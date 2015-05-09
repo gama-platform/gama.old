@@ -49,11 +49,13 @@ public class DisplaySurfaceMenu {
 		}
 		Set<IAgent> all = new LinkedHashSet();
 		for ( final ILayer display : displays ) {
-			final Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
-			if ( agents.isEmpty() ) {
-				continue;
+			if ( display.isSelectable() ) {
+				final Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
+				if ( agents.isEmpty() ) {
+					continue;
+				}
+				all.addAll(agents);
 			}
-			all.addAll(agents);
 		}
 		buildMenu(true, mousex, mousey, modelCoordinates, all);
 	}

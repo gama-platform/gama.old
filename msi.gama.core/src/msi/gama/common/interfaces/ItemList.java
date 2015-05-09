@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ItemList.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ItemList.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -41,5 +41,13 @@ public interface ItemList<T> {
 	String getItemDisplayName(T obj, String previousName);
 
 	void updateItemValues();
+
+	/**
+	 * @param data
+	 * @param b
+	 */
+	void makeItemSelectable(T data, boolean b);
+
+	void makeItemVisible(T obj, boolean b);
 
 }

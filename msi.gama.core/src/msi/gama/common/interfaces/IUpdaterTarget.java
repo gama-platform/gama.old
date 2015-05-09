@@ -15,6 +15,10 @@ public interface IUpdaterTarget<Message> {
 
 	public boolean isDisposed();
 
+	public boolean isVisible();
+
+	public boolean isBusy();
+
 	public void updateWith(Message m);
 
 	public int getCurrentState();

@@ -132,6 +132,11 @@ public class UserControlView extends GamaViewPart {
 		return new GamaUIJob() {
 
 			@Override
+			protected UpdatePriority jobPriority() {
+				return UpdatePriority.HIGH;
+			}
+
+			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				initFor(scope, userCommands, title);
 				return Status.OK_STATUS;

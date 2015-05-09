@@ -41,10 +41,9 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  */
 @msi.gama.precompiler.GamlAnnotations.display("opengl")
-public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayDataListener, GLEventListener {
+public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayDataListener {
 
-	static int FRAME_PER_SECOND = 30; // TODO Make it a preference
-	final SWTGLAnimator animator;
+	final GLAnimatorControl animator;
 	final JOGLRenderer renderer;
 	protected final AffineTransform translation = new AffineTransform();
 	protected volatile boolean canBeUpdated = true;
@@ -154,8 +153,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 * Method computeBoundsFrom()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#computeBoundsFrom(int, int)
 	 */
-	@Override
-	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
+	private int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
 		final int[] dim = new int[2];
 		double widthHeightConstraint = getEnvHeight() / getEnvWidth();
@@ -179,21 +177,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
 		canBeUpdated(false);
 		int[] point = computeBoundsFrom(x, y);
-		int imageWidth = Math.max(1, point[0]);
-		int imageHeight = Math.max(1, point[1]);
-		createNewImage(imageWidth, imageHeight);
+		viewPort.height = Math.max(1, point[1]);;
+		viewPort.width = Math.max(1, point[0]);;
 		canBeUpdated(true);
 		setSize(x, y);
 		return true;
-	}
-
-	/**
-	 * @param imageWidth
-	 * @param imageHeight
-	 */
-	private void createNewImage(final int width, final int height) {
-		setDisplayHeight(height);
-		setDisplayWidth(width);
 	}
 
 	@Override
@@ -201,17 +189,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 		return viewPort.width;
 	}
 
-	protected void setDisplayWidth(final int displayWidth) {
-		viewPort.width = displayWidth;
-	}
-
 	@Override
 	public int getDisplayHeight() {
 		return viewPort.height;
-	}
-
-	protected void setDisplayHeight(final int displayHeight) {
-		viewPort.height = displayHeight;
 	}
 
 	/**
@@ -220,10 +200,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 */
 	@Override
 	public void zoomIn() {
-		// if ( alreadyZooming ) { return; }
-		// alreadyZooming = true;
 		renderer.camera.zoom(true);
-		// alreadyZooming = false;
 	}
 
 	/**
@@ -232,10 +209,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 */
 	@Override
 	public void zoomOut() {
-		// if ( alreadyZooming ) { return; }
-		// alreadyZooming = true;
 		renderer.camera.zoom(false);
-		// alreadyZooming = false;
 	}
 
 	/**
@@ -290,18 +264,19 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 */
 	@Override
 	public void waitForUpdateAndRun(final Runnable r) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while (!canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (final InterruptedException e) {}
-				}
-				GuiUtils.run(r);
-			}
-		}).start();
+		r.run();
+		// new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// while (!canBeUpdated()) {
+		// try {
+		// Thread.sleep(10);
+		// } catch (final InterruptedException e) {}
+		// }
+		// GuiUtils.run(r);
+		// }
+		// }).start();
 	}
 
 	public final void save(final IScope scope, final RenderedImage image) {
@@ -595,7 +570,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 * @see msi.gama.common.interfaces.IDisplaySurface.OpenGL#selectAgents(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public void selectAgents(final IAgent agent) {
+	public void selectAgent(final IAgent agent) {
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agent);
 	}
 
@@ -619,47 +594,44 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 * @see msi.gama.common.interfaces.IDisplaySurface.OpenGL#selectSeveralAgents(java.util.Collection, int)
 	 */
 	@Override
-	public void selectSeveralAgents(final Collection<IAgent> agents, final int i) {
-		try {
-			// animator.pause();
-			GuiUtils.asyncRun(new Runnable() {
+	public void selectSeveralAgents(final Collection<IAgent> agents) {
 
-				@Override
-				public void run() {
-					if ( menu != null && !menu.isDisposed() ) {
-						menu.dispose();
-					}
-					Control swtControl = renderer.getCanvas();
-					DisplayedAgentsMenu menuBuilder = new DisplayedAgentsMenu();
-					menu =
-						menuBuilder.getMenu(SWTOpenGLDisplaySurface.this, swtControl, true, false, agents,
-							getModelCoordinates(), true);
-					menu.setData(IKeyword.USER_LOCATION, getModelCoordinates());
-					menu.setLocation(swtControl.toDisplay(renderer.camera.getMousePosition().x,
-						renderer.camera.getMousePosition().y));
-					menu.addMenuListener(new MenuListener() {
+		// animator.pause();
+		GuiUtils.asyncRun(new Runnable() {
 
-						@Override
-						public void menuHidden(final MenuEvent e) {
-							// animator.resume();
-						}
-
-						@Override
-						public void menuShown(final MenuEvent e) {
-							// animator.pause();
-						}
-					});
-					menu.setVisible(true);
-
-					// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :
-					// http://www.eclipse.org/forums/index.php/t/208284/
-					// retryVisible(menu, MAX_RETRIES);
+			@Override
+			public void run() {
+				if ( menu != null && !menu.isDisposed() ) {
+					menu.dispose();
 				}
-			});
+				Control swtControl = renderer.getCanvas();
+				DisplayedAgentsMenu menuBuilder = new DisplayedAgentsMenu();
+				menu =
+					menuBuilder.getMenu(SWTOpenGLDisplaySurface.this, swtControl, true, true, agents,
+						getModelCoordinates(), true);
+				menu.setData(IKeyword.USER_LOCATION, getModelCoordinates());
+				menu.setLocation(swtControl.toDisplay(renderer.camera.getMousePosition().x,
+					renderer.camera.getMousePosition().y));
+				// menu.addMenuListener(new MenuListener() {
+				//
+				// @Override
+				// public void menuHidden(final MenuEvent e) {
+				// // animator.resume();
+				// }
+				//
+				// @Override
+				// public void menuShown(final MenuEvent e) {
+				// // animator.pause();
+				// }
+				// });
+				menu.setVisible(true);
 
-		} finally {
-			// animator.resume();
-		}
+				// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :
+				// http://www.eclipse.org/forums/index.php/t/208284/
+				// retryVisible(menu, MAX_RETRIES);
+			}
+		});
+
 	}
 
 	protected void setDisplayScope(final IScope scope) {
@@ -675,12 +647,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 		if ( manager != null ) {
 			manager.dispose();
 		}
-		stop();
-		renderer.getDrawable().removeGLEventListener(this);
-		renderer.dispose();
+		if ( animator.isStarted() ) {
+			animator.stop();
+		}
 		GAMA.releaseScope(getDisplayScope());
 		setDisplayScope(null);
-		// super.dispose();
 	}
 
 	@Override
@@ -763,94 +734,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 		return new JOGLRenderer(this);
 	}
 
-	private SWTGLAnimator createAnimator() {
-		// System.out.println("Creating animator");
-		GLProfile profile = GLProfile.getDefault();
-		GLCapabilities cap = new GLCapabilities(profile);
-		cap.setStencilBits(8);
-		cap.setDoubleBuffered(true);
-		cap.setHardwareAccelerated(true);
-		GLAutoDrawable drawable = renderer.createDrawable(cap, this);
-		SWTGLAnimator animator = new SWTGLAnimator(FRAME_PER_SECOND);
-		animator.add(drawable);
-		drawable.addGLEventListener(this);
-		return animator;
-	}
-
-	/**
-	 * Method init()
-	 * @see javax.media.opengl.GLEventListener#init(javax.media.opengl.GLAutoDrawable)
-	 */
-	@Override
-	public void init(final GLAutoDrawable drawable) {
-		renderer.init(drawable);
-	}
-
-	/**
-	 * Method dispose()
-	 * @see javax.media.opengl.GLEventListener#dispose(javax.media.opengl.GLAutoDrawable)
-	 */
-	@Override
-	public void dispose(final GLAutoDrawable drawable) {
-		renderer.dispose();
-	}
-
-	/**
-	 * Method display()
-	 * @see javax.media.opengl.GLEventListener#display(javax.media.opengl.GLAutoDrawable)
-	 */
-	@Override
-	public void display(final GLAutoDrawable drawable) {
-		// fail fast
-		if ( GAMA.getSimulation() == null ) { return; }
-		if ( animator != null && animator.isPaused() ) { return; }
-		// if ( surface.getOutput().isPaused() ) { return; }
-		// if ( GAMA.isPaused() ) { return; }
-		// if ( !drawable.isRealized() ) { return; }
-		renderer.display(drawable);
-
-	}
-
-	/**
-	 * Method reshape()
-	 * @see javax.media.opengl.GLEventListener#reshape(javax.media.opengl.GLAutoDrawable, int, int, int, int)
-	 */
-	@Override
-	public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
-		// fail fast
-		if ( width <= 0 || height <= 0 ) { return; }
-		renderer.reshape(drawable, x, y, width, height);
-	}
-
-	public void start() {
-		// System.out.println("ANimator asked to start");
-		if ( !animator.isStarted() ) {
-			animator.start();
-		}
-	}
-
-	public void stop() {
-		// System.out.println("ANimator asked to stop");
-		if ( animator.isStarted() ) {
-			animator.stop();
-		}
-	}
-
-	public void pause() {
-		// System.out.println("ANimator asked to pause");
-		if ( animator.isAnimating() ) {
-			animator.pause();
-		}
-	}
-
-	public void resume() {
-		// System.out.println("ANimator asked to resume");
-		if ( !animator.isStarted() ) {
-			start();
-		} else if ( animator.isPaused() ) {
-			animator.resume();
-
-		}
+	private GLAnimatorControl createAnimator() {
+		GLAutoDrawable drawable = renderer.createDrawable(parent);
+		return drawable.getAnimator();
 	}
 
 }

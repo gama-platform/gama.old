@@ -36,6 +36,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	private final static int PRESENTATION = 0;
 	private final static int FOCUS = 1;
 	private final static int SNAP = 2;
+	protected volatile boolean disposed;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -111,6 +112,16 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	@Override
 	public void dispose() {
 		// FIXME Should not be redefined, but we should add a DisposeListener instead
+		if ( disposed ) { return; }
+		disposed = true;
+		releaseLock();
+		if ( updateThread != null ) {
+			try {
+				updateThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 
 		if ( perspectiveListener != null ) {
 			SwtGui.getWindow().removePerspectiveListener(perspectiveListener);
@@ -140,13 +151,13 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	 * Between 0 and 100;
 	 */
 	public int getZoomLevel() {
-		if (zoomLevel == null) {
-			if (getDisplaySurface() != null) {
+		if ( zoomLevel == null ) {
+			if ( getDisplaySurface() != null ) {
 				zoomLevel = (int) getDisplaySurface().getZoomLevel() * 100;
 			} else {
 				zoomLevel = 1;
 			}
-		}	
+		}
 		return zoomLevel;
 	}
 
@@ -214,19 +225,15 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	public String getOverlayZoomInfo() {
 		IDisplaySurface surface = getDisplaySurface();
 		boolean openGL = getOutput().isOpenGL();
-		Object[] objects = null;
-		if ( surface != null ) {
-			if ( !openGL ) {
-				objects = new Object[] { getZoomLevel() };
-			} else {
-				IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
-				ILocation camera = ds.getCameraPosition();
-				objects = new Object[] { getZoomLevel(), camera.getX(), camera.getY(), camera.getZ() };
-			}
-		}
-		return String.format("Zoom %d%%" + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects == null ? 100
-			: objects);
 
+		if ( !openGL ) {
+			return "Zoom " + getZoomLevel() + "%";
+		} else {
+			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
+			ILocation camera = ds.getCameraPosition();
+			return String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(), camera.getY(),
+				camera.getZ());
+		}
 	}
 
 	@Override
@@ -300,11 +307,60 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		return new GamaUIJob() {
 
 			@Override
+			protected UpdatePriority jobPriority() {
+				return UpdatePriority.HIGHEST;
+			}
+
+			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				getDisplaySurface().updateDisplay(false);
 				return Status.OK_STATUS;
 			}
 		};
+	}
+
+	private volatile boolean lockAcquired = false;
+
+	Thread updateThread;
+
+	public synchronized void acquireLock() {
+		while (lockAcquired) {
+			try {
+				wait();
+			} catch (final InterruptedException e) {
+				// e.printStackTrace();
+			}
+		}
+		lockAcquired = true;
+	}
+
+	public synchronized void releaseLock() {
+		lockAcquired = false;
+		notify();
+	}
+
+	@Override
+	public void update(final IDisplayOutput output) {
+		if ( updateThread == null ) {
+			updateThread = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					while (!disposed) {
+						acquireLock();
+						IDisplaySurface s = getDisplaySurface();
+						if ( s != null ) {
+							s.updateDisplay(false);
+						}
+					}
+				}
+			});
+			updateThread.start();
+		}
+		if ( updateThread.isAlive() ) {
+			releaseLock();
+		}
+
 	}
 
 	/**

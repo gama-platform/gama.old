@@ -32,6 +32,7 @@ public class LayerBox implements IDisplayLayerBox {
 	IExpression refresh = new ConstantExpression(true);
 	IExpression trace = new ConstantExpression(0);
 	IExpression fading = new ConstantExpression(false);
+	IExpression selectable = new ConstantExpression(true);
 
 	Double currentTransparency = 0d;
 	ILocation currentPosition;
@@ -39,6 +40,7 @@ public class LayerBox implements IDisplayLayerBox {
 	Boolean currentRefresh;
 	Boolean currentFading;
 	Integer currentTrace;
+	Boolean currentSelectable;
 
 	ILocation constantPosition = null;
 	ILocation constantSize = null;
@@ -46,11 +48,12 @@ public class LayerBox implements IDisplayLayerBox {
 	Boolean constantRefresh = null;
 	Boolean constantFading = null;
 	Integer constantTrace = null;
+	Boolean constantSelectable = null;
 
 	boolean constantBoundingBox = false;
 
 	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression refr,
-		final IExpression tr, final IExpression fd) throws GamaRuntimeException {
+		final IExpression tr, final IExpression fd, final IExpression sl) throws GamaRuntimeException {
 		IScope scope = GAMA.obtainNewScope();
 		setTransparency(scope, transp == null ? transparency : transp);
 		setPosition(scope, pos == null ? loc : pos);
@@ -58,6 +61,7 @@ public class LayerBox implements IDisplayLayerBox {
 		setRefresh(scope, refr == null ? refresh : refr);
 		setTrace(scope, tr == null ? trace : tr);
 		setFading(scope, fd == null ? fading : fd);
+		setSelectable(scope, sl == null ? selectable : sl);
 	}
 
 	@Override
@@ -66,6 +70,8 @@ public class LayerBox implements IDisplayLayerBox {
 			currentTransparency =
 				constantTransparency == null ? 1d - Math.min(
 					Math.max(Cast.asFloat(scope, transparency.value(scope)), 0d), 1d) : constantTransparency;
+			currentSelectable =
+				constantSelectable == null ? Cast.asBool(scope, selectable.value(scope)) : constantSelectable;
 			if ( !constantBoundingBox ) {
 				currentPosition = constantPosition == null ? Cast.asPoint(scope, loc.value(scope)) : constantPosition;
 				currentSize = constantSize == null ? Cast.asPoint(scope, size.value(scope)) : constantSize;
@@ -227,11 +233,27 @@ public class LayerBox implements IDisplayLayerBox {
 		}
 	}
 
+	@Override
+	public void setSelectable(final IScope scope, final IExpression r) {
+		if ( r != null ) {
+			constantSelectable = null;
+			fading = r;
+			if ( r.isConst() ) {
+				setSelectable(Cast.asBool(scope, r.value(scope)));
+			}
+		}
+	}
+
 	/**
 	 * @param asBool
 	 */
 	private void setFading(final Boolean b) {
 		currentFading = constantFading = b;
+	}
+
+	@Override
+	public void setSelectable(final Boolean b) {
+		currentSelectable = constantSelectable = b;
 	}
 
 	/**
@@ -250,6 +272,11 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public Boolean getFading() {
 		return currentFading;
+	}
+
+	@Override
+	public Boolean isSelectable() {
+		return currentSelectable;
 	}
 
 }

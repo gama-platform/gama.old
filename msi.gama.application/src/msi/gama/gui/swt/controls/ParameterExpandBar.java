@@ -29,10 +29,13 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	private int spacing, yCurrentScroll, itemCount;
 	private final Listener listener;
 	private boolean inDispose;
-	final boolean isClosable;
-	final boolean isPausable;
+	final boolean hasClosableToggle;
+	final boolean hasPausableToggle;
+	final boolean hasSelectableToggle;
+	final boolean hasVisibleToggle;
 	private final ItemList underlyingObjects;
 	int bandHeight = ParameterExpandItem.CHEVRON_SIZE;
+	private boolean ignoreMouseUp;
 
 	/**
 	 * @param underlyingObjects Constructs a new instance of this class given its parent and a style
@@ -61,15 +64,17 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	 */
 
 	public ParameterExpandBar(final Composite parent, final int style) {
-		this(parent, style | SWT.DOUBLE_BUFFERED, false, false, null);
+		this(parent, style | SWT.DOUBLE_BUFFERED, false, false, false, false, null);
 	}
 
 	public ParameterExpandBar(final Composite parent, final int style, final boolean isClosable,
-		final boolean isPausable, final ItemList underlyingObjects) {
+		final boolean isPausable, final boolean isSelectable, final boolean isVisible, final ItemList underlyingObjects) {
 		super(parent, checkStyle(style));
 		items = new ParameterExpandItem[4];
-		this.isClosable = isClosable;
-		this.isPausable = isPausable;
+		this.hasClosableToggle = isClosable;
+		this.hasPausableToggle = isPausable;
+		this.hasSelectableToggle = isSelectable;
+		this.hasVisibleToggle = isVisible;
 		this.underlyingObjects = underlyingObjects;
 		listener = new Listener() {
 
@@ -436,7 +441,8 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			if ( !hover ) {
 				continue;
 			}
-			if ( isPausable && item.pauseRequested(x, y) ) {
+			if ( hasPausableToggle && item.pauseRequested(x, y) ) {
+				ignoreMouseUp = true;
 				if ( item.isPaused ) {
 					if ( underlyingObjects != null ) {
 						underlyingObjects.resumeItem(item.getData());
@@ -451,7 +457,41 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 				showItem(item);
 				return;
 			}
-			if ( isClosable && item.closeRequested(x, y) ) {
+			if ( hasVisibleToggle && item.visibleRequested(x, y) ) {
+				ignoreMouseUp = true;
+				if ( item.isVisible ) {
+					if ( underlyingObjects != null ) {
+						underlyingObjects.makeItemVisible(item.getData(), false);
+					}
+					item.isVisible = false;
+				} else {
+					if ( underlyingObjects != null ) {
+						underlyingObjects.makeItemVisible(item.getData(), true);
+					}
+					item.isVisible = true;
+				}
+				showItem(item);
+				return;
+			}
+			if ( hasSelectableToggle && item.selectableRequested(x, y) ) {
+				ignoreMouseUp = true;
+				if ( item.isSelectable ) {
+					if ( underlyingObjects != null ) {
+						underlyingObjects.makeItemSelectable(item.getData(), false);
+					}
+					item.isSelectable = false;
+				} else {
+					if ( underlyingObjects != null ) {
+						underlyingObjects.makeItemSelectable(item.getData(), true);
+					}
+					item.isSelectable = true;
+				}
+				showItem(item);
+				return;
+
+			}
+			if ( hasClosableToggle && item.closeRequested(x, y) ) {
+				ignoreMouseUp = true;
 				item.dispose();
 				return;
 			}
@@ -468,6 +508,10 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	void onMouseUp(final Event event) {
+		if ( ignoreMouseUp ) {
+			ignoreMouseUp = false;
+			return;
+		}
 		if ( event.button != 1 ) { return; }
 		if ( getFocusItem() == null ) { return; }
 		int x = event.x;
@@ -476,7 +520,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			getFocusItem().x <= x && x < getFocusItem().x + getFocusItem().width && getFocusItem().y <= y &&
 				y < getFocusItem().y + bandHeight;
 		if ( hover ) {
-			if ( isPausable && getFocusItem().pauseRequested(x, y) ) { return; }
+			// if ( hasPausableToggle && getFocusItem().pauseRequested(x, y) ) { return; }
 
 			Event ev = new Event();
 			ev.item = getFocusItem();

@@ -48,11 +48,11 @@ public class AgentLayer extends AbstractLayer {
 		String aspectName = IKeyword.DEFAULT;
 		if ( definition instanceof AgentLayerStatement ) {
 			aspectName = ((AgentLayerStatement) definition).getAspectName();
-		
+
 			for ( final IAgent a : getAgentsToDisplay() ) {
 				if ( a != null/* && !scope.interrupted() */) {
 					IExecutable aspect = ((AgentLayerStatement) definition).getAspect();
-					if ( aspect == null) {
+					if ( aspect == null ) {
 						aspect = a.getSpecies().getAspect(aspectName);
 					}
 					if ( aspect == null ) {
@@ -68,11 +68,11 @@ public class AgentLayer extends AbstractLayer {
 				}
 			}
 		} else if ( definition instanceof GridLayerStatement ) {
-			
+
 			for ( final IAgent a : getAgentsToDisplay() ) {
 				if ( a != null/* && !scope.interrupted() */) {
 					IExecutable aspect = AspectStatement.DEFAULT_ASPECT;
-					
+
 					Object[] result = new Object[1];
 					scope.execute(aspect, a, null, result);
 					final Rectangle2D r = (Rectangle2D) result[0];
@@ -85,6 +85,7 @@ public class AgentLayer extends AbstractLayer {
 		}
 	}
 
+	@Override
 	public Collection<IAgent> getAgentsForMenu(final IScope scope) {
 		if ( shapes.isEmpty() ) { return getAgentsToDisplay(); }
 		// Avoid recalculating the agents

@@ -40,11 +40,32 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
 
+	enum UpdatePriority {
+		HIGH, LOW, HIGHEST, LOWEST;
+	}
+
 	protected abstract class GamaUIJob extends UIJob {
 
 		public GamaUIJob() {
 			super("Updating " + getPartName());
+			UpdatePriority p = jobPriority();
+			switch (p) {
+				case HIGHEST:
+					setPriority(INTERACTIVE);
+					break;
+				case LOWEST:
+					setPriority(DECORATE);
+					break;
+				case HIGH:
+					setPriority(SHORT);
+					break;
+				case LOW:
+					setPriority(LONG);
+					break;
+			}
 		}
+
+		protected abstract UpdatePriority jobPriority();
 
 		public void runSynchronized() {
 			GuiUtils.run(new Runnable() {
@@ -161,7 +182,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	protected abstract GamaUIJob createUpdateJob();
 
 	@Override
-	public final void update(final IDisplayOutput output) {
+	public void update(final IDisplayOutput output) {
 		GamaUIJob job = getUpdateJob();
 		if ( job != null ) {
 			if ( output.isSynchronized() ) {

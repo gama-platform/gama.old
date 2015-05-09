@@ -13,11 +13,11 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import ummisco.gama.opengl.JOGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
+import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 
@@ -84,9 +84,9 @@ public class ImageObject extends AbstractObject {
 									new GamaPoint(pickedPoint.x, -pickedPoint.y));
 							}
 						});
-						renderer.displaySurface.selectAgents(ag);
+						renderer.displaySurface.selectAgent(ag);
 					} else {
-						renderer.displaySurface.selectAgents(agent);
+						renderer.displaySurface.selectAgent(agent);
 					}
 				}
 			}
@@ -104,7 +104,7 @@ public class ImageObject extends AbstractObject {
 	@Override
 	protected Texture computeTexture(final GL gl, final JOGLRenderer renderer) {
 		if ( image == null ) { return null; }
-		return TextureCache.create(gl, renderer, image, isDynamic);
+		return TextureCache.getInstance().get(gl, renderer.getCurrentScene(), image, isDynamic);
 	}
 
 }

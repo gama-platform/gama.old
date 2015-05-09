@@ -14,7 +14,6 @@ package msi.gama.outputs.layers;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 
 /**

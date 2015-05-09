@@ -42,7 +42,6 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	protected final LayeredDisplayData data;
 	protected final Rectangle viewPort = new Rectangle();
 	protected final ILayerManager manager;
-	protected final Runnable displayBlock;
 	protected final AffineTransform translation = new AffineTransform();
 
 	protected IGraphics iGraphics;
@@ -134,13 +133,6 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		setBackground(data.getBackgroundColor());
 		setName(output.getName());
 		manager = new LayerManager(this, output);
-		displayBlock = new Runnable() {
-
-			@Override
-			public void run() {
-				internalDisplayUpdate();
-			}
-		};
 		final DisplayMouseListener d = new DisplayMouseListener();
 		addMouseListener(d);
 		addMouseMotionListener(d);
@@ -351,16 +343,20 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 		@Override
 		public void run() {
-			displayBlock.run();
+			internalDisplayUpdate();
 			canBeUpdated(true);
 		}
 	};
 
-	protected void runDisplay() {
+	@Override
+	public void updateDisplay(final boolean force) {
+		if ( !canBeUpdated() ) { return; }
+		// EXPERIMENTAL
+
 		canBeUpdated(false);
-		if ( GAMA.isPaused() || EventQueue.isDispatchThread() ) {
+		if ( /* GAMA.isPaused() || */EventQueue.isDispatchThread() ) {
 			EventQueue.invokeLater(displayRunnable);
-		} else if ( output.isSynchronized() ) {
+		} else {
 			try {
 				EventQueue.invokeAndWait(displayRunnable);
 			} catch (InterruptedException e) {
@@ -368,16 +364,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
-		} else {
-			EventQueue.invokeLater(displayRunnable);
 		}
-	}
-
-	@Override
-	public void updateDisplay(final boolean force) {
-		if ( !canBeUpdated() ) { return; }
-		runDisplay();
-		// EXPERIMENTAL
 
 		if ( temp_focus != null ) {
 			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()), false);
@@ -395,11 +382,13 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 				centerOnDisplayCoordinates(center);
 			}
 			temp_focus = null;
-			// canBeUpdated(true);
-			if ( !canBeUpdated() ) { return; }
-			runDisplay();
-			// canBeUpdated(false);
+			// Recursive call
+			updateDisplay(true);
 		}
+
+		// else {
+		// EventQueue.invokeLater(displayRunnable);
+		// }
 
 		// EXPERIMENTAL
 	}
@@ -577,8 +566,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		}
 	}
 
-	@Override
-	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
+	private int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
 		final int[] dim = new int[2];
 		double widthHeightConstraint = getEnvHeight() / getEnvWidth();

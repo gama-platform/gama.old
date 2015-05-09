@@ -14,9 +14,9 @@ package ummisco.gama.opengl.scene;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import ummisco.gama.opengl.JOGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
+import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
@@ -114,7 +114,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 					renderer.setPicking(false);
 					pick();
 					renderer.currentPickedObject = this;
-					renderer.displaySurface.selectAgents(agent);
+					renderer.displaySurface.selectAgent(agent);
 				}
 			}
 			super.draw(gl, drawer, picking);
@@ -139,7 +139,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	}
 
 	private Texture computeTexture(final GL gl, final JOGLRenderer renderer, final int order) {
-		return TextureCache.create(gl, renderer, textureImages.get(order), false);
+		return TextureCache.getInstance().get(gl, renderer.getCurrentScene(), textureImages.get(order), false);
 	}
 
 	public boolean hasTextures() {

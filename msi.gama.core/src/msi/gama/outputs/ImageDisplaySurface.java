@@ -120,15 +120,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
-		final int[] dim = new int[2];
-		double widthHeightConstraint = getEnvHeight() / getEnvWidth();
-		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
-		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
-		return dim;
-	}
-
-	@Override
 	public boolean resizeImage(final int newWidth, final int newHeight, final boolean force) {
 		if ( !force && width == newWidth && height == newHeight ) { return false; }
 		this.width = newWidth;
@@ -156,15 +147,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		displayGraphics.fillBackground(data.getBackgroundColor(), 1);
 		manager.drawLayersOn(displayGraphics);
 	}
-
-	/*
-	 * public void drawDisplaysWithoutRepainting() {
-	 * if ( iGraphics == null ) { return; }
-	 * ex[0] = null;
-	 * iGraphics.fillBackground(bgColor, 1);
-	 * manager.drawLayersOn(iGraphics);
-	 * }
-	 */
 
 	private void createBuffImage() {
 		buffImage = ImageUtils.createCompatibleImage(width, height);
@@ -398,9 +380,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		IList<IAgent> result = GamaListFactory.create(Types.AGENT);
 		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
 		for ( ILayer layer : layers ) {
-			Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
-			if ( !agents.isEmpty() ) {
-				result.addAll(agents);
+			if ( layer.isSelectable() ) {
+				Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
+				if ( !agents.isEmpty() ) {
+					result.addAll(agents);
+				}
 			}
 		}
 		return result;

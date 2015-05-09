@@ -40,9 +40,9 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 		void setPaused(boolean flag);
 
-		void selectAgents(IAgent agent);
+		void selectAgent(IAgent agent);
 
-		void selectSeveralAgents(Collection<IAgent> shapes, int i);
+		void selectSeveralAgents(Collection<IAgent> shapes);
 
 	}
 
@@ -66,7 +66,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	 */
 	void setSWTMenuManager(Object displaySurfaceMenu);
 
-	int[] computeBoundsFrom(int width, int height);
+	// int[] computeBoundsFrom(int width, int height);
 
 	boolean resizeImage(int width, int height, boolean force);
 

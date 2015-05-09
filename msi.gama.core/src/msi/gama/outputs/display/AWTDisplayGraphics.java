@@ -291,9 +291,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			renderer.setColor(highlight ? data.getHighlightColor() : color);
 			if ( geom instanceof Lineal || geom instanceof Puntal ? false : fill ) {
 				renderer.fill(s);
-				renderer.setColor(highlight ? data.getHighlightColor() : border);
+				if ( border != null ) {
+					renderer.setColor(highlight ? data.getHighlightColor() : border);
+				}
 			}
-			renderer.draw(s);
+			if ( border != null ) {
+				renderer.draw(s);
+			}
 			renderer.setTransform(saved);
 			return r;
 		} catch (final Exception e) {

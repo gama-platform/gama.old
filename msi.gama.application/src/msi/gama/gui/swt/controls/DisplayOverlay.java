@@ -13,6 +13,7 @@ package msi.gama.gui.swt.controls;
 
 import java.util.List;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
@@ -146,29 +147,41 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		}
 	}
 
+	volatile boolean isBusy;
+
+	@Override
+	public boolean isBusy() {
+		return isBusy;
+	}
+
 	@Override
 	public void update() {
-		if ( getPopup().isDisposed() ) { return; }
-		if ( !coord.isDisposed() ) {
-			try {
-				coord.setText(getView().getOverlayCoordInfo());
-			} catch (Exception e) {
-				// GuiUtils.debug("Error in updating overlay: " + e.getMessage());
-				coord.setText("Not initialized yet");
+		isBusy = true;
+		try {
+			if ( getPopup().isDisposed() ) { return; }
+			if ( !coord.isDisposed() ) {
+				try {
+					coord.setText(getView().getOverlayCoordInfo());
+				} catch (Exception e) {
+					// GuiUtils.debug("Error in updating overlay: " + e.getMessage());
+					coord.setText("Not initialized yet");
+				}
 			}
-		}
-		if ( !zoom.isDisposed() ) {
-			try {
-				zoom.setText(getView().getOverlayZoomInfo());
-			} catch (Exception e) {
-				// GuiUtils.debug("Error in updating overlay: " + e.getMessage());
-				zoom.setText("Not initialized yet");
+			if ( !zoom.isDisposed() ) {
+				try {
+					zoom.setText(getView().getOverlayZoomInfo());
+				} catch (Exception e) {
+					GuiUtils.debug("Error in updating overlay: " + e.getMessage());
+					zoom.setText("Not initialized yet");
+				}
 			}
+			if ( !scalebar.isDisposed() ) {
+				scalebar.redraw();
+			}
+			getPopup().layout(true);
+		} finally {
+			isBusy = false;
 		}
-		if ( !scalebar.isDisposed() ) {
-			scalebar.redraw();
-		}
-		getPopup().layout(true);
 	}
 
 	@Override

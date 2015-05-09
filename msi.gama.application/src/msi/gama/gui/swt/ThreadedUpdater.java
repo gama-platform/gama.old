@@ -29,6 +29,7 @@ public class ThreadedUpdater<Message extends IUpdaterMessage> extends UIJob impl
 
 	public ThreadedUpdater(final String name) {
 		super(SwtGui.getDisplay(), name);
+		setPriority(DECORATE);
 	}
 
 	@Override
@@ -37,9 +38,14 @@ public class ThreadedUpdater<Message extends IUpdaterMessage> extends UIJob impl
 	}
 
 	@Override
+	public boolean isVisible() {
+		return control.isVisible();
+	}
+
+	@Override
 	public void updateWith(final Message m) {
+		if ( isDisposed() || !isVisible() || isBusy() || m == null || m.isEmpty() ) { return; }
 		message = m;
-		if ( m == null || m.isEmpty() ) { return; }
 		schedule();
 	}
 
@@ -53,8 +59,14 @@ public class ThreadedUpdater<Message extends IUpdaterMessage> extends UIJob impl
 	}
 
 	@Override
+	public boolean isBusy() {
+		return control.isBusy();
+	}
+
+	@Override
 	public IStatus runInUIThread(final IProgressMonitor monitor) {
 		if ( control.isDisposed() ) { return Status.CANCEL_STATUS; }
+		if ( control.isBusy() || !control.isVisible() ) { return Status.OK_STATUS; }
 		control.updateWith(message);
 		return Status.OK_STATUS;
 	}

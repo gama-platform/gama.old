@@ -22,11 +22,12 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.outputs.LayeredDisplayData;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import ummisco.gama.opengl.camera.*;
 import ummisco.gama.opengl.scene.*;
 import ummisco.gama.opengl.utils.GLUtilLight;
@@ -44,7 +45,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 27 avr. 2015
  * 
  */
-public class JOGLRenderer implements IGraphics.OpenGL {
+public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	private static boolean BLENDING_ENABLED; // blending on/off
 	GLCanvas canvas;
@@ -72,6 +73,8 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 	protected double yRatioBetweenPixelsAndModelUnits;
 	private GLU glu;
 	private Envelope3D ROIEnvelope = null;
+	private ModelScene currentScene;
+	private volatile boolean inited;
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		displaySurface = d;
@@ -80,11 +83,23 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 		sceneBuffer = new SceneBuffer(this);
 	}
 
-	public GLAutoDrawable createDrawable(final GLCapabilities cap, final SWTOpenGLDisplaySurface surface) {
-		canvas = new GLCanvas(surface.getParent(), SWT.NONE, cap, null);
+	public GLAutoDrawable createDrawable(final Composite parent) {
+		GLProfile profile = TextureCache.getInstance().getSharedContext().getGLProfile();
+		GLCapabilities cap = new GLCapabilities(profile);
+		cap.setStencilBits(8);
+		cap.setDoubleBuffered(true);
+		cap.setHardwareAccelerated(true);
+		canvas = new GLCanvas(parent, SWT.NONE, cap, null);
+		canvas.setSharedAutoDrawable(TextureCache.getInstance().getSharedContext());
 		canvas.setAutoSwapBufferMode(true);
+		SWTGLAnimator animator = new SWTGLAnimator(canvas);
+		canvas.addGLEventListener(this);
 		return canvas;
 
+	}
+
+	public ModelScene getCurrentScene() {
+		return currentScene;
 	}
 
 	public void defineROI(final Point extent) {
@@ -129,6 +144,7 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 
 	}
 
+	@Override
 	public void init(final GLAutoDrawable drawable) {
 		// see https://jogamp.org/deployment/v2.1.1/javadoc/jogl/javadoc/javax/media/opengl/glu/gl2/GLUgl2.html
 		// GLU objects are NOT thread safe...
@@ -166,14 +182,22 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 		// problem when true with glutBitmapString
 		BLENDING_ENABLED = true;
 		camera.updateCamera(gl, width, height);
+		// We mark the renderer as inited
+		inited = true;
 	}
 
 	public boolean getComputeNormal() {
 		return data.isDraw_norm();
 	}
 
+	@Override
 	public void display(final GLAutoDrawable drawable) {
+		// fail fast
+		if ( GAMA.getSimulation() == null ) { return; }
+
+		// if () != null && animator.isPaused() ) { return; }
 		GL2 gl = drawable.getContext().getGL().getGL2();
+
 		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 		gl.glGetDoublev(GLMatrixFunc.GL_MODELVIEW_MATRIX, mvmatrix, 0);
 		gl.glGetDoublev(GLMatrixFunc.GL_PROJECTION_MATRIX, projmatrix, 0);
@@ -245,10 +269,12 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 
 	}
 
+	@Override
 	public void
 		reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width, final int height) {
 		// System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
 		// Get the OpenGL graphics context
+		if ( width <= 0 || height <= 0 ) { return; }
 		GL2 gl = drawable.getContext().getGL().getGL2();
 		this.width = width;
 		this.height = height == 0 ? 1 : height;
@@ -268,23 +294,25 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 	}
 
 	public void drawScene(final GL2 gl) {
-		// scene.wipe(data.getTraceDisplay());
-		// System.out.println("====> RENDERING FRONT SCENE Thread " + Thread.currentThread().getName());
-		sceneBuffer.switchScenes(gl);
+		currentScene = sceneBuffer.getSceneToRender();
+		if ( currentScene == null ) { return; }
+		// Do some garbage collecting in model scenes
+		sceneBuffer.garbageCollect(gl);
 		if ( isPicking() ) {
-			this.drawPickableObjects(gl);
+			this.drawPickableObjects(gl, currentScene);
 		} else {
 			if ( data.isCubeDisplay() ) {
-				drawCubeDisplay(gl);
+				drawCubeDisplay(gl, currentScene);
 
 			} else {
-				this.drawModel(gl);
+				this.drawModel(gl, currentScene);
 			}
 		}
+
 	}
 
-	public void drawModel(final GL2 gl) {
-		sceneBuffer.getSceneToDisplay().draw(gl, isPicking() || currentPickedObject != null);
+	public void drawModel(final GL2 gl, final ModelScene scene) {
+		scene.draw(gl, isPicking() || currentPickedObject != null);
 	}
 
 	public void switchCamera() {
@@ -320,12 +348,12 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 
 	}
 
-	public void drawPickableObjects(final GL2 gl) {
+	public void drawPickableObjects(final GL2 gl, final ModelScene scene) {
 		if ( camera.beginPicking(gl) ) {
-			drawModel(gl);
+			drawModel(gl, scene);
 			setPickedObjectIndex(camera.endPicking(gl));
 		}
-		drawModel(gl);
+		drawModel(gl, scene);
 	}
 
 	public int getWidth() {
@@ -364,18 +392,14 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 		if ( pickedObjectIndex == -1 ) {
 			setPicking(false);
 		} else if ( pickedObjectIndex == -2 ) {
-			displaySurface.selectAgents(null);
+			displaySurface.selectAgent(null);
 			setPicking(false);
 		}
 	}
 
-	public void dispose() {
-		if ( sceneBuffer.getSceneToUpdate() != null ) {
-			sceneBuffer.getSceneToUpdate().dispose();
-		}
-
-		TextureCache.clearCache(this);
-		// textures.clear();
+	@Override
+	public void dispose(final GLAutoDrawable drawable) {
+		sceneBuffer.dispose();
 	}
 
 	// Use when the rotation button is on.
@@ -454,26 +478,15 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 		return picking;
 	}
 
-	/**
-	 * @param traceDisplay
-	 */
-	public boolean wipeScene(final GL gl) {
-		// if ( getScene() == null ) { return false; }
-		int traceDisplay = data.getTraceDisplay();
-		sceneBuffer.getSceneToDisplay().wipe(gl, traceDisplay);
-		if ( traceDisplay == 0 ) {
-			TextureCache.clearDynamicTextures(gl, this);
-
-		}
-
-		return true;
-	}
-
 	// This method is normally called either when the graphics is created or when the output is changed
 	@Override
 	public void initFor(final IDisplaySurface surface) {
+		System.out.println("Call of initFor on renderer");
 		if ( sceneBuffer != null ) {
-			sceneBuffer.getSceneToDisplay().reload();
+			ModelScene scene = sceneBuffer.getSceneToRender();
+			if ( scene != null ) {
+				scene.reload();
+			}
 		}
 	}
 
@@ -539,7 +552,6 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
 		final java.util.List<BufferedImage> textures, final java.util.List<Double> ratio,
 		final java.util.List<GamaColor> colors) {
-		// if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
 
 		sceneBuffer.getSceneToUpdate().addGeometry(geom, scope.getAgentScope(), color, fill, border,
 			textures == null || textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type,
@@ -559,7 +571,6 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
 		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final boolean isDynamic,
 		final String name) {
-		// if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 
 		GamaPoint location = new GamaPoint(locationInModelUnits);
 		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
@@ -645,7 +656,6 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
 		final Double heightInModelUnits, final Font font, final Double angle, final Boolean bitmap) {
-		// if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		GamaPoint location = new GamaPoint(locationInModelUnits).yNegated();
 		Integer size;
 		Double sizeInModelUnits;
@@ -673,7 +683,15 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 	@Override
 	public void beginDrawingLayers() {
 		// System.out.println("====> UPDATING BACK SCENE Thread " + Thread.currentThread().getName());
-		sceneBuffer.beginDrawingLayers();
+		while (!inited) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		sceneBuffer.beginUpdatingScene();
 	}
 
 	/**
@@ -700,9 +718,6 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 			z_scale = 1;
 		}
 
-		final Boolean refresh = layer.isDynamic();
-		boolean isStatic = refresh == null ? false : !refresh;
-
 		GamaPoint currentOffset =
 			new GamaPoint(xOffsetInPixels / (getWidth() / data.getEnvWidth()), yOffsetInPixels /
 				(getHeight() / data.getEnvHeight()), currentZLayer);
@@ -710,8 +725,7 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 			new GamaPoint(widthOfLayerInPixels / (double) getWidth(), heightOfLayerInPixels / (double) getHeight(),
 				z_scale);
 
-		sceneBuffer.getSceneToUpdate().beginDrawingLayer(layer.getName(), layer.getOrder(), currentOffset,
-			currentScale, currentAlpha, isStatic, layer.getTrace(), layer.getFading());
+		sceneBuffer.getSceneToUpdate().beginDrawingLayer(layer, currentOffset, currentScale, currentAlpha);
 	}
 
 	@Override
@@ -730,7 +744,7 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 	 */
 	@Override
 	public void endDrawingLayers() {
-		sceneBuffer.endDrawingLayers();
+		sceneBuffer.endUpdatingScene();
 	}
 
 	@Override
@@ -816,29 +830,29 @@ public class JOGLRenderer implements IGraphics.OpenGL {
 		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
 
-	public void drawCubeDisplay(final GL2 gl) {
+	public void drawCubeDisplay(final GL2 gl, final ModelScene scene) {
 		final float envMaxDim = (float) data.getEnvWidth();
 		// GL2 gl = GLContext.getCurrentGL().getGL2();
-		drawModel(gl);
+		drawModel(gl, scene);
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
-		drawModel(gl);
+		drawModel(gl, scene);
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
-		drawModel(gl);
+		drawModel(gl, scene);
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
-		drawModel(gl);
+		drawModel(gl, scene);
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
 		gl.glRotatef(-90, 1, 0, 0);
 		gl.glTranslatef(0, envMaxDim, 0);
-		drawModel(gl);
+		drawModel(gl, scene);
 		gl.glTranslatef(0, -envMaxDim, 0);
 		gl.glRotatef(90, 1, 0, 0);
 		gl.glRotatef(90, 1, 0, 0);
 		gl.glTranslatef(0, 0, envMaxDim);
-		drawModel(gl);
+		drawModel(gl, scene);
 		gl.glTranslatef(0, 0, -envMaxDim);
 		gl.glRotatef(-90, 1, 0, 0);
 	}

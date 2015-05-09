@@ -34,7 +34,6 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final ImageObject img) {
-		// GL2 gl = GLContext.getCurrentGL().getGL2();
 		Texture curTexture = img.getTexture(gl, renderer);
 		if ( curTexture == null ) { return; }
 		double width = img.dimensions.x;

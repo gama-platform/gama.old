@@ -95,4 +95,9 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	public Collection<IAgent> getAgentsForMenu(final IScope scope);
 
+	/**
+	 * @return
+	 */
+	Boolean isSelectable();
+
 }

@@ -35,7 +35,8 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	public void createViewer(final Composite parent) {
 		if ( parent == null ) { return; }
 		if ( viewer == null ) {
-			viewer = new ParameterExpandBar(parent, SWT.V_SCROLL, areItemsClosable(), areItemsPausable(), this);
+			viewer =
+				new ParameterExpandBar(parent, SWT.V_SCROLL, areItemsClosable(), areItemsPausable(), false, false, this);
 			Object layout = parent.getLayout();
 			if ( layout instanceof GridLayout ) {
 				GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -141,6 +142,12 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	public void focusItem(final T obj) {}
 
 	@Override
+	public void makeItemVisible(final T obj, final boolean b) {}
+
+	@Override
+	public void makeItemSelectable(final T obj, final boolean b) {}
+
+	@Override
 	public String getItemDisplayName(final T obj, final String previousName) {
 		return null;
 	}
@@ -155,6 +162,11 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	@Override
 	protected GamaUIJob createUpdateJob() {
 		return new GamaUIJob() {
+
+			@Override
+			protected UpdatePriority jobPriority() {
+				return UpdatePriority.LOW;
+			}
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {

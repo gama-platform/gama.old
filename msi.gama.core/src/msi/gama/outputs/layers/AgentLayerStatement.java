@@ -48,6 +48,10 @@ import msi.gaml.types.IType;
 		type = { IType.BOOL, IType.INT },
 		optional = true,
 		doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. ")),
+	@facet(name = IKeyword.SELECTABLE,
+		type = { IType.BOOL },
+		optional = true,
+		doc = @doc("Indicates whether the agents present on this layer are selectable by the user. Default is true")),
 	@facet(name = IKeyword.FADING,
 		type = { IType.BOOL },
 		optional = true,
@@ -76,7 +80,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.REFRESH,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("(openGL only) specify whether the display of the species is refreshed. (true by default, usefull in case of agents that do not move)")) },
+		doc = @doc("(openGL only) specify whether the display of the species is refreshed. (true by default, useful in case of agents that do not move)")) },
 	omissible = IKeyword.NAME)
 @validator(AgentLayerValidator.class)
 @doc(value = "`" + IKeyword.AGENTS + "` allows the modeler to display only the agents that fulfill a given condition.",

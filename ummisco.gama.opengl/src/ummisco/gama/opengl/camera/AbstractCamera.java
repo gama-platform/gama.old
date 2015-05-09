@@ -232,7 +232,7 @@ public abstract class AbstractCamera implements ICamera {
 					});
 					// System.out.println("Envelope : " + env);
 
-					renderer.displaySurface.selectSeveralAgents(shapes, 0);
+					renderer.displaySurface.selectSeveralAgents(shapes);
 				}
 			} else if ( shift(e) ) {
 				final Envelope3D env = renderer.getROIEnvelope();

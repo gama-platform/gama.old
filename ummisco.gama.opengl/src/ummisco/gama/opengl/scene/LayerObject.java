@@ -14,10 +14,11 @@ package ummisco.gama.opengl.scene;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import ummisco.gama.opengl.JOGLRenderer;
+import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaColor;
+import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.*;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -33,25 +34,31 @@ public class LayerObject implements Iterable<GeometryObject> {
 	GamaPoint offset = new GamaPoint();
 	GamaPoint scale = new GamaPoint(1, 1, 1);
 	Double alpha = 1d;
-	final Integer id;
-	int trace = 0;
-	boolean fading = false;
+	final ILayer layer;
+	// final Integer id;
+	// int trace = 0;
+	// boolean fading = false;
+	// boolean isPickable = true;
 
-	protected final SceneObjects<GeometryObject> geometries;
-	protected final SceneObjects<ImageObject> images;
-	protected final SceneObjects<DEMObject> dems;
-	protected final SceneObjects<StringObject> strings;
+	protected final ISceneObjects<GeometryObject> geometries;
+	protected final ISceneObjects<ImageObject> images;
+	protected final ISceneObjects<DEMObject> dems;
+	protected final ISceneObjects<StringObject> strings;
 
-	public LayerObject(final JOGLRenderer renderer, final Integer i) {
+	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
+		this.layer = layer;
 		geometries = buildSceneObjects(new GeometryDrawer(renderer), true, false);
 		strings = buildSceneObjects(new StringDrawer(renderer), !StringDrawer.USE_VERTEX_ARRAYS, false);
 		images = buildSceneObjects(new ImageDrawer(renderer), true, false);
 		dems = buildSceneObjects(new DEMDrawer(renderer), true, false);
-		id = i;
 	}
 
-	protected SceneObjects buildSceneObjects(final ObjectDrawer drawer, final boolean asList, final boolean asVBO) {
+	protected ISceneObjects buildSceneObjects(final ObjectDrawer drawer, final boolean asList, final boolean asVBO) {
 		return new SceneObjects(drawer, asList, asVBO);
+	}
+
+	private boolean isPickable() {
+		return layer == null ? false : layer.isSelectable();
 	}
 
 	public void draw(final GL2 gl, final JOGLRenderer renderer, final boolean picking) {
@@ -61,9 +68,9 @@ public class LayerObject implements Iterable<GeometryObject> {
 		gl.glTranslated(offset.x, -offset.y, offset.z);
 		gl.glScaled(scale.x, scale.y, scale.z);
 		//
-		geometries.draw(gl, picking);
+		geometries.draw(gl, picking && isPickable());
 		gl.glEnable(GL.GL_TEXTURE_2D);
-		images.draw(gl, picking);
+		images.draw(gl, picking && isPickable());
 		gl.glDisable(GL.GL_TEXTURE_2D);
 
 		//
@@ -72,14 +79,16 @@ public class LayerObject implements Iterable<GeometryObject> {
 		// and offset...
 		// FIXME this needs to be changed
 		gl.glPushMatrix();
-		dems.draw(gl, picking);
-		strings.draw(gl, picking);
+		dems.draw(gl, picking && isPickable());
+		strings.draw(gl, picking && isPickable());
 		gl.glPopMatrix();
 		// gl.glFlush();
 	}
 
 	public boolean isStatic() {
-		return false;
+		if ( layer == null ) { return true; }
+		Boolean isDynamic = layer.isDynamic();
+		return isDynamic == null ? false : !isDynamic;
 	}
 
 	public void setAlpha(final Double a) {
@@ -111,8 +120,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,
 		final GamaPoint dimensions, final Double angle, final boolean isDynamic, final String name) {
-		images.add(new ImageObject(img, agent, id, location, alpha, dimensions, angle == null ? 0d : angle, isDynamic,
-			name));
+		images.add(new ImageObject(img, agent, getOrder(), location, alpha, dimensions, angle == null ? 0d : angle,
+			isDynamic, name));
 
 	}
 
@@ -132,29 +141,40 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if ( type == IShape.Type.PIESPHERE || type == IShape.Type.PIESPHEREWITHDYNAMICALCOLOR ||
 			type == IShape.Type.PACMAN || type == IShape.Type.ANTISLICE || type == IShape.Type.SLICE ) {
 			curJTSGeometry =
-				new Pie3DObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured, textures,
-					angle == null ? 0 : angle, height, roundCorner, type, ratio, colors);
+				new Pie3DObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border, isTextured,
+					textures, angle == null ? 0 : angle, height, roundCorner, type, ratio, colors);
 		} else {
 			curJTSGeometry =
-				new GeometryObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured, textures,
-					angle == null ? 0 : angle, height, roundCorner, type);
+				new GeometryObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border, isTextured,
+					textures, angle == null ? 0 : angle, height, roundCorner, type);
 		}
 		geometries.add(curJTSGeometry);
 	}
 
+	private int getOrder() {
+		return layer == null ? 0 : layer.getOrder();
+	}
+
+	private int getTrace() {
+		if ( layer == null ) { return 0; }
+		Integer trace = layer.getTrace();
+		return trace == null ? 0 : trace;
+	}
+
+	private boolean getFading() {
+		if ( layer == null ) { return false; }
+		Boolean fading = layer.getFading();
+		return fading == null ? false : fading;
+	}
+
 	public void clear(final GL gl, final int requestedDisplayTraceSize) {
+		int trace = getTrace();
 		int traceSize = trace == 0 ? requestedDisplayTraceSize : trace;
+		boolean fading = getFading();
 		geometries.clear(gl, traceSize, fading);
 		images.clear(gl, traceSize, fading);
 		dems.clear(gl, traceSize, fading);
 		strings.clear(gl, traceSize, fading);
-	}
-
-	public void dispose() {
-		geometries.dispose();
-		strings.dispose();
-		images.dispose();
-		dems.dispose();
 	}
 
 	/**
@@ -164,20 +184,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 	@Override
 	public Iterator<GeometryObject> iterator() {
 		return geometries.getObjects().iterator();
-	}
-
-	/**
-	 * @param trace
-	 */
-	public void setTrace(final Integer trace) {
-		this.trace = trace;
-	}
-
-	/**
-	 * @param fading
-	 */
-	public void setFading(final Boolean fading) {
-		this.fading = fading;
 	}
 
 }

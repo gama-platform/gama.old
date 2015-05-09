@@ -213,4 +213,22 @@ public class LayerManager implements ILayerManager {
 		return false;
 	}
 
+	/**
+	 * Method makeItemSelectable()
+	 * @see msi.gama.common.interfaces.ItemList#makeItemSelectable(java.lang.Object, boolean)
+	 */
+	@Override
+	public void makeItemSelectable(final ILayer data, final boolean b) {
+		data.getDefinition().setSelectable(b);
+	}
+
+	/**
+	 * Method makeItemVisible()
+	 * @see msi.gama.common.interfaces.ItemList#makeItemVisible(java.lang.Object, boolean)
+	 */
+	@Override
+	public void makeItemVisible(final ILayer obj, final boolean b) {
+		enableLayer(obj, b);
+	}
+
 }

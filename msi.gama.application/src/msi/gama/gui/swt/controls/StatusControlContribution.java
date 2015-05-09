@@ -31,6 +31,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	// private Composite compo;
 	// private Composite parent;
+	volatile boolean isUpdating;
 	FlatButton label;
 	private Popup popup;
 	int state;
@@ -57,11 +58,16 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	}
 
 	@Override
+	public boolean isBusy() {
+		return isUpdating;
+	}
+
+	@Override
 	protected Control createControl(final Composite parent) {
-		//parent.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
+		// parent.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		// this.parent = parent;
 		Composite compo = new Composite(parent, SWT.DOUBLE_BUFFERED);
-		//compo.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
+		// compo.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		GridLayout layout = new GridLayout(1, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -142,6 +148,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			if ( popup.isVisible() ) {
 				popup.display();
 			}
+			isUpdating = false;
 		}
 
 	};
@@ -152,6 +159,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public void updateWith(final IStatusMessage m) {
+		if ( isUpdating ) { return; }
+		isUpdating = true;
 		if ( m instanceof SubTaskMessage ) {
 			if ( InUserStatus ) { return; }
 			SubTaskMessage m2 = (SubTaskMessage) m;
@@ -192,7 +201,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			state = m.getCode();
 		}
 
-		GuiUtils.run(updater);
+		updater.run();
 
 	}
 

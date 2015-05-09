@@ -92,4 +92,10 @@ public abstract class EditorsList<T> implements ItemList<T> {
 	@Override
 	public void focusItem(final T obj) {}
 
+	@Override
+	public void makeItemVisible(final T obj, final boolean b) {}
+
+	@Override
+	public void makeItemSelectable(final T obj, final boolean b) {}
+
 }

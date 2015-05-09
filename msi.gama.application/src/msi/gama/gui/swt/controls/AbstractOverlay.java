@@ -321,6 +321,10 @@ public abstract class AbstractOverlay {
 		return isDisposed() || isHidden;
 	}
 
+	public boolean isVisible() {
+		return !isHidden;
+	}
+
 	private boolean viewIsDetached() {
 		// Uses the trick from http://eclipsesource.com/blogs/2010/06/23/tip-how-to-detect-that-a-view-was-detached/
 		IWorkbenchPartSite site = view.getSite();

@@ -64,15 +64,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public void updateDisplay(final boolean force) {}
 
 	/**
-	 * Method computeBoundsFrom()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#computeBoundsFrom(int, int)
-	 */
-	@Override
-	public int[] computeBoundsFrom(final int width, final int height) {
-		return new int[] { 0, 0 };
-	}
-
-	/**
 	 * Method resizeImage()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#resizeImage(int, int)
 	 */

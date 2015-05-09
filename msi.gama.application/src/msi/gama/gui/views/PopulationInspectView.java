@@ -106,6 +106,11 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		return new GamaUIJob() {
 
 			@Override
+			protected UpdatePriority jobPriority() {
+				return UpdatePriority.LOW;
+			}
+
+			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				TableViewer v = viewer;
 				if ( !locked ) {

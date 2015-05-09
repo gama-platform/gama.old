@@ -26,12 +26,12 @@ public class StaticLayerObject extends LayerObject {
 	static final GamaPoint WORLD_SCALE = new GamaPoint(1, 1, 1);
 	static final Double WORLD_ALPHA = 1d;
 
-	public StaticLayerObject(final JOGLRenderer renderer, final Integer id) {
-		super(renderer, id);
+	public StaticLayerObject(final JOGLRenderer renderer) {
+		super(renderer, null);
 	}
 
 	@Override
-	protected SceneObjects buildSceneObjects(final ObjectDrawer drawer, final boolean asList, final boolean asVBO) {
+	protected ISceneObjects buildSceneObjects(final ObjectDrawer drawer, final boolean asList, final boolean asVBO) {
 		return new SceneObjects.Static(drawer, asList, asVBO);
 	}
 
@@ -46,9 +46,7 @@ public class StaticLayerObject extends LayerObject {
 	public static class WaitingLayerObject extends StaticLayerObject {
 
 		public WaitingLayerObject(final JOGLRenderer renderer) {
-			super(renderer, 0);
-			setTrace(0);
-			setFading(false);
+			super(renderer);
 			setAlpha(WORLD_ALPHA);
 			setOffset(WORLD_OFFSET);
 			setScale(WORLD_SCALE);
@@ -81,10 +79,8 @@ public class StaticLayerObject extends LayerObject {
 		public boolean axesDrawn = false;
 
 		public WordLayerObject(final JOGLRenderer renderer) {
-			super(renderer, 0);
+			super(renderer);
 			startTime = System.currentTimeMillis();
-			setTrace(0);
-			setFading(false);
 			setAlpha(WORLD_ALPHA);
 			setOffset(WORLD_OFFSET);
 			setScale(WORLD_SCALE);

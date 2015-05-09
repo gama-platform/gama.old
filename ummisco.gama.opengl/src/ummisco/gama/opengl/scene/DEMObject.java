@@ -13,11 +13,11 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import ummisco.gama.opengl.JOGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
+import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.awt.ImageUtil;
 import com.jogamp.opengl.util.texture.Texture;
@@ -103,11 +103,11 @@ public class DEMObject extends AbstractObject {
 							}
 						});
 						if ( ag != null ) {
-							renderer.displaySurface.selectAgents(ag);
+							renderer.displaySurface.selectAgent(ag);
 						}
 
 					} else {
-						renderer.displaySurface.selectAgents(agent);
+						renderer.displaySurface.selectAgent(agent);
 					}
 				}
 			}
@@ -144,6 +144,6 @@ public class DEMObject extends AbstractObject {
 	@Override
 	protected Texture computeTexture(final GL gl, final JOGLRenderer renderer) {
 		if ( textureImage == null ) { return null; }
-		return TextureCache.create(gl, renderer, textureImage, isDynamic);
+		return TextureCache.getInstance().get(gl, renderer.getCurrentScene(), textureImage, isDynamic);
 	}
 }

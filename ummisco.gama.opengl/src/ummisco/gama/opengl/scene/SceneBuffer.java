@@ -4,8 +4,9 @@
  */
 package ummisco.gama.opengl.scene;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.scene.ModelScene.WaitingScene;
 import com.jogamp.opengl.GL2;
 
 /**
@@ -18,68 +19,53 @@ import com.jogamp.opengl.GL2;
 public class SceneBuffer {
 
 	final JOGLRenderer renderer;
-	volatile boolean backSceneFinished;
-	volatile boolean frontSceneRenderingCompleted;
-	ModelScene backScene;
-	ModelScene frontScene;
+	volatile ModelScene sceneToUpdate;
+	private ModelScene staticScene;
+	volatile ModelScene sceneToRender;
+	private final Queue<ModelScene> garbage = new ConcurrentLinkedQueue<ModelScene>();
 
 	public SceneBuffer(final JOGLRenderer joglRenderer) {
 		this.renderer = joglRenderer;
 	}
 
-	public boolean switchScenes(final GL2 gl) {
-		// Sync
-		// waitForBackSceneToBeCompleted()
-		//
-		frontSceneRenderingCompleted = true;
-		if ( !backSceneFinished ) { return false; }
-		backSceneFinished = false;
-		ModelScene backSceneToPutForward = backScene;
-		backScene = createBackSceneFrom(frontScene);
-		System.out.println("***** SWITCHING SCENES**** Thread " + Thread.currentThread().getName());
-		// ModelScene newBackScene = createBackSceneFrom(frontScene);
-		renderer.wipeScene(gl);
-		frontScene = backSceneToPutForward;
-		// backScene = newBackScene;
-		return true;
-
-	}
-
-	public void beginDrawingLayers() {
-		// Sync
-		waitForFrontSceneToBeRendered();
-		frontSceneRenderingCompleted = false;
-		//
-		if ( backSceneFinished ) {
-			backSceneFinished = false;
-			// backScene.dispose();
-			backScene = createBackSceneFrom(backScene);
-
-		}
-		getSceneToUpdate().beginDrawingLayers();
-	}
-
-	private void waitForFrontSceneToBeRendered() {
+	public void beginUpdatingScene() {
+		// If the back scene has already been completed (and not rendered yet), we discard it
 		if ( renderer.data.isSynchronized() ) {
-			while (!frontSceneRenderingCompleted) {
+			while (sceneToUpdate != null) {
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
+					return;
 				}
 			}
-		}
+		} else if ( sceneToUpdate != null ) { return; }
+		sceneToUpdate = createSceneFrom(staticScene);
+		// We prepare it for drawing
+		sceneToUpdate.beginDrawingLayers();
 	}
 
-	public void endDrawingLayers() {
-		backSceneFinished = true;
-		getSceneToUpdate().endDrawingLayers();
+	public void endUpdatingScene() {
+		// We create the static scene if it does not exist
+		sceneToUpdate.endDrawingLayers();
+		if ( staticScene == null ) {
+			System.out.println("Creating static scene from scene " + sceneToUpdate.getId());
+			staticScene = createSceneFrom(sceneToUpdate);
+		}
+
+		if ( sceneToRender != null ) {
+			garbage.add(sceneToRender);
+		}
+		// We switch the scene
+		sceneToRender = sceneToUpdate;
+		// ... and clear the sceneToUpdate
+		sceneToUpdate = null;
 	}
 
 	/**
 	 * @return
 	 */
-	private ModelScene createBackSceneFrom(final ModelScene scene) {
+	private ModelScene createSceneFrom(final ModelScene scene) {
 		ModelScene newBackScene;
 		if ( scene == null ) {
 			newBackScene = new ModelScene(renderer, true);
@@ -89,18 +75,39 @@ public class SceneBuffer {
 		return newBackScene;
 	}
 
-	public ModelScene getSceneToDisplay() {
-		if ( frontScene == null ) {
-			frontScene = new WaitingScene(renderer);
-		}
-		return frontScene;
+	public ModelScene getSceneToRender() {
+		return sceneToRender;
 	}
 
 	public ModelScene getSceneToUpdate() {
-		if ( backScene == null ) {
-			backScene = createBackSceneFrom(frontScene);
+		return sceneToUpdate;
+	}
+
+	/**
+	 * @param gl
+	 */
+	public void garbageCollect(final GL2 gl) {
+		ModelScene[] scenes = garbage.toArray(new ModelScene[0]);
+		garbage.clear();
+		for ( ModelScene scene : scenes ) {
+			scene.wipe(gl, 0);
+			scene.dispose();
 		}
-		return backScene;
+	}
+
+	public void dispose() {
+		if ( sceneToRender != null ) {
+			sceneToRender.dispose();
+		}
+		sceneToRender = null;
+		if ( sceneToUpdate != null ) {
+			sceneToUpdate.dispose();
+		}
+		sceneToUpdate = null;
+		if ( staticScene != null ) {
+			staticScene.dispose();
+		}
+		staticScene = null;
 	}
 
 }

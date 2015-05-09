@@ -10,18 +10,20 @@ import com.jogamp.opengl.*;
  */
 public class SWTGLAnimator implements Runnable, GLAnimatorControl {
 
+	static int FRAME_PER_SECOND = 60; // TODO Make it a preference
 	protected final int targetFPS;
 	protected final Thread animatorThread;
-	GLAutoDrawable drawable;
-	// protected final CopyOnWriteArrayList<GLAutoDrawable> autoDrawableList = new CopyOnWriteArrayList();
+	protected final GLAutoDrawable drawable;
 
 	protected volatile boolean stopRequested = false;
 	protected volatile boolean pauseRequested = false;
 	protected volatile boolean animating = false;
 
-	public SWTGLAnimator(final int targetFPS) {
-		this.targetFPS = targetFPS;
-		this.animatorThread = new Thread(this, this.getClass().getSimpleName());
+	public SWTGLAnimator(final GLAutoDrawable drawable) {
+		this.targetFPS = FRAME_PER_SECOND;
+		this.drawable = drawable;
+		drawable.setAnimator(this);
+		this.animatorThread = new Thread(this, "Animator thread");
 		this.animatorThread.setDaemon(true);
 	}
 
@@ -130,21 +132,21 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl {
 
 	@Override
 	public void add(final GLAutoDrawable drawable) {
-		// this.autoDrawableList.addIfAbsent(drawable);
-		if ( this.drawable != null ) {
-			remove(this.drawable);
-		}
-		this.drawable = drawable;
-		drawable.setAnimator(this);
+		// // this.autoDrawableList.addIfAbsent(drawable);
+		// if ( this.drawable != null ) {
+		// remove(this.drawable);
+		// }
+		// this.drawable = drawable;
+		// drawable.setAnimator(this);
 	}
 
 	@Override
 	public void remove(final GLAutoDrawable drawable) {
 		// this.autoDrawableList.remove(drawable);
-		if ( this.drawable == drawable ) {
-			this.drawable = null;
-			drawable.setAnimator(null);
-		}
+		// if ( this.drawable == drawable ) {
+		// this.drawable = null;
+		// drawable.setAnimator(null);
+		// }
 	}
 
 	@Override

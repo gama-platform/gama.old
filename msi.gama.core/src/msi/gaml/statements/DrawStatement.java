@@ -57,7 +57,10 @@ import msi.gaml.types.*;
 		type = IType.BOOL,
 		optional = true,
 		doc = @doc("a condition specifying whether the geometry is empty or full")),
-	@facet(name = BORDER, type = IType.COLOR, optional = true, doc = @doc("the color of the geometry border")),
+	@facet(name = BORDER,
+		type = { IType.COLOR, IType.BOOL },
+		optional = true,
+		doc = @doc("if used with a color, represents the color of the geometry border. If set to false, expresses that no border should be drawn. If not set, the borders will be drawn using the color of the geometry.")),
 	@facet(name = ROUNDED,
 		type = IType.BOOL,
 		optional = true,
@@ -280,6 +283,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		Color constCol;
 		private final Color constBord;
+		private final boolean hasBord;
 		private final ILocation constSize;
 		private final Double constRot;
 		private final Boolean constEmpty;
@@ -305,9 +309,27 @@ public class DrawStatement extends AbstractStatementSequence {
 			rounded = getFacet(ROUNDED);
 			textures = getFacet(TEXTURE);
 
-			constSize = getSizeExp() == null ? LOC : getSizeExp().isConst() ? Cast.asPoint(scope, getSizeExp().value(scope), false) : null;
+			constSize =
+				getSizeExp() == null ? LOC : getSizeExp().isConst() ? Cast.asPoint(scope, getSizeExp().value(scope),
+					false) : null;
 			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope), false) : null;
-			constBord = bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope), false) : null;
+			if ( bord != null && bord.isConst() ) {
+				IType type = bord.getType();
+				if ( type == Types.BOOL ) {
+					hasBord = Cast.asBool(scope, bord.value(scope));
+					constBord = null;
+				} else {
+					constBord = bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope), false) : null;
+					hasBord = true;
+				}
+			} else if ( bord == null ) {
+				hasBord = true;
+				constBord = Color.black;
+			} else {
+				hasBord = true;
+				constBord = null;
+			}
+
 			constRot = rot != null && rot.isConst() ? Cast.asFloat(scope, rot.value(scope)) : null;
 			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope), false) : null;
 			constRounded =
@@ -330,9 +352,12 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		Color getBorder(final IScope scope) {
-			return constBord == null ? bord != null ? Cast.asColor(scope, bord.value(scope)) : scope.getAgentScope()
-				.getSpecies().hasVar(BORDER) ? Cast.asColor(scope,
-				scope.getAgentVarValue(scope.getAgentScope(), BORDER)) : Color.black : constBord;
+			if ( !hasBord ) { return null; }
+			if ( constBord != null ) { return constBord; }
+
+			return bord != null ? Cast.asColor(scope, bord.value(scope)) : scope.getAgentScope().getSpecies()
+				.hasVar(BORDER) ? Cast.asColor(scope, scope.getAgentVarValue(scope.getAgentScope(), BORDER))
+				: Color.black;
 		}
 
 		Boolean getRounded(final IScope scope) {
@@ -362,7 +387,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			return size;
 		}
 
-		void setSize(IExpression size) {
+		void setSize(final IExpression size) {
 			this.size = size;
 		}
 

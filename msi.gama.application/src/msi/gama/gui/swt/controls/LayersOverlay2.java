@@ -77,7 +77,7 @@ public class LayersOverlay2 extends PopupDialog {
 		content = new Composite(parent, SWT.None);
 		content.setLayout(new GridLayout());
 		ItemList<ILayer> list = view.getDisplayManager();
-		ParameterExpandBar viewer = new ParameterExpandBar(content, SWT.V_SCROLL, false, false, list);
+		ParameterExpandBar viewer = new ParameterExpandBar(content, SWT.V_SCROLL, true, true, true, true, list);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		viewer.setLayoutData(data);
 		viewer.setSpacing(5);

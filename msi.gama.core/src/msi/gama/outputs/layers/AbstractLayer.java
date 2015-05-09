@@ -185,6 +185,11 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
+	public Boolean isSelectable() {
+		return definition.getBox().isSelectable();
+	}
+
+	@Override
 	public boolean containsScreenPoint(final int x, final int y) {
 		return x >= positionInPixels.x && y >= positionInPixels.y && x <= positionInPixels.x + sizeInPixels.x &&
 			y <= positionInPixels.y + sizeInPixels.y;

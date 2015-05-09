@@ -13,6 +13,7 @@ package ummisco.gama.opengl.scene;
 
 import java.nio.FloatBuffer;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.utils.VertexArrayHandler;
 import com.google.common.collect.Iterables;
@@ -20,7 +21,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
 
-public class SceneObjects<T extends AbstractObject> {
+public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> {
 
 	public static class Static<T extends AbstractObject> extends SceneObjects<T> {
 
@@ -56,42 +57,45 @@ public class SceneObjects<T extends AbstractObject> {
 		this.drawer = drawer;
 		drawAsList = asList;
 		drawAsVBO = asVBO;
-		currentList = new ArrayList();
+		currentList = newCurrentList();
 		objects.add(currentList);
 	}
 
-	protected void clearObjects(final int sizeLimit) {
-		int size = objects.size();
-		for ( int i = 0, n = size - sizeLimit; i < n; i++ ) {
-			objects.poll();
-		}
-		// while (objects.size() > sizeLimit) {
-		// objects.removeFirst();
-		// }
-		currentList = new ArrayList();
-		objects.offer(currentList);
+	private List newCurrentList() {
+		return new CopyOnWriteArrayList();
 	}
 
+	@Override
 	public void clear(final GL gl, final int sizeLimit, final boolean fading) {
 		isFading = fading;
-		clearObjects(sizeLimit);
+		if ( sizeLimit == 0 ) {
+			objects.clear();
+		} else {
+			int size = objects.size();
+			for ( int i = 0, n = size - sizeLimit; i < n; i++ ) {
+				objects.poll();
+			}
+		}
+		currentList = newCurrentList();
+		objects.offer(currentList);
 		Integer index = openGLListIndex;
 		if ( index != null ) {
-			// drawer.getRenderer().getContext().makeCurrent();
-			// GL2 gl = context.getGL().getGL2();
 			gl.getGL2().glDeleteLists(index, 1);
 			openGLListIndex = null;
 		}
 	}
 
+	@Override
 	public void add(final T object) {
 		currentList.add(object);
 	}
 
+	@Override
 	public Iterable<T> getObjects() {
 		return Iterables.concat(objects);
 	}
 
+	@Override
 	public void draw(final GL2 gl, final boolean picking) {
 		JOGLRenderer renderer = drawer.getRenderer();
 		gl.glColor3d(1.0, 1.0, 1.0);
@@ -179,10 +183,6 @@ public class SceneObjects<T extends AbstractObject> {
 				object.draw(gl, drawer, picking);
 			}
 		}
-	}
-
-	public void dispose() {
-		drawer.dispose();
 	}
 
 }

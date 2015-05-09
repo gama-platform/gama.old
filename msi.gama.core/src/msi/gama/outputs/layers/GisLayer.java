@@ -15,7 +15,6 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 

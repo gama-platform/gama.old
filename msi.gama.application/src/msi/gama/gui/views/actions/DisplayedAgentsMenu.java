@@ -116,22 +116,23 @@ public class DisplayedAgentsMenu {
 		} else {
 
 			for ( final ILayer layer : surface.getManager().getItems() ) {
-				Collection<IAgent> pop = layer.getAgentsForMenu(surface.getDisplayScope());
-				pop = new ArrayList(pop);
-				if ( pop.isEmpty() ) {
-					continue;
+				if ( layer.isSelectable() ) {
+					Collection<IAgent> pop = layer.getAgentsForMenu(surface.getDisplayScope());
+					pop = new ArrayList(pop);
+					if ( pop.isEmpty() ) {
+						continue;
+					}
+					String layerName = layer.getType() + ": " + layer.getName();
+					final FocusOnSelection adapter = new FocusOnSelection(surface);
+					AgentsMenu.MenuAction focus =
+						new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
+
+					// if ( isOpenGL ) {
+					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus/* , follow */);
+					// } else {
+					// fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus);
+					// }
 				}
-				String layerName = layer.getType() + ": " + layer.getName();
-				final FocusOnSelection adapter = new FocusOnSelection(surface);
-				AgentsMenu.MenuAction focus =
-					new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
-
-				// if ( isOpenGL ) {
-				fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus/* , follow */);
-				// } else {
-				// fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus);
-				// }
-
 			}
 		}
 	}

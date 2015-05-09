@@ -44,9 +44,15 @@ public class ParameterExpandItem extends Item {
 	Control control;
 	boolean expanded;
 	int x, y, width, height;
+	int pausePosition = -1;
+	int visiblePosition = -1;
+	int selectablePosition = -1;
+	int closePosition = -1;
 
 	private static int imageHeight = 16, imageWidth = 16;
-	boolean isPaused;
+	boolean isPaused = false;
+	boolean isVisible = true;
+	boolean isSelectable = true;
 	private static final int TEXT_INSET = 4;
 	private static final int SEPARATION = 3;
 	static final int BORDER = 4;
@@ -149,13 +155,31 @@ public class ParameterExpandItem extends Item {
 			drawX += imageWidth;
 		}
 		int endX = x + width;
-		if ( parent.isClosable ) {
+		if ( parent.hasClosableToggle ) {
 			endX -= 2 * TEXT_INSET + imageWidth;
+			closePosition = endX;
 			gc.drawImage(IGamaIcons.SMALL_CLOSE.image(), endX, imageY);
 		}
-		if ( parent.isPausable ) {
+		if ( parent.hasPausableToggle ) {
 			Image image = isPaused ? IGamaIcons.SMALL_RESUME.image() : IGamaIcons.SMALL_PAUSE.image();
 			endX -= 2 * TEXT_INSET + imageWidth;
+			pausePosition = endX;
+			gc.drawImage(image, endX, imageY);
+		}
+
+		if ( parent.hasVisibleToggle ) {
+			Image image =
+				isVisible ? GamaIcons.create("small.inspect").image() : GamaIcons.create("small.hidden").image();
+			endX -= 2 * TEXT_INSET + imageWidth;
+			visiblePosition = endX;
+			gc.drawImage(image, endX, imageY);
+		}
+		if ( parent.hasSelectableToggle ) {
+			Image image =
+				isSelectable ? GamaIcons.create("small.selectable").image() : GamaIcons.create("small.unselectable")
+					.image();
+			endX -= 2 * TEXT_INSET + imageWidth;
+			selectablePosition = endX;
 			gc.drawImage(image, endX, imageY);
 		}
 		if ( getText().length() > 0 ) {
@@ -374,11 +398,23 @@ public class ParameterExpandItem extends Item {
 	}
 
 	public boolean closeRequested(final int x2, final int y2) {
-		return clickIn(x2, y2, x + width - 2 * TEXT_INSET - imageWidth);
+		if ( closePosition == -1 ) { return false; }
+		return clickIn(x2, y2, x + closePosition);
 	}
 
 	public boolean pauseRequested(final int x2, final int y2) {
-		return clickIn(x2, y2, x + width - 4 * TEXT_INSET - 2 * imageWidth);
+		if ( pausePosition == -1 ) { return false; }
+		return clickIn(x2, y2, x + pausePosition);
+	}
+
+	public boolean visibleRequested(final int x2, final int y2) {
+		if ( visiblePosition == -1 ) { return false; }
+		return clickIn(x2, y2, x + visiblePosition);
+	}
+
+	public boolean selectableRequested(final int x2, final int y2) {
+		if ( selectablePosition == -1 ) { return false; }
+		return clickIn(x2, y2, x + selectablePosition);
 	}
 
 }
