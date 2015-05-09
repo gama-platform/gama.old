@@ -138,6 +138,7 @@ public class JTSDrawer {
 	}
 
 	public void setColor(final Color c, final double alpha) {
+		if ( c == null ) { return; }
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
 	}
@@ -420,6 +421,7 @@ public class JTSDrawer {
 
 	public void DrawPolygonContour(final Polygon p, final Color border, final double alpha,
 		final double z_fighting_value) {
+		if ( border == null ) { return; }
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		// FIXME: when rendering with this method the triangulation does not work anymore
 		if ( renderer.data.isZ_fighting() ) {
@@ -1018,16 +1020,18 @@ public class JTSDrawer {
 		}
 		PyramidSkeleton(p, g.height, g.getColor(), g.getAlpha());
 		// border
-		if ( !colorpicking ) {
-			setColor(g.border, g.getAlpha());
-		}
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-		gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
-		gl.glPolygonOffset(0.0f, -(float) 1.1);
-		PyramidSkeleton(p, g.height, g.border, g.getAlpha());
-		gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
-		if ( !renderer.data.isTriangulation() ) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+		if ( g.border != null ) {
+			if ( !colorpicking ) {
+				setColor(g.border, g.getAlpha());
+			}
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
+			gl.glPolygonOffset(0.0f, -(float) 1.1);
+			PyramidSkeleton(p, g.height, g.border, g.getAlpha());
+			gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
+			if ( !renderer.data.isTriangulation() ) {
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+			}
 		}
 		gl.glTranslated(0, 0, -z);
 	}
