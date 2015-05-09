@@ -1529,6 +1529,18 @@ public abstract class Spatial {
 			return GeometryUtils.voronoi(scope, pts);
 		}
 
+		@operator(value = "smooth", content_type = IType.GEOMETRY, category = { IOperatorCategory.SPATIAL,
+			IOperatorCategory.SP_TRANSFORMATIONS })
+		@doc(value = "Returns a 'smoothed' geometry, where straight lines are replaces by polynomial (bicubic) curves. The first parameter is the original geometry, the second is the 'fit' parameter which can be in the range 0 (loose fit) to 1 (tightest fit).",
+			masterDoc = true,
+			examples = { @example(value = "smooth(square(10), 0.0)", equals = "a 'rounded' square", test = false) })
+		public static
+			IShape smooth(final IScope scope, final IShape geometry, final Double fit) {
+			if ( geometry == null ) { return null; }
+			double param = fit == null ? 0d : fit < 0 ? 0d : fit > 1 ? 1d : fit;
+			return GeometryUtils.smooth(geometry.getInnerGeometry(), param);
+		}
+
 		@operator(value = "to_squares", type = IType.LIST, content_type = IType.GEOMETRY, category = {
 			IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
 		@doc(value = "A list of squares of the size corresponding to the given size that result from the decomposition of the geometry into squares (geometry, size, overlaps), if overlaps = true, add the squares that overlap the border of the geometry",
