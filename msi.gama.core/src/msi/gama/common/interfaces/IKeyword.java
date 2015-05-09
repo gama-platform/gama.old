@@ -319,6 +319,7 @@ public interface IKeyword {
 	public static final String SCHEDULES = "schedules";
 	public static final String SEED = "seed";
 	public static final String SEGMENTS = "segments";
+	public static final String SELECTABLE = "selectable";
 	public static final String SELF = "self";
 	public static final String SERIES = "series";
 	public static final String SET = "set";
@@ -435,7 +436,6 @@ public interface IKeyword {
 
 	public final static String INTERNAL = "internal_";
 
-	
 	/**
 	 * Gen*
 	 */
