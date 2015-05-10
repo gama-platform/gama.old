@@ -134,24 +134,13 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		return label.toDisplay(new Point(label.getLocation().x, label.getSize().y));
 	}
 
-	Runnable updater = new Runnable() {
-
-		@Override
-		public void run() {
-			label.setColor(getPopupBackground());
-			if ( inSubTask ) {
-				label.setText(subTaskName +
-					(subTaskCompletion != null ? " [" + (int) (subTaskCompletion * 100) + "%]" : ""));
-			} else {
-				label.setText(mainTaskName == null ? "" : mainTaskName);
-			}
-			if ( popup.isVisible() ) {
-				popup.display();
-			}
-			isUpdating = false;
-		}
-
-	};
+	//
+	// Runnable updater = new Runnable() {
+	//
+	// @Override
+	// public void run() {}
+	//
+	// };
 
 	/**
 	 * Method updateWith()
@@ -201,7 +190,20 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			state = m.getCode();
 		}
 
-		updater.run();
+		// updater.run();
+
+		label.setColor(getPopupBackground());
+		if ( inSubTask ) {
+			label.setText(subTaskName +
+				(subTaskCompletion != null ? " [" + (int) (subTaskCompletion * 100) + "%]" : ""));
+		} else {
+			label.setText(mainTaskName == null ? "" : mainTaskName);
+		}
+		if ( popup.isVisible() ) {
+			popup.display();
+		}
+		isUpdating = false;
+		InUserStatus = false;
 
 	}
 
