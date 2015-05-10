@@ -51,6 +51,7 @@ public class EventLayer extends AbstractLayer {
 
 	@Override
 	public void disableOn(final IDisplaySurface surface) {
+		super.disableOn(surface);
 		surface.removeMouseListener(listener);
 	}
 

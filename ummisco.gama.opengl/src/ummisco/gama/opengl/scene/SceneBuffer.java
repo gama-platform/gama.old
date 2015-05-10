@@ -110,4 +110,13 @@ public class SceneBuffer {
 		staticScene = null;
 	}
 
+	/**
+	 * 
+	 */
+	public void layersChanged() {
+		// FIXME What to do with the textures ?
+		staticScene.dispose();
+		staticScene = null;
+	}
+
 }

@@ -820,4 +820,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		});
 	}
 
+	@Override
+	public void layersChanged() {};
+
 }

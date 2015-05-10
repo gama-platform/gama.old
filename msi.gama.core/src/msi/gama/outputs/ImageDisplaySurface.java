@@ -424,4 +424,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void setSWTMenuManager(final Object displaySurfaceMenu) {}
 
+	/**
+	 * Method layersChanged()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#layersChanged()
+	 */
+	@Override
+	public void layersChanged() {}
+
 }

@@ -150,24 +150,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	}
 
 	/**
-	 * Method computeBoundsFrom()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#computeBoundsFrom(int, int)
-	 */
-	private int[] computeBoundsFrom(final int vwidth, final int vheight) {
-		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
-		final int[] dim = new int[2];
-		double widthHeightConstraint = getEnvHeight() / getEnvWidth();
-		if ( widthHeightConstraint < 1 ) {
-			dim[1] = Math.min(vheight, (int) Math.round(vwidth * widthHeightConstraint));
-			dim[0] = Math.min(vwidth, (int) Math.round(dim[1] / widthHeightConstraint));
-		} else {
-			dim[0] = Math.min(vwidth, (int) Math.round(vheight / widthHeightConstraint));
-			dim[1] = Math.min(vheight, (int) Math.round(dim[0] * widthHeightConstraint));
-		}
-		return dim;
-	}
-
-	/**
 	 * Method resizeImage()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#resizeImage(int, int, boolean)
 	 */
@@ -176,7 +158,20 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 		if ( !force && x == viewPort.width && y == viewPort.height ) { return true; }
 		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
 		canBeUpdated(false);
-		int[] point = computeBoundsFrom(x, y);
+		final int[] point = new int[2];
+		if ( !manager.stayProportional() ) {
+			point[0] = x;
+			point[1] = y;
+		} else {
+			double widthHeightConstraint = getEnvHeight() / getEnvWidth();
+			if ( widthHeightConstraint < 1 ) {
+				point[1] = Math.min(y, (int) Math.round(x * widthHeightConstraint));
+				point[0] = Math.min(x, (int) Math.round(point[1] / widthHeightConstraint));
+			} else {
+				point[0] = Math.min(x, (int) Math.round(y / widthHeightConstraint));
+				point[1] = Math.min(y, (int) Math.round(point[0] * widthHeightConstraint));
+			}
+		}
 		viewPort.height = Math.max(1, point[1]);;
 		viewPort.width = Math.max(1, point[0]);;
 		canBeUpdated(true);
@@ -738,5 +733,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 		GLAutoDrawable drawable = renderer.createDrawable(parent);
 		return drawable.getAnimator();
 	}
+
+	@Override
+	public void layersChanged() {
+		renderer.sceneBuffer.layersChanged();
+	};
 
 }

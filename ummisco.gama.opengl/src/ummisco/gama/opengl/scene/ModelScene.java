@@ -187,15 +187,9 @@ public class ModelScene {
 	}
 
 	public void endDrawingLayers() {
-		// completed = true;
 		staticObjectsAreLocked = true;
 		System.out.println("End of update of Model back scene #" + id);
 	}
-
-	//
-	// public boolean completed() {
-	// return completed;
-	// }
 
 	public boolean rendered() {
 		return rendered;

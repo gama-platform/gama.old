@@ -146,4 +146,9 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	 */
 	boolean isDisposed();
 
+	/**
+	 * 
+	 */
+	void layersChanged();
+
 }
