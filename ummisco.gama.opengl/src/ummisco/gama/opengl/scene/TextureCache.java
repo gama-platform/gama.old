@@ -22,98 +22,30 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
 public class TextureCache {
 
-	private final static TextureCache instance = new TextureCache();
-	private final Map<BufferedImage, Texture> staticTextures = new ConcurrentHashMap(100, 0.75f, 1);
-	private final Map<ModelScene, Map<BufferedImage, Texture>> dynamicTextures = new ConcurrentHashMap(10, 0.75f, 1);
+	private static final Map<BufferedImage, Texture> TEXTURES = new ConcurrentHashMap(100, 0.75f, 1);
+	private static final TextureAsyncBuilder BUILDER = new TextureAsyncBuilder();
 
-	private final TextureAsyncBuilder BUILDER = new TextureAsyncBuilder();
-
-	private TextureCache() {}
-
-	public static TextureCache getInstance() {
-		return instance;
-	}
-
-	public GLAutoDrawable getSharedContext() {
+	public static GLAutoDrawable getSharedContext() {
 		return BUILDER.drawable;
 	}
 
-	private Texture retrieve(final ModelScene scene, final BufferedImage image, final boolean isDynamic) {
-		if ( isDynamic ) {
-			Map<BufferedImage, Texture> map = dynamicTextures.get(scene);
-			if ( map == null ) {
-				return null;
-			} else {
-				return map.get(image);
-			}
-		} else {
-			return staticTextures.get(image);
-		}
-
-	}
-
-	// Stores the texture for the given image. Renderer can be null (in which case the texture is considered as static
-	void store(final ModelScene scene, final BufferedImage image, final Texture texture) {
-		if ( texture == null || image == null ) { return; }
-
-		if ( scene != null ) {
-			Map<BufferedImage, Texture> map = dynamicTextures.get(scene);
-			if ( map == null ) {
-				map = new ConcurrentHashMap(50, 0.75f, 1);
-				map.put(image, texture);
-				dynamicTextures.put(scene, map);
-			}
-		} else {
-			staticTextures.put(image, texture);
-		}
-	}
-
-	public void clearDynamicTextures(final ModelScene scene) {
-		// clearCache(renderer);
-		Map<BufferedImage, Texture> map = dynamicTextures.get(scene);
-		if ( map != null ) {
-			int size = map.size();
-			int[] textureIdsToDestroy = new int[size];
-			int index = 0;
-			for ( Map.Entry<BufferedImage, Texture> entry : map.entrySet() ) {
-				Texture t = entry.getValue();
-				textureIdsToDestroy[index++] = t == null ? 0 : t.getTextureObject();
-				BUILDER.tasks.offer(new DestroyingTask(scene, textureIdsToDestroy));
-			}
-			clearCache(scene);
-		}
-
-	}
-
-	public void clearCache(final ModelScene scene) {
-		dynamicTextures.remove(scene);
-	}
-
-	// Assumes the texture has been created. But it may be processed at the time of the call, so we wait a bit for its
-	// availability.
-	public Texture get(final GL gl, final ModelScene scene, final BufferedImage image, final boolean isDynamic) {
+	// Assumes the texture has been created. But it may be processed at the time of the call, so we wait for its availability.
+	public static Texture get(final GL gl, final BufferedImage image) {
 		if ( image == null ) { return null; }
-		Texture texture = retrieve(scene, image, isDynamic);
+		Texture texture = TEXTURES.get(image);
 		while (texture == null) {
-			texture = retrieve(scene, image, isDynamic);
+			texture = TEXTURES.get(image);
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		if ( texture != null ) {
-			// FIXME
-			boolean antiAlias = scene.renderer.data.isAntialias();
-			// Apply antialas to the texture based on the current preferences
-			texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
-			texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
-		}
 		return texture;
 	}
 
-	public void initializeStaticTexture(final BufferedImage image) {
-		if ( hasStaticTexture(image) ) { return; }
+	public static void initializeStaticTexture(final BufferedImage image) {
+		if ( contains(image) ) { return; }
 		BuildingTask task = new BuildingTask(null, image);
 		BUILDER.tasks.offer(task);
 	}
@@ -122,28 +54,11 @@ public class TextureCache {
 	 * @param image
 	 * @return
 	 */
-	private boolean hasStaticTexture(final BufferedImage image) {
-		return staticTextures.containsKey(image);
+	static boolean contains(final BufferedImage image) {
+		return TEXTURES.containsKey(image);
 	}
 
-	public void initializeDynamicTexture(final ModelScene scene, final BufferedImage image) {
-		if ( hasDynamicTexture(scene, image) ) { return; }
-		BuildingTask task = new BuildingTask(scene, image);
-		BUILDER.tasks.offer(task);
-	}
-
-	/**
-	 * @param renderer
-	 * @param image
-	 * @return
-	 */
-	private boolean hasDynamicTexture(final ModelScene scene, final BufferedImage image) {
-		Map<BufferedImage, Texture> map = dynamicTextures.get(scene);
-		if ( map == null ) { return false; }
-		return map.containsKey(image) && map.get(image) != null;
-	}
-
-	private Texture buildTexture(final GL gl, final BufferedImage image) {
+	public static Texture buildTexture(final GL gl, final BufferedImage image) {
 		BufferedImage corrected = correctImage(image);
 		try {
 			TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), corrected, false);
@@ -153,10 +68,9 @@ public class TextureCache {
 			e.printStackTrace();
 			return null;
 		}
-
 	}
 
-	private BufferedImage correctImage(final BufferedImage image) {
+	private static BufferedImage correctImage(final BufferedImage image) {
 		BufferedImage corrected = image;
 		if ( !IsPowerOfTwo(image.getWidth()) || !IsPowerOfTwo(image.getHeight()) ) {
 			int width = getClosestPow(image.getWidth());
@@ -182,7 +96,7 @@ public class TextureCache {
 		return power;
 	}
 
-	public class TextureAsyncBuilder implements Runnable {
+	public static class TextureAsyncBuilder implements Runnable {
 
 		final LinkedBlockingQueue<GLTask> tasks = new LinkedBlockingQueue<GLTask>();
 		final GLAutoDrawable drawable;
@@ -197,7 +111,6 @@ public class TextureCache {
 			cap.setOnscreen(false);
 			loadingThread = new Thread(this, "Texture building thread");
 			drawable = GLDrawableFactory.getFactory(profile).createDummyAutoDrawable(null, true, cap, null);
-			// drawable.setExclusiveContextThread(loadingThread);
 			loadingThread.start();
 		}
 
@@ -218,30 +131,19 @@ public class TextureCache {
 
 	}
 
-	protected abstract class GLTask {
-
-		protected final ModelScene scene;
-
-		GLTask(final ModelScene scene) {
-			this.scene = scene;
-		}
+	protected interface GLTask {
 
 		abstract void runIn(GL gl);
 	}
 
-	protected class DestroyingTask extends GLTask {
+	protected class DestroyingTask implements GLTask {
 
 		final int[] textureIds;
 
-		DestroyingTask(final ModelScene scene, final int[] textureIds) {
-			super(scene);
+		DestroyingTask(final int[] textureIds) {
 			this.textureIds = textureIds;
 		}
 
-		/**
-		 * Method runIn()
-		 * @see ummisco.gama.opengl.scene.TextureCache.GLTask#runIn(com.jogamp.opengl.GL)
-		 */
 		@Override
 		public void runIn(final GL gl) {
 			gl.glDeleteTextures(textureIds.length, textureIds, 0);
@@ -249,24 +151,22 @@ public class TextureCache {
 
 	}
 
-	protected class BuildingTask extends GLTask {
+	protected static class BuildingTask implements GLTask {
 
 		protected final BufferedImage image;
 
 		BuildingTask(final ModelScene scene, final BufferedImage image) {
-			super(scene);
 			this.image = image;
 		}
 
 		@Override
 		public void runIn(final GL gl) {
-			if ( scene != null && hasDynamicTexture(scene, image) ) { return; }
-			if ( scene == null && hasStaticTexture(image) ) { return; }
+			if ( contains(image) ) { return; }
 			Texture texture = buildTexture(gl, image);
 			System.out.println("Building texture : " + image);
 			// We use the original image to keep track of the texture
 			if ( texture != null ) {
-				store(scene, image, texture);
+				TEXTURES.put(image, texture);
 			}
 
 		}

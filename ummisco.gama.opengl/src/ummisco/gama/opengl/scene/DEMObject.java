@@ -144,6 +144,6 @@ public class DEMObject extends AbstractObject {
 	@Override
 	protected Texture computeTexture(final GL gl, final JOGLRenderer renderer) {
 		if ( textureImage == null ) { return null; }
-		return TextureCache.getInstance().get(gl, renderer.getCurrentScene(), textureImage, isDynamic);
+		return renderer.getCurrentScene().getTexture(gl, textureImage);
 	}
 }

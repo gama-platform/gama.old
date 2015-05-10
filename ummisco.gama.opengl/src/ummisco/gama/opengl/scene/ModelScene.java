@@ -21,6 +21,7 @@ import msi.gama.util.GamaColor;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -42,7 +43,7 @@ public class ModelScene {
 	protected LayerObject currentLayer;
 	protected final JOGLRenderer renderer;
 	private volatile boolean staticObjectsAreLocked;
-	// private volatile boolean completed = false;
+	private final Map<BufferedImage, Texture> textures = new HashMap(10);
 	private volatile boolean rendered = false;
 
 	public ModelScene(final JOGLRenderer renderer, final boolean withWorld) {
@@ -76,8 +77,39 @@ public class ModelScene {
 				obj.clear(gl, traceSize);
 			}
 		}
-		// reloaded = false;
+		// Wipe the textures. However, might be necessary to know what to do for the trace...
+		int size = textures.size();
+		if ( size != 0 ) {
+			int[] textureIdsToDestroy = new int[size];
+			int index = 0;
+			for ( Map.Entry<BufferedImage, Texture> entry : textures.entrySet() ) {
+				Texture t = entry.getValue();
+				textureIdsToDestroy[index++] = t == null ? 0 : t.getTextureObject();
+			}
+			gl.glDeleteTextures(textureIdsToDestroy.length, textureIdsToDestroy, 0);
+			textures.clear();
+		}
 
+	}
+
+	public Texture getTexture(final GL gl, final BufferedImage image) {
+		if ( image == null ) { return null; }
+		Texture texture = textures.get(image);
+		if ( texture == null ) {
+			if ( TextureCache.contains(image) ) {
+				texture = TextureCache.get(gl, image);
+			} else {
+				texture = TextureCache.buildTexture(gl, image);
+				textures.put(image, texture);
+			}
+		}
+		if ( texture != null ) {
+			boolean antiAlias = renderer.data.isAntialias();
+			// Apply antialas to the texture based on the current preferences
+			texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
+			texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
+		}
+		return texture;
 	}
 
 	public void draw(final GL2 gl, final boolean picking) {
@@ -101,10 +133,8 @@ public class ModelScene {
 	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,
 		final GamaPoint dimensions, final Double angle, final boolean isDynamic, final String name) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		if ( isDynamic ) {
-			TextureCache.getInstance().initializeDynamicTexture(this, img);
-		} else {
-			TextureCache.getInstance().initializeStaticTexture(img);
+		if ( !isDynamic ) {
+			TextureCache.initializeStaticTexture(img);
 		}
 		currentLayer.addImage(img, agent, location, dimensions, angle, isDynamic, name);
 	}
@@ -113,7 +143,7 @@ public class ModelScene {
 		addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition, final Envelope3D bounds) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( demTexture != null ) {
-			TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
+			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
 		}
 		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds, 1,
 			null);
@@ -124,7 +154,7 @@ public class ModelScene {
 		final Envelope3D env, final double cellSize, final String name) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( demTexture != null ) {
-			TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
+			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
 		}
 		currentLayer.addDEM(dem, demTexture, null, agent, isTextured, isTriangulated, isGrayScaled, isShowText, false,
 			true, env, cellSize, name);
@@ -138,7 +168,7 @@ public class ModelScene {
 		if ( textures != null && !textures.isEmpty() ) {
 			for ( BufferedImage img : textures ) {
 				if ( img != null ) {
-					TextureCache.getInstance().initializeStaticTexture(img);
+					TextureCache.initializeStaticTexture(img);
 				}
 			}
 		}
@@ -149,7 +179,6 @@ public class ModelScene {
 	public void dispose() {
 		layers.clear();
 		currentLayer = null;
-		TextureCache.getInstance().clearCache(this);
 	}
 
 	public void beginDrawingLayers() {

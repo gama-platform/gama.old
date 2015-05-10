@@ -84,13 +84,13 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	}
 
 	public GLAutoDrawable createDrawable(final Composite parent) {
-		GLProfile profile = TextureCache.getInstance().getSharedContext().getGLProfile();
+		GLProfile profile = TextureCache.getSharedContext().getGLProfile();
 		GLCapabilities cap = new GLCapabilities(profile);
 		cap.setStencilBits(8);
 		cap.setDoubleBuffered(true);
 		cap.setHardwareAccelerated(true);
 		canvas = new GLCanvas(parent, SWT.NONE, cap, null);
-		canvas.setSharedAutoDrawable(TextureCache.getInstance().getSharedContext());
+		canvas.setSharedAutoDrawable(TextureCache.getSharedContext());
 		canvas.setAutoSwapBufferMode(true);
 		SWTGLAnimator animator = new SWTGLAnimator(canvas);
 		canvas.addGLEventListener(this);

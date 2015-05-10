@@ -104,7 +104,7 @@ public class ImageObject extends AbstractObject {
 	@Override
 	protected Texture computeTexture(final GL gl, final JOGLRenderer renderer) {
 		if ( image == null ) { return null; }
-		return TextureCache.getInstance().get(gl, renderer.getCurrentScene(), image, isDynamic);
+		return renderer.getCurrentScene().getTexture(gl, image);
 	}
 
 }

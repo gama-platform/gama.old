@@ -139,7 +139,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	}
 
 	private Texture computeTexture(final GL gl, final JOGLRenderer renderer, final int order) {
-		return TextureCache.getInstance().get(gl, renderer.getCurrentScene(), textureImages.get(order), false);
+		return renderer.getCurrentScene().getTexture(gl, textureImages.get(order));
 	}
 
 	public boolean hasTextures() {
