@@ -165,13 +165,6 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		return disposed;
 	}
 
-	protected void internalDisplayUpdate() {
-		canBeUpdated(false);
-		drawDisplaysWithoutRepainting();
-		repaint();
-		canBeUpdated(true);
-	}
-
 	@Override
 	public void outputReloaded() {
 		// We first copy the scope
@@ -281,10 +274,11 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void removeNotify() {
-		// GuiUtils.debug("AWTDisplaySurface.removeNotify: BEGUN" + outputName);
+		GuiUtils.debug("AWTDisplaySurface.removeNotify: BEGUN");
+		dispose();
 		super.removeNotify();
 		OutputSynchronizer.decClosingViews(getOutput().getName());
-		// GuiUtils.debug("AWTDisplaySurface.removeNotify: FINISHED" + outputName);
+		GuiUtils.debug("AWTDisplaySurface.removeNotify: FINISHED");
 	}
 
 	protected void scaleOrigin() {
@@ -343,13 +337,22 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 		@Override
 		public void run() {
-			internalDisplayUpdate();
-			canBeUpdated(true);
+			if ( disposed ) { return; }
+			if ( iGraphics == null ) { return; }
+			try {
+				canBeUpdated(false);
+				iGraphics.fillBackground(getBackground(), 1);
+				manager.drawLayersOn(iGraphics);
+				repaint();
+			} finally {
+				canBeUpdated(true);
+			}
 		}
 	};
 
 	@Override
 	public void updateDisplay(final boolean force) {
+		if ( disposed ) { return; }
 		if ( !canBeUpdated() ) { return; }
 		// EXPERIMENTAL
 
@@ -491,12 +494,6 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		return layers.get(0).getModelCoordinatesFrom(xc, yc, this);
 	}
 
-	public void drawDisplaysWithoutRepainting() {
-		if ( iGraphics == null ) { return; }
-		iGraphics.fillBackground(getBackground(), 1);
-		manager.drawLayersOn(iGraphics);
-	}
-
 	@Override
 	public double getEnvWidth() {
 		return data.getEnvWidth();
@@ -632,6 +629,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void dispose() {
+		java.lang.System.out.println("Disposing Java2D display");
 		if ( disposed ) { return; }
 		disposed = true;
 		if ( manager != null ) {
