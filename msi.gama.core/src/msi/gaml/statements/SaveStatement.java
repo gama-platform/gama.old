@@ -37,7 +37,6 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.SaveStatement.SaveValidator;
 import msi.gaml.types.*;
 import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -353,7 +352,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			values.clear();
 			SimpleFeature ff = (SimpleFeature) fw.next();
 			// geometry is by convention (in specs) at position 0
-			values.add(gis == null ? ag.getInnerGeometry() : gis.transform(ag.getInnerGeometry()));
+			values.add(gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry()));
 			for ( final String variable : attributeValues ) {
 				values.add(ag.getDirectVarValue(scope, variable));
 			}
