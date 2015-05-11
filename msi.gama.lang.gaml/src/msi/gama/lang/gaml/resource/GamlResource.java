@@ -14,6 +14,8 @@ package msi.gama.lang.gaml.resource;
 import static msi.gaml.factories.DescriptionFactory.getModelFactory;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.Map.Entry;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
@@ -168,21 +170,34 @@ public class GamlResource extends LazyLinkingResource {
 		// GamlResourceDocManager.clearCache();
 		// We document only when the resource is marked as 'edited'
 		// hqnghi build micro-model
+		//hqnghi 11/May/15: Micro-model manipulate their own imported resources of micro-model , they are not supposed to be merged with co-model (main-model) 
 		Map<String, ModelDescription> mm = new TOrderedHashMap<String, ModelDescription>();
-		for ( ISyntacticElement r : microModels.keySet() ) {
-			List<ISyntacticElement> res = new ArrayList<ISyntacticElement>();
-			res.add(r);
+		String aliasName= null;
+		while (!microModels.isEmpty()) {
+			aliasName=(String) microModels.values().toArray()[0];
+			List<ISyntacticElement> res =getListMicroSyntacticElement(microModels,aliasName);
+			microModels.keySet().removeAll(res);
 			ModelDescription mic =
 				getModelFactory().createModelDescription(projectPath, modelPath, res, getErrorCollector(), isEdited,
-					Collections.EMPTY_MAP, ((SyntacticModelElement) r).getImports());
-			mic.setAlias(microModels.get(r));
-			mm.put(microModels.get(r), mic);
+					Collections.<String, ModelDescription> emptyMap(), ((SyntacticModelElement) res.get(0)).getImports());
+			mic.setAlias(aliasName);
+			mm.put(aliasName, mic);
 		}
 		// end-hqnghi
 		return getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(), isEdited,
 			mm, ((SyntacticModelElement) getSyntacticContents()).getImports());
 	}
 
+	private List<ISyntacticElement> getListMicroSyntacticElement (Map<ISyntacticElement, String> microModels, String aliasName){
+		List<ISyntacticElement> res = new ArrayList<ISyntacticElement>();
+		for(final Entry<ISyntacticElement, String> entry: microModels.entrySet()) {
+			if(entry.getValue().equals(aliasName)) {				
+				res.add(entry.getKey());
+			}		
+		}
+		return res;		
+	}
+	
 	public LinkedHashMap<URI, String> computeAllImportedURIs(final ResourceSet set) {
 		// TODO A Revoir pour éviter trop de créations de listes/map, etc.
 
@@ -204,7 +219,7 @@ public class GamlResource extends LazyLinkingResource {
 							newResources.put(entry.getKey(), impl.getName());
 						} else {
 							// "normal" Import (no "as")
-							newResources.put(entry.getKey(), null);
+							newResources.put(entry.getKey(), resourcesToConsider.get(gr));
 						}
 					}
 					// newResources.addAll(imports.keySet());
