@@ -2240,7 +2240,7 @@ public abstract class Spatial {
 				"agent_closest_to" })
 		public static
 			IList neighbours_of(final IScope scope, final ITopology t, final IAgent agent) {
-			return _neighbours(scope, Different.with(), agent, 1.0);
+			return _neighbours(scope, Different.with(), agent, 1.0,t);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
@@ -2255,7 +2255,7 @@ public abstract class Spatial {
 		public static
 			IList neighbours_of(final IScope scope, final ITopology t, final GamaPair pair) {
 			if ( pair == null ) { return GamaListFactory.EMPTY_LIST; }
-			return _neighbours(scope, Different.with(), pair.key, pair.value);
+			return _neighbours(scope, Different.with(), pair.key, pair.value,t);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
@@ -2268,7 +2268,7 @@ public abstract class Spatial {
 				test = false) }))
 		public static
 			IList neighbours_of(final IScope scope, final ITopology t, final IShape agent, final Double distance) {
-			return _neighbours(scope, Different.with(), agent, distance);
+			return _neighbours(scope, Different.with(), agent, distance,t);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
@@ -2416,15 +2416,21 @@ public abstract class Spatial {
 
 		private static IList<IAgent> _neighbours(final IScope scope, final IAgentFilter filter, final Object source,
 			final Object distance) {
-			if ( filter == null || source == null ) { return GamaListFactory.EMPTY_LIST; }
-			IType type =
-				filter.getSpecies() == null ? Types.AGENT : scope.getModelContext().getTypeNamed(
-					filter.getSpecies().getName());
-			return GamaListFactory.createWithoutCasting(
-				type,
-				scope.getTopology().getNeighboursOf(scope, Cast.asGeometry(scope, source, false),
-					Cast.asFloat(scope, distance), filter));
+			return _neighbours(scope, filter, source,distance,scope.getTopology());
 		}
+		
+		private static IList<IAgent> _neighbours(final IScope scope, final IAgentFilter filter, final Object source,
+				final Object distance, final ITopology t) {
+				if ( filter == null || source == null ) { return GamaListFactory.EMPTY_LIST; }
+				IType type =
+					filter.getSpecies() == null ? Types.AGENT : scope.getModelContext().getTypeNamed(
+						filter.getSpecies().getName());
+				return GamaListFactory.createWithoutCasting(
+					type,
+					t.getNeighboursOf(scope, Cast.asGeometry(scope, source, false),
+						Cast.asFloat(scope, distance), filter));
+			}
+
 
 	}
 
