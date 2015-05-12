@@ -44,8 +44,8 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 
 	private Label label(final Composite c, final int horizontalAlign) {
 		Label l = new Label(c, SWT.None);
-		l.setForeground(WHITE);
-		l.setBackground(BLACK);
+		l.setForeground(IGamaColors.WHITE.color());
+		l.setBackground(IGamaColors.BLACK.color());
 		l.setText(" ");
 		l.setLayoutData(infoData(horizontalAlign));
 		l.addMouseListener(toggleListener);
@@ -69,7 +69,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		layout.marginWidth = 5;
 		layout.marginHeight = 5;
 		top.setLayout(layout);
-		top.setBackground(BLACK);
+		top.setBackground(IGamaColors.BLACK.color());
 		if ( createExtraInfo ) {
 			// left overlay info
 			left = label(top, SWT.LEFT);
@@ -91,7 +91,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		scaleData.minimumHeight = 24;
 		scaleData.heightHint = 24;
 		scalebar.setLayoutData(scaleData);
-		scalebar.setBackground(BLACK);
+		scalebar.setBackground(IGamaColors.BLACK.color());
 		scalebar.addPaintListener(new PaintListener() {
 
 			@Override
@@ -105,7 +105,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 	}
 
 	void paintScale(final GC gc) {
-		gc.setBackground(BLACK);
+		gc.setBackground(IGamaColors.BLACK.color());
 		int BAR_WIDTH = 1;
 		int BAR_HEIGHT = 8;
 		int x = 0;
@@ -124,7 +124,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		path.moveTo(barStartX + width, barStartY - BAR_HEIGHT + 2);
 		path.lineTo(barStartX + width, barStartY + 2);
 
-		gc.setForeground(WHITE);
+		gc.setForeground(IGamaColors.WHITE.color());
 		gc.setLineStyle(SWT.LINE_SOLID);
 		gc.setLineWidth(BAR_WIDTH);
 		gc.drawPath(path);
@@ -230,7 +230,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		if ( label == null || label.isDisposed() ) { return; }
 		Color c = label.getForeground();
 		label.setForeground(color);
-		if ( c != WHITE && c != color ) {
+		if ( c != IGamaColors.WHITE.color() && c != color ) {
 			c.dispose();
 		}
 	}

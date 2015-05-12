@@ -12,11 +12,11 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.views.LayeredDisplayView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -33,15 +33,11 @@ import org.eclipse.ui.*;
  */
 public abstract class AbstractOverlay {
 
-	public static Color BLACK = SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK);
-	public static Color WHITE = SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE);
-
 	private final Shell popup;
 	private boolean isHidden = true;
 	private final LayeredDisplayView view;
 	protected final Composite referenceComposite;
 	private final Shell parentShell;
-	// protected final Shell slidingShell;
 	final boolean createExtraInfo;
 
 	// ACTIONS ON THE POPUP
@@ -227,7 +223,7 @@ public abstract class AbstractOverlay {
 		layout.type = SWT.VERTICAL;
 		layout.spacing = 10;
 		popup.setLayout(layout);
-		popup.setBackground(BLACK);
+		popup.setBackground(IGamaColors.BLACK.color());
 		createPopupControl();
 		// Control control = createControl();
 		// control.setLayoutData(null);
@@ -318,7 +314,7 @@ public abstract class AbstractOverlay {
 
 	public boolean isHidden() {
 		// AD: Temporary fix for Issue 548. When a view is detached, the overlays are not displayed
-		return isDisposed() || isHidden;
+		return isHidden || isDisposed();
 	}
 
 	public boolean isVisible() {
@@ -327,12 +323,21 @@ public abstract class AbstractOverlay {
 
 	private boolean viewIsDetached() {
 		// Uses the trick from http://eclipsesource.com/blogs/2010/06/23/tip-how-to-detect-that-a-view-was-detached/
-		IWorkbenchPartSite site = view.getSite();
-		if ( site == null ) { return false; }
-		Shell shell = site.getShell();
-		if ( shell == null ) { return false; }
-		String text = shell.getText();
-		return text == null || text.isEmpty();
+		final boolean[] result = new boolean[] { false };
+		GuiUtils.run(new Runnable() {
+
+			@Override
+			public void run() {
+				IWorkbenchPartSite site = view.getSite();
+				if ( site == null ) { return; }
+				Shell shell = site.getShell();
+				if ( shell == null ) { return; }
+				String text = shell.getText();
+				result[0] = text == null || text.isEmpty();
+			}
+		});
+		return result[0];
+
 	}
 
 	public final void toggle() {
