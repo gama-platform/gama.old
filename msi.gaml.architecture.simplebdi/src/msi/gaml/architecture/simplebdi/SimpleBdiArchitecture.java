@@ -77,7 +77,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private final List<SimpleBdiPlan> _perceives = new ArrayList<SimpleBdiPlan>();
 	private int _plansNumber = 0;
 	private int _perceiveNumber = 0;
-	private SimpleBdiPlan _persistentTask = null;
+	private HashMap<IAgent,SimpleBdiPlan> _persistentTaskTable = new HashMap();
 	private boolean iscurrentplaninstantaneous=false;
 
 	@Override
@@ -102,23 +102,23 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
+		//le super permet de réaliser les reflex en premier
 		super.executeOn(scope);
 		return executePlans(scope);
 	}
 
 	protected final Object executePlans(final IScope scope) {
 		Object result = null;
-		if ( _perceiveNumber > 0 ) {
-			for ( int i = 0; i < _perceiveNumber; i++ ) {
-				result = _perceives.get(i).executeOn(scope);
-			}
-		}
+//		if ( _perceiveNumber > 0 ) {
+//			for ( int i = 0; i < _perceiveNumber; i++ ) {
+//				result = _perceives.get(i).executeOn(scope);
+//			}
+//		}
 		if ( _plansNumber > 0 ) {
 			boolean loop_instantaneous_plans=true;
 			while (loop_instantaneous_plans)
 			{
 				loop_instantaneous_plans=false;
-				
 			final IAgent agent = getCurrentAgent(scope);
 			GamaList<Predicate> desireBase =
 				(GamaList<Predicate>) (scope.hasArg(DESIRE_BASE) ? scope.getListArg(DESIRE_BASE)
@@ -126,7 +126,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			GamaList<Predicate> intentionBase =
 				(GamaList<Predicate>) (scope.hasArg(INTENTION_BASE) ? scope.getListArg(INTENTION_BASE)
 					: (GamaList<Predicate>) agent.getAttribute(INTENTION_BASE));
-
 			Double persistenceCoefficientPlans =
 				scope.hasArg(PERSISTENCE_COEFFICIENT_PLANS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_PLANS) : (Double) agent
 					.getAttribute(PERSISTENCE_COEFFICIENT_PLANS);
@@ -134,6 +133,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				scope.hasArg(PERSISTENCE_COEFFICIENT_INTENTIONS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_INTENTIONS)
 					: (Double) agent.getAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS);
 
+			//Initiate _persistantTaskTable
+			if(!_persistentTaskTable.containsKey(agent)){
+				_persistentTaskTable.put(agent, null);
+			}
+				
+			SimpleBdiPlan _persistentTask = _persistentTaskTable.get(agent);
+				
 			// RANDOMLY REMOVE (last)INTENTION
 			Boolean flipResultintention = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientintention);
 			while (!flipResultintention && (intentionBase.size() > 0)) {
@@ -147,17 +153,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							+ previousint;					
 					addThoughts(scope, think);
 					_persistentTask = null;
+					_persistentTaskTable.put(agent, _persistentTask);
 				}
 			}
 
 			// If current intention has no plan or is on hold, choose a new
 			// Desire
+//			System.out.println("_persistentTask 0 " +  _persistentTask);
 			if ( testOnHold(scope, currentIntention(scope)) || selectExecutablePlanWithHighestPriority(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
 				_persistentTask = null;
+				_persistentTaskTable.put(agent, _persistentTask);
 
 			}
-
 			Boolean flipResult = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientPlans);
 
 			if ( !flipResult ) {
@@ -165,6 +173,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					addThoughts(scope, "check what happens if I stop: " + _persistentTask.getName());
 				}
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
+				_persistentTaskTable.put(agent, _persistentTask);
 
 				if ( _persistentTask != null ) {
 					addThoughts(scope, "lets do instead " + _persistentTask.getName());
@@ -173,7 +182,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 
 			// choose a plan for the current intention
-
+//			System.out.println("_persistentTask 1 " +  _persistentTask);
 			if ( _persistentTask == null && currentIntention(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
 				if ( currentIntention(scope) == null ) {
@@ -181,18 +190,23 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					return null;
 
 				}
+//				System.out.println("_persistentTask 2 " +  _persistentTask);
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
-				
+				_persistentTaskTable.put(agent, _persistentTask);
 				addThoughts(scope, "ok, new intention: " + currentIntention(scope) + " with plan " + _persistentTask.getName());
 			}
-			if ( _persistentTask == null && currentIntention(scope) != null ) {
+			if ( (_persistentTask) == null && currentIntention(scope) != null ) {
+//				System.out.println("_persistentTask 3 " +  _persistentTask);
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
+				_persistentTaskTable.put(agent, _persistentTask);
 				if ( _persistentTask != null ) {
+//					System.out.println("_persistentTask 4 " +  _persistentTask);
 					addThoughts(scope, "use plan : " + _persistentTask.getName());
 				}
 			}
 			if ( _persistentTask != null ) {
 				if ( !agent.dead() ) {
+//					System.out.println("_persistentTask 5 " +  _persistentTask);
 					result = _persistentTask.executeOn(scope);
 					boolean isExecuted =
 						_persistentTask.getExecutedExpression() == null ||
@@ -201,19 +215,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					{
 						loop_instantaneous_plans=true;
 					}
+//					System.out.println("isExecuted: " +  isExecuted);
 					if ( isExecuted ) {
 						_persistentTask = null;
+						_persistentTaskTable.put(agent, _persistentTask);
 
-					}
-					if ( getBase(scope, BELIEF_BASE).contains(currentIntention(scope)) ) {
-						addThoughts(scope,"intention " + currentIntention(scope) + " reached! abort current plan... ");
-						removeFromBase(scope, currentIntention(scope), DESIRE_BASE);
-						removeFromBase(scope, currentIntention(scope), INTENTION_BASE);
-
-						_persistentTask = null;
-
-					}
-
+					}				
 				}
 			}
 			
@@ -224,50 +231,110 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	protected final Boolean selectDesireWithHighestPriority(final IScope scope) {
-		GamaList<Predicate> desireBase =
-			(GamaList<Predicate>) scope.getExperiment().getRandomGenerator().shuffle(getBase(scope, DESIRE_BASE));
-		GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
-		double maxpriority = Double.NEGATIVE_INFINITY;
-		if ( desireBase.size() > 0 && intentionBase != null ) {
-			Predicate newIntention = desireBase.anyValue(scope);
-			for ( Predicate desire : desireBase ) {
-				if ( desire.priority > maxpriority ) {
-					if ( !intentionBase.contains(desire) ) {
-						maxpriority = desire.priority;
-						newIntention = desire;
-
-					}
+		final IAgent agent = getCurrentAgent(scope);
+		Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE) ? 
+				scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE) ;
+				
+		if(is_probabilistic_choice){
+			GamaList<Predicate> desireBase = getBase(scope, DESIRE_BASE);
+			GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
+			if(desireBase.size()>0){
+				Predicate newIntention = desireBase.anyValue(scope);
+				double priority_list[] = new double[desireBase.length(scope)];
+				for (int i=0; i<desireBase.length(scope);i++){
+					priority_list[i]= desireBase.get(i).priority;
+				}
+				IList priorities = GamaListFactory.create(scope, Types.FLOAT, priority_list);
+				int index_choice = msi.gaml.operators.Random.opRndChoice(scope, priorities);
+				newIntention=desireBase.get(index_choice);
+				if ( !intentionBase.contains(newIntention) ) {
+					intentionBase.addValue(scope, newIntention);
+					return true;
 				}
 			}
-			if ( !intentionBase.contains(newIntention) ) {
-				intentionBase.add(newIntention);
-				return true;
+		}
+		else{
+			GamaList<Predicate> desireBase =
+				(GamaList<Predicate>) scope.getExperiment().getRandomGenerator().shuffle(getBase(scope, DESIRE_BASE));
+			GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
+			double maxpriority = Double.NEGATIVE_INFINITY;
+			if ( desireBase.size() > 0 && intentionBase != null ) {
+				Predicate newIntention = desireBase.anyValue(scope);
+				for ( Predicate desire : desireBase ) {
+					if ( desire.priority > maxpriority ) {
+						if ( !intentionBase.contains(desire) ) {
+							maxpriority = desire.priority;
+							newIntention = desire;
+						}
+					}
+				}
+				if ( !intentionBase.contains(newIntention) ) {
+					intentionBase.addValue(scope, newIntention);
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
 	protected final SimpleBdiPlan selectExecutablePlanWithHighestPriority(final IScope scope) {
+		final IAgent agent = getCurrentAgent(scope);
+		Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE) ? 
+				scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE) ;
+				
 		SimpleBdiPlan resultStatement = null;
-		double highestPriority = Double.MIN_VALUE;
-		for ( Object statement : scope.getExperiment().getRandomGenerator().shuffle(_plans) ) {
-			boolean isContextConditionSatisfied =
-				((SimpleBdiPlan) statement).getContextExpression() == null ||
-					msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlan) statement).getContextExpression()
-						.value(scope));
-			if ( isContextConditionSatisfied ) {
-				double currentPriority =1.0;
-				if(((SimpleBdiPlan) statement).getFacet(SimpleBdiArchitecture.PRIORITY)!=null){
-					 currentPriority = msi.gaml.operators.Cast.asFloat(scope, ((SimpleBdiPlan) statement).getPriorityExpression()
+		
+			double highestPriority = Double.MIN_VALUE;
+			List<SimpleBdiPlan> temp_plan = new ArrayList<SimpleBdiPlan>();
+			IList priorities = GamaListFactory.create(Types.FLOAT);
+//			System.out.println("intention: " + getBase(scope, SimpleBdiArchitecture.INTENTION_BASE));
+			for ( Object statement : scope.getExperiment().getRandomGenerator().shuffle(_plans) ) {
+//				System.out.println("statement: " + statement);
+//				System.out.println("((SimpleBdiPlan) statement).getContextExpression(): " + ((SimpleBdiPlan) statement).getContextExpression());
+				boolean isContextConditionSatisfied =
+					((SimpleBdiPlan) statement).getContextExpression() == null ||
+						msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlan) statement).getContextExpression()
 							.value(scope));
-				}
-
-				if ( highestPriority < currentPriority ) {
-					highestPriority = currentPriority;
-					resultStatement = (SimpleBdiPlan) statement;
+//				System.out.println("isContextConditionSatisfied: " + isContextConditionSatisfied);
+				if ( isContextConditionSatisfied ) {
+//					System.out.println("is_probabilistic_choice: " + is_probabilistic_choice);
+					if(is_probabilistic_choice){
+//						System.out.println("(SimpleBdiPlan) statement: " +  statement);
+						
+						temp_plan.add((SimpleBdiPlan) statement);
+//					System.out.println("temp_plan: " +  temp_plan);
+						
+					}
+					else{
+						double currentPriority =1.0;
+						if(((SimpleBdiPlan) statement).getFacet(SimpleBdiArchitecture.PRIORITY)!=null){
+							 currentPriority = msi.gaml.operators.Cast.asFloat(scope, ((SimpleBdiPlan) statement).getPriorityExpression()
+									.value(scope));
+						}
+		
+						if ( highestPriority < currentPriority ) {
+							highestPriority = currentPriority;
+							resultStatement = (SimpleBdiPlan) statement;
+						}
+					}
 				}
 			}
-		}
+			if(is_probabilistic_choice){
+				if (! temp_plan.isEmpty()) {
+					for(Object statement : temp_plan){
+						if(((SimpleBdiPlan) statement).hasFacet(PRIORITY)){
+							priorities.add(msi.gaml.operators.Cast.asFloat(scope,((SimpleBdiPlan) statement).getPriorityExpression().value(scope)));
+						}
+						else{
+							priorities.add(1.0);
+						}
+					}
+					int index_plan = msi.gaml.operators.Random.opRndChoice(scope, priorities);
+					resultStatement = temp_plan.get(index_plan);
+//					System.out.println("resultStatement: " +  resultStatement);
+				}
+			}
+
 		iscurrentplaninstantaneous=false;
 		if (resultStatement!=null)
 		if(((SimpleBdiPlan) resultStatement).getFacet(SimpleBdiArchitecture.INSTANTANEAOUS)!=null){
@@ -347,11 +414,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		returns = "true if it is in the base.",
 		examples = { @example("") }))
 	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
+	//Je rajoute ici le moteur pour supprimer une intention si on ajoute la croyance.
 		public
 		Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if ( predicateDirect != null ) { return addToBase(scope, predicateDirect, BELIEF_BASE); }
+		if ( predicateDirect != null ) { 
+//			Predicate current_intention = currentIntention(scope);
+			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
+				removeFromBase(scope, predicateDirect, DESIRE_BASE);
+				removeFromBase(scope, predicateDirect, INTENTION_BASE);
+			}
+			return addToBase(scope, predicateDirect, BELIEF_BASE); 
+		}
 
 		return false;
 
@@ -612,7 +687,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			} else {ok = false;}
 			Predicate newPredicate =
 					(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-			if ( newPredicate != null ) { return addToBase(scope, newPredicate, BELIEF_BASE); }
+			if ( newPredicate != null ) { 
+//				Predicate current_intention = currentIntention(scope);
+				if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(newPredicate)){
+					removeFromBase(scope, newPredicate, DESIRE_BASE);
+					removeFromBase(scope, newPredicate, INTENTION_BASE);
+				}
+				return addToBase(scope, newPredicate, BELIEF_BASE); 
+			}
 			return ok;
 		}
 
@@ -669,7 +751,5 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@Override
 	public void verifyBehaviors(final ISpecies context) {}
 
-	@Override
-	public void dispose() {}
-
+	
 }

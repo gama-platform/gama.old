@@ -18,16 +18,15 @@ public class PredicateType extends GamaType<Predicate> {
 	}
 
 	@Override
-	public Predicate cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+	public Predicate cast(final IScope scope, final Object obj, final Object val, final boolean copy)
 		throws GamaRuntimeException {
 		if ( obj instanceof Predicate ) { return (Predicate) obj; }
 		if ( obj != null && obj instanceof Map ) {
 			Map<String, Object> map = (Map<String, Object>) obj;
 			String nm = (String) (map.containsKey("name") ? map.get("name") : "predicate");
 			Double pr = (Double) (map.containsKey("priority") ? map.get("priority") : 1.0);
-			IValue val = (IValue) (map.containsKey("value") ? map.get("value") : null);
-			Map par = (Map) (map.containsKey("name") ? map.get("parameter") : null);
-			return new Predicate(nm, val, pr, par);
+			Map values = (Map) (map.containsKey("name") ? map.get("values") : null);
+			return new Predicate(nm, pr, values);
 		}
 		return null;
 	}

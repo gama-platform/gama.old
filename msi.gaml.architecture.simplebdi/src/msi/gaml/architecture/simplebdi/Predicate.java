@@ -20,37 +20,30 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
 
-@vars({ @var(name = "name", type = IType.STRING), @var(name = "value", type = IType.NONE),
-	@var(name = "parameters", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
+@vars({ @var(name = "name", type = IType.STRING),/* @var(name = "value", type = IType.NONE),
+	@var(name = "parameters", type = IType.MAP),*/@var(name = "values", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
 	@var(name = "date", type = IType.FLOAT), @var(name = "subintentions", type = IType.LIST),
 	@var(name = "on_hold_until", type = IType.NONE) })
 public class Predicate implements IValue {
 
 	String name;
-	Object value;
-	Map<String, Object> parameters;
+	Map<String, Object> values;
 	Double priority = 1.0;
 	Double date;
 	Object onHoldUntil;
 	List<Predicate> subintentions;
-	boolean everyPossibleValue = false;
-	boolean everyPossibleParam = false;
+	boolean everyPossibleValues = false;
 
 	@getter("name")
 	public String getName() {
 		return name;
 	}
 
-	@getter("value")
-	public Object getValue() {
-		return value;
+	@getter("values")
+	public Map<String, Object> getValues() {
+		return values;
 	}
-
-	@getter("parameters")
-	public Map<String, Object> getParameters() {
-		return parameters;
-	}
-
+	
 	@getter("priority")
 	public Double getPriority() {
 		return priority;
@@ -73,15 +66,10 @@ public class Predicate implements IValue {
 	public void setOnHoldUntil(final Object onHoldUntil) {
 		this.onHoldUntil = onHoldUntil;
 	}
-
-	public void setValue(final Object value) {
-		this.value = value;
-		everyPossibleValue = value == "every_possible_value_";
-	}
-
-	public void setParameters(final Map<String, Object> parameters) {
-		this.parameters = parameters;
-		everyPossibleParam = parameters == null;
+	
+	public void setValues(final Map<String, Object> values){
+		this.values = values;
+		everyPossibleValues = values == null;
 	}
 
 	public void setPriority(final Double priority) {
@@ -99,53 +87,28 @@ public class Predicate implements IValue {
 	public Predicate() {
 		super();
 		this.name = "";
-		this.value = "every_possible_value_";
-		everyPossibleValue = true;
-		everyPossibleParam = true;
+		everyPossibleValues = true;
 	}
 
 	public Predicate(final String name) {
 		super();
 		this.name = name;
-		this.value = "every_possible_value_";
-		everyPossibleValue = true;
-		everyPossibleParam = true;
+		everyPossibleValues = true;
 	}
 
-	public Predicate(final String name, final Object value) {
+	public Predicate(final String name, final Map<String, Object> values) {
 		super();
 		this.name = name;
-		this.value = value;
-		everyPossibleValue = value == "every_possible_value_";
-		everyPossibleParam = true;
+		this.values = values;
+		everyPossibleValues = values == null;;
 	}
 
-	public Predicate(final String name, final Object value, final double priority) {
+	public Predicate(final String name, final double priority, final Map<String, Object> values) {
 		super();
 		this.name = name;
-		this.value = value;
+		this.values = values;
 		this.priority = priority;
-		everyPossibleValue = value == "every_possible_value_";
-		everyPossibleParam = true;
-	}
-
-	public Predicate(final String name, final Object value, final Map<String, Object> parameters) {
-		super();
-		this.name = name;
-		this.value = value;
-		this.parameters = parameters;
-		everyPossibleValue = value == "every_possible_value_";
-		everyPossibleParam = parameters == null;
-	}
-
-	public Predicate(final String name, final Object value, final double priority, final Map<String, Object> parameters) {
-		super();
-		this.name = name;
-		this.value = value;
-		this.parameters = parameters;
-		this.priority = priority;
-		everyPossibleValue = value == "every_possible_value_";
-		everyPossibleParam = parameters == null;
+		everyPossibleValues = values == null;
 	}
 
 	public void setName(final String name) {
@@ -160,18 +123,18 @@ public class Predicate implements IValue {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "predicate(" + name + (value == null ? "" : "," + value) + (parameters == null ? "" : "," + parameters) +
+		return "predicate(" + name + (values == null ? "" : "," + values) +
 			")";
 	}
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return name + (value == null ? "" : "," + value) + (parameters == null ? "" : "," + parameters);
+		return name + (values == null ? "" : "," + values);
 	}
 
 	@Override
 	public IValue copy(final IScope scope) throws GamaRuntimeException {
-		return new Predicate(name, value, priority, new LinkedHashMap<String, Object>(parameters));
+		return new Predicate(name, priority, new LinkedHashMap<String, Object>(values));
 	}
 
 	public boolean isSimilarName(final Predicate other) {
@@ -183,25 +146,12 @@ public class Predicate implements IValue {
 		return true;
 	}
 
-	public boolean isSimilarNameValue(final Predicate other) {
-		if ( this == other ) { return true; }
-		if ( other == null ) { return false; }
-		if ( name == null ) {
-			if ( other.name != null ) { return false; }
-		} else if ( !name.equals(other.name) ) { return false; }
-		if ( value == null ) {
-			if ( other.value != null ) { return false; }
-		} else if ( !value.equals(other.value) ) { return false; }
-		return true;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (name == null ? 0 : name.hashCode());
-		result = prime * result + (parameters == null ? 0 : parameters.hashCode());
-		result = prime * result + (value == null ? 0 : value.hashCode());
+		result = prime * result + (values == null ? 0 : values.hashCode());
 		return result;
 	}
 
@@ -215,13 +165,10 @@ public class Predicate implements IValue {
 			if ( other.name != null ) { return false; }
 		} else if ( !name.equals(other.name) ) { return false; }
 
-		if ( value == null ) {
-			if ( other.value != null ) { return false; }
-		} else if ( !everyPossibleValue && !other.everyPossibleValue && !value.equals(other.value) ) { return false; }
-		if ( everyPossibleParam || other.everyPossibleParam ) { return true; }
-		if ( parameters == null ) {
-			if ( other.parameters != null ) { return false; }
-		} else if ( !parameters.equals(other.parameters) ) { return false; }
+		if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
+		if ( values == null ) {
+			if ( other.values != null ) { return false; }
+		} else if ( !values.equals(other.values) ) { return false; }
 		return true;
 	}
 
