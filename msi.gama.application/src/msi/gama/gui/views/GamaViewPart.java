@@ -147,7 +147,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	}
 
 	@Override
-	public/* final */void createPartControl(final Composite composite) {
+	public final void createPartControl(final Composite composite) {
 		this.parent = GamaToolbarFactory.createToolbars(this, composite);
 		ownCreatePartControl(parent);
 		activateContext();
@@ -195,8 +195,8 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void setOutput(final IDisplayOutput out) {
 		if ( toolbar != null ) {
-			toolbar.wipe(SWT.LEFT);
-			toolbar.wipe(SWT.RIGHT);
+			toolbar.wipe(SWT.LEFT, true);
+			toolbar.wipe(SWT.RIGHT, true);
 			GamaToolbarFactory.buildToolbar(this, toolbar);
 		}
 		if ( output != null && output != out ) {
@@ -230,7 +230,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	 */
 	@Override
 	public void stopDisplayingTooltips() {
-		toolbar.wipe(SWT.LEFT);
+		toolbar.wipe(SWT.LEFT, false);
 	}
 
 	@Override

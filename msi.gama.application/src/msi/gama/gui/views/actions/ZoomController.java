@@ -5,7 +5,7 @@
 package msi.gama.gui.views.actions;
 
 import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView.Zoomable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -49,49 +49,6 @@ public class ZoomController {
 	 */
 	public ZoomController(final Zoomable view) {
 		this.view = view;
-	}
-
-	public void install(final GamaToolbarSimple tb) {
-		tb.addControlListener(new ControlAdapter() {
-
-			@Override
-			public void controlResized(final ControlEvent e) {
-				Control[] controls = view.getZoomableControls();
-				for ( Control c : controls ) {
-					if ( c != null ) {
-						c.addGestureListener(gl);
-						c.addMouseListener(ml);
-						// once installed the listener removes itself from the toolbar
-						tb.removeControlListener(this);
-					}
-				}
-			}
-
-		});
-		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN.getCode(), "Zoom in", "Zoom in", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				view.zoomIn();
-			}
-		});
-		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT.getCode(), "Zoom fit", "Zoom to fit view", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				view.zoomFit();
-			}
-
-		});
-
-		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT.getCode(), "Zoom out", "Zoom out", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				view.zoomOut();
-			}
-		});
-
 	}
 
 	/**

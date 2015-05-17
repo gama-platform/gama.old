@@ -170,7 +170,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	}
 
 	private void buildRightToolbar() {
-		toolbar.wipe(SWT.RIGHT);
+		toolbar.wipe(SWT.RIGHT, true);
 		/* OtherExperimentsButton other = */new OtherExperimentsButton(this, toolbar);
 		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
 		toggle.addSelectionListener(new SelectionAdapter() {
@@ -321,7 +321,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 					if ( msg != null ) {
 						toolbar.status((Image) null, msg, c, SWT.LEFT);
 					} else {
-						toolbar.wipe(SWT.LEFT);
+						toolbar.wipe(SWT.LEFT, true);
 						int i = 0;
 						for ( String e : state.abbreviations ) {
 							enableButton(i++, e);

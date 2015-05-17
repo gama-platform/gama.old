@@ -85,7 +85,7 @@ public class GamaToolbar2 extends Composite {
 
 	public ToolItem
 		status(final Image image, final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		wipe(side);
+		wipe(side, false);
 		ToolItem item = button(color, s, image, side);
 		refresh(true);
 		return item;
@@ -94,9 +94,14 @@ public class GamaToolbar2 extends Composite {
 	public ToolItem tooltip(final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		if ( s == null ) { return null; }
 		final GamaToolbarSimple tb = getToolbar(side);
+		wipe(side, false);
 		final GamaToolbarSimple other = tb == right ? left : right;
-		int width = getSize().x - other.getSize().x - 30;
-		wipe(side);
+		int mySize = getSize().x;
+		int remainingLeftSize = tb.getSize().x;
+		int rightSize = other.getSize().x;
+
+		int width = mySize - remainingLeftSize - rightSize - 100;
+		// wipe(side, false);
 		Label label = new Label(tb, SWT.WRAP);
 		label.setForeground(color.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color());
 		String newString = "";
@@ -171,16 +176,32 @@ public class GamaToolbar2 extends Composite {
 		layout(true, true);
 	}
 
-	public void wipe(final int side /* SWT.LEFT or SWT.RIGHT */) {
+	/**
+	 * Wipes the toolbar (left or right), including or not the simple tool items. Retuns the width of the toolbar once wiped.
+	 * 
+	 * @param side
+	 * @param includingToolItems
+	 * @return
+	 */
+	public int wipe(final int side /* SWT.LEFT or SWT.RIGHT */, final boolean includingToolItems) {
+		int width = 0;
 		ToolItem[] items = getToolbar(side).getItems();
 		for ( ToolItem t : items ) {
+
 			Control c = t.getControl();
-			if ( c != null ) {
-				c.dispose();
+			if ( c == null && includingToolItems || c != null ) {
+				if ( c != null ) {
+					c.dispose();
+				}
+				t.dispose();
+			} else {
+				width += t.getWidth();
 			}
-			t.dispose();
+
 		}
 		prepareToolbar(side);
+		refresh(true);
+		return width;
 	}
 
 	public void item(final IContributionItem item, final int side) {

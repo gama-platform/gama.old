@@ -369,7 +369,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			try {
 				EventQueue.invokeAndWait(displayRunnable);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}

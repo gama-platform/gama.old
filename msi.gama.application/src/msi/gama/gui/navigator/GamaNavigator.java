@@ -277,7 +277,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	public void selectionChanged(final SelectionChangedEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		if ( selection == null || selection.isEmpty() ) {
-			toolbar.wipe(SWT.LEFT);
+			toolbar.wipe(SWT.LEFT, true);
 			return;
 		}
 		String message = commonDescriptionProvider.getDescription(selection);

@@ -31,7 +31,7 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 		super.configureActions();
 
 		IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
-		toolbar.wipe(SWT.RIGHT);
+		toolbar.wipe(SWT.RIGHT, true);
 		for ( IContributionItem item : tbm.getItems() ) {
 			toolbar.item(item, SWT.RIGHT);
 		}

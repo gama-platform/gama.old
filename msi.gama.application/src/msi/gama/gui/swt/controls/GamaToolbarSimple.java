@@ -4,13 +4,10 @@
  */
 package msi.gama.gui.swt.controls;
 
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -22,7 +19,6 @@ import org.eclipse.swt.widgets.*;
  */
 public class GamaToolbarSimple extends ToolBar {
 
-
 	ControlListener widthListener;
 
 	public GamaToolbarSimple(final Composite parent, final int style) {
@@ -32,7 +28,6 @@ public class GamaToolbarSimple extends ToolBar {
 
 	@Override
 	protected void checkSubclass() {}
-
 
 	public GamaToolbarSimple width(final Control parent) {
 		if ( widthListener != null ) {
@@ -58,8 +53,6 @@ public class GamaToolbarSimple extends ToolBar {
 		return item;
 	}
 
-
-
 	public ToolItem check(final String image, final String text, final String tip, final SelectionListener listener) {
 		return create(image, text, tip, listener, SWT.CHECK);
 	}
@@ -83,10 +76,9 @@ public class GamaToolbarSimple extends ToolBar {
 		return control;
 	}
 
-
 	private ToolItem create(final String i, final String text, final String tip, final SelectionListener listener,
 		final int style) {
-		ToolItem button  = new ToolItem(this, style, getItems().length);
+		ToolItem button = new ToolItem(this, style, getItems().length);
 		if ( tip != null ) {
 			button.setToolTipText(tip);
 		}

@@ -122,7 +122,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 	public void setHtml(final String html) {
 		browser.setText(html, true);
-		toolbar.wipe(SWT.LEFT);
+		toolbar.wipe(SWT.LEFT, true);
 	}
 
 	@Override
