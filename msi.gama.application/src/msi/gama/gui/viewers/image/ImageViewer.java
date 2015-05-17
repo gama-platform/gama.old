@@ -131,15 +131,6 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	}
 
 	/**
-	 * Method getToolbarActionsId()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#getToolbarActionsId()
-	 */
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] { SEP, -32, -34, -33 };
-	}
-
-	/**
 	 * Unregister any change listeners for the specified input.
 	 */
 	protected void unregisterResourceListener(final IEditorInput input) {
@@ -700,32 +691,20 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	}
 
 	/**
-	 * Method setToolbar()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
-	@Override
-	public void setToolbar(final GamaToolbar2 toolbar) {
-		this.toolbar = toolbar;
-	}
-
-	/**
 	 * Method createToolItem()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {
+	public void createToolItems(final GamaToolbar2 tb) {
+		this.toolbar = tb;
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+		tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
 
-		switch (code) {
-			case -32:
-				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						doSaveAs();
-					}
-				}, SWT.RIGHT);
-				break;
-		}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				doSaveAs();
+			}
+		}, SWT.RIGHT);
 
 	}
 

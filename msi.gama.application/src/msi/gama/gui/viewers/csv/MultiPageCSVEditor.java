@@ -41,8 +41,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 
 	private boolean isPageModified;
 	GamaToolbar2 toolbar;
-	private final static int ADD_ROW = -10, REMOVE_ROW = -11, DUPLICATE_ROW = -12, ADD_COLUMN = -13,
-		REMOVE_COLUMN = -14, SHOW_COLUMN = -15, SAVE_AS = -16, WITH_HEADER = -17;
+
 	/** index of the source page */
 	public static final int indexSRC = 1;
 	/** index of the table page */
@@ -97,16 +96,6 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		super();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		// model = createCSVFile();
-	}
-
-	/**
-	 * Method getToolbarActionsId()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#getToolbarActionsId()
-	 */
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] { WITH_HEADER, SEP, ADD_ROW, REMOVE_ROW, SEP, ADD_COLUMN, REMOVE_COLUMN, SHOW_COLUMN, SEP,
-			SAVE_AS };
 	}
 
 	@Override
@@ -554,156 +543,120 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	}
 
 	/**
-	 * Method setToolbar()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
-	@Override
-	public void setToolbar(final GamaToolbar2 toolbar) {
-		this.toolbar = toolbar;
-	}
-
-	/**
 	 * Method createToolItem()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {
+	public void createToolItems(final GamaToolbar2 tb) {
+		this.toolbar = tb;
+		// { WITH_HEADER, SEP, ADD_ROW, REMOVE_ROW, SEP, ADD_COLUMN, REMOVE_COLUMN, SHOW_COLUMN, SEP,SAVE_AS };
 
-		switch (code) {
-			case DUPLICATE_ROW:
-				tb.button("action.duplicate.row2", "Duplicate", "Duplicate Row", new SelectionAdapter() {
+		ToolItem t =
+			tb.check("action.set.header2", "First line is header", "First line is header", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-						if ( row != null ) {
-							model.duplicateRow(row);
-							tableModified();
-						}
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					ToolItem t = (ToolItem) e.widget;
+					model.setFirstLineHeader(t.getSelection());
+					try {
+						populateTablePage();
+					} catch (Exception e1) {
+						e1.printStackTrace();
 					}
-				}, SWT.RIGHT);
-				break;
-			case ADD_ROW:
-				tb.button("action.add.row2", "Add row",
-					"Insert a new row before the currently selected one or at the end of the file if none is selected",
-					new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-							if ( row != null ) {
-								model.addRowAfterElement(row);
-							} else {
-								model.addRow();
-							}
-							tableModified();
-						}
-					}, SWT.RIGHT);
-				break;
-			case REMOVE_ROW:
-				tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-
-						CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-
-						while (row != null) {
-							row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-							if ( row != null ) {
-								model.removeRow(row);
-								tableModified();
-							}
-						}
-					}
-				}, SWT.RIGHT);
-				break;
-			case ADD_COLUMN:
-				if ( model.isFirstLineHeader() ) {
-					tb.button("action.add.column2", "Add column", "Add new column", new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent arg0) {
-							// call insert/add column page
-							InsertColumnPage acPage =
-								new InsertColumnPage(getSite().getShell(), model.getArrayHeader());
-							if ( acPage.open() == Window.OK ) {
-								String colToInsert = acPage.getColumnNewName();
-								model.addColumn(colToInsert);
-								tableViewer.setInput(model);
-								final TableColumn column = new TableColumn(tableViewer.getTable(), SWT.LEFT);
-								column.setText(colToInsert);
-								column.setWidth(100);
-								column.setResizable(true);
-								column.setMoveable(true);
-								addMenuItemToColumn(column, model.getColumnCount() - 1);
-								defineCellEditing();
-								tableModified();
-							}
-						}
-					}, SWT.RIGHT);
+					// tableModified();
+					RefreshHandler.run();
 				}
-				break;
-			case REMOVE_COLUMN:
-				if ( model.isFirstLineHeader() ) {
-					tb.button("action.delete.column2", "Delete column", "Delete one or several column(s)",
-						new SelectionAdapter() {
 
-							@Override
-							public void widgetSelected(final SelectionEvent e) {
+			}, SWT.RIGHT);
+		t.setSelection(model.isFirstLineHeader());
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+		tb.button("action.add.row2", "Add row",
+			"Insert a new row before the currently selected one or at the end of the file if none is selected",
+			new SelectionAdapter() {
 
-								// call delete column page
-								DeleteColumnPage dcPage =
-									new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
-								if ( dcPage.open() == Window.OK ) {
-									String[] colToDelete = dcPage.getColumnSelected();
-									for ( String column : colToDelete ) {
-										int colIndex = findColumnForName(column);
-										tableViewer.getTable().getColumn(colIndex).dispose();
-										// tableHeaderMenu.getItem(colIndex).dispose();
-										model.removeColumn(column);
-									}
-									tableModified();
-								}
-
-							}
-						}, SWT.RIGHT);
-				}
-				break;
-			case SHOW_COLUMN:
-				break;
-			case WITH_HEADER:
-				ToolItem t =
-					tb.check("action.set.header2", "First line is header", "First line is header",
-						new SelectionAdapter() {
-
-							@Override
-							public void widgetSelected(final SelectionEvent e) {
-								ToolItem t = (ToolItem) e.widget;
-								model.setFirstLineHeader(t.getSelection());
-								try {
-									populateTablePage();
-								} catch (Exception e1) {
-									e1.printStackTrace();
-								}
-								// tableModified();
-								RefreshHandler.run();
-							}
-
-						}, SWT.RIGHT);
-				t.setSelection(model.isFirstLineHeader());
-				break;
-			case SAVE_AS:
-				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						doSaveAs();
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+					if ( row != null ) {
+						model.addRowAfterElement(row);
+					} else {
+						model.addRow();
 					}
-				}, SWT.RIGHT);
-				break;
+					tableModified();
+				}
+			}, SWT.RIGHT);
+		tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+
+				CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+
+				while (row != null) {
+					row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+					if ( row != null ) {
+						model.removeRow(row);
+						tableModified();
+					}
+				}
+			}
+		}, SWT.RIGHT);
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+		if ( model.isFirstLineHeader() ) {
+			tb.button("action.add.column2", "Add column", "Add new column", new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent arg0) {
+					// call insert/add column page
+					InsertColumnPage acPage = new InsertColumnPage(getSite().getShell(), model.getArrayHeader());
+					if ( acPage.open() == Window.OK ) {
+						String colToInsert = acPage.getColumnNewName();
+						model.addColumn(colToInsert);
+						tableViewer.setInput(model);
+						final TableColumn column = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+						column.setText(colToInsert);
+						column.setWidth(100);
+						column.setResizable(true);
+						column.setMoveable(true);
+						addMenuItemToColumn(column, model.getColumnCount() - 1);
+						defineCellEditing();
+						tableModified();
+					}
+				}
+			}, SWT.RIGHT);
 
 		}
+		if ( model.isFirstLineHeader() ) {
+			tb.button("action.delete.column2", "Delete column", "Delete one or several column(s)",
+				new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+
+						// call delete column page
+						DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
+						if ( dcPage.open() == Window.OK ) {
+							String[] colToDelete = dcPage.getColumnSelected();
+							for ( String column : colToDelete ) {
+								int colIndex = findColumnForName(column);
+								tableViewer.getTable().getColumn(colIndex).dispose();
+								// tableHeaderMenu.getItem(colIndex).dispose();
+								model.removeColumn(column);
+							}
+							tableModified();
+						}
+
+					}
+				}, SWT.RIGHT);
+		}
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+		tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				doSaveAs();
+			}
+		}, SWT.RIGHT);
 
 	}
 }

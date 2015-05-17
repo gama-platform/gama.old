@@ -61,9 +61,7 @@ public abstract class AbstractLayer implements ILayer {
 	public void enableOn(final IDisplaySurface surface) {}
 
 	@Override
-	public void disableOn(final IDisplaySurface surface) {
-		surface.layersChanged();
-	}
+	public void disableOn(final IDisplaySurface surface) {}
 
 	@Override
 	public void setOrder(final Integer o) {

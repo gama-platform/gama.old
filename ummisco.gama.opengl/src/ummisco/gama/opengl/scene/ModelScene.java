@@ -73,7 +73,7 @@ public class ModelScene {
 
 		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
 			LayerObject obj = entry.getValue();
-			if ( obj != null && !obj.isStatic() ) {
+			if ( obj != null && (!obj.isStatic() || obj.isInvalid()) ) {
 				obj.clear(gl, traceSize);
 			}
 		}
@@ -113,10 +113,10 @@ public class ModelScene {
 	}
 
 	public void draw(final GL2 gl, final boolean picking) {
-		System.out.println("Beginning rendering Model front scene #" + id);
+		// System.out.println("Beginning rendering Model front scene #" + id);
 		LayerObject[] array = layers.values().toArray(new LayerObject[0]);
 		for ( LayerObject layer : array ) {
-			if ( layer != null ) {
+			if ( layer != null && !layer.isInvalid() ) {
 				layer.draw(gl, renderer, picking);
 			}
 		}
@@ -183,12 +183,12 @@ public class ModelScene {
 
 	public void beginDrawingLayers() {
 		// completed = false;
-		System.out.println("Beginning update of Model back scene #" + id);
+		// System.out.println("Beginning update of Model back scene #" + id);
 	}
 
 	public void endDrawingLayers() {
 		staticObjectsAreLocked = true;
-		System.out.println("End of update of Model back scene #" + id);
+		// System.out.println("End of update of Model back scene #" + id);
 	}
 
 	public boolean rendered() {
@@ -196,7 +196,7 @@ public class ModelScene {
 	}
 
 	public void reload() {
-		System.out.println("ModelScene " + id + " reloaded");
+		// System.out.println("ModelScene " + id + " reloaded");
 		staticObjectsAreLocked = false;
 		dispose();
 		initWorld();
@@ -227,11 +227,20 @@ public class ModelScene {
 	public ModelScene copyStatic() {
 		ModelScene newScene = new ModelScene(renderer, false);
 		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
-			if ( entry.getValue().isStatic() ) {
+			if ( entry.getValue().isStatic() && !entry.getValue().isInvalid() ) {
 				newScene.layers.put(entry.getKey(), entry.getValue());
 			}
 		}
 		return newScene;
+	}
+
+	/**
+	 * 
+	 */
+	public void invalidateLayers() {
+		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
+			entry.getValue().invalidate();
+		}
 	}
 
 }

@@ -12,14 +12,12 @@
 package msi.gama.gui.views.actions;
 
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.commands.*;
-import msi.gama.gui.swt.commands.GamaColorMenu.IColorRunnable;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -34,106 +32,106 @@ public class PresentationMenu {
 	private Menu menu;
 
 	public void fillMenu(final Menu menu, final LayeredDisplayView view) {
-		final MenuItem layerEditMenu = new MenuItem(menu, SWT.PUSH);
-		// boolean sidebar = view.getSidebar() != null && view.getSidebar().getPopup().isVisible();
-		layerEditMenu.setText("Show layer options");
-		layerEditMenu.setImage(IGamaIcons.DISPLAY_TOOLBAR_SIDEBAR.image());
-		layerEditMenu.addSelectionListener(new SelectionAdapter() {
+		// final MenuItem layerEditMenu = new MenuItem(menu, SWT.PUSH);
+		// // boolean sidebar = view.getSidebar() != null && view.getSidebar().getPopup().isVisible();
+		// layerEditMenu.setText("Show layer options");
+		// layerEditMenu.setImage(IGamaIcons.DISPLAY_TOOLBAR_SIDEBAR.image());
+		// layerEditMenu.addSelectionListener(new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		// view.toggleSideBar();
+		// }
+		//
+		// });
+		// MenuItem overlayItem = new MenuItem(menu, SWT.PUSH);
+		// overlayItem.setImage(IGamaIcons.DISPLAY_TOOLBAR_OVERLAY.image());
+		// final boolean overlay = view.getOverlay().getPopup().isVisible();
+		// overlayItem.setText(overlay ? "Hide overlay" : "Show overlay");
+		// overlayItem.addSelectionListener(new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		// view.toggleOverlay();
+		// }
+		//
+		// });
+		// if ( overlay ) {
+		// MenuItem scaleItem = new MenuItem(menu, SWT.CHECK);
+		// scaleItem.setImage(GamaIcons.create("display.scale2").image());
+		// final boolean scale = view.getOutput().shouldDisplayScale();
+		// scaleItem.setText("... with scale");
+		//
+		// scaleItem.setSelection(scale);
+		// scaleItem.addSelectionListener(new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		// view.getOverlay().displayScale(!scale);
+		// view.getOutput().toogleScaleDisplay();
+		// }
+		//
+		// });
+		// }
+		//
+		// new MenuItem(menu, SWT.SEPARATOR);
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				view.toggleSideBar();
-			}
+		// MenuItem antialiasItem = new MenuItem(menu, SWT.CHECK);
+		// antialiasItem.setImage(GamaIcons.create("display.antialias2").image());
+		// antialiasItem.setText("Apply antialiasing");
+		// final boolean antialias = view.getOutput().getSurface().getData().isAntialias();
+		// antialiasItem.setSelection(antialias);
+		// antialiasItem.addSelectionListener(new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		// view.getDisplaySurface().getData().setAntialias(!antialias);
+		// }
+		//
+		// });
 
-		});
-		MenuItem overlayItem = new MenuItem(menu, SWT.PUSH);
-		overlayItem.setImage(IGamaIcons.DISPLAY_TOOLBAR_OVERLAY.image());
-		final boolean overlay = view.getOverlay().getPopup().isVisible();
-		overlayItem.setText(overlay ? "Hide overlay" : "Show overlay");
-		overlayItem.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				view.toggleOverlay();
-			}
-
-		});
-		if ( overlay ) {
-			MenuItem scaleItem = new MenuItem(menu, SWT.CHECK);
-			scaleItem.setImage(GamaIcons.create("display.scale2").image());
-			final boolean scale = view.getOutput().shouldDisplayScale();
-			scaleItem.setText("... with scale");
-
-			scaleItem.setSelection(scale);
-			scaleItem.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					view.getOverlay().displayScale(!scale);
-					view.getOutput().toogleScaleDisplay();
-				}
-
-			});
-		}
-
-		new MenuItem(menu, SWT.SEPARATOR);
-
-		MenuItem antialiasItem = new MenuItem(menu, SWT.CHECK);
-		antialiasItem.setImage(GamaIcons.create("display.antialias2").image());
-		antialiasItem.setText("Apply antialiasing");
-		final boolean antialias = view.getOutput().getSurface().getData().isAntialias();
-		antialiasItem.setSelection(antialias);
-		antialiasItem.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				view.getDisplaySurface().getData().setAntialias(!antialias);
-			}
-
-		});
-
-		MenuItem backgroundItem = new MenuItem(menu, SWT.CHECK);
-		final java.awt.Color background = view.getOutput().getData().getBackgroundColor();
-		final Image image = GamaIcons.createTempColorIcon(GamaColors.get(background));
-		backgroundItem.setImage(image);
-		backgroundItem.setText("Background color...");
-		backgroundItem.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				GamaColorMenu.openView(new IColorRunnable() {
-
-					@Override
-					public void run(final int r, final int g, final int b) {
-						java.awt.Color background = new java.awt.Color(r, g, b);
-						view.getDisplaySurface().getData().setBackgroundColor(background);
-						image.dispose();
-					}
-				}, new RGB(background.getRed(), background.getGreen(), background.getBlue()));
-			}
-
-		});
-
-		MenuItem highlightItem = new MenuItem(menu, SWT.CHECK);
-		final java.awt.Color h = view.getDisplaySurface().getData().getHighlightColor();
-		final Image highlightImage = GamaIcons.createTempColorIcon(GamaColors.get(h));
-		highlightItem.setImage(highlightImage);
-		highlightItem.setText("Highlight color...");
-		highlightItem.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				GamaColorMenu.openView(new IColorRunnable() {
-
-					@Override
-					public void run(final int r, final int g, final int b) {
-						view.getDisplaySurface().getData().setHighlightColor(h);
-						highlightImage.dispose();
-					}
-				}, new RGB(h.getRed(), h.getGreen(), h.getBlue()));
-			}
-
-		});
+		// MenuItem backgroundItem = new MenuItem(menu, SWT.CHECK);
+		// final java.awt.Color background = view.getOutput().getData().getBackgroundColor();
+		// final Image image = GamaIcons.createTempColorIcon(GamaColors.get(background));
+		// backgroundItem.setImage(image);
+		// backgroundItem.setText("Background color...");
+		// backgroundItem.addSelectionListener(new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		// GamaColorMenu.openView(new IColorRunnable() {
+		//
+		// @Override
+		// public void run(final int r, final int g, final int b) {
+		// java.awt.Color background = new java.awt.Color(r, g, b);
+		// view.getDisplaySurface().getData().setBackgroundColor(background);
+		// image.dispose();
+		// }
+		// }, new RGB(background.getRed(), background.getGreen(), background.getBlue()));
+		// }
+		//
+		// });
+		//
+		// MenuItem highlightItem = new MenuItem(menu, SWT.CHECK);
+		// final java.awt.Color h = view.getDisplaySurface().getData().getHighlightColor();
+		// final Image highlightImage = GamaIcons.createTempColorIcon(GamaColors.get(h));
+		// highlightItem.setImage(highlightImage);
+		// highlightItem.setText("Highlight color...");
+		// highlightItem.addSelectionListener(new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		// GamaColorMenu.openView(new IColorRunnable() {
+		//
+		// @Override
+		// public void run(final int r, final int g, final int b) {
+		// view.getDisplaySurface().getData().setHighlightColor(h);
+		// highlightImage.dispose();
+		// }
+		// }, new RGB(h.getRed(), h.getGreen(), h.getBlue()));
+		// }
+		//
+		// });
 
 		if ( !view.isOpenGL() ) { return; }
 		new MenuItem(menu, SWT.SEPARATOR);
@@ -147,7 +145,7 @@ public class PresentationMenu {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
+				view.getDisplaySurface().runAndUpdate(new Runnable() {
 
 					@Override
 					public void run() {
@@ -166,7 +164,7 @@ public class PresentationMenu {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
+					view.getDisplaySurface().runAndUpdate(new Runnable() {
 
 						@Override
 						public void run() {
@@ -187,7 +185,7 @@ public class PresentationMenu {
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
 
-					view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
+					view.getDisplaySurface().runAndUpdate(new Runnable() {
 
 						@Override
 						public void run() {
@@ -211,7 +209,7 @@ public class PresentationMenu {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
+				view.getDisplaySurface().runAndUpdate(new Runnable() {
 
 					@Override
 					public void run() {
@@ -231,7 +229,7 @@ public class PresentationMenu {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
+				view.getDisplaySurface().runAndUpdate(new Runnable() {
 
 					@Override
 					public void run() {
@@ -251,7 +249,7 @@ public class PresentationMenu {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
+				view.getDisplaySurface().runAndUpdate(new Runnable() {
 
 					@Override
 					public void run() {
@@ -270,7 +268,7 @@ public class PresentationMenu {
 	 */
 	public void createItem(final GamaToolbar2 tb, final IToolbarDecoratedView view) {
 
-		tb.menu("display.presentation2", "Presentation", "Presentation options", new SelectionAdapter() {
+		tb.menu("display.presentation2", "Presentation", "OpenGL options", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent trigger) {
@@ -289,7 +287,7 @@ public class PresentationMenu {
 
 			}
 
-		}, SWT.RIGHT);
+		}, SWT.LEFT);
 
 	}
 }

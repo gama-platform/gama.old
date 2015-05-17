@@ -12,6 +12,7 @@
 package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
+import msi.gama.gui.swt.controls.SwitchButton;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gaml.types.*;
@@ -21,7 +22,7 @@ import org.eclipse.swt.widgets.*;
 
 public class BooleanEditor extends AbstractEditor {
 
-	private Button button;
+	private SwitchButton button;
 
 	BooleanEditor(final IParameter param) {
 		super(param);
@@ -53,20 +54,22 @@ public class BooleanEditor extends AbstractEditor {
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
-		button = new Button(comp, SWT.CHECK);
-		// button.setLayoutData(this.getParameterGridData());
+		button = new SwitchButton(comp, SWT.CHECK);
 		button.addSelectionListener(this);
 		return button;
 	}
 
 	@Override
 	protected void displayParameterValue() {
+		internalModification = true;
 		Boolean b = (Boolean) currentValue;
 		if ( b == null ) {
 			b = false;
 		}
-		button.setText(b ? "true" : "false");
+		// button.setText(b ? "true" : "false");
 		button.setSelection(b);
+		internalModification = false;
+
 	}
 
 	@Override

@@ -30,9 +30,6 @@ import org.eclipse.swt.widgets.*;
 
 public class UserControlView extends GamaViewPart {
 
-	public static final int CONTINUE = 100;
-	public static final int INSPECT = 101;
-
 	public static String ID = "msi.gama.views.userControlView";
 
 	private IScope scope;
@@ -52,11 +49,6 @@ public class UserControlView extends GamaViewPart {
 
 		ownCreatePartControl(parent);
 		parent.layout();
-	}
-
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] { INSPECT, CONTINUE };
 	}
 
 	private void deactivate(final Composite parent) {
@@ -145,51 +137,38 @@ public class UserControlView extends GamaViewPart {
 	}
 
 	/**
-	 * Method setToolbar()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
-	@Override
-	public void setToolbar(final GamaToolbar2 toolbar) {}
-
-	/**
 	 * Method createToolItem()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {
+	public void createToolItems(final GamaToolbar2 tb) {
+		super.createToolItems(tb);
 
-		switch (code) {
-			case CONTINUE:
-				continueItem =
-					tb.button(IGamaIcons.PANEL_CONTINUE.getCode(), "Continue", "Continue", new SelectionListener() {
+		inspectItem = tb.button(IGamaIcons.PANEL_INSPECT.getCode(), "Inspect", "Inspect", new SelectionAdapter() {
 
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							GAMA.controller.getScheduler().setUserHold(false);
-							deactivate(parent);
-							GuiUtils.hideView(ID);
-						}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				GuiUtils.setSelectedAgent(scope.getAgentScope());
+			}
 
-						@Override
-						public void widgetDefaultSelected(final SelectionEvent e) {
-							widgetSelected(e);
-						}
+		}, SWT.RIGHT);
+		inspectItem.setEnabled(false);
+		continueItem = tb.button(IGamaIcons.PANEL_CONTINUE.getCode(), "Continue", "Continue", new SelectionListener() {
 
-					}, SWT.RIGHT);
-				continueItem.setEnabled(false);
-				break;
-			case INSPECT:
-				inspectItem =
-					tb.button(IGamaIcons.PANEL_INSPECT.getCode(), "Inspect", "Inspect", new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				GAMA.controller.getScheduler().setUserHold(false);
+				deactivate(parent);
+				GuiUtils.hideView(ID);
+			}
 
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							GuiUtils.setSelectedAgent(scope.getAgentScope());
-						}
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e) {
+				widgetSelected(e);
+			}
 
-					}, SWT.RIGHT);
-				inspectItem.setEnabled(false);
-		}
+		}, SWT.RIGHT);
+		continueItem.setEnabled(false);
 
 	}
 

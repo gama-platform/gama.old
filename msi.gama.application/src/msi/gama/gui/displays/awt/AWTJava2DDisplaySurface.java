@@ -14,6 +14,7 @@ package msi.gama.gui.displays.awt;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.awt.im.InputContext;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -27,6 +28,7 @@ import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
+import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.*;
 import msi.gama.outputs.layers.ILayerMouseListener;
 import msi.gama.precompiler.GamlAnnotations.display;
@@ -48,6 +50,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	protected DisplaySurfaceMenu menuManager;
 	protected volatile boolean canBeUpdated = true;
+	private volatile boolean lockAcquired = false;
 	protected IExpression temp_focus;
 
 	protected Dimension previousPanelSize;
@@ -70,7 +73,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		public void mouseDragged(final MouseEvent e) {
 			if ( SwingUtilities.isLeftMouseButton(e) ) {
 				dragging = true;
-				canBeUpdated(false);
+				canBeUpdated = false;
 				final Point p = e.getPoint();
 				if ( mousePosition == null ) {
 					mousePosition = new Point(getWidth() / 2, getHeight() / 2);
@@ -114,10 +117,12 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		@Override
 		public void mouseReleased(final MouseEvent e) {
 			if ( dragging ) {
+				canBeUpdated = true;
 				updateDisplay(true);
 				dragging = false;
+
 			}
-			canBeUpdated(true);
+
 		}
 
 	}
@@ -126,9 +131,10 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		output = (LayeredDisplayOutput) args[0];
 		output.setSurface(this);
 		data = output.getData();
+		data.addListener(this);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 		setOpaque(true);
-		setDoubleBuffered(false);
+		setDoubleBuffered(true);
 		setLayout(new BorderLayout());
 		setBackground(data.getBackgroundColor());
 		setName(output.getName());
@@ -273,12 +279,15 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
+	public InputContext getInputContext() {
+		return null;
+	}
+
+	@Override
 	public void removeNotify() {
-		GuiUtils.debug("AWTDisplaySurface.removeNotify: BEGUN");
-		dispose();
+		// dispose();
 		super.removeNotify();
 		OutputSynchronizer.decClosingViews(getOutput().getName());
-		GuiUtils.debug("AWTDisplaySurface.removeNotify: FINISHED");
 	}
 
 	protected void scaleOrigin() {
@@ -318,14 +327,14 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	}
 
-	@Override
-	public void canBeUpdated(final boolean canBeUpdated) {
-		this.canBeUpdated = canBeUpdated;
-	}
-
-	public boolean canBeUpdated() {
-		return canBeUpdated && iGraphics != null;
-	}
+	// @Override
+	// public void canBeUpdated(final boolean canBeUpdated) {
+	// this.canBeUpdated = canBeUpdated;
+	// }
+	//
+	// public boolean canBeUpdated() {
+	// return canBeUpdated && iGraphics != null;
+	// }
 
 	protected void setOrigin(final int x, final int y) {
 		viewPort.x = x;
@@ -340,12 +349,12 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			if ( disposed ) { return; }
 			if ( iGraphics == null ) { return; }
 			try {
-				canBeUpdated(false);
+				canBeUpdated = false;
 				iGraphics.fillBackground(getBackground(), 1);
 				manager.drawLayersOn(iGraphics);
 				repaint();
 			} finally {
-				canBeUpdated(true);
+				canBeUpdated = true;
 			}
 		}
 	};
@@ -353,10 +362,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void updateDisplay(final boolean force) {
 		if ( disposed ) { return; }
-		if ( !canBeUpdated() ) { return; }
-		// EXPERIMENTAL
-
-		canBeUpdated(false);
+		if ( !canBeUpdated ) { return; }
 		if ( /* GAMA.isPaused() || */EventQueue.isDispatchThread() ) {
 			EventQueue.invokeLater(displayRunnable);
 		} else {
@@ -443,35 +449,25 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public boolean resizeImage(final int x, final int y, final boolean force) {
 		if ( !force && x == viewPort.width && y == viewPort.height ) { return true; }
 		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
-		canBeUpdated(false);
-		int[] point = computeBoundsFrom(x, y);
-		int imageWidth = Math.max(1, point[0]);
-		int imageHeight = Math.max(1, point[1]);
-		createNewImage(imageWidth, imageHeight);
-		createIGraphics();
-		canBeUpdated(true);
+		try {
+			canBeUpdated = false;
+			int[] point = computeBoundsFrom(x, y);
+			int imageWidth = Math.max(1, point[0]);
+			int imageHeight = Math.max(1, point[1]);
+			final BufferedImage newImage = ImageUtils.createCompatibleImage(imageWidth, imageHeight);
+			if ( buffImage != null ) {
+				newImage.getGraphics().drawImage(buffImage, 0, 0, imageWidth, imageHeight, null);
+				buffImage.flush();
+			}
+			buffImage = newImage;
+			setDisplayHeight(imageHeight);
+			setDisplayWidth(imageWidth);
+			iGraphics = new AWTDisplayGraphics(this, buffImage.createGraphics());
+		} finally {
+			canBeUpdated = true;
+		}
 		return true;
 
-	}
-
-	protected void createNewImage(final int width, final int height) {
-		final BufferedImage newImage = ImageUtils.createCompatibleImage(width, height);
-		if ( buffImage != null ) {
-			newImage.getGraphics().drawImage(buffImage, 0, 0, width, height, null);
-			buffImage.flush();
-		}
-		buffImage = newImage;
-		setDisplayHeight(height);
-		setDisplayWidth(width);
-	}
-
-	protected void createIGraphics() {
-		iGraphics = new AWTDisplayGraphics(this, buffImage.createGraphics());
-		// iGraphics.setQualityRendering(qualityRendering);
-	}
-
-	protected void setIGraphics(final IGraphics iGraphics) {
-		this.iGraphics = iGraphics;
 	}
 
 	@Override
@@ -612,17 +608,22 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void waitForUpdateAndRun(final Runnable r) {
+	public void runAndUpdate(final Runnable r) {
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				while (!canBeUpdated()) {
+				while (!canBeUpdated) {
 					try {
 						Thread.sleep(10);
-					} catch (final InterruptedException e) {}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				r.run();
+				if ( GAMA.isPaused() ) {
+					updateDisplay(true);
+				}
 			}
 		}).start();
 	}
@@ -630,6 +631,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void dispose() {
 		java.lang.System.out.println("Disposing Java2D display");
+		data.removeListener(this);
 		if ( disposed ) { return; }
 		disposed = true;
 		if ( manager != null ) {
@@ -704,14 +706,6 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		// GuiUtils.debug("Set bounds called with " + r);
 		if ( r.width < 1 && r.height < 1 ) { return; }
 		super.setBounds(r);
-	}
-
-	Point getScreenCoordinatesFrom(final double x, final double y) {
-		final double xFactor = x / getEnvWidth();
-		final double yFactor = y / getEnvHeight();
-		final int xOnDisplay = (int) (xFactor * getWidth());
-		final int yOnDisplay = (int) (yFactor * getHeight());
-		return new Point(xOnDisplay, yOnDisplay);
 	}
 
 	public double applyZoom(final double factor) {
@@ -821,6 +815,41 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void layersChanged() {};
+	public void layersChanged() {}
+
+	/**
+	 * Method changed()
+	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(int, boolean)
+	 */
+	@Override
+	public void changed(final Changes property, final boolean value) {
+
+		switch (property) {
+			case BACKGROUND:
+				setBackground(data.getBackgroundColor());
+				break;
+			default:
+				;
+		}
+
+	};
+
+	@Override
+	public synchronized void acquireLock() {
+		while (lockAcquired) {
+			try {
+				wait();
+			} catch (final InterruptedException e) {
+				// e.printStackTrace();
+			}
+		}
+		lockAcquired = true;
+	}
+
+	@Override
+	public synchronized void releaseLock() {
+		lockAcquired = false;
+		notify();
+	}
 
 }

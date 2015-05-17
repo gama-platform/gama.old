@@ -493,14 +493,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	}
 
 	/**
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#getToolbarActionsId()
-	 */
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return null;
-	}
-
-	/**
 	 * @see msi.gama.lang.gaml.ui.editor.IGamlEditor#openEditTemplateDialog()
 	 */
 	public boolean openEditTemplateDialog(final TemplatePersistenceData data, final boolean edit) {
@@ -567,18 +559,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	}
 
 	/**
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
-	@Override
-	public void setToolbar(final GamaToolbar2 toolbar) {
-		this.toolbar = toolbar;
-	}
-
-	/**
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {}
+	public void createToolItems(final GamaToolbar2 tb) {
+		this.toolbar = tb;
+	}
 
 	@Override
 	protected void handlePreferenceStoreChanged(final PropertyChangeEvent event) {

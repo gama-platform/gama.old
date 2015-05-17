@@ -249,15 +249,6 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 		}
 	}
 
-	/**
-	 * Method getToolbarActionsId()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#getToolbarActionsId()
-	 */
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] { SEP, -32 };
-	}
-
 	@Override
 	public void zoomIn() {
 		ReferencedEnvelope env = pane.getDisplayArea();
@@ -287,20 +278,13 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	}
 
 	/**
-	 * Method setToolbar()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
-	@Override
-	public void setToolbar(final GamaToolbar2 toolbar) {
-		this.toolbar = toolbar;
-	}
-
-	/**
 	 * Method createToolItem()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {}
+	public void createToolItems(final GamaToolbar2 tb) {
+		this.toolbar = tb;
+	}
 
 	public void setStrokeColor(final Color color, final Mode mode, final FeatureTypeStyle fts) {
 		if ( mode == Mode.LINE ) {

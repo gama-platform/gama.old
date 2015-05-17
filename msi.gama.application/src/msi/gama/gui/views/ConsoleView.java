@@ -16,6 +16,7 @@ import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
@@ -25,20 +26,11 @@ import org.eclipse.ui.internal.console.IOConsoleViewer;
 public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable {
 
 	public static final String ID = "msi.gama.application.view.ConsoleView";
-	private final static int CLEAR = 0;
 	private BufferedWriter bw;
 	private MessageConsole msgConsole;
 	IOConsoleViewer viewer;
 	boolean paused = false;
 	private final StringBuilder pauseBuffer = new StringBuilder(GamaPreferences.CORE_CONSOLE_BUFFER.getValue());
-
-	/**
-	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
-	 */
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] { SEP, CLEAR };
-	}
 
 	public void setCharacterLimit(final int limit) {
 		msgConsole.setWaterMarks(limit, limit * 2);
@@ -134,19 +126,17 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {
-		switch (code) {
-			case CLEAR:
-				tb.button(IGamaIcons.ACTION_CLEAR.getCode(), "Clear", "Clear the console", new SelectionAdapter() {
+	public void createToolItems(final GamaToolbar2 tb) {
+		super.createToolItems(tb);
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+		tb.button(IGamaIcons.ACTION_CLEAR.getCode(), "Clear", "Clear the console", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent arg0) {
-						setText("");
-					}
-				}, SWT.RIGHT);
-				break;
+			@Override
+			public void widgetSelected(final SelectionEvent arg0) {
+				setText("");
+			}
+		}, SWT.RIGHT);
 
-		}
 	}
 
 	@Override

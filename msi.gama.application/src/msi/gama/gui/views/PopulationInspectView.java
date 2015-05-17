@@ -20,6 +20,7 @@ import msi.gama.gui.parameters.ExpressionControl;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
@@ -445,11 +446,6 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		viewer.getControl().setFocus();
 	}
 
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] { LOCK, EXPR, POP, SEP, SAVE };
-	}
-
 	public class AgentComparator extends ViewerComparator implements Comparator {
 
 		private String attribute = null;
@@ -695,66 +691,57 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {
-		switch (code) {
-			case EXPR:
-				createExpressionComposite();
-				break;
-			case POP:
-				populationMenu = tb.menu("population.list2", "", "Browse a species", new SelectionAdapter() {
+	public void createToolItems(final GamaToolbar2 tb) {
+		super.createToolItems(tb);
+		tb.check("population.lock2", "", "Lock the current population (prevents editing it)", new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				locked = !locked;
+				editor.getControl().setEnabled(!locked);
+				populationMenu.setEnabled(!locked);
+
+				// TODO let the list of agents remain the same ??
+			}
+
+		}, SWT.RIGHT);
+		createExpressionComposite();
+		populationMenu = tb.menu("population.list2", "", "Browse a species", new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent trigger) {
+				if ( locked ) { return; }
+				GamaMenu menu = new GamaMenu() {
 
 					@Override
-					public void widgetSelected(final SelectionEvent trigger) {
-						if ( locked ) { return; }
-						GamaMenu menu = new GamaMenu() {
+					protected void fillMenu() {
+						IPopulation[] pops = getOutput().getRootAgent().getMicroPopulations();
+						for ( final IPopulation p : pops ) {
+							action(p.getName(), new SelectionAdapter() {
 
-							@Override
-							protected void fillMenu() {
-								IPopulation[] pops = getOutput().getRootAgent().getMicroPopulations();
-								for ( final IPopulation p : pops ) {
-									action(p.getName(), new SelectionAdapter() {
-
-										@Override
-										public void widgetSelected(final SelectionEvent e) {
-											setSpeciesName(p.getName(), true);
-										}
-
-									}, GamaIcons.create("display.agents2").image());
+								@Override
+								public void widgetSelected(final SelectionEvent e) {
+									setSpeciesName(p.getName(), true);
 								}
-							}
-						};
-						menu.open(toolbar, trigger);
+
+							}, GamaIcons.create("display.agents2").image());
+						}
 					}
+				};
+				menu.open(toolbar, trigger);
+			}
 
-				}, SWT.RIGHT);
-				break;
-			case LOCK:
-				tb.check("population.lock2", "", "Lock the current population (prevents editing it)",
-					new SelectionAdapter() {
+		}, SWT.RIGHT);
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+		tb.button("menu.saveas2", "Save as CSV", "Save the attributes of agents into a CSV file",
+			new SelectionAdapter() {
 
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							locked = !locked;
-							editor.getControl().setEnabled(!locked);
-							populationMenu.setEnabled(!locked);
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					saveAsCSV();
+				}
 
-							// TODO let the list of agents remain the same ??
-						}
-
-					}, SWT.RIGHT);
-				break;
-			case SAVE:
-				tb.button("menu.saveas2", "Save as CSV", "Save the attributes of agents into a CSV file",
-					new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							saveAsCSV();
-						}
-
-					}, SWT.RIGHT);
-				break;
-		}
+			}, SWT.RIGHT);
 	}
 
 	@Override

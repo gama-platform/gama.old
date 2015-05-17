@@ -4,8 +4,7 @@
  */
 package ummisco.gama.opengl;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
+import java.awt.Point;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
@@ -18,7 +17,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.*;
-import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
+import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.ILayerMouseListener;
 import msi.gama.runtime.*;
@@ -28,7 +27,6 @@ import msi.gaml.operators.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.vividsolutions.jts.geom.Envelope;
@@ -41,26 +39,23 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  */
 @msi.gama.precompiler.GamlAnnotations.display("opengl")
-public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayDataListener {
+public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	final GLAnimatorControl animator;
 	final JOGLRenderer renderer;
-	protected final AffineTransform translation = new AffineTransform();
-	protected volatile boolean canBeUpdated = true;
+	// protected volatile boolean canBeUpdated = true;
 	protected double zoomIncrement = 0.1;
 	protected Double zoomLevel = null;
 	protected boolean zoomFit = true;
 	private IZoomListener zoomListener;
-	protected final Rectangle viewPort = new Rectangle();
 	Map<ILayerMouseListener, MouseListener> listeners = new HashMap();
 	final LayeredDisplayOutput output;
 	final LayerManager manager;
 	protected DisplaySurfaceMenu menuManager;
 	protected IExpression temp_focus;
 	IScope scope;
-	// boolean alreadyZooming = false;
 	final Composite parent;
-	Point size;
+	private volatile boolean lockAcquired = false;
 
 	// NEVER USED
 	public SWTOpenGLDisplaySurface(final Object ... objects) {
@@ -115,19 +110,20 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 */
 	@Override
 	public void updateDisplay(final boolean force) {
-		if ( !canBeUpdated() ) { return; }
-		boolean oldState = getOutput().isPaused();
+
+		// acquireLock();
+		boolean oldState = animator.isPaused();
 		if ( force ) {
-			getOutput().setPaused(false);
+			animator.resume();
 		}
-		canBeUpdated(false);
+		// canBeUpdated(false);
 		try {
 			if ( output.getData().isAutosave() ) {
 				snapshot();
 			}
 			manager.drawLayersOn(renderer);
 		} finally {
-			canBeUpdated(true);
+			// releaseLock();
 		}
 
 		// EXPERIMENTAL
@@ -140,13 +136,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 			}
 		}
 		if ( force ) {
-			getOutput().setPaused(oldState);
+			if ( oldState ) {
+				animator.pause();
+			}
 		}
 
-	}
-
-	public boolean canBeUpdated() {
-		return canBeUpdated /* && graphics != null */;
 	}
 
 	/**
@@ -155,38 +149,40 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 */
 	@Override
 	public boolean resizeImage(final int x, final int y, final boolean force) {
-		if ( !force && x == viewPort.width && y == viewPort.height ) { return true; }
-		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
-		canBeUpdated(false);
-		final int[] point = new int[2];
-		if ( !manager.stayProportional() ) {
-			point[0] = x;
-			point[1] = y;
-		} else {
-			double widthHeightConstraint = getEnvHeight() / getEnvWidth();
-			if ( widthHeightConstraint < 1 ) {
-				point[1] = Math.min(y, (int) Math.round(x * widthHeightConstraint));
-				point[0] = Math.min(x, (int) Math.round(point[1] / widthHeightConstraint));
-			} else {
-				point[0] = Math.min(x, (int) Math.round(y / widthHeightConstraint));
-				point[1] = Math.min(y, (int) Math.round(point[0] * widthHeightConstraint));
-			}
-		}
-		viewPort.height = Math.max(1, point[1]);;
-		viewPort.width = Math.max(1, point[0]);;
-		canBeUpdated(true);
-		setSize(x, y);
+		// if ( !force && x == viewPort.width && y == viewPort.height ) { return true; }
+		// // if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
+		// canBeUpdated(false);
+		// final int[] point = new int[2];
+		// if ( !manager.stayProportional() ) {
+		// point[0] = x;
+		// point[1] = y;
+		// } else {
+		// double widthHeightConstraint = getEnvHeight() / getEnvWidth();
+		// if ( widthHeightConstraint < 1 ) {
+		// point[1] = Math.min(y, (int) Math.round(x * widthHeightConstraint));
+		// point[0] = Math.min(x, (int) Math.round(point[1] / widthHeightConstraint));
+		// } else {
+		// point[0] = Math.min(x, (int) Math.round(y / widthHeightConstraint));
+		// point[1] = Math.min(y, (int) Math.round(point[0] * widthHeightConstraint));
+		// }
+		// }
+		// viewPort.height = Math.max(1, point[1]);;
+		// viewPort.width = Math.max(1, point[0]);;
+		// canBeUpdated(true);
+		// setSize(x, y);
 		return true;
 	}
 
 	@Override
 	public int getDisplayWidth() {
-		return viewPort.width;
+		return renderer.getCanvas().getSurfaceWidth();
+		// return viewPort.width;
 	}
 
 	@Override
 	public int getDisplayHeight() {
-		return viewPort.height;
+		return renderer.getCanvas().getSurfaceHeight();
+		// return viewPort.height;
 	}
 
 	/**
@@ -213,7 +209,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 */
 	@Override
 	public void zoomFit() {
-		resizeImage(getWidth(), getHeight(), false);
+		// resizeImage(getWidth(), getHeight(), false);
 		renderer.frame = 0;
 		renderer.camera.zeroVelocity();
 		renderer.camera.resetCamera(getEnvWidth(), getEnvHeight(), output.getData().isOutput3D());
@@ -245,33 +241,19 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	}
 
 	/**
-	 * Method canBeUpdated()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#canBeUpdated(boolean)
-	 */
-	@Override
-	public void canBeUpdated(final boolean ok) {
-		this.canBeUpdated = ok;
-	}
-
-	/**
 	 * Method waitForUpdateAndRun()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#waitForUpdateAndRun(java.lang.Runnable)
 	 */
 	@Override
-	public void waitForUpdateAndRun(final Runnable r) {
+	public void runAndUpdate(final Runnable r) {
 		r.run();
-		// new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// while (!canBeUpdated()) {
-		// try {
-		// Thread.sleep(10);
-		// } catch (final InterruptedException e) {}
-		// }
-		// GuiUtils.run(r);
-		// }
-		// }).start();
+		if ( GAMA.isPaused() ) {
+			updateDisplay(true);
+		}
+		if ( animator.isPaused() ) {
+			animator.resume();
+			animator.pause();
+		}
 	}
 
 	public final void save(final IScope scope, final RenderedImage image) {
@@ -328,7 +310,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 */
 	@Override
 	public int getWidth() {
-		return size.x;
+		return 0;
+		// return size.x;
 	}
 
 	/**
@@ -337,7 +320,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 */
 	@Override
 	public int getHeight() {
-		return size.y;
+		return 0;
+		// return size.y;
 	}
 
 	/**
@@ -351,7 +335,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 		renderer.initFor(this);
 		manager.outputChanged();
 
-		resizeImage(getWidth(), getHeight(), true);
+		// resizeImage(getWidth(), getHeight(), true);
 		if ( zoomFit ) {
 			zoomFit();
 		}
@@ -659,12 +643,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(int, boolean)
 	 */
 	@Override
-	public void changed(final int property, final boolean value) {
+	public void changed(final Changes property, final boolean value) {
 		switch (property) {
-			case LayeredDisplayData.CHANGE_CAMERA:
+			case CHANGE_CAMERA:
 				renderer.switchCamera();
 				break;
-			case LayeredDisplayData.SPLIT_LAYER:
+			case SPLIT_LAYER:
 				final int nbLayers = this.getManager().getItems().size();
 				int i = 0;
 				final Iterator<ILayer> it = this.getManager().getItems().iterator();
@@ -680,11 +664,14 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 
 				updateDisplay(true);
 				break;
-			case LayeredDisplayData.THREED_VIEW:
+			case THREED_VIEW:
 				// FIXME What is this ???
 				break;
-			case LayeredDisplayData.CAMERA_POS:
+			case CAMERA_POS:
 				renderer.updateCameraPosition();
+				break;
+			default:
+				break;
 
 		}
 
@@ -696,8 +683,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	 */
 	@Override
 	public void setSize(final int x, final int y) {
-		size = new Point(x, y);
-
+		// size = new Point(x, y);
 	}
 
 	/**
@@ -737,6 +723,25 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 	@Override
 	public void layersChanged() {
 		renderer.sceneBuffer.layersChanged();
-	};
+
+	}
+
+	@Override
+	public synchronized void acquireLock() {
+		while (lockAcquired) {
+			try {
+				wait();
+			} catch (final InterruptedException e) {
+				// e.printStackTrace();
+			}
+		}
+		lockAcquired = true;
+	}
+
+	@Override
+	public synchronized void releaseLock() {
+		lockAcquired = false;
+		notify();
+	}
 
 }

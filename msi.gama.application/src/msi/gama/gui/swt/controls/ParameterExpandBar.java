@@ -14,6 +14,7 @@ package msi.gama.gui.swt.controls;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.gui.swt.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 
@@ -25,7 +26,7 @@ import org.eclipse.swt.widgets.*;
 public class ParameterExpandBar extends Composite/* implements IPopupProvider */{
 
 	private ParameterExpandItem[] items;
-	private ParameterExpandItem focusItem;
+	private ParameterExpandItem focusItem, hoverItem;
 	private int spacing, yCurrentScroll, itemCount;
 	private final Listener listener;
 	private boolean inDispose;
@@ -108,6 +109,30 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		addListener(SWT.MouseUp, listener);
 		addListener(SWT.Paint, listener);
 		addListener(SWT.Resize, listener);
+		addMouseTrackListener(new MouseTrackListener() {
+
+			@Override
+			public void mouseEnter(final MouseEvent e) {
+				// onHover(e);
+			}
+
+			@Override
+			public void mouseExit(final MouseEvent e) {
+				changeHoverTo(null);
+			}
+
+			@Override
+			public void mouseHover(final MouseEvent e) {
+				// onHover(e);
+			}
+		});
+		addMouseMoveListener(new MouseMoveListener() {
+
+			@Override
+			public void mouseMove(final MouseEvent e) {
+				onHover(e);
+			}
+		});
 		// addListener(SWT.KeyDown, listener);
 		addListener(SWT.FocusIn, listener);
 		addListener(SWT.FocusOut, listener);
@@ -431,6 +456,35 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		}
 	}
 
+	void onHover(final MouseEvent event) {
+		int x = event.x;
+		int y = event.y;
+		boolean hover = false;
+		for ( int i = 0; i < itemCount; i++ ) {
+			ParameterExpandItem item = items[i];
+			hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
+			if ( hover ) {
+				changeHoverTo(item);
+				return;
+			}
+		}
+		if ( !hover ) {
+			changeHoverTo(null);
+		}
+	}
+
+	void changeHoverTo(final ParameterExpandItem item) {
+		if ( hoverItem == item ) { return; }
+		ParameterExpandItem oldHoverItem = hoverItem;
+		hoverItem = item;
+		if ( oldHoverItem != null ) {
+			oldHoverItem.redraw();
+		}
+		if ( item != null ) {
+			item.redraw();
+		}
+	}
+
 	void onMouseDown(final Event event) {
 		if ( event.button != 1 ) { return; }
 		int x = event.x;
@@ -536,7 +590,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		for ( int i = 0; i < itemCount; i++ ) {
 			ParameterExpandItem item = items[i];
 			event.gc.setAlpha(255);
-			item.drawItem(event.gc, hasFocus && item == getFocusItem());
+			item.drawItem(event.gc, item == hoverItem);
 		}
 	}
 

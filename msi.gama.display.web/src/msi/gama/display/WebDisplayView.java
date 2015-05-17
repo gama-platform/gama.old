@@ -25,37 +25,6 @@ public class WebDisplayView extends LayeredDisplayView {
 	protected Composite createSurfaceComposite() {
 		surfaceComposite = new Browser(parent, SWT.NONE);
 
-		// perspectiveListener = new IPerspectiveListener() {
-		//
-		// boolean previousState = false;
-		//
-		// @Override
-		// public void perspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective,
-		// final String changeId) {}
-		//
-		// @Override
-		// public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-		// if ( perspective.getId().equals(ModelingPerspective.ID) ) {
-		// if ( getOutput() != null && getOutput().getSurface() != null ) {
-		// previousState = getOutput().getSurface().isPaused();
-		// getOutput().getSurface().setPaused(true);
-		// }
-		// if ( overlay != null ) {
-		// overlay.hide();
-		// // layersOverlay.hide();
-		// }
-		// } else {
-		// if ( getOutput() != null && getOutput().getSurface() != null ) {
-		// getOutput().getSurface().setPaused(previousState);
-		// }
-		// if ( overlay != null ) {
-		// overlay.update();
-		// // layersOverlay.update();
-		// }
-		// }
-		// }
-		// };
-		// SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
 		return surfaceComposite;
 	}
 

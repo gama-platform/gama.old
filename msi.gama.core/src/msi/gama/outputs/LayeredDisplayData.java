@@ -14,19 +14,18 @@ import msi.gama.util.GamaColor;
  */
 public class LayeredDisplayData {
 
+	public enum Changes {
+		SPLIT_LAYER, CHANGE_CAMERA, THREED_VIEW, CAMERA_POS, BACKGROUND, HIGHLIGHT;
+	}
+
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
 	public static final String WEB = "web";
 	public static final String THREED = "3D";
 
-	public static final int SPLIT_LAYER = 0;
-	public static final int CHANGE_CAMERA = 1;
-	public static final int THREED_VIEW = 2;
-	public static final int CAMERA_POS = 3;
-
 	public static interface DisplayDataListener {
 
-		void changed(int property, boolean value);
+		void changed(Changes property, boolean value);
 	}
 
 	final Set<DisplayDataListener> listeners = new HashSet();
@@ -39,7 +38,7 @@ public class LayeredDisplayData {
 		listeners.remove(listener);
 	}
 
-	public void notifyListeners(final int property, final boolean value) {
+	public void notifyListeners(final Changes property, final boolean value) {
 		for ( DisplayDataListener listener : listeners ) {
 			listener.changed(property, value);
 		}
@@ -114,6 +113,7 @@ public class LayeredDisplayData {
 	 */
 	public void setBackgroundColor(final Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
+		notifyListeners(Changes.BACKGROUND, true);
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class LayeredDisplayData {
 	 */
 	public void setOutput3D(final boolean output3d) {
 		isOutputtingIn3D = output3d;
-		notifyListeners(LayeredDisplayData.THREED_VIEW, output3d);
+		notifyListeners(LayeredDisplayData.Changes.THREED_VIEW, output3d);
 	}
 
 	/**
@@ -362,7 +362,7 @@ public class LayeredDisplayData {
 	public void setCameraPos(final ILocation cameraPos) {
 		if ( !this.cameraPos.equals(cameraPos) ) {
 			this.cameraPos = cameraPos;
-			notifyListeners(CAMERA_POS, true);
+			notifyListeners(Changes.CAMERA_POS, true);
 		}
 	}
 
@@ -379,7 +379,7 @@ public class LayeredDisplayData {
 	public void setCameraLookPos(final ILocation cameraLookPos) {
 		if ( !this.cameraLookPos.equals(cameraLookPos) ) {
 			this.cameraLookPos = cameraLookPos;
-			notifyListeners(CAMERA_POS, true);
+			notifyListeners(Changes.CAMERA_POS, true);
 		}
 	}
 
@@ -396,7 +396,7 @@ public class LayeredDisplayData {
 	public void setCameraUpVector(final ILocation cameraUpVector) {
 		if ( !this.cameraUpVector.equals(cameraUpVector) ) {
 			this.cameraUpVector = cameraUpVector;
-			notifyListeners(CAMERA_POS, true);
+			notifyListeners(Changes.CAMERA_POS, true);
 		}
 	}
 
@@ -479,6 +479,7 @@ public class LayeredDisplayData {
 
 	public void setHighlightColor(final Color hc) {
 		highlightColor = hc;
+		notifyListeners(Changes.HIGHLIGHT, true);
 	}
 
 	/**
@@ -531,7 +532,7 @@ public class LayeredDisplayData {
 
 	public void setArcBallCamera(final boolean c) {
 		isUsingArcBallCamera = c;
-		notifyListeners(LayeredDisplayData.CHANGE_CAMERA, c);
+		notifyListeners(Changes.CHANGE_CAMERA, c);
 	}
 
 	/**
@@ -543,7 +544,7 @@ public class LayeredDisplayData {
 
 	public void setLayerSplitted(final boolean s) {
 		isSplittingLayers = s;
-		notifyListeners(LayeredDisplayData.SPLIT_LAYER, s);
+		notifyListeners(Changes.SPLIT_LAYER, s);
 	}
 
 	public static ILocation getNoChange() {

@@ -272,12 +272,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	@Override
 	public void
 		reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width, final int height) {
-		// System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
+		System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
 		// Get the OpenGL graphics context
 		if ( width <= 0 || height <= 0 ) { return; }
 		GL2 gl = drawable.getContext().getGL().getGL2();
 		this.width = width;
-		this.height = height == 0 ? 1 : height;
+		this.height = height;
 		// Set the viewport (display area) to cover the entire window
 		gl.glViewport(0, 0, width, height);
 		// Enable the model view - any new transformations will affect the model-view matrix
@@ -289,8 +289,9 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		gl.glLoadIdentity();
 		// System.out.println("	Renderer reshaping:" + "projection matrix reset");
 		// FIXME Update camera as well ??
+		// Only if zoomFit... camera.resetCamera(data.getEnvWidth(), data.getEnvHeight(), data.isOutput3D());
 		camera.updateCamera(gl, width, height);
-		// System.out.println("	Renderer reshaping:" + "camera updated");
+		System.out.println("	Renderer reshaping:" + "camera updated");
 	}
 
 	public void drawScene(final GL2 gl) {
@@ -552,7 +553,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
 		final java.util.List<BufferedImage> textures, final java.util.List<Double> ratio,
 		final java.util.List<GamaColor> colors) {
-
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
 		sceneBuffer.getSceneToUpdate().addGeometry(geom, scope.getAgentScope(), color, fill, border,
 			textures == null || textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type,
 			ratio, colors);
@@ -572,6 +573,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final boolean isDynamic,
 		final String name) {
 
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		GamaPoint location = new GamaPoint(locationInModelUnits);
 		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
 		if ( sizeInModelUnits == null ) {
@@ -595,6 +597,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] valueMatrix,
 		final boolean textured, final boolean triangulated, final boolean isGrayScaled, final boolean showText,
 		final Color gridColor, final double cellSize, final String name) {
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		Envelope3D env = getWorldEnvelopeWithZ(1);
 		IAgent a = scope.getAgentScope();
 		sceneBuffer.getSceneToUpdate().addDEM(valueMatrix, img, a, textured, triangulated, isGrayScaled, showText, env,
@@ -606,6 +609,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	}
 
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
 		double stepX, stepY;
 		double wRatio = this.data.getEnvWidth() / image.getWidth();
 		double hRatio = this.data.getEnvHeight() / image.getHeight();
@@ -626,7 +630,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	@Override
 	public Rectangle2D drawDEM(final IScope scope, final BufferedImage dem, final BufferedImage texture,
 		final Double z_factor) {
-		// if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 
 		sceneBuffer.getSceneToUpdate().addDEMFromPNG(texture, dem, getWorldEnvelopeWithZ(z_factor));
 		return null;
@@ -659,6 +663,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		GamaPoint location = new GamaPoint(locationInModelUnits).yNegated();
 		Integer size;
 		Double sizeInModelUnits;
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		if ( heightInModelUnits == null ) {
 			size = heightOfLayerInPixels;
 			sizeInModelUnits = getHeight() / data.getEnvHeight() * size;
@@ -725,7 +730,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			new GamaPoint(widthOfLayerInPixels / (double) getWidth(), heightOfLayerInPixels / (double) getHeight(),
 				z_scale);
 
-		sceneBuffer.getSceneToUpdate().beginDrawingLayer(layer, currentOffset, currentScale, currentAlpha);
+		ModelScene scene = sceneBuffer.getSceneToUpdate();
+		if ( scene != null ) {
+			scene.beginDrawingLayer(layer, currentOffset, currentScale, currentAlpha);
+		}
 	}
 
 	@Override

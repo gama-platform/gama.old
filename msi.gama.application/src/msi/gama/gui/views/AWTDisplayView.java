@@ -52,7 +52,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			}
 		};
 
-		final boolean isOpenGL = getOutput().isOpenGL();
+		// final boolean isOpenGL = getOutput().isOpenGL();
 		final String outputName = getOutput().getName();
 
 		OutputSynchronizer.incInitializingViews(outputName, getOutput().isPermanent()); // incremented in the SWT thread
@@ -91,11 +91,12 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			public void afterComponentCreatedAWTThread() {
-				if ( !isOpenGL ) {
-					// Deferred to the OpenGL renderer to signify its initialization
-					// see JOGLAWTGLRendered.init()
-					OutputSynchronizer.decInitializingViews(outputName);
-				}
+				// if ( !isOpenGL ) {
+				// Deferred to the OpenGL renderer to signify its initialization
+				// see JOGLAWTGLRendered.init()
+				OutputSynchronizer.decInitializingViews(outputName);
+				// }
+
 				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
@@ -165,12 +166,6 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			}
 
 		});
-	}
-
-	@Override
-	public void dispose() {
-		surfaceComposite.dispose();
-		super.dispose();
 	}
 
 	@Override

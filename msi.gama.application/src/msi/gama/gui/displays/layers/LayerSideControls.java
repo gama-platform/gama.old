@@ -39,18 +39,47 @@ public class LayerSideControls {
 		// }
 	}
 
+	public static void fill(final Composite compo, final IDisplaySurface container) {
+		EditorFactory.create(compo, "Antialias:", container.getData().isAntialias(), new EditorListener<Boolean>() {
+
+			@Override
+			public void valueModified(final Boolean newValue) throws GamaRuntimeException {
+				container.getData().setAntialias(newValue);
+				updateIfPaused(null, container);
+			}
+		});
+		EditorFactory.create(compo, "Background:", container.getData().getBackgroundColor(),
+			new EditorListener<Color>() {
+
+				@Override
+				public void valueModified(final Color newValue) {
+					container.getData().setBackgroundColor(newValue);
+					updateIfPaused(null, container);
+				}
+			});
+		EditorFactory.create(compo, "Highlight:", container.getData().getHighlightColor(), new EditorListener<Color>() {
+
+			@Override
+			public void valueModified(final Color newValue) {
+				container.getData().setHighlightColor(newValue);
+				updateIfPaused(null, container);
+			}
+		});
+
+	}
+
 	public static void fill(final Composite compo, final ILayer layer, final IDisplaySurface container) {
 
 		final ILayerStatement definition = layer.getDefinition();
 
-		EditorFactory.create(compo, "Visible:", container.getManager().isEnabled(layer), new EditorListener<Boolean>() {
-
-			@Override
-			public void valueModified(final Boolean newValue) {
-				container.getManager().enableLayer(layer, newValue);
-				updateIfPaused(layer, container);
-			}
-		});
+		// EditorFactory.create(compo, "Visible:", container.getManager().isEnabled(layer), new EditorListener<Boolean>() {
+		//
+		// @Override
+		// public void valueModified(final Boolean newValue) {
+		// container.getManager().enableLayer(layer, newValue);
+		// updateIfPaused(layer, container);
+		// }
+		// });
 		EditorFactory.create(compo, "Transparency:", definition.getTransparency(), 0.0, 1.0, 0.1, false,
 			new EditorListener<Double>() {
 

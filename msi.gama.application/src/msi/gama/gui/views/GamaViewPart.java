@@ -80,8 +80,8 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	}
 
 	@Override
-	public void setToolbar(final GamaToolbar2 toolbar) {
-		this.toolbar = toolbar;
+	public void createToolItems(final GamaToolbar2 tb) {
+		this.toolbar = tb;
 	}
 
 	@Override
@@ -146,12 +146,6 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		// GamaToolbarFactory.buildToolbar(this, getToolbarActionsId());
 	}
 
-	/**
-	 * @return
-	 */
-	@Override
-	public abstract Integer[] getToolbarActionsId();
-
 	@Override
 	public/* final */void createPartControl(final Composite composite) {
 		this.parent = GamaToolbarFactory.createToolbars(this, composite);
@@ -200,15 +194,15 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 	@Override
 	public void setOutput(final IDisplayOutput out) {
-		resetButtonStates();
+		if ( toolbar != null ) {
+			toolbar.wipe(SWT.LEFT);
+			toolbar.wipe(SWT.RIGHT);
+			GamaToolbarFactory.buildToolbar(this, toolbar);
+		}
 		if ( output != null && output != out ) {
 			output.dispose();
 		}
 		output = out;
-	}
-
-	private void resetButtonStates() {
-		GamaToolbarFactory.resetToolbar(this, toolbar);
 	}
 
 	@Override
@@ -218,6 +212,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 	@Override
 	public void dispose() {
+		toolbar = null;
 		IWorkbenchPartSite s = getSite();
 		if ( s != null ) {
 			IPartService ps = (IPartService) s.getService(IPartService.class);
@@ -252,8 +247,9 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 			@Override
 			public void run() {
 				try {
+					System.out.println("Closing: " + getPartName());
 					getSite().getPage().hideView(GamaViewPart.this);
-
+					System.out.println("Closed: " + getPartName());
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}

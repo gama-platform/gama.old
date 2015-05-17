@@ -21,6 +21,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.*;
 import msi.gama.outputs.layers.ILayerMouseListener;
 import msi.gama.precompiler.GamlAnnotations.display;
@@ -34,7 +35,7 @@ import msi.gaml.types.Types;
 public class ImageDisplaySurface implements IDisplaySurface {
 
 	private final LayeredDisplayOutput output;
-	private boolean needsUpdate = true;
+	private final boolean needsUpdate = true;
 	private BufferedImage buffImage = null;
 	private Graphics2D g2 = null;
 	private int width = 500, height = 500;
@@ -235,10 +236,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	}
 
-	@Override
-	public void canBeUpdated(final boolean ok) {
-		needsUpdate = ok;
-	}
+	//
+	// @Override
+	// public void canBeUpdated(final boolean ok) {
+	// needsUpdate = ok;
+	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
@@ -404,7 +406,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#waitForUpdateAndRun(java.lang.Runnable)
 	 */
 	@Override
-	public void waitForUpdateAndRun(final Runnable r) {
+	public void runAndUpdate(final Runnable r) {
 		r.run();
 	}
 
@@ -430,5 +432,26 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void layersChanged() {}
+
+	/**
+	 * Method changed()
+	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(msi.gama.outputs.LayeredDisplayData.Changes, boolean)
+	 */
+	@Override
+	public void changed(final Changes property, final boolean value) {}
+
+	/**
+	 * Method acquireLock()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#acquireLock()
+	 */
+	@Override
+	public void acquireLock() {}
+
+	/**
+	 * Method releaseLock()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#releaseLock()
+	 */
+	@Override
+	public void releaseLock() {}
 
 }

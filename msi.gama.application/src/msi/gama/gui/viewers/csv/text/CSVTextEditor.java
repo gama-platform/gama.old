@@ -38,15 +38,6 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 		setSourceViewerConfiguration(csvTextConfig);
 	}
 
-	/**
-	 * Method getToolbarActionsId()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#getToolbarActionsId()
-	 */
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] { -32 };
-	}
-
 	@Override
 	public void createPartControl(final Composite composite) {
 		Composite parent = GamaToolbarFactory.createToolbars(this, composite);
@@ -60,34 +51,19 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 	}
 
 	/**
-	 * Method setToolbar()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
-	@Override
-	public void setToolbar(final GamaToolbar2 toolbar) {
-		// this.toolbar = toolbar;
-	}
-
-	/**
 	 * Method createToolItem()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {
+	public void createToolItems(final GamaToolbar2 tb) {
 
-		switch (code) {
+		tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
 
-			case -32:
-				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						doSaveAs();
-					}
-				}, SWT.RIGHT);
-				break;
-
-		}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				doSaveAs();
+			}
+		}, SWT.RIGHT);
 
 	}
 

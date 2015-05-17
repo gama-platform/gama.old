@@ -35,6 +35,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	GamaPoint scale = new GamaPoint(1, 1, 1);
 	Double alpha = 1d;
 	final ILayer layer;
+	volatile boolean isInvalid;
 	// final Integer id;
 	// int trace = 0;
 	// boolean fading = false;
@@ -62,6 +63,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void draw(final GL2 gl, final JOGLRenderer renderer, final boolean picking) {
+		if ( isInvalid() ) { return; }
 		// GL2 gl = GLContext.getCurrentGL().getGL2();
 		gl.glPushMatrix();
 		//
@@ -184,6 +186,18 @@ public class LayerObject implements Iterable<GeometryObject> {
 	@Override
 	public Iterator<GeometryObject> iterator() {
 		return geometries.getObjects().iterator();
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isInvalid() {
+		return isInvalid;
+	}
+
+	public void invalidate() {
+
+		isInvalid = true;
 	}
 
 }

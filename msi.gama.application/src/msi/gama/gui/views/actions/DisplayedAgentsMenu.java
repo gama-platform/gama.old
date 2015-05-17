@@ -70,7 +70,7 @@ public class DisplayedAgentsMenu {
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
-				surface.waitForUpdateAndRun(new Runnable() {
+				surface.runAndUpdate(new Runnable() {
 
 					@Override
 					public void run() {
@@ -176,7 +176,7 @@ public class DisplayedAgentsMenu {
 					menu.setVisible(true);
 
 				}
-			}, SWT.RIGHT);
+			}, SWT.LEFT);
 
 	}
 

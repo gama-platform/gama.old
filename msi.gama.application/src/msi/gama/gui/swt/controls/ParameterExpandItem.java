@@ -137,7 +137,7 @@ public class ParameterExpandItem extends Item {
 
 	}
 
-	void drawItem(final GC gc, final boolean drawFocus) {
+	void drawItem(final GC gc, final boolean drawHover) {
 		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
 		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
@@ -145,6 +145,10 @@ public class ParameterExpandItem extends Item {
 		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6, 6);
 		gc.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		gc.fillRoundRectangle(x, y, width, headerHeight, 6, 6);
+		if ( drawHover ) {
+			gc.setForeground(IGamaColors.GRAY_LABEL.color());
+			gc.drawRoundRectangle(x + 1, y + 1, width - 2, headerHeight - 2, 6, 6);
+		}
 
 		// gc.drawRoundRectangle(x, y, width, headerHeight + (expanded ? height : 0), 6, 6);
 		int drawX = x;
@@ -192,7 +196,7 @@ public class ParameterExpandItem extends Item {
 				title = getText();
 			}
 			gc.setFont(SwtGui.getExpandfont());
-			drawX += ParameterExpandItem.SEPARATION;
+			drawX += 2 * ParameterExpandItem.TEXT_INSET;
 			Point size = gc.stringExtent(title);
 			gc.setForeground(IGamaColors.NEUTRAL.color());
 			// gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));

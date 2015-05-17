@@ -18,7 +18,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
@@ -79,15 +78,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 			reset();
 			displayItems();
 		}
-	}
-
-	/**
-	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
-	 */
-	@Override
-	public Integer[] getToolbarActionsId() {
-		// TODO Need to be defined and usable (not the case now)
-		return new Integer[] {};
 	}
 
 	@Override
@@ -243,12 +233,5 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		exceptions.clear();
 		displayItems();
 	}
-
-	/**
-	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
-	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {}
 
 }

@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
+import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.layers.ILayerMouseListener;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
@@ -108,13 +109,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void focusOn(final IShape geometry) {}
-
-	/**
-	 * Method canBeUpdated()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#canBeUpdated(boolean)
-	 */
-	@Override
-	public void canBeUpdated(final boolean ok) {}
 
 	/**
 	 * Method snapshot()
@@ -279,7 +273,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#waitForUpdateAndRun(java.lang.Runnable)
 	 */
 	@Override
-	public void waitForUpdateAndRun(final Runnable r) {}
+	public void runAndUpdate(final Runnable r) {}
 
 	/**
 	 * Method getData()
@@ -303,5 +297,26 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void layersChanged() {}
+
+	/**
+	 * Method changed()
+	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(msi.gama.outputs.LayeredDisplayData.Changes, boolean)
+	 */
+	@Override
+	public void changed(final Changes property, final boolean value) {}
+
+	/**
+	 * Method acquireLock()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#acquireLock()
+	 */
+	@Override
+	public void acquireLock() {}
+
+	/**
+	 * Method releaseLock()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#releaseLock()
+	 */
+	@Override
+	public void releaseLock() {}
 
 }

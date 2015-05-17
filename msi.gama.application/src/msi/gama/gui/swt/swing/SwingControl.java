@@ -13,6 +13,7 @@ package msi.gama.gui.swt.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.im.InputContext;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -247,6 +248,19 @@ public abstract class SwingControl extends Composite {
 			SWT_AWT.embeddedFrameClass = "sun.lwawt.macosx.CViewEmbeddedFrame";
 		}
 		frame = SWT_AWT.new_Frame(borderlessChild);
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				/*
+				 * Fetching the input context will cause one to be created if not previously fetched.
+				 * Window#getInputContext() is sychronized, and can lead to SWT/AWT deadlock. So fetch it now to avoid
+				 * problems later.
+				 */
+				@SuppressWarnings("unused")
+				final InputContext input = frame.getInputContext();
+			}
+		});
 
 		// if ( verboseSizeLayout )
 		// ComponentDebugging.addComponentSizeDebugListeners(frame);
@@ -398,9 +412,20 @@ public abstract class SwingControl extends Composite {
 		// Overridden from JApplet.
 		@Override
 		protected JRootPane createRootPane() {
+			enableInputMethods(false);
 			JRootPane rootPane = new ToplevelRootPane();
 			rootPane.setOpaque(true);
 			return rootPane;
+		}
+
+		@Override
+		public InputContext getInputContext() {
+			return null;
+		}
+
+		@Override
+		public void removeNotify() {
+			super.removeNotify();
 		}
 	}
 
@@ -409,6 +434,10 @@ public abstract class SwingControl extends Composite {
 	 * Panel.
 	 */
 	private class ToplevelRootPane extends JRootPane {
+
+		public ToplevelRootPane() {
+			disableEvents(/* AWTEvent.INPUT_METHODS_ENABLED_MASK */0x1000);
+		}
 
 		// Keep the sizes cache up to date.
 		// The JRootPane, not the JApplet, is the "validation root",
@@ -422,6 +451,16 @@ public abstract class SwingControl extends Composite {
 			// namely [0,2147483647] instead of [2147483647,2147483647],
 			// so we use the content pane's maximum size instead.
 			updateCachedAWTSizes(getMinimumSize(), getPreferredSize(), getContentPane().getMaximumSize());
+		}
+
+		@Override
+		public InputContext getInputContext() {
+			return null;
+		}
+
+		@Override
+		public void removeNotify() {
+			super.removeNotify();
 		}
 	}
 

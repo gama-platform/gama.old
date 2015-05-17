@@ -155,7 +155,6 @@ public class GamaToolbarFactory {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		data.minimumWidth = TOOLBAR_HEIGHT * 2;
 		tb.setLayoutData(data);
-		view.setToolbar(tb);
 		composite.addDisposeListener(new DisposeListener() {
 
 			@Override
@@ -163,7 +162,7 @@ public class GamaToolbarFactory {
 				disposeToolbar(view, tb);
 			}
 		});
-		buildToolbar(view, tb, view.getToolbarActionsId());
+		buildToolbar(view, tb);
 		return childComposite;
 	}
 
@@ -171,17 +170,9 @@ public class GamaToolbarFactory {
 		if ( tb != null && !tb.isDisposed() ) {
 			tb.dispose();
 		}
-		view.setToolbar(null);
 	}
 
-	public static void resetToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
-		if ( tb == null ) { return; }
-		tb.wipe(SWT.RIGHT);
-		buildToolbar(view, tb, view.getToolbarActionsId());
-	}
-
-	public static void buildToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb, final Integer ... codes) {
-		if ( codes == null ) { return; }
+	public static void buildToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
 		if ( view instanceof IToolbarDecoratedView.Sizable ) {
 			FontSizer fs = new FontSizer((IToolbarDecoratedView.Sizable) view);
 			fs.install(tb);
@@ -198,13 +189,7 @@ public class GamaToolbarFactory {
 			BackgroundChooser b = new BackgroundChooser((Colorizable) view);
 			b.install(tb);
 		}
-		for ( Integer i : codes ) {
-			if ( IToolbarDecoratedView.SEP == i ) {
-				tb.sep(TOOLBAR_SEP, SWT.RIGHT);
-			} else {
-				view.createToolItem(i, tb);
-			}
-		}
+		view.createToolItems(tb);
 	}
 
 }

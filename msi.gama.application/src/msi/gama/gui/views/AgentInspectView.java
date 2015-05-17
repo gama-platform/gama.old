@@ -167,18 +167,10 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 	}
 
 	/**
-	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
-	 */
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] {};
-	}
-
-	/**
 	 * Method createToolItem()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {}
+	public void createToolItems(final GamaToolbar2 tb) {}
 
 }

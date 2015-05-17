@@ -83,11 +83,16 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public final void updateCamera(final GL2 gl, final int width, final int height) {
-		double aspect = (double) width / (height == 0 ? width : height);
+		// double aspect = (renderer.data.getEnvWidth() / renderer.data.getEnvHeight());
+		// double aspect = renderer.displaySurface.getDisplayWidth() / renderer.displaySurface.getDisplayHeight();
+		double aspect = (double) width / (height == 0 ? 1 : height);
+
+		// System.out.println("Aspect = " + aspect);
 		GLU glu = renderer.getGlu();
 		if ( !getRenderer().data.isOrtho() ) {
 			try {
-				glu.gluPerspective(45.0d, aspect, maxDim / 1000, maxDim * 10);
+				perspectiveGL(gl, 45.0d, aspect, maxDim / 1000, maxDim * 10);
+				// glu.gluPerspective(45.0d, aspect, maxDim / 1000, maxDim * 10);
 			} catch (BufferOverflowException e) {
 				System.out.println("Buffer overflow exception");
 			}
@@ -101,6 +106,13 @@ public abstract class AbstractCamera implements ICamera {
 		}
 		makeGluLookAt(glu);
 		animate();
+	}
+
+	void perspectiveGL(final GL2 gl, final double fovY, final double aspect, final double zNear, final double zFar) {
+		double fW, fH;
+		fH = Math.tan(fovY / 360 * Math.PI) * zNear;
+		fW = fH * aspect;
+		gl.glFrustum(-fW, fW, -fH, fH, zNear, zFar);
 	}
 
 	protected abstract void animate();

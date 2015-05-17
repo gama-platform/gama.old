@@ -31,11 +31,6 @@ import org.osgi.framework.Bundle;
  */
 public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
-	private final static int BACK = -50;
-	private final static int FORWARD = -51;
-	private final static int HOME = -52;
-	private final static int REFRESH = -53;
-	private final static int STOP = -54;
 	private static String HOME_URL = null;
 
 	public static void openWelcomePage(final boolean ifEmpty) {
@@ -139,81 +134,58 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 		return browser;
 	}
 
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] { BACK, HOME, FORWARD, SEP, REFRESH, STOP };
-	}
-
-	/**
-	 * Method setToolbar()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
-	@Override
-	public void setToolbar(final GamaToolbar2 toolbar) {
-		this.toolbar = toolbar;
-	}
-
 	/**
 	 * Method createToolItem()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {
+	public void createToolItems(final GamaToolbar2 tb) {
+		this.toolbar = tb;
 
-		switch (code) {
-			case BACK:
-				back = tb.button("browser/back", "Back", "Go to previous page in history", new SelectionAdapter() {
+		back = tb.button("browser/back", "Back", "Go to previous page in history", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						browser.back();
-						checkButtons();
-					}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				browser.back();
+				checkButtons();
+			}
 
-				}, SWT.RIGHT);
-				break;
-			case HOME:
-				home = tb.button("browser/home", "Home", "Go back to the welcome page", new SelectionAdapter() {
+		}, SWT.RIGHT);
+		home = tb.button("browser/home", "Home", "Go back to the welcome page", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						openWelcomePage(false);
-						checkButtons();
-					}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				openWelcomePage(false);
+				checkButtons();
+			}
 
-				}, SWT.RIGHT);
-				break;
-			case FORWARD:
-				forward = tb.button("browser/forward", "Forward", "Go to next page in history", new SelectionAdapter() {
+		}, SWT.RIGHT);
+		forward = tb.button("browser/forward", "Forward", "Go to next page in history", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						browser.forward();
-						checkButtons();
-					}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				browser.forward();
+				checkButtons();
+			}
 
-				}, SWT.RIGHT);
-				break;
-			case REFRESH:
-				tb.button("browser/refresh", "Refresh", "Refresh current page", new SelectionAdapter() {
+		}, SWT.RIGHT);
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+		tb.button("browser/refresh", "Refresh", "Refresh current page", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						browser.refresh();
-					}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				browser.refresh();
+			}
 
-				}, SWT.RIGHT);
-				break;
-			case STOP:
-				tb.button("browser/stop", "Stop", "Stop loading page", new SelectionAdapter() {
+		}, SWT.RIGHT);
+		tb.button("browser/stop", "Stop", "Stop loading page", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						browser.stop();
-					}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				browser.stop();
+			}
 
-				}, SWT.RIGHT);
-		}
+		}, SWT.RIGHT);
 
 	}
 

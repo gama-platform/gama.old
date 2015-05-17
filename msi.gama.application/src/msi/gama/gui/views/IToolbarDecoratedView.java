@@ -23,9 +23,11 @@ public interface IToolbarDecoratedView {
 
 	public IWorkbenchSite getSite();
 
-	public void setToolbar(GamaToolbar2 toolbar);
+	// public void setToolbar(GamaToolbar2 toolbar);
 
-	public Integer[] getToolbarActionsId();
+	// public Integer[] getToolbarActionsId();
+
+	public void createToolItems(GamaToolbar2 tb);
 
 	public static interface Pausable extends IToolbarDecoratedView {
 
@@ -64,11 +66,5 @@ public interface IToolbarDecoratedView {
 		Control[] getZoomableControls();
 
 	}
-
-	/**
-	 * @param code
-	 * @param tb
-	 */
-	public void createToolItem(int code, GamaToolbar2 tb);
 
 }

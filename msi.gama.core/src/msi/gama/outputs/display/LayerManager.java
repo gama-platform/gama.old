@@ -59,12 +59,11 @@ public class LayerManager implements ILayerManager {
 		return null;
 	}
 
-	public ILayer removeLayer(final ILayer found) {
+	public void removeLayer(final ILayer found) {
 		if ( found != null ) {
 			enabledLayers.remove(found);
 		}
 		Collections.sort(enabledLayers);
-		return found;
 	}
 
 	@Override
@@ -104,27 +103,29 @@ public class LayerManager implements ILayerManager {
 	}
 
 	private void disable(final ILayer found) {
-		final ILayer ff = removeLayer(found);
-		if ( ff != null ) {
-			ff.disableOn(surface);
-			disabledLayers.add(ff);
+		if ( found != null ) {
+			found.disableOn(surface);
+			removeLayer(found);
+			disabledLayers.add(found);
 		}
 	}
 
 	@Override
 	public void enableLayer(final ILayer display, final Boolean enable) {
 
-		surface.waitForUpdateAndRun(new Runnable() {
+		surface.runAndUpdate(new Runnable() {
 
 			@Override
 			public void run() {
-				surface.canBeUpdated(false);
+				// surface.canBeUpdated(false);
 				if ( enable ) {
 					enable(display);
 				} else {
 					disable(display);
 				}
-				surface.canBeUpdated(true);
+				surface.layersChanged();
+
+				// surface.canBeUpdated(true);
 			}
 		});
 	}

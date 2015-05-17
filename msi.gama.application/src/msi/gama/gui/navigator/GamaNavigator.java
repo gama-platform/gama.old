@@ -31,20 +31,12 @@ import org.eclipse.ui.navigator.*;
 
 public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedView, ISelectionChangedListener {
 
-	final public static int LINK = 50;
-	final public static int COLLAPSE = 51;
-	final public static int NEW = 52;
-	final public static int IMPORT = 54;
-	final public static int PROJECT = 53;
-	final public static int SORT = 55;
-
 	// String OPEN_BROWSER_COMMAND_ID = "msi.gama.application.commands.OpenBrowser";
 
 	IResourceChangeListener listener;
 	IAction link, collapse;
 	ToolItem linkItem; // collapseItem, newFileItem, newProjectItem, importItem;
 	protected Composite parent;
-	// protected GamaToolbar leftToolbar, rightToolbar;
 	protected GamaToolbar2 toolbar;
 	private IDescriptionProvider commonDescriptionProvider;
 
@@ -203,110 +195,78 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	}
 
 	/**
-	 * Method setToolbar()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
-	@Override
-	public void setToolbar(final GamaToolbar2 toolbar) {
-		this.toolbar = toolbar;
-	}
-
-	/**
 	 * Method createToolItem()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {
+	public void createToolItems(final GamaToolbar2 tb) {
+		this.toolbar = tb;
 
-		switch (code) {
-			case LINK:
-				linkItem =
-					tb.check("navigator/navigator.link2", "", "Stay in sync with the editor", new SelectionAdapter() {
+		// Menu: { IMPORT, NEW, SEP, SORT, COLLAPSE, LINK };
+		tb.menu("navigator/navigator.import2", "", "Import...", new SelectionAdapter() {
 
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							link.run();
-						}
+			@Override
+			public void widgetSelected(final SelectionEvent trigger) {
+				GamaNavigatorImportMenu menu =
+					new GamaNavigatorImportMenu((IStructuredSelection) getCommonViewer().getSelection());
+				final ToolItem target = (ToolItem) trigger.widget;
+				final ToolBar toolBar = target.getParent();
+				menu.open(toolBar, trigger);
 
-					}, SWT.RIGHT);
-				break;
-			case COLLAPSE:
-				// ToolItem collapseItem =
-				tb.button("navigator/navigator.collapse2", "", "Collapse all items", new SelectionAdapter() {
+			}
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						collapse.run();
-					}
+		}, SWT.RIGHT);
+		tb.menu("navigator/navigator.new2", "", "New...", new SelectionAdapter() {
 
-				}, SWT.RIGHT);
-				break;
-			case SORT:
-				// ToolItem dateSorter =
-				tb.check("navigator/navigator.date2", "", "Sort by modification date", new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent trigger) {
+				GamaNavigatorNewMenu menu =
+					new GamaNavigatorNewMenu((IStructuredSelection) getCommonViewer().getSelection());
+				final ToolItem target = (ToolItem) trigger.widget;
+				final ToolBar toolBar = target.getParent();
+				menu.open(toolBar, trigger);
 
-					@Override
-					public void widgetSelected(final SelectionEvent trigger) {
-						boolean enabled = ((ToolItem) trigger.widget).getSelection();
+			}
 
-						try {
-							IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
-							mgr.setEnabled("msi.gama.application.date.decorator", enabled);
-						} catch (CoreException e) {
-							e.printStackTrace();
-						}
+		}, SWT.RIGHT);
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+		tb.check("navigator/navigator.date2", "", "Sort by modification date", new SelectionAdapter() {
 
-						FileFolderSorter.BY_DATE = enabled;
-						Object[] expanded = getCommonViewer().getExpandedElements();
-						getCommonViewer().refresh();
-						getCommonViewer().setExpandedElements(expanded);
-					}
+			@Override
+			public void widgetSelected(final SelectionEvent trigger) {
+				boolean enabled = ((ToolItem) trigger.widget).getSelection();
 
-				}, SWT.RIGHT);
-				break;
-			case NEW:
-				// newFileItem = <
-				tb.menu("navigator/navigator.new2", "", "New...", new SelectionAdapter() {
+				try {
+					IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+					mgr.setEnabled("msi.gama.application.date.decorator", enabled);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
 
-					@Override
-					public void widgetSelected(final SelectionEvent trigger) {
-						GamaNavigatorNewMenu menu =
-							new GamaNavigatorNewMenu((IStructuredSelection) getCommonViewer().getSelection());
-						final ToolItem target = (ToolItem) trigger.widget;
-						final ToolBar toolBar = target.getParent();
-						menu.open(toolBar, trigger);
+				FileFolderSorter.BY_DATE = enabled;
+				Object[] expanded = getCommonViewer().getExpandedElements();
+				getCommonViewer().refresh();
+				getCommonViewer().setExpandedElements(expanded);
+			}
 
-					}
+		}, SWT.RIGHT);
+		tb.button("navigator/navigator.collapse2", "", "Collapse all items", new SelectionAdapter() {
 
-				}, SWT.RIGHT);
-				break;
-			case IMPORT:
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				collapse.run();
+			}
 
-				// importItem =
-				tb.menu("navigator/navigator.import2", "", "Import...", new SelectionAdapter() {
+		}, SWT.RIGHT);
+		linkItem = tb.check("navigator/navigator.link2", "", "Stay in sync with the editor", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent trigger) {
-						GamaNavigatorImportMenu menu =
-							new GamaNavigatorImportMenu((IStructuredSelection) getCommonViewer().getSelection());
-						final ToolItem target = (ToolItem) trigger.widget;
-						final ToolBar toolBar = target.getParent();
-						menu.open(toolBar, trigger);
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				link.run();
+			}
 
-					}
+		}, SWT.RIGHT);
 
-				}, SWT.RIGHT);
-		}
-
-	}
-
-	/**
-	 * Method getToolbarActionsId()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#getToolbarActionsId()
-	 */
-	@Override
-	public Integer[] getToolbarActionsId() {
-		return new Integer[] { IMPORT, NEW, SEP, SORT, COLLAPSE, LINK };
 	}
 
 	/**

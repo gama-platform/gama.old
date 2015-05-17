@@ -17,6 +17,7 @@ import java.util.Collection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
+import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.outputs.layers.ILayerMouseListener;
 import msi.gama.runtime.IScope;
 
@@ -26,7 +27,7 @@ import msi.gama.runtime.IScope;
  * @todo Description
  * 
  */
-public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener */{
+public interface IDisplaySurface extends DisplayDataListener /* extends IPerspectiveListener, IPartListener */{
 
 	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
 	static final int MAX_ZOOM_FACTOR = 2;
@@ -80,9 +81,9 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	void focusOn(IShape geometry);
 
-	void canBeUpdated(boolean ok);
+	// void canBeUpdated(boolean ok);
 
-	void waitForUpdateAndRun(Runnable r);
+	void runAndUpdate(Runnable r);
 
 	void snapshot();
 
@@ -150,5 +151,9 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	 * 
 	 */
 	void layersChanged();
+
+	void acquireLock();
+
+	void releaseLock();
 
 }
