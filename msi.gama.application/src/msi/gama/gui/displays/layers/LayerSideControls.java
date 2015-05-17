@@ -85,7 +85,7 @@ public class LayerSideControls {
 
 				@Override
 				public void valueModified(final Double newValue) {
-					layer.setTransparency(newValue);
+					layer.setTransparency(1 - newValue);
 					updateIfPaused(layer, container);
 				}
 
