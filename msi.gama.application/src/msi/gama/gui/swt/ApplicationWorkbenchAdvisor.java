@@ -51,10 +51,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		try {
 			IDecoratorManager dm = configurer.getWorkbench().getDecoratorManager();
 			dm.setEnabled("org.eclipse.pde.ui.binaryProjectDecorator", false);
-			// dm.setEnabled("org.eclipse.jdt.ui.decorator", false);
-			// dm.setEnabled("org.eclipse.jdt.ui.interface.decorator", false);
-			// dm.setEnabled("org.eclipse.jdt.ui.buildpath.decorator", false);
-			// dm.setEnabled("org.eclipse.jdt.ui.override.decorator", false);
 			dm.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", false);
 			dm.setEnabled("msi.gama.application.decorator", true);
 			dm.setEnabled("org.eclipse.ui.LinkedResourceDecorator", false);

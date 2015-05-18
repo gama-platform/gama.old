@@ -41,6 +41,10 @@ public class ExpressionEditor extends GenericEditor<IExpression> {
 		getEditorControl().setText(expressionText);
 	}
 
+	public IExpression getParameterValue() {
+		return (IExpression) param.value(null);
+	}
+
 	@Override
 	protected String typeToDisplay() {
 		return "expression";

@@ -421,7 +421,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		return i;
 	}
 
-	private T getParameterValue() throws GamaRuntimeException {
+	protected T getParameterValue() throws GamaRuntimeException {
 		return GAMA.run(new InScope<T>() {
 
 			@Override

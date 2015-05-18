@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'InputParameter.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'InputParameter.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -74,6 +74,11 @@ public class InputParameter extends ParameterAdapter {
 
 	@Override
 	public Object value() {
+		return value;
+	}
+
+	@Override
+	public Object value(final IScope scope) {
 		return value;
 	}
 

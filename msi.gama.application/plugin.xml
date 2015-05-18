@@ -1046,22 +1046,32 @@
          <command
                commandId="msi.gama.gui.gamaNavigator.commands.Refresh"
                icon="icons/navigator/navigator.refresh2.png"
-               label="Refresh"
+               label="Erase metadata"
                style="push">
             <visibleWhen>
                <and>
                   <iterate>
-                     <or>
-                        <instanceof
-                              value="msi.gama.gui.navigator.UserProjectsFolder">
-                        </instanceof>
-                        <instanceof
-                              value="msi.gama.gui.navigator.VirtualSharedModelsFolder">
-                        </instanceof>
-                        <instanceof
-                              value="msi.gama.gui.navigator.ModelsLibraryFolder">
-                        </instanceof>
-                     </or>
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <or>
+                           <test
+                                 property="org.eclipse.core.resources.contentTypeId"
+                                 value="msi.gama.gui.images.type">
+                           </test>
+                           <test
+                                 property="org.eclipse.core.resources.contentTypeId"
+                                 value="msi.gama.gui.csv.type">
+                           </test>
+                           <test
+                                 property="org.eclipse.core.resources.contentTypeId"
+                                 value="msi.gama.gui.shapefile.type">
+                           </test>
+                           <test
+                                 property="org.eclipse.core.resources.contentTypeId"
+                                 value="msi.gama.gui.gaml.type">
+                           </test>
+                        </or>
+                     </adapt>
                   </iterate>
                   <not>
                      <count
@@ -1357,6 +1367,18 @@
       <handler
             class="msi.gama.gui.swt.commands.HelpHandler"
             commandId="org.eclipse.ui.help.helpContents">
+         <activeWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="msi.gama.gui.navigator.commands.ResourceRefreshHandler"
+            commandId="msi.gama.gui.gamaNavigator.commands.Refresh">
          <activeWhen>
             <with
                   variable="activeWorkbenchWindow">
