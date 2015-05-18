@@ -23,7 +23,7 @@ Require-Bundle: org.eclipse.ui.console,
  org.eclipse.ui.navigator.resources;bundle-version="3.4.400",
  msi.gama.ext;bundle-version="1.0.0"
 Bundle-Vendor: UMMISCO
-Bundle-Version: 1.6.1.qualifier
+Bundle-Version: 1.7.0.qualifier
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: msi.gama.application;singleton:=true
 Bundle-ClassPath: .,

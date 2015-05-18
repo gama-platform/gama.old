@@ -69,6 +69,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		if ( checkCopyOfBuiltInModels() ) {
 			WorkspaceModelsManager.linkSampleModelsToWorkspace();
 		}
+
 	}
 
 	@Override
