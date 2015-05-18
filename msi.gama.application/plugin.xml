@@ -240,7 +240,8 @@
             class="msi.gama.gui.views.AgentInspectView"
             icon="icons/view.inspector2.png"
             id="msi.gama.application.view.AgentInspectView"
-            name="Inspector">
+            name="Inspector"
+            restorable="false">
       </view>
       <view
             allowMultiple="false"
@@ -267,7 +268,7 @@
             icon="icons/view.parameters2.png"
             id="msi.gama.application.view.ParameterView"
             name="Parameters"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="false"
@@ -276,7 +277,7 @@
             icon="icons/view.errors2.png"
             id="msi.gama.application.view.ErrorView"
             name="Errors"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="false"
@@ -303,7 +304,7 @@
             icon="icons/view.panel2.png"
             id="msi.gama.views.userControlView"
             name="User Control"
-            restorable="true">
+            restorable="false">
       </view>
 
    </extension>
@@ -1297,10 +1298,6 @@
          </activeWhen>
       </handler>
       <handler
-            class="msi.gama.gui.swt.commands.InspectAgentHandler"
-            commandId="msi.gama.application.commands.InspectAgent">
-      </handler>
-      <handler
             class="msi.gama.gui.swt.commands.ErrorsPauseAndEdit"
             commandId="msi.gama.application.commands.PauseAndEdit">
       </handler>
@@ -1607,10 +1604,6 @@
       <command
             id="msi.gama.application.commands.Cancel"
             name="Cancel">
-      </command>
-      <command
-            id="msi.gama.application.commands.InspectAgent"
-            name="Show Agent Inspector">
       </command>
       <command
             defaultHandler="msi.gama.gui.navigator.commands.ImportProjectsFromSVNHandler"

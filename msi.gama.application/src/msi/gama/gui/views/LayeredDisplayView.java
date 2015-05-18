@@ -90,12 +90,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		setPartName(output.getViewName());
+		setPartName(getOutput().getViewName());
 
 	}
 
 	public boolean isOpenGL() {
-		if ( output == null ) { return false; }
+		if ( outputs.isEmpty() ) { return false; }
 		return getOutput().isOpenGL();
 	}
 

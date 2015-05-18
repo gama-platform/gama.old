@@ -20,12 +20,14 @@ public interface IGamaView {
 
 	public void update(IDisplayOutput output);
 
-	public void setOutput(IDisplayOutput output);
+	public void addOutput(IDisplayOutput output);
 
 	IDisplayOutput getOutput();
 
 	public void close();
 
 	public void outputReloaded(IDisplayOutput output);
+
+	public void removeOutput(IDisplayOutput putput);
 
 }

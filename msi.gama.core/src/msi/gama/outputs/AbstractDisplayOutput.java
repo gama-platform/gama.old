@@ -40,7 +40,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 				view = GuiUtils.showView(getViewId(), isUnique() ? null : getName(), 3); // IWorkbenchPage.VIEW_CREATE
 			}
 			if ( view == null ) { return; }
-			view.setOutput(AbstractDisplayOutput.this);
+			view.addOutput(AbstractDisplayOutput.this);
 		}
 
 	};
@@ -65,7 +65,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 		if ( disposed ) { return; }
 		disposed = true;
 		if ( view != null ) {
-			view.close();
+			view.removeOutput(this);
 			view = null;
 		}
 		// GuiUtils.closeViewOf(this);

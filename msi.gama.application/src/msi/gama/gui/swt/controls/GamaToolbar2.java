@@ -85,7 +85,7 @@ public class GamaToolbar2 extends Composite {
 
 	public ToolItem
 		status(final Image image, final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		wipe(side, false);
+		wipe(side, true);
 		ToolItem item = button(color, s, image, side);
 		refresh(true);
 		return item;
@@ -183,25 +183,19 @@ public class GamaToolbar2 extends Composite {
 	 * @param includingToolItems
 	 * @return
 	 */
-	public int wipe(final int side /* SWT.LEFT or SWT.RIGHT */, final boolean includingToolItems) {
-		int width = 0;
+	public void wipe(final int side /* SWT.LEFT or SWT.RIGHT */, final boolean includingToolItems) {
 		ToolItem[] items = getToolbar(side).getItems();
 		for ( ToolItem t : items ) {
-
 			Control c = t.getControl();
 			if ( c == null && includingToolItems || c != null ) {
 				if ( c != null ) {
 					c.dispose();
 				}
 				t.dispose();
-			} else {
-				width += t.getWidth();
 			}
-
 		}
 		prepareToolbar(side);
 		refresh(true);
-		return width;
 	}
 
 	public void item(final IContributionItem item, final int side) {

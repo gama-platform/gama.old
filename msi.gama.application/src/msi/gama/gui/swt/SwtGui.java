@@ -1228,15 +1228,17 @@ public class SwtGui implements IGui {
 				if ( r == null ) {
 					if ( a == null ) { return; }
 					try {
-						new InspectDisplayOutput("Inspector", InspectDisplayOutput.INSPECT_AGENT).launch();
+						InspectDisplayOutput output =
+							new InspectDisplayOutput("Inspector", InspectDisplayOutput.INSPECT_AGENT, a);
+						output.launch();
 					} catch (final GamaRuntimeException g) {
 						g.addContext("In opening the agent inspector");
 						GAMA.reportError(GAMA.getRuntimeScope(), g, false);
 					}
 				}
-				AgentInspectView v =
-					(AgentInspectView) showView(GuiUtils.AGENT_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-				v.inspectAgent(a);
+				// AgentInspectView v =
+				// (AgentInspectView) showView(GuiUtils.AGENT_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+				// v.inspectAgent(a);
 			}
 		});
 	}

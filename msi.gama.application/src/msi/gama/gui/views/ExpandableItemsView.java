@@ -62,6 +62,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
 		final Composite control, final ParameterExpandBar bar, final boolean expanded) {
+		System.out.println("ExpandItem created for name " + name);
 		ParameterExpandItem i = new ParameterExpandItem(bar, data, SWT.None);
 		if ( name != null ) {
 			i.setText(name);

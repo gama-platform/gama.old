@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
+import java.util.*;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
@@ -35,7 +36,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolbarDecoratedView.Pausable, ITooltipDisplayer {
 
-	protected IDisplayOutput output = null;
+	protected final List<IDisplayOutput> outputs = new ArrayList();
 	protected Composite parent;
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
@@ -142,7 +143,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 				}
 			}
 		}
-		setOutput(out);
+		addOutput(out);
 		// GamaToolbarFactory.buildToolbar(this, getToolbarActionsId());
 	}
 
@@ -155,7 +156,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 	public abstract void ownCreatePartControl(Composite parent);
 
-	public void activateContext() {
+	private void activateContext() {
 		final IContextService contextService = (IContextService) getSite().getService(IContextService.class);
 		contextService.activateContext("msi.gama.application.simulation.context");
 	}
@@ -189,20 +190,26 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 	@Override
 	public IDisplayOutput getOutput() {
-		return output;
+		if ( outputs.isEmpty() ) { return null; }
+		return outputs.get(0);
 	}
 
 	@Override
-	public void setOutput(final IDisplayOutput out) {
+	public void addOutput(final IDisplayOutput out) {
+		if ( out == null ) { return; }
 		if ( toolbar != null ) {
 			toolbar.wipe(SWT.LEFT, true);
 			toolbar.wipe(SWT.RIGHT, true);
 			GamaToolbarFactory.buildToolbar(this, toolbar);
 		}
-		if ( output != null && output != out ) {
-			output.dispose();
+		// if ( !(outputs.isEmpty()) &&() {
+		// output.dispose();
+		// }
+		if ( !outputs.contains(out) ) {
+			outputs.add(out);
+		} else {
+			outputReloaded(out);
 		}
-		output = out;
 	}
 
 	@Override
@@ -213,6 +220,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void dispose() {
 		toolbar = null;
+		outputs.clear();
 		IWorkbenchPartSite s = getSite();
 		if ( s != null ) {
 			IPartService ps = (IPartService) s.getService(IPartService.class);
@@ -264,6 +272,14 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		// setOutput(output);
 		// }
 
+	}
+
+	@Override
+	public void removeOutput(final IDisplayOutput output) {
+		outputs.remove(output);
+		if ( outputs.isEmpty() ) {
+			close();
+		}
 	}
 
 }

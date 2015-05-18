@@ -142,8 +142,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	@Override
-	public void setOutput(final IDisplayOutput output) {
-		super.setOutput(output);
+	public void addOutput(final IDisplayOutput output) {
+		super.addOutput(output);
 		scope = null;
 		selectedColumns.clear();
 		final IExpression expr = getOutput().getValue();
@@ -236,9 +236,9 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 					Object oldVal = currentValue;
 					super.modifyValue();
 					if ( oldVal == null ? currentValue == null : oldVal.equals(currentValue) ) {
-						if ( output == null ) { return; }
+						if ( outputs.isEmpty() ) { return; }
 						try {
-							((InspectDisplayOutput) output).setNewExpression((IExpression) currentValue);
+							getOutput().setNewExpression((IExpression) currentValue);
 						} catch (final GamaRuntimeException e) {
 							e.printStackTrace();
 						}
@@ -247,7 +247,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 						fillAttributeMenu();
 						// TODO Make a test on the columns.
 						recreateViewer();
-						update(output);
+						update(getOutput());
 
 					}
 				}

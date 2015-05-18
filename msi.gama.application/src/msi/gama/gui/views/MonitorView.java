@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
@@ -39,7 +38,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	public static final String ID = GuiUtils.MONITOR_VIEW_ID;
 
-	private final ArrayList<MonitorOutput> outputs = new ArrayList();
+	// private final ArrayList<MonitorOutput> outputs = new ArrayList();
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
@@ -55,9 +54,10 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	// }
 
 	@Override
-	public void setOutput(final IDisplayOutput output) {
+	public void addOutput(final IDisplayOutput output) {
 		if ( output == null || outputs.contains(output) ) { return; }
 		// always consider the latest monitor as the output
+		super.addOutput(output);
 		addItem((MonitorOutput) output);
 	}
 
@@ -133,10 +133,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	@Override
 	public void removeItem(final MonitorOutput o) {
 		o.close();
-		outputs.remove(o);
-		if ( outputs.isEmpty() ) {
-			close();
-		}
+		removeOutput(o);
 	}
 
 	@Override
@@ -195,7 +192,8 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public void focusItem(final MonitorOutput data) {
-		output = data;
+		outputs.remove(data);
+		outputs.add(0, data);
 	}
 
 	@Override
@@ -209,7 +207,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	}
 
 	@Override
-	public List<MonitorOutput> getItems() {
+	public List getItems() {
 		return outputs;
 	}
 

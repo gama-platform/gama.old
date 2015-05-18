@@ -153,11 +153,13 @@ public class InspectDisplayOutput extends MonitorOutput {
 		return true;
 	}
 
-	public InspectDisplayOutput(final String name, final short type) {
+	public InspectDisplayOutput(final String name, final short type, final IAgent a) {
 		// Opens directly an inspector
 		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME,
 			StringUtils.toGamlString(name + (type != INSPECT_TABLE ? count++ : "")), IKeyword.TYPE, types.get(type))
 			.validate());
+		setValue(null);
+		lastValue = a;
 	}
 
 	private InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {

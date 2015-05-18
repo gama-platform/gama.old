@@ -16,10 +16,10 @@ import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.swt.controls.ParameterExpandItem;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.InspectDisplayOutput;
+import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaHelper;
@@ -36,26 +36,47 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 
 	public static final String ID = GuiUtils.AGENT_VIEW_ID;
 
-	// @Override
-	public void inspectAgent(final IAgent entity) {
-		if ( entity == null ) {
+	@Override
+	public void addOutput(final IDisplayOutput output) {
+
+		if ( output == null ) {
 			reset();
-		} else {
-			addItem(entity);
+			return;
+		}
+		System.out.println("Adding output " + output.getName() + " to inspector");
+		if ( !(output instanceof InspectDisplayOutput) ) { return; }
+		InspectDisplayOutput out = (InspectDisplayOutput) output;
+		if ( out.getLastValue() == null || out.getLastValue().length == 0 ) {
+			reset();
+			return;
+		}
+
+		IAgent agent = out.getLastValue()[0];
+		if ( parent == null ) {
+			super.addOutput(out);
+		} else if ( editors == null || !editors.getCategories().containsKey(agent) ) {
+			super.addOutput(out);
+			addItem(agent);
 		}
 	}
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
+		System.out.println("Inspector creating its own part control");
 		parent.setBackground(parent.getBackground());
-		if ( output != null ) {
-			IAgent[] init = ((InspectDisplayOutput) output).getLastValue();
-			if ( init != null ) {
+		if ( !outputs.isEmpty() ) {
+			IAgent[] init = getOutput().getLastValue();
+			if ( init != null && init.length > 0 ) {
 				for ( IAgent a : init ) {
-					inspectAgent(a);
+					addItem(a);
 				}
 			}
 		}
+	}
+
+	@Override
+	public InspectDisplayOutput getOutput() {
+		return (InspectDisplayOutput) super.getOutput();
 	}
 
 	@Override
@@ -141,19 +162,22 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 
 	@Override
 	public boolean addItem(final IAgent agent) {
+		System.out.println("Adding item " + agent.getName() + " to inspector");
 		if ( editors == null ) {
 			editors = new AgentAttributesEditorsList();
 		}
 		if ( !editors.getCategories().containsKey(agent) ) {
 			editors.add(getParametersToInspect(agent), agent);
-			createItem(parent, agent, true);
+			System.out.println("Asking to create the item " + agent.getName() + " in inspector");
+			ParameterExpandItem item = createItem(parent, agent, true);
+			if ( item == null ) { return false; }
 			return true;
 		}
 		return false;
 	}
 
 	private List<IParameter> getParametersToInspect(final IAgent agent) {
-		Collection<String> names = ((InspectDisplayOutput) getOutput()).getAttributes();
+		Collection<String> names = getOutput().getAttributes();
 		if ( names == null ) {
 			names = agent.getSpecies().getVarNames();
 		}
@@ -166,11 +190,28 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 		return params;
 	}
 
-	/**
-	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
-	 */
 	@Override
-	public void createToolItems(final GamaToolbar2 tb) {}
+	public void removeItem(final IAgent a) {
+		InspectDisplayOutput found = null;
+		for ( IDisplayOutput out : outputs ) {
+			InspectDisplayOutput output = (InspectDisplayOutput) out;
+			IAgent[] agents = output.getLastValue();
+			if ( agents != null && agents.length > 0 && agents[0] == a ) {
+				found = output;
+				break;
+			}
+		}
+		if ( found != null ) {
+			found.close();
+			removeOutput(found);
+		}
+	}
+
+	// /**
+	// * Method createToolItem()
+	// * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	// */
+	// @Override
+	// public void createToolItems(final GamaToolbar2 tb) {}
 
 }
