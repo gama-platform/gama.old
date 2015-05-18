@@ -31,8 +31,8 @@ public class Application implements IApplication {
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 		System.out.println(Arrays.toString(CommandLineArgs.getAllArgs()));
-		System.out.println(Platform.getProduct() == null ? "No product" : Platform.getProduct().getId() + " version " +
-			Platform.getProduct().getDefiningBundle().getVersion());
+		// System.out.println(Platform.getProduct() == null ? "No product" : Platform.getProduct().getId() + " version " +
+		// Platform.getProduct().getDefiningBundle().getVersion());
 		System.err
 			.println("If you are running the developer version of GAMA, be sure to perform a clean build of your projects before launching it. Unexpected compilation errors can occur if the annotations are somehow out of sync with the code.");
 
