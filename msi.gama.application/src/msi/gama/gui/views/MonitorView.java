@@ -55,15 +55,13 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public void addOutput(final IDisplayOutput output) {
-		if ( output == null || outputs.contains(output) ) { return; }
-		// always consider the latest monitor as the output
 		super.addOutput(output);
 		addItem((MonitorOutput) output);
 	}
 
 	@Override
 	public boolean addItem(final MonitorOutput output) {
-		if ( output != null && !outputs.contains(output) ) {
+		if ( output != null ) {
 			createItem(parent, output, output.getValue() == null);
 			return true;
 		}
@@ -125,7 +123,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 				update(output);
 			}
 		});
-		outputs.add(output);
+		// outputs.add(output);
 		// update(output);
 		return compo;
 	}
