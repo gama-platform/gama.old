@@ -260,6 +260,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		@Override
 		public void widgetSelected(final SelectionEvent evt) {
 			GamlEditor.this.performSave(true, null);
+			if ( XtextGui.EDITOR_SAVE.getValue() ) {
+				SwtGui.getPage().saveAllEditors(XtextGui.EDITOR_SAVE_ASK.getValue());
+			}
 			String name = ((FlatButton) evt.widget).getText();
 			int i = state.abbreviations.indexOf(name);
 			if ( i == -1 ) { return; }

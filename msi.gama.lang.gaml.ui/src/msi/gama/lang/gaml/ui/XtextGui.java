@@ -84,6 +84,12 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 	public static final GamaPreferences.Entry<Boolean> EDITOR_CLEAN_UP = GamaPreferences
 		.create("editor.cleanup.save", "Apply formatting to models on save", false, IType.BOOL)
 		.in(GamaPreferences.EDITOR).group("Options");
+	public static final GamaPreferences.Entry<Boolean> EDITOR_SAVE = GamaPreferences
+		.create("editor.save.all", "Save all model files before lauching an experiment", true, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Options").activates("editor.save.ask");
+	public static final GamaPreferences.Entry<Boolean> EDITOR_SAVE_ASK = GamaPreferences
+		.create("editor.save.ask", "Ask before saving each file", false, IType.BOOL).in(GamaPreferences.EDITOR)
+		.group("Options");
 	public static final GamaPreferences.Entry<Boolean> EDITBOX_ENABLED = GamaPreferences
 		.create("editor.editbox.enabled", "Turn on colorization of code sections by default", false, IType.BOOL)
 		.in(GamaPreferences.EDITOR).group("Presentation");
