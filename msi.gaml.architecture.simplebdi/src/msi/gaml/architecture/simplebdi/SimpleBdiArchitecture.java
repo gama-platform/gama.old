@@ -17,6 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -36,7 +37,8 @@ import msi.gaml.types.*;
 	@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.LAST_THOUGHTS, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.INTENTION_BASE, type = IType.LIST, init = "[]"),
-	@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, init = "[]") })
+	@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, init = "[]"),
+	@var(name = SimpleBdiArchitecture.CURRENT_PLAN, type = IType.NONE)})
 @skill(name = SimpleBdiArchitecture.SIMPLE_BDI)
 
 public class SimpleBdiArchitecture extends ReflexArchitecture {
@@ -71,13 +73,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String DESIRE_BASE = "desire_base";
 	public static final String INTENTION_BASE = "intention_base";
 	public static final String EVERY_VALUE = "every_possible_value";
+	public static final String CURRENT_PLAN = "current_plan";
 
 	private IScope _consideringScope;
 	private final List<SimpleBdiPlan> _plans = new ArrayList<SimpleBdiPlan>();
 	private final List<SimpleBdiPlan> _perceives = new ArrayList<SimpleBdiPlan>();
 	private int _plansNumber = 0;
 	private int _perceiveNumber = 0;
-	private HashMap<IAgent,SimpleBdiPlan> _persistentTaskTable = new HashMap();
 	private boolean iscurrentplaninstantaneous=false;
 
 	@Override
@@ -133,12 +135,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				scope.hasArg(PERSISTENCE_COEFFICIENT_INTENTIONS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_INTENTIONS)
 					: (Double) agent.getAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS);
 
-			//Initiate _persistantTaskTable
-			if(!_persistentTaskTable.containsKey(agent)){
-				_persistentTaskTable.put(agent, null);
-			}
-				
-			SimpleBdiPlan _persistentTask = _persistentTaskTable.get(agent);
+			SimpleBdiPlan _persistentTask = (SimpleBdiPlan)agent.getAttribute(CURRENT_PLAN);
 				
 			// RANDOMLY REMOVE (last)INTENTION
 			Boolean flipResultintention = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientintention);
@@ -153,7 +150,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							+ previousint;					
 					addThoughts(scope, think);
 					_persistentTask = null;
-					_persistentTaskTable.put(agent, _persistentTask);
+					agent.setAttribute(CURRENT_PLAN, _persistentTask);
 				}
 			}
 
@@ -163,7 +160,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if ( testOnHold(scope, currentIntention(scope)) || selectExecutablePlanWithHighestPriority(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
 				_persistentTask = null;
-				_persistentTaskTable.put(agent, _persistentTask);
+				agent.setAttribute(CURRENT_PLAN, _persistentTask);
 
 			}
 			Boolean flipResult = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientPlans);
@@ -173,7 +170,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					addThoughts(scope, "check what happens if I stop: " + _persistentTask.getName());
 				}
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
-				_persistentTaskTable.put(agent, _persistentTask);
+				agent.setAttribute(CURRENT_PLAN, _persistentTask);
 
 				if ( _persistentTask != null ) {
 					addThoughts(scope, "lets do instead " + _persistentTask.getName());
@@ -192,13 +189,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 //				System.out.println("_persistentTask 2 " +  _persistentTask);
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
-				_persistentTaskTable.put(agent, _persistentTask);
+				agent.setAttribute(CURRENT_PLAN, _persistentTask);
 				addThoughts(scope, "ok, new intention: " + currentIntention(scope) + " with plan " + _persistentTask.getName());
 			}
 			if ( (_persistentTask) == null && currentIntention(scope) != null ) {
 //				System.out.println("_persistentTask 3 " +  _persistentTask);
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
-				_persistentTaskTable.put(agent, _persistentTask);
+				agent.setAttribute(CURRENT_PLAN, _persistentTask);
 				if ( _persistentTask != null ) {
 //					System.out.println("_persistentTask 4 " +  _persistentTask);
 					addThoughts(scope, "use plan : " + _persistentTask.getName());
@@ -218,7 +215,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 //					System.out.println("isExecuted: " +  isExecuted);
 					if ( isExecuted ) {
 						_persistentTask = null;
-						_persistentTaskTable.put(agent, _persistentTask);
+						agent.setAttribute(CURRENT_PLAN, _persistentTask);
 
 					}				
 				}
@@ -407,6 +404,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return factBase.add(predicateItem);
 	}
 
+	@getter (value = CURRENT_PLAN)
+	public String getPlan(IScope scope){
+		return ((SimpleBdiPlan)(getCurrentAgent(scope).getAttribute(CURRENT_PLAN))).getName();
+	}
+	
 	@action(name = "add_belief", args = { @arg(name = PREDICATE,
 		type = IType.MAP,
 		optional = true,
