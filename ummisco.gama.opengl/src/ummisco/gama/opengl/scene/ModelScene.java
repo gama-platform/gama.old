@@ -213,7 +213,7 @@ public class ModelScene {
 		currentLayer = layers.get(key);
 		if ( currentLayer == null ) {
 			currentLayer = new LayerObject(renderer, layer);
-			System.out.println("Adding layer " + key + " to scene " + this.id);
+			// System.out.println("Adding layer " + key + " to scene " + this.id);
 			layers.put(key, currentLayer);
 		}
 		currentLayer.setOffset(offset);

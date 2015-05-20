@@ -480,6 +480,47 @@ public class GeometryUtils {
 		return geoms;
 	}
 
+	public static IList<IShape> triangulationSimple(final IScope scope, final Geometry geom) {
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+		if ( geom instanceof GeometryCollection ) {
+			final GeometryCollection gc = (GeometryCollection) geom;
+			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
+				geoms.addAll(triangulationSimple(scope, gc.getGeometryN(i)));
+			}
+		} else if ( geom instanceof Polygon ) {
+			final Polygon polygon = (Polygon) geom;
+			final double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
+			final DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
+			GeometryCollection tri = null;
+			try {
+				dtb.setSites(polygon);
+				// dtb.setConstraints(polygon);
+				dtb.setTolerance(sizeTol);
+				tri = (GeometryCollection) dtb.getTriangles(FACTORY);
+			} catch (final LocateFailureException e) {
+				GamaRuntimeException.warning("Impossible to triangulate Geometry: " + new WKTWriter().write(geom),
+					scope);
+				return triangulationSimple(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
+			} catch (final ConstraintEnforcementException e) {
+				/* GAMA.reportError(scope, */GamaRuntimeException.warning("Impossible to triangulate Geometry: " +
+					new WKTWriter().write(geom), scope)/* , false) */;
+				return triangulationSimple(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
+			}
+			final PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
+			final PreparedGeometry env = pgfactory.create(pg.getGeometry().getEnvelope());
+			final int nb = tri.getNumGeometries();
+			for ( int i = 0; i < nb; i++ ) {
+
+				final Geometry gg = tri.getGeometryN(i);
+
+				if ( env.covers(gg) && pg.covers(gg) ) {
+					geoms.add(new GamaShape(gg));
+				}
+			}
+		}
+		return geoms;
+	}
+
 	public static IList<IShape> triangulation(final IScope scope, final Geometry geom) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		if ( geom instanceof GeometryCollection ) {

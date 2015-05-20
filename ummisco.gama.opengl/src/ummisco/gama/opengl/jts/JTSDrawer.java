@@ -182,20 +182,23 @@ public class JTSDrawer {
 				if ( rounded == true ) {
 					drawRoundRectangle(p);
 				} else {
-					if ( renderer.data.isTesselation() ) {
-						DrawTesselatedPolygon(p, norm_dir, c, alpha);
-						if ( drawPolygonContour == true ) {
-							DrawPolygonContour(p, border, alpha, z_fighting_value);
-						}
-					}
+					// if ( renderer.data.isTesselation() ) {
+					// DrawTesselatedPolygon(p, norm_dir, c, alpha);
+					// gl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
+					// if ( drawPolygonContour == true ) {
+					// DrawPolygonContour(p, border, alpha, z_fighting_value);
+					// }
+					// }
 					// use JTS triangulation on simplified geometry (DouglasPeucker)
 					// FIXME: not working with a z_layer value!!!!
-					else {
-						drawTriangulatedPolygon(p, useJTSForTriangulation, null);
-						gl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
-						if ( drawPolygonContour == true ) {
-							DrawPolygonContour(p, border, alpha, z_fighting_value);
-						}
+					// else {
+					// AD 21/5 Use of tesselaton everywhere works better than JTS triangulation (see Issue 1130)
+					DrawTesselatedPolygon(p, norm_dir, c, alpha);
+					// drawTriangulatedPolygon(p, useJTSForTriangulation, null);
+					gl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
+					if ( drawPolygonContour == true ) {
+						DrawPolygonContour(p, border, alpha, z_fighting_value);
+						// }
 					}
 				}
 			}
@@ -335,7 +338,7 @@ public class JTSDrawer {
 		// Workaround to compute the z value of each triangle as triangulation
 		// create new point during the triangulation that are set with z=NaN
 		if ( p.getNumPoints() > 4 ) {
-			triangles = GeometryUtils.triangulation(null, p); // VERIFY NULL SCOPE
+			triangles = GeometryUtils.triangulationSimple(null, p); // VERIFY NULL SCOPE
 
 			List<Geometry> segments = new ArrayList<Geometry>();
 			for ( int i = 0; i < p.getNumPoints() - 1; i++ ) {
@@ -389,7 +392,9 @@ public class JTSDrawer {
 		texture.bind(gl);
 
 		if ( p.getNumPoints() > 5 ) {
+			// FIXME AD 05/15 Should we use drawTesselatedPolygon instead ?
 			drawTriangulatedPolygon(p, useJTSForTriangulation, texture);
+
 		} else {
 			Vertex[] vertices = this.getExteriorRingVertices(p);
 			if ( renderer.getComputeNormal() ) {

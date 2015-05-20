@@ -248,15 +248,14 @@ public class SimulationAgent extends GamlAgent {
 			GAMA.reportError(scope, GamaRuntimeException.warning(
 				"Changing the shape of the world after its creation can have unexpected consequences", scope), false);
 		}
-		getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
+		// FIXME : AD 5/15 Revert the commit by PT: getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
 		final Envelope3D env = geom.getEnvelope();
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry = Transformations.translated_by(getScope(), geom, p);
 		// projectionFactory.setWorldProjectionEnv(env);
 		getPopulation().setTopology(getScope(), geometry);
-		
-		
+
 	}
 
 	@Override
@@ -390,5 +389,4 @@ public class SimulationAgent extends GamlAgent {
 		return (SimulationOutputManager) outputs;
 	}
 
-	
 }

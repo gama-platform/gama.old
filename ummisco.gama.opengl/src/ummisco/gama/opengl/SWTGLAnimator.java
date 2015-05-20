@@ -8,10 +8,10 @@ import com.jogamp.opengl.*;
  * 
  * @author AqD (aqd@5star.com.tw)
  */
-public class SWTGLAnimator implements Runnable, GLAnimatorControl {
+public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
 
 	static int FRAME_PER_SECOND = 60; // TODO Make it a preference
-	protected final int targetFPS;
+	protected final int targetFPS = FRAME_PER_SECOND;
 	protected final Thread animatorThread;
 	protected final GLAutoDrawable drawable;
 
@@ -20,7 +20,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl {
 	protected volatile boolean animating = false;
 
 	public SWTGLAnimator(final GLAutoDrawable drawable) {
-		this.targetFPS = FRAME_PER_SECOND;
+		// this.targetFPS = FRAME_PER_SECOND;
 		this.drawable = drawable;
 		drawable.setAnimator(this);
 		this.animatorThread = new Thread(this, "Animator thread");
@@ -172,7 +172,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl {
 	protected void displayGL() {
 		this.animating = true;
 		try {
-			if ( drawable != null && drawable.isRealized() ) {
+			if ( drawable.isRealized() ) {
 				drawable.display();
 			}
 		} finally {
@@ -186,7 +186,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl {
 	 */
 	@Override
 	public UncaughtExceptionHandler getUncaughtExceptionHandler() {
-		return null;
+		return this;
 	}
 
 	/**
@@ -195,4 +195,16 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl {
 	 */
 	@Override
 	public void setUncaughtExceptionHandler(final UncaughtExceptionHandler handler) {}
+
+	/**
+	 * Method uncaughtException()
+	 * @see com.jogamp.opengl.GLAnimatorControl.UncaughtExceptionHandler#uncaughtException(com.jogamp.opengl.GLAnimatorControl, com.jogamp.opengl.GLAutoDrawable, java.lang.Throwable)
+	 */
+	@Override
+	public void
+		uncaughtException(final GLAnimatorControl animator, final GLAutoDrawable drawable, final Throwable cause) {
+		System.out.println("Uncaught exception in animator & drawable:");
+		cause.printStackTrace();
+
+	}
 }

@@ -16,36 +16,39 @@ import com.jogamp.opengl.glu.*;
 
 public class TessellCallBack implements GLUtessellatorCallback {
 
-	// private final GL2 gl;
+	private GL2 gl;
 	private final GLU glu;
 
 	public TessellCallBack(final GLU glu) {
-		// this.gl = gl;
 		this.glu = glu;
+	}
+
+	GL2 gl() {
+		if ( gl == null ) {
+			gl = GLContext.getCurrentGL().getGL2();
+		}
+		return gl;
 	}
 
 	@Override
 	public void begin(final int type) {
-		GL2 gl = GLContext.getCurrentGL().getGL2();
-		gl.glBegin(type);
+		gl().glBegin(type);
 	}
 
 	@Override
 	public void end() {
-		GL2 gl = GLContext.getCurrentGL().getGL2();
-		gl.glEnd();
+		gl().glEnd();
 	}
 
 	@Override
 	public void vertex(final Object vertexData) {
-		GL2 gl = GLContext.getCurrentGL().getGL2();
 		double[] pointer;
 		if ( vertexData instanceof double[] ) {
 			pointer = (double[]) vertexData;
 			if ( pointer.length == 6 ) {
-				gl.glColor3dv(pointer, 3);
+				gl().glColor3dv(pointer, 3);
 			}
-			gl.glVertex3dv(pointer, 0);
+			gl().glVertex3dv(pointer, 0);
 		}
 
 	}
@@ -88,7 +91,7 @@ public class TessellCallBack implements GLUtessellatorCallback {
 		String estring;
 		estring = glu.gluErrorString(errnum);
 		System.err.println("Tessellation Error: " + estring);
-		System.exit(0);
+		// System.exit(0);s
 	}
 
 	@Override
