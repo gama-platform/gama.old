@@ -15,12 +15,14 @@
  */
 package msi.gama.gui.viewers.csv;
 
-import msi.gama.gui.navigator.commands.RefreshHandler;
+import msi.gama.gui.navigator.FileMetaDataProvider;
+import msi.gama.gui.swt.commands.GamaMenu;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.viewers.csv.model.*;
 import msi.gama.gui.viewers.csv.text.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
@@ -29,7 +31,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.*;
 
 /**
@@ -40,7 +41,7 @@ import org.eclipse.ui.part.*;
 public class MultiPageCSVEditor extends MultiPageEditorPart implements IResourceChangeListener, IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
 
 	private boolean isPageModified;
-	GamaToolbar2 toolbar;
+	// GamaToolbar2 toolbar;
 
 	/** index of the source page */
 	public static final int indexSRC = 1;
@@ -48,16 +49,14 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	public static final int indexTBL = 0;
 
 	/** The text editor used in page 0. */
-	protected TextEditor editor;
+	protected CSVTextEditor editor;
 
 	/** The table viewer used in page 1. */
 	protected TableViewer tableViewer;
 
-	private CSVTableSorter tableSorter;
-
-	// private Menu tableHeaderMenu;
-
-	private AbstractCSVFile model;
+	private final CSVTableSorter tableSorter;
+	private final CSVTableFilter tableFilter;
+	private CSVModel model;
 
 	private final ICsvFileModelListener csvFileListener = new ICsvFileModelListener() {
 
@@ -93,8 +92,9 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	 * Creates a multi-page editor example.
 	 */
 	public MultiPageCSVEditor() {
-		super();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		tableFilter = new CSVTableFilter();
+		tableSorter = new CSVTableSorter();
 		// model = createCSVFile();
 	}
 
@@ -112,7 +112,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	@Override
 	protected void createPages() {
 		try {
-			model = new DefaultCSVFile(getFileFor(getEditorInput()));
+			model = new CSVModel(getFileFor(getEditorInput()));
 			createTablePage();
 			createSourcePage();
 			updateTitle();
@@ -160,37 +160,15 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		Composite composite = GamaToolbarFactory.createToolbars(this, intermediate);
 		tableViewer =
 			new TableViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		// tableViewer.getControl().setLayoutData(GamaToolbarFactory.getLayoutDataForChild());
 		tableViewer.setUseHashlookup(true);
 		final Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		// set the sorter for the table
-		tableSorter = new CSVTableSorter();
+
 		tableViewer.setSorter(tableSorter);
 		// set a table filter
-		final CSVTableFilter tableFilter = new CSVTableFilter();
 		tableViewer.addFilter(tableFilter);
-
-		// add the filtering and coloring when searching specific elements.
-		final Text searchText = new Text(toolbar.getToolbar(SWT.LEFT), SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
-
-		toolbar.control(searchText, 150, SWT.LEFT);
-		searchText.addKeyListener(new KeyAdapter() {
-
-			@Override
-			public void keyReleased(final KeyEvent ke) {
-				tableFilter.setSearchText(searchText.getText(), model.getSensitiveSearch());
-				String filterText = searchText.getText();
-				for ( int i = 0; i < tableViewer.getColumnProperties().length; i++ ) {
-					CellLabelProvider labelProvider = tableViewer.getLabelProvider(i);
-					if ( labelProvider != null ) {
-						((CSVLabelProvider) labelProvider).setSearchText(filterText);
-					}
-				}
-				tableViewer.refresh();
-			}
-		});
 
 		addPage(intermediate);
 		setPageText(indexTBL, "Table");
@@ -208,7 +186,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	/**
 	 * @throws Exception
 	 */
-	private void populateTablePage() throws Exception {
+	private void populateTablePage() {
 
 		tableViewer.setContentProvider(new CSVContentProvider());
 
@@ -245,31 +223,33 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		model.removeModelListener(csvFileListener);
 
 		model.setInput(editor.getDocumentProvider().getDocument(editor.getEditorInput()).get());
-
 		// tableHeaderMenu = new Menu(tableViewer.getTable());
 		TableColumn[] columns = tableViewer.getTable().getColumns();
-		if ( columns.length > 0 ) { // if table header columns already created
-			// update column header text
-			for ( int i = 0; i < model.getHeader().size(); i++ ) {
-				if ( i < columns.length ) {
-					columns[i].setText(model.getHeader().get(i));
-					final int index = i;
-					addMenuItemToColumn(columns[i], index);
-				}
-			}
-		} else {
-			// create columns
-			for ( int i = 0; i < model.getHeader().size(); i++ ) {
-				final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.LEFT);
-				final int index = i;
-				column.getColumn().setText(model.getHeader().get(i));
-				column.getColumn().setWidth(100);
-				column.getColumn().setResizable(true);
-				column.getColumn().setMoveable(true);
-				column.setLabelProvider(new CSVLabelProvider());
-				addMenuItemToColumn(column.getColumn(), index);
-			}
+		for ( TableColumn c : columns ) {
+			c.dispose();
 		}
+		// if ( columns.length > 0 ) { // if table header columns already created
+		// // update column header text
+		// for ( int i = 0; i < model.getHeader().size(); i++ ) {
+		// if ( i < columns.length ) {
+		// columns[i].setText(model.getHeader().get(i));
+		// final int index = i;
+		// addMenuItemToColumn(columns[i], index);
+		// }
+		// }
+		// } else {
+		// create columns
+		for ( int i = 0; i < model.getHeader().size(); i++ ) {
+			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.LEFT);
+			final int index = i;
+			column.getColumn().setText(model.getHeader().get(i));
+			column.getColumn().setWidth(100);
+			column.getColumn().setResizable(true);
+			column.getColumn().setMoveable(true);
+			column.setLabelProvider(new CSVLabelProvider());
+			addMenuItemToColumn(column.getColumn(), index);
+		}
+		// }
 
 		// if ( model.isFirstLineHeader() ) {
 		// new MenuItem(tableHeaderMenu, SWT.SEPARATOR);
@@ -411,9 +391,14 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		} else {
 			updateTableFromTextEditor();
 		}
-
+		IFile file = getFileFor(getEditorInput());
+		CSVInfo md = model.getCurrentMetaData();
 		isPageModified = false;
 		editor.doSave(monitor);
+		if ( md != null ) {
+			FileMetaDataProvider.getInstance().storeMetadata(file, md);
+		}
+
 	}
 
 	/**
@@ -495,7 +480,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
      */
 	private void updateTextEditorFromTable() {
 		editor.getDocumentProvider().getDocument(editor.getEditorInput())
-			.set(((AbstractCSVFile) tableViewer.getInput()).getTextRepresentation());
+			.set(((CSVModel) tableViewer.getInput()).getTextRepresentation());
 	}
 
 	/**
@@ -542,15 +527,108 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		}
 	}
 
+	private void refreshWithDelimiter(final Character c) {
+		if ( c != null ) {
+			model.setCustomDelimiter(c);
+			editor.setDelimiter(c);
+		}
+		updateTableFromTextEditor();
+		updateTextEditorFromTable();
+	}
+
 	/**
 	 * Method createToolItem()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
-		this.toolbar = tb;
-		// { WITH_HEADER, SEP, ADD_ROW, REMOVE_ROW, SEP, ADD_COLUMN, REMOVE_COLUMN, SHOW_COLUMN, SEP,SAVE_AS };
 
+		// add the filtering and coloring when searching specific elements.
+		final Text searchText = new Text(tb.getToolbar(SWT.LEFT), SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
+
+		tb.control(searchText, 150, SWT.LEFT);
+		searchText.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyReleased(final KeyEvent ke) {
+				tableFilter.setSearchText(searchText.getText());
+				String filterText = searchText.getText();
+				for ( int i = 0; i < tableViewer.getColumnProperties().length; i++ ) {
+					CellLabelProvider labelProvider = tableViewer.getLabelProvider(i);
+					if ( labelProvider != null ) {
+						((CSVLabelProvider) labelProvider).setSearchText(filterText);
+					}
+				}
+				tableViewer.refresh();
+			}
+		});
+
+		ToolItem delimiter =
+			tb.menu("action.set.delimiter2", "Determine which character should be used as delimiter of fields",
+				"Determine which character should be used as delimiter of fields", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						GamaMenu menu = new GamaMenu() {
+
+							@Override
+							protected void fillMenu() {
+								action(", (comma)", new SelectionAdapter() {
+
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter(',');
+									}
+
+								}, null);
+								action("; (semicolon)", new SelectionAdapter() {
+
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter(';');
+									}
+
+								}, null);
+								action("  (space)", new SelectionAdapter() {
+
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter(' ');
+									}
+
+								}, null);
+								action("  (tabulation)", new SelectionAdapter() {
+
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter('\t');
+									}
+
+								}, null);
+								action(": (colon)", new SelectionAdapter() {
+
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter(':');
+									}
+
+								}, null);
+								action("| (pipe)", new SelectionAdapter() {
+
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter('|');
+
+									}
+
+								}, null);
+
+							}
+						};
+						menu.open(tb.getToolbar(SWT.RIGHT), e);
+					}
+
+				}, SWT.RIGHT);
 		ToolItem t =
 			tb.check("action.set.header2", "First line is header", "First line is header", new SelectionAdapter() {
 
@@ -558,13 +636,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 				public void widgetSelected(final SelectionEvent e) {
 					ToolItem t = (ToolItem) e.widget;
 					model.setFirstLineHeader(t.getSelection());
-					try {
-						populateTablePage();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-					// tableModified();
-					RefreshHandler.run();
+					refreshWithDelimiter(null);
 				}
 
 			}, SWT.RIGHT);
@@ -583,6 +655,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 						model.addRow();
 					}
 					tableModified();
+					model.saveMetaData();
 				}
 			}, SWT.RIGHT);
 		tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", new SelectionAdapter() {
@@ -597,6 +670,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 					if ( row != null ) {
 						model.removeRow(row);
 						tableModified();
+						model.saveMetaData();
 					}
 				}
 			}
@@ -621,6 +695,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 						addMenuItemToColumn(column, model.getColumnCount() - 1);
 						defineCellEditing();
 						tableModified();
+						model.saveMetaData();
 					}
 				}
 			}, SWT.RIGHT);
@@ -644,6 +719,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 								model.removeColumn(column);
 							}
 							tableModified();
+							model.saveMetaData();
 						}
 
 					}

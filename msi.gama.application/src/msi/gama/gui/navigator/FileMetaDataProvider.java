@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Class FileMetaDataProvider.
@@ -102,11 +104,13 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return instance;
 	}
 
-	private FileMetaDataProvider() {};
+	private FileMetaDataProvider() {
+		ResourcesPlugin.getWorkspace().getSynchronizer().add(CACHE_KEY);
+	};
 
 	@Override
 	public String getDecoratorSuffix(final Object element) {
-		IGamaFileMetaData data = getMetaData(element);
+		IGamaFileMetaData data = getMetaData(element, false);
 		if ( data == null ) { return ""; }
 		return data.getSuffix();
 	}
@@ -116,7 +120,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @see msi.gama.gui.navigator.IFileMetaDataProvider#getMetaData(org.eclipse.core.resources.IFile)
 	 */
 	@Override
-	public IGamaFileMetaData getMetaData(final Object element) {
+	public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated) {
 		IFile file = SwtGui.adaptTo(element, IFile.class, IFile.class);
 		if ( file == null ) {
 			if ( element instanceof java.io.File ) {
@@ -128,7 +132,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		String ct = getContentTypeId(file);
 		Class infoClass = CLASSES.get(ct);
 		if ( infoClass == null ) { return null; }
-		IGamaFileMetaData data = readMetadata(file, infoClass);
+		IGamaFileMetaData data = readMetadata(file, infoClass, includeOutdated);
 		if ( data == null ) {
 			if ( SHAPEFILE_CT_ID.equals(ct) ) {
 				data = createShapeFileMetaData(file);
@@ -146,13 +150,16 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return data;
 	}
 
-	private <T extends IGamaFileMetaData> T readMetadata(final IFile file, final Class<T> clazz) {
+	private <T extends IGamaFileMetaData> T readMetadata(final IFile file, final Class<T> clazz,
+		final boolean includeOutdated) {
 		IGamaFileMetaData result = null;
 		long modificationStamp = file.getModificationStamp();
 		try {
-			String s = file.getPersistentProperty(CACHE_KEY);
-			if ( s != null ) {
-				result = GamaFileMetaData.from(s, modificationStamp, clazz);
+			byte[] b = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(CACHE_KEY, file);
+			if ( b != null ) {
+				String s = new String(b, "UTF-8");
+				// String s = file.getPersistentProperty(CACHE_KEY);
+				result = GamaFileMetaData.from(s, modificationStamp, clazz, includeOutdated);
 				if ( !clazz.isInstance(result) ) { return null; }
 			}
 		} catch (Exception ignore) {
@@ -163,7 +170,22 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	public void storeMetadata(final IFile file, final IGamaFileMetaData data) {
 		try {
-			file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
+			data.setModificationStamp(file.getModificationStamp());
+			ResourcesPlugin.getWorkspace().getSynchronizer()
+				.setSyncInfo(CACHE_KEY, file, data == null ? null : data.toPropertyString().getBytes("UTF-8"));
+			// file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
+
+			// Decorate using current UI thread
+			Display.getDefault().asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					// Fire a LabelProviderChangedEvent to notify eclipse views
+					// that label provider has been changed for the resources
+					PlatformUI.getWorkbench().getDecoratorManager().update("msi.gama.application.decorator");
+				}
+			});
+
 		} catch (Exception ignore) {
 			System.err.println("Error storing metadata for " + file.getName() + " : " + ignore.getMessage());
 		}

@@ -38,9 +38,10 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 
 	public static class CSVInfo extends GamaFileMetaData {
 
-		public final int cols, rows;
+		public int cols;
+		public final int rows;
 		public boolean header;
-		public final Character delimiter;
+		public Character delimiter;
 		public final IType type;
 		public String[] headers;
 
@@ -193,7 +194,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 		if ( info != null ) { return info; }
 		IFileMetaDataProvider p = GuiUtils.getMetaDataProvider();
 		if ( p != null ) {
-			info = (CSVInfo) p.getMetaData(getFile());
+			info = (CSVInfo) p.getMetaData(getFile(), false);
 		}
 		if ( info == null ) {
 			info = new CSVInfo(getFile().getAbsolutePath(), 0);

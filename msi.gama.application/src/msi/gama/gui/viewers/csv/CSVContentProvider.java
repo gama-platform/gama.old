@@ -14,7 +14,7 @@
  */
 package msi.gama.gui.viewers.csv;
 
-import msi.gama.gui.viewers.csv.model.AbstractCSVFile;
+import msi.gama.gui.viewers.csv.model.CSVModel;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -32,8 +32,8 @@ public class CSVContentProvider implements IStructuredContentProvider {
      */
     public Object[] getElements(Object element) {
 
-        if(element instanceof AbstractCSVFile) {
-            AbstractCSVFile model = (AbstractCSVFile) element;
+        if(element instanceof CSVModel) {
+            CSVModel model = (CSVModel) element;
             return model.getArrayRows(false);
         }
         return null;

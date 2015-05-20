@@ -162,7 +162,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 		String s;
 		GamaUIColor color;
 
-		final GamaShapeFile.ShapeInfo info = (ShapeInfo) FileMetaDataProvider.getInstance().getMetaData(file);
+		final GamaShapeFile.ShapeInfo info = (ShapeInfo) FileMetaDataProvider.getInstance().getMetaData(file, false);
 		if ( info == null ) {
 			s = "Error in reading file information";
 			color = IGamaColors.ERROR;

@@ -54,7 +54,7 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 		if ( p instanceof IFile ) {
 			String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
 			if ( ctid.equals(FileMetaDataProvider.GAML_CT_ID) ) {
-				GAMLFile.GamlInfo info = (GAMLFile.GamlInfo) FileMetaDataProvider.getInstance().getMetaData(p);
+				GAMLFile.GamlInfo info = (GAMLFile.GamlInfo) FileMetaDataProvider.getInstance().getMetaData(p, false);
 				if ( info == null ) { return VirtualContent.EMPTY; }
 				List l = new ArrayList();
 				for ( String s : info.experiments ) {

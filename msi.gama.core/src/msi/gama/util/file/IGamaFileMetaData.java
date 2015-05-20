@@ -47,4 +47,9 @@ public interface IGamaFileMetaData {
 	 */
 	public String getDocumentation();
 
+	/**
+	 * @param modificationStamp
+	 */
+	void setModificationStamp(long modificationStamp);
+
 }

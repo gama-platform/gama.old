@@ -4,7 +4,6 @@
  */
 package msi.gama.util.file;
 
-
 /**
  * Class IFileMetaDataProvider.
  * 
@@ -14,7 +13,7 @@ package msi.gama.util.file;
  */
 public interface IFileMetaDataProvider {
 
-	IGamaFileMetaData getMetaData(Object element);
+	IGamaFileMetaData getMetaData(Object element, boolean includeOutdated);
 
 	/**
 	 * Returns the suffix to use in the navigator for decorating the element.

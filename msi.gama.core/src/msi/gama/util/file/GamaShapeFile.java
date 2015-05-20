@@ -206,7 +206,7 @@ public class GamaShapeFile extends GamaGisFile {
 		ShapeInfo s;
 		IFileMetaDataProvider p = GuiUtils.getMetaDataProvider();
 		if ( p != null ) {
-			s = (ShapeInfo) p.getMetaData(getFile());
+			s = (ShapeInfo) p.getMetaData(getFile(), false);
 		} else {
 			try {
 				s = new ShapeInfo(getFile().toURI().toURL(), 0);

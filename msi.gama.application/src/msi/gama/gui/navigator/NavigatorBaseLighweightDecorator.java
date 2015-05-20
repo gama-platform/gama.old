@@ -23,7 +23,7 @@ public class NavigatorBaseLighweightDecorator extends SVNLightweightDecorator {
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 		if ( SwtGui.NAVIGATOR_METADATA.getValue() ) {
-			IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element);
+			IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element, false);
 			if ( data == null ) { return; }
 			String suffix = data.getSuffix();
 			if ( suffix != null ) {

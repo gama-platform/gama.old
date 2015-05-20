@@ -31,6 +31,8 @@ import org.eclipse.ui.editors.text.TextEditor;
 public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
 
 	// GamaToolbar2 toolbar;
+	Composite ancestor;
+	Composite parent;
 
 	public CSVTextEditor(final char delimiter) {
 		CSVTextSourceViewerConfiguration csvTextConfig =
@@ -40,8 +42,18 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 
 	@Override
 	public void createPartControl(final Composite composite) {
-		Composite parent = GamaToolbarFactory.createToolbars(this, composite);
-		super.createPartControl(parent);
+		ancestor = composite;
+		parent = new Composite(composite, SWT.NONE);
+		Composite compo = GamaToolbarFactory.createToolbars(this, parent);
+		super.createPartControl(compo);
+	}
+
+	public void setDelimiter(final char delimiter) {
+		CSVTextSourceViewerConfiguration csvTextConfig =
+			new CSVTextSourceViewerConfiguration(delimiter, getPreferenceStore());
+		setSourceViewerConfiguration(csvTextConfig);
+		parent.dispose();
+		createPartControl(ancestor);
 	}
 
 	@Override

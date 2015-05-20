@@ -50,9 +50,9 @@ public class RearrangeMenus {
 		final IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
 		ActionFactory.REFRESH.create(window).setImageDescriptor(GamaIcons.create("navigator/refresh2").descriptor());
 		if ( window instanceof WorkbenchWindow ) {
-			final MenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
+			final IMenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
 			for ( IContributionItem item : menuManager.getItems() ) {
-				MenuManager menu = null;
+				IMenuManager menu = null;
 				if ( item instanceof MenuManager ) {
 					menu = (MenuManager) item;
 				} else if ( item instanceof ActionSetContributionItem ) {
@@ -81,7 +81,7 @@ public class RearrangeMenus {
 	// System.out.println(sb.toString());
 	// }
 
-	private static void removeUnwantedItems(final MenuManager menu) {
+	private static void removeUnwantedItems(final IMenuManager menu) {
 		for ( String name : MENU_ITEMS_TO_REMOVE ) {
 			IContributionItem item = menu.find(name);
 			if ( item != null ) {
@@ -91,7 +91,7 @@ public class RearrangeMenus {
 		}
 	}
 
-	private static void changeFileIcons(final MenuManager menu) {
+	private static void changeFileIcons(final IMenuManager menu) {
 		for ( String name : MENU_IMAGES.keySet() ) {
 			IContributionItem item = menu.find(name);
 			if ( item != null ) {
@@ -100,7 +100,7 @@ public class RearrangeMenus {
 		}
 	}
 
-	private static void changeIcon(final MenuManager menu, final IContributionItem item) {
+	private static void changeIcon(final IMenuManager menu, final IContributionItem item) {
 		String name = item.getId();
 
 		if ( item instanceof ActionContributionItem ) {
@@ -109,13 +109,13 @@ public class RearrangeMenus {
 		} else if ( item instanceof CommandContributionItem ) {
 			CommandContributionItemParameter data = ((CommandContributionItem) item).getData();
 			data.commandId = ((CommandContributionItem) item).getCommand().getId();
-			int index = menu.indexOf(name);
-			menu.remove(item);
-			item.dispose();
+			// int index = menu.iindexOf(name);
 			data.icon = GamaIcons.create(MENU_IMAGES.get(name)).descriptor();
 			CommandContributionItem newItem = new CommandContributionItem(data);
 			newItem.setId(name);
-			menu.insert(index, newItem);
+			menu.insertAfter(name, newItem);
+			menu.remove(item);
+			item.dispose();
 		} else if ( item instanceof ActionSetContributionItem ) {
 			changeIcon(menu, ((ActionSetContributionItem) item).getInnerItem());
 		}
