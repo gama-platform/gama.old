@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -661,6 +662,50 @@ public abstract class Spatial {
 			return GamaGeometryType.buildPolyhedron(shapes, depth);
 		}
 
+		@operator(value = { "curve" },
+				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			@doc(value = "A quadratic Bezier curve geometry built from the three given points composed of 10 points.",
+				usages = { @usage(value = "if the operand is nil, returns nil")},
+				examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
+					equals = "a quadratic Bezier curve geometry composed of 10 points from p0 to p2.",
+					test = false) }, see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle",
+					"square", "triangle", "line" })
+			public static IShape BezierCurve(final IScope scope, final GamaPoint P0,  final GamaPoint P1, final GamaPoint P2) {
+				if (P0 == null || P1 == null || P2 == null)
+					return null;
+				return GamaGeometryType.buildPolyline(quadraticBezierCurve(P0,P1,P2,10));
+			}
+		
+		@operator(value = { "curve" },
+				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			@doc(value = "A quadratic Bezier curve geometry built from the three given points composed of 10 points.",
+				usages = { @usage(value = "if the operand is nil, returns nil"), @usage(value = "if the last operand (number of points) is inferior to 2, returns nil")},
+				examples = { @example(value = "curve({0,0}, {0,10}, {10,10}, 20)",
+					equals = "a quadratic Bezier curve geometry composed of 20 points from p0 to p2.",
+					test = false) }, see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle",
+					"square", "triangle", "line" })
+			public static IShape BezierCurve(final IScope scope, final GamaPoint P0,  final GamaPoint P1, final GamaPoint P2, final int nbPoints) {
+				if (P0 == null || P1 == null || P2 == null || nbPoints < 2)
+					return null;
+				return GamaGeometryType.buildPolyline(quadraticBezierCurve(P0,P1,P2,nbPoints));
+			}
+		
+		private static  List<IShape> quadraticBezierCurve( final GamaPoint P0,  final GamaPoint P1, final GamaPoint P2, int nbPoints) {
+			final List<IShape> points = new ArrayList<IShape>();
+			for (int i = 0; i < nbPoints; i++) {
+				double x = quadraticBezier(P0.x,P1.x,P2.x,(double)i/(nbPoints - 1));
+				double y = quadraticBezier(P0.y,P1.y,P2.y,(double)i/(nbPoints-1));
+				double z = quadraticBezier(P0.z,P1.z,P2.z,(double)i/(nbPoints-1));
+				points.add(new GamaPoint(x,y,z));
+			}
+			return points;
+		}
+		private static double quadraticBezier(double v0, double v1, double v2, double t) {
+			return (1-t)*((1-t)*v0 + t*v1) + t*((1-t)*v1 +t*v2);
+		}
+		
 		@operator(value = { "line", "polyline" },
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
