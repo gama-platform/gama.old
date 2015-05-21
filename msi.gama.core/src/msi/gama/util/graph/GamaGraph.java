@@ -672,7 +672,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				VertexPair<V> nodes1 = new VertexPair<V>(source, target);
 				IList<IList<E>> sp1 = shortestPathComputed.get(nodes1);
 				IList<E> spl1 = null;
-				if ( sp1 == null || sp1.isEmpty() ) {
+				if ( sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
 					spl1 = GamaListFactory.create(getType().getContentType());
 					final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph(), source);
 					List<E> re = p1.getPathEdgeList(target);
@@ -695,7 +695,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				IList<IList<E>> sp2 = shortestPathComputed.get(nodes2);
 				IList<E> spl2 = null;
 
-				if ( sp2 == null || sp2.isEmpty() ) {
+				if ( sp2 == null || sp2.isEmpty() || sp2.get(0).isEmpty() ) {
 					spl2 = GamaListFactory.create(getType().getContentType());
 
 					try {
@@ -726,7 +726,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				VertexPair<V> nodes3 = new VertexPair<V>(source, target);
 				IList<IList<E>> sp3 = shortestPathComputed.get(nodes3);
 				IList<E> spl3 = null;
-				if ( sp3 == null || sp3.isEmpty() ) {
+				if ( sp3 == null || sp3.isEmpty() || sp3.get(0).isEmpty()) {
 					spl3 = GamaListFactory.create(getType().getContentType());
 					msi.gama.metamodel.topology.graph.AStar astarAlgo =
 						new msi.gama.metamodel.topology.graph.AStar(this, source, target);
@@ -756,6 +756,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		List<E> edges2 = GamaListFactory.create(scope, getType().getContentType(), edges);
 		for ( E edge : edges ) {
 			edges2.remove(0);
+			if ( edges2.isEmpty() ) {
+				break;
+			}
 			// System.out.println("s : " + s + " j : " + j + " i: " + i);
 			V nwS = (V) this.getEdgeTarget(edge);
 			if ( !directed && nwS == s ) {
@@ -768,9 +771,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				shortestPathComputed.put(pp, spl2);
 			}
 			s = nwS;
-			if ( edges2.isEmpty() ) {
-				break;
-			}
+			
 		}
 	}
 
