@@ -244,8 +244,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				IList priorities = GamaListFactory.create(scope, Types.FLOAT, priority_list);
 				int index_choice = msi.gaml.operators.Random.opRndChoice(scope, priorities);
 				newIntention=desireBase.get(index_choice);
-				if ( !intentionBase.contains(newIntention) ) {
-					intentionBase.addValue(scope, newIntention);
+				if(newIntention.getSubintentions() == null){
+					if ( !intentionBase.contains(newIntention) ) {
+						intentionBase.addValue(scope, newIntention);
+						return true;
+					}
+				}
+				else{
+					for(int i=0; i<newIntention.getSubintentions().size();i++ ){
+						desireBase.addValue(scope, newIntention.getSubintentions().get(i));
+					}
+					desireBase.remove(newIntention);
 					return true;
 				}
 			}
@@ -265,8 +274,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 				}
-				if ( !intentionBase.contains(newIntention) ) {
-					intentionBase.addValue(scope, newIntention);
+				if(newIntention.getSubintentions()==null){
+					if ( !intentionBase.contains(newIntention) ) {
+						intentionBase.addValue(scope, newIntention);
+						return true;
+					}
+				}else{
+					for(int i=0; i<newIntention.getSubintentions().size();i++ ){
+						desireBase.addValue(scope, newIntention.getSubintentions().get(i));
+					}
+					desireBase.remove(newIntention);
 					return true;
 				}
 			}
@@ -404,10 +421,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return factBase.add(predicateItem);
 	}
 
-	@getter (value = CURRENT_PLAN)
-	public String getPlan(IScope scope){
-		return ((SimpleBdiPlan)(getCurrentAgent(scope).getAttribute(CURRENT_PLAN))).getName();
-	}
+//	@getter (value = CURRENT_PLAN)
+//	public String getPlan(IScope scope){
+//		return ((SimpleBdiPlan)(getCurrentAgent(scope).getAttribute(CURRENT_PLAN))).getName();
+//	}
 	
 	@action(name = "add_belief", args = { @arg(name = PREDICATE,
 		type = IType.MAP,

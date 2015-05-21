@@ -1,5 +1,7 @@
 package msi.gaml.architecture.simplebdi;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -46,5 +48,16 @@ public class Operators {
 		return predicate;
 	}
 	
+	@operator(value = "and", can_be_const = true, category = { "BDI" })
+	@doc(value = "create a new predicate from two others by including them as subintentions",
+			examples = @example(value = "predicate1 and predicate2", test=false))
+	public static Predicate and(final Predicate pred1,final Predicate pred2){
+		Predicate tempPred=new Predicate(pred1.getName()+"_and_"+pred2.getName());
+		List<Predicate> tempList= new ArrayList<Predicate>();
+		tempList.add(pred1);
+		tempList.add(pred2);
+		tempPred.setSubintentions(tempList);
+		return tempPred;
+	}
 
 }
