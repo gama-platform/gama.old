@@ -680,7 +680,7 @@ public abstract class Spatial {
 		@operator(value = { "curve" },
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
-			@doc(value = "A quadratic Bezier curve geometry built from the three given points composed of 10 points.",
+			@doc(value = "A quadratic Bezier curve geometry built from the three given points composed of a given numnber of points.",
 				usages = { @usage(value = "if the operand is nil, returns nil"), @usage(value = "if the last operand (number of points) is inferior to 2, returns nil")},
 				examples = { @example(value = "curve({0,0}, {0,10}, {10,10}, 20)",
 					equals = "a quadratic Bezier curve geometry composed of 20 points from p0 to p2.",
@@ -690,6 +690,36 @@ public abstract class Spatial {
 				if (P0 == null || P1 == null || P2 == null || nbPoints < 2)
 					return null;
 				return GamaGeometryType.buildPolyline(quadraticBezierCurve(P0,P1,P2,nbPoints));
+			}
+		
+		@operator(value = { "curve" },
+				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			@doc(value = "A cubic Bezier curve geometry built from the four given points composed of 10 points.",
+				usages = { @usage(value = "if the operand is nil, returns nil")},
+				examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
+					equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p3.",
+					test = false) }, see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle",
+					"square", "triangle", "line" })
+			public static IShape BezierCurve(final IScope scope, final GamaPoint P0,  final GamaPoint P1, final GamaPoint P2,final GamaPoint P3) {
+				if (P0 == null || P1 == null || P2 == null|| P3 == null)
+					return null;
+				return GamaGeometryType.buildPolyline(cubicBezierCurve(P0,P1,P2,P3,10));
+			}
+		
+		@operator(value = { "curve" },
+				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			@doc(value = "A cubic Bezier curve geometry built from the four given points composed of a given number of points.",
+				usages = { @usage(value = "if the operand is nil, returns nil"), @usage(value = "if the last operand (number of points) is inferior to 2, returns nil")},
+				examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
+					equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p3.",
+					test = false) }, see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle",
+					"square", "triangle", "line" })
+			public static IShape BezierCurve(final IScope scope, final GamaPoint P0,  final GamaPoint P1, final GamaPoint P2,final GamaPoint P3, int nbPoints) {
+				if (P0 == null || P1 == null || P2 == null|| P3 == null|| nbPoints < 2)
+					return null;
+				return GamaGeometryType.buildPolyline(cubicBezierCurve(P0,P1,P2,P3,nbPoints));
 			}
 		
 		private static  List<IShape> quadraticBezierCurve( final GamaPoint P0,  final GamaPoint P1, final GamaPoint P2, int nbPoints) {
@@ -702,8 +732,22 @@ public abstract class Spatial {
 			}
 			return points;
 		}
+		
+		private static  List<IShape> cubicBezierCurve( final GamaPoint P0,  final GamaPoint P1, final GamaPoint P2,final GamaPoint P3, int nbPoints) {
+			final List<IShape> points = new ArrayList<IShape>();
+			for (int i = 0; i < nbPoints; i++) {
+				double x = cubicBezier(P0.x,P1.x,P2.x,P3.x,(double)i/(nbPoints - 1));
+				double y = cubicBezier(P0.y,P1.y,P2.y,P3.y,(double)i/(nbPoints-1));
+				double z = cubicBezier(P0.z,P1.z,P2.z,P3.z,(double)i/(nbPoints-1));
+				points.add(new GamaPoint(x,y,z));
+			}
+			return points;
+		}
 		private static double quadraticBezier(double v0, double v1, double v2, double t) {
 			return (1-t)*((1-t)*v0 + t*v1) + t*((1-t)*v1 +t*v2);
+		}
+		private static double cubicBezier(double v0, double v1, double v2,double v3, double t) {
+			return Math.pow((1-t),3)*v0+3*(1-t)*(1-t)*t*v1+3*(1-t)*t*t*v2+Math.pow(t, 3)*v3;
 		}
 		
 		@operator(value = { "line", "polyline" },
