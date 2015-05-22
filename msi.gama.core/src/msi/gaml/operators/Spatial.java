@@ -1222,26 +1222,14 @@ public abstract class Spatial {
 						geoms.add(new GamaShape(gg));
 				}
 				final GamaList geomsVisible =  (GamaList) GamaListFactory.create();
+				final PreparedGeometry ref = PreparedGeometryFactory.prepare(locG);
 				
 				for ( final IShape geom : geoms ) {
 					if ( !intersection(geom,obst) ) {
 						geomsVisible.addValue(scope, geom);
 					} else {
-						IShape perceptReal = difference(geom, obst);
-						final PreparedGeometry ref = PreparedGeometryFactory.prepare(locG);
-						if ( perceptReal.getInnerGeometry() instanceof GeometryCollection ) {
-							final GeometryCollection gc = (GeometryCollection) perceptReal.getInnerGeometry();
-							perceptReal = null;
-							final int nb = gc.getNumGeometries();
-							for ( int i1 = 0; i1 < nb; i1++ ) {
-								if ( !ref.disjoint(gc.getGeometryN(i1)) ) {
-									perceptReal = new GamaShape(gc.getGeometryN(i1));
-									break;
-								}
-							}
-						} else if ( ref.disjoint(perceptReal.getInnerGeometry()) ) {
-							perceptReal = null;
-						}
+						IShape perceptReal = difference(geom, obst,ref);
+						
 						if ( perceptReal != null && (isPoint || !perceptReal.isPoint()) ) {
 							geomsVisible.addValue(scope, perceptReal);
 						}
@@ -1267,11 +1255,33 @@ public abstract class Spatial {
 			return false;
 		}
 		
-		private static IShape difference(IShape geom, List<IShape> geoms) {
+		private static IShape difference(IShape geom, List<IShape> geoms,PreparedGeometry ref) {
 			if (geom == null) return null;
 			Geometry gR = geom.getInnerGeometry();
 			for(IShape g : geoms) {
-				if (g != null  && geom.intersects(g)) gR = gR.difference(g.getInnerGeometry());
+				
+				if (g != null  && geom.intersects(g)) {
+					try {
+						gR = gR.difference(g.getInnerGeometry());
+						
+					} catch (TopologyException e) {
+						IShape gp = new GamaShape(g, null, 1.0, null);
+						gR = gR.difference(gp.getInnerGeometry());
+					}
+					if ( gR instanceof GeometryCollection ) {
+						final GeometryCollection gc = (GeometryCollection) gR;
+						gR = null;
+						final int nb = gc.getNumGeometries();
+						for ( int i1 = 0; i1 < nb; i1++ ) {
+							if ( !ref.disjoint(gc.getGeometryN(i1)) ) {
+								gR =gc.getGeometryN(i1);
+								break;
+							}
+						}
+					} else if ( ref.disjoint(gR) ) {
+						return null;
+					}
+				}
 			}
 			if (gR != null)
 				return new GamaShape(gR);
