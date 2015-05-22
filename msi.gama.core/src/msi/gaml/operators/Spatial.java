@@ -372,20 +372,20 @@ public abstract class Spatial {
 			return GamaGeometryType.buildTeapot(size, location);
 		}
 
+		
 		@operator(value = "cone", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
 		@doc(value = "A cone geometry which min and max angles are given by the operands.",
 			special_cases = { "returns nil if the operand is nil." },
 			comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "cone({0, 45})",
+			examples = { @example(value = "cone(0, 45)",
 				equals = "a geometry as a cone with min angle is 0 and max angle is 45.",
 				test = false) }, see = { "around", "circle", "line", "link", "norm", "point", "polygon", "polyline",
 				"rectangle", "square", "triangle" })
 		public static
-			IShape cone(final IScope scope, final GamaPoint p) {
-			if ( p == null ) { return null; }
-
-			final int min_angle = Maths.checkHeading((int) p.x);
-			final int max_angle = Maths.checkHeading((int) p.y);
+			IShape cone(final IScope scope, final Integer p1, Integer p2) {
+			if ( p1 == null || p2 == null) { return null; }
+			final Integer min_angle = Maths.checkHeading(p1);
+			final Integer max_angle = Maths.checkHeading(p2);
 			final IAgent a = scope.getAgentScope();
 			final ILocation origin = a.getLocation() == null ? new GamaPoint(0, 0) : a.getLocation();
 			final double originx = origin.getX();
@@ -402,6 +402,20 @@ public abstract class Spatial {
 			final ILocation maxPoint = new GamaPoint(max_point_x, max_point_y);
 
 			return polygon(scope, GamaListFactory.createWithoutCasting(Types.POINT, origin, minPoint, maxPoint));
+
+		}
+		@operator(value = "cone", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@doc(value = "A cone geometry which min and max angles are given by the operands.",
+			special_cases = { "returns nil if the operand is nil." },
+			comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.",
+			examples = { @example(value = "cone({0, 45})",
+				equals = "a geometry as a cone with min angle is 0 and max angle is 45.",
+				test = false) }, see = { "around", "circle", "line", "link", "norm", "point", "polygon", "polyline",
+				"rectangle", "square", "triangle" })
+		public static
+			IShape cone(final IScope scope, final GamaPoint p) {
+			if ( p == null ) { return null; }
+			return cone(scope,(int)p.x,(int)p.y);
 		}
 
 		@operator(value = "square", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
@@ -1172,87 +1186,92 @@ public abstract class Spatial {
 			equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
 			isExecutable = false) })
 		public static
-			IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IAgent> obstacles,
-				Double precision) {
+			IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IShape> obstacles,
+				Integer precision) {
 			final IAgent a = scope.getAgentScope();
+			List<IShape> obst = ((obstacles == null) ? new ArrayList<IShape>() : obstacles.listValue(scope, Types.GEOMETRY, false));  
 			final ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if ( precision == null ) {
-				precision = 120.0;
+				precision = 120;
 			}
 			final Geometry visiblePercept = GeometryUtils.FACTORY.createGeometry(source.getInnerGeometry());
+			boolean isPoint = source.isPoint();
 			if ( obstacles != null && !obstacles.isEmpty(scope) ) {
-				final Envelope3D env = source.getEnvelope();
-				final double percep_dist = Math.max(env.getHeight(), env.getWidth());
+				final Geometry pt = GeometryUtils.FACTORY.createPoint(location.toCoordinate());
 				final Geometry locG =
-					GeometryUtils.FACTORY.createPoint(location.toCoordinate())
-						.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT)
+						pt
+						.buffer(0.01)
 						.getEnvelope();
-
-				final List<Geometry> geoms = new ArrayList<Geometry>();
-				Coordinate prec = new Coordinate(location.getX() + percep_dist, location.getY());
-				for ( int k = 1; k <= precision; k++ ) {
-					final double angle = k / precision * 2 * Math.PI;
-					Coordinate next = null;
-					if ( k < precision ) {
-						next =
-							new Coordinate(location.getX() + Math.cos(angle) * percep_dist, location.getY() +
-								Math.sin(angle) * percep_dist);
-					} else {
-						next = new Coordinate(location.getX() + percep_dist, location.getY());
-					}
+				double percep_dist = 0;
+				for(ILocation p: source.getPoints()) {
+					double dist = location.euclidianDistanceTo(p);
+					if (dist > percep_dist) {percep_dist = dist;}
+				}
+				final Geometry gbuff = pt.buffer(percep_dist, precision/4);
+				final List<IShape> geoms = new ArrayList<IShape>();
+				for ( int k = 1; k < gbuff.getNumPoints(); k++ ) {
+					
 					final Coordinate[] coordinates = new Coordinate[4];
 					coordinates[0] = location.toCoordinate();
-					coordinates[1] = prec;
-					coordinates[2] = next;
+					coordinates[1] = gbuff.getCoordinates()[k-1];
+					coordinates[2] = gbuff.getCoordinates()[k];
 					coordinates[3] = location.toCoordinate();
 					final LinearRing closeRing = GeometryUtils.FACTORY.createLinearRing(coordinates);
-					geoms.add(source.getGeometry().getInnerGeometry()
-						.intersection(GeometryUtils.FACTORY.createPolygon(closeRing, null)));
-					prec = next;
+					Geometry gg = source.getGeometry().getInnerGeometry().intersection(GeometryUtils.FACTORY.createPolygon(closeRing, null));
+					if (isPoint || !(gg instanceof Point))
+						geoms.add(new GamaShape(gg));
 				}
-				final List<Geometry> geomsVisible = new ArrayList<Geometry>();
-				final Geometry geomObsts[] = new Geometry[obstacles.length(scope)];
-				int i = 0;
-				for ( final IShape shape : obstacles.iterable(scope) ) {
-					geomObsts[i++] = shape.getInnerGeometry();
-				}
-
-				final Geometry obstaclesGeom = GeometryUtils.FACTORY.createGeometryCollection(geomObsts);
-				obstaclesGeom.union();
-				for ( final Geometry geom : geoms ) {
-					if ( !obstaclesGeom.intersects(geom) ) {
-						geomsVisible.add(geom);
+				final GamaList geomsVisible =  (GamaList) GamaListFactory.create();
+				
+				for ( final IShape geom : geoms ) {
+					if ( !intersection(geom,obst) ) {
+						geomsVisible.addValue(scope, geom);
 					} else {
-						Geometry perceptReal = geom.difference(obstaclesGeom);
+						IShape perceptReal = difference(geom, obst);
 						final PreparedGeometry ref = PreparedGeometryFactory.prepare(locG);
-						if ( perceptReal instanceof GeometryCollection ) {
-							final GeometryCollection gc = (GeometryCollection) perceptReal;
+						if ( perceptReal.getInnerGeometry() instanceof GeometryCollection ) {
+							final GeometryCollection gc = (GeometryCollection) perceptReal.getInnerGeometry();
 							perceptReal = null;
 							final int nb = gc.getNumGeometries();
 							for ( int i1 = 0; i1 < nb; i1++ ) {
 								if ( !ref.disjoint(gc.getGeometryN(i1)) ) {
-									perceptReal = gc.getGeometryN(i1);
+									perceptReal = new GamaShape(gc.getGeometryN(i1));
 									break;
 								}
 							}
-						} else if ( ref.disjoint(perceptReal) ) {
+						} else if ( ref.disjoint(perceptReal.getInnerGeometry()) ) {
 							perceptReal = null;
 						}
-						final Geometry result = perceptReal;
-						if ( result != null ) {
-							geomsVisible.add(result);
+						if ( perceptReal != null && (isPoint || !perceptReal.isPoint()) ) {
+							geomsVisible.addValue(scope, perceptReal);
 						}
 					}
 				}
-				Geometry newGeom = null;
-				if ( !geomsVisible.isEmpty() ) {
-					newGeom = GeometryUtils.FACTORY.createGeometryCollection(geomsVisible.toArray(new Geometry[0]));
-					newGeom.union();
+				if ( !geomsVisible.isEmpty(scope) ) {
+					return Cast.asGeometry(scope, geomsVisible, false);
 				}
-				if ( newGeom != null ) { return new GamaShape(newGeom); }
-				return null;
+				return null; 
 			}
 			return new GamaShape(visiblePercept);
+		}
+		
+		private static boolean intersection(IShape geom, List<IShape> geoms) {
+			if (geom == null) return false;
+			for(IShape g : geoms) {
+				if (g != null  && geom.intersects(g)) return true;
+			}
+			return false;
+		}
+		
+		private static IShape difference(IShape geom, List<IShape> geoms) {
+			if (geom == null) return null;
+			Geometry gR = geom.getInnerGeometry();
+			for(IShape g : geoms) {
+				if (g != null  && geom.intersects(g)) gR = gR.difference(g.getInnerGeometry());
+			}
+			if (gR != null)
+				return new GamaShape(gR);
+			return null;
 		}
 
 		@operator(value = "masked_by", category = { IOperatorCategory.SPATIAL })
@@ -1260,7 +1279,7 @@ public abstract class Spatial {
 			equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
 			isExecutable = false) })
 		public static
-			IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IAgent> obstacles) {
+			IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IShape> obstacles) {
 			return masked_by(scope, source, obstacles, null);
 		}
 
