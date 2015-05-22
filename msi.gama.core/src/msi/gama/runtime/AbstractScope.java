@@ -57,8 +57,9 @@ public abstract class AbstractScope implements IScope {
 
 	// Allows to disable error reporting for this scope (the value will be read by the error reporting mechnanism).
 	private boolean reportErrors = true;
+
 	// Allows (for debugging purposes) to trace how the agents are popped and pushed to the scope
-	public boolean traceAgents = false;
+	// public boolean traceAgents = false;
 
 	public AbstractScope(final IMacroAgent root) {
 		this.root = root;
@@ -292,9 +293,9 @@ public abstract class AbstractScope implements IScope {
 	public boolean push(final IAgent agent) {
 		final IAgent a = agents.peek();
 		if ( a != null && a.equals(agent) ) { return false; }
-		if ( traceAgents ) {
-			System.out.println("" + a + " pushed to " + agents);
-		}
+		// if ( traceAgents ) {
+		// System.out.println("" + a + " pushed to " + agents);
+		// }
 		agents.push(agent);
 		return true;
 	}
@@ -336,16 +337,15 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void pop(final IAgent agent) {
-		// GuiUtils.debug("AbstractScope.pop " + agent);
-		// final IAgent a = agents.pop();
-		// if ( agent != a ) {
-		// GuiUtils.debug("AbstractScope.pop : Different agents !");
-		// }
-
-		IAgent a = agents.pop();
-		if ( traceAgents ) {
-			System.out.println("" + a + " popped from " + agents);
+		try {
+			IAgent a = agents.pop();
+			// if ( traceAgents ) {
+			// System.out.println("" + a + " popped from " + agents);
+			// }
+		} catch (NoSuchElementException e) {
+			return;
 		}
+
 		_agent_halted = false;
 	}
 
@@ -365,7 +365,11 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void pop(final IStatement statement) {
-		statements.pop();
+		try {
+			statements.pop();
+		} catch (NoSuchElementException e) {
+			return;
+		}
 		if ( trace ) {
 			tabLevel--;
 		}
