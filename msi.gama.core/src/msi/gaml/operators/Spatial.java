@@ -1248,7 +1248,11 @@ public abstract class Spatial {
 					}
 				}
 				if ( !geomsVisible.isEmpty(scope) ) {
-					return Cast.asGeometry(scope, geomsVisible, false);
+					IShape result = Cast.asGeometry(scope, geomsVisible, false);
+					if (result.getInnerGeometry() instanceof GeometryCollection) {
+						result = Spatial.Transformations.enlarged_by(scope, result, 0.1);
+					}
+					return result;
 				}
 				return null; 
 			}
