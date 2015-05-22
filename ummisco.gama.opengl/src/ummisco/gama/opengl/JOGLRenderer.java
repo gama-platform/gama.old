@@ -72,6 +72,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	protected double xRatioBetweenPixelsAndModelUnits;
 	protected double yRatioBetweenPixelsAndModelUnits;
 	private GLU glu;
+	private GL2 gl;
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
 	private volatile boolean inited;
@@ -149,8 +150,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// see https://jogamp.org/deployment/v2.1.1/javadoc/jogl/javadoc/javax/media/opengl/glu/gl2/GLUgl2.html
 		// GLU objects are NOT thread safe...
 		glu = new GLU();
+		gl = GLContext.getCurrentGL().getGL2();
 		initializeCanvasWithListeners();
-		GL2 gl = GLContext.getCurrentGL().getGL2();
 		updateCameraPosition();
 		width = drawable.getSurfaceWidth();
 		height = drawable.getSurfaceHeight();
@@ -196,7 +197,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		if ( GAMA.getSimulation() == null ) { return; }
 
 		// if () != null && animator.isPaused() ) { return; }
-		GL2 gl = drawable.getContext().getGL().getGL2();
 
 		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 		gl.glGetDoublev(GLMatrixFunc.GL_MODELVIEW_MATRIX, mvmatrix, 0);
@@ -275,7 +275,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
 		// Get the OpenGL graphics context
 		if ( width <= 0 || height <= 0 ) { return; }
-		GL2 gl = drawable.getContext().getGL().getGL2();
 		this.width = width;
 		this.height = height;
 		// Set the viewport (display area) to cover the entire window
@@ -808,6 +807,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	public GLU getGlu() {
 		return glu;
+	}
+
+	public GL2 getGL() {
+		return gl;
 	}
 
 	public GamaPoint getIntWorldPointFromWindowPoint(final Point windowPoint) {

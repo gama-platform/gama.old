@@ -85,13 +85,12 @@ public abstract class AbstractCamera implements ICamera {
 	public final void updateCamera(final GL2 gl, final int width, final int height) {
 		// double aspect = (renderer.data.getEnvWidth() / renderer.data.getEnvHeight());
 		// double aspect = renderer.displaySurface.getDisplayWidth() / renderer.displaySurface.getDisplayHeight();
-		double aspect = (double) width / (height == 0 ? 1 : height);
+		double aspect = (double) width / (double) (height == 0 ? 1 : height);
 
 		// System.out.println("Aspect = " + aspect);
-		GLU glu = renderer.getGlu();
 		if ( !getRenderer().data.isOrtho() ) {
 			try {
-				perspectiveGL(gl, 45.0d, aspect, maxDim / 1000, maxDim * 10);
+				perspectiveGL(gl, aspect, maxDim / 1000, maxDim * 10);
 				// glu.gluPerspective(45.0d, aspect, maxDim / 1000, maxDim * 10);
 			} catch (BufferOverflowException e) {
 				System.out.println("Buffer overflow exception");
@@ -104,14 +103,20 @@ public abstract class AbstractCamera implements ICamera {
 			}
 			gl.glTranslated(0d, 0d, maxDim * 1.5);
 		}
-		makeGluLookAt(glu);
+		makeGluLookAt(renderer.getGlu());
 		animate();
 	}
 
-	void perspectiveGL(final GL2 gl, final double fovY, final double aspect, final double zNear, final double zFar) {
+	void perspectiveGL(final GL2 gl, final double aspect, final double zNear, final double zFar) {
 		double fW, fH;
-		fH = Math.tan(fovY / 360 * Math.PI) * zNear;
-		fW = fH * aspect;
+		double fovY = 45.0d;
+		if ( aspect > 1.0 ) {
+			fH = Math.tan(fovY / 360 * Math.PI) * zNear;
+			fW = fH * aspect;
+		} else {
+			fW = Math.tan(fovY / 360 * Math.PI) * zNear;
+			fH = fW / aspect;
+		}
 		gl.glFrustum(-fW, fW, -fH, fH, zNear, zFar);
 	}
 
