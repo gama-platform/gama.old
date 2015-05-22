@@ -29,7 +29,8 @@ public class TextureCache {
 		return BUILDER.drawable;
 	}
 
-	// Assumes the texture has been created. But it may be processed at the time of the call, so we wait for its availability.
+	// Assumes the texture has been created. But it may be processed at the time
+	// of the call, so we wait for its availability.
 	public static Texture get(final GL gl, final BufferedImage image) {
 		if ( image == null ) { return null; }
 		Texture texture = TEXTURES.get(image);
@@ -120,12 +121,22 @@ public class TextureCache {
 			final ArrayList<GLTask> copy = new ArrayList();
 			while (true) {
 				tasks.drainTo(copy);
-				drawable.getContext().makeCurrent();
-				for ( GLTask currentTask : copy ) {
-					currentTask.runIn(drawable.getGL());
+				try {
+					drawable.getContext().makeCurrent();
+					for ( GLTask currentTask : copy ) {
+						currentTask.runIn(drawable.getGL());
+					}
+
+				} catch (com.jogamp.nativewindow.NativeWindowException e) {
+					break;
+				} catch (com.jogamp.opengl.GLException ex) {
+					break;
+				} finally {
+					try {
+						drawable.getContext().release();
+					} catch (com.jogamp.nativewindow.NativeWindowException e) {} catch (com.jogamp.opengl.GLException ex) {}
+					copy.clear();
 				}
-				drawable.getContext().release();
-				copy.clear();
 			}
 		}
 
