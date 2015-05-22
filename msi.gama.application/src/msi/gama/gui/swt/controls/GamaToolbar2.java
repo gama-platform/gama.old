@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.*;
 public class GamaToolbar2 extends Composite {
 
 	private GamaToolbarSimple left, right;
-
+	private boolean hasTooltip;
 	final int height;
 
 	public GamaToolbar2(final Composite parent, final int style, final int height) {
@@ -93,6 +93,7 @@ public class GamaToolbar2 extends Composite {
 
 	public ToolItem tooltip(final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		if ( s == null ) { return null; }
+		hasTooltip = true;
 		final GamaToolbarSimple tb = getToolbar(side);
 		wipe(side, false);
 		final GamaToolbarSimple other = tb == right ? left : right;
@@ -239,6 +240,13 @@ public class GamaToolbar2 extends Composite {
 	 */
 	public GamaToolbarSimple getToolbar(final int side) {
 		return side == SWT.LEFT ? left : right;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean hasTooltip() {
+		return hasTooltip;
 	}
 
 }

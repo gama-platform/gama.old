@@ -35,6 +35,7 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 		for ( IContributionItem item : tbm.getItems() ) {
 			toolbar.item(item, SWT.RIGHT);
 		}
+		toolbar.refresh(true);
 		tbm.removeAll();
 		tbm.update(true);
 	}

@@ -197,17 +197,14 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void addOutput(final IDisplayOutput out) {
 		if ( out == null ) { return; }
-		if ( toolbar != null ) {
-			toolbar.wipe(SWT.LEFT, true);
-			toolbar.wipe(SWT.RIGHT, true);
-			GamaToolbarFactory.buildToolbar(this, toolbar);
-		}
-		// if ( !(outputs.isEmpty()) &&() {
-		// output.dispose();
-		// }
 		if ( !outputs.contains(out) ) {
 			outputs.add(out);
 		} else {
+			if ( toolbar != null ) {
+				toolbar.wipe(SWT.LEFT, true);
+				toolbar.wipe(SWT.RIGHT, true);
+				GamaToolbarFactory.buildToolbar(this, toolbar);
+			}
 			outputReloaded(out);
 		}
 	}
@@ -238,7 +235,9 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	 */
 	@Override
 	public void stopDisplayingTooltips() {
-		toolbar.wipe(SWT.LEFT, false);
+		if ( toolbar.hasTooltip() ) {
+			toolbar.wipe(SWT.LEFT, false);
+		}
 	}
 
 	@Override

@@ -190,6 +190,7 @@ public class GamaToolbarFactory {
 			b.install(tb);
 		}
 		view.createToolItems(tb);
+		tb.refresh(true);
 	}
 
 }
