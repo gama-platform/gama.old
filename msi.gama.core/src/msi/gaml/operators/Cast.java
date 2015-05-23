@@ -143,8 +143,9 @@ public class Cast {
 		index_type = ITypeProvider.SECOND_KEY_TYPE,
 		can_be_const = true,
 		category = { IOperatorCategory.CASTING })
-	@doc(value = "casting of the first argument into a given type", comment = "It is equivalent to the application of the type operator on the left operand.",
-		examples = @example(value="3.5 as int", returnType="int", equals="int(3.5)"))
+	@doc(value = "casting of the first argument into a given type",
+		comment = "It is equivalent to the application of the type operator on the left operand.",
+		examples = @example(value = "3.5 as int", returnType = "int", equals = "int(3.5)"))
 	public static Object as(final IScope scope, final Object val, final IExpression expr) {
 		// WARNING copy is set explicity to false
 		return expr.getType().cast(scope, val, null, false);
@@ -439,7 +440,7 @@ public class Cast {
 	}
 
 	@operator(value = "to_gaml", category = { IOperatorCategory.CASTING })
-	@doc(value = "represents the gaml way to write an expression in gaml, depending on its type",
+	@doc(value = "returns the litteral description of an expression or description -- action, behavior, species, aspect, even model -- in gaml",
 		examples = {
 			@example(value = "to_gaml(0)", equals = "'0'"),
 			@example(value = "to_gaml(3.78)", equals = "'3.78'"),
