@@ -279,7 +279,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// It is not an description so it must be an operator. We emit an error and stop compiling if it
 		// is not
 		if ( !OPERATORS.containsKey(op) ) {
-			getContext().error("Unknown description or operator: " + op, IGamlIssue.UNKNOWN_ACTION, e2.eContainer(), op);
+			getContext()
+				.error("Unknown action or operator: " + op, IGamlIssue.UNKNOWN_ACTION, e2.eContainer(), op);
 			return null;
 		}
 
@@ -388,7 +389,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return expr;
 		}
 		// We are now dealing with an agent. In that case, it can be either an attribute or an
-		// description call
+		// action call
 		if ( fieldExpr instanceof VariableRef ) {
 			String var = EGaml.getKeyOf(fieldExpr);
 			IVarExpression expr = (IVarExpression) species.getVarExpr(var);
