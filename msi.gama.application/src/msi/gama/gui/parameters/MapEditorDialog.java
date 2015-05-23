@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import java.util.Map;
 import msi.gama.runtime.*;
 import msi.gama.util.*;
 import msi.gaml.types.Types;
@@ -150,8 +149,10 @@ public class MapEditorDialog extends Dialog {
 		 * The list widget containing all the elements of the corresponding GAML list.
 		 */
 		list = new List(container, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
-		for ( final Map.Entry gamlElement : data.getPairs() ) {
-			list.add(((GamaPair) gamlElement).serialize(false));
+		for ( final Object gamlElement : data.getPairs() ) {
+			if ( gamlElement instanceof GamaPair ) {
+				list.add(((GamaPair) gamlElement).serialize(false));
+			}
 		}
 
 		final GridData listGridData = new GridData(GridData.FILL, GridData.FILL, true, true, 2, 5);
