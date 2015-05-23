@@ -276,10 +276,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				if ( result != null ) { return result; }
 			}
 		}
-		// It is not an action so it must be an operator. We emit an error and stop compiling if it
+		// It is not an description so it must be an operator. We emit an error and stop compiling if it
 		// is not
 		if ( !OPERATORS.containsKey(op) ) {
-			getContext().error("Unknown action or operator: " + op, IGamlIssue.UNKNOWN_ACTION, e2.eContainer(), op);
+			getContext().error("Unknown description or operator: " + op, IGamlIssue.UNKNOWN_ACTION, e2.eContainer(), op);
 			return null;
 		}
 
@@ -388,7 +388,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return expr;
 		}
 		// We are now dealing with an agent. In that case, it can be either an attribute or an
-		// action call
+		// description call
 		if ( fieldExpr instanceof VariableRef ) {
 			String var = EGaml.getKeyOf(fieldExpr);
 			IVarExpression expr = (IVarExpression) species.getVarExpr(var);
@@ -444,8 +444,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	// FIXME Possibility to simplify here as we recreate a map that will be later decompiled...
 	// Create Arguments directly ?
-	// private List<IExpressionDescription> compileArguments(final StatementDescription action, final EObject args) {
-	// Map<String, IExpressionDescription> descriptions = parseArguments(action, args, getContext());
+	// private List<IExpressionDescription> compileArguments(final StatementDescription description, final EObject args) {
+	// Map<String, IExpressionDescription> descriptions = parseArguments(description, args, getContext());
 	// if ( descriptions == null ) { return null; }
 	// final List list = new ArrayList();
 	// for ( Map.Entry<String, IExpressionDescription> d : descriptions.entrySet() ) {
@@ -847,19 +847,19 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return null;
 	}
 
-	private IExpression caseVar(final String s, final EObject object) {
-		if ( s == null ) {
+	private IExpression caseVar(final String varName, final EObject object) {
+		if ( varName == null ) {
 			getContext().error("Unknown variable", IGamlIssue.UNKNOWN_VAR, object);
 			return null;
 		}
 
 		// HACK
-		if ( s.equals(USER_LOCATION) ) { return factory.createVar(USER_LOCATION, Types.POINT, true,
+		if ( varName.equals(USER_LOCATION) ) { return factory.createVar(USER_LOCATION, Types.POINT, true,
 			IVarExpression.TEMP, getContext()); }
 		// HACK
-		if ( s.equals(EACH) ) { return getEachExpr(); }
-		if ( s.equals(NULL) ) { return IExpressionFactory.NIL_EXPR; }
-		if ( s.equals(SELF) ) {
+		if ( varName.equals(EACH) ) { return getEachExpr(); }
+		if ( varName.equals(NULL) ) { return IExpressionFactory.NIL_EXPR; }
+		if ( varName.equals(SELF) ) {
 			IDescription temp_sd = getContext().getSpeciesContext();
 			if ( temp_sd == null ) {
 				getContext().error("Unable to determine the species of self", IGamlIssue.GENERAL, object);
@@ -868,9 +868,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			IType tt = temp_sd.getType();
 			return factory.createVar(SELF, tt, true, IVarExpression.SELF, null);
 		}
-		if ( s.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
-		if ( isSpeciesName(s) ) { return factory.createConst(s, GamaType.from(getSpeciesContext(s))); }
-		IDescription temp_sd = getContext() == null ? null : getContext().getDescriptionDeclaringVar(s);
+		if ( varName.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
+		if ( isSpeciesName(varName) ) { return factory.createConst(varName, GamaType.from(getSpeciesContext(varName))); }
+		IDescription temp_sd = getContext() == null ? null : getContext().getDescriptionDeclaringVar(varName);
 
 		if ( temp_sd != null ) {
 			if ( temp_sd instanceof SpeciesDescription ) {
@@ -880,19 +880,19 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 					if ( remote_sd != temp_sd && !remote_sd.isBuiltIn() && !remote_sd.hasMacroSpecies(found_sd) ) {
 						getContext().error(
-							"The variable " + s + " is not accessible in this context (" + remote_sd.getName() +
+							"The variable " + varName + " is not accessible in this context (" + remote_sd.getName() +
 								"), but in the context of " + found_sd.getName() +
-								". It should be preceded by 'myself.'", IGamlIssue.UNKNOWN_VAR, object, s);
+								". It should be preceded by 'myself.'", IGamlIssue.UNKNOWN_VAR, object, varName);
 					}
 				}
 			}
 
-			return temp_sd.getVarExpr(s);
+			return temp_sd.getVarExpr(varName);
 		}
 
-		if ( isTypeName(s) ) { return factory.createTypeExpression(getContext().getTypeNamed(s)); }
+		if ( isTypeName(varName) ) { return factory.createTypeExpression(getContext().getTypeNamed(varName)); }
 
-		if ( isSkillName(s) ) { return skill(s); }
+		if ( isSkillName(varName) ) { return skill(varName); }
 
 		if ( getContext() != null ) {
 
@@ -900,11 +900,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// compatibility while providing a useful warning.
 
 			if ( getContext().getKeyword().equals(DRAW) ) {
-				if ( DrawStatement.SHAPES.keySet().contains(s) ) {
-					getContext().warning(
-						"The symbol " + s + " is not used anymore in draw. Please use geometries instead, e.g. '" + s +
-							"(size)'", IGamlIssue.UNKNOWN_KEYWORD, object, s);
-					return factory.createConst(s + "__deprecated", Types.STRING);
+				if ( DrawStatement.SHAPES.keySet().contains(varName) ) {
+					getContext()
+						.warning(
+							"The symbol " + varName +
+								" is not used anymore in draw. Please use geometries instead, e.g. '" + varName +
+								"(size)'", IGamlIssue.UNKNOWN_KEYWORD, object, varName);
+					return factory.createConst(varName + "__deprecated", Types.STRING);
 				}
 			}
 
@@ -912,12 +914,22 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// that the variable used belongs to the species denoted by the current statement
 			if ( getContext() instanceof StatementDescription ) {
 				SpeciesDescription denotedSpecies = ((StatementDescription) getContext()).computeSpecies();
-				if ( denotedSpecies != null && denotedSpecies.hasVar(s) ) { return denotedSpecies.getVarExpr(s); }
+				if ( denotedSpecies != null ) {
+					if ( denotedSpecies.hasVar(varName) ) { return denotedSpecies.getVarExpr(varName); }
+				}
 			}
 
+			// An experimental possibility is that the variable refers to an description of the species (used like a variable, see Issue 853)
+			// or also any behavior or aspect
+			SpeciesDescription sd = getContext().getSpeciesContext();
+			if ( sd.hasAction(varName) ) { return new DenotedActionExpression(sd.getAction(varName)); }
+			if ( sd.hasBehavior(varName) ) { return new DenotedActionExpression(sd.getBehavior(varName)); }
+			if ( sd.hasAspect(varName) ) { return new DenotedActionExpression(sd.getAspect(varName)); }
+
 			getContext().error(
-				"The variable " + s + " is not defined or accessible in this context. Check its name or declare it",
-				IGamlIssue.UNKNOWN_VAR, object, s);
+				"The variable " + varName +
+					" is not defined or accessible in this context. Check its name or declare it",
+				IGamlIssue.UNKNOWN_VAR, object, varName);
 		}
 		return null;
 
