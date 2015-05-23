@@ -22,6 +22,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 /**
  * The class DisplayOverlay.
@@ -30,13 +31,62 @@ import org.eclipse.swt.widgets.*;
  * @since 19 august 2013
  * 
  */
-public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<OverlayInfo> {
+public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	Label coord, zoom, left, center, right;
 	Canvas scalebar;
+	volatile boolean isBusy;
+	private final Shell popup;
+	private boolean visible = false;
+	private final LayeredDisplayView view;
+	protected final Composite referenceComposite;
+	private final Shell parentShell;
+	final boolean createExtraInfo;
+
+	class OverlayListener extends ShellAdapter implements ControlListener {
+
+		@Override
+		public void controlMoved(final ControlEvent e) {
+			relocate();
+			resize();
+		}
+
+		@Override
+		public void controlResized(final ControlEvent e) {
+			relocate();
+			resize();
+		}
+
+		@Override
+		public void shellClosed(final ShellEvent e) {
+			close();
+		}
+
+	}
 
 	public DisplayOverlay(final LayeredDisplayView view, final Composite c, final IOverlayProvider provider) {
-		super(view, c, provider != null);
+		this.createExtraInfo = provider != null;
+		this.view = view;
+		IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+		ps.addPartListener(pl2);
+		referenceComposite = c;
+		parentShell = c.getShell();
+		popup = new Shell(parentShell, SWT.NO_TRIM | SWT.NO_FOCUS);
+
+		popup.setAlpha(140);
+		FillLayout layout = new FillLayout();
+		layout.type = SWT.VERTICAL;
+		layout.spacing = 10;
+		popup.setLayout(layout);
+		popup.setBackground(IGamaColors.BLACK.color());
+		createPopupControl();
+		// Control control = createControl();
+		// control.setLayoutData(null);
+		popup.setAlpha(140);
+		popup.layout();
+		parentShell.addShellListener(listener);
+		parentShell.addControlListener(listener);
+		c.addControlListener(listener);
 		if ( provider != null ) {
 			provider.setTarget(new ThreadedOverlayUpdater(this));
 		}
@@ -59,7 +109,6 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		return data;
 	}
 
-	@Override
 	protected void createPopupControl() {
 		// overall panel
 		Shell top = getPopup();
@@ -147,14 +196,87 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		}
 	}
 
-	volatile boolean isBusy;
+	Runnable doHide = new Runnable() {
+
+		@Override
+		public void run() {
+			hide();
+		}
+	};
+	Runnable doDisplay = new Runnable() {
+
+		@Override
+		public void run() {
+			display();
+		}
+	};
+	private final IPartListener2 pl2 = new IPartListener2() {
+
+		@Override
+		public void partActivated(final IWorkbenchPartReference partRef) {
+
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) ) {
+				run(doDisplay);
+			}
+		}
+
+		@Override
+		public void partBroughtToTop(final IWorkbenchPartReference partRef) {}
+
+		@Override
+		public void partClosed(final IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) ) {
+				close();
+			}
+		}
+
+		@Override
+		public void partDeactivated(final IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) && !referenceComposite.isVisible() ) {
+				run(doHide);
+			}
+		}
+
+		@Override
+		public void partOpened(final IWorkbenchPartReference partRef) {}
+
+		@Override
+		public void partHidden(final IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) ) {
+				run(doHide);
+			}
+		}
+
+		@Override
+		public void partVisible(final IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) ) {
+				run(doDisplay);
+			}
+		}
+
+		@Override
+		public void partInputChanged(final IWorkbenchPartReference partRef) {}
+	};
+	OverlayListener listener = new OverlayListener();
+	protected final MouseListener toggleListener = new MouseAdapter() {
+
+		@Override
+		public void mouseUp(final MouseEvent e) {
+			setVisible(false);
+		}
+
+	};
 
 	@Override
 	public boolean isBusy() {
 		return isBusy;
 	}
 
-	@Override
 	public void update() {
 		isBusy = true;
 		try {
@@ -163,7 +285,6 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 				try {
 					coord.setText(getView().getOverlayCoordInfo());
 				} catch (Exception e) {
-					// GuiUtils.debug("Error in updating overlay: " + e.getMessage());
 					coord.setText("Not initialized yet");
 				}
 			}
@@ -177,6 +298,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 			}
 			if ( !scalebar.isDisposed() ) {
 				scalebar.redraw();
+				scalebar.update();
 			}
 			getPopup().layout(true);
 		} finally {
@@ -184,7 +306,6 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		}
 	}
 
-	@Override
 	protected Point getLocation() {
 		Rectangle r = referenceComposite.getClientArea();
 		Point p = referenceComposite.toDisplay(r.x, r.y);
@@ -193,13 +314,12 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		return new Point(x, y);
 	}
 
-	@Override
 	protected Point getSize() {
 		Point s = referenceComposite.getSize();
 		return new Point(s.x, -1);
 	}
 
-	public static void drawStringCentered(final GC gc, final String string, final int xCenter, final int yBase,
+	private void drawStringCentered(final GC gc, final String string, final int xCenter, final int yBase,
 		final boolean filled) {
 		Point extent = gc.textExtent(string);
 		int xx = xCenter - extent.x / 2;
@@ -208,19 +328,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 
 	public void displayScale(final Boolean newValue) {
 		scalebar.setVisible(newValue);
-		// ((GridData) scalebar.getLayoutData()).exclude = !newValue;
 	}
-
-	//
-	// @Override
-	// public void appear() {
-	// Composite surfaceComposite = getView().getComponent();
-	// Point loc = surfaceComposite.toDisplay(surfaceComposite.getLocation());
-	// Point s = surfaceComposite.getSize();
-	// Point extent = new Point(s.x, 10);
-	// slidingShell.setBounds(loc.x, loc.y + s.y - 10, extent.x, extent.y);
-	// super.appear();
-	// }
 
 	/**
 	 * @param left2
@@ -280,5 +388,110 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 	 */
 	@Override
 	public void resume() {}
+
+	protected void run(final Runnable r) {
+		GuiUtils.run(r);
+	}
+
+	public Shell getPopup() {
+		return popup;
+	}
+
+	protected LayeredDisplayView getView() {
+		return view;
+	}
+
+	public void display() {
+		if ( !isVisible() ) { return; }
+		// We first verify that the popup is still ok
+		if ( popup.isDisposed() ) { return; }
+		update();
+		relocate();
+		resize();
+		if ( !popup.isVisible() ) {
+			popup.setVisible(true);
+		}
+	}
+
+	public void relocate() {
+		if ( !isVisible() ) { return; }
+		if ( !popup.isDisposed() ) {
+			popup.setLocation(getLocation());
+		}
+	}
+
+	public void resize() {
+		if ( !isVisible() ) { return; }
+		if ( !popup.isDisposed() ) {
+			final Point size = getSize();
+			popup.setSize(popup.computeSize(size.x, size.y));
+		}
+	}
+
+	public void hide() {
+		if ( !popup.isDisposed() && popup.isVisible() ) {
+			popup.setSize(0, 0);
+			popup.update();
+			popup.setVisible(false);
+		}
+	}
+
+	@Override
+	public boolean isDisposed() {
+		return popup.isDisposed() || viewIsDetached();
+	}
+
+	public void close() {
+		if ( !popup.isDisposed() ) {
+			// Composite c = view.getComponent();
+			if ( referenceComposite != null && !referenceComposite.isDisposed() ) {
+				referenceComposite.removeControlListener(listener);
+			}
+			IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+			if ( ps != null ) {
+				ps.removePartListener(pl2);
+			}
+			if ( !parentShell.isDisposed() ) {
+				parentShell.removeControlListener(listener);
+				parentShell.removeShellListener(listener);
+			}
+			popup.dispose();
+		}
+	}
+
+	@Override
+	public boolean isVisible() {
+		// AD: Temporary fix for Issue 548. When a view is detached, the overlays are not displayed
+		return visible && !isDisposed();
+	}
+
+	private boolean viewIsDetached() {
+		// Uses the trick from http://eclipsesource.com/blogs/2010/06/23/tip-how-to-detect-that-a-view-was-detached/
+		final boolean[] result = new boolean[] { false };
+		GuiUtils.run(new Runnable() {
+
+			@Override
+			public void run() {
+				IWorkbenchPartSite site = view.getSite();
+				if ( site == null ) { return; }
+				Shell shell = site.getShell();
+				if ( shell == null ) { return; }
+				String text = shell.getText();
+				result[0] = text == null || text.isEmpty();
+			}
+		});
+		return result[0];
+
+	}
+
+	public void setVisible(final boolean visible) {
+		this.visible = visible;
+		if ( !visible ) {
+			hide();
+		} else if ( !viewIsDetached() ) {
+			display();
+		}
+		getView().overlayChanged();
+	}
 
 }

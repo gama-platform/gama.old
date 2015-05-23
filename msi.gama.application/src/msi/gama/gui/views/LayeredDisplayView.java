@@ -40,6 +40,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	protected DisplayOverlay overlay;
 	protected Integer zoomLevel = null;
 	protected volatile boolean disposed;
+	protected ToolItem overlayItem;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -102,7 +103,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
 		getDisplaySurface().setZoomListener(this);
 		overlay.update();
-		overlay.setHidden(!GamaPreferences.CORE_OVERLAY.getValue());
+		overlay.setVisible(GamaPreferences.CORE_OVERLAY.getValue());
 		parent.layout();
 
 		// Create after the surface composite
@@ -224,10 +225,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		return envWidth / displayWidth;
 	}
 
-	public void toggleOverlay() {
-		this.overlay.toggle();
-	}
-
 	public String getOverlayCoordInfo() {
 		IDisplayOutput output = getOutput();
 		boolean paused = output.isPaused();
@@ -280,14 +277,15 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 			}
 
 		}, SWT.LEFT);
-		tb.check("display.overlay2", "Toggle overlay", "Toggle overlay", new SelectionAdapter() {
+		overlayItem = tb.check("display.overlay2", "Toggle overlay", "Toggle overlay", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				toggleOverlay();
+				overlay.setVisible(overlayItem.getSelection());
 			}
 
-		}, SWT.LEFT).setSelection(GamaPreferences.CORE_OVERLAY.getValue());
+		}, SWT.LEFT);
+		overlayItem.setSelection(GamaPreferences.CORE_OVERLAY.getValue());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
 		new DisplayedAgentsMenu().createItem(tb, getDisplaySurface(), isOpenGL());
 		if ( isOpenGL() ) {
@@ -455,6 +453,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		parent.layout();
 		return content;
 
+	}
+
+	/**
+	 * Ensures that the overlay tool item is coherent with the state of the overlay
+	 * @param hidden
+	 */
+	public void overlayChanged() {
+		overlayItem.setSelection(overlay.isVisible());
 	}
 
 }

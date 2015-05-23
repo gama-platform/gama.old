@@ -34,7 +34,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			public void run() {
-				if ( overlay.isHidden() ) { return; }
+				if ( !overlay.isVisible() ) { return; }
 				overlay.update();
 			}
 		};
@@ -85,7 +85,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			@Override
 			public void afterComponentCreatedSWTThread() {
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
-					overlay.setHidden(false);
+					overlay.setVisible(true);
 				}
 			}
 
