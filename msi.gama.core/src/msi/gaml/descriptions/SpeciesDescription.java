@@ -25,7 +25,7 @@ import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.SymbolSerializer.SpeciesSerializer;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
@@ -184,6 +184,22 @@ public class SpeciesDescription extends TypeDescription {
 
 	public String getParentName() {
 		return facets.getLabel(PARENT);
+	}
+
+	@Override
+	public IExpression getVarExpr(final String n) {
+		IExpression result = super.getVarExpr(n);
+		if ( result == null ) {
+			IDescription desc = getBehavior(n);
+			if ( desc != null ) {
+				result = new DenotedActionExpression(desc);
+			}
+			desc = getAspect(n);
+			if ( desc != null ) {
+				result = new DenotedActionExpression(desc);
+			}
+		}
+		return result;
 	}
 
 	@Override

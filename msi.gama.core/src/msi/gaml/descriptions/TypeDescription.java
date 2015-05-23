@@ -15,7 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -90,7 +90,11 @@ public abstract class TypeDescription extends SymbolDescription {
 	@Override
 	public IExpression getVarExpr(final String n) {
 		final VariableDescription vd = getVariable(n);
-		if ( vd == null ) { return null; }
+		if ( vd == null ) {
+			IDescription desc = getAction(n);
+			if ( desc != null ) { return new DenotedActionExpression(desc); }
+			return null;
+		}
 		return vd.getVarExpr();
 	}
 

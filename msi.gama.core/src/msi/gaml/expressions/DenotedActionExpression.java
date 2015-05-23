@@ -12,14 +12,14 @@
 package msi.gaml.expressions;
 
 import msi.gama.runtime.IScope;
-import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.Types;
 
 public class DenotedActionExpression extends VariableExpression {
 
-	StatementDescription description;
+	IDescription description;
 
-	public DenotedActionExpression(final StatementDescription action) {
+	public DenotedActionExpression(final IDescription action) {
 		super(action.getName(), Types.NO_TYPE, true, null);
 		this.description = action;
 	}
@@ -33,7 +33,6 @@ public class DenotedActionExpression extends VariableExpression {
 	public String getTitle() {
 		return description.getTitle();
 	}
-
 
 	/**
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
