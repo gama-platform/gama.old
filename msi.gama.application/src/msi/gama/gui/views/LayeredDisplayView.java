@@ -23,11 +23,10 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.*;
 import msi.gama.outputs.layers.AbstractLayer;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -41,51 +40,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	protected DisplayOverlay overlay;
 	protected Integer zoomLevel = null;
 	protected volatile boolean disposed;
-
-	private class LayersOverlay2 extends PopupDialog {
-
-		public LayersOverlay2(final int shellStyle) {
-			super(getSite().getShell(), shellStyle, true, true, true, true, true, null, null);
-		}
-
-		@Override
-		protected Point getDefaultLocation(final Point initialSize) {
-			return getSurfaceComposite().toDisplay(new Point(0, 0));
-		}
-
-		@Override
-		protected Point getInitialLocation(final Point initialSize) {
-			return getSurfaceComposite().toDisplay(new Point(0, 0));
-		}
-
-		@Override
-		protected Point getInitialSize() {
-			Point size = getSurfaceComposite().getSize();
-			return new Point(size.x, size.y / 2);
-		}
-
-		@Override
-		protected Point getDefaultSize() {
-			Point size = getSurfaceComposite().getSize();
-			return new Point(size.x, size.y / 2);
-		}
-
-		@Override
-		protected Color getBackground() {
-			return IGamaColors.WHITE.color();
-		}
-
-		@Override
-		protected Color getForeground() {
-			return IGamaColors.BLACK.color();
-		}
-
-		@Override
-		protected Control createDialogArea(final Composite parent) {
-			getShell().setAlpha(220);
-			return fillLayerSideControls(parent);
-		}
-	}
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -148,6 +102,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
 		getDisplaySurface().setZoomListener(this);
 		overlay.update();
+		overlay.setHidden(!GamaPreferences.CORE_OVERLAY.getValue());
 		parent.layout();
 
 		// Create after the surface composite
@@ -267,10 +222,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		double displayWidth = s.getDisplayWidth();
 		double envWidth = s.getEnvWidth();
 		return envWidth / displayWidth;
-	}
-
-	public void toggleSideBar() {
-		new LayersOverlay2(SWT.RESIZE).open();
 	}
 
 	public void toggleOverlay() {
