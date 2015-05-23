@@ -234,6 +234,10 @@ public class SpeciesDescription extends TypeDescription {
 		// ((SpeciesDescription) parent).hasBehavior(a);
 	}
 
+	public StatementDescription getBehavior(final String s) {
+		return behaviors != null ? behaviors.get(s) : null;
+	}
+
 	private void addAspect(final StatementDescription ce) {
 		String aspectName = ce.getName();
 		if ( aspectName == null ) {
@@ -293,7 +297,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	protected boolean hasAspect(final String a) {
+	public boolean hasAspect(final String a) {
 		return aspects != null && aspects.containsKey(a);
 
 		// || parent != null && parent.hasAspect(a);
