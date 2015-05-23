@@ -128,13 +128,16 @@ public class TextureCache {
 					}
 
 				} catch (com.jogamp.nativewindow.NativeWindowException e) {
+					drawable.destroy();
 					break;
 				} catch (com.jogamp.opengl.GLException ex) {
 					break;
 				} finally {
 					try {
 						drawable.getContext().release();
-					} catch (com.jogamp.nativewindow.NativeWindowException e) {} catch (com.jogamp.opengl.GLException ex) {}
+					} catch (com.jogamp.nativewindow.NativeWindowException e) {
+						drawable.destroy();
+					} catch (com.jogamp.opengl.GLException ex) {}
 					copy.clear();
 				}
 			}
