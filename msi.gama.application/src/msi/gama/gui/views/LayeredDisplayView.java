@@ -303,39 +303,19 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 			}, SWT.RIGHT);
 	}
 
-	public void zoom(final int type) {
-		getDisplaySurface().runAndUpdate(new Runnable() {
-
-			@Override
-			public void run() {
-				switch (type) {
-					case -1:
-						getDisplaySurface().zoomOut();
-						break;
-					case 0:
-						getDisplaySurface().zoomFit();
-						break;
-					case 1:
-						getDisplaySurface().zoomIn();
-						break;
-				}
-			}
-		});
-	}
-
 	@Override
 	public void zoomIn() {
-		zoom(1);
+		getDisplaySurface().zoomIn();
 	}
 
 	@Override
 	public void zoomOut() {
-		zoom(-1);
+		getDisplaySurface().zoomOut();
 	}
 
 	@Override
 	public void zoomFit() {
-		zoom(0);
+		getDisplaySurface().zoomFit();
 	}
 
 	@Override
