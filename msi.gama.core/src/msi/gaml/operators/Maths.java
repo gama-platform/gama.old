@@ -894,9 +894,9 @@ public class Maths {
 
 	public static final double SQRT2 = Math.sqrt(2);
 	/** Constant field toDeg. */
-	public static final double toDeg = 180 / Math.PI;
+	public static final double toDeg = 180d / Math.PI;
 	/** Constant field toRad. */
-	public static final double toRad = Math.PI / 180;
+	public static final double toRad = Math.PI / 180d;
 	public static final long[] TENS = new long[100];
 
 	static {
@@ -915,7 +915,6 @@ public class Maths {
 		double atan2(final double y, final double x) {
 		return Math.atan2(y, x) * toDeg;
 	}
-
 
 	/**
 	 * Check heading : keep it in the 0 - 360 degrees interval.
