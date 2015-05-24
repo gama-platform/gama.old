@@ -13,9 +13,9 @@ package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
 import msi.gama.metamodel.shape.Envelope3D;
+import msi.gaml.operators.Maths;
 import org.eclipse.swt.SWT;
 import ummisco.gama.opengl.JOGLRenderer;
-import com.jogamp.opengl.glu.GLU;
 
 public class CameraArcBall extends AbstractCamera {
 
@@ -37,17 +37,20 @@ public class CameraArcBall extends AbstractCamera {
 		super(joglawtglRenderer);
 		phi = 90.00;
 		theta = 360.00;
-		update();
+		updateCartesianCoordinatesFromAngles();
 	}
 
-	@Override
-	protected void makeGluLookAt(final GLU glu) {
-		// System.out.println("CAMERA Position=" + position + "; target=" + target + "; upVector = " + upVector);
-		glu.gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.getX(),
-			upVector.getY(), upVector.getZ());
+	// Use when the alt+right/left is pressed (rotate the camera upvector around z axis).
+	public void rotateCameraUpVectorOnZ(final boolean clock) {
+		upPosition(Math.cos(Math.PI / 2 + curZRotation), Math.sin(Math.PI / 2 + curZRotation), upVector.z);
+		if ( clock ) {
+			curZRotation = curZRotation - Math.PI / 64;
+		} else {
+			curZRotation = curZRotation + Math.PI / 64;
+		}
 	}
 
-	protected void update() {
+	protected void updateCartesianCoordinatesFromAngles() {
 		upPosition(0.0, phi < 360 && phi > 180 ? -1 : 1, 0.0);
 		theta = theta > 360 ? 0.00000002 : theta < 0 ? 360.00000002 : theta;
 		phi = phi >= 360 ? 0.00000002 : phi <= 0 ? 360.00000002 : phi;
@@ -59,7 +62,16 @@ public class CameraArcBall extends AbstractCamera {
 		double sinP = Math.sin(factorP);
 		position
 			.setLocation(radius * sinT * sinP + target.x, radius * cosP + target.y, radius * cosT * sinP + target.z);
-		forward.setLocation(cosP * -cosT, cosP * -sinT, -sinP);
+	}
+
+	@Override
+	public void updateSphericalCoordinatesFromLocations() {
+		double x = position.x - target.x;
+		double y = position.y - target.y;
+		double z = position.z - target.z;
+		radius = Math.sqrt(x * x + y * y + z * z);
+		theta = Maths.toDeg * Math.atan2(x, z);
+		phi = Maths.toDeg * Math.acos(y / radius);
 	}
 
 	// public void followAgent(IAgent a) {
@@ -80,12 +92,11 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void resetCamera(final double envWidth, final double envHeight, final boolean threeD) {
-		super.resetCamera(envWidth, envHeight, threeD);
-		radius = getMaxDim() * INIT_Z_FACTOR;
+		radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
 		target.setLocation(envWidth / 2, -envHeight / 2, 0);
 		phi = threeD ? 135.0 : 90.0;
 		theta = 360.00;
-		update();
+		updateCartesianCoordinatesFromAngles();
 	}
 
 	// Move in the XY plan by changing camera pos and look pos.
@@ -116,13 +127,13 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	protected void animate() {
+	public void animate() {
 
 		double translation = 2 * (Math.abs(position.z) + 1) / getRenderer().getHeight();
 		if ( isForward() ) {
 			if ( isShiftKeyDown() ) {
 				phi = phi - -get_keyboardSensivity() * get_sensivity();
-				update();
+				updateCartesianCoordinatesFromAngles();
 			} else {
 				updatePosition(position.x, position.y - translation, position.z);
 				lookPosition(target.x, target.y - translation, target.z);
@@ -132,7 +143,7 @@ public class CameraArcBall extends AbstractCamera {
 		if ( isBackward() ) {
 			if ( isShiftKeyDown() ) {
 				phi = phi - get_keyboardSensivity() * get_sensivity();
-				update();
+				updateCartesianCoordinatesFromAngles();
 			} else {
 				updatePosition(position.x, position.y + translation, position.z);
 				lookPosition(target.x, target.y + translation, target.z);
@@ -141,7 +152,7 @@ public class CameraArcBall extends AbstractCamera {
 		if ( isStrafeLeft() ) {
 			if ( isShiftKeyDown() ) {
 				theta = theta - -get_keyboardSensivity() * get_sensivity();
-				update();
+				updateCartesianCoordinatesFromAngles();
 			} else {
 				if ( isAltKeyDown() && isViewIn2DPlan() ) {
 					rotateCameraUpVectorOnZ(true);
@@ -155,7 +166,7 @@ public class CameraArcBall extends AbstractCamera {
 		if ( isStrafeRight() ) {
 			if ( isShiftKeyDown() ) {
 				theta = theta - get_keyboardSensivity() * get_sensivity();
-				update();
+				updateCartesianCoordinatesFromAngles();
 			} else {
 				if ( isAltKeyDown() && isViewIn2DPlan() ) {
 					rotateCameraUpVectorOnZ(false);
@@ -169,15 +180,16 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public Double zoomLevel() {
-		return getMaxDim() * INIT_Z_FACTOR / radius;
+		return getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / radius;
 	}
 
 	@Override
 	public void zoom(final boolean in) {
-		float step = radius != 0 ? (float) ((Double) radius).doubleValue() / 10 : 0.1f;
+		double step = radius != 0d ? radius / 10d : 0.1d;
 		radius = radius + (in ? -step : step);
 		getRenderer().displaySurface.newZoomLevel(zoomLevel());
-		update();
+		// dump();
+		updateCartesianCoordinatesFromAngles();
 	}
 
 	@Override
@@ -186,7 +198,7 @@ public class CameraArcBall extends AbstractCamera {
 		int height = (int) env.getHeight();
 		radius = 1.5 * (width > height ? width : height);
 		target.setLocation(env.centre());
-		update();
+		updateCartesianCoordinatesFromAngles();
 	}
 
 	@Override
@@ -203,7 +215,7 @@ public class CameraArcBall extends AbstractCamera {
 			zPos = extent * 1.5;
 		}
 		radius = zPos;
-		update();
+		updateCartesianCoordinatesFromAngles();
 		updatePosition(centerX, -centerY, zPos);
 		lookPosition(centerX, -centerY, 0);
 	}
@@ -245,7 +257,7 @@ public class CameraArcBall extends AbstractCamera {
 			theta = theta - horizMovement * get_sensivity();
 			phi = phi - vertMovement * get_sensivity();
 
-			update();
+			updateCartesianCoordinatesFromAngles();
 
 		}
 		// ROI Is enabled only if the view is in a 2D plan.
@@ -319,7 +331,7 @@ public class CameraArcBall extends AbstractCamera {
 				velocityVert = velocityVert * damping;
 				theta = theta - velocityHoriz * amplitude;
 				phi = phi - velocityVert * amplitude;
-				update();
+				updateCartesianCoordinatesFromAngles();
 				if ( Math.abs(velocityHoriz) < 0.01 || Math.abs(velocityVert) < 0.01 ) {
 					velocityHoriz = 0;
 					velocityVert = 0;

@@ -12,7 +12,7 @@
 package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
-import java.nio.*;
+import java.nio.IntBuffer;
 import java.util.Collection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -44,13 +44,12 @@ public abstract class AbstractCamera implements ICamera {
 	private Point mousePosition;
 	protected Point lastMousePressedPosition;
 
-	protected double maxDim;
+	// protected double maxDim;
 
 	// To handle mouse event
 
 	protected final GamaPoint position = new GamaPoint(0, 0, 0);
 	protected final GamaPoint target = new GamaPoint(0, 0, 0);
-	protected final GamaPoint forward = new GamaPoint(0, 0, 0);
 	protected final GamaPoint upVector = new GamaPoint(0, 0, 0);
 
 	protected double theta;
@@ -77,52 +76,9 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	@Override
-	public void resetCamera(final double envWidth, final double envHeight, final boolean threeD) {
-		setMaxDim(envWidth > envHeight ? envWidth : envHeight);
+	public void updateSphericalCoordinatesFromLocations() {
+
 	}
-
-	@Override
-	public final void updateCamera(final GL2 gl, final int width, final int height) {
-		// double aspect = (renderer.data.getEnvWidth() / renderer.data.getEnvHeight());
-		// double aspect = renderer.displaySurface.getDisplayWidth() / renderer.displaySurface.getDisplayHeight();
-		double aspect = (double) width / (double) (height == 0 ? 1 : height);
-
-		// System.out.println("Aspect = " + aspect);
-		if ( !getRenderer().data.isOrtho() ) {
-			try {
-				perspectiveGL(gl, aspect, maxDim / 1000, maxDim * 10);
-				// glu.gluPerspective(45.0d, aspect, maxDim / 1000, maxDim * 10);
-			} catch (BufferOverflowException e) {
-				System.out.println("Buffer overflow exception");
-			}
-		} else {
-			if ( aspect >= 1.0 ) {
-				((GL2ES1) gl).glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim, -maxDim);
-			} else {
-				((GL2ES1) gl).glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
-			}
-			gl.glTranslated(0d, 0d, maxDim * 1.5);
-		}
-		makeGluLookAt(renderer.getGlu());
-		animate();
-	}
-
-	void perspectiveGL(final GL2 gl, final double aspect, final double zNear, final double zFar) {
-		double fW, fH;
-		double fovY = 45.0d;
-		if ( aspect > 1.0 ) {
-			fH = Math.tan(fovY / 360 * Math.PI) * zNear;
-			fW = fH * aspect;
-		} else {
-			fW = Math.tan(fovY / 360 * Math.PI) * zNear;
-			fH = fW / aspect;
-		}
-		gl.glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-	}
-
-	protected abstract void animate();
-
-	protected abstract void makeGluLookAt(GLU glu);
 
 	@Override
 	public void updatePosition(final double xPos, final double yPos, final double zPos) {
@@ -139,21 +95,27 @@ public abstract class AbstractCamera implements ICamera {
 		upVector.setLocation(xPos, yPos, zPos);
 	}
 
-	// Use when the alt+right/left is pressed (rotate the camera upvector around z axis).
-	public void rotateCameraUpVectorOnZ(final boolean clock) {
-		upPosition(Math.cos(Math.PI / 2 + curZRotation), Math.sin(Math.PI / 2 + curZRotation), upVector.z);
-		if ( clock ) {
-			curZRotation = curZRotation - Math.PI / 64;
-		} else {
-			curZRotation = curZRotation + Math.PI / 64;
-		}
-	}
-
 	/* -------Get commands--------- */
 
 	@Override
 	public GamaPoint getPosition() {
 		return position;
+	}
+
+	@Override
+	public GamaPoint getLookPosition() {
+		return target;
+	}
+
+	@Override
+	public GamaPoint getUpPosition() {
+		return upVector;
+	}
+
+	@Override
+	public void makeGluLookAt(final GLU glu) {
+		glu.gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.x, upVector.y,
+			upVector.z);
 	}
 
 	/*------------------ Events controls ---------------------*/
@@ -197,6 +159,16 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public void mouseHover(final org.eclipse.swt.events.MouseEvent e) {}
+
+	/**
+	 * Method mouseDoubleClick()
+	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+	 */
+	@Override
+	public void mouseDoubleClick(final org.eclipse.swt.events.MouseEvent e) {
+		// Already taken in charge by the ZoomListener in the view
+		// getRenderer().displaySurface.zoomFit();
+	}
 
 	/**
 	 * Method mouseDown()
@@ -264,15 +236,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected abstract boolean canSelectOnRelease(org.eclipse.swt.events.MouseEvent arg0);
 
-	/**
-	 * Method mouseDoubleClick()
-	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public void mouseDoubleClick(final org.eclipse.swt.events.MouseEvent e) {
-		getRenderer().displaySurface.zoomFit();
-	}
-
 	protected boolean ctrl(final org.eclipse.swt.events.MouseEvent e) {
 		return SWTAccessor.isOSX && (e.stateMask & SWT.COMMAND) != 0 || (e.stateMask & SWT.CTRL) != 0;
 	}
@@ -296,14 +259,6 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean alt(final org.eclipse.swt.events.KeyEvent e) {
 		return (e.stateMask & SWT.ALT) != 0;
 	}
-
-	// protected boolean detectMacOS() {
-	// String os = System.getProperty("os.name");
-	// if ( "Mac OS X".equals(os) ) {
-	// isMacOS = true;
-	// }
-	// return isMacOS;
-	// }
 
 	protected boolean isArcBallOn(final org.eclipse.swt.events.MouseEvent e) {
 		if ( ctrl(e) && getRenderer().data.isArcBallDragOn() ) { return false; }
@@ -361,8 +316,9 @@ public abstract class AbstractCamera implements ICamera {
 		 */
 		glu.gluPickMatrix(getMousePosition().x, height - getMousePosition().y, 4, 4, viewport, 0);
 
-		this.updateCamera(gl, width, height);
-		// FIXME: Comment GL_MODELVIEW to debug3D picking (redraw the model when clicking)
+		// FIXME Why do we have to call updatePerspective() here ?
+		renderer.updatePerspective();
+		// Comment GL_MODELVIEW to debug3D picking (redraw the model when clicking)
 		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		// 4. After this pass you must draw Objects
 
@@ -412,14 +368,6 @@ public abstract class AbstractCamera implements ICamera {
 		}
 
 		return selectedIndex;
-	}
-
-	protected double getMaxDim() {
-		return maxDim;
-	}
-
-	protected void setMaxDim(final double maxDim) {
-		this.maxDim = maxDim;
 	}
 
 	protected void dump() {

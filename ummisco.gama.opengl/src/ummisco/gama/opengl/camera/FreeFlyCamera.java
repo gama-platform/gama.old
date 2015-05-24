@@ -14,6 +14,7 @@ package ummisco.gama.opengl.camera;
 import java.awt.Point;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gaml.operators.Maths;
 import org.eclipse.swt.SWT;
 import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.glu.GLU;
@@ -21,23 +22,25 @@ import com.jogamp.opengl.glu.GLU;
 public class FreeFlyCamera extends AbstractCamera {
 
 	private static final GamaPoint up = new GamaPoint(0.0f, 0.0f, 1.0f);
+	protected final GamaPoint forward = new GamaPoint(0, 0, 0);
 	private final GamaPoint left = new GamaPoint(0, 0, 0);
 	private final double speed = 0.04;
 
 	public FreeFlyCamera(final JOGLRenderer renderer) {
 		super(renderer);
+		upVector.setLocation(up);
 		this.phi = 0.0;
 		this.theta = 0.0;
 	}
 
-	protected void update() {
+	protected void updateCartesianCoordinatesFromAngles() {
 		if ( phi > 89 ) {
 			this.phi = 89;
 		} else if ( phi < -89 ) {
 			this.phi = -89;
 		}
-		double factorP = phi * factor;
-		double factorT = theta * factor;
+		double factorP = phi * Maths.toRad;
+		double factorT = theta * Maths.toRad;
 		double r_temp = Math.cos(factorP);
 		forward.setLocation(r_temp * Math.cos(factorT), r_temp * Math.sin(factorT), Math.sin(factorP));
 		left.setLocation(GamaPoint.crossProduct(up, forward).normalized());
@@ -45,11 +48,11 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	protected void animate() {
+	public void animate() {
 		if ( isForward() ) {
 			if ( isShiftKeyDown() ) {
 				this.phi = phi - -get_keyboardSensivity() * get_sensivity();
-				update();
+				updateCartesianCoordinatesFromAngles();
 			} else {
 				position.setLocation(position.plus(forward.times(speed * 200))); // go forward
 			}
@@ -57,7 +60,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		if ( isBackward() ) {
 			if ( isShiftKeyDown() ) {
 				this.phi = phi - get_keyboardSensivity() * get_sensivity();
-				update();
+				updateCartesianCoordinatesFromAngles();
 			} else {
 				position.setLocation(position.minus(forward.times(speed * 200))); // go backward
 			}
@@ -65,7 +68,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		if ( isStrafeLeft() ) {
 			if ( isShiftKeyDown() ) {
 				this.theta = theta - -get_keyboardSensivity() * get_sensivity();
-				update();
+				updateCartesianCoordinatesFromAngles();
 			} else {
 				position.setLocation(position.plus(left.times(speed * 200))); // move on the right
 			}
@@ -73,7 +76,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		if ( isStrafeRight() ) {
 			if ( isShiftKeyDown() ) {
 				this.theta = theta - get_keyboardSensivity() * get_sensivity();
-				update();
+				updateCartesianCoordinatesFromAngles();
 			} else {
 				position.setLocation(position.minus(left.times(speed * 200))); // move on the left
 			}
@@ -83,29 +86,28 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	protected void makeGluLookAt(final GLU glu) {
-		glu.gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, 0.0f, 0.0f, 1.0f);
+	public void upPosition(final double xPos, final double yPos, final double zPos) {
+		// Not allowed for this camera
 	}
 
 	public void followAgent(final IAgent a, final GLU glu) {
 		ILocation l = a.getLocation();
 		position.setLocation(l.getX(), l.getY(), l.getZ());
-		glu.gluLookAt(0, 0, (float) (maxDim * 1.5), 0, 0, 0, 0.0f, 0.0f, 1.0f);
+		glu.gluLookAt(0, 0, (float) (getRenderer().getMaxEnvDim() * 1.5), 0, 0, 0, 0.0f, 0.0f, 1.0f);
 	}
 
 	@Override
 	public void resetCamera(final double envWidth, final double envHeight, final boolean threeD) {
-		super.resetCamera(envWidth, envHeight, threeD);
-		position.setLocation(envWidth / 2, -envHeight * 1.75, getMaxDim());
+		position.setLocation(envWidth / 2, -envHeight * 1.75, getRenderer().getMaxEnvDim());
 		target.setLocation(envWidth / 2, -envHeight * 0.5, 0);
 		this.phi = -45;
 		this.theta = 90;
-		update();
+		updateCartesianCoordinatesFromAngles();
 	}
 
 	@Override
 	public Double zoomLevel() {
-		return getMaxDim() * INIT_Z_FACTOR / position.getZ();
+		return getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / position.getZ();
 	}
 
 	@Override
@@ -123,7 +125,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		int height = (int) env.getHeight();
 		double maxDim = width > height ? width : height;
 		updatePosition(env.centre().x, env.centre().y, maxDim * 1.5);
-		update();
+		updateCartesianCoordinatesFromAngles();
 	}
 
 	@Override
@@ -147,7 +149,7 @@ public class FreeFlyCamera extends AbstractCamera {
 			lastMousePressedPosition = new Point(e.x, e.y);
 			this.theta = theta - horizMovement * get_sensivity();
 			this.phi = phi - vertMovement * get_sensivity();
-			update();
+			updateCartesianCoordinatesFromAngles();
 		}
 	}
 

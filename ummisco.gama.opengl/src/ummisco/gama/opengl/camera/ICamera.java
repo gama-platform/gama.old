@@ -15,6 +15,7 @@ import java.awt.Point;
 import msi.gama.metamodel.shape.GamaPoint;
 import org.eclipse.swt.events.MouseTrackListener;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * Class ICamera.
@@ -37,9 +38,15 @@ public interface ICamera extends /* KeyListener, MouseListener, MouseMotionListe
 
 	public abstract GamaPoint getPosition();
 
+	public abstract GamaPoint getLookPosition();
+
+	public abstract GamaPoint getUpPosition();
+
 	// Update
 
-	public abstract void updateCamera(final GL2 gl, final int width, final int height);
+	// public abstract void updateCamera(final GL2 gl, final int width, final int height);
+
+	public abstract void makeGluLookAt(GLU glu);
 
 	public abstract void resetCamera(final double envWidth, final double envHeight, boolean threeD);
 
@@ -74,6 +81,16 @@ public interface ICamera extends /* KeyListener, MouseListener, MouseMotionListe
 	public abstract double getPhi();
 
 	public abstract boolean isViewIn2DPlan();
+
+	/**
+	 * 
+	 */
+	public abstract void animate();
+
+	/**
+	 * 
+	 */
+	public abstract void updateSphericalCoordinatesFromLocations();
 
 	// public abstract boolean isEnableROIDrawing();
 

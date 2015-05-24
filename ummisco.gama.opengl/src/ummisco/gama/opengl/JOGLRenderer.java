@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.BufferOverflowException;
 import java.util.ArrayList;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -152,9 +153,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		glu = new GLU();
 		gl = GLContext.getCurrentGL().getGL2();
 		initializeCanvasWithListeners();
-		updateCameraPosition();
+
 		width = drawable.getSurfaceWidth();
 		height = drawable.getSurfaceHeight();
+		updateCameraPosition();
 		System.out.println("Renderer initializing to " + width + " , " + height + " with drawable: " + drawable);
 
 		// Putting the swap interval to 0 (instead of 1) seems to cure some of the problems of resizing of views.
@@ -182,7 +184,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
 		BLENDING_ENABLED = true;
-		camera.updateCamera(gl, width, height);
+		updatePerspective();
 		// We mark the renderer as inited
 		inited = true;
 	}
@@ -210,7 +212,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		gl.glLoadIdentity();
 
 		// TODO Is this line necessary ? The changes are made in init and reshape
-		camera.updateCamera(gl, width, height);
+		updateCameraPosition();
+		updatePerspective();
 		if ( data.isLightOn() ) {
 			gl.glEnable(GLLightingFunc.GL_LIGHTING);
 		} else {
@@ -289,8 +292,49 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// System.out.println("	Renderer reshaping:" + "projection matrix reset");
 		// FIXME Update camera as well ??
 		// Only if zoomFit... camera.resetCamera(data.getEnvWidth(), data.getEnvHeight(), data.isOutput3D());
-		camera.updateCamera(gl, width, height);
-		System.out.println("	Renderer reshaping:" + "camera updated");
+		updatePerspective();
+		// gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+	}
+
+	public final void updatePerspective() {
+		double aspect = (double) width / (double) (height == 0 ? 1 : height);
+
+		double maxDim = getMaxEnvDim();
+
+		// System.out.println("Aspect = " + aspect);
+		if ( !data.isOrtho() ) {
+			try {
+				double zNear = maxDim / 1000;
+				double fW, fH;
+				double fovY = 45.0d;
+				if ( aspect > 1.0 ) {
+					fH = Math.tan(fovY / 360 * Math.PI) * zNear;
+					fW = fH * aspect;
+				} else {
+					fW = Math.tan(fovY / 360 * Math.PI) * zNear;
+					fH = fW / aspect;
+				}
+				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 10);
+			} catch (BufferOverflowException e) {
+				System.out.println("Buffer overflow exception");
+			}
+		} else {
+			if ( aspect >= 1.0 ) {
+				((GL2ES1) gl).glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim, -maxDim);
+			} else {
+				((GL2ES1) gl).glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
+			}
+			gl.glTranslated(0d, 0d, maxDim * 1.5);
+		}
+		camera.makeGluLookAt(glu);
+		camera.animate();
+	}
+
+	public double getMaxEnvDim() {
+		// built dynamically to prepare for the changes in size of the environment
+		double env_width = data.getEnvWidth();
+		double env_height = data.getEnvHeight();
+		return env_width > env_height ? env_width : env_height;
 	}
 
 	public void drawScene(final GL2 gl) {
@@ -374,17 +418,13 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			camera.lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
 		}
 		ILocation upVector = data.getCameraUpVector();
+		camera.updateSphericalCoordinatesFromLocations();
 		if ( camera.getPhi() < 360 && camera.getPhi() > 180 ) {
 			camera.upPosition(0, -1, 0);
 		} else {
 			camera.upPosition(upVector.getX(), upVector.getY(), upVector.getZ());
 		}
-	}
-
-	public double getMaxEnvDim() {
-		double env_width = data.getEnvWidth();
-		double env_height = data.getEnvHeight();
-		return env_width > env_height ? env_width : env_height;
+		// camera.updateCamera(gl, width, height);
 	}
 
 	public void setPickedObjectIndex(final int pickedObjectIndex) {
