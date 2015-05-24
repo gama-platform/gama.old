@@ -24,9 +24,10 @@ public class WorldProjection extends Projection {
 	public WorldProjection(final CoordinateReferenceSystem crs, final Envelope env, final ProjectionFactory fact) {
 		super(null, crs, env, fact);
 		// referenceProjection = this;
-		if ( env != null ) {
+		/*Remove the translation: this one is computed only when the world agent geometry is modified.
+		 * if ( env != null ) {
 			createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
-		}
+		}*/
 	}
 	
 
@@ -46,7 +47,8 @@ public class WorldProjection extends Projection {
 	public void updateTranslations(Envelope env) {
 		if ( env != null ) {
 			// We project the envelope and we use it for initializing the translations
-			projectedEnv = transform(env);
+			//projectedEnv = transform(env, false);
+			projectedEnv = env;
 			// createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
 		}
 		createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());

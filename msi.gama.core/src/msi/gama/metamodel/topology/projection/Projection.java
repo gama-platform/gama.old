@@ -75,6 +75,24 @@ public class Projection implements IProjection {
 		translate(geom);
 		return geom;
 	}
+	
+	public Geometry transform(final Geometry g, final boolean translate) {
+		Geometry geom = GeometryUtils.FACTORY.createGeometry(g);
+		if ( transformer != null ) {
+			try {
+				geom = transformer.transform(g);
+			} catch (TransformException e) {
+				e.printStackTrace();
+			}
+		}
+		if(translate) translate(geom);
+		return geom;
+	}
+	
+	Envelope transform(final Envelope g, final boolean translate) {
+		if ( transformer == null ) { return g; }
+		return transform(JTS.toGeometry(g), translate).getEnvelopeInternal();
+	}
 
 	Envelope transform(final Envelope g) {
 		if ( transformer == null ) { return g; }

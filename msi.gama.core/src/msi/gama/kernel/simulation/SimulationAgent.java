@@ -20,6 +20,7 @@ import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.metamodel.topology.projection.WorldProjection;
 import msi.gama.outputs.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -251,6 +252,8 @@ public class SimulationAgent extends GamlAgent {
 		// FIXME : AD 5/15 Revert the commit by PT: getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
 		final Envelope3D env = geom.getEnvelope();
+		if (getProjectionFactory() != null && getProjectionFactory().getWorld() != null)
+				((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry = Transformations.translated_by(getScope(), geom, p);
 		// projectionFactory.setWorldProjectionEnv(env);
