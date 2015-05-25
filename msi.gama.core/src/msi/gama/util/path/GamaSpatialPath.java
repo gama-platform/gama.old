@@ -53,6 +53,11 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		super(null, start, target, edges, false);
 		// this.init(null, start, target, edges, false);
 	}
+	
+	public GamaSpatialPath(final IShape start, final IShape target, final IList<? extends IShape> edges, final boolean modify_edges) {
+		super(null, start, target, edges, modify_edges);
+		// this.init(null, start, target, edges, false);
+	}
 
 	public GamaSpatialPath(final IList<IShape> nodes) {
 		super(nodes);
@@ -104,7 +109,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					Coordinate c0 = geom.getCoordinates()[0];
 					Coordinate c1 = geom.getCoordinates()[geom.getNumPoints() - 1];
 					IShape edge2 = null;
-					if ( !g.isDirected() && pt.distance(c0) > pt.distance(c1) ) {
+					if ((g == null || !g.isDirected()) && pt.distance(c0) > pt.distance(c1) ) {
 						geom2 = geom.reverse();
 						edge2 = new GamaShape(geom2);
 						pt = c0;

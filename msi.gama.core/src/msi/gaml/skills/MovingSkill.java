@@ -12,6 +12,7 @@
 package msi.gaml.skills;
 
 import gnu.trove.map.hash.THashMap;
+
 import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
@@ -36,6 +37,7 @@ import msi.gama.util.path.*;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.*;
+
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 
@@ -177,6 +179,15 @@ public class MovingSkill extends Skill {
 		if ( topo == null ) { return scope.getTopology(); }
 		return topo;
 	}
+	 
+	protected Object computeTopologyEdge(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		final Object on = scope.getArg("on", IType.NONE);
+		if (on instanceof IShape && ((IShape) on).isLine()) {return (IShape) on;}
+		final ITopology topo = Cast.asTopology(scope, on);
+		if ( topo == null ) { return scope.getTopology(); }
+		return topo;
+	}
+	
 
 	protected Map computeMoveWeights(final IScope scope) throws GamaRuntimeException {
 		return scope.hasArg("move_weights") ? (Map) scope.getArg("move_weights", IType.MAP) : null;
@@ -268,15 +279,11 @@ public class MovingSkill extends Skill {
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if ( bounds != null ) {
 				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
-				// java.lang.System.out.println("define bound w:" + geom.getEnvelope().getWidth() + "h:" +
-				// geom.getEnvelope().getHeight() + "d:" + geom.getEnvelope().getDepth());
 				if ( geom != null && geom.getInnerGeometry() != null ) {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
 			} else {
 				final IShape geom = scope.getSimulationScope().getGeometry();
-				// java.lang.System.out.println("world bound w:" + geom.getEnvelope().getWidth() + "h:" +
-				// geom.getEnvelope().getHeight() + "d:" + geom.getEnvelope().getDepth());
 				if ( geom != null && geom.getInnerGeometry() != null ) {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
@@ -401,8 +408,10 @@ public class MovingSkill extends Skill {
 		final IShape goal = computeTarget(scope, agent);
 		final Boolean returnPath =
 			scope.hasArg("return_path") ? (Boolean) scope.getArg("return_path", IType.NONE) : false;
-		final ITopology topo = computeTopology(scope, agent);
-
+		final Object rt = computeTopologyEdge(scope, agent);
+		final IShape edge = (rt instanceof IShape) ? (IShape) rt : null;
+		final ITopology topo = (rt instanceof ITopology) ? (ITopology) rt : scope.getTopology();
+		
 		if ( goal == null ) {
 			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST, false); }
 			return null;
@@ -423,7 +432,11 @@ public class MovingSkill extends Skill {
 		IPath path = (GamaPath) agent.getAttribute("current_path");
 		if ( path == null || path.getTopology(scope) != null && !path.getTopology(scope).equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
-			path = topo.pathBetween(scope, source, goal);
+			if (edge !=null) {
+				IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
+				edges.add(edge);
+				path = new GamaSpatialPath(source.getGeometry(), goal, edges, true);
+			} else path = topo.pathBetween(scope, source, goal);
 		} else {
 
 			if ( topo instanceof GraphTopology ) {
