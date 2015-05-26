@@ -310,7 +310,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlan) statement).getContextExpression()
 							.value(scope));
 //				System.out.println("isContextConditionSatisfied: " + isContextConditionSatisfied);
-				if ( isContextConditionSatisfied ) {
+				boolean isIntentionConditionSatisfied = 
+						((SimpleBdiPlan) statement).getIntentionExpression() == null ||
+						((Predicate)((SimpleBdiPlan) statement).getIntentionExpression().value(scope)).equals(currentIntention(scope));
+				if ( isContextConditionSatisfied && isIntentionConditionSatisfied) {
 //					System.out.println("is_probabilistic_choice: " + is_probabilistic_choice);
 					if(is_probabilistic_choice){
 //						System.out.println("(SimpleBdiPlan) statement: " +  statement);
