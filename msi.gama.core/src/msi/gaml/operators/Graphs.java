@@ -1106,6 +1106,13 @@ public class Graphs {
 	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine) {
 		return layoutOneshot(scope, graph, layoutEngine, -1);
 	}
+	
+	@operator(value = "adjacency", category = { IOperatorCategory.GRAPH })
+	@doc(value = "adjacency matrix of the given graph.")
+	public static GamaFloatMatrix adjacencyMatrix(final IScope scope, final GamaGraph graph) {
+		return graph.toMatrix(scope);
+	}
+	
 
 	// TODO "complete" (pour cr�er un graphe complet)
 

@@ -1420,4 +1420,23 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		this.linkedGraph = linkedGraph;
 	}
 
+	public GamaFloatMatrix toMatrix(IScope scope) {
+		int nbVertices = this.getVertices().size();
+		if (nbVertices == 0)
+			return null;
+		GamaFloatMatrix mat = new GamaFloatMatrix(nbVertices, nbVertices);
+		mat.setAllValues(scope, Double.POSITIVE_INFINITY);
+		for (int i = 0; i < nbVertices; i++) {
+			for (int j = 0; j < nbVertices; j++) {
+				if (i == j) mat.set(scope, i, j, 0);
+				else {
+					Object edge = getEdge(getVertices().get(i),getVertices().get(j));
+					if (edge != null)
+						mat.set(scope, i, j, getWeightOf(edge));
+				}
+			}
+		}
+		return mat;
+	}
+
 }
