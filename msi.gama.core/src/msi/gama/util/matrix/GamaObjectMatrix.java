@@ -21,6 +21,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
+
 import com.google.common.collect.ImmutableList;
 
 public class GamaObjectMatrix extends GamaMatrix<Object> {
@@ -398,5 +401,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		if ( index > getMatrix().length ) { return null; }
 		return getMatrix()[index];
 	}
+	
+	
 
 }

@@ -204,6 +204,14 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	public abstract
 		IMatrix opAppendVertically(final IScope scope, final IMatrix b);
 
+	@operator(value = "determinant",
+			category = { IOperatorCategory.MATRIX })
+	@doc(value = "The determinant of the given matrix",
+		masterDoc = true,
+		examples = { @example(value = "determinant(matrix([[1,2],[3,4]]))",
+			equals = "") })
+		public abstract Double getDeterminant(IScope scope) throws GamaRuntimeException;
+
 	// public abstract void put(final int col, final int row, final double obj)
 	// throws GamaRuntimeException;
 

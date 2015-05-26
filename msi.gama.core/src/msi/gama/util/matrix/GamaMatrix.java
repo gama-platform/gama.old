@@ -714,4 +714,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return this;
 	}
 
+	@Override
+	public Double getDeterminant(IScope scope) throws GamaRuntimeException {
+		return 0.0;
+	}
 }

@@ -22,6 +22,7 @@ import msi.gaml.types.*;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.*;
+
 import com.google.common.primitives.Doubles;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
@@ -568,7 +569,31 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		if ( index > getMatrix().length ) { return 0d; }
 		return getMatrix()[index];
 	}
-
+	
+	public RealMatrix toApacheMatrix(IScope scope){
+		RealMatrix rm = new Array2DRowRealMatrix(numRows, numCols);
+		for ( int i = 0; i < numCols; i++ ) {
+			for ( int j = 0; j < numRows; j++ ) {
+				double val = get(scope, i, j);
+				rm.setEntry(j, i, val);
+			}
+		}
+		return rm;
+	}
+	
+	public void fromApacheMatrix(IScope scope, RealMatrix rm ){
+		for ( int i = 0; i < numCols; i++ ) {
+			for ( int j = 0; j < numRows; j++ ) {
+				set(scope, i, j, rm.getEntry(j, i));
+			}
+		}
+	}
+	@Override
+	public Double getDeterminant(IScope scope) throws GamaRuntimeException {
+		RealMatrix rm = toApacheMatrix(scope);
+		LUDecomposition ld = new LUDecomposition(rm);
+		return ld.getDeterminant();
+	}
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return "matrix<float>(" + getRowsList(null).serialize(includingBuiltIn) + ")";

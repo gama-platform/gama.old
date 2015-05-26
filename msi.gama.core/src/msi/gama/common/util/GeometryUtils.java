@@ -13,6 +13,7 @@ package msi.gama.common.util;
 
 import static msi.gama.metamodel.shape.IShape.Type.*;
 import java.util.*;
+
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.shape.IShape.Type;
@@ -380,14 +381,54 @@ public class GeometryUtils {
 		 */
 		return geoms;
 	}
-
+	public static IList<IShape> discretisation(final Geometry geom, int nb_squares,final boolean overlaps, double coeff_precision) {
+		double size = Math.sqrt(geom.getArea() /nb_squares);
+		List<IShape> rectToRemove = new ArrayList<IShape>();
+		IList<IShape> squares = discretisation(geom, size, size, overlaps,rectToRemove);
+		if (squares.size() < nb_squares) {
+			while (squares.size() < nb_squares) {
+				size *= coeff_precision;
+				rectToRemove = new ArrayList<IShape>();
+				squares = discretisation(geom, size, size, overlaps,rectToRemove);
+			}
+		} else if (squares.size() > nb_squares) {
+			while (squares.size() > nb_squares) {
+				size /= coeff_precision;
+				List<IShape> rectToRemove2 = new ArrayList<IShape>();
+				IList<IShape> squares2 = discretisation(geom, size, size, overlaps,rectToRemove2);
+				if (squares2.size() < nb_squares) {
+					break;
+				}
+				squares = squares2;
+				rectToRemove = rectToRemove2;
+			}
+		}
+		int nb = squares.size();
+		if(nb > nb_squares) {
+			
+			if (nb- nb_squares > rectToRemove.size()) {
+				squares.removeAll(rectToRemove);
+			} else {
+				for (int i = 0; i < (nb - nb_squares); i++) {
+					squares.remove(rectToRemove.get(i));
+				}
+			}
+		}
+		return squares;
+	}
+		
 	public static IList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y,
-		final boolean overlaps) {
+			final boolean overlaps ) {
+		return discretisation(geom,  size_x, size_y,overlaps, null );
+	}
+		
+	public static IList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y,
+		final boolean overlaps, List<IShape> borders ) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		if ( geom instanceof GeometryCollection ) {
 			final GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
-				geoms.addAll(discretisation(gc.getGeometryN(i), size_x, size_y, overlaps));
+				geoms.addAll(discretisation(gc.getGeometryN(i), size_x, size_y, overlaps, borders));
 			}
 		} else {
 			final Envelope env = geom.getEnvelopeInternal();
@@ -395,8 +436,10 @@ public class GeometryUtils {
 			final double yMax = env.getMaxY();
 			double x = env.getMinX();
 			double y = env.getMinY();
+			boolean firstX = true;
 			while (x < xMax) {
 				y = env.getMinY();
+				firstX = true;
 				while (y < yMax) {
 					final Coordinate c1 = new Coordinate(x, y);
 					final Coordinate c2 = new Coordinate(x + size_x, y);
@@ -407,11 +450,18 @@ public class GeometryUtils {
 					y += size_y;
 					if ( !overlaps ) {
 						if ( square.coveredBy(geom) ) {
-							geoms.add(new GamaShape(square));
+							IShape sq = new GamaShape(square);
+							geoms.add(sq);
+							if (firstX && borders != null) borders.add(sq);
+							firstX = false;
+							
 						}
 					} else {
 						if ( square.intersects(geom) ) {
-							geoms.add(new GamaShape(square));
+							IShape sq = new GamaShape(square);
+							geoms.add(sq);
+							if (firstX && borders != null) borders.add(sq);
+							firstX = false;
 						}
 					}
 				}
