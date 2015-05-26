@@ -254,7 +254,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					for(int i=0; i<newIntention.getSubintentions().size();i++ ){
 						desireBase.addValue(scope, newIntention.getSubintentions().get(i));
 					}
-					desireBase.remove(newIntention);
+//					desireBase.remove(newIntention);
+					newIntention.setOnHoldUntil(newIntention.getSubintentions());
+					intentionBase.addValue(scope, newIntention);
 					return true;
 				}
 			}
@@ -283,7 +285,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					for(int i=0; i<newIntention.getSubintentions().size();i++ ){
 						desireBase.addValue(scope, newIntention.getSubintentions().get(i));
 					}
-					desireBase.remove(newIntention);
+//					desireBase.remove(newIntention);
+					newIntention.setOnHoldUntil(newIntention.getSubintentions());
+					intentionBase.addValue(scope, newIntention);
 					return true;
 				}
 			}
