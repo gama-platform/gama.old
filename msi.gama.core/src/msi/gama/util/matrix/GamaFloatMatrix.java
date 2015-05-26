@@ -581,18 +581,36 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return rm;
 	}
 	
-	public void fromApacheMatrix(IScope scope, RealMatrix rm ){
+	public IMatrix fromApacheMatrix(IScope scope, RealMatrix rm ){
+		if (rm == null) return null;
+		GamaFloatMatrix matrix = new GamaFloatMatrix(rm.getColumnDimension(), rm.getRowDimension());
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
-				set(scope, i, j, rm.getEntry(j, i));
+				matrix.set(scope, i, j, rm.getEntry(j, i));
 			}
 		}
+		return matrix;
+		
 	}
 	@Override
 	public Double getDeterminant(IScope scope) throws GamaRuntimeException {
 		RealMatrix rm = toApacheMatrix(scope);
 		LUDecomposition ld = new LUDecomposition(rm);
 		return ld.getDeterminant();
+	}
+	
+	@Override
+	public Double getTrace(IScope scope) throws GamaRuntimeException {
+		RealMatrix rm = toApacheMatrix(scope);
+		return rm.getTrace();
+	}
+	
+	@Override
+	public IMatrix getEigen(IScope scope) throws GamaRuntimeException {
+		RealMatrix rm = toApacheMatrix(scope);
+		EigenDecomposition ed = new EigenDecomposition(rm);
+		if (ed == null) return null;
+		return fromApacheMatrix(scope, ed.getV());
 	}
 	@Override
 	public String serialize(final boolean includingBuiltIn) {

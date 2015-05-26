@@ -716,6 +716,16 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	@Override
 	public Double getDeterminant(IScope scope) throws GamaRuntimeException {
-		return 0.0;
+		throw GamaRuntimeException.error("Only usable for int and float matrices", scope);
+	}
+	
+	@Override
+	public Double getTrace(IScope scope) throws GamaRuntimeException {
+		throw GamaRuntimeException.error("Only usable for int and float matrices", scope);
+	}
+	
+	@Override
+	public IMatrix getEigen(IScope scope) throws GamaRuntimeException{
+		throw GamaRuntimeException.error("Only usable for int and float matrices", scope);
 	}
 }

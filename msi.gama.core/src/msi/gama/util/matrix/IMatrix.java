@@ -204,13 +204,30 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	public abstract
 		IMatrix opAppendVertically(final IScope scope, final IMatrix b);
 
-	@operator(value = "determinant",
+	@operator(value = {"determinant", "det"},
 			category = { IOperatorCategory.MATRIX })
 	@doc(value = "The determinant of the given matrix",
 		masterDoc = true,
 		examples = { @example(value = "determinant(matrix([[1,2],[3,4]]))",
-			equals = "") })
+			equals = "-2") })
 		public abstract Double getDeterminant(IScope scope) throws GamaRuntimeException;
+	
+	@operator(value = "trace",
+			category = { IOperatorCategory.MATRIX })
+	@doc(value = "The trace of the given matrix (the sum of the elements on the main diagonal).",
+		masterDoc = true,
+		examples = { @example(value = "trace(matrix([[1,2],[3,4]]))",
+			equals = "5") })
+	public abstract Double getTrace(IScope scope) throws GamaRuntimeException;
+	
+	@operator(value = "eigen_values",
+			category = { IOperatorCategory.MATRIX })
+	@doc(value = "The eigen values (matrix) of the given matrix",
+		masterDoc = true,
+		examples = { @example(value = "eigen_values(matrix([[1,2],[3,4]]))",
+			equals = "[[-0.9093767091321242;-0.5742757238257109] [0.4159735579192843;-0.8369650072299835]]") })
+	public abstract IMatrix getEigen(IScope scope) throws GamaRuntimeException;
+	
 
 	// public abstract void put(final int col, final int row, final double obj)
 	// throws GamaRuntimeException;
