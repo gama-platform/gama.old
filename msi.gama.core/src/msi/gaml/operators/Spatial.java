@@ -1677,6 +1677,35 @@ public abstract class Spatial {
 			return GeometryUtils.discretisation(geom.getInnerGeometry(), dimension, dimension, overlaps);
 		}
 
+		@operator(value = "to_squares", type = IType.LIST, content_type = IType.GEOMETRY, category = {
+				IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			@doc(value = "A list of a given number of squares from the decomposition of the geometry into squares (geometry, nb_square, overlaps), if overlaps = true, add the squares that overlap the border of the geometry",
+				examples = { @example(value = "to_squares(self, 10, true)",
+					equals = "the list of 10 squares corresponding to the discretisation into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
+					test = false) })
+			public static
+				IList<IShape> toSquares(final IScope scope, final IShape geom, final Integer nbSquares,
+					final boolean overlaps) {
+				if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory
+					.create(Types.GEOMETRY); }
+				return GeometryUtils.discretisation(geom.getInnerGeometry(), nbSquares,overlaps,0.99);
+			}
+		
+		@operator(value = "to_squares", type = IType.LIST, content_type = IType.GEOMETRY, category = {
+				IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			@doc(value = "A list of a given number of squares from the decomposition of the geometry into squares (geometry, nb_square, overlaps, precision_coefficient), if overlaps = true, add the squares that overlap the border of the geometry, coefficient_precision should be close to 1.0",
+				examples = { @example(value = "to_squares(self, 10, true, 0.99)",
+					equals = "the list of 10 squares corresponding to the discretisation into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
+					test = false) })
+			public static
+				IList<IShape> toSquares(final IScope scope, final IShape geom, final Integer nbSquares,
+					final boolean overlaps, final double precision) {
+				if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory
+					.create(Types.GEOMETRY); }
+				return GeometryUtils.discretisation(geom.getInnerGeometry(), nbSquares,overlaps,precision);
+			}
+		
+		
 		@operator(value = "to_rectangles", content_type = IType.GEOMETRY, category = { IOperatorCategory.SPATIAL,
 			IOperatorCategory.SP_TRANSFORMATIONS })
 		@doc(value = "A list of rectangles of the size corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, dimension, overlaps), if overlaps = true, add the rectangles that overlap the border of the geometry",
