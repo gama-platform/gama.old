@@ -613,16 +613,23 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 	
 	@Override
-	public IMatrix getEigen(IScope scope) throws GamaRuntimeException {
+	public IList<Double> getEigen(IScope scope) throws GamaRuntimeException {
 		RealMatrix rm = toApacheMatrix(scope);
 		EigenDecomposition ed = new EigenDecomposition(rm);
-		if (ed == null) return null;
-		return fromApacheMatrix(scope, ed.getV());
+		return fromApacheMatrixtoDiagList(scope, ed.getD());
 	}
 	
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return "matrix<int>(" + getRowsList(null).serialize(includingBuiltIn) + ")";
+	}
+	
+	IList<Double> fromApacheMatrixtoDiagList(IScope scope, RealMatrix rm ){
+		IList<Double> vals = GamaListFactory.create(Types.FLOAT);
+		for (int i = 0; i < rm.getColumnDimension(); i++) {
+			vals.add(rm.getEntry(i, i));
+		}
+		return vals;
 	}
 	
 	public RealMatrix toApacheMatrix(IScope scope){
@@ -646,5 +653,13 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		}
 		return matrix;
 		
+	}
+	
+	
+	@Override
+	public IMatrix<Double> inverse(IScope scope) throws GamaRuntimeException {
+		RealMatrix rm = toApacheMatrix(scope);
+		LUDecomposition ld = new LUDecomposition(rm);
+		return fromApacheMatrix(scope, ld.getSolver().getInverse());
 	}
 }

@@ -725,7 +725,17 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 	
 	@Override
-	public IMatrix getEigen(IScope scope) throws GamaRuntimeException{
+	public IList<Double> getEigen(IScope scope) throws GamaRuntimeException{
 		throw GamaRuntimeException.error("Only usable for int and float matrices", scope);
+	}
+	
+	@Override
+	public IMatrix<Double> inverse(IScope scope) throws GamaRuntimeException {
+		throw GamaRuntimeException.error("Only usable for int and float matrices", scope);
+	}
+	
+	@Override
+	public IMatrix transpose(IScope scope) throws GamaRuntimeException {
+		return (IMatrix) reverse(scope); 
 	}
 }

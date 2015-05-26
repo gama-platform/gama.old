@@ -220,15 +220,31 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 			equals = "5") })
 	public abstract Double getTrace(IScope scope) throws GamaRuntimeException;
 	
-	@operator(value = "eigen_values",
+	@operator(value = "eigenvalues",
 			category = { IOperatorCategory.MATRIX })
 	@doc(value = "The eigen values (matrix) of the given matrix",
 		masterDoc = true,
-		examples = { @example(value = "eigen_values(matrix([[1,2],[3,4]]))",
-			equals = "[[-0.9093767091321242;-0.5742757238257109] [0.4159735579192843;-0.8369650072299835]]") })
-	public abstract IMatrix getEigen(IScope scope) throws GamaRuntimeException;
+		examples = { @example(value = "eigen_values(matrix([[5,-3],[6,-4]]))",
+			equals = "[2.0000000000000004,-0.9999999999999998]") })
+	public abstract IList<Double> getEigen(IScope scope) throws GamaRuntimeException;
 	
-
+	@operator(value = "transpose",
+			category = { IOperatorCategory.MATRIX })
+	@doc(value = "The tranposition of the given matrix",
+		masterDoc = true,
+		examples = { @example(value = "transpose(matrix([[5,-3],[6,-4]]))",
+			equals = "[[5,6],[-3,-4]]") })
+	public abstract IMatrix transpose(IScope scope) throws GamaRuntimeException;
+	
+	@operator(value = "inverse",
+			category = { IOperatorCategory.MATRIX })
+	@doc(value = "The inverse matrix of the given matrix",
+		masterDoc = true,
+		examples = { @example(value = "inverse(matrix([[5,-3],[6,-4]]))",
+			equals = "[2.0000000000000004,-0.9999999999999998]") })
+	public abstract IMatrix<Double> inverse(IScope scope) throws GamaRuntimeException;
+	
+	
 	// public abstract void put(final int col, final int row, final double obj)
 	// throws GamaRuntimeException;
 

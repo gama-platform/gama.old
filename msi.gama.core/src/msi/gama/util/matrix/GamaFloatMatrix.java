@@ -19,6 +19,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.*;
@@ -606,12 +607,20 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 	
 	@Override
-	public IMatrix getEigen(IScope scope) throws GamaRuntimeException {
+	public IList<Double> getEigen(IScope scope) throws GamaRuntimeException {
 		RealMatrix rm = toApacheMatrix(scope);
 		EigenDecomposition ed = new EigenDecomposition(rm);
-		if (ed == null) return null;
-		return fromApacheMatrix(scope, ed.getV());
+		return fromApacheMatrixtoDiagList(scope, ed.getD());
 	}
+	
+	IList<Double> fromApacheMatrixtoDiagList(IScope scope, RealMatrix rm ){
+		IList<Double> vals = GamaListFactory.create(Types.FLOAT);
+		for (int i = 0; i < rm.getColumnDimension(); i++) {
+			vals.add(rm.getEntry(i, i));
+		}
+		return vals;
+	}
+	
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return "matrix<float>(" + getRowsList(null).serialize(includingBuiltIn) + ")";
@@ -620,6 +629,13 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	@Override
 	public IContainerType getType() {
 		return Types.MATRIX.of(Types.FLOAT);
+	}
+	
+	@Override
+	public IMatrix<Double> inverse(IScope scope) throws GamaRuntimeException {
+		RealMatrix rm = toApacheMatrix(scope);
+		LUDecomposition ld = new LUDecomposition(rm);
+		return fromApacheMatrix(scope, ld.getSolver().getInverse());
 	}
 
 }
