@@ -640,10 +640,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		Envelope3D env = getWorldEnvelopeWithZ(1);
 		IAgent a = scope.getAgentScope();
 		sceneBuffer.getSceneToUpdate().addDEM(valueMatrix, img, a, textured, triangulated, isGrayScaled, showText, env,
-			cellSize, name);
-		if ( gridColor != null ) {
+			cellSize, name, gridColor);
+		/* This line has been removed to fix the issue 1174
+		 * if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
-		}
+		}*/
 		return rect;
 	}
 

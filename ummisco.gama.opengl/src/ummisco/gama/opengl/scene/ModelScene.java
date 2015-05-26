@@ -146,18 +146,18 @@ public class ModelScene {
 			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
 		}
 		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds, 1,
-			null);
+			null,null);
 	}
 
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent,
 		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
-		final Envelope3D env, final double cellSize, final String name) {
+		final Envelope3D env, final double cellSize, final String name, final Color lineColor) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( demTexture != null ) {
 			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
 		}
 		currentLayer.addDEM(dem, demTexture, null, agent, isTextured, isTriangulated, isGrayScaled, isShowText, false,
-			true, env, cellSize, name);
+			true, env, cellSize, name, lineColor);
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
