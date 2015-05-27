@@ -418,13 +418,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			camera.lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
 		}
 		ILocation upVector = data.getCameraUpVector();
-		camera.updateSphericalCoordinatesFromLocations();
 		if ( camera.getPhi() < 360 && camera.getPhi() > 180 ) {
 			camera.upPosition(0, -1, 0);
 		} else {
 			camera.upPosition(upVector.getX(), upVector.getY(), upVector.getZ());
 		}
-		// camera.updateCamera(gl, width, height);
+		camera.updateSphericalCoordinatesFromLocations();
 	}
 
 	public void setPickedObjectIndex(final int pickedObjectIndex) {

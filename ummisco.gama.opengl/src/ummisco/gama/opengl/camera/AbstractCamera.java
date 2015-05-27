@@ -67,7 +67,7 @@ public abstract class AbstractCamera implements ICamera {
 	// private final boolean ctrlKeyDown = false;
 	private boolean shiftKeyDown = false;
 	private boolean altKeyDown = false;
-
+	
 	public AbstractCamera(final JOGLRenderer renderer) {
 		setRenderer(renderer);
 		// detectMacOS();
@@ -373,6 +373,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected void dump() {
 		System.out.println("xPos:" + position.x + " yPos:" + position.y + " zPos:" + position.z);
 		System.out.println("xLPos:" + target.x + " yLPos:" + target.y + " zLPos:" + target.z);
+		System.out.println("upX" + upVector.x + " upY:" + upVector.y + " upZ:" + upVector.z);
 		System.out.println("_phi " + phi + " _theta " + theta);
 	}
 
@@ -453,13 +454,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public double getPhi() {
 		return phi;
-	}
-
-	//
-	// protected Point getRoiCenter() {
-	// return roiCenter;
-	// }
-
+	}	
 	/**
 	 * Method keyPressed()
 	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)

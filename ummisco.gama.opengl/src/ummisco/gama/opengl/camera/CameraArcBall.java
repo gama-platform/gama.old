@@ -51,9 +51,8 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	protected void updateCartesianCoordinatesFromAngles() {
-		upPosition(0.0, phi < 360 && phi > 180 ? -1 : 1, 0.0);
-		theta = theta > 360 ? 0.00000002 : theta < 0 ? 360.00000002 : theta;
-		phi = phi >= 360 ? 0.00000002 : phi <= 0 ? 360.00000002 : phi;
+		theta = theta % 360;
+		phi = phi % 360;
 		double factorT = theta * factor;
 		double factorP = phi * factor;
 		double cosT = Math.cos(factorT);
@@ -66,12 +65,17 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void updateSphericalCoordinatesFromLocations() {
+
 		double x = position.x - target.x;
 		double y = position.y - target.y;
 		double z = position.z - target.z;
 		radius = Math.sqrt(x * x + y * y + z * z);
 		theta = Maths.toDeg * Math.atan2(x, z);
-		phi = Maths.toDeg * Math.acos(y / radius);
+		phi = Maths.toDeg * Math.acos(y/ radius);
+		if(upVector.getY() == -1){
+			phi= 360.0-phi;	
+			theta= 180+theta;
+		}
 	}
 
 	// public void followAgent(IAgent a) {
@@ -256,7 +260,6 @@ public class CameraArcBall extends AbstractCamera {
 			lastMousePressedPosition = newPoint;
 			theta = theta - horizMovement * get_sensivity();
 			phi = phi - vertMovement * get_sensivity();
-
 			updateCartesianCoordinatesFromAngles();
 
 		}
@@ -362,5 +365,7 @@ public class CameraArcBall extends AbstractCamera {
 		velocityHoriz = 0;
 		velocityVert = 0;
 	}
+
+	
 
 }// End of Class CameraArcBall
