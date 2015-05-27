@@ -156,7 +156,7 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void initialize() {
 		try {
-			experiment = HeadlessSimulationLoader.newHeadlessSimulation(this.model, this.experimentName, this.params);
+			experiment = HeadlessSimulationLoader.newHeadlessSimulation(this.model, this.experimentName, this.params, null);
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 			experiment = null;

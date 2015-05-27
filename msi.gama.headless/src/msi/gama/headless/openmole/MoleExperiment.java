@@ -51,7 +51,7 @@ public class MoleExperiment implements IMoleExperiment {
 	private synchronized void loadCurrentExperiment(final String expName) {
 		this.experimentName = expName;
 		this.currentStep = 0;
-		this.currentExperiment = HeadlessSimulationLoader.newHeadlessSimulation(model, experimentName, this.params);
+		this.currentExperiment = HeadlessSimulationLoader.newHeadlessSimulation(model, experimentName, this.params,seed);
 	}
 
 	@Override

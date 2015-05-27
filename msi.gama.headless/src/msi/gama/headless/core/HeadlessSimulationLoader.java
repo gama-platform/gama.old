@@ -38,9 +38,10 @@ public class HeadlessSimulationLoader {
 	 * @throws InterruptedException
 	 */
 	public static synchronized ExperimentPlan newHeadlessSimulation(final IModel model, final String expName,
-		final ParametersSet params) throws GamaRuntimeException {
+		final ParametersSet params, final Long seed) throws GamaRuntimeException {
 
 		ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
+		if (seed != null)((ExperimentAgent) currentExperiment.getAgent()).setSeed(Double.longBitsToDouble(seed));
 		if ( currentExperiment == null ) { throw GamaRuntimeException.error("Experiment " + expName +
 			" cannot be created"); }
 
