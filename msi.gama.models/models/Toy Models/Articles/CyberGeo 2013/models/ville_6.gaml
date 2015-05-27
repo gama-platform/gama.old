@@ -17,13 +17,11 @@ global {
 			location <- {location.x,location.y,z};
 		}
 		industries <- batiment select (each.type = "Industrial");
-		create route from: shape_file_routes {
-			float z <- (mnt_cell(location)).grid_value;   
-			location <- {location.x,location.y,z};
-		}
+		create route from: shape_file_routes;
 		create foyer number: 500;
 		reseau_route <- as_edge_graph(route);
 		topo_route <- topology(reseau_route);
+
 	}
 }
 
@@ -89,7 +87,7 @@ species batiment {
 }
 species route {
 	aspect geometrie {
-		draw shape color: rgb("black");
+		draw shape color: rgb("black") at:{location.x,location.y,(mnt_cell(location)).grid_value};
 	}
 }
 experiment ville type: gui {
