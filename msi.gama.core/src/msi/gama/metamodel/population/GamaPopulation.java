@@ -432,9 +432,16 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	protected static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
 		IExpression exp = species.getFacet(IKeyword.WIDTH);
-		final int rows = exp == null ? 100 : Cast.asInt(scope, exp.value(scope));
+		final int rows = exp == null ? (species.hasFacet(IKeyword.CELL_WIDTH) ? 
+				(int)(scope.getSimulationScope().getGeometry().getEnvelope().getWidth() / Cast.asInt(scope,species.getFacet(IKeyword.CELL_WIDTH).value(scope)) ):  100) : 
+					Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
-		final int columns = exp == null ? 100 : Cast.asInt(scope, exp.value(scope));
+		final int columns = exp == null ? (species.hasFacet(IKeyword.CELL_HEIGHT) ? 
+				(int)(scope.getSimulationScope().getGeometry().getEnvelope().getHeight() / Cast.asInt(scope,species.getFacet(IKeyword.CELL_HEIGHT).value(scope))):  100) : 
+					Cast.asInt(scope, exp.value(scope));
+		
+		
+		
 		// exp = species.getFacet(IKeyword.TORUS);
 		// final boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
 		boolean isTorus = host.getPopulation().getTopology().isTorus();

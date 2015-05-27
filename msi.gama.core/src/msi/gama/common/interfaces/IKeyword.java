@@ -59,6 +59,9 @@ public interface IKeyword {
 	public static final String CAMERA_UP_VECTOR = "camera_up_vector";
 	public static final String CAPTURE = "capture";
 	public static final String CATEGORY = "category";
+	public static final String CELL_WIDTH = "cell_width";
+	public static final String CELL_HEIGHT = "cell_height";
+	
 	public static final String CELLULAR = "cellular";
 	public static final String CENTER = "center";
 	public static final String CHAIN = "chain";
@@ -255,6 +258,8 @@ public interface IKeyword {
 	public static final String NODE = "node";
 	public static final String NULL = "nil";
 	public static final String NUMBER = "number";
+	public static final String NB_COLS = "nb_cols";
+	public static final String NB_ROWS = "nb_rows";
 	public static final String OF = "of";
 	public static final String ON = "on";
 	public static final String OPEN_EXP = "(";
