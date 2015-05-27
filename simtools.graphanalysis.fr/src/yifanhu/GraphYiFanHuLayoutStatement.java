@@ -45,6 +45,10 @@ import org.gephi.layout.plugin.multilevel.*;
 		type = IType.FLOAT,
 		optional = true,
 		doc = @doc("The step size used in the algorithm. It has to be a meaningful size compared to the optimal distance (e.g. 10%). default: 10")),
+	@facet(name = GraphYiFanHuLayoutStatement.NB_STEPS,
+		type = IType.INT,
+		optional = true,
+		doc = @doc("The number of steps of the algorithm to perform (default 1).")),
 	@facet(name = GraphYiFanHuLayoutStatement.BOUNDED_P1,
 		type = IType.POINT,
 		optional = true,
@@ -66,6 +70,7 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 	public static final String BARNES_THETA = "theta";
 	public static final String RELATIVE_STRENGTH = "relative_strength";
 	public static final String STEP_SIZE = "step_size";
+	public static final String NB_STEPS = "nb_steps";
 	public static final String BOUNDED_P1 = "bounded_point1";
 	public static final String BOUNDED_P2 = "bounded_point2";
 
@@ -87,6 +92,7 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 	private static final double BARNES_THETA_DEFAULT = 1.2;
 	private static final int QUAD_MAX_DEFAULT = 10;
 	private static final double RATIO_DEFAULT = 0.2;
+	private static final int NB_STEPS_DEFAULT = 1;
 
 	@Override
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
@@ -96,6 +102,8 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.OPTIMAL_DIST, OPTIMAL_DIST_DEFAULT));
 		double initial_step =
 			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.STEP_SIZE, INITIAL_STEP_DEFAULT));
+		int nb_steps =
+				Cast.asInt(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.NB_STEPS, NB_STEPS_DEFAULT));
 		double barnes_hut_theta =
 			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.BARNES_THETA, BARNES_THETA_DEFAULT));
 		int max_level = Cast.asInt(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.QUAD_MAX, QUAD_MAX_DEFAULT));
@@ -113,7 +121,12 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
 		InitializingYifanHuLayout(layout, optimal_distance, initial_step, STEP_RATIO_DEFAULT,
 			CONVERGENCE_THRESHOLD_DEFAULT, barnes_hut_theta, max_level, relative_strength);
-		layout.goAlgo();
+	//	layout.goAlgo();
+//		for ( int i = 0; i < nb_steps && layout.canAlgo(); i++ ) {
+			for ( int i = 0; i < nb_steps ; i++ ) {
+			layout.goAlgo();
+//			System.out.println("..." + i + "/" + nb_steps + "/" + layout.canAlgo());
+		}
 		if ( bp1 != null && bp2 != null ) {
 			ILocation p1 = Cast.asPoint(scope, bp1);
 			ILocation p2 = Cast.asPoint(scope, bp2);

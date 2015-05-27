@@ -47,6 +47,7 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 	@facet(name = IKeyword.GRAPH, type = IType.GRAPH, optional = false, doc = @doc("the graph to apply the layout.")),
+	@facet(name = GraphForceAtlasLayoutStatement.NB_STEPS, type =  IType.INT, optional = true, doc = @doc("The number of steps of the algorithm to perform (default 1).")),
 	@facet(name = GraphForceAtlasLayoutStatement.THREAD_NUMBER, type =  IType.INT, optional = true, doc = @doc("More threads means more speed (default: 1).")),
 	@facet(name = GraphForceAtlasLayoutStatement.DISSUADE_HUBS, type =  IType.BOOL, optional = true, doc = @doc("Distributes attraction along outbound edges. Hubs attract less and thus are pushed to the borders (default: false).")),
 	@facet(name = GraphForceAtlasLayoutStatement.LINLOG_MODE, type =  IType.BOOL, optional = true, doc = @doc("Switch model from lin-lin to lin-log. Makes clusters more tight (default: false).")),
@@ -81,6 +82,7 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 	public static final String APPROXIMATION = "approximation";
 	public static final String BOUNDED_P1 = "bounded_point1";
 	public static final String BOUNDED_P2 = "bounded_point2";
+	public static final String NB_STEPS = "nb_steps";
 	
 	public static double stepvalue=-1;
 	
@@ -103,6 +105,7 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 	private static final double TOLERANCE_DEFAULT=0.1;
 	private static final boolean APPROXIMATE_REPULSION_DEFAULT=false;
 	private static final double APPROXIMATION_DEFAULT=1.2;
+	private static final int NB_STEPS_DEFAULT = 1;
 	
 	@Override
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {		
@@ -119,6 +122,8 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 		double tolerance=Cast.asFloat(scope, getFacetValue(scope, GraphForceAtlasLayoutStatement.TOLERANCE,TOLERANCE_DEFAULT));
 		boolean approximate_repulsion=Cast.asBool(scope, getFacetValue(scope, GraphForceAtlasLayoutStatement.APPROXIMATE_REPULSION,APPROXIMATE_REPULSION_DEFAULT));
 		double approximation=Cast.asFloat(scope, getFacetValue(scope, GraphForceAtlasLayoutStatement.APPROXIMATION,APPROXIMATION_DEFAULT));
+		int nb_steps =
+				Cast.asInt(scope, getFacetValue(scope, GraphForceAtlasLayoutStatement.NB_STEPS, NB_STEPS_DEFAULT));
 		Object bp1=getFacetValue(scope, GraphForceAtlasLayoutStatement.BOUNDED_P1,null);
 		Object bp2=getFacetValue(scope, GraphForceAtlasLayoutStatement.BOUNDED_P2,null);
 //		public static IGraph YifanHuLayout_Step_Unlimited(final IGraph g, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta) {
@@ -144,8 +149,9 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 //		System.out.println("working ...");
 		fa2Layout.initAlgo();
 //		System.out.println("working ...");
-		int nbsteps=1;
-		for (int i = 0; i < nbsteps && fa2Layout.canAlgo(); i++){
+//		int nbsteps=1;
+//		for (int i = 0; i < nbsteps && fa2Layout.canAlgo(); i++){
+		for (int i = 0; i < nb_steps; i++){
 			fa2Layout.goAlgo();
 		}
 		fa2Layout.endAlgo();
@@ -161,6 +167,7 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 		{
 			Update_locations(g);				
 		}
+
 //		System.out.println("ended.");
 
 		
