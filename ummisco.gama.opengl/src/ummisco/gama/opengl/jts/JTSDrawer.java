@@ -17,6 +17,8 @@ import javax.vecmath.Vector3d;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.GeometryObject;
 import ummisco.gama.opengl.utils.*;
@@ -395,7 +397,9 @@ public class JTSDrawer {
 		if ( p.getNumPoints() > 5 ) {
 			// FIXME AD 05/15 Should we use drawTesselatedPolygon instead ?
 			drawTriangulatedPolygon(p, useJTSForTriangulation, texture);
-			GuiUtils.informConsole("Texture can only be applied on quad or rectangle");
+			GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.warning("Texture can only be applied on quad or rectangle"),false);
+
+			
 		} else {
 			Vertex[] vertices = this.getExteriorRingVertices(p);
 			if ( renderer.getComputeNormal() ) {
