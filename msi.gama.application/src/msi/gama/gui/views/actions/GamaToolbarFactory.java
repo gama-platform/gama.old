@@ -16,7 +16,6 @@ import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.*;
 import msi.gama.gui.views.IToolbarDecoratedView.Colorizable;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -130,7 +129,7 @@ public class GamaToolbarFactory {
 		// Install the toogle in the view site
 		IWorkbenchSite site = view.getSite();
 		if ( site instanceof IViewSite ) {
-			IToolBarManager2 tm = (IToolBarManager2) ((IViewSite) site).getActionBars().getToolBarManager();
+			IToolBarManager tm = (IToolBarManager) ((IViewSite) site).getActionBars().getToolBarManager();
 			tm.add(toggle);
 			tm.update(true);
 		} else if ( site instanceof IEditorSite ) {
