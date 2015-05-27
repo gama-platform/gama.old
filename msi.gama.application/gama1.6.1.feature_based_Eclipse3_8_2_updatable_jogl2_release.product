@@ -23,7 +23,8 @@ Visit http://code.google.com/p/gama-platform/
       <programArgs>-nl ${target.nl} 
 -data @noDefault 
 --launcher.defaultAction
-openFile</programArgs>
+openFile
+      </programArgs>
       <vmArgs>-server
 -Xverify:none
 -Xms256m -Xmx2048m
@@ -33,8 +34,10 @@ openFile</programArgs>
 -XX:MaxPermSize=256m
 -XX:+UseParallelGC
 -XX:+UseAdaptiveSizePolicy
--XX:+OptimizeStringConcat</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+-XX:+OptimizeStringConcat
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="/msi.gama.application/icons/launcher_icons/icon16.png" i32="/msi.gama.application/icons/launcher_icons/icon32.png" i48="/msi.gama.application/icons/launcher_icons/icon48.png" i64="/msi.gama.application/icons/launcher_icons/icon64.png" i128="/msi.gama.application/icons/launcher_icons/icon128.png"/>
@@ -60,8 +63,9 @@ openFile</programArgs>
       </win>
    </launcher>
 
+
    <vm>
-      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</macos>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
    </vm>
 
    <license>
@@ -255,6 +259,16 @@ openFile</programArgs>
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>
       <feature id="org.eclipse.equinox.p2.user.ui"/>
+      <feature id="org.eclipse.rcp" version="4.4.2.v20150204-1700"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient4.feature"/>
+      <feature id="org.eclipse.emf.ecore"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"/>
+      <feature id="org.eclipse.ecf.core.feature"/>
+      <feature id="org.eclipse.emf.common"/>
+      <feature id="org.eclipse.ecf.filetransfer.feature"/>
+      <feature id="org.eclipse.ecf.core.ssl.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
+      <feature id="org.eclipse.e4.rcp"/>
    </features>
 
    <configurations>
