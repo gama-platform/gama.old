@@ -289,15 +289,6 @@
             restorable="true">
       </view>
       <view
-            allowMultiple="false"
-            category="msi.gama.gui.category.gama"
-            class="org.eclipse.team.svn.ui.repository.RepositoriesView"
-            icon="icons/view.repositories2.png"
-            id="org.eclipse.team.svn.ui.repository.RepositoriesView"
-            name="Repositories"
-            restorable="true">
-      </view>
-      <view
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.UserControlView"
             fastViewWidthRatio="0.2"
@@ -945,25 +936,6 @@
             </command>
          </menu>
          <command
-               commandId="msi.gama.application.commands.CheckoutProject"
-               icon="platform:/plugin/msi.gama.application/icons/navigator/checkout2.png"
-               label="Download Project"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <and>
-                  <iterate>
-                     <adapt
-                           type="msi.gama.gui.navigator.SVNProject">
-                     </adapt>
-                  </iterate>
-                  <count
-                        value="1">
-                  </count>
-               </and>
-            </visibleWhen>
-         </command>
-         <command
                commandId="msi.gama.application.commands.CopyProjectToWorkspace"
                icon="icons/navigator/navigator.copy2.png"
                label="Copy to User Models"
@@ -1001,25 +973,6 @@
                         operator="and">
                      <instanceof
                            value="msi.gama.gui.navigator.ModelsLibraryFolder">
-                     </instanceof>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="msi.gama.application.commands.ImportProjectFromSVN"
-               icon="icons/navigator/navigator.update2.png"
-               label="Update Shared Models"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="true"
-                        operator="and">
-                     <instanceof
-                           value="msi.gama.gui.navigator.VirtualSharedModelsFolder">
                      </instanceof>
                   </iterate>
                </with>
@@ -1619,18 +1572,8 @@
             name="Show console">
       </command>
       <command
-            defaultHandler="msi.gama.gui.swt.commands.ShowHideRepositoriesViewHandler"
-            id="msi.gama.application.commands.ShowHideRepositoriesView"
-            name="Show/Hide Repositories">
-      </command>
-      <command
             id="msi.gama.application.commands.Cancel"
             name="Cancel">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.navigator.commands.ImportProjectsFromSVNHandler"
-            id="msi.gama.application.commands.ImportProjectFromSVN"
-            name="Update Library">
       </command>
       <command
             defaultHandler="msi.gama.gui.navigator.commands.RefreshHandler"
@@ -1641,11 +1584,6 @@
             defaultHandler="msi.gama.gui.navigator.commands.CopyProjectToWorkspaceHandler"
             id="msi.gama.application.commands.CopyProjectToWorkspace"
             name="Copy to Workspace">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.navigator.commands.CheckoutProjectHandler"
-            id="msi.gama.application.commands.CheckoutProject"
-            name="Checkout Project From Repository">
       </command>
       <command
             id="msi.gama.application.commands.ShowHideHeadlessParamView"
@@ -1897,12 +1835,6 @@
                   class="msi.gama.gui.navigator.BuiltInProjectNature">
             </run>
          </runtime>
-      </extension>
-      <extension
-            point="org.eclipse.team.svn.core.svnconnector">
-         <svnconnector
-               class="msi.gama.gui.svn.SVNKitConnectorFactory">
-         </svnconnector>
       </extension>
          <extension
          point="org.eclipse.ui.commandImages">

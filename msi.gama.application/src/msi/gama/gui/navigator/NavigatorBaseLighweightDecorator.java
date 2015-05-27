@@ -7,7 +7,8 @@ package msi.gama.gui.navigator;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.util.file.IGamaFileMetaData;
 import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 /**
  * Class NavigatorBaseLighweightDecorator.
@@ -16,14 +17,14 @@ import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
  * @since 11 févr. 2015
  * 
  */
-public class NavigatorBaseLighweightDecorator extends SVNLightweightDecorator {
+public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecorator {
 
 	static final public String ID = "msi.gama.application.decorator";
 
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 		if ( SwtGui.NAVIGATOR_METADATA.getValue() ) {
-			IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element, false);
+			IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element);
 			if ( data == null ) { return; }
 			String suffix = data.getSuffix();
 			if ( suffix != null ) {
@@ -34,7 +35,29 @@ public class NavigatorBaseLighweightDecorator extends SVNLightweightDecorator {
 			// replaceImage(decoration, (ImageDescriptor) thumbnail);
 			// }
 		}
-		super.decorate(element, decoration);
+	}
+
+	@Override
+	public void addListener(ILabelProviderListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isLabelProperty(Object element, String property) {
+		return true;
+	}
+
+	@Override
+	public void removeListener(ILabelProviderListener listener) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// private void replaceImage(final IDecoration decoration, final ImageDescriptor thumbnail) {
