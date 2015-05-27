@@ -94,8 +94,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public static final String PROJECT_PATH = "project_path";
 	public static final String MINIMUM_CYCLE_DURATION = "minimum_cycle_duration";
 
-	private static final IShape SHAPE = GamaGeometryType.createPoint(new GamaPoint(-1, -1));
-
 	private final IScope scope;
 	protected SimulationAgent simulation;
 	final Map<String, Object> extraParametersMap = new TOrderedHashMap();
@@ -112,7 +110,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
-		super.setGeometry(SHAPE);
+		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
 		scope = obtainNewScope();
 		reset();
 	}
