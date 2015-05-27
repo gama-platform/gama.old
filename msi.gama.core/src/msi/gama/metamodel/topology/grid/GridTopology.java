@@ -12,15 +12,22 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.*;
+
+import org.eclipse.core.runtime.dynamichelpers.IFilter;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
+import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.metamodel.topology.filter.DifferentList;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gaml.types.*;
@@ -192,14 +199,20 @@ public class GridTopology extends AbstractTopology {
 	public Collection<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
 		// We compute the neighbouring cells of the "source" shape
-		Set<IAgent> placesConcerned = getPlaces().getNeighboursOf(scope, source, distance, filter);
+		
+		Set<IAgent> placesConcerned = getPlaces().getNeighboursOf(scope, source, distance, getPlaces().getCellSpecies());
 		// If we only accept cells from this topology, no need to look for other agents
 		if ( filter.getSpecies() == getPlaces().getCellSpecies() ) { return placesConcerned; }
 		// Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the
-		// cells themselves) and that are accepted by the filter
-		return getAgentsIn(scope,
-			GamaGeometryType.geometriesToGeometry(scope, GamaListFactory.createWithoutCasting(Types.AGENT, placesConcerned)), filter,
-			false);
+		// cells themselves) and that are accepted by the filter 
+		boolean normalFilter = filter.getSpecies() != null || !(filter instanceof Different);
+		IAgentFilter fDL = normalFilter ? filter : (new DifferentList(getPlaces().getCellSpecies().listValue(scope, Types.NO_TYPE, false)));
+		Set<IAgent> agents = (Set<IAgent>) getAgentsIn(scope,
+			GamaGeometryType.geometriesToGeometry(scope, GamaListFactory.createWithoutCasting(Types.AGENT, placesConcerned)), fDL,
+			false); 
+		if(! normalFilter) {agents.addAll(placesConcerned);}
+		return agents;
+		
 
 	}
 

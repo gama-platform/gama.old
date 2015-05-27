@@ -2384,7 +2384,7 @@ public abstract class Spatial {
 
 		@operator(value = "neighbours_of", content_type = IType.AGENT, category = { IOperatorCategory.SPATIAL,
 			IOperatorCategory.SP_QUERIES })
-		@doc(value = "a list, containing all the agents located at a distance inferior or equal to 1 to the right-hand operand agent considering the left-hand operand topology.",
+		@doc(value = "a list, containing all the agents of the same species than the argument (if it is an agent) located at a distance inferior or equal to 1 to the right-hand operand agent considering the left-hand operand topology.",
 			masterDoc = true,
 			examples = { @example(value = "topology(self) neighbours_of self",
 				equals = "returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.",
@@ -2393,7 +2393,8 @@ public abstract class Spatial {
 				"agent_closest_to" })
 		public static
 			IList neighbours_of(final IScope scope, final ITopology t, final IAgent agent) {
-			return _neighbours(scope, Different.with(), agent, 1.0,t);
+			return _neighbours(scope, agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation())
+					: Different.with(), agent, 1.0,t);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
@@ -2401,27 +2402,30 @@ public abstract class Spatial {
 			IOperatorCategory.SP_QUERIES })
 		/* TODO, expected_content_type = { IType.FLOAT, IType.INT } */
 		@doc(deprecated = "Use 'neighbours_of(topology, agent, distance)' instead",
-			usages = @usage(value = "a list, containing all the agents located at a distance inferior or equal to the right member (float) of the pair (right-hand operand) to the left member (agent, geometry or point) considering the left-hand operand topology.",
+			usages = @usage(value = "a list, containing all the agents of the same species than the key of the pair argument (if it is an agent) located at a distance inferior or equal to the right member (float) of the pair (right-hand operand) to the left member (agent, geometry or point) considering the left-hand operand topology.",
 				examples = { @example(value = "topology(self) neighbours_of self::10",
 					equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
 					test = false) }))
 		public static
 			IList neighbours_of(final IScope scope, final ITopology t, final GamaPair pair) {
 			if ( pair == null ) { return GamaListFactory.EMPTY_LIST; }
-			return _neighbours(scope, Different.with(), pair.key, pair.value,t);
+			Object agent = pair.key;
+			return _neighbours(scope, agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation())
+					: Different.with(), agent, pair.value,t);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
 		@operator(value = "neighbours_of", content_type = IType.AGENT, category = { IOperatorCategory.SPATIAL,
 			IOperatorCategory.SP_QUERIES })
 		/* TODO, expected_content_type = { IType.FLOAT, IType.INT } */
-		@doc(usages = @usage(value = "a list, containing all the agents located at a distance inferior or equal to the third argument to the second argument (agent, geometry or point) considering the first operand topology.",
+		@doc(usages = @usage(value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the third argument to the second argument (agent, geometry or point) considering the first operand topology.",
 			examples = { @example(value = "neighbours_of (topology(self), self,10)",
 				equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
 				test = false) }))
 		public static
 			IList neighbours_of(final IScope scope, final ITopology t, final IShape agent, final Double distance) {
-			return _neighbours(scope, Different.with(), agent, distance,t);
+			return _neighbours(scope, agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation())
+					: Different.with(), agent, distance,t);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
@@ -2541,7 +2545,6 @@ public abstract class Spatial {
 		@operator(value = "agents_at_distance", content_type = IType.AGENT, category = { IOperatorCategory.SPATIAL,
 			IOperatorCategory.SP_QUERIES })
 		@doc(value = "A list of agents situated at a distance lower than the right argument.",
-			comment = "Equivalent to neighbours_at with a left-hand argument equal to 'self'",
 			examples = { @example(value = "agents_at_distance(20)",
 				equals = "all the agents (excluding the caller) which distance to the caller is lower than 20",
 				test = false) }, see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside",
