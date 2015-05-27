@@ -224,7 +224,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 			category = { IOperatorCategory.MATRIX })
 	@doc(value = "The eigen values (matrix) of the given matrix",
 		masterDoc = true,
-		examples = { @example(value = "eigen_values(matrix([[5,-3],[6,-4]]))",
+		examples = { @example(value = "eigenvalues(matrix([[5,-3],[6,-4]]))",
 			equals = "[2.0000000000000004,-0.9999999999999998]") })
 	public abstract IList<Double> getEigen(IScope scope) throws GamaRuntimeException;
 	
@@ -238,7 +238,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	
 	@operator(value = "inverse",
 			category = { IOperatorCategory.MATRIX })
-	@doc(value = "The inverse matrix of the given matrix",
+	@doc(value = "The inverse matrix of the given matrix. If no inverse exists, returns a matrix that has properties that resemble that of an inverse.",
 		masterDoc = true,
 		examples = { @example(value = "inverse(matrix([[5,-3],[6,-4]]))",
 			equals = "[2.0000000000000004,-0.9999999999999998]") })
