@@ -489,7 +489,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public/* synchronized */void setGeometry(final IShape newGeometry) {
 		// Addition to address Issue 817: if the new geometry is exactly the one possessed by the agent, no need to
 		// change anything.
-		if ( newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ) { return; }
+		if ( newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ||this.getSpecies().isGrid() ) { return; }
 
 		final ITopology topology = population.getTopology();
 		final ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
@@ -520,7 +520,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public/* synchronized */void setLocation(final ILocation point) {
-		if ( point == null || dead() ) { return; }
+		if ( point == null || dead() || this.getSpecies().isGrid()) { return; }
 		final ILocation newLocation = point.copy(getScope());
 		final ITopology topology = population.getTopology();
 		if ( topology == null ) { return; }
