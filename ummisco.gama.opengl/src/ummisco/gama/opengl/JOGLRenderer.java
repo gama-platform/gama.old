@@ -431,7 +431,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			}
 			camera.updateSphericalCoordinatesFromLocations();	
 		}
-		
 	}
 
 	public void setPickedObjectIndex(final int pickedObjectIndex) {
