@@ -3,6 +3,7 @@
 <plugin>
    <extension-point id="gaml.grammar.addition" name="Addition to the grammar of GAML" schema="schema/gaml.grammar.addition.exsd"/>
    <extension-point id="gama.display" name="Implementations of IDisplaySurface" schema="schema/gama.display.exsd"/>
+   <extension-point id="gama.create" name="Implementations of ICreateDelegate" schema="schema/gama.create.exsd"/>
    <extension
          point="gaml.grammar.addition">
       <path
@@ -14,6 +15,49 @@
       <implementation
             class="msi.gama.outputs.ImageDisplaySurface"
             keyword="image">
+      </implementation>
+   </extension>
+   <extension
+         name="csv"
+         point="gama.create">
+      <implementation
+            class="msi.gaml.statements.CreateFromCSVDelegate"
+            description="Create agents from CSV files">
+      </implementation>
+   </extension>
+   <extension
+         name="shapes"
+         point="gama.create">
+      <implementation
+            class="msi.gaml.statements.CreateFromGeometriesDelegate">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.create">
+      <implementation
+            class="msi.gaml.statements.CreateFromGridFileDelegate"
+            description="Create agents from a grid file">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.create">
+      <implementation
+            class="msi.gaml.statements.CreateFromNullDelegate"
+            description="Create agents with no source">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.create">
+      <implementation
+            class="msi.gaml.statements.CreateFromDatabaseDelegate"
+            description="Create agents from databases">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.create">
+      <implementation
+            class="msi.gaml.statements.CreateFromGenstarDelegate"
+            description="Create agents from CSV Genstar files">
       </implementation>
    </extension>
 

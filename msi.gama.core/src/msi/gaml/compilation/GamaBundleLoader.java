@@ -12,10 +12,15 @@
 package msi.gaml.compilation;
 
 import gnu.trove.set.hash.THashSet;
+
 import java.util.Set;
+
+import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.util.GuiUtils;
 import msi.gaml.operators.Strings;
+import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
+
 import org.eclipse.core.runtime.*;
 
 /**
@@ -29,18 +34,26 @@ public class GamaBundleLoader {
 
 	public static String CORE_PLUGIN = "msi.gama.core";
 	public static String ADDITIONS = "gaml.additions.GamlAdditions";
-	public static String EXTENSION = "gaml.grammar.addition";
+	public static String GRAMMAR_EXTENSION = "gaml.grammar.addition";
+	public static String CREATE_EXTENSION = "gama.create";
 	private static Set<String> plugins = new THashSet();
 
 	public static void preBuildContributions() {
 		final long start = System.currentTimeMillis();
-		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION) ) {
+		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(GRAMMAR_EXTENSION) ) {
 			plugins.add(e.getContributor().getName());
 		}
 		plugins.remove(CORE_PLUGIN);
 		preBuild(CORE_PLUGIN);
 		for ( String addition : plugins ) {
 			preBuild(addition);
+		}
+		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(CREATE_EXTENSION) ){
+			try {
+				CreateStatement.delegates.add((ICreateDelegate) e.createExecutableExtension("class"));
+			} catch (CoreException e1) {
+				e1.printStackTrace();
+			}
 		}
 		// CRUCIAL INITIALIZATIONS
 		AbstractGamlAdditions.buildMetaModel();
