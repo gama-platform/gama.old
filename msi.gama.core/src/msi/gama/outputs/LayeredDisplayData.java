@@ -74,6 +74,7 @@ public class LayeredDisplayData {
 	private int traceSize = 0;
 	private boolean isZFighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
 	private boolean isDrawingNormals = GamaPreferences.CORE_DRAW_NORM.getValue();
+	public boolean isComputingNormals = true;
 	private boolean isDisplayingAsACube = GamaPreferences.CORE_CUBEDISPLAY.getValue();
 	private boolean ortho = false;
 	private boolean isShowingFPS = GamaPreferences.CORE_SHOW_FPS.getValue();
