@@ -14,6 +14,7 @@ package ummisco.gama.opengl.scene;
 import java.awt.image.BufferedImage;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.utils.*;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
@@ -196,6 +197,7 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 						vertices[3].z = z3 * altFactor;
 						double[] normal = GLUtilNormal.CalculateNormal(vertices[2], vertices[1], vertices[0]);
 						gl.glNormal3dv(normal, 0);
+						//GLUtilNormal.HandleNormal(vertices, null, 0,-1, renderer);
 					}
 					if(demObj.lineColor != null){
 						gl.glColor3d((float)(demObj.lineColor.getRed())/255.0f,(float)(demObj.lineColor.getGreen())/255.0f,(float)(demObj.lineColor.getBlue())/255.0f);

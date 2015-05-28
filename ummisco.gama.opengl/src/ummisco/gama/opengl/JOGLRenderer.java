@@ -189,8 +189,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		inited = true;
 	}
 
-	public boolean getComputeNormal() {
+	public boolean getDrawNormal() {
 		return data.isDraw_norm();
+	}
+	
+	public boolean getComputeNormal() {
+		return data.isComputingNormals;
 	}
 
 	@Override
@@ -261,6 +265,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		if ( data.isInertia() ) {
 			camera.doInertia();
 		}
+
 
 		drawScene(gl);
 
