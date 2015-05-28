@@ -68,6 +68,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	private final Set<IAgent> generatedEdges = new HashSet<IAgent>();
 	protected int version;
+	
+	protected ISpecies vertexSpecies;
 
 	public GamaGraph(final IScope scope, final boolean directed, final IType nodeType, final IType vertexType) {
 		this.directed = directed;
@@ -395,6 +397,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public boolean addVertex(final Object v) {
 		if ( v instanceof GraphObjectToAdd ) {
+			if (v instanceof IAgent) {
+				if (! this.getVertices().isEmpty() && ((IAgent) v).getSpecies() != vertexSpecies) vertexSpecies = null;
+			}
 			addValue(scope, (GraphObjectToAdd) v);
 			return ((GraphObjectToAdd) v).getObject() != null;
 		}
@@ -1437,6 +1442,16 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			}
 		}
 		return mat;
+	}
+	
+	@Override
+	public ISpecies getVertexSpecies() {
+		return vertexSpecies;
+	}
+	
+	@Override
+	public ISpecies getEdgeSpecies() {
+		return edgeSpecies;
 	}
 
 }

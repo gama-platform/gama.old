@@ -90,7 +90,8 @@ public class LayeredDisplayData {
 	private boolean isDraggingWithArcBall;
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
-	private boolean isSplittingLayers;;
+	private boolean isSplittingLayers;
+	private volatile boolean isCameraLock = true;
 
 	/**
 	 * Overlay
@@ -546,6 +547,17 @@ public class LayeredDisplayData {
 	public void setLayerSplitted(final boolean s) {
 		isSplittingLayers = s;
 		notifyListeners(Changes.SPLIT_LAYER, s);
+	}
+	
+	/**
+	 * @return
+	 */
+	public boolean isCameraLock() {
+		return isCameraLock;
+	}
+
+	public void setCameraLock(final boolean s) {
+		isCameraLock = s;
 	}
 
 	public static ILocation getNoChange() {

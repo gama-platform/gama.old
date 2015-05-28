@@ -12,16 +12,32 @@
 package msi.gama.metamodel.topology.graph;
 
 import gnu.trove.set.hash.THashSet;
-import java.util.*;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.*;
-import msi.gama.metamodel.topology.filter.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.AbstractTopology;
+import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.filter.IAgentFilter;
+import msi.gama.metamodel.topology.filter.In;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.util.path.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
+import msi.gama.util.path.GamaSpatialPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.types.Types;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * The class GraphTopology.
@@ -81,7 +97,7 @@ public class GraphTopology extends AbstractTopology {
 		} else {
 			double distSMin = Double.MAX_VALUE;
 			double distTMin = Double.MAX_VALUE;
-			for ( Object e : graph.edgeSet() ) {
+			for ( Object e : graph.getEdges() ) {
 				IShape edge = (IShape) e;
 				if ( !sourceNode && distSMin > 0 ) {
 					double distS = edge.euclidianDistanceTo(source);
@@ -291,7 +307,6 @@ public class GraphTopology extends AbstractTopology {
 					edges = edges2;
 					lmin = l2;
 				}
-
 			}
 			if ( computeS1T2 ) {
 
@@ -515,6 +530,14 @@ public class GraphTopology extends AbstractTopology {
 	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
 		final GamaSpatialPath path = this.pathBetween(scope, source, target);
 		if ( path == null ) { return Double.MAX_VALUE; }
+		if (path.getEdgeList().isEmpty()) return 0.0;
+		Coordinate[] coordsSource = path.getEdgeList().get(0).getInnerGeometry().getCoordinates();
+		Coordinate[] coordsTarget = path.getEdgeList().get(path.getEdgeList().size() - 1).getInnerGeometry().getCoordinates();
+		if ( coordsSource.length == 0 || coordsTarget.length == 0 ) { return Double.MAX_VALUE; }
+		GamaPoint sourceEdges = new GamaPoint(coordsSource[0]);
+		GamaPoint targetEdges = new GamaPoint(coordsTarget[coordsTarget.length - 1]);
+		path.setSource(sourceEdges);
+		path.setTarget(targetEdges);
 		return path.getDistance(scope);
 	}
 
@@ -522,6 +545,14 @@ public class GraphTopology extends AbstractTopology {
 	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
 		final GamaSpatialPath path = this.pathBetween(scope, source, target);
 		if ( path == null ) { return Double.MAX_VALUE; }
+		if (path.getEdgeList().isEmpty()) return 0.0;
+		Coordinate[] coordsSource = path.getEdgeList().get(0).getInnerGeometry().getCoordinates();
+		Coordinate[] coordsTarget = path.getEdgeList().get(path.getEdgeList().size() - 1).getInnerGeometry().getCoordinates();
+		if ( coordsSource.length == 0 || coordsTarget.length == 0 ) { return Double.MAX_VALUE; }
+		GamaPoint sourceEdges = new GamaPoint(coordsSource[0]);
+		GamaPoint targetEdges = new GamaPoint(coordsTarget[coordsTarget.length - 1]);
+		path.setSource(sourceEdges);
+		path.setTarget(targetEdges);
 		return path.getDistance(scope);
 	}
 
@@ -695,5 +726,95 @@ public class GraphTopology extends AbstractTopology {
 		return results;
 
 	}
+	
+	@Override
+	public Collection<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+		final IAgentFilter filter) throws GamaRuntimeException {
+		final ISpatialGraph graph = this.getPlaces();
+		boolean searchEdges = false;
+		boolean searchVertices = false;
+		final Set<IAgent> agents = new THashSet<IAgent>();
+		IShape realS = null;
+		IShape tcr =  null;
+		if (graph.containsEdge(source)) realS = source;
+		else {
+			double minDist = Double.POSITIVE_INFINITY;
+			for (IShape e : graph.getEdges()) {
+				double d = e.euclidianDistanceTo(source) ;
+				if (d < minDist ) {
+					minDist = d;
+					tcr = e;
+				}
+			}
+			if (source.euclidianDistanceTo(graph.getEdgeSource(tcr)) < source.euclidianDistanceTo(graph.getEdgeTarget(tcr))) {
+				realS = graph.getEdgeSource(tcr);
+			} else {
+				realS = graph.getEdgeTarget(tcr);
+			}
+		}
+		if (filter.getSpecies() != null) {
+			searchEdges = filter.getSpecies() == graph.getEdgeSpecies();
+			searchVertices = filter.getSpecies() == graph.getVertexSpecies();
+		}
+		if (searchEdges) {
+			Set<IShape> edgs = getNeighboursOfRec(scope, realS,true,distance, graph,new THashSet<IShape>());
+			for (IShape ed : edgs ) agents.add(ed.getAgent());
+			return agents; 
+		} else if (searchVertices) {
+			Set<IShape> nds =  getNeighboursOfRec(scope, realS,false,distance, graph,new THashSet<IShape>());
+			for (IShape nd : nds ) agents.add(nd.getAgent());
+			return agents;
+		}
+		IContainer agentsTotest = null;
+		if(filter.getSpecies() != null) 
+			agentsTotest = filter.getSpecies().getAgents(scope);
+		else 
+			agentsTotest = scope.getSimulationScope().getAgents(scope);
+		final Set<IShape> edges = getNeighboursOfRec(scope, realS,true,distance, graph, new THashSet<IShape>());	
+		for (Object ob : agentsTotest.iterable(scope)) {
+			IShape ag = (IShape) ob;
+			if (filter.accept(scope, source, ag)) {
+				IShape rd = null;
+				if (graph.getEdges().contains(ag)) rd = ag;
+				else {
+					double minDist = Double.POSITIVE_INFINITY;
+					for (IShape e : graph.getEdges()) {
+						double d = e.euclidianDistanceTo(ag) ;
+						if (d < minDist ) {
+							minDist = d;
+							rd = e;
+						}
+					}
+				}
+					
+				if (edges.contains(rd) && this.distanceBetween(scope, source, ag) <= distance) {
+					agents.add(ag.getAgent());
+				}
+					
+			}
+		}
+		
+		return agents;
 
+	}
+	
+	public Set<IShape> getNeighboursOfRec(final IScope scope, final IShape currentSource, 
+		final boolean edge, double currentDist,ISpatialGraph graph, Set<IShape> alr) throws GamaRuntimeException {
+		final Set<IShape> edges = new THashSet<IShape>();
+		Set<IShape> eds = (graph.isDirected()) ? graph.outgoingEdgesOf(currentSource) : graph.edgesOf(currentSource);
+		if (!edge) edges.add(currentSource.getAgent());
+		for (IShape ed : eds){
+			if (alr.contains(ed)) continue;
+			alr.add(ed);
+			double dist = ed.getPerimeter();
+			if (edge) edges.add(ed);
+			if ((currentDist - dist) > 0) {
+				IShape nextNode = null;
+				if (graph.isDirected()) nextNode = graph.getEdgeTarget(ed);
+				else nextNode = (currentSource == graph.getEdgeTarget(ed)) ? graph.getEdgeSource(ed) : graph.getEdgeTarget(ed);
+				edges.addAll(getNeighboursOfRec(scope, nextNode,edge,currentDist - dist, graph,alr));
+			}
+		}
+		return edges;
+	}
 }
