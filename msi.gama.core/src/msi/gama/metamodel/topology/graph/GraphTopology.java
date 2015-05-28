@@ -530,6 +530,14 @@ public class GraphTopology extends AbstractTopology {
 	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
 		final GamaSpatialPath path = this.pathBetween(scope, source, target);
 		if ( path == null ) { return Double.MAX_VALUE; }
+		if (path.getEdgeList().isEmpty()) return 0.0;
+		Coordinate[] coordsSource = path.getEdgeList().get(0).getInnerGeometry().getCoordinates();
+		Coordinate[] coordsTarget = path.getEdgeList().get(path.getEdgeList().size() - 1).getInnerGeometry().getCoordinates();
+		if ( coordsSource.length == 0 || coordsTarget.length == 0 ) { return Double.MAX_VALUE; }
+		GamaPoint sourceEdges = new GamaPoint(coordsSource[0]);
+		GamaPoint targetEdges = new GamaPoint(coordsTarget[coordsTarget.length - 1]);
+		path.setSource(sourceEdges);
+		path.setTarget(targetEdges);
 		return path.getDistance(scope);
 	}
 
@@ -727,9 +735,9 @@ public class GraphTopology extends AbstractTopology {
 		boolean searchVertices = false;
 		final Set<IAgent> agents = new THashSet<IAgent>();
 		IShape realS = null;
+		IShape tcr =  null;
 		if (graph.containsEdge(source)) realS = source;
 		else {
-			IShape tcr =  null;
 			double minDist = Double.POSITIVE_INFINITY;
 			for (IShape e : graph.getEdges()) {
 				double d = e.euclidianDistanceTo(source) ;
@@ -749,10 +757,12 @@ public class GraphTopology extends AbstractTopology {
 			searchVertices = filter.getSpecies() == graph.getVertexSpecies();
 		}
 		if (searchEdges) {
-			getNeighboursOfRec(scope, realS,true,agents,distance, graph);
-			return agents;
+			Set<IShape> edgs = getNeighboursOfRec(scope, realS,true,distance, graph,new THashSet<IShape>());
+			for (IShape ed : edgs ) agents.add(ed.getAgent());
+			return agents; 
 		} else if (searchVertices) {
-			getNeighboursOfRec(scope, realS,false,agents,distance, graph);
+			Set<IShape> nds =  getNeighboursOfRec(scope, realS,false,distance, graph,new THashSet<IShape>());
+			for (IShape nd : nds ) agents.add(nd.getAgent());
 			return agents;
 		}
 		IContainer agentsTotest = null;
@@ -760,8 +770,7 @@ public class GraphTopology extends AbstractTopology {
 			agentsTotest = filter.getSpecies().getAgents(scope);
 		else 
 			agentsTotest = scope.getSimulationScope().getAgents(scope);
-		final Set<IAgent> edges = new THashSet<IAgent>();
-		getNeighboursOfRec(scope, realS,true,edges,distance, graph);	
+		final Set<IShape> edges = getNeighboursOfRec(scope, realS,true,distance, graph, new THashSet<IShape>());	
 		for (Object ob : agentsTotest.iterable(scope)) {
 			IShape ag = (IShape) ob;
 			if (filter.accept(scope, source, ag)) {
@@ -778,7 +787,7 @@ public class GraphTopology extends AbstractTopology {
 					}
 				}
 					
-				if (graph.containsEdge(rd) && this.distanceBetween(scope, source, ag) <= distance) {
+				if (edges.contains(rd) && this.distanceBetween(scope, source, ag) <= distance) {
 					agents.add(ag.getAgent());
 				}
 					
@@ -789,20 +798,23 @@ public class GraphTopology extends AbstractTopology {
 
 	}
 	
-	public void getNeighboursOfRec(final IScope scope, final IShape currentSource, 
-		final boolean edge, Collection<IAgent> agents, double currentDist,ISpatialGraph graph) throws GamaRuntimeException {
+	public Set<IShape> getNeighboursOfRec(final IScope scope, final IShape currentSource, 
+		final boolean edge, double currentDist,ISpatialGraph graph, Set<IShape> alr) throws GamaRuntimeException {
+		final Set<IShape> edges = new THashSet<IShape>();
 		Set<IShape> eds = (graph.isDirected()) ? graph.outgoingEdgesOf(currentSource) : graph.edgesOf(currentSource);
-		if (edge) agents.add(currentSource.getAgent());
-		
+		if (!edge) edges.add(currentSource.getAgent());
 		for (IShape ed : eds){
+			if (alr.contains(ed)) continue;
+			alr.add(ed);
 			double dist = ed.getPerimeter();
-			if (edge) agents.add(ed.getAgent());
-			if (currentDist - dist > 0) {
+			if (edge) edges.add(ed);
+			if ((currentDist - dist) > 0) {
 				IShape nextNode = null;
 				if (graph.isDirected()) nextNode = graph.getEdgeTarget(ed);
 				else nextNode = (currentSource == graph.getEdgeTarget(ed)) ? graph.getEdgeSource(ed) : graph.getEdgeTarget(ed);
-				getNeighboursOfRec(scope, nextNode,edge,agents,currentDist -dist, graph);
+				edges.addAll(getNeighboursOfRec(scope, nextNode,edge,currentDist - dist, graph,alr));
 			}
 		}
+		return edges;
 	}
 }
