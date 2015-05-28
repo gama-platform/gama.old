@@ -20,7 +20,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import msi.gama.doc.Constants;
+import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.DocTransformer;
 import msi.gama.doc.util.XMLUtils;
 import msi.gama.precompiler.doc.utils.XMLElements;

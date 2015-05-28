@@ -21,8 +21,8 @@ import org.tmatesoft.svn.core.SVNException;
 import org.xml.sax.SAXException;
 
 import msi.gama.doc.transform.XmlToWiki;
+import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.PrepareEnv;
-import msi.gama.doc.util.SVNUtils;
 import msi.gama.doc.util.UnifyDoc;
 
 public class MainGenerateWiki {
@@ -54,7 +54,8 @@ public class MainGenerateWiki {
 		// FIXME send the documentation on the SVN repository
 		try {
 			System.out.print("Checkout Wiki Files from GAMA SVN................");		
-			SVNUtils.checkoutSVNGamaDoc();		
+			// Ben: remove SVN and get from Git 
+			// SVNUtils.checkoutSVNGamaDoc();		
 			System.out.println("DONE");			
 		} catch (Exception e){
 			System.out.println("NO AVAILABLE CONNECTION");

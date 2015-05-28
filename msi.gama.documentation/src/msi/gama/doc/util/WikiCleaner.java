@@ -24,7 +24,6 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
-import msi.gama.doc.Constants;
 import net.htmlparser.jericho.CharacterReference;
 import net.htmlparser.jericho.Config;
 import net.htmlparser.jericho.Renderer;

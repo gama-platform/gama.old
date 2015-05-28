@@ -27,7 +27,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 
 //FOP
-import msi.gama.doc.Constants;
+import msi.gama.doc.util.Constants;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;

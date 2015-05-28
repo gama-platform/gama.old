@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.tmatesoft.svn.core.SVNException;
 
+import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.PrepareEnv;
-import msi.gama.doc.util.SVNUtils;
 import msi.gama.doc.util.WikiCleaner;
 
 public class MainBeforePython {
@@ -42,7 +42,8 @@ public class MainBeforePython {
 			
 			if(Constants.ONLINE){
 				System.out.print("Checkout Wiki Files from GAMA SVN................PLEASE WAIT");	
-				SVNUtils.checkoutSVNGamaDoc();	
+				// Ben: remove SVN, get from GIT
+				// SVNUtils.checkoutSVNGamaDoc();	
 				System.out.println("Checkout Wiki Files from GAMA SVN................DONE");	
 			} else {
 				System.out.println("NO CHECKOUT DONE  ... then will copy all files if availables from the WIKI folder");
@@ -50,7 +51,7 @@ public class MainBeforePython {
 			System.out.print("Select and clean some wiki files.................");
 			WikiCleaner.selectWikiFiles();
 			System.out.println("DONE");			
-		} catch(SVNException e){
+		} catch(Exception e){
 			System.out.println("ERROR: Impossible connection to the SVN repository.");
 			System.out.println(e);
 		}	
