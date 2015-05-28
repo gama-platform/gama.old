@@ -17,9 +17,8 @@ release/*
 .idea/
 .idea/*
 *~
-.project
-.settings
 *.bak
 .directory
 .DS_Store
 *.history
+*.class
