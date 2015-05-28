@@ -19,6 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.path.IPath;
+import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractContainerStatement.GraphObjectToAdd;
 import msi.gaml.types.IType;
 import org.jgrapht.*;
@@ -114,5 +115,9 @@ public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, Gam
 	public GamaPair<Node, Node> buildIndex(IScope scope, Object object);
 
 	public IContainer<?, GamaPair<Node, Node>> buildIndexes(IScope scope, IContainer value);
+	
+	public ISpecies getVertexSpecies();
+	
+	public ISpecies getEdgeSpecies();
 
 }
