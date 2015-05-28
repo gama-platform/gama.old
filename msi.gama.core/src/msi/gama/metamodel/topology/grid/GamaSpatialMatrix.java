@@ -521,12 +521,26 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public int manhattanDistanceBetween(final IShape g1, final IShape g2) {
 		// New algorithm : we get the cells at the nearest points and compute the distance between their centroids ?
-
-		final Coordinate[] coord = new DistanceOp(g1.getInnerGeometry(), g2.getInnerGeometry()).nearestPoints();
-		final Coordinate p1 = coord[0];
-		final Coordinate p2 = coord[1];
-		final int dx = (int) (Maths.abs(p2.x - p1.x) / cellWidth) + 1;
-		final int dy = (int) (Maths.abs(p2.y - p1.y) / cellHeight) + 1;
+		IShape s1 = (g1.getAgent() != null && g1.getAgent().getSpecies() == this.getCellSpecies()) ? g1 :null;
+		IShape s2 = (g2.getAgent() != null && g2.getAgent().getSpecies() == this.getCellSpecies()) ? g2 :null;
+		
+		if (s1 == null || s2 == null) {
+			ILocation p1 = g1.isPoint() ? g1.getLocation() : null;
+			ILocation p2 = g2.isPoint() ? g2.getLocation() : null;
+			final Coordinate[] coord = new DistanceOp(g1.getInnerGeometry(), g2.getInnerGeometry()).nearestPoints();
+			if(s1 == null) {
+				p1 = new GamaPoint(coord[0]);
+				s1 = this.getPlaceAt(p1);
+			}
+			if(s2 == null) {
+				p2 = new GamaPoint(coord[1]);
+				s2 = this.getPlaceAt(p2);
+			}
+		}
+		
+		final Coordinate[] coord = new DistanceOp(s1.getInnerGeometry(), s2.getInnerGeometry()).nearestPoints();
+		final int dx = (int) (Maths.abs(coord[0].x - coord[1].x) / cellWidth) + 1;
+		final int dy = (int) (Maths.abs(coord[0].y - coord[1].y) / cellHeight) + 1;
 		if ( usesVN ) {
 			int result = dx + dy;
 			if ( result == 2 ) {
