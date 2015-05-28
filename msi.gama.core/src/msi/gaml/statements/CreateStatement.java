@@ -1,24 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'CreateStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.statements;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.database.sql.SqlConnection;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -32,8 +31,6 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.file.*;
-import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
@@ -43,125 +40,105 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CreateStatement.CreateSerializer;
 import msi.gaml.statements.CreateStatement.CreateValidator;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This command is used to create agents.
- * 
+ *
  * Considering the invoking agent as the execution context, species of the created agents can be
  * 1. The same species of the invoking agent or any peer species of the invoking agent's species.
  * The newly created agent(s) will take the invoking agent's macro-agent as its/their macro-agent.
- * 
+ *
  * 2. The direct micro-species of the invoking agent's species.
  * The newly create agent(s) will take the invoking agent as its/their macro-agent.
- * 
+ *
  * 3. The direct macro-species of the invoking agent's species or any peer species of this direct
  * macro-species.
  * The newly created agent(s) will take the macro-agent of invoking agent's macro-agent as its/their
  * macro-agent.
- * 
+ *
  * Creation of agents from CSV files: create toto from: "toto.csv" header: true
  * with:[att1::read("NAME"), att2::read("TYPE")];
  * or, without header: create toto from: "toto.csv"with:[att1::read(0), att2::read(1)]; //with the
  * read(int), the index of the column.
  */
 @symbol(name = IKeyword.CREATE,
-	kind = ISymbolKind.SEQUENCE_STATEMENT,
-	with_sequence = true,
-	with_args = true,
-	remote_context = true)
+kind = ISymbolKind.SEQUENCE_STATEMENT,
+with_sequence = true,
+with_args = true,
+remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 	@facet(name = IKeyword.SPECIES,
 		type = IType.SPECIES,
 		optional = true,
 		doc = @doc("an expression that evaluates to a species, the species of created agents")),
-	@facet(name = IKeyword.RETURNS,
+		@facet(name = IKeyword.RETURNS,
 		type = IType.NEW_TEMP_ID,
 		optional = true,
 		doc = @doc("a new temporary variable name containing the list of created agents (a lsit even if only one agent has been created)")),
-	@facet(name = IKeyword.FROM,
+		@facet(name = IKeyword.FROM,
 		type = IType.NONE,
 		optional = true,
 		doc = @doc("an expression that evaluates to a localized entity, a list of localized entities, a string (the path of a shapefile, a .csv, a .asc or a OSM file) or a container returned by a request to a database")),
-	@facet(name = IKeyword.NUMBER,
+		@facet(name = IKeyword.NUMBER,
 		type = IType.INT,
 		optional = true,
 		doc = @doc("an expression that evaluates to an int, the number of created agents")),
-	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc = @doc("")),
-	@facet(name = IKeyword.WITH,
+		@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc = @doc("")),
+		@facet(name = IKeyword.WITH,
 		type = { IType.MAP },
 		optional = true,
 		doc = @doc("an expression that evaluates to a map, for each pair the key is a species attribute and the value the assigned value")),
-	@facet(name = IKeyword.HEADER,
+		@facet(name = IKeyword.HEADER,
 		type = { IType.BOOL },
 		optional = true,
 		doc = @doc("an expression that evaluates to a boolean, when creating agents from csv file, specify whether the file header is loaded")) },
-	omissible = IKeyword.SPECIES)
+		omissible = IKeyword.SPECIES)
 @doc(value = "Allows an agent to create `number` agents of species `species`, to create agents of species `species` from a shapefile or to create agents of species `species` from one or several localized entities (discretization of the localized entity geometries).",
-	usages = {
-		@usage(value = "Its simple syntax to create `an_int` agents of species `a_species` is:", examples = {
-			@example(value = "create a_species number: an_int;", isExecutable = false),
-			@example(value = "create species_of(self) number: 5 returns: list5Agents;", isTestOnly = false),
-			@example(var = "list5Agents", returnType = "list", value = "5", isExecutable = false) }),
+usages = {
+	@usage(value = "Its simple syntax to create `an_int` agents of species `a_species` is:", examples = {
+		@example(value = "create a_species number: an_int;", isExecutable = false),
+		@example(value = "create species_of(self) number: 5 returns: list5Agents;", isTestOnly = false),
+		@example(var = "list5Agents", returnType = "list", value = "5", isExecutable = false) }),
 		@usage("If `number` equals 0 or species is not a species, the statement is ignored."),
 		@usage(value = "In GAML modelers can create agents of species `a_species  (with two attributes `type` and `nature` with types corresponding to the types of the shapefile attributes) from a shapefile `the_shapefile` while reading attributes 'TYPE_OCC' and 'NATURE' of the shapefile. One agent will be created by object contained in the shapefile:",
-			examples = @example(value = "create a_species from: the_shapefile with: [type:: 'TYPE_OCC', nature::'NATURE'];",
-				isExecutable = false)),
+		examples = @example(value = "create a_species from: the_shapefile with: [type:: 'TYPE_OCC', nature::'NATURE'];",
+		isExecutable = false)),
 		@usage(value = "In order to create agents from a .csv file, facet `header` can be used to specified whether we can use columns header:",
-			examples = {
-				@example(value = "create toto from: \"toto.csv\" header: true with:[att1::read(\"NAME\"), att2::read(\"TYPE\")];",
-					isExecutable = false),
+		examples = {
+			@example(value = "create toto from: \"toto.csv\" header: true with:[att1::read(\"NAME\"), att2::read(\"TYPE\")];",
+				isExecutable = false),
 				@example(value = "or", isExecutable = false),
 				@example(value = "create toto from: \"toto.csv\" with:[att1::read(0), att2::read(1)]; //with read(int), the index of the column",
-					isExecutable = false) }),
-		@usage(value = "Similarly to the creation from shapefile, modelers can create agents from a set of geometries. In this case, one agent per geometry will be created (with the geometry as shape)",
-			examples = {
-				@example(value = "create species_of(self) from: [square(4),circle(4)]; 	// 2 agents have been created, with shapes respectively square(4) and circle(4)"),
-				@example(value = "create species_of(self) from: [square(4),circle(4)] returns: new_agt;",
+				isExecutable = false) }),
+				@usage(value = "Similarly to the creation from shapefile, modelers can create agents from a set of geometries. In this case, one agent per geometry will be created (with the geometry as shape)",
+				examples = {
+					@example(value = "create species_of(self) from: [square(4),circle(4)]; 	// 2 agents have been created, with shapes respectively square(4) and circle(4)"),
+					@example(value = "create species_of(self) from: [square(4),circle(4)] returns: new_agt;",
 					isTestOnly = true),
-				@example(value = "new_agt[0].shape", equals = "square(4)", returnType = "geometry", isTestOnly = true),
-				@example(value = "new_agt[1].shape", equals = "circle(4)", returnType = "geometry", isTestOnly = true) }),
-		@usage(value = "Created agents are initialized following the rules of their species. If one wants to refer to them after the statement is executed, the returns keyword has to be defined: the agents created will then be referred to by the temporary variable it declares. For instance, the following statement creates 0 to 4 agents of the same species as the sender, and puts them in the temporary variable children for later use.",
-			examples = { @example(value = "create species (self) number: rnd (4) returns: children;", test = false),
-				@example(value = "ask children {", test = true), @example(value = "        // ...", test = false),
-				@example(value = "}", test = false) }),
-		@usage(value = "If one wants to specify a special initialization sequence for the agents created, create provides the same possibilities as ask. This extended syntax is:",
-			examples = { @example(value = "create a_species number: an_int {", isExecutable = false),
-				@example(value = "     [statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "The same rules as in ask apply. The only difference is that, for the agents created, the assignments of variables will bypass the initialization defined in species. For instance:",
-			examples = {
-				@example(value = "create species(self) number: rnd (4) returns: children {", isExecutable = false),
-				@example(value = "     set location <- myself.location + {rnd (2), rnd (2)}; // tells the children to be initially located close to me",
-					isExecutable = false),
-				@example(value = "     set parent <- myself; // tells the children that their parent is me (provided the variable parent is declared in this species) ",
-					isExecutable = false), @example(value = "}", isExecutable = false) }),
-		@usage(value = "Desprecated uses: ", examples = { @example(value = "// Simple syntax", isExecutable = false),
-			@example(value = "create species: a_species number: an_int;", isExecutable = false),
-			@example(value = "", isExecutable = false) }) })
+					@example(value = "new_agt[0].shape", equals = "square(4)", returnType = "geometry", isTestOnly = true),
+					@example(value = "new_agt[1].shape", equals = "circle(4)", returnType = "geometry", isTestOnly = true) }),
+					@usage(value = "Created agents are initialized following the rules of their species. If one wants to refer to them after the statement is executed, the returns keyword has to be defined: the agents created will then be referred to by the temporary variable it declares. For instance, the following statement creates 0 to 4 agents of the same species as the sender, and puts them in the temporary variable children for later use.",
+					examples = { @example(value = "create species (self) number: rnd (4) returns: children;", test = false),
+						@example(value = "ask children {", test = true), @example(value = "        // ...", test = false),
+						@example(value = "}", test = false) }),
+						@usage(value = "If one wants to specify a special initialization sequence for the agents created, create provides the same possibilities as ask. This extended syntax is:",
+						examples = { @example(value = "create a_species number: an_int {", isExecutable = false),
+							@example(value = "     [statements]", isExecutable = false),
+							@example(value = "}", isExecutable = false) }),
+							@usage(value = "The same rules as in ask apply. The only difference is that, for the agents created, the assignments of variables will bypass the initialization defined in species. For instance:",
+							examples = {
+								@example(value = "create species(self) number: rnd (4) returns: children {", isExecutable = false),
+								@example(value = "     set location <- myself.location + {rnd (2), rnd (2)}; // tells the children to be initially located close to me",
+								isExecutable = false),
+								@example(value = "     set parent <- myself; // tells the children that their parent is me (provided the variable parent is declared in this species) ",
+								isExecutable = false), @example(value = "}", isExecutable = false) }),
+								@usage(value = "Desprecated uses: ", examples = { @example(value = "// Simple syntax", isExecutable = false),
+									@example(value = "create species: a_species number: an_int;", isExecutable = false),
+									@example(value = "", isExecutable = false) }) })
 @validator(CreateValidator.class)
 @serializer(CreateSerializer.class)
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
-
-	public static class CreateSerializer extends StatementSerializer {
-
-		@Override
-		protected void serializeArgs(final StatementDescription desc, final StringBuilder sb,
-			final boolean ncludingBuiltIn) {
-			Collection<IDescription> args = desc.getArgs();
-			if ( args == null || args.isEmpty() ) { return; }
-			sb.append("with: [");
-			for ( IDescription arg : args ) {
-				String name = arg.getFacets().getLabel(NAME);
-				IExpressionDescription def = arg.getFacets().get(VALUE);
-				sb.append(name).append("::").append(def.serialize(false));
-				sb.append(", ");
-			}
-			sb.setLength(sb.length() - 2);
-			sb.append("]");
-		}
-	}
 
 	public static class CreateValidator implements IDescriptionValidator<StatementDescription> {
 
@@ -171,7 +148,6 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		 */
 		@Override
 		public void validate(final StatementDescription cd) {
-
 			final SpeciesDescription species = cd.computeSpecies();
 			if ( species != null ) {
 				if ( species.isAbstract() ) {
@@ -187,7 +163,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 						"Species " +
 							species.getName() +
 							" is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
-						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
 					return;
 				}
 				SpeciesDescription callerSpecies = cd.getSpeciesContext();
@@ -212,10 +188,30 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	}
 
+	public static class CreateSerializer extends StatementSerializer {
+
+		@Override
+		protected void serializeArgs(final StatementDescription desc, final StringBuilder sb,
+			final boolean ncludingBuiltIn) {
+			Collection<IDescription> args = desc.getArgs();
+			if ( args == null || args.isEmpty() ) { return; }
+			sb.append("with: [");
+			for ( IDescription arg : args ) {
+				String name = arg.getFacets().getLabel(NAME);
+				IExpressionDescription def = arg.getFacets().get(VALUE);
+				sb.append(name).append("::").append(def.serialize(false));
+				sb.append(", ");
+			}
+			sb.setLength(sb.length() - 2);
+			sb.append("]");
+		}
+	}
+
 	private Arguments init;
 	private final IExpression from, number, species, header;
 	private final String returns;
 	private final RemoteSequence sequence;
+	public static List<ICreateDelegate> delegates = new ArrayList();
 
 	public CreateStatement(final IDescription desc) {
 		super(desc);
@@ -272,26 +268,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
 		final List<Map> inits = GamaListFactory.create(Types.MAP, max == null ? 10 : max);
 		final Object source = getSource(scope);
-		if ( source instanceof GamaCSVFile ) {
-			fillInits(scope, inits, max, (GamaCSVFile) source);
-		} else if ( source instanceof List && ((List) source).get(0) instanceof String &&
-			((List) source).get(0).equals(IKeyword.GENSTAR_POPULATION) ) {
-			// genstar returns a list in which
-			// the first element is the "genstar_population" string
-			// other elements are maps of <String, Object>, each map represents variable values of a generated agent
-			fillInitsGenstar(scope, inits, max, (GamaList) source);
-		} else if ( source instanceof IList && ((IList) source).get(0) instanceof List ) {
-			// DBAccess
-			fillInitsWithDBResults(scope, inits, max, (IList) source);
-		} else if ( source instanceof IList && ((IList) source).get(0) instanceof GamaShape ||
-			source instanceof GamaShapeFile || source instanceof GamaOsmFile ) {
-			fillInits(scope, inits, max, (IAddressableContainer) source);
-		} else if ( source instanceof GamaGridFile ) {
-			fillInits(scope, inits, max, (GamaGridFile) source);
-		} else if ( source instanceof GamaTextFile ) {
-			fillInits(scope, inits, max, (GamaFile) source);
-		} else {
-			fillInits(scope, inits, max);
+		for ( ICreateDelegate delegate : delegates ) {
+			if ( delegate.acceptSource(source) ) {
+				delegate.createFrom(scope, inits, max, source, init, this);
+			}
 		}
 		// and we create and return the agent(s)
 		final IList<? extends IAgent> agents = createAgents(scope, pop, inits);
@@ -299,38 +279,6 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			scope.setVarValue(returns, agents);
 		}
 		return agents;
-	}
-
-	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaCSVFile source) {
-		if ( header != null ) {
-			source.forceHeader(Cast.asBool(scope, header.value(scope)));
-		}
-		final boolean hasHeader = source.hasHeader();
-		IMatrix mat = source.getContents(scope);
-		if ( mat == null || mat.isEmpty(scope) ) { return; }
-		int rows = mat.getRows(scope);
-		int cols = mat.getCols(scope);
-		rows = max == null ? rows : Math.min(rows, max);
-
-		List headers;
-		if ( hasHeader ) {
-			headers = source.getAttributes(scope);
-		} else {
-			headers = new ArrayList();
-			for ( int j = 0; j < cols; j++ ) {
-				headers.add(j);
-			}
-		}
-		for ( int i = 0; i < rows; i++ ) {
-			final GamaMap map = GamaMapFactory.create(hasHeader ? Types.STRING : Types.INT, Types.NO_TYPE);
-			final IList vals = mat.getRow(scope, i);
-			for ( int j = 0; j < cols; j++ ) {
-				map.put(headers.get(j), vals.get(j));
-			}
-			// CSV attributes are mixed with the attributes of agents
-			fillWithUserInit(scope, map);
-			inits.add(map);
-		}
 	}
 
 	private Object getSource(final IScope scope) {
@@ -343,100 +291,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		return source;
 	}
 
-	/**
-	 * Method used to read initial values and attributes from a CSV file.
-	 */
-	// private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaTextFile file) {
-	// final boolean hasHeader = header == null ? false : Cast.asBool(scope, header.value(scope));
-	// final GamaList<String[]> rows = new GamaList(file.length(scope));
-	// for ( final String str : file.iterable(scope) ) {
-	// rows.add(GamaMatrixType.csvPattern.split(str, -1));
-	// }
-	// final int num = max == null ? rows.size() : Math.min(rows.size(), max);
-	// final String[] headers = rows.get(0);
-	// for ( int i = hasHeader ? 1 : 0; i < num; i++ ) {
-	// final GamaMap map = GamaMapFactory.create();
-	// final String[] splitStr = rows.get(i);
-	// for ( int j = 0; j < splitStr.length; j++ ) {
-	// map.put(hasHeader ? headers[j] : j, splitStr[j]);
-	// }
-	// // CSV attributes are mixed with the attributes of agents
-	// fillWithUserInit(scope, map);
-	// inits.add(map);
-	// }
-	// }
-
-	/**
-	 * Method used to read initial values and attributes from a GIS file.
-	 */
-	private void fillInits(final IScope scope, final List<Map> inits, final Integer max,
-		final IAddressableContainer<Integer, GamaShape, Integer, GamaShape> file) {
-		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
-		for ( int i = 0; i < num; i++ ) {
-			final GamaShape g = file.get(scope, i);
-			final Map map = g.getOrCreateAttributes();
-			// The shape is added to the initial values
-			map.put(IKeyword.SHAPE, g);
-			// GIS attributes are mixed with the attributes of agents
-			fillWithUserInit(scope, map);
-			inits.add(map);
-		}
-	}
-
-	/**
-	 * Method used to read initial values and attributes from a GRID file.
-	 */
-	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaGridFile file) {
-		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
-		for ( int i = 0; i < num; i++ ) {
-			final IShape g = file.get(scope, i);
-			final Map map = g.getOrCreateAttributes();
-			// The shape is added to the initial values
-			map.put(IKeyword.SHAPE, g);
-			// GIS attributes are mixed with the attributes of agents
-			fillWithUserInit(scope, map);
-			inits.add(map);
-		}
-	}
-
-	/**
-	 * Method used to read initial values decribed by the modeler (facet with)
-	 */
-	private void fillInits(final IScope scope, final List<Map> inits, final Integer max) {
-		if ( init == null ) { return; }
-		final int num = max == null ? 1 : max;
-		for ( int i = 0; i < num; i++ ) {
-			final Map map = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
-			fillWithUserInit(scope, map);
-			inits.add(map);
-		}
-	}
-
-	/**
-	 * Method used to read initial values and attributes from a list of values
-	 * @author thai.truongminh@gmail.com
-	 * @since 04-09-2012
-	 */
-	private void fillInitsWithDBResults(final IScope scope, final List<Map> initialValues, final Integer max,
-		final IList list) throws GamaRuntimeException {
-		// get Column name
-		final GamaList<Object> colNames = (GamaList<Object>) list.get(0);
-		// get Column type
-		final GamaList<Object> colTypes = (GamaList<Object>) list.get(1);
-		// Get ResultSet
-		final GamaList<GamaList<Object>> initValue = (GamaList<GamaList<Object>>) list.get(2);
-		// set initialValues to generate species
-		final int num = max == null ? initValue.length(scope) : Math.min(max, initValue.length(scope));
-		for ( int i = 0; i < num; i++ ) {
-			final GamaList<Object> rowList = initValue.get(i);
-			final Map map = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
-			computeInits(scope, map, rowList, colTypes, colNames);
-			initialValues.add(map);
-		}
-	}
-
 	private IList<? extends IAgent>
-		createAgents(final IScope scope, final IPopulation population, final List<Map> inits) {
+	createAgents(final IScope scope, final IPopulation population, final List<Map> inits) {
 		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
 		// hqnghi in case of creating experiment of micro-models, we must implicitely initialize it and its simulation output
 		if ( population instanceof ExperimentPopulation ) {
@@ -463,7 +319,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		return list;
 	}
 
-	private void fillWithUserInit(final IScope scope, final Map values) {
+	// TODO Call it before calling the ICreateDelegate createFrom method !
+	void fillWithUserInit(final IScope scope, final Map values) {
 		if ( init == null ) { return; }
 		Files.tempAttributes.push(values);
 		try {
@@ -485,53 +342,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	@Override
 	public void setRuntimeArgs(final Arguments args) {}
 
-	/*
-	 * thai.truongminh@gmail.com
-	 * Method: GamaList2ListMap
-	 * Description:
-	 * created date : 13-09-2012
-	 * 25-Feb-2013:
-	 * Add transformCRS from GisUtils.transformCRS
-	 * Last Modified: 25-Feb-2013
-	 */
-	private void computeInits(final IScope scope, final Map values, final GamaList<Object> rowList,
-		final GamaList<Object> colTypes, final GamaList<Object> colNames) throws GamaRuntimeException {
-		if ( init == null ) { return; }
-		for ( final Map.Entry<String, IExpressionDescription> f : init.entrySet() ) {
-			if ( f != null ) {
-				final IExpression valueExpr = f.getValue().getExpression();
-				// get parameter
-				final String columnName = valueExpr.value(scope).toString().toUpperCase();
-				// get column number of parameter
-				final int val = colNames.indexOf(columnName);
-				if ( ((String) colTypes.get(val)).equalsIgnoreCase(SqlConnection.GEOMETRYTYPE) ) {
-					final Geometry geom = (Geometry) rowList.get(val);
-					values.put(f.getKey(), new GamaShape(geom));
-				} else {
-					values.put(f.getKey(), rowList.get(val));
-				}
-
-			}
-		}
-	}
-
 	/**
-	 * Fills initial values of agents with those generated by Gen*
-	 * 
-	 * @param scope
-	 * @param initialValues
-	 * @param max
-	 * @param syntheticPopulation
+	 * @return
 	 */
-	private void fillInitsGenstar(final IScope scope, final List<Map> initialValues, final Integer max,
-		final IList<Map> syntheticPopulation) {
-		final int num =
-			max == null ? syntheticPopulation.length(scope) - 1 : Math.min(syntheticPopulation.length(scope) - 1, max); // the first element of syntheticPopulation a string (i.e.,
-																														// "genstar_population")
-		for ( int i = 1; i < num; i++ ) {
-			final Map genstarInit = syntheticPopulation.get(i);
-			fillWithUserInit(scope, genstarInit); // mix genstar's init attributes with user's init
-			initialValues.add(genstarInit);
-		}
+	public IExpression getHeader() {
+		return header;
 	}
+
 }
