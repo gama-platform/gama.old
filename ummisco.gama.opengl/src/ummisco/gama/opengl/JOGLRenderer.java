@@ -414,21 +414,24 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	}
 
 	public void updateCameraPosition() {
-		ILocation cameraPos = data.getCameraPos();
-		if ( cameraPos != LayeredDisplayData.getNoChange() ) {
-			camera.updatePosition(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
+		if(data.isCameraLock()){
+			ILocation cameraPos = data.getCameraPos();
+			if ( cameraPos != LayeredDisplayData.getNoChange() ) {
+				camera.updatePosition(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
+			}
+			ILocation camLookPos = data.getCameraLookPos();
+			if ( camLookPos != LayeredDisplayData.getNoChange() ) {
+				camera.lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
+			}
+			ILocation upVector = data.getCameraUpVector();
+			if ( camera.getPhi() < 360 && camera.getPhi() > 180 ) {
+				camera.upPosition(0, -1, 0);
+			} else {
+				camera.upPosition(upVector.getX(), upVector.getY(), upVector.getZ());
+			}
+			camera.updateSphericalCoordinatesFromLocations();	
 		}
-		ILocation camLookPos = data.getCameraLookPos();
-		if ( camLookPos != LayeredDisplayData.getNoChange() ) {
-			camera.lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
-		}
-		ILocation upVector = data.getCameraUpVector();
-		if ( camera.getPhi() < 360 && camera.getPhi() > 180 ) {
-			camera.upPosition(0, -1, 0);
-		} else {
-			camera.upPosition(upVector.getX(), upVector.getY(), upVector.getZ());
-		}
-		camera.updateSphericalCoordinatesFromLocations();
+		
 	}
 
 	public void setPickedObjectIndex(final int pickedObjectIndex) {
