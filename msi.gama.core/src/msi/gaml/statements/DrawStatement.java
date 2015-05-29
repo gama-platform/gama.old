@@ -81,6 +81,10 @@ import msi.gaml.types.*;
 		type = { IType.FLOAT, IType.INT },
 		optional = true,
 		doc = @doc("orientation of the shape/text/icon")),
+	@facet(name = ROTATE3D,
+		type = { IType.PAIR},
+		optional = true,
+		doc = @doc("orientation of the shape/text/icon")),
 	@facet(name = FONT,
 		type = { IType.FONT, IType.STRING },
 		optional = true,
@@ -272,6 +276,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		IExpression bord;
 
 		IExpression rot;
+		
+		IExpression rot3D;
 
 		IExpression depth;
 
@@ -286,6 +292,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		private final boolean hasBord;
 		private final ILocation constSize;
 		private final Double constRot;
+		private final GamaPair<Double,GamaPoint> constRot3D;
 		private final Boolean constEmpty;
 		private final Boolean constRounded;
 		protected final ILocation constLoc;
@@ -306,6 +313,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			loc = getFacet(AT);
 			bord = getFacet(BORDER);
 			rot = getFacet(ROTATE);
+			rot3D = getFacet(ROTATE3D);
 			rounded = getFacet(ROUNDED);
 			textures = getFacet(TEXTURE);
 
@@ -331,6 +339,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			}
 
 			constRot = rot != null && rot.isConst() ? Cast.asFloat(scope, rot.value(scope)) : null;
+			constRot3D = rot3D != null && rot3D.isConst() ? Cast.asPair(scope, rot3D.value(scope),false) : null;
 			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope), false) : null;
 			constRounded =
 				rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope), false) : null;
@@ -415,6 +424,10 @@ public class DrawStatement extends AbstractStatementSequence {
 			if ( depth != null ) {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
 			}
+			if(rot3D != null){
+				g2.setAttribute(IShape.ROTATE_ATTRIBUTE, rot3D.value(scope));
+			}
+				
 			IList textures = getTextures(scope);
 			if ( textures != null ) {
 				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, textures);

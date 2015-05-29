@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.util.ArrayList;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -25,18 +26,24 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.*;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaPair;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+
 import ummisco.gama.opengl.camera.*;
 import ummisco.gama.opengl.scene.*;
 import ummisco.gama.opengl.utils.GLUtilLight;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.vividsolutions.jts.geom.Geometry;
+
+import ummisco.gama.opengl.files.*;
 
 /**
  * This class plays the role of Renderer and IGraphics.
@@ -77,6 +84,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
 	private volatile boolean inited;
+	
+	private GLModel chairModel = null;
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		displaySurface = d;
@@ -187,8 +196,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		updatePerspective();
 		// We mark the renderer as inited
 		inited = true;
-	}
 
+		
+		//chairModel = ModelLoaderOBJ.LoadModel("/Users/Arno/Projects/Gama/Sources/Git/GITclean/ummisco.gama.opengl/src/ummisco/gama/opengl/files/car.obj",
+			//	"/Users/Arno/Projects/Gama/Sources/Git/GITclean/ummisco.gama.opengl/src/ummisco/gama/opengl/files/car.mtl", gl);
+	}
+	
 	public boolean getDrawNormal() {
 		return data.isDraw_norm();
 	}
@@ -266,8 +279,9 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			camera.doInertia();
 		}
 
-
 		drawScene(gl);
+		//chairModel.opengldraw(gl);
+		
 
 		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 
@@ -545,6 +559,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		final Color border, final boolean rounded) {
 		if ( shape == null ) { return null; }
 		Double depth = 0d;
+		GamaPair<Double,GamaPoint> rot3D = null;
 		java.util.List<BufferedImage> textures = null;
 		IShape.Type type = shape.getGeometricalType();
 		java.util.List<Double> ratio = new ArrayList<Double>();
@@ -553,6 +568,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
 		}
+		
+		if ( shape.hasAttribute(IShape.ROTATE_ATTRIBUTE) ) {
+			rot3D = Cast.asPair(scope, shape.getAttribute(IShape.ROTATE_ATTRIBUTE),false);
+		}
+		
 		if ( shape.hasAttribute(IShape.TEXTURE_ATTRIBUTE) ) {
 			java.util.List<String> textureNames = Cast.asList(scope, shape.getAttribute(IShape.TEXTURE_ATTRIBUTE));
 			textures = new ArrayList();
@@ -582,12 +602,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 				Geometry intersect = world.intersection(g);
 				if ( !intersect.isEmpty() ) {
 					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth,
-						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, ratio, colors);
+						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, ratio, colors, rot3D);
 				}
 			}
 		} else {
 			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures,
-				ratio, colors);
+				ratio, colors, rot3D);
 		}
 
 		// Add a geometry with a depth and type coming from Attributes
@@ -597,11 +617,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
 		final java.util.List<BufferedImage> textures, final java.util.List<Double> ratio,
-		final java.util.List<GamaColor> colors) {
+		final java.util.List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
 		sceneBuffer.getSceneToUpdate().addGeometry(geom, scope.getAgentScope(), color, fill, border,
 			textures == null || textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type,
-			ratio, colors);
+			ratio, colors, rotate3D);
 
 	}
 
@@ -667,7 +687,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
 						.getInnerGeometry();
 				sceneBuffer.getSceneToUpdate().addGeometry(g, null, lineColor, false, lineColor, false, null, 0, 0,
-					false, IShape.Type.GRIDLINE, null, null);
+					false, IShape.Type.GRIDLINE, null, null,null);
 			}
 		}
 	}
