@@ -12,7 +12,9 @@
 package msi.gama.metamodel.agent;
 
 import gnu.trove.map.hash.THashMap;
+
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
@@ -30,6 +32,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
+
 import com.google.common.collect.Iterables;
 
 /**
@@ -758,6 +761,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if ( geometry == null ) { return; }
 		geometry.setDepth(depth);
 
+	}
+
+	@Override
+	public void setRotate3D(GamaPair rot3d) {
+		if ( geometry == null ) { return; }
+		geometry.setRotate3D(rot3d);
+		
 	}
 
 }

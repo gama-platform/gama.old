@@ -14,9 +14,13 @@ package ummisco.gama.opengl.scene;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.List;
+
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.util.GamaPair;
 import ummisco.gama.opengl.JOGLRenderer;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
@@ -33,11 +37,12 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public double height;
 	public boolean rounded;
 	private final Texture[] textures;
+	public GamaPair<Double,GamaPoint> rotate3D = null;
 
 	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
 		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
 		final List<BufferedImage> textures, final int angle, final double height, final boolean rounded,
-		final IShape.Type type) {
+		final IShape.Type type, final GamaPair<Double,GamaPoint> rotate3D) {
 		super(color, alpha);
 
 		if ( type == IShape.Type.GRIDLINE ) {
@@ -74,6 +79,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 		}
 		this.height = height;
 		this.rounded = rounded;
+		this.rotate3D = rotate3D;
 	}
 
 	@Override

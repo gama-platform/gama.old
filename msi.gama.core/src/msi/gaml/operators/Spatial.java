@@ -12,6 +12,7 @@
 package msi.gaml.operators;
 
 import gnu.trove.set.hash.THashSet;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -41,6 +42,7 @@ import msi.gaml.types.*;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.algorithm.distance.*;
 import com.vividsolutions.jts.geom.*;
@@ -1525,17 +1527,14 @@ public abstract class Spatial {
 		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
 		@doc(value = "A geometry resulting from the application of a rotation by the right-hand operand angles (degree) along the three axis (x,y,z) to the left-hand operand (geometry, agent, point)",
 			masterDoc = true,
-			examples = { @example(value = "rotated_by(self,45,5,110)",
-				equals = "the geometry resulting from a 45 degres rotation along the x axis, 5 degres rotation along the y axis and 110 degres rotation along the z axis to the geometry of the agent applying the operator.",
+			examples = { @example(value = "rotated_by(45, {1,0,0})",
+				equals = "the geometry resulting from a 45 degres rotation along the {1,0,0} vector to the geometry of the agent applying the operator.",
 				test = false) },
 			see = { "transformed_by", "translated_by" })
 		public static
-			IShape rotated_by(final IScope scope, final IShape g1, final Double angleX, final Double angleY, final Double angleZ) {
+			IShape rotated_by(final IScope scope, final IShape g1, final Double rotation, final GamaPoint vector) {
 			if ( g1 == null ) { return null; }
-			return new GamaShape(g1, null, angleX, angleY, angleZ, null);
-			// final GamaShape s = g1.asShapeWithGeometry(scope, null);
-			// return s.rotatedBy(scope, Math.toRadians(angle));
-			// return new GamaShape(s.getInnerGeometry()).rotatedBy(scope, Math.toRadians(angle));
+			return new GamaShape(g1, null, rotation,vector, g1.getLocation());
 		}
 
 		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
