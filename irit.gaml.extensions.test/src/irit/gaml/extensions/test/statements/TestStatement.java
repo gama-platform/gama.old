@@ -46,7 +46,7 @@ public class TestStatement extends AbstractStatementSequence {
 
 	// We keep the setup in memory to avoid looking for it every time step
 	SetUpStatement setup = null;
-
+ 
 	// true if the setup has already been looked for, false otherwise
 	boolean setupLookedFor = false;
 
