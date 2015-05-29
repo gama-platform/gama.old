@@ -83,7 +83,7 @@ global {
 }
 	
 
-species people parent: multicriteria_analyzer {
+species people  {
 	aspect default {
 		draw sphere(2) color: °red;
 	}

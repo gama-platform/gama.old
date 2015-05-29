@@ -212,6 +212,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean constantDiffusePos = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
+	public volatile boolean cameraFix = false; // Means that the camera has been set by the modeller.
 	final LayeredDisplayData data = new LayeredDisplayData();
 	// Specific to overlays
 	OverlayStatement overlayInfo;
@@ -337,17 +338,20 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( camera != null ) {
 			this.data.setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
 			constantCamera = camera.isConst();
+			cameraFix= true;
 		}
 
 		final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 		if ( cameraLook != null ) {
 			this.data.setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 			constantCameraLook = cameraLook.isConst();
+			cameraFix= true;
 		}
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
 		if ( cameraUp != null ) {
 			this.data.setCameraUpVector(Cast.asPoint(getScope(), cameraUp.value(getScope())));
+			cameraFix= true;
 		}
 
 		final IExpression poly = getFacet(IKeyword.POLYGONMODE);

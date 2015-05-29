@@ -11,6 +11,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.SWTChartEditor;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.*;
+import msi.gama.outputs.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaFont;
@@ -65,6 +66,15 @@ public class LayerSideControls {
 				updateIfPaused(null, container);
 			}
 		});
+		if(((LayeredDisplayOutput) container.getOutput()).isOpenGL() && ((LayeredDisplayOutput) container.getOutput()).cameraFix){
+			EditorFactory.create(compo, "Camera Lock:", container.getData().isCameraLock(), new EditorListener<Boolean>() {
+				@Override
+				public void valueModified(final Boolean newValue) throws GamaRuntimeException {
+					container.getData().setCameraLock(newValue);
+					updateIfPaused(null, container);
+				}
+			});
+		}
 
 	}
 

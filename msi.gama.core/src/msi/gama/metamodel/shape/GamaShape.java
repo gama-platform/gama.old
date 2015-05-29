@@ -106,6 +106,26 @@ public class GamaShape implements IShape /* , IContainer */{
 			setLocation(newLocation);
 		}
 	}
+	
+	/**
+	 * Same as above, but applies a (optional) rotation and (optional) translation to the geometry
+	 * @param source cannot be null
+	 * @param geom can be null
+	 * @param rotation can be null, expressed in degrees
+	 * @param newLocation can be null
+	 */
+	public GamaShape(final IShape source, final Geometry geom, final Double rotationX,final Double rotationY,final Double rotationZ, final ILocation newLocation) {
+		this(source, geom);
+		if ( !isPoint() && rotationX != null && rotationY != null && rotationZ != null ) {
+			Coordinate c = geometry.getCentroid().getCoordinate();
+			geometry.apply(AffineTransform3D.createRotationOz(Math.toRadians(rotationZ), c.x, c.y));
+			geometry.apply(AffineTransform3D.createRotationOx(Math.toRadians(rotationX)));
+			geometry.apply(AffineTransform3D.createRotationOy(Math.toRadians(rotationY)));
+		}
+		if ( newLocation != null ) {
+			setLocation(newLocation);
+		}
+	}
 
 	/**
 	 * Same as above, but applies a (optional) scaling to the geometry by specifying a bounding box or a set of

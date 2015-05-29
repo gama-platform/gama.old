@@ -21,6 +21,7 @@ import org.tmatesoft.svn.core.SVNException;
 import org.xml.sax.SAXException;
 
 import msi.gama.doc.transform.XmlToTestGAML;
+import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.UnifyDoc;
 

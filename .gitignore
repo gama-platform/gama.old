@@ -22,3 +22,4 @@ release/*
 .DS_Store
 *.history
 *.class
+gaml/

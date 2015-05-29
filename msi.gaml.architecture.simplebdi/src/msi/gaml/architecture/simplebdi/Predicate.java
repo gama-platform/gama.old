@@ -20,8 +20,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
 
-@vars({ @var(name = "name", type = IType.STRING),/* @var(name = "value", type = IType.NONE),
-	@var(name = "parameters", type = IType.MAP),*/@var(name = "values", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
+@vars({ @var(name = "name", type = IType.STRING), @var(name = "is_true", type = IType.BOOL),
+/*	@var(name = "parameters", type = IType.MAP),*/@var(name = "values", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
 	@var(name = "date", type = IType.FLOAT), @var(name = "subintentions", type = IType.LIST),
 	@var(name = "on_hold_until", type = IType.NONE) })
 public class Predicate implements IValue {
@@ -33,7 +33,8 @@ public class Predicate implements IValue {
 	Object onHoldUntil;
 	List<Predicate> subintentions;
 	boolean everyPossibleValues = false;
-
+	boolean is_true=true;
+	
 	@getter("name")
 	public String getName() {
 		return name;
@@ -47,6 +48,11 @@ public class Predicate implements IValue {
 	@getter("priority")
 	public Double getPriority() {
 		return priority;
+	}
+
+	@getter("is_true")
+	public Boolean getIs_True() {
+		return is_true;
 	}
 
 	@getter("date")
@@ -72,6 +78,10 @@ public class Predicate implements IValue {
 		everyPossibleValues = values == null;
 	}
 
+	public void setIsTrue(final Boolean ist) {
+		this.is_true=ist;
+	}
+
 	public void setPriority(final Double priority) {
 		this.priority = priority;
 	}
@@ -94,6 +104,13 @@ public class Predicate implements IValue {
 		super();
 		this.name = name;
 		everyPossibleValues = true;
+	}
+
+	public Predicate(final String name, boolean ist) {
+		super();
+		this.name = name;
+		everyPossibleValues = true;
+		is_true=ist;
 	}
 
 	public Predicate(final String name, final Map<String, Object> values) {

@@ -35,7 +35,7 @@ import msi.gaml.types.IType;
 		@facet(name = SimpleBdiArchitecture.FINISHEDWHEN, type = IType.BOOL, optional = true),
 	@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
-	@facet(name = SimpleBdiPlan.INTENTION, type = IType.NONE, optional = true),
+	@facet(name = SimpleBdiPlanStatement.INTENTION, type = IType.NONE, optional = true),
 	@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true)}, omissible = IKeyword.NAME)
 //Ajouter un facet "intention" qui complèterait le when.
 public class SimpleBdiPlan extends AbstractStatementSequence {

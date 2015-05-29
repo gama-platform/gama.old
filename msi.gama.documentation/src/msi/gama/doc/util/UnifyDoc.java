@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import msi.gama.doc.Constants;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 

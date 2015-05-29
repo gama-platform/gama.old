@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import msi.gama.doc.Constants;
-
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;

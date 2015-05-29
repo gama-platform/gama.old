@@ -34,10 +34,11 @@ import msi.gaml.types.*;
 @vars({ @var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_PLANS, type = IType.FLOAT, init = "1.0", doc= @doc ("plan persistence")),
 	@var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_INTENTIONS, type = IType.FLOAT, init = "1.0", doc= @doc ("intention persistence")),
 	@var(name = SimpleBdiArchitecture.PROBABILISTIC_CHOICE, type = IType.BOOL, init = "true"),
-	@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, init = "[]"),
+	@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.LAST_THOUGHTS, type = IType.LIST, init = "[]"),
-	@var(name = SimpleBdiArchitecture.INTENTION_BASE, type = IType.LIST, init = "[]"),
-	@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, init = "[]"),
+	@var(name = SimpleBdiArchitecture.INTENTION_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
+	@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
+	@var(name = SimpleBdiArchitecture.PLAN_BASE, type = IType.LIST, of = BDIPlanType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.CURRENT_PLAN, type = IType.NONE)})
 @skill(name = SimpleBdiArchitecture.SIMPLE_BDI)
 
@@ -73,11 +74,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String DESIRE_BASE = "desire_base";
 	public static final String INTENTION_BASE = "intention_base";
 	public static final String EVERY_VALUE = "every_possible_value";
+	public static final String PLAN_BASE = "plan_base";
 	public static final String CURRENT_PLAN = "current_plan";
 
 	private IScope _consideringScope;
-	private final List<SimpleBdiPlan> _plans = new ArrayList<SimpleBdiPlan>();
-	private final List<SimpleBdiPlan> _perceives = new ArrayList<SimpleBdiPlan>();
+//	private final List<SimpleBdiPlanStatement> _plans = new ArrayList<SimpleBdiPlanStatement>();
+	private final List<SimpleBdiPlanStatement> _perceives = new ArrayList<SimpleBdiPlanStatement>();
+	private final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
 	private int _plansNumber = 0;
 	private int _perceiveNumber = 0;
 	private boolean iscurrentplaninstantaneous=false;
@@ -93,9 +96,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@Override
 	public void addBehavior(final IStatement c) {
 		
-		if ( c instanceof SimpleBdiPlan ) {
+		if ( c instanceof SimpleBdiPlanStatement ) {
 			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
-			_plans.add((SimpleBdiPlan) c);
+			_plans.add(new BDIPlan((SimpleBdiPlanStatement) c));
 			_plansNumber++;
 		} else {
 			super.addBehavior(c);
@@ -135,7 +138,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				scope.hasArg(PERSISTENCE_COEFFICIENT_INTENTIONS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_INTENTIONS)
 					: (Double) agent.getAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS);
 
-			SimpleBdiPlan _persistentTask = (SimpleBdiPlan)agent.getAttribute(CURRENT_PLAN);
+			SimpleBdiPlanStatement _persistentTask = (SimpleBdiPlanStatement)agent.getAttribute(CURRENT_PLAN);
 				
 			// RANDOMLY REMOVE (last)INTENTION
 			Boolean flipResultintention = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientintention);
@@ -254,9 +257,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					for(int i=0; i<newIntention.getSubintentions().size();i++ ){
 						desireBase.addValue(scope, newIntention.getSubintentions().get(i));
 					}
-//					desireBase.remove(newIntention);
-					newIntention.setOnHoldUntil(newIntention.getSubintentions());
-					intentionBase.addValue(scope, newIntention);
+					desireBase.remove(newIntention);
 					return true;
 				}
 			}
@@ -285,9 +286,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					for(int i=0; i<newIntention.getSubintentions().size();i++ ){
 						desireBase.addValue(scope, newIntention.getSubintentions().get(i));
 					}
-//					desireBase.remove(newIntention);
-					newIntention.setOnHoldUntil(newIntention.getSubintentions());
-					intentionBase.addValue(scope, newIntention);
+					desireBase.remove(newIntention);
 					return true;
 				}
 			}
@@ -295,47 +294,47 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
-	protected final SimpleBdiPlan selectExecutablePlanWithHighestPriority(final IScope scope) {
+	protected final SimpleBdiPlanStatement selectExecutablePlanWithHighestPriority(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE) ? 
 				scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE) ;
 				
-		SimpleBdiPlan resultStatement = null;
+		SimpleBdiPlanStatement resultStatement = null;
 		
 			double highestPriority = Double.MIN_VALUE;
-			List<SimpleBdiPlan> temp_plan = new ArrayList<SimpleBdiPlan>();
+			List<SimpleBdiPlanStatement> temp_plan = new ArrayList<SimpleBdiPlanStatement>();
 			IList priorities = GamaListFactory.create(Types.FLOAT);
 //			System.out.println("intention: " + getBase(scope, SimpleBdiArchitecture.INTENTION_BASE));
 			for ( Object statement : scope.getExperiment().getRandomGenerator().shuffle(_plans) ) {
 //				System.out.println("statement: " + statement);
 //				System.out.println("((SimpleBdiPlan) statement).getContextExpression(): " + ((SimpleBdiPlan) statement).getContextExpression());
 				boolean isContextConditionSatisfied =
-					((SimpleBdiPlan) statement).getContextExpression() == null ||
-						msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlan) statement).getContextExpression()
+					((SimpleBdiPlanStatement) statement).getContextExpression() == null ||
+						msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlanStatement) statement).getContextExpression()
 							.value(scope));
 //				System.out.println("isContextConditionSatisfied: " + isContextConditionSatisfied);
 				boolean isIntentionConditionSatisfied = 
-						((SimpleBdiPlan) statement).getIntentionExpression() == null ||
-						((Predicate)((SimpleBdiPlan) statement).getIntentionExpression().value(scope)).equals(currentIntention(scope));
+						((SimpleBdiPlanStatement) statement).getIntentionExpression() == null ||
+						((Predicate)((SimpleBdiPlanStatement) statement).getIntentionExpression().value(scope)).equals(currentIntention(scope));
 				if ( isContextConditionSatisfied && isIntentionConditionSatisfied) {
 //					System.out.println("is_probabilistic_choice: " + is_probabilistic_choice);
 					if(is_probabilistic_choice){
 //						System.out.println("(SimpleBdiPlan) statement: " +  statement);
 						
-						temp_plan.add((SimpleBdiPlan) statement);
+						temp_plan.add((SimpleBdiPlanStatement) statement);
 //					System.out.println("temp_plan: " +  temp_plan);
 						
 					}
 					else{
 						double currentPriority =1.0;
-						if(((SimpleBdiPlan) statement).getFacet(SimpleBdiArchitecture.PRIORITY)!=null){
-							 currentPriority = msi.gaml.operators.Cast.asFloat(scope, ((SimpleBdiPlan) statement).getPriorityExpression()
+						if(((SimpleBdiPlanStatement) statement).getFacet(SimpleBdiArchitecture.PRIORITY)!=null){
+							 currentPriority = msi.gaml.operators.Cast.asFloat(scope, ((SimpleBdiPlanStatement) statement).getPriorityExpression()
 									.value(scope));
 						}
 		
 						if ( highestPriority < currentPriority ) {
 							highestPriority = currentPriority;
-							resultStatement = (SimpleBdiPlan) statement;
+							resultStatement = (SimpleBdiPlanStatement) statement;
 						}
 					}
 				}
@@ -343,8 +342,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if(is_probabilistic_choice){
 				if (! temp_plan.isEmpty()) {
 					for(Object statement : temp_plan){
-						if(((SimpleBdiPlan) statement).hasFacet(PRIORITY)){
-							priorities.add(msi.gaml.operators.Cast.asFloat(scope,((SimpleBdiPlan) statement).getPriorityExpression().value(scope)));
+						if(((SimpleBdiPlanStatement) statement).hasFacet(PRIORITY)){
+							priorities.add(msi.gaml.operators.Cast.asFloat(scope,((SimpleBdiPlanStatement) statement).getPriorityExpression().value(scope)));
 						}
 						else{
 							priorities.add(1.0);
@@ -358,8 +357,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 		iscurrentplaninstantaneous=false;
 		if (resultStatement!=null)
-		if(((SimpleBdiPlan) resultStatement).getFacet(SimpleBdiArchitecture.INSTANTANEAOUS)!=null){
-			iscurrentplaninstantaneous = msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlan) resultStatement).getInstantaneousExpression()
+		if(((SimpleBdiPlanStatement) resultStatement).getFacet(SimpleBdiArchitecture.INSTANTANEAOUS)!=null){
+			iscurrentplaninstantaneous = msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlanStatement) resultStatement).getInstantaneousExpression()
 					.value(scope));
 		}
 
@@ -405,6 +404,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 
 	}
+	
+	@action(name = "get_plans", 
+			doc = @doc(value = "get the list of plans.",
+			returns = "the list of BDI plans.",
+			examples = { @example("get_plans()") }))
+	public IList<BDIPlan> getPlans(final IScope scope) {
+		final IAgent agent = getCurrentAgent(scope);
+		IList<BDIPlan> mylist=GamaListFactory.create(Types.NO_TYPE);
+		if (_plans.size()>0)
+		{
+			for (int i=0; i<_plans.size(); i++)
+			{
+				mylist.add(_plans.get(i));
+			}
+		}
+		return mylist;
+	}
+
 
 	public GamaList<Predicate> getBase(final IScope scope, final String basename) {
 		final IAgent agent = getCurrentAgent(scope);
@@ -548,6 +565,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return predicates;
 		}
 
+	
 	@action(name = "is_current_intention",
 		args = { @arg(name = PREDICATE, type = PredicateType.id, optional = false, doc = @doc("predicate to check")) },
 		doc = @doc(value = "check if the predicates is the current intention (last entry of intention base).",

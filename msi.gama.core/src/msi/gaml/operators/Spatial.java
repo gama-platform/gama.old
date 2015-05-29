@@ -1521,6 +1521,22 @@ public abstract class Spatial {
 			// return s.rotatedBy(scope, Math.toRadians(angle));
 			// return new GamaShape(s.getInnerGeometry()).rotatedBy(scope, Math.toRadians(angle));
 		}
+		
+		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+		@doc(value = "A geometry resulting from the application of a rotation by the right-hand operand angles (degree) along the three axis (x,y,z) to the left-hand operand (geometry, agent, point)",
+			masterDoc = true,
+			examples = { @example(value = "rotated_by(self,45,5,110)",
+				equals = "the geometry resulting from a 45 degres rotation along the x axis, 5 degres rotation along the y axis and 110 degres rotation along the z axis to the geometry of the agent applying the operator.",
+				test = false) },
+			see = { "transformed_by", "translated_by" })
+		public static
+			IShape rotated_by(final IScope scope, final IShape g1, final Double angleX, final Double angleY, final Double angleZ) {
+			if ( g1 == null ) { return null; }
+			return new GamaShape(g1, null, angleX, angleY, angleZ, null);
+			// final GamaShape s = g1.asShapeWithGeometry(scope, null);
+			// return s.rotatedBy(scope, Math.toRadians(angle));
+			// return new GamaShape(s.getInnerGeometry()).rotatedBy(scope, Math.toRadians(angle));
+		}
 
 		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
 		@doc(comment = "the right-hand operand can be a float or a int")
@@ -2032,7 +2048,7 @@ public abstract class Spatial {
 		public static
 			IPath path_to(final IScope scope, final IShape g, final IShape g1) throws GamaRuntimeException {
 			if ( g == null ) { return null; }
-			return scope.getTopology().pathBetween(scope, g1, g);
+			return scope.getTopology().pathBetween(scope, g, g1);
 		}
 
 		@operator(value = "path_to", type = IType.PATH, category = { IOperatorCategory.SPATIAL,
@@ -2042,7 +2058,7 @@ public abstract class Spatial {
 			public static
 			IPath path_to(final IScope scope, final GamaPoint g, final GamaPoint g1) throws GamaRuntimeException {
 			if ( g == null ) { return null; }
-			return scope.getTopology().pathBetween(scope, g1, g);
+			return scope.getTopology().pathBetween(scope, g, g1);
 		}
 
 	}
@@ -3049,5 +3065,4 @@ public abstract class Spatial {
 				return s;
 			}
 	}
-
 }

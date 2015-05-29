@@ -14,8 +14,10 @@ package msi.gama.metamodel.topology.grid;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.*;
+
 import java.awt.Graphics2D;
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.*;
@@ -36,6 +38,7 @@ import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.*;
@@ -616,6 +619,55 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 		return allPlaces;
 	}
+	
+	
+	IAgent testPlace(final IScope scope, final IShape source,final IAgentFilter filter, final IShape toTest){
+		List<IAgent> agents = new ArrayList<IAgent>(scope.getTopology().getAgentsIn(scope,toTest, filter,false)); 
+		agents.remove(source);
+		if (agents == null || agents.isEmpty()) return null;
+		return (IAgent) scope.getRandom().shuffle(agents).get(0);
+	}
+	
+	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) throws GamaRuntimeException {
+		final int currentplace = getPlaceIndexAt(source.getLocation());
+		final IAgent startAg = matrix[currentplace].getAgent();
+		if (filter.accept(scope, source, startAg)) return startAg;
+		IAgent agT = testPlace(scope,source,filter,startAg);
+		if (agT !=null) return agT;
+		final List<IAgent> cells = new ArrayList<IAgent>();
+		
+		int cpt = 0;
+		cells.add(startAg);
+		final int max = this.numCols * this.numRows;
+		List<IAgent> neighb = scope.getRandom().shuffle(getNeighborhoods(scope, startAg, cells, new ArrayList<IAgent>()));
+		while (cpt < this.numCols * this.numRows) {
+			cpt++;
+			final Set<IAgent> neighb2 = new THashSet<IAgent>();
+			for ( final IAgent ag : neighb ) {
+				agT = testPlace(scope,source,filter,ag);
+				if (agT !=null) return agT;
+				cells.add(ag);
+				neighb2.addAll(getNeighborhoods(scope, ag, cells, neighb));
+				
+			}
+			neighb = new ArrayList<IAgent>(neighb2);
+			
+		}
+		return null;
+	}
+	
+	private List<IAgent> getNeighborhoods(final IScope scope, final IAgent agent, final List cells,
+			final List<IAgent> currentList) throws GamaRuntimeException {
+			final List<IAgent> agents = new ArrayList(getNeighboursOf(scope, agent.getLocation(), 1.0, null));
+			final List<IAgent> neighs = new ArrayList<IAgent>();
+			for ( IAgent ag : agents ) {
+				if ( !cells.contains(ag) && !currentList.contains(ag) && !neighs.contains(ag) ) {
+					neighs.add(ag);
+				}
+			}
+			return neighs;
+		}
+
 
 	@Override
 	public GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source, final IShape target,
@@ -668,7 +720,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 * @param matrix representing the background geometry
 	 * @return the "valid" neighborhood of the current position (Van Neuman)
 	 */
-	private Set<IAgent> getNeighs(final IScope scope, final IAgent agent, final GamaMap dists,
+	private Set<IAgent> getNeighs(final IScope scope, final IAgent agent, final Map dists,
 		final Set<IAgent> currentList) throws GamaRuntimeException {
 		final Set<IAgent> agents = getNeighboursOf(scope, agent.getLocation(), 1.0, null);
 		final Set<IAgent> neighs = new THashSet<IAgent>();

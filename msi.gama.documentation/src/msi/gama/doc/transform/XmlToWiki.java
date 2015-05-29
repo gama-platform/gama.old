@@ -18,7 +18,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import msi.gama.doc.Constants;
+import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.DocTransformer;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
@@ -55,8 +55,8 @@ public class XmlToWiki {
 		//
 		System.out.print("Creation of the wiki page for Statements.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Statements-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__Statements"+suffix+".wiki");	
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Statements-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__Statements"+suffix+".md");	
 		System.out.println("Done");		
 		//
 		System.out.print("Creation of the wiki page for Skills.......");		
