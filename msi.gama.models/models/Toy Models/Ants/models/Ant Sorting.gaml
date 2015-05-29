@@ -7,7 +7,7 @@ global torus: true {
 	int density_percent <- 30 min: 0 max: 99 ;
 	int number_of_objects_in_history <- 3 min: 0 ;
 	int number_of_objects_around  <- 5 min: 0 max: 8;
-	int width_and_height_of_grid <- 100 max: 400 min: 20 ;
+	int width_and_height_of_grid <- 100 max: 400 min: 20 ;  
 	int ants <- 100 min: 1 ;
 
 	rgb black <- rgb("black")  ;	
