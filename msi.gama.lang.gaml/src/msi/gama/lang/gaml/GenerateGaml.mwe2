@@ -10,128 +10,128 @@ var projectName = "msi.gama.lang.gaml"
 var runtimeProject = "../${projectName}"
 
 Workflow {
-    bean = StandaloneSetup {
-        scanClassPath = true
-        platformUri = "${runtimeProject}/.."
-    }
+	bean = StandaloneSetup {
+		scanClassPath = true
+		platformUri = "${runtimeProject}/.."
+	}
 
-    component = DirectoryCleaner {
-        directory = "${runtimeProject}/src-gen"
-    }
+	component = DirectoryCleaner {
+		directory = "${runtimeProject}/src-gen"
+	}
 
-    component = DirectoryCleaner {
-        directory = "${runtimeProject}.ui/src-gen"
-    }
+	component = DirectoryCleaner {
+		directory = "${runtimeProject}.ui/src-gen"
+	}
 
-    component = Generator {
-        pathRtProject = runtimeProject
-        pathUiProject = "${runtimeProject}.ui"
-        // pathTestProject = "${runtimeProject}.tests"
-        projectNameRt = projectName
-        projectNameUi = "${projectName}.ui"
-        language = auto-inject {
-            uri = grammarURI
-            fileExtensions = file.extensions
+	component = Generator {
+		pathRtProject = runtimeProject
+		pathUiProject = "${runtimeProject}.ui"// pathTestProject = "${runtimeProject}.tests"
+		projectNameRt = projectName
+		projectNameUi = "${projectName}.ui"
+		language = auto-inject {
+			uri = grammarURI
+			fileExtensions = file.extensions
 
-            // Java API to access grammar elements (required by several other fragments)
-            fragment = grammarAccess.GrammarAccessFragment auto-inject{}
+			// Java API to access grammar elements (required by several other fragments)
+			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
-            // generates Java API for the generated EPackages
-            fragment = ecore.EMFGeneratorFragment auto-inject{}
+			// generates Java API for the generated EPackages
+			fragment = ecore.EMFGeneratorFragment auto-inject {}
 
-            // Serializer 2.0
-            fragment = serializer.SerializerFragment auto-inject{
-            	generateXtendStub = false
-            }
+			// Serializer 2.0
+			fragment = serializer.SerializerFragment auto-inject {
+				generateXtendStub = false
+			}
 
-            // the serialization component (1.0)
-            // fragment = parseTreeConstructor.ParseTreeConstructorFragment {}
+			// the serialization component (1.0)
+			// fragment = parseTreeConstructor.ParseTreeConstructorFragment {}
 
-            // a custom ResourceFactory for use with EMF
-            fragment = resourceFactory.ResourceFactoryFragment auto-inject{
-                fileExtensions = file.extensions
-            }
+			// a custom ResourceFactory for use with EMF
+			fragment = resourceFactory.ResourceFactoryFragment auto-inject {
+				fileExtensions = file.extensions
+			}
 
-            // The antlr parser generator fragment.
-            fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject{
-            	antlrParam = "-Xconversiontimeout" antlrParam = "10000"
-             options = {
-  		            backtrack = false
-  		            memoize = true
-                    classSplitting = true
-                    fieldsPerClass = "200"
-                    methodsPerClass= "200"
-              }
-            }
+			// The antlr parser generator fragment.
+			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {
+				antlrParam = "-Xconversiontimeout"
+				antlrParam = "10000"
+				options = {
+					backtrack = false
+					memoize = true
+					classSplitting = true
+					fieldsPerClass = "200"
+					methodsPerClass = "200"
+				}
+			}
 
-            // java-based API for validation
-            fragment = validation.JavaValidatorFragment auto-inject{
-               composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
-               // composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
-            }
+			// java-based API for validation
+			fragment = validation.JavaValidatorFragment auto-inject {
+				composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"// composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+			}
 
-            // scoping and exporting API
-            fragment = scoping.ImportURIScopingFragment auto-inject{}
-            fragment = exporting.SimpleNamesFragment auto-inject{}
+			// scoping and exporting API
+			fragment = scoping.ImportURIScopingFragment auto-inject {}
+			fragment = exporting.SimpleNamesFragment auto-inject {}
 
-            // scoping and exporting API
-      		//fragment = scoping.ImportNamespacesScopingFragment {}
-     		//fragment = exporting.QualifiedNamesFragment {}
-      		fragment = builder.BuilderIntegrationFragment auto-inject{}
+			// scoping and exporting API
+			//fragment = scoping.ImportNamespacesScopingFragment {}
+			//fragment = exporting.QualifiedNamesFragment {}
+			fragment = builder.BuilderIntegrationFragment auto-inject {}
 
-            // generator API
-            fragment = generator.GeneratorFragment auto-inject{
-                generateMwe = false
-                generateJavaMain = true
-                generateStub = true
-                generateXtendMain = false
-            }
+			// generator API
+			fragment = generator.GeneratorFragment auto-inject {
+				generateMwe = false
+				generateJavaMain = true
+				generateStub = true
+				generateXtendMain = false
+			}
 
-            // formatter API
-            fragment = formatting.FormatterFragment auto-inject{}
+			// formatter API
+			fragment = formatting.FormatterFragment auto-inject {}
 
-            // labeling API
-            fragment = labeling.LabelProviderFragment auto-inject{}
+			// labeling API
+			fragment = labeling.LabelProviderFragment auto-inject {}
 
-            // outline API
-            fragment = outline.OutlineTreeProviderFragment auto-inject{}
-            //fragment = outline.QuickOutlineFragment {}
+			// outline API
+			fragment = outline.OutlineTreeProviderFragment auto-inject {}
+			//fragment = outline.QuickOutlineFragment {}
 
-            // quickfix API
-            fragment = quickfix.QuickfixProviderFragment auto-inject{}
+			// quickfix API
+			fragment = quickfix.QuickfixProviderFragment auto-inject {}
 
-            // content assist API
-            fragment = contentAssist.JavaBasedContentAssistFragment auto-inject{}
+			// content assist API
+			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
 
-            // generates a more lightweight Antlr parser and lexer tailored for content assist
-            fragment = parser.antlr.XtextAntlrUiGeneratorFragment auto-inject{
-            	antlrParam = "-Xconversiontimeout" antlrParam = "10000"
-            options = {
-  		            backtrack = false
-  		            memoize = true
-                    classSplitting = true
-                    fieldsPerClass = "200"
-                    methodsPerClass= "200"
-              }
-            }
+			// generates a more lightweight Antlr parser and lexer tailored for content assist
+			fragment = parser.antlr.XtextAntlrUiGeneratorFragment auto-inject {
+				antlrParam = "-Xconversiontimeout"
+				antlrParam = "10000"
+				options = {
+					backtrack = false
+					memoize = true
+					classSplitting = true
+					fieldsPerClass = "200"
+					methodsPerClass = "200"
+				}
+			}
 
-            // project wizard (optional)
-            // fragment = projectWizard.SimpleProjectWizardFragment {
-            //      generatorProjectName = "${projectName}"
-            //      modelFileExtension = file.extensions
-            // }
+			// project wizard (optional)
+			// fragment = projectWizard.SimpleProjectWizardFragment {
+			//      generatorProjectName = "${projectName}"
+			//      modelFileExtension = file.extensions
+			// }
 
-            // provides a preference page for template proposals
-            fragment = templates.CodetemplatesGeneratorFragment auto-inject{}
+			// provides a preference page for template proposals
+			fragment = templates.CodetemplatesGeneratorFragment auto-inject {}
 
-            // rename refactoring
-            fragment = refactoring.RefactorElementNameFragment auto-inject{}
+			// rename refactoring
+			fragment = refactoring.RefactorElementNameFragment auto-inject {}
 
-            // provides a compare view
-            fragment = compare.CompareFragment auto-inject {
-                 fileExtensions = file.extensions
-            }
+			// provides a compare view
+			fragment = compare.CompareFragment auto-inject {
+				fileExtensions = file.extensions
+			}
 
-        }
-    }
+		}
+	}
 }

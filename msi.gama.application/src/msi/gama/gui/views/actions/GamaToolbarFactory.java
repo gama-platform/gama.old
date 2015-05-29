@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaToolbarFactory.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
@@ -24,10 +24,10 @@ import org.eclipse.ui.*;
 
 /**
  * The class GamaToolbarFactory.
- * 
+ *
  * @author drogoul
  * @since 19 janv. 2012
- * 
+ *
  */
 public class GamaToolbarFactory {
 
@@ -39,6 +39,7 @@ public class GamaToolbarFactory {
 			super(parent, SWT.None);
 			this.displayer = displayer;
 		}
+
 	}
 
 	public static ITooltipDisplayer findTooltipDisplayer(final Control c) {
@@ -129,7 +130,7 @@ public class GamaToolbarFactory {
 		// Install the toogle in the view site
 		IWorkbenchSite site = view.getSite();
 		if ( site instanceof IViewSite ) {
-			IToolBarManager tm = (IToolBarManager) ((IViewSite) site).getActionBars().getToolBarManager();
+			IToolBarManager tm = ((IViewSite) site).getActionBars().getToolBarManager();
 			tm.add(toggle);
 			tm.update(true);
 		} else if ( site instanceof IEditorSite ) {
@@ -161,6 +162,19 @@ public class GamaToolbarFactory {
 				disposeToolbar(view, tb);
 			}
 		});
+		// intermediateComposite.addControlListener(new ControlAdapter() {
+		//
+		// /**
+		// * Method controlResized()
+		// * @see org.eclipse.swt.events.ControlAdapter#controlResized(org.eclipse.swt.events.ControlEvent)
+		// */
+		// @Override
+		// public void controlResized(final ControlEvent e) {
+		// tb.refresh(true);
+		// // intermediateComposite.removeControlListener(this);
+		// }
+		//
+		// });
 		buildToolbar(view, tb);
 		return childComposite;
 	}

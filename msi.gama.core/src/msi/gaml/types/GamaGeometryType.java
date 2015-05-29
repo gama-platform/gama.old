@@ -12,7 +12,9 @@
 package msi.gaml.types;
 
 import static msi.gama.metamodel.shape.IShape.Type.*;
+
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
@@ -24,6 +26,7 @@ import msi.gama.util.*;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.species.ISpecies;
+
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.*;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
@@ -148,6 +151,35 @@ public class GamaGeometryType extends GamaType<IShape> {
 		// return buildPolyline(points);
 		// / ???
 		return new GamaShape(p);
+	}
+	
+	
+	//A.G 28/05/2015 ADDED for gamanalyser
+	public static IShape buildMultiPolygon(final List<List<IShape>> lpoints) {
+		Polygon[] polys=new Polygon[lpoints.size()];
+		for (int z=0;z<lpoints.size();z++)
+		{
+			List<IShape> points=lpoints.get(z);
+			final CoordinateSequenceFactory fact = GeometryUtils.coordFactory;
+		final int size = points.size();
+		// AD 12/05/13 The dimensions of the points to create have been changed to 3, otherwise the z coordinates could
+		// be lost when copying this geometry
+		CoordinateSequence cs = fact.create(size, 3);
+		for ( int i = 0; i < size; i++ ) {
+			final Coordinate p = (GamaPoint) points.get(i).getLocation();
+			cs.setOrdinate(i, 0, p.x);
+			cs.setOrdinate(i, 1, p.y);
+			cs.setOrdinate(i, 2, p.z);
+		}
+		cs = CoordinateSequences.ensureValidRing(fact, cs);
+		final LinearRing geom = GeometryUtils.FACTORY.createLinearRing(cs);
+		final Polygon p = (Polygon)GeometryUtils.FACTORY.createPolygon(geom, null).convexHull();
+		polys[z]=p;
+		}
+		final MultiPolygon m=GeometryUtils.FACTORY.createMultiPolygon(polys); 
+
+		if ( m.isValid() ) { return new GamaShape(m.buffer(0.0)); } // Why buffer (0.0) ???
+		 return new GamaShape(m.buffer(0.0));	
 	}
 
 	// Maybe a bit overkill, but the list of points is created *and* validated by the call to buildPolygon()
