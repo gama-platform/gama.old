@@ -45,14 +45,14 @@ Operators in GAML are purely functional, i.e. they are guaranteed to not have an
 The priority of operators determines, in the case of complex expressions composed of several operators, which one(s) will be evaluated first.
 
 GAML follows in general the traditional priorities attributed to arithmetic, boolean, comparison operators, with some twists. Namely:
-  * the constructor operators, like '::', used to compose pairs of operands, have the lowest priority of all operators (e.g. 'a &gt; b :: b &gt; c' will return a pair of boolean values, which means that the two comparisons are evaluated before the operator applies. Similarly, '[a &gt; 10, b &gt; 5]' will return a list of boolean values.
-  * it is followed by the '?:' operator, the functional if-else (e.g. ' a &gt; b ? a + 10 : a - 10' will return the result of the if-else).
-  * next are the logical operators, 'and' and 'or' (e.g. 'a &gt; b or b &gt; c' will return the value of the test)
-  * next are the comparison operators (i.e. '&gt;', '&lt;', '&lt;=', '&gt;=', '=', '!=')
-  * next the arithmetic operators in their logical order (multiplicative operators have a higher priority than additive operators)
-  * next the unary operators '-' and '!'
-  * next the access operators '.' and '[]' (e.g. '{1,2,3}.x &gt; 20 + {4,5,6}.y' will return the result of the comparison between the x and y ordinates of the two points)
-  * and finally the functional operators, which have the highest priority of all.
+* the constructor operators, like '::', used to compose pairs of operands, have the lowest priority of all operators (e.g. 'a &gt; b :: b &gt; c' will return a pair of boolean values, which means that the two comparisons are evaluated before the operator applies. Similarly, '[a &gt; 10, b &gt; 5]' will return a list of boolean values.
+* it is followed by the '?:' operator, the functional if-else (e.g. ' a &gt; b ? a + 10 : a - 10' will return the result of the if-else).
+* next are the logical operators, 'and' and 'or' (e.g. 'a &gt; b or b &gt; c' will return the value of the test)
+* next are the comparison operators (i.e. '&gt;', '&lt;', '&lt;=', '&gt;=', '=', '!=')
+* next the arithmetic operators in their logical order (multiplicative operators have a higher priority than additive operators)
+* next the unary operators '-' and '!'
+* next the access operators '.' and '[]' (e.g. '{1,2,3}.x &gt; 20 + {4,5,6}.y' will return the result of the comparison between the x and y ordinates of the two points)
+* and finally the functional operators, which have the highest priority of all.
 
 &lt;br/&gt;
 ----
@@ -62,25 +62,24 @@ Actions defined in species can be used as operators, provided they are called on
 
 For instance, if the following species is defined:
 
-{{{
+```
 species spec1 {
         int min(int x, int y) {
                 return x &gt; y ? x : y;
         }
-}
-}}}
+}```
+
 
 any agent instance of species1 can use 'min' as an operator (if the action conflicts with an existing operator, a warning will be emitted). For instance, in the same model, the following line is perfectly acceptable:
 
-{{{
+```
 global {
         init {
                 create spec1;
                 spec1 my_agent &lt;- spec1[0];
                 int the_min &lt;- my_agent min(10,20); // or min(my_agent, 10, 20);
         }
-}
-}}}
+}```
 
 If the action doesn't have any operands, the syntax to use is 'my_agent the_action()'. Finally, if it does not return a value, it might still be used but is considering as returning a value of type 'unknown' (e.g. 'unknown result &lt;- my_agent the_action(op1, op2);').
 
