@@ -65,7 +65,6 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void updateSphericalCoordinatesFromLocations() {
-
 		double x = position.x - target.x;
 		double y = position.y - target.y;
 		double z = position.z - target.z;
