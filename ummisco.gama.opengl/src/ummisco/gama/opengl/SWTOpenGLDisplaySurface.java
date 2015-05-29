@@ -626,7 +626,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if ( manager != null ) {
 			manager.dispose();
 		}
-		if ( animator.isStarted() ) {
+		if ( animator != null && animator.isStarted() ) {
 			animator.stop();
 		}
 		GAMA.releaseScope(getDisplayScope());

@@ -310,6 +310,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public ISpecies getSpecies() {
 		return null; // See if we can identify the species of edges / vertices
 	}
+	
+	
 
 	/**
 	 * Method getAgents()
@@ -335,14 +337,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 */
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
-		// System.out.println("results size : " + results.size() + " graph size : " + edgeSet().size());
 		Iterator<? extends IShape> it = results.iterator();
 		while (it.hasNext()) {
 			if ( !edgeMap.containsKey(it.next()) ) {
 				it.remove();
 			}
 		}
-		// results.retainAll(edgeSet());
 	}
 
 }

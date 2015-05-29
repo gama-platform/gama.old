@@ -2032,7 +2032,7 @@ public abstract class Spatial {
 		public static
 			IPath path_to(final IScope scope, final IShape g, final IShape g1) throws GamaRuntimeException {
 			if ( g == null ) { return null; }
-			return scope.getTopology().pathBetween(scope, g1, g);
+			return scope.getTopology().pathBetween(scope, g, g1);
 		}
 
 		@operator(value = "path_to", type = IType.PATH, category = { IOperatorCategory.SPATIAL,
@@ -2042,7 +2042,7 @@ public abstract class Spatial {
 			public static
 			IPath path_to(final IScope scope, final GamaPoint g, final GamaPoint g1) throws GamaRuntimeException {
 			if ( g == null ) { return null; }
-			return scope.getTopology().pathBetween(scope, g1, g);
+			return scope.getTopology().pathBetween(scope, g, g1);
 		}
 
 	}
@@ -2618,7 +2618,7 @@ public abstract class Spatial {
 			final Double distance, final Set<IAgent> clusteredAgs, final IAgent currentAg) {
 			IList<IAgent> group = GamaListFactory.create(Types.AGENT);
 			List<IAgent> ags =
-				new ArrayList<IAgent>(currentAg.getTopology().getNeighboursOf(scope, currentAg, distance, filter));
+				new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, currentAg, distance, filter));
 			clusteredAgs.add(currentAg);
 			group.add(currentAg);
 			for ( IAgent ag : ags ) {
@@ -2746,7 +2746,7 @@ public abstract class Spatial {
 				double sumNull = 0;
 				int nbNull = 0;
 				for ( GamaPoint pt : points.keySet() ) {
-					double dist = geom.euclidianDistanceTo(pt);
+					double dist = scope.getTopology().distanceBetween(scope, geom, pt);
 					if ( dist == 0 ) {
 						nbNull++;
 						sumNull += points.get(pt);
@@ -3049,5 +3049,4 @@ public abstract class Spatial {
 				return s;
 			}
 	}
-
 }

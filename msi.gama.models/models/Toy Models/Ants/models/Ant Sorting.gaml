@@ -69,7 +69,7 @@ experiment sort type: gui{
 	parameter "Number of agents:" var: ants category: "Agents" ;
 	
 	output {
-		display grid_display refresh_every: 1 type: opengl {
+		display grid_display refresh: every(1) type: opengl {
 			grid ant_grid ;
 			species ant transparency: 0.2 ;
 		}

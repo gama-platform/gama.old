@@ -25,9 +25,6 @@ import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
 
-// Si construit � partir d'une liste de points, cr�e la g�om�trie correspondante
-// Si construit � partir d'un graphe spatial, cr�e la g�om�trie � partir des edges pass�s.
-// Si
 
 public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, IShape>> {
 
@@ -77,7 +74,6 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		this.target = target;
 		this.graph = g;
 		this.segments = GamaListFactory.create(Types.GEOMETRY);
-
 		realObjects = new THashMap<IShape, IShape>();
 		graphVersion = 0;
 
@@ -310,7 +306,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	private double getDistanceComplex(final IScope scope, final boolean keepSource, final boolean keepTarget) {
 		double distance = 0;
 		int index = 0;
-		int indexSegment = 1;
+		int indexSegment = 0;
 		ILocation currentLocation = source.getLocation().copy(scope);
 		int nb = segments.size();
 		if ( !keepSource ) {
