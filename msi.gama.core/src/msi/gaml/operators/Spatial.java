@@ -2032,7 +2032,7 @@ public abstract class Spatial {
 		public static
 			IPath path_to(final IScope scope, final IShape g, final IShape g1) throws GamaRuntimeException {
 			if ( g == null ) { return null; }
-			return scope.getTopology().pathBetween(scope, g1, g);
+			return scope.getTopology().pathBetween(scope, g, g1);
 		}
 
 		@operator(value = "path_to", type = IType.PATH, category = { IOperatorCategory.SPATIAL,
@@ -2042,7 +2042,7 @@ public abstract class Spatial {
 			public static
 			IPath path_to(final IScope scope, final GamaPoint g, final GamaPoint g1) throws GamaRuntimeException {
 			if ( g == null ) { return null; }
-			return scope.getTopology().pathBetween(scope, g1, g);
+			return scope.getTopology().pathBetween(scope, g, g1);
 		}
 
 	}
@@ -3049,5 +3049,4 @@ public abstract class Spatial {
 				return s;
 			}
 	}
-
 }

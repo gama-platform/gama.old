@@ -13,6 +13,7 @@ package msi.gama.metamodel.topology.graph;
 
 import gnu.trove.set.hash.THashSet;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -610,12 +611,15 @@ public class GraphTopology extends AbstractTopology {
 		final IAgentFilter filter = In.edgesOf(getPlaces());
 
 		if ( !sourceNode ) {
-			edgeS = getAgentClosestTo(scope, source, filter);
+			if (getPlaces().getEdgeSpecies() != null) edgeS = getAgentClosestTo(scope, source, filter);
+			else edgeS = shapeClosest(this.getPlaces().getEdges(), source);
+			
 			// We avoid computing the target if we cannot find any source.
 			if ( edgeS == null ) { return null; }
 		}
 		if ( !targetNode ) {
-			edgeT = getAgentClosestTo(scope, target, filter);
+			if (getPlaces().getEdgeSpecies() != null) edgeT = getAgentClosestTo(scope, target, filter);
+			else edgeT = shapeClosest(this.getPlaces().getEdges(), target);
 			if ( edgeT == null ) { return null; }
 		}
 
@@ -623,6 +627,19 @@ public class GraphTopology extends AbstractTopology {
 			sourceNode, targetNode, k); }
 
 		return KpathsBetweenCommon(scope, edgeS, edgeT, source, target, sourceNode, targetNode, k);
+	}
+	
+	public IShape shapeClosest(List<IShape> shapes, IShape geom){
+		IShape cp = null;
+		double distMin = Double.MAX_VALUE;
+		for (IShape shp : shapes) {
+			double dist = shp.euclidianDistanceTo(geom);
+			if (dist < distMin) {
+				distMin = dist;
+				cp = shp;
+			}
+		}
+		return cp;
 	}
 
 	@Override
@@ -816,5 +833,31 @@ public class GraphTopology extends AbstractTopology {
 			}
 		}
 		return edges;
+	}
+	
+	@Override
+	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
+		//A better solution is required !!! this solution is just here to ensure the consistency of the closest operator on graph !
+		
+		List<IAgent> listAgents  = null;
+		if (filter.getSpecies() != null) {
+			listAgents = new ArrayList<IAgent>(filter.getSpecies().getAgents(scope).listValue(scope, Types.AGENT, false));
+		} else if (filter instanceof In) {
+			listAgents = new ArrayList<IAgent>(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
+		} else {
+			listAgents = new ArrayList<IAgent>(scope.getSimulationScope().getAgents(scope).listValue(scope, Types.AGENT, false));
+		}
+		listAgents.remove(source);
+		IAgent closest = null;
+		double minDist = Double.POSITIVE_INFINITY;
+		for (IAgent ag : listAgents) {
+			Double dist = this.distanceBetween(scope, source, ag);
+			if (dist != null && dist < minDist) {
+				if (dist == 0) return ag;
+				closest = ag;
+				minDist = dist;
+			}
+		}
+		return closest;
 	}
 }
