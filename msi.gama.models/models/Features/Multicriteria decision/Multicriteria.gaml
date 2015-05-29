@@ -58,13 +58,17 @@ global {
 	
 	
 	init {
-		create people;
+		write "index: " + weighted_means_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [["name"::"utility", "weight" :: 2.0],["name"::"price", "weight" :: 1.0]]);
+		write "index: " + promethee_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [["name"::"utility", "weight" :: 2.0,"p"::0.5, "q"::0.0, "s"::1.0, "maximize" :: true],["name"::"price", "weight" :: 1.0,"p"::0.5, "q"::0.0, "s"::1.0, "maximize" :: false]]);
+		write "index: " + electre_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [["name"::"utility", "weight" :: 2.0,"p"::0.5, "q"::0.0, "v"::1.0, "maximize" :: true],["name"::"price", "weight" :: 1.0,"p"::0.5, "q"::0.0, "v"::1.0, "maximize" :: false]], 0.7);
+		write "index: " + evidence_theory_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [["name"::"utility", "s1" :: 0.0,"s2"::1.0, "v1p"::0.0, "v2p"::1.0, "v1c"::0.0, "v2c"::0.0, "maximize" :: true],["name"::"price",  "s1" :: 0.0,"s2"::1.0, "v1p"::0.0, "v2p"::1.0, "v1c"::0.0, "v2c"::0.0, "maximize" :: true]], true);
+		/*create people;
 		geometry free_space <- copy(shape);
 		free_space <- free_space - 10;
 		create house number: 15 {
 			location <- any_location_in (free_space);
 			free_space <- free_space - (shape + 10);
-		}
+		}*/
 	}
 	
 	reflex reset_selected {
@@ -83,7 +87,7 @@ global {
 }
 	
 
-species people parent: multicriteria_analyzer {
+species people  {
 	aspect default {
 		draw sphere(2) color: °red;
 	}
