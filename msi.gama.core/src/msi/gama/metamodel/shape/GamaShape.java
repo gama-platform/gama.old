@@ -416,6 +416,16 @@ public class GamaShape implements IShape /* , IContainer */{
 		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
 		this.envelope = null;
 	}
+	
+	@getter("rotate3D")
+	public Double getRotate3D() {
+		return (Double) this.getAttribute(IShape.ROTATE_ATTRIBUTE);
+	}
+
+	@Override
+	public void setRotate3D(final GamaPair rot3D) {
+		this.setAttribute(IShape.ROTATE_ATTRIBUTE, rot3D);
+	}
 
 	@getter("envelope")
 	public GamaShape getGeometricEnvelope() {
