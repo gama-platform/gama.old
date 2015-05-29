@@ -8,7 +8,7 @@
 <xsl:variable name="alphabetID" select="'*'"/>
 <xsl:variable name="fileName" select="'Operators'"/>
 <xsl:variable name="ak" select="'ak'"/>
-<xsl:variable name="lz" select="'lz'"/>
+<xsl:variable name="lz" select="'lz'"/> 
 
 
 <xsl:template match="/">
