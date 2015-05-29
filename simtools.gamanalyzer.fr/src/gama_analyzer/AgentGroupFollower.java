@@ -63,27 +63,27 @@ import java.io.ObjectOutputStream;
 import java.lang.Object;
 import java.lang.Math;
 
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicSession;
-import javax.jms.TopicSubscriber;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
-
-
-
+//import javax.jms.DeliveryMode;
+//import javax.jms.JMSException;
+//import javax.jms.MapMessage;
+//import javax.jms.Message;
+//import javax.jms.MessageListener;
+//import javax.jms.MessageProducer;
+//import javax.jms.ObjectMessage;
+//import javax.jms.Queue;
+//import javax.jms.Session;
+//import javax.jms.Topic;
+//import javax.jms.TopicConnection;
+//import javax.jms.TopicConnectionFactory;
+//import javax.jms.TopicSession;
+//import javax.jms.TopicSubscriber;
+//import javax.naming.Context;
+//import javax.naming.InitialContext;
+//import javax.naming.NamingException;
+//
+//
+//
+//
 
 
 
@@ -135,7 +135,8 @@ import com.thoughtworks.xstream.*;
 })
 
 @species(name = "agent_group_follower")
-public class AgentGroupFollower extends ClusterBuilder implements  MessageListener{
+public class AgentGroupFollower extends ClusterBuilder //implements  MessageListener
+{
 
 	public long firsttime=0;
 	
@@ -857,7 +858,7 @@ public class AgentGroupFollower extends ClusterBuilder implements  MessageListen
 				message.put("type","mastername");
 				message.put("follower",this.getName());
 				message.put("value",this.getNetName());	
-				this.sendMessage("all", this.getNetName(), message);
+//				this.sendMessage("all", this.getNetName(), message);
 
 			}
 		}
@@ -1365,7 +1366,7 @@ public class AgentGroupFollower extends ClusterBuilder implements  MessageListen
 		multidata.lastdetailedvarvalues=mydata.lastdetailedvarvalues;
 		mydata.lastdetailedvarvalues=null;
 		message.put("value",mydata);
-		this.sendMessage("all", this.getNetName(),  message);
+//		this.sendMessage("all", this.getNetName(),  message);
 		mydata.lastdetailedvarvalues=multidata.lastdetailedvarvalues;
 
 	}
@@ -1630,7 +1631,7 @@ public class AgentGroupFollower extends ClusterBuilder implements  MessageListen
 		message.put("type","release");
 		message.put("follower",this.getName());
 		message.put("value",this.getClock().getCycle());
-		this.sendMessage("all", this.getNetName(), (GamaMap<String, Object>) message);
+	//	this.sendMessage("all", this.getNetName(), (GamaMap<String, Object>) message);
 
 	}
 
@@ -1641,8 +1642,8 @@ public class AgentGroupFollower extends ClusterBuilder implements  MessageListen
 		return this.getName()+this.getUniqueSimName(this.getScope())+ismastervar;
 	}
 
-	 MessageProducer producer = null;
-	 Session session=null;
+//	 MessageProducer producer = null;
+//	 Session session=null;
 	 HashMap<String,LinkedList<GamaMap<String,Object>>> messages;
 	 XStream xstream ;
 
@@ -1655,7 +1656,7 @@ public class AgentGroupFollower extends ClusterBuilder implements  MessageListen
 
 	public void connect(String serverUrl, String mytopic, String name)
 	{
-		final IAgent agent = this;
+/*		final IAgent agent = this;
 		//		String serverUrl = (String) scope.getArg("topic", IType.STRING);
 		//		String mytopic = (String) scope.getArg("to", IType.STRING);
 		//		String name = (String) scope.getArg("withName", IType.STRING);
@@ -1717,7 +1718,7 @@ public class AgentGroupFollower extends ClusterBuilder implements  MessageListen
 			System.out.println(e);
 		}
 
-	}
+*/	}
 
 	public GamaMap<String, Object> fetchMessage()
 	{
@@ -1748,7 +1749,7 @@ public class AgentGroupFollower extends ClusterBuilder implements  MessageListen
 		return (this.messages.get(tmpName).isEmpty());*/
 		return mList.isEmpty();
 	}
-
+/*
 	private InitialContext initialiseContext(String url) throws NamingException
 	{
 		Hashtable<String, String> props = new Hashtable<String, String>();
@@ -1861,7 +1862,7 @@ public class AgentGroupFollower extends ClusterBuilder implements  MessageListen
 			this.messages.get((String) this.getAttribute("netAgtName")).addLast((GamaMap<String, Object>) agentMsg);
 
 
-	}
+	}*/
 
 
 	@action(name = "distrib_legend", args = {
