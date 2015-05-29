@@ -29,7 +29,7 @@ public class Operators {
 	@doc(value = "a new predicate with the given is_true (name, is_true)",
 		examples = @example(value = "predicate(\"hasWater\", true )", test = false))
 	public static Predicate newPredicate(final String name, final Boolean ist) throws GamaRuntimeException {
-		return new Predicate(name,values,ist);
+		return new Predicate(name,ist);
 	}
 	
 	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" })
@@ -43,7 +43,7 @@ public class Operators {
 	@doc(value = "a new predicate with the given properties (name, values, is_true)",
 		examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], true)", test = false))
 	public static Predicate newPredicate(final String name, final Map values, final Boolean truth) throws GamaRuntimeException {
-		return new Predicate(name,/*value,*/values,is_true);
+		return new Predicate(name,/*value,*/values,truth);
 	}
 	
 	@operator(value = "set_truth", can_be_const = true, category = { "BDI" })
