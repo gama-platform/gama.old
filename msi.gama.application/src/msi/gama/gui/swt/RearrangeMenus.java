@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 21 nov. 2014
- * 
+ *
  */
 package msi.gama.gui.swt;
 
@@ -13,10 +13,10 @@ import org.eclipse.ui.menus.*;
 
 /**
  * Class RemoveUnwantedMenus.
- * 
+ *
  * @author drogoul
  * @since 21 nov. 2014
- * 
+ *
  */
 public class RearrangeMenus {
 

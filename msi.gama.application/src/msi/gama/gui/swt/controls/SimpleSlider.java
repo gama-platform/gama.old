@@ -57,6 +57,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		@Override
 		public void paintControl(final PaintEvent e) {
 			GC gc = e.gc;
+
 			Rectangle r = getClientArea();
 			gc.setBackground(getParent().getBackground());
 			gc.fillRectangle(r);
@@ -72,10 +73,10 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	 * slider's current position
 	 */
 	private IToolTipProvider toolTipInterperter;
-	/** the minimum width of the slider */
-	private final int minWidth;
-	/** the minimum height of the slider */
-	private final int minHeight;
+	// /** the minimum width of the slider */
+	// private final int minWidth;
+	// /** the minimum height of the slider */
+	// private final int minHeight;
 	/** A list of position changed listeners */
 	private final List<IPositionChangeListener> positionChangedListeners = new ArrayList<IPositionChangeListener>();
 	/** stores the previous position that was sent out to the position changed listeners */
@@ -94,8 +95,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
 		setLayout(gl);
-		minWidth = thumbImageNormal.getBounds().width;
-		minHeight = thumbImageNormal.getBounds().height;
+		// minWidth = thumbImageNormal.getBounds().width;
+		// minHeight = thumbImageNormal.getBounds().height;
 
 		leftRegion = new Panel(this, color);
 		leftRegion.addMouseListener(new MouseAdapter() {
@@ -213,7 +214,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the position of the slider in the from of a percentage. Note the range is from 0 to 1
 	 */
 	public double getCurrentPosition() {
@@ -296,7 +297,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	/**
 	 * Method to update current position of the slider
-	 * 
+	 *
 	 * @param percentage between 0 and 1 (i.e 0% to 100%)
 	 */
 	public void updateSlider(double percentage, final boolean notify) {
@@ -316,7 +317,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param toolTipInterperter
 	 */
 	public void setTooltipInterperter(final IToolTipProvider toolTipInterperter) {
@@ -337,19 +338,20 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		popupColor = color;
 	}
 
-	@Override
-	public Point computeSize(final int wHint, final int hHint) {
-		checkWidget();
-		int width = minWidth;
-		int height = minHeight;
-		if ( wHint != SWT.DEFAULT ) {
-			width = wHint;
-		}
-		if ( hHint != SWT.DEFAULT ) {
-			height = hHint;
-		}
-		return new Point(width, height);
-	}
+	//
+	// @Override
+	// public Point computeSize(final int wHint, final int hHint) {
+	// checkWidget();
+	// int width = minWidth;
+	// int height = minHeight;
+	// if ( wHint != SWT.DEFAULT ) {
+	// width = wHint;
+	// }
+	// if ( hHint != SWT.DEFAULT ) {
+	// height = hHint;
+	// }
+	// return new Point(width, height);
+	// }
 
 	@Override
 	public void setToolTipText(final String string) {
