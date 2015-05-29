@@ -59,13 +59,11 @@ public class CameraArcBall extends AbstractCamera {
 		double sinT = Math.sin(factorT);
 		double cosP = Math.cos(factorP);
 		double sinP = Math.sin(factorP);
-		position
-			.setLocation(radius * sinT * sinP + target.x, radius * cosP + target.y, radius * cosT * sinP + target.z);
+		position.setLocation(radius * sinT * sinP + target.x, radius * cosP + target.y, radius * cosT * sinP + target.z);
 	}
 
 	@Override
 	public void updateSphericalCoordinatesFromLocations() {
-
 		double x = position.x - target.x;
 		double y = position.y - target.y;
 		double z = position.z - target.z;
