@@ -139,15 +139,6 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 					}
 
 			}
-			if(geometry.rotate3D != null){	
-				gl.glRotatef(-geometry.rotate3D.key.floatValue() , (float) geometry.rotate3D.value.x, (float) geometry.rotate3D.value.y, (float) geometry.rotate3D.value.z);
-				System.out.println("derotate geometry.rotate3D.key.floatValue() : " + -geometry.rotate3D.key.floatValue() + "x:  " +(float) geometry.rotate3D.value.x + 
-						"y: " + (float) geometry.rotate3D.value.y + " z: " + (float) geometry.rotate3D.value.z);
-				System.out.println("detranslate	 to center x: " + -geometry.agent.getLocation().getX() + "go to center y: " + geometry.agent.getLocation().getY() + "go to center z: " + -geometry.agent.getLocation().getZ());
-				
-				
-				
-			}
 		}
 	}
 }
