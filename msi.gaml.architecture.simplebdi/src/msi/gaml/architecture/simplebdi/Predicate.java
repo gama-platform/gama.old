@@ -78,7 +78,7 @@ public class Predicate implements IValue {
 		everyPossibleValues = values == null;
 	}
 
-	public void setIsTrue(final Boolean ist) {
+	public void setIs_True(final Boolean ist) {
 		this.is_true=ist;
 	}
 
@@ -117,6 +117,14 @@ public class Predicate implements IValue {
 		super();
 		this.name = name;
 		this.values = values;
+		everyPossibleValues = values == null;;
+	}
+
+	public Predicate(final String name, final Map<String, Object> values, final Boolean truth) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.is_true=truth;
 		everyPossibleValues = values == null;;
 	}
 

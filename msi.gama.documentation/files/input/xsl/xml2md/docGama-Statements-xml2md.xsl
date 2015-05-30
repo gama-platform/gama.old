@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!---->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
-<xsl:import href="docGaml-template-checkName-xml2wiki.xsl"/>
-<xsl:import href="docGaml-template-generateExamples-xml2wiki.xsl"/>
+<xsl:import href="docGaml-template-checkName-xml2md.xsl"/>
+<xsl:import href="docGaml-template-generateExamples-xml2md.xsl"/>
 
 <xsl:template match="/">
  	<xsl:text># Statements

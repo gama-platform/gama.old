@@ -14,12 +14,15 @@ package ummisco.gama.opengl.scene;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
+
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaPair;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
@@ -163,7 +166,7 @@ public class ModelScene {
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
 		final Color border, final boolean isTextured, final java.util.List<BufferedImage> textures,
 		final Integer angle, final double height, final boolean roundCorner, final IShape.Type type,
-		final java.util.List<Double> ratio, final java.util.List<GamaColor> colors) {
+		final java.util.List<Double> ratio, final java.util.List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( textures != null && !textures.isEmpty() ) {
 			for ( BufferedImage img : textures ) {
@@ -173,7 +176,7 @@ public class ModelScene {
 			}
 		}
 		currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textures, angle, height,
-			roundCorner, type, ratio, colors);
+			roundCorner, type, ratio, colors, rotate3D);
 	}
 
 	public void dispose() {

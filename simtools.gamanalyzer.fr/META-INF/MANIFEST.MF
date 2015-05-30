@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Fr
+Bundle-SymbolicName: simtools.gamanalyzer.fr;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: msi.gama.ext;bundle-version="1.0.0",
+ msi.gama.processor;bundle-version="1.4.0",
+ msi.gama.core;bundle-version="1.6.0"
+Bundle-ClassPath: lib/weka.jar,
+ .,
+ xstream-1.4.5.jar

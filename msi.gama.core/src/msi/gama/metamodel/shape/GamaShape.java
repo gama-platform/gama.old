@@ -108,19 +108,16 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 	
 	/**
-	 * Same as above, but applies a (optional) rotation and (optional) translation to the geometry
+	 * Same as above, but applies a (optional) rotation along a given vector and (optional) translation to the geometry
 	 * @param source cannot be null
 	 * @param geom can be null
 	 * @param rotation can be null, expressed in degrees
 	 * @param newLocation can be null
 	 */
-	public GamaShape(final IShape source, final Geometry geom, final Double rotationX,final Double rotationY,final Double rotationZ, final ILocation newLocation) {
+	public GamaShape(final IShape source, final Geometry geom, final Double rotation,final GamaPoint vector,final ILocation newLocation) {
 		this(source, geom);
-		if ( !isPoint() && rotationX != null && rotationY != null && rotationZ != null ) {
-			Coordinate c = geometry.getCentroid().getCoordinate();
-			geometry.apply(AffineTransform3D.createRotationOz(Math.toRadians(rotationZ), c.x, c.y));
-			geometry.apply(AffineTransform3D.createRotationOx(Math.toRadians(rotationX)));
-			geometry.apply(AffineTransform3D.createRotationOy(Math.toRadians(rotationY)));
+		if ( !isPoint() && vector != null && rotation != null ) {
+			geometry.apply(AffineTransform3D.createRotationVector(Math.toRadians(rotation), vector.x, vector.y, vector.z));
 		}
 		if ( newLocation != null ) {
 			setLocation(newLocation);
@@ -415,6 +412,16 @@ public class GamaShape implements IShape /* , IContainer */{
 	public void setDepth(final double depth) {
 		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
 		this.envelope = null;
+	}
+	
+	@getter("rotate3D")
+	public Double getRotate3D() {
+		return (Double) this.getAttribute(IShape.ROTATE_ATTRIBUTE);
+	}
+
+	@Override
+	public void setRotate3D(final GamaPair rot3D) {
+		this.setAttribute(IShape.ROTATE_ATTRIBUTE, rot3D);
 	}
 
 	@getter("envelope")
