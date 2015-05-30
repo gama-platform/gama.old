@@ -20,6 +20,7 @@ public class GamaRegressionType extends GamaType<GamaRegression> {
 	@Override
 	public GamaRegression cast(IScope scope, Object obj, Object param,
 			boolean copy) throws GamaRuntimeException {
+		if ( obj instanceof GamaRegression ) { return (GamaRegression) obj; }
 		return null;
 	}
 

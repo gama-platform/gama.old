@@ -12,6 +12,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -23,18 +24,18 @@ public class GamaRegression implements IValue{
 	int nbFeatures;
 	double param[] ;
 	
-	public void buildRegressionMethod(IScope scope, GamaFloatMatrix data, String method){
+	public GamaRegression(IScope scope, GamaFloatMatrix data, String method) throws Exception{
 		AbstractMultipleLinearRegression regressionMethod = null;
-		if (method.equals("GS"))
+		if (method.equals("GLS"))
 			regressionMethod = new GLSMultipleLinearRegression();
 		else regressionMethod = new OLSMultipleLinearRegression();
-		int nbFeatures = data.numCols - 1;
-		int nbInstances = data.numRows - 1;
-		double[] instances = new double[data.numCols * data.numRows - 1 ];
+		int nbFeatures = data.numCols -1;
+		int nbInstances = data.numRows ;
+		double[] instances = new double[data.numCols * data.numRows];
 		for (int i = 0; i < data.length(scope); i++ ) {
 			instances[i] = data.getMatrix()[i];
 		}
-		regressionMethod.newSampleData(instances, nbFeatures, nbInstances);
+		regressionMethod.newSampleData(instances, nbInstances,nbFeatures);
 		param = regressionMethod.estimateRegressionParameters();
 	}
 	
@@ -50,12 +51,12 @@ public class GamaRegression implements IValue{
 	
 
 
-	public Double predict(GamaList<Double> instance){
+	public Double predict(IScope scope, GamaList<Double> instance) {
 		if (param == null)
 			return null;
 		double val = param[0];
 		for (int i = 1; i < param.length; i++) {
-			val += param[i]*instance.get(i);
+			val += param[i]*Cast.asFloat(scope, instance.get(i-1));
 		}
 		return val;
 	}
@@ -75,8 +76,10 @@ public class GamaRegression implements IValue{
 	
 	@Override
 	public String serialize(boolean includingBuiltIn) {
-		return getParameters().serialize(includingBuiltIn);
+		return stringValue(null);
 	}
+	
+	
 
 	@Override
 	public IType getType() {

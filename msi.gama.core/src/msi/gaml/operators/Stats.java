@@ -912,25 +912,36 @@ public class Stats {
 			return KMeansPlusplusApache(scope,data,k,-1);
 		}
 	
-	@operator(value = "build", can_be_const = false, type = IType.LIST, content_type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
-	@doc(value = "returns the regression parameters build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build_regression(regression, data,method)",
-		examples = { @example("build(my_regression, [1,2,3,4][2,3,4,2],\"GLS\")")})
+	@operator(value = "build", can_be_const = false, type = IType.REGRESSION, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build(data,method)",
+		examples = { @example("build([1,2,3,4][2,3,4,2],\"GLS\")")})
 	public static
-		IList<Double> buildRegression(final IScope scope, final GamaRegression regression, final GamaFloatMatrix data, String method)
+		GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data, String method)
 			throws GamaRuntimeException {
-				regression.buildRegressionMethod(scope, data, method);
-				return regression.getParameters();
+				try {
+				return new GamaRegression(scope, data, method);
+				} catch (Exception e) {
+					throw GamaRuntimeException
+					.error(
+						"The GLS operator is not usable for these data", scope);
+				}
 		}
 	
-	@operator(value = "build", can_be_const = false, type = IType.LIST, content_type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
-	@doc(value = "returns the regression parameters build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given ordinary least squares method. Usage: build_regression(regression, data)",
-		examples = { @example("build(my_regression, [1,2,3,4][2,3,4,2])")})
+	@operator(value = "build", can_be_const = false, type = IType.REGRESSION, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given ordinary least squares method. Usage: build(data)",
+		examples = { @example("build([1,2,3,4][2,3,4,2])")})
 	public static
-		IList<Double> buildRegression(final IScope scope, final GamaRegression regression, final GamaFloatMatrix data)
+	GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data)
 			throws GamaRuntimeException {
-				regression.buildRegressionMethod(scope, data, "OLS");
-				return regression.getParameters();
+		try {
+					
+			return new GamaRegression(scope, data, "OSL");
+		} catch (Exception e) {
+			throw GamaRuntimeException
+			.error(
+				"The GLS operator is not usable for these data", scope);
 		}
+	}
 	
 	@operator(value = "predict", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "returns the value predict by the regression parameters for a given instance. Usage: predict(regression, instance)",
@@ -938,7 +949,7 @@ public class Stats {
 	public static
 		Double predictFromRegression(final IScope scope, final GamaRegression regression, final GamaList<Double> instance)
 			throws GamaRuntimeException {
-				return regression.predict(instance);
+				return regression.predict(scope,instance);
 		}
 	
 }
