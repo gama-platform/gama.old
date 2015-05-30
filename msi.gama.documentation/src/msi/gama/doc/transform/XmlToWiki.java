@@ -67,18 +67,18 @@ public class XmlToWiki {
 		//		Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInArchitectures"+suffix+".wiki");	
 		// System.out.println("Done");		
 		//
-//		System.out.print("Creation of the wiki page for Built-in Species.....");		
-//		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-//				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Species-xml2wiki.xsl",
-//				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSpecies"+suffix+".wiki");	
-//		System.out.println("Done");	
-//		//
-//		System.out.print("Creation of the wiki page for Constants and units.....");		
-//		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-//				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Constants-xml2wiki.xsl",
-//				Constants.XML2WIKI_FOLDER + File.separator + "G__UnitsAndConstants"+suffix+".wiki");	
-//		System.out.println("Done");	
-//		//
+		System.out.print("Creation of the wiki page for Built-in Species.....");		
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Species-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSpecies"+suffix+".md");	
+		System.out.println("Done");	
+		//
+		System.out.print("Creation of the wiki page for Constants and units.....");		
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Constants-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__UnitsAndConstants"+suffix+".md");	
+		System.out.println("Done");	
+		//
 		System.out.println("End of the transformation");		
 	}
 
