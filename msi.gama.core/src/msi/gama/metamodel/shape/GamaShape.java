@@ -117,7 +117,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation,final GamaPoint vector,final ILocation newLocation) {
 		this(source, geom);
 		if ( !isPoint() && vector != null && rotation != null ) {
-			geometry.apply(AffineTransform3D.createRotationVector(rotation, vector.x, vector.y, vector.z));
+			geometry.apply(AffineTransform3D.createRotationVector(Math.toRadians(rotation), vector.x, vector.y, vector.z));
 		}
 		if ( newLocation != null ) {
 			setLocation(newLocation);

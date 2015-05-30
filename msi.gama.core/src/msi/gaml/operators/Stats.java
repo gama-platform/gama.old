@@ -11,7 +11,16 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.math3.stat.clustering.Cluster;
+import org.apache.commons.math3.stat.clustering.Clusterable;
+import org.apache.commons.math3.stat.clustering.DBSCANClusterer;
+import org.apache.commons.math3.stat.clustering.EuclideanDoublePoint;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
@@ -821,5 +830,35 @@ public class Stats {
 		RFile obj = new RFile(scope, RFile, param);
 		return obj.getContents(scope);
 	}
-
+	
+	@operator(value = "dbscan", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the list of clusters (list of instance indices) computed with the dbscan (density-based spatial clustering of applications with noise) algorithm from the first operand data according to the maximum radius of the neighborhood to be considered (eps) and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
+		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+		examples = { @example("dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)")})
+	public static
+		GamaList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps, final Integer minPts)
+			throws GamaRuntimeException {
+			
+			DBSCANClusterer<EuclideanDoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
+			List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
+			for (int i = 0; i < data.size(); i++) {
+				GamaList d = (GamaList) data.get(i);
+				double point[] = new double[d.size()];
+				for (int j = 0; j < d.size(); j++) point[j] = Cast.asFloat(scope, d.get(j));
+				instances.add(new Instance(i, point));
+			}
+			List<Cluster<EuclideanDoublePoint>> clusters = dbscan.cluster(instances);
+			GamaList results =  (GamaList) GamaListFactory.create();
+			for (Cluster<EuclideanDoublePoint> cl : clusters) {
+				GamaList clG =  (GamaList) GamaListFactory.create();
+				for (EuclideanDoublePoint pt : cl.getPoints()) {
+					clG.addValue(scope, ((Instance) pt).getId());
+				}
+				results.add(clG);
+			}
+			return results;
+		}
+	
 }
+
+
