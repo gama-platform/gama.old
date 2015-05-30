@@ -87,12 +87,12 @@ public class GraphTopology extends AbstractTopology {
 		if ( graph.isAgentEdge() ) {
 			final IAgentFilter filter = In.edgesOf(getPlaces());
 			if ( !sourceNode ) {
-				edgeS = getAgentClosestTo(scope, source, filter);
+				edgeS = scope.getSimulationScope().getTopology().getAgentClosestTo(scope, source, filter);
 				// We avoid computing the target if we cannot find any source.
 				if ( edgeS == null ) { return null; }
 			}
 			if ( !targetNode ) {
-				edgeT = getAgentClosestTo(scope, target, filter);
+				edgeT = scope.getSimulationScope().getTopology().getAgentClosestTo(scope, target, filter);
 				if ( edgeT == null ) { return null; }
 			}
 		} else {
