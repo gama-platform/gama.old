@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!---->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
-<xsl:import href="docGaml-template-checkName-xml2wiki.xsl"/>
-<xsl:import href="docGaml-template-generateExamples-xml2wiki.xsl"/>
-
-<xsl:variable name="file" select="'G__Operators'"/>
-<xsl:variable name="fileAK" select="'G__OperatorsAK'"/>
-<xsl:variable name="fileLZ" select="'G__OperatorsLZ'"/>
-<xsl:variable name="alphabetID" select="'*'"/>
-<xsl:variable name="fileName" select="'Operators'"/>
-<xsl:variable name="ak" select="'ak'"/>
-<xsl:variable name="lz" select="'lz'"/> 
-
+<xsl:import href="docGaml-template-checkName-xml2md.xsl"/>
+<xsl:import href="docGaml-template-generateExamples-xml2md.xsl"/>
 
 <xsl:template match="/">
  	<xsl:text># Operators 
@@ -128,7 +119,7 @@ Note that due to the fact that actions are written by modelers, the general func
 </xsl:template>
     
  <xsl:template name="buildOperators"> 
-    <xsl:for-each select="doc/operators/operator[@alphabetOrder = $alphabetID or $alphabetID = '*']">
+    <xsl:for-each select="doc/operators/operator">
     	<xsl:sort select="@name" />
 ----
 
