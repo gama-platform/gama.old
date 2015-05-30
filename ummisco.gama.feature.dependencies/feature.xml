@@ -1166,4 +1166,24 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="msi.gaml.architecture.simplebdi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="simtools.gamanalyzer.fr"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="simtools.graphanalysis"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
