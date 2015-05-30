@@ -58,4 +58,15 @@ public class GamaSQLSkill extends Skill {
 			
 	}
 
+	@action(name = "SqlObject", args = {
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+			@arg(name = "table", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
+			@arg(name = "filter",type = IType.STRING,optional = true, doc = @doc("Filter for select"))
+			})
+		public GamaSqlConnection SqlObject(final IScope scope) throws GamaRuntimeException {
+			GamaSqlConnection gamaSqlConn; 
+			gamaSqlConn = new GamaSqlConnection(scope);
+			return gamaSqlConn;
+	}
+
 }
