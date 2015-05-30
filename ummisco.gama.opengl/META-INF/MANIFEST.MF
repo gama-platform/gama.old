@@ -32,4 +32,3 @@ Bundle-ClassPath: gluegen-rt-natives-linux-amd64.jar,
  .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: UMMISCO
-Bundle-Activator: ummisco.gama.opengl.Activator
