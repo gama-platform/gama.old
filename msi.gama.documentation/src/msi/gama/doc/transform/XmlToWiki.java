@@ -34,19 +34,7 @@ public class XmlToWiki {
 	public static void createAllWikis() 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		System.out.println("Beginning of the transformation");
-		//
-//		System.out.print("Creation of the wiki page for Operators from A to K.....");
-//		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-//				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAK-xml2wiki.xsl",
-//				Constants.XML2WIKI_FOLDER + File.separator + "G__OperatorsAK"+suffix+".wiki");
-//		System.out.println("Done");	
-//		//
-//		System.out.print("Creation of the wiki page for Operators from L to Z.....");
-//		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-//				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsLZ-xml2wiki.xsl",
-//				Constants.XML2WIKI_FOLDER + File.separator + "G__OperatorsLZ"+suffix+".wiki");
-//		System.out.println("Done");	
-//		//
+
 		System.out.print("Creation of the wiki page for Operators.....");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2md.xsl",
@@ -59,12 +47,12 @@ public class XmlToWiki {
 				Constants.XML2WIKI_FOLDER + File.separator + "G__Statements"+suffix+".md");	
 		System.out.println("Done");		
 		//
-//		System.out.print("Creation of the wiki page for Skills.......");		
-//		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-//				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Skills-xml2wiki.xsl",
-//				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSkills"+suffix+".wiki");	
-//		System.out.println("Done");		
-//		//
+		System.out.print("Creation of the wiki page for Skills.......");		
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Skills-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSkills"+suffix+".md");	
+		System.out.println("Done");		
+		//
 //		System.out.print("Creation of the wiki page for the Index.......");		
 //		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 //				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Index-xml2wiki.xsl",
