@@ -35,6 +35,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.GamaFileMetaData;
 import msi.gama.util.file.GamaGisFile;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -80,11 +81,13 @@ public  class GamaSqlConnection extends GamaGisFile {
 	
 	// Database object/ Database connection
     protected DataStore dataStore;
+    protected String table =null;
+    protected String filter =null;
 
-	public GamaSqlConnection(IScope scope, String localhost, Integer code) {
-		super(scope, localhost, code);
-		// TODO Auto-generated constructor stub
-	}
+//	public GamaSqlConnection(IScope scope, String localhost, Integer code) {
+//		super(scope, localhost, code);
+//		// TODO Auto-generated constructor stub
+//	}
 	
 	public GamaSqlConnection(IScope scope){
 		super(scope,
@@ -101,6 +104,29 @@ public  class GamaSqlConnection extends GamaGisFile {
 	}
 	
 	private void setParams(IScope scope){
+		setConnectionParameters(scope);
+		setTableName(scope);
+		setFilter(scope);
+	}
+	
+	private void setParams(Map<String, Object> params,String table, String filter){
+		setConnectionParameters(params);
+		setTable(table);
+		setFilter(filter);
+	}
+
+	private void setParams(Map<String, Object> params){
+		setConnectionParameters(params);
+	}
+	
+	private void setTable(String table){
+		this.table=table;
+	}
+	
+	private void setFilter(String filter){
+		this.filter=filter;
+	}
+	private void setConnectionParameters(IScope scope){
 		Map<String, Object> params = (Map<String, Object>) scope.getArg("params", IType.MAP);
 		 this.dbtype = (String) params.get("dbtype");
 		 this.host = (String) params.get("host");
@@ -108,20 +134,24 @@ public  class GamaSqlConnection extends GamaGisFile {
 		 this.database = (String) params.get("database");
 		 this.user = (String) params.get("user");
 		 this.passwd = (String) params.get("passwd");
-//		 extension = (String) params.get("extension");
-//		 transformed = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
-
 	}
-	private void setParams(Map<String, Object> params){
+
+	private void setTableName(IScope scope){
+		this.table = (String) scope.getArg("table", IType.STRING);
+	}
+	private void setFilter(IScope scope){
+		this.filter = (String) scope.getArg("filter", IType.STRING);
+	}
+
+	private void setConnectionParameters(Map<String, Object> params){
 		 this.dbtype = (String) params.get("dbtype");
 		 this.host = (String) params.get("host");
 		 this.port = (String) params.get("port");
 		 this.database = (String) params.get("database");
 		 this.user = (String) params.get("user");
 		 this.passwd = (String) params.get("passwd");
-//		 extension = (String) params.get("extension");
-//		 transformed = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
-
+//		 this.table = (String) params.get("table");
+//		 this.filter = (String) params.get("filter");
 	}
 
 	public static GamaSqlConnection createConnectionObject( IScope scope)
@@ -141,6 +171,8 @@ public  class GamaSqlConnection extends GamaGisFile {
 		String database = (String) params.get("database");
 		String user = (String) params.get("user");
 		String passwd = (String) params.get("passwd");
+//		String table = (String) params.get("table");
+//		String filter = (String) params.get("filter");
 
 		if (dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGRES) || dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGIS))
 		{
@@ -228,14 +260,11 @@ public  class GamaSqlConnection extends GamaGisFile {
 		return connectionParameters;
 	}
 	
+	/*
+	 * Create a connection to database with current connection parameter of the GamaSqlConnection object
+	 */
     public DataStore Connect(IScope scope) throws Exception{
 	  Map<String, Object> connectionParameters = new HashMap<String,Object>();
-//      connectionParameters.put("host",host);
-//      connectionParameters.put("dbtype",dbtype);
-//      connectionParameters.put("port",port);
-//      connectionParameters.put("database",database);
-//      connectionParameters.put("user",user);
-//      connectionParameters.put("passwd",passwd);
 	  connectionParameters = createConnectionParams(scope);
    	  DataStore dStore;
       dStore = DataStoreFinder.getDataStore(connectionParameters); //get connection
@@ -246,7 +275,9 @@ public  class GamaSqlConnection extends GamaGisFile {
       return dStore;	  
     }
     
-    
+	/*
+	 * Create a connection to database with the connection parameter params
+	 */  
     public DataStore Connect(IScope scope, Map<String, Object> params) throws IOException{
   	  Map<String, Object> connectionParameters = new HashMap<String,Object>();
 	  connectionParameters = createConnectionParams(scope,params);
@@ -259,6 +290,9 @@ public  class GamaSqlConnection extends GamaGisFile {
       return dStore;	  
     }
     
+    /*
+     * Close the current connection of of the GamaSqlConnection object
+     */
     public void close() throws GamaRuntimeException{
     	if (dataStore != null){
     		dataStore.dispose();
@@ -266,6 +300,7 @@ public  class GamaSqlConnection extends GamaGisFile {
 			throw GamaRuntimeException.error("The connection to "+ this.database + " is not opened ");
     	}
     }
+    
 	public static GamaSqlConnection createConnectionObject( IScope scope, Map<String, Object> params)
 			throws GamaRuntimeException, Exception {
 		
@@ -275,6 +310,8 @@ public  class GamaSqlConnection extends GamaGisFile {
 			String database = (String) params.get("database");
 			String user = (String) params.get("user");
 			String passwd = (String) params.get("passwd");
+			String table = (String) params.get("table");
+			String filter = (String) params.get("filter");
            
 			Map<String, Object> connectionParameters = new HashMap<String,Object>();
             connectionParameters.put("host",host);
@@ -292,7 +329,10 @@ public  class GamaSqlConnection extends GamaGisFile {
 		        }
 			    GamaSqlConnection sqlConn;
 				sqlConn = new GamaSqlConnection(scope,connectionParameters);
+				sqlConn.setTable(table);
+				sqlConn.setFilter(scope);
 		        sqlConn.setDataStore(dStore);// Create connection an get data store (database) for query
+		        
 		        return sqlConn;
 					
 			} else {
