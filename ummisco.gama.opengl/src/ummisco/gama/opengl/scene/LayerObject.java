@@ -14,11 +14,14 @@ package ummisco.gama.opengl.scene;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
+
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaPair;
 import ummisco.gama.opengl.JOGLRenderer;
+
 import com.jogamp.opengl.*;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -138,7 +141,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
 		final Color border, final boolean isTextured, final List<BufferedImage> textures, final Integer angle,
 		final double height, final boolean roundCorner, final IShape.Type type, final List<Double> ratio,
-		final List<GamaColor> colors) {
+		final List<GamaColor> colors, final GamaPair<Double,GamaPoint> rotate3D) {
 		final GeometryObject curJTSGeometry;
 		if ( type == IShape.Type.PIESPHERE || type == IShape.Type.PIESPHEREWITHDYNAMICALCOLOR ||
 			type == IShape.Type.PACMAN || type == IShape.Type.ANTISLICE || type == IShape.Type.SLICE ) {
@@ -148,7 +151,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		} else {
 			curJTSGeometry =
 				new GeometryObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border, isTextured,
-					textures, angle == null ? 0 : angle, height, roundCorner, type);
+					textures, angle == null ? 0 : angle, height, roundCorner, type, rotate3D);
 		}
 		geometries.add(curJTSGeometry);
 	}

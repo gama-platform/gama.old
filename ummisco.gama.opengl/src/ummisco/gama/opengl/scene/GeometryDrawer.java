@@ -14,7 +14,9 @@ package ummisco.gama.opengl.scene;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.jts.*;
 import ummisco.gama.opengl.utils.*;
+
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLContext;
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -42,6 +44,12 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			pieDrawer._draw((Pie3DObject) geometry);
 
 		} else {
+			if(geometry.rotate3D != null){
+				gl.glTranslated(geometry.agent.getLocation().getX(), -geometry.agent.getLocation().getY(), geometry.agent.getLocation().getZ());
+				gl.glRotatef(geometry.rotate3D.key.floatValue() , (float) geometry.rotate3D.value.x, (float) geometry.rotate3D.value.y, (float) geometry.rotate3D.value.z);	
+				gl.glTranslated(-geometry.agent.getLocation().getX(), geometry.agent.getLocation().getY(), -geometry.agent.getLocation().getZ());
+			}
+			
 			switch (geometry.type) {
 				case MULTIPOLYGON:
 					jtsDrawer.drawMultiPolygon((MultiPolygon) geometry.geometry, geometry.getColor(),

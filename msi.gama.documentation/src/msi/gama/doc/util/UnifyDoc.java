@@ -54,6 +54,7 @@ public class UnifyDoc {
 	
 	public static void unify() throws IOException, JDOMException {
 		HashMap<File,String> hmFilesPackages = getMapFiles(".");
+		System.out.println("******* TODO *****: filter on folders");
 		Document doc = mergeFiles(hmFilesPackages);
 		
 		// TODO : FAIRE un mode debug!

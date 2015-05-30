@@ -13,6 +13,7 @@ import msi.gaml.types.*;
 import weka.clusterers.*;
 import weka.clusterers.forOPTICSAndDBScan.DataObjects.ManhattanDataObject;
 import weka.core.*;
+import weka.core.Instance;
 
 public class Clustering {
 

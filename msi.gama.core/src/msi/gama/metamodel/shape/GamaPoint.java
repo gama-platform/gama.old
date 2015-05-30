@@ -386,6 +386,11 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void setDepth(final double depth) {
 		// TODO Auto-generated method stub
 	}
+	
+	@Override
+	public void setRotate3D(final GamaPair rot3D) {
+		// TODO Auto-generated method stub
+	}
 
 	/**
 	 * Method getType()

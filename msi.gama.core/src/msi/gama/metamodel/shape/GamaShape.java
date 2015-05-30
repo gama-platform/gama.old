@@ -114,6 +114,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	 * @param rotation can be null, expressed in degrees
 	 * @param newLocation can be null
 	 */
+
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final GamaPoint vector,
 		final ILocation newLocation) {
 		this(source, geom);
@@ -414,11 +415,6 @@ public class GamaShape implements IShape /* , IContainer */{
 	public void setDepth(final double depth) {
 		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
 		this.envelope = null;
-	}
-
-	@getter("rotate3D")
-	public Double getRotate3D() {
-		return (Double) this.getAttribute(IShape.ROTATE_ATTRIBUTE);
 	}
 
 	@Override

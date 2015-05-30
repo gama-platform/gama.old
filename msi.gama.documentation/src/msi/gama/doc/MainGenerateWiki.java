@@ -47,14 +47,13 @@ public class MainGenerateWiki {
 		System.out.print("Merge all the docGAMA.xml files................");		
 		UnifyDoc.unify();
 		System.out.println("DONE");
-		System.out.print("Transform the docGAMA.xml file into Wiki Files (md)................");		
+		System.out.print("Transform the docGAMA.xml file into Wiki Files (md) and create/update them in the gama.wiki folder................");		
 		XmlToWiki.createAllWikis();
 		System.out.println("DONE");		
 		
-		// FIXME send the documentation on the GIT repository
+		// TODO commit and push created files to the GIT repository
 		try {
-			System.out.print("Checkout Wiki Files from GAMA SVN................");		
-			// Ben: remove SVN and get from Git 
+			System.out.print("TODO: commit, pull and push created files to the GIT repository................");		
 			// SVNUtils.checkoutSVNGamaDoc();		
 			System.out.println("DONE");			
 		} catch (Exception e){

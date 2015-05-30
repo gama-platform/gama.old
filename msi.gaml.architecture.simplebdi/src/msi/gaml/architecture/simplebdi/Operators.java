@@ -39,6 +39,21 @@ public class Operators {
 		return new Predicate(name,/*value,*/priority,values);
 	}
 	
+	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new predicate with the given properties (name, values, is_true)",
+		examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], true)", test = false))
+	public static Predicate newPredicate(final String name, final Map values, final Boolean truth) throws GamaRuntimeException {
+		return new Predicate(name,/*value,*/values,truth);
+	}
+	
+	@operator(value = "set_truth", can_be_const = true, category = { "BDI" })
+	@doc(value = "change the is_true value of the given predicate",
+		examples = @example(value = "predicate set_truth false", test = false))
+	public static Predicate withTruth(final Predicate predicate, final Boolean truth) throws GamaRuntimeException {
+		predicate.is_true = truth;
+		return predicate;
+	}
+	
 	@operator(value = "with_priority", can_be_const = true, category = { "BDI" })
 	@doc(value = "change the priority of the given predicate",
 		examples = @example(value = "predicate with_priority 2", test = false))
