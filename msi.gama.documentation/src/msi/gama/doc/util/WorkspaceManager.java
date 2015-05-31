@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 
 /**
  * @author bgaudou
@@ -31,6 +31,10 @@ public class WorkspaceManager {
 
 	public File getFeatureFile(String feature) {
 		return new File(wsFile.getAbsolutePath() + File.separator + feature + File.separator + "feature.xml");
+	}
+	
+	public File getDocFile(String plugin){
+		return new File(wsFile.getAbsolutePath() + File.separator + plugin + File.separator + Constants.DOCGAMA_FILE);
 	}
 	
 	public File getProductFile() throws IOException{
@@ -56,12 +60,17 @@ public class WorkspaceManager {
 		return feature.exists();
 	}	
 	
+	public boolean hasPluginDoc(String pluginName){
+		File pluginDoc = getDocFile(pluginName);
+		return pluginDoc.exists();
+	}
+	
  	/**
  	 * This method will parse the Eclipse workspace to find project that have a file "docGama.xml".
  	 * @return It will then return the HashMap containing all their project name with their associated files associated 
  	 * @throws IOException
  	 */
- 	public HashMap<String, File> getDocFiles() throws IOException{
+ 	public HashMap<String, File> getAllDocFiles() throws IOException{
 		HashMap<String, File> hmFilesPackages = new HashMap<String, File>();
 		
 		for(File f : wsFile.listFiles()){			
@@ -72,7 +81,35 @@ public class WorkspaceManager {
 		}
 		return hmFilesPackages;
  	}
-	
+ 	
+ 	public HashMap<String, File> getProductDocFiles() throws IOException, ParserConfigurationException, SAXException{
+ 		HashMap<String, File> hmFilesPackages = getAllDocFiles();
+ 		List<String> pluginsProduct = getAllGAMAPluginsInProduct();
+ 		HashMap<String, File> hmFilesRes = new HashMap<String, File>();
+
+ 		for(Entry<String, File> eSF: hmFilesPackages.entrySet()) {
+ 			if(pluginsProduct.contains(eSF.getKey())) {
+ 				hmFilesRes.put(eSF.getKey(), eSF.getValue());
+ 			}
+ 		}
+ 		
+ 		return hmFilesRes;
+ 	}
+ 	
+ 	public HashMap<String, File> getExtensionsDocFiles() throws IOException, ParserConfigurationException, SAXException{
+ 		HashMap<String, File> hmFilesPackages = getAllDocFiles();
+ 		List<String> pluginsProduct = getAllGAMAPluginsInProduct();
+ 		HashMap<String, File> hmFilesRes = new HashMap<String, File>();
+
+ 		for(Entry<String, File> eSF: hmFilesPackages.entrySet()) {
+ 			if(!pluginsProduct.contains(eSF.getKey())) {
+ 				hmFilesRes.put(eSF.getKey(), eSF.getValue());
+ 			}
+ 		}
+ 		
+ 		return hmFilesRes;
+ 	}
+ 	
 	/**
 	 * From a product file, get all the features
 	 * @param feature
@@ -81,7 +118,7 @@ public class WorkspaceManager {
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public List<String> getPluginsFromProduct(File product) throws ParserConfigurationException, SAXException, IOException{
+	private List<String> getPluginsFromProduct(File product) throws ParserConfigurationException, SAXException, IOException{
 		ArrayList<String> listPlugins = new ArrayList<String>();
 		
 		// Creation of the DOM source
@@ -111,7 +148,7 @@ public class WorkspaceManager {
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public List<String> getPluginsFromFeature(File feature) throws ParserConfigurationException, SAXException, IOException{
+	private List<String> getPluginsFromFeature(File feature) throws ParserConfigurationException, SAXException, IOException{
 		ArrayList<String> listPlugins = new ArrayList<String>();
 		
 		// Creation of the DOM source
@@ -160,12 +197,31 @@ public class WorkspaceManager {
 		return listPlugins;
 	}
 
+	
+	
 	public static void main(String[] arg) throws IOException, ParserConfigurationException, SAXException{
 		WorkspaceManager ws = new WorkspaceManager(".");
 		List<String> l = ws.getAllGAMAPluginsInProduct();
 		for(String name : l){
 			System.out.println(name);
 		}
+		System.out.println("----------");
+		
+		HashMap<String,File> hm = ws.getAllDocFiles();
+		for(Entry<String,File> e : hm.entrySet()){
+			System.out.println(e.getKey());
+		}
+		System.out.println("----------");
+		hm = ws.getProductDocFiles();
+		for(Entry<String,File> e : hm.entrySet()){
+			System.out.println(e.getKey());
+		}
+		System.out.println("----------");
+		hm = ws.getExtensionsDocFiles();
+		for(Entry<String,File> e : hm.entrySet()){
+			System.out.println(e.getKey());
+		}
+		System.out.println("----------");
 	}
 }
 

@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import msi.gama.precompiler.doc.utils.TypeConverter;
@@ -33,7 +31,6 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class UnifyDoc {
@@ -58,36 +55,19 @@ public class UnifyDoc {
 		XMLElements.INSIDE_STAT_SYMBOLS,
 		XMLElements.STATEMENT_KINDS};	
 	
-	public static void unify() throws IOException, JDOMException {
-		HashMap<File,String> hmFilesPackages = getMapFiles(".");
-		System.out.println("******* TODO *****: filter on folders");
-		Document doc = mergeFiles(hmFilesPackages);
+	public static void unify() throws IOException, JDOMException, ParserConfigurationException, SAXException {
+		WorkspaceManager ws = new WorkspaceManager(".");
+		HashMap<String, File> hmFiles = ws.getProductDocFiles(); 
 		
-		// TODO : FAIRE un mode debug!
-   		System.out.println(""+hmFilesPackages);
+		Document doc = mergeFiles(hmFiles);
+		
+   		System.out.println(""+hmFiles);
 		
 		XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
-        // sortie.output(doc, System.out);
         sortie.output(doc, new FileOutputStream(Constants.DOCGAMA_GLOBAL_FILE));		
 	}
 	
-	// This method will parse the Eclipse workspace to find project that have a file "docGama.xml"
-	// It will then return the HashMap containing all these files associated with their project name 
- 	private static HashMap<File, String> getMapFiles(String folderName) throws IOException{
- 		File mainFile = new File((new File(folderName)).getCanonicalPath());				
-		File parentFile = new File(mainFile.getParent());	
-		HashMap<File,String> hmFilesPackages = new HashMap<File, String>();
-		
-		for(File f : parentFile.listFiles()){			
-			File docGamaFile = new File(f.getAbsolutePath() + File.separator + Constants.DOCGAMA_FILE);
-			if(docGamaFile.exists()){
-				hmFilesPackages.put(docGamaFile, f.getName());
-			}
-		}
-		return hmFilesPackages;
- 	}
-	
-	private static Document mergeFiles(HashMap<File,String> hmFilesPackages) throws JDOMException, IOException{
+	private static Document mergeFiles(HashMap<String,File> hmFilesPackages) throws JDOMException, IOException{
        	SAXBuilder builder = new SAXBuilder();      	
        	Document doc = null;
        	
@@ -96,51 +76,36 @@ public class UnifyDoc {
 			doc.getRootElement().addContent(new Element(elt));
 		}
        	
-       	for(Entry<File, String> fileDoc : hmFilesPackages.entrySet()){
-//	    	if(doc == null){
-//				doc = (Document) builder.build(fileDoc.getKey());	
-//				for(String catXML : tabEltXML){
-//				//	if(doc.getRootElement().getChild(catXML) != null) {
-//						for(Element e : doc.getRootElement().getChild(catXML).getChildren()) {
-//							if(!Arrays.asList(tabCategoriesEltXML).contains(catXML)) e.setAttribute("projectName", fileDoc.getValue());
-//						}	
-//				//	}	
-//				}
-//			}
-//	    	else {
-				Document docTemp = (Document) builder.build(fileDoc.getKey());
-				
-				// System.out.println("======= File  " + fileDoc.getKey());
-				for(String catXML : tabEltXML){
-					if(docTemp.getRootElement().getChild(catXML) != null){
-						// System.out.println("         " + catXML);
+       	for(Entry<String, File> fileDoc : hmFilesPackages.entrySet()){
+			Document docTemp = (Document) builder.build(fileDoc.getValue());
+			
+			for(String catXML : tabEltXML){
+				if(docTemp.getRootElement().getChild(catXML) != null){
 
-						List<Element> existingElt = doc.getRootElement().getChild(catXML).getChildren();
-	
-						for(Element e : docTemp.getRootElement().getChild(catXML).getChildren()) {
-							// Do not add the projectName for every kinds of categories 
-							if(!Arrays.asList(tabCategoriesEltXML).contains(catXML)) e.setAttribute("projectName", fileDoc.getValue());
-							
-							// Test whether the element is already in the merged doc
-							boolean found = false;
-							for(Element exElt : existingElt){
-								boolean equals = (exElt.getName()).equals(e.getName());
-								for(Attribute att : exElt.getAttributes()){
-								 	 String valueExElt = (exElt.getAttribute(att.getName()) != null ) ? exElt.getAttributeValue(att.getName()) : "";
-								 	 String valueE = (e.getAttribute(att.getName()) != null) ? e.getAttributeValue(att.getName()) : "";
-									equals = equals && (valueExElt.equals(valueE));
-								}		
-								found = found || equals;
-							}						
-							// Add it if it is not already in the merged doc
-							if( !found) {
-								doc.getRootElement().getChild(catXML).addContent(e.clone());
-								// System.out.println( "Addition : " + e.getName() + " " + existingElt.size());
-							}
-						}	
-					}
+					List<Element> existingElt = doc.getRootElement().getChild(catXML).getChildren();
+
+					for(Element e : docTemp.getRootElement().getChild(catXML).getChildren()) {
+						// Do not add the projectName for every kinds of categories 
+						if(!Arrays.asList(tabCategoriesEltXML).contains(catXML)) e.setAttribute("projectName", fileDoc.getKey());
+						
+						// Test whether the element is already in the merged doc
+						boolean found = false;
+						for(Element exElt : existingElt){
+							boolean equals = (exElt.getName()).equals(e.getName());
+							for(Attribute att : exElt.getAttributes()){
+							 	 String valueExElt = (exElt.getAttribute(att.getName()) != null ) ? exElt.getAttributeValue(att.getName()) : "";
+							 	 String valueE = (e.getAttribute(att.getName()) != null) ? e.getAttributeValue(att.getName()) : "";
+								equals = equals && (valueExElt.equals(valueE));
+							}		
+							found = found || equals;
+						}						
+						// Add it if it is not already in the merged doc
+						if( !found) {
+							doc.getRootElement().getChild(catXML).addContent(e.clone());
+						}
+					}	
 				}
-//	    	}
+			}
        	}
        	     
        	// Add an element for the generated types       	
@@ -149,43 +114,7 @@ public class UnifyDoc {
        	
        	return doc;
 	}
-
-	// This method will parse the Eclipse workspace to get the product file, get all the features, and then the list of folder
- 	private static HashMap<File, String> getMapFilesRelease(String folderName) throws IOException, ParserConfigurationException, SAXException{
- 		WorkspaceManager ws = new WorkspaceManager(folderName);
- 		
- 		File mainFile = new File((new File(folderName)).getCanonicalPath());				
-		File parentFile = new File(mainFile.getParent());	
 		
-		System.out.println(parentFile.getAbsolutePath() + File.separator + Constants.RELEASE_APPLICATION + File.separator + Constants.RELEASE_PRODUCT);
-		File productFile = new File(parentFile.getAbsolutePath() + File.separator + Constants.RELEASE_APPLICATION + File.separator + Constants.RELEASE_PRODUCT);
-		if(productFile.exists()){
-			System.out.println(productFile);
-			// Parse le product file et get les features/plugin imbriqués
-			// Creation of the DOM source
-			DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
-			DocumentBuilder constructeur = fabriqueD.newDocumentBuilder();
-			org.w3c.dom.Document document = constructeur.parse(productFile);
-			
-			// We get the features from the product 
-			NodeList nLFeatures = document.getElementsByTagName("feature");
-			for(int j = 0; j < nLFeatures.getLength(); j++){
-				org.w3c.dom.Element eltFeature = (org.w3c.dom.Element) nLFeatures.item(j);
-				System.out.println(eltFeature.getAttribute("id"));
-			}				
-		}
-		
-		
-		HashMap<File,String> hmFilesPackages = new HashMap<File, String>();
-		
-		for(File f : parentFile.listFiles()){			
-			File docGamaFile = new File(f.getAbsolutePath() + File.separator + Constants.DOCGAMA_FILE);
-			if(docGamaFile.exists()){
-				hmFilesPackages.put(docGamaFile, f.getName());
-			}
-		}
-		return hmFilesPackages;
- 	} 		
 	
 	/**
 	 * @param args
@@ -193,16 +122,6 @@ public class UnifyDoc {
 	 * @throws JDOMException 
 	 */
 	public static void main(String[] args) {
-		try {
-			getMapFilesRelease(".");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 }
