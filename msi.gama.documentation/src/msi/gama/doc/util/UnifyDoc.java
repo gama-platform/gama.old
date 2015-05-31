@@ -19,6 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
@@ -29,6 +33,8 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class UnifyDoc {
 
@@ -144,6 +150,43 @@ public class UnifyDoc {
        	return doc;
 	}
 
+	// This method will parse the Eclipse workspace to get the product file, get all the features, and then the list of folder
+ 	private static HashMap<File, String> getMapFilesRelease(String folderName) throws IOException, ParserConfigurationException, SAXException{
+ 		WorkspaceManager ws = new WorkspaceManager(folderName);
+ 		
+ 		File mainFile = new File((new File(folderName)).getCanonicalPath());				
+		File parentFile = new File(mainFile.getParent());	
+		
+		System.out.println(parentFile.getAbsolutePath() + File.separator + Constants.RELEASE_APPLICATION + File.separator + Constants.RELEASE_PRODUCT);
+		File productFile = new File(parentFile.getAbsolutePath() + File.separator + Constants.RELEASE_APPLICATION + File.separator + Constants.RELEASE_PRODUCT);
+		if(productFile.exists()){
+			System.out.println(productFile);
+			// Parse le product file et get les features/plugin imbriqués
+			// Creation of the DOM source
+			DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
+			DocumentBuilder constructeur = fabriqueD.newDocumentBuilder();
+			org.w3c.dom.Document document = constructeur.parse(productFile);
+			
+			// We get the features from the product 
+			NodeList nLFeatures = document.getElementsByTagName("feature");
+			for(int j = 0; j < nLFeatures.getLength(); j++){
+				org.w3c.dom.Element eltFeature = (org.w3c.dom.Element) nLFeatures.item(j);
+				System.out.println(eltFeature.getAttribute("id"));
+			}				
+		}
+		
+		
+		HashMap<File,String> hmFilesPackages = new HashMap<File, String>();
+		
+		for(File f : parentFile.listFiles()){			
+			File docGamaFile = new File(f.getAbsolutePath() + File.separator + Constants.DOCGAMA_FILE);
+			if(docGamaFile.exists()){
+				hmFilesPackages.put(docGamaFile, f.getName());
+			}
+		}
+		return hmFilesPackages;
+ 	} 		
+	
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -151,10 +194,14 @@ public class UnifyDoc {
 	 */
 	public static void main(String[] args) {
 		try {
-			unify();
+			getMapFilesRelease(".");
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (JDOMException e) {
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

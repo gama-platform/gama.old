@@ -15,6 +15,12 @@ import java.io.File;
 public class Constants {
 	public static boolean ONLINE = false;
 	
+	// 
+	public static String RELEASE_APPLICATION = "msi.gama.application";
+	public static String RELEASE_PRODUCT = "gama1.7.Eclipse3_8_2.product";
+	
+	// Repositories containing used files
+	
 	public static String BASE_FOLDER = "";
 	public static String SRC_FOLDER = BASE_FOLDER + "files";
 	

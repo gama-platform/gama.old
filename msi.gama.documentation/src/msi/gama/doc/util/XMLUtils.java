@@ -25,10 +25,16 @@ public class XMLUtils {
 	
 	public static Document createDoc(String xml) throws ParserConfigurationException, SAXException, IOException{
 		// Creation of the DOM source
+		File fileXml = new File(xml);
+		
+		return createDoc(fileXml);
+	}
+	
+	public static Document createDoc(File XMLFile) throws ParserConfigurationException, SAXException, IOException{
+		// Creation of the DOM source
 		DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = fabriqueD.newDocumentBuilder();
-		File fileXml = new File(xml);
-		Document document = builder.parse(fileXml);
+		Document document = builder.parse(XMLFile);
 		
 		return document;
 	}
