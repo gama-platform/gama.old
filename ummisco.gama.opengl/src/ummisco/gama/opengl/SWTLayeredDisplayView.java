@@ -62,7 +62,9 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 			@Override
 			public void run() {
 				try {
-					surface.dispose();
+					if ( surface != null ) {
+						surface.dispose();
+					}
 					getSite().getPage().hideView(SWTLayeredDisplayView.this);
 				} catch (final Exception e) {
 					e.printStackTrace();
