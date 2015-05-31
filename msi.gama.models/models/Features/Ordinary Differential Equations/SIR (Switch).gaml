@@ -166,7 +166,6 @@ entities {
 		string model_type <- 'none';
 		
 		action remove_model {
-		//		do write message: 'removing model';
 			do die;
 		}
 
@@ -361,15 +360,8 @@ experiment mysimulation type: gui {
 			grid sir_grid lines: rgb("black");
 			species Host aspect: basic;
 		}
-
-		//	    display distribution refresh_every: 1{
-		//	    		chart 'Distribution' type : pie background :rgb('lightGray'){
-		//		    		data 'susceptible' value: current_model.S color: rgb('green');
-		//					data 'infected' value: current_model.I color: rgb('red');
-		//					data 'immune' value: current_model.R color: rgb('yellow');
-		//				}
-		//	    }
-		display 'Switch model' refresh_every: 1 {
+	
+		display 'Switch model' {
 			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
 				data 'susceptible' value: current_model.S color: rgb('green');
 				data 'infected' value: current_model.I color: rgb('red');
@@ -378,7 +370,7 @@ experiment mysimulation type: gui {
 
 		}
 
-		display SI_maths refresh_every: 1 {
+		display SI_maths  {
 			chart "SI" type: series background: rgb('white') {
 				data 'S' value: first((my_SIR_maths)).S color: rgb('green');
 				data 'I' value: first((my_SIR_maths)).I color: rgb('red');

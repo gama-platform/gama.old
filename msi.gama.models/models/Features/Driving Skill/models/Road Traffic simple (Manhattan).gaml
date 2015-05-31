@@ -87,11 +87,11 @@ experiment Complex type: gui {
 	parameter "Shapefile for the bounds:" var: shape_file_bounds category: "GIS" ;
 	
 	output {
-		display city_display refresh_every: 1 {
+		display city_display {
 			species road aspect: base ;
 			species people aspect: base;
 		}
-		monitor "Number of goals achieved" value: nbGoalsAchived refresh_every: 1 ;
+		monitor "Number of goals achieved" value: nbGoalsAchived ;
 	}
 }
 

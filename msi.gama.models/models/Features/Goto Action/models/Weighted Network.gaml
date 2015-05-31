@@ -50,7 +50,7 @@ species people skills: [moving]{
 
 experiment goto_weighted_network type: gui {
 	output {
-		display object_display refresh_every: 1 {
+		display object_display {
 			species road aspect: base ;
 			species people aspect: base ;
 		}

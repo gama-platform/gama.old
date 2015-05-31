@@ -39,7 +39,7 @@ entities {
 
 experiment maths type: gui {
 	output { 
-		display display_charts refresh_every: 1 {
+		display display_charts {
 			chart "SIR_agent" type: series background: rgb('white') {
 				data 'S' value: first(list(agent_with_SIR_dynamic)).S color: rgb('green') ;				
 				data 'I' value: first(list(agent_with_SIR_dynamic)).I color: rgb('red') ;

@@ -72,7 +72,7 @@ experiment pyramidDisplay type: gui {
 
 experiment coneDisplay type: gui {
 	output {
-		display Cone refresh_every: 1  type:opengl ambient_light:100{
+		display Cone type:opengl ambient_light:100{
 			species cells aspect:cone;
 		}
 	}
@@ -80,7 +80,7 @@ experiment coneDisplay type: gui {
 
 experiment cylinderDisplay type: gui {
 	output {
-		display Cylinder refresh_every: 1  type:opengl ambient_light:100{
+		display Cylinder type:opengl ambient_light:100{
 			species cells aspect:cylinder;
 		}
 	}
@@ -88,7 +88,7 @@ experiment cylinderDisplay type: gui {
 
 experiment sphereDisplay type: gui {
 	output {
-		display sphere refresh_every: 1  type:opengl ambient_light:100 {
+		display sphere type:opengl ambient_light:100 {
 			species cells aspect: sphere;
 		}
 	}
@@ -96,7 +96,7 @@ experiment sphereDisplay type: gui {
 
 experiment teapotDisplay type: gui {
 	output {
-		display teapot refresh_every: 1  type:opengl ambient_light:100 {
+		display teapot type:opengl ambient_light:100 {
 			species cells aspect: teapot;
 		}
 	}

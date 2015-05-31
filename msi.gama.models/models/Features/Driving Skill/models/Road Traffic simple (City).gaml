@@ -175,16 +175,16 @@ experiment traffic type: gui {
 	parameter "Radius of the city center" var: city_center_radius category: "City" ;
 	
 	output {
-		display city_display refresh_every: 1 {
+		display city_display {
 			species road aspect: road_width ;
 			species building aspect: base;
 			species people aspect: base;
 		}
-		display traffic_jam_display refresh_every: 1 {
+		display traffic_jam_display {
 			species road aspect: base ;
 			species road aspect: traffic_jam ;
 		}
-		display chart_display refresh_every: 10 {
+		display chart_display refresh: every(10) {
 			chart name: "Traffic jam" type: series size: {0.9, 0.4} position: {0.05, 0.05} {
 				data name:"Mean road traffic coefficient" value: mean (road collect each.coeff_traffic) style: line color: rgb("green") ;
 				data name:"Max road traffic coefficient" value: road max_of (each.coeff_traffic) style: line color: rgb("red") ;
@@ -194,7 +194,7 @@ experiment traffic type: gui {
 				data name:"Staying home" value: length ((people as list) where (each.objective="go home")) color: rgb("blue") ;
 			}
 		}
-		monitor "Number of goals achieved" value: nbGoalsAchived refresh_every: 1 ;
+		monitor "Number of goals achieved" value: nbGoalsAchived ;
 	}
 }
 

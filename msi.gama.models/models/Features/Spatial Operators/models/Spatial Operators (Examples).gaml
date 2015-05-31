@@ -90,7 +90,7 @@ experiment example_spatial_operators type: gui {
 	parameter 'Size background side:' var: background_size_side category: 'Population' ;
 
 	output {
-		display space_display refresh_every: 1{
+		display space_display {
 			graphics "background" {
 				draw world.shape color: rgb ([ 255 , 240 , 240 ]);
 			}

@@ -107,7 +107,7 @@ entities {
 	
 			draw circle(4) empty: true color: rgb('white');
 			draw string(self as int) color: rgb('white') size: 1;
-			draw state color: rgb('yellow') size: 10 °px at: my location + { 1, 1 } style: "bold";
+			draw state color: rgb('yellow') size: 10 °px at: my location + { 1, 1 } ;
 		}
 	
 		aspect icon {
@@ -139,21 +139,21 @@ experiment Displays type: gui {
 
 	float carrying -> { cycle = 0 ? 0 : (((100 * world.ant count (each.has_food or each.state = "followingRoad")) / length(world.ant)) with_precision 2) };
 	output {
-		display Ants background: rgb('white') refresh_every: 1 type: opengl {
+		display Ants background: rgb('white') type: opengl {
 		// First quadrant
 			image '../images/soil.jpg' position: { pos, pos } size: quadrant_size;
-			text "position {0,0} size {0.5, 0.5}: image, cells and ants as icons" size: font_size position: { pos + 0.01, pos + 0.03 } color: rgb("yellow") font: "Helvetica" style: bold;
+			text "position {0,0} size {0.5, 0.5}: image, cells and ants as icons" size: font_size position: { pos + 0.01, pos + 0.03 } color: rgb("yellow") font: "Helvetica" ;
 			agents "agents" transparency: 0.5 position: { pos, pos } size: quadrant_size value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { pos, pos } size: quadrant_size aspect: icon;
 
 			//Second quadrant
 			grid ant_grid lines: rgb("black") position: { 0.5, 0 } size: quadrant_size;
-			text "position {0.5,0} size {0.5, 0.5}: grid and simple ants" size: font_size position: { 0.51, 20 °px } color: rgb("white") font: "Helvetica" style: bold;
+			text "position {0.5,0} size {0.5, 0.5}: grid and simple ants" size: font_size position: { 0.51, 20 °px } color: rgb("white") font: "Helvetica";
 			species ant position: { 0.5, 0 } size: quadrant_size aspect: info;
 
 			//Third quadrant
 			quadtree 'qt' position: { 0, 0.5 } size: quadrant_size;
-			text "position {0,0.5} size {0.5, 0.5}: quadtree and ants" size: font_size position: { 0.01, 0.53 } color: rgb("blue") font: "Helvetica" style: bold;
+			text "position {0,0.5} size {0.5, 0.5}: quadtree and ants" size: font_size position: { 0.01, 0.53 } color: rgb("blue") font: "Helvetica";
 			species ant position: { 0, 0.5 } size: quadrant_size aspect: default;
 
 			//Fourth quadrant
@@ -162,9 +162,8 @@ experiment Displays type: gui {
 				data 'Idle' value: 100 - carrying color: rgb("blue");
 			}
 
-			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.51, 0.53 } color: rgb('black') size: font_size
-			style: bold;
-			text 'Carrying ants: ' + carrying + '%' position: { 0.75, 0.53 } color: rgb('black') size: font_size style: bold;
+			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.51, 0.53 } color: rgb('black') size: font_size;
+			text 'Carrying ants: ' + carrying + '%' position: { 0.75, 0.53 } color: rgb('black') size: font_size ;
 		}
 	}
 }
@@ -183,7 +182,7 @@ experiment Complete type: gui {
 
 
 	output {
-		display Ants background: rgb('white') refresh_every: 1{
+		display Ants background: rgb('white') {
 			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
@@ -208,7 +207,7 @@ experiment Batch type: batch repeat: 2 keep_seed: true until: (food_gathered = f
 	}
 	
 	permanent {
-		display Ants background: rgb('white') refresh_every: 1 {
+		display Ants background: rgb('white') {
 			chart "Food Gathered" type: series {
 				data "Food" value: food_gathered;
 			}
@@ -231,7 +230,7 @@ experiment Quadtree type: gui {
 			quadtree 'qt';
 		}
 
-		display Ants background: rgb('white') refresh_every: 1 {
+		display Ants background: rgb('white') {
 			grid ant_grid lines: rgb('black');
 			species ant aspect: default;
 		}

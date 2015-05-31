@@ -52,13 +52,13 @@ experiment maths type: gui {
 	parameter "Integration time step" var: integration_time_step <- 0.01 min: 0.0 max:0.1 category: "Integration method";  // the user defines the value of the integration step, the default value is 0.01 and this value must be between 0 and 1
 
 	output {
- 		display TimeSeries refresh_every: 1 {																	// creation of a display to show time series of the model, values are plotted at every step
+ 		display TimeSeries  {																	// creation of a display to show time series of the model, values are plotted at every step
 			chart "Lotka Volterra Time Series" type: series background: rgb('white') {  						// the chart, of type 'serie', is named Lotka Volterra Time Series, it shows quantities according to time, and the background is white
 				data 'Number of preys' value: first(LotkaVolterra_agent).nb_prey color: rgb('green') ;			// number of preys is plotted in green
 				data 'Number of predators' value: first(LotkaVolterra_agent).nb_predator color: rgb('red') ; 	// number of predators is plotted in red
 			}
 		}
-		display PhasePortrait refresh_every: 1 {																// creation of a display to show the phase portait, values are plotted at every time step
+		display PhasePortrait  {																// creation of a display to show the phase portait, values are plotted at every time step
 			chart "Lotka Volterra Phase Portrait" type: xy background: rgb('white') {							// the chart, os type 'xy', is named Lotka Volterra Phase portrait, it shows a quantity according to another one, and the background is white
 			data ' ' value: {predator_death_rate / predation_efficiency, prey_birth_rate/predation_rate} color: °blue; // equilibrium point
 			data 'Number of preys according to number of predators' value:{first(LotkaVolterra_agent).nb_prey, first(LotkaVolterra_agent).nb_predator} color: rgb('black') ;	// number of predators according to the number of preys plotted in black

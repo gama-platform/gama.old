@@ -107,7 +107,7 @@ entities {
 
 experiment morpho type: gui {
 	output {
-		display morpho refresh_every: 1 type: opengl tesselation:false{
+		display morpho type: opengl tesselation:false{
 			species section;
 			species riverPlan;
 		}

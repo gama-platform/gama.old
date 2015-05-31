@@ -105,7 +105,7 @@ experiment Simulation type : gui {
 	parameter 'Delta (I->R)' type: float var: _delta <- 0.01 category: "Parameters";	
 	
 	output {
-		display chart_3system_eq refresh_every : 1 {
+		display chart_3system_eq {
 			chart 'Split system' type : series background : rgb('lightGray') {
 				data 'susceptible' value : first(S_agt).Ssize color : rgb('green');
 				data 'infected0' value : first(I_agt).beta * first(I_agt).Isize color : rgb('white');
@@ -116,7 +116,7 @@ experiment Simulation type : gui {
 
 		}
 
-		display chart_1system_eq refresh_every : 1 {
+		display chart_1system_eq  {
 			chart 'unified system' type : series background : rgb('lightGray') {
 				data 'susceptible_maths' value : first(my_SIR_maths).Sm color : rgb('green');
 				data 'infected_maths' value : first(my_SIR_maths).Im color : rgb('red');

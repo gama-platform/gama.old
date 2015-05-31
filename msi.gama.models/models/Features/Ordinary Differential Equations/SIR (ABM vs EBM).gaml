@@ -113,21 +113,21 @@ experiment Simulation_ABM_EBM type: gui {
 			grid sir_grid lines: rgb("black");
 			species Host aspect: basic;	
 		}
-		display ABM refresh_every: 1 { 
+		display ABM { 
 			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
 				data 'susceptible' value: (Host as list) count (each.is_susceptible) color: rgb('green');
 				data 'infected' value: (Host as list) count (each.is_infected) color: rgb('red');
 				data 'immune' value: (Host as list) count (each.is_immune) color: rgb('blue');
 			}
 		}
-		display EBM refresh_every: 1 { 
+		display EBM { 
 			chart "SIR" type: series background: rgb('white') {
 				data 'S' value: first(node_agent).S color: rgb('green');
 				data 'I' value: first(node_agent).I color: rgb('red');
 				data 'R' value: first(node_agent).R color: rgb('blue');
 			}
 		}
-		display ABM_EBM refresh_every: 1 { 
+		display ABM_EBM  { 
 			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
 				data 'susceptible' value: (Host as list) count (each.is_susceptible) color: rgb('green')-50;
 				data 'infected' value: (Host as list) count (each.is_infected) color: rgb('red')-50;

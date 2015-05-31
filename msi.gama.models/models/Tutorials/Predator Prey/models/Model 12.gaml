@@ -77,7 +77,7 @@ species generic_species {
 	}
 	
 	reflex reproduce when: (energy >= energy_reproduce) and (flip(proba_reproduce)) {
-			int nb_offsprings <- 1 + rnd(nb_max_offsprings -1);
+			int nb_offsprings <- int(1 + rnd(nb_max_offsprings -1));
 			create species(self) number: nb_offsprings {
 				myCell <- myself.myCell ;
 				location <- myCell.location ;
@@ -182,7 +182,7 @@ experiment prey_predator type: gui {
 			species prey aspect: info ;
 			species predator aspect: info ;
 		}
-		display Population_information refresh_every: 5 {
+		display Population_information refresh: every(5) {
 			chart "Species evolution" type: series size: {1,0.5} position: {0, 0} {
 				data "number_of_preys" value: nb_preys color: #blue ;
 				data "number_of_predator" value: nb_predators color: #red ;

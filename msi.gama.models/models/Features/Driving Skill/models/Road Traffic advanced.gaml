@@ -215,7 +215,7 @@ species people skills: [advanced_driving] {
 experiment experiment_2D type: gui {
 	parameter "if true, simple data (simple track), if false complex one (Manhattan):" var: simple_data category: "GIS" ;
 	output {
-		display city_display refresh_every: 1 {
+		display city_display {
 			species road aspect: base ;
 			species intersection aspect: base;
 			species people aspect: base;

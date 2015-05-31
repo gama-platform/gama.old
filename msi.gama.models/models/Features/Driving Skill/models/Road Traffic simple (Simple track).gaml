@@ -74,7 +74,7 @@ experiment Simple type: gui {
 	parameter "Shapefile for the bounds:" var: shape_file_bounds category: "GIS" ;
 	
 	output {
-		display city_display refresh_every: 1 {
+		display city_display {
 			species road aspect: base ;
 			species people aspect: base;
 		}

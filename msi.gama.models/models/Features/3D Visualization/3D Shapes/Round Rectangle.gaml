@@ -35,31 +35,29 @@ global {
 		}
 	}  
 } 
- 
-entities { 
-	
-	species mySquare{
 
-		float width ;
-		float height;
-		rgb color;	
+species mySquare{
+	float width ;
+	float height;
+	rgb color;	
 		
-		reflex updateShape{
-			width <- float(rnd(maxSize));
-			height <-float(rnd(maxSize));
-			color <- rgb (blueCombination[rnd(3)]);
+	reflex updateShape{
+		width <- float(rnd(maxSize));
+		height <-float(rnd(maxSize));
+		color <- rgb (blueCombination[rnd(3)]);
 			
-		}
-		aspect RoundCorner {
-			draw rectangle({self.width, self.height}) color: color border:color rounded:true depth:elevation; 
-		}
-	}	
+	}
+
+	aspect RoundCorner {
+		draw rectangle(self.width, self.height) smooth 0.5 color: color border:color  depth:elevation; 
+	}
+}	
 	
 
-}
+
 experiment Display  type: gui {
 	output {
-		display Poincare refresh_every: 1  type:opengl ambient_light:50 {
+		display Poincare type:opengl ambient_light:50 {
 			
 			image imageRaster.path ;
 			species mySquare aspect:RoundCorner transparency: 0.5 position: {0,0,0.1} ;	

@@ -267,7 +267,7 @@ entities {
 
 experiment examples type : gui {
 	output {		
-		display SI refresh_every : 1 {
+		display SI  {
 			chart 'examplePreSI' type : series background : rgb('lightGray') position: {0,0} size:{1,0.5} {
 				data "S" value : first(preSI).S color : rgb('green');
 				data "I" value : first(preSI).I color : rgb('red');
@@ -278,7 +278,7 @@ experiment examples type : gui {
 			}
 		}
 
-		display SISs refresh_every : 1 {
+		display SISs  {
 			chart 'examplePreSIS' type : series background : rgb('lightGray') position: {0,0} size:{1,0.5} {
 				data "S" value : first(preSIS).S color : rgb('green');
 				data "I" value : first(preSIS).I color : rgb('red');
@@ -289,7 +289,7 @@ experiment examples type : gui {
 			}			
 		}
 		
-		display SIR refresh_every : 1 {
+		display SIR  {
 			chart 'examplePreSIR' type : series background : rgb('lightGray') position: {0,0} size:{1,0.5} {
 				data "S" value : first(preSIR).S color : rgb('green');
 				data "I" value : first(preSIR).I color : rgb('red');
@@ -302,7 +302,7 @@ experiment examples type : gui {
 			}			
 		}
 
-		display SIRS refresh_every : 1 {
+		display SIRS  {
 			chart 'examplePreSIRS' type : series background : rgb('lightGray') position: {0,0} size:{1,0.5} {
 				data "S" value : first(preSIRS).S color : rgb('green');
 				data "I" value : first(preSIRS).I color : rgb('red');
@@ -315,7 +315,7 @@ experiment examples type : gui {
 			}			
 		}
 
-		display SEIR refresh_every : 1 {
+		display SEIR  {
 			chart 'examplePreSEIR' type : series background : rgb('lightGray') position: {0,0} size:{1,0.5} {
 				data "S" value : first(preSEIR).S color : rgb('green');
 				data "E" value : first(preSEIR).E color : rgb('yellow');
@@ -330,7 +330,7 @@ experiment examples type : gui {
 			}
 		}
 
-		display LV refresh_every : 1 {
+		display LV  {
 			chart 'examplePreLV' type : series background : rgb('lightGray') position: {0,0} size:{1,0.5} {
 				data "x" value : first(preLV).x color : rgb('yellow');
 				data "y" value : first(preLV).y color : rgb('blue');
@@ -345,7 +345,7 @@ experiment examples type : gui {
 
 experiment diff_predefined_defined_by_user type : gui {
 	output {
-		display diff refresh_every : 1 {
+		display diff  {
 			chart 'diffSI' type : series background : rgb('lightGray')  position: {0,0} size:{0.5, 0.33} {
 				data "dS" value : (first(userSI).S - first(preSI).S) color : rgb('yellow');
 				data "dI" value : (first(userSI).I - first(preSI).I) color : rgb('blue');

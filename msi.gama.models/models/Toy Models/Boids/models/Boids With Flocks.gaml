@@ -155,15 +155,14 @@ entities {
 
 	species flock_agents_viewer {
 		aspect default {
-			draw "Flocks: " + (string(length(list(flock)))) at: { width_and_height_of_environment - 810, (width_and_height_of_environment) - 5 } color: rgb("blue") size: 80 style: bold;
+			draw "Flocks: " + (string(length(list(flock)))) at: { width_and_height_of_environment - 810, (width_and_height_of_environment) - 5 } color: rgb("blue") size: 80 ;
 		}
 
 	}
 
 	species boids_agents_viewer {
 		aspect default {
-			draw text: "Boids: " + (string(length(list(boids)))) at: { width_and_height_of_environment - 810, (width_and_height_of_environment) - 165 } color: rgb("blue") size: 80 style:
-			bold;
+			draw text: "Boids: " + (string(length(list(boids)))) at: { width_and_height_of_environment - 810, (width_and_height_of_environment) - 165 } color: rgb("blue") size: 80 ;
 		}
 
 	}
@@ -171,7 +170,7 @@ entities {
 	species boids_in_flock_viewer {
 		aspect default {
 			draw text: "Boids in flocks: " + (string(number_of_agents - (length(list(boids))))) at: { width_and_height_of_environment - 810, width_and_height_of_environment - 85 } color:
-			rgb("blue") size: 80 style: bold;
+			rgb("blue") size: 80 ;
 		}
 
 	}

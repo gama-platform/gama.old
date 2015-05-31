@@ -234,7 +234,7 @@ grid cell width: 10 height: 10 neighbours: 4{
 species dummy {
 	string id;
 	init {
-		add vertex: self to: the_graph;
+		add node: self to: the_graph;
 	}
 	aspect default {
 		draw circle(2) color: rgb("yellow");

@@ -116,14 +116,14 @@ experiment Simulation type : gui {
 	parameter 'Delta (I->R)' type: float var: delta <- 0.01 category: "Parameters";
 	
 	output {
-		display "split system" refresh_every : 1 {
+		display "split system" {
 			chart 'Susceptible' type : series background : rgb ( 'lightGray' ) {
 				data 'susceptible' value : first ( S_agt ) . Ssize color : rgb ( 'green' ) ;
 				data 'infected' value : first ( I_agt ) . Isize color : rgb ( 'red' ) ;
 				data 'removed' value : first ( R_agt ) . Rsize color : rgb ( 'blue' ) ;
 			}
 		}
-		display "unified system" refresh_every : 1 {
+		display "unified system"{
 			chart 'Susceptible' type : series background : rgb ( 'lightGray' ) {
 				data 'susceptible_maths' value : first( SIR_agt ).Sm color : rgb ( 'green' ) ;
 				data 'infected_maths' value : first( SIR_agt ).Im color : rgb ( 'red' ) ;
