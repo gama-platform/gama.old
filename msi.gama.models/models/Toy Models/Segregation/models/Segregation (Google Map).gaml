@@ -5,6 +5,7 @@ import "../include/Common Schelling Segregation.gaml"
 global {
 	list<space> free_places <- []; 
 	list<space> all_places <- [];
+	geometry shape <- square(dimensions);
 	float percent_similar_wanted <- 0.6;
 	int neighbours_distance <- 4; 
 	int number_of_groups <- 3;
@@ -27,32 +28,30 @@ global {
 		free_places <- copy(all_places);
 	}  
 }
-environment width: dimensions height: dimensions {
-	grid space width: dimensions height: dimensions neighbours: 8 use_individual_shapes: false use_regular_agents: false frequency: 0 ; 
-} 
-entities { 
-	species people parent: base  {
 
-		
-		const color type: rgb <- colors at (rnd (number_of_groups - 1));
-		list<people> my_neighbours -> {(self neighbours_at neighbours_distance) of_species people};
-		init {
-			location <- (one_of(free_places)).location; 
-			remove location as space from: free_places;
-		} 
-		reflex migrate when: !is_happy { 
-			add location as space to: free_places;
-			location <- any(free_places).location;
-			remove location as space from: free_places;
-		}
-		aspect geom {
-			draw square(1) color: color  ;
-		}
-		aspect default {
-			draw  square(2) color: rgb("black") ;
-		}
+grid space width: dimensions height: dimensions neighbours: 8 use_individual_shapes: false use_regular_agents: false frequency: 0 ; 
+ 
+
+species people parent: base  {
+	const color type: rgb <- colors at (rnd (number_of_groups - 1));
+	list<people> my_neighbours -> {(self neighbours_at neighbours_distance) of_species people};
+	init {
+		location <- (one_of(free_places)).location; 
+		remove location as space from: free_places;
+	} 
+	reflex migrate when: !is_happy { 
+		add location as space to: free_places;
+		location <- any(free_places).location;
+		remove location as space from: free_places;
+	}
+	aspect geom {
+		draw square(1) color: color  ;
+	}
+	aspect default {
+		draw  square(2) color: rgb("black") ;
 	}
 }
+
 
 experiment schelling type: gui {	
 	output {

@@ -15,22 +15,22 @@ global {
 	}   
 } 
 
-entities {
-	grid cell width: env_width height: env_height neighbours: 8 use_regular_agents: false {
-		center closest_center <- nil update: center closest_to(self);
-		rgb color <- rgb('white') update: (closest_center).color;
-	}
-	
-	species center skills: [moving] { 
-		rgb color <- rgb([rnd (255),rnd (255),rnd (255)]);        
-		reflex wander {
-			do wander amplitude: 90;
-		}  
-		aspect base {
-			draw circle(1.0) color: color;
-		}
+
+grid cell width: env_width height: env_height neighbours: 8 use_regular_agents: false {
+	center closest_center <- nil update: center closest_to(self);
+	rgb color <- rgb('white') update: (closest_center).color;
+}
+
+species center skills: [moving] { 
+	rgb color <- rgb([rnd (255),rnd (255),rnd (255)]);        
+	reflex wander {
+		do wander amplitude: 90;
+	}  
+	aspect base {
+		draw circle(1.0) color: color;
 	}
 }
+
 
 
 experiment voronoi type: gui{ 

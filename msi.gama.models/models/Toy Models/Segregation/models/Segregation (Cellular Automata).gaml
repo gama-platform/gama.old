@@ -30,25 +30,25 @@ global torus: true{
 
 }
 
-entities {
-	grid space parent: base width: dimensions height: dimensions neighbours: 8  {
-		rgb color <- black;
-		list<space> my_neighbours <- self neighbours_at neighbours_distance;
-		action migrate {
-			if !is_happy {
-				space pp <- any(my_neighbours where (each.color = black));
-				if (pp != nil) {
-					free_places <+ self;
-					free_places >- pp;
-					all_people >- self;
-					all_people << pp;
-					set pp.color <- color;
-					set color <- black;
-				}
+
+grid space parent: base width: dimensions height: dimensions neighbours: 8  {
+	rgb color <- black;
+	list<space> my_neighbours <- self neighbours_at neighbours_distance;
+	action migrate {
+		if !is_happy {
+			space pp <- any(my_neighbours where (each.color = black));
+			if (pp != nil) {
+				free_places <+ self;
+				free_places >- pp;
+				all_people >- self;
+				all_people << pp;
+				set pp.color <- color;
+				set color <- black;
 			}
 		}
 	}
 }
+
 
 experiment schelling type: gui {
 	output {

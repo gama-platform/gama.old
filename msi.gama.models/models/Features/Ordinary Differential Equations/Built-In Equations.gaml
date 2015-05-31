@@ -35,235 +35,235 @@ global {
 	}
 }
 
-entities {
-	species preSI {
-		float t;
-    	int N;
-		float I ; 
-		float S <- N - I; 
-   		float h;
-   		float beta<-0.4;
 
-		// must be followed with exact order S, I, t  and N,beta
-		equation eqSI type: SI vars: [S,I,t] params: [N,beta] ;
-		reflex solving {solve eqSI method:rk4 step:h;}
-		
-	}
+species preSI {
+	float t;
+	int N;
+	float I ; 
+	float S <- N - I; 
+	float h;
+	float beta<-0.4;
 
-	species userSI {
-		float t;
-    	int N;
-		float I ; 
-		float S <- N - I; 
-   		float h;
-   		float beta<-0.4;
-		
-		equation eqSI {
-			diff(S,t) = -beta * S * I / N ;
-			diff(I,t) = beta * S * I / N ;
-		}		
-		reflex solving{solve eqSI method:rk4 step:h;}
-		
-	}
-
-
-	species preSIS {
-		float t;
-    	int N;
-		float I ; 
-		float S <- N - I; 
-   		float h;
-   		float beta<-0.4;
-   		float gamma<-0.01;    		
-
-		// must be followed with exact order S, I, t  and N,beta
-		equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma] ;
-		reflex solving {
-			solve eqSIS method:rk4 step:h;
-		}
-	}
-
-	species userSIS {
-		float t;
-    	int N;
-		float I ; 
-		float S <- N - I; 
-   		float h;
-   		float beta<-0.4;
-   		float gamma<-0.01;    		
-		
-		equation eqSIS {
-			diff(S,t) = -beta * S * I / N + gamma * I;
-			diff(I,t) = beta * S * I / N - gamma * I;
-		}		
-		reflex solving {	
-			solve eqSIS method:rk4 step:h;
-		}
-	}
+	// must be followed with exact order S, I, t  and N,beta
+	equation eqSI type: SI vars: [S,I,t] params: [N,beta] ;
+	reflex solving {solve eqSI method:rk4 step:h;}
 	
-	
-	species preSIR {
-		float t;
-    	int N;
-		float I ; 
-		float S <- N - I; 
-		float R <- 0.0; 
-   		float h;
-   		float beta<-0.4;
-   		float gamma<-0.01; 
-
-		// must be followed with exact order S, I, R, t  and N,beta,delta
-		equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma] ;
-		reflex solving {	
-			solve eqSIR method:rk4 step:h;
-		}
-	}
-
-	species userSIR{
-		float t;
-    	int N;
-		float I ; 
-		float S <- N - I; 
-		float R <- 0.0; 
-   		float h;
-   		float beta<-0.4;
-   		float gamma<-0.01; 				
-		
-		equation eqSIR {
-			diff(S,t) = (- beta * S * I / N);
-			diff(I,t) = (beta * S * I / N) - (gamma * I);
-			diff(R,t) = (gamma * I);
-		}		
-		reflex solving {
-			solve eqSIR method:rk4 step:h;
-		}
-	}
-
-
-	species preSIRS {
-		float t;
-    	int N;
-		float I ; 
-		float S <- N - I; 
-		float R <- 0.0; 
-   		float h;
-   		float beta<-0.4;
-   		float gamma<-0.01; 
-   		float omega <- 0.05;
-   		float mu <- 0.01;
-
-		// must be followed with exact order S, I, R, t  and N,beta,delta
-		equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu] ;
-		reflex solving {
-			solve eqSIRS method:rk4 step:h;
-		}
-	}
-
-	species userSIRS {
-		float t;
-    	int N;
-		float I ; 
-		float S <- N - I; 
-		float R <- 0.0; 
-   		float h;
-   		float beta<-0.4;
-   		float gamma<-0.01; 	
-   		float omega <- 0.05;
-   		float mu <- 0.01;   					
-		
-		equation eqSIRS {
-			 diff(S,t) = mu * N + omega * R + - beta * S * I / N - mu * S ;
-			 diff(I,t) = beta * S * I / N - gamma * I - mu * I ;
-			 diff(R,t) = gamma * I - omega * R - mu * R ;
-		}		
-		reflex solving {
-			solve eqSIRS method:rk4 step:h;
-		}
-	}
-
-
-	species preSEIR {
-		float t;
-    	int N;
-		float S <- N - I;     	
-		float E <- 0.0;
-		float I ; 
-		float R <- 0.0; 
-   		float h;
-   		float beta<-0.4;
-   		float gamma<-0.01; 
-   		float sigma <- 0.05;
-   		float mu <- 0.01;
-
-		// must be followed with exact order S, E, I, R, t  and N,beta,gamma,sigma,mu
-		equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu] ;
-		reflex solving {
-			solve eqSEIR method:rk4 step:h;
-		}
-	}
-
-	species userSEIR {
-		float t;
-    	int N;
-		float S <- N - I;     	
-		float E <- 0.0;
-		float I ; 
-		float R <- 0.0; 
-   		float h;
-   		float beta<-0.4;
-   		float gamma<-0.01; 	
-   		float sigma <- 0.05;
-   		float mu <- 0.01;   					
-		
-		equation eqSEIR {
-			diff(S,t) = mu * N - beta * S * I / N - mu * S ;
-			diff(E,t) = beta * S * I / N - mu * E - sigma * E ;
-			diff(I,t) = sigma * E - mu * I - gamma * I;
-			diff(R,t) = gamma * I - mu * R ;
-		}		
-		reflex solving {
-		solve eqSEIR method:rk4 step:h;
-		}
-	}
-
-
-	species preLV {
-		float t;
-		float x ; 
-		float y ; 
-   		float h;
-		float alpha <- 0.8 ;
-		float beta  <- 0.3 ;
-		float gamma <- 0.2 ;
-		float delta <- 0.85;
-
-		// must be followed with exact order x, y, t  and  alpha,beta,delta,gamma
-		equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;
-		reflex solving {
-			solve eqLV method:rk4 step:h;
-		}
-	}
-
-	species userLV {
-		float t;
-		float x ; 
-		float y ; 
-   		float h;
-		float alpha <- 0.8 ;
-		float beta  <- 0.3 ;
-		float gamma <- 0.2 ;
-		float delta <- 0.85;
-		
-		equation eqLV { 
-			diff(x,t) =   x * (alpha - beta * y);
-			diff(y,t) = - y * (delta - gamma * x);
-        }		
-		reflex solving {
-			solve eqLV method:rk4 step:h;
-		}
-	}
-
 }
+
+species userSI {
+	float t;
+	int N;
+	float I ; 
+	float S <- N - I; 
+	float h;
+	float beta<-0.4;
+	
+	equation eqSI {
+		diff(S,t) = -beta * S * I / N ;
+		diff(I,t) = beta * S * I / N ;
+	}		
+	reflex solving{solve eqSI method:rk4 step:h;}
+	
+}
+
+
+species preSIS {
+	float t;
+	int N;
+	float I ; 
+	float S <- N - I; 
+	float h;
+	float beta<-0.4;
+	float gamma<-0.01;    		
+
+	// must be followed with exact order S, I, t  and N,beta
+	equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma] ;
+	reflex solving {
+		solve eqSIS method:rk4 step:h;
+	}
+}
+
+species userSIS {
+	float t;
+	int N;
+	float I ; 
+	float S <- N - I; 
+	float h;
+	float beta<-0.4;
+	float gamma<-0.01;    		
+	
+	equation eqSIS {
+		diff(S,t) = -beta * S * I / N + gamma * I;
+		diff(I,t) = beta * S * I / N - gamma * I;
+	}		
+	reflex solving {	
+		solve eqSIS method:rk4 step:h;
+	}
+}
+
+
+species preSIR {
+	float t;
+	int N;
+	float I ; 
+	float S <- N - I; 
+	float R <- 0.0; 
+	float h;
+	float beta<-0.4;
+	float gamma<-0.01; 
+
+	// must be followed with exact order S, I, R, t  and N,beta,delta
+	equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma] ;
+	reflex solving {	
+		solve eqSIR method:rk4 step:h;
+	}
+}
+
+species userSIR{
+	float t;
+	int N;
+	float I ; 
+	float S <- N - I; 
+	float R <- 0.0; 
+	float h;
+	float beta<-0.4;
+	float gamma<-0.01; 				
+	
+	equation eqSIR {
+		diff(S,t) = (- beta * S * I / N);
+		diff(I,t) = (beta * S * I / N) - (gamma * I);
+		diff(R,t) = (gamma * I);
+	}		
+	reflex solving {
+		solve eqSIR method:rk4 step:h;
+	}
+}
+
+
+species preSIRS {
+	float t;
+	int N;
+	float I ; 
+	float S <- N - I; 
+	float R <- 0.0; 
+	float h;
+	float beta<-0.4;
+	float gamma<-0.01; 
+	float omega <- 0.05;
+	float mu <- 0.01;
+
+	// must be followed with exact order S, I, R, t  and N,beta,delta
+	equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu] ;
+	reflex solving {
+		solve eqSIRS method:rk4 step:h;
+	}
+}
+
+species userSIRS {
+	float t;
+	int N;
+	float I ; 
+	float S <- N - I; 
+	float R <- 0.0; 
+	float h;
+	float beta<-0.4;
+	float gamma<-0.01; 	
+	float omega <- 0.05;
+	float mu <- 0.01;   					
+	
+	equation eqSIRS {
+		 diff(S,t) = mu * N + omega * R + - beta * S * I / N - mu * S ;
+		 diff(I,t) = beta * S * I / N - gamma * I - mu * I ;
+		 diff(R,t) = gamma * I - omega * R - mu * R ;
+	}		
+	reflex solving {
+		solve eqSIRS method:rk4 step:h;
+	}
+}
+
+
+species preSEIR {
+	float t;
+	int N;
+	float S <- N - I;     	
+	float E <- 0.0;
+	float I ; 
+	float R <- 0.0; 
+	float h;
+	float beta<-0.4;
+	float gamma<-0.01; 
+	float sigma <- 0.05;
+	float mu <- 0.01;
+
+	// must be followed with exact order S, E, I, R, t  and N,beta,gamma,sigma,mu
+	equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu] ;
+	reflex solving {
+		solve eqSEIR method:rk4 step:h;
+	}
+}
+
+species userSEIR {
+	float t;
+	int N;
+	float S <- N - I;     	
+	float E <- 0.0;
+	float I ; 
+	float R <- 0.0; 
+	float h;
+	float beta<-0.4;
+	float gamma<-0.01; 	
+	float sigma <- 0.05;
+	float mu <- 0.01;   					
+	
+	equation eqSEIR {
+		diff(S,t) = mu * N - beta * S * I / N - mu * S ;
+		diff(E,t) = beta * S * I / N - mu * E - sigma * E ;
+		diff(I,t) = sigma * E - mu * I - gamma * I;
+		diff(R,t) = gamma * I - mu * R ;
+	}		
+	reflex solving {
+	solve eqSEIR method:rk4 step:h;
+	}
+}
+
+
+species preLV {
+	float t;
+	float x ; 
+	float y ; 
+	float h;
+	float alpha <- 0.8 ;
+	float beta  <- 0.3 ;
+	float gamma <- 0.2 ;
+	float delta <- 0.85;
+
+	// must be followed with exact order x, y, t  and  alpha,beta,delta,gamma
+	equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;
+	reflex solving {
+		solve eqLV method:rk4 step:h;
+	}
+}
+
+species userLV {
+	float t;
+	float x ; 
+	float y ; 
+	float h;
+	float alpha <- 0.8 ;
+	float beta  <- 0.3 ;
+	float gamma <- 0.2 ;
+	float delta <- 0.85;
+	
+	equation eqLV { 
+		diff(x,t) =   x * (alpha - beta * y);
+		diff(y,t) = - y * (delta - gamma * x);
+    }		
+	reflex solving {
+		solve eqLV method:rk4 step:h;
+	}
+}
+
+
 
 experiment examples type : gui {
 	output {		

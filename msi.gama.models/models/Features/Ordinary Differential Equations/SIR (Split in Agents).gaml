@@ -47,65 +47,65 @@ global {
 	}
 }
 
-entities {
-	species S_agt {
-		float t ;		
-		float Ssize ;
-		
-		float beta ;
-		
-		equation evol simultaneously: [ first ( I_agt ) , first ( R_agt ) ] {
-			diff ( first ( S_agt ) . Ssize , t ) = 
-				( - beta * first ( S_agt ) . Ssize * first (	I_agt ) . Isize / N ) ;
-		}
-		
-		reflex solving {solve evol method : "rk4" step : 0.01 ;}
-	}
-	
-	species I_agt {
-		float t ;
-		float Isize ; // number of infected
-		
-		float beta ;
-		float delta ;
-	
-		equation evol simultaneously : [ first ( S_agt ) , first ( R_agt ) ] {
-			diff ( first ( I_agt ) . Isize , t ) = 
-				( beta * first ( S_agt ) . Ssize * first ( I_agt ) . Isize / N ) 
-				- ( delta * first ( I_agt ) . Isize ) ;
-		}
-	}
-	
-	species R_agt {
-		float t ;		
-		float Rsize ;
-		
-		float delta ;
 
-		equation evol simultaneously : [ first ( S_agt ) , first ( I_agt ) ] {
-			diff ( first ( R_agt ) . Rsize , t ) = 
-				( delta * first ( I_agt ) . Isize ) ;
-		}
+species S_agt {
+	float t ;		
+	float Ssize ;
+	
+	float beta ;
+	
+	equation evol simultaneously: [ first ( I_agt ) , first ( R_agt ) ] {
+		diff ( first ( S_agt ) . Ssize , t ) = 
+			( - beta * first ( S_agt ) . Ssize * first (	I_agt ) . Isize / N ) ;
 	}
 	
-	species SIR_agt {
-		float t ;
-		float Im ;
-		float Sm ;
-		float Rm ;
-		
-		float beta ;
-		float delta ;
-		
-		equation SIR {
-			diff ( Sm , t ) = ( - beta * Sm * Im / N ) ; 
-			diff ( Im , t ) = ( beta * Sm	* Im / N ) - ( delta * Im ) ; 
-			diff ( Rm , t ) = ( delta * Im ) ;
-		}
-		
-		reflex solving {solve SIR method : "rk4" step : 0.01 ;}
+	reflex solving {solve evol method : "rk4" step : 0.01 ;}
+}
+
+species I_agt {
+	float t ;
+	float Isize ; // number of infected
+	
+	float beta ;
+	float delta ;
+
+	equation evol simultaneously : [ first ( S_agt ) , first ( R_agt ) ] {
+		diff ( first ( I_agt ) . Isize , t ) = 
+			( beta * first ( S_agt ) . Ssize * first ( I_agt ) . Isize / N ) 
+			- ( delta * first ( I_agt ) . Isize ) ;
 	}
 }
+
+species R_agt {
+	float t ;		
+	float Rsize ;
+	
+	float delta ;
+
+	equation evol simultaneously : [ first ( S_agt ) , first ( I_agt ) ] {
+		diff ( first ( R_agt ) . Rsize , t ) = 
+			( delta * first ( I_agt ) . Isize ) ;
+	}
+}
+
+species SIR_agt {
+	float t ;
+	float Im ;
+	float Sm ;
+	float Rm ;
+	
+	float beta ;
+	float delta ;
+	
+	equation SIR {
+		diff ( Sm , t ) = ( - beta * Sm * Im / N ) ; 
+		diff ( Im , t ) = ( beta * Sm	* Im / N ) - ( delta * Im ) ; 
+		diff ( Rm , t ) = ( delta * Im ) ;
+	}
+	
+	reflex solving {solve SIR method : "rk4" step : 0.01 ;}
+}
+
 
 experiment Simulation type : gui {
 	parameter 'Number of Susceptible' type: int var: number_S <- 495 category: "Initial population"; // The initial number of susceptibles

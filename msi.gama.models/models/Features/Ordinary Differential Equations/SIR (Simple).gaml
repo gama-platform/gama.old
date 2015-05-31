@@ -12,30 +12,30 @@ global {
 	}
 }
 
-entities {
-	species agent_with_SIR_dynamic {
-		int N <- 1500 ;
-		int iInit <- 1;		
 
-	    float t;  
-		float S <- N - float(iInit); 	      
-		float I <- float(iInit); 
-		float R <- 0.0; 
-		
-		float alpha <- 0.2 min: 0.0 max: 1.0;
-		float beta <- 0.8 min: 0.0 max: 1.0;
+species agent_with_SIR_dynamic {
+	int N <- 1500 ;
+	int iInit <- 1;		
 
-		float h <- 0.01;
-	   
-		equation SIR{ 
-			diff(S,t) = (- beta * S * I / N);
-			diff(I,t) = (beta * S * I / N) - (alpha * I);
-			diff(R,t) = (alpha * I);
-		}
-	                
-	    reflex solving {solve SIR method: "rk4" step: h cycle_length: 1/h ;	    }    
+    float t;  
+	float S <- N - float(iInit); 	      
+	float I <- float(iInit); 
+	float R <- 0.0; 
+	
+	float alpha <- 0.2 min: 0.0 max: 1.0;
+	float beta <- 0.8 min: 0.0 max: 1.0;
+
+	float h <- 0.01;
+   
+	equation SIR{ 
+		diff(S,t) = (- beta * S * I / N);
+		diff(I,t) = (beta * S * I / N) - (alpha * I);
+		diff(R,t) = (alpha * I);
 	}
+                
+    reflex solving {solve SIR method: "rk4" step: h cycle_length: 1/h ;	    }    
 }
+
 
 experiment maths type: gui {
 	output { 

@@ -40,62 +40,62 @@ global {
 
 }
 
-entities {
-	species building {
-		string type;
-		rgb color <- rgb('gray');
-		int height;
-		aspect base {
-			draw shape color: color depth: height;
-		}
 
+species building {
+	string type;
+	rgb color <- rgb('gray');
+	int height;
+	aspect base {
+		draw shape color: color depth: height;
 	}
 
-	species road {
-		rgb color <- rgb('black');
-		aspect base {
-			draw shape color: color;
-		}
+}
 
+species road {
+	rgb color <- rgb('black');
+	aspect base {
+		draw shape color: color;
 	}
 
-	species people skills: [moving] {
-		rgb color <- rgb('yellow');
-		building living_place <- nil;
-		building working_place <- nil;
-		int start_work;
-		int end_work;
-		string objectif;
-		point the_target <- nil;
-		reflex time_to_work when: day_time = start_work {
-			objectif <- 'working';
-			the_target <- any_location_in(working_place);
-		}
+}
 
-		reflex time_to_go_home when: day_time = end_work {
-			objectif <- 'go home';
-			the_target <- any_location_in(living_place);
-		}
+species people skills: [moving] {
+	rgb color <- rgb('yellow');
+	building living_place <- nil;
+	building working_place <- nil;
+	int start_work;
+	int end_work;
+	string objectif;
+	point the_target <- nil;
+	reflex time_to_work when: day_time = start_work {
+		objectif <- 'working';
+		the_target <- any_location_in(working_place);
+	}
 
-		reflex move when: the_target != nil {
-			do goto target: the_target on: the_graph;
-			switch the_target {
-				match location {
-					the_target <- nil;
-					location <- {location.x, location.y,objectif  = 'go home' ?  living_place.height : working_place.height};
-				}
+	reflex time_to_go_home when: day_time = end_work {
+		objectif <- 'go home';
+		the_target <- any_location_in(living_place);
+	}
 
+	reflex move when: the_target != nil {
+		do goto target: the_target on: the_graph;
+		switch the_target {
+			match location {
+				the_target <- nil;
+				location <- {location.x, location.y,objectif  = 'go home' ?  living_place.height : working_place.height};
 			}
 
 		}
 
-		aspect base {
-			draw sphere(10) color: color;
-		}
+	}
 
+	aspect base {
+		draw sphere(10) color: color;
 	}
 
 }
+
+
 
 experiment road_traffic type: gui {
 	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS';

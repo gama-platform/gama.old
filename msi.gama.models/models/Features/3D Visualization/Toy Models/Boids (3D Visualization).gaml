@@ -95,30 +95,25 @@ global torus: torus_environment{
 	}  
 }
 
-entities {
-	species name: boids_goal skills: [moving] {
-		const range type: float init: 20.0;
-		const size type: float init: 10.0;
-		int radius <-3;
-		
-		/*reflex wander { 
-			do wander amplitude: 45 speed: 20;  
-			goal <- location;
-		}*/
-		
-		reflex wander_in_circle{
 
-			set location <- {world.shape.width/2 + world.shape.width/2 * cos (time*radius_speed), world.shape.width/2 + world.shape.width/2 * sin (time*radius_speed)};
-			goal <- location;
-		}
-		
-		aspect default {
-			draw circle(10) color: rgb ('red');
-			draw circle(40) color: rgb ('orange') size: 40 empty: true;
-		}
-		
-		aspect sphere{
-			draw sphere(10) color: rgb('white');
+species boids_goal skills: [moving] {
+	const range type: float init: 20.0;
+	const size type: float init: 10.0;
+	int radius <-3;
+	
+	reflex wander_in_circle{
+
+		set location <- {world.shape.width/2 + world.shape.width/2 * cos (time*radius_speed), world.shape.width/2 + world.shape.width/2 * sin (time*radius_speed)};
+		goal <- location;
+	}
+	
+	aspect default {
+		draw circle(10) color: rgb ('red');
+		draw circle(40) color: rgb ('orange') size: 40 empty: true;
+	}
+	
+	aspect sphere{
+		draw sphere(10) color: rgb('white');
 		}
 	} 
 	
@@ -134,185 +129,185 @@ entities {
 			action compute_mass_center type: point {
 				loop o over: others {
 					if condition: dead(o) { // �a peut faire lever un message "warning" dans la vue "Errors" 
-						do write message: 'in ' + name + ' agent with others contains death agents'; 
-					} 
-				}
-				 
-				return (length(others) > 0) ? (mean (others collect (each.location)) ) : location;
+					do write message: 'in ' + name + ' agent with others contains death agents'; 
+				} 
 			}
-
-			reflex separation when: apply_separation {
-			}
-			
-			reflex alignment when: apply_alignment {
-			}
-			
-			reflex cohesion when: apply_cohesion {
-				point acc <- (self compute_mass_center []) - location;
-				acc <- acc / cohesion_factor;
-				velocity <- velocity + acc;
-			}
-			
-			reflex avoid when: apply_avoid {
-			}		
-		}
-		
-		reflex capture_release_boids {
-			 list<boids_delegation> removed_components <- boids_delegation where ((each distance_to location) > cohesionIndex );
-			 if !(empty (removed_components)) {
-			 	release removed_components;
-			 }
 			 
-			 list<boids> added_components <- boids where ((each distance_to location) < cohesionIndex );
-			 if !(empty (added_components)) {
-			 	capture added_components as: boids_delegation;
-			 }
+			return (length(others) > 0) ? (mean (others collect (each.location)) ) : location;
 		}
-		
-		reflex dispose when: ((length (members)) < 2) {
-			 release members;
-			 do die;
-		}
-		
-		reflex merge_nearby_flocks {
-			list<flock> nearby_flocks<- (flock overlapping (shape +  merging_distance));
-			if !(empty (nearby_flocks)) {
-			 	nearby_flocks <- nearby_flocks sort_by (length (each.members));
-			 	flock largest_flock <- nearby_flocks at ((length (nearby_flocks)) - 1);
-			 	 
-			 	remove largest_flock from: nearby_flocks;
-			 	 
-			 	list<boids> added_components <- [];
-			 	loop one_flock over: nearby_flocks {
-			 		release one_flock.members returns: released_boids; 
-			 		
-			 		loop rb over: released_boids {
-			 			add boids(rb) to: added_components;
-			 		}
-			 	}
-			 	
-			 	if !(empty (added_components)) { 
-			 		ask largest_flock {
-			 			capture added_components as: boids_delegation;
-			 		}
-			 	} 
-			 }
-		}
-		
-		aspect default {
-			draw shape color: color;
-		}
-	}
-	
-	
-	species aggregatedboids{
-		reflex updateLocation{
-		  location <- mean (boids collect (each.location));	
-		}
-		aspect base{   		
-			draw sphere(10) color: rgb('red');
-		}
-	}
-	
-	species boids skills: [moving] {
-		float speed max: maximal_speed <- maximal_speed;
-		float range <- minimal_distance * 2;
-		point velocity <- {0,0};
-		int size <- 5;
-		float hue <- rnd(360) / 360;
-		
-		list<boids> others update: ((boids overlapping (circle (range)))  - self);
-		
-		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) )  : location;
-		
+
 		reflex separation when: apply_separation {
-			point acc <- {0,0}; 
-			loop boid over: (boids overlapping (circle(minimal_distance)))  {
-				acc <- acc - ((location of boid) - location);
-			}  
-			velocity <- velocity + acc;
 		}
 		
 		reflex alignment when: apply_alignment {
-			point acc <- mean (others collect (each.velocity)) - velocity;
-			velocity <- velocity + (acc / alignment_factor);
 		}
-		 
+		
 		reflex cohesion when: apply_cohesion {
-			point acc <- mass_center - location;
+			point acc <- (self compute_mass_center []) - location;
 			acc <- acc / cohesion_factor;
-			velocity <- velocity + acc; 
+			velocity <- velocity + acc;
 		}
 		
 		reflex avoid when: apply_avoid {
-			point acc <- {0,0};
-			list<obstacle> nearby_obstacles <- (obstacle overlapping (circle (range)) );
-			loop obs over: nearby_obstacles {
-				acc <- acc - ((location of obs) - my (location));
-			}
-			velocity <- velocity + acc; 
-		}
-		
-		action bounding {
-			if  !(torus_environment) {
-				if  (location.x) < xmin {
-					velocity <- velocity + {bounds,0};
-				} else if (location.x) > xmax {
-					velocity <- velocity - {bounds,0};
-				}
-				
-				if (location.y) < ymin {
-					velocity <- velocity + {0,bounds};
-				} else if (location.y) > ymax {
-					velocity <- velocity - {0,bounds};
-				}
-				
-			}
-		}
-		
-		reflex follow_goal when: apply_goal {
-			velocity <- velocity + ((goal - location) / cohesion_factor);
-		}
-		
-		reflex wind when: apply_wind {
-			velocity <- velocity + wind_vector;
-		}
-		  
-		action do_move {  
-			if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) {
-				velocity <- {(rnd(4)) -2, (rnd(4)) - 2}; 
-			}
-			point old_location <- location; 
-			do goto target: location + velocity;
-			velocity <- location - old_location; 
-		}
-		
-		reflex movement {
-			do bounding;
-			do do_move;
-		}
-		
-		aspect basic{
-			draw triangle(boids_size) color:rgb('black');
-		}
-		aspect image {
-			draw (images at (rnd(2))) size: boids_size rotate: heading color: rgb('black') ;			    
-		}
-				
-		aspect dynamicColor{
-			rgb cc <- hsb (float(heading)/360.0,1.0,1.0);
-			draw triangle(20) size: 15 rotate: 90 + heading color: cc border:cc depth:5;
-			draw name;
-		}
-	} 
+		}		
+	}
 	
-	species obstacle skills: [moving] {
-		float speed <- 0.1;	 
-		aspect default {
-			draw triangle(20) color: rgb('yellow') depth:5;
-		}
+	reflex capture_release_boids {
+		 list<boids_delegation> removed_components <- boids_delegation where ((each distance_to location) > cohesionIndex );
+		 if !(empty (removed_components)) {
+		 	release removed_components;
+		 }
+		 
+		 list<boids> added_components <- boids where ((each distance_to location) < cohesionIndex );
+		 if !(empty (added_components)) {
+		 	capture added_components as: boids_delegation;
+		 }
+	}
+	
+	reflex dispose when: ((length (members)) < 2) {
+		 release members;
+		 do die;
+	}
+	
+	reflex merge_nearby_flocks {
+		list<flock> nearby_flocks<- (flock overlapping (shape +  merging_distance));
+		if !(empty (nearby_flocks)) {
+		 	nearby_flocks <- nearby_flocks sort_by (length (each.members));
+		 	flock largest_flock <- nearby_flocks at ((length (nearby_flocks)) - 1);
+		 	 
+		 	remove largest_flock from: nearby_flocks;
+		 	 
+		 	list<boids> added_components <- [];
+		 	loop one_flock over: nearby_flocks {
+		 		release one_flock.members returns: released_boids; 
+		 		
+		 		loop rb over: released_boids {
+		 			add boids(rb) to: added_components;
+		 		}
+		 	}
+		 	
+		 	if !(empty (added_components)) { 
+		 		ask largest_flock {
+		 			capture added_components as: boids_delegation;
+		 		}
+		 	} 
+		 }
+	}
+	
+	aspect default {
+		draw shape color: color;
 	}
 }
+
+
+species aggregatedboids{
+	reflex updateLocation{
+	  location <- mean (boids collect (each.location));	
+	}
+	aspect base{   		
+		draw sphere(10) color: rgb('red');
+	}
+}
+
+species boids skills: [moving] {
+	float speed max: maximal_speed <- maximal_speed;
+	float range <- minimal_distance * 2;
+	point velocity <- {0,0};
+	int size <- 5;
+	float hue <- rnd(360) / 360;
+	
+	list<boids> others update: ((boids overlapping (circle (range)))  - self);
+	
+	point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) )  : location;
+	
+	reflex separation when: apply_separation {
+		point acc <- {0,0}; 
+		loop boid over: (boids overlapping (circle(minimal_distance)))  {
+			acc <- acc - ((location of boid) - location);
+		}  
+		velocity <- velocity + acc;
+	}
+	
+	reflex alignment when: apply_alignment {
+		point acc <- mean (others collect (each.velocity)) - velocity;
+		velocity <- velocity + (acc / alignment_factor);
+	}
+	 
+	reflex cohesion when: apply_cohesion {
+		point acc <- mass_center - location;
+		acc <- acc / cohesion_factor;
+		velocity <- velocity + acc; 
+	}
+	
+	reflex avoid when: apply_avoid {
+		point acc <- {0,0};
+		list<obstacle> nearby_obstacles <- (obstacle overlapping (circle (range)) );
+		loop obs over: nearby_obstacles {
+			acc <- acc - ((location of obs) - my (location));
+		}
+		velocity <- velocity + acc; 
+	}
+	
+	action bounding {
+		if  !(torus_environment) {
+			if  (location.x) < xmin {
+				velocity <- velocity + {bounds,0};
+			} else if (location.x) > xmax {
+				velocity <- velocity - {bounds,0};
+			}
+			
+			if (location.y) < ymin {
+				velocity <- velocity + {0,bounds};
+			} else if (location.y) > ymax {
+				velocity <- velocity - {0,bounds};
+			}
+			
+		}
+	}
+	
+	reflex follow_goal when: apply_goal {
+		velocity <- velocity + ((goal - location) / cohesion_factor);
+	}
+	
+	reflex wind when: apply_wind {
+		velocity <- velocity + wind_vector;
+	}
+	  
+	action do_move {  
+		if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) {
+			velocity <- {(rnd(4)) -2, (rnd(4)) - 2}; 
+		}
+		point old_location <- location; 
+		do goto target: location + velocity;
+		velocity <- location - old_location; 
+	}
+	
+	reflex movement {
+		do bounding;
+		do do_move;
+	}
+	
+	aspect basic{
+		draw triangle(boids_size) color:rgb('black');
+	}
+	aspect image {
+		draw (images at (rnd(2))) size: boids_size rotate: heading color: rgb('black') ;			    
+	}
+			
+	aspect dynamicColor{
+		rgb cc <- hsb (float(heading)/360.0,1.0,1.0);
+		draw triangle(20) size: 15 rotate: 90 + heading color: cc border:cc depth:5;
+		draw name;
+	}
+} 
+
+species obstacle skills: [moving] {
+	float speed <- 0.1;	 
+	aspect default {
+		draw triangle(20) color: rgb('yellow') depth:5;
+	}
+}
+
 
 
 experiment start type: gui {

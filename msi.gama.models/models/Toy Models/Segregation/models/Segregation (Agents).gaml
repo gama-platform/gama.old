@@ -16,32 +16,32 @@ global {
 		free_places <- all_places;  
 	} 
 }
-entities {
-	grid space width: dimensions height: dimensions neighbours: 8 use_regular_agents: false frequency: 0{
-		const color type: rgb <- black;
-	}
 
-	species people parent: base  {
-		const color type: rgb <- colors at (rnd (number_of_groups - 1));
-		list<people> my_neighbours -> {people at_distance neighbours_distance} ;
-		space my_place;
-		init {
-			my_place <- one_of(free_places);
-			location <- my_place.location; 
-			remove my_place from: free_places;
-		} 
-		reflex migrate when: !is_happy {
-			add my_place to: free_places;
-			my_place <- one_of(free_places);
-			location <- my_place.location; 
-			remove my_place from: free_places;
-		}
-		
-		aspect default{ 
-			draw circle (0.5) color: color; 
-		}
+grid space width: dimensions height: dimensions neighbours: 8 use_regular_agents: false frequency: 0{
+	const color type: rgb <- black;
+}
+
+species people parent: base  {
+	const color type: rgb <- colors at (rnd (number_of_groups - 1));
+	list<people> my_neighbours -> {people at_distance neighbours_distance} ;
+	space my_place;
+	init {
+		my_place <- one_of(free_places);
+		location <- my_place.location; 
+		remove my_place from: free_places;
+	} 
+	reflex migrate when: !is_happy {
+		add my_place to: free_places;
+		my_place <- one_of(free_places);
+		location <- my_place.location; 
+		remove my_place from: free_places;
+	}
+	
+	aspect default{ 
+		draw circle (0.5) color: color; 
 	}
 }
+
 
 
 experiment schelling type: gui {	

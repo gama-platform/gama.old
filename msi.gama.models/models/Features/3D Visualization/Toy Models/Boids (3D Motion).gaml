@@ -32,95 +32,93 @@ global torus: torus_environment{
 	}
 }
 
-entities {
-	species boids_goal skills: [moving] {
-		const range type: float init: 20.0;
-		const size type: float init: 10.0;
-		
-		reflex wander { 
-			do  wander_3D amplitude: 45 speed: 20; 
-			if (location.z) < 0 {
-				location <- {location.x,location.y,0};
-			} else if (location.z) > z_max {
-				location <- {location.x,location.y,z_max};
-			}
-			goal <- location;
-		}
-		
-		aspect default { 
-			draw sphere(size) color: rgb('red') ;
-		}
-	} 
-	
-	
-	species boids skills: [moving] {
-		float speed max: maximal_speed <- maximal_speed;
-		float range <- minimal_distance * 2;
-		point velocity <- {0,0, 0} ;
-		int size <- 5;
-		
-		list others update: ((boids at_distance range)  - self);
-		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) )  : location;
-		
-		reflex separation when: apply_separation {
-			point acc <- {0,0,0};
-			loop boid over: (boids at_distance (minimal_distance))  {
-				acc <- acc - ((location of boid) - location);
-			}  
-			velocity <- velocity + acc;
-		}
-		
-		reflex alignment when: apply_alignment {
-			point acc <- (length(others) > 0) ? (mean (others collect (each.velocity))) : {0.0,0.0,0.0};
-			acc <- acc - velocity;
-			velocity <- velocity + (acc / alignment_factor);
-		}
-		 
-		reflex cohesion when: apply_cohesion {
-			point acc <- mass_center - location;
-			acc <- acc / cohesion_factor;
-			velocity <- velocity + acc; 
-		}
-		
-		action bounding {
-			if (location.z) < 0 {
-				location <- {location.x,location.y,0};
-			} else if (location.z) > z_max {
-				location <- {location.x,location.y,z_max};
-			}
-		}
-		
-		reflex follow_goal when: apply_goal {
-			velocity <- velocity + ((goal - location) / cohesion_factor);
-		}
-		
-		reflex wind when: apply_wind {
-			velocity <- velocity + wind_vector;
-		}
-		  
-		action do_move {  
-			if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) and (((velocity.z) as int) = 0) {
-				velocity <- {(rnd(4)) -2, (rnd(4)) - 2,  ((rnd(4)) - 2)} ; 
-			}
-			point old_location <- location;
-			do goto target: location + velocity;
-			velocity <- location - old_location;
-		}
-		
-		reflex movement {
-			do bounding;
-			do do_move;
-		}
-		
-		aspect sphere {
-			draw sphere(10) color: rgb("green");
-		}
-		
-		aspect image {
-			draw (images at (rnd(2))) size: boids_size rotate: heading color: rgb('black') ;      
-		}
 
-	}  
+species boids_goal skills: [moving] {
+	const range type: float init: 20.0;
+	const size type: float init: 10.0;
+	
+	reflex wander { 
+		do  wander_3D amplitude: 45 speed: 20; 
+		if (location.z) < 0 {
+			location <- {location.x,location.y,0};
+		} else if (location.z) > z_max {
+			location <- {location.x,location.y,z_max};
+		}
+		goal <- location;
+	}
+	
+	aspect default { 
+		draw sphere(size) color: rgb('red') ;
+	}
+} 
+
+
+species boids skills: [moving] {
+	float speed max: maximal_speed <- maximal_speed;
+	float range <- minimal_distance * 2;
+	point velocity <- {0,0, 0} ;
+	int size <- 5;
+	
+	list others update: ((boids at_distance range)  - self);
+	point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) )  : location;
+	
+	reflex separation when: apply_separation {
+		point acc <- {0,0,0};
+		loop boid over: (boids at_distance (minimal_distance))  {
+			acc <- acc - ((location of boid) - location);
+		}  
+		velocity <- velocity + acc;
+	}
+	
+	reflex alignment when: apply_alignment {
+		point acc <- (length(others) > 0) ? (mean (others collect (each.velocity))) : {0.0,0.0,0.0};
+		acc <- acc - velocity;
+		velocity <- velocity + (acc / alignment_factor);
+	}
+	 
+	reflex cohesion when: apply_cohesion {
+		point acc <- mass_center - location;
+		acc <- acc / cohesion_factor;
+		velocity <- velocity + acc; 
+	}
+	
+	action bounding {
+		if (location.z) < 0 {
+			location <- {location.x,location.y,0};
+		} else if (location.z) > z_max {
+			location <- {location.x,location.y,z_max};
+		}
+	}
+	
+	reflex follow_goal when: apply_goal {
+		velocity <- velocity + ((goal - location) / cohesion_factor);
+	}
+	
+	reflex wind when: apply_wind {
+		velocity <- velocity + wind_vector;
+	}
+	  
+	action do_move {  
+		if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) and (((velocity.z) as int) = 0) {
+			velocity <- {(rnd(4)) -2, (rnd(4)) - 2,  ((rnd(4)) - 2)} ; 
+		}
+		point old_location <- location;
+		do goto target: location + velocity;
+		velocity <- location - old_location;
+	}
+	
+	reflex movement {
+		do bounding;
+		do do_move;
+	}
+	
+	aspect sphere {
+		draw sphere(10) color: rgb("green");
+	}
+	
+	aspect image {
+		draw (images at (rnd(2))) size: boids_size rotate: heading color: rgb('black') ;      
+	}
 }
 
 

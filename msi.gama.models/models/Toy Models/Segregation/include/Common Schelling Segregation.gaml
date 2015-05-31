@@ -38,16 +38,16 @@ global {
 	action initialize_people virtual: true;
 }
 
-entities {
-	species base {
-		rgb color;
-		list<base> my_neighbours;
-		int similar_nearby -> {
-			(my_neighbours count (each.color = color))
-		};
-		int total_nearby -> {
-			length (my_neighbours)
-		};
-		bool is_happy -> {similar_nearby >= (percent_similar_wanted * total_nearby )} ;
-	}
+
+species base {
+	rgb color;
+	list<base> my_neighbours;
+	int similar_nearby -> {
+		(my_neighbours count (each.color = color))
+	};
+	int total_nearby -> {
+		length (my_neighbours)
+	};
+	bool is_happy -> {similar_nearby >= (percent_similar_wanted * total_nearby )} ;
 }
+

@@ -46,55 +46,55 @@ global {
 
 }
 
-entities {
-	species S_agt {
-		float t;		
-		float Ssize;
-		
-		equation evol simultaneously : [I_agt, R_agt] {
-			diff(self.Ssize, t) = (- sum(I_agt accumulate [each.beta * each.Isize]) * self.Ssize / N);
-		}
 
-		reflex solving {solve evol method : "rk4" step : hKR4 ;}
+species S_agt {
+	float t;		
+	float Ssize;
+	
+	equation evol simultaneously : [I_agt, R_agt] {
+		diff(self.Ssize, t) = (- sum(I_agt accumulate [each.beta * each.Isize]) * self.Ssize / N);
 	}
 
-	species I_agt {
-		float t;		
-		float Isize;
-		 
-		float beta;
-		float delta;
-		
-		equation evol simultaneously : [S_agt, R_agt] {
-			diff(self.Isize, t) = (beta * first(S_agt).Ssize * self.Isize / N) - (delta * self.Isize);
-		}
-	}
-
-	species R_agt {
-		float t;		
-		float Rsize;
-
-		equation evol simultaneously : [I_agt] {
-			diff(self.Rsize, t) = (sum(I_agt collect (each.delta * each.Isize)));
-		}
-	}
-
-	species my_SIR_maths {
-		float t;
-		float Im;
-		float Sm;
-		float Rm;
-		
-		equation SIR {
-			diff(self.Sm, t) = (-_beta * Sm * Im / N);
-			diff(self.Im, t) = (_beta * Sm * Im / N) - (_delta * Im);
-			diff(self.Rm, t) = (_delta * Im);
-		}
-
-		reflex solving {solve SIR method : "rk4" step : hKR4;}
-	}
-
+	reflex solving {solve evol method : "rk4" step : hKR4 ;}
 }
+
+species I_agt {
+	float t;		
+	float Isize;
+	 
+	float beta;
+	float delta;
+	
+	equation evol simultaneously : [S_agt, R_agt] {
+		diff(self.Isize, t) = (beta * first(S_agt).Ssize * self.Isize / N) - (delta * self.Isize);
+	}
+}
+
+species R_agt {
+	float t;		
+	float Rsize;
+
+	equation evol simultaneously : [I_agt] {
+		diff(self.Rsize, t) = (sum(I_agt collect (each.delta * each.Isize)));
+	}
+}
+
+species my_SIR_maths {
+	float t;
+	float Im;
+	float Sm;
+	float Rm;
+	
+	equation SIR {
+		diff(self.Sm, t) = (-_beta * Sm * Im / N);
+		diff(self.Im, t) = (_beta * Sm * Im / N) - (_delta * Im);
+		diff(self.Rm, t) = (_delta * Im);
+	}
+
+	reflex solving {solve SIR method : "rk4" step : hKR4;}
+}
+
+
 
 experiment Simulation type : gui {
 	parameter 'Number of Susceptible' type: int var: number_S <- 495 category: "Initial population"; 

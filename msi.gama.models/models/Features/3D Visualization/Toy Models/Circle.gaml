@@ -22,45 +22,45 @@ global {
 
 
   
-entities { 
-	species cells skills: [moving] {  
-		rgb color;
-		const size type: float <- float(size_of_agents);
-		const range type: float <- float(range_of_agents); 
-		const speed type: float <- speed_of_agents;   
-		int heading <- rnd(359);
-		int z <- rnd(100);
-		
-		reflex go_to_center {
-			heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
-			do move speed: speed; 
-		}
-		
-		reflex flee_others {
-			cells close <- one_of ( ( (self neighbours_at range) of_species cells) sort_by (self distance_to each) );
-			if close != nil {
-				heading <- (self towards close) - 180;
-				float dist <- self distance_to close;
-				do move speed: dist / repulsion_strength heading: heading;
-			}
-		}
-		aspect pyramid {
-			draw pyramid(size) color:color;
-		}
-		aspect cone {
-			draw cone3D(size,size) color:color border:color;
-		}
-		aspect cylinder {
-			draw cylinder(size,z) color:color border:color;
-		}
-		aspect sphere{
-			draw sphere(size) color:color;
-		}
-		aspect teapot{
-			draw teapot(size) color:color;
+
+species cells skills: [moving] {  
+	rgb color;
+	const size type: float <- float(size_of_agents);
+	const range type: float <- float(range_of_agents); 
+	const speed type: float <- speed_of_agents;   
+	int heading <- rnd(359);
+	int z <- rnd(100);
+	
+	reflex go_to_center {
+		heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
+		do move speed: speed; 
+	}
+	
+	reflex flee_others {
+		cells close <- one_of ( ( (self neighbours_at range) of_species cells) sort_by (self distance_to each) );
+		if close != nil {
+			heading <- (self towards close) - 180;
+			float dist <- self distance_to close;
+			do move speed: dist / repulsion_strength heading: heading;
 		}
 	}
+	aspect pyramid {
+		draw pyramid(size) color:color;
+	}
+	aspect cone {
+		draw cone3D(size,size) color:color border:color;
+	}
+	aspect cylinder {
+		draw cylinder(size,z) color:color border:color;
+	}
+	aspect sphere{
+		draw sphere(size) color:color;
+	}
+	aspect teapot{
+		draw teapot(size) color:color;
+	}
 }
+
 
 experiment pyramidDisplay type: gui {
 	output {

@@ -51,59 +51,59 @@ global {
 } 
  
   
-entities { 
-	species section {
-		
-		//Polyline in x,z
-		geometry zSection;
-		geometry zSection2;
-		geometry river_channel;
-		
-		action initZSection{
-			
-			list<point> zPoints <- [];
-			list<point> zPoints2 <- [];
-			
-			loop i from: 0 to: nbPointOnSection {
-				
-				int z1_noise <-   (-rnd(noise));
-				int z2_noise <-   (-rnd(noise));         
-                point tmpzPoint <- {(i/nbPointOnSection)*width_of_environment,location.y} +{0,0, ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z1_noise)};
-                point tmpzPoint2 <- {(i/nbPointOnSection)*width_of_environment,location.y+lenghtSection} + {0,0, ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z2_noise)};
-                
-                add tmpzPoint to: zPoints;
-                add tmpzPoint2 to: zPoints2;
-               
-            }
-            zSection <- polyline(zPoints);
-            zSection2 <- polyline(zPoints2);
-            list<point> list_tmp  <- list(reverse(zSection2.points));
 
-            river_channel <- polygon( zSection.points + list_tmp);
-		}
+species section {
+	
+	//Polyline in x,z
+	geometry zSection;
+	geometry zSection2;
+	geometry river_channel;
+	
+	action initZSection{
 		
-		reflex update {
-			do initZSection;
-		}
-			 
-		aspect default { 
-			draw river_channel color: rgb('blue') empty:isEmpty;
-		}
+		list<point> zPoints <- [];
+		list<point> zPoints2 <- [];
+		
+		loop i from: 0 to: nbPointOnSection {
+			
+			int z1_noise <-   (-rnd(noise));
+			int z2_noise <-   (-rnd(noise));         
+            point tmpzPoint <- {(i/nbPointOnSection)*width_of_environment,location.y} +{0,0, ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z1_noise)};
+            point tmpzPoint2 <- {(i/nbPointOnSection)*width_of_environment,location.y+lenghtSection} + {0,0, ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z2_noise)};
+            
+            add tmpzPoint to: zPoints;
+            add tmpzPoint2 to: zPoints2;
+           
+        }
+        zSection <- polyline(zPoints);
+        zSection2 <- polyline(zPoints2);
+        list<point> list_tmp  <- list(reverse(zSection2.points));
+
+        river_channel <- polygon( zSection.points + list_tmp);
 	}
 	
-	species riverPlan{
-		
-		geometry river_plan;
-		
-		reflex update{
-			river_plan <- rectangle({width_of_environment,height_of_environment});
-			location <-{location.x,location.y,-rnd(meanDepth/4)}; 
-		}
-		aspect default { 
-			draw river_plan color: rgb('blue') empty:isEmpty;
-		}
+	reflex update {
+		do initZSection;
+	}
+		 
+	aspect default { 
+		draw river_channel color: rgb('blue') empty:isEmpty;
 	}
 }
+
+species riverPlan{
+	
+	geometry river_plan;
+	
+	reflex update{
+		river_plan <- rectangle({width_of_environment,height_of_environment});
+		location <-{location.x,location.y,-rnd(meanDepth/4)}; 
+	}
+	aspect default { 
+		draw river_plan color: rgb('blue') empty:isEmpty;
+	}
+}
+
 
 experiment morpho type: gui {
 	output {

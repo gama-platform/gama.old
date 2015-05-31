@@ -19,17 +19,17 @@ global {
 }
 
 
-entities {	
-	species managementUnit{
-		int MUcode;
-		string MULabel;
-		string pgeSAGE;
-		
-		aspect basic{
-    		draw shape color: rgb("yellow");
-    	}
-	}	
-}
+	
+species managementUnit{
+	int MUcode;
+	string MULabel;
+	string pgeSAGE;
+	
+	aspect basic{
+		draw shape color: rgb("yellow");
+	}
+}	
+
 
 experiment main type: gui {
 	parameter 'Management unit' var: ManagementUnitShape category: 'MU' ;

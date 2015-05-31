@@ -35,92 +35,89 @@ global {
   
 }
 
-entities {
-	grid ant_grid width: gridsize height: gridsize neighbours: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
-		const neighbours type: list of: ant_grid <- self neighbours_at 1;
-		const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
-		rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
-		food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
-		int food <- 0;
-	}
-	species ant skills: [moving] control: fsm {
-		float speed <- 1.0;
-		bool has_food <- false;
-		signal road update: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
-		
-		action pick (int amount) {
-			has_food <- true;
-			ant_grid place <- ant_grid(location);
-			place.food <- place.food - amount;
-		}
-	
-		action drop {
-			food_gathered <- food_gathered + 1;
-			has_food <- false;
-			heading <- heading - 180;
-		}
-	
-		point choose_best_place {
-			container list_places <- (ant_grid(location)).neighbours;
-			if (list_places count (each.food > 0)) > 0 {
-				return point(list_places first_with (each.food > 0));
-			} else {
-				list_places <- (list_places where ((each.road > 0) and ((each distance_to center) > (self distance_to center)))) sort_by (each.road);
-				return point(last(list_places));
-			}
-	
-		}
-	
-		reflex drop when: has_food and (ant_grid(location)).is_nest {
-			do drop();
-		}
-	
-		reflex pick when: !has_food and (ant_grid(location)).food > 0 {
-			do pick(1);
-		}
-	
-		state wandering initial: true {
-			do wander(amplitude: 90);
-			float pr <- (ant_grid(location)).road;
-			transition to: carryingFood when: has_food;
-			transition to: followingRoad when: (pr > 0.05) and (pr < 4);
-		}
-	
-		state carryingFood {
-			do goto(target: center);
-			transition to: wandering when: !has_food;
-		}
-	
-		state followingRoad {
-			point next_place <- choose_best_place();
-			float pr <- (ant_grid(location)).road;
-			location <- next_place;
-			transition to: carryingFood when: has_food;
-			transition to: wandering when: (pr < 0.05) or (next_place = nil);
-		}
-	
-		aspect info {
-			draw circle(1) empty: !has_food color: rgb('red');
-			if (destination != nil) {
-				draw line([location, destination]) color: rgb('white');
-			}
-	
-			draw circle(4) empty: true color: rgb('white');
-			draw string(self as int) color: rgb('white') size: 1;
-			draw state color: rgb('yellow') size: 10 °px at: my location + { 1, 1 } ;
-		}
-	
-		aspect icon {
-			draw ant_shape_empty size: 10 rotate: my heading + 1;
-		}
-	
-		aspect default {
-			draw square(1) empty: !has_food color: rgb('blue') rotate: my heading;
-		}
-	}	
+
+grid ant_grid width: gridsize height: gridsize neighbours: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
+	const neighbours type: list of: ant_grid <- self neighbours_at 1;
+	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
+	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
+	food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
+	int food <- 0;
 }
+species ant skills: [moving] control: fsm {
+	float speed <- 1.0;
+	bool has_food <- false;
+	signal road update: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
+	
+	action pick (int amount) {
+		has_food <- true;
+		ant_grid place <- ant_grid(location);
+		place.food <- place.food - amount;
+	}
 
+	action drop {
+		food_gathered <- food_gathered + 1;
+		has_food <- false;
+		heading <- heading - 180;
+	}
 
+	point choose_best_place {
+		container list_places <- (ant_grid(location)).neighbours;
+		if (list_places count (each.food > 0)) > 0 {
+			return point(list_places first_with (each.food > 0));
+		} else {
+			list_places <- (list_places where ((each.road > 0) and ((each distance_to center) > (self distance_to center)))) sort_by (each.road);
+			return point(last(list_places));
+		}
+
+	}
+
+	reflex drop when: has_food and (ant_grid(location)).is_nest {
+		do drop();
+	}
+
+	reflex pick when: !has_food and (ant_grid(location)).food > 0 {
+		do pick(1);
+	}
+
+	state wandering initial: true {
+		do wander(amplitude: 90);
+		float pr <- (ant_grid(location)).road;
+		transition to: carryingFood when: has_food;
+		transition to: followingRoad when: (pr > 0.05) and (pr < 4);
+	}
+
+	state carryingFood {
+		do goto(target: center);
+		transition to: wandering when: !has_food;
+	}
+
+	state followingRoad {
+		point next_place <- choose_best_place();
+		float pr <- (ant_grid(location)).road;
+		location <- next_place;
+		transition to: carryingFood when: has_food;
+		transition to: wandering when: (pr < 0.05) or (next_place = nil);
+	}
+
+	aspect info {
+		draw circle(1) empty: !has_food color: rgb('red');
+		if (destination != nil) {
+			draw line([location, destination]) color: rgb('white');
+		}
+
+		draw circle(4) empty: true color: rgb('white');
+		draw string(self as int) color: rgb('white') size: 1;
+		draw state color: rgb('yellow') size: 10 °px at: my location + { 1, 1 } ;
+	}
+
+	aspect icon {
+		draw ant_shape_empty size: 10 rotate: my heading + 1;
+	}
+
+	aspect default {
+		draw square(1) empty: !has_food color: rgb('blue') rotate: my heading;
+	}
+}	
 
 experiment Displays type: gui {
 	point quadrant_size <- { 0.5, 0.5 };
