@@ -61,7 +61,7 @@ entities {
 		}	
 		
 		aspect default {
-			draw shape color: rgb('gray') ;
+			draw shape color: #gray ;
 		}
 	}
 }      

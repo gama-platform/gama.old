@@ -54,7 +54,7 @@ global {
 
 species river {
 	aspect basic{
-		draw  shape color: rgb('blue');
+		draw  shape color: #blue;
 	}	
 }
 
@@ -69,10 +69,10 @@ species managementUnit{
 }	
 species izard {	
 	init{
-		set location <- (shuffle(cell) first_with ((each.color != rgb('white')) and (empty(agents overlapping each)))).location ;
+		set location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
 	}	
 	aspect basic{
-		draw square(5000) color: rgb('orange');
+		draw square(5000) color: #orange;
 	}
 	aspect image{
 		draw izardShape size: 5000;

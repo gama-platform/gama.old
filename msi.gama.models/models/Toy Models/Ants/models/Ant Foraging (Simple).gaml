@@ -44,7 +44,7 @@ grid ant_grid width: gridsize height: gridsize neighbours: 8 {
 	const nest type: int <- int(300 - ( self distance_to center ));
 }
 species ant skills: [ moving ] {     
-	rgb color <- rgb('red');
+	rgb color <- #red;
 	ant_grid place function: {ant_grid ( location )};
 	bool hasFood <- false;
 	signal road update: hasFood ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid; 

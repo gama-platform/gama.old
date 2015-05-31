@@ -100,7 +100,7 @@ species physic_world parent: Physical3DWorld ;
  
 species ground skills: [physical3D]{
 	aspect default {
-		draw shape color: rgb("black") empty:true;
+		draw shape color: #black empty:true;
 	}
 }
 
@@ -108,7 +108,7 @@ species wall skills: [physical3D]{
 	rgb color;
 	float height;
     aspect default {
-		draw shape color: rgb("black") depth:height empty:true;
+		draw shape color: #black depth:height empty:true;
 	}
 }
  	

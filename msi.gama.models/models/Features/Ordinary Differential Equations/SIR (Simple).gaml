@@ -40,10 +40,10 @@ species agent_with_SIR_dynamic {
 experiment maths type: gui {
 	output { 
 		display display_charts {
-			chart "SIR_agent" type: series background: rgb('white') {
-				data 'S' value: first(list(agent_with_SIR_dynamic)).S color: rgb('green') ;				
-				data 'I' value: first(list(agent_with_SIR_dynamic)).I color: rgb('red') ;
-				data 'R' value: first(list(agent_with_SIR_dynamic)).R color: rgb('blue') ;
+			chart "SIR_agent" type: series background: #white {
+				data 'S' value: first(list(agent_with_SIR_dynamic)).S color: #green ;				
+				data 'I' value: first(list(agent_with_SIR_dynamic)).I color: #red ;
+				data 'R' value: first(list(agent_with_SIR_dynamic)).R color: #blue ;
 			}
 		}
 	}

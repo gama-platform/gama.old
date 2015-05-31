@@ -16,13 +16,13 @@ species batiment {
 	string type;
 	int capacite <- type = "Industrial" ? 0 : int(shape.area / 60.0);
 	aspect geometrie {
-		draw shape color: type = "Industrial" ? rgb("pink") : rgb("gray");
+		draw shape color: type = "Industrial" ? #pink : #gray;
 	}
 }
 
 species route {
 	aspect geometrie {
-		draw shape color: rgb("black");
+		draw shape color: #black;
 	}
 }
 

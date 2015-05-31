@@ -36,9 +36,9 @@ global {
 			collisionBound <- ["shape"::"sphere", "radius"::5];
 			i <- i + 1;
 			if ((i mod 2) = 0) {
-				color <- rgb('red');
+				color <- #red;
 			} else {
-				color <- rgb('yellow');
+				color <- #yellow;
 			}
 
 			if (i = 5) {
@@ -203,7 +203,7 @@ species ball skills: [physical3D] {
 
 experiment pool type: gui {
 	output {
-		display Circle type: opengl tesselation: true ambient_light: 100 background: rgb('black') draw_env: false { species ground aspect: default;
+		display Circle type: opengl tesselation: true ambient_light: 100 background: #black draw_env: false { species ground aspect: default;
 		species wall aspect: default;
 		species ball aspect: sphere;
 		}

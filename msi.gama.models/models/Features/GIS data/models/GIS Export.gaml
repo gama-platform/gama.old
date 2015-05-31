@@ -28,7 +28,7 @@ species building {
 	float height;
 	string type;
 	float price <- (shape.area * height) * (type = "Industrial" ? 0.5: 1) update: price * (90 +rnd(20)) / 100; 
-	rgb color <- type = "Industrial" ? rgb("pink") : rgb("gray");
+	rgb color <- type = "Industrial" ? #pink : #gray;
 	
 	aspect default {
 		draw shape depth: height color: color;

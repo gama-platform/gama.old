@@ -66,12 +66,12 @@ species space {
 		capacity <- capacity + 1;
 	}
 	aspect simple {
-		color <- empty(insiders) ? rgb("white") : rgb ([mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
+		color <- empty(insiders) ? #white : rgb ([mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
 		draw  square(40) color: color;
 	}
 	aspect gis {
-		color <- empty(insiders) ? rgb("white") : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
-		draw shape color: color border: rgb("black");
+		color <- empty(insiders) ? #white : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
+		draw shape color: color border: #black;
 	} 
 }
 
@@ -83,13 +83,13 @@ experiment schelling type: gui {
 			species people  aspect: simple;
 		}
 		display Charts {
-			chart name: "Proportion of happiness" type: histogram background: rgb("lightgray") gap:0.05 position: {0,0} size: {1.0,0.5}{
-				data "Unhappy" value: number_of_people - sum_happy_people color: rgb("green");
-				data "Happy" value: sum_happy_people color: rgb("yellow") ;
+			chart name: "Proportion of happiness" type: histogram background: #lightgray gap:0.05 position: {0,0} size: {1.0,0.5}{
+				data "Unhappy" value: number_of_people - sum_happy_people color: #green;
+				data "Happy" value: sum_happy_people color: #yellow ;
 			}
-			chart name: "Global happiness and similarity" type: series background: rgb("lightgray") axes: rgb("white") position: {0,0.5} size: {1.0,0.5} {
-				data "happy" color: rgb("blue") value:  ((sum_happy_people * 100) / number_of_people)  style: spline ;
-				data "similarity" color: rgb("red") value:  (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
+			chart name: "Global happiness and similarity" type: series background: #lightgray axes: #white position: {0,0.5} size: {1.0,0.5} {
+				data "happy" color: #blue value:  ((sum_happy_people * 100) / number_of_people)  style: spline ;
+				data "similarity" color: #red value:  (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
 			}
 		}
 	}

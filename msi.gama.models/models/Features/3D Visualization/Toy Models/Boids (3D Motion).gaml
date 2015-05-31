@@ -48,7 +48,7 @@ species boids_goal skills: [moving] {
 	}
 	
 	aspect default { 
-		draw sphere(size) color: rgb('red') ;
+		draw sphere(size) color: #red ;
 	}
 } 
 
@@ -113,11 +113,11 @@ species boids skills: [moving] {
 	}
 	
 	aspect sphere {
-		draw sphere(10) color: rgb("green");
+		draw sphere(10) color: #green;
 	}
 	
 	aspect image {
-		draw (images at (rnd(2))) size: boids_size rotate: heading color: rgb('black') ;      
+		draw (images at (rnd(2))) size: boids_size rotate: heading color: #black ;      
 	}
 }
 

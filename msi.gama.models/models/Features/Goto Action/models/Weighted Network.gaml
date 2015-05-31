@@ -37,7 +37,7 @@ species road  {
 }
 
 species people skills: [moving]{
-	rgb color <- rgb('yellow') ;
+	rgb color <- #yellow ;
 	point target <- nil ;
 		
 	reflex move  {

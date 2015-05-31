@@ -48,7 +48,7 @@ species people parent: base  {
 		draw square(1) color: color  ;
 	}
 	aspect default {
-		draw  square(2) color: rgb("black") ;
+		draw  square(2) color: #black ;
 	}
 }
 
@@ -60,12 +60,12 @@ experiment schelling type: gui {
 			species people transparency: 0.5 aspect: geom;
 		}	
 		display Charts {
-			chart name: "Proportion of happiness" type: pie background: rgb("lightGray") style: exploded position: { 0, 0 } size: { 1.0, 0.5 } {
-				data "Unhappy" value: number_of_people - sum_happy_people color: rgb("green");
-				data "Happy" value: sum_happy_people color: rgb("yellow");
+			chart name: "Proportion of happiness" type: pie background: #lightgray style: exploded position: { 0, 0 } size: { 1.0, 0.5 } {
+				data "Unhappy" value: number_of_people - sum_happy_people color: #green;
+				data "Happy" value: sum_happy_people color: #yellow;
 			}
 
-			chart name: "Global happiness and similarity" type: series background: rgb("lightGray") axes: rgb("white") position: { 0, 0.5 } size: { 1.0, 0.5 } x_range: 20 y_range: 20 {
+			chart name: "Global happiness and similarity" type: series background: #lightgray axes: #white position: { 0, 0.5 } size: { 1.0, 0.5 } x_range: 20 y_range: 20 {
 				data "happy" color: °blue value: (sum_happy_people / number_of_people) * 100 style: spline fill: false;
 				data "similarity" color: °red value: (sum_similar_neighbours / sum_total_neighbours) * 100 style: line fill: true ;
 			}

@@ -100,14 +100,14 @@ species ant skills: [moving] control: fsm {
 	}
 
 	aspect info {
-		draw circle(1) empty: !has_food color: rgb('red');
+		draw circle(1) empty: !has_food color: #red;
 		if (destination != nil) {
-			draw line([location, destination]) color: rgb('white');
+			draw line([location, destination]) color: #white;
 		}
 
-		draw circle(4) empty: true color: rgb('white');
-		draw string(self as int) color: rgb('white') size: 1;
-		draw state color: rgb('yellow') size: 10 °px at: my location + { 1, 1 } ;
+		draw circle(4) empty: true color: #white;
+		draw string(self as int) color: #white size: 1;
+		draw state color: #yellow size: 10 °px at: my location + { 1, 1 } ;
 	}
 
 	aspect icon {
@@ -115,7 +115,7 @@ species ant skills: [moving] control: fsm {
 	}
 
 	aspect default {
-		draw square(1) empty: !has_food color: rgb('blue') rotate: my heading;
+		draw square(1) empty: !has_food color: #blue rotate: my heading;
 	}
 }	
 
@@ -136,31 +136,31 @@ experiment Displays type: gui {
 
 	float carrying -> { cycle = 0 ? 0 : (((100 * world.ant count (each.has_food or each.state = "followingRoad")) / length(world.ant)) with_precision 2) };
 	output {
-		display Ants background: rgb('white') type: opengl {
+		display Ants background: #white type: opengl {
 		// First quadrant
 			image '../images/soil.jpg' position: { pos, pos } size: quadrant_size;
-			text "position {0,0} size {0.5, 0.5}: image, cells and ants as icons" size: font_size position: { pos + 0.01, pos + 0.03 } color: rgb("yellow") font: "Helvetica" ;
+			text "position {0,0} size {0.5, 0.5}: image, cells and ants as icons" size: font_size position: { pos + 0.01, pos + 0.03 } color: #yellow font: "Helvetica" ;
 			agents "agents" transparency: 0.5 position: { pos, pos } size: quadrant_size value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { pos, pos } size: quadrant_size aspect: icon;
 
 			//Second quadrant
-			grid ant_grid lines: rgb("black") position: { 0.5, 0 } size: quadrant_size;
-			text "position {0.5,0} size {0.5, 0.5}: grid and simple ants" size: font_size position: { 0.51, 20 °px } color: rgb("white") font: "Helvetica";
+			grid ant_grid lines: #black position: { 0.5, 0 } size: quadrant_size;
+			text "position {0.5,0} size {0.5, 0.5}: grid and simple ants" size: font_size position: { 0.51, 20 °px } color: #white font: "Helvetica";
 			species ant position: { 0.5, 0 } size: quadrant_size aspect: info;
 
 			//Third quadrant
 			quadtree 'qt' position: { 0, 0.5 } size: quadrant_size;
-			text "position {0,0.5} size {0.5, 0.5}: quadtree and ants" size: font_size position: { 0.01, 0.53 } color: rgb("blue") font: "Helvetica";
+			text "position {0,0.5} size {0.5, 0.5}: quadtree and ants" size: font_size position: { 0.01, 0.53 } color: #blue font: "Helvetica";
 			species ant position: { 0, 0.5 } size: quadrant_size aspect: default;
 
 			//Fourth quadrant
-			chart name: 'Proportion of workers' type: pie background: rgb('white') style: exploded position: { 0.5, 0.50 } size: quadrant_size transparency: 0.5 + pos {
-				data 'Working' value: carrying color: rgb("red");
-				data 'Idle' value: 100 - carrying color: rgb("blue");
+			chart name: 'Proportion of workers' type: pie background: #white style: exploded position: { 0.5, 0.50 } size: quadrant_size transparency: 0.5 + pos {
+				data 'Working' value: carrying color: #red;
+				data 'Idle' value: 100 - carrying color: #blue;
 			}
 
-			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.51, 0.53 } color: rgb('black') size: font_size;
-			text 'Carrying ants: ' + carrying + '%' position: { 0.75, 0.53 } color: rgb('black') size: font_size ;
+			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.51, 0.53 } color: #black size: font_size;
+			text 'Carrying ants: ' + carrying + '%' position: { 0.75, 0.53 } color: #black size: font_size ;
 		}
 	}
 }
@@ -179,12 +179,12 @@ experiment Complete type: gui {
 
 
 	output {
-		display Ants background: rgb('white') {
+		display Ants background: #white {
 			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
-			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: rgb('black') size: { 1, 0.02 };
-			text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: rgb('black')
+			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: #black size: { 1, 0.02 };
+			text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: #black
 			size: { 1, 0.02 };
 		}
 		inspect "One" type: table value: ant attributes: ['name', 'location', 'heading','state'];
@@ -204,7 +204,7 @@ experiment Batch type: batch repeat: 2 keep_seed: true until: (food_gathered = f
 	}
 	
 	permanent {
-		display Ants background: rgb('white') {
+		display Ants background: #white {
 			chart "Food Gathered" type: series {
 				data "Food" value: food_gathered;
 			}
@@ -227,8 +227,8 @@ experiment Quadtree type: gui {
 			quadtree 'qt';
 		}
 
-		display Ants background: rgb('white') {
-			grid ant_grid lines: rgb('black');
+		display Ants background: #white {
+			grid ant_grid lines: #black;
 			species ant aspect: default;
 		}
 	}

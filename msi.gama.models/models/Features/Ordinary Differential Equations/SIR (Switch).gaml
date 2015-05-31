@@ -98,7 +98,7 @@ global {
 
 environment width: grid_size height: grid_size {
 	grid sir_grid width: grid_size height: grid_size {
-		rgb color <- rgb('black');
+		rgb color <- #black;
 		list<sir_grid> neighbours <- (self neighbours_at neighbours_range) of_species sir_grid;
 	}
 
@@ -179,21 +179,21 @@ species IBM_model schedules: [] parent: SIR_model {
 			is_susceptible <- true;
 			is_infected <- false;
 			is_immune <- false;
-			color <- rgb('green');
+			color <- #green;
 		}
 
 		create Host number: round(I) {
 			is_susceptible <- false;
 			is_infected <- true;
 			is_immune <- false;
-			color <- rgb('red');
+			color <- #red;
 		}
 
 		create Host number: round(R) {
 			is_susceptible <- false;
 			is_infected <- false;
 			is_immune <- true;
-			color <- rgb('yellow');
+			color <- #yellow;
 		}
 		//force evaluation at first step;
 		do count;
@@ -240,7 +240,7 @@ species Host schedules: [] skills: [moving] {
 	bool is_susceptible <- true;
 	bool is_infected <- false;
 	bool is_immune <- false;
-	rgb color <- rgb('green');
+	rgb color <- #green;
 	sir_grid myPlace;
 	
 	/* next function computes the number of neighbours of the agent */
@@ -271,7 +271,7 @@ species Host schedules: [] skills: [moving] {
 			set is_susceptible <- false;
 			set is_infected <- true;
 			set is_immune <- false;
-			set color <- rgb('red');
+			set color <- #red;
 		}
 
 	}
@@ -283,7 +283,7 @@ species Host schedules: [] skills: [moving] {
 					hst.is_susceptible <- false;
 					hst.is_infected <- true;
 					hst.is_immune <- false;
-					hst.color <- rgb('red');
+					hst.color <- #red;
 				}
 			}
 		}
@@ -293,7 +293,7 @@ species Host schedules: [] skills: [moving] {
 		is_susceptible <- false;
 		is_infected <- false;
 		is_immune <- true;
-		color <- rgb('yellow');
+		color <- #yellow;
 	}
 
 	aspect basic {
@@ -342,24 +342,24 @@ experiment mysimulation type: gui {
 	
 	output {
 		display 'sir display' {
-			grid sir_grid lines: rgb("black");
+			grid sir_grid lines: #black;
 			species Host aspect: basic;
 		}
 	
 		display 'Switch model' {
-			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
-				data 'susceptible' value: current_model.S color: rgb('green');
-				data 'infected' value: current_model.I color: rgb('red');
-				data 'immune' value: current_model.R color: rgb('yellow');
+			chart 'Susceptible' type: series background: #lightgray style: exploded {
+				data 'susceptible' value: current_model.S color: #green;
+				data 'infected' value: current_model.I color: #red;
+				data 'immune' value: current_model.R color: #yellow;
 			}
 
 		}
 
 		display SI_maths  {
-			chart "SI" type: series background: rgb('white') {
-				data 'S' value: first((my_SIR_maths)).S color: rgb('green');
-				data 'I' value: first((my_SIR_maths)).I color: rgb('red');
-				data 'R' value: first((my_SIR_maths)).R color: rgb('yellow');
+			chart "SI" type: series background: #white {
+				data 'S' value: first((my_SIR_maths)).S color: #green;
+				data 'I' value: first((my_SIR_maths)).I color: #red;
+				data 'R' value: first((my_SIR_maths)).R color: #yellow;
 			}
 
 		}

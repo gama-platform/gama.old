@@ -149,7 +149,7 @@ species Group_electors {
 	int effectif <- 0;
 	list<elector> electors_dans_Group ;
 	aspect default {
-		draw square(2) color: rgb("orange");
+		draw square(2) color: #orange;
 	} 
 	
 }
@@ -163,7 +163,7 @@ species elector skills: [moving]{
 			location <- {x_cord, y_cord};
 		}
 	}
-	rgb color <- rgb('white');
+	rgb color <- #white;
 	candidate my_candidate;  
 	
 	aspect base {
@@ -212,12 +212,12 @@ species candidate skills:[moving]{
 		if (active) {
 			float radius  <- 1 + (percentage_vote / 4.0);
 			if (is_elected) {
-				draw square( radius *1.5) color: rgb("red"); 
+				draw square( radius *1.5) color: #red; 
 				draw circle(radius) color: color;
 			} else {
 				draw circle(radius) color: color;
 			}
-			draw string(percentage_vote) size: 5 color: rgb("white");
+			draw string(percentage_vote) size: 5 color: #white;
 		}
 	}
 	
@@ -293,14 +293,14 @@ experiment vote type: gui {
 	parameter "Strategy of candidates : " var: strategy_candidates category: "Candidate";
 	
 	output {
-		display main background: rgb("black") { 
+		display main background: #black { 
 			species elector aspect: base;
 			species candidate aspect: dynamic;
 			species Group_electors;
 			
 		}
 		display votants {
-			chart "Distribution of electors" type: pie background: rgb('white')  {
+			chart "Distribution of electors" type: pie background: #white  {
 			 	loop cand over: candidate {
 			 		data legend: cand.name value:cand.percentage_vote color: cand.color ;
 			 	}	
@@ -308,11 +308,11 @@ experiment vote type: gui {
 			
 			}
 		display indicateurs {
-			chart "Shannon Entropy" type: series background: rgb('white') size: {1,0.5} position: {0, 0} {
-				data "entropy" value: entropy color: rgb('blue') ;
+			chart "Shannon Entropy" type: series background: #white size: {1,0.5} position: {0, 0} {
+				data "entropy" value: entropy color: #blue ;
 			}
-			chart "Opinion distribution" type: series background: rgb('white') size: {1,0.5} position: {0, 0.5} {
-				data "Space area covered" value: (union(candidate collect (each.shape buffer threshold_attraction_candidates))).area / 40000 color: rgb('blue') ;
+			chart "Opinion distribution" type: series background: #white size: {1,0.5} position: {0, 0.5} {
+				data "Space area covered" value: (union(candidate collect (each.shape buffer threshold_attraction_candidates))).area / 40000 color: #blue ;
 			}
 		}
 	}

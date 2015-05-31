@@ -53,8 +53,8 @@ species boids_goal skills: [moving] {
 	}
 	
 	aspect default {
-		draw shape: circle(10) color: rgb('red') ;
-		draw shape: circle(40) color: rgb('orange') empty: true;
+		draw shape: circle(10) color: #red ;
+		draw shape: circle(40) color: #orange empty: true;
 	}
 } 
 
@@ -139,11 +139,11 @@ species boids skills: [moving] {
 		draw (images at (rnd(2))) size: 35 rotate: heading color: rgb([0,0,rnd(200) + 55]);      
 	}
 	aspect circle { 
-		draw circle(15) rotate: 90 + heading color: rgb('red');
+		draw circle(15) rotate: 90 + heading color: #red;
 	}
 	
 	aspect default { 
-		draw triangle(15) rotate: 90 + heading color: rgb('yellow');
+		draw triangle(15) rotate: 90 + heading color: #yellow;
 	}
 } 
 
@@ -161,12 +161,12 @@ species obstacle skills: [moving] {
 		}
 	}
 	aspect default {
-		draw  triangle(20) color: rgb('yellow') ;
+		draw  triangle(20) color: #yellow ;
 	}
 
 	
 	aspect geom {
-		draw shape color: rgb('yellow');
+		draw shape color: #yellow;
 	}
 }
 

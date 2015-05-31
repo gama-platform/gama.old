@@ -42,7 +42,7 @@ species road  {
 	int nbLanes; 
 	geometry geom_visu;
 	aspect base {    
-		draw geom_visu color: rgb("black") ;
+		draw geom_visu color: #black ;
 	} 
 }
 

@@ -181,13 +181,13 @@ experiment prey_predator type: gui {
 				data "number_of_preys" value: nb_preys color: #blue ;
 				data "number_of_predator" value: nb_predators color: #red ;
 			}
-			chart "Prey Energy Distribution" type: histogram background: rgb("lightGray") size: {0.5,0.5} position: {0, 0.5} {
+			chart "Prey Energy Distribution" type: histogram background: #lightgray size: {0.5,0.5} position: {0, 0.5} {
 				data "]0;0.25]" value: prey count (each.energy <= 0.25) color:#blue;
 				data "]0.25;0.5]" value: prey count ((each.energy > 0.25) and (each.energy <= 0.5)) color:#blue;
 				data "]0.5;0.75]" value: prey count ((each.energy > 0.5) and (each.energy <= 0.75)) color:#blue;
 				data "]0.75;1]" value: prey count (each.energy > 0.75) color:#blue;
 			}
-			chart "Predator Energy Distribution" type: histogram background: rgb("lightGray") size: {0.5,0.5} position: {0.5, 0.5} {
+			chart "Predator Energy Distribution" type: histogram background: #lightgray size: {0.5,0.5} position: {0.5, 0.5} {
 				data "]0;0.25]" value: predator count (each.energy <= 0.25) color: #red ;
 				data "]0.25;0.5]" value: predator count ((each.energy > 0.25) and (each.energy <= 0.5)) color: #red ;
 				data "]0.5;0.75]" value: predator count ((each.energy > 0.5) and (each.energy <= 0.75)) color: #red ;

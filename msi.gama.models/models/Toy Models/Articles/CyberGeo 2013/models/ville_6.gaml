@@ -79,15 +79,15 @@ species batiment {
 		}
 	}
 	aspect geometrie {
-		draw shape color: type = "Industrial" ? rgb("pink") : rgb("gray") depth: hauteur;
+		draw shape color: type = "Industrial" ? #pink : #gray depth: hauteur;
 	}
 	aspect information_foyer {
-		draw shape color: type = "Industrial" ? rgb("pink") : (empty(foyers) ? rgb("gray") : rgb(int(255 * (1 - (revenu_moyen / 3000))), int(255 * (revenu_moyen / 3000)), 0)) depth: length(foyers);
+		draw shape color: type = "Industrial" ? #pink : (empty(foyers) ? #gray : rgb(int(255 * (1 - (revenu_moyen / 3000))), int(255 * (revenu_moyen / 3000)), 0)) depth: length(foyers);
 	}
 }
 species route {
 	aspect geometrie {
-		draw shape color: rgb("black") at:{location.x,location.y,(mnt_cell(location)).grid_value};
+		draw shape color: #black at:{location.x,location.y,(mnt_cell(location)).grid_value};
 	}
 }
 experiment ville type: gui {

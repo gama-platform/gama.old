@@ -36,10 +36,10 @@ species predefined_ODE_SIR_agent {
 experiment mysimulation type : gui {
 	output {	
 		display display_charts {
-			chart 'SIR_agent' type : series background : rgb('lightGray') {
-				data "S" value : first(predefined_ODE_SIR_agent).S color : rgb('green');
-				data "I" value : first(predefined_ODE_SIR_agent).I color : rgb('red');
-				data "R" value : first(predefined_ODE_SIR_agent).R color : rgb('blue');
+			chart 'SIR_agent' type : series background : #lightgray {
+				data "S" value : first(predefined_ODE_SIR_agent).S color : #green;
+				data "I" value : first(predefined_ODE_SIR_agent).I color : #red;
+				data "R" value : first(predefined_ODE_SIR_agent).R color : #blue;
 			}
 		}
 	}

@@ -42,13 +42,13 @@ species people skills:[moving]{
 		}
 	}
 	aspect circle{
-		draw sphere(5) color:is_infected ? rgb("red") : rgb("green");
+		draw sphere(5) color:is_infected ? #red : #green;
 	}
 }
 
 species roads {
 	aspect geom {
-		draw shape color: rgb("black");
+		draw shape color: #black;
 	}
 }
 
@@ -65,7 +65,7 @@ species buildings {
    	float h<-0.1;
    	
 	aspect geom {
-		draw shape color: empty(members) ? rgb("gray") : (nb_I/length(members) > 0.5 ? rgb("red") : rgb("green")) depth: height;
+		draw shape color: empty(members) ? #gray : (nb_I/length(members) > 0.5 ? #red : #green) depth: height;
 	}
 	species people_in_building parent: people schedules: [] {
 		int leaving_time;

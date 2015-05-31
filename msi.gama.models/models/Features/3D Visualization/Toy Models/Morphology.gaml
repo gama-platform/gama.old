@@ -87,7 +87,7 @@ species section {
 	}
 		 
 	aspect default { 
-		draw river_channel color: rgb('blue') empty:isEmpty;
+		draw river_channel color: #blue empty:isEmpty;
 	}
 }
 
@@ -100,7 +100,7 @@ species riverPlan{
 		location <-{location.x,location.y,-rnd(meanDepth/4)}; 
 	}
 	aspect default { 
-		draw river_plan color: rgb('blue') empty:isEmpty;
+		draw river_plan color: #blue empty:isEmpty;
 	}
 }
 

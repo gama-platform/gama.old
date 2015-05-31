@@ -228,7 +228,7 @@ global {
 }
 
 grid cell width: 10 height: 10 neighbours: 4{
-	rgb color <- rgb("green");
+	rgb color <- #green;
 }
 
 species dummy {
@@ -237,19 +237,19 @@ species dummy {
 		add node: self to: the_graph;
 	}
 	aspect default {
-		draw circle(2) color: rgb("yellow");
-		draw id size: 6 color: rgb("black");
+		draw circle(2) color: #yellow;
+		draw id size: 6 color: #black;
 	}
 }
 experiment topology_test type: gui {
 	/** Insert here the definition of the input and output of the model */
 	output {
 		display main_display  {
-			grid cell lines: rgb("black");
+			grid cell lines: #black;
 			species dummy;
 			graphics graph{
 				loop edg over: the_graph.edges {
-					draw edg color: rgb("red");	
+					draw edg color: #red;	
 				}
 			}
 		}

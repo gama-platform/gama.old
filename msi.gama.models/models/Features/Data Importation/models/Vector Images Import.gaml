@@ -26,7 +26,7 @@ species managementUnit{
 	string pgeSAGE;
 	
 	aspect basic{
-		draw shape color: rgb("yellow");
+		draw shape color: #yellow;
 	}
 }	
 

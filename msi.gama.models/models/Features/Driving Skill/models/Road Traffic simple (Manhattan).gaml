@@ -36,7 +36,7 @@ species road  {
 	int indexDirection; 
 	geometry geom_visu;
 	aspect base {    
-		draw geom_visu color: rgb("black") ;
+		draw geom_visu color: #black ;
 	} 
 }
 	

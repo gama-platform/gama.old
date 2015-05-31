@@ -33,16 +33,16 @@ global {
  
 
 // We create izard agents and locate them on one'cell' among the list of cellules that verifies the following conditions : is empty ('empty(each.agents)') 
-// and with a color that is not white 'each.color != rgb('white')'
+// and with a color that is not white 'each.color != #white'
 // the shuffle operator is used to randomized the list of cells
 
 
 species izard {	
 	init{
-		set location <- (shuffle(cell) first_with ((each.color != rgb('white')) and (empty(agents overlapping each)))).location ;
+		set location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
 	}		
 	aspect basic{
-		draw square(1) color: rgb('orange');
+		draw square(1) color: #orange;
 	}
 	aspect image{
 		draw izardShape size: 3;

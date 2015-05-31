@@ -10,7 +10,7 @@ global torus: true {
 	int width_and_height_of_grid <- 100 max: 400 min: 20 ;  
 	int ants <- 100 min: 1 ;
 
-	rgb black <- rgb("black")  ;	
+	rgb black <- #black  ;	
 	const colors type: list <- ["yellow","red", "orange", "blue", "green","cyan", "gray","pink","magenta"] ;
 	
 	action description {
@@ -23,7 +23,7 @@ global torus: true {
 }
 
 species ant skills: [ moving ] control: fsm { 
-	rgb color <- rgb("white") ; 
+	rgb color <- #white ; 
 	ant_grid place -> {ant_grid (location)} ;
 	
 	reflex wandering { 

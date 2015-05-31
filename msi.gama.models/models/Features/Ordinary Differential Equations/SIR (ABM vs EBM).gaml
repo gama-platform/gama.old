@@ -22,14 +22,14 @@ global {
 			is_susceptible <- true;
 			is_infected <- false;
 			is_immune <- false;
-			color <- rgb('green');
+			color <- #green;
 		}
 
 		create Host number: number_I {
 			is_susceptible <- false;
 			is_infected <- true;
 			is_immune <- false;
-			color <- rgb('red');
+			color <- #red;
 		}
 
 		create node_agent number: 1 {
@@ -47,14 +47,14 @@ global {
 }
 
 grid sir_grid width: 50 height: 50 {
-		rgb color <- rgb('black');
+		rgb color <- #black;
 		list<sir_grid> neighbours <- (self neighbours_at neighbours_size) of_species sir_grid;
 	}
 species Host {
 	bool is_susceptible <- true;
 	bool is_infected <- false;
 	bool is_immune <- false;
-	rgb color <- rgb('green');
+	rgb color <- #green;
 	int sic_count <- 0;
 	sir_grid myPlace;
     int ngb_infected_number function: {self neighbours_at(neighbours_size) count(each.is_infected)};
@@ -74,7 +74,7 @@ species Host {
         		is_susceptible <-  false;
 	            	is_infected <-  true;
 	            	is_immune <-  false;
-	            	color <-  rgb('red');       			
+	            	color <-  #red;       			
 			}    				
 	}
 
@@ -82,7 +82,7 @@ species Host {
 		is_susceptible <- false;
 		is_infected <- false;
 		is_immune <- true;
-		color <- rgb('yellow');
+		color <- #yellow;
 	} 
 	
 	aspect basic {
@@ -110,31 +110,31 @@ experiment Simulation_ABM_EBM type: gui {
 	parameter 'Size of the neighbours' type: int var: neighbours_size <- 1 min: 1 max: 5 category: "Infection";
 	output {
 		display sir_display { 
-			grid sir_grid lines: rgb("black");
+			grid sir_grid lines: #black;
 			species Host aspect: basic;	
 		}
 		display ABM { 
-			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
-				data 'susceptible' value: (Host as list) count (each.is_susceptible) color: rgb('green');
-				data 'infected' value: (Host as list) count (each.is_infected) color: rgb('red');
-				data 'immune' value: (Host as list) count (each.is_immune) color: rgb('blue');
+			chart 'Susceptible' type: series background: #lightgray style: exploded {
+				data 'susceptible' value: (Host as list) count (each.is_susceptible) color: #green;
+				data 'infected' value: (Host as list) count (each.is_infected) color: #red;
+				data 'immune' value: (Host as list) count (each.is_immune) color: #blue;
 			}
 		}
 		display EBM { 
-			chart "SIR" type: series background: rgb('white') {
-				data 'S' value: first(node_agent).S color: rgb('green');
-				data 'I' value: first(node_agent).I color: rgb('red');
-				data 'R' value: first(node_agent).R color: rgb('blue');
+			chart "SIR" type: series background: #white {
+				data 'S' value: first(node_agent).S color: #green;
+				data 'I' value: first(node_agent).I color: #red;
+				data 'R' value: first(node_agent).R color: #blue;
 			}
 		}
 		display ABM_EBM  { 
-			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
-				data 'susceptible' value: (Host as list) count (each.is_susceptible) color: rgb('green')-50;
-				data 'infected' value: (Host as list) count (each.is_infected) color: rgb('red')-50;
-				data 'immune' value: (Host as list) count (each.is_immune) color: rgb('blue')-50;
-				data 'S' value: first(node_agent).S color: rgb('green')+50;
-				data 'I' value: first(node_agent).I color: rgb('red')+50;
-				data 'R' value: first(node_agent).R color: rgb('blue')+50;
+			chart 'Susceptible' type: series background: #lightgray style: exploded {
+				data 'susceptible' value: (Host as list) count (each.is_susceptible) color: #green-50;
+				data 'infected' value: (Host as list) count (each.is_infected) color: #red-50;
+				data 'immune' value: (Host as list) count (each.is_immune) color: #blue-50;
+				data 'S' value: first(node_agent).S color: #green+50;
+				data 'I' value: first(node_agent).I color: #red+50;
+				data 'R' value: first(node_agent).R color: #blue+50;
 			}
 		}
 	}

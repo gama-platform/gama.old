@@ -96,7 +96,7 @@ species ant skills: [moving] control: fsm {
 		}
 	} 
 	aspect default {
-		draw shape: circle(1.0) empty: !hasFood color: rgb('orange') ; 
+		draw shape: circle(1.0) empty: !hasFood color: #orange ; 
 	}           
 }
 

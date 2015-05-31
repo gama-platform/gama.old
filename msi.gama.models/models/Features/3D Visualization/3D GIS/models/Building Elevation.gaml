@@ -17,7 +17,7 @@ global {
 	init {
 		create building from: shape_file_buildings with: [type:: string(read('NATURE'))] {
 			if type = 'Industrial' {
-				color <- rgb('blue');
+				color <- #blue;
 			}
 			height <- 10 + rnd(90);
 		}
@@ -43,7 +43,7 @@ global {
 
 species building {
 	string type;
-	rgb color <- rgb('gray');
+	rgb color <- #gray;
 	int height;
 	aspect base {
 		draw shape color: color depth: height;
@@ -52,7 +52,7 @@ species building {
 }
 
 species road {
-	rgb color <- rgb('black');
+	rgb color <- #black;
 	aspect base {
 		draw shape color: color;
 	}
@@ -60,7 +60,7 @@ species road {
 }
 
 species people skills: [moving] {
-	rgb color <- rgb('yellow');
+	rgb color <- #yellow;
 	building living_place <- nil;
 	building working_place <- nil;
 	int start_work;

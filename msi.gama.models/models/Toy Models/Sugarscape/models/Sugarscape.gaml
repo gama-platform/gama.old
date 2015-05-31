@@ -17,13 +17,13 @@ global {
 	geometry shape <- rectangle(50, 50);
 		
 	const types type: file<int> <- file<int>('../images/sugarscape.pgm');
-	const red type: rgb <- rgb('red');
-	const white type: rgb <- rgb('white');
+	const red type: rgb <- #red;
+	const white type: rgb <- #white;
 	const FFFFAA type: rgb <- rgb('#FFFFAA');
 	const FFFF55 type: rgb <- rgb('#FFFF55');
-	const yellow type: rgb <- rgb('yellow');
+	const yellow type: rgb <- #yellow;
 	const dark_yellow type: rgb <- rgb('#EEB422');
-	const pink type: rgb <- rgb('pink');
+	const pink type: rgb <- #pink;
 	const less_red type: rgb <- rgb('#FF5F5F');
 	
 	init {
@@ -101,15 +101,15 @@ experiment sugarscape type: gui{
 			species animal;
 		}
 		display chart refresh: every(5) {
-			chart name: 'Energy' type: pie background: rgb('lightGray') style: exploded {
-				data "strong" value: (animal as list) count (each.sugar > 8) color: rgb("green");
-				data "weak" value: (animal as list) count (each.sugar < 9) color: rgb("red");
+			chart name: 'Energy' type: pie background: #lightgray style: exploded {
+				data "strong" value: (animal as list) count (each.sugar > 8) color: #green;
+				data "weak" value: (animal as list) count (each.sugar < 9) color: #red;
 			}
 		}
 		display chart2 refresh: every(5) {
-			chart name: 'Energy' type: histogram background: rgb('lightGray') {
-				data "strong" value: (animal as list) count (each.sugar > 8)  color: rgb("green");
-				data "weak" value: (animal as list) count (each.sugar < 9)  color: rgb("red");
+			chart name: 'Energy' type: histogram background: #lightgray {
+				data "strong" value: (animal as list) count (each.sugar > 8)  color: #green;
+				data "weak" value: (animal as list) count (each.sugar < 9)  color: #red;
 			}
 		}
 	}

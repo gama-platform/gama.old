@@ -24,7 +24,7 @@ global {
 	geometry shape <- square(width_and_height_of_environment);
 	init { 
 		
-		global_color <- rgb("yellow");//global_color hsb_to_rgb ([0.25,1.0,1.0]);
+		global_color <- #yellow;//global_color hsb_to_rgb ([0.25,1.0,1.0]);
 
 		maxSize<- 10;
 		

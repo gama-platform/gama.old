@@ -49,26 +49,26 @@ species SIR_agt {
 experiment mysimulation1 type: gui { 
  	output { 
 		display SIR_1  {
-			chart "SI - h=1" type: series background: rgb('white') {
-				data 'S' value: first(SIR_agt where (each.mycycle = s1)).S color: rgb('green');				
-				data 'I' value: first(SIR_agt where (each.mycycle = s1)).I color: rgb('red') ;
-				data 'R' value: first(SIR_agt where (each.mycycle = s1)).R color: rgb('blue') ;				
+			chart "SI - h=1" type: series background: #white {
+				data 'S' value: first(SIR_agt where (each.mycycle = s1)).S color: #green;				
+				data 'I' value: first(SIR_agt where (each.mycycle = s1)).I color: #red ;
+				data 'R' value: first(SIR_agt where (each.mycycle = s1)).R color: #blue ;				
 			}
 		}
 		
 		display SIR_10 {
-			chart "SI - h=0.1" type: series background: rgb('white'){
-				data 'S' value: first(SIR_agt where (each.mycycle = s2)).S color: rgb('green');				
-				data 'I' value: first(SIR_agt where (each.mycycle = s2)).I color: rgb('red') ;
-				data 'R' value: first(SIR_agt where (each.mycycle = s2)).R color: rgb('blue') ;				
+			chart "SI - h=0.1" type: series background: #white{
+				data 'S' value: first(SIR_agt where (each.mycycle = s2)).S color: #green;				
+				data 'I' value: first(SIR_agt where (each.mycycle = s2)).I color: #red ;
+				data 'R' value: first(SIR_agt where (each.mycycle = s2)).R color: #blue ;				
 			}
 		}
 		
 		display SIR_100  {
-			chart "SI - h=0.01" type: series background: rgb('white') {
-				data 'S' value: first(SIR_agt where (each.mycycle = s3)).S color: rgb('green');				
-				data 'I' value: first(SIR_agt where (each.mycycle = s3)).I color: rgb('red') ;
-				data 'R' value: first(SIR_agt where (each.mycycle = s3)).R color: rgb('blue') ;				
+			chart "SI - h=0.01" type: series background: #white {
+				data 'S' value: first(SIR_agt where (each.mycycle = s3)).S color: #green;				
+				data 'I' value: first(SIR_agt where (each.mycycle = s3)).I color: #red ;
+				data 'R' value: first(SIR_agt where (each.mycycle = s3)).R color: #blue ;				
 			}
 		}	
 	}

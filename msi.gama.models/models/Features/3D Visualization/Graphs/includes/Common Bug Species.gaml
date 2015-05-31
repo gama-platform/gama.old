@@ -29,7 +29,7 @@ species bug skills: [moving] {
 	} 
 	//Display the bug in red
     aspect base {
-        draw sphere(1) color: rgb('red');
+        draw sphere(1) color: #red;
     }
     
     //Display the bug with a color that represent the value of the attribute

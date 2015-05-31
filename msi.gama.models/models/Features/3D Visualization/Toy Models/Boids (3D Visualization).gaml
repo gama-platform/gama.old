@@ -113,7 +113,7 @@ species boids_goal skills: [moving] {
 	}
 	
 	aspect sphere{
-		draw sphere(10) color: rgb('white');
+		draw sphere(10) color: #white;
 		}
 	} 
 	
@@ -205,7 +205,7 @@ species aggregatedboids{
 	  location <- mean (boids collect (each.location));	
 	}
 	aspect base{   		
-		draw sphere(10) color: rgb('red');
+		draw sphere(10) color: #red;
 	}
 }
 
@@ -288,10 +288,10 @@ species boids skills: [moving] {
 	}
 	
 	aspect basic{
-		draw triangle(boids_size) color:rgb('black');
+		draw triangle(boids_size) color:#black;
 	}
 	aspect image {
-		draw (images at (rnd(2))) size: boids_size rotate: heading color: rgb('black') ;			    
+		draw (images at (rnd(2))) size: boids_size rotate: heading color: #black ;			    
 	}
 			
 	aspect dynamicColor{
@@ -304,7 +304,7 @@ species boids skills: [moving] {
 species obstacle skills: [moving] {
 	float speed <- 0.1;	 
 	aspect default {
-		draw triangle(20) color: rgb('yellow') depth:5;
+		draw triangle(20) color: #yellow depth:5;
 	}
 }
 
@@ -356,17 +356,17 @@ experiment SpaceTimeCube type: gui {
 			    draw triangle(20) size: 15 rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) border:hsb (float(heading)/360.0,1.0,1.0) depth:5 at: {location.x ,location.y,location.z+time};	
 			}
 			species boids_goal trace:true{
-				draw sphere(10) color: rgb('yellow') at: {location.x ,location.y,location.z+time};
+				draw sphere(10) color: #yellow at: {location.x ,location.y,location.z+time};
 			}	
 		}
 				
 		display SpaceTimeCubeAggregated  type:opengl ambient_light:50 diffuse_light:100{
 			image name:'background' file:'images/ocean.jpg';
 			species aggregatedboids trace:true{
-			    draw sphere(10) color: rgb('red') at: {location.x ,location.y,location.z+time};	
+			    draw sphere(10) color: #red at: {location.x ,location.y,location.z+time};	
 			}
 			species boids_goal trace:true{
-				draw sphere(10) color: rgb('yellow') at: {location.x ,location.y,location.z+time};
+				draw sphere(10) color: #yellow at: {location.x ,location.y,location.z+time};
 			}	
 		}
 	}

@@ -22,13 +22,13 @@ global {
         	is_susceptible <- true;
         	is_infected <-  false;
             is_immune <-  false; 
-            color <-  rgb("green");
+            color <-  #green;
         }
         create Host number: number_I {
             is_susceptible <-  false; 
             is_infected <-  true;
             is_immune <-  false; 
-            color <-  rgb("red");  
+            color <-  #red;  
        }
    }
    reflex compute_nb_infected {
@@ -38,14 +38,14 @@ global {
 
 
 grid si_grid width: 50 height: 50 use_individual_shapes: false use_regular_agents: false frequency: 0{
-	rgb color <- rgb("black");
+	rgb color <- #black;
 	list<si_grid> neighbours <- (self neighbours_at neighbours_size) ;       
 }
 species Host  {
 	bool is_susceptible <- true;
 	bool is_infected <- false;
     bool is_immune <- false;
-    rgb color <- rgb("green");
+    rgb color <- #green;
     int sic_count <- 0;
     si_grid myPlace;
     
@@ -77,7 +77,7 @@ species Host  {
         	is_susceptible <-  false;
             is_infected <-  true;
             is_immune <-  false;
-            color <-  rgb("red");    
+            color <-  #red;    
         }
     }
     
@@ -106,14 +106,14 @@ experiment Simulation type: gui {
 	
  	output { 
 	    display si_display {
-	        grid si_grid lines: rgb("black");
+	        grid si_grid lines: #black;
 	        species Host aspect: basic;
 	    }
 	        
 	    display chart refresh: every(10) {
-			chart "Susceptible" type: series background: rgb("lightGray") style: exploded {
-				data "susceptible" value: Host count (each.is_susceptible) color: rgb("green");
-				data "infected" value: Host count (each.is_infected) color: rgb("red");
+			chart "Susceptible" type: series background: #lightgray style: exploded {
+				data "susceptible" value: Host count (each.is_susceptible) color: #green;
+				data "infected" value: Host count (each.is_infected) color: #red;
 			}
 		}
 			
