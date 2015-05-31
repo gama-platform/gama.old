@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaListType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
@@ -33,8 +33,9 @@ public class GamaListType extends GamaContainerType<IList> {
 		return list;
 	}
 
-	public static IList staticCast(final IScope scope, final Object obj, final IType contentsType, final boolean copy)
+	public static IList staticCast(final IScope scope, final Object obj, final IType ct, final boolean copy)
 		throws GamaRuntimeException {
+		IType contentsType = ct == null ? Types.NO_TYPE : ct;
 		if ( obj == null ) { return GamaListFactory.create(Types.NO_TYPE, 0); }
 		// if ( obj instanceof IList ) { return (IList) obj; }
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).listValue(scope, contentsType, copy); }

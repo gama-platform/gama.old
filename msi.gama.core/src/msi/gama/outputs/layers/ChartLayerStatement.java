@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ChartLayerStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -40,7 +40,7 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Random;
 import msi.gaml.statements.AbstractStatementSequence;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
@@ -57,9 +57,9 @@ import org.jfree.ui.RectangleInsets;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = IKeyword.DISPLAY)
@@ -69,74 +69,74 @@ import org.jfree.ui.RectangleInsets;
 		type = { IType.FLOAT, IType.INT, IType.POINT },
 		optional = true,
 		doc = @doc("range of the x-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
-	@facet(name = ChartLayerStatement.YRANGE,
+		@facet(name = ChartLayerStatement.YRANGE,
 		type = { IType.FLOAT, IType.INT, IType.POINT },
 		optional = true,
 		doc = @doc("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
-	@facet(name = IKeyword.POSITION,
+		@facet(name = IKeyword.POSITION,
 		type = IType.POINT,
 		optional = true,
 		doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
-	@facet(name = IKeyword.SIZE,
+		@facet(name = IKeyword.SIZE,
 		type = IType.POINT,
 		optional = true,
 		doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
-	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("the background color")),
-	@facet(name = IKeyword.TIMEXSERIES,
+		@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("the background color")),
+		@facet(name = IKeyword.TIMEXSERIES,
 		type = IType.LIST,
 		optional = true,
 		doc = @doc("for series charts, change the default time serie (simulation cycle) for an other value.")),
-	@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true, doc = @doc("the axis color")),
-	@facet(name = IKeyword.TYPE,
+		@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true, doc = @doc("the axis color")),
+		@facet(name = IKeyword.TYPE,
 		type = IType.ID,
 		values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,
 			IKeyword.BOX_WHISKER },
-		optional = true,
-		doc = @doc("the type of chart. It could be histogram, series, xy, pie or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
-	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D, IKeyword.STACK,
-		IKeyword.BAR }, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true, doc = @doc("the style of the chart")),
-	@facet(name = IKeyword.GAP, type = IType.FLOAT, optional = true),
-	@facet(name = ChartLayerStatement.YTICKUNIT,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
-	@facet(name = ChartLayerStatement.XTICKUNIT,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the chart layer")),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
-	@facet(name = ChartLayerStatement.TICKFONTFACE, type = IType.STRING, optional = true),
-	@facet(name = ChartLayerStatement.TICKFONTSIZE, type = IType.INT, optional = true),
-	@facet(name = ChartLayerStatement.TICKFONTSTYLE,
-		type = IType.ID,
-		values = { "plain", "bold", "italic" },
-		optional = true,
-		doc = @doc("the style used to display ticks")),
-	@facet(name = ChartLayerStatement.LABELFONTFACE, type = IType.STRING, optional = true),
-	@facet(name = ChartLayerStatement.LABELFONTSIZE, type = IType.INT, optional = true),
-	@facet(name = ChartLayerStatement.LABELFONTSTYLE,
-		type = IType.ID,
-		values = { "plain", "bold", "italic" },
-		optional = true,
-		doc = @doc("the style used to display labels")),
-	@facet(name = ChartLayerStatement.LEGENDFONTFACE, type = IType.STRING, optional = true),
-	@facet(name = ChartLayerStatement.LEGENDFONTSIZE, type = IType.INT, optional = true),
-	@facet(name = ChartLayerStatement.LEGENDFONTSTYLE,
-		type = IType.ID,
-		values = { "plain", "bold", "italic" },
-		optional = true,
-		doc = @doc("the style used to display legend")),
-	@facet(name = ChartLayerStatement.TITLEFONTFACE, type = IType.STRING, optional = true),
-	@facet(name = ChartLayerStatement.TITLEFONTSIZE, type = IType.INT, optional = true),
-	@facet(name = ChartLayerStatement.TITLEFONTSTYLE,
-		type = IType.ID,
-		values = { "plain", "bold", "italic" },
-		optional = true,
-		doc = @doc("the style used to display titles")), },
+			optional = true,
+			doc = @doc("the type of chart. It could be histogram, series, xy, pie or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
+			@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D, IKeyword.STACK,
+				IKeyword.BAR }, optional = true),
+				@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true, doc = @doc("the style of the chart")),
+				@facet(name = IKeyword.GAP, type = IType.FLOAT, optional = true),
+				@facet(name = ChartLayerStatement.YTICKUNIT,
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
+				@facet(name = ChartLayerStatement.XTICKUNIT,
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
+				@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the chart layer")),
+				@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+				@facet(name = ChartLayerStatement.TICKFONTFACE, type = IType.STRING, optional = true),
+				@facet(name = ChartLayerStatement.TICKFONTSIZE, type = IType.INT, optional = true),
+				@facet(name = ChartLayerStatement.TICKFONTSTYLE,
+				type = IType.ID,
+				values = { "plain", "bold", "italic" },
+				optional = true,
+				doc = @doc("the style used to display ticks")),
+				@facet(name = ChartLayerStatement.LABELFONTFACE, type = IType.STRING, optional = true),
+				@facet(name = ChartLayerStatement.LABELFONTSIZE, type = IType.INT, optional = true),
+				@facet(name = ChartLayerStatement.LABELFONTSTYLE,
+				type = IType.ID,
+				values = { "plain", "bold", "italic" },
+				optional = true,
+				doc = @doc("the style used to display labels")),
+				@facet(name = ChartLayerStatement.LEGENDFONTFACE, type = IType.STRING, optional = true),
+				@facet(name = ChartLayerStatement.LEGENDFONTSIZE, type = IType.INT, optional = true),
+				@facet(name = ChartLayerStatement.LEGENDFONTSTYLE,
+				type = IType.ID,
+				values = { "plain", "bold", "italic" },
+				optional = true,
+				doc = @doc("the style used to display legend")),
+				@facet(name = ChartLayerStatement.TITLEFONTFACE, type = IType.STRING, optional = true),
+				@facet(name = ChartLayerStatement.TITLEFONTSIZE, type = IType.INT, optional = true),
+				@facet(name = ChartLayerStatement.TITLEFONTSTYLE,
+				type = IType.ID,
+				values = { "plain", "bold", "italic" },
+				optional = true,
+				doc = @doc("the style used to display titles")), },
 
-	omissible = IKeyword.NAME)
+				omissible = IKeyword.NAME)
 @doc(value = "`" +
 	IKeyword.CHART +
 	"` allows modeler to display a chart: this enables to display specific values of the model at each iteration. GAMA can display various chart types: time series (series), pie charts (pie) and histograms (histogram).",
@@ -145,8 +145,8 @@ import org.jfree.ui.RectangleInsets;
 		@example(value = "   chart \"chart name\" type: series [additional options] {", isExecutable = false),
 		@example(value = "      [Set of data, datalists statements]", isExecutable = false),
 		@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) },
-	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
-		IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
+	IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
 public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String XRANGE = "x_range";
@@ -277,7 +277,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						xAxisName, IKeyword.VALUE, SimulationAgent.CYCLE).compile();
 				if ( getFacet(IKeyword.TIMEXSERIES) != null ) {
 					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
-						.setExpression(getFacet(IKeyword.TIMEXSERIES));
+					.setExpression(getFacet(IKeyword.TIMEXSERIES));
 				}
 			}
 
@@ -637,13 +637,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 			case XY_CHART:
 				chart =
-					ChartFactory.createXYLineChart(getName(), "", "", null, PlotOrientation.VERTICAL, true, false,
-						false);
+				ChartFactory.createXYLineChart(getName(), "", "", null, PlotOrientation.VERTICAL, true, false,
+					false);
 				break;
 			case SCATTER_CHART:
 				chart =
-					ChartFactory.createXYLineChart(getName(), "", "", null, PlotOrientation.VERTICAL, true, false,
-						false);
+				ChartFactory.createXYLineChart(getName(), "", "", null, PlotOrientation.VERTICAL, true, false,
+					false);
 				break;
 			case BOX_WHISKER_CHART: {
 				chart =
@@ -907,7 +907,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 							if ( ((DefaultTableXYDataset) ((XYPlot) chart.getPlot()).getDataset(i + 1))
 								.getSeriesCount() > 0 ) {
 								((DefaultTableXYDataset) ((XYPlot) chart.getPlot()).getDataset(i + 1)).getSeries(0)
-									.setKey(seriesnames.get(i) + "(" + i + ")");
+								.setKey(seriesnames.get(i) + "(" + i + ")");
 							}
 
 						}
@@ -941,10 +941,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						r = datalist.renderer.getClass().newInstance();
 						if ( XYLineAndShapeRenderer.class.isAssignableFrom(r.getClass()) ) {
 							((XYLineAndShapeRenderer) r)
-								.setBaseShapesFilled(((XYLineAndShapeRenderer) datalist.renderer).getBaseShapesFilled());
+							.setBaseShapesFilled(((XYLineAndShapeRenderer) datalist.renderer).getBaseShapesFilled());
 							((XYLineAndShapeRenderer) r)
-								.setBaseShapesVisible(((XYLineAndShapeRenderer) datalist.renderer)
-									.getBaseShapesVisible());
+							.setBaseShapesVisible(((XYLineAndShapeRenderer) datalist.renderer)
+								.getBaseShapesVisible());
 							((XYLineAndShapeRenderer) r).setSeriesLinesVisible(0,
 								((XYLineAndShapeRenderer) datalist.renderer).getSeriesLinesVisible(0));
 						}
@@ -1062,7 +1062,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			 * dynamiccategorynames=true;
 			 * categorynames=(GamaList)valc;
 			 * }
-			 * 
+			 *
 			 * if (type==HISTOGRAM_CHART)
 			 * {
 			 * for ( int i=0; i<values.size(); i++ ) {
@@ -1088,7 +1088,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			 * for (int j=0;j<x.length(scope);j++)
 			 * ((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope,
 			 * x.get(j)).doubleValue(),(String)defaultnames.get(i), new Integer(j));
-			 * 
+			 *
 			 * }
 			 * } else {
 			 * ((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, obj).doubleValue(), new
@@ -1255,13 +1255,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				clearvalues = true;
 				if ( type != XY_CHART ) {
 					for ( int j = 0; j < x.size(); j++ ) {
-						lastValues.put(d.getName(), Double.parseDouble("" + x.get(j)));
+						lastValues.put(d.getName(), Cast.asFloat(scope, x.get(j)));
 					}
 				}
 			} else {
 				x.add(obj);
 				// if ( type != XY_CHART || type != SCATTER_CHART ) {
-				lastValues.put(d.getName(), Double.parseDouble("" + x.get(x.size() - 1)));
+				lastValues.put(d.getName(), Cast.asFloat(scope, x.get(x.size() - 1)));
 				// }
 			}
 		}
@@ -1368,29 +1368,23 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					// java.lang.System.out.println("gr"+n);
 					for ( int j = 0; j < n.size(); j++ ) {
 						if ( type == SERIES_CHART ) {
+							double d2 = Cast.asFloat(scope, n.get(j));
+							double d1;
 							if ( cumulative ) {
-								// serie.addOrUpdate(Cast.asFloat(scope,Random.opRnd(scope, 10000))/1000,
-								// Double.parseDouble("" + n.get(j)));
-								serie.addOrUpdate(Double.parseDouble("" + x.get(j)), Double.parseDouble("" + n.get(j)));
+								d1 = Cast.asFloat(scope, x.get(j));
 							} else {
-								serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));
-								// serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));
-
+								d1 = Cast.asFloat(scope, j);
 							}
-						}
-						if ( type == XY_CHART || type == SCATTER_CHART ) {
-							// GamaRuntimeException g = GamaRuntimeException.create(scope);
-							// if ( isAgent ) {
-							// g.addAgent(agent.toString());
-							// }
-							// GAMA.reportAndThrowIfNeeded(scope, g, true);
+							serie.addOrUpdate(d1, d2);
+						} else if ( type == XY_CHART || type == SCATTER_CHART ) {
 							try {
+								IList<Double> list = GamaListType.staticCast(scope, n.get(j), Types.FLOAT, false);
+								double d1 = list.get(0);
+								double d2 = list.get(1);
 								if ( cumulative ) {
-									serie.addOrUpdate(Double.parseDouble("" + Cast.asList(scope, n.get(j)).get(0)),
-										Double.parseDouble("" + Cast.asList(scope, n.get(j)).get(1)));
+									serie.addOrUpdate(d1, d2);
 								} else {
-									serie.addOrUpdate(Double.parseDouble("" + Cast.asList(scope, n.get(j)).get(0)),
-										Double.parseDouble("" + Cast.asList(scope, n.get(j)).get(1)));
+									serie.addOrUpdate(d1, d2);
 
 								}
 							} catch (IndexOutOfBoundsException e) {

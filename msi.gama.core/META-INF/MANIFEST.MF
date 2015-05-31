@@ -45,6 +45,7 @@ Export-Package: msi.gama.common,
    org.opengis.referencing.operation,
    com.vividsolutions.jts.geom,
    msi.gama.runtime.exceptions",
+ msi.gama.database.geosql,
  msi.gama.database.mdx,
  msi.gama.database.sql,
  msi.gama.kernel.batch;
