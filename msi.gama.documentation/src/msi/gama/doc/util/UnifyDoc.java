@@ -118,10 +118,12 @@ public class UnifyDoc {
 	
 	/**
 	 * @param args
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
 	 * @throws IOException 
 	 * @throws JDOMException 
 	 */
-	public static void main(String[] args) {
-
+	public static void main(String[] args) throws IOException, JDOMException, ParserConfigurationException, SAXException {
+		UnifyDoc.unify();
 	}
 }

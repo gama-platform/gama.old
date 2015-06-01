@@ -133,7 +133,6 @@ public class WorkspaceManager {
 		NodeList nLFeatures = document.getElementsByTagName("feature");
 		for(int j = 0; j < nLFeatures.getLength(); j++){
 			org.w3c.dom.Element eltFeature = (org.w3c.dom.Element) nLFeatures.item(j);
-			// System.out.println(eltFeature.getAttribute("id"));
 			listPlugins.add(eltFeature.getAttribute("id"));
 		}
 		
@@ -158,7 +157,6 @@ public class WorkspaceManager {
 		NodeList nlPlugins = document.getElementsByTagName("plugin");
 		for(int j = 0; j < nlPlugins.getLength(); j++){
 			org.w3c.dom.Element eltPlugin = (org.w3c.dom.Element) nlPlugins.item(j);
-			// System.out.println(eltPlugin.getAttribute("id"));
 			listPlugins.add(eltPlugin.getAttribute("id"));
 		}		
 
@@ -166,7 +164,6 @@ public class WorkspaceManager {
 		NodeList nlFeatures = document.getElementsByTagName("includes");
 		for(int j = 0; j < nlFeatures.getLength(); j++){
 			org.w3c.dom.Element eltFeature = (org.w3c.dom.Element) nlFeatures.item(j);
-		//	System.out.println(eltFeature.getAttribute("id"));
 			listPlugins.add(eltFeature.getAttribute("id"));
 		}		
 		
