@@ -8,7 +8,7 @@ model mapcomparison
 
 global {
 	list<string> categories <- ["type 1", "type 2", "type 3", "type 4"];
-	map<string,rgb> color_cat <- ["type 1"::rgb("blue"), "type 2"::rgb("green"), "type 3"::rgb("yellow"), "type 4"::rgb("red")];
+	map<string,rgb> color_cat <- ["type 1"::#blue, "type 2"::#green, "type 3"::#yellow, "type 4"::#red];
 	matrix<float> fuzzy_categories;
 	matrix<float> fuzzy_transitions;
 	list<float> nb_per_cat_obs;
@@ -63,7 +63,7 @@ grid cell width: 50 height: 50 {
 	rgb color;
 	rgb color_init;
 	rgb color_obs;
-	rgb color_fuzzy <- rgb("white");
+	rgb color_fuzzy <- #white;
 	list<cell> neighbours <- self neighbours_at 1;
 	
 	aspect fuzzy_sim {

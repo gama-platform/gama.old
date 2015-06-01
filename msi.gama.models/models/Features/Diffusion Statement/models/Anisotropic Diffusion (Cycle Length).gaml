@@ -35,19 +35,17 @@ global {
 	}
 }
 
-entities {
-	grid cells height: taille width: taille {
-		float phero  <- 0.0;
-		rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
-		//float grid_value update: phero * 100;
-	} 
-	
-	grid quick_cells height: taille width: taille {
-		float phero  <- 0.0;
-		rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
-		//float grid_value update: phero * 100;
-	} 
-}
+
+grid cells height: taille width: taille {
+	float phero  <- 0.0;
+	rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
+} 
+
+grid quick_cells height: taille width: taille {
+	float phero  <- 0.0;
+	rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
+} 
+
 
 experiment diffusion type: gui {
 	output {

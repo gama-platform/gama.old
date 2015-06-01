@@ -35,8 +35,8 @@ global {
 	int xmax <- int((environment_bounds.x) - inner_bounds_x) ;
 	int ymax <- int((environment_bounds.y) - inner_bounds_y) ;
 	float MAX_DISTANCE <- environment_bounds.x + environment_bounds.y  ;
-	rgb ball_color <- rgb('green'); 
-	rgb chaos_ball_color <- rgb('red');
+	rgb ball_color <- #green; 
+	rgb chaos_ball_color <- #red;
 	float ball_size <- float(3);  
 	float ball_speed <- float(1);
 	float chaos_ball_speed <- 8 * ball_speed;  
@@ -384,7 +384,7 @@ global {
 				
 				loop m over: members {
 					ask m as group_delegation {
-						do move2 with: [ with_heading :: direction_target, with_speed :: cloud_speed ];
+						do move2 with: [ with_heading :: float(direction_target), with_speed :: float(cloud_speed) ];
 					}				
 				}
 			}
@@ -432,19 +432,19 @@ global {
 	 	 
 		aspect default {
 			draw shape color: color empty: true;
-			draw text: name + ' with ' + (string(length(members))) + ' groups.' size: 15 color: color style: bold at: {location.x - 65, location.y};
+			draw text: name + ' with ' + (string(length(members))) + ' groups.' size: 15 color: color  at: {location.x - 65, location.y};
 		}
 	}
 	
 	species group_agents_viewer  { 
 		aspect default {
-			draw text: 'Number of groups: ' + (string (length (world.agents of_generic_species group))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: rgb('blue') size: 40 style: bold ;
+			draw text: 'Number of groups: ' + (string (length (world.agents of_generic_species group))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: #blue size: 40  ;
 		}
 	}
 
 	species cloud_agents_viewer  { 
 		aspect default {
-			draw text: 'Number of clouds: ' + (string (length (list(cloud)))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: rgb('green') size: 40 style: bold;
+			draw text: 'Number of clouds: ' + (string (length (list(cloud)))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: #green size: 40 ;
 		}
 	} 
 

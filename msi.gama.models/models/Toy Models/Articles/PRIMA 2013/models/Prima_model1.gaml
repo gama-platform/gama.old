@@ -26,7 +26,7 @@ species people skills:[moving]{
 		}
 	}
 	aspect circle{
-		draw circle(5) color:is_infected ? rgb("red") : rgb("green");
+		draw circle(5) color:is_infected ? #red : #green;
 	}
 }
 

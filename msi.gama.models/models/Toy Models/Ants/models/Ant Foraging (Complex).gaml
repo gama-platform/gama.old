@@ -35,92 +35,89 @@ global {
   
 }
 
-entities {
-	grid ant_grid width: gridsize height: gridsize neighbours: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
-		const neighbours type: list of: ant_grid <- self neighbours_at 1;
-		const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
-		rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
-		food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
-		int food <- 0;
-	}
-	species ant skills: [moving] control: fsm {
-		float speed <- 1.0;
-		bool has_food <- false;
-		signal road update: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
-		
-		action pick (int amount) {
-			has_food <- true;
-			ant_grid place <- ant_grid(location);
-			place.food <- place.food - amount;
-		}
-	
-		action drop {
-			food_gathered <- food_gathered + 1;
-			has_food <- false;
-			heading <- heading - 180;
-		}
-	
-		point choose_best_place {
-			container list_places <- (ant_grid(location)).neighbours;
-			if (list_places count (each.food > 0)) > 0 {
-				return point(list_places first_with (each.food > 0));
-			} else {
-				list_places <- (list_places where ((each.road > 0) and ((each distance_to center) > (self distance_to center)))) sort_by (each.road);
-				return point(last(list_places));
-			}
-	
-		}
-	
-		reflex drop when: has_food and (ant_grid(location)).is_nest {
-			do drop();
-		}
-	
-		reflex pick when: !has_food and (ant_grid(location)).food > 0 {
-			do pick(1);
-		}
-	
-		state wandering initial: true {
-			do wander(amplitude: 90);
-			float pr <- (ant_grid(location)).road;
-			transition to: carryingFood when: has_food;
-			transition to: followingRoad when: (pr > 0.05) and (pr < 4);
-		}
-	
-		state carryingFood {
-			do goto(target: center);
-			transition to: wandering when: !has_food;
-		}
-	
-		state followingRoad {
-			point next_place <- choose_best_place();
-			float pr <- (ant_grid(location)).road;
-			location <- next_place;
-			transition to: carryingFood when: has_food;
-			transition to: wandering when: (pr < 0.05) or (next_place = nil);
-		}
-	
-		aspect info {
-			draw circle(1) empty: !has_food color: rgb('red');
-			if (destination != nil) {
-				draw line([location, destination]) color: rgb('white');
-			}
-	
-			draw circle(4) empty: true color: rgb('white');
-			draw string(self as int) color: rgb('white') size: 1;
-			draw state color: rgb('yellow') size: 10 °px at: my location + { 1, 1 } style: "bold";
-		}
-	
-		aspect icon {
-			draw ant_shape_empty size: 10 rotate: my heading + 1;
-		}
-	
-		aspect default {
-			draw square(1) empty: !has_food color: rgb('blue') rotate: my heading;
-		}
-	}	
+
+grid ant_grid width: gridsize height: gridsize neighbours: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
+	const neighbours type: list of: ant_grid <- self neighbours_at 1;
+	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
+	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
+	food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
+	int food <- 0;
 }
+species ant skills: [moving] control: fsm {
+	float speed <- 1.0;
+	bool has_food <- false;
+	signal road update: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
+	
+	action pick (int amount) {
+		has_food <- true;
+		ant_grid place <- ant_grid(location);
+		place.food <- place.food - amount;
+	}
 
+	action drop {
+		food_gathered <- food_gathered + 1;
+		has_food <- false;
+		heading <- heading - 180;
+	}
 
+	point choose_best_place {
+		container list_places <- (ant_grid(location)).neighbours;
+		if (list_places count (each.food > 0)) > 0 {
+			return point(list_places first_with (each.food > 0));
+		} else {
+			list_places <- (list_places where ((each.road > 0) and ((each distance_to center) > (self distance_to center)))) sort_by (each.road);
+			return point(last(list_places));
+		}
+
+	}
+
+	reflex drop when: has_food and (ant_grid(location)).is_nest {
+		do drop();
+	}
+
+	reflex pick when: !has_food and (ant_grid(location)).food > 0 {
+		do pick(1);
+	}
+
+	state wandering initial: true {
+		do wander(amplitude: 90);
+		float pr <- (ant_grid(location)).road;
+		transition to: carryingFood when: has_food;
+		transition to: followingRoad when: (pr > 0.05) and (pr < 4);
+	}
+
+	state carryingFood {
+		do goto(target: center);
+		transition to: wandering when: !has_food;
+	}
+
+	state followingRoad {
+		point next_place <- choose_best_place();
+		float pr <- (ant_grid(location)).road;
+		location <- next_place;
+		transition to: carryingFood when: has_food;
+		transition to: wandering when: (pr < 0.05) or (next_place = nil);
+	}
+
+	aspect info {
+		draw circle(1) empty: !has_food color: #red;
+		if (destination != nil) {
+			draw line([location, destination]) color: #white;
+		}
+
+		draw circle(4) empty: true color: #white;
+		draw string(self as int) color: #white size: 1;
+		draw state color: #yellow size: 10 °px at: my location + { 1, 1 } ;
+	}
+
+	aspect icon {
+		draw ant_shape_empty size: 10 rotate: my heading + 1;
+	}
+
+	aspect default {
+		draw square(1) empty: !has_food color: #blue rotate: my heading;
+	}
+}	
 
 experiment Displays type: gui {
 	point quadrant_size <- { 0.5, 0.5 };
@@ -139,32 +136,31 @@ experiment Displays type: gui {
 
 	float carrying -> { cycle = 0 ? 0 : (((100 * world.ant count (each.has_food or each.state = "followingRoad")) / length(world.ant)) with_precision 2) };
 	output {
-		display Ants background: rgb('white') refresh_every: 1 type: opengl {
+		display Ants background: #white type: opengl {
 		// First quadrant
 			image '../images/soil.jpg' position: { pos, pos } size: quadrant_size;
-			text "position {0,0} size {0.5, 0.5}: image, cells and ants as icons" size: font_size position: { pos + 0.01, pos + 0.03 } color: rgb("yellow") font: "Helvetica" style: bold;
+			text "position {0,0} size {0.5, 0.5}: image, cells and ants as icons" size: font_size position: { pos + 0.01, pos + 0.03 } color: #yellow font: "Helvetica" ;
 			agents "agents" transparency: 0.5 position: { pos, pos } size: quadrant_size value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { pos, pos } size: quadrant_size aspect: icon;
 
 			//Second quadrant
-			grid ant_grid lines: rgb("black") position: { 0.5, 0 } size: quadrant_size;
-			text "position {0.5,0} size {0.5, 0.5}: grid and simple ants" size: font_size position: { 0.51, 20 °px } color: rgb("white") font: "Helvetica" style: bold;
+			grid ant_grid lines: #black position: { 0.5, 0 } size: quadrant_size;
+			text "position {0.5,0} size {0.5, 0.5}: grid and simple ants" size: font_size position: { 0.51, 20 °px } color: #white font: "Helvetica";
 			species ant position: { 0.5, 0 } size: quadrant_size aspect: info;
 
 			//Third quadrant
 			quadtree 'qt' position: { 0, 0.5 } size: quadrant_size;
-			text "position {0,0.5} size {0.5, 0.5}: quadtree and ants" size: font_size position: { 0.01, 0.53 } color: rgb("blue") font: "Helvetica" style: bold;
+			text "position {0,0.5} size {0.5, 0.5}: quadtree and ants" size: font_size position: { 0.01, 0.53 } color: #blue font: "Helvetica";
 			species ant position: { 0, 0.5 } size: quadrant_size aspect: default;
 
 			//Fourth quadrant
-			chart name: 'Proportion of workers' type: pie background: rgb('white') style: exploded position: { 0.5, 0.50 } size: quadrant_size transparency: 0.5 + pos {
-				data 'Working' value: carrying color: rgb("red");
-				data 'Idle' value: 100 - carrying color: rgb("blue");
+			chart name: 'Proportion of workers' type: pie background: #white style: exploded position: { 0.5, 0.50 } size: quadrant_size transparency: 0.5 + pos {
+				data 'Working' value: carrying color: #red;
+				data 'Idle' value: 100 - carrying color: #blue;
 			}
 
-			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.51, 0.53 } color: rgb('black') size: font_size
-			style: bold;
-			text 'Carrying ants: ' + carrying + '%' position: { 0.75, 0.53 } color: rgb('black') size: font_size style: bold;
+			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.51, 0.53 } color: #black size: font_size;
+			text 'Carrying ants: ' + carrying + '%' position: { 0.75, 0.53 } color: #black size: font_size ;
 		}
 	}
 }
@@ -183,12 +179,12 @@ experiment Complete type: gui {
 
 
 	output {
-		display Ants background: rgb('white') refresh_every: 1{
+		display Ants background: #white {
 			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
-			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: rgb('black') size: { 1, 0.02 };
-			text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: rgb('black')
+			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: #black size: { 1, 0.02 };
+			text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: #black
 			size: { 1, 0.02 };
 		}
 		inspect "One" type: table value: ant attributes: ['name', 'location', 'heading','state'];
@@ -208,7 +204,7 @@ experiment Batch type: batch repeat: 2 keep_seed: true until: (food_gathered = f
 	}
 	
 	permanent {
-		display Ants background: rgb('white') refresh_every: 1 {
+		display Ants background: #white {
 			chart "Food Gathered" type: series {
 				data "Food" value: food_gathered;
 			}
@@ -231,8 +227,8 @@ experiment Quadtree type: gui {
 			quadtree 'qt';
 		}
 
-		display Ants background: rgb('white') refresh_every: 1 {
-			grid ant_grid lines: rgb('black');
+		display Ants background: #white {
+			grid ant_grid lines: #black;
 			species ant aspect: default;
 		}
 	}

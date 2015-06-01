@@ -57,7 +57,7 @@ species generic_species {
 	}
 	
 	reflex reproduce when: (energy >= energy_reproduce) and (flip(proba_reproduce)) {
-			int nb_offsprings <- 1 + rnd(nb_max_offsprings -1);
+			int nb_offsprings <- int(1 + rnd(nb_max_offsprings -1));
 			create species(self) number: nb_offsprings {
 				myCell <- myself.myCell ;
 				location <- myCell.location ;

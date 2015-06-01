@@ -47,7 +47,7 @@ species myCircle skills:[moving]{
 	 
 	}
 	aspect base {
-	  draw circle(1) color:rgb("red") ;	
+	  draw circle(1) color:#red ;	
 	  if (cycle < 100) {
 	  	loop seg over: path_to_follow1.edges {
 	  		draw seg color: °green;
@@ -67,14 +67,14 @@ species myCircle skills:[moving]{
 
 species road {
 	aspect base {
-	  draw shape color:rgb("blue") ;	
+	  draw shape color:#blue ;	
 	  
 	} 
 }
 
 species road_of_graph {
 	aspect base {
-	  draw shape color:rgb("red") ;	
+	  draw shape color:#red ;	
 	  
 	} 
 }

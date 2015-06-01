@@ -46,55 +46,55 @@ global {
 
 }
 
-entities {
-	species S_agt {
-		float t;		
-		float Ssize;
-		
-		equation evol simultaneously : [I_agt, R_agt] {
-			diff(self.Ssize, t) = (- sum(I_agt accumulate [each.beta * each.Isize]) * self.Ssize / N);
-		}
 
-		reflex solving {solve evol method : "rk4" step : hKR4 ;}
+species S_agt {
+	float t;		
+	float Ssize;
+	
+	equation evol simultaneously : [I_agt, R_agt] {
+		diff(self.Ssize, t) = (- sum(I_agt accumulate [each.beta * each.Isize]) * self.Ssize / N);
 	}
 
-	species I_agt {
-		float t;		
-		float Isize;
-		 
-		float beta;
-		float delta;
-		
-		equation evol simultaneously : [S_agt, R_agt] {
-			diff(self.Isize, t) = (beta * first(S_agt).Ssize * self.Isize / N) - (delta * self.Isize);
-		}
-	}
-
-	species R_agt {
-		float t;		
-		float Rsize;
-
-		equation evol simultaneously : [I_agt] {
-			diff(self.Rsize, t) = (sum(I_agt collect (each.delta * each.Isize)));
-		}
-	}
-
-	species my_SIR_maths {
-		float t;
-		float Im;
-		float Sm;
-		float Rm;
-		
-		equation SIR {
-			diff(self.Sm, t) = (-_beta * Sm * Im / N);
-			diff(self.Im, t) = (_beta * Sm * Im / N) - (_delta * Im);
-			diff(self.Rm, t) = (_delta * Im);
-		}
-
-		reflex solving {solve SIR method : "rk4" step : hKR4;}
-	}
-
+	reflex solving {solve evol method : "rk4" step : hKR4 ;}
 }
+
+species I_agt {
+	float t;		
+	float Isize;
+	 
+	float beta;
+	float delta;
+	
+	equation evol simultaneously : [S_agt, R_agt] {
+		diff(self.Isize, t) = (beta * first(S_agt).Ssize * self.Isize / N) - (delta * self.Isize);
+	}
+}
+
+species R_agt {
+	float t;		
+	float Rsize;
+
+	equation evol simultaneously : [I_agt] {
+		diff(self.Rsize, t) = (sum(I_agt collect (each.delta * each.Isize)));
+	}
+}
+
+species my_SIR_maths {
+	float t;
+	float Im;
+	float Sm;
+	float Rm;
+	
+	equation SIR {
+		diff(self.Sm, t) = (-_beta * Sm * Im / N);
+		diff(self.Im, t) = (_beta * Sm * Im / N) - (_delta * Im);
+		diff(self.Rm, t) = (_delta * Im);
+	}
+
+	reflex solving {solve SIR method : "rk4" step : hKR4;}
+}
+
+
 
 experiment Simulation type : gui {
 	parameter 'Number of Susceptible' type: int var: number_S <- 495 category: "Initial population"; 
@@ -105,22 +105,22 @@ experiment Simulation type : gui {
 	parameter 'Delta (I->R)' type: float var: _delta <- 0.01 category: "Parameters";	
 	
 	output {
-		display chart_3system_eq refresh_every : 1 {
-			chart 'Split system' type : series background : rgb('lightGray') {
-				data 'susceptible' value : first(S_agt).Ssize color : rgb('green');
-				data 'infected0' value : first(I_agt).beta * first(I_agt).Isize color : rgb('white');
-				data 'infected1' value : last(I_agt).beta * last(I_agt).Isize color : rgb('yellow');
+		display chart_3system_eq {
+			chart 'Split system' type : series background : #lightgray {
+				data 'susceptible' value : first(S_agt).Ssize color : #green;
+				data 'infected0' value : first(I_agt).beta * first(I_agt).Isize color : #white;
+				data 'infected1' value : last(I_agt).beta * last(I_agt).Isize color : #yellow;
 				data 'i1+i2' value : sum(I_agt accumulate (each.beta * each. Isize)) color : rgb ( 'red' ) ;				
-				data 'recovered' value : first(R_agt).Rsize color : rgb('blue');
+				data 'recovered' value : first(R_agt).Rsize color : #blue;
 			}
 
 		}
 
-		display chart_1system_eq refresh_every : 1 {
-			chart 'unified system' type : series background : rgb('lightGray') {
-				data 'susceptible_maths' value : first(my_SIR_maths).Sm color : rgb('green');
-				data 'infected_maths' value : first(my_SIR_maths).Im color : rgb('red');
-				data 'recovered_maths' value : first(my_SIR_maths).Rm color : rgb('blue');
+		display chart_1system_eq  {
+			chart 'unified system' type : series background : #lightgray {
+				data 'susceptible_maths' value : first(my_SIR_maths).Sm color : #green;
+				data 'infected_maths' value : first(my_SIR_maths).Im color : #red;
+				data 'recovered_maths' value : first(my_SIR_maths).Rm color : #blue;
 			}
 		}
 	}

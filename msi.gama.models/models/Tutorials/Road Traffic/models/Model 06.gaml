@@ -122,7 +122,7 @@ experiment road_traffic type: gui {
 			species road aspect: base ;
 			species people aspect: base ;
 		}
-		display chart_display refresh_every: 10 { 
+		display chart_display refresh: every(10) { 
 			chart "Road Status" type: series size: {1, 0.5} position: {0, 0} {
 				data "Mean road destruction" value: mean (road collect each.destruction_coeff) style: line color: #green ;
 				data "Max road destruction" value: road max_of each.destruction_coeff style: line color: #red ;
