@@ -20,6 +20,7 @@
 package gama_analyzer;
 
 import java.util.List;
+
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
@@ -36,6 +37,8 @@ import msi.gaml.types.IType;
 import weka.clusterers.*;
 import weka.clusterers.forOPTICSAndDBScan.DataObjects.ManhattanDataObject;
 import weka.core.*;
+import weka.core.Instance;
+
 import java.util.ArrayList;
 
 @species(name = "cluster_builder")
