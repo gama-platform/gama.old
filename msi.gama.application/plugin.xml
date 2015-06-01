@@ -223,7 +223,7 @@
             icon="icons/view.console2.png"
             id="msi.gama.application.view.ConsoleView"
             name="Console"
-            restorable="true">
+            restorable="false">
       </view>
 
       <view
@@ -232,7 +232,8 @@
             class="msi.gama.gui.views.PopulationInspectView"
             icon="icons/view.browser2.png"
             id="msi.gama.application.view.TableAgentInspectView"
-            name="Browser">
+            name="Browser"
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
