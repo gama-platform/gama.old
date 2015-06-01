@@ -58,12 +58,12 @@ species road  {
 	int nbLanes;
 	int indexDirection; 
 	bool blocked <- false;
-	rgb color <- rgb("black");
+	rgb color <- #black;
 	float coeff_traffic <- 1.0 update: 1 + (float(length(people at_distance 1.0)) / shape.perimeter * 200 / nbLanes);
 	geometry visu_geom;
 	
 	aspect base { 
-		draw shape color: rgb("black") ;
+		draw shape color: #black ;
 	} 
 		
 	user_command "Remove a road" action: remove;
@@ -74,7 +74,7 @@ species road  {
 		the_graph <-  (as_edge_graph(road where (!each.blocked))) ;
 		map<road,float> weights_map <- road as_map (each:: each.coeff_traffic);
 		the_graph <- the_graph  with_weights weights_map;
-		color <- rgb("magenta");
+		color <- #magenta;
 	}
 		
 	action add {
@@ -82,7 +82,7 @@ species road  {
 		the_graph <-  (as_edge_graph(road where (!each.blocked)));
 		map<road,float> weights_map <- road as_map (each:: each.coeff_traffic);
 		the_graph <- the_graph  with_weights weights_map;
-		color <- rgb("black");
+		color <- #black;
 	}
 		
 	aspect road_width {  
@@ -91,13 +91,13 @@ species road  {
 	
 	aspect traffic_jam {  
 		if (coeff_traffic > 0.025) {
-			draw shape + (coeff_traffic / 4.0) color: rgb("red") ;
+			draw shape + (coeff_traffic / 4.0) color: #red ;
 		}
 	} 		
 }
 	
 species building  { 
-	rgb color <- rgb("gray");
+	rgb color <- #gray;
 	aspect base { 
 		draw shape color: color ;
 	}
@@ -175,26 +175,26 @@ experiment traffic type: gui {
 	parameter "Radius of the city center" var: city_center_radius category: "City" ;
 	
 	output {
-		display city_display refresh_every: 1 {
+		display city_display {
 			species road aspect: road_width ;
 			species building aspect: base;
 			species people aspect: base;
 		}
-		display traffic_jam_display refresh_every: 1 {
+		display traffic_jam_display {
 			species road aspect: base ;
 			species road aspect: traffic_jam ;
 		}
-		display chart_display refresh_every: 10 {
+		display chart_display refresh: every(10) {
 			chart name: "Traffic jam" type: series size: {0.9, 0.4} position: {0.05, 0.05} {
-				data name:"Mean road traffic coefficient" value: mean (road collect each.coeff_traffic) style: line color: rgb("green") ;
-				data name:"Max road traffic coefficient" value: road max_of (each.coeff_traffic) style: line color: rgb("red") ;
+				data name:"Mean road traffic coefficient" value: mean (road collect each.coeff_traffic) style: line color: #green ;
+				data name:"Max road traffic coefficient" value: road max_of (each.coeff_traffic) style: line color: #red ;
 			}
 			chart name: "People Objectif" type: pie style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
-				data name:"Working" value: length ((people as list) where (each.objective="working")) color: rgb("green") ;
-				data name:"Staying home" value: length ((people as list) where (each.objective="go home")) color: rgb("blue") ;
+				data name:"Working" value: length ((people as list) where (each.objective="working")) color: #green ;
+				data name:"Staying home" value: length ((people as list) where (each.objective="go home")) color: #blue ;
 			}
 		}
-		monitor "Number of goals achieved" value: nbGoalsAchived refresh_every: 1 ;
+		monitor "Number of goals achieved" value: nbGoalsAchived ;
 	}
 }
 

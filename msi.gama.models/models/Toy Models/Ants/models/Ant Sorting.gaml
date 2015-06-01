@@ -10,7 +10,7 @@ global torus: true {
 	int width_and_height_of_grid <- 100 max: 400 min: 20 ;  
 	int ants <- 100 min: 1 ;
 
-	rgb black <- rgb("black")  ;	
+	rgb black <- #black  ;	
 	const colors type: list <- ["yellow","red", "orange", "blue", "green","cyan", "gray","pink","magenta"] ;
 	
 	action description {
@@ -21,41 +21,40 @@ global torus: true {
 		create ant number: ants ;
 	} 
 }
-entities {
-	species ant skills: [ moving ] control: fsm { 
-		rgb color <- rgb("white") ; 
-		ant_grid place -> {ant_grid (location)} ;
-		
-		reflex wandering { 
-			do wander amplitude: 120;
-		}
-		state empty initial: true {
-			transition to: full when: (place.color != black) and ( (place.neighbours count (each.color = place.color)) < (rnd(number_of_objects_around))) {
-				color <- place.color ;
-				place.color <- black ; 
-			}
-		}
-		state full {
-			enter { 
-				int encountered <- 0; 
-			}
-			if place.color = color { 
-				encountered <- encountered + 1 ;
-			}
-			transition to: empty when: (place.color = black) and (encountered > number_of_objects_in_history) {
-				place.color <- color ;
-				color <- black ;
-			}
-		}
-		aspect default {
-			draw ant_normal rotate: heading at: location empty: false color: color;
+
+species ant skills: [ moving ] control: fsm { 
+	rgb color <- #white ; 
+	ant_grid place -> {ant_grid (location)} ;
+	
+	reflex wandering { 
+		do wander amplitude: 120;
+	}
+	state empty initial: true {
+		transition to: full when: (place.color != black) and ( (place.neighbours count (each.color = place.color)) < (rnd(number_of_objects_around))) {
+			color <- place.color ;
+			place.color <- black ; 
 		}
 	}
+	state full {
+		enter { 
+			int encountered <- 0; 
+		}
+		if place.color = color { 
+			encountered <- encountered + 1 ;
+		}
+		transition to: empty when: (place.color = black) and (encountered > number_of_objects_in_history) {
+			place.color <- color ;
+			color <- black ;
+		}
+	}
+	aspect default {
+		draw ant_normal rotate: heading at: location empty: false color: color;
+	}
+}
 
-	grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbours: 8 use_regular_agents: false frequency: 0{
-		rgb color <- (rnd(100)) < density_percent ? (colors at rnd(number_of_different_colors - 1)) as rgb : world.black ;
-		list<ant_grid> neighbours <- self neighbours_at 1;   
-	} 
+grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbours: 8 use_regular_agents: false frequency: 0{
+	rgb color <- (rnd(100)) < density_percent ? (colors at rnd(number_of_different_colors - 1)) as rgb : world.black ;
+	list<ant_grid> neighbours <- self neighbours_at 1;    
 }
 
 

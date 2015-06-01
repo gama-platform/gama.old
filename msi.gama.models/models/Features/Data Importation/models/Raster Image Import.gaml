@@ -33,30 +33,30 @@ global {
  
 
 // We create izard agents and locate them on one'cell' among the list of cellules that verifies the following conditions : is empty ('empty(each.agents)') 
-// and with a color that is not white 'each.color != rgb('white')'
+// and with a color that is not white 'each.color != #white'
 // the shuffle operator is used to randomized the list of cells
 
-entities {
-	species izard {	
-		init{
-			set location <- (shuffle(cell) first_with ((each.color != rgb('white')) and (empty(agents overlapping each)))).location ;
-		}		
-		aspect basic{
-    		draw square(1) color: rgb('orange');
-    	}
-    	aspect image{
-    		draw izardShape size: 3;
-    	}
+
+species izard {	
+	init{
+		set location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
+	}		
+	aspect basic{
+		draw square(1) color: #orange;
 	}
-	
-	// We create a grid as environment with the same dimensions as the matrix in which we want to store the image
+	aspect image{
+		draw izardShape size: 3;
+	}
+}
+
+// We create a grid as environment with the same dimensions as the matrix in which we want to store the image
 // Note that the height (resp. the width) of the grid corresponds to the number of rows (resp. of columns) of the matrix:
 // - in the creation of a matrix: ([...] as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;)
 // - in the creation of the grid: grid cellule width: widthImg/factorDiscret height: heightImg/factorDiscret;
 
-	grid cell  width: widthImg/factorDiscret height: heightImg/factorDiscret;
-	
-}
+grid cell  width: widthImg/factorDiscret height: heightImg/factorDiscret;
+
+
 
 experiment main type: gui {
 	// Parameters

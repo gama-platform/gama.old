@@ -220,12 +220,12 @@ experiment main_gui type: gui {
          species building aspect: geometry;
          species dyke aspect: geometry;
       }
-      display chart_display refresh_every: 24 { 
+      display chart_display refresh: every(24) { 
          chart "Pressure on Dykes" type: series {
-            data "Mean pressure on dykes " value: mean(dyke collect (each.water_pressure)) style: line color: rgb("magenta") ;
-            data "Rate of dykes with max pressure" value: (dyke count (each.water_pressure = 1.0))/ length(dyke) style: line color: rgb("red") ;
-            data "Rate of dykes with high pressure" value: (dyke count (each.water_pressure > 0.5))/ length(dyke) style: line color: rgb("orange") ;
-            data "Rate of dykes with low pressure" value: (dyke count (each.water_pressure < 0.25))/ length(dyke) style: line color: rgb("green") ;
+            data "Mean pressure on dykes " value: mean(dyke collect (each.water_pressure)) style: line color: #magenta ;
+            data "Rate of dykes with max pressure" value: (dyke count (each.water_pressure = 1.0))/ length(dyke) style: line color: #red ;
+            data "Rate of dykes with high pressure" value: (dyke count (each.water_pressure > 0.5))/ length(dyke) style: line color: #orange ;
+            data "Rate of dykes with low pressure" value: (dyke count (each.water_pressure < 0.25))/ length(dyke) style: line color: #green ;
          }
       }
    }

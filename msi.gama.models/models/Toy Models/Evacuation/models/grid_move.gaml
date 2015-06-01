@@ -13,7 +13,7 @@ global {
 		{
 			ask cell overlapping self {
 				is_obstacle <- true;
-				color <- rgb("black");
+				color <- #black;
 			}
 		}
 	
@@ -34,7 +34,7 @@ global {
 species building {
 	float height <- 3.0 + rnd(5);
 	aspect default {
-		draw shape color: rgb("gray") depth: height;
+		draw shape color: #gray depth: height;
 	}
 }
 species people {
@@ -73,7 +73,7 @@ species people {
 grid cell width: 150 height: 150  neighbours: 8 frequency: 0 {
 	bool is_obstacle <- false;
 	bool is_free <- true;
-	rgb color <- rgb("white");
+	rgb color <- #white;
 }
 
 experiment main type: gui {
@@ -85,7 +85,7 @@ experiment main type: gui {
 			species building refresh: false;
 			species people;
 			graphics "exit" refresh: false {
-				draw sphere(2 * people_size) at: target_point color: rgb("green");	
+				draw sphere(2 * people_size) at: target_point color: #green;	
 			}
 		}
 	}

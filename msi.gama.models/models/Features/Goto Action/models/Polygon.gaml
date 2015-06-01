@@ -40,7 +40,7 @@ global {
 
 species object  {
 	aspect default {
-		draw shape color: rgb('gray') ;
+		draw shape color: #gray ;
 	}
 }
 
@@ -53,13 +53,13 @@ species triangle_obj  {
 
 species skeleton  {
 	aspect default {
-		draw shape + 0.2 color: rgb('red') ;
+		draw shape + 0.2 color: #red ;
 	}
 }
 	
 species goal {
 	aspect default {
-		draw circle(3) color:rgb('red');
+		draw circle(3) color:#red;
 	}
 }
 
@@ -71,7 +71,7 @@ species people skills: [moving] {
 		do goto on:the_graph target:target speed:1;
 	}
 	aspect default {
-		draw circle(3) color: rgb('green');
+		draw circle(3) color: #green;
 	}
 }
 

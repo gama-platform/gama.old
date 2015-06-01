@@ -58,12 +58,12 @@ species batiment {
 		}
 	}
 	aspect geometrie {
-		draw shape color: type = "Industrial" ? rgb("pink") : rgb("gray");
+		draw shape color: type = "Industrial" ? #pink : #gray;
 	}
 }
 species route {
 	aspect geometrie {
-		draw shape color: rgb("black");
+		draw shape color: #black;
 	}
 }
 experiment ville type: gui {

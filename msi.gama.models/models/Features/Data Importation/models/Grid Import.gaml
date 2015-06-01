@@ -17,24 +17,24 @@ global {
 	
 }
 
-entities {
-	grid cell file: grid_file{
-		init {
-			color<- grid_value = 0.0 ? rgb('black')  : (grid_value = 1.0  ? rgb('green') :   rgb('yellow'));
-		
-		}
+
+grid cell file: grid_file{
+	init {
+		color<- grid_value = 0.0 ? #black  : (grid_value = 1.0  ? #green :   #yellow);
+	
 	}
-	species object  {
-		aspect base {
-			draw geometry: shape color: rgb('red') ; 	
-		}
-	} 
 }
+species object  {
+	aspect base {
+		draw geometry: shape color: #red ; 	
+	}
+} 
+
 
 experiment gridloading type: gui {
 	output {
 		display test {
-			grid cell lines: rgb("black");
+			grid cell lines: #black;
 			species object aspect: base;
 		}
 	} 

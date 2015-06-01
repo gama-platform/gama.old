@@ -49,19 +49,19 @@ species people skills: [moving]{
 		do goto on:road_graph target:target speed:1 + rnd(2);
 	}
 	aspect base {
-		draw circle(size) color: rgb("red");
+		draw circle(size) color: #red;
 	}	
 }
 	
 species friendship_link {
 	aspect base {
-		draw shape color: rgb("blue");
+		draw shape color: #blue;
 	}
 }
 	
 species road  {
 	aspect base {
-		draw shape color: rgb('black') ;
+		draw shape color: #black ;
 	}
 } 
 

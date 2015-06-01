@@ -23,13 +23,13 @@ global {
 species node_agent mirrors: list(bug) {
 	point location <- target.location update: target.location;
 	aspect base {
-		draw sphere(1.1) color: rgb('green'); 
+		draw sphere(1.1) color: #green; 
 	}
 }
 
 species edge_agent {
 	aspect base {
-		draw shape color: rgb('green');
+		draw shape color: #green;
 	}
 }
 

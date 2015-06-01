@@ -51,13 +51,13 @@ global {
 species road  {
 	float speed_coef ;
 	aspect default {
-		draw shape color: rgb('black') ;
+		draw shape color: #black ;
 	}
 } 
 	
 species goal {
 	aspect default {
-		draw circle(50) color: rgb('red');
+		draw circle(50) color: #red;
 	}
 }
 	
@@ -66,7 +66,7 @@ species people skills: [moving] {
 	path my_path; 
 	
 	aspect default {
-		draw circle(50) color: rgb('green');
+		draw circle(50) color: #green;
 	}
 	reflex movement {
 		do goto on:the_graph target:target speed:1;

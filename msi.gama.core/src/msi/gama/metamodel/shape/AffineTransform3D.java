@@ -326,4 +326,19 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 		return false;
 	}
 
+	/**
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void setTranslation(final double x, final double y, final double z) {
+		m03 = x;
+		m13 = y;
+		m23 = z;
+	}
+
+	public GamaPoint getTranslation() {
+		return new GamaPoint(m03, m13, m23);
+	}
+
 }

@@ -48,7 +48,7 @@ experiment graphoperators type: gui {
 		display map {
 			graphics "edges" {
 				loop edge over: the_graph.edges {
-					draw edge color: rgb("black");
+					draw edge color: #black;
 				}
  			}
  			species people aspect: centrality;

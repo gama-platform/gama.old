@@ -26,7 +26,7 @@ experiment GIS_visualization type: gui {
 		
 		//display of the building as an image
 		display gis_displays_image type: opengl {
-			image "shape buildings" gis: shape_file_buildings.path color: rgb("gray") refresh: false;
+			image "shape buildings" gis: shape_file_buildings.path color: #gray refresh: false;
 		}
 	}
 }

@@ -34,32 +34,31 @@ global torus: torus_environment {
 
 }
 
-entities {
-	grid life_cell width: environment_width height: environment_height neighbours: 8  use_individual_shapes: false use_regular_agents: false frequency: 0
-	use_neighbours_cache: false {
-		bool new_state;
-		list<life_cell> neighbours <- self neighbours_at 1;
-		bool state <- (rnd(100)) < density;
-		rgb color <- state ? livingcolor : deadcolor;
-		action evolve {
-			int living <- neighbours count each.state;
-			if state {
-				new_state <- living in living_conditions;
-				color <- new_state ? livingcolor : dyingcolor;
-			} else {
-				new_state <- living in birth_conditions;
-				color <- new_state ? emergingcolor : deadcolor;
-			}
 
-		}
-
-		action update {
-			state <- new_state;
+grid life_cell width: environment_width height: environment_height neighbours: 8  use_individual_shapes: false use_regular_agents: false frequency: 0
+use_neighbours_cache: false {
+	bool new_state;
+	list<life_cell> neighbours <- self neighbours_at 1;
+	bool state <- (rnd(100)) < density;
+	rgb color <- state ? livingcolor : deadcolor;
+	action evolve {
+		int living <- neighbours count each.state;
+		if state {
+			new_state <- living in living_conditions;
+			color <- new_state ? livingcolor : dyingcolor;
+		} else {
+			new_state <- living in birth_conditions;
+			color <- new_state ? emergingcolor : deadcolor;
 		}
 
 	}
 
+	action update {
+		state <- new_state;
+	}
+
 }
+
 
 experiment "Game of Life" type: gui {
 	parameter 'Width:' var: environment_width category: 'Board';
