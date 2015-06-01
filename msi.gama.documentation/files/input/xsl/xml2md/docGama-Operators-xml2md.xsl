@@ -100,6 +100,7 @@ Note that due to the fact that actions are written by modelers, the general func
 		<xsl:sort select="@id"/>
 		<xsl:variable name="categoryGlobal" select="@id"/> 
 		<xsl:text>
+
 ----
 
 ### </xsl:text> <xsl:value-of select="@id"/> <xsl:text>
