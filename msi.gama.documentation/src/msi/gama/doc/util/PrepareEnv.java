@@ -40,18 +40,7 @@ public class PrepareEnv {
 
 		copyPythonTemplate();
 	}
-	
-//	private static void createCleanFolder(String fileName){
-//		File folder = new File(fileName);
-//		if(!folder.exists()) {
-//			folder.mkdirs();
-//		}
-//	
-//		for(File f : folder.listFiles()) {
-//			f.delete();
-//		}		
-//	}
-	
+
 	private static void copyPythonTemplate() throws IOException{
 		File pythonTemplate = new File(Constants.PYTHON_TEMPLATE_FOLDER);
 		FileUtils.copyDirectory(pythonTemplate, new File(Constants.WIKI2WIKI_FOLDER));
