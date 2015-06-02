@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Envelope3D.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -19,13 +19,13 @@ import com.vividsolutions.jts.geom.*;
 
 /**
  * A 3D envelope that extends the 2D JTS Envelope.
- * 
- * 
+ *
+ *
  * @source $URL$
  * @version $Id$
  * @author Niels Charlier
  * @adapted for GAMA by A. Drogoul
- * 
+ *
  */
 public class Envelope3D extends Envelope {
 
@@ -55,6 +55,12 @@ public class Envelope3D extends Envelope {
 		return env;
 	}
 
+	public static Envelope3D of(final Envelope e) {
+		Envelope3D env = new Envelope3D();
+		env.init(e);
+		return env;
+	}
+
 	public static Envelope3D of(final Coordinate p) {
 		Envelope3D env = new Envelope3D();
 		env.init(p);
@@ -80,7 +86,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Initialize an <code>Envelope</code> for a region defined by maximum and
 	 * minimum values.
-	 * 
+	 *
 	 * @param x1
 	 *            the first x-value
 	 * @param x2
@@ -109,7 +115,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Initialize an <code>Envelope</code> to a region defined by two
 	 * Coordinates.
-	 * 
+	 *
 	 * @param p1
 	 *            the first Coordinate
 	 * @param p2
@@ -123,7 +129,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Initialize an <code>Envelope</code> to a region defined by a single
 	 * Coordinate.
-	 * 
+	 *
 	 * @param p
 	 *            the coordinate
 	 */
@@ -143,7 +149,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Initialize an <code>Envelope</code> from an existing 3D Envelope.
-	 * 
+	 *
 	 * @param env
 	 *            the 3D Envelope to initialize from
 	 */
@@ -166,7 +172,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Returns the difference between the maximum and minimum z values.
-	 * 
+	 *
 	 * @return max z - min z, or 0 if this is a null <code>Envelope</code>
 	 */
 	public double getDepth() {
@@ -177,7 +183,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Returns the <code>Envelope</code>s minimum z-value. min z > max z
 	 * indicates that this is a null <code>Envelope</code>.
-	 * 
+	 *
 	 * @return the minimum z-coordinate
 	 */
 	public double getMinZ() {
@@ -187,7 +193,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Returns the <code>Envelope</code>s maximum z-value. min z > max z
 	 * indicates that this is a null <code>Envelope</code>.
-	 * 
+	 *
 	 * @return the maximum z-coordinate
 	 */
 	public double getMaxZ() {
@@ -196,7 +202,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Gets the volume of this envelope.
-	 * 
+	 *
 	 * @return the volume of the envelope
 	 * @return 0.0 if the envelope is null
 	 */
@@ -207,7 +213,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Gets the minimum extent of this envelope across all three dimensions.
-	 * 
+	 *
 	 * @return the minimum extent of this envelope
 	 */
 	@Override
@@ -218,7 +224,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Gets the maximum extent of this envelope across all three dimensions.
-	 * 
+	 *
 	 * @return the maximum extent of this envelope
 	 */
 	@Override
@@ -231,7 +237,7 @@ public class Envelope3D extends Envelope {
 	 * Enlarges this <code>Envelope</code> so that it contains the given {@link Coordinate}. Has no effect if the point
 	 * is already on or within
 	 * the envelope.
-	 * 
+	 *
 	 * @param p
 	 *            the Coordinate to expand to include
 	 */
@@ -243,7 +249,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Expands this envelope by a given distance in all directions. Both
 	 * positive and negative distances are supported.
-	 * 
+	 *
 	 * @param distance
 	 *            the distance to expand the envelope
 	 */
@@ -255,7 +261,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Expands this envelope by a given distance in all directions. Both
 	 * positive and negative distances are supported.
-	 * 
+	 *
 	 * @param deltaX
 	 *            the distance to expand the envelope along the the X axis
 	 * @param deltaY
@@ -276,7 +282,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Enlarges this <code>Envelope</code> so that it contains the given point.
 	 * Has no effect if the point is already on or within the envelope.
-	 * 
+	 *
 	 * @param x
 	 *            the value to lower the minimum x to or to raise the maximum x
 	 *            to
@@ -304,8 +310,8 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Translates this envelope by given amounts in the X and Y direction.
-	 * 
+	 * Translates this envelope by given amounts in the X and Y direction. Returns the envelope
+	 *
 	 * @param transX
 	 *            the amount to translate along the X axis
 	 * @param transY
@@ -313,16 +319,17 @@ public class Envelope3D extends Envelope {
 	 * @param transZ
 	 *            the amount to translate along the Z axis
 	 */
-	public void translate(final double transX, final double transY, final double transZ) {
-		if ( isNull() ) { return; }
+	public Envelope3D translate(final double transX, final double transY, final double transZ) {
+		if ( isNull() ) { return this; }
 		init(getMinX() + transX, getMaxX() + transX, getMinY() + transY, getMaxY() + transY, getMinZ() + transZ,
 			getMaxZ() + transZ);
+		return this;
 	}
 
 	/**
 	 * Computes the coordinate of the centre of this envelope (as long as it is
 	 * non-null
-	 * 
+	 *
 	 * @return the centre coordinate of this envelope <code>null</code> if the
 	 *         envelope is null
 	 */
@@ -336,7 +343,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Check if the region defined by <code>other</code> overlaps (intersects)
 	 * the region of this <code>Envelope</code>.
-	 * 
+	 *
 	 * @param other
 	 *            the <code>Envelope</code> which this <code>Envelope</code> is
 	 *            being checked for overlapping
@@ -351,7 +358,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Check if the point <code>p</code> overlaps (lies inside) the region of
 	 * this <code>Envelope</code>.
-	 * 
+	 *
 	 * @param p
 	 *            the <code>Coordinate</code> to be tested
 	 * @return <code>true</code> if the point overlaps this <code>Envelope</code>
@@ -364,7 +371,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Check if the point <code>(x, y)</code> overlaps (lies inside) the region
 	 * of this <code>Envelope</code>.
-	 * 
+	 *
 	 * @param x
 	 *            the x-ordinate of the point
 	 * @param y
@@ -380,7 +387,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Tests if the given point lies in or on the envelope.
-	 * 
+	 *
 	 * @param x
 	 *            the x-coordinate of the point which this <code>Envelope</code> is being checked for containing
 	 * @param y
@@ -395,7 +402,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Tests if the given point lies in or on the envelope.
-	 * 
+	 *
 	 * @param p
 	 *            the point which this <code>Envelope</code> is being checked
 	 *            for containing
@@ -410,7 +417,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Tests if the <code>Envelope other</code> lies wholely inside this <code>Envelope</code> (inclusive of the
 	 * boundary).
-	 * 
+	 *
 	 * @param other
 	 *            the <code>Envelope</code> to check
 	 * @return true if this <code>Envelope</code> covers the <code>other</code>
@@ -470,7 +477,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Creates an envelope for a region defined by maximum and minimum values.
-	 * 
+	 *
 	 * @param x1 The first x-value.
 	 * @param x2 The second x-value.
 	 * @param y1 The first y-value.
@@ -478,7 +485,7 @@ public class Envelope3D extends Envelope {
 	 * @param z1 The first y-value.
 	 * @param z2 The second y-value.
 	 * @param crs The coordinate reference system.
-	 * 
+	 *
 	 * @throws MismatchedDimensionException if the CRS dimension is not valid.
 	 */
 	public Envelope3D(final double x1, final double x2, final double y1, final double y2, final double z1,
@@ -488,10 +495,10 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Creates a new envelope from an existing envelope.
-	 * 
+	 *
 	 * @param envelope The envelope to initialize from
 	 * @throws MismatchedDimensionException if the CRS dimension is not valid.
-	 * 
+	 *
 	 */
 	public Envelope3D(final Envelope3D envelope) {
 		init(envelope);
@@ -499,7 +506,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Creates a new envelope from an existing JTS envelope.
-	 * 
+	 *
 	 * @param envelope The envelope to initialize from.
 	 * @param crs The coordinate reference system.
 	 * @throws MismatchedDimensionExceptionif the CRS dimension is not valid.
@@ -514,7 +521,7 @@ public class Envelope3D extends Envelope {
 
 	/**
 	 * Computes the intersection of two {@link Envelope}s.
-	 * 
+	 *
 	 * @param env
 	 *            the envelope to intersect with
 	 * @return a new Envelope representing the intersection of the envelopes
@@ -535,7 +542,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Computes the list of envelopes (from 2 to 4, possibily 0 if env covers this) resulting from the extrusion of env from this. Only in 2D for the moment.
 	 * Does not return null envelopes.
-	 * 
+	 *
 	 */
 	public List<Envelope> extrusion(final Envelope env) {
 		List<Envelope> list = new ArrayList();
@@ -565,7 +572,7 @@ public class Envelope3D extends Envelope {
 	/**
 	 * Enlarges this <code>Envelope</code> so that it contains the <code>other</code> Envelope. Has no effect if <code>other</code> is
 	 * wholly on or within the envelope.
-	 * 
+	 *
 	 * @param other
 	 *            the <code>Envelope</code> to expand to include
 	 */

@@ -33,8 +33,8 @@ grid cell width: width height: height neighbours: 4 {
 	}
 
 	aspect base {
-		draw shape color: rgb('white');
-		draw string(cellValue) size: 0.5 color: rgb('black');
+		draw shape color: #white;
+		draw string(cellValue) size: 0.5 color: #black;
 	}
 
 	aspect colored {

@@ -65,6 +65,24 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 		return new AffineTransform3D(cot, -sit, 0, x - x * cot + y * sit, sit, cot, 0, y - x * sit - y * cot, 0, 0, 1,
 			0);
 	}
+	
+	public final static AffineTransform3D createRotationVector(final double theta, final double xI, final double yI, final double zI) {
+		double cot = Math.cos(theta);
+		double sit = Math.sin(theta);
+		double sum = xI*xI + yI*yI + zI*zI;
+		if (sum == 0) {
+			return null;
+		}
+		double x = Math.sqrt(xI/sum);
+		double y = Math.sqrt(yI/sum);
+		double z = Math.sqrt(zI/sum);
+		return new AffineTransform3D(cot + x*x*(1-cot),x*y*(1-cot)-z*sit, x*z*(1-cot)+y*sit, 0.0,
+									y*x*(1-cot)+z*sit, cot+y*y*(1-cot), y*z*(1-cot)-x*sit, 0.0,
+									z*x*(1-cot)-y*sit, z*y*(1-cot)+x*sit, cot+z*z*(1-cot), 0.0);
+	}	
+
+	
+
 
 	public final static AffineTransform3D createScaling(final double s) {
 		return createScaling(s, s, s);
@@ -306,6 +324,21 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	@Override
 	public boolean isDone() {
 		return false;
+	}
+
+	/**
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void setTranslation(final double x, final double y, final double z) {
+		m03 = x;
+		m13 = y;
+		m23 = z;
+	}
+
+	public GamaPoint getTranslation() {
+		return new GamaPoint(m03, m13, m23);
 	}
 
 }

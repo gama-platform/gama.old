@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="miglayout-4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-dbcp-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="gt-jdbc-postgis-11.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="postgresql-9.2-1002.jdbc4.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-graph-11.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-jxpath-1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-epsg-hsql-11.4.jar"/>

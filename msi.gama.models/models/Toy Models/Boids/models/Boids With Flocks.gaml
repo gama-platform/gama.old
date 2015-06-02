@@ -36,147 +36,145 @@ global {
 
 }
 
-entities {
-	species flock skills: [moving] {
-		rgb color <- rgb(rnd(255), rnd(255), rnd(255));
-		geometry shape <- polygon(((boids_in_flock))) buffer 10;
-		float perception_range <- float(base_perception_range + (rnd(5)));
-		float speed update: mean(boids_in_flock collect each.speed);
-		
-		reflex disaggregate {
-			geometry buffered_shape <- shape + perception_range;
-			if !(empty(obstacle overlapping buffered_shape)) {
-				release members as: boids in: world;
-				do die;
+
+species flock skills: [moving] {
+	rgb color <- rgb(rnd(255), rnd(255), rnd(255));
+	geometry shape <- polygon(((boids_in_flock))) buffer 10;
+	float perception_range <- float(base_perception_range + (rnd(5)));
+	float speed update: mean(boids_in_flock collect each.speed);
+	
+	reflex disaggregate {
+		geometry buffered_shape <- shape + perception_range;
+		if !(empty(obstacle overlapping buffered_shape)) {
+			release members as: boids in: world;
+			do die;
+		}
+
+	}
+
+	reflex capture_nearby_boids when: ((cycle mod update_frequency) = 0) {
+		geometry buffered_shape <- shape + perception_range;
+		list<boids> nearby_boids <- (boids overlapping buffered_shape);
+		if (!(empty(nearby_boids))) {
+			geometry new_polygon <- convex_hull(solid(shape + polygon(nearby_boids collect (each.location))));
+			if (empty(obstacle overlapping new_polygon)) {
+				capture nearby_boids as: boids_in_flock;
 			}
 
 		}
 
-		reflex capture_nearby_boids when: ((cycle mod update_frequency) = 0) {
-			geometry buffered_shape <- shape + perception_range;
-			list<boids> nearby_boids <- (boids overlapping buffered_shape);
-			if (!(empty(nearby_boids))) {
-				geometry new_polygon <- convex_hull(solid(shape + polygon(nearby_boids collect (each.location))));
-				if (empty(obstacle overlapping new_polygon)) {
-					capture nearby_boids as: boids_in_flock;
-				}
+	}
 
-			}
-
-		}
-
-		reflex merge_nearby_flocks when: ((cycle mod merge_frequency) = 0) {
-			loop f over: (flock) {
-				if (f != self and (shape intersects f.shape)) {
-					geometry new_shape <- convex_hull(polygon(shape.points + f.shape.points));
-					if empty(obstacle overlapping new_shape) {
-						list<boids> released_boids <- [];
-						ask f {
-							release members as: boids in: world returns: released_coms;
-							released_boids <- list(released_coms);
-							do die;
-						}
-
-						if (!empty(released_boids)) {
-							capture released_boids as: boids_in_flock;
-						}
-
-						shape <- convex_hull(polygon(members collect (boids_in_flock(each).location)));
+	reflex merge_nearby_flocks when: ((cycle mod merge_frequency) = 0) {
+		loop f over: (flock) {
+			if (f != self and (shape intersects f.shape)) {
+				geometry new_shape <- convex_hull(polygon(shape.points + f.shape.points));
+				if empty(obstacle overlapping new_shape) {
+					list<boids> released_boids <- [];
+					ask f {
+						release members as: boids in: world returns: released_coms;
+						released_boids <- list(released_coms);
+						do die;
 					}
 
+					if (!empty(released_boids)) {
+						capture released_boids as: boids_in_flock;
+					}
+
+					shape <- convex_hull(polygon(members collect (boids_in_flock(each).location)));
 				}
 
 			}
 
 		}
 
-		reflex chase_goal {
-			int direction_to_nearest_ball <- (self towards (goal));
-			float step_distance <- speed * step;
-			float dx <- step_distance * (cos(direction_to_nearest_ball));
-			float dy <- step_distance * (sin(direction_to_nearest_ball));
-			geometry envelope <- shape.envelope;
-			float min_y <- (envelope.points with_min_of (each.y)).y;
-			float min_x <- (envelope.points with_min_of (each.x)).x;
-			float max_x <- (envelope.points with_max_of (each.x)).x;
-			float max_y <- (envelope.points with_max_of (each.y)).y;
-			if (((dx + min_x) < xmin) and min_x > xmin) or (((dx + max_x) > xmax) and max_x < xmax) {
-				dx <- 0.0;
-			}
-			if (((dy + min_y) < ymin) and min_y > ymin) or (((dy + max_y) > ymax) and max_y < ymax) {
-				dy <- 0.0;
-			}
-			
-			loop com over: boids_in_flock {
-				(boids_in_flock(com)).location <- (boids_in_flock(com)).location + { dx, dy };
-			}
-
-			shape <- convex_hull(polygon(list(boids_in_flock) collect (each.location)));
-		}
-
-		aspect default {
-			draw shape color: color;
-		}
-
-		species boids_in_flock parent: boids {
-			float my_age <- 1.0 update: my_age + 0.01;
-			reflex separation when: apply_separation {
-			}
-
-			reflex alignment when: apply_alignment {
-			}
-
-			reflex cohesion when: apply_cohesion {
-			}
-
-			reflex avoid when: apply_avoid {
-			}
-
-			reflex follow_goal when: apply_goal {
-			}
-
-			reflex wind when: apply_wind {
-			}
-
-			action do_move {
-			}
-
-			reflex movement {
-				do do_move;
-			}
-
-			aspect default {
-				draw circle(my_age) color: ((host as flock).color).darker;
-			}
-
-		}
-
 	}
 
-	species flock_agents_viewer {
-		aspect default {
-			draw "Flocks: " + (string(length(list(flock)))) at: { width_and_height_of_environment - 810, (width_and_height_of_environment) - 5 } color: rgb("blue") size: 80 style: bold;
+	reflex chase_goal {
+		int direction_to_nearest_ball <- (self towards (goal));
+		float step_distance <- speed * step;
+		float dx <- step_distance * (cos(direction_to_nearest_ball));
+		float dy <- step_distance * (sin(direction_to_nearest_ball));
+		geometry envelope <- shape.envelope;
+		float min_y <- (envelope.points with_min_of (each.y)).y;
+		float min_x <- (envelope.points with_min_of (each.x)).x;
+		float max_x <- (envelope.points with_max_of (each.x)).x;
+		float max_y <- (envelope.points with_max_of (each.y)).y;
+		if (((dx + min_x) < xmin) and min_x > xmin) or (((dx + max_x) > xmax) and max_x < xmax) {
+			dx <- 0.0;
+		}
+		if (((dy + min_y) < ymin) and min_y > ymin) or (((dy + max_y) > ymax) and max_y < ymax) {
+			dy <- 0.0;
+		}
+		
+		loop com over: boids_in_flock {
+			(boids_in_flock(com)).location <- (boids_in_flock(com)).location + { dx, dy };
 		}
 
+		shape <- convex_hull(polygon(list(boids_in_flock) collect (each.location)));
 	}
 
-	species boids_agents_viewer {
-		aspect default {
-			draw text: "Boids: " + (string(length(list(boids)))) at: { width_and_height_of_environment - 810, (width_and_height_of_environment) - 165 } color: rgb("blue") size: 80 style:
-			bold;
+	aspect default {
+		draw shape color: color;
+	}
+
+	species boids_in_flock parent: boids {
+		float my_age <- 1.0 update: my_age + 0.01;
+		reflex separation when: apply_separation {
 		}
 
-	}
+		reflex alignment when: apply_alignment {
+		}
 
-	species boids_in_flock_viewer {
+		reflex cohesion when: apply_cohesion {
+		}
+
+		reflex avoid when: apply_avoid {
+		}
+
+		reflex follow_goal when: apply_goal {
+		}
+
+		reflex wind when: apply_wind {
+		}
+
+		action do_move {
+		}
+
+		reflex movement {
+			do do_move;
+		}
+
 		aspect default {
-			draw text: "Boids in flocks: " + (string(number_of_agents - (length(list(boids))))) at: { width_and_height_of_environment - 810, width_and_height_of_environment - 85 } color:
-			rgb("blue") size: 80 style: bold;
+			draw circle(my_age) color: ((host as flock).color).darker;
 		}
 
 	}
 
 }
+
+species flock_agents_viewer {
+	aspect default {
+		draw "Flocks: " + (string(length(list(flock)))) at: { width_and_height_of_environment - 810, (width_and_height_of_environment) - 5 } color: #blue size: 80 ;
+	}
+
+}
+
+species boids_agents_viewer {
+	aspect default {
+		draw text: "Boids: " + (string(length(list(boids)))) at: { width_and_height_of_environment - 810, (width_and_height_of_environment) - 165 } color: #blue size: 80 ;
+	}
+
+}
+
+species boids_in_flock_viewer {
+	aspect default {
+		draw text: "Boids in flocks: " + (string(number_of_agents - (length(list(boids))))) at: { width_and_height_of_environment - 810, width_and_height_of_environment - 85 } color:
+		#blue size: 80 ;
+	}
+
+}
+
 
 experiment boids_flocks type: gui {
 	parameter "Create flock?" var: create_flocks <- true;

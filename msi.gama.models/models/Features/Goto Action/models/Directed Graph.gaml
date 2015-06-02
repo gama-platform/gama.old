@@ -14,17 +14,17 @@ global {
 	init {
 		create road from: road_file with:[direction::int(read("DIRECTION"))] {
 			switch direction {
-				match 0 {color <- rgb("green");}
-				match 1 {color <- rgb("red");
+				match 0 {color <- #green;}
+				match 1 {color <- #red;
 					//inversion of the road geometry
 					shape <- polyline(reverse(shape.points));
 				}
-				match 2 {color <- rgb("blue");
+				match 2 {color <- #blue;
 					//bidirectional: creation of the inverse road
 					create road {
 						shape <- polyline(reverse(myself.shape.points));
 						direction <- 2;
-						color <- rgb("blue");
+						color <- #blue;
 					}
 				} 
 			}
@@ -53,7 +53,7 @@ species people skills: [moving] {
 	string r_s;
 	string r_t; 
 	aspect circle {
-		draw circle(10) color: rgb('green');
+		draw circle(10) color: #green;
 	}
 	reflex movement {
 		my_path <- self goto (on:the_graph, target:target, speed:10, return_path: true);

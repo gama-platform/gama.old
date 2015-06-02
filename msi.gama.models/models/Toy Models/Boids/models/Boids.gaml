@@ -42,134 +42,134 @@ global torus: torus_environment{
 	}	
 }
 
-entities {
-	species name: boids_goal skills: [moving] {
-		const range type: float <- 20.0;
-		const size type: float <- 10.0;
-		
-		reflex wander {  
-			do  wander amplitude: 45 speed: 20;  
-			goal <- location;
-		}
-		
-		aspect default {
-			draw shape: circle(10) color: rgb('red') ;
-			draw shape: circle(40) color: rgb('orange') empty: true;
-		}
-	} 
+
+species boids_goal skills: [moving] {
+	const range type: float <- 20.0;
+	const size type: float <- 10.0;
 	
-	species boids skills: [moving] {
-		float speed max: maximal_speed <- maximal_speed;
-		float range <- minimal_distance * 2;
-		int heading ;
-		point velocity <- {0,0};
-		int size <- 5;
+	reflex wander {  
+		do  wander amplitude: 45 speed: 20;  
+		goal <- location;
+	}
+	
+	aspect default {
+		draw shape: circle(10) color: #red ;
+		draw shape: circle(40) color: #orange empty: true;
+	}
+} 
+
+species boids skills: [moving] {
+	float speed max: maximal_speed <- maximal_speed;
+	float range <- minimal_distance * 2;
+	int heading ;
+	point velocity <- {0,0};
+	int size <- 5;
+		
+	reflex separation when: apply_separation {
+		point acc <- {0,0};
+		ask (boids overlapping (circle(minimal_distance)))  {
+			acc <- acc - ((location) - myself.location);
+		}  
+		velocity <- velocity + acc;
+	}
+	
+	reflex alignment when: apply_alignment {
+		list others  <- ((boids overlapping (circle (range)))  - self);
+		point acc <- mean (others collect (each.velocity)) - velocity;
+		velocity <- velocity + (acc / alignment_factor);
+	}
+	 
+	reflex cohesion when: apply_cohesion {
+		list others <- ((boids overlapping (circle (range)))  - self);
+		point mass_center <- (length(others) > 0) ? mean (others collect (each.location)) : location;
+
+		point acc <- mass_center - location;
+		acc <- acc / cohesion_factor; 
+		velocity <- velocity + acc;   
+	}
+	
+	reflex avoid when: apply_avoid { 
+		point acc <- {0,0};
+		list<obstacle> nearby_obstacles <- (obstacle overlapping (circle (range)) );
+		loop obs over: nearby_obstacles {
+			acc <- acc - ((location of obs) - my (location));
+		}
+		velocity <- velocity + acc; 
+	}
+	
+	action bounding {
+		if  !(torus_environment) {
+			if  (location.x) < xmin {
+				velocity <- velocity + {bounds,0};
+			} else if (location.x) > xmax {
+				velocity <- velocity - {bounds,0};
+			}
 			
-		reflex separation when: apply_separation {
-			point acc <- {0,0};
-			ask (boids overlapping (circle(minimal_distance)))  {
-				acc <- acc - ((location) - myself.location);
-			}  
-			velocity <- velocity + acc;
-		}
-		
-		reflex alignment when: apply_alignment {
-			list others  <- ((boids overlapping (circle (range)))  - self);
-			point acc <- mean (others collect (each.velocity)) - velocity;
-			velocity <- velocity + (acc / alignment_factor);
-		}
-		 
-		reflex cohesion when: apply_cohesion {
-			list others <- ((boids overlapping (circle (range)))  - self);
-			point mass_center <- (length(others) > 0) ? mean (others collect (each.location)) : location;
-
-			point acc <- mass_center - location;
-			acc <- acc / cohesion_factor; 
-			velocity <- velocity + acc;   
-		}
-		
-		reflex avoid when: apply_avoid { 
-			point acc <- {0,0};
-			list<obstacle> nearby_obstacles <- (obstacle overlapping (circle (range)) );
-			loop obs over: nearby_obstacles {
-				acc <- acc - ((location of obs) - my (location));
+			if (location.y) < ymin {
+				velocity <- velocity + {0,bounds};
+			} else if (location.y) > ymax {
+				velocity <- velocity - {0,bounds};
 			}
-			velocity <- velocity + acc; 
-		}
-		
-		action bounding {
-			if  !(torus_environment) {
-				if  (location.x) < xmin {
-					velocity <- velocity + {bounds,0};
-				} else if (location.x) > xmax {
-					velocity <- velocity - {bounds,0};
-				}
-				
-				if (location.y) < ymin {
-					velocity <- velocity + {0,bounds};
-				} else if (location.y) > ymax {
-					velocity <- velocity - {0,bounds};
-				}
-				
-			}
-		}
-		
-		reflex follow_goal when: apply_goal {
-			velocity <- velocity + ((goal - location) / cohesion_factor);
-		}
-		
-		reflex wind when: apply_wind {
-			velocity <- velocity + wind_vector;
-		}
-		  
-		action do_move {  
-			if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) {
-				velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
-			}
-			point old_location <- copy(location);
-			do goto target: location + velocity;
-			velocity <- location - old_location;
-		}
-		
-		reflex movement {
-			do do_move;
-		}
-		
-		aspect image {
-			draw (images at (rnd(2))) size: 35 rotate: heading color: rgb([0,0,rnd(200) + 55]);      
-		}
-		aspect circle { 
-			draw circle(15) rotate: 90 + heading color: rgb('red');
-		}
-		
-		aspect default { 
-			draw triangle(15) rotate: 90 + heading color: rgb('yellow');
-		}
-	} 
-	
-	species obstacle skills: [moving] {
-		float speed <- 2.0;
-		geometry shape <- triangle(15);
-		
-		reflex move_obstacles when: moving_obstacles {
-			if flip(0.5)  
-			{ 
-				do goto target: one_of(boids);
-			} 
-			else{ 
-				do wander amplitude: 360;   
-			}
-		}
-		aspect default {
-			draw  triangle(20) color: rgb('yellow') ;
-		}
-
-		
-		aspect geom {
-			draw shape color: rgb('yellow');
+			
 		}
 	}
+	
+	reflex follow_goal when: apply_goal {
+		velocity <- velocity + ((goal - location) / cohesion_factor);
+	}
+	
+	reflex wind when: apply_wind {
+		velocity <- velocity + wind_vector;
+	}
+	  
+	action do_move {  
+		if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) {
+			velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
+		}
+		point old_location <- copy(location);
+		do goto target: location + velocity;
+		velocity <- location - old_location;
+	}
+	
+	reflex movement {
+		do do_move;
+	}
+	
+	aspect image {
+		draw (images at (rnd(2))) size: 35 rotate: heading color: rgb([0,0,rnd(200) + 55]);      
+	}
+	aspect circle { 
+		draw circle(15) rotate: 90 + heading color: #red;
+	}
+	
+	aspect default { 
+		draw triangle(15) rotate: 90 + heading color: #yellow;
+	}
+} 
+
+species obstacle skills: [moving] {
+	float speed <- 2.0;
+	geometry shape <- triangle(15);
+	
+	reflex move_obstacles when: moving_obstacles {
+		if flip(0.5)  
+		{ 
+			do goto target: one_of(boids);
+		} 
+		else{ 
+			do wander amplitude: 360;   
+		}
+	}
+	aspect default {
+		draw  triangle(20) color: #yellow ;
+	}
+
+	
+	aspect geom {
+		draw shape color: #yellow;
+	}
 }
+
 
 experiment Boids2 type: gui {
 	parameter 'Number of agents' var: number_of_agents;
@@ -191,7 +191,7 @@ experiment Boids2 type: gui {
 	parameter 'Direction of the wind' var: wind_vector ;  
 	
 	output {
-		display Sky refresh_every: 1 {
+		display Sky {
 			image 'background' file:'../images/sky.jpg';
 			species boids aspect: image;
 			species boids_goal;

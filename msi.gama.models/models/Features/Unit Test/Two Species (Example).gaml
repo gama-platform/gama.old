@@ -27,15 +27,15 @@ global {
 	}
 }
 
-entities {
-	species test_species2 {
-		test t1 {
-         	assert (length(test_species1) > 5) equals: true;
-		}
-	}
 
-	species test_species1 {
+species test_species2 {
+	test t1 {
+     	assert (length(test_species1) > 5) equals: true;
 	}
 }
+
+species test_species1 {
+}
+
 
 experiment new type: gui {}

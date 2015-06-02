@@ -63,6 +63,9 @@ public class XMLElements {
 	
 	public static final String ARCHITECTURES = "architectures";
 	public static final String ARCHITECTURE = "architecture";
+
+	// Attributes of DOC element
+	public static final String ATT_DOC_PLUGINNAME = "plugin";	
 	
 	// Attributes of CATEGORY element
 	public static final String ATT_CAT_ID = "id";

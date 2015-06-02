@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 25 mars 2015
- * 
+ *
  */
 package ummisco.gama.opengl;
 
@@ -17,10 +17,10 @@ import com.jogamp.common.util.JarUtil;
 
 /**
  * Class OpenGLLayeredDisplayView.
- * 
+ *
  * @author drogoul
  * @since 25 mars 2015
- * 
+ *
  */
 public class SWTLayeredDisplayView extends LayeredDisplayView implements /* ControlListener, */MouseMoveListener {
 
@@ -66,7 +66,9 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 			@Override
 			public void run() {
 				try {
-					surface.dispose();
+					if ( surface != null ) {
+						surface.dispose();
+					}
 					getSite().getPage().hideView(SWTLayeredDisplayView.this);
 				} catch (final Exception e) {
 					e.printStackTrace();

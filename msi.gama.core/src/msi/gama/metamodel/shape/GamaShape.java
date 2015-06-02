@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaShape.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -25,9 +25,9 @@ import com.vividsolutions.jts.geom.*;
 
 /**
  * Written by drogoul Modified on 25 ao�t 2010
- * 
- * 
- * 
+ *
+ *
+ *
  */
 @vars({ @var(name = "area", type = IType.FLOAT), @var(name = "volume", type = IType.FLOAT),
 	@var(name = "centroid", type = IType.POINT), @var(name = "width", type = IType.FLOAT),
@@ -106,21 +106,21 @@ public class GamaShape implements IShape /* , IContainer */{
 			setLocation(newLocation);
 		}
 	}
-	
+
 	/**
-	 * Same as above, but applies a (optional) rotation and (optional) translation to the geometry
+	 * Same as above, but applies a (optional) rotation along a given vector and (optional) translation to the geometry
 	 * @param source cannot be null
 	 * @param geom can be null
 	 * @param rotation can be null, expressed in degrees
 	 * @param newLocation can be null
 	 */
-	public GamaShape(final IShape source, final Geometry geom, final Double rotationX,final Double rotationY,final Double rotationZ, final ILocation newLocation) {
+
+	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final GamaPoint vector,
+		final ILocation newLocation) {
 		this(source, geom);
-		if ( !isPoint() && rotationX != null && rotationY != null && rotationZ != null ) {
-			Coordinate c = geometry.getCentroid().getCoordinate();
-			geometry.apply(AffineTransform3D.createRotationOz(Math.toRadians(rotationZ), c.x, c.y));
-			geometry.apply(AffineTransform3D.createRotationOx(Math.toRadians(rotationX)));
-			geometry.apply(AffineTransform3D.createRotationOy(Math.toRadians(rotationY)));
+		if ( !isPoint() && vector != null && rotation != null ) {
+			geometry.apply(AffineTransform3D.createRotationVector(Math.toRadians(rotation), vector.x, vector.y,
+				vector.z));
 		}
 		if ( newLocation != null ) {
 			setLocation(newLocation);
@@ -383,15 +383,15 @@ public class GamaShape implements IShape /* , IContainer */{
 			result = ((Polygon) result).getExteriorRing();
 		} else
 
-		if ( result instanceof MultiPolygon ) {
-			final MultiPolygon mp = (MultiPolygon) result;
-			final LineString lines[] = new LineString[mp.getNumGeometries()];
-			for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
-				lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
-			}
-			result = GeometryUtils.FACTORY.createMultiLineString(lines);
+			if ( result instanceof MultiPolygon ) {
+				final MultiPolygon mp = (MultiPolygon) result;
+				final LineString lines[] = new LineString[mp.getNumGeometries()];
+				for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
+					lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
+				}
+				result = GeometryUtils.FACTORY.createMultiLineString(lines);
 
-		}
+			}
 		return new GamaShape(result);
 	}
 
@@ -415,6 +415,11 @@ public class GamaShape implements IShape /* , IContainer */{
 	public void setDepth(final double depth) {
 		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
 		this.envelope = null;
+	}
+
+	@Override
+	public void setRotate3D(final GamaPair rot3D) {
+		this.setAttribute(IShape.ROTATE_ATTRIBUTE, rot3D);
 	}
 
 	@getter("envelope")

@@ -15,7 +15,7 @@ global {
 		create people number: number_people ;
         ask (number_I among people) {
         	is_infected <- true;
-        	color <- rgb("red");
+        	color <- #red;
         }
    }
   }
@@ -23,7 +23,7 @@ global {
 species people skills:[moving] {
 	bool is_infected <- false;
 	bool is_immune <- false;
-	rgb color <- rgb("green");
+	rgb color <- #green;
 	int cpt <- 0;
 	reflex basic_move {
 		do wander speed: speed_people;
@@ -33,7 +33,7 @@ species people skills:[moving] {
 		if (cpt > end_immunity_step) {
 			cpt <- 0;
 			is_immune <- false;
-			color <-  rgb("green");
+			color <-  #green;
 		} else {
 			cpt <- cpt + 1;
 		}
@@ -43,7 +43,7 @@ species people skills:[moving] {
 			cpt <- 0;
 			is_immune <- true;
 			is_infected <- false;
-			color <-  rgb("blue");
+			color <-  #blue;
 		} else {
 			cpt <- cpt + 1;
 		}
@@ -51,7 +51,7 @@ species people skills:[moving] {
 	reflex become_infected when: not is_infected and not is_immune{
 		if (flip(infection_rate) and not empty(people at_distance infection_distance where each.is_infected)) {
 			is_infected <- true;
-			color <-  rgb("red");
+			color <-  #red;
 			nb_infected <- nb_infected + 1;
 		}
 	}

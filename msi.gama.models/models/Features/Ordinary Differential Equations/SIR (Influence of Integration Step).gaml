@@ -22,51 +22,53 @@ global {
 }
 
 
-entities {
-    species SIR_agt {
-		int N <- 500;
-    	float t;    
 
-		float I <- 1.0; 
-		float S <- N - I; 
-		float R <- 0.0; 
-		
-   		float h;
-    	float mycycle <- 1.0;   		
-		
-		equation SIR{ 
-			diff(S,t) = (- beta * S * I / N);
-			diff(I,t) = (beta * S * I / N) - (delta * I);
-			diff(R,t) = (delta * I);
-		} 
+species SIR_agt {
+	int N <- 500;
+    float t;    
 
-		reflex solving {solve SIR method: "rk4" step: h cycle_length:mycycle ; }      
-	}
+	float I <- 1.0; 
+	float S <- N - I; 
+	float R <- 0.0; 
+		
+   	float h;
+    float mycycle <- 1.0;   		
+		
+	equation SIR{ 
+		diff(S,t) = (- beta * S * I / N);
+		diff(I,t) = (beta * S * I / N) - (delta * I);
+		diff(R,t) = (delta * I);
+	} 
+
+	reflex solving {
+		solve SIR method: "rk4" step: h cycle_length:mycycle ;
+	}      
 }
+
 
 experiment mysimulation1 type: gui { 
  	output { 
-		display SIR_1 refresh_every: 1 {
-			chart "SI - h=1" type: series background: rgb('white') {
-				data 'S' value: first(SIR_agt where (each.mycycle = s1)).S color: rgb('green');				
-				data 'I' value: first(SIR_agt where (each.mycycle = s1)).I color: rgb('red') ;
-				data 'R' value: first(SIR_agt where (each.mycycle = s1)).R color: rgb('blue') ;				
+		display SIR_1  {
+			chart "SI - h=1" type: series background: #white {
+				data 'S' value: first(SIR_agt where (each.mycycle = s1)).S color: #green;				
+				data 'I' value: first(SIR_agt where (each.mycycle = s1)).I color: #red ;
+				data 'R' value: first(SIR_agt where (each.mycycle = s1)).R color: #blue ;				
 			}
 		}
 		
-		display SIR_10 refresh_every: 1 {
-			chart "SI - h=0.1" type: series background: rgb('white'){
-				data 'S' value: first(SIR_agt where (each.mycycle = s2)).S color: rgb('green');				
-				data 'I' value: first(SIR_agt where (each.mycycle = s2)).I color: rgb('red') ;
-				data 'R' value: first(SIR_agt where (each.mycycle = s2)).R color: rgb('blue') ;				
+		display SIR_10 {
+			chart "SI - h=0.1" type: series background: #white{
+				data 'S' value: first(SIR_agt where (each.mycycle = s2)).S color: #green;				
+				data 'I' value: first(SIR_agt where (each.mycycle = s2)).I color: #red ;
+				data 'R' value: first(SIR_agt where (each.mycycle = s2)).R color: #blue ;				
 			}
 		}
 		
-		display SIR_100 refresh_every: 1 {
-			chart "SI - h=0.01" type: series background: rgb('white') {
-				data 'S' value: first(SIR_agt where (each.mycycle = s3)).S color: rgb('green');				
-				data 'I' value: first(SIR_agt where (each.mycycle = s3)).I color: rgb('red') ;
-				data 'R' value: first(SIR_agt where (each.mycycle = s3)).R color: rgb('blue') ;				
+		display SIR_100  {
+			chart "SI - h=0.01" type: series background: #white {
+				data 'S' value: first(SIR_agt where (each.mycycle = s3)).S color: #green;				
+				data 'I' value: first(SIR_agt where (each.mycycle = s3)).I color: #red ;
+				data 'R' value: first(SIR_agt where (each.mycycle = s3)).R color: #blue ;				
 			}
 		}	
 	}

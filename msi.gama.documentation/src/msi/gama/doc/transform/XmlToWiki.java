@@ -10,8 +10,12 @@
  * 
  **********************************************************************************************/
 package msi.gama.doc.transform;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +24,7 @@ import javax.xml.transform.TransformerException;
 
 import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.DocTransformer;
+import msi.gama.doc.util.WorkspaceManager;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
 import org.w3c.dom.Document;
@@ -30,27 +35,16 @@ import org.xml.sax.SAXException;
 public class XmlToWiki {
 
 	public static String suffix = ""; // "Dev"
+	public static String extFileName = "G__Extension";
 	
 	public static void createAllWikis() 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		System.out.println("Beginning of the transformation");
-		//
-		System.out.print("Creation of the wiki page for Operators from A to K.....");
-		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAK-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__OperatorsAK"+suffix+".wiki");
-		System.out.println("Done");	
-		//
-		System.out.print("Creation of the wiki page for Operators from L to Z.....");
-		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsLZ-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__OperatorsLZ"+suffix+".wiki");
-		System.out.println("Done");	
-		//
+
 		System.out.print("Creation of the wiki page for Operators.....");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__Operators"+suffix+".wiki");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__Operators"+suffix+".md");
 		System.out.println("Done");			
 		//
 		System.out.print("Creation of the wiki page for Statements.....");		
@@ -61,14 +55,14 @@ public class XmlToWiki {
 		//
 		System.out.print("Creation of the wiki page for Skills.......");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Skills-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSkills"+suffix+".wiki");	
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Skills-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSkills"+suffix+".md");	
 		System.out.println("Done");		
 		//
 		System.out.print("Creation of the wiki page for the Index.......");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Index-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__Index"+suffix+".wiki");	
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Index-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__Index"+suffix+".md");	
 		System.out.println("Done");	
 		
 		
@@ -81,14 +75,14 @@ public class XmlToWiki {
 		//
 		System.out.print("Creation of the wiki page for Built-in Species.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Species-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSpecies"+suffix+".wiki");	
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Species-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSpecies"+suffix+".md");	
 		System.out.println("Done");	
 		//
 		System.out.print("Creation of the wiki page for Constants and units.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Constants-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__UnitsAndConstants"+suffix+".wiki");	
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Constants-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__UnitsAndConstants"+suffix+".md");	
 		System.out.println("Done");	
 		//
 		System.out.println("End of the transformation");		
@@ -96,11 +90,22 @@ public class XmlToWiki {
 
 	private static void createWiki(String xml, String xsl, String wiki) 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
+		createWiki( xml,  xsl,  wiki, "");
+	}
+
+	
+	private static void createWiki(String xml, String xsl, String wiki, String pluginName) 
+			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		// Creation of the DOM source
 		DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
 		DocumentBuilder constructeur = fabriqueD.newDocumentBuilder();
 		File fileXml = new File(xml);
 		Document document = constructeur.parse(fileXml);
+		
+		// We the pluginName in the doc root
+		NodeList nLDoc = document.getElementsByTagName(XMLElements.DOC);
+		org.w3c.dom.Element eltDoc = (org.w3c.dom.Element) nLDoc.item(0);
+		eltDoc.setAttribute(XMLElements.ATT_DOC_PLUGINNAME, pluginName);
 		
 		// We add index to example to distinguish variables in the doc 
 		NodeList nLOperators = document.getElementsByTagName(XMLElements.OPERATOR);
@@ -116,12 +121,56 @@ public class XmlToWiki {
 		DocTransformer.transformDocument(document, xsl, wiki); 		
 	}
 	
+	public static void createExtentionsWiki() 
+			throws IOException, ParserConfigurationException, SAXException, TransformerException{
+		WorkspaceManager ws = new WorkspaceManager(".");
+		HashMap<String, File> hmExt = ws.getExtensionsDocFiles();
+		
+		// Create the G__Extensions.md file as a toc to each G__extensions_plugin.md files
+		String pathExtension = Constants.XML2WIKI_FOLDER + File.separator + extFileName +suffix+".md";
+		File ext = new File(pathExtension);
+		FileWriter fw=new FileWriter(ext);
+		BufferedWriter extBw= new BufferedWriter(fw);
+		
+		extBw.write("# Extensions");
+		extBw.newLine();
+		extBw.write("----");		
+		extBw.newLine();
+		extBw.write("**This file is automatically generated from java files. Do Not Edit It.**");
+		extBw.newLine();
+		extBw.newLine();		
+		extBw.write("----");		
+		extBw.newLine();	
+		extBw.newLine();		
+		extBw.write("## Introduction");
+		extBw.newLine();
+		extBw.write("This page provides a link to each of the extension pages. Extensions are the additional GAMA plugins that exist in the GAMA GitHub repository but will not be packaged with the release. **These extensions are not maintained by GAMA core team but by their authors.**");
+		extBw.newLine();
+		
+		for(String pluginName : hmExt.keySet()){
+			extBw.write("* ["+ pluginName +"]("+extFileName+"_"+pluginName+")");	
+			extBw.newLine();
+		}
+		extBw.close();
+		
+		// Create 1 G__extension_plugin.md file per plugin
+		for(Entry<String,File> docPlug : hmExt.entrySet()){
+			System.out.print("Creation of the wiki pages for each extension.....");		
+			createWiki(docPlug.getValue().getAbsolutePath(),
+					Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Exntensions-xml2md.xsl",
+					Constants.XML2WIKI_FOLDER + File.separator + extFileName + "_" + docPlug.getKey()+ suffix+".md",
+					docPlug.getKey());	
+			System.out.println("Done");				
+		}
+	}
+	
 	/**
 	 * @param args
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		createAllWikis();
+		createExtentionsWiki();
+		// createAllWikis();
 	}
 	
 }

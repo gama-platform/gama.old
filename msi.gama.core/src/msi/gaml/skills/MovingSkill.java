@@ -14,6 +14,7 @@ package msi.gaml.skills;
 import gnu.trove.map.hash.THashMap;
 
 import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -783,7 +784,7 @@ public class MovingSkill extends Skill {
 			index++;
 		}
 		if ( currentLocation.equals(falseTarget) ) {
-			currentLocation = (GamaPoint) path.getEndVertex();
+			currentLocation = (GamaPoint) Cast.asPoint(scope, path.getEndVertex());
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);

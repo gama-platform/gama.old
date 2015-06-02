@@ -30,7 +30,7 @@ global {
 species dummy_agent {
 	geometry shape <- square (5);
 	aspect default {	
-		draw shape color: rgb("red");
+		draw shape color: #red;
 	}
 }
 
@@ -43,7 +43,7 @@ experiment loadgraph type: gui {
 			species dummy_agent ;
 			graphics "the graph" {
 				loop edge over: the_graph.edges {
-					draw edge color: rgb("blue");
+					draw edge color: #blue;
 				}
 			}
 		}

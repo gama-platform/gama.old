@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaList.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util;
 
@@ -22,7 +22,7 @@ import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 21 nov. 2008
- * 
+ *
  * @todo Description
  */
 
@@ -143,7 +143,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	/**
-	 * 
+	 *
 	 * Method add()
 	 * @see java.util.ArrayList#add(java.lang.Object)
 	 * @deprecated This method DOES NOT ensure type safety. Use addValue(IScope, Object) instead
@@ -154,7 +154,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	/**
-	 * 
+	 *
 	 * Method add()
 	 * @see java.util.ArrayList#add(int, java.lang.Object)
 	 * @deprecated This method DOES NOT ensure type safety. Use addValue(IScope, Integer, Object) instead
@@ -165,7 +165,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	/**
-	 * 
+	 *
 	 * Method set()
 	 * @see java.util.ArrayList#set(int, java.lang.Object)
 	 * @deprecated This method DOES NOT ensure type safety. Use setValueAtIndex(IScope, Integer, Object) instead
@@ -176,7 +176,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	/**
-	 * 
+	 *
 	 * Method addAll()
 	 * @see java.util.ArrayList#addAll(java.util.Collection)
 	 * @deprecated This method DOES NOT ensure type safety. Use addValues(IScope, IContainer) instead
@@ -187,7 +187,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	/**
-	 * 
+	 *
 	 * Method addAll()
 	 * @see java.util.ArrayList#addAll(int, java.util.Collection)
 	 * @deprecated This method DOES NOT ensure type safety.

@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'LayeredDisplayView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views;
 
@@ -141,7 +141,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		// FIXME Should not be redefined, but we should add a DisposeListener instead
 		if ( disposed ) { return; }
 		disposed = true;
-		surfaceComposite.dispose();
+		if ( surfaceComposite != null ) {
+			surfaceComposite.dispose();
+		}
 		IDisplaySurface s = getDisplaySurface();
 		if ( s != null ) {
 			s.releaseLock();
@@ -295,12 +297,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT.getCode(), "Take a snapshot", "Take a snapshot",
 			new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					getDisplaySurface().snapshot();
-				}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				getDisplaySurface().snapshot();
+			}
 
-			}, SWT.RIGHT);
+		}, SWT.RIGHT);
 	}
 
 	@Override

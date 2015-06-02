@@ -194,40 +194,40 @@ global skills: [moving] control: fsm {
 	reflex calling_actions {
 	// IN IMPERATIVE MODE (i.e. in a statement)
 	// The classic way
-		do action: dummy1 with: [a::10, b::100];
+		do action: dummy1 with: [a::10, b::100.0];
 
 		// Another classic way using facets
-		do action: dummy1 a: 10 b: 100;
+		do action: dummy1 a: 10 b: 100.0;
 
 		// Another by removing the first facet
-		do dummy1 a: 10 b: 100;
+		do dummy1 a: 10 b: 100.0;
 
 		// The new alternative one 
-		do dummy1(a: 10, b: 100);
+		do dummy1(a: 10, b: 100.0);
 		ask any(species1) {
 			do goto(target: { 10, 10 }, speed: 100);
 		}
 		// ... which has been introduced to unify the functional/imperative use of actions.
 
 		// And finally the new functional way, probably reserved to simple calls (as all the arguments must be passed).
-		do dummy1(10, 100);
+		do dummy1(10, 100.0);
 
 		// IN FUNCTIONAL MODE (i.e. as part of expressions)
 		// The "classic" way of calling actions. Note that in that case, dummy1 is used like a binary operator (callee on the left, argument map on the right)
-		list d1 <- self dummy1 [a::10, b::100];
+		list d1 <- self dummy1 [a::10, b::100.0];
 
 		// First improvement, argument maps can now be simplified, which results in a functional syntax with named arguments
-		list d2 <- self dummy1 (b: 100); // a is not passed as it has a default value.
+		list d2 <- self dummy1 (b: 100.0); // a is not passed as it has a default value.
 
 		// To improve the readability of this way of calling actions, the dotted notation is now allowed as well 
-		list d3 <- self.dummy1(a: 100, b: 100);
+		list d3 <- self.dummy1(a: 100, b: 100.0);
 		float s <- any(species1).compute_speed_using_an_action(max: 100);
 
 		// Finally, the functional syntax is also introduced. In that case, all the arguments need to be passed as they are not named.
 		// This unifies the way of calling operators and actions furthermore. 
 
 		// The action can be called as a n_ary operator, and in that case, the callee is implicitely the agent that executes the call
-		list d4 <- dummy1(10, 100);
+		list d4 <- dummy1(10, 100.0);
 
 		// And it can also be called using the "dotted" syntax, in which case the callee needs to be explicit (can be "self" of course)
 		path p <- world.move(100, 45, shape); // speed, heading, bounds

@@ -57,7 +57,7 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
 	public static final int FONT = 19;
 	public static final int IMAGE = 20;
-
+	public final static int REGRESSION = 21;
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 

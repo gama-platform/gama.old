@@ -29,13 +29,13 @@ global {
 	}
 }
 
-entities {
-	grid cells height: grid_size width: grid_size {
-		float phero <- 0.0;
-		rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
-		float grid_value update: min([100, phero * 100]);
-	} 
-}
+
+grid cells height: grid_size width: grid_size {
+	float phero <- 0.0;
+	rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
+	float grid_value update: min([100, phero * 100]);
+} 
+
 
 experiment diffusion type: gui {
 	output {

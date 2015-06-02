@@ -11,24 +11,48 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.GamaRegression;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
+import msi.gama.util.Instance;
 import msi.gama.util.file.RFile;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+
+import org.apache.commons.math3.stat.clustering.Cluster;
+import org.apache.commons.math3.stat.clustering.DBSCANClusterer;
+import org.apache.commons.math3.stat.clustering.EuclideanDoublePoint;
+import org.apache.commons.math3.stat.clustering.KMeansPlusPlusClusterer;
+
 import rcaller.RCaller;
-import rcaller.exception.*;
+import rcaller.exception.RCallerExecutionException;
+import rcaller.exception.RCallerParseException;
 
 /**
  * Written by drogoul Modified on 15 janv. 2011
@@ -821,5 +845,113 @@ public class Stats {
 		RFile obj = new RFile(scope, RFile, param);
 		return obj.getContents(scope);
 	}
-
+	
+	@operator(value = "dbscan", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the list of clusters (list of instance indices) computed with the dbscan (density-based spatial clustering of applications with noise) algorithm from the first operand data according to the maximum radius of the neighborhood to be considered (eps) and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
+		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+		examples = { @example("dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)")})
+	public static
+		GamaList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps, final Integer minPts)
+			throws GamaRuntimeException {
+			
+			DBSCANClusterer<EuclideanDoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
+			List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
+			for (int i = 0; i < data.size(); i++) {
+				GamaList d = (GamaList) data.get(i);
+				double point[] = new double[d.size()];
+				for (int j = 0; j < d.size(); j++) point[j] = Cast.asFloat(scope, d.get(j));
+				instances.add(new Instance(i, point));
+			}
+			List<Cluster<EuclideanDoublePoint>> clusters = dbscan.cluster(instances);
+			GamaList results =  (GamaList) GamaListFactory.create();
+			for (Cluster<EuclideanDoublePoint> cl : clusters) {
+				GamaList clG =  (GamaList) GamaListFactory.create();
+				for (EuclideanDoublePoint pt : cl.getPoints()) {
+					clG.addValue(scope, ((Instance) pt).getId());
+				}
+				results.addValue(scope, clG);
+			}
+			return results;
+		}
+	
+	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k) and the maximum number of iterations to run the algorithm for (If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
+		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+		examples = { @example("kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)")})
+	public static
+		GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k, final Integer maxIt)
+			throws GamaRuntimeException {
+			Random rand = new Random(scope.getRandom().getSeed().longValue());
+			KMeansPlusPlusClusterer<EuclideanDoublePoint> kmeans = new KMeansPlusPlusClusterer<EuclideanDoublePoint>(rand);
+			
+			List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
+			for (int i = 0; i < data.size(); i++) {
+				GamaList d = (GamaList) data.get(i);
+				double point[] = new double[d.size()];
+				for (int j = 0; j < d.size(); j++) point[j] = Cast.asFloat(scope, d.get(j));
+				instances.add(new Instance(i, point));
+			}
+			List<Cluster<EuclideanDoublePoint>> clusters = kmeans.cluster(instances, k, maxIt);
+			GamaList results =  (GamaList) GamaListFactory.create();
+			for (Cluster<EuclideanDoublePoint> cl : clusters) {
+				GamaList clG =  (GamaList) GamaListFactory.create();
+				for (EuclideanDoublePoint pt : cl.getPoints()) {
+					clG.addValue(scope, ((Instance) pt).getId());
+				}
+				results.addValue(scope, clG);
+			}
+			return results;
+		}
+	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k). Usage: kmeans(data,k)",
+		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+		examples = { @example("kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)")})
+	public static
+		GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k)
+			throws GamaRuntimeException {
+			return KMeansPlusplusApache(scope,data,k,-1);
+		}
+	
+	@operator(value = "build", can_be_const = false, type = IType.REGRESSION, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build(data,method)",
+		examples = { @example("build([1,2,3,4][2,3,4,2],\"GLS\")")})
+	public static
+		GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data, String method)
+			throws GamaRuntimeException {
+				try {
+				return new GamaRegression(scope, data, method);
+				} catch (Exception e) {
+					throw GamaRuntimeException
+					.error(
+						"The GLS operator is not usable for these data", scope);
+				}
+		}
+	
+	@operator(value = "build", can_be_const = false, type = IType.REGRESSION, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given ordinary least squares method. Usage: build(data)",
+		examples = { @example("build([1,2,3,4][2,3,4,2])")})
+	public static
+	GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data)
+			throws GamaRuntimeException {
+		try {
+					
+			return new GamaRegression(scope, data, "OSL");
+		} catch (Exception e) {
+			throw GamaRuntimeException
+			.error(
+				"The GLS operator is not usable for these data", scope);
+		}
+	}
+	
+	@operator(value = "predict", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the value predict by the regression parameters for a given instance. Usage: predict(regression, instance)",
+		examples = { @example("predict(my_regression, [1,2,3]")})
+	public static
+		Double predictFromRegression(final IScope scope, final GamaRegression regression, final GamaList<Double> instance)
+			throws GamaRuntimeException {
+				return regression.predict(scope,instance);
+		}
+	
 }
+
+

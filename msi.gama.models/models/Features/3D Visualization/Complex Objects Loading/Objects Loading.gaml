@@ -16,7 +16,7 @@ global {
 
 species ComplexObject{
 	aspect obj {
-		draw geometry (file("./includes/teapot.obj"))  at:{5.0,5.0,0} color:rgb('blue');
+		draw geometry (file("./includes/teapot.obj"))  at:{5.0,5.0,0} color:#blue;
 	}
 }	
 

@@ -21,7 +21,7 @@ global {
 species building {
 	float height min: 0.0 max: 100.0 update: height + 5 - rnd(10);
 	string type;
-	rgb color <- type = "Industrial" ? rgb("pink") : rgb("gray");
+	rgb color <- type = "Industrial" ? #pink : #gray;
 	
 	aspect default {
 		draw shape depth: height color: color;

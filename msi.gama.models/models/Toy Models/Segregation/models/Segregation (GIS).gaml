@@ -23,60 +23,58 @@ global {
 	action initialize_places {}   
 	
 } 
-entities {      
-	species people parent: base {   
-		
-		
-		const size type: float <- 2.0;  
-		const color type: rgb <- colors at (rnd (number_of_groups - 1)); 
-		const red type: int <- (color as list) at 0; 
-		const green type: int <- (color as list) at 1;  
-		const blue type: int <- (color as list) at 2;  
-		space current_building <- nil;
-		list<people> my_neighbours -> {people at_distance neighbours_distance}; 
+    
+species people parent: base {   
+	const size type: float <- 2.0;  
+	const color type: rgb <- colors at (rnd (number_of_groups - 1)); 
+	const red type: int <- (color as list) at 0; 
+	const green type: int <- (color as list) at 1;  
+	const blue type: int <- (color as list) at 2;  
+	space current_building <- nil;
+	list<people> my_neighbours -> {people at_distance neighbours_distance}; 
 
-		action move_to_new_place {  
-			current_building <- (shuffle(all_places) first_with (((each).capacity) > 0));
-			ask current_building {
-				do accept one_people: myself;   
-			}
-		}
-		reflex migrate when: !is_happy {
-			if current_building != nil {
-				ask current_building { 
-					do remove_one one_people: myself;
-				}
-			} 
-			do move_to_new_place;
-		}
-		aspect simple {
-			draw circle(5) color: color;
+	action move_to_new_place {  
+		current_building <- (shuffle(all_places) first_with (((each).capacity) > 0));
+		ask current_building {
+			do accept one_people: myself;   
 		}
 	}
-	species space {	
-		list<people> insiders <- [];
-		rgb color <- rgb(255, 255, 255); 
-		float surface;
-		int capacity  <- 1 + int(surface / square_meters_per_people);  
-		action accept (people one_people) {
-			add one_people to: insiders;
-			location of one_people <- any_location_in(shape);
-			capacity <- capacity - 1;
-		}
-		action remove_one (people one_people){
-			remove one_people from: insiders;
-			capacity <- capacity + 1;
-		}
-		aspect simple {
-			color <- empty(insiders) ? rgb("white") : rgb ([mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
-			draw  square(40) color: color;
-		}
-		aspect gis {
-			color <- empty(insiders) ? rgb("white") : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
-			draw shape color: color border: rgb("black");
+	reflex migrate when: !is_happy {
+		if current_building != nil {
+			ask current_building { 
+				do remove_one one_people: myself;
+			}
 		} 
+		do move_to_new_place;
+	}
+	aspect simple {
+		draw circle(5) color: color;
 	}
 }
+species space {	
+	list<people> insiders <- [];
+	rgb color <- rgb(255, 255, 255); 
+	float surface;
+	int capacity  <- 1 + int(surface / square_meters_per_people);  
+	action accept (people one_people) {
+		add one_people to: insiders;
+		location of one_people <- any_location_in(shape);
+		capacity <- capacity - 1;
+	}
+	action remove_one (people one_people){
+		remove one_people from: insiders;
+		capacity <- capacity + 1;
+	}
+	aspect simple {
+		color <- empty(insiders) ? #white : rgb ([mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
+		draw  square(40) color: color;
+	}
+	aspect gis {
+		color <- empty(insiders) ? #white : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
+		draw shape color: color border: #black;
+	} 
+}
+
 
 experiment schelling type: gui {	
 	output {
@@ -85,13 +83,13 @@ experiment schelling type: gui {
 			species people  aspect: simple;
 		}
 		display Charts {
-			chart name: "Proportion of happiness" type: histogram background: rgb("lightgray") gap:0.05 position: {0,0} size: {1.0,0.5}{
-				data "Unhappy" value: number_of_people - sum_happy_people color: rgb("green");
-				data "Happy" value: sum_happy_people color: rgb("yellow") ;
+			chart name: "Proportion of happiness" type: histogram background: #lightgray gap:0.05 position: {0,0} size: {1.0,0.5}{
+				data "Unhappy" value: number_of_people - sum_happy_people color: #green;
+				data "Happy" value: sum_happy_people color: #yellow ;
 			}
-			chart name: "Global happiness and similarity" type: series background: rgb("lightgray") axes: rgb("white") position: {0,0.5} size: {1.0,0.5} {
-				data "happy" color: rgb("blue") value:  ((sum_happy_people * 100) / number_of_people)  style: spline ;
-				data "similarity" color: rgb("red") value:  (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
+			chart name: "Global happiness and similarity" type: series background: #lightgray axes: #white position: {0,0.5} size: {1.0,0.5} {
+				data "happy" color: #blue value:  ((sum_happy_people * 100) / number_of_people)  style: spline ;
+				data "similarity" color: #red value:  (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
 			}
 		}
 	}
