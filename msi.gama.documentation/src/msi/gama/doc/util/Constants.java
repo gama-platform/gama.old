@@ -42,6 +42,7 @@ public class Constants {
 	public static String XSL_XML2WIKI_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2md";
 	public static String XSL_XML2TEST_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2test";	
 	public static String XSL_XML2PDF_FILE = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2pdf" + File.separator + "xhtml-to-xslfo.xsl";
+	public static String PANDOC_FOLDER = INPUT_FOLDER + File.separator + "pandocPDF";
 	
 	public static String DOCGAMA_FILE = "gaml"+ File.separator + "docGAMA.xml";
 	public static String DOCGAMA_GLOBAL_FILE = JAVA2XML_FOLDER + File.separator + "docGAMAglobal.xml";
@@ -51,7 +52,9 @@ public class Constants {
 	public static String TEST_STATEMENTS_FOLDER = "statementsTest";
 	
 	public static String DOCGAMA_PDF = PDF_FOLDER + File.separator + "docGAMAv7.pdf";	
-	public static String TOC_FILE = INPUT_FOLDER + File.separator + "toc" + File.separator + "toc7.xml";	
+	public static String TOC_FILE = INPUT_FOLDER + File.separator + "toc" + File.separator + "toc17.xml";	
 	
 //	public static String ADR_SVNGAMA = "http://gama-platform.googlecode.com/svn/wiki";
+	
+	
 }
