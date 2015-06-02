@@ -3,8 +3,9 @@
 <xsl:import href="docGama-Operators-xml2md.xsl"/>
 <xsl:import href="docGama-Statements-xml2md.xsl"/>
 <xsl:import href="docGama-Species-xml2md.xsl"/> 
+<xsl:import href="docGama-Skills-xml2md.xsl"/> 
+<xsl:import href="docGama-Architectures-xml2md.xsl"/>
 
- 
 <xsl:template match="/">
 
 <xsl:text># Extension </xsl:text> <xsl:value-of select="doc/@plugin"></xsl:value-of>
@@ -17,17 +18,16 @@
 <xsl:call-template name="buildStatementsByName"/>
 
 ### Skills
+<xsl:call-template name="buildSkillsByName"/>
 
 ### Architectures
+
+<xsl:call-template name="buildSkillsByName"/>
 
 ### Species
 <xsl:call-template name="buildSpeciesByName"/>
 
-----
 
-## Operators by categories
-	<xsl:call-template name="buildOperatorsByCategories"/>
-	
 ----
 
 ## Operators
@@ -35,8 +35,25 @@
 
 ----
 
+## Skills
+	<xsl:call-template name="buildSkills"/>
+
+----
+
 ## Statements
 	<xsl:call-template name="buildStatements"/>	
+	
+----
+
+## Species
+	<xsl:call-template name="buildSpecies"/>
+	
+----
+
+## Architectures 
+	<xsl:call-template name="buildSkills"/>
+	
+	
 		
 </xsl:template>
 

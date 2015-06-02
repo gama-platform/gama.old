@@ -51,12 +51,22 @@ if speed = 5 {
 
 ## Table of Contents
 &lt;wiki:toc max_depth="3" /&gt;
+
 </xsl:text>
+	<xsl:call-template name="buildSkillsByName"/>
+
+	<xsl:call-template name="buildSkills"/>
+
+</xsl:template>
+
+<xsl:template name="buildSkillsByName">
 	<xsl:for-each select="doc/skills/skill"> 
 		<xsl:sort select="@name" />
 			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
 	</xsl:for-each>  
+</xsl:template>
 
+<xsl:template name= "buildSkills">
 	<xsl:for-each select="doc/skills/skill">
     	<xsl:sort select="@name" />
     	
@@ -67,7 +77,6 @@ if speed = 5 {
 		<xsl:call-template name="buildVariables"/>
 		<xsl:call-template name="buildActions"/>		
 	</xsl:for-each>
-
 </xsl:template>
 
     
