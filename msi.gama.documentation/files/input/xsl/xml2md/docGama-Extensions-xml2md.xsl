@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:import href="docGama-Operators-xml2md.xsl"/>
 <xsl:import href="docGama-Statements-xml2md.xsl"/>
+<xsl:import href="docGama-Species-xml2md.xsl"/> 
 
  
 <xsl:template match="/">
@@ -11,8 +12,16 @@
 ## Table of Contents
 ### Operators
 <xsl:call-template name="buildOperatorsByName"/>
+
 ### Statements
 <xsl:call-template name="buildStatementsByName"/>
+
+### Skills
+
+### Architectures
+
+### Species
+<xsl:call-template name="buildSpeciesByName"/>
 
 ----
 
