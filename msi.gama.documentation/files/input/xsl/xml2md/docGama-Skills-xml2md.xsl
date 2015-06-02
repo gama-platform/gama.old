@@ -8,9 +8,6 @@
 
 ----
 
-## Table of Contents
-&lt;wiki:toc max_depth="3" /&gt;
-
 ## Introduction
 
 Skills are built-in modules, written in Java, that provide a set of related built-in variables and built-in actions (in addition to those already provided by GAMA) to the species that declare them. A declaration of skill is done by filling the skills attribute in the species definition:
@@ -51,10 +48,20 @@ if speed = 5 {
 
 ----
 
+
+## Table of Contents
+&lt;wiki:toc max_depth="3" /&gt;
 </xsl:text>
+	<xsl:for-each select="doc/skills/skill"> 
+		<xsl:sort select="@name" />
+			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
+	</xsl:for-each>  
+
 	<xsl:for-each select="doc/skills/skill">
     	<xsl:sort select="@name" />
+    	
 ----
+
 ## <xsl:value-of select="@name"/>
 <xsl:value-of select="documentation/result"/> 
 		<xsl:call-template name="buildVariables"/>
