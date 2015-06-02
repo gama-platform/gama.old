@@ -93,7 +93,12 @@ Note that due to the fact that actions are written by modelers, the general func
 
 </xsl:template>
 
-
+<xsl:template name="buildOperatorsByName">
+	<xsl:for-each select="/doc/operators/operator"> 
+		<xsl:sort select="@name" />
+			<xsl:text>[</xsl:text><xsl:value-of select="@name"/><xsl:text>](#</xsl:text><xsl:value-of select="@name"/><xsl:text>), </xsl:text> 	
+	</xsl:for-each>
+</xsl:template>
  
 <xsl:template name="buildOperatorsByCategories">
 	<xsl:for-each select="doc/operatorsCategories/category">

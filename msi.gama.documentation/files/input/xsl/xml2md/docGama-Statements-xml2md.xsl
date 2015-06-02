@@ -45,17 +45,29 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 [Top of the page](#table-of-contents)
 
 	</xsl:text>
+		<xsl:call-template name="buildStatements"/>
+<!-- 	<xsl:for-each select="doc/statements/statement"> -->
+<!--     	<xsl:sort select="@name" /> -->
 
+<!--  -->
+<!-- ### <xsl:value-of select="@name"/> -->
+<!-- 		<xsl:call-template name="buildFacets"/> -->
+<!-- 		<xsl:call-template name="buildEmbedments"/> -->
+<!-- 		<xsl:call-template name="buildDefinition"/>		 -->
+<!-- 	</xsl:for-each> -->
+
+</xsl:template>
+
+<xsl:template name="buildStatements">
 	<xsl:for-each select="doc/statements/statement">
     	<xsl:sort select="@name" />
-&lt;br/&gt;
+
 ----
 ### <xsl:value-of select="@name"/>
 		<xsl:call-template name="buildFacets"/>
 		<xsl:call-template name="buildEmbedments"/>
 		<xsl:call-template name="buildDefinition"/>		
 	</xsl:for-each>
-
 </xsl:template>
 
 <xsl:template name="buildEmbedments"> 

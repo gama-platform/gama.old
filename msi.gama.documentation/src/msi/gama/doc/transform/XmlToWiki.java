@@ -157,7 +157,7 @@ public class XmlToWiki {
 		for(Entry<String,File> docPlug : hmExt.entrySet()){
 			System.out.print("Creation of the wiki pages for each extension.....");		
 			createWiki(docPlug.getValue().getAbsolutePath(),
-					Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Exntensions-xml2md.xsl",
+					Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Extensions-xml2md.xsl",
 					Constants.XML2WIKI_FOLDER + File.separator + extFileName + "_" + docPlug.getKey()+ suffix+".md",
 					docPlug.getKey());	
 			System.out.println("Done");				
