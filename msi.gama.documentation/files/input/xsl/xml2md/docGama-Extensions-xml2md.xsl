@@ -8,7 +8,10 @@
 
 <xsl:template match="/">
 
-<xsl:text># Extension </xsl:text> <xsl:value-of select="doc/@plugin"></xsl:value-of>
+<xsl:text># Extension
+
+----
+ </xsl:text> <xsl:value-of select="doc/@plugin"></xsl:value-of>
 
 ## Table of Contents
 ### Operators
