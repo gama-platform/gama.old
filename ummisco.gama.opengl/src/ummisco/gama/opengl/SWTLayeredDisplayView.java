@@ -5,7 +5,7 @@
 package ummisco.gama.opengl;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.*;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
@@ -33,8 +33,12 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 			@Override
 			public URL resolve(final URL url) {
 				try {
-					return FileLocator.resolve(url);
+					URL urlUnresolved = FileLocator.resolve(url);
+					URL urlResolved = new URI(urlUnresolved.getProtocol(), urlUnresolved.getPath(), null).toURL();
+					return urlResolved;
 				} catch (IOException ioexception) {
+					return url;
+				} catch (URISyntaxException urisyntaxexception) {
 					return url;
 				}
 			}
