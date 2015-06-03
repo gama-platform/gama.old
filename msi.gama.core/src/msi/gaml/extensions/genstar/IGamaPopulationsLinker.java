@@ -1,9 +1,8 @@
 package msi.gaml.extensions.genstar;
 
-import java.util.List;
-
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.runtime.IScope;
+import msi.gama.util.IList;
 
 public interface IGamaPopulationsLinker {
 
@@ -13,5 +12,5 @@ public interface IGamaPopulationsLinker {
 	
 	public abstract int getCurrentRound();
 	
-	public abstract void establishRelationship(final IScope scope, final List<List<IMacroAgent>> populations);
+	public abstract void establishRelationship(final IScope scope, final IList<IList<IMacroAgent>> populations);
 }

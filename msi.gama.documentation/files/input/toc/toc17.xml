@@ -20,13 +20,13 @@
 		<chapter name="3. Editing Models" file="G__EditingModels"/>	
 		<chapter name="3.1 GAML Editor" file="G__GamlEditor"/>		
 		<chapter name="3.2 Validation of Models" file="G__ValidationOfModels"/>		
-		<chapter name="3.3 Graphical Editor" file="G__GraphicalEditor"/>				
+		<chapter name="3.3 Graphical Editor" file="G__GraphicalEditor"/>	
 		<chapter name="4. Running Experiments" file="G__RunningExperiments"/>	
 		<chapter name="4.1 Launching Experiments" file="G__LaunchingExperiments"/>		
 		<chapter name="4.2 Experiments User interface" file="G__ExperimentsUserInterface"/>		
 		<chapter name="4.2.1 Menus and commands" file="G__MenusAndCommands"/>
 		<chapter name="4.2.2 Parameters view" file="G__ParametersView"/>			
-		<chapter name="4.2.3 Inspectors and monitors" file="G__InspectorsAndMonitors"/>	
+		<chapter name="4.2.3 Inspectors and monitors" file="G__InspectorsAndMonitors"/>
 		<chapter name="4.2.4 Displays" file="G__Displays"/>		
 		<chapter name="4.2.5 Batch Specific UI" file="G__BatchSpecific"/>
 		<chapter name="4.2.6 Errors View" file="G__ErrorsView"/>		 
@@ -57,7 +57,7 @@
 		<chapter name="4.2.1 Defining Displays" file="G__DefiningDisplays"/>	
 		<chapter name="4.2.1.1 Defining Chart Layers" file="G__DefiningChartLayers"/>
 		<chapter name="4.2.1.2 Defining Other Layers" file="G__DefiningOtherLayers"/>
-		<chapter name="4.2.1.3 3D Specific Instructions" file="G__3DSpecificInstructions"/>
+		<chapter name="4.2.1.3 3D Specific Instructions" file="G__3DSpecificInstructions"/>	
 		<chapter name="4.2.2 Defining Inspectors and Monitors" file="G__DefiningMonitorsAndInspectors"/>
 		<chapter name="4.2.3 Defining Files" file="G__DefiningFiles"/>
 		
@@ -86,8 +86,7 @@
 		<chapter name="6.6.3 Pseudo-variables" file="G__PseudoVariables"/>		
 		<chapter name="6.6.4 Variables and attributes" file="G__VariablesAndAttributes"/>	
 		
-		<chapter name="6.6.5 Operators (A to K)" file="G__OperatorsAK"/>		
-		<chapter name="6.6.6 Operators (L to Z)" file="G__OperatorsLZ"/>		
+		<chapter name="6.6.5 Operators" file="G__Operators"/>				
 			
 		<chapter name="7. Recipes" file="G__Recipes"/>
 		<chapter name="7.1 Optimizing Models" file="G__OptimizingModels"/>
