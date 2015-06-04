@@ -37,6 +37,7 @@ public class PrepareEnv {
 		new File(Constants.HTML2XML_FOLDER).mkdirs();
 		new File(Constants.PDF_FOLDER).mkdirs();
 		new File(Constants.TEST_FOLDER).mkdirs();
+		new File(Constants.TOC_GEN_FOLDER).mkdir();
 
 		copyPythonTemplate();
 	}
