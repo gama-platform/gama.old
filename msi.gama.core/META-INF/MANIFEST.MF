@@ -29,7 +29,7 @@ Export-Package: msi.gama.common,
    msi.gama.runtime.exceptions",
  msi.gama.common.util;
   uses:="msi.gama.precompiler,
-   org.uncommons.maths.random,
+   msi.gama.util.random,
    msi.gama.kernel.experiment,
    msi.gama.runtime,
    msi.gama.util,
@@ -49,8 +49,7 @@ Export-Package: msi.gama.common,
  msi.gama.database.mdx,
  msi.gama.database.sql,
  msi.gama.kernel.batch;
-  uses:="org.uncommons.maths.number,
-   msi.gaml.expressions,
+  uses:="msi.gaml.expressions,
    msi.gama.kernel.experiment,
    msi.gaml.descriptions,
    msi.gaml.compilation",
@@ -402,9 +401,7 @@ Export-Package: msi.gama.common,
    msi.gaml.skills,
    msi.gaml.compilation,
    msi.gaml.types",
- org.uncommons.maths.binary,
- org.uncommons.maths.number,
- org.uncommons.maths.random;uses:="org.uncommons.maths.number"
+ msi.gama.util.random;uses:=""
 Import-Package: org.apache.commons.lang;version="2.4.0"
 Bundle-ClassPath: schema/,
  .

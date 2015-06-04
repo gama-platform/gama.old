@@ -23,7 +23,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 // ============================================================================
-package org.uncommons.maths.number;
+package msi.gama.util.random;
 
 /**
  * Interface for providing different types of sequences of numbers.  This is

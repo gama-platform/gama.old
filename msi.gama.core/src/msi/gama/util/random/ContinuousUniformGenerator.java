@@ -23,10 +23,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ============================================================================
-package org.uncommons.maths.random;
+package msi.gama.util.random;
 
 import java.util.Random;
-import org.uncommons.maths.number.NumberGenerator;
 
 /**
  * Continuous, uniformly distributed random sequence. Generates

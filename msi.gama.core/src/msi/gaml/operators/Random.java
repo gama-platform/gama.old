@@ -23,8 +23,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.random.NumberGenerator;
 import msi.gaml.types.*;
-import org.uncommons.maths.number.NumberGenerator;
 
 /**
  * Written by drogoul Modified on 10 d�c. 2010

@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
  *
- * 'GaussianGenerator.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'GaussianGenerator.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit http://gama-platform.googlecode.com for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 // Copyright 2006-2010 Daniel W. Dyer
 //
@@ -23,10 +23,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ============================================================================
-package org.uncommons.maths.random;
+package msi.gama.util.random;
 
 import java.util.Random;
-import org.uncommons.maths.number.*;
 
 /**
  * <a href="http://en.wikipedia.org/wiki/Normal_distribution" target="_top">Normally distributed</a>
@@ -41,15 +40,12 @@ public class GaussianGenerator implements NumberGenerator<Double> {
 
 	/**
 	 * <p>
-	 * Creates a generator of normally-distributed values. The mean and standard deviation are
-	 * determined by the provided {@link NumberGenerator}s. This means that the statistical
-	 * parameters of this generator may change over time. One example of where this is useful is if
-	 * the mean and standard deviation generators are attached to GUI controls that allow a user to
-	 * tweak the parameters while a program is running.
+	 * Creates a generator of normally-distributed values. The mean and standard deviation are determined by the provided {@link NumberGenerator}s. This means that the statistical parameters of this
+	 * generator may change over time. One example of where this is useful is if the mean and standard deviation generators are attached to GUI controls that allow a user to tweak the parameters while
+	 * a program is running.
 	 * </p>
 	 * <p>
-	 * To create a Gaussian generator with a constant mean and standard deviation, use the
-	 * {@link #GaussianGenerator(double, double, Random)} constructor instead.
+	 * To create a Gaussian generator with a constant mean and standard deviation, use the {@link #GaussianGenerator(double, double, Random)} constructor instead.
 	 * </p>
 	 * @param mean A {@link NumberGenerator} that provides the mean of the
 	 *            Gaussian distribution used for the next generated value.
@@ -58,8 +54,8 @@ public class GaussianGenerator implements NumberGenerator<Double> {
 	 *            generated value.
 	 * @param rng The source of randomness.
 	 */
-	public GaussianGenerator(final NumberGenerator<Double> mean,
-		final NumberGenerator<Double> standardDeviation, final Random rng) {
+	public GaussianGenerator(final NumberGenerator<Double> mean, final NumberGenerator<Double> standardDeviation,
+		final Random rng) {
 		this.mean = mean;
 		this.standardDeviation = standardDeviation;
 		this.rng = rng;
@@ -73,8 +69,7 @@ public class GaussianGenerator implements NumberGenerator<Double> {
 	 * @param rng The source of randomness.
 	 */
 	public GaussianGenerator(final double mean, final double standardDeviation, final Random rng) {
-		this(new ConstantGenerator<Double>(mean), new ConstantGenerator<Double>(standardDeviation),
-			rng);
+		this(new ConstantGenerator<Double>(mean), new ConstantGenerator<Double>(standardDeviation), rng);
 	}
 
 	/**

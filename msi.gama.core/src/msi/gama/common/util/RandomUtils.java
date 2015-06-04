@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'RandomUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.util;
 
@@ -15,9 +15,9 @@ import java.security.SecureRandom;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
-import org.uncommons.maths.random.*;
+import msi.gama.util.random.*;
 
-public class RandomUtils implements SeedGenerator {
+public class RandomUtils {
 
 	/** The seed. */
 	protected Double seed;
@@ -64,10 +64,10 @@ public class RandomUtils implements SeedGenerator {
 
 	/**
 	 * Creates a new Discrete Uniform Generator object.
-	 * 
+	 *
 	 * @param min the min
 	 * @param max the max
-	 * 
+	 *
 	 * @return the discrete uniform generator
 	 */
 	public DiscreteUniformGenerator createUniform(final int min, final int max) {
@@ -76,10 +76,10 @@ public class RandomUtils implements SeedGenerator {
 
 	/**
 	 * Creates a new Continuous Uniform Generator object.
-	 * 
+	 *
 	 * @param min the min
 	 * @param max the max
-	 * 
+	 *
 	 * @return the continuous uniform generator
 	 */
 	public ContinuousUniformGenerator createUniform(final double min, final double max) {
@@ -88,10 +88,10 @@ public class RandomUtils implements SeedGenerator {
 
 	/**
 	 * Creates a new Gaussian Generator object.
-	 * 
+	 *
 	 * @param mean the mean
 	 * @param stdv the stdv
-	 * 
+	 *
 	 * @return the gaussian generator
 	 */
 	public GaussianGenerator createGaussian(final double mean, final double stdv) {
@@ -100,10 +100,10 @@ public class RandomUtils implements SeedGenerator {
 
 	/**
 	 * Creates a new Binomial Generator object.
-	 * 
+	 *
 	 * @param n the n
 	 * @param p the p
-	 * 
+	 *
 	 * @return the binomial generator
 	 */
 	public BinomialGenerator createBinomial(final int n, final double p) {
@@ -112,9 +112,9 @@ public class RandomUtils implements SeedGenerator {
 
 	/**
 	 * Creates a new Poisson Generator object.
-	 * 
+	 *
 	 * @param mean the mean
-	 * 
+	 *
 	 * @return the poisson generator
 	 */
 	public PoissonGenerator createPoisson(final double mean) {
@@ -162,7 +162,6 @@ public class RandomUtils implements SeedGenerator {
 		uniform = null;
 	}
 
-	@Override
 	public byte[] generateSeed(final int length) {
 		byte[] result;
 		return createSeed(seed, length);
@@ -181,7 +180,7 @@ public class RandomUtils implements SeedGenerator {
 
 	/**
 	 * Sets the generator.
-	 * 
+	 *
 	 * @param newGen the new generator
 	 */
 	public void setGenerator(final String newGen, final boolean init) {

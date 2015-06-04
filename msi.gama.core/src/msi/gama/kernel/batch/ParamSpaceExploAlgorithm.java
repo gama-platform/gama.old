@@ -18,11 +18,11 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.random.NumberGenerator;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
-import org.uncommons.maths.number.NumberGenerator;
 
 /**
  * The Class ParamSpaceExploAlgorithm.

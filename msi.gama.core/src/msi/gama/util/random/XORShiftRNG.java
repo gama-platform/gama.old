@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'XORShiftRNG.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit http://gama-platform.googlecode.com for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 // Copyright 2006-2010 Daniel W. Dyer
 //
@@ -23,10 +23,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ============================================================================
-package org.uncommons.maths.random;
+package msi.gama.util.random;
 
-import java.util.Random;
-import org.uncommons.maths.binary.BinaryUtils;
+import msi.gama.common.util.RandomUtils;
 
 /**
  * Very fast pseudo random number generator. See <a
@@ -35,7 +34,7 @@ import org.uncommons.maths.binary.BinaryUtils;
  * @author Daniel Dyer
  * @since 1.2
  */
-public class XORShiftRNG extends Random implements RepeatableRNG {
+public class XORShiftRNG extends GamaRNG {
 
 	private static final int SEED_SIZE_BYTES = 20; // Needs 5 32-bit integers.
 
@@ -65,7 +64,7 @@ public class XORShiftRNG extends Random implements RepeatableRNG {
 	 *            RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
-	public XORShiftRNG(final SeedGenerator seedGenerator) {
+	public XORShiftRNG(final RandomUtils seedGenerator) {
 		this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
 	}
 
@@ -77,7 +76,7 @@ public class XORShiftRNG extends Random implements RepeatableRNG {
 		if ( seed == null || seed.length != SEED_SIZE_BYTES ) { throw new IllegalArgumentException(
 			"XOR shift RNG requires 160 bits of seed data."); }
 		this.seed = seed.clone();
-		int[] state = BinaryUtils.convertBytesToInts(seed);
+		int[] state = convertBytesToInts(seed);
 		this.state1 = state[0];
 		this.state2 = state[1];
 		this.state3 = state[2];

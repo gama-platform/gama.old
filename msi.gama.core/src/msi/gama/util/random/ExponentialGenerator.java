@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
  *
- * 'ExponentialGenerator.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'ExponentialGenerator.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit http://gama-platform.googlecode.com for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 // Copyright 2006-2010 Daniel W. Dyer
 //
@@ -23,10 +23,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ============================================================================
-package org.uncommons.maths.random;
+package msi.gama.util.random;
 
 import java.util.Random;
-import org.uncommons.maths.number.*;
 
 /**
  * Continuous random sequence that follows an

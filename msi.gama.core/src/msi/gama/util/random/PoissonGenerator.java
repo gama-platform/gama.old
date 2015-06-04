@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
  *
- * 'PoissonGenerator.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'PoissonGenerator.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit http://gama-platform.googlecode.com for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 // Copyright 2006-2010 Daniel W. Dyer
 //
@@ -23,10 +23,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ============================================================================
-package org.uncommons.maths.random;
+package msi.gama.util.random;
 
 import java.util.Random;
-import org.uncommons.maths.number.*;
 
 /**
  * Discrete random sequence that follows a
@@ -41,15 +40,11 @@ public class PoissonGenerator implements NumberGenerator<Integer> {
 
 	/**
 	 * <p>
-	 * Creates a generator of Poisson-distributed values. The mean is determined by the provided
-	 * {@link org.uncommons.maths.number.NumberGenerator}. This means that the statistical
-	 * parameters of this generator may change over time. One example of where this is useful is if
-	 * the mean generator is attached to a GUI control that allows a user to tweak the parameters
-	 * while a program is running.
+	 * Creates a generator of Poisson-distributed values. The mean is determined by the provided {@link org.uncommons.maths.number.NumberGenerator}. This means that the statistical parameters of this
+	 * generator may change over time. One example of where this is useful is if the mean generator is attached to a GUI control that allows a user to tweak the parameters while a program is running.
 	 * </p>
 	 * <p>
-	 * To create a Poisson generator with a constant mean, use the
-	 * {@link #PoissonGenerator(double, Random)} constructor instead.
+	 * To create a Poisson generator with a constant mean, use the {@link #PoissonGenerator(double, Random)} constructor instead.
 	 * </p>
 	 * @param mean A {@link NumberGenerator} that provides the mean of the
 	 *            Poisson distribution used for the next generated value.

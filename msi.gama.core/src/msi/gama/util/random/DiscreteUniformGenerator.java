@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- * 
- * 'SeedGenerator.java', in plugin 'msi.gama.core', is part of the source code of the
+ *
+ * 'DiscreteUniformGenerator.java', in plugin 'msi.gama.core', is part of the source code of the 
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -23,19 +23,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ============================================================================
-package org.uncommons.maths.random;
+package msi.gama.util.random;
+
+import java.util.Random;
 
 /**
- * Strategy interface for seeding random number generators.
+ * Discrete, uniformly distributed random sequence. Generates
+ * values between the specified minimum and maximum values (inclusive).
  * @author Daniel Dyer
  */
-public interface SeedGenerator {
+public class DiscreteUniformGenerator implements NumberGenerator<Integer> {
+
+	private final Random rng;
+	private final int range;
+	private final int minimumValue;
+
+	public DiscreteUniformGenerator(final int minimumValue, final int maximumValue, final Random rng) {
+		this.rng = rng;
+		this.minimumValue = minimumValue;
+		this.range = maximumValue - minimumValue + 1;
+	}
 
 	/**
-	 * Generate a seed value for a random number generator.
-	 * @param length The length of the seed to generate (in bytes).
-	 * @return A byte array containing the seed data.
-	 * @throws SeedException If a seed cannot be generated for any reason.
+	 * {@inheritDoc}
 	 */
-	byte[] generateSeed(int length);
+	@Override
+	public Integer nextValue() {
+		return rng.nextInt(range) + minimumValue;
+	}
 }
