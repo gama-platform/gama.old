@@ -23,13 +23,10 @@ public class PrepareEnv {
 
 		File genFolder = new File(Constants.GEN_FOLDER);
 		File testFolder = new File(Constants.TEST_FOLDER);
-		File svnFolder = new File(Constants.SVN_FOLDER);
 		
 		if(genFolder.exists()) {FileUtils.deleteDirectory(genFolder);}
 		if(testFolder.exists()) {FileUtils.deleteDirectory(testFolder);}
-		if(svnFolder.exists()) {FileUtils.deleteDirectory(svnFolder);}
 
-		svnFolder.mkdir();
 		genFolder.mkdir();	
 		new File(Constants.JAVA2XML_FOLDER).mkdirs();	
 		new File(Constants.XML2WIKI_FOLDER).mkdirs();

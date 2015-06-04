@@ -3,19 +3,12 @@ package msi.gama.doc.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ConvertToPDF {
@@ -55,7 +48,6 @@ public class ConvertToPDF {
 	public static void convert(){
 		String line;
 		try {
-			String[] cmd = { "ls" };
 			String[] env = { "PATH=/usr/local/bin/:${PATH}" };
 
 			Process p = Runtime.getRuntime().exec(getCommandLine(), env, new File("../../gama.wiki"));
@@ -73,7 +65,7 @@ public class ConvertToPDF {
 			}
 			bre.close();
 			p.waitFor();
-			System.out.println("Done.");
+			System.out.println("PDF generated.");
 		} catch (Exception err) {
 			err.printStackTrace();
 		}
