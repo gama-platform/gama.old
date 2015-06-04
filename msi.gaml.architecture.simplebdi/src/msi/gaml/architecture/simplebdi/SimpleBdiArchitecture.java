@@ -78,9 +78,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String CURRENT_PLAN = "current_plan";
 
 	private IScope _consideringScope;
-	private final List<SimpleBdiPlanStatement> _plans = new ArrayList<SimpleBdiPlanStatement>();
+//	private final List<SimpleBdiPlanStatement> _plans = new ArrayList<SimpleBdiPlanStatement>();
 	private final List<SimpleBdiPlanStatement> _perceives = new ArrayList<SimpleBdiPlanStatement>();
-//	private final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
+	private final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
 	private int _plansNumber = 0;
 	private int _perceiveNumber = 0;
 	private boolean iscurrentplaninstantaneous=false;
@@ -98,7 +98,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		
 		if ( c instanceof SimpleBdiPlanStatement ) {
 			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
-			_plans.add(/*new BDIPlan(*/(SimpleBdiPlanStatement) c)/*)*/;
+			_plans.add(new BDIPlan((SimpleBdiPlanStatement) c));
 			_plansNumber++;
 		} else {
 			super.addBehavior(c);
@@ -158,7 +158,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 			// If current intention has no plan or is on hold, choose a new
 			// Desire
-			System.out.println("_persistentTask 0 " +  _persistentTask);
+//			System.out.println("_persistentTask 0 " +  _persistentTask);
 			if ( testOnHold(scope, currentIntention(scope)) || selectExecutablePlanWithHighestPriority(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
 				_persistentTask = null;
@@ -181,7 +181,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 
 			// choose a plan for the current intention
-			System.out.println("_persistentTask 1 " +  _persistentTask);
+//			System.out.println("_persistentTask 1 " +  _persistentTask);
 			if ( _persistentTask == null && currentIntention(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
 				if ( currentIntention(scope) == null ) {
@@ -189,23 +189,23 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					return null;
 
 				}
-				System.out.println("_persistentTask 2 " +  _persistentTask);
+//				System.out.println("_persistentTask 2 " +  _persistentTask);
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
 				agent.setAttribute(CURRENT_PLAN, _persistentTask);
 				addThoughts(scope, "ok, new intention: " + currentIntention(scope) + " with plan " + _persistentTask.getName());
 			}
 			if ( (_persistentTask) == null && currentIntention(scope) != null ) {
-				System.out.println("_persistentTask 3 " +  _persistentTask);
+//				System.out.println("_persistentTask 3 " +  _persistentTask);
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
 				agent.setAttribute(CURRENT_PLAN, _persistentTask);
 				if ( _persistentTask != null ) {
-					System.out.println("_persistentTask 4 " +  _persistentTask);
+//					System.out.println("_persistentTask 4 " +  _persistentTask);
 					addThoughts(scope, "use plan : " + _persistentTask.getName());
 				}
 			}
 			if ( _persistentTask != null ) {
 				if ( !agent.dead() ) {
-					System.out.println("_persistentTask 5 " +  _persistentTask);
+//					System.out.println("_persistentTask 5 " +  _persistentTask);
 					result = _persistentTask.executeOn(scope);
 					boolean isExecuted =
 						_persistentTask.getExecutedExpression() == null ||
@@ -312,8 +312,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			List<SimpleBdiPlanStatement> temp_plan = new ArrayList<SimpleBdiPlanStatement>();
 			IList priorities = GamaListFactory.create(Types.FLOAT);
 //			System.out.println("intention: " + getBase(scope, SimpleBdiArchitecture.INTENTION_BASE));
-			for ( Object /*BDIPlan*/statement : scope.getExperiment().getRandomGenerator().shuffle(_plans) ) {
-//				SimpleBdiPlanStatement statement = ((BDIPlan)BDIPlanstatement).planstatement;
+			for ( Object BDIPlanstatement : scope.getExperiment().getRandomGenerator().shuffle(_plans) ) {
+				SimpleBdiPlanStatement statement = ((BDIPlan)BDIPlanstatement).getPlanStatement();
 //				System.out.println("statement: " + statement);
 //				System.out.println("((SimpleBdiPlan) statement).getContextExpression(): " + ((SimpleBdiPlan) statement).getContextExpression());
 				boolean isContextConditionSatisfied =
@@ -416,10 +416,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 		}
 		if (intention.getValues().containsKey("or")){
-			System.out.println("intention : "+ intention);
+//			System.out.println("intention : "+ intention);
 			Object cond = intention.onHoldUntil;
-			System.out.println("onHoldUntil : "+ intention.onHoldUntil);
-			System.out.println("size : "+ ((ArrayList)cond).size());
+//			System.out.println("onHoldUntil : "+ intention.onHoldUntil);
+//			System.out.println("size : "+ ((ArrayList)cond).size());
 			if(cond instanceof ArrayList){
 				if(((ArrayList)cond).size()<=1){
 					System.out.println("size : "+ ((ArrayList)cond).size());

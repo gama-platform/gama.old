@@ -38,7 +38,7 @@ import msi.gaml.types.*;
 	})
 public class BDIPlan implements IValue {
 
-	SimpleBdiPlanStatement planstatement;
+	private SimpleBdiPlanStatement planstatement;
 
 	@getter("name")
 	public String getName() {
@@ -63,6 +63,10 @@ public class BDIPlan implements IValue {
 	@getter(SimpleBdiArchitecture.INSTANTANEAOUS)
 	public String getInstantaneous() {
 		return this.planstatement._instantaneous.serialize(true);
+	}
+	
+	public SimpleBdiPlanStatement getPlanStatement(){
+		return this.planstatement;
 	}
 	
 	public BDIPlan() {
