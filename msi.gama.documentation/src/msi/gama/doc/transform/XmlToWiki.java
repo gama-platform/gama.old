@@ -66,13 +66,12 @@ public class XmlToWiki {
 		System.out.println("Done");	
 		
 		
-		// To uncomment when we want to generate Architectures
-		// System.out.print("Creation of the wiki page for Architectures.......");		
-		// createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-		//		Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Architectures-xml2wiki.xsl",
-		//		Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInArchitectures"+suffix+".wiki");	
-		// System.out.println("Done");		
-		//
+		System.out.print("Creation of the wiki page for Architectures.......");		
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Architectures-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInArchitectures"+suffix+".md");	
+		System.out.println("Done");		
+		
 		System.out.print("Creation of the wiki page for Built-in Species.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Species-xml2md.xsl",
@@ -155,9 +154,9 @@ public class XmlToWiki {
 		
 		// Create 1 G__extension_plugin.md file per plugin
 		for(Entry<String,File> docPlug : hmExt.entrySet()){
-			System.out.print("Creation of the wiki pages for each extension.....");		
+			System.out.print("Creation of the wiki pages for extension: " + docPlug.getKey());		
 			createWiki(docPlug.getValue().getAbsolutePath(),
-					Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Exntensions-xml2md.xsl",
+					Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Extensions-xml2md.xsl",
 					Constants.XML2WIKI_FOLDER + File.separator + extFileName + "_" + docPlug.getKey()+ suffix+".md",
 					docPlug.getKey());	
 			System.out.println("Done");				

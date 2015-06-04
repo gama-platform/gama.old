@@ -1,0 +1,718 @@
+avant
+B:2:['r','a']
+D:0:[]
+I:0:[]
+curIntention:null
+E: 0 : []
+updating kb
+deduce conclu b from premise a
+apres
+B:3:['r','a','b']
+D:0:[]
+I:0:[]
+curIntention:null
+E: 0 : []
+desire that b
+check b in beliefs = true
+after emotions
+B:3:['r','a','b']
+D:1:['b']
+I:0:[]
+curIntention:null
+E: 1 : ['emotion0']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 2 : ['emotion0','emotion1']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  sadness about happy
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 4 : ['joy about b deg 1.0','hope about happy deg 0.8','sadness about happy deg 3.0','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 4 : ['joy about b deg 1.0','hope about happy deg 0.8','sadness about happy deg 3.0','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 4 : ['joy about b deg 1.0','hope about happy deg 0.8','sadness about happy deg 3.0','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 5 : ['joy about b deg 1.0','hope about happy deg 0.8','sadness about happy deg 3.0','hope about happy deg 0.8','emotion4']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 6 : ['joy about b deg 1.0','hope about happy deg 0.6666666666666667','sadness about happy deg 1.0','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 6 : ['joy about b deg 1.0','hope about happy deg 0.6666666666666667','sadness about happy deg 1.0','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 6 : ['joy about b deg 1.0','hope about happy deg 0.6666666666666667','sadness about happy deg 1.0','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 7 : ['joy about b deg 1.0','hope about happy deg 0.6666666666666667','sadness about happy deg 1.0','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion6']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 8 : ['joy about b deg 1.0','hope about happy deg 0.5555555555555557','sadness about happy deg 1.0','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 8 : ['joy about b deg 1.0','hope about happy deg 0.5555555555555557','sadness about happy deg 1.0','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 8 : ['joy about b deg 1.0','hope about happy deg 0.5555555555555557','sadness about happy deg 1.0','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 9 : ['joy about b deg 1.0','hope about happy deg 0.5555555555555557','sadness about happy deg 1.0','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion8']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 10 : ['joy about b deg 1.0','hope about happy deg 0.4629629629629631','sadness about happy deg 1.0','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 10 : ['joy about b deg 1.0','hope about happy deg 0.4629629629629631','sadness about happy deg 1.0','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 10 : ['joy about b deg 1.0','hope about happy deg 0.4629629629629631','sadness about happy deg 1.0','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 11 : ['joy about b deg 1.0','hope about happy deg 0.4629629629629631','sadness about happy deg 1.0','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion10']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 12 : ['joy about b deg 1.0','hope about happy deg 0.3858024691358026','sadness about happy deg 1.0','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 12 : ['joy about b deg 1.0','hope about happy deg 0.3858024691358026','sadness about happy deg 1.0','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 12 : ['joy about b deg 1.0','hope about happy deg 0.3858024691358026','sadness about happy deg 1.0','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 13 : ['joy about b deg 1.0','hope about happy deg 0.3858024691358026','sadness about happy deg 1.0','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion12']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 14 : ['joy about b deg 1.0','hope about happy deg 0.3215020576131688','sadness about happy deg 1.0','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 14 : ['joy about b deg 1.0','hope about happy deg 0.3215020576131688','sadness about happy deg 1.0','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 14 : ['joy about b deg 1.0','hope about happy deg 0.3215020576131688','sadness about happy deg 1.0','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 15 : ['joy about b deg 1.0','hope about happy deg 0.3215020576131688','sadness about happy deg 1.0','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion14']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 16 : ['joy about b deg 1.0','hope about happy deg 0.26791838134430734','sadness about happy deg 1.0','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 16 : ['joy about b deg 1.0','hope about happy deg 0.26791838134430734','sadness about happy deg 1.0','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 16 : ['joy about b deg 1.0','hope about happy deg 0.26791838134430734','sadness about happy deg 1.0','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 17 : ['joy about b deg 1.0','hope about happy deg 0.26791838134430734','sadness about happy deg 1.0','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion16']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 18 : ['joy about b deg 1.0','hope about happy deg 0.2232653177869228','sadness about happy deg 1.0','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 18 : ['joy about b deg 1.0','hope about happy deg 0.2232653177869228','sadness about happy deg 1.0','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 18 : ['joy about b deg 1.0','hope about happy deg 0.2232653177869228','sadness about happy deg 1.0','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 19 : ['joy about b deg 1.0','hope about happy deg 0.2232653177869228','sadness about happy deg 1.0','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion18']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 20 : ['joy about b deg 1.0','hope about happy deg 0.18605443148910233','sadness about happy deg 1.0','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 20 : ['joy about b deg 1.0','hope about happy deg 0.18605443148910233','sadness about happy deg 1.0','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 20 : ['joy about b deg 1.0','hope about happy deg 0.18605443148910233','sadness about happy deg 1.0','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 21 : ['joy about b deg 1.0','hope about happy deg 0.18605443148910233','sadness about happy deg 1.0','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion20']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 22 : ['joy about b deg 1.0','hope about happy deg 0.15504535957425195','sadness about happy deg 1.0','hope about happy deg 0.15504535957425195','hope about happy deg 0.18605443148910233','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 22 : ['joy about b deg 1.0','hope about happy deg 0.15504535957425195','sadness about happy deg 1.0','hope about happy deg 0.15504535957425195','hope about happy deg 0.18605443148910233','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 22 : ['joy about b deg 1.0','hope about happy deg 0.15504535957425195','sadness about happy deg 1.0','hope about happy deg 0.15504535957425195','hope about happy deg 0.18605443148910233','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 23 : ['joy about b deg 1.0','hope about happy deg 0.15504535957425195','sadness about happy deg 1.0','hope about happy deg 0.15504535957425195','hope about happy deg 0.18605443148910233','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion22']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 24 : ['joy about b deg 1.0','hope about happy deg 0.12920446631187663','sadness about happy deg 1.0','hope about happy deg 0.12920446631187663','hope about happy deg 0.15504535957425195','hope about happy deg 0.15504535957425195','hope about happy deg 0.18605443148910233','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 24 : ['joy about b deg 1.0','hope about happy deg 0.12920446631187663','sadness about happy deg 1.0','hope about happy deg 0.12920446631187663','hope about happy deg 0.15504535957425195','hope about happy deg 0.15504535957425195','hope about happy deg 0.18605443148910233','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+E: 24 : ['joy about b deg 1.0','hope about happy deg 0.12920446631187663','sadness about happy deg 1.0','hope about happy deg 0.12920446631187663','hope about happy deg 0.15504535957425195','hope about happy deg 0.15504535957425195','hope about happy deg 0.18605443148910233','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8']
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+E: 25 : ['joy about b deg 1.0','hope about happy deg 0.12920446631187663','sadness about happy deg 1.0','hope about happy deg 0.12920446631187663','hope about happy deg 0.15504535957425195','hope about happy deg 0.15504535957425195','hope about happy deg 0.18605443148910233','hope about happy deg 0.18605443148910233','hope about happy deg 0.2232653177869228','hope about happy deg 0.2232653177869228','hope about happy deg 0.26791838134430734','hope about happy deg 0.26791838134430734','hope about happy deg 0.3215020576131688','hope about happy deg 0.3215020576131688','hope about happy deg 0.3858024691358026','hope about happy deg 0.3858024691358026','hope about happy deg 0.4629629629629631','hope about happy deg 0.4629629629629631','hope about happy deg 0.5555555555555557','hope about happy deg 0.5555555555555557','hope about happy deg 0.6666666666666667','hope about happy deg 0.6666666666666667','hope about happy deg 0.8','hope about happy deg 0.8','emotion24']
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b
+avant
+B:4:['b','run effect','r','a']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+updating kb
+deduce conclu b from premise a
+apres
+B:4:['run effect','r','a','b']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+desire that happy
+check happy in beliefs = false
+desire that b
+check b in beliefs = true
+after emotions
+B:4:['run effect','r','a','b']
+D:2:['happy','b']
+I:0:[]
+curIntention:null
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+test hope
+B:4:['r','a','b','run effect']
+D:2:['b','happy']
+I:0:[]
+curIntention:null
+fini
+desire that b
+check b in beliefs = true
+desire that happy
+check happy in beliefs = false
+action = running
+effect = happy
+proba = 0.8
+has desire OK
+hope created
+emotion MAX =  joy about b

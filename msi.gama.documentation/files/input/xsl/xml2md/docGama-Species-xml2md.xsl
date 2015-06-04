@@ -26,11 +26,13 @@ create cluster_builder returns: clusterer;```
 
 ## Table of Contents
 &lt;wiki:toc max_depth="3" /&gt;
-	<xsl:for-each select="doc/speciess/species"> 
-		<xsl:sort select="@name" />
-			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
-	</xsl:for-each>  
+<xsl:call-template name="buildSpeciesByName"/>
 
+<xsl:call-template name="buildSpecies"/>
+
+</xsl:template>
+
+<xsl:template name="buildSpecies">
 
 	<xsl:for-each select="doc/speciess/species">
     	<xsl:sort select="@name" />
@@ -65,5 +67,12 @@ create cluster_builder returns: clusterer;```
 [Top of the page](#table-of-contents) 
 	</xsl:for-each>
 </xsl:template>
+  
+<xsl:template name="buildSpeciesByName">
+	<xsl:for-each select="/doc/speciess/species"> 
+		<xsl:sort select="@name" />
+			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
+	</xsl:for-each>  
+</xsl:template>  
   
 </xsl:stylesheet>

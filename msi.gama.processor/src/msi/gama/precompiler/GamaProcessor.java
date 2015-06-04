@@ -711,9 +711,11 @@ public class GamaProcessor extends AbstractProcessor {
 			try {
 				t.wraps();
 			} catch (MirroredTypesException ex) {
-				wraps = ex.getTypeMirrors();
-			} catch (MirroredTypeException ex2) {
-				wraps = Arrays.asList(ex2.getTypeMirror());
+				try {
+					wraps = ex.getTypeMirrors();
+				} catch (MirroredTypeException ex2) {
+					wraps = Arrays.asList(ex2.getTypeMirror());
+				}
 			}
 			for ( TypeMirror tm : wraps ) {
 				sb.append(SEP).append(rawNameOf(tm, e));

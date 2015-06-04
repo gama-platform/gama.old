@@ -49,6 +49,7 @@ public class MainGenerateWiki {
 		System.out.println("DONE");
 		System.out.print("Transform the docGAMA.xml file into Wiki Files (md) and create/update them in the gama.wiki folder................");		
 		XmlToWiki.createAllWikis();
+		XmlToWiki.createExtentionsWiki();
 		System.out.println("DONE");		
 		
 		// TODO commit and push created files to the GIT repository
