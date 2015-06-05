@@ -401,7 +401,7 @@ Export-Package: msi.gama.common,
    msi.gaml.skills,
    msi.gaml.compilation,
    msi.gaml.types",
- msi.gama.util.random;uses:=""
+ msi.gama.util.random
 Import-Package: org.apache.commons.lang;version="2.4.0"
 Bundle-ClassPath: schema/,
  .
