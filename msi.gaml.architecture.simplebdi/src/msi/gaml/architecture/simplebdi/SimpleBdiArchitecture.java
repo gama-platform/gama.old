@@ -465,22 +465,22 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 	
-//	@action(name = "get_plans", 
-//			doc = @doc(value = "get the list of plans.",
-//			returns = "the list of BDI plans.",
-//			examples = { @example("get_plans()") }))
-//	public IList<BDIPlan> getPlans(final IScope scope) {
-//		final IAgent agent = getCurrentAgent(scope);
-//		IList<BDIPlan> mylist=GamaListFactory.create(Types.NO_TYPE);
-//		if (_plans.size()>0)
-//		{
-//			for (int i=0; i<_plans.size(); i++)
-//			{
-//				mylist.add(_plans.get(i));
-//			}
-//		}
-//		return mylist;
-//	}
+	@action(name = "get_plans", 
+			doc = @doc(value = "get the list of plans.",
+			returns = "the list of BDI plans.",
+			examples = { @example("get_plans()") }))
+	public IList<BDIPlan> getPlans(final IScope scope) {
+		final IAgent agent = getCurrentAgent(scope);
+		IList<BDIPlan> mylist=GamaListFactory.create(Types.NO_TYPE);
+		if (_plans.size()>0)
+		{
+			for (int i=0; i<_plans.size(); i++)
+			{
+				mylist.add(_plans.get(i));
+			}
+		}
+		return mylist;
+	}
 
 
 	public GamaList<Predicate> getBase(final IScope scope, final String basename) {
@@ -517,7 +517,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		returns = "true if it is in the base.",
 		examples = { @example("") }))
 	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-	//Je rajoute ici le moteur pour supprimer une intention si on ajoute la croyance.
 		public
 		Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =

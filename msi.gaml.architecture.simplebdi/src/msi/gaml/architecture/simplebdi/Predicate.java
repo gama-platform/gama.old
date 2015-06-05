@@ -194,6 +194,10 @@ public class Predicate implements IValue {
 		if ( values == null ) {
 			if ( other.values != null ) { return false; }
 		} else if ( !values.equals(other.values) ) { return false; }
+		//ajouter une comparaison sur les sous intentions sur le même modèle qu'au dessus.
+		if(subintentions == null){
+			if (other.subintentions!=null){return false;}
+		} else if(!subintentions.equals(other.subintentions)) {return false;}
 		return true;
 	}
 
