@@ -21,7 +21,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import msi.gama.doc.util.Constants;
-import msi.gama.doc.util.DocTransformer;
 import msi.gama.doc.util.XMLUtils;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
@@ -74,7 +73,7 @@ public class XmlToTestGAML {
 	
 	private static void createMasterTest(Document document, String xsl, String targetFolder, String targetFile) 
 			throws ParserConfigurationException, SAXException, IOException {		
-		DocTransformer.transformDocument(document, xsl, targetFolder + File.separator + targetFile); 		
+		XMLUtils.transformDocument(document, xsl, targetFolder + File.separator + targetFile); 		
 	}
 	
 	
@@ -123,7 +122,7 @@ public class XmlToTestGAML {
 			root.appendChild(rootOperators);
 			docTemp.appendChild(root);
 			
-			DocTransformer.transformDocument(docTemp, xsl, targetFolder + File.separator + nameFileSpecies + ".gaml"); 		
+			XMLUtils.transformDocument(docTemp, xsl, targetFolder + File.separator + nameFileSpecies + ".gaml"); 		
 		}
 	}
 	

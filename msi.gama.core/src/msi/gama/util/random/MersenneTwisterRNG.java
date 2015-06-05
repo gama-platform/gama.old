@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MersenneTwisterRNG.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit http://gama-platform.googlecode.com for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 // Copyright 2006-2010 Daniel W. Dyer
 //
@@ -23,36 +23,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ============================================================================
-package org.uncommons.maths.random;
+package msi.gama.util.random;
 
-import java.util.Random;
-import org.uncommons.maths.binary.BinaryUtils;
+import msi.gama.common.util.RandomUtils;
 
 /**
  * <p>
  * Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html" target="_top">Mersenne Twister</a> algorithm developed by Makoto Matsumoto and Takuji
  * Nishimura.
  * </p>
- * 
+ *
  * <p>
  * This is a very fast random number generator with good statistical properties (it passes the full DIEHARD suite). This is the best RNG for most experiments. If a non-linear generator is required,
  * use the slower {@link AESCounterRNG} RNG.
  * </p>
- * 
+ *
  * <p>
  * This PRNG is deterministic, which can be advantageous for testing purposes since the output is repeatable. If multiple instances of this class are created with the same seed they will all have
  * identical output.
  * </p>
- * 
+ *
  * <p>
  * This code is translated from the original C version and assumes that we will always seed from an array of bytes. I don't pretend to know the meanings of the magic numbers or how it works, it just
  * does.
  * </p>
- * 
+ *
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class MersenneTwisterRNG extends Random implements RepeatableRNG {
+public class MersenneTwisterRNG extends GamaRNG {
 
 	// The actual seed size isn't that important, but it should be a multiple of 4.
 	private static final int SEED_SIZE_BYTES = 16;
@@ -91,7 +90,7 @@ public class MersenneTwisterRNG extends Random implements RepeatableRNG {
 	 *            RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
-	public MersenneTwisterRNG(final SeedGenerator seedGenerator) {
+	public MersenneTwisterRNG(final RandomUtils seedGenerator) {
 		this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
 	}
 
@@ -104,7 +103,7 @@ public class MersenneTwisterRNG extends Random implements RepeatableRNG {
 			"Mersenne Twister RNG requires a 128-bit (16-byte) seed."); }
 		this.seed = seed.clone();
 
-		int[] seedInts = BinaryUtils.convertBytesToInts(this.seed);
+		int[] seedInts = convertBytesToInts(this.seed);
 
 		// This section is translated from the init_genrand code in the C version.
 		mt[0] = BOOTSTRAP_SEED;

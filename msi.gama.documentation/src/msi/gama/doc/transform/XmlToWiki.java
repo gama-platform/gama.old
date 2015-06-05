@@ -23,8 +23,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import msi.gama.doc.util.Constants;
-import msi.gama.doc.util.DocTransformer;
 import msi.gama.doc.util.WorkspaceManager;
+import msi.gama.doc.util.XMLUtils;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
 import org.w3c.dom.Document;
@@ -117,7 +117,7 @@ public class XmlToWiki {
 			}
 		}		
 		
-		DocTransformer.transformDocument(document, xsl, wiki); 		
+		XMLUtils.transformDocument(document, xsl, wiki); 		
 	}
 	
 	public static void createExtentionsWiki() 

@@ -193,10 +193,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		@Override
 		protected void serializeArgs(final StatementDescription desc, final StringBuilder sb,
 			final boolean ncludingBuiltIn) {
-			Collection<IDescription> args = desc.getArgs();
+			Collection<StatementDescription> args = desc.getArgs();
 			if ( args == null || args.isEmpty() ) { return; }
 			sb.append("with: [");
-			for ( IDescription arg : args ) {
+			for ( StatementDescription arg : args ) {
 				String name = arg.getFacets().getLabel(NAME);
 				IExpressionDescription def = arg.getFacets().get(VALUE);
 				sb.append(name).append("::").append(def.serialize(false));

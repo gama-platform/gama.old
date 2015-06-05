@@ -27,15 +27,16 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 	SWTOpenGLDisplaySurface surface;
 
 	static {
-		// Necessary to load the native libraries correctly
+		// Necessary to load the native libraries correctly (see
+		// http://forum.jogamp.org/Return-of-the-quot-java-lang-UnsatisfiedLinkError-Can-t-load-library-System-Library-Frameworks-glueg-td4034549.html)
 		JarUtil.setResolver(new JarUtil.Resolver() {
 
 			@Override
 			public URL resolve(final URL url) {
 				try {
-					URL urlUnresolved = FileLocator.resolve(url);
-					URL urlResolved = new URI(urlUnresolved.getProtocol(), urlUnresolved.getPath(), null).toURL();
-					return urlResolved;
+					URL urlUnescaped = FileLocator.resolve(url);
+					URL urlEscaped = new URI(urlUnescaped.getProtocol(), urlUnescaped.getPath(), null).toURL();
+					return urlEscaped;
 				} catch (IOException ioexception) {
 					return url;
 				} catch (URISyntaxException urisyntaxexception) {

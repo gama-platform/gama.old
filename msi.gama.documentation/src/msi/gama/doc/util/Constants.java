@@ -37,6 +37,7 @@ public class Constants {
 	public static String WIKI2HTML_FOLDER = GEN_FOLDER + File.separator + "wiki2html";
 	public static String HTML2XML_FOLDER = GEN_FOLDER + File.separator + "html2xml";
 	public static String PDF_FOLDER = GEN_FOLDER + File.separator + "pdf";
+	public static String TOC_GEN_FOLDER = GEN_FOLDER + File.separator + "toc2pdf";
 		
 	public static String PYTHON_TEMPLATE_FOLDER = INPUT_FOLDER + File.separator + "templatePythonGeneration";
 	public static String XSL_XML2WIKI_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2md";
@@ -51,8 +52,9 @@ public class Constants {
 	public static String TEST_OPERATORS_FOLDER = "operatorsTest";
 	public static String TEST_STATEMENTS_FOLDER = "statementsTest";
 	
-	public static String DOCGAMA_PDF = PDF_FOLDER + File.separator + "docGAMAv7.pdf";	
+	public static String DOCGAMA_PDF = PDF_FOLDER + File.separator + "docGAMAv17.pdf";	
 	public static String TOC_FILE = INPUT_FOLDER + File.separator + "toc" + File.separator + "toc17.xml";	
+	public static String MD_BLANK_PAGE = PANDOC_FOLDER + File.separator + "G__BlankPage.md";
 	
 //	public static String ADR_SVNGAMA = "http://gama-platform.googlecode.com/svn/wiki";
 	

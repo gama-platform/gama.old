@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'CellularAutomatonRNG.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit http://gama-platform.googlecode.com for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 // Copyright 2006-2010 Daniel W. Dyer
 //
@@ -23,10 +23,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ============================================================================
-package org.uncommons.maths.random;
+package msi.gama.util.random;
 
-import java.util.Random;
-import org.uncommons.maths.binary.BinaryUtils;
+import msi.gama.common.util.RandomUtils;
 
 /**
  * Java port of the <a href="http://home.southernct.edu/~pasqualonia1/ca/report.html"
@@ -34,7 +33,7 @@ import org.uncommons.maths.binary.BinaryUtils;
  * @author Tony Pasqualoni (original C version)
  * @author Daniel Dyer (Java port)
  */
-public class CellularAutomatonRNG extends Random implements RepeatableRNG {
+public class CellularAutomatonRNG extends GamaRNG {
 
 	private static final int SEED_SIZE_BYTES = 4;
 	private static final int AUTOMATON_LENGTH = 2056;
@@ -83,7 +82,7 @@ public class CellularAutomatonRNG extends Random implements RepeatableRNG {
 	 *            RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
-	public CellularAutomatonRNG(final SeedGenerator seedGenerator) {
+	public CellularAutomatonRNG(final RandomUtils seedGenerator) {
 		this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
 	}
 
@@ -102,7 +101,7 @@ public class CellularAutomatonRNG extends Random implements RepeatableRNG {
 		cells[AUTOMATON_LENGTH - 3] = seed[2] + 128;
 		cells[AUTOMATON_LENGTH - 4] = seed[3] + 128;
 
-		int seedAsInt = BinaryUtils.convertBytesToInt(seed, 0);
+		int seedAsInt = convertBytesToInt(seed, 0);
 		if ( seedAsInt != 0xFFFFFFFF ) {
 			seedAsInt++;
 		}
