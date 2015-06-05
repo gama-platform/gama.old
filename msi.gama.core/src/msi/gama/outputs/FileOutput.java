@@ -1,20 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'FileOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -33,7 +34,7 @@ import msi.gaml.types.IType;
 
 /**
  * The Class AbstractFileOutput.
- * 
+ *
  * @author drogoul
  */
 @symbol(name = IKeyword.OUTPUT_FILE, kind = ISymbolKind.OUTPUT, with_sequence = false)
@@ -59,9 +60,11 @@ import msi.gaml.types.IType;
 		optional = true) }, omissible = IKeyword.NAME)
 public class FileOutput extends AbstractOutput {
 
+	final static SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
+
 	/**
 	 * @throws GamaRuntimeException The Constructor.
-	 * 
+	 *
 	 * @param sim the sim
 	 */
 	public FileOutput(/* final ISymbol context, */final IDescription desc) {
@@ -240,7 +243,7 @@ public class FileOutput extends AbstractOutput {
 		file = new File(dir, fileName + "." + extensions.get(type));
 		final boolean exist = file.exists();
 		if ( exist && !getRewrite() ) {
-			this.fileName = fileName + StringUtils.getTimeInString();
+			this.fileName = fileName + sdf.format(Calendar.getInstance().getTime());
 		}
 		file = new File(dir, fileName + "." + extensions.get(type));
 		try {
@@ -345,7 +348,7 @@ public class FileOutput extends AbstractOutput {
 
 	private String getHeader() {
 		if ( header == null ) {
-			setHeader(getName() + " " + StringUtils.getTimeInString());
+			setHeader(getName() + " " + sdf.format(Calendar.getInstance().getTime()));
 		}
 		return header;
 	}
@@ -356,7 +359,7 @@ public class FileOutput extends AbstractOutput {
 
 	private String getFooter() {
 		if ( footer == null ) {
-			setFooter("End of " + getName() + " " + StringUtils.getTimeInString());
+			setFooter("End of " + getName() + " " + sdf.format(Calendar.getInstance().getTime()));
 		}
 		return header;
 	}

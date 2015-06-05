@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ParamSpaceExploAlgorithm.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.batch;
 
@@ -18,7 +18,6 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.random.NumberGenerator;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -38,7 +37,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		AbstractGamlAdditions._constants(COMBINATIONS);
 	}
 
-	private NumberGenerator<Double> randUniform;
+	// private ContinuousUniformGenerator randUniform;
 	protected HashMap<ParametersSet, Double> testedSolutions;
 	protected IExpression fitnessExpression;
 	protected boolean isMaximize;
@@ -56,12 +55,12 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		this.scope = scope;
 	}
 
-	protected NumberGenerator<Double> getRandUniform() {
-		if ( randUniform == null ) {
-			randUniform = scope.getRandom().createUniform(0., 1.);
-		}
-		return randUniform;
-	}
+	// protected ContinuousUniformGenerator getRandUniform() {
+	// if ( randUniform == null ) {
+	// randUniform = scope.getRandom().createUniform(0., 1.);
+	// }
+	// return randUniform;
+	// }
 
 	protected void initializeTestedSolutions() {
 		testedSolutions = new HashMap<ParametersSet, Double>();

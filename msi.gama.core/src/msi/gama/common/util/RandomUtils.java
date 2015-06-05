@@ -21,16 +21,11 @@ public class RandomUtils {
 
 	/** The seed. */
 	protected Double seed;
-
-	// private Double seed = null;
 	private static final SecureRandom SEED_SOURCE = new SecureRandom();
-
 	/** The generator name. */
 	private String generatorName;
-
 	/** The generator. */
 	private Random generator;
-	private ContinuousUniformGenerator uniform;
 
 	public RandomUtils(final Double seed, final String rng) {
 		setSeed(seed, false);
@@ -59,19 +54,7 @@ public class RandomUtils {
 			/* By default */
 			generator = new MersenneTwisterRNG(this);
 		}
-		uniform = createUniform(0., 1.);
-	}
-
-	/**
-	 * Creates a new Discrete Uniform Generator object.
-	 *
-	 * @param min the min
-	 * @param max the max
-	 *
-	 * @return the discrete uniform generator
-	 */
-	public DiscreteUniformGenerator createUniform(final int min, final int max) {
-		return new DiscreteUniformGenerator(min, max, generator);
+		// uniform = createUniform(0., 1.);
 	}
 
 	/**
@@ -82,8 +65,8 @@ public class RandomUtils {
 	 *
 	 * @return the continuous uniform generator
 	 */
-	public ContinuousUniformGenerator createUniform(final double min, final double max) {
-		return new ContinuousUniformGenerator(min, max, generator);
+	public double createUniform(final double min, final double max) {
+		return generator.nextDouble() * (max - min) + min;
 	}
 
 	/**
@@ -94,8 +77,8 @@ public class RandomUtils {
 	 *
 	 * @return the gaussian generator
 	 */
-	public GaussianGenerator createGaussian(final double mean, final double stdv) {
-		return new GaussianGenerator(mean, stdv, generator);
+	public double createGaussian(final double mean, final double stdv) {
+		return generator.nextGaussian() * stdv + mean;
 	}
 
 	/**
@@ -106,8 +89,36 @@ public class RandomUtils {
 	 *
 	 * @return the binomial generator
 	 */
-	public BinomialGenerator createBinomial(final int n, final double p) {
-		return new BinomialGenerator(n, p, generator);
+	public int createBinomial(final int n, final double p) {
+
+		double value = p;
+		StringBuilder bits = new StringBuilder(64);
+		double bitValue = 0.5d;
+		while (value > 0) {
+			if ( value >= bitValue ) {
+				bits.append('1');
+				value -= bitValue;
+			} else {
+				bits.append('0');
+			}
+			bitValue /= 2;
+		}
+		final BitString pBits = new BitString(bits.toString());
+
+		int trials = n;
+		int totalSuccesses = 0;
+		int pIndex = pBits.getLength() - 1;
+		while (trials > 0 && pIndex >= 0) {
+			BitString bs = new BitString(trials, generator);
+			int successes = bs.countSetBits();
+			trials -= successes;
+			if ( pBits.getBit(pIndex) ) {
+				totalSuccesses += successes;
+			}
+			--pIndex;
+		}
+		return totalSuccesses;
+
 	}
 
 	/**
@@ -117,8 +128,19 @@ public class RandomUtils {
 	 *
 	 * @return the poisson generator
 	 */
-	public PoissonGenerator createPoisson(final double mean) {
-		return new PoissonGenerator(mean, generator);
+	public int createPoisson(final double mean) {
+
+		int x = 0;
+		double t = 0.0;
+		while (true) {
+			t -= Math.log(generator.nextDouble()) / mean;
+			if ( t > 1.0 ) {
+				break;
+			}
+			++x;
+		}
+		return x;
+
 	}
 
 	private byte[] createSeed(final Double seed, final int length) {
@@ -159,7 +181,7 @@ public class RandomUtils {
 	public void dispose() {
 		seed = null;
 		generator = null;
-		uniform = null;
+		// uniform = null;
 	}
 
 	public byte[] generateSeed(final int length) {
@@ -171,7 +193,6 @@ public class RandomUtils {
 		seed = newSeed;
 		if ( seed == null ) {
 			seed = SEED_SOURCE.nextDouble();
-			// byte[] s = SEED_SOURCE.generateSeed(length);
 		}
 		if ( init ) {
 			initGenerator();
@@ -189,28 +210,6 @@ public class RandomUtils {
 			initGenerator();
 		}
 	}
-
-	// public String getGeneratorName() {
-	// return generatorName;
-	// }
-	//
-	// public Random getGenerator() {
-	// return generator;
-	// }
-
-	// public void shuffle(final Set list) {
-	// final Object[] copy = list.toArray(new Object[list.size()]);
-	// list.clear();
-	// for ( int i = copy.length; i > 1; i-- ) {
-	// final int i1 = i - 1;
-	// final int j = between(0, i - 1);
-	// final Object tmp = copy[i1];
-	// copy[i1] = copy[j];
-	// copy[j] = tmp;
-	// }
-	// list.addAll(Arrays.asList(copy));
-	//
-	// }
 
 	public void shuffle2(final Set list) {
 		int size = list.size();
@@ -259,12 +258,12 @@ public class RandomUtils {
 	 * @return an uniformly distributed int random number in [from, to]
 	 */
 	public int between(final int min, final int max) {
-		return (int) (min + (long) ((1L + max - min) * next()));
+		return (int) (min + (long) ((1L + max - min) * generator.nextDouble()));
 	}
 
 	public double between(final double min, final double max) {
 		// uniformly distributed double random number in [min, max]
-		return min + (max + Double.MIN_VALUE - min) * next();
+		return min + (max + Double.MIN_VALUE - min) * generator.nextDouble();
 	}
 
 	/**
@@ -285,7 +284,7 @@ public class RandomUtils {
 	}
 
 	public double next() {
-		return uniform.nextValue();
+		return generator.nextDouble();
 	}
 
 	/**
@@ -378,6 +377,137 @@ public class RandomUtils {
 			}
 		}
 		System.out.println("Finished");
+	}
+
+	public final class BitString {
+
+		private static final int WORD_LENGTH = 32;
+
+		private final int length;
+
+		/**
+		 * Store the bits packed in an array of 32-bit ints. This field cannot
+		 * be declared final because it must be cloneable.
+		 */
+		private final int[] data;
+
+		/**
+		 * Creates a bit string of the specified length with all bits
+		 * initially set to zero (off).
+		 * @param length The number of bits.
+		 */
+		public BitString(final int length) {
+			if ( length < 0 ) { throw new IllegalArgumentException("Length must be non-negative."); }
+			this.length = length;
+			this.data = new int[(length + WORD_LENGTH - 1) / WORD_LENGTH];
+		}
+
+		/**
+		 * Creates a bit string of the specified length with each bit set
+		 * randomly (the distribution of bits is uniform so long as the output
+		 * from the provided RNG is also uniform). Using this constructor is
+		 * more efficient than creating a bit string and then randomly setting
+		 * each bit individually.
+		 * @param length The number of bits.
+		 * @param rng A source of randomness.
+		 */
+		public BitString(final int length, final Random rng) {
+			this(length);
+			// We can set bits 32 at a time rather than calling rng.nextBoolean()
+			// and setting each one individually.
+			for ( int i = 0; i < data.length; i++ ) {
+				data[i] = rng.nextInt();
+			}
+			// If the last word is not fully utilised, zero any out-of-bounds bits.
+			// This is necessary because the countSetBits() methods will count
+			// out-of-bounds bits.
+			int bitsUsed = length % WORD_LENGTH;
+			if ( bitsUsed < WORD_LENGTH ) {
+				int unusedBits = WORD_LENGTH - bitsUsed;
+				int mask = 0xFFFFFFFF >>> unusedBits;
+			data[data.length - 1] &= mask;
+			}
+		}
+
+		/**
+		 * Initialises the bit string from a character string of 1s and 0s
+		 * in big-endian order.
+		 * @param value A character string of ones and zeros.
+		 */
+		public BitString(final String value) {
+			this(value.length());
+			for ( int i = 0; i < value.length(); i++ ) {
+				if ( value.charAt(i) == '1' ) {
+					setBit(value.length() - (i + 1), true);
+				} else if ( value.charAt(i) != '0' ) { throw new IllegalArgumentException(
+					"Illegal character at position " + i); }
+			}
+		}
+
+		/**
+		 * @return The length of this bit string.
+		 */
+		public int getLength() {
+			return length;
+		}
+
+		/**
+		 * Returns the bit at the specified index.
+		 * @param index The index of the bit to look-up (0 is the least-significant bit).
+		 * @return A boolean indicating whether the bit is set or not.
+		 * @throws IndexOutOfBoundsException If the specified index is not a bit
+		 *             position in this bit string.
+		 */
+		public boolean getBit(final int index) {
+			assertValidIndex(index);
+			int word = index / WORD_LENGTH;
+			int offset = index % WORD_LENGTH;
+			return (data[word] & 1 << offset) != 0;
+		}
+
+		/**
+		 * Sets the bit at the specified index.
+		 * @param index The index of the bit to set (0 is the least-significant bit).
+		 * @param set A boolean indicating whether the bit should be set or not.
+		 * @throws IndexOutOfBoundsException If the specified index is not a bit
+		 *             position in this bit string.
+		 */
+		public void setBit(final int index, final boolean set) {
+			assertValidIndex(index);
+			int word = index / WORD_LENGTH;
+			int offset = index % WORD_LENGTH;
+			if ( set ) {
+				data[word] |= 1 << offset;
+			} else // Unset the bit.
+			{
+				data[word] &= ~(1 << offset);
+			}
+		}
+
+		/**
+		 * Helper method to check whether a bit index is valid or not.
+		 * @param index The index to check.
+		 * @throws IndexOutOfBoundsException If the index is not valid.
+		 */
+		private void assertValidIndex(final int index) {
+			if ( index >= length || index < 0 ) { throw new IndexOutOfBoundsException("Invalid index: " + index +
+				" (length: " + length + ")"); }
+		}
+
+		/**
+		 * @return The number of bits that are 1s rather than 0s.
+		 */
+		public int countSetBits() {
+			int count = 0;
+			for ( int x : data ) {
+				while (x != 0) {
+					x &= x - 1; // Unsets the least significant on bit.
+					++count; // Count how many times we have to unset a bit before x equals zero.
+				}
+			}
+			return count;
+		}
+
 	}
 
 }

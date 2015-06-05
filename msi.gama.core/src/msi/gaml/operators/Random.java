@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Random.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.operators;
 
@@ -23,14 +23,13 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gama.util.random.NumberGenerator;
 import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 10 d�c. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class Random {
 
@@ -71,13 +70,13 @@ public class Random {
 		 */
 		// double internalRange = bound / 2;
 		double tmpResult = 0;
-		final NumberGenerator<Double> gen = RANDOM(scope).createGaussian(mean, range / 2);
+		// final GaussianGenerator gen = RANDOM(scope).createGaussian(mean, range / 2);
 		// 'do while' does the truncature
 
 		do {
 			// we use bound / 2 as a standard deviation because we want to have
 			// stdDeviation = 2 * bound
-			tmpResult = gen.nextValue();
+			tmpResult = RANDOM(scope).createGaussian(mean, range / 2);
 		} while (tmpResult > mean + range || tmpResult < mean - range);
 		return tmpResult;
 
@@ -94,7 +93,7 @@ public class Random {
 		Double opGauss(final IScope scope, final GamaPoint point) {
 		final double mean = point.x;
 		final double sd = point.y;
-		return RANDOM(scope).createGaussian(mean, sd).nextValue();
+		return RANDOM(scope).createGaussian(mean, sd);
 	}
 
 	@operator(value = "gauss", category = { IOperatorCategory.RANDOM })
@@ -106,7 +105,7 @@ public class Random {
 		see = { "truncated_gauss", "poisson" })
 	public static
 		Double opGauss(final IScope scope, final double mean, final double sd) {
-		return RANDOM(scope).createGaussian(mean, sd).nextValue();
+		return RANDOM(scope).createGaussian(mean, sd);
 	}
 
 	@operator(value = "poisson", category = { IOperatorCategory.RANDOM })
@@ -116,19 +115,30 @@ public class Random {
 		see = { "binomial", "gauss" })
 	public static
 		Integer opPoisson(final IScope scope, final Double mean) {
-		return RANDOM(scope).createPoisson(mean).nextValue();
+		return RANDOM(scope).createPoisson(mean);
 	}
 
 	@operator(value = "binomial", category = { IOperatorCategory.RANDOM })
-	@doc(value = "A value from a random variable following a binomial distribution. The operand {n,p} represents the number of experiments n and the success probability p.",
+	@doc(deprecated = " Use binomial(int, float) instead",
+		value = "A value from a random variable following a binomial distribution. The operand {n,p} represents the number of experiments n and the success probability p.",
 		comment = "The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.",
 		examples = { @example(value = "binomial({15,0.6})", equals = "a random positive integer", test = false) },
 		see = { "poisson", "gauss" })
 	public static
 		Integer opBinomial(final IScope scope, final GamaPoint point) {
-		final int n = (int) point.x;
-		final double p = point.y;
-		return RANDOM(scope).createBinomial(n, p).nextValue();
+		final Integer n = (int) point.x;
+		final Double p = point.y;
+		return opBinomial(scope, n, p);
+	}
+
+	@operator(value = "binomial", category = { IOperatorCategory.RANDOM })
+	@doc(value = "A value from a random variable following a binomial distribution. The operands represent the number of experiments n and the success probability p.",
+		comment = "The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.",
+		examples = { @example(value = "binomial(15,0.6)", equals = "a random positive integer", test = false) },
+		see = { "poisson", "gauss" })
+	public static
+		Integer opBinomial(final IScope scope, final Integer n, final Double p) {
+		return RANDOM(scope).createBinomial(n, p);
 	}
 
 	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {

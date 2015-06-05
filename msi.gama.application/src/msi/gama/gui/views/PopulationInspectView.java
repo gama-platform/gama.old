@@ -232,27 +232,27 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 			new ExpressionControl(compo, null, getScope().getAgentScope(), Types.CONTAINER.of(Types.AGENT), SWT.BORDER,
 				false) {
 
-				@Override
-				public void modifyValue() {
-					Object oldVal = currentValue;
-					super.modifyValue();
-					if ( oldVal == null ? currentValue == null : oldVal.equals(currentValue) ) {
-						if ( outputs.isEmpty() ) { return; }
-						try {
-							getOutput().setNewExpression((IExpression) currentValue);
-						} catch (final GamaRuntimeException e) {
-							e.printStackTrace();
-						}
-						final ISpecies species = getOutput().getSpecies();
-						setSpeciesName(species == null ? null : species.getName(), false);
-						fillAttributeMenu();
-						// TODO Make a test on the columns.
-						recreateViewer();
-						update(getOutput());
-
+			@Override
+			public void modifyValue() {
+				Object oldVal = currentValue;
+				super.modifyValue();
+				if ( oldVal == null ? currentValue == null : oldVal.equals(currentValue) ) {
+					if ( outputs.isEmpty() ) { return; }
+					try {
+						getOutput().setNewExpression((IExpression) currentValue);
+					} catch (final GamaRuntimeException e) {
+						e.printStackTrace();
 					}
+					final ISpecies species = getOutput().getSpecies();
+					setSpeciesName(species == null ? null : species.getName(), false);
+					fillAttributeMenu();
+					// TODO Make a test on the columns.
+					recreateViewer();
+					update(getOutput());
+
 				}
-			};
+			}
+		};
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.minimumHeight = 16;
 		data.heightHint = 16;
@@ -277,7 +277,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	};
 
 	private void fillAttributeMenu() {
-		if ( attributesMenu.isDisposed() ) { return; }
+		// Not yet declared or already disposed
+		if ( attributesMenu == null || attributesMenu.isDisposed() ) { return; }
 		attributesMenu.removeAll();
 		String tooltipText;
 		if ( CUSTOM.equals(speciesName) ) {
@@ -285,7 +286,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		} else {
 			tooltipText =
 				"A list of the attributes defined in species " + speciesName +
-					". Select the ones you want to display in the table";
+				". Select the ones you want to display in the table";
 		}
 		attributesMenu.setToolTipText(tooltipText);
 		final IExpression expr = getOutput().getValue();
@@ -737,19 +738,23 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		tb.button("menu.saveas2", "Save as CSV", "Save the attributes of agents into a CSV file",
 			new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					saveAsCSV();
-				}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				saveAsCSV();
+			}
 
-			}, SWT.RIGHT);
+		}, SWT.RIGHT);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		viewer.getTable().dispose();
-		currentFont.dispose();
+		if ( viewer != null && viewer.getTable() != null && !viewer.getTable().isDisposed() ) {
+			viewer.getTable().dispose();
+		}
+		if ( currentFont != null && !currentFont.isDisposed() ) {
+			currentFont.dispose();
+		}
 	}
 
 	@Override
