@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SaveStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.statements;
 
@@ -37,8 +37,8 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
 import msi.gaml.statements.SaveStatement.SaveValidator;
+import msi.gaml.types.*;
 import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.SchemaException;
@@ -104,9 +104,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			IType t = data.getType().getContentType();
 			if ( !t.isAgentType() ) { return; }
 			SpeciesDescription species = t.getSpecies();
-			Collection<IDescription> args = desc.getArgs();
+			Collection<StatementDescription> args = desc.getArgs();
 			if ( args == null || args.isEmpty() ) { return; }
-			for ( IDescription arg : args ) {
+			for ( StatementDescription arg : args ) {
 				if ( !species.hasVar(arg.getName()) ) {
 					desc.error(
 						"Attribute " + arg.getName() + " is not defined for the agents of " + data.serialize(false),

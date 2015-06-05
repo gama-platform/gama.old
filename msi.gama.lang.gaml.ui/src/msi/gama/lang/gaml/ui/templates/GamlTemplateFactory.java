@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 12 déc. 2014
- * 
+ *
  */
 package msi.gama.lang.gaml.ui.templates;
 
@@ -18,10 +18,10 @@ import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 
 /**
  * The class GamlTemplateFactory.
- * 
+ *
  * @author drogoul
  * @since 12 déc. 2014
- * 
+ *
  */
 public class GamlTemplateFactory {
 
@@ -185,10 +185,10 @@ public class GamlTemplateFactory {
 
 	public static Template callToAction(final StatementDescription sd) {
 		String name = sd.getName();
-		Collection<IDescription> args = sd.getArgs();
+		Collection<StatementDescription> args = sd.getArgs();
 		StringBuilder sb = new StringBuilder(100);
 		sb.append("(");
-		for ( IDescription arg : args ) {
+		for ( StatementDescription arg : args ) {
 			sb.append(arg.getName()).append(": ").append("${the_").append(arg.getName()).append("}, ");
 		}
 		int length = sb.length();

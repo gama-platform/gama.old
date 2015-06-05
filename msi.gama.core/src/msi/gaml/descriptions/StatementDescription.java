@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'StatementDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -25,9 +25,9 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 10 févr. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 
 public class StatementDescription extends SymbolDescription {
@@ -358,7 +358,7 @@ public class StatementDescription extends SymbolDescription {
 		return executer.verifyArgs(this, args);
 	}
 
-	public Collection<IDescription> getArgs() {
+	public Collection<StatementDescription> getArgs() {
 		return args == null ? Collections.EMPTY_SET : args.values();
 	}
 
@@ -582,7 +582,7 @@ public class StatementDescription extends SymbolDescription {
 
 	private void verifyInits(final Arguments ca) {
 		final SpeciesDescription sd = computeSpecies();
-		final Collection<IDescription> args = getArgs();
+		final Collection<StatementDescription> args = getArgs();
 		if ( sd == null ) {
 			if ( !args.isEmpty() ) {
 				warning(
@@ -591,7 +591,7 @@ public class StatementDescription extends SymbolDescription {
 			}
 			return;
 		}
-		for ( final IDescription arg : args ) {
+		for ( final StatementDescription arg : args ) {
 			final String name = arg.getName();
 			// hqnghi check attribute is not exist in both main model and micro-model
 			if ( !sd.hasVar(name) && sd instanceof ExperimentDescription && !sd.getModelDescription().hasVar(name) ) {
