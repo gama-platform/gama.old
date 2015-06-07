@@ -34,7 +34,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.path.GamaPath;
 import msi.gama.util.path.GamaSpatialPath;
+import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.types.Types;
 
@@ -87,31 +89,41 @@ public class GraphTopology extends AbstractTopology {
 		if ( graph.isAgentEdge() ) {
 			final IAgentFilter filter = In.edgesOf(getPlaces());
 			if ( !sourceNode ) {
-				edgeS = scope.getSimulationScope().getAgent().getTopology().getAgentClosestTo(scope, source, filter);
+				edgeS = getPathEdge(scope,source);
+				if (edgeS == null)
+					edgeS = scope.getSimulationScope().getAgent().getTopology().getAgentClosestTo(scope, source, filter);
 				// We avoid computing the target if we cannot find any source.
 				if ( edgeS == null ) { return null; }
 			}
 			if ( !targetNode ) {
-				edgeT = scope.getSimulationScope().getAgent().getTopology().getAgentClosestTo(scope, target, filter);
+				edgeT = getPathEdge(scope,target);
+				if (edgeT == null)
+					edgeT = scope.getSimulationScope().getAgent().getTopology().getAgentClosestTo(scope, target, filter);
 				if ( edgeT == null ) { return null; }
 			}
 		} else {
 			double distSMin = Double.MAX_VALUE;
 			double distTMin = Double.MAX_VALUE;
-			for ( Object e : graph.getEdges() ) {
-				IShape edge = (IShape) e;
-				if ( !sourceNode && distSMin > 0 ) {
-					double distS = edge.euclidianDistanceTo(source);
-					if ( distS < distSMin ) {
-						distSMin = distS;
-						edgeS = edge;
+			edgeS = getPathEdge(scope,source);
+			if (edgeS != null) distSMin = 0;
+			edgeT = getPathEdge(scope,target);
+			if (edgeT != null) distTMin = 0;
+			if ((distSMin > 0  && !sourceNode) || (distTMin > 0 && !targetNode)) {
+				for ( Object e : graph.getEdges() ) {
+					IShape edge = (IShape) e;
+					if ( !sourceNode && distSMin > 0 ) {
+						double distS = edge.euclidianDistanceTo(source);
+						if ( distS < distSMin ) {
+							distSMin = distS;
+							edgeS = edge;
+						}
 					}
-				}
-				if ( !targetNode && distTMin > 0 ) {
-					double distT = edge.euclidianDistanceTo(target);
-					if ( distT < distTMin ) {
-						distTMin = distT;
-						edgeT = edge;
+					if ( !targetNode && distTMin > 0 ) {
+						double distT = edge.euclidianDistanceTo(target);
+						if ( distT < distTMin ) {
+							distTMin = distT;
+							edgeT = edge;
+						}
 					}
 				}
 			}
@@ -122,6 +134,20 @@ public class GraphTopology extends AbstractTopology {
 			sourceNode, targetNode); }
 
 		return pathBetweenCommon(scope, graph, edgeS, edgeT, source, target, sourceNode, targetNode);
+	}
+	
+	public IShape getPathEdge(IScope scope, IShape ref) {
+		if (ref.getAgent() != null) {
+			IPath path = (GamaPath) ref.getAgent().getAttribute("current_path");
+				if ( path != null && path.getTopology(scope) != null && path.getTopology(scope).equals(this) &&
+					 ((IShape) path.getStartVertex()).getLocation().equals(ref.getLocation()) ) {
+				int index = path.indexOf(ref.getAgent());
+				if (index >= path.getEdgeList().size())
+					return (IShape) path.getEdgeList().get(path.getEdgeList().size() - 1);
+				return (IShape) path.getEdgeList().get(index);
+			}
+		}
+		return null;
 	}
 
 	public GamaSpatialPath
