@@ -39,7 +39,7 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 	public boolean acceptSource(Object source) {
 
 		return ( source instanceof IList && ((IList) source).getType().getContentType().isAssignableFrom(Types.GEOMETRY) ||
-				source instanceof GamaShapeFile || source instanceof GamaOsmFile );
+				source instanceof GamaShapeFile || source instanceof GamaOsmFile || source instanceof GamaSVGFile || source instanceof GamaDXFFile );
 	}
 
 	/**
