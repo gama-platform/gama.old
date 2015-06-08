@@ -8,7 +8,9 @@ model example_regression
 
 global {
 	regression location_fct;
-	point pt_test <- {50,50};
+	float x_val <- 50.0;
+	float y_val <- 50.0;
+	
 	float val <- -1.0;
 	init {
 		loop i from: 0 to: 18{
@@ -28,7 +30,7 @@ global {
 		location_fct  <- build(instances);
 		write "learnt function: " + location_fct;
 		
-		val <-  predict(location_fct, [50,50]);
+		val <-  predict(location_fct, [x_val, y_val]);
 		write "value : " + val;
 	}
 }
@@ -40,13 +42,14 @@ species dummy {
 }
 
 experiment main type: gui {
-	parameter "Point to test" var: pt_test ;
+	parameter "Point to test, x value" var: x_val ;
+	parameter "Point to test, y value" var: y_val ;
 	output {
 		display map type: opengl {
 			species dummy;
 			graphics "new Point " {
 				if (location_fct != nil) {
-					draw sphere(2) color: #red at: pt_test + {0,0,val};
+					draw sphere(2) color: #red at: {x_val,y_val,val};
 				}
 				
 			}
