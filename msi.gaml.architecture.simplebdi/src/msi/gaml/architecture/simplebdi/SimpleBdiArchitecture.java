@@ -261,9 +261,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 					newIntention.setOnHoldUntil(newIntention.getSubintentions());
-					intentionBase.addValue(scope, newIntention);
-//					desireBase.remove(newIntention);
-					return true;
+					if (!intentionBase.contains(newIntention)){
+						intentionBase.addValue(scope, newIntention);
+						return true;
+					}
 				}
 			}
 		}
@@ -294,9 +295,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 					newIntention.setOnHoldUntil(newIntention.getSubintentions());
-					intentionBase.addValue(scope, newIntention);
-//					desireBase.remove(newIntention);
-					return true;
+					if (!intentionBase.contains(newIntention)){
+						intentionBase.addValue(scope, newIntention);
+						return true;
+					}
 				}
 			}
 		}
@@ -408,11 +410,23 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					GamaList intentionbase = getBase(scope, INTENTION_BASE);
 					desbase.remove(intention);
 					intentionbase.remove(intention);
+					for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+						if(((Predicate)statement).getSubintentions()!=null){
+							if(((Predicate)statement).getSubintentions().contains(intention)){
+								((Predicate)statement).getSubintentions().remove(intention);
+							}
+						}
+						if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+							if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(intention)){
+								((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(intention);
+							}
+						}
+					}
 					return false;
 				}
 				else{
-					GamaList desbase = getBase(scope, DESIRE_BASE);
-					desbase.remove(intention);
+//					GamaList desbase = getBase(scope, DESIRE_BASE);
+//					desbase.remove(intention);
 					return true;
 				}
 			}
@@ -433,12 +447,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						if(desbase.contains(((ArrayList)cond).get(0))){
 							desbase.remove(((ArrayList)cond).get(0));
 						}
+						for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+							if(((Predicate)statement).getSubintentions()!=null){
+								if(((Predicate)statement).getSubintentions().contains(intention)){
+									((Predicate)statement).getSubintentions().remove(intention);
+								}
+							}
+							if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+								if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(intention)){
+									((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(intention);
+								}
+							}
+						}
 					}
 					return false;
 				}
 				else{
-					GamaList desbase = getBase(scope, DESIRE_BASE);
-					desbase.remove(intention);
+//					GamaList desbase = getBase(scope, DESIRE_BASE);
+//					desbase.remove(intention);
 					return true;
 				}
 			}

@@ -51,13 +51,13 @@ public class BDIPlan implements IValue {
 	}
 	
 	@getter(SimpleBdiArchitecture.FINISHEDWHEN)
-	public IExpression getIntention() {
-		return this.planstatement._intention;
+	public String getFinishedWhen() {
+		return this.planstatement._executedwhen.serialize(true);
 	}
 	
 	@getter(SimpleBdiPlanStatement.INTENTION)
-	public String getFinishedWhen() {
-		return this.planstatement._executedwhen.serialize(true);
+	public Predicate getIntention() {
+		return (Predicate)this.planstatement._intention;
 	}
 	
 	@getter(SimpleBdiArchitecture.INSTANTANEAOUS)
