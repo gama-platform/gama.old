@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
@@ -28,11 +29,14 @@ import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+import org.kabeja.dxf.DXFCircle;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLayer;
 import org.kabeja.dxf.DXFLine;
 import org.kabeja.dxf.DXFPolyline;
+import org.kabeja.dxf.DXFShape;
+import org.kabeja.dxf.DXFSolid;
 import org.kabeja.dxf.DXFVertex;
 import org.kabeja.parser.DXFParser;
 import org.kabeja.parser.Parser;
@@ -91,6 +95,65 @@ public class GamaDXFFile extends GamaGeometryFile {
 			return null;
 		}
 		
+		public IShape createPolygone(IScope scope, IList pts) {
+			if (pts.isEmpty()) return null;
+	    	IShape shape =  GamaGeometryType.buildPolygon(pts);
+			if (shape != null) {
+				if ( size != null ) {
+					return Spatial.Transformations.scaled_to(scope, shape, size);
+				}
+				return shape;
+		    }
+			return null;
+		}
+		
+		public IShape createCircle(IScope scope, GamaPoint location, double radius) {
+			IShape shape =  GamaGeometryType.buildCircle(radius, location);
+			if (shape != null) {
+				if ( size != null ) {
+					return Spatial.Transformations.scaled_to(scope, shape, size);
+				}
+				return shape;
+		    }
+			return null; 
+		}
+		
+		
+		public IShape manageObj(IScope scope, DXFSolid obj) {
+			if (obj == null) return null;
+			double x_t = obj.getDXFDocument().getBounds().getMinimumX();
+			double y_t = obj.getDXFDocument().getBounds().getMinimumY();
+			IList list = GamaListFactory.create(Types.POINT);
+			list.add(new GamaPoint(obj.getPoint1().getX() - x_t,obj.getPoint1().getY() - y_t,obj.getPoint1().getZ()));
+			list.add(new GamaPoint(obj.getPoint2().getX() - x_t,obj.getPoint2().getY() - y_t,obj.getPoint2().getZ()));
+			list.add(new GamaPoint(obj.getPoint3().getX() - x_t,obj.getPoint3().getY() - y_t,obj.getPoint3().getZ()));
+			list.add(new GamaPoint(obj.getPoint4().getX() - x_t,obj.getPoint4().getY() - y_t,obj.getPoint4().getZ()));
+			
+	    	IShape shape = createPolygone(scope,list);
+	    	shape.setAttribute("layer", obj.getLayerName());
+	    	shape.setAttribute("id", obj.getID());
+	    	shape.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
+	    	shape.setAttribute("thickness", obj.getThickness());
+	    	shape.setAttribute("is_visibile", obj.isVisibile());
+	    	shape.setAttribute("is_omit", obj.isOmitLineType());
+	    	return shape;
+		}
+		
+		public IShape manageObj(IScope scope, DXFCircle obj) {
+			if (obj == null) return null;
+			double x_t = obj.getDXFDocument().getBounds().getMinimumX();
+			double y_t = obj.getDXFDocument().getBounds().getMinimumY();
+			GamaPoint pt = new GamaPoint(obj.getCenterPoint().getX() - x_t, obj.getCenterPoint().getY() - y_t, obj.getCenterPoint().getZ());
+			IShape line = createCircle(scope,pt, obj.getRadius());
+			line.setAttribute("layer", obj.getLayerName());
+			line.setAttribute("id", obj.getID());
+			line.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
+			line.setAttribute("thickness", obj.getThickness());
+			line.setAttribute("is_visibile", obj.isVisibile());
+			line.setAttribute("is_omit", obj.isOmitLineType());
+			return line;
+		}
+		
 		public IShape manageObj(IScope scope, DXFLine obj) {
 			if (obj == null) return null;
 			IList list = GamaListFactory.create(Types.POINT);
@@ -133,7 +196,9 @@ public class GamaDXFFile extends GamaGeometryFile {
 				IList<IShape> geoms = GamaListFactory.create();
 				for (Object obj : objs) {
 					if (obj instanceof DXFLine) {IShape g = manageObj(scope, (DXFLine) obj); if (g != null) geoms.add(g);}
-					if (obj instanceof DXFPolyline) {IShape g = manageObj(scope, (DXFPolyline) obj); if (g != null) geoms.add(g);}
+					else if (obj instanceof DXFPolyline) {IShape g = manageObj(scope, (DXFPolyline) obj); if (g != null) geoms.add(g);}
+					else if (obj instanceof DXFSolid) {IShape g = manageObj(scope, (DXFSolid) obj); if (g != null) geoms.add(g);}
+					else if (obj instanceof DXFCircle) {IShape g = manageObj(scope, (DXFCircle) obj); if (g != null) geoms.add(g);}
 				}
 				return geoms;
 			}
