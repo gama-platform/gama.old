@@ -1,7 +1,7 @@
 /**
  *  evalWhenTest
  *  Author: Mathieu
- *  Description: 
+ *  Description: example of the use of the eval_when operator and of the get_plans action
  */
 
 model evalWhenTest
