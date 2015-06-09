@@ -495,17 +495,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			doc = @doc(value = "get the list of plans.",
 			returns = "the list of BDI plans.",
 			examples = { @example("get_plans()") }))
-	public IList<BDIPlan> getPlans(final IScope scope) {
-		final IAgent agent = getCurrentAgent(scope);
-		IList<BDIPlan> mylist=GamaListFactory.create(Types.NO_TYPE);
+	public List<BDIPlan> getPlans(final IScope scope) {
 		if (_plans.size()>0)
 		{
-			for (int i=0; i<_plans.size(); i++)
-			{
-				mylist.add(_plans.get(i));
-			}
+			return _plans;
 		}
-		return mylist;
+		return null;
 	}
 
 
