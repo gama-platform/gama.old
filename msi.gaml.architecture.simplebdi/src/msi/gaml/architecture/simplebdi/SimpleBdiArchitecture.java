@@ -261,9 +261,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 					newIntention.setOnHoldUntil(newIntention.getSubintentions());
-					intentionBase.addValue(scope, newIntention);
-//					desireBase.remove(newIntention);
-					return true;
+					if (!intentionBase.contains(newIntention)){
+						intentionBase.addValue(scope, newIntention);
+						return true;
+					}
 				}
 			}
 		}
@@ -294,9 +295,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 					newIntention.setOnHoldUntil(newIntention.getSubintentions());
-					intentionBase.addValue(scope, newIntention);
-//					desireBase.remove(newIntention);
-					return true;
+					if (!intentionBase.contains(newIntention)){
+						intentionBase.addValue(scope, newIntention);
+						return true;
+					}
 				}
 			}
 		}
@@ -408,11 +410,23 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					GamaList intentionbase = getBase(scope, INTENTION_BASE);
 					desbase.remove(intention);
 					intentionbase.remove(intention);
+					for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+						if(((Predicate)statement).getSubintentions()!=null){
+							if(((Predicate)statement).getSubintentions().contains(intention)){
+								((Predicate)statement).getSubintentions().remove(intention);
+							}
+						}
+						if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+							if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(intention)){
+								((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(intention);
+							}
+						}
+					}
 					return false;
 				}
 				else{
-					GamaList desbase = getBase(scope, DESIRE_BASE);
-					desbase.remove(intention);
+//					GamaList desbase = getBase(scope, DESIRE_BASE);
+//					desbase.remove(intention);
 					return true;
 				}
 			}
@@ -433,12 +447,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						if(desbase.contains(((ArrayList)cond).get(0))){
 							desbase.remove(((ArrayList)cond).get(0));
 						}
+						for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+							if(((Predicate)statement).getSubintentions()!=null){
+								if(((Predicate)statement).getSubintentions().contains(intention)){
+									((Predicate)statement).getSubintentions().remove(intention);
+								}
+							}
+							if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+								if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(intention)){
+									((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(intention);
+								}
+							}
+						}
 					}
 					return false;
 				}
 				else{
-					GamaList desbase = getBase(scope, DESIRE_BASE);
-					desbase.remove(intention);
+//					GamaList desbase = getBase(scope, DESIRE_BASE);
+//					desbase.remove(intention);
 					return true;
 				}
 			}
@@ -465,22 +491,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 	
-//	@action(name = "get_plans", 
-//			doc = @doc(value = "get the list of plans.",
-//			returns = "the list of BDI plans.",
-//			examples = { @example("get_plans()") }))
-//	public IList<BDIPlan> getPlans(final IScope scope) {
-//		final IAgent agent = getCurrentAgent(scope);
-//		IList<BDIPlan> mylist=GamaListFactory.create(Types.NO_TYPE);
-//		if (_plans.size()>0)
-//		{
-//			for (int i=0; i<_plans.size(); i++)
-//			{
-//				mylist.add(_plans.get(i));
-//			}
-//		}
-//		return mylist;
-//	}
+	@action(name = "get_plans", 
+			doc = @doc(value = "get the list of plans.",
+			returns = "the list of BDI plans.",
+			examples = { @example("get_plans()") }))
+	public List<BDIPlan> getPlans(final IScope scope) {
+		if (_plans.size()>0)
+		{
+			return _plans;
+		}
+		return null;
+	}
 
 
 	public GamaList<Predicate> getBase(final IScope scope, final String basename) {
@@ -517,7 +538,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		returns = "true if it is in the base.",
 		examples = { @example("") }))
 	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-	//Je rajoute ici le moteur pour supprimer une intention si on ajoute la croyance.
 		public
 		Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
