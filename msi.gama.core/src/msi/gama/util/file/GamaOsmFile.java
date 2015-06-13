@@ -176,7 +176,9 @@ public class GamaOsmFile extends GamaGisFile {
 			} else {
 				List<IShape> points = GamaListFactory.create(Types.GEOMETRY);
 				for ( WayNode node : way.getWayNodes() ) {
-					points.add(nodesPt.get(node.getNodeId()));
+					GamaShape pp = nodesPt.get(node.getNodeId());
+					if (pp == null) continue;
+					points.add(pp);
 				}
 				if ( points.size() < 3 ) {
 					continue;
@@ -205,6 +207,7 @@ public class GamaOsmFile extends GamaGisFile {
 		for ( WayNode node : way.getWayNodes() ) {
 			Long id = node.getNodeId();
 			GamaShape pt = nodesPt.get(id);
+			if (pt == null) continue;
 			points.add(pt);
 			if ( intersectionNodes.contains(id) || node == endNode ) {
 				if ( points.size() > 1 ) {
@@ -228,7 +231,7 @@ public class GamaOsmFile extends GamaGisFile {
 	private IShape createRoad(final List<IShape> points, final Map<String, Object> values) {
 		if ( points.size() < 2 ) { return null; }
 		IShape geom = GamaGeometryType.buildPolyline(points);
-		if ( geom != null && !geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isSimple() &&
+		if ( geom != null && geom.getInnerGeometry() != null &&  !geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isSimple() &&
 			geom.getPerimeter() > 0 ) {
 			for ( String key : values.keySet() ) {
 				geom.setAttribute(key, values.get(key));
