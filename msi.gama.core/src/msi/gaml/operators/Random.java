@@ -119,19 +119,6 @@ public class Random {
 	}
 
 	@operator(value = "binomial", category = { IOperatorCategory.RANDOM })
-	@doc(deprecated = " Use binomial(int, float) instead",
-		value = "A value from a random variable following a binomial distribution. The operand {n,p} represents the number of experiments n and the success probability p.",
-		comment = "The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.",
-		examples = { @example(value = "binomial({15,0.6})", equals = "a random positive integer", test = false) },
-		see = { "poisson", "gauss" })
-	public static
-		Integer opBinomial(final IScope scope, final GamaPoint point) {
-		final Integer n = (int) point.x;
-		final Double p = point.y;
-		return opBinomial(scope, n, p);
-	}
-
-	@operator(value = "binomial", category = { IOperatorCategory.RANDOM })
 	@doc(value = "A value from a random variable following a binomial distribution. The operands represent the number of experiments n and the success probability p.",
 		comment = "The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.",
 		examples = { @example(value = "binomial(15,0.6)", equals = "a random positive integer", test = false) },
@@ -279,15 +266,6 @@ public class Random {
 	public static
 		Double opRnd(final IScope scope, final Double max) {
 		return opRnd(scope, 0.0, max);
-	}
-
-	@Deprecated
-	@operator(value = "rnd_float")
-	@doc(deprecated = "Use rnd instead with a float argument", examples = { @example(value = "rnd_float(3)",
-		equals = "a random float between 0.0 and 3.0",
-		test = false) }, see = { "rnd" })
-	public static Double opRndFloat(final IScope scope, final Double max) {
-		return opRnd(scope, max);
 	}
 
 	@operator(value = "flip", category = { IOperatorCategory.RANDOM })

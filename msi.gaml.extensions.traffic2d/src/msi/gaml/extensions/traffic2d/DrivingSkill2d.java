@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'DrivingSkill2d.java', in plugin 'msi.gaml.extensions.traffic2d', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.extensions.traffic2d;
 
@@ -307,7 +307,7 @@ public class DrivingSkill2d extends MovingSkill {
 					}
 					if ( consideringBackgroundAgent != null ) {
 						// System.out.println(((GamaShape)consideringBackgroundAgent).getPoints().toString());
-						if ( msi.gaml.operators.Spatial.Properties.covered_by(candidateShape,
+						if ( msi.gaml.operators.DeprecatedOperators.covered_by(candidateShape,
 							consideringBackgroundAgent) ) {
 							final CandidateEntry candidateEntry =
 								new CandidateEntry(pointToAdd, candidateHeading, dAngle);
@@ -531,7 +531,7 @@ public class DrivingSkill2d extends MovingSkill {
 						}
 						if ( consideringBackgroundAgent != null ) {
 							// System.out.println(((GamaShape)consideringBackgroundAgent).getPoints().toString());
-							if ( msi.gaml.operators.Spatial.Properties.covered_by(candidateShape,
+							if ( msi.gaml.operators.DeprecatedOperators.covered_by(candidateShape,
 								consideringBackgroundAgent) ) {
 								final CandidateEntry candidateEntry =
 									new CandidateEntry(pointToAdd, candidateHeading, dAngle);
