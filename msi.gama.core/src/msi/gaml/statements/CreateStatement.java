@@ -179,6 +179,21 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 					cd.error("No instance of " + macro.getName() + " available for creating instances of " +
 						species.getName());
 				}
+				IExpression exp = cd.getFacets().getExpr(FROM);
+				if ( exp != null ) {
+					IType type = exp.getType();
+					boolean found = false;
+					for ( IType delegateType : delegateTypes ) {
+						found = delegateType.isAssignableFrom(type);
+						if ( found ) {
+							break;
+						}
+					}
+					if ( !found ) {
+						cd.warning("Facet 'from' expects an expression with one of the following types: " +
+							delegateTypes, IGamlIssue.WRONG_TYPE, FROM);
+					}
+				}
 
 			} else {
 				cd.error("Species cannot be determined");
@@ -211,7 +226,19 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private final IExpression from, number, species, header;
 	private final String returns;
 	private final RemoteSequence sequence;
-	public static List<ICreateDelegate> delegates = new ArrayList();
+	private static List<ICreateDelegate> delegates = new ArrayList();
+	private static List<IType> delegateTypes = new ArrayList();
+
+	/**
+	 * @param createExecutableExtension
+	 */
+	public static void addDelegate(final ICreateDelegate delegate) {
+		delegates.add(delegate);
+		IType delegateType = delegate.fromFacetType();
+		if ( delegateType != null && delegateType != Types.NO_TYPE ) {
+			delegateTypes.add(delegate.fromFacetType());
+		}
+	}
 
 	public CreateStatement(final IDescription desc) {
 		super(desc);

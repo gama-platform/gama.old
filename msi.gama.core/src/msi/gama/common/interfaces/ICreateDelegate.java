@@ -1,33 +1,31 @@
 /**
  * Created by drogoul, 27 mai 2015
- * 
+ *
  */
 package msi.gama.common.interfaces;
 
 import java.util.*;
-
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 import msi.gaml.statements.*;
+import msi.gaml.types.IType;
 
 /**
- * Class ICreateDelegate. 
+ * Class ICreateDelegate.
  *
  * @author drogoul
  * @since 27 mai 2015
  *
  */
 public interface ICreateDelegate {
-	
+
 	/**
 	 * Returns whether or not this delegate accepts to create agents from this source.
 	 * @param source
 	 * @return
 	 */
-	
+
 	boolean acceptSource(Object source);
-	
-	
+
 	/**
 	 * Fills the list of maps with the initial values read from the source. Returns true if all the inits have been correctly filled
 	 * @param scope
@@ -36,7 +34,15 @@ public interface ICreateDelegate {
 	 * @param source
 	 * @return
 	 */
-	
-	boolean createFrom(IScope scope, List<Map> inits, Integer max, Object source, Arguments init, CreateStatement statement);
+
+	boolean createFrom(IScope scope, List<Map> inits, Integer max, Object source, Arguments init,
+		CreateStatement statement);
+
+	/**
+	 * Returns the type expected in the 'from:' facet of 'create' statement. Should not be null and should be different from IType.NO_TYPE (in order to be able to check the validity of create
+	 * statements at compile time-
+	 * @return a GAML type representing the type of the source expected by this ICreateDelegate
+	 */
+	IType fromFacetType();
 
 }
