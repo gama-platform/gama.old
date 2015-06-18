@@ -81,10 +81,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	private IScope _consideringScope;
 //	private final List<SimpleBdiPlanStatement> _plans = new ArrayList<SimpleBdiPlanStatement>();
-	private final List<SimpleBdiPlanStatement> _perceives = new ArrayList<SimpleBdiPlanStatement>();
+	private final List<PerceiveStatement> _perceptions = new ArrayList<PerceiveStatement>();
 	private final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
 	private int _plansNumber = 0;
-	private int _perceiveNumber = 0;
+	private int _perceptionNumber = 0;
 	private boolean iscurrentplaninstantaneous=false;
 
 	@Override
@@ -97,12 +97,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@Override
 	public void addBehavior(final IStatement c) {
-		
 		if ( c instanceof SimpleBdiPlanStatement ) {
 			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
 			_plans.add(new BDIPlan((SimpleBdiPlanStatement) c));
 			_plansNumber++;
-		} else {
+		} else if(c instanceof PerceiveStatement){
+			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
+			_perceptions.add((PerceiveStatement)c);
+			_perceptionNumber++;
+		} else{
 			super.addBehavior(c);
 		}
 	}
@@ -110,6 +113,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		super.executeOn(scope);
+		if ( _perceptionNumber > 0 ) {
+			for ( int i = 0; i < _perceptionNumber; i++ ) {
+				_perceptions.get(i).executeOn(scope);
+			}
+		}
 		return executePlans(scope);
 	}
 
@@ -209,9 +217,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if ( !agent.dead() ) {
 //					System.out.println("_persistentTask 5 " +  _persistentTask);
 					result = _persistentTask.executeOn(scope);
-					boolean isExecuted =
-						_persistentTask.getExecutedExpression() == null ||
-							msi.gaml.operators.Cast.asBool(scope, _persistentTask.getExecutedExpression().value(scope));
+					boolean isExecuted = false;
+					if(_persistentTask.getExecutedExpression() != null){
+							isExecuted = msi.gaml.operators.Cast.asBool(scope, _persistentTask.getExecutedExpression().value(scope));
+					}
 					if (this.iscurrentplaninstantaneous)
 					{
 						loop_instantaneous_plans=true;
@@ -425,8 +434,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					return false;
 				}
 				else{
-//					GamaList desbase = getBase(scope, DESIRE_BASE);
-//					desbase.remove(intention);
 					return true;
 				}
 			}
@@ -463,8 +470,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					return false;
 				}
 				else{
-//					GamaList desbase = getBase(scope, DESIRE_BASE);
-//					desbase.remove(intention);
 					return true;
 				}
 			}
@@ -475,7 +480,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if ( desbase.isEmpty() ) { return false; }
 			for ( Object subintention : (ArrayList) cond ) {
 				if ( desbase.contains(subintention) ) {
-					desbase.remove(intention);
+//					desbase.remove(intention);
 					return true; 
 					}
 			}
@@ -777,10 +782,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if ( superpredicate != null ) {
 				if ( superpredicate.getSubintentions() == null ) {
 					superpredicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
-
 				}
 				superpredicate.getSubintentions().add(predicateDirect);
-
 			}
 			addToBase(scope, predicateDirect, DESIRE_BASE);
 			return true;

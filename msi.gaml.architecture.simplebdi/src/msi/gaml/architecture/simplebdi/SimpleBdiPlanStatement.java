@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
  *
- * 'SimpleBdiStatement.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the 
+ * 'SimpleBdiPlanStatement.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the 
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -37,7 +37,6 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = SimpleBdiPlanStatement.INTENTION, type = IType.NONE, optional = true),
 	@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true)}, omissible = IKeyword.NAME)
-//Ajouter un facet "intention" qui complèterait le when.
 public class SimpleBdiPlanStatement extends AbstractStatementSequence {
 	
 	public static final String INTENTION = "intention";
