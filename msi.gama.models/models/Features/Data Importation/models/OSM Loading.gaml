@@ -63,7 +63,7 @@ species road frequency: 0{
 species node_agent {
 	string type;
 	aspect base { 
-		draw square(3) color: rgb("red") ;
+		draw square(3) color: #red ;
 	}
 } 
 	
@@ -80,7 +80,7 @@ species people skills: [moving] {
 		do goto on:the_graph target:target speed:1;
 	}
 	aspect base {
-		draw circle(3) color: rgb('green');
+		draw circle(3) color: #green;
 	}
 		
 }

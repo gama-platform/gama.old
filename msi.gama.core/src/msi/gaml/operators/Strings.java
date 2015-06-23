@@ -1,20 +1,19 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Strings.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.operators;
 
 import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -31,9 +30,9 @@ import org.joda.time.format.*;
 
 /**
  * Written by drogoul Modified on 10 d�c. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class Strings {
 
@@ -171,14 +170,6 @@ public class Strings {
 	}
 
 	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, category = { IOperatorCategory.STRING })
-	@doc(deprecated = "Deprecated. Use copy_between(string, int, int) instead")
-	public static String opCopy(final String target, final GamaPoint p) {
-		final int beginIndex = (int) p.x;
-		final int endIndex = (int) p.y;
-		return opCopy(target, beginIndex, endIndex);
-	}
-
-	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, category = { IOperatorCategory.STRING })
 	@doc(examples = @example(value = "copy_between(\"abcabcabc\", 2,6)", equals = "\"cabc\""))
 	public static String opCopy(final String target, final Integer beginIndex, final Integer endIndex) {
 		int bIndex = beginIndex < 0 ? 0 : beginIndex;
@@ -251,7 +242,7 @@ public class Strings {
 		}
 
 		sz--; // Don't want to loop to the last char, check it afterwords for type
-				// qualifiers
+		// qualifiers
 		int i = start;
 
 		// Loop to the next to last char or to the last char if we need another digit to
@@ -361,14 +352,6 @@ public class Strings {
 	static public String asChar(final Integer s) {
 		if ( s == null ) { return ""; }
 		return Character.toString((char) s.intValue());
-	}
-
-	@operator(value = "toChar", can_be_const = true, category = { IOperatorCategory.STRING })
-	@doc(deprecated = "Use 'char' instead",
-		special_cases = { "convert ACSII integer value to character" },
-		examples = { @example(value = "toChar (34)", equals = "'\"'") })
-	static public String toChar(final Integer s) {
-		return asChar(s);
 	}
 
 	@operator(value = "indented_by", can_be_const = true, category = { IOperatorCategory.STRING })

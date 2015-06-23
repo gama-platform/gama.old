@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 csvedit
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,9 +34,9 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 
 /**
- * 
+ *
  * @author fhenri
- * 
+ *
  */
 public class MultiPageCSVEditor extends MultiPageEditorPart implements IResourceChangeListener, IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
 
@@ -106,7 +106,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 
 	/**
 	 * Creates the pages of the multi-page editor.
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#createPages()
 	 */
 	@Override
@@ -152,8 +152,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	}
 
 	/**
-     *
-     */
+	 *
+	 */
 	private void createTablePage() {
 		Composite parent = getContainer();
 		Composite intermediate = new Composite(parent, SWT.NONE);
@@ -203,8 +203,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	}
 
 	/**
-     *
-     */
+	 *
+	 */
 	public void tableModified() {
 		tableViewer.refresh();
 		boolean wasPageModified = isPageModified;
@@ -216,8 +216,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	}
 
 	/**
-     *
-     */
+	 *
+	 */
 	private void updateTableFromTextEditor() {
 		// PropertyFile propertyFile = (PropertyFile) treeViewer.getInput();
 		model.removeModelListener(csvFileListener);
@@ -271,8 +271,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	}
 
 	/**
-     *
-     */
+	 *
+	 */
 	private void defineCellEditing() {
 		String[] columnProperties = new String[model.getColumnCount()];
 		CellEditor[] cellEditors = new CellEditor[model.getColumnCount()];
@@ -292,7 +292,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 
 	/**
 	 * Find a column in the Table by its name
-	 * 
+	 *
 	 * @param columnName
 	 * @return the index of the Column indicated by its name
 	 */
@@ -365,7 +365,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	 * and marks the end of the editor's life cycle.
 	 * It cleans up any platform resources, such as images, clipboard,
 	 * and so on, which were created by this class.
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#dispose()
 	 */
 	@Override
@@ -381,7 +381,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	 * If the save is canceled via user action, or for any other reason,
 	 * the part should invoke setCanceled on the IProgressMonitor to
 	 * inform the caller
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -403,7 +403,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 
 	/**
 	 * Returns whether the "Save As" operation is supported by this part.
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
 	@Override
@@ -415,7 +415,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	 * Saves the multi-page editor's document as another file. Also updates the
 	 * text for page 0's tab, and updates this multi-page editor's input to
 	 * correspond to the nested editor's.
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
 	 */
 	@Override
@@ -454,7 +454,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 
 	/**
 	 * Calculates the contents of page 2 when the it is activated.
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#pageChange(int)
 	 */
 	@Override
@@ -476,18 +476,18 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	}
 
 	/**
-     *
-     */
+	 *
+	 */
 	private void updateTextEditorFromTable() {
 		editor.getDocumentProvider().getDocument(editor.getEditorInput())
-			.set(((CSVModel) tableViewer.getInput()).getTextRepresentation());
+		.set(((CSVModel) tableViewer.getInput()).getTextRepresentation());
 	}
 
 	/**
 	 * When the focus shifts to the editor, this method is called;
 	 * it must then redirect focus to the appropriate editor based
 	 * on which page is currently selected.
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#setFocus()
 	 */
 	@Override
@@ -504,12 +504,12 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 
 	/**
 	 * Closes all project files on project close.
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
-		if ( event.getType() == IResourceChangeEvent.PRE_CLOSE ) {
+		if ( event.getType() == IResourceChangeEvent.PRE_CLOSE || event.getType() == IResourceChangeEvent.PRE_DELETE ) {
 			Display.getDefault().asyncExec(new Runnable() {
 
 				@Override
@@ -524,6 +524,31 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 					}
 				}
 			});
+		} else {
+
+			IResourceDelta delta = event.getDelta().findMember(getFileFor(getEditorInput()).getFullPath());
+			if ( delta != null ) {
+				// file deleted -- close the editor
+				if ( delta.getKind() == IResourceDelta.REMOVED ) {
+					Runnable r = new Runnable() {
+
+						@Override
+						public void run() {
+							// this needs to be run in the SWT thread
+							getSite().getPage().closeEditor(MultiPageCSVEditor.this, false);
+						}
+					};
+					getSite().getShell().getDisplay().asyncExec(r);
+				}
+				// file changed -- reload image
+				else if ( delta.getKind() == IResourceDelta.CHANGED ) {
+					int flags = delta.getFlags();
+					if ( (flags & IResourceDelta.CONTENT) != 0 || (flags & IResourceDelta.LOCAL_CHANGED) != 0 ) {
+						MultiPageCSVEditor.this.updateTableFromTextEditor();
+					}
+				}
+			}
+
 		}
 	}
 
@@ -567,68 +592,68 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 			tb.menu("action.set.delimiter2", "Determine which character should be used as delimiter of fields",
 				"Determine which character should be used as delimiter of fields", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						GamaMenu menu = new GamaMenu() {
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					GamaMenu menu = new GamaMenu() {
 
-							@Override
-							protected void fillMenu() {
-								action(", (comma)", new SelectionAdapter() {
+						@Override
+						protected void fillMenu() {
+							action(", (comma)", new SelectionAdapter() {
 
-									@Override
-									public void widgetSelected(final SelectionEvent e) {
-										refreshWithDelimiter(',');
-									}
+								@Override
+								public void widgetSelected(final SelectionEvent e) {
+									refreshWithDelimiter(',');
+								}
 
-								}, null);
-								action("; (semicolon)", new SelectionAdapter() {
+							}, null);
+							action("; (semicolon)", new SelectionAdapter() {
 
-									@Override
-									public void widgetSelected(final SelectionEvent e) {
-										refreshWithDelimiter(';');
-									}
+								@Override
+								public void widgetSelected(final SelectionEvent e) {
+									refreshWithDelimiter(';');
+								}
 
-								}, null);
-								action("  (space)", new SelectionAdapter() {
+							}, null);
+							action("  (space)", new SelectionAdapter() {
 
-									@Override
-									public void widgetSelected(final SelectionEvent e) {
-										refreshWithDelimiter(' ');
-									}
+								@Override
+								public void widgetSelected(final SelectionEvent e) {
+									refreshWithDelimiter(' ');
+								}
 
-								}, null);
-								action("  (tabulation)", new SelectionAdapter() {
+							}, null);
+							action("  (tabulation)", new SelectionAdapter() {
 
-									@Override
-									public void widgetSelected(final SelectionEvent e) {
-										refreshWithDelimiter('\t');
-									}
+								@Override
+								public void widgetSelected(final SelectionEvent e) {
+									refreshWithDelimiter('\t');
+								}
 
-								}, null);
-								action(": (colon)", new SelectionAdapter() {
+							}, null);
+							action(": (colon)", new SelectionAdapter() {
 
-									@Override
-									public void widgetSelected(final SelectionEvent e) {
-										refreshWithDelimiter(':');
-									}
+								@Override
+								public void widgetSelected(final SelectionEvent e) {
+									refreshWithDelimiter(':');
+								}
 
-								}, null);
-								action("| (pipe)", new SelectionAdapter() {
+							}, null);
+							action("| (pipe)", new SelectionAdapter() {
 
-									@Override
-									public void widgetSelected(final SelectionEvent e) {
-										refreshWithDelimiter('|');
+								@Override
+								public void widgetSelected(final SelectionEvent e) {
+									refreshWithDelimiter('|');
 
-									}
+								}
 
-								}, null);
+							}, null);
 
-							}
-						};
-						menu.open(tb.getToolbar(SWT.RIGHT), e);
-					}
+						}
+					};
+					menu.open(tb.getToolbar(SWT.RIGHT), e);
+				}
 
-				}, SWT.RIGHT);
+			}, SWT.RIGHT);
 		ToolItem t =
 			tb.check("action.set.header2", "First line is header", "First line is header", new SelectionAdapter() {
 
@@ -646,18 +671,18 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 			"Insert a new row before the currently selected one or at the end of the file if none is selected",
 			new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-					if ( row != null ) {
-						model.addRowAfterElement(row);
-					} else {
-						model.addRow();
-					}
-					tableModified();
-					model.saveMetaData();
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+				if ( row != null ) {
+					model.addRowAfterElement(row);
+				} else {
+					model.addRow();
 				}
-			}, SWT.RIGHT);
+				tableModified();
+				model.saveMetaData();
+			}
+		}, SWT.RIGHT);
 		tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", new SelectionAdapter() {
 
 			@Override
@@ -705,25 +730,25 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 			tb.button("action.delete.column2", "Delete column", "Delete one or several column(s)",
 				new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
 
-						// call delete column page
-						DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
-						if ( dcPage.open() == Window.OK ) {
-							String[] colToDelete = dcPage.getColumnSelected();
-							for ( String column : colToDelete ) {
-								int colIndex = findColumnForName(column);
-								tableViewer.getTable().getColumn(colIndex).dispose();
-								// tableHeaderMenu.getItem(colIndex).dispose();
-								model.removeColumn(column);
-							}
-							tableModified();
-							model.saveMetaData();
+					// call delete column page
+					DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
+					if ( dcPage.open() == Window.OK ) {
+						String[] colToDelete = dcPage.getColumnSelected();
+						for ( String column : colToDelete ) {
+							int colIndex = findColumnForName(column);
+							tableViewer.getTable().getColumn(colIndex).dispose();
+							// tableHeaderMenu.getItem(colIndex).dispose();
+							model.removeColumn(column);
 						}
-
+						tableModified();
+						model.saveMetaData();
 					}
-				}, SWT.RIGHT);
+
+				}
+			}, SWT.RIGHT);
 		}
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {

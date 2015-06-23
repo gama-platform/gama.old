@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Graphs.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.operators;
 
@@ -41,9 +41,9 @@ import org.jgrapht.alg.ConnectivityInspector;
 
 /**
  * Written by drogoul Modified on 13 avr. 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class Graphs {
 
@@ -135,7 +135,8 @@ public class Graphs {
 	@doc(value = "returns the agent corresponding to given geometry (right-hand operand) in the given path (left-hand operand).",
 		usages = @usage("if the left-hand operand is nil, returns nil"),
 		examples = { @example(value = "geometry line <- one_of(path_followed.segments);", isExecutable = false),
-			@example(value = "road ag <- road(path_followed agent_from_geometry line);", isExecutable = false) }, see = "path")
+			@example(value = "road ag <- road(path_followed agent_from_geometry line);", isExecutable = false) },
+		see = "path")
 	public static
 		IAgent getAgentFromGeom(final IPath path, final IShape geom) {
 		if ( path == null ) { return null; }
@@ -487,21 +488,21 @@ public class Graphs {
 		return mapResult;
 	}
 
-	@operator(value = "neighbours_of",
+	@operator(value = { "neighbors_of" },
 		type = IType.LIST,
 		content_type = ITypeProvider.FIRST_KEY_TYPE,
 		category = { IOperatorCategory.GRAPH })
 	@doc(value = "returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)",
 		examples = {
-			@example(value = "graphEpidemio neighbours_of (node(3))", equals = "[node0,node2]", isExecutable = false),
-			@example(value = "graphFromMap neighbours_of node({12,45})",
+			@example(value = "graphEpidemio neighbors_of (node(3))", equals = "[node0,node2]", isExecutable = false),
+			@example(value = "graphFromMap neighbors_of node({12,45})",
 				equals = "[{1.0,5.0},{34.0,56.0}]",
 				isExecutable = false) },
 		see = { "predecessors_of", "successors_of" })
 	public static
 		IList neighboursOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException.error(
-			"In the neighbours_of operator, the graph should not be null!", scope); }
+			"In the neighbors_of operator, the graph should not be null!", scope); }
 		if ( graph.containsVertex(vertex) ) { return GamaListFactory.create(scope, graph.getType().getKeyType(),
 			org.jgrapht.Graphs.neighborListOf(graph, vertex)); }
 		return GamaListFactory.create(graph.getType().getKeyType());
@@ -772,8 +773,7 @@ public class Graphs {
 	@operator(value = "add_node", type = IType.GRAPH, category = { IOperatorCategory.GRAPH })
 	@doc(value = "adds a node in a graph.", examples = @example(value = "graph add_node node(0) ",
 		equals = "the graph with node(0)",
-		isExecutable = false),
-		see = {"add_edge", "graph"})
+		isExecutable = false), see = { "add_edge", "graph" })
 	public static IGraph addNode(final IGraph g, final IShape node) {
 		g.addVertex(node);
 		g.incVersion();
@@ -790,16 +790,6 @@ public class Graphs {
 		g.removeVertex(node);
 		g.incVersion();
 
-		return g;
-	}
-
-	@operator(value = "rewire_p", category = { IOperatorCategory.GRAPH })
-	@doc(value = "Rewires a graph (in the Watts-Strogatz meaning)", deprecated = "Does not work now", examples = {
-		@example(value = "graph graphEpidemio <- graph([]);", isTestOnly = true),
-		@example(value = "graphEpidemio rewire_p 0.2", test = false) }, see = "rewire_p")
-	public static IGraph rewireGraph(final IScope scope, final IGraph g, final Double probability) {
-		GraphAlgorithmsHandmade.rewireGraphProbability(scope, g, probability);
-		g.incVersion();
 		return g;
 	}
 
@@ -821,8 +811,9 @@ public class Graphs {
 	@doc(value = "add an edge between a source vertex and a target vertex (resp. the left and the right element of the pair operand)",
 		comment = "if the edge already exists, the graph is unchanged",
 		examples = @example(value = "graph <- graph add_edge (source::target);", isExecutable = false),
-		see = {"add_node","graph"})
-	public static IGraph addEdge(final IGraph g, final GamaPair nodes) {
+		see = { "add_node", "graph" })
+	public static
+	IGraph addEdge(final IGraph g, final GamaPair nodes) {
 		g.addEdge(nodes.first(), nodes.last());
 		g.incVersion();
 		return g;
@@ -842,21 +833,6 @@ public class Graphs {
 		if ( graph instanceof GamaSpatialGraph ) { return Cast.asTopology(scope, graph).pathBetween(scope, source,
 			target); }
 		return graph.computeShortestPathBetween(scope, source, target);
-		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
-
-	}
-
-	@operator(value = "path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-		IOperatorCategory.GRAPH, IOperatorCategory.PATH })
-	@doc(value = "The shortest path between a list of two objects in a graph",
-		examples = { @example(value = "my_graph path_between (ag1:: ag2)",
-			equals = "A path between ag1 and ag2",
-			isExecutable = false) }, deprecated = "use 'path_between(graph, geometry, geometry)' instead")
-	public static IPath path_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg)
-		throws GamaRuntimeException {
-		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
-		return path_between(scope, graph, (IShape) sourTarg.key, (IShape) sourTarg.value);
-
 		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
 
 	}
@@ -1061,8 +1037,8 @@ public class Graphs {
 		examples = { @example(value = "all_pairs_shortest_paths(my_graph)",
 			equals = "shortest_paths_matrix will contain all pairs of shortest paths",
 			isExecutable = false) })
-	public static GamaIntMatrix primAllPairShortestPaths(final IScope scope, final GamaGraph graph)
-		throws GamaRuntimeException {
+	public static
+	GamaIntMatrix primAllPairShortestPaths(final IScope scope, final GamaGraph graph) throws GamaRuntimeException {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the all_pairs_shortest_paths operator, the graph should not be null!"); }
 		return graph.saveShortestPaths(scope);
@@ -1106,13 +1082,12 @@ public class Graphs {
 	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine) {
 		return layoutOneshot(scope, graph, layoutEngine, -1);
 	}
-	
+
 	@operator(value = "adjacency", category = { IOperatorCategory.GRAPH })
 	@doc(value = "adjacency matrix of the given graph.")
 	public static GamaFloatMatrix adjacencyMatrix(final IScope scope, final GamaGraph graph) {
 		return graph.toMatrix(scope);
 	}
-	
 
 	// TODO "complete" (pour cr�er un graphe complet)
 

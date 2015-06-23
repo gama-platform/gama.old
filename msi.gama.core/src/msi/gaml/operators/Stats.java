@@ -1,28 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Stats.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.operators;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.Random;
-
-import org.apache.commons.math3.stat.clustering.Cluster;
-import org.apache.commons.math3.stat.clustering.Clusterable;
-import org.apache.commons.math3.stat.clustering.DBSCANClusterer;
-import org.apache.commons.math3.stat.clustering.EuclideanDoublePoint;
-import org.apache.commons.math3.stat.clustering.KMeansPlusPlusClusterer;
-
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
@@ -34,18 +24,19 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.file.RFile;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
+import org.apache.commons.math3.stat.clustering.*;
 import rcaller.RCaller;
 import rcaller.exception.*;
 
 /**
  * Written by drogoul Modified on 15 janv. 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class Stats {
 
@@ -325,13 +316,13 @@ public class Stats {
 		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
 		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER })
 	@doc(value = "the maximum element found in the operand",
-		masterDoc = true,
-		comment = "the max operator behavior depends on the nature of the operand",
-		usages = {
-			@usage(value = "if it is a list of int of float, max returns the maximum of all the elements",
-				examples = { @example(value = "max ([100, 23.2, 34.5])", equals = "100.0") }),
+	masterDoc = true,
+	comment = "the max operator behavior depends on the nature of the operand",
+	usages = {
+		@usage(value = "if it is a list of int of float, max returns the maximum of all the elements",
+			examples = { @example(value = "max ([100, 23.2, 34.5])", equals = "100.0") }),
 			@usage(value = "if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
-				examples = { @example(value = "max([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{9.0,1.0}") }),
+			examples = { @example(value = "max([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{9.0,1.0}") }),
 			@usage("if it is a population of a list of other type: max transforms all elements into integer and returns the maximum of them"),
 			@usage("if it is a map, max returns the maximum among the list of all elements value"),
 			@usage("if it is a file, max returns the maximum of the content of the file (that is also a container)"),
@@ -339,9 +330,9 @@ public class Stats {
 			@usage("if it is a matrix of int, float or object, max returns the maximum of all the numerical elements (thus all elements for integer and float matrices)"),
 			@usage("if it is a matrix of geometry, max returns the maximum of the list of the geometries"),
 			@usage("if it is a matrix of another type, max returns the maximum of the elements transformed into float") },
-		see = { "min" })
+			see = { "min" })
 	public static
-		Object max(final IScope scope, final IContainer l) {
+	Object max(final IScope scope, final IContainer l) {
 		Number maxNum = null;
 		ILocation maxPoint = null;
 		for ( Object o : l.iterable(scope) ) {
@@ -368,11 +359,11 @@ public class Stats {
 		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
 		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER })
 	@doc(value = "the minimum element found in the operand.",
-		masterDoc = true,
-		comment = "the min operator behavior depends on the nature of the operand",
-		usages = {
-			@usage(value = "if it is a list of int or float: min returns the minimum of all the elements",
-				examples = { @example(value = "min ([100, 23.2, 34.5])", equals = "23.2") }),
+	masterDoc = true,
+	comment = "the min operator behavior depends on the nature of the operand",
+	usages = {
+		@usage(value = "if it is a list of int or float: min returns the minimum of all the elements",
+			examples = { @example(value = "min ([100, 23.2, 34.5])", equals = "23.2") }),
 			@usage(value = "if it is a list of points: min returns the minimum of all points as a point (i.e. the point with the smallest coordinate on the x-axis, in case of equality the point with the smallest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )"),
 			@usage(value = "if it is a population of a list of other types: min transforms all elements into integer and returns the minimum of them"),
 			@usage(value = "if it is a map, min returns the minimum among the list of all elements value"),
@@ -381,9 +372,9 @@ public class Stats {
 			@usage(value = "if it is a matrix of int, float or object, min returns the minimum of all the numerical elements (thus all elements for integer and float matrices)"),
 			@usage(value = "if it is a matrix of geometry, min returns the minimum of the list of the geometries"),
 			@usage(value = "if it is a matrix of another type, min returns the minimum of the elements transformed into float") },
-		see = { "max" })
+			see = { "max" })
 	public static
-		Object min(final IScope scope, final IContainer l) {
+	Object min(final IScope scope, final IContainer l) {
 		Number minNum = null;
 		ILocation minPoint = null;
 		for ( Object o : l.iterable(scope) ) {
@@ -410,11 +401,11 @@ public class Stats {
 		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
 		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER })
 	@doc(value = "the product of all the elements of the operand",
-		masterDoc = true,
-		comment = "the mul operator behavior depends on the nature of the operand",
-		usages = {
-			@usage(value = "if it is a list of int or float: mul returns the product of all the elements",
-				examples = { @example(value = "mul ([100, 23.2, 34.5])", equals = "80040.0") }),
+	masterDoc = true,
+	comment = "the mul operator behavior depends on the nature of the operand",
+	usages = {
+		@usage(value = "if it is a list of int or float: mul returns the product of all the elements",
+			examples = { @example(value = "mul ([100, 23.2, 34.5])", equals = "80040.0") }),
 			@usage(value = "if it is a list of points: mul returns the product of all points as a point (each coordinate is the product of the corresponding coordinate of each element)"),
 			@usage(value = "if it is a list of other types: mul transforms all elements into integer and multiplies them"),
 			@usage(value = "if it is a map, mul returns the product of the value of all elements"),
@@ -423,9 +414,9 @@ public class Stats {
 			@usage(value = "if it is a matrix of int, float or object, mul returns the product of all the numerical elements (thus all elements for integer and float matrices)"),
 			@usage(value = "if it is a matrix of geometry, mul returns the product of the list of the geometries"),
 			@usage(value = "if it is a matrix of other types: mul transforms all elements into float and multiplies them") },
-		see = { "sum" })
+			see = { "sum" })
 	public static
-		Object product(final IScope scope, final IContainer l) {
+	Object product(final IScope scope, final IContainer l) {
 		DataSet x = new DataSet();
 		DataSet y = null, z = null;
 		for ( Object o : l.iterable(scope) ) {
@@ -454,13 +445,13 @@ public class Stats {
 		IType.INT, IType.FLOAT, IType.POINT, IType.COLOR }, category = { IOperatorCategory.STATISTICAL,
 		IOperatorCategory.CONTAINER, IOperatorCategory.COLOR })
 	@doc(value = "the sum of all the elements of the operand",
-		masterDoc = true,
-		comment = "the sum operator behavior depends on the nature of the operand",
-		usages = {
-			@usage(value = "if it is a list of int or float: sum returns the sum of all the elements",
-				examples = { @example(value = "sum ([12,10,3])", returnType = IKeyword.INT, equals = "25") }),
+	masterDoc = true,
+	comment = "the sum operator behavior depends on the nature of the operand",
+	usages = {
+		@usage(value = "if it is a list of int or float: sum returns the sum of all the elements",
+			examples = { @example(value = "sum ([12,10,3])", returnType = IKeyword.INT, equals = "25") }),
 			@usage(value = "if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)",
-				examples = { @example(value = "sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{20.0,17.0}") }),
+			examples = { @example(value = "sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{20.0,17.0}") }),
 			@usage(value = "if it is a population or a list of other types: sum transforms all elements into float and sums them"),
 			@usage(value = "if it is a map, sum returns the sum of the value of all elements"),
 			@usage(value = "if it is a file, sum returns the sum of the content of the file (that is also a container)"),
@@ -469,9 +460,9 @@ public class Stats {
 			@usage(value = "if it is a matrix of geometry, sum returns the sum of the list of the geometries"),
 			@usage(value = "if it is a matrix of other types: sum transforms all elements into float and sums them"),
 			@usage(value = "if it is a list of colors: sum will sum them and return the blended resulting color") },
-		see = { "mul" })
+			see = { "mul" })
 	public static
-		Object sum(final IScope scope, final IExpression expr) {
+	Object sum(final IScope scope, final IExpression expr) {
 		IType type = expr.getType();
 		if ( !type.isContainer() ) { throw GamaRuntimeException.error("'sum' can only operate on containers.", scope); }
 		IContainer l = Types.CONTAINER.cast(scope, expr.value(scope), null, false);
@@ -541,12 +532,12 @@ public class Stats {
 		IType.INT, IType.FLOAT, IType.POINT, IType.COLOR }, category = { IOperatorCategory.STATISTICAL,
 		IOperatorCategory.CONTAINER, IOperatorCategory.COLOR })
 	@doc(value = "the mean of all the elements of the operand",
-		comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.",
-		special_cases = { "if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" },
-		examples = { @example(value = "mean ([4.5, 3.5, 5.5, 7.0])", equals = "5.125 ") },
-		see = { "sum" })
+	comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.",
+	special_cases = { "if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" },
+	examples = { @example(value = "mean ([4.5, 3.5, 5.5, 7.0])", equals = "5.125 ") },
+	see = { "sum" })
 	public static
-		Object getMean(final IScope scope, final IExpression expr) throws GamaRuntimeException {
+	Object getMean(final IScope scope, final IExpression expr) throws GamaRuntimeException {
 		IType type = expr.getType();
 		if ( !type.isContainer() ) { throw GamaRuntimeException.error("'mean' can only operate on containers.", scope); }
 		IContainer l = Types.CONTAINER.cast(scope, expr.value(scope), null, false);
@@ -587,12 +578,12 @@ public class Stats {
 		expected_content_type = { IType.INT, IType.FLOAT },
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "the median of all the elements of the operand.",
-		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		special_cases = { "" },
-		examples = { @example(value = "median ([4.5, 3.5, 5.5, 7.0])", equals = "5.0") },
-		see = { "mean" })
+	comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+	special_cases = { "" },
+	examples = { @example(value = "median ([4.5, 3.5, 5.5, 7.0])", equals = "5.0") },
+	see = { "mean" })
 	public static
-		Double opMedian(final IScope scope, final IContainer values) {
+	Double opMedian(final IScope scope, final IContainer values) {
 		DataSet d = from(scope, values);
 		return d.getMedian();
 	}
@@ -602,12 +593,12 @@ public class Stats {
 		expected_content_type = { IType.INT, IType.FLOAT },
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "the standard deviation on the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> for more details.",
-		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		special_cases = { "" },
-		examples = { @example(value = "standard_deviation ([4.5, 3.5, 5.5, 7.0])", equals = "1.2930100540985752") },
-		see = { "mean", "mean_deviation" })
+	comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+	special_cases = { "" },
+	examples = { @example(value = "standard_deviation ([4.5, 3.5, 5.5, 7.0])", equals = "1.2930100540985752") },
+	see = { "mean", "mean_deviation" })
 	public static
-		Double opStDev(final IScope scope, final IContainer values) {
+	Double opStDev(final IScope scope, final IContainer values) {
 		DataSet d = from(scope, values);
 		return d.getStandardDeviation();
 	}
@@ -617,12 +608,12 @@ public class Stats {
 		expected_content_type = { IType.INT, IType.FLOAT },
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "the geometric mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</A> for more details.",
-		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		special_cases = { "" },
-		examples = { @example(value = "geometric_mean ([4.5, 3.5, 5.5, 7.0])", equals = "4.962326343467649") },
-		see = { "mean", "median", "harmonic_mean" })
+	comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+	special_cases = { "" },
+	examples = { @example(value = "geometric_mean ([4.5, 3.5, 5.5, 7.0])", equals = "4.962326343467649") },
+	see = { "mean", "median", "harmonic_mean" })
 	public static
-		Double opGeomMean(final IScope scope, final IContainer values) {
+	Double opGeomMean(final IScope scope, final IContainer values) {
 		DataSet d = from(scope, values);
 		return d.getGeometricMean();
 	}
@@ -632,12 +623,12 @@ public class Stats {
 		expected_content_type = { IType.INT, IType.FLOAT },
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "the harmonic mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Harmonic_mean\">Harmonic_mean</A> for more details.",
-		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		special_cases = { "" },
-		examples = { @example(value = "harmonic_mean ([4.5, 3.5, 5.5, 7.0])", equals = "4.804159445407279") },
-		see = { "mean", "median", "geometric_mean" })
+	comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+	special_cases = { "" },
+	examples = { @example(value = "harmonic_mean ([4.5, 3.5, 5.5, 7.0])", equals = "4.804159445407279") },
+	see = { "mean", "median", "geometric_mean" })
 	public static
-		Double opHarmonicMean(final IScope scope, final IContainer values) {
+	Double opHarmonicMean(final IScope scope, final IContainer values) {
 		DataSet d = from(scope, values);
 		return d.getHarmonicMean();
 	}
@@ -647,11 +638,11 @@ public class Stats {
 		expected_content_type = { IType.INT, IType.FLOAT },
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "the variance of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Variance\">Variance</A> for more details.",
-		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded. ",
-		examples = { @example(value = "variance ([4.5, 3.5, 5.5, 7.0])", equals = "1.671875") },
-		see = { "mean", "median" })
+	comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded. ",
+	examples = { @example(value = "variance ([4.5, 3.5, 5.5, 7.0])", equals = "1.671875") },
+	see = { "mean", "median" })
 	public static
-		Double opVariance(final IScope scope, final IContainer values) {
+	Double opVariance(final IScope scope, final IContainer values) {
 		DataSet d = from(scope, values);
 		return d.getVariance();
 	}
@@ -661,11 +652,11 @@ public class Stats {
 		expected_content_type = { IType.INT, IType.FLOAT },
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "the deviation from the mean of all the elements of the operand. See <A href= \"http://en.wikipedia.org/wiki/Absolute_deviation\" >Mean_deviation</A> for more details.",
-		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		examples = { @example(value = "mean_deviation ([4.5, 3.5, 5.5, 7.0])", equals = "1.125") },
-		see = { "mean", "standard_deviation" })
+	comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+	examples = { @example(value = "mean_deviation ([4.5, 3.5, 5.5, 7.0])", equals = "1.125") },
+	see = { "mean", "standard_deviation" })
 	public static
-		Double opMeanDeviation(final IScope scope, final IContainer values) {
+	Double opMeanDeviation(final IScope scope, final IContainer values) {
 		DataSet d = from(scope, values);
 		return d.getMeanDeviation();
 	}
@@ -677,13 +668,13 @@ public class Stats {
 		content_type = IType.INT,
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)",
-		comment = "",
-		examples = { @example(value = "[ag1, ag2, ag3, ag4] frequency_of each.size",
-			equals = "the different sizes as keys and the number of agents of this size as values",
-			isExecutable = false) }, see = "as_map")
+	comment = "",
+	examples = { @example(value = "[ag1, ag2, ag3, ag4] frequency_of each.size",
+	equals = "the different sizes as keys and the number of agents of this size as values",
+	isExecutable = false) }, see = "as_map")
 	public static
-		GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
-			throws GamaRuntimeException {
+	GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
+		throws GamaRuntimeException {
 		if ( original == null ) { return GamaMapFactory.create(Types.NO_TYPE, Types.INT); }
 		final GamaMap<Object, Integer> result = GamaMapFactory.create(original.getType().getContentType(), Types.INT);
 		for ( Object each : original.iterable(scope) ) {
@@ -698,14 +689,17 @@ public class Stats {
 		return result;
 	}
 
-	@operator(value = "corR", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = { "corR", "R_correlation" },
+		can_be_const = false,
+		type = IType.FLOAT,
+		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).",
-		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-		examples = { @example("list X <- [1, 2, 3];"), @example("list Y <- [1, 2, 4];"),
-			@example(value = "corR(X, Y)", equals = "0.981980506061966") })
+	special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+	examples = { @example("list X <- [1, 2, 3];"), @example("list Y <- [1, 2, 4];"),
+		@example(value = "corR(X, Y)", equals = "0.981980506061966") })
 	public static
-		Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
-			throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
+	Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
+		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if ( l1.length(scope) == 0 || l2.length(scope) == 0 ) { return Double.valueOf(0d); }
 
 		if ( l1.length(scope) != l2.length(scope) ) { return Double.valueOf(0d); }
@@ -749,15 +743,15 @@ public class Stats {
 		return results[0];
 	}
 
-	@operator(value = "meanR",
+	@operator(value = { "meanR", "R_mean" },
 		can_be_const = false,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).",
-		examples = { @example("list<int> X <- [2, 3, 1];"),
-			@example(value = "meanR(X)", equals = "2", returnType = IKeyword.INT) })
+	examples = { @example("list<int> X <- [2, 3, 1];"),
+		@example(value = "meanR(X)", equals = "2", returnType = IKeyword.INT) })
 	public static Object getMeanR(final IScope scope, final IContainer l) throws GamaRuntimeException,
-		RCallerParseException, RCallerExecutionException {
+	RCallerParseException, RCallerExecutionException {
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
 
 		double[] results;
@@ -784,121 +778,117 @@ public class Stats {
 		return results[0];
 	}
 
-	@operator(value = "R_compute",
-		can_be_const = false,
-		content_type = IType.LIST,
-		index_type = IType.STRING,
-		category = { IOperatorCategory.STATISTICAL })
-	@doc(deprecated = "Use R_file instead",
-		value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand).",
-		examples = {
-			@example(value = "file f <- file('Correlation.r');", isTestOnly = true),
-			@example(value = "save \"x <- c(1, 2, 3);\" to: f.path;", isTestOnly = true),
-			@example(value = "save \"y <- c(1, 2, 4);\" to: f.path;", isTestOnly = true),
-			@example(value = "save \"result<- cor(x, y);\" to: f.path;", isTestOnly = true),
-			@example(value = "R_compute('Correlation.R')", var = "result", equals = "['result'::['0.981980506061966']]"),
-			@example("////// Correlation.R file:"), @example("// x <- c(1, 2, 3);"), @example("// y <- c(1, 2, 4);"),
-			@example("// result <- cor(x, y);"), @example("// Output:"), @example("// result::[0.981980506061966]") })
-	@Deprecated
-	public static
-		GamaMap opRFileEvaluate(final IScope scope, final String RFile) throws GamaRuntimeException,
-			RCallerParseException, RCallerExecutionException {
-		RFile obj = new RFile(scope, RFile);
-		return obj.getContents(scope);
-	}
-
-	@operator(value = "R_compute_param",
-		can_be_const = false,
-		type = IType.MAP,
-		content_type = IType.LIST,
-		index_type = IType.STRING,
-		category = { IOperatorCategory.STATISTICAL })
-	@doc(deprecated = "Use R_file instead",
-		value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand), R file (first right-hand operand) reads the vector (second right-hand operand) as the parameter vector",
-		examples = { @example(value = "file f <- file('AddParam.r');", isTestOnly = true),
-			@example(value = "save \"v1 <- vectorParam[1];\" to: f.path;", isTestOnly = true),
-			@example(value = "save \"v2<-vectorParam[2];\" to: f.path;", isTestOnly = true),
-			@example(value = "save \"v3<-vectorParam[3];\" to: f.path;", isTestOnly = true),
-			@example(value = "save \"result<-v1+v2+v3;\" to: f.path;", isTestOnly = true),
-			@example("list<int> X <- [2, 3, 1];"),
-			@example(value = "R_compute_param('AddParam.R', X)", var = "result", equals = "['result'::['6']]"),
-			@example("////// AddParam.R file:"), @example("// v1 <- vectorParam[1];"),
-			@example("// v2<-vectorParam[2];"), @example("// v3<-vectorParam[3];"), @example("// result<-v1+v2+v3;"),
-			@example("////// Output:"), @example("// 'result'::[6]") })
-	@Deprecated
-	public static
-		GamaMap operateRFileEvaluate(final IScope scope, final String RFile, final IContainer param)
-			throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
-		RFile obj = new RFile(scope, RFile, param);
-		return obj.getContents(scope);
-	}
-	
-	@operator(value = "dbscan", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = "dbscan", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "returns the list of clusters (list of instance indices) computed with the dbscan (density-based spatial clustering of applications with noise) algorithm from the first operand data according to the maximum radius of the neighborhood to be considered (eps) and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
-		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-		examples = { @example("dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)")})
+	special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+	examples = { @example("dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)") })
 	public static
-		GamaList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps, final Integer minPts)
-			throws GamaRuntimeException {
-			
-			DBSCANClusterer<EuclideanDoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
-			List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
-			for (int i = 0; i < data.size(); i++) {
-				GamaList d = (GamaList) data.get(i);
-				double point[] = new double[d.size()];
-				for (int j = 0; j < d.size(); j++) point[j] = Cast.asFloat(scope, d.get(j));
-				instances.add(new Instance(i, point));
+	GamaList<GamaList>
+		DBscanApache(final IScope scope, final GamaList data, final Double eps, final Integer minPts)
+		throws GamaRuntimeException {
+
+		DBSCANClusterer<EuclideanDoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
+		List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
+		for ( int i = 0; i < data.size(); i++ ) {
+			GamaList d = (GamaList) data.get(i);
+			double point[] = new double[d.size()];
+			for ( int j = 0; j < d.size(); j++ ) {
+				point[j] = Cast.asFloat(scope, d.get(j));
 			}
-			List<Cluster<EuclideanDoublePoint>> clusters = dbscan.cluster(instances);
-			GamaList results =  (GamaList) GamaListFactory.create();
-			for (Cluster<EuclideanDoublePoint> cl : clusters) {
-				GamaList clG =  (GamaList) GamaListFactory.create();
-				for (EuclideanDoublePoint pt : cl.getPoints()) {
-					clG.addValue(scope, ((Instance) pt).getId());
-				}
-				results.addValue(scope, clG);
-			}
-			return results;
+			instances.add(new Instance(i, point));
 		}
-	
-	@operator(value = "kmeans", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
+		List<Cluster<EuclideanDoublePoint>> clusters = dbscan.cluster(instances);
+		GamaList results = (GamaList) GamaListFactory.create();
+		for ( Cluster<EuclideanDoublePoint> cl : clusters ) {
+			GamaList clG = (GamaList) GamaListFactory.create();
+			for ( EuclideanDoublePoint pt : cl.getPoints() ) {
+				clG.addValue(scope, ((Instance) pt).getId());
+			}
+			results.addValue(scope, clG);
+		}
+		return results;
+	}
+
+	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k) and the maximum number of iterations to run the algorithm for (If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
-		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-		examples = { @example("kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)")})
+	special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+	examples = { @example("kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)") })
 	public static
-		GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k, final Integer maxIt)
-			throws GamaRuntimeException {
-			Random rand = new Random(scope.getRandom().getSeed().longValue());
-			KMeansPlusPlusClusterer<EuclideanDoublePoint> kmeans = new KMeansPlusPlusClusterer<EuclideanDoublePoint>(rand);
-			
-			List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
-			for (int i = 0; i < data.size(); i++) {
-				GamaList d = (GamaList) data.get(i);
-				double point[] = new double[d.size()];
-				for (int j = 0; j < d.size(); j++) point[j] = Cast.asFloat(scope, d.get(j));
-				instances.add(new Instance(i, point));
+	GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k,
+			final Integer maxIt) throws GamaRuntimeException {
+		Random rand = new Random(scope.getRandom().getSeed().longValue());
+		KMeansPlusPlusClusterer<EuclideanDoublePoint> kmeans = new KMeansPlusPlusClusterer<EuclideanDoublePoint>(rand);
+
+		List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
+		for ( int i = 0; i < data.size(); i++ ) {
+			GamaList d = (GamaList) data.get(i);
+			double point[] = new double[d.size()];
+			for ( int j = 0; j < d.size(); j++ ) {
+				point[j] = Cast.asFloat(scope, d.get(j));
 			}
-			List<Cluster<EuclideanDoublePoint>> clusters = kmeans.cluster(instances, k, maxIt);
-			GamaList results =  (GamaList) GamaListFactory.create();
-			for (Cluster<EuclideanDoublePoint> cl : clusters) {
-				GamaList clG =  (GamaList) GamaListFactory.create();
-				for (EuclideanDoublePoint pt : cl.getPoints()) {
-					clG.addValue(scope, ((Instance) pt).getId());
-				}
-				results.addValue(scope, clG);
-			}
-			return results;
+			instances.add(new Instance(i, point));
 		}
-	@operator(value = "kmeans", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
+		List<Cluster<EuclideanDoublePoint>> clusters = kmeans.cluster(instances, k, maxIt);
+		GamaList results = (GamaList) GamaListFactory.create();
+		for ( Cluster<EuclideanDoublePoint> cl : clusters ) {
+			GamaList clG = (GamaList) GamaListFactory.create();
+			for ( EuclideanDoublePoint pt : cl.getPoints() ) {
+				clG.addValue(scope, ((Instance) pt).getId());
+			}
+			results.addValue(scope, clG);
+		}
+		return results;
+	}
+
+	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k). Usage: kmeans(data,k)",
-		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-		examples = { @example("kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)")})
+	special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+	examples = { @example("kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)") })
 	public static
-		GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k)
-			throws GamaRuntimeException {
-			return KMeansPlusplusApache(scope,data,k,-1);
+	GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k)
+		throws GamaRuntimeException {
+		return KMeansPlusplusApache(scope, data, k, -1);
+	}
+
+	@operator(value = "build",
+		can_be_const = false,
+		type = IType.REGRESSION,
+		category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build(data,method)",
+	examples = { @example("build([1,2,3,4][2,3,4,2],\"GLS\")") })
+	public static
+	GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data, final String method)
+		throws GamaRuntimeException {
+		try {
+			return new GamaRegression(scope, data, method);
+		} catch (Exception e) {
+			throw GamaRuntimeException.error("The GLS operator is not usable for these data", scope);
 		}
-	
+	}
+
+	@operator(value = "build",
+		can_be_const = false,
+		type = IType.REGRESSION,
+		category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given ordinary least squares method. Usage: build(data)",
+	examples = { @example("build([1,2,3,4][2,3,4,2])") })
+	public static
+		GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data) throws GamaRuntimeException {
+		try {
+
+			return new GamaRegression(scope, data, "OSL");
+		} catch (Exception e) {
+			throw GamaRuntimeException.error("The GLS operator is not usable for these data", scope);
+		}
+	}
+
+	@operator(value = "predict", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
+	@doc(value = "returns the value predict by the regression parameters for a given instance. Usage: predict(regression, instance)",
+	examples = { @example("predict(my_regression, [1,2,3]") })
+	public static
+	Double predictFromRegression(final IScope scope, final GamaRegression regression,
+			final GamaList<Double> instance) throws GamaRuntimeException {
+		return regression.predict(scope, instance);
+	}
+
 }
-
-

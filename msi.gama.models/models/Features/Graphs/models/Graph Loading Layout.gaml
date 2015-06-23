@@ -26,13 +26,13 @@ global {
 
 species edge_agent {
 	aspect default {	
-		draw shape color: rgb("black");
+		draw shape color: #black;
 	}
 }
 
 species node_agent {
 	aspect default {	
-		draw circle(2) color: rgb("red");
+		draw circle(2) color: #red;
 	}
 }
 

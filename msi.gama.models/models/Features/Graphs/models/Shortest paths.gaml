@@ -17,7 +17,7 @@ global {
 	path shortest_path;
 	list<path> k_shortest_paths;
 	int k <- 3; 
-	list<rgb> colors <- [rgb("red"),rgb("green"),rgb("blue"),rgb("pink"),rgb("cyan"),rgb("magenta"),rgb("yellow")];
+	list<rgb> colors <- [#red,#green,#blue,#pink,#cyan,#magenta,#yellow];
 	bool save_shortest_paths <- false;
 	bool load_shortest_paths <- false;
 	string shortest_paths_file <- "../includes/shortest_paths.csv";
@@ -50,7 +50,7 @@ global {
 
 species road  {
 	aspect base {
-		draw shape color: rgb('black') ;
+		draw shape color: #black ;
 	} 
 }
 
@@ -64,9 +64,9 @@ experiment ShortestPath type: gui {
 			species road aspect: base;
 			graphics "shortest path" {
 				if (shortest_path != nil) {
-					draw circle(5) at: source color: rgb("green");
-					draw circle(5) at: target color: rgb("cyan");
-					draw (shortest_path.shape + 2.0) color: rgb("magenta");
+					draw circle(5) at: source color: #green;
+					draw circle(5) at: target color: #cyan;
+					draw (shortest_path.shape + 2.0) color: #magenta;
 				}
 			}
 		}
@@ -74,8 +74,8 @@ experiment ShortestPath type: gui {
 			species road aspect: base;
 			graphics "k shortest paths" {
 				if (shortest_path != nil) {
-					draw circle(5) at: source color: rgb("green");
-					draw circle(5) at: target color: rgb("cyan");
+					draw circle(5) at: source color: #green;
+					draw circle(5) at: target color: #cyan;
 					loop i from: 0 to: length(k_shortest_paths) - 1{
 						draw ((k_shortest_paths[i]).shape + 2.0) color: colors[i];
 					}

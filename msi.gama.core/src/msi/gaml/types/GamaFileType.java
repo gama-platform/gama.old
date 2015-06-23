@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaFileType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
@@ -17,8 +17,6 @@ import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -32,7 +30,7 @@ import org.eclipse.core.runtime.*;
  * Written by drogoul
  * Modified on 1st Aug. 2010
  * Modified on 30 Dec. 2013
- * 
+ *
  */
 @type(name = IKeyword.FILE, id = IType.FILE, wraps = { IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaFileType extends GamaContainerType<IGamaFile> {
@@ -44,7 +42,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	/**
 	 * Adds a new file type definition.
-	 * 
+	 *
 	 * @param string a string representin the type of the file in GAML
 	 * @param clazz the class that supports this file type
 	 * @param s an array of allowed extensions for files of this type
@@ -70,7 +68,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	/**
 	 * Verifies if the path has the correct extension with respect to the type of the file.
-	 * 
+	 *
 	 * @param type a string representing the type of the file
 	 * @param path an absolute or relative file path
 	 * @return true if the extension of the path belongs to the extensions of the file type, false if the type is
@@ -140,36 +138,6 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 				(IModifiableContainer) param); }
 		}
 		return getDefault();
-	}
-
-	// @doc(deprecated = "use 'is_property' instead", value =
-	// "the operator tests whether the operand represents the name of a supported properties file", comment =
-	// "cf. file type definition for supported (espacially image) file extensions.", examples = {
-	// "is_properties(\"../includes/Stupid_Cell.Data\")    --:  false;",
-	// "is_properties(\"../includes/test.png\")            --:  false;",
-	// "is_properties(\"../includes/test.properties\")     --:  true;",
-	// "is_properties(\"../includes/test.shp\")            --:  false;" }, see = { "properties", "is_text",
-	// "is_shape", "is_image" })
-	@operator(value = "is_properties")
-	@doc(deprecated = "use 'is_property' instead")
-	@Deprecated
-	public static Boolean isProperties(final String f) {
-		return verifyExtension("property", f);
-	}
-
-	// @doc(deprecated = "use 'is_gaml' instead", value =
-	// "the operator tests whether the operand represents the name of a supported gamlfile", comment =
-	// "cf. file type definition for supported (espacially model) file extensions.", examples = {
-	// "is_shape(\"../includes/Stupid_Cell.Data\")    --:  false;",
-	// "is_shape(\"../includes/test.png\")            --:  false;",
-	// "is_shape(\"../includes/test.properties\")     --:  false;",
-	// "is_shape(\"../includes/test.gaml\")            --:  true;" }, see = { "image", "is_text", "is_properties",
-	// "is_image" })
-	@operator(value = "is_GAML")
-	@doc(deprecated = "use 'is_gaml' instead")
-	@Deprecated
-	public static Boolean isGAML(final String f) {
-		return verifyExtension("gaml", f);
 	}
 
 	@Override

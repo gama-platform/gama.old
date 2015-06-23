@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MyTexture.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -104,7 +104,10 @@ public class TextureCache {
 		final Thread loadingThread;
 
 		public TextureAsyncBuilder() {
+			long t0 = System.currentTimeMillis();
 			GLProfile profile = GLProfile.getDefault();
+			long t1 = System.currentTimeMillis();
+			System.out.println("GLProfile took: " + (t1 - t0) + "ms");
 			GLCapabilities cap = new GLCapabilities(profile);
 			cap.setStencilBits(8);
 			cap.setDoubleBuffered(true);

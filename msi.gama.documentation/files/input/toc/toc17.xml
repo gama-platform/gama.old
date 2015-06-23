@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- NOTE: 
- - the documentation should begin by a chapter (otherwise the part will not be taken into account)
--->
 <toc title="Full Documentation of GAMA 7">
+	<part name= "Introduction">
 		<chapter name="Introduction" file="G__Overview"/>		
-	<part name="Platform"/>	
+	</part>
+	<part name="Platform">	
 		<chapter name="Platform" file="G__Platform"/>		
 		<chapter name="1.1 Installation" file="G__Installation"/>	
-		<chapter name="1.2 Launching GAMA" file="G__Launching"/>		
+	    <chapter name="1.2 Launching GAMA" file="G__Launching"/>		
 		<chapter name="1.3 Headless Mode" file="G__Headless"/>		
 		<chapter name="1.4 Updating GAMA" file="G__Updating"/>		
 		<chapter name="1.5 Installing Plugins" file="G__InstallingPlugins"/>		
@@ -20,25 +19,26 @@
 		<chapter name="3. Editing Models" file="G__EditingModels"/>	
 		<chapter name="3.1 GAML Editor" file="G__GamlEditor"/>		
 		<chapter name="3.2 Validation of Models" file="G__ValidationOfModels"/>		
-		<chapter name="3.3 Graphical Editor" file="G__GraphicalEditor"/>				
+		<chapter name="3.3 Graphical Editor" file="G__GraphicalEditor"/>	
 		<chapter name="4. Running Experiments" file="G__RunningExperiments"/>	
 		<chapter name="4.1 Launching Experiments" file="G__LaunchingExperiments"/>		
 		<chapter name="4.2 Experiments User interface" file="G__ExperimentsUserInterface"/>		
 		<chapter name="4.2.1 Menus and commands" file="G__MenusAndCommands"/>
 		<chapter name="4.2.2 Parameters view" file="G__ParametersView"/>			
-		<chapter name="4.2.3 Inspectors and monitors" file="G__InspectorsAndMonitors"/>	
+		<chapter name="4.2.3 Inspectors and monitors" file="G__InspectorsAndMonitors"/>
 		<chapter name="4.2.4 Displays" file="G__Displays"/>		
 		<chapter name="4.2.5 Batch Specific UI" file="G__BatchSpecific"/>
 		<chapter name="4.2.6 Errors View" file="G__ErrorsView"/>		 
-		<chapter name="5. Preferences" file="G__Preferences"/>		 
-	<part name="GAML (GAMA Modeling Language)"/>		
+		<chapter name="5. Preferences" file="G__Preferences"/>
+	</part>	 
+	<part name="GAML (GAMA Modeling Language)">
 		<chapter name="GAML (GAMA Modeling Language)" file="G__GamlLanguage"/>	
 		<chapter name="1. Key Concepts" file="G__KeyConcepts"/>
 		<chapter name="1.1 Runtime Concepts" file="G__RuntimeConcepts"/>
 		<chapter name="2. Organization of a Model" file="G__OrganizationModel"/>	
 		<chapter name="3. Defining Species" file="G__DefiningSpecies"/>
-		<chapter name="3.1 Global Species" file="G__GlobalSpecies"/>
-<!--		<chapter name="3.2 Regular Species" file="G__RegularSpecies"/>		-->
+		<chapter name="3.1 Global Species" file="G__GlobalSpecies"/> 
+		<chapter name="3.2 Regular Species" file="G__RegularSpecies"/>		
 		<chapter name="3.3 Grid Species" file="G__GridSpecies"/>
 		<chapter name="3.4 Graph Species" file="G__GraphSpecies"/>
 		<chapter name="3.5 Mirror Species" file="G__MirrorSpecies"/>
@@ -57,7 +57,7 @@
 		<chapter name="4.2.1 Defining Displays" file="G__DefiningDisplays"/>	
 		<chapter name="4.2.1.1 Defining Chart Layers" file="G__DefiningChartLayers"/>
 		<chapter name="4.2.1.2 Defining Other Layers" file="G__DefiningOtherLayers"/>
-		<chapter name="4.2.1.3 3D Specific Instructions" file="G__3DSpecificInstructions"/>
+		<chapter name="4.2.1.3 3D Specific Instructions" file="G__3DSpecificInstructions"/>	
 		<chapter name="4.2.2 Defining Inspectors and Monitors" file="G__DefiningMonitorsAndInspectors"/>
 		<chapter name="4.2.3 Defining Files" file="G__DefiningFiles"/>
 		
@@ -69,8 +69,8 @@
 		<chapter name="6.1 Built-in Species" file="G__BuiltInSpecies"/>
 		<chapter name="6.1.1 'agent'" file="G__AgentBuiltInSpecies"/>		
 		<chapter name="6.1.2 'model'" file="G__ModelBuiltInSpecies"/>		
-		<chapter name="6.1.3 'experiment'" file="G__ExperimentBuiltInSpecies"/>		
-<!--		<chapter name="6.1.4 Other Built-in Species" file="G__OtherBuiltInSpecies"/>	-->
+		<chapter name="6.1.3 'experiment'" file="G__ExperimentBuiltInSpecies"/>	
+		<chapter name="6.1.4 Other Built-in Species" file="G__OtherBuiltInSpecies"/> 
 		<chapter name="6.2 Built-in Skills" file="G__BuiltInSkills"/>
 		<chapter name="6.3 Built-in Control Architectures" file="G__BuiltInControlArchitectures"/>
 		<chapter name="6.3.1 Finite State Machine" file="G__FiniteStateMachine"/>
@@ -78,28 +78,30 @@
 		<chapter name="6.3.3 User Controlled" file="G__UserControlled"/>
 		<chapter name="6.4 Statements" file="G__Statements"/>
 		<chapter name="6.5 Data Types" file="G__DataTypes"/>
-		<chapter name="6.5.1 File Types" file="G__FileTypes"/>
+		<chapter name="6.5.1 File Types" file="G__FileTypes"/> 
 
-		<chapter name="6.6 Expressions" file="G__Expressions"/>
-		<chapter name="6.6.1 Literals" file="G__Literals"/>		
+		<chapter name="6.6 Expressions" file="G__Expressions"/>		
+		<chapter name="6.6.1 Literals" file="G__Literals"/>
 		<chapter name="6.6.2 Units and constants" file="G__UnitsAndConstants"/>		
 		<chapter name="6.6.3 Pseudo-variables" file="G__PseudoVariables"/>		
-		<chapter name="6.6.4 Variables and attributes" file="G__VariablesAndAttributes"/>	
-		
-		<chapter name="6.6.5 Operators (A to K)" file="G__OperatorsAK"/>		
-		<chapter name="6.6.6 Operators (L to Z)" file="G__OperatorsLZ"/>		
-			
+		<chapter name="6.6.4 Variables and attributes" file="G__VariablesAndAttributes"/>
+		<chapter name="6.6.5 Operators" file="G__Operators"/>
+	</part>
+	<part name="Recipes">
 		<chapter name="7. Recipes" file="G__Recipes"/>
-		<chapter name="7.1 Optimizing Models" file="G__OptimizingModels"/>
-<!--		<chapter name="7.2 Using Equations" file="G__UsingEquations"/>		-->
+		<chapter name="7.1 Optimizing Models" file="G__OptimizingModels"/> 
+		<chapter name="7.2 Using Equations" file="G__UsingEquations"/>		
 
-<!--		<chapter name="7.3 Implementing Diffusion" file="G__Diffusion"/>	-->
+		<chapter name="7.3 Implementing Diffusion" file="G__Diffusion"/>	
 		<chapter name="7.4 Using Database Access" file="G__UsingDatabase"/>		
-		<chapter name="7.5 Calling R" file="G__CallingR"/>
-<!--		<chapter name="7.6 Using FIPA ACL" file="G__UsingFIPAACL"/>			-->
-<!--		<chapter name="7.7 Using the Driving Skill" file="G__UsingDringSkill"/> 	-->
-		<chapter name="7.8 Defining User Interaction" file="G__DefininUserInteraction"/>		
-			
-	<part name="References"/>
+		<chapter name="7.5 Calling R" file="G__CallingR"/>		
+		<chapter name="7.6 Using FIPA ACL" file="G__UsingFIPAACL"/>			
+		<chapter name="7.7 Using the Driving Skill" file="G__UsingDringSkill"/>
+
+		<chapter name="7.8 Defining User Interaction" file="G__DefininUserInteraction"/>
+		<chapter name="7.9 Using BDI agents" file="G__UsingBDI"/>
+	</part>
+	<part name="References">
 		<chapter name="References" file="G__References"/>		
+	</part>
 </toc>		

@@ -1,12 +1,14 @@
 package msi.gaml.architecture.simplebdi;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class Operators {
@@ -79,7 +81,34 @@ public class Operators {
 		tempList.add(pred1);
 		tempList.add(pred2);
 		tempPred.setSubintentions(tempList);
+		Map<String,Object> tempMap = new HashMap();
+		tempMap.put("and", true);
+		tempPred.setValues(tempMap);
 		return tempPred;
 	}
-
+	
+	@operator(value = "or", can_be_const = true, category = { "BDI" })
+	@doc(value = "create a new predicate from two others by including them as subintentions. It's an exclusive \"or\" ",
+			examples = @example(value = "predicate1 or predicate2", test=false))
+	public static Predicate or(final Predicate pred1,final Predicate pred2){
+		Predicate tempPred=new Predicate(pred1.getName()+"_or_"+pred2.getName());
+		List<Predicate> tempList= new ArrayList<Predicate>();
+		tempList.add(pred1);
+		tempList.add(pred2);
+		tempPred.setSubintentions(tempList);
+		Map<String,Object> tempMap = new HashMap();
+		tempMap.put("or", true);
+		tempPred.setValues(tempMap);
+		return tempPred;
+	}
+	
+	@operator(value = "eval_when", can_be_const = true, category = { "BDI" })
+	@doc(value = "evaluate the facet when of a given plan", 
+			examples = @example(value = "eval_when(plan1)", test=false))
+	public static Boolean evalWhen(final IScope scope,final BDIPlan plan){
+		return ((SimpleBdiPlanStatement) plan.getPlanStatement()).getContextExpression() == null ||
+				msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlanStatement) plan.getPlanStatement()).getContextExpression()
+						.value(scope));
+	}
+	
 }

@@ -106,13 +106,13 @@ species intersection skills: [skill_road_node] {
 	
 	action to_green {
 		stop[0] <- ways2 ;
-		color_fire <- rgb("green");
+		color_fire <- #green;
 		is_green <- true;
 	}
 	
 	action to_red {
 		stop[0] <- ways1;
-		color_fire <- rgb("red");
+		color_fire <- #red;
 		is_green <- false;
 	}
 	reflex dynamic_node when: is_traffic_signal  {
@@ -132,7 +132,7 @@ species intersection skills: [skill_road_node] {
 	
 	aspect base3D {
 		if (is_traffic_signal) {	
-			draw box(1,1,10) color:rgb("black");
+			draw box(1,1,10) color:#black;
 			draw sphere(5) at: {location.x,location.y,12} color: color_fire;
 		}
 	}
@@ -142,10 +142,10 @@ species road skills: [skill_road] {
 	geometry geom_display;
 	string oneway;
 	aspect base {    
-		draw shape color: rgb("gray") end_arrow: 10;
+		draw shape color: #gray end_arrow: 10;
 	} 
 	aspect base3D {    
-		draw geom_display color: rgb("gray") ;
+		draw geom_display color: #gray ;
 	} 
 }
 	
@@ -192,7 +192,7 @@ species people skills: [advanced_driving] {
 		draw triangle(0.5) depth: 1.5 at: loc rotate:  heading + 90 color: color;
 		
 		if (breakdown) {
-			draw circle(2) at: loc color: rgb("red");
+			draw circle(2) at: loc color: #red;
 		}
 	} 
 	
@@ -215,7 +215,7 @@ species people skills: [advanced_driving] {
 experiment experiment_2D type: gui {
 	parameter "if true, simple data (simple track), if false complex one (Manhattan):" var: simple_data category: "GIS" ;
 	output {
-		display city_display refresh_every: 1 {
+		display city_display {
 			species road aspect: base ;
 			species intersection aspect: base;
 			species people aspect: base;

@@ -33,12 +33,12 @@ species node_agent mirrors: list(bug) parent: graph_node edge_species: edge_agen
 	}
 
 	aspect base {
-		draw sphere(2) color: rgb('green');
+		draw sphere(2) color: #green;
 	}
 
 	aspect dynamic {
 		int degree <- (my_graph) degree_of (self);
-		draw sphere(1 + (degree / 5.0)) color: rgb('blue');
+		draw sphere(1 + (degree / 5.0)) color: #blue;
 	}
 
 }
@@ -46,7 +46,7 @@ species node_agent mirrors: list(bug) parent: graph_node edge_species: edge_agen
 species edge_agent parent: base_edge {
 	rgb color;
 	aspect base {
-		draw shape color: rgb("green");
+		draw shape color: #green;
 	}
 
 	aspect dynamic {

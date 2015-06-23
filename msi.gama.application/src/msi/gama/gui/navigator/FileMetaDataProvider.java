@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 11 févr. 2015
- * 
+ *
  */
 package msi.gama.gui.navigator;
 
@@ -25,10 +25,10 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Class FileMetaDataProvider.
- * 
+ *
  * @author drogoul
  * @since 11 févr. 2015
- * 
+ *
  */
 public class FileMetaDataProvider implements IFileMetaDataProvider {
 
@@ -128,7 +128,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(p);
 				if ( file == null || !file.exists() ) { return null; }
 			}
-		}
+		} else if ( !file.isAccessible() ) { return null; }
 		String ct = getContentTypeId(file);
 		Class infoClass = CLASSES.get(ct);
 		if ( infoClass == null ) { return null; }
@@ -170,7 +170,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	public void storeMetadata(final IFile file, final IGamaFileMetaData data) {
 		try {
+			if ( ResourcesPlugin.getWorkspace().isTreeLocked() ) { return; }
 			data.setModificationStamp(file.getModificationStamp());
+			System.out.println("Writing back metadata to " + file);
 			ResourcesPlugin.getWorkspace().getSynchronizer()
 				.setSyncInfo(CACHE_KEY, file, data == null ? null : data.toPropertyString().getBytes("UTF-8"));
 			// file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
@@ -187,6 +189,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			});
 
 		} catch (Exception ignore) {
+			ignore.printStackTrace();
 			System.err.println("Error storing metadata for " + file.getName() + " : " + ignore.getMessage());
 		}
 	}

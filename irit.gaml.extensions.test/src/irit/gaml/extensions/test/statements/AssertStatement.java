@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AssertStatement.java', in plugin 'irit.gaml.extensions.test', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package irit.gaml.extensions.test.statements;
 
@@ -70,10 +70,10 @@ public class AssertStatement extends AbstractStatement {
 		super(desc);
 		setName("assert");
 
-		Collection<IDescription> statements = desc.getSpeciesContext().getBehaviors();
-		for ( IDescription s : statements ) {
+		Collection<StatementDescription> statements = desc.getSpeciesContext().getBehaviors();
+		for ( StatementDescription s : statements ) {
 			if ( "setup".equals(s.getName()) ) {
-				setUpStatement = (StatementDescription) s;
+				setUpStatement = s;
 			}
 		}
 
@@ -95,11 +95,13 @@ public class AssertStatement extends AbstractStatement {
 		if ( equals != null ) {
 			if ( value.value(scope) != null ) {
 				if ( !value.value(scope).equals(equals.value(scope)) ) { throw GamaRuntimeException.error(
-					"Assert equals ERROR : " + value.serialize(false) + " is not equals to " + equals.value(scope), scope); }
+					"Assert equals ERROR : " + value.serialize(false) + " is not equals to " + equals.value(scope),
+					scope); }
 				return null;
 			} else {
 				if ( equals.value(scope) != null ) { throw GamaRuntimeException.error(
-					"Assert equals ERROR : " + value.serialize(false) + " is not equals to " + equals.value(scope), scope); }
+					"Assert equals ERROR : " + value.serialize(false) + " is not equals to " + equals.value(scope),
+					scope); }
 				return null;
 			}
 		}
@@ -117,17 +119,20 @@ public class AssertStatement extends AbstractStatement {
 			} catch (GamaRuntimeException e) {
 				boolean isWarning = e.isWarning() && !scope.getExperiment().getWarningsAsErrors();
 
-				if ( isWarning && IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException.error(
-					"Assert raises ERROR: " + value.serialize(false) + " does not raise an error. It raises a warning.", scope); }
-				if ( !isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException.error(
-					"Assert raises ERROR: " + value.serialize(false) + " does not raise a warning. It raises an error.", scope); }
+				if ( isWarning && IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
+					.error("Assert raises ERROR: " + value.serialize(false) +
+						" does not raise an error. It raises a warning.", scope); }
+				if ( !isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
+					.error("Assert raises ERROR: " + value.serialize(false) +
+						" does not raise a warning. It raises an error.", scope); }
 				if ( !IKeyword.ERROR.equals(raises.getName()) && !IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.serialize(false) + "does not raise a " + raises.getName() +
 						", it raises " + (isWarning ? "a warning." : "an error."), scope); }
 				return null;
 			} catch (Exception e) {
 				if ( !IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException.error(
-					"Assert raises ERROR: " + value.serialize(false) + " raises an error that is not managed by GAMA.", scope); }
+					"Assert raises ERROR: " + value.serialize(false) + " raises an error that is not managed by GAMA.",
+					scope); }
 				return null;
 			}
 			if ( IKeyword.ERROR.equals(raises.getName()) || IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException

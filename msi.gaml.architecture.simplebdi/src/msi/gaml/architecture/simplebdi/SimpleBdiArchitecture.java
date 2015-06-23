@@ -37,6 +37,7 @@ import msi.gaml.types.*;
 	@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.LAST_THOUGHTS, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.INTENTION_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
+	@var(name = SimpleBdiArchitecture.EMOTION_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.PLAN_BASE, type = IType.LIST, of = BDIPlanType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.CURRENT_PLAN, type = IType.NONE)})
@@ -73,16 +74,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String REMOVE_DESIRE_AND_INTENTION = "desire_also";
 	public static final String DESIRE_BASE = "desire_base";
 	public static final String INTENTION_BASE = "intention_base";
+	public static final String EMOTION_BASE = "emotion_base";
 	public static final String EVERY_VALUE = "every_possible_value";
 	public static final String PLAN_BASE = "plan_base";
 	public static final String CURRENT_PLAN = "current_plan";
 
 	private IScope _consideringScope;
 //	private final List<SimpleBdiPlanStatement> _plans = new ArrayList<SimpleBdiPlanStatement>();
-	private final List<SimpleBdiPlanStatement> _perceives = new ArrayList<SimpleBdiPlanStatement>();
+	private final List<PerceiveStatement> _perceptions = new ArrayList<PerceiveStatement>();
 	private final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
 	private int _plansNumber = 0;
-	private int _perceiveNumber = 0;
+	private int _perceptionNumber = 0;
 	private boolean iscurrentplaninstantaneous=false;
 
 	@Override
@@ -95,20 +97,27 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@Override
 	public void addBehavior(final IStatement c) {
-		
 		if ( c instanceof SimpleBdiPlanStatement ) {
 			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
 			_plans.add(new BDIPlan((SimpleBdiPlanStatement) c));
 			_plansNumber++;
-		} else {
+		} else if(c instanceof PerceiveStatement){
+			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
+			_perceptions.add((PerceiveStatement)c);
+			_perceptionNumber++;
+		} else{
 			super.addBehavior(c);
 		}
 	}
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		//le super permet de réaliser les reflex en premier
 		super.executeOn(scope);
+		if ( _perceptionNumber > 0 ) {
+			for ( int i = 0; i < _perceptionNumber; i++ ) {
+				_perceptions.get(i).executeOn(scope);
+			}
+		}
 		return executePlans(scope);
 	}
 
@@ -208,9 +217,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if ( !agent.dead() ) {
 //					System.out.println("_persistentTask 5 " +  _persistentTask);
 					result = _persistentTask.executeOn(scope);
-					boolean isExecuted =
-						_persistentTask.getExecutedExpression() == null ||
-							msi.gaml.operators.Cast.asBool(scope, _persistentTask.getExecutedExpression().value(scope));
+					boolean isExecuted = false;
+					if(_persistentTask.getExecutedExpression() != null){
+							isExecuted = msi.gaml.operators.Cast.asBool(scope, _persistentTask.getExecutedExpression().value(scope));
+					}
 					if (this.iscurrentplaninstantaneous)
 					{
 						loop_instantaneous_plans=true;
@@ -255,10 +265,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 				else{
 					for(int i=0; i<newIntention.getSubintentions().size();i++ ){
-						desireBase.addValue(scope, newIntention.getSubintentions().get(i));
+						if(!desireBase.contains(newIntention.getSubintentions().get(i))){
+							desireBase.addValue(scope, newIntention.getSubintentions().get(i));
+						}
 					}
-					desireBase.remove(newIntention);
-					return true;
+					newIntention.setOnHoldUntil(newIntention.getSubintentions());
+					if (!intentionBase.contains(newIntention)){
+						intentionBase.addValue(scope, newIntention);
+						return true;
+					}
 				}
 			}
 		}
@@ -284,10 +299,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}else{
 					for(int i=0; i<newIntention.getSubintentions().size();i++ ){
-						desireBase.addValue(scope, newIntention.getSubintentions().get(i));
+						if(!desireBase.contains(newIntention.getSubintentions().get(i))){
+							desireBase.addValue(scope, newIntention.getSubintentions().get(i));
+						}
 					}
-					desireBase.remove(newIntention);
-					return true;
+					newIntention.setOnHoldUntil(newIntention.getSubintentions());
+					if (!intentionBase.contains(newIntention)){
+						intentionBase.addValue(scope, newIntention);
+						return true;
+					}
 				}
 			}
 		}
@@ -305,7 +325,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			List<SimpleBdiPlanStatement> temp_plan = new ArrayList<SimpleBdiPlanStatement>();
 			IList priorities = GamaListFactory.create(Types.FLOAT);
 //			System.out.println("intention: " + getBase(scope, SimpleBdiArchitecture.INTENTION_BASE));
-			for ( Object statement : scope.getExperiment().getRandomGenerator().shuffle(_plans) ) {
+			for ( Object BDIPlanstatement : scope.getExperiment().getRandomGenerator().shuffle(_plans) ) {
+				SimpleBdiPlanStatement statement = ((BDIPlan)BDIPlanstatement).getPlanStatement();
 //				System.out.println("statement: " + statement);
 //				System.out.println("((SimpleBdiPlan) statement).getContextExpression(): " + ((SimpleBdiPlan) statement).getContextExpression());
 				boolean isContextConditionSatisfied =
@@ -386,12 +407,82 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public boolean testOnHold(final IScope scope, final Predicate intention) {
 		if ( intention == null ) { return false; }
 		if ( intention.onHoldUntil == null ) { return false; }
+		if (intention.getValues().containsKey("and")){
+//			System.out.println("intention : "+ intention);
+			Object cond = intention.onHoldUntil;
+//			System.out.println("onHoldUntil : "+ intention.onHoldUntil);
+//			System.out.println("size : "+ ((ArrayList)cond).size());
+			if(cond instanceof ArrayList){
+//				System.out.println("size : "+ ((ArrayList)cond).size());
+				if(((ArrayList)cond).size()==0){
+					GamaList desbase = getBase(scope, DESIRE_BASE);
+					GamaList intentionbase = getBase(scope, INTENTION_BASE);
+					desbase.remove(intention);
+					intentionbase.remove(intention);
+					for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+						if(((Predicate)statement).getSubintentions()!=null){
+							if(((Predicate)statement).getSubintentions().contains(intention)){
+								((Predicate)statement).getSubintentions().remove(intention);
+							}
+						}
+						if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+							if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(intention)){
+								((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(intention);
+							}
+						}
+					}
+					return false;
+				}
+				else{
+					return true;
+				}
+			}
+		}
+		if (intention.getValues().containsKey("or")){
+//			System.out.println("intention : "+ intention);
+			Object cond = intention.onHoldUntil;
+//			System.out.println("onHoldUntil : "+ intention.onHoldUntil);
+//			System.out.println("size : "+ ((ArrayList)cond).size());
+			if(cond instanceof ArrayList){
+				if(((ArrayList)cond).size()<=1){
+					System.out.println("size : "+ ((ArrayList)cond).size());
+					GamaList desbase = getBase(scope, DESIRE_BASE);
+					GamaList intentionbase = getBase(scope, INTENTION_BASE);
+					desbase.remove(intention);
+					intentionbase.remove(intention);
+					if(((ArrayList)cond).size()==1){
+						if(desbase.contains(((ArrayList)cond).get(0))){
+							desbase.remove(((ArrayList)cond).get(0));
+						}
+						for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+							if(((Predicate)statement).getSubintentions()!=null){
+								if(((Predicate)statement).getSubintentions().contains(intention)){
+									((Predicate)statement).getSubintentions().remove(intention);
+								}
+							}
+							if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+								if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(intention)){
+									((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(intention);
+								}
+							}
+						}
+					}
+					return false;
+				}
+				else{
+					return true;
+				}
+			}
+		}
 		Object cond = intention.onHoldUntil;
-		if ( cond instanceof GamaList ) {
+		if ( cond instanceof ArrayList ) {
 			GamaList desbase = getBase(scope, DESIRE_BASE);
 			if ( desbase.isEmpty() ) { return false; }
-			for ( Object subintention : (GamaList) cond ) {
-				if ( desbase.contains(subintention) ) { return true; }
+			for ( Object subintention : (ArrayList) cond ) {
+				if ( desbase.contains(subintention) ) {
+//					desbase.remove(intention);
+					return true; 
+					}
 			}
 			addThoughts(scope, "no more subintention for" + intention);
 			return false;
@@ -409,17 +500,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			doc = @doc(value = "get the list of plans.",
 			returns = "the list of BDI plans.",
 			examples = { @example("get_plans()") }))
-	public IList<BDIPlan> getPlans(final IScope scope) {
-		final IAgent agent = getCurrentAgent(scope);
-		IList<BDIPlan> mylist=GamaListFactory.create(Types.NO_TYPE);
+	public List<BDIPlan> getPlans(final IScope scope) {
 		if (_plans.size()>0)
 		{
-			for (int i=0; i<_plans.size(); i++)
-			{
-				mylist.add(_plans.get(i));
-			}
+			return _plans;
 		}
-		return mylist;
+		return null;
 	}
 
 
@@ -457,7 +543,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		returns = "true if it is in the base.",
 		examples = { @example("") }))
 	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-	//Je rajoute ici le moteur pour supprimer une intention si on ajoute la croyance.
 		public
 		Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
@@ -467,6 +552,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
 				removeFromBase(scope, predicateDirect, INTENTION_BASE);
+			}
+			for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+				if(((Predicate)statement).getSubintentions()!=null){
+					if(((Predicate)statement).getSubintentions().contains(predicateDirect)){
+						((Predicate)statement).getSubintentions().remove(predicateDirect);
+					}
+				}
+				if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+					if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(predicateDirect)){
+						((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(predicateDirect);
+					}
+				}
 			}
 			return addToBase(scope, predicateDirect, BELIEF_BASE); 
 		}
@@ -685,10 +782,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if ( superpredicate != null ) {
 				if ( superpredicate.getSubintentions() == null ) {
 					superpredicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
-
 				}
 				superpredicate.getSubintentions().add(predicateDirect);
-
 			}
 			addToBase(scope, predicateDirect, DESIRE_BASE);
 			return true;
@@ -737,6 +832,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					removeFromBase(scope, newPredicate, DESIRE_BASE);
 					removeFromBase(scope, newPredicate, INTENTION_BASE);
 				}
+				for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+					if(((Predicate)statement).getSubintentions()!=null){
+						if(((Predicate)statement).getSubintentions().contains(newPredicate)){
+							((Predicate)statement).getSubintentions().remove(newPredicate);
+						}
+					}
+					if(((GamaList)((Predicate)statement).getOnHoldUntil())!=null){
+						if(((GamaList)((Predicate)statement).getOnHoldUntil()).contains(newPredicate)){
+							((GamaList)((Predicate)statement).getOnHoldUntil()).remove(newPredicate);
+						}
+					}
+				}
 				return addToBase(scope, newPredicate, BELIEF_BASE); 
 			}
 			return ok;
@@ -778,6 +885,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			getBase(scope, INTENTION_BASE).remove(predicateDirect);
 			if ( dodesire ) {
 				getBase(scope, DESIRE_BASE).remove(predicateDirect);
+			}
+			for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+				if(((Predicate)statement).getSubintentions()!=null){
+					if(((Predicate)statement).getSubintentions().contains(predicateDirect)){
+						((Predicate)statement).getSubintentions().remove(predicateDirect);
+					}
+				}
+				if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+					if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(predicateDirect)){
+						((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(predicateDirect);
+					}
+				}
 			}
 			return true;
 		}

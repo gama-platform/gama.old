@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'InputParameter.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
@@ -23,7 +23,7 @@ public class InputParameter extends ParameterAdapter {
 	private Number min, max;
 
 	InputParameter(final String name, final Object value) {
-		this(name, value, Types.get(value == null ? Object.class : value.getClass()));
+		this(name, value, Types.get(value == null ? Object.class : (Class<Object>) value.getClass()));
 	}
 
 	public InputParameter(final String name, final Object value, final IType type) {

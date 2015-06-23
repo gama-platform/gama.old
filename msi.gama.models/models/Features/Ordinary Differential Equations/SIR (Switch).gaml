@@ -98,248 +98,232 @@ global {
 
 environment width: grid_size height: grid_size {
 	grid sir_grid width: grid_size height: grid_size {
-		rgb color <- rgb('black');
+		rgb color <- #black;
 		list<sir_grid> neighbours <- (self neighbours_at neighbours_range) of_species sir_grid;
 	}
 
 }
 
-entities {
-	species new_scheduler schedules: (Host + IBM_model + Math_model + switch_model) {
-	}
 
-	species switch_model schedules: [] {
-		int threshold_to_IBM <- 45; // threshold under which the model swith to IBM
-		int threshold_to_Maths <- 50; // threshold under which the model swith to Maths model 
-		bool start_with_IBM function: { (initial_S < threshold_to_IBM or initial_I < threshold_to_IBM) };
+species new_scheduler schedules: (Host + IBM_model + Math_model + switch_model) ;
 
-		// task switch_to_IBM weight:1 when: (current_model.model_type = 'Maths'){
-		reflex switch_to_IBM when: (current_model.model_type = 'Maths') {
-			if (current_model.S < threshold_to_IBM or current_model.I < threshold_to_IBM) {
-				write 'Switch to IBM model at cycle ' + string(cycle);
-				create IBM_model {
-				//	do write message: 'current_model.S: ' + string(current_model.S);
-					self.S <- current_model.S;
-					self.I <- current_model.I;
-					self.R <- current_model.R;
-					self.N <- current_model.N;
-					do initialize;
-				}
+species switch_model schedules: [] {
+	int threshold_to_IBM <- 45; // threshold under which the model swith to IBM
+	int threshold_to_Maths <- 50; // threshold under which the model swith to Maths model 
+	bool start_with_IBM function: { (initial_S < threshold_to_IBM or initial_I < threshold_to_IBM) };
 
-				ask current_model {
-					do remove_model;
-				}
-
-				current_model <- first(IBM_model);
+	// task switch_to_IBM weight:1 when: (current_model.model_type = 'Maths'){
+	reflex switch_to_IBM when: (current_model.model_type = 'Maths') {
+		if (current_model.S < threshold_to_IBM or current_model.I < threshold_to_IBM) {
+			write 'Switch to IBM model at cycle ' + string(cycle);
+			create IBM_model {
+				self.S <- current_model.S;
+				self.I <- current_model.I;
+				self.R <- current_model.R;
+				self.N <- current_model.N;
+				do initialize;
 			}
 
-		}
-
-		reflex switch_to_Maths when: (current_model.model_type = 'IBM') {
-		//			do write message: 'now is IBM';
-			if (current_model.S > threshold_to_Maths and current_model.I > threshold_to_Maths) {
-				write 'Switch to Maths model at cycle ' + cycle;
-				create Math_model {
-					self.S <- current_model.S;
-					self.I <- current_model.I;
-					self.R <- current_model.R;
-					self.N <- current_model.N;
-					do initialize;
-				}
-
-				ask current_model {
-					do remove_model;
-				}
-
-				current_model <- first(Math_model);
+			ask current_model {
+				do remove_model;
 			}
 
+			current_model <- first(IBM_model);
 		}
 
 	}
 
-	species SIR_model schedules: [] {
-		float S;
-		float I;
-		float R;
-		int N;
-		string model_type <- 'none';
-		
-		action remove_model {
-		//		do write message: 'removing model';
-			do die;
-		}
-
-		action initialize ;
-
-	}
-
-	species IBM_model schedules: [] parent: SIR_model {
-		string model_type <- 'IBM';
-		
-		action initialize {
-			write 'Initializing IBM model with S=' + round(S) + ', I=' + round(I) + ', R=' + round(R) + '\n';
-			create Host number: round(S) {
-				is_susceptible <- true;
-				is_infected <- false;
-				is_immune <- false;
-				color <- rgb('green');
+	reflex switch_to_Maths when: (current_model.model_type = 'IBM') {
+		if (current_model.S > threshold_to_Maths and current_model.I > threshold_to_Maths) {
+			write 'Switch to Maths model at cycle ' + cycle;
+			create Math_model {
+				self.S <- current_model.S;
+				self.I <- current_model.I;
+				self.R <- current_model.R;
+				self.N <- current_model.N;
+				do initialize;
 			}
 
-			create Host number: round(I) {
-				is_susceptible <- false;
-				is_infected <- true;
-				is_immune <- false;
-				color <- rgb('red');
+			ask current_model {
+				do remove_model;
 			}
 
-			create Host number: round(R) {
-				is_susceptible <- false;
-				is_infected <- false;
-				is_immune <- true;
-				color <- rgb('yellow');
-			}
-			//force evaluation at first step;
-			do count;
+			current_model <- first(Math_model);
 		}
-
-		reflex count {
-			do count;
-		}
-
-		action count {
-			S <- float(Host count (each.is_susceptible));
-			I <- float(Host count (each.is_infected));
-			R <- float(Host count (each.is_immune));
-		}
-
-		action remove_model {
-			ask Host {
-				do die;
-			}
-
-			do die;
-		}
-
-	}
-
-	species Math_model schedules: [] parent: SIR_model {
-		string model_type <- 'Maths';
-		float t;
-		
-		action initialize {
-			write 'Initializing Maths model with S=' + S + ', I=' + I + ', R=' + R + '\n';
-		}
-
-		equation SIR {
-			diff(S, t) = (-beta_maths * S * I / N);
-			diff(I, t) = (beta_maths * S * I / N) - (delta * I);
-			diff(R, t) = (delta * I);
-		}
-
-		reflex solving {solve SIR method: "rk4" step: 0.01 ;}
-	}
-
-	species Host schedules: [] skills: [moving] {
-		bool is_susceptible <- true;
-		bool is_infected <- false;
-		bool is_immune <- false;
-		rgb color <- rgb('green');
-		sir_grid myPlace;
-		
-		/* next function computes the number of neighbours of the agent */
-		int ngb_number function: {
-			length(((self) neighbours_at (2)) of_species Host) - 1 // -1 is because the agent counts itself
-		};
-		
-		init {
-			myPlace <- one_of(sir_grid as list);
-			location <- myPlace.location;
-		}
-
-		reflex basic_move {
-			if (!local_random_walk) {
-			/* random walk among neighbours */
-				myPlace <- one_of(myPlace.neighbours);
-				location <- myPlace.location;
-				//				do wander amplitude:800;
-				//				set myPlace <- first(sir_grid overlapping (self)) ;      		
-
-			} else {
-			/* move agent to a random place anywhere in the grid */
-				myPlace <- any(sir_grid);
-				location <- myPlace.location;
-			}
-
-		}
-
-		reflex become_infected when: (is_susceptible and computeInfectionFromS) {
-		//        		if (flip(1 - (1 - beta)  ^ (((myPlace.neighbours + myPlace) collect (each.agents)) of_species Host as list) count (each.is_infected))) {
-			if (flip(1 - (1 - beta) ^ (((self) neighbours_at (2)) of_species Host) count (each.is_infected))) {
-				set is_susceptible <- false;
-				set is_infected <- true;
-				set is_immune <- false;
-				set color <- rgb('red');
-			}
-
-		}
-
-		reflex infecte_others when: (is_infected and not (computeInfectionFromS)) {
-		//          		loop hst over: ((myPlace.neighbours + myPlace) collect (each.agents)) of_species Host{
-			loop hst over: ((self) neighbours_at (2)) {
-				if (hst.is_susceptible) {
-					if (flip(beta)) {
-						hst.is_susceptible <- false;
-						hst.is_infected <- true;
-						hst.is_immune <- false;
-						hst.color <- rgb('red');
-					}
-				}
-			}
-		}
-
-		reflex become_immune when: (is_infected and flip(delta)) {
-			is_susceptible <- false;
-			is_infected <- false;
-			is_immune <- true;
-			color <- rgb('yellow');
-		}
-
-		//        reflex shallDie when: flip(nu) {
-		//			create species(self) number: 1 {
-		//				set myPlace <- myself.myPlace ;
-		//				set location <- myself.location ; 
-		//			}
-		//           	do die;
-		//        }
-		aspect basic {
-			draw circle(1) color: color;
-		}
-
-	}
-
-	species my_SIR_maths {
-		float t;
-		float I <- float(iInit);
-		float S <- N - I;
-		float R <- 0.0;
-				
-		float alpha <- 0.01 min: 0.0 max: 1.0;
-		float beta1 <- 0.1 min: 0.0 max: 1000.0;
-		int N <- 500 min: 1 max: 3000;
-		int iInit <- 1;
-
-		equation SIR {
-			diff(S, t) = (-beta1 * S * I / N);
-			diff(I, t) = (beta1 * S * I / N) - (alpha * I);
-			diff(R, t) = (alpha * I);
-		}
-		
-		reflex solving {solve SIR method:"rk4" step:0.01;}
 
 	}
 
 }
+
+species SIR_model schedules: [] {
+	float S;
+	float I;
+	float R;
+	int N;
+	string model_type <- 'none';
+	
+	action remove_model {
+		do die;
+	}
+
+	action initialize ;
+
+}
+
+species IBM_model schedules: [] parent: SIR_model {
+	string model_type <- 'IBM';
+	
+	action initialize {
+		write 'Initializing IBM model with S=' + round(S) + ', I=' + round(I) + ', R=' + round(R) + '\n';
+		create Host number: round(S) {
+			is_susceptible <- true;
+			is_infected <- false;
+			is_immune <- false;
+			color <- #green;
+		}
+
+		create Host number: round(I) {
+			is_susceptible <- false;
+			is_infected <- true;
+			is_immune <- false;
+			color <- #red;
+		}
+
+		create Host number: round(R) {
+			is_susceptible <- false;
+			is_infected <- false;
+			is_immune <- true;
+			color <- #yellow;
+		}
+		//force evaluation at first step;
+		do count;
+	}
+
+	reflex count {
+		do count;
+	}
+
+	action count {
+		S <- float(Host count (each.is_susceptible));
+		I <- float(Host count (each.is_infected));
+		R <- float(Host count (each.is_immune));
+	}
+
+	action remove_model {
+		ask Host {
+			do die;
+		}
+
+		do die;
+	}
+
+}
+
+species Math_model schedules: [] parent: SIR_model {
+	string model_type <- 'Maths';
+	float t;
+	
+	action initialize {
+		write 'Initializing Maths model with S=' + S + ', I=' + I + ', R=' + R + '\n';
+	}
+
+	equation SIR {
+		diff(S, t) = (-beta_maths * S * I / N);
+		diff(I, t) = (beta_maths * S * I / N) - (delta * I);
+		diff(R, t) = (delta * I);
+	}
+
+	reflex solving {solve SIR method: "rk4" step: 0.01 ;}
+}
+
+species Host schedules: [] skills: [moving] {
+	bool is_susceptible <- true;
+	bool is_infected <- false;
+	bool is_immune <- false;
+	rgb color <- #green;
+	sir_grid myPlace;
+	
+	/* next function computes the number of neighbours of the agent */
+	int ngb_number function: {
+		length(((self) neighbours_at (2)) of_species Host) - 1 // -1 is because the agent counts itself
+	};
+	
+	init {
+		myPlace <- one_of(sir_grid as list);
+		location <- myPlace.location;
+	}
+
+	reflex basic_move {
+		if (!local_random_walk) {
+		/* random walk among neighbours */
+			myPlace <- one_of(myPlace.neighbours);
+			location <- myPlace.location;
+		} else {
+		/* move agent to a random place anywhere in the grid */
+			myPlace <- any(sir_grid);
+			location <- myPlace.location;
+		}
+
+	}
+
+	reflex become_infected when: (is_susceptible and computeInfectionFromS) {
+		if (flip(1 - (1 - beta) ^ (((self) neighbours_at (2)) of_species Host) count (each.is_infected))) {
+			set is_susceptible <- false;
+			set is_infected <- true;
+			set is_immune <- false;
+			set color <- #red;
+		}
+
+	}
+
+	reflex infecte_others when: (is_infected and not (computeInfectionFromS)) {
+		loop hst over: ((self) neighbours_at (2)) {
+			if (hst.is_susceptible) {
+				if (flip(beta)) {
+					hst.is_susceptible <- false;
+					hst.is_infected <- true;
+					hst.is_immune <- false;
+					hst.color <- #red;
+				}
+			}
+		}
+	}
+
+	reflex become_immune when: (is_infected and flip(delta)) {
+		is_susceptible <- false;
+		is_infected <- false;
+		is_immune <- true;
+		color <- #yellow;
+	}
+
+	aspect basic {
+		draw circle(1) color: color;
+	}
+
+}
+
+species my_SIR_maths {
+	float t;
+	float I <- float(iInit);
+	float S <- N - I;
+	float R <- 0.0;
+			
+	float alpha <- 0.01 min: 0.0 max: 1.0;
+	float beta1 <- 0.1 min: 0.0 max: 1000.0;
+	int N <- 500 min: 1 max: 3000;
+	int iInit <- 1;
+
+	equation SIR {
+		diff(S, t) = (-beta1 * S * I / N);
+		diff(I, t) = (beta1 * S * I / N) - (alpha * I);
+		diff(R, t) = (alpha * I);
+	}
+	
+	reflex solving {solve SIR method:"rk4" step:0.01;}
+
+}
+
+
 
 experiment mysimulation type: gui {
 	parameter 'Number of Susceptible' type: int var: initial_S <- 495 category: "Initial population"; 
@@ -358,31 +342,24 @@ experiment mysimulation type: gui {
 	
 	output {
 		display 'sir display' {
-			grid sir_grid lines: rgb("black");
+			grid sir_grid lines: #black;
 			species Host aspect: basic;
 		}
-
-		//	    display distribution refresh_every: 1{
-		//	    		chart 'Distribution' type : pie background :rgb('lightGray'){
-		//		    		data 'susceptible' value: current_model.S color: rgb('green');
-		//					data 'infected' value: current_model.I color: rgb('red');
-		//					data 'immune' value: current_model.R color: rgb('yellow');
-		//				}
-		//	    }
-		display 'Switch model' refresh_every: 1 {
-			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
-				data 'susceptible' value: current_model.S color: rgb('green');
-				data 'infected' value: current_model.I color: rgb('red');
-				data 'immune' value: current_model.R color: rgb('yellow');
+	
+		display 'Switch model' {
+			chart 'Susceptible' type: series background: #lightgray style: exploded {
+				data 'susceptible' value: current_model.S color: #green;
+				data 'infected' value: current_model.I color: #red;
+				data 'immune' value: current_model.R color: #yellow;
 			}
 
 		}
 
-		display SI_maths refresh_every: 1 {
-			chart "SI" type: series background: rgb('white') {
-				data 'S' value: first((my_SIR_maths)).S color: rgb('green');
-				data 'I' value: first((my_SIR_maths)).I color: rgb('red');
-				data 'R' value: first((my_SIR_maths)).R color: rgb('yellow');
+		display SI_maths  {
+			chart "SI" type: series background: #white {
+				data 'S' value: first((my_SIR_maths)).S color: #green;
+				data 'I' value: first((my_SIR_maths)).I color: #red;
+				data 'R' value: first((my_SIR_maths)).R color: #yellow;
 			}
 
 		}

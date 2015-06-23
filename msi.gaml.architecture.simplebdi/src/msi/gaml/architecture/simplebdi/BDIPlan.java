@@ -38,7 +38,7 @@ import msi.gaml.types.*;
 	})
 public class BDIPlan implements IValue {
 
-	SimpleBdiPlanStatement planstatement;
+	private SimpleBdiPlanStatement planstatement;
 
 	@getter("name")
 	public String getName() {
@@ -51,18 +51,22 @@ public class BDIPlan implements IValue {
 	}
 	
 	@getter(SimpleBdiArchitecture.FINISHEDWHEN)
-	public IExpression getIntention() {
-		return this.planstatement._intention;
+	public String getFinishedWhen() {
+		return this.planstatement._executedwhen.serialize(true);
 	}
 	
 	@getter(SimpleBdiPlanStatement.INTENTION)
-	public String getFinishedWhen() {
-		return this.planstatement._executedwhen.serialize(true);
+	public Predicate getIntention() {
+		return (Predicate)this.planstatement._intention;
 	}
 	
 	@getter(SimpleBdiArchitecture.INSTANTANEAOUS)
 	public String getInstantaneous() {
 		return this.planstatement._instantaneous.serialize(true);
+	}
+	
+	public SimpleBdiPlanStatement getPlanStatement(){
+		return this.planstatement;
 	}
 	
 	public BDIPlan() {

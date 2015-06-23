@@ -24,7 +24,7 @@ global {
 species building {
 	float height <- 3.0 + rnd(5);
 	aspect default {
-		draw shape color: rgb("gray") depth: height;
+		draw shape color: #gray depth: height;
 	}
 }
 	
@@ -85,7 +85,7 @@ experiment main type: gui {
 			species building refresh: false;
 			species people;
 			graphics "exit" refresh: false {
-				draw sphere(2 * people_size) at: target_point color: rgb("green");	
+				draw sphere(2 * people_size) at: target_point color: #green;	
 			}
 		}
 	}

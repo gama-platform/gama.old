@@ -1,11 +1,11 @@
 /**
  * Created by drogoul, 25 mars 2015
- * 
+ *
  */
 package ummisco.gama.opengl;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.*;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
@@ -17,24 +17,29 @@ import com.jogamp.common.util.JarUtil;
 
 /**
  * Class OpenGLLayeredDisplayView.
- * 
+ *
  * @author drogoul
  * @since 25 mars 2015
- * 
+ *
  */
 public class SWTLayeredDisplayView extends LayeredDisplayView implements /* ControlListener, */MouseMoveListener {
 
 	SWTOpenGLDisplaySurface surface;
 
 	static {
-		// Necessary to load the native libraries correctly
+		// Necessary to load the native libraries correctly (see
+		// http://forum.jogamp.org/Return-of-the-quot-java-lang-UnsatisfiedLinkError-Can-t-load-library-System-Library-Frameworks-glueg-td4034549.html)
 		JarUtil.setResolver(new JarUtil.Resolver() {
 
 			@Override
 			public URL resolve(final URL url) {
 				try {
-					return FileLocator.resolve(url);
+					URL urlUnescaped = FileLocator.resolve(url);
+					URL urlEscaped = new URI(urlUnescaped.getProtocol(), urlUnescaped.getPath(), null).toURL();
+					return urlEscaped;
 				} catch (IOException ioexception) {
+					return url;
+				} catch (URISyntaxException urisyntaxexception) {
 					return url;
 				}
 			}
@@ -66,7 +71,9 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 			@Override
 			public void run() {
 				try {
-					surface.dispose();
+					if ( surface != null ) {
+						surface.dispose();
+					}
 					getSite().getPage().hideView(SWTLayeredDisplayView.this);
 				} catch (final Exception e) {
 					e.printStackTrace();

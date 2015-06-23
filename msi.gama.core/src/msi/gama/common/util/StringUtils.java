@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'StringUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.util;
 
@@ -22,10 +22,10 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * The class StringUtils.
- * 
+ *
  * @author drogoul
  * @since 13 d�c. 2011
- * 
+ *
  */
 public class StringUtils {
 
@@ -65,9 +65,9 @@ public class StringUtils {
 
 	/**
 	 * Unescape java.
-	 * 
+	 *
 	 * @param str the str
-	 * 
+	 *
 	 * @return the string
 	 */
 	static public String unescapeJava(final String str) {
@@ -85,7 +85,7 @@ public class StringUtils {
 
 	/**
 	 * Unescape java.
-	 * 
+	 *
 	 * @param out the out
 	 * @param str the str
 	 */
@@ -161,17 +161,6 @@ public class StringUtils {
 			// string, let's output it anyway.
 			writer.append('\\');
 		}
-	}
-
-	/**
-	 * Gets the time in string.
-	 * 
-	 * @return the time in string
-	 */
-	public static String getTimeInString() {
-		final Calendar cal = Calendar.getInstance();
-		final SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
-		return sdf.format(cal.getTime());
 	}
 
 	static public boolean isGamaString(final String s) {

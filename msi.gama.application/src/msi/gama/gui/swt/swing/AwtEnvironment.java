@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AwtEnvironment.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 /*******************************************************************************
  * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
@@ -15,7 +15,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
@@ -43,12 +43,10 @@ import org.eclipse.swt.widgets.Event;
  * <li>more later...
  * </ul>
  * <p>
- * This class is most helpful to applications which create new AWT/Swing windows (e.g. dialogs) rather than those which
- * embed AWT/Swing components in SWT windows. For support specific to embedding AWT/Swing components see
- * {@link SwingControl}.
+ * This class is most helpful to applications which create new AWT/Swing windows (e.g. dialogs) rather than those which embed AWT/Swing components in SWT windows. For support specific to embedding
+ * AWT/Swing components see {@link SwingControl}.
  * <p>
- * There is at most one instance of this class per SWT {@link org.eclipse.swt.widgets.Display Display}. In most
- * applications this means that there is exactly one instance for the entire application.
+ * There is at most one instance of this class per SWT {@link org.eclipse.swt.widgets.Display Display}. In most applications this means that there is exactly one instance for the entire application.
  * <p>
  * An instance of this class can be obtained with the static {@link #getInstance(Display)} method.
  */
@@ -70,7 +68,7 @@ public final class AwtEnvironment {
 	 * dialogs.
 	 * <p>
 	 * The first call to this method must occur before any AWT/Swing APIs are called.
-	 * 
+	 *
 	 * @param display
 	 *            the non-null SWT display
 	 * @return the AWT environment
@@ -146,6 +144,8 @@ public final class AwtEnvironment {
 		 */
 		// TODO: this is effective only on Windows.
 		System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$//$NON-NLS-2$
+		// Disabling OpenGL pipeline in order to tackle Issue #869
+		System.setProperty("sun.java2d.opengl", "False");
 
 		/*
 		 * It's important to wait for the L&F to be set so that any subsequent calls
@@ -333,15 +333,13 @@ public final class AwtEnvironment {
 	 * until the runnable task completes, at which point this method will
 	 * return.
 	 * <p>
-	 * This method is useful for displayng modal AWT/Swing dialogs from the SWT event thread. The modal AWT/Swing dialog
-	 * will always block input across the whole application, but not until it appears. By calling this method, it is
-	 * guaranteed that SWT input is blocked immediately, even before the AWT/Swing dialog appears.
+	 * This method is useful for displayng modal AWT/Swing dialogs from the SWT event thread. The modal AWT/Swing dialog will always block input across the whole application, but not until it appears.
+	 * By calling this method, it is guaranteed that SWT input is blocked immediately, even before the AWT/Swing dialog appears.
 	 * <p>
-	 * To avoid unnecessary flicker, AWT/Swing dialogs should have their parent set to a frame returned by
-	 * {@link #createDialogParentFrame()}.
+	 * To avoid unnecessary flicker, AWT/Swing dialogs should have their parent set to a frame returned by {@link #createDialogParentFrame()}.
 	 * <p>
 	 * This method must be called from the SWT event thread.
-	 * 
+	 *
 	 * @param runnable
 	 *            the code to schedule on the AWT event thread
 	 * @exception IllegalArgumentException
@@ -397,13 +395,12 @@ public final class AwtEnvironment {
 	/**
 	 * Creates an AWT frame suitable as a parent for AWT/Swing dialogs.
 	 * <p>
-	 * This method must be called from the SWT event thread. There must be an active shell associated with the
-	 * environment's display.
+	 * This method must be called from the SWT event thread. There must be an active shell associated with the environment's display.
 	 * <p>
 	 * The created frame is a non-visible child of the active shell and will be disposed when that shell is disposed.
 	 * <p>
 	 * See {@link #createDialogParentFrame(Shell)} for more details.
-	 * 
+	 *
 	 * @return a {@link java.awt.Frame} to be used for parenting dialogs
 	 * @exception SWTException
 	 *                <ul>
@@ -425,22 +422,18 @@ public final class AwtEnvironment {
 	/**
 	 * Creates an AWT frame suitable as a parent for AWT/Swing dialogs.
 	 * <p>
-	 * This method must be called from the SWT event thread. There must be an active shell associated with the
-	 * environment's display.
+	 * This method must be called from the SWT event thread. There must be an active shell associated with the environment's display.
 	 * <p>
 	 * The created frame is a non-visible child of the given shell and will be disposed when that shell is disposed.
 	 * <p>
-	 * This method is useful for creating a frame to parent any AWT/Swing dialogs created for use inside a SWT
-	 * application. A modal AWT/Swing dialogs will behave better if its parent is set to the returned frame rather than
-	 * to null or to an independently created {@link java.awt.Frame}.
+	 * This method is useful for creating a frame to parent any AWT/Swing dialogs created for use inside a SWT application. A modal AWT/Swing dialogs will behave better if its parent is set to the
+	 * returned frame rather than to null or to an independently created {@link java.awt.Frame}.
 	 * <p>
-	 * The frame is positioned such that its child AWT dialogs are centered over the given parent shell's position
-	 * <i>when this method is called</i>. If the parent frame is later moved, the child will no longer be properly
-	 * positioned. For best results, create a new frame with this method immediately before creating and displaying each
-	 * child AWT/Swing dialog.
+	 * The frame is positioned such that its child AWT dialogs are centered over the given parent shell's position <i>when this method is called</i>. If the parent frame is later moved, the child will
+	 * no longer be properly positioned. For best results, create a new frame with this method immediately before creating and displaying each child AWT/Swing dialog.
 	 * <p>
 	 * As with any AWT window, the returned frame must be explicitly disposed.
-	 * 
+	 *
 	 * @param parent - the SWT parent shell of the shell that will contain the returned frame
 	 * @return a {@link java.awt.Frame} to be used for parenting dialogs
 	 * @exception SWTException
@@ -517,7 +510,7 @@ public final class AwtEnvironment {
 	 * Use the return value from this method to create any SWT menus that
 	 * are used in calls to {@link SwtPopupRegistry#setMenu(Component, boolean, org.eclipse.swt.widgets.Menu)}.
 	 * Otherwise, the popup menu may not display on some platforms.
-	 * 
+	 *
 	 * @param control the SwingControl that owns the AWT component which will have
 	 *            a menu attached.
 	 * @return

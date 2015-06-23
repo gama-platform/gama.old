@@ -39,20 +39,20 @@ species people skills:[moving]{
 		}
 	}
 	aspect circle{
-		draw sphere(5) color:is_infected ? rgb("red") : rgb("green");
+		draw sphere(5) color:is_infected ? #red : #green;
 	}
 }
 
 species roads {
 	aspect geom {
-		draw shape color: rgb("black");
+		draw shape color: #black;
 	}
 }
 
 species buildings {
 	float height <- 10.0+ rnd(10);
 	aspect geom {
-		draw shape color: rgb("gray") depth: height;
+		draw shape color: #gray depth: height;
 	}
 }
 

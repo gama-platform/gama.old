@@ -32,14 +32,14 @@ global {
 		
 		//people with information about the traffic
 		create people {
-			color <- rgb("blue");
+			color <- #blue;
 			size <- 2.0;
 			roads_knowledge <- road as_map (each:: each.shape.perimeter * (each.slow ? slow_coeff : 1.0));
 		}
 		
 		//people without information about the traffic
 		create people {
-			color <- rgb("yellow");
+			color <- #yellow;
 			size <- 1.0;
 			roads_knowledge <- road as_map (each:: each.shape.perimeter);
 		}
@@ -50,7 +50,7 @@ global {
 species road {
 	bool slow;
 	aspect geom {
-		draw shape color: slow ? rgb("red") : rgb("green");
+		draw shape color: slow ? #red : #green;
 	}
 }
 	

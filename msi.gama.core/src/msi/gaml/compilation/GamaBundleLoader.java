@@ -1,34 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaBundleLoader.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.compilation;
 
 import gnu.trove.set.hash.THashSet;
-
 import java.util.Set;
-
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.util.GuiUtils;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
-
 import org.eclipse.core.runtime.*;
 
 /**
  * The class GamaBundleLoader.
- * 
+ *
  * @author drogoul
  * @since 24 janv. 2012
- * 
+ *
  */
 public class GamaBundleLoader {
 
@@ -48,9 +45,9 @@ public class GamaBundleLoader {
 		for ( String addition : plugins ) {
 			preBuild(addition);
 		}
-		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(CREATE_EXTENSION) ){
+		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(CREATE_EXTENSION) ) {
 			try {
-				CreateStatement.delegates.add((ICreateDelegate) e.createExecutableExtension("class"));
+				CreateStatement.addDelegate((ICreateDelegate) e.createExecutableExtension("class"));
 			} catch (CoreException e1) {
 				e1.printStackTrace();
 			}

@@ -94,7 +94,7 @@ species intersection {
 	string type;
 	string crossing;
 	aspect base { 
-		draw square(3) color: rgb("red") ;
+		draw square(3) color: #red ;
 	}
 } 
 	

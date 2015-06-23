@@ -50,7 +50,7 @@ species cell {
 experiment Displays type: gui {
 	output {
 		display map { 
-			species simulation.cell;
+			species cell;
 		}
 	}
 }

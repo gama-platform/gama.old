@@ -26,7 +26,7 @@ import com.thoughtworks.xstream.XStream;
 
 public class ConnectionManager extends Skill implements MessageListener {
 
-	protected static String DEFAULT_PORT_NUM = "61616";
+	protected static String DEFAULT_PORT_NUM = "61616"; 
 	protected String serverURL;
 	protected String topicName;
 	private MessageProducer producer = null;
@@ -45,6 +45,8 @@ public class ConnectionManager extends Skill implements MessageListener {
 		return this.session;
 	}
 
+	
+	
 	public void connect(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		readCallParameters(scope);

@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SpeciesDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -287,7 +287,7 @@ public class SpeciesDescription extends TypeDescription {
 		return aspects == null ? Collections.EMPTY_LIST : aspects.keySet();
 	}
 
-	public Collection<IDescription> getAspects() {
+	public Collection<StatementDescription> getAspects() {
 		return aspects == null ? Collections.EMPTY_LIST : aspects.values();
 	}
 
@@ -297,7 +297,7 @@ public class SpeciesDescription extends TypeDescription {
 
 	/**
 	 * Returns all the direct&in-direct micro-species of this species.
-	 * 
+	 *
 	 * @return
 	 */
 	public List<SpeciesDescription> getAllMicroSpecies() {
@@ -506,7 +506,7 @@ public class SpeciesDescription extends TypeDescription {
 	 * Returns a list of SpeciesDescription that can be the parent of this species.
 	 * A species can be a sub-species of its "peer" species ("peer" species are species sharing the
 	 * same direct macro-species).
-	 * 
+	 *
 	 * @return
 	 */
 	public List<SpeciesDescription> getPotentialParentSpecies() {
@@ -520,7 +520,7 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Sorts the micro-species.
 	 * Parent micro-species are ahead of the list followed by sub micro-species.
-	 * 
+	 *
 	 * @return
 	 */
 	private List<SpeciesDescription> sortedMicroSpecies() {
@@ -547,12 +547,12 @@ public class SpeciesDescription extends TypeDescription {
 
 	/**
 	 * Returns a list of visible species from this species.
-	 * 
+	 *
 	 * A species can see the following species:
 	 * 1. Its direct micro-species.
 	 * 2. Its peer species.
 	 * 3. Its direct&in-direct macro-species and their peers.
-	 * 
+	 *
 	 * @return
 	 */
 	public List<SpeciesDescription> getVisibleSpecies() {
@@ -576,7 +576,7 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Returns a visible species from the view point of this species.
 	 * If the visible species list contains a species with the specified name.
-	 * 
+	 *
 	 * @param speciesName
 	 */
 	public TypeDescription getVisibleSpecies(final String speciesName) {
@@ -589,7 +589,7 @@ public class SpeciesDescription extends TypeDescription {
 
 	/**
 	 * Verifies if the specified species can be a parent of this species.
-	 * 
+	 *
 	 * A species can be parent of other if the following conditions are hold
 	 * 1. A parent species is visible to the sub-species.
 	 * 2. A species can' be a sub-species of itself.
@@ -599,7 +599,7 @@ public class SpeciesDescription extends TypeDescription {
 	 * parent-species having micro-species.
 	 * 7. The inheritance between species from different branches doesn't form a "circular"
 	 * inheritance.
-	 * 
+	 *
 	 * @param parentName the name of the potential parent
 	 * @throws GamlException if the species with the specified name can not be a parent of this
 	 *             species.
@@ -655,7 +655,7 @@ public class SpeciesDescription extends TypeDescription {
 	 * + Copy the behaviors, attributes from parent;
 	 * + Creates the control if necessary.
 	 * Add a variable representing the population of each micro-species
-	 * 
+	 *
 	 * @throws GamlException
 	 */
 	public void finalizeDescription() {
@@ -847,7 +847,7 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * @return
 	 */
-	public Collection<IDescription> getBehaviors() {
+	public Collection<StatementDescription> getBehaviors() {
 		return behaviors == null ? Collections.EMPTY_LIST : behaviors.values();
 	}
 

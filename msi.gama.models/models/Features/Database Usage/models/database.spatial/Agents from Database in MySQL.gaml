@@ -41,7 +41,7 @@ entities {
 	species buildings {
 		string type;
 		aspect default {
-			draw shape color: rgb('gray') ;
+			draw shape color: #gray ;
 		}	
 	}	
 }

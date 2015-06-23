@@ -51,39 +51,39 @@ global {
 
 
 
-entities {	
-	species river {
-		aspect basic{
-			draw  shape color: rgb('blue');
-		}	
+
+species river {
+	aspect basic{
+		draw  shape color: #blue;
+	}	
+}
+
+species managementUnit{
+	int MUcode;
+	string MULabel;
+	string pgeSAGE;
+	
+	aspect basic{
+		draw shape;
 	}
-	
-	species managementUnit{
-		int MUcode;
-		string MULabel;
-		string pgeSAGE;
-		
-		aspect basic{
-    		draw shape;
-    	}
+}	
+species izard {	
+	init{
+		set location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
 	}	
-	species izard {	
-		init{
-			set location <- (shuffle(cell) first_with ((each.color != rgb('white')) and (empty(agents overlapping each)))).location ;
-		}	
-		aspect basic{
-    		draw square(5000) color: rgb('orange');
-    	}
-    	aspect image{
-    		draw izardShape size: 5000;
-    	}
-	}	
-	
+	aspect basic{
+		draw square(5000) color: #orange;
+	}
+	aspect image{
+		draw izardShape size: 5000;
+	}
+}	
+
 // We create a grid as environment with the same dimensions as the matrix in which we want to store the image
 
-	grid cell  width: widthImg/factorDiscret height: heightImg/factorDiscret;
-	
-}
+grid cell  width: widthImg/factorDiscret height: heightImg/factorDiscret;
+
+
 
 experiment main type: gui {
 	// Parameters

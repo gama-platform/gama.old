@@ -12,41 +12,34 @@ global {
 	}
 }
 
-entities {
-	species predefined_ODE_SIR_agent {
-		float t;
+
+species predefined_ODE_SIR_agent {
+	float t;
  
-    	int N <- 500;
-		float I <- 1.0; 
-		float S <- N - I; 
-		float R <- 0.0; 
+   	int N <- 500;
+	float I <- 1.0; 
+	float S <- N - I; 
+	float R <- 0.0; 
 
-   		float beta <- 0.4;
-   		float gamma <- 0.01; 
+  	float beta <- 0.4;
+   	float gamma <- 0.01; 
    		
-   		float h <- 0.1;
+   	float h <- 0.1;
 
-		// Following predefined equation system is equivalent to following system:
-		//		equation SIR_classic{
-		//			diff(S,t) = (- beta * S * I / N);
-		//			diff(I,t) = (beta * S * I / N) - (gamma * I);
-		//			diff(R,t) = (gamma * I);
-		//		}
-		
-		// Parameters must follow exact order S, I, R, t  and N,beta,gamma		
-		equation eqSIR type:SIR vars: [S,I,R,t] params: [N,beta,gamma] ;
+	// Parameters must follow exact order S, I, R, t  and N,beta,gamma		
+	equation eqSIR type:SIR vars: [S,I,R,t] params: [N,beta,gamma] ;
 
-		reflex solving {solve eqSIR method:rk4 step:h cycle_length:1/h;}
-	}
+	reflex solving {solve eqSIR method:rk4 step:h cycle_length:1/h;}
 }
+
 
 experiment mysimulation type : gui {
 	output {	
-		display display_charts refresh_every : 1 {
-			chart 'SIR_agent' type : series background : rgb('lightGray') {
-				data "S" value : first(predefined_ODE_SIR_agent).S color : rgb('green');
-				data "I" value : first(predefined_ODE_SIR_agent).I color : rgb('red');
-				data "R" value : first(predefined_ODE_SIR_agent).R color : rgb('blue');
+		display display_charts {
+			chart 'SIR_agent' type : series background : #lightgray {
+				data "S" value : first(predefined_ODE_SIR_agent).S color : #green;
+				data "I" value : first(predefined_ODE_SIR_agent).I color : #red;
+				data "R" value : first(predefined_ODE_SIR_agent).R color : #blue;
 			}
 		}
 	}
