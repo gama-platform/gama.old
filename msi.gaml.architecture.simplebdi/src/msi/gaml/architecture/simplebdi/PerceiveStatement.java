@@ -43,10 +43,11 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
+	@facet(name = IKeyword.AS, type = IType.SPECIES, optional = true),
 	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.IN, type = {IType.FLOAT,IType.GEOMETRY}, optional = true),
-	@facet(name = IKeyword.OVER, type = { IType.CONTAINER, IType.POINT }, optional=false)
-})
+	@facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.POINT }, optional=false)
+}, omissible = IKeyword.TARGET)
 
 public class PerceiveStatement extends AbstractStatementSequence{
 
@@ -56,7 +57,7 @@ public class PerceiveStatement extends AbstractStatementSequence{
 	
 	final IExpression _when;
 	final IExpression _in;
-	private final IExpression over = getFacet(IKeyword.OVER);
+	private final IExpression target = getFacet(IKeyword.TARGET);
 	
 	private final String varName;
 	private final Object[] result = new Object[1];
@@ -85,7 +86,11 @@ public class PerceiveStatement extends AbstractStatementSequence{
 	public PerceiveStatement(IDescription desc) {
 		super(desc);
 		_when = getFacet(IKeyword.WHEN);
-		_in = getFacet(IKeyword.IN);
+		if(hasFacet(IKeyword.IN)){
+			_in = getFacet(IKeyword.IN);
+		}else{
+			_in=null;
+		}
 		if ( hasFacet(IKeyword.NAME) ) {
 			setName(getLiteral(IKeyword.NAME));
 		}
@@ -93,8 +98,11 @@ public class PerceiveStatement extends AbstractStatementSequence{
 	}
 	public Object privateExecuteIn(IScope scope) throws GamaRuntimeException{
 		if ( _when == null || Cast.asBool(scope, _when.value(scope)) ){
-			final Object obj = over.value(scope);
-			final Object inArg = _in.value(scope);
+			final Object obj = target.value(scope);
+			Object inArg = null;
+			if(_in!=null){
+				inArg = _in.value(scope);
+			}			
 			
 			if (inArg instanceof Float || inArg instanceof Integer || inArg instanceof Double){
 				IList<IAgent> temp = msi.gaml.operators.Spatial.Queries.at_distance(scope, (IContainer)obj, Cast.asFloat(scope, inArg));
