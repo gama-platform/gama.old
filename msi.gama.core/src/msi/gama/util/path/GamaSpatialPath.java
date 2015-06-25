@@ -407,6 +407,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 
 	@Override
 	public IShape getGeometry() {
+		
 		if ( shape == null && segments.size() > 0 ) {
 			final Geometry geoms[] = new Geometry[segments.size()];
 			int cpt = 0;
@@ -414,8 +415,14 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				geoms[cpt] = ent.getInnerGeometry();
 				cpt++;
 			}
-			final Geometry geom = GeometryUtils.FACTORY.createGeometryCollection(geoms);
-			shape = new GamaShape(geom.union());
+			if (geoms.length == 1 ) {
+				shape = new GamaShape(geoms[0]);
+			}
+			else {
+				final Geometry geom = GeometryUtils.FACTORY.createGeometryCollection(geoms);
+				shape = new GamaShape(geom.union());
+			}
+			
 		}
 		return shape;
 	}
