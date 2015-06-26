@@ -82,7 +82,6 @@ public class PerceiveStatement extends AbstractStatementSequence{
 //		}
 //
 //	}
-	
 	public static final String PERCEIVE = "perceive";
 	
 	private RemoteSequence sequence = null;
