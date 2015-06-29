@@ -431,6 +431,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	@getter("points")
 	public IList<? extends ILocation> getPoints() {
 		final IList<GamaPoint> result = GamaListFactory.create(Types.POINT);
+		if (getInnerGeometry() == null) return result;
 		final Coordinate[] points = getInnerGeometry().getCoordinates();
 		for ( final Coordinate c : points ) {
 			result.add(new GamaPoint(c));

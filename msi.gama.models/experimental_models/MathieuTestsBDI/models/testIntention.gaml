@@ -11,11 +11,15 @@ global{
 	init{
 		create but number:1;
 		create sortie number:1;
-		create agentTest number:100;
+//		create agentTest number:100;
 		create agentTest2 number:100;		
 		
 	}
-
+	
+//	reflex a{
+//		write duration;
+//	}
+	
 }
 
 species agentTest skills:[moving] control: simple_bdi{
@@ -31,15 +35,40 @@ species agentTest skills:[moving] control: simple_bdi{
 	predicate position <- new_predicate("position");
 	predicate butAtteint <- new_predicate("but");
 	predicate sortieAtteint <- new_predicate("sortie");
-
+	geometry carre; /* <- circle(10)*/ /*update: carre.location <- self.location*//* ;*/
 	
 	reflex perception{
-		if(self.location = monBut.location){
-			do add_belief(butAtteint);
+		carre <- square(10);
+//		if(self.location = monBut.location){
+//			do add_belief(butAtteint);
+//		}
+//		if(self.location = maSortie.location){
+//			do add_belief(butAtteint);
+//		}
+	}
+	
+	perceive name:a target: but in:carre /*when:false*/{
+//		write "but en vue";
+		ask myself{
+//			do add_belief(new_predicate("new",["location"::myself.location]));
+			if (myself.location=location){
+				do add_belief(butAtteint);
+			}
 		}
-		if(self.location = maSortie.location){
-			do add_belief(butAtteint);
+//		write myself.belief_base;
+//		write myself.location;
+	}
+	
+	perceive b target: sortie in:carre /*when:false*/{
+//		write "sortie en vue";
+		ask myself{
+//			do add_belief(new_predicate("new",["location"::myself.location]));
+			if (myself.location=location){
+				do add_belief(butAtteint);
+			}
 		}
+//		write myself.belief_base;
+//		write myself.location;
 	}
 	
 	init{
@@ -48,16 +77,17 @@ species agentTest skills:[moving] control: simple_bdi{
 		do add_desire(butAtteint);
 	}
 	
-	plan bouger intention: butAtteint priority: 2{
+	plan bouger intention: butAtteint /*finished_when: fini=true*/ priority: 2{
 		do goto on: grille target:monBut speed:2;
 	}
 	
-	plan bouger2 intention: butAtteint priority: 1{
+	plan bouger2 intention: butAtteint /*finished_when: fini=true*/ priority: 2{
 		do goto on: grille target:maSortie speed:2;
 	}
 	
 	aspect base{
 		draw circle(1) color:#blue;
+//		draw carre;
 	}
 }
 
@@ -78,16 +108,40 @@ species agentTest2 skills:[moving] control: simple_bdi{
 	predicate butOrSortie <- (butAtteint or sortieAtteint);
 
 	
-	reflex perception{
-//		write get_current_intention();
-		if(self.location = monBut.location){
-			do add_belief(butAtteint);
-			do remove_desire(butAtteint);
+//	reflex perception{
+////		write get_current_intention();
+//		if(self.location = monBut.location){
+//			do add_belief(butAtteint);
+//			do remove_desire(butAtteint);
+//		}
+//		if(self.location = maSortie.location){
+//			do add_belief(sortieAtteint);
+//			do remove_desire(sortieAtteint);
+//		}
+//	}
+	
+	perceive name:a target: but /*when:false*/{
+//		write "but en vue";
+		ask myself{
+//			do add_belief(new_predicate("new",["location"::myself.location]));
+			if (myself.location=location){
+				do add_belief(butAtteint);
+			}
 		}
-		if(self.location = maSortie.location){
-			do add_belief(sortieAtteint);
-			do remove_desire(sortieAtteint);
+//		write myself.belief_base;
+//		write myself.location;
+	}
+	
+	perceive b target: sortie /*when:false*/{
+//		write "sortie en vue";
+		ask myself{
+//			do add_belief(new_predicate("new",["location"::myself.location]));
+			if (myself.location=location){
+				do add_belief(butAtteint);
+			}
 		}
+//		write myself.belief_base;
+//		write myself.location;
 	}
 	
 	init{
