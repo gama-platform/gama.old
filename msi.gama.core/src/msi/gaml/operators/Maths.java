@@ -480,9 +480,9 @@ public class Maths {
 	@doc(value = "Returns the factorial of the operand.",
 		usages = @usage("if the operand is less than 0, fact returns 0."),
 		examples = @example(value = "fact(4)", equals = "24"))
-	public static Integer fact(final Integer n) {
-		if ( n < 0 ) { return 0; }
-		int product = 1;
+	public static Double fact(final Integer n) {
+		if ( n < 0 ) { return 0.0; }
+		double product = 1;
 		for ( int i = 2; i <= n; i++ ) {
 			product *= i;
 		}
