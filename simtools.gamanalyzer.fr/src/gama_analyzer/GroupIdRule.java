@@ -10,10 +10,7 @@ public class GroupIdRule {
 
 	public GroupIdRule() {}
 
-	public IList<IAgent> update(IScope scope, IList<IAgent> liste) {
-		//System.out.println("groupidrule= " + liste);
-		
+	public IList<IAgent> update(IScope scope, IList<IAgent> liste) {	
 		return liste;
-
 	}
 }
