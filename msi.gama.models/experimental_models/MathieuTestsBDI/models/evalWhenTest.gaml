@@ -9,6 +9,7 @@ model evalWhenTest
 global{
 	init{
 		create agentTest number : 1;
+		create agentTest2 number : 1;
 	}
 }
 
@@ -39,6 +40,22 @@ species agentTest control: simple_bdi{
 		test<-test+1;
 	}
 	
+	perceive target:agentTest2 {
+		if(test=2){
+			write "2";
+		}
+		if(myself.test=2){
+			write "mon 2";
+		}		
+	}
+	
+}
+
+species agentTest2{
+	int test<-10;
+	reflex bidule{
+		test<-test-1;
+	}
 }
 
 experiment main type: gui{

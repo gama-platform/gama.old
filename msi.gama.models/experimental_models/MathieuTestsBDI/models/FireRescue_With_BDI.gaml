@@ -43,20 +43,31 @@ species helicopter skills: [moving] control: simple_bdi{
 		
 	}
 	reflex perception {
-		loop fire over: fireArea at_distance 10 {
-			if (not has_belief(new_predicate("fire",["firePlace"::fire.location], 2))) {
-				do add_belief(new_predicate("fire", ["firePlace"::fire.location], 2));		
-				do add_desire(new_predicate("fireExtinguish", ["firePlace"::fire.location], 2));
-				do remove_intention(patrol_desire,false);
-				
-			}
-		}
+//		loop fire over: fireArea at_distance 10 {
+//			if (not has_belief(new_predicate("fire",["firePlace"::fire.location], 2))) {
+//				do add_belief(new_predicate("fire", ["firePlace"::fire.location], 2));		
+//				do add_desire(new_predicate("fireExtinguish", ["firePlace"::fire.location], 2));
+//				do remove_intention(patrol_desire,false);
+//				
+//			}
+//		}
 		
 		if(has_belief(fireExtinguish)){
 			do remove_belief(fireExtinguish);
 		}
 		
 	}
+	
+	perceive target:fireArea in: 10{
+		ask myself{
+			if (not has_belief(new_predicate("fire",["firePlace"::myself.location], 2))) {
+				do add_belief(new_predicate("fire", ["firePlace"::myself.location], 2));		
+				do add_desire(new_predicate("fireExtinguish", ["firePlace"::myself.location], 2));
+				do remove_intention(patrol_desire,false);
+			}
+		}
+	}
+	
 	plan patrolling intention:patrol_desire /*when: is_current_intention(patrol_desire)*/ finished_when: has_belief(firePredicate){
 		write "patrolling";
 //		do patrouiller;
