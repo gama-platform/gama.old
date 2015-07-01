@@ -407,53 +407,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public boolean testOnHold(final IScope scope, final Predicate intention) {
 		if ( intention == null ) { return false; }
 		if ( intention.onHoldUntil == null ) { return false; }
-		if (intention.getValues().containsKey("and")){
-//			System.out.println("intention : "+ intention);
-			Object cond = intention.onHoldUntil;
-//			System.out.println("onHoldUntil : "+ intention.onHoldUntil);
-//			System.out.println("size : "+ ((ArrayList)cond).size());
-			if(cond instanceof ArrayList){
-//				System.out.println("size : "+ ((ArrayList)cond).size());
-				if(((ArrayList)cond).size()==0){
-					GamaList desbase = getBase(scope, DESIRE_BASE);
-					GamaList intentionbase = getBase(scope, INTENTION_BASE);
-					desbase.remove(intention);
-					intentionbase.remove(intention);
-					for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
-						if(((Predicate)statement).getSubintentions()!=null){
-							if(((Predicate)statement).getSubintentions().contains(intention)){
-								((Predicate)statement).getSubintentions().remove(intention);
-							}
-						}
-						if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
-							if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(intention)){
-								((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(intention);
-							}
-						}
-					}
-					return false;
-				}
-				else{
-					return true;
-				}
-			}
-		}
-		if (intention.getValues().containsKey("or")){
-//			System.out.println("intention : "+ intention);
-			Object cond = intention.onHoldUntil;
-//			System.out.println("onHoldUntil : "+ intention.onHoldUntil);
-//			System.out.println("size : "+ ((ArrayList)cond).size());
-			if(cond instanceof ArrayList){
-				if(((ArrayList)cond).size()<=1){
-					System.out.println("size : "+ ((ArrayList)cond).size());
-					GamaList desbase = getBase(scope, DESIRE_BASE);
-					GamaList intentionbase = getBase(scope, INTENTION_BASE);
-					desbase.remove(intention);
-					intentionbase.remove(intention);
-					if(((ArrayList)cond).size()==1){
-						if(desbase.contains(((ArrayList)cond).get(0))){
-							desbase.remove(((ArrayList)cond).get(0));
-						}
+		if (intention.getValues()!=null){
+			if (intention.getValues().containsKey("and")){
+	//			System.out.println("intention : "+ intention);
+				Object cond = intention.onHoldUntil;
+	//			System.out.println("onHoldUntil : "+ intention.onHoldUntil);
+	//			System.out.println("size : "+ ((ArrayList)cond).size());
+				if(cond instanceof ArrayList){
+	//				System.out.println("size : "+ ((ArrayList)cond).size());
+					if(((ArrayList)cond).size()==0){
+						GamaList desbase = getBase(scope, DESIRE_BASE);
+						GamaList intentionbase = getBase(scope, INTENTION_BASE);
+						desbase.remove(intention);
+						intentionbase.remove(intention);
 						for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
 							if(((Predicate)statement).getSubintentions()!=null){
 								if(((Predicate)statement).getSubintentions().contains(intention)){
@@ -466,11 +432,50 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								}
 							}
 						}
+						return false;
 					}
-					return false;
+					else{
+//						if(!intention.subintentions.containsAll((Collection)intention.onHoldUntil)){
+//							intention.subintentions.addAll((Collection)intention.onHoldUntil);
+//						}
+						return true;
+					}
 				}
-				else{
-					return true;
+			}
+			if (intention.getValues().containsKey("or")){
+	//			System.out.println("intention : "+ intention);
+				Object cond = intention.onHoldUntil;
+	//			System.out.println("onHoldUntil : "+ intention.onHoldUntil);
+	//			System.out.println("size : "+ ((ArrayList)cond).size());
+				if(cond instanceof ArrayList){
+					if(((ArrayList)cond).size()<=1){
+						System.out.println("size : "+ ((ArrayList)cond).size());
+						GamaList desbase = getBase(scope, DESIRE_BASE);
+						GamaList intentionbase = getBase(scope, INTENTION_BASE);
+						desbase.remove(intention);
+						intentionbase.remove(intention);
+						if(((ArrayList)cond).size()==1){
+							if(desbase.contains(((ArrayList)cond).get(0))){
+								desbase.remove(((ArrayList)cond).get(0));
+							}
+							for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+								if(((Predicate)statement).getSubintentions()!=null){
+									if(((Predicate)statement).getSubintentions().contains(intention)){
+										((Predicate)statement).getSubintentions().remove(intention);
+									}
+								}
+								if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+									if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(intention)){
+										((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(intention);
+									}
+								}
+							}
+						}
+						return false;
+					}
+					else{
+						return true;
+					}
 				}
 			}
 		}
