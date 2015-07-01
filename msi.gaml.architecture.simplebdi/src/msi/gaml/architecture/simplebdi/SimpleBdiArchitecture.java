@@ -536,17 +536,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 //		return ((SimpleBdiPlan)(getCurrentAgent(scope).getAttribute(CURRENT_PLAN))).getName();
 //	}
 	
-	@action(name = "add_belief", args = { @arg(name = PREDICATE,
-		type = IType.MAP,
-		optional = true,
-		doc = @doc("predicate to check")) }, doc = @doc(value = "check if the predicates is in the desire base.",
-		returns = "true if it is in the base.",
-		examples = { @example("") }))
-	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-		public
-		Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
-		Predicate predicateDirect =
-			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+	private Boolean addBelief(final IScope scope, final Predicate predicateDirect){
 		if ( predicateDirect != null ) { 
 //			Predicate current_intention = currentIntention(scope);
 			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
@@ -569,6 +559,42 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 
 		return false;
+	}
+	
+	@action(name = "add_belief", args = { @arg(name = PREDICATE,
+		type = IType.MAP,
+		optional = true,
+		doc = @doc("predicate to check")) }, doc = @doc(value = "check if the predicates is in the desire base.",
+		returns = "true if it is in the base.",
+		examples = { @example("") }))
+	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
+		public
+		Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
+		Predicate predicateDirect =
+			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+//		if ( predicateDirect != null ) { 
+////			Predicate current_intention = currentIntention(scope);
+//			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
+//				removeFromBase(scope, predicateDirect, DESIRE_BASE);
+//				removeFromBase(scope, predicateDirect, INTENTION_BASE);
+//			}
+//			for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+//				if(((Predicate)statement).getSubintentions()!=null){
+//					if(((Predicate)statement).getSubintentions().contains(predicateDirect)){
+//						((Predicate)statement).getSubintentions().remove(predicateDirect);
+//					}
+//				}
+//				if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+//					if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(predicateDirect)){
+//						((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(predicateDirect);
+//					}
+//				}
+//			}
+//			return addToBase(scope, predicateDirect, BELIEF_BASE); 
+//		}
+//
+//		return false;
+		return addBelief(scope,predicateDirect);
 
 	}
 
@@ -717,14 +743,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Boolean primOnHoldIntention(final IScope scope) throws GamaRuntimeException {
 		Predicate predicate = currentIntention(scope);
 		Object until = scope.hasArg(PREDICATE_ONHOLD) ? scope.getArg(PREDICATE_ONHOLD, IType.NONE) : null;
-		if ( until == null ) {
-			List<Predicate> subintention = predicate.subintentions;
-			if ( subintention != null && !subintention.isEmpty() ) {
-				predicate.onHoldUntil = subintention;
-
+		if(predicate!=null){
+			if ( until == null ) {
+				List<Predicate> subintention = predicate.subintentions;
+				if ( subintention != null && !subintention.isEmpty() ) {
+					predicate.onHoldUntil = subintention;
+				}
+			} else {
+				predicate.onHoldUntil = until;
 			}
-		} else {
-			predicate.onHoldUntil = until;
 		}
 		return true;
 	}
