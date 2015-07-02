@@ -435,9 +435,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						return false;
 					}
 					else{
-//						if(!intention.subintentions.containsAll((Collection)intention.onHoldUntil)){
-//							intention.subintentions.addAll((Collection)intention.onHoldUntil);
-//						}
 						return true;
 					}
 				}
@@ -756,6 +753,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			} else {
 				predicate.onHoldUntil = until;
+//				if(!predicate.subintentions.containsAll(Cast.asList(scope, until))){
+//					predicate.subintentions.addAll(Cast.asList(scope, until));
+//				}
 			}
 		}
 		return true;
