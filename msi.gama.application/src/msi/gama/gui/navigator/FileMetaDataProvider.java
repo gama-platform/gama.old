@@ -176,9 +176,11 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				System.out.println("Canceled: Resources are locked");
 				return;
 			}
-			data.setModificationStamp(file.getModificationStamp());
+			if ( data != null ) {
+				data.setModificationStamp(file.getModificationStamp());
+			}
 			ResourcesPlugin.getWorkspace().getSynchronizer()
-			.setSyncInfo(CACHE_KEY, file, data == null ? null : data.toPropertyString().getBytes("UTF-8"));
+				.setSyncInfo(CACHE_KEY, file, data == null ? null : data.toPropertyString().getBytes("UTF-8"));
 			System.out.println("Success: sync info written");
 			// file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
 
