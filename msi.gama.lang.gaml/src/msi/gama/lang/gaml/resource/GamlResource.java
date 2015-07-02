@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlResource.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
@@ -15,7 +15,6 @@ import static msi.gaml.factories.DescriptionFactory.getModelFactory;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.Map.Entry;
-
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
@@ -37,11 +36,11 @@ import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import com.google.common.collect.ImmutableList;
 
 /*
- * 
+ *
  * The class GamlResource.
- * 
+ *
  * @author drogoul
- * 
+ *
  * @since 24 avr. 2012
  */
 public class GamlResource extends LazyLinkingResource {
@@ -170,16 +169,17 @@ public class GamlResource extends LazyLinkingResource {
 		// GamlResourceDocManager.clearCache();
 		// We document only when the resource is marked as 'edited'
 		// hqnghi build micro-model
-		//hqnghi 11/May/15: Micro-model manipulate their own imported resources of micro-model , they are not supposed to be merged with co-model (main-model) 
+		// hqnghi 11/May/15: Micro-model manipulate their own imported resources of micro-model , they are not supposed to be merged with co-model (main-model)
 		Map<String, ModelDescription> mm = new TOrderedHashMap<String, ModelDescription>();
-		String aliasName= null;
+		String aliasName = null;
 		while (!microModels.isEmpty()) {
-			aliasName=(String) microModels.values().toArray()[0];
-			List<ISyntacticElement> res =getListMicroSyntacticElement(microModels,aliasName);
+			aliasName = (String) microModels.values().toArray()[0];
+			List<ISyntacticElement> res = getListMicroSyntacticElement(microModels, aliasName);
 			microModels.keySet().removeAll(res);
 			ModelDescription mic =
 				getModelFactory().createModelDescription(projectPath, modelPath, res, getErrorCollector(), isEdited,
-					Collections.<String, ModelDescription> emptyMap(), ((SyntacticModelElement) res.get(0)).getImports());
+					Collections.<String, ModelDescription> emptyMap(),
+					((SyntacticModelElement) res.get(0)).getImports());
 			mic.setAlias(aliasName);
 			mm.put(aliasName, mic);
 		}
@@ -188,16 +188,17 @@ public class GamlResource extends LazyLinkingResource {
 			mm, ((SyntacticModelElement) getSyntacticContents()).getImports());
 	}
 
-	private List<ISyntacticElement> getListMicroSyntacticElement (Map<ISyntacticElement, String> microModels, String aliasName){
+	private List<ISyntacticElement> getListMicroSyntacticElement(final Map<ISyntacticElement, String> microModels,
+		final String aliasName) {
 		List<ISyntacticElement> res = new ArrayList<ISyntacticElement>();
-		for(final Entry<ISyntacticElement, String> entry: microModels.entrySet()) {
-			if(entry.getValue().equals(aliasName)) {				
+		for ( final Entry<ISyntacticElement, String> entry : microModels.entrySet() ) {
+			if ( entry.getValue().equals(aliasName) ) {
 				res.add(entry.getKey());
-			}		
+			}
 		}
-		return res;		
+		return res;
 	}
-	
+
 	public LinkedHashMap<URI, String> computeAllImportedURIs(final ResourceSet set) {
 		// TODO A Revoir pour éviter trop de créations de listes/map, etc.
 
@@ -311,9 +312,11 @@ public class GamlResource extends LazyLinkingResource {
 	 * @return errors an ErrorCollector which contains semantic errors (as opposed to the ones obtained via
 	 *         resource.getErrors(), which are syntactic errors), This collector can be probed for compilation
 	 *         errors via its hasErrors(), hasInternalErrors(), hasImportedErrors() methods
-	 * 
+	 *
 	 */
-	public boolean validate(final ResourceSet set) {
+	public void validate(final ResourceSet set) {
+		// if ( isValidating ) { return; }
+
 		try {
 			setValidating(true);
 			// We first build the model description
@@ -323,7 +326,7 @@ public class GamlResource extends LazyLinkingResource {
 
 			ModelDescription model = buildCompleteDescription(set);
 
-			if ( model == null ) { return false; }
+			if ( model == null ) { return; }
 
 			// We then validate it and get rid of the description. The documentation is produced only if the resource is
 			// marked as 'edited'
@@ -339,12 +342,12 @@ public class GamlResource extends LazyLinkingResource {
 				1000000d + " ms [ ~" + (mem - Runtime.getRuntime().freeMemory()) / mb + " kb used ]");
 			System.out.println("****************************************************");
 
-			return !getErrorCollector().hasInternalErrors();
+			// return !getErrorCollector().hasInternalErrors();
 		} catch (final Exception e) {
 			e.printStackTrace();
 			invalidateBecauseOfImportedProblem("An exception has occured during the validation of " +
 				getURI().lastSegment() + ": " + e.getMessage(), this);
-			return false;
+			// return false;
 		} finally {
 			setValidating(false);
 		}
