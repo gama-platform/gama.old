@@ -482,13 +482,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if ( desbase.isEmpty() ) { return false; }
 			for ( Object subintention : (ArrayList) cond ) {
 				if ( desbase.contains(subintention) ) {
-//					desbase.remove(intention);
 					return true; 
 					}
 			}
 			addThoughts(scope, "no more subintention for" + intention);
 			return false;
 		}
+//		if( cond instanceof Predicate){
+//			GamaList desbase = getBase(scope, DESIRE_BASE);
+//			if ( desbase.isEmpty() ) { return false; }
+//			if ( desbase.contains(cond) ) {
+//				return true; 
+//				}
+//		}
 		if ( cond instanceof String ) {
 			Object res = msi.gaml.operators.System.opEvalGaml(scope, (String) cond);
 			if ( Cast.asBool(scope, res) == false ) { return true; }
@@ -540,7 +546,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	
 	private Boolean addBelief(final IScope scope, final Predicate predicateDirect){
 		if ( predicateDirect != null ) { 
-//			Predicate current_intention = currentIntention(scope);
 			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
 				removeFromBase(scope, predicateDirect, INTENTION_BASE);
@@ -551,9 +556,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						((Predicate)statement).getSubintentions().remove(predicateDirect);
 					}
 				}
-				if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
-					if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(predicateDirect)){
-						((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(predicateDirect);
+				if(((ArrayList)(((Predicate)statement).getOnHoldUntil()))!=null){
+					if(((ArrayList)(((Predicate)statement).getOnHoldUntil())).contains(predicateDirect)){
+						((ArrayList)(((Predicate)statement).getOnHoldUntil())).remove(predicateDirect);
 					}
 				}
 			}
@@ -574,28 +579,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-//		if ( predicateDirect != null ) { 
-////			Predicate current_intention = currentIntention(scope);
-//			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
-//				removeFromBase(scope, predicateDirect, DESIRE_BASE);
-//				removeFromBase(scope, predicateDirect, INTENTION_BASE);
-//			}
-//			for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
-//				if(((Predicate)statement).getSubintentions()!=null){
-//					if(((Predicate)statement).getSubintentions().contains(predicateDirect)){
-//						((Predicate)statement).getSubintentions().remove(predicateDirect);
-//					}
-//				}
-//				if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
-//					if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(predicateDirect)){
-//						((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(predicateDirect);
-//					}
-//				}
-//			}
-//			return addToBase(scope, predicateDirect, BELIEF_BASE); 
-//		}
-//
-//		return false;
 		return addBelief(scope,predicateDirect);
 
 	}
@@ -752,10 +735,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					predicate.onHoldUntil = subintention;
 				}
 			} else {
-				predicate.onHoldUntil = until;
-//				if(!predicate.subintentions.containsAll(Cast.asList(scope, until))){
-//					predicate.subintentions.addAll(Cast.asList(scope, until));
-//				}
+				if (predicate.onHoldUntil == null){
+					predicate.onHoldUntil = GamaListFactory.create(Types.get(PredicateType.id));
+				}
+				if ( predicate.getSubintentions() == null ) {
+					predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
+				} /*else {
+					predicate.getSubintentions().remove(until);
+				}*/
+				predicate.onHoldUntil.add((Predicate) until);
+				predicate.getSubintentions().add((Predicate) until);
+				addToBase(scope, (Predicate)until, DESIRE_BASE);
 			}
 		}
 		return true;
@@ -785,9 +775,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		
 		if ( predicate.getSubintentions() == null ) {
 			predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
-		} else {
+		} /*else {
 			predicate.getSubintentions().remove(subpredicate);
-		}
+		}*/
 		predicate.getSubintentions().add(subpredicate);
 		if (addAsDesire) {
 			addToBase(scope, subpredicate, DESIRE_BASE);
