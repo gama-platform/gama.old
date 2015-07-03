@@ -257,6 +257,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				IList priorities = GamaListFactory.create(scope, Types.FLOAT, priority_list);
 				int index_choice = msi.gaml.operators.Random.opRndChoice(scope, priorities);
 				newIntention=desireBase.get(index_choice);
+				while(intentionBase.contains(newIntention)){
+					int index_choice2 = msi.gaml.operators.Random.opRndChoice(scope, priorities);
+					newIntention=desireBase.get(index_choice2);
+				}
 				if(newIntention.getSubintentions() == null){
 					if ( !intentionBase.contains(newIntention) ) {
 						intentionBase.addValue(scope, newIntention);
@@ -486,7 +490,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 			}
 			addThoughts(scope, "no more subintention for" + intention);
-			return false;
+//			return false;
+			/*Must return true the step it lost it's last subintention to reinitilizate the current plan*/
+			return true;
 		}
 //		if( cond instanceof Predicate){
 //			GamaList desbase = getBase(scope, DESIRE_BASE);
