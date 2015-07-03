@@ -17,7 +17,7 @@ global{
 	
 	init {
 		create but number:nbBut;
-		create people number:nbPeople;
+//		create people number:nbPeople;
 		create peopleBDI number:nbPeopleBDI;
 		create trous number: nbTrou;
 	}
@@ -136,77 +136,91 @@ species peopleBDI skills:[moving] control: simple_bdi{
 		point butLocation <- first(but).location;
 		/*Cas spécial, si l'agent est aligné avec le but et que le trou est sur le coté, on reprend sa marche en avant*/
 		if (self.location.x=butLocation.x and trouLocation.x!=butLocation.x){
-			do add_subintention(get_current_intention(),nonEvitement);
-			do add_desire(nonEvitement);
+			do add_subintention(get_current_intention(),nonEvitement,true);
+//			do add_desire(nonEvitement);
+//			do current_intention_on_hold(nonEvitement);
 		}
 		if (self.location.y=butLocation.y and trouLocation.y!=butLocation.y){
-			do add_subintention(get_current_intention(),nonEvitement);
-			do add_desire(nonEvitement);
+			do add_subintention(get_current_intention(),nonEvitement,true);
+//			do add_desire(nonEvitement);
+//			do current_intention_on_hold(nonEvitement);
 		}
 		/*Faire des chemins particuliers en fonction que le trou se trouve juste au dessus, juste en dessou, juste à gauche ou juste à droite 
 		 * On réalise un contournement et on vérifiera que si le trou est "derière" nous, on s'en fou (sachant que les trous ne sont pas détéctés en diagonal)*/
 		/*On s'occupe d'abord du cas ou le trou n'est pas entre nous et le but*/
 		/*Le trou est à notre droite et le but à notre gauche*/
 		if (self.location.x<trouLocation.x and self.location.x>butLocation.x){
-			do add_subintention(get_current_intention(),nonEvitement);
-			do add_desire(nonEvitement);
+			do add_subintention(get_current_intention(),nonEvitement,true);
+//			do add_desire(nonEvitement);
+//			do current_intention_on_hold(nonEvitement);
 		} 
 		/*Le trou est à notre gauche et le but à notre droite */
 		if (self.location.x>trouLocation.x and self.location.x<butLocation.x){
-			do add_subintention(get_current_intention(),nonEvitement);
-			do add_desire(nonEvitement);
+			do add_subintention(get_current_intention(),nonEvitement,true);
+//			do add_desire(nonEvitement);
+//			do current_intention_on_hold(nonEvitement);
 		} 
 		/*Le trou est au dessus et le but en dessous */
 		if (self.location.y<trouLocation.y and self.location.y>butLocation.y){
-			do add_subintention(get_current_intention(),nonEvitement);
-			do add_desire(nonEvitement);
+			do add_subintention(get_current_intention(),nonEvitement,true);
+//			do add_desire(nonEvitement);
+//			do current_intention_on_hold(nonEvitement);
 		} 
 		/*Le trou est en dessous et le but au dessus */
 		if (self.location.y>trouLocation.y and self.location.y<butLocation.y){
-			do add_subintention(get_current_intention(),nonEvitement);
-			do add_desire(nonEvitement);
+			do add_subintention(get_current_intention(),nonEvitement,true);
+//			do add_desire(nonEvitement);
+//			do current_intention_on_hold(nonEvitement);
 		} 
 		
 		/*Le trous se trouve à ma gauche et le but se trouve en haut à gauche (par rapport à moi) 
 		 * On considère que le repère est dans le coin en haut à gauche du cadrillage*/
 		if(self.location.x>trouLocation.x and butLocation.y<=self.location.y){
-			do add_subintention(get_current_intention(),evitementHaut);
-			do add_desire(evitementHaut);
+			do add_subintention(get_current_intention(),evitementHaut,true);
+//			do add_desire(evitementHaut);
+//			do current_intention_on_hold(evitementHaut);
 		}
 		/*Le trou se trouve à ma gauche et le but se trouve en dessous à gauche */
 		if(self.location.x>trouLocation.x and butLocation.y>self.location.y){
-			do add_subintention(get_current_intention(),evitementBas);
-			do add_desire(evitementBas);
+			do add_subintention(get_current_intention(),evitementBas,true);
+//			do add_desire(evitementBas);
+//			do current_intention_on_hold(evitementBas);
 		}
 		/*le trou se trouve à ma droite et le but en haut à droite */
 		if(self.location.x<trouLocation.x and butLocation.y<=self.location.y){
-			do add_subintention(get_current_intention(),evitementHaut);
-			do add_desire(evitementHaut);
+			do add_subintention(get_current_intention(),evitementHaut,true);
+//			do add_desire(evitementHaut);
+//			do current_intention_on_hold(evitementHaut);
 		}
 		/*le trou se trouve à ma droite et le but se trouve en bas à droite */
 		if(self.location.x<trouLocation.x and butLocation.y>self.location.y){
-			do add_subintention(get_current_intention(),evitementBas);
-			do add_desire(evitementBas);
+			do add_subintention(get_current_intention(),evitementBas,true);
+//			do add_desire(evitementBas);
+//			do current_intention_on_hold(evitementBas);
 		}
 		/*le trou se trouve au dessus et le but se trouve en haut à gauche */
 		if(self.location.y>trouLocation.y and butLocation.x<=self.location.x){
-			do add_subintention(get_current_intention(),evitementGauche);
-			do add_desire(evitementGauche);
+			do add_subintention(get_current_intention(),evitementGauche,true);
+//			do add_desire(evitementGauche);
+//			do current_intention_on_hold(evitementGauche);
 		}
 		/*le trou se trouve au dessus et le but se trouve en haut à droite*/
 		if(self.location.y>trouLocation.y and butLocation.x>self.location.x){
-			do add_subintention(get_current_intention(),evitementDroite);
-			do add_desire(evitementDroite);
+			do add_subintention(get_current_intention(),evitementDroite,true);
+//			do add_desire(evitementDroite);
+//			do current_intention_on_hold(evitementDroite);
 		}
 		/*le trou se trouve en dessous et le but se trouve en dessous à gauche */
 		if(self.location.y<trouLocation.y and butLocation.x<=self.location.x){
-			do add_subintention(get_current_intention(),evitementGauche);
-			do add_desire(evitementGauche);
+			do add_subintention(get_current_intention(),evitementGauche,true);
+//			do add_desire(evitementGauche);
+//			do current_intention_on_hold(evitementGauche);
 		}
 		/*le trou se trouve en dessous et le but se trouve en dessous à droite */
 		if(self.location.y<trouLocation.y and butLocation.x>self.location.x){
-			do add_subintention(get_current_intention(),evitementDroite);
-			do add_desire(evitementDroite);
+			do add_subintention(get_current_intention(),evitementDroite,true);
+//			do add_desire(evitementDroite);
+//			do current_intention_on_hold(evitementDroite);
 		}
 		do current_intention_on_hold();
 	}
