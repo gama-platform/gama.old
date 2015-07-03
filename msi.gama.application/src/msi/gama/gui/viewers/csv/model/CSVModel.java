@@ -18,15 +18,16 @@ package msi.gama.gui.viewers.csv.model;
 import java.io.*;
 import java.util.*;
 import msi.gama.gui.navigator.FileMetaDataProvider;
+import msi.gama.gui.navigator.commands.ResourceRefreshHandler;
 import msi.gama.util.file.*;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * 
+ *
  * @author fhenri
- * 
+ *
  */
 public class CSVModel implements IRowChangesListener {
 
@@ -80,7 +81,7 @@ public class CSVModel implements IRowChangesListener {
 	 * Get the character that defines comment lines
 	 * @return the comment line starting character. If no comments are allowed in this
 	 *         file, then Character.UNASSIGNED constant must be returned;
-	 * 
+	 *
 	 */
 	public char getCommentChar() {
 		char result = Character.UNASSIGNED;
@@ -188,7 +189,7 @@ public class CSVModel implements IRowChangesListener {
 			System.out.println("exception in readLines " + e);
 			e.printStackTrace();
 		}
-		this.saveMetaData();
+		this.discardMetaData();
 	}
 
 	// ----------------------------------
@@ -235,7 +236,7 @@ public class CSVModel implements IRowChangesListener {
 		int indexRow = findRow(row);
 		if ( indexRow != -1 ) {
 			rows.add(indexRow, newRow);
-			saveMetaData();
+			discardMetaData();
 
 		} else {
 			addRow(newRow);
@@ -243,8 +244,8 @@ public class CSVModel implements IRowChangesListener {
 	}
 
 	/**
-     *
-     */
+	 *
+	 */
 	public void addRow() {
 		CSVRow row = CSVRow.createEmptyLine(info.cols, this);
 		addRow(row);
@@ -255,7 +256,7 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public void addRow(final CSVRow row) {
 		rows.add(row);
-		saveMetaData();
+		discardMetaData();
 
 	}
 
@@ -268,7 +269,7 @@ public class CSVModel implements IRowChangesListener {
 
 		if ( indexRow != -1 ) {
 			rows.add(indexRow, newRow);
-			saveMetaData();
+			discardMetaData();
 
 		} else {
 			addRow(newRow);
@@ -342,8 +343,8 @@ public class CSVModel implements IRowChangesListener {
 	}
 
 	/**
-     *
-     */
+	 *
+	 */
 	public void removeRow(final CSVRow row) {
 		if ( !rows.remove(row) ) {
 			// TODO return error message
@@ -364,7 +365,7 @@ public class CSVModel implements IRowChangesListener {
 		for ( CSVRow row : rows ) {
 			row.addElement("");
 		}
-		saveMetaData();
+		discardMetaData();
 
 	}
 
@@ -377,7 +378,7 @@ public class CSVModel implements IRowChangesListener {
 
 	/**
 	 * Remove the column represented by the index
-	 * 
+	 *
 	 * @param colIndex
 	 */
 	public void removeColumn(final int colIndex) {
@@ -393,12 +394,12 @@ public class CSVModel implements IRowChangesListener {
 				row.removeElementAt(colIndex);
 			}
 		}
-		saveMetaData();
+		discardMetaData();
 	}
 
 	/**
 	 * Remove the column represented by its name
-	 * 
+	 *
 	 * @param colIndex
 	 */
 	public void removeColumn(final String columnName) {
@@ -473,18 +474,18 @@ public class CSVModel implements IRowChangesListener {
 	}
 
 	/**
-	 * 
+	 *
 	 */
-	public void saveMetaData() {
+	public void discardMetaData() {
 		// reload();
 
-		System.out.println("Saving the following metadata: " + info.getSuffix());
+		// System.out.println("Saving the following metadata: " + info.getSuffix());
 
-		FileMetaDataProvider.getInstance().storeMetadata(file, info);
+		ResourceRefreshHandler.discardMetaData(file);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void reload() {
 		try {

@@ -145,6 +145,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			} else if ( SHAPEFILE_SUPPORT_CT_ID.equals(ct) ) {
 				data = createShapeFileSupportMetaData(file);
 			}
+			System.out.println("Storing the metadata just created (or recreated) while reading it for " + file);
 			storeMetadata(file, data);
 		}
 		return data;
@@ -170,11 +171,17 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	public void storeMetadata(final IFile file, final IGamaFileMetaData data) {
 		try {
-			if ( ResourcesPlugin.getWorkspace().isTreeLocked() ) { return; }
-			data.setModificationStamp(file.getModificationStamp());
 			System.out.println("Writing back metadata to " + file);
+			if ( ResourcesPlugin.getWorkspace().isTreeLocked() ) {
+				System.out.println("Canceled: Resources are locked");
+				return;
+			}
+			if ( data != null ) {
+				data.setModificationStamp(file.getModificationStamp());
+			}
 			ResourcesPlugin.getWorkspace().getSynchronizer()
 				.setSyncInfo(CACHE_KEY, file, data == null ? null : data.toPropertyString().getBytes("UTF-8"));
+			System.out.println("Success: sync info written");
 			// file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
 
 			// Decorate using current UI thread
@@ -184,6 +191,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				public void run() {
 					// Fire a LabelProviderChangedEvent to notify eclipse views
 					// that label provider has been changed for the resources
+					System.out.println("Finally: updating the decorator manager");
 					PlatformUI.getWorkbench().getDecoratorManager().update("msi.gama.application.decorator");
 				}
 			});

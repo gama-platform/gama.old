@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 csvedit
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -480,7 +480,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	 */
 	private void updateTextEditorFromTable() {
 		editor.getDocumentProvider().getDocument(editor.getEditorInput())
-		.set(((CSVModel) tableViewer.getInput()).getTextRepresentation());
+			.set(((CSVModel) tableViewer.getInput()).getTextRepresentation());
 	}
 
 	/**
@@ -592,68 +592,68 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 			tb.menu("action.set.delimiter2", "Determine which character should be used as delimiter of fields",
 				"Determine which character should be used as delimiter of fields", new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					GamaMenu menu = new GamaMenu() {
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						GamaMenu menu = new GamaMenu() {
 
-						@Override
-						protected void fillMenu() {
-							action(", (comma)", new SelectionAdapter() {
+							@Override
+							protected void fillMenu() {
+								action(", (comma)", new SelectionAdapter() {
 
-								@Override
-								public void widgetSelected(final SelectionEvent e) {
-									refreshWithDelimiter(',');
-								}
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter(',');
+									}
 
-							}, null);
-							action("; (semicolon)", new SelectionAdapter() {
+								}, null);
+								action("; (semicolon)", new SelectionAdapter() {
 
-								@Override
-								public void widgetSelected(final SelectionEvent e) {
-									refreshWithDelimiter(';');
-								}
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter(';');
+									}
 
-							}, null);
-							action("  (space)", new SelectionAdapter() {
+								}, null);
+								action("  (space)", new SelectionAdapter() {
 
-								@Override
-								public void widgetSelected(final SelectionEvent e) {
-									refreshWithDelimiter(' ');
-								}
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter(' ');
+									}
 
-							}, null);
-							action("  (tabulation)", new SelectionAdapter() {
+								}, null);
+								action("  (tabulation)", new SelectionAdapter() {
 
-								@Override
-								public void widgetSelected(final SelectionEvent e) {
-									refreshWithDelimiter('\t');
-								}
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter('\t');
+									}
 
-							}, null);
-							action(": (colon)", new SelectionAdapter() {
+								}, null);
+								action(": (colon)", new SelectionAdapter() {
 
-								@Override
-								public void widgetSelected(final SelectionEvent e) {
-									refreshWithDelimiter(':');
-								}
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter(':');
+									}
 
-							}, null);
-							action("| (pipe)", new SelectionAdapter() {
+								}, null);
+								action("| (pipe)", new SelectionAdapter() {
 
-								@Override
-								public void widgetSelected(final SelectionEvent e) {
-									refreshWithDelimiter('|');
+									@Override
+									public void widgetSelected(final SelectionEvent e) {
+										refreshWithDelimiter('|');
 
-								}
+									}
 
-							}, null);
+								}, null);
 
-						}
-					};
-					menu.open(tb.getToolbar(SWT.RIGHT), e);
-				}
+							}
+						};
+						menu.open(tb.getToolbar(SWT.RIGHT), e);
+					}
 
-			}, SWT.RIGHT);
+				}, SWT.RIGHT);
 		ToolItem t =
 			tb.check("action.set.header2", "First line is header", "First line is header", new SelectionAdapter() {
 
@@ -671,18 +671,18 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 			"Insert a new row before the currently selected one or at the end of the file if none is selected",
 			new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-				if ( row != null ) {
-					model.addRowAfterElement(row);
-				} else {
-					model.addRow();
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+					if ( row != null ) {
+						model.addRowAfterElement(row);
+					} else {
+						model.addRow();
+					}
+					tableModified();
+					model.discardMetaData();
 				}
-				tableModified();
-				model.saveMetaData();
-			}
-		}, SWT.RIGHT);
+			}, SWT.RIGHT);
 		tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", new SelectionAdapter() {
 
 			@Override
@@ -695,7 +695,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 					if ( row != null ) {
 						model.removeRow(row);
 						tableModified();
-						model.saveMetaData();
+						model.discardMetaData();
 					}
 				}
 			}
@@ -720,7 +720,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 						addMenuItemToColumn(column, model.getColumnCount() - 1);
 						defineCellEditing();
 						tableModified();
-						model.saveMetaData();
+						model.discardMetaData();
 					}
 				}
 			}, SWT.RIGHT);
@@ -730,25 +730,25 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 			tb.button("action.delete.column2", "Delete column", "Delete one or several column(s)",
 				new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
 
-					// call delete column page
-					DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
-					if ( dcPage.open() == Window.OK ) {
-						String[] colToDelete = dcPage.getColumnSelected();
-						for ( String column : colToDelete ) {
-							int colIndex = findColumnForName(column);
-							tableViewer.getTable().getColumn(colIndex).dispose();
-							// tableHeaderMenu.getItem(colIndex).dispose();
-							model.removeColumn(column);
+						// call delete column page
+						DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
+						if ( dcPage.open() == Window.OK ) {
+							String[] colToDelete = dcPage.getColumnSelected();
+							for ( String column : colToDelete ) {
+								int colIndex = findColumnForName(column);
+								tableViewer.getTable().getColumn(colIndex).dispose();
+								// tableHeaderMenu.getItem(colIndex).dispose();
+								model.removeColumn(column);
+							}
+							tableModified();
+							model.discardMetaData();
 						}
-						tableModified();
-						model.saveMetaData();
-					}
 
-				}
-			}, SWT.RIGHT);
+					}
+				}, SWT.RIGHT);
 		}
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {

@@ -111,13 +111,15 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 					event.getType() == IResourceChangeEvent.PRE_CLOSE ||
 					event.getType() == IResourceChangeEvent.PRE_DELETE ) { return; }
 
-				Display.getDefault().syncExec(new Runnable() {
+				Display.getDefault().asyncExec(new Runnable() {
 
 					@Override
 					public void run() {
 						TreePath[] treePaths = viewer.getExpandedTreePaths();
-						viewer.refresh();
-						viewer.setExpandedTreePaths(treePaths);
+						if ( !viewer.isBusy() ) {
+							viewer.refresh();
+							viewer.setExpandedTreePaths(treePaths);
+						}
 					}
 				});
 			}
