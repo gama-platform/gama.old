@@ -886,10 +886,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primRemoveDesire(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if ( predicateDirect != null ) { return getBase(scope, DESIRE_BASE).remove(predicateDirect);
-
+		if ( predicateDirect != null ) { 
+			getBase(scope, DESIRE_BASE).remove(predicateDirect);
+			//remove the intention too (and the subintentions)
+			getBase(scope, INTENTION_BASE).remove(predicateDirect);
+			for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+				if(((Predicate)statement).getSubintentions()!=null){
+					if(((Predicate)statement).getSubintentions().contains(predicateDirect)){
+						((Predicate)statement).getSubintentions().remove(predicateDirect);
+					}
+				}
+				if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+					if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(predicateDirect)){
+						((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(predicateDirect);
+					}
+				}
+			}
+			return true;
 		}
-// TODO remove intension aussi
 		return false;
 	}
 
