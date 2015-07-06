@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 3 déc. 2014
- * 
+ *
  */
 package msi.gama.gui.swt.controls;
 
@@ -19,10 +19,10 @@ import org.eclipse.swt.widgets.*;
 
 /**
  * Class GamaToolbar. A declarative wrapper around 2 toolbars (left, right).
- * 
+ *
  * @author drogoul
  * @since 3 déc. 2014
- * 
+ *
  */
 public class GamaToolbar2 extends Composite {
 
@@ -78,13 +78,13 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	public
-		ToolItem
-		status(final String image, final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
+	ToolItem
+	status(final String image, final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		return status(GamaIcons.create(image).image(), s, color, side);
 	}
 
 	public ToolItem
-		status(final Image image, final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
+	status(final Image image, final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		wipe(side, true);
 		ToolItem item = button(color, s, image, side);
 		refresh(true);
@@ -136,7 +136,7 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	public ToolItem
-		button(final GamaUIColor color, final String text, final SelectionListener listener, final int side) {
+	button(final GamaUIColor color, final String text, final SelectionListener listener, final int side) {
 		FlatButton button = FlatButton.button(side == SWT.LEFT ? left : right, color, text, null);
 		button.addSelectionListener(listener);
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
@@ -179,7 +179,7 @@ public class GamaToolbar2 extends Composite {
 
 	/**
 	 * Wipes the toolbar (left or right), including or not the simple tool items. Retuns the width of the toolbar once wiped.
-	 * 
+	 *
 	 * @param side
 	 * @param includingToolItems
 	 * @return
@@ -227,11 +227,11 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	private void prepareToolbar(final int side) {
-		GamaToolbarSimple tb = getToolbar(side);
-		if ( tb.getItemCount() > 0 ) { return; }
-		if ( side == SWT.LEFT ) {
-			sep(1, side);
-		}
+		// GamaToolbarSimple tb = getToolbar(side);
+		// if ( tb.getItemCount() > 0 ) { return; }
+		// if ( side == SWT.LEFT ) {
+		// sep(1, side);
+		// }
 	}
 
 	/**
