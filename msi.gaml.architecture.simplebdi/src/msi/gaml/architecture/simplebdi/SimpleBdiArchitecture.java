@@ -490,9 +490,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 			}
 			addThoughts(scope, "no more subintention for" + intention);
-//			return false;
-			/*Must return true the step it lost it's last subintention to reinitilizate the current plan*/
-			return true;
+			/*Must remove the current plan to change for a new one*/
+			final IAgent agent = getCurrentAgent(scope);
+			SimpleBdiPlanStatement _persistentTask = (SimpleBdiPlanStatement)agent.getAttribute(CURRENT_PLAN);
+			_persistentTask = null;
+			agent.setAttribute(CURRENT_PLAN, _persistentTask);
+			return false;
+			
+//			return true;
 		}
 //		if( cond instanceof Predicate){
 //			GamaList desbase = getBase(scope, DESIRE_BASE);
