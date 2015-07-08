@@ -18,6 +18,10 @@ public class RemoteSequence extends AbstractStatementSequence {
 		super(desc);
 	}
 
+	public IAgent getMyself(){
+		return myself;
+	}
+	
 	public void setMyself(final IAgent agent) {
 		myself = agent;
 	}

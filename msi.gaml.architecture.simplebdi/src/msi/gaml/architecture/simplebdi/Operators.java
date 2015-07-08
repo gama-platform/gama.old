@@ -10,6 +10,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.expressions.IVarExpression.Agent;
 
 public class Operators {
 
@@ -111,4 +112,9 @@ public class Operators {
 						.value(scope));
 	}
 	
+//	@operator(value = "focus", can_be_const = true, category = {"BDI"})
+//	public static Boolean focus(final Agent agent,final int var ){
+//		agent.
+//		return true;
+//	}
 }

@@ -30,7 +30,8 @@ public class Predicate implements IValue {
 	Map<String, Object> values;
 	Double priority = 1.0;
 	Double date;
-	Object onHoldUntil;
+//	Object onHoldUntil;
+	List<Predicate> onHoldUntil;
 	List<Predicate> subintentions;
 	boolean everyPossibleValues = false;
 	boolean is_true=true;
@@ -65,11 +66,15 @@ public class Predicate implements IValue {
 		return subintentions;
 	}
 
-	public Object getOnHoldUntil() {
+	public List<Predicate> getOnHoldUntil() {
 		return onHoldUntil;
 	}
 
-	public void setOnHoldUntil(final Object onHoldUntil) {
+//	public void setOnHoldUntil(final Object onHoldUntil) {
+//		this.onHoldUntil = onHoldUntil;
+//	}
+	
+	public void setOnHoldUntil(final List<Predicate> onHoldUntil){
 		this.onHoldUntil = onHoldUntil;
 	}
 	

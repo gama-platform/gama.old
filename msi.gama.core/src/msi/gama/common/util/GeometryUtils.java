@@ -520,6 +520,21 @@ public class GeometryUtils {
 	public static IList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		final VoronoiDiagramBuilder dtb = new VoronoiDiagramBuilder();
+		dtb.setClipEnvelope(scope.getSimulationScope().getEnvelope());
+		dtb.setSites(points);
+		final GeometryCollection g = (GeometryCollection) dtb.getDiagram(FACTORY);
+		final int nb = g.getNumGeometries();
+		for ( int i = 0; i < nb; i++ ) {
+			final Geometry gg = g.getGeometryN(i);
+			geoms.add(new GamaShape(gg));
+		}
+		return geoms;
+	}
+	
+	public static IList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points, final IShape clip) {
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+		final VoronoiDiagramBuilder dtb = new VoronoiDiagramBuilder();
+		dtb.setClipEnvelope(clip.getEnvelope());
 		dtb.setSites(points);
 		final GeometryCollection g = (GeometryCollection) dtb.getDiagram(FACTORY);
 		final int nb = g.getNumGeometries();

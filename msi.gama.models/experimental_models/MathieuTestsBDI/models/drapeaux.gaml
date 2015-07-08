@@ -83,19 +83,31 @@ species peopleBDI skills:[moving] control: simple_bdi{
 		do add_desire(but_desire);
 	}
 	
-	reflex perception{
-		
-		/*il faut percevoir les trous*/
-		list<trous> listeTrou <- trous at_distance 2;
-		if(length(listeTrou)!=nil){
-			loop trouTemp over: listeTrou{
-				if(not has_belief(new_predicate("trou",["emplacementTrou"::trouTemp.location]))){
+//	reflex perception{
+//		
+//		/*il faut percevoir les trous*/
+//		list<trous> listeTrou <- trous at_distance 2;
+//		if(length(listeTrou)!=nil){
+//			loop trouTemp over: listeTrou{
+//				if(not has_belief(new_predicate("trou",["emplacementTrou"::trouTemp.location]))){
+//					trouPasse<-false;
+//					do add_belief(new_predicate("trou",["emplacementTrou"::trouTemp.location]));
+//					do add_desire(new_predicate("trou",["emplacementTrou"::trouTemp.location]));
+//					do remove_intention(but_desire,true);
+//					//write("Perception");
+//				}
+//			}
+//		}
+//	}
+	
+	perceive target:trous in:2{
+		ask myself{
+			if(not has_belief(new_predicate("trou",["emplacementTrou"::myself.location]))){
 					trouPasse<-false;
-					do add_belief(new_predicate("trou",["emplacementTrou"::trouTemp.location]));
-					do add_desire(new_predicate("trou",["emplacementTrou"::trouTemp.location]));
+					do add_belief(new_predicate("trou",["emplacementTrou"::myself.location]));
+					do add_desire(new_predicate("trou",["emplacementTrou"::myself.location]));
 					do remove_intention(but_desire,true);
 					//write("Perception");
-				}
 			}
 		}
 	}
