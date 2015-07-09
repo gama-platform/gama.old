@@ -21,14 +21,15 @@ global {
 	
 	
 	agent_group_follower peoplefollower;
+	agent_group_follower roadfollower;
 	list<building> residential_buildings;
 	list<building>  industrial_buildings;
-	list<float> testlist3<-[2,3,4,5];
-	list<float> testlist4<-[3,2];
-	list<float> testlist5<-[3,2];
-	list<list> testlist6<-[testlist3,testlist4,testlist4];
-	list<list> testlist<-[testlist3,testlist3,testlist3];
-	list<list> testlist2<-["A","B","C","D"];
+	
+	
+	
+
+    //pour la simu 1 on a 2 agent
+	list<list> testlist<-[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
 	
 	init {
 		create building from: shape_file_buildings with: [type::string(read ('NATURE'))] {       
@@ -58,7 +59,7 @@ global {
 	}
 	
 	reflex update_graph{
-				create people number: 1
+	  create people number: 1
 				{
 			 speed <- min_speed + rnd (max_speed - min_speed) ;
 			 start_work <- min_work_start + rnd (max_work_start - min_work_start) ;
@@ -72,23 +73,14 @@ global {
 		if (cycle>0)
 		{
 			testlist<-peoplefollower at_cycle ("multi_distribhistory","speed");
-			testlist3<-peoplefollower at_cycle ("multi_minhistory","speed");
-			testlist4<-peoplefollower at_cycle ("multi_averagehistory","speed");
-			testlist5<-peoplefollower at_cycle ("multi_maxhistory","speed");
-			testlist2<-[testlist2,testlist3,testlist4];
-			testlist2<-peoplefollower distrib_legend ("speed");
-			testlist4<-((peoplefollower.averagehistory at {(reverse(peoplefollower.numvarmap)["speed"]) as int,cycle-1}) as list);
-			testlist4<-((peoplefollower.averagehistory at {(reverse(peoplefollower.numvarmap)["heading"]) as int,cycle-1}) as list);
-			testlist5<-((peoplefollower.distribhistory at {(reverse(peoplefollower.numvarmap)["speed"]) as int,cycle-1}) as list);			
+		
 		}
 		if (cycle=0) 
 		{
 			testlist<-[0,0,0];
 			
 		}
-		//write ""+reverse(peoplefollower.numvarmap)["speed"]; 
 		write ""+((peoplefollower.distribhistory at {(reverse(peoplefollower.numvarmap)["cestmoi"]) as int,cycle-1}) );   
-//		write ""+(((peoplefollower.distribhistory at {(reverse(peoplefollower.numvarmap)["cestmoi"]) as int,cycle-1}) as list) at 0);
 	}
 
 	reflex repair_road when: (time mod repair_time) = 0 {
@@ -175,29 +167,12 @@ experiment road_traffic type: gui {
 			species road aspect: base ;
 			species people aspect: base ;
 		}
-		display chart_display refresh_every: 10 { 
-			chart name: 'Road Status' type: series background: rgb('lightGray') size: {0.9, 0.4} position: {0.05, 0.05} {
-				data name:'Mean road destruction' value: mean (road collect each.destruction_coeff) style: line color: rgb('green') ;
-				data name:'Max road destruction' value: road max_of each.destruction_coeff style: line color: rgb('red') ;
-			}
-			chart name: 'People follower' type: series background: rgb('lightGray') size: {0.9, 0.4} position: {0.05, 0.05} {
-		//		data name:'people nb' value: ((peoplefollower.metadatahistory at {7,cycle}) as int) style: line color: rgb('green') ;
+
+		display chart_displayHisto refresh_every: 1 { 
+			chart name: 'Average Speed' type: histogram style: stack{
+				datalist value: (testlist) legend: ["exp1", "exp2", "exp3"]style:stack;
 			}
 		}
-			display chart_displayHisto refresh_every: 1 { 
-			chart name: 'Average tout st' type: histogram style: stack{
-				datalist value: (testlist)  style:stack;
-//				datalist value: (testlist) categoriesnames:(testlist2) style:stack;
-//				datalist value: (testlist) categoriesnames:testlist6 style:stack;
-			}
-
-
-//			display chart_display4 refresh_every: 1 { 
-//			chart name: 'Average tout st' type: histogram style: stack{
-//				datalist value: (testlist) categoriesnames:(testlist2) style:stack;
-////				datalist value: (testlist) categoriesnames:testlist6 style:stack;
-//			}
-			
-		}
+		
 	}
 }
