@@ -769,7 +769,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 				IList nl4=mydata.averagehistory.getLine(scope, mydata.averagehistory, mydata.averagehistory.numRows-1);
 				GamaFloatMatrix nm4=new GamaFloatMatrix(scope,nl4,new GamaPoint(mydata.averagehistory.numCols,1));
-				multidata.averagehistory=(GamaFloatMatrix)multidata.averagehistory._opAppendHorizontally(scope, nm4); // .opAppendVertically(scope, multidata.averagehistory, nm4);
+				multidata.averagehistory=(GamaFloatMatrix)multidata.averagehistory._opAppendVertically(scope, nm4); // .opAppendVertically(scope, multidata.averagehistory, nm4);
 				//System.out.println("je suis passé par averagehistory!");
 
 				IList nl5=mydata.stdevhistory.getLine(scope, mydata.stdevhistory, mydata.stdevhistory.numRows-1);
@@ -784,7 +784,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 				IList nl7=mydata.distribhistory.getLine(scope, mydata.distribhistory, mydata.distribhistory.numRows-1);
 				GamaObjectMatrix nm7=new GamaObjectMatrix(scope,nl7,new GamaPoint(mydata.distribhistory.numCols,1), Types.NO_TYPE);
-				multidata.distribhistory=(GamaObjectMatrix)multidata.distribhistory._opAppendHorizontally(scope, nm7); //.opAppendVertically(scope, multidata.distribhistory, nm7);
+				multidata.distribhistory=(GamaObjectMatrix)multidata.distribhistory._opAppendVertically(scope, nm7); //.opAppendVertically(scope, multidata.distribhistory, nm7);
 				//System.out.println("je suis passé par distribhistory!");
 
 
@@ -1091,6 +1091,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 		if(my_matrix.equals("multi_minhistory")) {
 			//System.out.println("c'est multi_min qui a été choisie.");
+			at_cycle_manager=new ArrayList<Double>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 					//System.out.println("on est à l'agent group follower: " + manager.agentGroupFollowerList.get(i).toString());					
@@ -1110,6 +1111,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 		}
 		else if(my_matrix.equals("multi_maxhistory")) {
+			at_cycle_manager=new ArrayList<Double>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 					for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
@@ -1126,6 +1128,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 		}
 		else if(my_matrix.equals("multi_averagehistory")) {
+			at_cycle_manager=new ArrayList<Double>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {				
 					for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
@@ -1142,6 +1145,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 		}
 		else if(my_matrix.equals("multi_stdevhistory")) {
+			at_cycle_manager=new ArrayList<Double>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 					for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
@@ -1158,6 +1162,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 		}
 		else if(my_matrix.equals("multi_distribhistory")) {
+			at_cycle_manager=new ArrayList<Object>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 					for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
