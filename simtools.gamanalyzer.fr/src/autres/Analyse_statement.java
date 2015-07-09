@@ -49,32 +49,18 @@ public class Analyse_statement extends AbstractStatement {
 
 	public static String getAnalyseStatementVariable() { return ANALYSE_STATEMENT_VARIABLE; }
 	public static String getAnalyseStatementConstraint() { return ANALYSE_STATEMENT_CONSTRAINT; }
-	//public static String getAnalyseStatementVar() { return ANALYSE_STATEMENT_VAR; }
-	
-	
-	/*static String analysedSpecies;
-	static String constraint;
-	public static String getAnalysedSpecies() {
-		return analysedSpecies;
-	}
-	public static String getConstraint() {
-		return constraint;
-	}*/
 
 	public Analyse_statement(IDescription desc) {
 		super(desc);
 
 		desc.getFacets().get(ANALYSE_STATEMENT_VARIABLE);
-		//desc.getFacets().get(ANALYSE_STATEMENT_VAR);
 		desc.getFacets().get(ANALYSE_STATEMENT_CONSTRAINT);
 	}
 	
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
 		String analysedSpecies = (String) this.getFacet(ANALYSE_STATEMENT_VARIABLE).value(scope);
-		//String analysedList = (String) this.getFacet(ANALYSE_STATEMENT_VAR).value(scope);
 		String constraint = (String) this.getFacet(ANALYSE_STATEMENT_CONSTRAINT).value(scope);
-
 		return null;
 	}
 }

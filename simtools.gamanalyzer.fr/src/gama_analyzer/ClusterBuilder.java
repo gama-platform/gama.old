@@ -105,9 +105,6 @@ public class ClusterBuilder extends GamlAgent {
 					final List<IAgent> groupe = groupes.get(clusterIndex);
 					groupe.add(agents.get(i));
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-//					e.printStackTrace();
-					//no cluster, NOISE
 				}
 			}
 			return groupes;

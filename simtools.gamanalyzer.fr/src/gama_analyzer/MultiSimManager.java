@@ -21,7 +21,6 @@ public class MultiSimManager {
 	public MultiSimManager(GamaList<AgentGroupFollower> agentGroupFollowerList,
 			GamaList<StorableData> storableDataList,
 			GamaList<GroupIdRule> groupIdRuleList, 
-			//GamaList<Object> idSimList,
 			GamaList<Color> simColorList, 
 			GamaList<Double> at_cycle_manager,
 			GamaList<GamaList<Double>> at_var_manager, 
@@ -33,18 +32,13 @@ public class MultiSimManager {
 		this.groupIdRuleList = groupIdRuleList;
 		this.idSimList = idSimList;
 		this.simColorList = simColorList;
-	}
-	
+	}	
 	
 	IList agentGroupFollowerList = GamaListFactory.create(Types.AGENT);
 	IList<StorableData> storableDataList = GamaListFactory.create(Types.NO_TYPE);
 	IList<GroupIdRule> groupIdRuleList = GamaListFactory.create(Types.NO_TYPE);
 	IList idSimList = GamaListFactory.create(Types.NO_TYPE);
 	IList<Color> simColorList = GamaListFactory.create(Types.NO_TYPE);
-
-	
-
-
 
 	public IList<AgentGroupFollower> getAgentGroupFollowerList() { return agentGroupFollowerList; }
 	public void setAgentGroupFollowerList( GamaList<AgentGroupFollower> agentGroupFollowerList) { this.agentGroupFollowerList = agentGroupFollowerList; }
@@ -56,11 +50,5 @@ public class MultiSimManager {
 	public void setIdSimList(GamaList<Object> idSimList) { this.idSimList = idSimList; }
 	public IList<Color> getSimColorList() { return simColorList; }
 	public void setSimColorList(GamaList<Color> simColorList) { this.simColorList = simColorList; }
-		
-	/*public GamaList<Double> getAt_cycle_manager() { return at_cycle_manager; }
-	public void setAt_cycle_manager(GamaList<Double> at_cycle_manager) { this.at_cycle_manager = at_cycle_manager; }
-	public GamaList<GamaList<Double>> getAt_var_manager() { return at_var_manager; }
-	public void setAt_var_manager(GamaList<GamaList<Double>> at_var_manager) { this.at_var_manager = at_var_manager; }
-	*/
 	}
 

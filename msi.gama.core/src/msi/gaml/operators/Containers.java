@@ -711,8 +711,8 @@ public class Containers {
 		final Iterable it = nullCheck(scope, original).iterable(scope);
 		final int size = size(it);
 		if ( size == 0 ) { return GamaListFactory.EMPTY_LIST; }
-		if ( size == 1 ) { return GamaListFactory.createWithoutCasting(original.getType().getContentType(),
-			getFirst(it, null)); }
+//		if ( size == 1 ) { return GamaListFactory.createWithoutCasting(original.getType().getContentType(),
+//			getFirst(it, null)); }
 		return GamaListFactory.createWithoutCasting(original.getType().getContentType(),
 			Guava.orderOn(Guava.function(scope, filter)).sortedCopy(it));
 	}

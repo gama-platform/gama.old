@@ -32,7 +32,6 @@ public class GamaShapeConverter implements Converter {
 		writer.setValue(agt.getInnerGeometry().getClass().getName());
 			writer.startNode("geom");
 			arg2.convertAnother(agt.getInnerGeometry());
-//            writer.setValue(agt.getInnerGeometry().);
             writer.endNode();
 	}
 

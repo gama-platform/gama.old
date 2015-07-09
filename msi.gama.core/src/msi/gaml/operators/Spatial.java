@@ -1673,6 +1673,18 @@ public abstract class Spatial {
 			if ( pts == null ) { return null; }
 			return GeometryUtils.voronoi(scope, pts);
 		}
+		
+		@operator(value = "voronoi", content_type = IType.GEOMETRY, category = { IOperatorCategory.SPATIAL,
+				IOperatorCategory.SP_TRANSFORMATIONS })
+			@doc(value = "A list of geometries corresponding to the Voronoi diagram built from the list of points according to the given clip",
+			masterDoc = true,
+			examples = { @example(value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}], square(300))",
+					equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points with a square of 300m side size as clip.",
+					test = false) })
+			public static IList<IShape> vornoi(final IScope scope, final IList<GamaPoint> pts, final IShape clip) {
+				if ( pts == null ) { return null; }
+				return GeometryUtils.voronoi(scope, pts, clip);
+			}
 
 		@operator(value = "smooth", content_type = IType.GEOMETRY, category = { IOperatorCategory.SPATIAL,
 			IOperatorCategory.SP_TRANSFORMATIONS })

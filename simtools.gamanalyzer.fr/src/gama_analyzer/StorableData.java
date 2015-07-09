@@ -38,16 +38,6 @@ public class StorableData {
 	public GamaObjectMatrix distribhistoryparams; //one line per step, params for the distribhistory: cl et st: xmin=st * 2^cl le nb de clust max est un param global
 	public GamaObjectMatrix distribhistory; //one line per step, one GamaIntMatrix per cell
 	 
-	/*public GamaMatrix multi_metadatahistory; 
-	public GamaMatrix multi_lastdetailedvarvalues;
-	public GamaFloatMatrix multi_averagehistory; 
-	public GamaFloatMatrix multi_stdevhistory;
-	public GamaFloatMatrix multi_minhistory;
-	public GamaFloatMatrix multi_maxhistory;
-	public GamaMatrix multi_distribhistoryparams; 
-	public GamaMatrix multi_distribhistory; 
-	*/
-	
 	public GamaMap getVarmap() { return varmap; }
 	public void setVarmap(GamaMap varmap) { this.varmap = varmap; }
 	public GamaMap getNumvarmap() { return numvarmap; }
@@ -70,24 +60,6 @@ public class StorableData {
 	public void setDistribhistoryparams(GamaObjectMatrix distribhistoryparams) { this.distribhistoryparams = distribhistoryparams; }
 	public GamaMatrix getDitribhistory() { return distribhistory; }
 	public void setDitribhistory(GamaObjectMatrix ditribhistory) { this.distribhistory = ditribhistory; }
-	
-	/*public GamaMatrix getMultiMetadatahistory() { return multi_metadatahistory; }
-	public void setMultiMetadatahistory(GamaMatrix multi_metadatahistory) { this.multi_metadatahistory = multi_metadatahistory; }
-	public GamaMatrix getMultiLastdetailedvarvalues() { return multi_lastdetailedvarvalues; }
-	public void setMultiLastdetailedvarvalues( GamaMatrix multi_lastdetailedvarvalues) { this.multi_lastdetailedvarvalues = multi_lastdetailedvarvalues; }
-	public GamaFloatMatrix getMultiAveragehistory() { return multi_averagehistory; }
-	public void setMultiAveragehistory(GamaFloatMatrix multi_averagehistory) { this.multi_averagehistory = multi_averagehistory; }
-	public GamaFloatMatrix getMultiStdevhistory() { return multi_stdevhistory; }
-	public void setMultiStdevhistory(GamaFloatMatrix multi_stdevhistory) { this.multi_stdevhistory = multi_stdevhistory; }
-	public GamaFloatMatrix getMultiMinhistory() { return multi_minhistory; }
-	public void setMultiMinhistory(GamaFloatMatrix multi_minhistory) { this.multi_minhistory = multi_minhistory; }
-	public GamaFloatMatrix getMultiMaxhistory() { return multi_maxhistory; }
-	public void setMultiMaxhistory(GamaFloatMatrix multi_maxhistory) { this.multi_maxhistory = multi_maxhistory; }
-	public GamaMatrix getMultiDistribhistoryparams() { return multi_distribhistoryparams;}
-	public void setMultiDistribhistoryparams(GamaMatrix multi_distribhistoryparams) { this.multi_distribhistoryparams = multi_distribhistoryparams; }
-	public GamaMatrix getMultiDistribhistory() { return multi_distribhistory; }
-	public void setMultiDistribhistory(GamaMatrix multi_distribhistory) { this.multi_distribhistory = multi_distribhistory; }
-	*/
 	
 	Boolean isAgentCreated;
 

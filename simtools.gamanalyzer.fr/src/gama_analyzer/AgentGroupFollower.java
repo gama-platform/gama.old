@@ -161,11 +161,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	public String getNom_espece() { return nom_espece; }
 	public void setNom_espece(String nom_espece) { this.nom_espece = nom_espece; }
 
-	//public String getNom_contrainte() { return nom_contrainte; }
-	//public void setNom_contrainte(String nom_contrainte) { this.nom_contrainte = nom_contrainte; }
-
 	public static final String ANALYSE_STATEMENT_VARIABLE = "species_to_analyse";
-	//public static final String ANALYSE_STATEMENT_VAR = "list_to_analyse";
 	public static final String ANALYSE_STATEMENT_CONSTRAINT = "with_constraint";
 
 	public final static String VARMAP = "varmap";
@@ -189,10 +185,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	public final static String MULTI_DISTRIBHISTORYPARAMS = "multi_distribhistoryparams";
 	public final static String MULTI_DISTRIBHISTORY = "multi_distribhistory";
 
-	/*public final static String TRALALA = "tralala";
-	public final static String LALALA = "lalala";
-	//public final static String CYCLE = "cycle";
-	 */
 	public final static String WITH_MATRIX = "with_matrix";
 	public final static String WITH_VAR = "with_var";
 
@@ -219,7 +211,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	public StorableData multidata;
 
 	public ArrayList my_big_list = new ArrayList<Object>();
-	//public static GamaList<GamaList> my_very_big_list = new GamaList<GamaList>(); 
 
 	@getter(VARMAP) public GamaMap getVarMap (IAgent agent) { return (GamaMap) ((AgentGroupFollower)agent).mydata.varmap; }
 	@setter(VARMAP) public void setVarMap(final IAgent agent, final GamaMap latt) { ((AgentGroupFollower)agent).mydata.varmap = latt; }
