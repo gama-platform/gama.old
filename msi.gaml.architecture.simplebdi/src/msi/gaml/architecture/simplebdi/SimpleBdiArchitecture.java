@@ -175,6 +175,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				agent.setAttribute(CURRENT_PLAN, _persistentTask);
 
 			}
+			_persistentTask = (SimpleBdiPlanStatement)agent.getAttribute(CURRENT_PLAN);
 			Boolean flipResult = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientPlans);
 
 			if ( !flipResult ) {
@@ -525,8 +526,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return _plans;
 		}
 		return null;
-	}
-
+	}	
 
 	public GamaList<Predicate> getBase(final IScope scope, final String basename) {
 		final IAgent agent = getCurrentAgent(scope);
@@ -751,9 +751,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 				if ( predicate.getSubintentions() == null ) {
 					predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
-				} /*else {
-					predicate.getSubintentions().remove(until);
-				}*/
+				}
+				((Predicate) until).setSuperIntention(predicate);
 				predicate.onHoldUntil.add((Predicate) until);
 				predicate.getSubintentions().add((Predicate) until);
 				addToBase(scope, (Predicate)until, DESIRE_BASE);
@@ -786,10 +785,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		
 		if ( predicate.getSubintentions() == null ) {
 			predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
-		} /*else {
-			predicate.getSubintentions().remove(subpredicate);
-		}*/
+		}
+		
 		predicate.getSubintentions().add(subpredicate);
+		subpredicate.setSuperIntention(predicate);
 		if (addAsDesire) {
 			addToBase(scope, subpredicate, DESIRE_BASE);
 		}
@@ -819,6 +818,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				superpredicate.getSubintentions().add(predicateDirect);
 			}
 			addToBase(scope, predicateDirect, DESIRE_BASE);
+			predicateDirect.setSuperIntention(superpredicate);
 			return true;
 		}
 

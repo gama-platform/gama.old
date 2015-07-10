@@ -23,7 +23,7 @@ import msi.gaml.types.*;
 @vars({ @var(name = "name", type = IType.STRING), @var(name = "is_true", type = IType.BOOL),
 /*	@var(name = "parameters", type = IType.MAP),*/@var(name = "values", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
 	@var(name = "date", type = IType.FLOAT), @var(name = "subintentions", type = IType.LIST),
-	@var(name = "on_hold_until", type = IType.NONE) })
+	@var(name = "on_hold_until", type = IType.NONE), @var(name = "super_intention", type = IType.NONE) })
 public class Predicate implements IValue {
 
 	String name;
@@ -33,6 +33,7 @@ public class Predicate implements IValue {
 //	Object onHoldUntil;
 	List<Predicate> onHoldUntil;
 	List<Predicate> subintentions;
+	Predicate superIntention;
 	boolean everyPossibleValues = false;
 	boolean is_true=true;
 	
@@ -65,11 +66,20 @@ public class Predicate implements IValue {
 	public List<Predicate> getSubintentions() {
 		return subintentions;
 	}
+	
+	@getter("superIntention")
+	public Predicate getSuperIntention(){
+		return superIntention;
+	}
 
 	public List<Predicate> getOnHoldUntil() {
 		return onHoldUntil;
 	}
 
+	public void setSuperIntention(Predicate superPredicate){
+		this.superIntention = superPredicate;
+	}
+	
 //	public void setOnHoldUntil(final Object onHoldUntil) {
 //		this.onHoldUntil = onHoldUntil;
 //	}
@@ -199,10 +209,15 @@ public class Predicate implements IValue {
 		if ( values == null ) {
 			if ( other.values != null ) { return false; }
 		} else if ( !values.equals(other.values) ) { return false; }
-		//ajouter une comparaison sur les sous intentions sur le même modèle qu'au dessus.
+		
 		if(subintentions == null){
 			if (other.subintentions!=null){return false;}
 		} else if(!subintentions.equals(other.subintentions)) {return false;}
+		//ajouter une comparaison sur les sur-intentions sur le même modèle qu'au dessus.
+		if(superIntention == null){
+			if(other.superIntention != null){return false;}
+		}else if(!superIntention.equals(other.superIntention)){return false;}
+		
 		return true;
 	}
 
