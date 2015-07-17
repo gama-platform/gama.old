@@ -555,7 +555,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 //		return ((SimpleBdiPlan)(getCurrentAgent(scope).getAttribute(CURRENT_PLAN))).getName();
 //	}
 	
-	private Boolean addBelief(final IScope scope, final Predicate predicateDirect){
+	public Boolean addBelief(final IScope scope, final Predicate predicateDirect){
 		if ( predicateDirect != null ) { 
 			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
