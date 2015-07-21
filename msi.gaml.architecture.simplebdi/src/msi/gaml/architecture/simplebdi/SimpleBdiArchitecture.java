@@ -528,22 +528,22 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}	
 
-	public GamaList<Predicate> getBase(final IScope scope, final String basename) {
-		final IAgent agent = getCurrentAgent(scope);
+	public static GamaList<Predicate> getBase(final IScope scope, final String basename) {
+		final IAgent agent = scope.getAgentScope();//getCurrentAgent(scope);
 		return (GamaList<Predicate>) (scope.hasArg(basename) ? scope.getListArg(basename) : (GamaList<Predicate>) agent
 			.getAttribute(basename));
 	}
 
-	public boolean removeFromBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
+	public static boolean removeFromBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
 		GamaList<Predicate> factBase = getBase(scope, factBaseName);
 		return factBase.remove(predicateItem);
 	}
 
-	public boolean addToBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
+	public static boolean addToBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
 		return addToBase(scope, predicateItem, getBase(scope, factBaseName));
 	}
 
-	public boolean addToBase(final IScope scope, final Predicate predicateItem, final GamaList<Predicate> factBase) {
+	public static boolean addToBase(final IScope scope, final Predicate predicateItem, final GamaList<Predicate> factBase) {
 		factBase.remove(predicateItem);
 
 		predicateItem.setDate(scope.getClock().getTime());
@@ -555,7 +555,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 //		return ((SimpleBdiPlan)(getCurrentAgent(scope).getAttribute(CURRENT_PLAN))).getName();
 //	}
 	
-	public Boolean addBelief(final IScope scope, final Predicate predicateDirect){
+	public static Boolean addBelief(final IScope scope, final Predicate predicateDirect){
 		if ( predicateDirect != null ) { 
 			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
