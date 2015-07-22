@@ -19,16 +19,10 @@ global {
 	graph the_graph;
 	int repair_time <- 6 ;
 	
-	
-	agent_group_follower peoplefollower;
-	agent_group_follower roadfollower;
 	list<building> residential_buildings;
 	list<building>  industrial_buildings;
 	
-	
-	
-
-    //pour la simu 1 on a 2 agent
+    agent_group_follower peoplefollower;
 	list<list> testlist<-[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
 	
 	init {
