@@ -497,16 +497,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			_persistentTask = null;
 			agent.setAttribute(CURRENT_PLAN, _persistentTask);
 			return false;
-			
-//			return true;
 		}
-//		if( cond instanceof Predicate){
-//			GamaList desbase = getBase(scope, DESIRE_BASE);
-//			if ( desbase.isEmpty() ) { return false; }
-//			if ( desbase.contains(cond) ) {
-//				return true; 
-//				}
-//		}
 		if ( cond instanceof String ) {
 			Object res = msi.gaml.operators.System.opEvalGaml(scope, (String) cond);
 			if ( Cast.asBool(scope, res) == false ) { return true; }
@@ -528,22 +519,22 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}	
 
-	public GamaList<Predicate> getBase(final IScope scope, final String basename) {
-		final IAgent agent = getCurrentAgent(scope);
+	public static GamaList<Predicate> getBase(final IScope scope, final String basename) {
+		final IAgent agent = scope.getAgentScope();//getCurrentAgent(scope);
 		return (GamaList<Predicate>) (scope.hasArg(basename) ? scope.getListArg(basename) : (GamaList<Predicate>) agent
 			.getAttribute(basename));
 	}
 
-	public boolean removeFromBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
+	public static boolean removeFromBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
 		GamaList<Predicate> factBase = getBase(scope, factBaseName);
 		return factBase.remove(predicateItem);
 	}
 
-	public boolean addToBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
+	public static boolean addToBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
 		return addToBase(scope, predicateItem, getBase(scope, factBaseName));
 	}
 
-	public boolean addToBase(final IScope scope, final Predicate predicateItem, final GamaList<Predicate> factBase) {
+	public static boolean addToBase(final IScope scope, final Predicate predicateItem, final GamaList<Predicate> factBase) {
 		factBase.remove(predicateItem);
 
 		predicateItem.setDate(scope.getClock().getTime());
@@ -555,7 +546,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 //		return ((SimpleBdiPlan)(getCurrentAgent(scope).getAttribute(CURRENT_PLAN))).getName();
 //	}
 	
-	public Boolean addBelief(final IScope scope, final Predicate predicateDirect){
+	public static Boolean addBelief(final IScope scope, final Predicate predicateDirect){
 		if ( predicateDirect != null ) { 
 			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
@@ -951,6 +942,31 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	//faire des actions clear_belief(), clear_desire(),clear_intention().
+	@action(name = "clear_belief",doc = @doc(value = "fgq",
+			returns = "true if the base is cleared correctly",
+			examples = {@example("")}))
+	public Boolean primClearBelief(final IScope scope){
+		getBase(scope, BELIEF_BASE).clear();
+		return true;
+	}
+	
+	@action(name = "clear_desire",doc = @doc(value = "fgq",
+			returns = "true if the base is cleared correctly",
+			examples = {@example("")}))
+	public Boolean primClearDesire(final IScope scope){
+		getBase(scope, DESIRE_BASE).clear();
+		return true;
+	}
+	
+	@action(name = "clear_intention",doc = @doc(value = "fgq",
+			returns = "true if the base is cleared correctly",
+			examples = {@example("")}))
+	public Boolean primClearIntention(final IScope scope){
+		getBase(scope, INTENTION_BASE).clear();
+		return true;
+	}
+	
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		super.init(scope);
