@@ -1,7 +1,5 @@
 model tutorial_gis_city_traffic
 
-
-
 global {
 	file shape_file_buildings <- file('../includes/building.shp');
 	file shape_file_roads <- file('../includes/road.shp');
