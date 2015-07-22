@@ -497,16 +497,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			_persistentTask = null;
 			agent.setAttribute(CURRENT_PLAN, _persistentTask);
 			return false;
-			
-//			return true;
 		}
-//		if( cond instanceof Predicate){
-//			GamaList desbase = getBase(scope, DESIRE_BASE);
-//			if ( desbase.isEmpty() ) { return false; }
-//			if ( desbase.contains(cond) ) {
-//				return true; 
-//				}
-//		}
 		if ( cond instanceof String ) {
 			Object res = msi.gaml.operators.System.opEvalGaml(scope, (String) cond);
 			if ( Cast.asBool(scope, res) == false ) { return true; }
@@ -951,6 +942,31 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	//faire des actions clear_belief(), clear_desire(),clear_intention().
+	@action(name = "clear_belief",doc = @doc(value = "fgq",
+			returns = "true if the base is cleared correctly",
+			examples = {@example("")}))
+	public Boolean primClearBelief(final IScope scope){
+		getBase(scope, BELIEF_BASE).clear();
+		return true;
+	}
+	
+	@action(name = "clear_desire",doc = @doc(value = "fgq",
+			returns = "true if the base is cleared correctly",
+			examples = {@example("")}))
+	public Boolean primClearDesire(final IScope scope){
+		getBase(scope, DESIRE_BASE).clear();
+		return true;
+	}
+	
+	@action(name = "clear_intention",doc = @doc(value = "fgq",
+			returns = "true if the base is cleared correctly",
+			examples = {@example("")}))
+	public Boolean primClearIntention(final IScope scope){
+		getBase(scope, INTENTION_BASE).clear();
+		return true;
+	}
+	
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		super.init(scope);

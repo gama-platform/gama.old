@@ -38,11 +38,11 @@ import msi.gaml.types.IType;
 @symbol(name = FocusStatement.FOCUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, remote_context=true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	@facet(name = IKeyword.VAR, type = /*{IType.FLOAT,IType.INT,IType.STRING,IType.BOOL}*/IType.NONE, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
-	@facet(name = IKeyword.AGENT, type = IType.AGENT)}
+	@facet(name = IKeyword.VAR, type = IType.NONE, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
+	@facet(name = IKeyword.AGENT, type = IType.AGENT, doc = @doc("the agent that will add the belief (use the myself pseudo-variable"))}
 ,omissible = IKeyword.VAR)
 @doc( value = "enables to directly add a belief from the variable of a perceived specie.",
-		examples={@example("focus speed /*where speed is a variable from a species that is being perceived*/")})
+		examples={@example("focus var:speed /*where speed is a variable from a species that is being perceived*/ agent: myself")})
 public class FocusStatement extends AbstractStatement {
 
 	public static final String FOCUS = "focus";
@@ -72,19 +72,14 @@ public class FocusStatement extends AbstractStatement {
 		IScope scopeMySelf = null;
 		if(mySelfAgent!=null){
 			scopeMySelf = mySelfAgent.getScope().copy();
-//Lorsqu'on touche à un scope, ça touche à tous les scoop pour le moment. Regarder d'où ça vient. Il faut en faire une copy du scope et pas assigner le même.
 			scopeMySelf.push(mySelfAgent);
 		}
 //		final SimpleBdiArchitecture archi = null;
 		final Predicate tempPred;
-		//Je vais déja m'occuper de transformer la variable en prédicat. 
-		//Pour ça, si la variable est une liste, j'en fait un cas particulier, sinon, je ne rajoute qu'un seul terme
-		//Dans un premier temps, je vais déja faire le cas où il n'y a pas de liste. 1 seule variable par focus.
 		if(variable!=null){
 			String namePred = variable.getName()+"_"+scope.getAgentScope().getSpeciesName();
 			String nameVar = variable.getName();
 			Map<String,Object> tempValues = new HashMap<String,Object>();
-			//Pour le moment, à chaque variable, la valeur associée s'appelera variable_value.
 			tempValues.put(nameVar + "_value", variable.value(scope));
 			tempPred = new Predicate(namePred,tempValues);
 			SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
