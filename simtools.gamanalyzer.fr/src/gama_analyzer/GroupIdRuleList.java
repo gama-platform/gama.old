@@ -34,7 +34,6 @@ public class GroupIdRuleList extends GroupIdRule {
 
 	public IList<IAgent> update(IScope scope, IList<IAgent> liste) {
 		liste=(GamaList)scope.getGlobalVarValue(nom);
-		//System.out.println("GLOBALVARVALUE= " + liste);
 		return liste;
 	}
 	
