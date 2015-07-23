@@ -652,28 +652,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				multidata.distribhistory = matrice8;
 
 				if(manager.idSimList.length(scope)>1) {
-/*
-					for (int i=0; i<manager.idSimList.size(); i++)
-					{
-
-						ISpecies sp=this.getPopulationFor("agent").getSpecies();
-						if (!sp.hasVar("color"))
-						{
-							Variable nc=new Variable(this.getSpecies().getVar("color").getDescription());
-							List<Variable> nv= new ArrayList<Variable>();
-							nv.add(nc);
-							sp.setChildren(nv);
-						}
-						GamlAgent nagent=new GamlAgent(this.getPopulationFor("agent"));
-						this.getPopulationFor("agent").add(nagent);
-
-						nagent._init_(scope);
-						nagent.setName("virtual"+manager.idSimList.get(i));
-						nagent.setDirectVarValue(scope,"color", manager.simColorList.get(i));
-						virtualAgents.add(nagent);
-						System.out.println("new virtual "+nagent.getName());
-
-					}*/
 					for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 						if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 
@@ -687,7 +665,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 							manager.storableDataList.get(i).stdevhistory=(GamaFloatMatrix)manager.storableDataList.get(i).stdevhistory._opAppendVertically(scope, multidata.stdevhistory); // .opAppendVertically(scope, manager.storableDataList.get(i).stdevhistory, multidata.stdevhistory);							
 							manager.storableDataList.get(i).distribhistoryparams=(GamaObjectMatrix)manager.storableDataList.get(i).distribhistoryparams._opAppendVertically(scope, multidata.distribhistoryparams); // .opAppendVertically(scope, manager.storableDataList.get(i).distribhistoryparams, multidata.distribhistoryparams);							
 							manager.storableDataList.get(i).distribhistory=(GamaObjectMatrix)manager.storableDataList.get(i).distribhistory._opAppendVertically(scope, multidata.distribhistory); //.opAppendVertically(scope, manager.storableDataList.get(i).distribhistory, multidata.distribhistory);							
-
 							multidata=manager.storableDataList.get(i);
 
 						}
