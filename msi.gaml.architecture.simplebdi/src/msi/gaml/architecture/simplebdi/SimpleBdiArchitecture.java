@@ -819,15 +819,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@action(name = "remove_belief", args = { @arg(name = PREDICATE,
 		type = PredicateType.id,
 		optional = true,
-		doc = @doc("predicate to add")) }, doc = @doc(value = "removes the predicates from the belief base.",
+		doc = @doc("predicate to add")) }, doc = @doc(value = "removes the first predicate from the belief base.",
 		returns = "true if it is in the base.",
 		examples = { @example("") }))
 	public Boolean primRemoveBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if ( predicateDirect != null ) { return getBase(scope, BELIEF_BASE).remove(predicateDirect);
-
-		}
+		if ( predicateDirect != null ) { return getBase(scope, BELIEF_BASE).remove(predicateDirect);}
 		return false;
 	}
 	
@@ -942,8 +940,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
-	//faire des actions clear_belief(), clear_desire(),clear_intention().
-	@action(name = "clear_belief",doc = @doc(value = "fgq",
+	@action(name = "clear_belief",doc = @doc(value = "clear the belief base",
 			returns = "true if the base is cleared correctly",
 			examples = {@example("")}))
 	public Boolean primClearBelief(final IScope scope){
@@ -951,7 +948,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 	
-	@action(name = "clear_desire",doc = @doc(value = "fgq",
+	@action(name = "clear_desire",doc = @doc(value = "clear the desire base",
 			returns = "true if the base is cleared correctly",
 			examples = {@example("")}))
 	public Boolean primClearDesire(final IScope scope){
@@ -959,13 +956,30 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 	
-	@action(name = "clear_intention",doc = @doc(value = "fgq",
+	@action(name = "clear_intention",doc = @doc(value = "clear the intention base",
 			returns = "true if the base is cleared correctly",
 			examples = {@example("")}))
 	public Boolean primClearIntention(final IScope scope){
 		getBase(scope, INTENTION_BASE).clear();
 		return true;
 	}
+	
+	@action(name = "remove_all_beliefs", args = { @arg(name = PREDICATE,
+			type = PredicateType.id,
+			optional = true,
+			doc = @doc("predicate to add")) }, doc = @doc(value = "removes the predicates from the belief base.",
+			returns = "true if it is in the base.",
+			examples = { @example("") }))
+		public Boolean primRemoveAllBelief(final IScope scope) throws GamaRuntimeException {
+			Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+			if ( predicateDirect != null ) {
+				getBase(scope, BELIEF_BASE).removeAllOccurencesOfValue(scope, predicateDirect);
+				return true;
+			}
+			return false;
+		}
+	
 	
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
