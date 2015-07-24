@@ -35,7 +35,7 @@ import msi.gaml.statements.AbstractStatement;
 import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 
-@symbol(name = FocusStatement.FOCUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, remote_context=true)
+@symbol(name = FocusStatement.FOCUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 	@facet(name = IKeyword.VAR, type = IType.NONE, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
