@@ -128,7 +128,7 @@ import com.thoughtworks.xstream.*;
 	@var(name = "color", type = IType.COLOR, doc = @doc("couleur de l'agent_group_follower")),
 	@var(name = "dbscann", type = IType.INT, init = "3", doc = @doc("number of points for DBSCAN")),
 	@var(name = "dbscane", type = IType.FLOAT, init = "0.1", doc = @doc("epsilon for DBSCAN")),
-	@var(name = "display_mode", type = IType.STRING,doc = @doc("displaying DBScan, global or SimGlobal"))
+	@var(name = "display_mode", type = IType.STRING,init = "global" , doc = @doc("displaying DBScan, global or SimGlobal"))
 })
 
 @species(name = "agent_group_follower")
@@ -731,12 +731,39 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	}
 
+	
+
+/*
+ 	if (virtualAgents.size()>0)
+ 	if(manager.idSimList.length(scope)>1) {
+ 	for (int i=0; i<virtualAgents.size(); i++)
+ 	{
+ 	String n=virtualAgents.get(i).getName();
+ 	for (int j=0; j<multidata.metadatahistory.numRows; j++)
+ 	{
+
+ 	if ((Integer)multidata.metadatahistory.get(scope, 1, j)==this.getClock().getCycle()-2)
+ 	if (n.contains(multidata.metadatahistory.get(scope, 2, j).toString()))
+ 	{
+ 	System.out.println("new geom "+multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());
+ 	virtualAgents.get(i).setGeometry((GamaShape)multidata.metadatahistory.get(scope, 8,j));
+ 	}
+
+ 	}
+
+
+
+ 	}
+ 	 
+ 	}
+ 	*/
+	
 
 	public boolean init(final IScope scope)
 	{
 		boolean res=super.init(scope);
 		firsttime=System.currentTimeMillis();
-		this.setAttribute("display_mode", "dbscan");
+		this.setAttribute("display_mode", "global");
 		messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
 	
 	   	xstream = new XStream();
@@ -808,35 +835,56 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	{		
 		System.out.println("In create_cluster : scope.getAgentScope().toString(): " + scope.getAgentScope().toString());
 		System.out.println("In create_cluster : analysedSpecies: " + analysedSpecies);
+		System.out.println("display_mode: " + this.getAttribute("display_mode"));
 
-
-		if (this.getAttribute("display_mode").equals("global")) {  //  à tester!!: --> chaque follower se fait son enveloppe
+		if (this.getAttribute("display_mode").equals("global")) {  // Affiche l'enveloppe de l'agent group follower (devrait être nommée "current_follower") 
 			List<IAgent> groupe = (List<IAgent>)this.agentsCourants;
 			polygone= new ArrayList<IShape>();
 			for (int i=0;i<groupe.size();i++) {
 						polygone.add((IShape)groupe.get(i).getLocation());	
-			}
-				mageom=(IShape)GamaGeometryType.buildPolygon(polygone);
-				this.setGeometry(((GamaShape)mageom));
+			}	
+			mageom=(IShape)new GamaShape(GamaGeometryType.buildPolygon(polygone).getInnerGeometry().convexHull());
+			this.setGeometry((mageom));
 		}
 		
-		if (this.getAttribute("display_mode").equals("simglobal")) {  //  à tester!!: --> une grande enveloppe pour tous les agents de toutes les simulations
+		
+		//FIXME: Cette méthode devrait fonctionner dans le cas de simu en parallele
+		/*if (this.getAttribute("display_mode").equals("simglobal")) {  //  à tester!!: --> une grande enveloppe pour tous les agents de toutes les simulations
 			List<IAgent> groupe = (List<IAgent>)this.agentsCourants;
 			polygone=new ArrayList<IShape>();
+			System.out.println("manager.getAgentGroupFollowerList().length(scope)" + manager.getAgentGroupFollowerList().length(scope) );
+			
 			for (int i=0;i<manager.getAgentGroupFollowerList().length(scope);i++) {
 					if (!manager.getAgentGroupFollowerList().get(i).getName().equals(this.getName())) {
-						for (int j=0;j<manager.getAgentGroupFollowerList().get(i).agentsCourants.length(scope);j++) {
+				        System.out.println("manager.getAgentGroupFollowerList().get(i).agentsCourants.length(scope)" + manager.getAgentGroupFollowerList().get(i).agentsCourants.length(scope));	
+				        for (int j=0;j<manager.getAgentGroupFollowerList().get(i).agentsCourants.length(scope);j++) {
 							groupe.add(manager.getAgentGroupFollowerList().get(i).agentsCourants.get(j));
 						}
-						
-						for (int k=0;k<groupe.size();k++) {
-							polygone.add((IShape)groupe.get(i).getLocation());	
-						}
+						System.out.println("display_mode: simglobal + groupe.size()" + groupe.size());
 					}
 			}
-				mageom=(IShape)GamaGeometryType.buildPolygon(polygone);
-				this.setGeometry(((GamaShape)mageom));
+			
+			for (int k=0;k<groupe.size();k++) {
+				polygone.add((IShape)groupe.get(k).getLocation());	
+			}
+			mageom=(IShape)new GamaShape(GamaGeometryType.buildPolygon(polygone).getInnerGeometry().convexHull());
+			this.setGeometry(((GamaShape)mageom));
+		}*/
+		
+		
+
+		if (this.getAttribute("display_mode").equals("simglobal")) {  
+			
+			for (int j=0; j< multidata.metadatahistory.numRows; j++)
+		 	{
+			 	if ((Integer)multidata.metadatahistory.get(scope, 1, j) == this.getClock().getCycle()-2){ //Check le pas de temps
+				 	  System.out.println("new geom "+multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());
+			 	}	
+		 	}
 		}
+		
+		
+		
 
 		if ((!(this.getAttribute("display_mode").equals("global"))) & (!(this.getAttribute("display_mode").equals("simglobal")))) {  //  à tester!!: --> chaque follower se fait son enveloppe
 //		if (this.getAttribute("display_mode").equals("dbscan")) {  // si on veut utiliser DBScan
