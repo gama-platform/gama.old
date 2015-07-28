@@ -826,7 +826,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		}*/
 		boolean res=super.init(scope);
 		firsttime=System.currentTimeMillis();
-		this.setAttribute("display_mode", "dbscan");
+		this.setAttribute("display_mode", "simglobal");
 		messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
 
 	   	  xstream = new XStream();
@@ -920,25 +920,71 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			for (int i=0;i<groupe.size();i++) {
 						polygone.add((IShape)groupe.get(i).getLocation());	
 			}
-				mageom=(IShape)GamaGeometryType.buildPolygon(polygone);
+				mageom=(IShape)new GamaShape(GamaGeometryType.buildPolygon(polygone).getInnerGeometry().convexHull());
 				this.setGeometry(((GamaShape)mageom));
 		}
+
+		if (this.getAttribute("display_mode").equals("simglobal")) {  //  à tester!!: --> chaque follower se fait son enveloppe
+			mespoly.clear();
+
+			
+			
+			List<IAgent> groupe = (List<IAgent>)this.agentsCourants;
+			polygone= new ArrayList<IShape>();
+			for (int i=0;i<groupe.size();i++) {
+						polygone.add((IShape)groupe.get(i).getLocation());	
+			}
+			mespoly.add(polygone);
+
+			if(manager.idSimList.length(scope)>1) {
+					for (int j=0; j<multidata.metadatahistory.numRows; j++)
+					{
+
+						if ((Integer)multidata.metadatahistory.get(scope, 1, j)==this.getClock().getCycle())
+							if (!scope.getSimulationScope().toString().equals(multidata.metadatahistory.get(scope, 0, j).toString()))
+							{
+								System.out.println("new geom "+multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());
+								polygone= new ArrayList<IShape>();
+								for (ILocation l:((GamaShape)multidata.metadatahistory.get(scope, 8,j)).getPoints()) {
+									polygone.add(new GamaPoint(l));	
+									}
+								mespoly.add(polygone);
+//								virtualAgents.get(i).setGeometry((GamaShape)multidata.metadatahistory.get(scope, 8,j));
+							}
+
+					}
+
+
+
+				}
+			
+				mageom=(IShape)GamaGeometryType.buildMultiPolygon(mespoly);
+				this.setGeometry(((GamaShape)mageom));
+				System.out.println("je suis un multipolygone!"+mageom);
+		}
+
 		
-		if (this.getAttribute("display_mode").equals("simglobal")) {  //  à tester!!: --> une grande enveloppe pour tous les agents de toutes les simulations
+		
+		
+		if (this.getAttribute("display_mode").equals("simglobalparal")) {  //  à tester!!: --> une grande enveloppe pour tous les agents de toutes les simulations
 			List<IAgent> groupe = (List<IAgent>)this.agentsCourants;
 			polygone=new ArrayList<IShape>();
 			for (int i=0;i<manager.getAgentGroupFollowerList().length(scope);i++) {
-					if (!manager.getAgentGroupFollowerList().get(i).getName().equals(this.getName())) {
+					if (manager.getAgentGroupFollowerList().get(i).getName().equals(this.getName())) {
 						for (int j=0;j<manager.getAgentGroupFollowerList().get(i).agentsCourants.length(scope);j++) {
 							groupe.add(manager.getAgentGroupFollowerList().get(i).agentsCourants.get(j));
 						}
 						
-						for (int k=0;k<groupe.size();k++) {
-							polygone.add((IShape)groupe.get(i).getLocation());	
-						}
 					}
 			}
-				mageom=(IShape)GamaGeometryType.buildPolygon(polygone);
+
+			
+			
+			
+			for (int k=0;k<groupe.size();k++) {
+				polygone.add((IShape)groupe.get(k).getLocation());	
+			}
+			mageom=(IShape)new GamaShape(GamaGeometryType.buildPolygon(polygone).getInnerGeometry().convexHull());
 				this.setGeometry(((GamaShape)mageom));
 		}
 
