@@ -112,9 +112,12 @@ public class Operators {
 						.value(scope));
 	}
 	
-//	@operator(value = "focus", can_be_const = true, category = {"BDI"})
-//	public static Boolean focus(final Agent agent,final int var ){
-//		agent.
-//		return true;
-//	}
+	@operator(value = "get_super_intention", can_be_const = true, category = { "BDI" })
+	public static Predicate getSuperIntention(Predicate pred1){
+		if(pred1.getSuperIntention()!=null){
+			return pred1.getSuperIntention();
+		}else{
+			return null;
+		}
+	}
 }
