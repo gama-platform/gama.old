@@ -128,7 +128,7 @@ import com.thoughtworks.xstream.*;
 	@var(name = "color", type = IType.COLOR, doc = @doc("couleur de l'agent_group_follower")),
 	@var(name = "dbscann", type = IType.INT, init = "3", doc = @doc("number of points for DBSCAN")),
 	@var(name = "dbscane", type = IType.FLOAT, init = "0.1", doc = @doc("epsilon for DBSCAN")),
-	@var(name = "display_mode", type = IType.STRING,init = "global" , doc = @doc("displaying DBScan, global or SimGlobal"))
+	@var(name = "display_mode", type = IType.STRING , doc = @doc("displaying DBScan, global or SimGlobal"))
 })
 
 @species(name = "agent_group_follower")
