@@ -71,8 +71,7 @@ public class StorableData {
 	}
 	public void init(IScope scope)
 	{
-		isAgentCreated = false;
-		
+		isAgentCreated = false;	
 		varmap = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 		numvarmap = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 		qualivarmap = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
@@ -86,75 +85,6 @@ public class StorableData {
 		distribhistory = new GamaObjectMatrix(0,0,msi.gaml.types.Types.NO_TYPE);
 		IList premlist=GamaListFactory.create(Types.NO_TYPE);
 		premlist.add(0);
-		premlist.add(0);
-		//premlist.add(0);
 		distribhistory.set(scope, 0, 0, premlist);
-							
-		/*multi_metadatahistory = new GamaObjectMatrix(0,0);
-		multi_lastdetailedvarvalues = new GamaObjectMatrix(0,0);
-		multi_averagehistory = new GamaFloatMatrix(0,0);
-		multi_stdevhistory = new GamaFloatMatrix(0,0);
-		multi_minhistory = new GamaFloatMatrix(0,0);
-		multi_maxhistory = new GamaFloatMatrix(0,0);
-		multi_distribhistoryparams = new GamaObjectMatrix(0,0);
-		multi_distribhistory = new GamaObjectMatrix(0,0);
-		GamaList deuzlist=new GamaList();
-		deuzlist.add(0);
-		deuzlist.add(0);
-		//deuzlist.add(0);
-		multi_distribhistory.set(scope, 0, 0, deuzlist);
-*/
 	}
-	/*
-	public String toString(IScope scope)
-	{
-		String s=new String();
-		try {
-//			XStream xstream = new XStream();
-			com.thoughtworks.xstream.XStream x=new com.thoughtworks.xstream.XStream();
-			s= x.toXML(metadatahistory);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("ser: "+s);
-		GamaList<Object> gm=new GamaList<Object>();
-		gm.add(metadatahistory.numCols);
-		gm.add(metadatahistory.numRows);
-		for (int i=0; i<metadatahistory.numCols; i++)
-			for (int j=0; j<metadatahistory.numRows; j++)
-				gm.add(metadatahistory.get(scope,i,j));
-		gm.add(lastdetailedvarvalues);
-		gm.add(averagehistory);
-		gm.add(stdevhistory);
-		gm.add(minhistory);
-		gm.add(maxhistory);
-		gm.add(distribhistoryparams);
-		gm.add(distribhistory);
-		return(s);
-	}
-	public void fromString(IScope scope,String s)
-	{
-		try {
-//			XStreamer xs=new XStreamer();
-			com.thoughtworks.xstream.XStream x=new com.thoughtworks.xstream.XStream();
-			metadatahistory=(GamaObjectMatrix) x.fromXML(s);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		IList<Object> gm= Cast.asList(scope, s);
-		int ind=0;
-		int nc=Cast.asInt(scope, gm.get(ind++));
-		int nr=Cast.asInt(scope, gm.get(ind++));
-		GamaObjectMatrix mat=new GamaObjectMatrix(nc,nr);
-		for (int i=0; i<nc; i++)
-			for (int j=0; j<nr; j++)
-				mat.set(scope,i,j,gm.get(ind++));
-//		metadatahistory=mat;
-		
-		
-	}
-	
-	*/
 }

@@ -20,11 +20,12 @@ global {
 	int repair_time <- 6 ;
 	list<list<string>> listin<-[[]];
 	int nbsim<-1;
+	list<building> residential_buildings;
+	list<building>  industrial_buildings;
 	
 	agent_group_follower peoplefollower;
 	agent_group_follower roadfollower;
-	list<building> residential_buildings;
-	list<building>  industrial_buildings;
+	
 	list<road> interestingroads<-[] update:(road where (each.destruction_coeff=1));
 
 	list<list> testlist<-[[2,3,4,5],[2,3,4,5],[2,3,4,5]];
@@ -52,14 +53,13 @@ global {
 		}  
 		create agentfollower 
 		{
-					  do analyse_cluster species_to_analyse:"people";
-					  peoplefollower<-self;
+		  do analyse_cluster species_to_analyse:"people";
+		  peoplefollower<-self;
 		}
 		create agentfollower 
 		{
-//					  do analyse_cluster species_to_analyse:"road where (each.destruction_coeff<1.1)";
-					  do analyse_cluster species_to_analyse:"interestingroads";
-					  roadfollower<-self;
+		  do analyse_cluster species_to_analyse:"interestingroads";
+		  roadfollower<-self;
 		}
 	}
 	

@@ -10,6 +10,7 @@ global{
 	init{
 		create agentTest number : 1;
 		create agentTest2 number : 1;
+//		create agentTest3 number : 12; 
 	}
 }
 
@@ -29,10 +30,13 @@ species agentTest control: simple_bdi{
 	}
 	
 	reflex titi{
+		write "belief : "+ belief_base;
+//		do add_desire(new_predicate("test"+test,["value"::test]));
 		list<BDIPlan> myplans<-get_plans() as list<BDIPlan>;
 		BDIPlan planToto <- first(myplans where (each.name="toto"));
 		if(eval_when(planToto)){
 			write "10";
+			do remove_all_beliefs(new_predicate("test_agentTest2"));
 		}
 		else{
 			write "pas 10";
@@ -46,16 +50,22 @@ species agentTest control: simple_bdi{
 		}
 		if(myself.test=2){
 			write "mon 2";
-		}		
+		}	
+		focus var:test agent: myself;	
 	}
 	
 }
 
-species agentTest2{
+species agentTest2 {
 	int test<-10;
+	
 	reflex bidule{
+//		write "beliefs2 : "+ belief_base;
 		test<-test-1;
 	}
+}
+
+species agentTest3 {
 }
 
 experiment main type: gui{

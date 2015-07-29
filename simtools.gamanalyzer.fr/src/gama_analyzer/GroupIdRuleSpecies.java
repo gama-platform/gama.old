@@ -38,8 +38,7 @@ public class GroupIdRuleSpecies extends GroupIdRule {
 		{
 			String s=it.next();
 			if (s.equals(nom)) {
-				Iterator<IAgent> monde = (Iterator<IAgent>) especes.get(s).iterable(scope).iterator();
-//			Iterator<IAgent> monde = especes.get(s).iterator();
+			Iterator<IAgent> monde = (Iterator<IAgent>) especes.get(s).iterable(scope).iterator();
 			while (monde.hasNext()) {
 					liste.add(monde.next()); 
 				}
@@ -48,6 +47,4 @@ public class GroupIdRuleSpecies extends GroupIdRule {
 		}
 		return liste;
 	}
-
-
 }
