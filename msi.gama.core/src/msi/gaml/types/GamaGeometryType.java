@@ -178,7 +178,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		}
 		final MultiPolygon m=GeometryUtils.FACTORY.createMultiPolygon(polys); 
 
-		if ( m.isValid() ) { return new GamaShape(m.buffer(0.0)); } // Why buffer (0.0) ???
+//		if ( m.isValid() ) { return new GamaShape(m.buffer(0.0)); } // Why buffer (0.0) ???
 		 return new GamaShape(m.buffer(0.0));	
 	}
 

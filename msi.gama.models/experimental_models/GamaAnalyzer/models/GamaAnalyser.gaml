@@ -1,7 +1,5 @@
 model tutorial_gis_city_traffic
 
-
-
 global {
 	file shape_file_buildings <- file('../includes/building.shp');
 	file shape_file_roads <- file('../includes/road.shp');
@@ -19,16 +17,10 @@ global {
 	graph the_graph;
 	int repair_time <- 6 ;
 	
-	
-	agent_group_follower peoplefollower;
-	agent_group_follower roadfollower;
 	list<building> residential_buildings;
 	list<building>  industrial_buildings;
 	
-	
-	
-
-    //pour la simu 1 on a 2 agent
+    agent_group_follower peoplefollower;
 	list<list> testlist<-[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
 	
 	init {

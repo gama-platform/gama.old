@@ -1,0 +1,7 @@
+data(iris)
+iris
+names(iris)
+iris[[1]]>mean(iris[[1]])
+pairlist(a=1,b='foo',c=1:5)
+sqrt(36)
+rnorm(10)

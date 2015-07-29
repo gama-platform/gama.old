@@ -11,32 +11,56 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.In;
-import msi.gama.metamodel.topology.graph.*;
+import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.GamlGridAgent;
-import msi.gama.metamodel.topology.grid.*;
+import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.file.GamaFile;
-import msi.gama.util.graph.*;
+import msi.gama.util.graph.GamaGraph;
+import msi.gama.util.graph.GraphAlgorithmsHandmade;
+import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.layout.AvailableGraphLayouts;
 import msi.gama.util.graph.loader.GraphLoader;
-import msi.gama.util.matrix.*;
-import msi.gama.util.path.*;
+import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.matrix.GamaMatrix;
+import msi.gama.util.path.GamaSpatialPath;
+import msi.gama.util.path.IPath;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
-import org.jgrapht.*;
+import msi.gaml.types.GamaGraphType;
+import msi.gaml.types.GamaPathType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 
 /**
@@ -102,6 +126,31 @@ public class Graphs {
 
 	};
 
+	
+	private static class IntersectionRelationLineTriangle implements VertexRelationship<IShape> {
+
+		IntersectionRelationLineTriangle() {}
+
+		@Override
+		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
+			Set<ILocation> cp = new HashSet<ILocation>() ;
+			for (ILocation pt : p2.getPoints()) {
+				if (p1.getPoints().contains(pt)) {
+					cp.add(pt);
+				}
+			}
+			
+			return cp.size() == 2;
+		}
+
+		@Override
+		public boolean equivalent(final IScope scope, final IShape p1, final IShape p2) {
+			return p1 == null ? p2 == null : p1.getGeometry().equals(p2.getGeometry());
+		}
+
+	};
+
+	
 	private static class DistanceRelation implements VertexRelationship<IShape> {
 
 		double distance;
@@ -604,7 +653,7 @@ public class Graphs {
 	}
 
 	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine(), null, scope, vertices
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLineTriangle(), null, scope, vertices
 			.getType().getContentType(), Types.GEOMETRY);
 	}
 

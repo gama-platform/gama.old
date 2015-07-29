@@ -148,7 +148,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	HashMap<String,Boolean> parallelsims=new HashMap<String,Boolean>();
 
 	
-	
 	//FIXME: This variable is a static one. Each data of each experiment is stored in this object.
 	public static MultiSimManager manager = new MultiSimManager();
 
