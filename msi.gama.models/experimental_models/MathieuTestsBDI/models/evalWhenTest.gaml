@@ -29,7 +29,7 @@ species agentTest control: simple_bdi{
 		
 	}
 	
-	reflex titi{
+	reflex titi {
 		write "belief : "+ belief_base;
 //		do add_desire(new_predicate("test"+test,["value"::test]));
 		list<BDIPlan> myplans<-get_plans() as list<BDIPlan>;
