@@ -16,6 +16,7 @@ global{
 
 species agentTest control: simple_bdi{
 	int test <- 0;
+	predicate truc <- new_predicate("test_agentTest2");
 	
 	plan toto when: test=10 {
 		
@@ -31,6 +32,7 @@ species agentTest control: simple_bdi{
 	
 	reflex titi {
 		write "belief : "+ belief_base;
+		write "desire : "+ desire_base;
 //		do add_desire(new_predicate("test"+test,["value"::test]));
 		list<BDIPlan> myplans<-get_plans() as list<BDIPlan>;
 		BDIPlan planToto <- first(myplans where (each.name="toto"));
@@ -43,6 +45,8 @@ species agentTest control: simple_bdi{
 		}
 		test<-test+1;
 	}
+	
+	rule belief: new_predicate("test_agentTest2") desire: new_predicate("test_agentTest2") when: (test=3);
 	
 	perceive target:agentTest2 {
 		if(test=2){
