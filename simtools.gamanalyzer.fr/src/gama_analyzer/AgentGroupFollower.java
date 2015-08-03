@@ -205,6 +205,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	String analysedSpecies;
 	
 	IShape myShape; //geometry courante 
+	List<IShape> allSimulationShape= new ArrayList<IShape>();
 	
 	List<IShape> curSimulationMutliPolygon= new ArrayList<IShape>(); //
 	List<List<IShape>> allSimulationMultiPoly = new ArrayList(); //
@@ -850,9 +851,9 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	public void create_cluster(final IScope scope)
 	{		
-		System.out.println("In create_cluster : scope.getAgentScope().toString(): " + scope.getAgentScope().toString());
+		/*System.out.println("In create_cluster : scope.getAgentScope().toString(): " + scope.getAgentScope().toString());
 		System.out.println("In create_cluster : analysedSpecies: " + analysedSpecies);
-		System.out.println("display_mode: " + this.getAttribute("display_mode"));
+		System.out.println("display_mode: " + this.getAttribute("display_mode"));*/
 
 		List<IAgent> groupe = (List<IAgent>)this.agentsCourants;
 		curSimulationMutliPolygon= new ArrayList<IShape>();
@@ -870,6 +871,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 		if (this.getAttribute("display_mode").equals("simglobal")) {  //  à tester!!: --> chaque follower se fait son enveloppe
 			allSimulationMultiPoly.clear();
+			allSimulationShape.clear();
 			
 			for (int i=0;i<groupe.size();i++) {
 			  curSimulationMutliPolygon.add((IShape)groupe.get(i).getLocation());	
@@ -880,15 +882,18 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			if(manager.idSimList.length(scope)>1) {
 					for (int j=0; j<multidata.metadatahistory.numRows; j++)
 					{
-
-						if ((Integer)multidata.metadatahistory.get(scope, 1, j)==this.getClock().getCycle())
+						if ((Integer)multidata.metadatahistory.get(scope, 1, j) == this.getClock().getCycle())
 							if (!scope.getSimulationScope().toString().equals(multidata.metadatahistory.get(scope, 0, j).toString()))
 							{
-								System.out.println("new geom "+multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());
-								curSimulationMutliPolygon= new ArrayList<IShape>();
+								System.out.println("metadatahistory "+ multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());
+								
+								//curSimulationMutliPolygon= new ArrayList<IShape>();
+										
+								allSimulationShape.add((GamaShape) multidata.metadatahistory.get(scope, 8,j));						
+								
 								for (ILocation l:((GamaShape)multidata.metadatahistory.get(scope, 8,j)).getPoints()) {
 									curSimulationMutliPolygon.add(new GamaPoint(l));	
-									}
+							    }
 								allSimulationMultiPoly.add(curSimulationMutliPolygon);
 							}
 
@@ -897,7 +902,10 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			
 				myShape=(IShape)GamaGeometryType.buildMultiPolygon(allSimulationMultiPoly);
 				this.setGeometry(((GamaShape)myShape));
-				System.out.println("je suis un multipolygone!"+myShape);
+				System.out.println("myShape (MultiPolygon)"+ myShape);
+				System.out.println("allSimulationMultiPoly"+ allSimulationMultiPoly);
+				
+				
 		}
 
 		
