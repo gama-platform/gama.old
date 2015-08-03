@@ -23,16 +23,14 @@ global {
 	{
 		aspect base {
           draw shape color: #red;
-          //write "allSimPoly" + allSimPoly;
-          
-          loop i from:0 to:length(allSimPoly)-1{
-          	write "allSimPoly[i]" + allSimPoly[i];
-          	loop j from:0 to:length(list(allSimPoly[i]))-1{
-          		write "allSimPoly[i][j]" + list(allSimPoly[i])[j];
-          	}
-          	}
-		  }
-        
+          int curColor <-0;
+          loop geom over: allSimShape{
+          	draw geom color:hsb(curColor/10,0.5,0.5);
+          	curColor <- curColor+1;
+          } 
+
+		}
+
 	}
 
 	species people skills: [moving]{

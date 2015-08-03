@@ -129,7 +129,7 @@ import com.thoughtworks.xstream.*;
 	@var(name = "dbscann", type = IType.INT, init = "3", doc = @doc("number of points for DBSCAN")),
 	@var(name = "dbscane", type = IType.FLOAT, init = "0.1", doc = @doc("epsilon for DBSCAN")),
 	@var(name = "display_mode", type = IType.STRING, doc = @doc("displaying DBScan, global or SimGlobal")),
-	@var(name = "allSimPoly", type = IType.LIST, doc = @doc("displaying DBScan, global or SimGlobal"))
+	@var(name = "allSimShape", type = IType.LIST, doc = @doc("shape of all the simulation of the agent folllower"))
 })
 
 @species(name = "agent_group_follower")
@@ -290,8 +290,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	@setter("display_mode") public void setDisplay(final IAgent agent, final String os) { agent.setAttribute("display_mode",os); }
 	
 	
-	@getter("allSimPoly") public List<List<IShape>> getAllSimulationPoly() {return allSimulationMultiPoly;}
-	@setter("allSimPoly") public void setAllSimulationPoly(List<List<IShape>> allSimulationMultiPoly) {this.allSimulationMultiPoly = allSimulationMultiPoly;}
+	@getter("allSimShape") public List<IShape> getAllSimulationShape() {return allSimulationShape;}
+	@setter("allSimShape") public void setAllSimulationShape(List<IShape> allSimulationMultiPoly) {this.allSimulationShape = allSimulationShape;}
 
 	
 	
@@ -904,6 +904,11 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				this.setGeometry(((GamaShape)myShape));
 				System.out.println("myShape (MultiPolygon)"+ myShape);
 				System.out.println("allSimulationMultiPoly"+ allSimulationMultiPoly);
+				
+				System.out.println("allSimulationShape");
+				for (int i=0;i<allSimulationShape.size();i++) {
+					System.out.println("allSimulationShape.get(" +i +")"+ allSimulationShape.get(i)); ;	
+			     }
 				
 				
 		}
