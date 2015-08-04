@@ -210,13 +210,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	List<IShape> curSimulationMutliPolygon= new ArrayList<IShape>(); //
 	List<List<IShape>> allSimulationMultiPoly = new ArrayList(); //
 	
-	
-	
-	//
-	
-
-	
-
 	public StorableData mydata;
 	public StorableData multidata;
 
@@ -301,18 +294,9 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		 return scope.getName().toString() + "_" + manager.hasard;
 	}
 
-	public void updatedata(final IScope scope)
-	{
-		if(mydata.getIsAgentCreated() == false ) {
-			//GamaList varlist=(GamaList)this.getSpecies().getVarNames();
-		}
-
-		// METADATAHISTORY .........................................................................
-
-		int nrow = mydata.metadatahistory.getRows(scope);
+	public void updateMetaDataHistory(final IScope scope, final int nrow){	
 		GamaObjectMatrix maMatriceMETA = GamaObjectMatrix.from(9,nrow+1,mydata.metadatahistory);
 		mydata.metadatahistory = maMatriceMETA;
-
 		mydata.metadatahistory.set(scope, 0, nrow, scope.getSimulationScope());
 		mydata.metadatahistory.set(scope, 1, nrow, scope.getClock().getCycle());
 		mydata.metadatahistory.set(scope, 2, nrow, getUniqueSimName(scope)); 
@@ -322,6 +306,20 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		mydata.metadatahistory.set(scope, 6, nrow, this.agentsCourants.copy(scope));
 		mydata.metadatahistory.set(scope, 7, nrow, this.agentsCourants.size());
 		mydata.metadatahistory.set(scope, 8, nrow, this.getGeometry());
+	}
+	
+	public void updatedata(final IScope scope)
+	{
+		
+		System.out.println("updatedata cycle : " + scope.getSimulationScope().getClock().getCycle());
+		if(mydata.getIsAgentCreated() == false ) {
+			//GamaList varlist=(GamaList)this.getSpecies().getVarNames();
+		}
+
+		// METADATAHISTORY .........................................................................
+		int nrow = mydata.metadatahistory.getRows(scope);
+		updateMetaDataHistory(scope, nrow);
+		
 
 
 		// LASTDETAILEDVARVALUES & VARMAP & NUMVARMAP & QUALIVARMAP................................................
@@ -330,8 +328,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		GamaMap<Integer, Object> gmap3 = mydata.qualivarmap.copy(scope);
 
 		int nbAgents = this.agentsCourants.size();
-
-		//System.out.println("voici les agents courants: " + agentsCourants);
 
 		if (nbAgents>0)
 		{		
@@ -379,7 +375,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			step=mydata.metadatahistory.numRows-1;
 
 			//System.out.println("on va faire la moyenne de: " + nbVar + " variables");
-			System.out.println("on est au cycle : " + step);
+			
 			//System.out.println("il y a: " + nbVar + " variables dont il faut faire la moyenne.");
 
 			//step = mydata.averagehistory.getRows(scope);
@@ -414,10 +410,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 						agmin.clear();
 						//agmin.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
 						agmin.add(mydata.lastdetailedvarvalues.get(scope, j, k).toString());
-						//System.out.println("agmin = " + agmin);
-
-						//System.out.println("je suis un minimum: " + minimum);
-						//System.out.println("je suis un agent min: " + agmin.toString());
 					}
 					else if(valeur == minimum) {
 						//agmin.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
@@ -438,8 +430,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				}
 				moyenne = moyenne / (float)nbAgents;
 
-				//System.out.println("la MOYENNE FINALE au step: " + step + " pour la colonne " + j + " est de " + moyenne);
-
 				mydata.averagehistory.set(scope, j, step, moyenne);
 				mydata.minhistory.set(scope, j, step, minimum) ;
 				mydata.maxhistory.set(scope, j, step, maximum) ;
@@ -447,7 +437,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 			// STDEVHISTORY...........................................................................
 
-			//step = mydata.stdevhistory.getRows(scope);
 			GamaFloatMatrix maMatriceSTDEV = GamaFloatMatrix.from(scope,nbVar,step+1,mydata.stdevhistory);
 			mydata.stdevhistory = maMatriceSTDEV; 
 
@@ -749,33 +738,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	}
 
-	
-
-/*
- 	if (virtualAgents.size()>0)
- 	if(manager.idSimList.length(scope)>1) {
- 	for (int i=0; i<virtualAgents.size(); i++)
- 	{
- 	String n=virtualAgents.get(i).getName();
- 	for (int j=0; j<multidata.metadatahistory.numRows; j++)
- 	{
-
- 	if ((Integer)multidata.metadatahistory.get(scope, 1, j)==this.getClock().getCycle()-2)
- 	if (n.contains(multidata.metadatahistory.get(scope, 2, j).toString()))
- 	{
- 	System.out.println("new geom "+multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());
- 	virtualAgents.get(i).setGeometry((GamaShape)multidata.metadatahistory.get(scope, 8,j));
- 	}
-
- 	}
-
-
-
- 	}
- 	 
- 	}
- 	*/
-	
 
 	public boolean init(final IScope scope)
 	{
@@ -902,14 +864,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			
 				myShape=(IShape)GamaGeometryType.buildMultiPolygon(allSimulationMultiPoly);
 				this.setGeometry(((GamaShape)myShape));
-				System.out.println("myShape (MultiPolygon)"+ myShape);
-				System.out.println("allSimulationMultiPoly"+ allSimulationMultiPoly);
-				
-				System.out.println("allSimulationShape");
-				for (int i=0;i<allSimulationShape.size();i++) {
-					System.out.println("allSimulationShape.get(" +i +")"+ allSimulationShape.get(i)); ;	
-			     }
-				
 				
 		}
 
