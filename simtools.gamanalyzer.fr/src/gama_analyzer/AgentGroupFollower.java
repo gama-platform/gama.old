@@ -857,6 +857,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					System.out.println("Pas de groupe.");
 				}
 
+				
 				else if(groupes.size()>0) {
 					for(int i=0;i<groupes.size();i++) {
 
