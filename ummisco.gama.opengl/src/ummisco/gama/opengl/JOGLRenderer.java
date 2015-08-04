@@ -198,8 +198,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		inited = true;
 
 		
-		//chairModel = ModelLoaderOBJ.LoadModel("/Users/Arno/Projects/Gama/Sources/Git/GITclean/ummisco.gama.opengl/src/ummisco/gama/opengl/files/car.obj",
-			//	"/Users/Arno/Projects/Gama/Sources/Git/GITclean/ummisco.gama.opengl/src/ummisco/gama/opengl/files/car.mtl", gl);
+		chairModel = ModelLoaderOBJ.LoadModel("/Users/Arno/Desktop/obj/c.obj", "/Users/Arno/Desktop/obj/c.mtl", gl);
 	}
 	
 	public boolean getDrawNormal() {
@@ -279,9 +278,9 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			camera.doInertia();
 		}
 
-		drawScene(gl);
-		//chairModel.opengldraw(gl);
 		
+		//chairModel.opengldraw(gl);
+		drawScene(gl);
 
 		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 
@@ -294,7 +293,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	@Override
 	public void
 		reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width, final int height) {
-		System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
+		//System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
 		// Get the OpenGL graphics context
 		if ( width <= 0 || height <= 0 ) { return; }
 		this.width = width;
@@ -588,6 +587,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			}
 
 		}
+		
 		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
 			ratio = Cast.asList(scope, shape.getAttribute(IShape.RATIO_ATTRIBUTE));
 		}
