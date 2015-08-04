@@ -1,9 +1,13 @@
 model tuto
 
-global {
+global skills:[graphic] {
 	int nb_people <- 3;
 
     agent_group_follower peoplefollower;
+    string sequentialPalette <- "Blues" among:["YlOrRd","Grays","PuBu","GnRdPu","BuPu","YlOrBr","Greens","BuGn","GnBu","PuRd","Purples","Blues","Oranges","PuBu","OrRd","Reds","YlGn","YlGnBu"];
+    string divergingPalette <- "Spectral" among:["PRGn","PuOr","RdGy","Spectral","RdYlGn","RdBu","RdYlBu","PiYG","BrBG"];
+
+    list<rgb> SequentialColors<-list<rgb>(brewer_palette(divergingPalette));
 	
 	init {
 
@@ -19,16 +23,15 @@ global {
 	}
 }
 
-	species agentfollower parent:agent_group_follower
+	species agentfollower parent:agent_group_follower skills:[graphic]
 	{
 		aspect base {
           draw shape color: #red;
           int curColor <-0;
           loop geom over: allSimShape{
-          	draw geom color:hsb(curColor/10,0.5,0.5);
+          	draw geom color:SequentialColors[curColor] at:{location.x,location.y,curColor*10};
           	curColor <- curColor+1;
           } 
-
 		}
 
 	}
@@ -47,7 +50,7 @@ global {
 
 experiment exp type: gui {
 	output {
-		display city_display{
+		display city_display type:opengl{
 			species people aspect: base ;
 			species agentfollower aspect:base transparency:0.1;
 		}
