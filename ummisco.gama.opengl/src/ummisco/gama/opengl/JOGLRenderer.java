@@ -198,7 +198,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		inited = true;
 
 		
-		chairModel = ModelLoaderOBJ.LoadModel("/Users/Arno/Desktop/obj/c.obj", "/Users/Arno/Desktop/obj/c.mtl", gl);
+		//chairModel = ModelLoaderOBJ.LoadModel("/Users/Arno/Desktop/obj/c.obj", "/Users/Arno/Desktop/obj/c.mtl", gl);
 	}
 	
 	public boolean getDrawNormal() {
