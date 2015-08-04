@@ -847,24 +847,13 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 						if ((Integer)multidata.metadatahistory.get(scope, 1, j) == this.getClock().getCycle())
 							if (!scope.getSimulationScope().toString().equals(multidata.metadatahistory.get(scope, 0, j).toString()))
 							{
-								System.out.println("metadatahistory "+ multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());
-								
-								//curSimulationMutliPolygon= new ArrayList<IShape>();
-										
+								System.out.println("metadatahistory "+ multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());		
 								allSimulationShape.add((GamaShape) multidata.metadatahistory.get(scope, 8,j));						
-								
-								for (ILocation l:((GamaShape)multidata.metadatahistory.get(scope, 8,j)).getPoints()) {
-									curSimulationMutliPolygon.add(new GamaPoint(l));	
-							    }
-								allSimulationMultiPoly.add(curSimulationMutliPolygon);
 							}
-
 					}
 				}
-			
-				myShape=(IShape)GamaGeometryType.buildMultiPolygon(allSimulationMultiPoly);
-				this.setGeometry(((GamaShape)myShape));
-				
+			myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
+			this.setGeometry(((GamaShape)myShape));		
 		}
 
 		
@@ -945,8 +934,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					//mageom= GamaGeometryType.buildPolygon(polygone);
 					//this.setInnerGeometry(((GamaShape)mageom).getInnerGeometry().convexHull()); // polygones pleins!!!
 
-					System.out.println("mg: "+myShape);
-					System.out.println("pg: "+curSimulationMutliPolygon);
+					System.out.println("mg: "+ myShape);
+					System.out.println("pg: "+ curSimulationMutliPolygon);
 					//System.out.println("mespoly: "+ mespoly);
 				}
 
