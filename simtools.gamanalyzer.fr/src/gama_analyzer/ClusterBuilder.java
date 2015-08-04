@@ -321,23 +321,23 @@ public class ClusterBuilder extends GamlAgent {
 	@action(name = "clustering_DBScan")
 	@args(names = { "agents", "attributes", "distance_f", "epsilon", "min_points" })
 	public List<List<IAgent>> primClusteringDBScan(final IScope scope) throws GamaRuntimeException {
-		final IList<IAgent> agents = scope.getListArg("agents");
-		final IList<String> attributes = scope.getListArg("attributes");
+		final IList<IAgent> agents = (IList<IAgent>) (scope.hasArg("agents") ? scope.getListArg("agents") : this.getAttribute("agents"));
+		final IList<String> attributes = (IList<String>) (scope.hasArg("attributes") ? scope.getListArg("attributes") : this.getAttribute("attributes"));
 		final DBScan dbScan = new DBScan();
 		try {
-			if ( scope.hasArg("distance_f") ) {
-				final String distanceFct = scope.getStringArg("distance_f");
+			if ( scope.hasArg("distance_f")|this.hasAttribute("distance_f") ) {
+				final String distanceFct = (String) (scope.hasArg("distance_f") ? scope.getListArg("distance_f") : this.getAttribute("distance_f"));
 				if ( distanceFct.equals("manhattan") ) {
 					dbScan.setDatabase_distanceType(ManhattanDataObject.class.getName());
 				} else {
 					dbScan.setDatabase_distanceType(EuclideanDistance.class.getName());
 				}
 			}
-			if ( scope.hasArg("epsilon") ) {
-				dbScan.setEpsilon(scope.getFloatArg("epsilon"));
+			if ( scope.hasArg("epsilon")|this.hasAttribute("epsilon") ) {
+				dbScan.setEpsilon((Double) (scope.hasArg("epsilon") ? scope.getListArg("epsilon") : this.getAttribute("epsilon")));
 			}
-			if ( scope.hasArg("min_points") ) {
-				dbScan.setMinPoints(scope.getIntArg("min_points"));
+			if ( scope.hasArg("min_points")|this.hasAttribute("min_points") ) {
+				dbScan.setMinPoints((Integer) (scope.hasArg("min_points") ? scope.getListArg("min_points") : this.getAttribute("min_points")));
 			}
 		} catch (final Exception e) {
 			// scope.setStatus(ExecutionStatus.failure);
@@ -382,5 +382,4 @@ public class ClusterBuilder extends GamlAgent {
 		return groupes;
 
 	}
-
 }

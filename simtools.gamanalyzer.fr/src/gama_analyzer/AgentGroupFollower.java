@@ -4,6 +4,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
@@ -87,8 +88,10 @@ import java.lang.Math;
 
 
 
+
 import org.apache.commons.math3.analysis.function.Min;
 import org.opengis.geometry.Geometry;
+
 
 
 
@@ -127,7 +130,7 @@ import com.thoughtworks.xstream.*;
 
 	@var(name = "color", type = IType.COLOR, doc = @doc("couleur de l'agent_group_follower")),
 	@var(name = "dbscann", type = IType.INT, init = "3", doc = @doc("number of points for DBSCAN")),
-	@var(name = "dbscane", type = IType.FLOAT, init = "0.1", doc = @doc("epsilon for DBSCAN")),
+	@var(name = "dbscane", type = IType.FLOAT, init = "25", doc = @doc("epsilon for DBSCAN")),
 	@var(name = "display_mode", type = IType.STRING, doc = @doc("displaying DBScan, global or SimGlobal")),
 	@var(name = "allSimShape", type = IType.LIST, doc = @doc("shape of all the simulation of the agent folllower"))
 })
@@ -743,7 +746,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	{
 		boolean res=super.init(scope);
 		firsttime=System.currentTimeMillis();
-		this.setAttribute("display_mode", "simglobal");
+		this.setAttribute("display_mode", "dbscan");
 		messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
 	
 	   	xstream = new XStream();
@@ -885,7 +888,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		if ((!(this.getAttribute("display_mode").equals("global"))) & (!(this.getAttribute("display_mode").equals("simglobal")))) {  //  à tester!!: --> chaque follower se fait son enveloppe
 //		if (this.getAttribute("display_mode").equals("dbscan")) {  // si on veut utiliser DBScan
 			this.setAttribute("agents", agentsCourants);
-			List<String> listarg=new ArrayList<String>();
+			IList<String> listarg=GamaListFactory.create(Types.STRING);
 			listarg.add("location.x");
 			listarg.add("location.y");
 			this.setAttribute("attributes", listarg);
