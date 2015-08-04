@@ -86,6 +86,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private int _plansNumber = 0;
 	private int _perceptionNumber = 0;
 	private boolean iscurrentplaninstantaneous=false;
+	
+	private final List<RuleStatement> _rules = new ArrayList<RuleStatement>();
+	private int _rulesNumber = 0;
+	
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
@@ -105,6 +109,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
 			_perceptions.add((PerceiveStatement)c);
 			_perceptionNumber++;
+		}  else if(c instanceof RuleStatement){
+			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
+			_rules.add((RuleStatement)c);
+			_rulesNumber++;
 		} else{
 			super.addBehavior(c);
 		}
@@ -116,6 +124,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if ( _perceptionNumber > 0 ) {
 			for ( int i = 0; i < _perceptionNumber; i++ ) {
 				_perceptions.get(i).executeOn(scope);
+			}
+		}
+		if(_rulesNumber > 0){
+			for ( int i = 0; i < _rulesNumber; i++ ) {
+				_rules.get(i).executeOn(scope);
 			}
 		}
 		return executePlans(scope);
@@ -587,6 +600,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	public static Boolean hasBelief(final IScope scope, Predicate predicateDirect){
+		return getBase(scope, BELIEF_BASE).contains(predicateDirect);
+	}
+	
 	@action(name = "has_belief", args = { @arg(name = PREDICATE,
 		type = PredicateType.id,
 		optional = true,
@@ -598,9 +615,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Boolean primTestBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if ( predicateDirect != null ) { return getBase(scope, BELIEF_BASE).contains(predicateDirect);
-
-		}
+		if ( predicateDirect != null ) { return hasBelief(scope, predicateDirect);}
 		return false;
 	}
 
@@ -787,6 +802,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	public static Boolean addDesire(final IScope scope, Predicate superPredicate, Predicate predicate){
+		if ( superPredicate != null ) {
+			if ( superPredicate.getSubintentions() == null ) {
+				superPredicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
+			}
+			superPredicate.getSubintentions().add(predicate);
+		}
+		addToBase(scope, predicate, DESIRE_BASE);
+		predicate.setSuperIntention(superPredicate);
+		return true;		
+	}
+	
 	@action(name = "add_desire",
 		args = {
 			@arg(name = PREDICATE, type = PredicateType.id, optional = false, doc = @doc("predicate to add")),
@@ -803,15 +830,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if ( predicateDirect != null ) {
 			Predicate superpredicate =
 				(Predicate) (scope.hasArg(PREDICATE_TODO) ? scope.getArg(PREDICATE_TODO, PredicateType.id) : null);
-			if ( superpredicate != null ) {
-				if ( superpredicate.getSubintentions() == null ) {
-					superpredicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
-				}
-				superpredicate.getSubintentions().add(predicateDirect);
-			}
-			addToBase(scope, predicateDirect, DESIRE_BASE);
-			predicateDirect.setSuperIntention(superpredicate);
-			return true;
+			return addDesire(scope,superpredicate,predicateDirect);
 		}
 
 		return false;

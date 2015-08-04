@@ -50,31 +50,21 @@ public class FocusStatement extends AbstractStatement {
 	final IExpression variable;
 	final IExpression agentMyself;
 	
-	private RemoteSequence sequence = null;
 	
 	public FocusStatement(IDescription desc) {
 		super(desc);
 		variable = getFacet(IKeyword.VAR);
 		agentMyself = getFacet(IKeyword.AGENT);
 	}
-	
-	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
-		sequence = new RemoteSequence(description);
-		sequence.setName("commands of " + getName());
-		sequence.setChildren(com);
-	}
 
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
-//		final IAgent mySelfAgent = sequence.getMyself();
 		final IAgent mySelfAgent = (IAgent) agentMyself.value(scope);
 		IScope scopeMySelf = null;
 		if(mySelfAgent!=null){
 			scopeMySelf = mySelfAgent.getScope().copy();
 			scopeMySelf.push(mySelfAgent);
 		}
-//		final SimpleBdiArchitecture archi = null;
 		final Predicate tempPred;
 		if(variable!=null){
 			String namePred = variable.getName()+"_"+scope.getAgentScope().getSpeciesName();
