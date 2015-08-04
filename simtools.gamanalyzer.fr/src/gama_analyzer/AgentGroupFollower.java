@@ -131,7 +131,8 @@ import com.thoughtworks.xstream.*;
 	@var(name = "color", type = IType.COLOR, doc = @doc("couleur de l'agent_group_follower")),
 	@var(name = "dbscann", type = IType.INT, init = "3", doc = @doc("number of points for DBSCAN")),
 	@var(name = "dbscane", type = IType.FLOAT, init = "25", doc = @doc("epsilon for DBSCAN")),
-	@var(name = "display_mode", type = IType.STRING, doc = @doc("displaying DBScan, global or SimGlobal")),
+	@var(name = "display_mode", type = IType.STRING, doc = @doc("displaying global or SimGlobal")),
+	@var(name = "clustering_mode", type = IType.STRING, doc = @doc("dbscan, none")),
 	@var(name = "allSimShape", type = IType.LIST, doc = @doc("shape of all the simulation of the agent folllower"))
 })
 
@@ -285,6 +286,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	@getter("display_mode") public String getDisplay(final IAgent agent) { return (String) agent.getAttribute("display_mode"); }
 	@setter("display_mode") public void setDisplay(final IAgent agent, final String os) { agent.setAttribute("display_mode",os); }
 	
+	@getter("clustering_mode") public String getClusteringMode(final IAgent agent) { return (String) agent.getAttribute("clustering_mode"); }
+	@setter("clustering_mode") public void setClusteringMode(final IAgent agent, final String os) { agent.setAttribute("clustering_mode",os); }
 	
 	@getter("allSimShape") public List<IShape> getAllSimulationShape() {return allSimulationShape;}
 	@setter("allSimShape") public void setAllSimulationShape(List<IShape> allSimulationMultiPoly) {this.allSimulationShape = allSimulationShape;}
@@ -746,7 +749,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	{
 		boolean res=super.init(scope);
 		firsttime=System.currentTimeMillis();
-		this.setAttribute("display_mode", "dbscan");
+		this.setAttribute("display_mode", "simglobal");
+		this.setAttribute("clustering_mode", "dbscan");
 		messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
 	
 	   	xstream = new XStream();
@@ -788,7 +792,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		agentsCourants = rule.update(scope,agentsCourants);
 		System.out.println("agentsCourants dans step après update: " + agentsCourants);
 		updatedata(scope);
-		create_cluster(scope);
+		updateShape(scope);
 
 
 		if (doparallelsim())
@@ -814,7 +818,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	  return;
 	}
 
-	public void create_cluster(final IScope scope)
+	public void updateShape(final IScope scope)
 	{		
 		/*System.out.println("In create_cluster : scope.getAgentScope().toString(): " + scope.getAgentScope().toString());
 		System.out.println("In create_cluster : analysedSpecies: " + analysedSpecies);
@@ -825,38 +829,85 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		
 		
 		// Affiche l'enveloppe de l'agent group follower (devrait être nommée "current_follower") 
-		if (this.getAttribute("display_mode").equals("global")) {  
-			
-			for (int i=0;i<groupe.size();i++) {
-			  curSimulationMutliPolygon.add((IShape)groupe.get(i).getLocation());	
+		if (this.getAttribute("display_mode").equals("global")) {
+			if(this.getAttribute("clustering_mode").equals("none")){
+				for (int i=0;i<groupe.size();i++) {
+					  curSimulationMutliPolygon.add((IShape)groupe.get(i).getLocation());	
+					}
+					myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
+					this.setGeometry(((GamaShape)myShape));	
 			}
-			myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
-			this.setGeometry(((GamaShape)myShape));
-		}
+			else{
+				this.setAttribute("agents", agentsCourants);
+				IList<String> listarg=GamaListFactory.create(Types.STRING);
+				listarg.add("location.x");
+				listarg.add("location.y");
+				this.setAttribute("attributes", listarg);
+				this.setAttribute("epsilon", (Double)this.getAttribute("dbscane"));
+				this.setAttribute("min_points", (Integer)this.getAttribute("dbscann"));
+
+				System.out.println("listarg: " + listarg);
+				//System.out.println("scope....: " + scope.toString());
+				
+				List<List<IAgent>> groupes = primClusteringDBScan(this.getScope());
+
+				allSimulationMultiPoly.clear();
+
+				if(groupes==null) {
+					System.out.println("Pas de groupe.");
+				}
+
+				else if(groupes.size()>0) {
+					for(int i=0;i<groupes.size();i++) {
+
+						System.out.println("nombre de groupes: " + groupes.size());
+						curSimulationMutliPolygon=new ArrayList<IShape>();
+						for(int j=0;j<groupes.get(i).size();j++) {
+							if(groupes.get(i).size()>1 || groupes.get(i).size()==0 ) {
+								curSimulationMutliPolygon.add((IShape)groupes.get(i).get(j).getLocation());
+							}
+						}
+						allSimulationMultiPoly.add(curSimulationMutliPolygon);
+		
+					}
+					myShape=(IShape)GamaGeometryType.buildMultiPolygon(allSimulationMultiPoly);
+					this.setGeometry(((GamaShape)myShape));
+					System.out.println("je suis un multipolygone!");
+				}
+				
+			}
+		}	
+		
 
 		if (this.getAttribute("display_mode").equals("simglobal")) {  //  à tester!!: --> chaque follower se fait son enveloppe
-			allSimulationMultiPoly.clear();
-			allSimulationShape.clear();
-			
-			for (int i=0;i<groupe.size();i++) {
-			  curSimulationMutliPolygon.add((IShape)groupe.get(i).getLocation());	
-			}
-			
-			allSimulationMultiPoly.add(curSimulationMutliPolygon); 
-
-			if(manager.idSimList.length(scope)>1) {
-					for (int j=0; j<multidata.metadatahistory.numRows; j++)
-					{
-						if ((Integer)multidata.metadatahistory.get(scope, 1, j) == this.getClock().getCycle())
-							if (!scope.getSimulationScope().toString().equals(multidata.metadatahistory.get(scope, 0, j).toString()))
-							{
-								System.out.println("metadatahistory "+ multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());		
-								allSimulationShape.add((GamaShape) multidata.metadatahistory.get(scope, 8,j));						
-							}
-					}
+			if(this.getAttribute("clustering_mode").equals("none")){
+				allSimulationMultiPoly.clear();
+				allSimulationShape.clear();
+				
+				for (int i=0;i<groupe.size();i++) {
+				  curSimulationMutliPolygon.add((IShape)groupe.get(i).getLocation());	
 				}
-			myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
-			this.setGeometry(((GamaShape)myShape));		
+				
+				allSimulationMultiPoly.add(curSimulationMutliPolygon); 
+
+				if(manager.idSimList.length(scope)>1) {
+						for (int j=0; j<multidata.metadatahistory.numRows; j++)
+						{
+							if ((Integer)multidata.metadatahistory.get(scope, 1, j) == this.getClock().getCycle())
+								if (!scope.getSimulationScope().toString().equals(multidata.metadatahistory.get(scope, 0, j).toString()))
+								{
+									System.out.println("metadatahistory "+ multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());		
+									allSimulationShape.add((GamaShape) multidata.metadatahistory.get(scope, 8,j));						
+								}
+						}
+					}
+				myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
+				this.setGeometry(((GamaShape)myShape));		
+			}
+			else{
+				
+			}
+				
 		}
 
 		
