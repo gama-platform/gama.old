@@ -8,101 +8,46 @@ import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
-import msi.gaml.variables.IVariable;
 import msi.gaml.variables.Variable;
 import msi.gaml.types.Types;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+
 
 import autres.Analyse_statement;
-import msi.gama.metamodel.agent.*;
 import msi.gama.util.*;
 import msi.gama.util.matrix.GamaFloatMatrix;
-import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
-import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Random;
-import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Maths;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.ObjectOutputStream;
+import java.awt.Color;
 import java.lang.Object;
 import java.lang.Math;
 
-//import javax.jms.DeliveryMode;
-//import javax.jms.JMSException;
-//import javax.jms.MapMessage;
-//import javax.jms.Message;
-//import javax.jms.MessageListener;
-//import javax.jms.MessageProducer;
-//import javax.jms.ObjectMessage;
-//import javax.jms.Queue;
-//import javax.jms.Session;
-//import javax.jms.Topic;
-//import javax.jms.TopicConnection;
-//import javax.jms.TopicConnectionFactory;
-//import javax.jms.TopicSession;
-//import javax.jms.TopicSubscriber;
-//import javax.naming.Context;
-//import javax.naming.InitialContext;
-//import javax.naming.NamingException;
-//
-//
-//
-//
 
-
-
-
-import org.apache.commons.math3.analysis.function.Min;
-import org.opengis.geometry.Geometry;
-
-
-
-
-
-
-
-//import ummisco.gama.communicator.CommunicatorSkill;
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instance;
-import weka.core.Instances;
 
 import com.thoughtworks.xstream.*;
 
@@ -133,7 +78,8 @@ import com.thoughtworks.xstream.*;
 	@var(name = "dbscane", type = IType.FLOAT, init = "25", doc = @doc("epsilon for DBSCAN")),
 	@var(name = "display_mode", type = IType.STRING, doc = @doc("displaying global or SimGlobal")),
 	@var(name = "clustering_mode", type = IType.STRING, doc = @doc("dbscan, none")),
-	@var(name = "allSimShape", type = IType.LIST, doc = @doc("shape of all the simulation of the agent folllower"))
+	@var(name = "allSimShape", type = IType.LIST, doc = @doc("shape of all the simulation of the agent folllower")),
+	@var(name = "colorList", type = IType.LIST, doc = @doc("color correponding to each simulation"))
 })
 
 @species(name = "agent_group_follower")
@@ -210,6 +156,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	
 	IShape myShape; //geometry courante 
 	List<IShape> allSimulationShape= new ArrayList<IShape>();
+
 	
 	List<IShape> curSimulationMutliPolygon= new ArrayList<IShape>(); //
 	List<List<IShape>> allSimulationMultiPoly = new ArrayList(); //
@@ -291,6 +238,9 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	
 	@getter("allSimShape") public List<IShape> getAllSimulationShape() {return allSimulationShape;}
 	@setter("allSimShape") public void setAllSimulationShape(List<IShape> allSimulationMultiPoly) {this.allSimulationShape = allSimulationShape;}
+	
+	@getter("colorList") public IList<Color> getColorList() {return manager.simColorList;}
+	@setter("colorList") public void setColorList(IList<Color> colorList) {manager.simColorList = colorList;}
 
 	
 	
