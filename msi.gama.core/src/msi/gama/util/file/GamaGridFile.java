@@ -69,10 +69,17 @@ public class GamaGridFile extends GamaGisFile {
 				StringBuilder text = new StringBuilder();
 				String NL = System.getProperty("line.separator");
 				Scanner scanner = null;
+				
 				try {
 					scanner = new Scanner(getFile());
+					int cpt = 0;
 					while (scanner.hasNextLine()) {
-						text.append(scanner.nextLine() + NL);
+						String line = scanner.nextLine();
+						if (cpt < 10) {
+							if (line.contains("dx")) text.append(line.replace("dx", "cellsize") + NL);
+							else if (line.contains("dy")) continue;
+							else text.append(line + NL);
+						} else text.append(line + NL);
 					}
 				} catch (FileNotFoundException ex) {
 					ex.printStackTrace();
@@ -81,6 +88,7 @@ public class GamaGridFile extends GamaGisFile {
 						scanner.close();
 					}
 				}
+				
 				text.append(NL);
 				// fis = new StringBufferInputStream(text.toString());
 				reader = new GamaGridReader(scope, new StringBufferInputStream(text.toString()));
