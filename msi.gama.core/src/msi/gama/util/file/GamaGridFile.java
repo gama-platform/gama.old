@@ -194,8 +194,7 @@ public class GamaGridFile extends GamaGisFile {
 							int green = (int) (bv[0]<0 ? 256+bv[1] : bv[1]);
 							int blue = (int) (bv[0]<0 ? 256+bv[2] : bv[2]);
 							rect.getAttributes().put("grid_value", (red+green+blue)/3.0);
-							rect.getAttributes().put("color", new GamaColor( red, green, blue, 255));
-							
+							//rect.getAttributes().put("color", new GamaColor( red, green, blue, 255));
 						}
 					}
 					//rect.getAttributes().put("grid_value", vals[0]);
