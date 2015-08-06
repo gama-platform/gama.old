@@ -960,7 +960,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
-	@action(name = "clear_belief",doc = @doc(value = "clear the belief base",
+	@action(name = "clear_beliefs",doc = @doc(value = "clear the belief base",
 			returns = "true if the base is cleared correctly",
 			examples = {@example("")}))
 	public Boolean primClearBelief(final IScope scope){
@@ -968,7 +968,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 		
-	@action(name = "clear_desire",doc = @doc(value = "clear the desire base",
+	@action(name = "clear_desires",doc = @doc(value = "clear the desire base",
 			returns = "true if the base is cleared correctly",
 			examples = {@example("")}))
 	public Boolean primClearDesire(final IScope scope){
@@ -976,7 +976,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 		
-	@action(name = "clear_intention",doc = @doc(value = "clear the intention base",
+	@action(name = "clear_intentions",doc = @doc(value = "clear the intention base",
 			returns = "true if the base is cleared correctly",
 			examples = {@example("")}))
 	public Boolean primClearIntention(final IScope scope){
