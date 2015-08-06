@@ -28,7 +28,7 @@ import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 @file(name = "image",
-	extensions = { "tif", "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" },
+	extensions = { "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" },
 	buffer_type = IType.MATRIX,
 	buffer_content = IType.INT,
 	buffer_index = IType.POINT)
