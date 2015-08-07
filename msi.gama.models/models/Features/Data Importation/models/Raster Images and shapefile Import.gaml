@@ -21,7 +21,7 @@ global {
 	
 	// Global variables related to the MNT
 	file mntImageRaster <- image_file('../images/mnt/testAG.jpg') ;
-	int factorDiscret  <- 20;
+	int factorDiscret  <- 10;
 	
 	// Global variables  related to the Management units	
 	file ManagementUnitShape <- file('../images/ug/UGSelect.shp');
@@ -39,7 +39,7 @@ global {
 		create managementUnit from: ManagementUnitShape 
 				with: [MUcode::int(read('Code_UG')), MULabel::string(read('Libelle_UG')), pgeSAGE::string(read('PGE_SAGE'))] ;
 				
-		create river from: waterShape.path;
+		create river from: waterShape;
 				
 		matrix<int> mapColor <- matrix<int>(mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret}) ;
 		ask cell {		
@@ -49,12 +49,9 @@ global {
     }
 }
 
-
-
-
 species river {
-	aspect basic{
-		draw  shape color: #blue;
+	aspect default{
+		draw shape color: #blue;
 	}	
 }
 
@@ -63,15 +60,15 @@ species managementUnit{
 	string MULabel;
 	string pgeSAGE;
 	
-	aspect basic{
+	aspect default{
 		draw shape;
 	}
 }	
 species izard {	
 	init{
-		set location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
+		location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
 	}	
-	aspect basic{
+	aspect default{
 		draw square(5000) color: #orange;
 	}
 	aspect image{
@@ -81,7 +78,7 @@ species izard {
 
 // We create a grid as environment with the same dimensions as the matrix in which we want to store the image
 
-grid cell  width: widthImg/factorDiscret height: heightImg/factorDiscret;
+grid cell width: widthImg/factorDiscret height: heightImg/factorDiscret;
 
 
 
@@ -107,10 +104,10 @@ experiment main type: gui {
 	// For cosmetic need, we can choose to not display the grid. 
 	output {
 		display HowToImportVectorial {
-	        image name: 'Background' file: mntImageRaster.path;  		
+	        image 'Background' file: mntImageRaster.path;  		
 	       	grid cell;
-	 		species managementUnit aspect: basic transparency: 0.5;
-	 		species river aspect: basic;
+	 		species managementUnit transparency: 0.5;
+	 		species river ;
 	 		species izard aspect: image;  
 		}
 	}

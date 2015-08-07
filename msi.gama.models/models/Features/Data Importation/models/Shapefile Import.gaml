@@ -9,11 +9,16 @@ model HowToImportVectorial
 
 
 global {
-	// Global variables  related to the Management units	
+	// Global variables related to the Management units	
 	file ManagementUnitShape <- file('../images/ug/UGSelect.shp'); 
+	
+	//definition of the environment size from the shapefile. 
+	//Note that is possible to define it from several files by using: geometry shape <- envelope(envelope(file1) + envelope(file2) + ...);
 	geometry shape <- envelope(ManagementUnitShape);
+	
 	init {
-		create managementUnit from: ManagementUnitShape.path 
+		//Creation of managmentUnit agents from the shapefile (and reading of the shapefile attributes)
+		create managementUnit from: ManagementUnitShape 
 			with: [MUcode::int(read('Code_UG')), MULabel::string(read('Libelle_UG')), pgeSAGE::string(read('PGE_SAGE'))] ;
     }
 }

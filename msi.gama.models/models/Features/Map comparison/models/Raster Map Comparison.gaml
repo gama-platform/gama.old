@@ -64,7 +64,7 @@ grid cell width: 50 height: 50 {
 	rgb color_init;
 	rgb color_obs;
 	rgb color_fuzzy <- #white;
-	list<cell> neighbours <- self neighbours_at 1;
+	list<cell> neighbours <- self neighbors_at 1;
 	
 	aspect fuzzy_sim {
 		draw shape color:color_fuzzy border: color_fuzzy;

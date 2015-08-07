@@ -39,9 +39,9 @@ global {
 
 species izard {	
 	init{
-		set location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
+		location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
 	}		
-	aspect basic{
+	aspect default{
 		draw square(1) color: #orange;
 	}
 	aspect image{
@@ -75,7 +75,7 @@ experiment main type: gui {
 	output {
 		display HowToImportRaster {
 	       grid cell;
-	       image name: 'Background' file: mntImageRaster.path;
+	       image 'Background' file: mntImageRaster.path;
 	       species izard aspect: image; 
 	    }   
 	}	

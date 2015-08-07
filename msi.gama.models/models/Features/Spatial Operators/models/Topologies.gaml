@@ -18,8 +18,8 @@ global {
 		//do test_distance_between;
 		do test_distance_to;
 		//do test_at_distance;
-		//do test_neighbours_at;
-		//do test_neighbours_of;
+		//do test_neighbors_at;
+		//do test_neighbors_of;
 	/*do test_path_between;
 		do test_path_to;*/
 		//do test_simple_clustering_by_distance;
@@ -94,35 +94,35 @@ global {
 			}
 		}
 	}
-	action test_neighbours_at {
-		write "\n************** NEIGHBOURS_AT **************";
-		write "CONTINUOUS TOPOLOGY :neighbours at 20  of dummy 8: " + ((dummy(8) neighbours_at 20) collect (each.id));
+	action test_neighbors_at {
+		write "\n************** neighbors_at **************";
+		write "CONTINUOUS TOPOLOGY :neighbours at 20  of dummy 8: " + ((dummy(8) neighbors_at 20) collect (each.id));
  		using(topology(cell)) { 
-			write "GRID TOPOLOGY : neighbours at 2 of dummy 8: "+ ((dummy(8) neighbours_at 2) collect (each.id));
+			write "GRID TOPOLOGY : neighbours at 2 of dummy 8: "+ ((dummy(8) neighbors_at 2) collect (each.id));
 		}
 		using(topology(the_graph)) {
-			write "GRAPH TOPOLOGY : neighbours at 20 of dummy 8: " + ((dummy(8) neighbours_at 20) collect (each.id));
+			write "GRAPH TOPOLOGY : neighbours at 20 of dummy 8: " + ((dummy(8) neighbors_at 20) collect (each.id));
 		}
 		using(topology(world)) { 
-			write "CONTINUOUS TOPOLOGY :neighbours at 10  of cell 40: " + (cell(40) neighbours_at 10);
+			write "CONTINUOUS TOPOLOGY :neighbours at 10  of cell 40: " + (cell(40) neighbors_at 10);
  		}
  		using(topology(cell)) { 
-			write "GRID TOPOLOGY : neighbours at 1 of cell 40: "+ (cell(40) neighbours_at 1);
+			write "GRID TOPOLOGY : neighbours at 1 of cell 40: "+ (cell(40) neighbors_at 1);
 		}
 		using(topology(the_graph)) {
-			write "GRAPH TOPOLOGY : neighbours at 20 of cell 40: "+ (cell(40) neighbours_at 20);
+			write "GRAPH TOPOLOGY : neighbours at 20 of cell 40: "+ (cell(40) neighbors_at 20);
 		}
 	}
 	
-	action test_neighbours_of{
-		write "\n************** NEIGHBOURS_OF **************";
-		write "CONTINUOUS TOPOLOGY : neighbours of dummy 8 at distance 20: " + ((topology(world) neighbours_of (dummy(8) ,20)));
-		write "GRID TOPOLOGY : neighbours of dummy 8 at distance 2: " + ((topology(cell) neighbours_of (dummy(8) ,2)));
-		write "GRAPH TOPOLOGY: neighbours of dummy 8 at distance 20: " + ((topology(the_graph) neighbours_of (dummy(8) ,20)));
+	action test_neighbors_of{
+		write "\n************** neighbors_of **************";
+		write "CONTINUOUS TOPOLOGY : neighbours of dummy 8 at distance 20: " + ((topology(world) neighbors_of (dummy(8) ,20)));
+		write "GRID TOPOLOGY : neighbours of dummy 8 at distance 2: " + ((topology(cell) neighbors_of (dummy(8) ,2)));
+		write "GRAPH TOPOLOGY: neighbours of dummy 8 at distance 20: " + ((topology(the_graph) neighbors_of (dummy(8) ,20)));
 		
-		write "CONTINUOUS TOPOLOGY : neighbours of cell 40 at distance 20: " + ((topology(world) neighbours_of (cell(40) ,10)));
-		write "GRID TOPOLOGY : neighbours of cell 40 at distance 2: " + ((topology(cell) neighbours_of (cell(40) ,1)));
-		write "GRAPH TOPOLOGY: neighbours of cell 40 at distance 20: " + ((topology(the_graph) neighbours_of (cell(40) ,10)));
+		write "CONTINUOUS TOPOLOGY : neighbours of cell 40 at distance 20: " + ((topology(world) neighbors_of (cell(40) ,10)));
+		write "GRID TOPOLOGY : neighbours of cell 40 at distance 2: " + ((topology(cell) neighbors_of (cell(40) ,1)));
+		write "GRAPH TOPOLOGY: neighbours of cell 40 at distance 20: " + ((topology(the_graph) neighbors_of (cell(40) ,10)));
 	}
 	
 	

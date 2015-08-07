@@ -99,7 +99,7 @@ global {
 environment width: grid_size height: grid_size {
 	grid sir_grid width: grid_size height: grid_size {
 		rgb color <- #black;
-		list<sir_grid> neighbours <- (self neighbours_at neighbours_range) of_species sir_grid;
+		list<sir_grid> neighbours <- (self neighbors_at neighbours_range) of_species sir_grid;
 	}
 
 }
@@ -245,7 +245,7 @@ species Host schedules: [] skills: [moving] {
 	
 	/* next function computes the number of neighbours of the agent */
 	int ngb_number function: {
-		length(((self) neighbours_at (2)) of_species Host) - 1 // -1 is because the agent counts itself
+		length(((self) neighbors_at (2)) of_species Host) - 1 // -1 is because the agent counts itself
 	};
 	
 	init {
@@ -267,7 +267,7 @@ species Host schedules: [] skills: [moving] {
 	}
 
 	reflex become_infected when: (is_susceptible and computeInfectionFromS) {
-		if (flip(1 - (1 - beta) ^ (((self) neighbours_at (2)) of_species Host) count (each.is_infected))) {
+		if (flip(1 - (1 - beta) ^ (((self) neighbors_at (2)) of_species Host) count (each.is_infected))) {
 			set is_susceptible <- false;
 			set is_infected <- true;
 			set is_immune <- false;
@@ -277,7 +277,7 @@ species Host schedules: [] skills: [moving] {
 	}
 
 	reflex infecte_others when: (is_infected and not (computeInfectionFromS)) {
-		loop hst over: ((self) neighbours_at (2)) {
+		loop hst over: ((self) neighbors_at (2)) {
 			if (hst.is_susceptible) {
 				if (flip(beta)) {
 					hst.is_susceptible <- false;
