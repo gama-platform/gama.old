@@ -246,8 +246,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			int nbRows = gp.getNbRows();
 			header += "ncols         " + nbCols + newLine;
 			header += "nrows         " + nbRows + newLine;
-			header += "xllcorner     " + scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX()+ newLine;
-			header += "yllcorner     " + scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY()+ newLine;
+			boolean nullProjection = scope.getSimulationScope().getProjectionFactory().getWorld() == null ;
+			header += "xllcorner     " + (nullProjection ? "0" : scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX())+ newLine;
+			header += "yllcorner     " + (nullProjection ? "0" : scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY())+ newLine;
 			double dx = scope.getSimulationScope().getEnvelope().getWidth()/nbCols;
 			double dy = scope.getSimulationScope().getEnvelope().getHeight()/nbRows;
 			if (dx == dy)
