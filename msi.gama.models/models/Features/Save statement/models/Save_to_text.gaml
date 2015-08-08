@@ -1,21 +1,21 @@
 /**
- *  SavetoCSV
+ *  SavetoText
  *  Author: Patrick Taillandier
- *  Description: Show how to save agent attributes into a csv file
+ *  Description: Show how to save data into a text file
  */
 
-model SavetoCSV
+model SavetoText
 
 global {
 	init {
 		create bug number: 50;
 	}
 	
-	reflex save_bug_attribute when: cycle = 100{
-		ask bug {
-			// save the values of the variables name, speed and size to the csv file
-			save [name,speed, size] to: "../results/bug.csv" type:"csv";
-		}
+	reflex save_data when: every(10){
+		//save the following text into the given text file. Note that each time the save statement is used, a new line is added at the end of the file.
+		save ("cycle:" + cycle + ", mean size: " + mean(bug collect each.size)) to: "../results/data.txt";
+	}
+	reflex end_simulation when: cycle = 100 {
 		do pause;
 	}
 }
