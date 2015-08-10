@@ -330,11 +330,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			int step = scope.getSimulationScope().getClock().getCycle();
 			step=mydata.metadatahistory.numRows-1;
 
-			//System.out.println("on va faire la moyenne de: " + nbVar + " variables");
-			
-			//System.out.println("il y a: " + nbVar + " variables dont il faut faire la moyenne.");
-
-			//step = mydata.averagehistory.getRows(scope);
 			GamaFloatMatrix maMatriceAV = GamaFloatMatrix.from(scope,nbVar,step+1,mydata.averagehistory);
 			mydata.averagehistory = maMatriceAV;
 
@@ -346,7 +341,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 			float moyenne = 0;
 
-			//for(int i=0; i<step+1; i++) {
 			for(int j=0;j<nbVar;j++) {
 				moyenne = 0;
 				float minimum = Float.parseFloat(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap_reverse.get(scope,mydata.numvarmap.getValues().get(j)),0).toString());
@@ -364,23 +358,19 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					if(valeur < minimum) {
 						minimum = valeur;
 						agmin.clear();
-						//agmin.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
 						agmin.add(mydata.lastdetailedvarvalues.get(scope, j, k).toString());
 					}
 					else if(valeur == minimum) {
-						//agmin.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
 						agmin.add(mydata.lastdetailedvarvalues.get(scope, j, k).toString());
 					}
 
 					if(valeur > maximum) {
 						maximum = valeur;
 						agmax.clear();
-						//	agmax.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
 						agmax.add(mydata.lastdetailedvarvalues.get(scope, j, k).toString());
 
 					}
 					else if(valeur == maximum) {
-						//agmax.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
 						agmax.add(mydata.lastdetailedvarvalues.get(scope, j, k).toString());
 					} 
 				}
@@ -410,9 +400,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				}
 
 				ecartype = (float) Math.sqrt(ecartype/nbAgents);
-
-				//System.out.println("l'ECARTYPE pour la variable  " + j + " est de : " + ecartype);
-
 				mydata.stdevhistory.set(scope, j, step, ecartype);
 			}
 
@@ -435,10 +422,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 				float min = Float.parseFloat(mydata.minhistory.get(scope, j, step).toString());
 				float max = Float.parseFloat(mydata.maxhistory.get(scope, j, step).toString());
-
-				/*	if(min==Float.parseFloat(mydata.minhistory.get(scope, j, step-1).toString()) & max==Float.parseFloat(mydata.maxhistory.get(scope, j, step-1).toString())) {
-					mydata.distribhistoryparams.set(scope, j, step, mydata.distribhistoryparams.get(scope, j, step-1));					
-				}*/
 
 				if(min==max) {
 					intervalle.clear();
@@ -507,21 +490,13 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 							if(minInt%deuxpuissancek!=0) {
 								newminInt = (int)deuxpuissancek*(int)((minInt/deuxpuissancek));
 								n = (int)((minInt/deuxpuissancek));
-								//System.out.println("minInt= " + minInt);
-								//System.out.println("deuxpuissancek= " + deuxpuissancek);
-								//System.out.println("je suis passé par le if2- n= " + n);
-								//System.out.println("je suis passé par le if2- newMinInt= " + newminInt);
 							}
 							else {
 								newminInt = minInt;
 								n = (int) ((int)minInt/deuxpuissancek);
-								//System.out.println("je suis passé par le else- newMinInt= " + newminInt);
 							}
 						}
 					}
-
-					//System.out.println("k= " + k);
-					//System.out.println("n= " + n);
 
 					intervalle.add(k);
 					intervalle.add(n);
@@ -578,17 +553,13 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 						if (i==8) manager.simColorList.add((GamaColor)Cast.asColor(scope,GamaColor.LIGHT_GRAY));
 						if (i==9) manager.simColorList.add((GamaColor)Cast.asColor(scope,GamaColor.DARK_GRAY));
 					}					
-			//	manager.simColorList.add((GamaColor)GamaColor.int_colors.values().toArray()[manager.simColorList.size()+1]);
 				else
 					manager.simColorList.add((GamaColor)GamaColor.getInt(Random.opRnd(scope, 10000)));
 			}
-			//System.out.println("1) manager.idSimList " + manager.idSimList);
 
 			if(!manager.agentGroupFollowerList.toString().contains(scope.getAgentScope().getName().toString())) {
 				manager.agentGroupFollowerList.add((AgentGroupFollower)scope.getAgentScope());
 			}
-			//System.out.println("2) manager.agentGroupFollowerList" + manager.agentGroupFollowerList);
-
 
 
 			if(mydata.metadatahistory.numRows==1) {
@@ -770,9 +741,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	public void updateShape(final IScope scope)
 	{		
-		/*System.out.println("In create_cluster : scope.getAgentScope().toString(): " + scope.getAgentScope().toString());
-		System.out.println("In create_cluster : analysedSpecies: " + analysedSpecies);
-		System.out.println("display_mode: " + this.getAttribute("display_mode"));*/
 
 		List<IAgent> groupe = (List<IAgent>)this.agentsCourants;
 		curSimulationMutliPolygon= new ArrayList<IShape>();
@@ -781,13 +749,15 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		allSimulationMultiPoly.clear();
 		allSimulationShape.clear();
 		
+		//CREATE THE CURRENT SHAPE
+		
 		if(this.getAttribute("clustering_mode").equals("none"))
 		{
 			for (int i=0;i<groupe.size();i++) {
-				  curSimulationMutliPolygon.add((IShape)groupe.get(i).getLocation());	
-				}
-				myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
-				this.setGeometry(((GamaShape)myShape));	
+			  curSimulationMutliPolygon.add((IShape)groupe.get(i).getLocation());	
+			}
+			myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
+			this.setGeometry(((GamaShape)myShape));	
 		}
 		else{
 			this.setAttribute("agents", agentsCourants);
@@ -825,17 +795,12 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				}
 				myShape=(IShape)GamaGeometryType.buildMultiPolygon(allSimulationMultiPoly);
 				this.setGeometry(((GamaShape)myShape));
-				System.out.println("je suis un multipolygone!");
 			}
 			
 		}
 		
 			
-		
-		
-		// Affiche l'enveloppe de l'agent group follower (devrait être nommée "current_follower") 
-
-		
+				
 		if (this.getAttribute("display_mode").equals("global")) {
 			allSimulationShape.add(myShape);
 		}	
@@ -854,10 +819,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 									allSimulationShape.add((GamaShape) multidata.metadatahistory.get(scope, 8,j));						
 								}
 						}
-					}
-//				myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
-	//			this.setGeometry(((GamaShape)myShape));		
-				
+					}				
 		}
 
 		
