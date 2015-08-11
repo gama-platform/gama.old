@@ -798,7 +798,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 			
 		}
-		
 			
 				
 		if (this.getAttribute("display_mode").equals("global")) {
@@ -846,10 +845,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		}
 		
 		
-		
 
 		if ((!(this.getAttribute("display_mode").equals("global"))) & (!(this.getAttribute("display_mode").equals("simglobal")))) {  //  à tester!!: --> chaque follower se fait son enveloppe
-//		if (this.getAttribute("display_mode").equals("dbscan")) {  // si on veut utiliser DBScan
 			this.setAttribute("agents", agentsCourants);
 			IList<String> listarg=GamaListFactory.create(Types.STRING);
 			listarg.add("location.x");
@@ -913,7 +910,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	}
 
 	String nom_espece = Analyse_statement.getAnalyseStatementVariable(); 
-	//String nom_liste = Analyse_statement.getAnalyseStatementVar(); 
 	String nom_contrainte = Analyse_statement.getAnalyseStatementConstraint(); 
 
 	public AgentGroupFollower(final IPopulation s) throws GamaRuntimeException {
@@ -936,7 +932,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	@action(name = "analyse_cluster", args = {
 			@arg(name = ANALYSE_STATEMENT_VARIABLE, type = IType.STRING, optional = false) 
-			//	@arg(name = ANALYSE_STATEMENT_VAR, type = IType.STRING, optional = false) })
 	})
 	public void analyseCluster(final IScope scope) throws GamaRuntimeException  {
 
