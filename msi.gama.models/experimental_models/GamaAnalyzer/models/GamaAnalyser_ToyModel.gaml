@@ -49,7 +49,7 @@ global skills:[graphic] {
 			draw shape color: #red;
             int curColor <-0;
             loop geom over: allSimShape{
-          	  draw geom color:SequentialColors[curColor] at:{location.x+curColor*world.shape.width,location.y,curColor*10};
+          	  draw geom color:SequentialColors[curColor] at:{location.x+curColor*world.shape.width,location.y,0};
           	  curColor <- curColor+1;
             } 
 		}
