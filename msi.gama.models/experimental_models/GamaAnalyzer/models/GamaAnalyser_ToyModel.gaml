@@ -6,7 +6,6 @@ global skills:[graphic] {
     agent_group_follower peoplefollower;
     string sequentialPalette <- "Blues" among:["YlOrRd","Grays","PuBu","GnRdPu","BuPu","YlOrBr","Greens","BuGn","GnBu","PuRd","Purples","Blues","Oranges","PuBu","OrRd","Reds","YlGn","YlGnBu"];
     string divergingPalette <- "Spectral" among:["PRGn","PuOr","RdGy","Spectral","RdYlGn","RdBu","RdYlBu","PiYG","BrBG"];
-
     list<rgb> SequentialColors<-list<rgb>(brewer_palette(divergingPalette));
     
 	
@@ -40,6 +39,17 @@ global skills:[graphic] {
             int curColor <-0;
             loop geom over: allSimShape{
           	  draw geom color:SequentialColors[curColor] at:{location.x,location.y,curColor*10};
+          	  curColor <- curColor+1;
+            } 
+		}
+		
+		aspect simglobalflat{
+			display_mode <-"simglobal";
+		    clustering_mode <-"none";
+			draw shape color: #red;
+            int curColor <-0;
+            loop geom over: allSimShape{
+          	  draw geom color:SequentialColors[curColor] at:{location.x+curColor*world.shape.width,location.y,curColor*10};
           	  curColor <- curColor+1;
             } 
 		}
@@ -89,6 +99,15 @@ experiment expSimGlobalNone type: gui {
 		display view type:opengl{
 			species people aspect: base ;
 			species agentfollower aspect:simglobal transparency:0.1;
+		}
+	}
+}
+
+experiment expSimGlobalNoneFlat type: gui {
+	output {
+		display view type:opengl{
+			species people aspect: base ;
+			species agentfollower aspect:simglobalflat transparency:0.1;
 		}
 	}
 }
