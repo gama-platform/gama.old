@@ -246,6 +246,36 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	
 	
 
+	public boolean init(final IScope scope)
+	{
+		boolean res=super.init(scope);
+		firsttime=System.currentTimeMillis();
+		this.setAttribute("display_mode", "simglobal");
+		this.setAttribute("clustering_mode", "dbscan");
+		messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
+	
+	   	xstream = new XStream();
+	   	xstream.registerConverter(new GamaAgentConverter());
+	   	xstream.registerConverter(new GamaScopeConverter());
+	   	xstream.registerConverter(new GamaSimulationAgentConverter());
+	   	xstream.registerConverter(new GamaShapeConverter());
+	   	 
+		if (doparallelsim())
+		{
+			this.setAttribute("netAgtName",this.getNetName());
+			this.connect("rmi://127.0.0.1:1099","sampleTopic",this.getNetName());
+			System.out.println("connecté!! "+this.getNetName());
+			if (ismaster())
+			{
+				Map<String,Object> message= new HashMap<String,Object>();
+				message.put("type","mastername");
+				message.put("follower",this.getName());
+				message.put("value",this.getNetName());	
+			}
+		}
+		return res;
+	}
+	
 	public String getUniqueSimName(final IScope scope) {
 		 return scope.getName().toString() + "_" + manager.hasard;
 	}
@@ -454,14 +484,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					else {
 						double N = Math.log10((maxInt-minInt)/(nbBarres-1))/Math.log10(2);
 
-						//System.out.println("dist: " + (maxInt-minInt));
-						//System.out.println("pas normal: " + (maxInt-minInt)/(nbBarres-1));
-						//System.out.println("N= " + N);
-
 						if(maxInt-minInt<nbBarres) { k = (int)N; }
 						else { k = (int)N + 1; }
-
-						//System.out.println("k= " + k);
 
 						if(k<0) {
 							float kprime = -k;
@@ -477,13 +501,10 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 							if(minInt%deuxpuissancek!=0) {
 								newminInt = (int)deuxpuissancek*(int)((minInt/deuxpuissancek)-1);
 								n = (int)((minInt/deuxpuissancek)-1);
-								//System.out.println("je suis passé par le if1- n= " + n);
-								//System.out.println("je suis passé par le if1- newMinInt= " + newminInt);
 							}
 							else {
 								newminInt = minInt;
 								n = (int) ((int)minInt/deuxpuissancek)-1;
-								//System.out.println("je suis passé par le else- newMinInt= " + newminInt);
 							}
 						}
 						else {
@@ -505,7 +526,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				}
 
 				preval = (int)newminInt;
-				//System.out.println("preval INITIAL= " + preval);
 
 				if(min!=max) {
 					for(int i=0;i<nbBarres;i++) {
@@ -666,35 +686,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	}
 
 
-	public boolean init(final IScope scope)
-	{
-		boolean res=super.init(scope);
-		firsttime=System.currentTimeMillis();
-		this.setAttribute("display_mode", "simglobal");
-		this.setAttribute("clustering_mode", "dbscan");
-		messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
-	
-	   	xstream = new XStream();
-	   	xstream.registerConverter(new GamaAgentConverter());
-	   	xstream.registerConverter(new GamaScopeConverter());
-	   	xstream.registerConverter(new GamaSimulationAgentConverter());
-	   	xstream.registerConverter(new GamaShapeConverter());
-	   	 
-		if (doparallelsim())
-		{
-			this.setAttribute("netAgtName",this.getNetName());
-			this.connect("rmi://127.0.0.1:1099","sampleTopic",this.getNetName());
-			System.out.println("connecté!! "+this.getNetName());
-			if (ismaster())
-			{
-				Map<String,Object> message= new HashMap<String,Object>();
-				message.put("type","mastername");
-				message.put("follower",this.getName());
-				message.put("value",this.getNetName());	
-			}
-		}
-		return res;
-	}
+
 
 	public boolean step(final IScope scope) {
 
@@ -733,7 +725,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	}
 
 
-	//@operator("clear_matrices")
 	public static void clearmatrices (final IScope scope) {
 	  manager.getAgentGroupFollowerList().clear();
 	  return;
@@ -769,7 +760,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			this.setAttribute("min_points", (Integer)this.getAttribute("dbscann"));
 
 			System.out.println("listarg: " + listarg);
-			//System.out.println("scope....: " + scope.toString());
 			
 			List<List<IAgent>> groupes = primClusteringDBScan(this.getScope());
 
@@ -856,7 +846,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			this.setAttribute("min_points", (Integer)this.getAttribute("dbscann"));
 
 			System.out.println("listarg: " + listarg);
-			//System.out.println("scope....: " + scope.toString());
+
 			
 			List<List<IAgent>> groupes = primClusteringDBScan(this.getScope());
 
@@ -873,7 +863,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					curSimulationMutliPolygon=new ArrayList<IShape>();
 					for(int j=0;j<groupes.get(i).size();j++) {
 						if(groupes.get(i).size()>1 || groupes.get(i).size()==0 ) {
-							//if (polygone.size()<3)
 							curSimulationMutliPolygon.add((IShape)groupes.get(i).get(j).getLocation());
 						}
 					}
@@ -897,14 +886,10 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					//mageom= GamaGeometryType.buildPolygon(polygone);
 					//this.setInnerGeometry(((GamaShape)mageom).getInnerGeometry().convexHull()); // polygones pleins!!!
 
-					System.out.println("mg: "+ myShape);
-					System.out.println("pg: "+ curSimulationMutliPolygon);
-					//System.out.println("mespoly: "+ mespoly);
 				}
 
 				myShape=(IShape)GamaGeometryType.buildMultiPolygon(allSimulationMultiPoly);
 				this.setGeometry(((GamaShape)myShape));
-				System.out.println("je suis un multipolygone!");
 			}
 		}
 	}
