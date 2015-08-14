@@ -38,8 +38,9 @@ import msi.gaml.types.IType;
 @symbol(name = FocusStatement.FOCUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	@facet(name = IKeyword.VAR, type = IType.NONE, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
-	@facet(name = IKeyword.AGENT, type = IType.AGENT, doc = @doc("the agent that will add the belief (use the myself pseudo-variable"))}
+	@facet(name = IKeyword.VAR, type = IType.NONE,optional = false, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
+	@facet(name = IKeyword.AGENT, type = IType.AGENT,optional = false, doc = @doc("the agent that will add the belief (use the myself pseudo-variable")),
+	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to focus only with a certian condition"))}
 ,omissible = IKeyword.VAR)
 @doc( value = "enables to directly add a belief from the variable of a perceived specie.",
 		examples={@example("focus var:speed /*where speed is a variable from a species that is being perceived*/ agent: myself")})
@@ -49,32 +50,35 @@ public class FocusStatement extends AbstractStatement {
 	
 	final IExpression variable;
 	final IExpression agentMyself;
+	final IExpression when;
 	
 	
 	public FocusStatement(IDescription desc) {
 		super(desc);
 		variable = getFacet(IKeyword.VAR);
 		agentMyself = getFacet(IKeyword.AGENT);
+		when = getFacet(IKeyword.WHEN);
 	}
 
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
-		final IAgent mySelfAgent = (IAgent) agentMyself.value(scope);
-		IScope scopeMySelf = null;
-		if(mySelfAgent!=null){
-			scopeMySelf = mySelfAgent.getScope().copy();
-			scopeMySelf.push(mySelfAgent);
+		if ( when == null || Cast.asBool(scope, when.value(scope)) ){
+			final IAgent mySelfAgent = (IAgent) agentMyself.value(scope);
+			IScope scopeMySelf = null;
+			if(mySelfAgent!=null){
+				scopeMySelf = mySelfAgent.getScope().copy();
+				scopeMySelf.push(mySelfAgent);
+			}
+			final Predicate tempPred;
+			if(variable!=null){
+				String namePred = variable.getName()+"_"+scope.getAgentScope().getSpeciesName();
+				String nameVar = variable.getName();
+				Map<String,Object> tempValues = new HashMap<String,Object>();
+				tempValues.put(nameVar + "_value", variable.value(scope));
+				tempPred = new Predicate(namePred,tempValues);
+				SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+			}
 		}
-		final Predicate tempPred;
-		if(variable!=null){
-			String namePred = variable.getName()+"_"+scope.getAgentScope().getSpeciesName();
-			String nameVar = variable.getName();
-			Map<String,Object> tempValues = new HashMap<String,Object>();
-			tempValues.put(nameVar + "_value", variable.value(scope));
-			tempPred = new Predicate(namePred,tempValues);
-			SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
-		}
-				
 		return null;
 	}
 
