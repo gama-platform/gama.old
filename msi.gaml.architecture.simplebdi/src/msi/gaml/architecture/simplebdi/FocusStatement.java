@@ -27,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -40,17 +41,20 @@ import msi.gaml.types.IType;
 @facets(value = {
 	@facet(name = IKeyword.VAR, type = IType.NONE,optional = false, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
 	@facet(name = IKeyword.AGENT, type = IType.AGENT,optional = false, doc = @doc("the agent that will add the belief (use the myself pseudo-variable")),
-	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to focus only with a certian condition"))}
+	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to focus only with a certian condition")),
+	@facet(name = FocusStatement.PRIORITY, type = {IType.FLOAT,IType.INT}, optional = true, doc = @doc("The priority of the created predicate"))}
 ,omissible = IKeyword.VAR)
 @doc( value = "enables to directly add a belief from the variable of a perceived specie.",
 		examples={@example("focus var:speed /*where speed is a variable from a species that is being perceived*/ agent: myself")})
 public class FocusStatement extends AbstractStatement {
 
 	public static final String FOCUS = "focus";
+	public static final String PRIORITY = "priority";
 	
 	final IExpression variable;
 	final IExpression agentMyself;
 	final IExpression when;
+	final IExpression priority;
 	
 	
 	public FocusStatement(IDescription desc) {
@@ -58,6 +62,7 @@ public class FocusStatement extends AbstractStatement {
 		variable = getFacet(IKeyword.VAR);
 		agentMyself = getFacet(IKeyword.AGENT);
 		when = getFacet(IKeyword.WHEN);
+		priority = getFacet(FocusStatement.PRIORITY);
 	}
 
 	@Override
@@ -73,9 +78,12 @@ public class FocusStatement extends AbstractStatement {
 			if(variable!=null){
 				String namePred = variable.getName()+"_"+scope.getAgentScope().getSpeciesName();
 				String nameVar = variable.getName();
-				Map<String,Object> tempValues = new HashMap<String,Object>();
+				Map<String,Object> tempValues = (Map<String, Object>) new GamaMap<String,Object>(1, null, null);
 				tempValues.put(nameVar + "_value", variable.value(scope));
-				tempPred = new Predicate(namePred,tempValues);
+				tempPred = Operators.newPredicate(namePred,tempValues);
+				if(priority!=null){
+					tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
+				}
 				SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
 			}
 		}
