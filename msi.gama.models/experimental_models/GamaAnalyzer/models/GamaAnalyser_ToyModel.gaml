@@ -3,9 +3,10 @@ model tuto
 global skills:[graphic] {
 	int nb_people <- 30;
 
-    agent_group_follower peoplefollower;
+    agentfollower peoplefollower;
     string sequentialPalette <- "Blues" among:["YlOrRd","Grays","PuBu","GnRdPu","BuPu","YlOrBr","Greens","BuGn","GnBu","PuRd","Purples","Blues","Oranges","PuBu","OrRd","Reds","YlGn","YlGnBu"];
     string divergingPalette <- "Spectral" among:["PRGn","PuOr","RdGy","Spectral","RdYlGn","RdBu","RdYlBu","PiYG","BrBG"];
+
     list<rgb> SequentialColors<-list<rgb>(brewer_palette(divergingPalette));
     
 	
@@ -26,6 +27,9 @@ global skills:[graphic] {
 
 	species agentfollower parent:agent_group_follower skills:[graphic]
 	{
+		list graphvalues<-[] update:(self at_cycle ("multi_averagehistory","speed"));
+		list graphdistrib<-[[0,0,0,0,0,0,0,0]] update:(self at_cycle ("multi_distribhistory","speed"));
+		list graphdistriblegend<-["1","2","3"] update:(self distrib_legend ("speed"));
 		aspect base {
 		  display_mode <-"global";
 		  clustering_mode <-"none";
@@ -39,17 +43,6 @@ global skills:[graphic] {
             int curColor <-0;
             loop geom over: allSimShape{
           	  draw geom color:SequentialColors[curColor] at:{location.x,location.y,curColor*10};
-          	  curColor <- curColor+1;
-            } 
-		}
-		
-		aspect simglobalflat{
-			display_mode <-"simglobal";
-		    clustering_mode <-"none";
-			draw shape color: #red;
-            int curColor <-0;
-            loop geom over: allSimShape{
-          	  draw geom color:SequentialColors[curColor] at:{location.x+curColor*world.shape.width,location.y,0};
           	  curColor <- curColor+1;
             } 
 		}
@@ -91,6 +84,18 @@ experiment expGlobalNone type: gui {
 			species people aspect: base ;
 			species agentfollower aspect:base transparency:0.1;
 		}
+		display chartserie {
+			chart name:"speedhistory" type:series {
+				datalist value: (peoplefollower.graphvalues);
+				
+			}
+		}
+		display chartdistrib refresh:cycle>2{
+			chart name:"speedhistory"  type: histogram style: stack {
+				datalist categoriesnames:peoplefollower.graphdistriblegend value: (peoplefollower.graphdistrib) style:stack;
+				
+			}
+		}
 	}
 }
 
@@ -99,15 +104,6 @@ experiment expSimGlobalNone type: gui {
 		display view type:opengl{
 			species people aspect: base ;
 			species agentfollower aspect:simglobal transparency:0.1;
-		}
-	}
-}
-
-experiment expSimGlobalNoneFlat type: gui {
-	output {
-		display view type:opengl{
-			species people aspect: base ;
-			species agentfollower aspect:simglobalflat transparency:0.1;
 		}
 	}
 }
