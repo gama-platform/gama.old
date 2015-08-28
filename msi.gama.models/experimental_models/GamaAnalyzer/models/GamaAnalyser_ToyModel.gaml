@@ -42,7 +42,7 @@ global skills:[graphic] {
 			draw shape color: #red;
             int curColor <-0;
             loop geom over: allSimShape{
-          	  draw geom color:SequentialColors[curColor] at:{location.x,location.y,curColor*10};
+          	  draw geom color:colorList[curColor] at:{location.x,location.y,curColor*10};
           	  curColor <- curColor+1;
             } 
 		}
@@ -59,7 +59,7 @@ global skills:[graphic] {
           draw shape color: #red;
           int curColor <-0;
           loop geom over: allSimShape{
-          	draw geom color:SequentialColors[curColor] at:{location.x,location.y,curColor*10};
+          	draw geom color:colorList[curColor] at:{location.x,location.y,curColor*10};
           	curColor <- curColor+1;
           } 
 		}
@@ -86,14 +86,12 @@ experiment expGlobalNone type: gui {
 		}
 		display chartserie {
 			chart name:"speedhistory" type:series {
-				datalist value: (peoplefollower.graphvalues);
-				
+				datalist value: (peoplefollower.graphvalues) color:peoplefollower.colorList;		
 			}
 		}
 		display chartdistrib refresh:cycle>2{
 			chart name:"speedhistory"  type: histogram style: stack {
-				datalist categoriesnames:peoplefollower.graphdistriblegend value: (peoplefollower.graphdistrib) style:stack;
-				
+				datalist categoriesnames:peoplefollower.graphdistriblegend value: (peoplefollower.graphdistrib) style:stack color:peoplefollower.colorList;		
 			}
 		}
 	}
@@ -104,6 +102,11 @@ experiment expSimGlobalNone type: gui {
 		display view type:opengl{
 			species people aspect: base ;
 			species agentfollower aspect:simglobal transparency:0.1;
+		}
+		display chartserie {
+			chart name:"speedhistory" type:series {
+				datalist value: (peoplefollower.graphvalues) color:peoplefollower.colorList;
+			}
 		}
 	}
 }
