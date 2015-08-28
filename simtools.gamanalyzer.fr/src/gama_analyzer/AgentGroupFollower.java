@@ -240,7 +240,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	@setter("allSimShape") public void setAllSimulationShape(List<IShape> allSimulationMultiPoly) {this.allSimulationShape = allSimulationShape;}
 	
 	@getter("colorList") public IList<Color> getColorList() {return manager.simColorList;}
-	@setter("colorList") public void setColorList(IList<Color> colorList) {manager.simColorList = colorList;}
+	//@setter("colorList") public void setColorList(IList<Color> colorList) {manager.simColorList = colorList;}
 
 	
 	
@@ -287,8 +287,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		mydata.metadatahistory.set(scope, 1, nrow, scope.getClock().getCycle());
 		mydata.metadatahistory.set(scope, 2, nrow, getUniqueSimName(scope)); 
 		mydata.metadatahistory.set(scope, 3, nrow, rule);
-		mydata.metadatahistory.set(scope, 4, nrow, scope.getAgentScope().getName()); //supgroupid,  
-		mydata.metadatahistory.set(scope, 5, nrow, this.getName()); //supruleid
+		mydata.metadatahistory.set(scope, 4, nrow, scope.getAgentScope().getName()); //supgroupid, Useless for the moment but could be use if an agent_group_follower create a sub agent 
+		mydata.metadatahistory.set(scope, 5, nrow, this.getName()); //supruleid, Useless for the moment  
 		mydata.metadatahistory.set(scope, 6, nrow, this.agentsCourants.copy(scope));
 		mydata.metadatahistory.set(scope, 7, nrow, this.agentsCourants.size());
 		mydata.metadatahistory.set(scope, 8, nrow, this.getGeometry());
@@ -559,7 +559,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			if(!manager.idSimList.contains(getUniqueSimName(scope))) {
 				manager.idSimList.add(getUniqueSimName(scope));	
 				if (manager.simColorList.size()+1<11)
-
 					{
 					int i=manager.simColorList.size();
 						if (i==0) manager.simColorList.add((GamaColor)Cast.asColor(scope,GamaColor.CYAN));
@@ -1298,7 +1297,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		mydata.lastdetailedvarvalues=multidata.lastdetailedvarvalues;
 
 	}
-
+    //For parrallel simulation
 	public void getdatafromslaves(IScope scope)
 	{
 		for (String source:parallelsims.keySet())
