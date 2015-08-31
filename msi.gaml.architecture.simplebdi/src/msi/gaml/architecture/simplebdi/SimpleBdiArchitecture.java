@@ -562,6 +562,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 //	}
 	
 	public static Boolean addBelief(final IScope scope, final Predicate predicateDirect){
+//		System.out.println(getBase(scope, BELIEF_BASE));
+		GamaList<Predicate> factBase = getBase(scope, BELIEF_BASE);
 		if ( predicateDirect != null ) { 
 			if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)){
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
@@ -576,6 +578,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if(((ArrayList)(((Predicate)statement).getOnHoldUntil()))!=null){
 					if(((ArrayList)(((Predicate)statement).getOnHoldUntil())).contains(predicateDirect)){
 						((ArrayList)(((Predicate)statement).getOnHoldUntil())).remove(predicateDirect);
+					}
+				}
+				if(((ArrayList)(((Predicate)statement).getSubintentions()))!=null){
+					if(((ArrayList)(((Predicate)statement).getSubintentions())).contains(predicateDirect)){
+						((ArrayList)(((Predicate)statement).getSubintentions())).remove(predicateDirect);
 					}
 				}
 			}
@@ -601,6 +608,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static Boolean hasBelief(final IScope scope, Predicate predicateDirect){
+//		System.out.println(getBase(scope, BELIEF_BASE));
+//		System.out.println(getBase(scope, BELIEF_BASE).contains(predicateDirect));
 		return getBase(scope, BELIEF_BASE).contains(predicateDirect);
 	}
 	
@@ -803,6 +812,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static Boolean addDesire(final IScope scope, Predicate superPredicate, Predicate predicate){
+		//Faire un test pour ne pas rajouter deux fois le même désire
 		if ( superPredicate != null ) {
 			if ( superPredicate.getSubintentions() == null ) {
 				superPredicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
@@ -811,7 +821,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		addToBase(scope, predicate, DESIRE_BASE);
 		predicate.setSuperIntention(superPredicate);
-		return true;		
+		return false;		
 	}
 	
 	@action(name = "add_desire",
@@ -885,6 +895,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							((GamaList)((Predicate)statement).getOnHoldUntil()).remove(newPredicate);
 						}
 					}
+					if(((ArrayList)(((Predicate)statement).getSubintentions()))!=null){
+						if(((ArrayList)(((Predicate)statement).getSubintentions())).contains(newPredicate)){
+							((ArrayList)(((Predicate)statement).getSubintentions())).remove(newPredicate);
+						}
+					}
 				}
 				return addToBase(scope, newPredicate, BELIEF_BASE); 
 			}
@@ -951,6 +966,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
 					if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(predicateDirect)){
 						((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(predicateDirect);
+					}
+				}
+				if(((ArrayList)(((Predicate)statement).getSubintentions()))!=null){
+					if(((ArrayList)(((Predicate)statement).getSubintentions())).contains(predicateDirect)){
+						((ArrayList)(((Predicate)statement).getSubintentions())).remove(predicateDirect);
 					}
 				}
 			}

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ITyped;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -28,6 +29,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -80,7 +82,7 @@ public class FocusStatement extends AbstractStatement {
 				String nameVar = variable.getName();
 				Map<String,Object> tempValues = (Map<String, Object>) new GamaMap<String,Object>(1, null, null);
 				tempValues.put(nameVar + "_value", variable.value(scope));
-				tempPred = Operators.newPredicate(namePred,tempValues);
+				tempPred = new Predicate(namePred,(Map<String, Object>) GamaMapFactory.createWithoutCasting(((GamaMap<String,Object>) tempValues).getType().getKeyType(), ((GamaMap<String,Object>) tempValues).getType().getContentType(), tempValues));
 				if(priority!=null){
 					tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 				}

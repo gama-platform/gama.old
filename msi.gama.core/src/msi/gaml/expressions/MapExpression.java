@@ -12,6 +12,7 @@
 package msi.gaml.expressions;
 
 import java.util.*;
+
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;

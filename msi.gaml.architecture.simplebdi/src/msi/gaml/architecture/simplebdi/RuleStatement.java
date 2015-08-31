@@ -12,6 +12,8 @@
 
 package msi.gaml.architecture.simplebdi;
 
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -22,6 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -62,7 +65,17 @@ public class RuleStatement extends AbstractStatement{
 			if((belief != null)){
 				if (SimpleBdiArchitecture.hasBelief(scope, (Predicate)(belief.value(scope)))){
 					if((desire != null)){
-						SimpleBdiArchitecture.addDesire(scope, null, (Predicate)(desire.value(scope)));
+						//Bricolage avec le copy en attendant que le map soit fixé
+						if(((Predicate)(desire.value(scope))).getValues()==null){
+							SimpleBdiArchitecture.addDesire(scope, null, ((Predicate)(desire.value(scope))));
+						}else{
+							//faire plus dégueu avec la copie seulement sur les values. 
+							Predicate temp;
+							temp =  (Predicate)(desire.value(scope));
+							//Il faut copier la liste des valeurs.
+							temp.setValues((Map<String, Object>) GamaMapFactory.createWithoutCasting(((Predicate)(desire.value(scope))).getType().getKeyType(), ((Predicate)(desire.value(scope))).getType().getContentType(), ((Predicate)(desire.value(scope))).getValues()));
+							SimpleBdiArchitecture.addDesire(scope, null, temp);
+						}
 					}
 				}
 			}

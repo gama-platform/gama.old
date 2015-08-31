@@ -12,12 +12,14 @@
 package msi.gaml.architecture.simplebdi;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.types.*;
 
 @vars({ @var(name = "name", type = IType.STRING), @var(name = "is_true", type = IType.BOOL),
@@ -89,7 +91,7 @@ public class Predicate implements IValue {
 	}
 	
 	public void setValues(final Map<String, Object> values){
-		this.values = values;
+		this.values = (Map<String, Object>) GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), values);
 		everyPossibleValues = values == null;
 	}
 
@@ -131,14 +133,14 @@ public class Predicate implements IValue {
 	public Predicate(final String name, final Map<String, Object> values) {
 		super();
 		this.name = name;
-		this.values = values;
+		this.values = (Map<String, Object>) GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), values);
 		everyPossibleValues = values == null;;
 	}
 
 	public Predicate(final String name, final Map<String, Object> values, final Boolean truth) {
 		super();
 		this.name = name;
-		this.values = values;
+		this.values = (Map<String, Object>) GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), values);
 		this.is_true=truth;
 		everyPossibleValues = values == null;;
 	}
@@ -146,7 +148,7 @@ public class Predicate implements IValue {
 	public Predicate(final String name, final double priority, final Map<String, Object> values) {
 		super();
 		this.name = name;
-		this.values = values;
+		this.values = (Map<String, Object>) GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), values);
 		this.priority = priority;
 		everyPossibleValues = values == null;
 	}
