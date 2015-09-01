@@ -136,11 +136,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	protected final Object executePlans(final IScope scope) {
 		Object result = null;
-//		if ( _perceiveNumber > 0 ) {
-//			for ( int i = 0; i < _perceiveNumber; i++ ) {
-//				result = _perceives.get(i).executeOn(scope);
-//			}
-//		}
 		if ( _plansNumber > 0 ) {
 			boolean loop_instantaneous_plans=true;
 			while (loop_instantaneous_plans)
