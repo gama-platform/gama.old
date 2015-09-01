@@ -38,6 +38,7 @@ import msi.gaml.types.IType;
 	@facet(name = RuleStatement.BELIEF, type = IType.NONE, optional = false, doc = @doc(" ")),
 	@facet(name = RuleStatement.DESIRE, type = IType.AGENT, optional = false, doc = @doc(" ")),
 	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc(" ")),
+	@facet(name = RuleStatement.PRIORITY, type = {IType.FLOAT,IType.INT}, optional = true, doc = @doc("The priority of the predicate added as a desire")),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc(" "))}
 ,omissible = IKeyword.NAME)
 @doc( value = "enables to directly add a belief from the variable of a perceived specie.",
@@ -47,16 +48,19 @@ public class RuleStatement extends AbstractStatement{
 	public static final String RULE = "rule";
 	public static final String BELIEF = "belief";
 	public static final String DESIRE = "desire";
+	public static final String PRIORITY = "priority";
 	
 	final IExpression when;
 	final IExpression belief;
 	final IExpression desire;
+	final IExpression priority;
 	
 	public RuleStatement(IDescription desc) {
 		super(desc);
 		when = getFacet(IKeyword.WHEN);
 		belief = getFacet(RuleStatement.BELIEF);
 		desire = getFacet(RuleStatement.DESIRE);
+		priority = getFacet(RuleStatement.PRIORITY);
 	}
 
 	@Override
@@ -74,6 +78,9 @@ public class RuleStatement extends AbstractStatement{
 							temp =  (Predicate)(desire.value(scope));
 							//Il faut copier la liste des valeurs.
 							temp.setValues((Map<String, Object>) GamaMapFactory.createWithoutCasting(((Predicate)(desire.value(scope))).getType().getKeyType(), ((Predicate)(desire.value(scope))).getType().getContentType(), ((Predicate)(desire.value(scope))).getValues()));
+							if(priority!=null){
+								temp.setPriority(Cast.asFloat(scope, priority.value(scope)));
+							}
 							SimpleBdiArchitecture.addDesire(scope, null, temp);
 						}
 					}
