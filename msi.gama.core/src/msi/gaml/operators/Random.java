@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
@@ -310,5 +312,48 @@ public class Random {
 
 		return -1;
 	}
+	
+
+	@operator(value = "sample", category = { IOperatorCategory.RANDOM })
+	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement",
+		examples = { @example(value = "sample([2,10,1],2,false)", equals = "[1,2]", test = false)})
+	public static
+		IList opSample(final IScope scope, final IList x, final int nb, final boolean replacement) {
+		if ( nb < 0.0 ) { throw GamaRuntimeException.create(new RuntimeException(
+				"The number of elements of the sample should be positive."), scope); }
+		IList result = GamaListFactory.create(x.getType());
+		IList source = (IList) (replacement ? x : x.copy(scope));
+		while (result.size() < nb && ! source.isEmpty()) {
+			final int i = scope.getRandom().between(0, source.size() - 1);
+			if (replacement) result.add(source.get(i));
+			else result.add(source.remove(i));
+		}
+		return result;
+	}
+	
+	@operator(value = "sample", category = { IOperatorCategory.RANDOM })
+	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement with given weights",
+		examples = { @example(value = "sample([2,10,1],2,false,[0.1,0.7,0.2])", equals = "[10,2]", test = false)})
+	public static
+		IList opSample(final IScope scope, final IList x, final int nb, final boolean replacement, final IList weights) {
+		if (weights == null) return opSample(scope,x,nb,replacement);
+		if ( nb < 0.0 ) { throw GamaRuntimeException.create(new RuntimeException(
+				"The number of elements of the sample should be positive."), scope); }
+		if ( weights.size() != x.size() ) { throw GamaRuntimeException.create(new RuntimeException(
+				"The number of weights should be equal to the number of elements of the source."), scope); }
+		IList result = GamaListFactory.create(x.getType());
+		IList source = (IList) (replacement ? x : x.copy(scope));
+		IList weights_s = (IList) (replacement ? weights : weights.copy(scope));
+		while (result.size() < nb && ! source.isEmpty()) {
+			final int i = opRndChoice(scope, weights_s);
+			if (replacement) result.add(source.get(i));
+			else  {
+				result.add(source.remove(i));
+				weights_s.remove(i);
+			}
+		}
+		return result;
+	}
+	
 
 }
