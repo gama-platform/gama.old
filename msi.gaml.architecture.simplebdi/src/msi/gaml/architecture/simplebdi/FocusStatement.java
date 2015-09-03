@@ -86,7 +86,9 @@ public class FocusStatement extends AbstractStatement {
 				if(priority!=null){
 					tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 				}
-				SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+				if(!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)){
+					SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+				}
 			}
 		}
 		return null;
