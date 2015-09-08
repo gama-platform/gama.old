@@ -35,14 +35,14 @@ import msi.gaml.types.IType;
 @symbol(name = RuleStatement.RULE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = {
-	@facet(name = RuleStatement.BELIEF, type = IType.NONE, optional = false, doc = @doc(" ")),
-	@facet(name = RuleStatement.DESIRE, type = IType.AGENT, optional = false, doc = @doc(" ")),
+	@facet(name = RuleStatement.BELIEF, type = IType.NONE, optional = false, doc = @doc("The belief required")),
+	@facet(name = RuleStatement.DESIRE, type = IType.NONE, optional = false, doc = @doc("The desire that will be added")),
 	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc(" ")),
 	@facet(name = RuleStatement.PRIORITY, type = {IType.FLOAT,IType.INT}, optional = true, doc = @doc("The priority of the predicate added as a desire")),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc(" "))}
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("The name of the rule"))}
 ,omissible = IKeyword.NAME)
-@doc( value = "enables to directly add a belief from the variable of a perceived specie.",
-		examples={@example("focus var:speed /*where speed is a variable from a species that is being perceived*/ agent: myself")})
+@doc( value = "enables to add a desire if the agent gets the belief mentioned.",
+		examples={@example("rule belif: new_predicate(\"test\") desire: new_predicate(\"test\")")})
 public class RuleStatement extends AbstractStatement{
 
 	public static final String RULE = "rule";
