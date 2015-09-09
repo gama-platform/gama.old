@@ -266,9 +266,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				IList priorities = GamaListFactory.create(scope, Types.FLOAT, priority_list);
 				int index_choice = msi.gaml.operators.Random.opRndChoice(scope, priorities);
 				newIntention=desireBase.get(index_choice);
-				while(intentionBase.contains(newIntention)){
-					int index_choice2 = msi.gaml.operators.Random.opRndChoice(scope, priorities);
-					newIntention=desireBase.get(index_choice2);
+				if(desireBase.size()>intentionBase.size()){
+					while(intentionBase.contains(newIntention)){
+						int index_choice2 = msi.gaml.operators.Random.opRndChoice(scope, priorities);
+						newIntention=desireBase.get(index_choice2);
+					}
 				}
 				if(newIntention.getSubintentions() == null){
 					if ( !intentionBase.contains(newIntention) ) {
