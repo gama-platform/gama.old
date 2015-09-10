@@ -59,7 +59,6 @@ species helicopter skills: [moving] control: simple_bdi{
 		ask myself{
 			do remove_intention(patrol_desire, true);
 		}
-		
 	}
 	
 	//The rules are used to create a desire from a belief. We can specify the priority of the desire with a statement priority.
