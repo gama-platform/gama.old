@@ -176,7 +176,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 			// If current intention has no plan or is on hold, choose a new
 			// Desire
-//			System.out.println("_persistentTask 0 " +  _persistentTask);
 			if ( testOnHold(scope, currentIntention(scope)) || selectExecutablePlanWithHighestPriority(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
 				_persistentTask = null;
@@ -200,7 +199,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 
 			// choose a plan for the current intention
-//			System.out.println("_persistentTask 1 " +  _persistentTask);
 			if ( _persistentTask == null && currentIntention(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
 				if ( currentIntention(scope) == null ) {
@@ -208,23 +206,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					return null;
 
 				}
-//				System.out.println("_persistentTask 2 " +  _persistentTask);
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
 				agent.setAttribute(CURRENT_PLAN, _persistentTask);
 				addThoughts(scope, "ok, new intention: " + currentIntention(scope) + " with plan " + _persistentTask.getName());
 			}
 			if ( (_persistentTask) == null && currentIntention(scope) != null ) {
-//				System.out.println("_persistentTask 3 " +  _persistentTask);
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
 				agent.setAttribute(CURRENT_PLAN, _persistentTask);
 				if ( _persistentTask != null ) {
-//					System.out.println("_persistentTask 4 " +  _persistentTask);
 					addThoughts(scope, "use plan : " + _persistentTask.getName());
 				}
 			}
 			if ( _persistentTask != null ) {
 				if ( !agent.dead() ) {
-//					System.out.println("_persistentTask 5 " +  _persistentTask);
 					result = _persistentTask.executeOn(scope);
 					boolean isExecuted = false;
 					if(_persistentTask.getExecutedExpression() != null){
@@ -234,7 +228,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					{
 						loop_instantaneous_plans=true;
 					}
-//					System.out.println("isExecuted: " +  isExecuted);
 					if ( isExecuted ) {
 						_persistentTask = null;
 						agent.setAttribute(CURRENT_PLAN, _persistentTask);
