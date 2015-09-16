@@ -73,7 +73,6 @@ public class RuleStatement extends AbstractStatement{
 						if(((Predicate)(desire.value(scope))).getValues()==null){
 							SimpleBdiArchitecture.addDesire(scope, null, ((Predicate)(desire.value(scope))));
 						}else{
-							//faire plus dégueu avec la copie seulement sur les values. 
 							Predicate temp;
 							temp =  (Predicate)(desire.value(scope));
 							//Il faut copier la liste des valeurs.
