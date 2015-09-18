@@ -41,15 +41,15 @@ public class HeadlessSimulationLoader {
 		final ParametersSet params, final Long seed) throws GamaRuntimeException {
 
 		ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
-		if (seed != null)((ExperimentAgent) currentExperiment.getAgent()).setSeed(Double.longBitsToDouble(seed));
-		if ( currentExperiment == null ) { throw GamaRuntimeException.error("Experiment " + expName +
-			" cannot be created"); }
 
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
 				entry.getValue());
 		}
 		currentExperiment.createAgent();
+		if (seed != null)((ExperimentAgent) currentExperiment.getAgent()).setSeed(Double.longBitsToDouble(seed));
+		if ( currentExperiment == null ) { throw GamaRuntimeException.error("Experiment " + expName +
+				" cannot be created"); }
 		currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
 		GAMA.controller.newHeadlessExperiment(currentExperiment);
 		return currentExperiment;
