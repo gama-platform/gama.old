@@ -120,4 +120,10 @@ public class Operators {
 			return null;
 		}
 	}
+	
+	@operator(value = "get_priority", can_be_const = true, category = {"BDI"})
+	public static Double getPriority(Predicate pred){
+		return pred.priority;
+	}
+	
 }
