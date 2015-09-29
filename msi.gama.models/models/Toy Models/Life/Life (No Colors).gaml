@@ -24,7 +24,7 @@ grid life_cell width: environment_width height: environment_height neighbours: 8
 	bool new_state;
 	bool state <- (rnd(100)) < density ;
 	rgb color <- state ? black : white ;
-	list<life_cell> neighbours <- self neighbours_at 1;
+	list<life_cell> neighbours <- self neighbors_at 1;
 	
 	action evolve {
 		int living  <- neighbours count each.state ;

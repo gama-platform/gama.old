@@ -14,7 +14,7 @@ global torus: true{
 }
 
 grid cell width: 100 height: 100 neighbours: 4 {
-	list<cell> neighbours4 <- self neighbours_at 4;
+	list<cell> neighbours4 <- self neighbors_at 4;
 	float maxFoodProdRate <- globalMaxFoodProdRate;
 	float foodProd <- (rnd(1000) / 1000) * maxFoodProdRate;
 	float food <- 0.0 update: food + foodProd ;

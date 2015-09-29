@@ -24,7 +24,7 @@ global {
 
 
 grid ant_grid width: gridsize height: gridsize neighbours: 8 use_regular_agents: false {
-	list<ant_grid> neighbours <- self neighbours_at 1;
+	list<ant_grid> neighbours <- self neighbors_at 1;
 	bool multiagent <- true ;
 	int type <- int(types at {grid_x,grid_y}) ;
 	bool isNestLocation <- (self distance_to center) < 4 ; 

@@ -10,7 +10,7 @@ global torus: true{
 }
 
 grid cell width: 100 height: 100 neighbours: 4 {
-	list<cell> neighbours4 <- self neighbours_at 4;
+	list<cell> neighbours4 <- self neighbors_at 4;
 }
 
 species bug {
