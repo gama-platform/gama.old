@@ -183,6 +183,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 			}
 			_persistentTask = (SimpleBdiPlanStatement)agent.getAttribute(CURRENT_PLAN);
+//			if((currentIntention(scope)!=null) && (_persistentTask!=null) && !(_persistentTask._intention.value(scope).equals(currentIntention(scope)))){
+//				_persistentTask = null;
+//				agent.setAttribute(CURRENT_PLAN, _persistentTask);
+//			}
 			Boolean flipResult = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientPlans);
 
 			if ( !flipResult ) {
