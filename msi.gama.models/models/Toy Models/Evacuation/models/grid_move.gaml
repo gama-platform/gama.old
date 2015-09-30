@@ -51,7 +51,7 @@ species people {
 		do die;
 	}
 	reflex move {
-		list<cell> possible_cells <- current_cell neighbours_at 1 where (not (each.is_obstacle) and each.is_free and not (each in memory));
+		list<cell> possible_cells <- current_cell neighbors_at 1 where (not (each.is_obstacle) and each.is_free and not (each in memory));
 		if not empty(possible_cells) {
 			current_cell.is_free <- true;
 			current_cell <- shuffle(possible_cells) with_min_of (each.location distance_to target_cell.location);

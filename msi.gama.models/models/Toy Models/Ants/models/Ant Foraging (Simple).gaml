@@ -38,7 +38,7 @@ global {
 grid ant_grid width: gridsize height: gridsize neighbours: 8 {
 	bool isNestLocation  <- ( self distance_to center ) < 4;
 	bool isFoodLocation <-  types[grid_x , grid_y] = 2;       
-	list<ant_grid> neighbours <- self neighbours_at 1;  
+	list<ant_grid> neighbours <- self neighbors_at 1;  
 	rgb color <- rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) , self.road * 30 , self.road > 15 ? 255 : food * 50 ]) update: rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,self.road * 30 , self.road > 15 ? 255 : food * 50 ]); 
 	int food <- isFoodLocation ? 5 : 0; 
 	const nest type: int <- int(300 - ( self distance_to center ));

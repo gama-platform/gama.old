@@ -45,7 +45,7 @@ global {
 		map<int,list<sugar_cell>> neighbours;
 		init {
 			loop i from: 1 to: maxRange {
-				neighbours[i] <- self neighbours_at i; 
+				neighbours[i] <- self neighbors_at i; 
 			}
 		}
 	}	

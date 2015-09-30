@@ -38,8 +38,8 @@ global {
 species scheduler schedules: cell + (bug sort_by ( - each.size)) + shuffle(predator);
 
 grid cell width: width height: height neighbours: 4 schedules:[]{
-	list<cell> neighbours4 <- self neighbours_at 4;
-	list<cell> neighbours3 <- self neighbours_at 3;
+	list<cell> neighbours4 <- self neighbors_at 4;
+	list<cell> neighbours3 <- self neighbors_at 3;
 	float maxFoodProdRate <- globalMaxFoodProdRate;
 	float foodProd <- (rnd(1000) / 1000) * maxFoodProdRate;
 	float food <- 0.0 update: food + foodProd;
@@ -90,7 +90,7 @@ species bug schedules:[]{
 species predator schedules:[]{
 	cell my_place;             
     reflex hunt {
-    	list<cell> neighbour_cells <- my_place neighbours_at 1;
+    	list<cell> neighbour_cells <- my_place neighbors_at 1;
         bug chosen_prey <- one_of((neighbour_cells + my_place) accumulate (each.agents of_species bug));
        	if chosen_prey != nil {
             cell new_place <- chosen_prey.my_place;    

@@ -34,7 +34,7 @@ grid space width: dimensions height: dimensions neighbours: 8 use_individual_sha
 
 species people parent: base  {
 	const color type: rgb <- colors at (rnd (number_of_groups - 1));
-	list<people> my_neighbours -> {(self neighbours_at neighbours_distance) of_species people};
+	list<people> my_neighbours -> {(self neighbors_at neighbours_distance) of_species people};
 	init {
 		location <- (one_of(free_places)).location; 
 		remove location as space from: free_places;
