@@ -563,6 +563,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
 				removeFromBase(scope, predicateDirect, INTENTION_BASE);
 			}
+			if(getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(predicateDirect)){
+				removeFromBase(scope, predicateDirect, DESIRE_BASE);
+			}
 			for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
 				if(((Predicate)statement).getSubintentions()!=null){
 					if(((Predicate)statement).getSubintentions().contains(predicateDirect)){
@@ -877,6 +880,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(newPredicate)){
 					removeFromBase(scope, newPredicate, DESIRE_BASE);
 					removeFromBase(scope, newPredicate, INTENTION_BASE);
+				}
+				if(getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(newPredicate)){
+					removeFromBase(scope, newPredicate, DESIRE_BASE);
 				}
 				for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
 					if(((Predicate)statement).getSubintentions()!=null){
