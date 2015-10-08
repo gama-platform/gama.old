@@ -183,6 +183,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 			}
 			_persistentTask = (SimpleBdiPlanStatement)agent.getAttribute(CURRENT_PLAN);
+//			if((currentIntention(scope)!=null) && (_persistentTask!=null) && !(_persistentTask._intention.value(scope).equals(currentIntention(scope)))){
+//				_persistentTask = null;
+//				agent.setAttribute(CURRENT_PLAN, _persistentTask);
+//			}
 			Boolean flipResult = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientPlans);
 
 			if ( !flipResult ) {
@@ -559,6 +563,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
 				removeFromBase(scope, predicateDirect, INTENTION_BASE);
 			}
+			if(getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(predicateDirect)){
+				removeFromBase(scope, predicateDirect, DESIRE_BASE);
+			}
 			for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
 				if(((Predicate)statement).getSubintentions()!=null){
 					if(((Predicate)statement).getSubintentions().contains(predicateDirect)){
@@ -873,6 +880,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if(getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(newPredicate)){
 					removeFromBase(scope, newPredicate, DESIRE_BASE);
 					removeFromBase(scope, newPredicate, INTENTION_BASE);
+				}
+				if(getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(newPredicate)){
+					removeFromBase(scope, newPredicate, DESIRE_BASE);
 				}
 				for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
 					if(((Predicate)statement).getSubintentions()!=null){

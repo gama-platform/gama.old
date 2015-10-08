@@ -103,7 +103,7 @@ species helicopter skills: [moving] control: simple_bdi{
 	} 
 	
 	//The plan to take water when the agent get the desire of water.
-    plan gotoTakeWater intention: water_predicate finished_when: has_belief(water_predicate) priority:2 {
+    plan gotoTakeWater intention: water_predicate priority:2 {
     	write "gotoTakeWater";
     	waterArea wa <- first(waterArea);
     	list<grille> voisins <-  (grille(location) neighbors_at (1)) + grille(location);

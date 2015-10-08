@@ -45,12 +45,20 @@ global schedules: [world] + traffic_signals + real_roads + (people sort_by (- 10
 	
 	int nbRefuge <- 0;
 	int nbRefuge2 <- 0;
+	int cata <- 0;
 	
 		
 	reflex info{
 		write "----------";
 		write "nbRefuge : "+ nbRefuge;
 		write "nbRefuge2 : "+ nbRefuge2;
+		write cata;
+	}
+	
+	reflex stop{
+		if length(people)=0{
+			do halt;
+		}
 	}
 		
 	init {
@@ -449,7 +457,10 @@ species people skills: [advanced_driving] control: simple_bdi {
 	refuge monRefuge <- first(refuge);
 	refuge2 monRefuge2 <- first(refuge2);
 	
-
+	int refugeChoisi <-0;
+	bool catast <- false;
+	predicate diying <- new_predicate("diying");
+	
 	reflex choose_target_node when:target_node = nil {
 		target_node <- one_of(connected_nodes);
 	}
@@ -526,17 +537,34 @@ species people skills: [advanced_driving] control: simple_bdi {
 		}
 	}
 	
+//	reflex infoCata{
+//		if(has_belief("location_catastrophe")){
+//			catast <- true;
+//			ask world{
+//				cata<-cata+1;
+//			}
+//		}
+//	}
+	
 	perceive target:catastrophe in: 100{
 		focus var: location agent: myself;
 		ask myself{
 			do clear_intentions();
 			do clear_desires();
 		}
+		if(!myself.catast){
+			myself.catast <- true;
+			myself.color_behavior <- #red;
+			myself.current_path <-nil;
+			ask world{
+					cata<-cata+1;
+			}
+		}
 	}
 	
 	perceive target:refuge in : 50{
 		ask myself{
-			if(has_desire(new_predicate("shelter"))){
+			if((has_desire(new_predicate("shelter"))) and (refugeChoisi=1)){
 				do add_belief(new_predicate("shelter"));
 				ask world{
 					nbRefuge <- nbRefuge+1;
@@ -550,7 +578,7 @@ species people skills: [advanced_driving] control: simple_bdi {
 	
 	perceive target:refuge2 in : 50{
 		ask myself{
-			if(has_desire(new_predicate("shelter"))){
+			if((has_desire(new_predicate("shelter"))) and (refugeChoisi=2)){
 				do add_belief(new_predicate("shelter"));
 				ask world{
 					nbRefuge2 <- nbRefuge2+1;
@@ -562,20 +590,49 @@ species people skills: [advanced_driving] control: simple_bdi {
 		}
 	}
 	
-	rule belief: new_predicate("location_catastrophe") desire: new_predicate("shelter");
+	perceive target:people in : 20{
+		predicate test <- get_belief_with_name("location_catastrophe");
+		if((!myself.has_belief(test)) and has_belief(test)){
+			ask myself{
+				do add_belief(test);
+				do clear_intentions();
+				do clear_desires();
+			}
+			if(!myself.catast){
+				myself.catast <- true;
+				myself.color_behavior <- #red;
+				myself.current_path <-nil;
+				ask world{
+						cata<-cata+1;
+				}
+			}
+		}
+	}
 	
-	plan bouge when: (current_path = nil or recompute_path or final_target = nil)and target_node != nil intention: bouger finished_when: (current_path != nil) or (has_belief(new_predicate("catastrophe"))){
+	rule belief: new_predicate("location_catastrophe") desire: new_predicate("shelter") when: !has_belief(new_predicate("shelter"));
+	rule belief: new_predicate("shelter") desire: diying;
+	
+	plan bouge when: (current_path = nil or recompute_path or final_target = nil)and target_node != nil and !catast intention: bouger 
+		finished_when: (current_path != nil) or (has_belief(new_predicate("location_catastrophe"))){
 		do chose_path;
 	}
 	
-	plan evitement when: (current_path = nil or recompute_path or final_target = nil)and target_node != nil intention: new_predicate("shelter"){
+	plan evitement when: (current_path = nil or recompute_path or final_target = nil)and target_node != nil intention: new_predicate("shelter") finished_when: false
+		priority : monRefuge distance_to point(get_belief_with_name("location_catastrophe").values["location_value"]){
 		target_node <- monRefuge.noeudRelie;
+		refugeChoisi <- 1;
 		do chose_path;
 	}
 	
-	plan evitement2 when: (current_path = nil or recompute_path or final_target = nil)and target_node != nil intention: new_predicate("shelter") priority : 2{
+	plan evitement2 when: (current_path = nil or recompute_path or final_target = nil)and target_node != nil intention: new_predicate("shelter") finished_when: false
+		priority : monRefuge2 distance_to point(get_belief_with_name("location_catastrophe").values["location_value"]){
 		target_node <- monRefuge2.noeudRelie;
+		refugeChoisi <- 2;
 		do chose_path;
+	}
+	
+	plan toDie intention:diying{
+		do die;
 	}
 	
 	action chose_path{
