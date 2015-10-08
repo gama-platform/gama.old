@@ -662,7 +662,7 @@ public class GeometryUtils {
 
 				final Geometry gg = tri.getGeometryN(i);
 
-				if ( env.covers(gg) && pg.covers(gg) ) {
+				if ( env.covers(gg) && pg.covers(gg) && gg.intersects(polygon) && gg.intersection(polygon).getArea() > 0.2 * gg.getArea() ) {
 					geoms.add(new GamaShape(gg));
 				}
 			}
