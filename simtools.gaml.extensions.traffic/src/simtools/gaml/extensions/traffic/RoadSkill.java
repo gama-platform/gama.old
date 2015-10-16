@@ -277,6 +277,10 @@ public class RoadSkill extends Skill {
 			// driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, 0);
 		}
 	}
+	
+	
+	
+	
 
 	@action(name = "unregister", args = { @arg(name = "agent",
 		type = IType.AGENT,

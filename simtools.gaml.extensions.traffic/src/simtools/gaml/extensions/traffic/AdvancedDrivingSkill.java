@@ -12,10 +12,12 @@
 package simtools.gaml.extensions.traffic;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.graph.GraphTopology;
 import msi.gama.metamodel.topology.graph.ISpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -39,6 +41,7 @@ import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
 import msi.gaml.types.*;
+
 import com.vividsolutions.jts.geom.*;
 
 @vars({
@@ -537,6 +540,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		return true;
 	}
+	
+	
 
 	@action(name = "compute_path",
 		args = {
@@ -545,7 +550,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			@arg(name = "source",
 				type = IType.AGENT,
 				optional = true,
-				doc = @doc("the source node (optional, if not defined, closest node to the agent location)")) },
+				doc = @doc("the source node (optional, if not defined, closest node to the agent location)")),
+			@arg(name = "on_road",
+				type = IType.AGENT,
+				optional = true,
+				doc = @doc("the road on which the agent is located (optional)"))},
 		doc = @doc(value = "action to compute a path to a target location according to a given graph",
 			returns = "the computed path, return nil if no path can be taken",
 			examples = { @example("do compute_path graph: road_network target: the_node;") }))
@@ -555,11 +564,15 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		IAgent target = (IAgent) scope.getArg("target", IType.AGENT);
 		IAgent agent = getCurrentAgent(scope);
 		IAgent source = (IAgent) scope.getArg("source", IType.AGENT);
+		IAgent onRoad = (IAgent) scope.getArg("on_road", IType.AGENT);;
 		if ( source == null ) {
-			source = Queries.closest_to(scope, target.getSpecies(), agent);
+			if (onRoad != null) source = RoadSkill.getTargetNode(onRoad);
+			else source = Queries.closest_to(scope, target.getSpecies(), agent);
 		}
-		// System.out.println("source : " + source + " target : " + target);
-		IPath path = graph.getTopology(scope).pathBetween(scope, source, target);
+		if (source.getLocation().equals(agent.getLocation())) onRoad = null;
+		
+		
+		IPath path = ((GraphTopology)graph.getTopology(scope)).pathBetween(scope, source, target, onRoad);
 		if ( path != null && !path.getEdgeGeometry().isEmpty() ) {
 			List<ILocation> targets = getTargets(agent);
 			targets.clear();
@@ -569,13 +582,20 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
 				targets.add(pt);
 			}
+			
 			setTargets(agent, targets);
-			IAgent nwRoad = (IAgent) path.getEdgeList().get(0);
 			setCurrentIndex(agent, 0);
 			setCurrentTarget(agent, targets.get(0));
 			setFinalTarget(agent, target.getLocation());
 			setCurrentPath(agent, path);
-			RoadSkill.register(nwRoad, agent, 0);
+		
+			IAgent nwRoad =(IAgent) path.getEdgeList().get(0);
+			int lane = getCurrentLane(agent);
+			if (lane > ((Integer) nwRoad.getAttribute(RoadSkill.LANES))) {
+				lane = ((Integer) nwRoad.getAttribute(RoadSkill.LANES));
+			}
+	 		RoadSkill.register(nwRoad, agent, lane);
+			
 			return path;
 
 		} else {
@@ -1263,18 +1283,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 		// t32 += java.lang.System.currentTimeMillis() - t;
 		// long t2 = java.lang.System.currentTimeMillis();
+		GamaPoint pt = null;
 		for ( int j = indexSegment; j < endIndexSegment; j++ ) {
 			// t = System.currentTimeMillis();
-			GamaPoint pt = null;
-			/*
-			 * if ( j == endIndexSegment ) {
-			 * pt = falseTarget;
-			 * } else {
-			 */
-			pt = new GamaPoint(coords[j + 1]);
-			// }
+			pt =  new GamaPoint(coords[j + 1]);
 			double dist = pt.euclidianDistanceTo(currentLocation);
-			setDistanceToGoal(agent, dist);
 			boolean onLinkedRoad = getOnLinkedRoad(agent);
 			// t33 += java.lang.System.currentTimeMillis() - t;
 			// t = java.lang.System.currentTimeMillis();
@@ -1299,13 +1312,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				GamaPoint npt = new GamaPoint(newX, newY);
 				realDistance += currentLocation.euclidianDistanceTo(npt);
 				currentLocation.setLocation(npt);
-				setDistanceToGoal(agent, pt.euclidianDistanceTo(currentLocation));
 				distance = 0;
 				// t35 += java.lang.System.currentTimeMillis() - t;
 				break;
 			} else {
 				currentLocation = pt;
-				setDistanceToGoal(agent, 0);
 				distance = distance - dist;
 				realDistance += dist;
 				// t35 += java.lang.System.currentTimeMillis() - t;
@@ -1318,6 +1329,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		// t36 += java.lang.System.currentTimeMillis() - t;
 		// t = java.lang.System.currentTimeMillis();
+		if (pt != null) setDistanceToGoal(agent, pt.distance(currentLocation));
 		setLocation(agent, currentLocation);
 		path.setSource(currentLocation.copy(scope));
 
