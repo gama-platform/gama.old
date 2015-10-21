@@ -8,17 +8,14 @@ model RoadTrafficComplex
 
 global {   
 	bool small <- true parameter: true;
-	//file shape_file_roads  <- small ? file("../includes/roads_finalL93_small.shp") : file("../includes/roads_finalL93_delete_mathilde_2.shp") ;
 	file shape_file_roads  <- small ? file("../includes/roads_7200_with_pm_small_small.shp") : file("../includes/roads_finalL93_delete_mathilde_2.shp") ;
-	//file shape_file_nodes  <-  small ?file("../includes/node_finalL93_small.shp") : file("../includes/node_finalL93_delete_mathilde_2.shp");
-	file shape_file_nodes  <-  small ?file("../includes/nodes_7200_with_pm_small_small.shp") : file("../includes/node_finalL93_delete_mathilde_2.shp");
+	file shape_file_nodes  <-  small ?file("../includes/nodes_7200_with_pm_small_small_Nettoye.shp") : file("../includes/node_finalL93_delete_mathilde_2.shp");
 	file shape_urgence  <-  small ?file("../includes/Evacuation_L93_small.shp") : file ("../includes/Evacuation_L93_big.shp") ;
 	file shape_fuite <- file("../includes/Fuite_L93.shp");
 	
 	geometry shape <- envelope(shape_file_roads);
 	graph road_network_speed;  
 	graph road_network_custom;  
-	int nb_people <- small ? 500: 2000;
 	
 	map<road,float> general_speed_map_speed;
 	
@@ -31,33 +28,25 @@ global {
 	float speed_coeff_traffic_jam <- 3.0;
 	float time_to_consider_traffic_jam <- 2#mn;
 	float distance_see_traffic_jams <- 500.0; // changé, initialement 500m. 
-	string sc_normal <- "sc_normal";
-	string sc_evacuation <- "sc_evacuation";
-	string sc_fuite <- "sc_fuite";
+	
+	float accepted_evacuation_distance <- 10.0; //distance d'un point d'évacuation à partir de laquelle on est "safe" -> l'agent est "tué"
+	
 	
 	int time_accident <- 1;
 	float prop_agent_evacuation <- 1.0;
-	string scenario <- sc_evacuation;
 	
 	int nb_agents_in_traffic_jam update:people count (each.in_traffic_jam);
 	int nb_driving_agent update:people count (each.real_speed > 1#km /#h);
 	int nb_agent_speed_30 update:people count (each.real_speed < 30#km /#h); 
 	int nb_agent_speed_zero update:people count (each.real_speed < 1#km /#h);
 	int nb_traffic_signals_green update:node_ count (each.is_green);
-	int nb_agent_update <- nb_people update:length(people);
-	//int nb_agent_speed_zero update:liste_individus count (each.bloques); 
-	//bloques
-	//float prop_agent_zero = (nb_agent_speed_zero / nb_driving_agent) ; 
+	int nb_agent_update  update:length(people);
 	
 	float traffic_jam_length <- 0.0 update: sum(embouteillage collect (each.shape.perimeter));
 	
 	int traffic_jam_nb_roads <- 0 update: length(embouteillage);
-	// float km_traffic_jam <- 0.0 ;
 	
-	float mean_real_speed <- 0.0 update: mean((people) collect (each.real_speed));
-	//	float mean_real_speed <- 50°km/°h update: mean((people where not each.is_arrived) collect (each.real_speed));
-	
-	float time_end_final <- 3 #h;
+	float mean_real_speed <- 0.0 update: mean((people) collect (each.real_speed)) #h/#km;
 	
 	list<node_> traffic_signals;
 	list<node_> connected_nodes;
@@ -73,15 +62,28 @@ global {
 	
 	file file_ssp_speed;
 	
+	int nb_path_recompute;
+	
 	list<people> people_moving ;
+	
+	float coeff_nb_people <- 3.0;
+	
+	float max_priority;
+	
+	
+	//****** UTILISER POUR L'OPTIMISATION DU MODELE *****
+	float t1;
+	float t2;
+	float t3;
+	float t4;
+	float t5;
+	float t6;
+	float t7;
+	
+	//****************************************
 		
 	init {  
-		if scenario = sc_evacuation { 
-			create evacuation_urgence from: shape_urgence;
-		}
-		if scenario = sc_fuite { 
-			create point_fuite from: shape_fuite;
-		}
+		create evacuation_urgence from: shape_urgence;
 		create node_ from: shape_file_nodes with:[is_traffic_signal::(string(read("type")) = "traffic_signals"), is_crossing :: (string(read("crossing")) = "traffic_signals")];
 		loop pt over: remove_duplicates(node_ collect (each.location)) {
 			list<node_> nds <- node_ overlapping pt;
@@ -94,58 +96,15 @@ global {
 			noeud_evacuation <- node_ closest_to self;
 		}
 
-		
-	  /* 
-	//********************************************* CREATION D UN RESEAU MANHATTAN
-	
-	list<geometry> geoms <- [] ;km/°h 
-	int nb_vertical_roads <- 17 ;
-	int nb_horizontal_roads <- 17 ;
-	float y_max <- 3250.0 ;
-	float x_max <- 3250.0 ;
-	
-	float dist_x_step <- x_max / (nb_vertical_roads + 1) ;
-	float dist_x <- dist_x_step ;
-	
-	loop times: nb_vertical_roads {
-		geometry ligne <- line([{0,dist_x}, {y_max,dist_x}]) ;
-		geoms << ligne ;
-		dist_x <- dist_x + dist_x_step ;
-	}
-	
-	float dist_y_step <- y_max / (nb_horizontal_roads + 1) ;
-	float dist_y <- dist_y_step ;
-	
-	loop times: nb_horizontal_roads {
-		geometry ligne <- line([{dist_y,0}, {dist_y,x_max}]) ;
-		geoms << ligne ;
-		dist_y <- dist_y + dist_y_step ;
-	}
-	
-	list<geometry> roads_geom <- split_lines(geoms) ;
-	loop road_geom over:geoms{
-		create road{
-			shape <- road_geom ;
-		}
-	}
-	write "shape créé" ;
-	
-	//********************************************* fin CREATION D UN RESEAU MANHATTAN 
-*/
-		
 
 		create road from: shape_file_roads with:[nb_agents::int(read("NB_CARS")), name::string(read("name")),highway::string(get("highway")),junction::string(read("junction")),lanes::int(read("lanes")), maxspeed::float(read("maxspeed")), oneway::string(read("oneway")), lanes_forward ::int (get( "lanesforwa")), lanes_backward :: int (get("lanesbackw"))] {
 			if maxspeed <= 0 {maxspeed <- 50 #km/#h;}
 			if lanes <= 0 {lanes <- 1;}
-			capacite_max <- 1+ int(lanes * shape.perimeter/(4.0));
+			capacite_max <- 1+ int(lanes * shape.perimeter/(5.0));
 			min_traffic_jam_people_destroy <- int(min([capacite_max, min_embouteillage_people_destruction]));
 			min_traffic_jam_people_creation <- int( min([capacite_max, min_embouteillage_people_creation]));
-			
 			geom_display <- (shape + (2.5 * lanes));
 			max_embouteillage_vitesse <- maxspeed / speed_coeff_traffic_jam;
-			//do manage_oneway_attribute;
-			
-			
 		}	
 		
 		real_roads <- road where (each.shape.perimeter > min_length);
@@ -178,13 +137,15 @@ global {
 		do init_traffic_signal;
 		do fill_matrix;
 		ask road {
-			loop times: nb_agents/5 {
+			loop times: nb_agents/coeff_nb_people {
 				ask world{do create_people_road(myself);}
 			} 
-		}    
+		}  
+		nb_agent_update <- length(people);  
+		do compute_road_priority;
 	}
 	
-	reflex scnerio_evac when: cycle = time_accident and scenario = sc_evacuation {
+	reflex scnerio_evac when: cycle = time_accident  {
 		ask (prop_agent_evacuation * length(people)) among people {
 			target_node <- nil;
 			color_behavior <- #red;
@@ -194,20 +155,9 @@ global {
 		}
 	}
 	
-	reflex scnerio_fuite when: cycle = time_accident and scenario = sc_fuite {
-		ask (prop_agent_evacuation * length(people)) among people {
-			target_node <- nil;
-			mode_fuite <- true ;
-			recompute_path <- true ;
-			current_path <- nil;
-			color_behavior <- #blue;
-			size <- 20;
-		}
-	}
 	
 	action fill_matrix {
 		file_ssp_speed <- csv_file("shortest_paths_speed_2.csv",";");
-		write "file_ssp_speed: " + length(file_ssp_speed);
 	}
 	
 	action create_people_road(road a_road) {
@@ -219,7 +169,6 @@ global {
 			proba_lane_change_up <-1.0;// 0.5 + (rnd(500) / 500);
 			proba_lane_change_down <- 1.0;//0.7+ (rnd(300) / 500);
 			location <- any_location_in(a_road);
-			//ask a_road { do register agent:myself lane: 0;}
 			init_rd <- a_road;
 			security_distance_coeff <- 2 * (1.5 - rnd(1000) / 1000);  
 			proba_respect_priorities <- 1.0;
@@ -233,26 +182,6 @@ global {
 		}
 	}
 	
-	action create_people {
-		create people  { 
-			speed <- 50 #km /#h ;
-			real_speed <- 50 #km /#h ;
-			vehicle_length <- 3.0 #m;
-			right_side_driving <- true;
-			proba_lane_change_up <-1.0;// 0.5 + (rnd(500) / 500);
-			proba_lane_change_down <- 1.0;//0.7+ (rnd(300) / 500);
-			current_node <- one_of(connected_nodes);
-			location <- current_node.location;
-			security_distance_coeff <- 2 * (1.5 - rnd(1000) / 1000);  
-			proba_respect_priorities <- 1.0;
-			proba_respect_stops <- [1.0];
-			proba_block_node <- 0.0;
-			proba_use_linked_road <- 0.0;
-			max_acceleration <- (12 + rnd(500) / 100) #km/#h;
-			speed_coeff <- 1.2 - (rnd(200) / 1000);
-			proba_avoid_traffic_jam <- proba_avoid_traffic_jam_global;
-		}
-	}
 	action init_traffic_signal { 
 		traffic_signals <- node_ where each.is_traffic_signal ;
 		ask traffic_signals {
@@ -317,35 +246,116 @@ global {
 		} 
 	}
 	
+	action compute_road_priority2 {
+		map<list<node_>,float> nodes2dist <- [];
+		ask road {
+			priority <- 999999999.9;
+			loop e over: evacuation_urgence {
+				if (e.noeud_evacuation = target_node) {
+					priority <- 0.0;
+					break;
+				} 
+				list nodes <- world.nodes_for_path(node_(target_node),e.noeud_evacuation, file_ssp_speed);
+				float dist <- 0.0;
+				if length(nodes) > 1 {
+					loop i from: 0 to: length(nodes) - 2 {
+						node_ n1 <- node_(nodes[0]);
+						node_ n2 <- node_(nodes[1]);
+						if [n1,n2] in nodes2dist.keys {
+							dist <- dist + nodes2dist[[n1,n2]];
+						} else {
+							float pp <- (road(road_network_speed edge_between (n1::n2))).shape.perimeter;
+							nodes2dist[[n1,n2]] <- pp;
+							dist <- dist + pp;
+						}
+					}
+					priority <- min([priority, dist]);
+				}
+			}
+		}
+	}
+	
+	action compute_road_priority {
+		map<list<node_>,float> nodes2dist <- [];
+		ask road {
+			priority <- 999999999.9;
+			loop e over: evacuation_urgence {
+				if (e.noeud_evacuation = target_node) {
+					priority <- 0.0;
+					break;
+				} 
+				path p <-  path_between(road_network_speed, target_node, e.noeud_evacuation);
+				if (p != nil and p.shape != nil) {
+					priority <- min([priority, p.shape.perimeter]);
+				}
+			}
+		}
+	}
+	
+	
+	list<node_> nodes_for_path (node_ source, node_ target, file ssp){
+		list<node_> nodes <- [];
+		int id <- source.id;
+		int target_id <- target.id;
+		int cpt <- 0;
+		loop while: id != target_id {
+			nodes << node_(vertices[id]);
+			id <- int(ssp[target_id, id]);
+			cpt <- cpt +1;
+			if (id = -1 or cpt > 50000) {
+				return list<node_>([]);
+			}
+		}
+		nodes<<target;
+		return nodes;
+	}
+	
+	
 	reflex general_dynamic {
+		float t <- machine_time;
 		ask traffic_signals {
 			do dynamic_node;
 		}
+		t1 <- t1 + machine_time - t;
+		t <- machine_time;
 		if (every(5)) {
 			ask real_roads {
 				do dynamic_road;
 			}	
 		}
+		t2 <- t2 + machine_time - t;
+		t <- machine_time;
 		
 		ask people where (each.target_node = nil ){
 			do choose_target_node;
 		}
+		t3 <- t3 + machine_time - t;
+		t <- machine_time;
 		
 		ask people where ((each.current_path = nil or each.recompute_path or each.final_target = nil)and each.target_node != nil) {
 			 do choose_a_path; 
 		}
+		t4 <- t4 + machine_time - t;
+		t <- machine_time;
 		
 		people_moving <- (people where (each.current_path != nil and each.final_target != nil ));
 		
 		ask people_moving {
-			val_order <- - 1000000 * segment_index_on_road + distance_to_goal;
+			val_order <- (road(current_road).priority * 100000 - 1000 * segment_index_on_road + distance_to_goal/10.0);
 		}
 		people_moving <- people_moving sort_by each.val_order;
-		
+		t5 <- t5 + machine_time - t;
+		t <- machine_time;
+		int cpt <- 0;
 		ask people_moving{
-			 do driving;
+			order <- cpt;
+			do driving;
+			cpt <- cpt + 1;
 		}
-		ask people where (each.target_node != nil and (each.location distance_to each.target_node.location < 5)){
+		
+		t6 <- t6 + machine_time - t;
+		t <- machine_time;
+		ask people where (each.target_node != nil and (each.location distance_to each.target_node.location < 10)){
 			if (current_road != nil) {
 				ask road(current_road) {
 					do unregister(myself);
@@ -353,10 +363,25 @@ global {
 			}
 			do die;
 		}
+		t7 <- t7 + machine_time - t;
 	}
 	
+	//****** UTILISER POUR L'OPTIMISATION DU MODELE *****
+	reflex info when: every(60)  { 
+		write "\n ******** " + cycle + "********";
+		write "temps node : " + t1/1000;
+		write "temps routes : " + t2/1000;
+		write "temps choose target : " + t3/1000;
+		write "temps choose path : " + t4/1000;
+		write "temps tri : " + t5/1000;
+		write "temps driving : " + t6/1000;
+		write "temps arriver objectif : " + t7/1000;
+	}
 	
-	reflex end when: length(people) = 0  { // time = time_end_final{
+	//****************************************
+		
+	
+	reflex end when: length(people) = 0  { 
 		do pause;
 	}
 } 
@@ -438,6 +463,7 @@ species road skills: [skill_road] {
 	
 	int lanes_backward;
 	int lanes_forward;
+	float priority;
 	
 	string junction;
 	
@@ -453,68 +479,17 @@ species road skills: [skill_road] {
 	string highway;
 	list<node_> neighbours;
 	
-	aspect geom {    
-		draw geom_display border:  rgb("gray")  color: rgb("gray") ;
-	}  
-	
-	aspect base {    
-		draw shape color: is_blocked ? rgb("red"): rgb("black") ;
-	} 
 	
 	aspect carto {
 		if highway = "trunk" or highway="trunk_link" or highway = "motorway" or highway = "motorway_link" {draw (shape + 3) color: #red;}
 		else if highway = "primary" or highway="primary_link"{draw (shape + 2) color: #orange;}
 		else if highway = "secondary" or highway="secondary_link" {draw (shape + 1) color: #yellow;}
-		else {draw shape color: #black;}
+		else {draw shape color: #black end_arrow: 5; }
+	}
+	aspect pp {
+		draw shape + ((max_priority - priority) * 5 /max_priority) color: #red end_arrow: 5; 
 	}
 	
-	aspect base_gray {    
-		draw shape color: rgb("gray") ;
-	} 
-	action manage_oneway_attribute {
-		if (lanes_forward > 0 and lanes_backward > 0) {
-			create road {
-				 capacite_max <- 1+ int(lanes * shape.perimeter/(4.0));
-				min_traffic_jam_people_destroy <- int(min([capacite_max, min_embouteillage_people_destruction]));
-				min_traffic_jam_people_creation <- int( min([capacite_max, min_embouteillage_people_creation]));
-				lanes <-myself.lanes_backward;
-				shape <- polyline(reverse(myself.shape.points));
-				maxspeed <- myself.maxspeed;
-				max_embouteillage_vitesse <- maxspeed / speed_coeff_traffic_jam;
-				geom_display  <- myself.geom_display;
-				linked_road <- myself;
-				myself.linked_road <- self;
-			}
-			lanes <- lanes_forward;
-		} else {
-			switch oneway {
-				match "yes" {
-										
-				}
-				match "-1" {
-					shape <- polyline(reverse(shape.points));
-				} 
-				default {
-					if (junction != 'roundabout') {
-						create road {
-							 capacite_max <- 1+ int(lanes * shape.perimeter/(4.0));
-							min_traffic_jam_people_destroy <- int(min([capacite_max, min_embouteillage_people_destruction]));
-							min_traffic_jam_people_creation <- int( min([capacite_max, min_embouteillage_people_creation]));
-							lanes <- max([1, int (myself.lanes / 2.0)]);
-							shape <- polyline(reverse(myself.shape.points));
-							maxspeed <- myself.maxspeed;
-							max_embouteillage_vitesse <- maxspeed / speed_coeff_traffic_jam;
-							geom_display  <- myself.geom_display;
-							linked_road <- myself;
-							myself.linked_road <- self;
-						}
-						lanes <- int(lanes /2.0 + 0.5);	
-					}
-				}
-			}
-		}
-		
-	}
 	action dynamic_road {
 		nb_people <- length(all_agents);
 		if (embout_route != nil) {
@@ -601,7 +576,7 @@ species embouteillage {
 	
 	
 	aspect base_width { 
-		draw shape + 5.0 color: rgb("red");
+		draw shape + 5.0 color: #red;
 	}
 	
 }
@@ -609,13 +584,13 @@ species embouteillage {
 species evacuation_urgence {
 	node_ noeud_evacuation ;
 	aspect default {
-		draw circle (100) color: rgb("orange");
+		draw circle (10) color: #orange;
 	}
 }
 
 species point_fuite {
 	aspect default {
-		draw circle (100) color: rgb("pink");
+		draw circle (10) color: #pink;
 	}
 }
 	
@@ -639,50 +614,26 @@ species people skills: [advanced_driving] schedules: [] {
 	
 	float val_order;
 	
+	int order;
+	
 	
 	action choose_target_node  {
 		if cycle >= time_accident {
-			if scenario = sc_evacuation {
-				target_node <- (evacuation_urgence with_min_of (each distance_to self)).noeud_evacuation;
-			}
-			else {
-				target_node <- one_of(connected_nodes);
-			}
+			target_node <- (evacuation_urgence with_min_of (each distance_to self)).noeud_evacuation;
 		}
 		else {
 			target_node <- one_of(connected_nodes);
 		}
-		
-		
-	
-		if(location distance_to target_node.location < 5){
+		if(location distance_to target_node.location < 10){
 			if (current_road != nil) {
 				ask road(current_road) {
 					do unregister(myself);
 				}
 			}
-			//if cycle < (time_accident - 200) {ask world {do create_people;}}
 			do die;
-		}
-		
+		}	
 	}
 	
-	list<node_> nodes_for_path (node_ source, node_ target, file ssp){
-		list<node_> nodes <- [];
-		int id <- source.id;
-		int target_id <- target.id;
-		int cpt <- 0;
-		loop while: id != target_id {
-			nodes << node_(vertices[id]);
-			id <- int(ssp[target_id, id]);
-			cpt <- cpt +1;
-			if (id = -1 or cpt > 50000) {
-				return list<node_>([]);
-			}
-		}
-		nodes<<target;
-		return nodes;
-	}
 	
 	
 	action choose_a_path  { 
@@ -690,30 +641,34 @@ species people skills: [advanced_driving] schedules: [] {
 			do recomputing_path(general_speed_map_speed);
 			recompute_path <- false;
 		} else {
+			
 			if (init_rd != nil) {
-				current_node <- node_(init_rd.target_node); 
+				if (init_rd distance_to self > 0.1) {
+					init_rd <- nil;
+				} else {
+					current_node <- node_(init_rd.target_node); 
+				}
 			}
-		/*	list<node_> nodes <- nodes_for_path(current_node,target_node,file_ssp_speed);
+			list<node_> nodes <- world.nodes_for_path(current_node,target_node,file_ssp_speed);
 			if (init_rd != nil) {
 				add node_(init_rd.source_node) to: nodes at: 0;
 			}
 			if (length(nodes) > 1) {current_path <- path_from_nodes(graph: road_network_speed, nodes: nodes);}
-			 */
+			 
 			if (current_path = nil) {
 				if (init_rd != nil) {
 					current_path <- compute_path(graph: road_network_speed, target: target_node, on_road: init_rd);
 				} else {
 					current_path <- compute_path(graph: road_network_speed, target: target_node);
-				}	
+				}
+				nb_path_recompute <- nb_path_recompute + 1;	
 			}
-			init_rd <- nil;
 			if (current_path = nil) {
 				if (current_road != nil) { 
 					ask road(current_road) {
 						do unregister(myself);
 					}
 				}
-				//if cycle < time_accident {ask world {do create_people;}}
 				do die;
 			} else {
 				if flip(proba_avoid_traffic_jam) and not empty(roads_traffic_jam) and length(current_node.roads_out) > 1 and ((current_node.roads_out count ((road(each).embout_route = nil) or not road(each).embout_route.real) ) > 0){
@@ -739,13 +694,12 @@ species people skills: [advanced_driving] schedules: [] {
 			proba_respect_priorities <- 1.0;
 		}
 		do drive;
-		if ((location distance_to target_node.location) < 5.0){
+		if ((location distance_to target_node.location) < 10.0){
 			if (current_road != nil) {
 				ask road(current_road) {
 					do unregister(myself);
 				}
 			}
-			//if cycle < time_accident {ask world {do create_people;}}
 			do die;
 		} 
 	} 
@@ -760,6 +714,7 @@ species people skills: [advanced_driving] schedules: [] {
 		}
 		road_network_custom <- road_network_custom  with_weights map_weights;
 		current_path <- compute_path(graph: road_network_custom, target: target_node, source: current_node);
+		nb_path_recompute <- nb_path_recompute + 1;
 		loop rd over: roads_traffic_jam{
 			map_weights[rd] <- rds[rd];
 		}		
@@ -845,6 +800,12 @@ species people skills: [advanced_driving] schedules: [] {
 		draw triangle(size) color: color_behavior rotate:heading + 90;	
 	} 
 	
+	aspect rang { 
+		float val <- order * 3 /length(people) * 255;
+		
+		draw triangle(10) color: rgb(val, val, val) rotate:heading + 90;	
+	} 
+	
 	float test_traffic_jam(road a_road,float remaining_time) {
 		if a_road.embout_route != nil and a_road.embout_route.real and (a_road in roads_traffic_jam) {
 			current_path <- nil;
@@ -898,15 +859,48 @@ species people skills: [advanced_driving] schedules: [] {
 	
 } 
 
+experiment sc_exceptionnel_optimized type: gui {
+	parameter coeff_nb_people  var: coeff_nb_people among:[1.0] <- 1.0;
+	output {
+		monitor "nb people" value: length(people);
+		monitor "nb path computation: " value: nb_path_recompute;
+		
+		display Graphiques refresh: every(10){
+			chart "mean speed of people" type: series size:{0.5,0.5} position:{0.0,0.5} {
+				data "mean speed of people" value: mean_real_speed color: #blue ;
+			}
+			
+			chart "rapports" type: series size:{0.5,0.5} position:{0.5,3.5}{
+				data "nb agents en mvt // nb agents" value: nb_driving_agent * 100 / (nb_agent_update) style: line color: #gray ;
+				data "feux verts" value: (nb_traffic_signals_green * 100 / length(traffic_signals)) style: line color: #green ;
+				data "routes embouteillees" value: (traffic_jam_nb_roads * 100 / length(road)) style: line color: #red ;
+			}
+			
+			chart "infos agents" type: series size:{0.5,0.5} position:{0.0,3.5}{
+				data "nb  agents" value: length(people) style: line color: #black ; //nb_agent_update
+				data "nb driving agent" value: nb_driving_agent style: line color: #red ;
+				data "nb agents in t-jam" value: nb_agents_in_traffic_jam style: line color: #orange ;
+				data "nb agent speed < 30 km/h" value: nb_agent_speed_30 color: #gray;
+				data "nb agent speed == 0 km/h" value: nb_agent_speed_zero color: #purple;
+			}
+			chart "traffic jam length" type: series size:{0.5,0.5} position:{0.5,0.5}{
+				data "traffic jam meters (cummulative)" value: traffic_jam_length color: #black;
+			}
+		}
+	}
+	
+}
+
 experiment traffic_simulation_sc_exceptionnel type: gui {
 	output {
-		monitor "moniteur" value: length(people);
-		/*display carte_embouteillage {
-			species road aspect: base_gray refresh: false;
+		monitor "nb people" value: length(people);
+		monitor "nb path computation: " value: nb_path_recompute;
+		display carte_embouteillage type: opengl refresh: every(100){
+			species road aspect: carto refresh: false;
 			species embouteillage aspect: base_width ;
-		}*/
+		}
 		
-		display city_display2D type: opengl {
+		display city_display2D type: opengl refresh: every(5){
 			species road aspect: carto refresh: false;
 			species node_ aspect: base refresh: false;
 			species people aspect: base; 
@@ -924,13 +918,9 @@ experiment traffic_simulation_sc_exceptionnel type: gui {
 				data "feux verts" value: (nb_traffic_signals_green * 100 / length(traffic_signals)) style: line color: #green ;
 				data "routes embouteillees" value: (traffic_jam_nb_roads * 100 / length(road)) style: line color: #red ;
 			}
-			//chart "blocked roads" type: series size:{0.5,0.5} position:{0.5,3.5}{
-			//	data "number of blocked roads" value: traffic_jam_nb_roads color: #red ;	
-			//}
 			
 			chart "infos agents" type: series size:{0.5,0.5} position:{0.0,3.5}{
 				data "nb  agents" value: length(people) style: line color: #black ; //nb_agent_update
-				//data "nb agents" value: nb_agent_update style: line color: #black ;
 				data "nb driving agent" value: nb_driving_agent style: line color: #red ;
 				data "nb agents in t-jam" value: nb_agents_in_traffic_jam style: line color: #orange ;
 				data "nb agent speed < 30 km/h" value: nb_agent_speed_30 color: #gray;
@@ -939,9 +929,6 @@ experiment traffic_simulation_sc_exceptionnel type: gui {
 			chart "traffic jam length" type: series size:{0.5,0.5} position:{0.5,0.5}{
 				data "traffic jam meters (cummulative)" value: traffic_jam_length color: #black;
 			}
-			/*chart "infos agents" type: series size:{0.5,0.5} position:{0.5,0.5}{
-				data "prop. agent stoppé" value: (nb_agent_speed_zero / nb_driving_agent) color: #black;
-			}*/
 		}
 	}
 	
