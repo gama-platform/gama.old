@@ -571,7 +571,6 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		if (source.getLocation().equals(agent.getLocation())) onRoad = null;
 		
-		
 		IPath path = ((GraphTopology)graph.getTopology(scope)).pathBetween(scope, source, target, onRoad);
 		if ( path != null && !path.getEdgeGeometry().isEmpty() ) {
 			List<ILocation> targets = getTargets(agent);
