@@ -564,7 +564,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		IAgent target = (IAgent) scope.getArg("target", IType.AGENT);
 		IAgent agent = getCurrentAgent(scope);
 		IAgent source = (IAgent) scope.getArg("source", IType.AGENT);
-		IAgent onRoad = (IAgent) scope.getArg("on_road", IType.AGENT);;
+		IAgent onRoad = (IAgent) scope.getArg("on_road", IType.AGENT);
 		if ( source == null ) {
 			if (onRoad != null) source = RoadSkill.getTargetNode(onRoad);
 			else source = Queries.closest_to(scope, target.getSpecies(), agent);
