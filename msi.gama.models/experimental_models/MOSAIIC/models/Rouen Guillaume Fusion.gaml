@@ -66,7 +66,7 @@ global {
 	
 	list<people> people_moving ;
 	
-	float coeff_nb_people <- 3.0;
+	float coeff_nb_people <- 1.0;
 	
 	float max_priority;
 	
@@ -97,7 +97,7 @@ global {
 		}
 
 
-		create road from: shape_file_roads with:[nb_agents::int(read("NB_CARS")), name::string(read("name")),highway::string(get("highway")),junction::string(read("junction")),lanes::int(read("lanes")), maxspeed::float(read("maxspeed")), oneway::string(read("oneway")), lanes_forward ::int (get( "lanesforwa")), lanes_backward :: int (get("lanesbackw"))] {
+		create road from: shape_file_roads with:[nb_agents::int(read("NB_CARS")), name::string(read("name")),highway::string(get("highway")),junction::string(read("junction")),lanes::int(read("lanes")), maxspeed::float(read("maxspeed")) #h/#km, oneway::string(read("oneway")), lanes_forward ::int (get( "lanesforwa")), lanes_backward :: int (get("lanesbackw"))] {
 			if maxspeed <= 0 {maxspeed <- 50 #km/#h;}
 			if lanes <= 0 {lanes <- 1;}
 			capacite_max <- 1+ int(lanes * shape.perimeter/(5.0));
@@ -137,9 +137,11 @@ global {
 		do init_traffic_signal;
 		do fill_matrix;
 		ask road {
-			loop times: nb_agents/coeff_nb_people {
-				ask world{do create_people_road(myself);}
-			} 
+			int nb <- int(0.5 + nb_agents/coeff_nb_people);
+			if (nb > 0) {
+				ask world{do create_people_road(myself,nb);} 
+			}
+			
 		}  
 		nb_agent_update <- length(people);  
 		do compute_road_priority;
@@ -151,7 +153,7 @@ global {
 			color_behavior <- #red;
 			targets <- [];
 			current_path <- nil;
-			size <- 20;
+			size <- 10;
 		}
 	}
 	
@@ -160,25 +162,31 @@ global {
 		file_ssp_speed <- csv_file("shortest_paths_speed_2.csv",";");
 	}
 	
-	action create_people_road(road a_road) {
-		create people  { 
-			speed <- 50 #km /#h ;
-			real_speed <- 50 #km /#h ;
-			vehicle_length <- 3.0 #m;
-			right_side_driving <- true;
-			proba_lane_change_up <-1.0;// 0.5 + (rnd(500) / 500);
-			proba_lane_change_down <- 1.0;//0.7+ (rnd(300) / 500);
-			location <- any_location_in(a_road);
-			init_rd <- a_road;
-			security_distance_coeff <- 2 * (1.5 - rnd(1000) / 1000);  
-			proba_respect_priorities <- 1.0;
-			proba_respect_stops <- [1.0];
-			proba_block_node <- 0.0;
-			proba_use_linked_road <- 0.0;
-			max_speed <- 150 #km/#h;
-			max_acceleration <- 1000.0;//(12 + rnd(500) / 100) #km/#h;
-			speed_coeff <- 1.2 - (rnd(200) / 1000);
-			proba_avoid_traffic_jam <- proba_avoid_traffic_jam_global;
+	action create_people_road(road a_road, int nb) {
+		list<point> pts <- points_on(a_road,a_road.shape.perimeter/(nb/a_road.lanes));
+		loop pt over: pts {
+			loop i from: 0 to: a_road.lanes -1 {
+				create people  { 
+					speed <- 50 #km /#h ;
+					real_speed <- 50 #km /#h ;
+					vehicle_length <- 3.0 #m;
+					right_side_driving <- true;
+					proba_lane_change_up <-1.0;// 0.5 + (rnd(500) / 500);
+					proba_lane_change_down <- 1.0;//0.7+ (rnd(300) / 500);
+					location <- pt;
+					current_lane <- i;
+					init_rd <- a_road;
+					security_distance_coeff <- 2 * (1.5 - rnd(1000) / 1000);  
+					proba_respect_priorities <- 1.0;
+					proba_respect_stops <- [1.0];
+					proba_block_node <- 0.0;
+					proba_use_linked_road <- 0.0;
+					max_speed <- 150 #km/#h;
+					max_acceleration <- 1000.0;//(12 + rnd(500) / 100) #km/#h;
+					speed_coeff <- 1.2 - (rnd(200) / 1000);
+					proba_avoid_traffic_jam <- proba_avoid_traffic_jam_global;
+				}
+			}	
 		}
 	}
 	
@@ -341,7 +349,7 @@ global {
 		people_moving <- (people where (each.current_path != nil and each.final_target != nil ));
 		
 		ask people_moving {
-			val_order <- (road(current_road).priority * 100000 - 1000 * segment_index_on_road + distance_to_goal/10.0);
+			val_order <- (road(current_road).priority * 1000000 - 10000 * segment_index_on_road + distance_to_goal);
 		}
 		people_moving <- people_moving sort_by each.val_order;
 		t5 <- t5 + machine_time - t;
@@ -487,7 +495,8 @@ species road skills: [skill_road] {
 		else {draw shape color: #black end_arrow: 5; }
 	}
 	aspect pp {
-		draw shape + ((max_priority - priority) * 5 /max_priority) color: #red end_arrow: 5; 
+		draw shape color: #black end_arrow: 5; 
+		draw (""+int(self)+" -> "+length(all_agents)) color: #black size: 10; 
 	}
 	
 	action dynamic_road {
@@ -562,6 +571,7 @@ species embouteillage {
 	bool real <- false ; 
 	
 	reflex maj_neighbours{
+		if (cycle < 10) {counter <- 5#mn;}
 		real_before <- real;
 		real <- counter > time_to_consider_traffic_jam;
 		if (real and not real_before) {
@@ -576,7 +586,7 @@ species embouteillage {
 	
 	
 	aspect base_width { 
-		draw shape + 5.0 color: #red;
+		draw shape + 5.0 color: real ? #red : #green;
 	}
 	
 }
@@ -637,18 +647,31 @@ species people skills: [advanced_driving] schedules: [] {
 	
 	
 	action choose_a_path  { 
+		current_node <- nil;
+		if (init_rd != nil) {
+			if (cycle > 2 or (init_rd distance_to self > 0.5) or (init_rd.target_node distance_to self < 0.5) ) {
+				if ((init_rd.target_node distance_to self < 0.5) )
+				{
+					current_node <- node_(init_rd.target_node);
+				}
+				init_rd <- nil;
+				
+			} else {
+				current_node <- node_(init_rd.target_node); 
+			}
+		}
+		if (current_node = nil) {
+			if (current_road != nil) {
+				current_node <-node_([road(current_road).source_node, road(current_road).target_node] with_min_of (each distance_to self));
+			} else {
+				current_node <- (node_ at_distance 50) closest_to self;
+			}
+			
+		}
 		if (recompute_path) {
 			do recomputing_path(general_speed_map_speed);
 			recompute_path <- false;
 		} else {
-			
-			if (init_rd != nil) {
-				if (init_rd distance_to self > 0.1) {
-					init_rd <- nil;
-				} else {
-					current_node <- node_(init_rd.target_node); 
-				}
-			}
 			list<node_> nodes <- world.nodes_for_path(current_node,target_node,file_ssp_speed);
 			if (init_rd != nil) {
 				add node_(init_rd.source_node) to: nodes at: 0;
@@ -710,7 +733,7 @@ species people skills: [advanced_driving] schedules: [] {
 		loop rd over: roads_traffic_jam{
 			float val <- map_weights[rd];
 			rds[rd] <- val ;
-			map_weights[rd] <-val * 100;
+			map_weights[rd] <-val * 10000;
 		}
 		road_network_custom <- road_network_custom  with_weights map_weights;
 		current_path <- compute_path(graph: road_network_custom, target: target_node, source: current_node);
@@ -797,7 +820,7 @@ species people skills: [advanced_driving] schedules: [] {
 	}
 	
 	aspect base { 
-		draw triangle(size) color: color_behavior rotate:heading + 90;	
+		draw triangle(3) color: color_behavior rotate:heading + 90;	
 	} 
 	
 	aspect rang { 
@@ -816,7 +839,6 @@ species people skills: [advanced_driving] schedules: [] {
 	}
 	
 	float external_factor_impact(road new_road,float remaining_time) {
-		current_node <- node_(new_road.source_node);
 		if (mode_fuite ) {
 			if (flip(0.9)) {
 				recompute_path <- true;
@@ -895,7 +917,7 @@ experiment traffic_simulation_sc_exceptionnel type: gui {
 	output {
 		monitor "nb people" value: length(people);
 		monitor "nb path computation: " value: nb_path_recompute;
-		display carte_embouteillage type: opengl refresh: every(100){
+		display carte_embouteillage{
 			species road aspect: carto refresh: false;
 			species embouteillage aspect: base_width ;
 		}
