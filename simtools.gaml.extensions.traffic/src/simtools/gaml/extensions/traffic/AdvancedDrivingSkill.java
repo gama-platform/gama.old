@@ -534,8 +534,9 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				if ( dr == driver ) {
 					continue;
 				}
+				
 				// if ( dr.euclidianDistanceTo(driver) < vL / 2 + secDist + getVehiculeLength(dr) / 2 ) { return false; }
-				if ( dr.euclidianDistanceTo(driver) < vL / 2 + getVehiculeLength(dr) / 2 ) { return false; }
+				if ( road.getPoints().get(0).euclidianDistanceTo(dr) < (vL / 2 + getVehiculeLength(dr) / 2) ) { return false; }
 			}
 		}
 		return true;
@@ -1034,12 +1035,15 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				}
 			}
 		} else {
+			
 			for ( IAgent ag : agents ) {
+				
 				if ( ag == agent ) {
 					continue;
 				}
 				double dist = getDistanceToGoal(ag);// distance2D((GamaPoint) ag.getLocation(), target);
 				double diff = distanceToGoal - dist;
+				
 				if ( changeLane && Math.abs(diff) < vL ) { return 0; }
 				if ( diff <= 0.0 ) {
 					continue;
@@ -1050,20 +1054,31 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				}
 			}
 		}
+	
 		// /System.out.println("agent : " + agent + " minDiff : " + minDiff + " nextAgent : " + nextAgent);
 		// t344+= java.lang.System.currentTimeMillis() - t;
 		// t = java.lang.System.currentTimeMillis();
-
+	/*	if (currentRoad.getIndex() == 1) 
+			java.lang.System.out.println("nextAgent" + nextAgent + " minDiff: " + minDiff);
+	*/
+		//java.lang.System.out.println("agent:" + agent + " nextAgent: " + nextAgent);
+		
 		if ( nextAgent == null ) {
+		//	java.lang.System.out.println("agent:" + agent + " nextSegment: " + nextSegment+ " moreSegment: " + moreSegment);
+			
 			if ( nextSegment && moreSegment ) {
 				Collection<IAgent> ags = (Collection<IAgent>) aglanes.get(segmentIndex + 1);
 				double length =
 					currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 1].distance(currentRoad
 						.getInnerGeometry().getCoordinates()[segmentIndex + 2]);
+			//	java.lang.System.out.println("length: " + length);
+				
 				for ( IAgent ag : ags ) {
 					double distTG = getDistanceToGoal(ag);
 					double vLa = 0.5 * vL + 0.5 * getVehiculeLength(ag);
-					if ( distTG > length - vLa ) { return distanceToGoal - (vLa - (length - distTG)); }
+					//java.lang.System.out.println("distTG: " + distTG + " vLa: " + vLa );
+					if ( distTG > length - vLa ) { 
+						return distanceToGoal - (vLa - (length - distTG)); }
 				}
 				return distance;
 			}
@@ -1080,7 +1095,9 @@ public class AdvancedDrivingSkill extends MovingSkill {
 
 		if ( changeLane && realDist < vL ) { return 0; }
 		realDist = Math.max(0.0, (int) (0.5 + realDist * 1000) / 1000.0);
-
+		/*if (currentRoad.getIndex() == 1) 
+			java.lang.System.out.println("realDist" + realDist + " secDistance: " + secDistance);
+	*/
 		return realDist;
 	}
 

@@ -150,6 +150,7 @@ public class RoadSkill extends Skill {
 				lane = Math.max(0, Math.min(lane, nbLanesLinked - 1));
 				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, true);
 				indexSegment = getSegmentIndex(linkedRoad, driver);
+				
 				List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
 				List ags = (List) agentsOn.get(lane);
 				((List) ags.get(indexSegment)).add(driver);
@@ -162,6 +163,7 @@ public class RoadSkill extends Skill {
 				((List) ((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
 				getAgents(road).add(driver);
 			}
+			driver.setAttribute(AdvancedDrivingSkill.DISTANCE_TO_GOAL, driver.getLocation().euclidianDistanceTo(road.getPoints().get(indexSegment+1)));
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_ROAD, road);
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_LANE, lane);
 			driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, onLinkedRoad ? road.getInnerGeometry()
