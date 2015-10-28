@@ -59,10 +59,9 @@ import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 	@facet(name = IKeyword.FILL_WITH, type = IType.NONE, optional = true, doc = @doc(value = "",
 		deprecated = "Use the operator matrix_with(size, fill_with) or list_with(size, fill_with) instead")) },
 	omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.CONTAINER,
-	with_sequence = false,
-	doc = @doc("Allows to declare an attribute of a species or an experiment"))
+@symbol(kind = ISymbolKind.Variable.CONTAINER, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
+@doc("Allows to declare an attribute of a species or an experiment")
 @validator(ContainerVarValidator.class)
 public class ContainerVariable extends Variable {
 

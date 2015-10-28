@@ -75,10 +75,9 @@ import msi.gaml.types.IType;
 		optional = true,
 		doc = @doc("A list of constant values among which the attribute can take its value")) },
 	omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.NUMBER,
-	with_sequence = false,
-	doc = @doc("Allows to declare an attribute of a species or experiment"))
+@symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
+@doc("Allows to declare an attribute of a species or experiment")
 public class NumberVariable extends Variable {
 
 	/** The max. */

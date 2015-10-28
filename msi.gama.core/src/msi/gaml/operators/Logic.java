@@ -53,7 +53,7 @@ public class Logic {
 
 	@operator(value = "?", type = ITypeProvider.SECOND_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE, category=IOperatorCategory.LOGIC)
 	@doc(value = "It is used in combinaison with the : operator: if the left-hand operand evaluates to true, returns the value of the left-hand operand of the :, otherwise that of the right-hand operand of the :", comment = "These functional tests can be combined together.", examples = {
-		@example(value="[10, 19, 43, 12, 7, 22] collect ((each > 20) ? 'above' : 'below')", returnType="lis<string>", equals="['below', 'below', 'above', 'below', 'below', 'above']"),
+		@example(value="[10, 19, 43, 12, 7, 22] collect ((each > 20) ? 'above' : 'below')", returnType="list<string>", equals="['below', 'below', 'above', 'below', 'below', 'above']"),
 		@example("rgb color <- (flip(0.3) ? #red : (flip(0.9) ? #blue : #green));") }, see = ":")
 	public static Object iff(final IScope scope, final Boolean left, final IExpression right)
 		throws GamaRuntimeException {

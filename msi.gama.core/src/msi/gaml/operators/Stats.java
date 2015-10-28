@@ -812,7 +812,7 @@ public class Stats {
 	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k) and the maximum number of iterations to run the algorithm for (If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
 	special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-	examples = { @example("kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)") })
+	examples = { @example(value="kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)", isExecutable=false) })
 	public static
 	GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k,
 			final Integer maxIt) throws GamaRuntimeException {
@@ -850,12 +850,10 @@ public class Stats {
 		return KMeansPlusplusApache(scope, data, k, -1);
 	}
 
-	@operator(value = "build",
-		can_be_const = false,
-		type = IType.REGRESSION,
+	@operator(value = "build", can_be_const = false, type = IType.REGRESSION,
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build(data,method)",
-	examples = { @example("build([1,2,3,4][2,3,4,2],\"GLS\")") })
+	examples = { @example("build(matrix([[1,2,3,4],[2,3,4,2]]),\"GLS\")") })
 	public static
 	GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data, final String method)
 		throws GamaRuntimeException {
@@ -871,7 +869,7 @@ public class Stats {
 		type = IType.REGRESSION,
 		category = { IOperatorCategory.STATISTICAL })
 	@doc(value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given ordinary least squares method. Usage: build(data)",
-	examples = { @example("build([1,2,3,4][2,3,4,2])") })
+	examples = { @example("matrix([[1,2,3,4],[2,3,4,2]])") })
 	public static
 		GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data) throws GamaRuntimeException {
 		try {
