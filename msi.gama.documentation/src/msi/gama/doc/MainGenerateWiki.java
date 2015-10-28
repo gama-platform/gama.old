@@ -44,9 +44,11 @@ public class MainGenerateWiki {
 		System.out.print("Preparation of the folders................");
 		PrepareEnv.prepareDocumentation(Constants.ONLINE);
 		System.out.println("DONE");
+		
 		System.out.print("Merge all the docGAMA.xml files................");		
 		UnifyDoc.unify();
 		System.out.println("DONE");
+		
 		System.out.print("Transform the docGAMA.xml file into Wiki Files (md) and create/update them in the gama.wiki folder................");		
 		XmlToWiki.createAllWikis();
 		XmlToWiki.createExtentionsWiki();

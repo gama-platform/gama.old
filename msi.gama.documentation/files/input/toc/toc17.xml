@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <toc title="Full Documentation of GAMA 7">
-	<part name= "Introduction">
+<!--	<part name= "Introduction">
 		<chapter name="Introduction" file="G__Overview"/>		
 	</part>
 	<part name="Platform">	
@@ -30,9 +30,9 @@
 		<chapter name="4.2.5 Batch Specific UI" file="G__BatchSpecific"/>
 		<chapter name="4.2.6 Errors View" file="G__ErrorsView"/>		 
 		<chapter name="5. Preferences" file="G__Preferences"/>
-	</part>	 
+	</part>	 -->
 	<part name="GAML (GAMA Modeling Language)">
-		<chapter name="GAML (GAMA Modeling Language)" file="G__GamlLanguage"/>	
+<!--		<chapter name="GAML (GAMA Modeling Language)" file="G__GamlLanguage"/>	
 		<chapter name="1. Key Concepts" file="G__KeyConcepts"/>
 		<chapter name="1.1 Runtime Concepts" file="G__RuntimeConcepts"/>
 		<chapter name="2. Organization of a Model" file="G__OrganizationModel"/>	
@@ -70,7 +70,7 @@
 		<chapter name="6.1.1 'agent'" file="G__AgentBuiltInSpecies"/>		
 		<chapter name="6.1.2 'model'" file="G__ModelBuiltInSpecies"/>		
 		<chapter name="6.1.3 'experiment'" file="G__ExperimentBuiltInSpecies"/>	
-		<chapter name="6.1.4 Other Built-in Species" file="G__OtherBuiltInSpecies"/> 
+		<chapter name="6.1.4 Other Built-in Species" file="G__OtherBuiltInSpecies"/>  
 		<chapter name="6.2 Built-in Skills" file="G__BuiltInSkills"/>
 		<chapter name="6.3 Built-in Control Architectures" file="G__BuiltInControlArchitectures"/>
 		<chapter name="6.3.1 Finite State Machine" file="G__FiniteStateMachine"/>
@@ -78,15 +78,15 @@
 		<chapter name="6.3.3 User Controlled" file="G__UserControlled"/>
 		<chapter name="6.4 Statements" file="G__Statements"/>
 		<chapter name="6.5 Data Types" file="G__DataTypes"/>
-		<chapter name="6.5.1 File Types" file="G__FileTypes"/> 
+		<chapter name="6.5.1 File Types" file="G__FileTypes"/>  -->
 
 		<chapter name="6.6 Expressions" file="G__Expressions"/>		
-		<chapter name="6.6.1 Literals" file="G__Literals"/>
+		<chapter name="6.6.1 Literals" file="G__Literals"/> 
 		<chapter name="6.6.2 Units and constants" file="G__UnitsAndConstants"/>		
 		<chapter name="6.6.3 Pseudo-variables" file="G__PseudoVariables"/>		
 		<chapter name="6.6.4 Variables and attributes" file="G__VariablesAndAttributes"/>
 		<chapter name="6.6.5 Operators" file="G__Operators"/>
-	</part>
+<!--	</part>
 	<part name="Recipes">
 		<chapter name="7. Recipes" file="G__Recipes"/>
 		<chapter name="7.1 Optimizing Models" file="G__OptimizingModels"/> 
@@ -102,6 +102,6 @@
 		<chapter name="7.9 Using BDI agents" file="G__UsingBDI"/>
 	</part>
 	<part name="References">
-		<chapter name="References" file="G__References"/>		
+		<chapter name="References" file="G__References"/>		-->
 	</part>
 </toc>		
