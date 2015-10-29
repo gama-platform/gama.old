@@ -121,14 +121,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		super.executeOn(scope);
+		IAgent agent = scope.getAgentScope();
+		if (agent.dead()) return null;
 		if ( _perceptionNumber > 0 ) {
 			for ( int i = 0; i < _perceptionNumber; i++ ) {
 				_perceptions.get(i).executeOn(scope);
+				if (agent.dead()) return null;
 			}
 		}
 		if(_rulesNumber > 0){
 			for ( int i = 0; i < _rulesNumber; i++ ) {
 				_rules.get(i).executeOn(scope);
+				if (agent.dead()) return null;
 			}
 		}
 		return executePlans(scope);
@@ -809,7 +813,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static Boolean addDesire(final IScope scope, Predicate superPredicate, Predicate predicate){
-		//Faire un test pour ne pas rajouter deux fois le même désire
+		//Faire un test pour ne pas rajouter deux fois le mï¿½me dï¿½sire
 		if ( superPredicate != null ) {
 			if ( superPredicate.getSubintentions() == null ) {
 				superPredicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
