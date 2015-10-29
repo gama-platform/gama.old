@@ -12,22 +12,18 @@
 
 package msi.gaml.architecture.simplebdi;
 
-import java.awt.Shape;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -36,13 +32,9 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.SymbolDescription;
-import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IVarExpression.Agent;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
-import msi.gaml.statements.Facets;
 import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 

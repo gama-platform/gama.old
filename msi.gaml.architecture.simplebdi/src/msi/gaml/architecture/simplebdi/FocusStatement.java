@@ -12,12 +12,9 @@
 
 package msi.gaml.architecture.simplebdi;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.ITyped;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -30,12 +27,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
-import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 
 @symbol(name = FocusStatement.FOCUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
