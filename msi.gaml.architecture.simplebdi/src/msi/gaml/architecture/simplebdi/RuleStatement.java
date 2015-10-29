@@ -35,24 +35,30 @@ import msi.gaml.types.IType;
 @symbol(name = RuleStatement.RULE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = {
-	@facet(name = RuleStatement.BELIEF, type = IType.NONE, optional = false, doc = @doc("The belief required")),
-	@facet(name = RuleStatement.DESIRE, type = IType.NONE, optional = false, doc = @doc("The desire that will be added")),
+	@facet(name = RuleStatement.BELIEF, type = PredicateType.id, optional = true, doc = @doc("The mandatory belief")),
+	@facet(name = RuleStatement.DESIRE, type = PredicateType.id, optional = true, doc = @doc("The mandatory desire")),
+	@facet(name = RuleStatement.NEW_DESIRE , type = PredicateType.id, optional = true, doc = @doc("The desire that will be added")),
+	@facet(name = RuleStatement.NEW_BELIEF, type = PredicateType.id, optional = true, doc = @doc("The belief that will be added")),
 	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc(" ")),
 	@facet(name = RuleStatement.PRIORITY, type = {IType.FLOAT,IType.INT}, optional = true, doc = @doc("The priority of the predicate added as a desire")),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("The name of the rule"))}
 ,omissible = IKeyword.NAME)
-@doc( value = "enables to add a desire if the agent gets the belief mentioned.",
-		examples={@example("rule belif: new_predicate(\"test\") desire: new_predicate(\"test\")")})
+@doc( value = "enables to add a desire or a belief if the agent gets the belief or/and desire or/and condition mentioned.",
+		examples={@example("rule belief: new_predicate(\"test\") when: flip(0.5) desire: new_predicate(\"test\")")})
 public class RuleStatement extends AbstractStatement{
 
 	public static final String RULE = "rule";
 	public static final String BELIEF = "belief";
 	public static final String DESIRE = "desire";
+	public static final String NEW_DESIRE = "new_desire";
+	public static final String NEW_BELIEF = "new_belief";
 	public static final String PRIORITY = "priority";
 	
 	final IExpression when;
 	final IExpression belief;
 	final IExpression desire;
+	final IExpression newBelief;
+	final IExpression newDesire;
 	final IExpression priority;
 	
 	public RuleStatement(IDescription desc) {
@@ -60,27 +66,38 @@ public class RuleStatement extends AbstractStatement{
 		when = getFacet(IKeyword.WHEN);
 		belief = getFacet(RuleStatement.BELIEF);
 		desire = getFacet(RuleStatement.DESIRE);
+		newBelief = getFacet(RuleStatement.NEW_BELIEF);
+		newDesire = getFacet(RuleStatement.NEW_DESIRE);
 		priority = getFacet(RuleStatement.PRIORITY);
 	}
 
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
+		if (newBelief == null && newDesire == null) return null;
 		if ( when == null || Cast.asBool(scope, when.value(scope)) ){
-			if((belief != null)){
-				if (SimpleBdiArchitecture.hasBelief(scope, (Predicate)(belief.value(scope)))){
-					if((desire != null)){
-						//Bricolage avec le copy en attendant que le map soit fixé
-						if(((Predicate)(desire.value(scope))).getValues()==null){
-							SimpleBdiArchitecture.addDesire(scope, null, ((Predicate)(desire.value(scope))));
+			if( belief == null || SimpleBdiArchitecture.hasBelief(scope, (Predicate)(belief.value(scope)))) {
+				if( desire == null || SimpleBdiArchitecture.hasDesire(scope, (Predicate)(desire.value(scope)))) {
+					if (newDesire != null) {
+						Predicate newDes = ((Predicate)(newDesire.value(scope)));
+						if(newDes.getValues()==null){
+							SimpleBdiArchitecture.addDesire(scope, null, newDes);
 						}else{
-							Predicate temp;
-							temp =  (Predicate)(desire.value(scope));
 							//Il faut copier la liste des valeurs.
-							temp.setValues((Map<String, Object>) GamaMapFactory.createWithoutCasting(((Predicate)(desire.value(scope))).getType().getKeyType(), ((Predicate)(desire.value(scope))).getType().getContentType(), ((Predicate)(desire.value(scope))).getValues()));
+							newDes.setValues((Map<String, Object>) GamaMapFactory.createWithoutCasting(newDes.getType().getKeyType(), newDes.getType().getContentType(), newDes.getValues()));
 							if(priority!=null){
-								temp.setPriority(Cast.asFloat(scope, priority.value(scope)));
+								newDes.setPriority(Cast.asFloat(scope, priority.value(scope)));
 							}
-							SimpleBdiArchitecture.addDesire(scope, null, temp);
+							SimpleBdiArchitecture.addDesire(scope, null, newDes);
+						}
+					}
+					if (newBelief != null) {
+						Predicate newBel = ((Predicate)(newBelief.value(scope)));
+						if(newBel.getValues()==null){
+							SimpleBdiArchitecture.addBelief(scope, newBel);
+						}else{
+							//Il faut copier la liste des valeurs.
+							newBel.setValues((Map<String, Object>) GamaMapFactory.createWithoutCasting(newBel.getType().getKeyType(), newBel.getType().getContentType(), newBel.getValues()));
+							SimpleBdiArchitecture.addBelief(scope, newBel);
 						}
 					}
 				}

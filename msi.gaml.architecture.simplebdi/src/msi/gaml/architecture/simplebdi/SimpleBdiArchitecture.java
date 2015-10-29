@@ -614,6 +614,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return getBase(scope, BELIEF_BASE).contains(predicateDirect);
 	}
 	
+	public static Boolean hasDesire(final IScope scope, Predicate predicateDirect){
+//		System.out.println(getBase(scope, BELIEF_BASE));
+//		System.out.println(getBase(scope, BELIEF_BASE).contains(predicateDirect));
+		return getBase(scope, DESIRE_BASE).contains(predicateDirect);
+	}
+	
 	@action(name = "has_belief", args = { @arg(name = PREDICATE,
 		type = PredicateType.id,
 		optional = true,
