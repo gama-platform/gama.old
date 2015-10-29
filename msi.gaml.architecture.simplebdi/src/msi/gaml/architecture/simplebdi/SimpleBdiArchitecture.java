@@ -466,7 +466,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	//			System.out.println("size : "+ ((ArrayList)cond).size());
 				if(cond instanceof ArrayList){
 					if(((ArrayList)cond).size()<=1){
-						System.out.println("size : "+ ((ArrayList)cond).size());
+						//System.out.println("size : "+ ((ArrayList)cond).size());
 						GamaList desbase = getBase(scope, DESIRE_BASE);
 						GamaList intentionbase = getBase(scope, INTENTION_BASE);
 						desbase.remove(intention);
