@@ -897,16 +897,6 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="platform:/plugin/msi.gama.application/icons/navigator/checkout2.png"
-                  label="From SVN..."
-                  style="push">
-               <parameter
-                     name="importWizardId"
-                     value="org.eclipse.team.svn.ui.wizard.ImportFromSVNWizard">
-               </parameter>
-            </command>
-            <command
-                  commandId="org.eclipse.ui.file.import"
                   icon="icons/navigator/navigator.import.disk2.png"
                   label="From disk..."
                   style="push">

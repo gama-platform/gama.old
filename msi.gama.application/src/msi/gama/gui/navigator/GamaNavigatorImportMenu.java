@@ -49,22 +49,12 @@ public class GamaNavigatorImportMenu extends GamaNavigatorMenu {
 
 	};
 
-	private final SelectionListener fromSVN = new SelectionAdapter() {
-
-		@Override
-		public void widgetSelected(final SelectionEvent e) {
-			openWizard("org.eclipse.team.svn.ui.wizard.ImportFromSVNWizard", selection);
-		}
-
-	};
-
 	@Override
 	protected void fillMenu() {
 		action("Import project...", project, GamaIcons.create("navigator/navigator.import.project2").image());
 		sep();
 		action("From disk...", fromDisk, GamaIcons.create("navigator/navigator.import.disk2").image());
 		action("From archive...", fromArchive, GamaIcons.create("navigator/navigator.import.archive2").image());
-		action("From SVN...", fromSVN, GamaIcons.create("navigator/checkout2").image());
 
 		// sep();
 		// action("Other...", newOther, GamaIcons.create("navigator/navigator.new2").image());
