@@ -179,13 +179,6 @@
          fragment="true"/>
 
    <plugin
-         id="org.eclipse.team.svn.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.equinox.p2.operations"
          download-size="0"
          install-size="0"
@@ -425,13 +418,6 @@
 
    <plugin
          id="org.eclipse.equinox.frameworkadmin.equinox"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.team.svn.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -1017,13 +1003,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="org.eclipse.ui.workbench.compatibility"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
 
    <plugin
          id="ummisco.gaml.editbox"
