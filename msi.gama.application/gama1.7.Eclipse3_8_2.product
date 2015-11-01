@@ -268,6 +268,10 @@ openFile
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
       <feature id="org.eclipse.e4.rcp"/>
+      <feature id="ummisco.gama.feature.models"/>
+      <feature id="ummisco.gama.feature.dependencies"/>
+      <feature id="ummisco.gama.feature.opengl.jogl2"/>
+      <feature id="ummisco.gama.feature.core"/>
    </features>
 
    <configurations>
