@@ -80,10 +80,10 @@ public class RuleStatement extends AbstractStatement{
 					if (newDesire != null) {
 						Predicate newDes = ((Predicate)(newDesire.value(scope)));
 						if(newDes.getValues()==null){
-							SimpleBdiArchitecture.addDesire(scope, null, newDes);
+							SimpleBdiArchitecture.addDesire(scope, null, ((Predicate)(newDesire.value(scope))));
 						}else{
 							//Il faut copier la liste des valeurs.
-							newDes.setValues((Map<String, Object>) GamaMapFactory.createWithoutCasting(newDes.getType().getKeyType(), newDes.getType().getContentType(), newDes.getValues()));
+							newDes.setValues((Map<String, Object>) GamaMapFactory.createWithoutCasting(newDes.getType().getKeyType(), newDes.getType().getContentType(), ((Predicate)(newDesire.value(scope))).getValues()));
 							if(priority!=null){
 								newDes.setPriority(Cast.asFloat(scope, priority.value(scope)));
 							}
@@ -93,10 +93,10 @@ public class RuleStatement extends AbstractStatement{
 					if (newBelief != null) {
 						Predicate newBel = ((Predicate)(newBelief.value(scope)));
 						if(newBel.getValues()==null){
-							SimpleBdiArchitecture.addBelief(scope, newBel);
+							SimpleBdiArchitecture.addBelief(scope, ((Predicate)(newBelief.value(scope))));
 						}else{
 							//Il faut copier la liste des valeurs.
-							newBel.setValues((Map<String, Object>) GamaMapFactory.createWithoutCasting(newBel.getType().getKeyType(), newBel.getType().getContentType(), newBel.getValues()));
+							newBel.setValues((Map<String, Object>) GamaMapFactory.createWithoutCasting(newBel.getType().getKeyType(), newBel.getType().getContentType(), ((Predicate)(newBelief.value(scope))).getValues()));
 							SimpleBdiArchitecture.addBelief(scope, newBel);
 						}
 					}
