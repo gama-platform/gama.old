@@ -22,7 +22,8 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
 public class SpeedContributionItem extends WorkbenchWindowControlContribution implements ISpeedDisplayer {
 
-	public final static int size = 100;
+	public final static int widthSize = 100;
+	public final static int heightSize = 16;
 	private final Image thumb_image;
 	private final double init;
 	private final GamaUIColor popupColor, sliderColor;
@@ -43,7 +44,7 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 
 	@Override
 	protected int computeWidth(final Control control) {
-		return control.computeSize(size, SWT.DEFAULT, true).x;
+		return control.computeSize(widthSize, SWT.DEFAULT, true).x;
 	}
 
 	@Override
@@ -57,12 +58,14 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 		composite.setLayout(layout);
 		composite.setBackground(parent.getBackground());
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		data.widthHint = size;
-		data.minimumWidth = size;
+		data.widthHint = widthSize;
+		data.minimumWidth = widthSize;
 		slider = new SimpleSlider(composite, sliderColor.color(), thumb_image);
 		slider.setTooltipInterperter(tip);
 		slider.setLayoutData(data);
-		slider.setSize(size, 16);
+		slider.setSize(widthSize, heightSize);
+		slider.specifyHeight(heightSize); // fix the problem of wrong position 
+		// for the tooltip. Certainly not the best way but it does the trick 
 		slider.addPositionChangeListener(listener);
 		slider.setPopupBackground(popupColor);
 		slider.updateSlider(getInitialValue(), false);
