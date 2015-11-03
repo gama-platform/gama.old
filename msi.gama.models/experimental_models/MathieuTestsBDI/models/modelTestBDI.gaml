@@ -62,8 +62,8 @@ species helicopter skills: [moving] control: simple_bdi{
 	}
 	
 	//The rules are used to create a desire from a belief. We can specify the priority of the desire with a statement priority.
-	rule belief: new_predicate("location_fireArea") desire: get_belief_with_name("location_fireArea");
-	rule belief: no_water_predicate desire: water_predicate;
+	rule belief: new_predicate("location_fireArea") new_desire: get_belief_with_name("location_fireArea");
+	rule belief: no_water_predicate new_desire: water_predicate;
 	
 	//The plan to do when the intention is to patrol.
 	plan patrolling intention:patrol_desire finished_when: has_belief(new_predicate("location_fireArea")) or has_belief(no_water_predicate){
