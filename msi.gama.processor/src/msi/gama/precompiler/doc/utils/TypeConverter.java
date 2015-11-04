@@ -60,20 +60,28 @@ public class TypeConverter {
 		hm.put("java.lang.Integer", "int");
 		hm.put("java.lang.Double", "float");	
 		hm.put("java.lang.Long", "float");		
+		hm.put("double", "float");	
+		hm.put("boolean", "bool");		
+		
 		// Matrix
 		hm.put("msi.gama.util.matrix.IMatrix<T>", "matrix");
 		hm.put("msi.gama.util.matrix.IMatrix", "matrix");
 		hm.put("msi.gama.util.matrix.GamaMatrix", "matrix");		
-		hm.put("msi.gama.util.matrix.GamaIntMatrix", "matrix");
+		hm.put("msi.gama.util.matrix.GamaIntMatrix", "matrix<int>");
 		hm.put("msi.gama.util.matrix.GamaMatrix<T>", "matrix");
 		hm.put("msi.gama.util.matrix.GamaMatrix<java.lang.Double>", "matrix<float>");
+		hm.put("msi.gama.util.matrix.GamaFloatMatrix", "matrix<float>");
+		hm.put("msi.gama.util.matrix.IMatrix<java.lang.Double>", "matrix<float>");
+		
 		// Files
 		hm.put("msi.gama.util.file.IGamaFile", "file");
 		hm.put("msi.gama.util.file.GamaFile", "file");		
 		hm.put("msi.gama.jogl.files.Gama3DSFile", "file");
 		hm.put("msi.gama.jogl.files.GamaObjFile", "file");
+		
 		// Colors
 		hm.put("msi.gama.util.GamaColor", "rgb");
+		
 		// List
 		hm.put("msi.gama.util.IList", "list");
 		hm.put("msi.gama.util.GamaList", "list");
@@ -83,6 +91,8 @@ public class TypeConverter {
 		hm.put("msi.gama.util.IList<java.lang.Object>", "list");
 		hm.put("java.util.List<java.lang.Object>", "list");
 		hm.put("msi.gama.util.IList<msi.gama.util.IList<T>>", "list<list>");
+		hm.put("msi.gama.util.IList<msi.gama.util.IList>", "list<list>");	
+		hm.put("msi.gama.util.GamaList<msi.gama.util.GamaList>", "list<list>");
 		hm.put("java.util.List<java.util.List>", "list<list>");
 		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
 		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>", "list<point>");
@@ -93,10 +103,11 @@ public class TypeConverter {
 		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
 		hm.put("msi.gama.util.GamaList<msi.gama.util.GamaList<msi.gama.metamodel.shape.GamaPoint>>","list<list<point>>");
 		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.ILocation>", "list<point>");		
-		hm.put("java.util.List<msi.gama.util.path.GamaSpatialPath>", "list<path>");
-		
+		hm.put("java.util.List<msi.gama.util.path.GamaSpatialPath>", "list<path>");		
 		hm.put("msi.gama.util.GamaList<java.lang.Double>", "list<float>");
 		hm.put("msi.gama.util.IList<java.lang.Double>", "list<float>");
+		hm.put("msi.gama.util.IList<msi.gama.util.GamaColor>", "list<rgb>");
+		hm.put("msi.gama.util.IList<KeyType>", "list<KeyType>");
 		
 		hm.put("msi.gama.metamodel.shape.GamaPoint", "point");
 		hm.put("msi.gama.metamodel.shape.ILocation", "point");
@@ -111,21 +122,38 @@ public class TypeConverter {
 		hm.put("msi.gama.util.GamaMap", "map");
 		hm.put("msi.gaml.expressions.IExpression", "any expression");
 		hm.put("msi.gaml.species.ISpecies", "species");
+		
 		hm.put("msi.gama.util.IContainer", "container");
-		hm.put("msi.gama.util.IContainer<KeyType,ValueType>", "container");
+		hm.put("msi.gama.util.IContainer<KeyType,ValueType>", "container<KeyType,ValueType>");
 		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>", "container<geometry>");
 		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.agent.IAgent>", "container<agent>");
+		hm.put("msi.gama.util.IContainer<?,? extends msi.gama.metamodel.shape.IShape>", "container<agent>");
+		hm.put("msi.gama.util.IContainer<?,java.lang.Double>", "container<float>");
 		
 		hm.put("java.util.Map", "map");
+		hm.put("msi.gama.util.GamaMap<?,?>", "map");	
 		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map<string,unknown>");
 		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,unknown>");
+		hm.put("msi.gama.util.GamaMap<java.lang.String,msi.gama.util.GamaList>", "map<string,list>");
+		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.GamaPoint,java.lang.Double>","map<point,float>");
+		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.IShape,java.lang.Double>","map<agent,float>");
+		
+		// BDI
+		hm.put("msi.gaml.architecture.simplebdi.Predicate", "predicate");	
+		hm.put("msi.gaml.architecture.simplebdi.BDIPlan", "BDIPlan");
+		
+		// FIPA
+		hm.put("msi.gaml.extensions.fipa.Conversation", "conversation");
+		hm.put("msi.gaml.extensions.fipa.Message", "message");
 		
 		hm.put("msi.gama.util.IPath", "path");		
 		hm.put("msi.gama.util.path.IPath", "path");
-		hm.put("double", "float");	
-		hm.put("boolean", "bool");
+
 		
-		hm.put("msi.gama.util.IAddressableContainer<java.lang.Integer,msi.gama.metamodel.agent.IAgent,java.lang.Integer,msi.gama.metamodel.agent.IAgent>","???");
+		hm.put("msi.gama.util.IContainer<KeyType,ValueType>.Addressable<KeyType,ValueType>", "container<KeyType,ValueType>");
+		hm.put("msi.gama.util.IAddressableContainer<java.lang.Integer,msi.gama.metamodel.agent.IAgent,java.lang.Integer,msi.gama.metamodel.agent.IAgent>","list<agent>");
+		// msi.gama.util.GamaRegression ??????
+		// msi.gama.util.GamaFont ????
 		return hm;
 	}
 	

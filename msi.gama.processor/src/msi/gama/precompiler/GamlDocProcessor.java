@@ -732,8 +732,9 @@ public class GamlDocProcessor {
 					statElt.setAttribute(XMLElements.ATT_STAT_ID, e.getAnnotation(symbol.class).name()[0]);
 					statElt.setAttribute(XMLElements.ATT_STAT_NAME, e.getAnnotation(symbol.class).name()[0]);
 				} else {
-					// TODO : case of variables declarations ... Variable, ContainerVariable,
-					// NumberVariable
+					String kind = tc.getSymbolKindStringFromISymbolKind(e.getAnnotation(symbol.class).kind()).replace("(", "").replace(")", "").replace(" ", "_");
+					statElt.setAttribute(XMLElements.ATT_STAT_ID, kind);
+					statElt.setAttribute(XMLElements.ATT_STAT_NAME, kind);					
 				}
 				statElt.setAttribute(XMLElements.ATT_STAT_KIND, tc.getSymbolKindStringFromISymbolKind(e.getAnnotation(symbol.class).kind()));
 	
