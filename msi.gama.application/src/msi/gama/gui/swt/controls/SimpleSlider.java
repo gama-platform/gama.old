@@ -28,6 +28,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	private final Thumb thumb;
 	private final Panel leftRegion;
 	private boolean mouseDown = false;
+	private int sliderHeight;
 
 	public class Thumb extends Canvas implements PaintListener {
 
@@ -380,11 +381,15 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	@Override
 	public Point getAbsoluteOrigin() {
-		return leftRegion.toDisplay(new Point(leftRegion.getLocation().x, leftRegion.getSize().y));
+		return leftRegion.toDisplay(new Point(leftRegion.getLocation().x, sliderHeight*2));
 	}
 
 	@Override
 	public Shell getControllingShell() {
 		return leftRegion.getShell();
+	}
+
+	public void specifyHeight(int heightsize) {
+		sliderHeight = heightsize;		
 	}
 }
