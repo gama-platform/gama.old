@@ -122,7 +122,12 @@ public class Operators {
 	
 	@operator(value = "get_priority", can_be_const = true, category = {"BDI"})
 	public static Double getPriority(Predicate pred){
-		return pred.priority;
+		if(pred!=null){
+			return pred.priority;
+		}
+		else{
+			return null;
+		}
 	}
 	
 }

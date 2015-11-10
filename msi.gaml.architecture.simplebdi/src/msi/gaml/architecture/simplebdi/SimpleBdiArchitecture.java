@@ -700,7 +700,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			optional = false,
 			doc = @doc("name of the predicate to check")) }, doc = @doc(value = "get the predicates is in the belief base (if several, returns the first one).",
 			returns = "the predicate if it is in the base.",
-			examples = { @example("get_belief(\"has_water\")") }))
+			examples = { @example("get_belief_with_name(\"has_water\")") }))
 		public Predicate getBeliefName(final IScope scope) throws GamaRuntimeException {
 			String predicateName =
 				(String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
@@ -894,6 +894,81 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	@action(name = "get_desire", args = { @arg(name = PREDICATE,
+			type = PredicateType.id,
+			optional = false,
+			doc = @doc("predicate to check")) }, doc = @doc(value = "get the predicates is in the desire base (if several, returns the first one).",
+			returns = "the predicate if it is in the base.",
+			examples = { @example("get_desire(new_predicate(\"has_water\", true))") }))
+		// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
+		public Predicate getDesire(final IScope scope) throws GamaRuntimeException {
+			Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+			if ( predicateDirect != null ) {
+				for ( Predicate pred : getBase(scope, DESIRE_BASE) ) {
+					if ( predicateDirect.equals(pred) ) { return pred; }
+				}
+			}
+			return null;
+		}
+	
+	@action(name = "get_desires", args = { @arg(name = PREDICATE,
+			type = PredicateType.id,
+			optional = false,
+			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base",
+			returns = "the list of predicates.",
+			examples = { @example("get_desires(\"has_water\")") }))
+		public IList<Predicate> getDesires(final IScope scope) throws GamaRuntimeException {
+		Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+			IList<Predicate> predicates = GamaListFactory.create();
+			if ( predicateDirect != null ) {
+				for ( Predicate pred : getBase(scope, DESIRE_BASE) ) {
+					if ( predicateDirect.equals(pred)) { predicates.add(pred); }
+				}
+			}
+			return predicates;
+		}
+	
+	@action(name = "get_desire_with_name", args = { @arg(name = "name",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("name of the predicate to check")) }, doc = @doc(value = "get the predicates is in the belief base (if several, returns the first one).",
+			returns = "the predicate if it is in the base.",
+			examples = { @example("get_desire_with_name(\"has_water\")") }))
+		public Predicate getDesireName(final IScope scope) throws GamaRuntimeException {
+			String predicateName =
+				(String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+			if ( predicateName != null ) {
+				for ( Predicate pred : getBase(scope, DESIRE_BASE) ) {
+					if ( predicateName.equals(pred.getName())) { return pred; }
+				}
+			}
+			return null;
+		}
+	
+	@action(name = "get_desires_with_name", args = { @arg(name = "name",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base with the given name.",
+			returns = "the list of predicates.",
+			examples = { @example("get_belief(\"has_water\")") }))
+		public List<Predicate> getDesiresName(final IScope scope) throws GamaRuntimeException {
+			String predicateName =
+				(String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+			List<Predicate> predicates = GamaListFactory.create();
+			if ( predicateName != null ) {
+				for ( Predicate pred : getBase(scope, DESIRE_BASE) ) {
+					if ( predicateName.equals(pred.getName())) { predicates.add(pred); }
+				}
+			}
+			return predicates;
+		}
+	
+	public static Boolean removeBelief(final IScope scope, final Predicate pred){
+		return getBase(scope, BELIEF_BASE).remove(pred);
+	}
+	
 	@action(name = "remove_belief", args = { @arg(name = PREDICATE,
 		type = PredicateType.id,
 		optional = true,
@@ -903,7 +978,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primRemoveBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if ( predicateDirect != null ) { return getBase(scope, BELIEF_BASE).remove(predicateDirect);}
+		if ( predicateDirect != null ) { return removeBelief(scope,predicateDirect);}
 		return false;
 	}
 	
@@ -957,6 +1032,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return ok;
 		}
 
+	public static Boolean removeDesire(final IScope scope, final Predicate pred){
+		getBase(scope, DESIRE_BASE).remove(pred);
+		getBase(scope, INTENTION_BASE).remove(pred);
+		for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+			if(((Predicate)statement).getSubintentions()!=null){
+				if(((Predicate)statement).getSubintentions().contains(pred)){
+					((Predicate)statement).getSubintentions().remove(pred);
+				}
+			}
+			if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+				if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(pred)){
+					((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(pred);
+				}
+			}
+		}
+		return true;
+	}
+	
 	@action(name = "remove_desire", args = { @arg(name = PREDICATE,
 		type = PredicateType.id,
 		optional = true,
@@ -967,26 +1060,104 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if ( predicateDirect != null ) { 
-			getBase(scope, DESIRE_BASE).remove(predicateDirect);
-			//remove the intention too (and the subintentions)
-			getBase(scope, INTENTION_BASE).remove(predicateDirect);
-			for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
-				if(((Predicate)statement).getSubintentions()!=null){
-					if(((Predicate)statement).getSubintentions().contains(predicateDirect)){
-						((Predicate)statement).getSubintentions().remove(predicateDirect);
-					}
-				}
-				if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
-					if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(predicateDirect)){
-						((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(predicateDirect);
-					}
-				}
-			}
-			return true;
+			return removeDesire(scope,predicateDirect);
 		}
 		return false;
 	}
 
+	@action(name = "get_intention", args = { @arg(name = PREDICATE,
+			type = PredicateType.id,
+			optional = false,
+			doc = @doc("predicate to check")) }, doc = @doc(value = "get the predicates is in the belief base (if several, returns the first one).",
+			returns = "the predicate if it is in the base.",
+			examples = { @example("get_belief(new_predicate(\"has_water\", true))") }))
+		// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
+		public Predicate getIntention(final IScope scope) throws GamaRuntimeException {
+			Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+			if ( predicateDirect != null ) {
+				for ( Predicate pred : getBase(scope, INTENTION_BASE) ) {
+					if ( predicateDirect.equals(pred) ) { return pred; }
+				}
+			}
+			return null;
+		}
+	
+	@action(name = "get_intentions", args = { @arg(name = PREDICATE,
+			type = PredicateType.id,
+			optional = false,
+			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base",
+			returns = "the list of predicates.",
+			examples = { @example("get_belief(\"has_water\")") }))
+		public IList<Predicate> getIntentions(final IScope scope) throws GamaRuntimeException {
+		Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+			IList<Predicate> predicates = GamaListFactory.create();
+			if ( predicateDirect != null ) {
+				for ( Predicate pred : getBase(scope, INTENTION_BASE) ) {
+					if ( predicateDirect.equals(pred)) { predicates.add(pred); }
+				}
+			}
+			return predicates;
+		}
+	
+	@action(name = "get_intention_with_name", args = { @arg(name = "name",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("name of the predicate to check")) }, doc = @doc(value = "get the predicates is in the belief base (if several, returns the first one).",
+			returns = "the predicate if it is in the base.",
+			examples = { @example("get_intention_with_name(\"has_water\")") }))
+		public Predicate getIntentionName(final IScope scope) throws GamaRuntimeException {
+			String predicateName =
+				(String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+			if ( predicateName != null ) {
+				for ( Predicate pred : getBase(scope, INTENTION_BASE) ) {
+					if ( predicateName.equals(pred.getName())) { return pred; }
+				}
+			}
+			return null;
+		}
+	
+	@action(name = "get_intentions_with_name", args = { @arg(name = "name",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base with the given name.",
+			returns = "the list of predicates.",
+			examples = { @example("get_belief(\"has_water\")") }))
+		public List<Predicate> getIntentionsName(final IScope scope) throws GamaRuntimeException {
+			String predicateName =
+				(String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+			List<Predicate> predicates = GamaListFactory.create();
+			if ( predicateName != null ) {
+				for ( Predicate pred : getBase(scope, INTENTION_BASE) ) {
+					if ( predicateName.equals(pred.getName())) { predicates.add(pred); }
+				}
+			}
+			return predicates;
+		}
+	
+	public static Boolean removeIntention(final IScope scope, final Predicate pred){
+		getBase(scope, INTENTION_BASE).remove(pred);
+		for(Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)){
+			if(((Predicate)statement).getSubintentions()!=null){
+				if(((Predicate)statement).getSubintentions().contains(pred)){
+					((Predicate)statement).getSubintentions().remove(pred);
+				}
+			}
+			if(((ArrayList)((Predicate)statement).getOnHoldUntil())!=null){
+				if(((ArrayList)((Predicate)statement).getOnHoldUntil()).contains(pred)){
+					((ArrayList)((Predicate)statement).getOnHoldUntil()).remove(pred);
+				}
+			}
+			if(((ArrayList)(((Predicate)statement).getSubintentions()))!=null){
+				if(((ArrayList)(((Predicate)statement).getSubintentions())).contains(pred)){
+					((ArrayList)(((Predicate)statement).getSubintentions())).remove(pred);
+				}
+			}
+		}
+		return true;
+	}
+	
 	@action(name = "remove_intention",
 		args = {
 			@arg(name = PREDICATE, type = PredicateType.id, optional = true, doc = @doc("predicate to add")),
