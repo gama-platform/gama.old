@@ -209,17 +209,18 @@ public class Predicate implements IValue {
 		if ( name == null ) {
 			if ( other.name != null ) { return false; }
 		} else if ( !name.equals(other.name) ) { return false; }
-
-		if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
-		if ( values == null ) {
-			if ( other.values != null ) { return false; }
-		} else if ( !values.equals(other.values) ) { return false; }
 		if(subintentions == null){
 			if (other.subintentions!=null){return false;}
 		} else if(!subintentions.equals(other.subintentions)) {return false;}
 		if(superIntention == null){
 			if(other.superIntention != null){return false;}
 		}else if(!superIntention.equals(other.superIntention)){return false;}
+		if(is_true!=other.is_true){return false;}
+		if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
+		if ( values == null ) {
+			if ( other.values != null ) { return false; }
+		} else if ( !values.equals(other.values) ) { return false; }
+		
 		return true;
 	}
 
