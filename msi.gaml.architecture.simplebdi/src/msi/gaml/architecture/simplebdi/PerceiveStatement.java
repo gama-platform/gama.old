@@ -12,6 +12,7 @@
 
 package msi.gaml.architecture.simplebdi;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
@@ -46,7 +48,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.AS, type = IType.SPECIES, optional = true, doc = @doc("an expression that evaluates to a species")),
 	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("a boolean to tell when does the perceive is active" )),
 	@facet(name = IKeyword.IN, type = {IType.FLOAT,IType.GEOMETRY}, optional = true, doc = @doc("a float or a geometry. If it is a float, it's a radius of a detection area. If it is a geometry, it is the area of detection of others species.")),
-	@facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.POINT }, optional=false, doc = @doc("the list of the agent you want to perceive"))
+	@facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.POINT, IType.AGENT }, optional=false, doc = @doc("the list of the agent you want to perceive"))
 }, omissible = IKeyword.NAME)
 @doc(value = "Allow the agent, with a bdi architecture, to perceive others agents" , usages = {
 		@usage(value = "the basic syntax to perceive agents inside a circle of perception", examples = {
@@ -125,13 +127,19 @@ public class PerceiveStatement extends AbstractStatementSequence{
 					}
 				return result[0];
 			}else{
-			final Iterator<IAgent> runners =
-					obj instanceof IContainer ? ((IContainer) obj).iterable(scope).iterator() : null;
+			final Iterator<IAgent> runners = 
+					obj instanceof IContainer ? ((IContainer) obj).iterable(scope).iterator() : obj instanceof IAgent ? transformAgentToList((IAgent) obj,scope) : null;
 			while (runners.hasNext() && scope.execute(sequence, runners.next(), null, result)) {}
 			return result[0];
 			}
 		}
 		return null;
 	
+	}
+	
+	Iterator<IAgent> transformAgentToList(IAgent temp, IScope scope){
+		IList<IAgent> tempList = GamaListFactory.create();
+		tempList.add(temp);
+		return ((IContainer) tempList).iterable(scope).iterator();
 	}
 }
