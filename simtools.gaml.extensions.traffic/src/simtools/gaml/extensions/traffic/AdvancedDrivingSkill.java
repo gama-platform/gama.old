@@ -985,7 +985,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		// long t = java.lang.System.currentTimeMillis();
 		IList aglanes = (IList) ((GamaList) currentRoad.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
 		Collection<IAgent> agents = (IList<IAgent>) aglanes.get(segmentIndex);
-		boolean moreSegment = segmentIndex <= aglanes.size() - 2;
+		boolean moreSegment = ! onLinkedRoad && (segmentIndex <= aglanes.size() - 2);
 		double distanceToGoal = getDistanceToGoal(agent);
 		boolean nextSegment = distanceToGoal < distance;
 		boolean contains = agents.contains(agent);
@@ -1023,7 +1023,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 
 		if ( onLinkedRoad ) {
 			for ( IAgent ag : agents ) {
-				if ( ag == agent ) {
+				if ( ag == agent || ag == null ) {
 					continue;
 				}
 				double dist = distance2D((GamaPoint) ag.getLocation(), target);
@@ -1040,8 +1040,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		} else {
 			
 			for ( IAgent ag : agents ) {
-				
-				if ( ag == agent ) {
+				//java.lang.System.out.println("ag: " + ag + " currentRoad:" + currentRoad);
+				if ( ag == agent || ag == null) {
 					continue;
 				}
 				double dist = getDistanceToGoal(ag);// distance2D((GamaPoint) ag.getLocation(), target);
@@ -1104,13 +1104,41 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		return realDist;
 	}
 
-	private void changeLane(final IScope scope, final IAgent agent, final int previousLane, final int newLane,
-		final int segment, final List currentAgentOn, final List newAgentOn, final int newSegmentAg) {
+	private void changeLanetoReverse(final IScope scope, final IAgent agent, final int previousLane, final int newLane,
+		final int segment, final List currentAgentOn, final List newAgentOn) {
+		int oldIndex = getSegmentIndex(agent);
+		List agPrevLane =((List) currentAgentOn.get(previousLane));
+		int newIndexInv = agPrevLane.size() - segment - 1;
 		agent.setAttribute(CURRENT_LANE, newLane);
-		((List) ((List) currentAgentOn.get(previousLane)).get(getSegmentIndex(agent))).remove(agent);
+		((List) agPrevLane.get(oldIndex)).remove(agent);
+		List ags = (List) newAgentOn.get(newLane);
+		((List) ags.get(newIndexInv)).add(agent);
+		agent.setAttribute(SEGMENT_INDEX, segment);
+	}
+	
+	private void changeLanefromReverse(final IScope scope, final IAgent agent, final int previousLane, final int newLane,
+			final int segment, final List currentAgentOn, final List newAgentOn) {
+		int oldIndex = getSegmentIndex(agent);
+		List agPrevLane =((List) currentAgentOn.get(previousLane));
+		int oldIndexInv = agPrevLane.size() - oldIndex - 1;
+		agent.setAttribute(CURRENT_LANE, newLane);
+		((List) agPrevLane.get(oldIndexInv)).remove(agent);
 		List ags = (List) newAgentOn.get(newLane);
 		((List) ags.get(segment)).add(agent);
-		agent.setAttribute(SEGMENT_INDEX, newSegmentAg);
+		agent.setAttribute(SEGMENT_INDEX, segment);
+	}
+	
+	private void changeLaneReverse(final IScope scope, final IAgent agent, final int previousLane, final int newLane,
+			final int segment, final List currentAgentOn, final List newAgentOn) {
+		int oldIndex = getSegmentIndex(agent);
+		List agPrevLane =((List) currentAgentOn.get(previousLane));
+		int oldIndexInv = agPrevLane.size() - oldIndex - 1;
+		int newIndexInv = agPrevLane.size() - segment - 1;
+		agent.setAttribute(CURRENT_LANE, newLane);
+		((List) agPrevLane.get(oldIndexInv)).remove(agent);
+		List ags = (List) newAgentOn.get(newLane);
+		((List) ags.get(newIndexInv)).add(agent);
+		agent.setAttribute(SEGMENT_INDEX, segment);
 	}
 	
 	private void changeLane(final IScope scope, final IAgent agent, final int previousLane, final int newLane,
@@ -1143,7 +1171,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 						segmentLinkedRoad, true, linkedRoad, true);
 				if ( val == distance ) {
 					newLane = lane + 1;
-					changeLane(scope, agent, lane, newLane, segmentLinkedRoad, agentOnLinkedRoad, agentOnLinkedRoad,segment);
+					changeLaneReverse(scope, agent, lane, lane, segment, agentOnLinkedRoad, agentOnLinkedRoad);
 					return distance;
 				}
 				if ( val > distMax && val > 0 ) {
@@ -1157,7 +1185,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				if ( val == distance ) {
 					newLane = nbLanes - 1;
 					setOnLinkedRoad(agent, false);
-					changeLane(scope, agent, lane, newLane, segmentLinkedRoad, agentOnLinkedRoad, agentOnCurrentRoad);
+					changeLanefromReverse(scope, agent, lane, newLane, segment, agentOnLinkedRoad, agentOnCurrentRoad);
 					return distance;
 				}
 				if ( val > distMax && val > 0 ) {
@@ -1172,7 +1200,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane, segmentLinkedRoad,
 				true, linkedRoad, false);
 		if ( val == distance ) {
-			changeLane(scope, agent, lane, lane, segmentLinkedRoad, agentOnLinkedRoad, agentOnLinkedRoad,segment);
+			changeLaneReverse(scope, agent, lane, lane, segment, agentOnLinkedRoad, agentOnLinkedRoad);
 
 			return distance;
 		}
@@ -1195,13 +1223,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 
 		// if ( lane != newLane ) {
-		int ind = segmentLinkedRoad;
 		if ( !onLinkedRoad ) {
 			setOnLinkedRoad(agent, false);
-			ind = segment;
-			changeLane(scope, agent, lane, newLane, ind, agentOnLinkedRoad, newAgentOn);
+			changeLanefromReverse(scope, agent, lane, lane, segment, agentOnLinkedRoad, newAgentOn);
 		} else {
-			changeLane(scope, agent, lane, newLane, ind, agentOnLinkedRoad, newAgentOn,segment);
+			changeLaneReverse(scope, agent, lane, lane, segment, agentOnLinkedRoad, newAgentOn);
 		}
 		
 
@@ -1264,6 +1290,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				changeLane = true;
 			}
 		}
+		boolean onLinkedRoad = false;
 		if ( linkedRoad != null && scope.getRandom().next() < probaUseLinkedRoad ) {
 			int nbLinkedLanes = (Integer) linkedRoad.getAttribute(RoadSkill.LANES);
 			val =
@@ -1276,10 +1303,13 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				setOnLinkedRoad(agent, true);
 				ind = segmentLinkedRoad;
 				changeLane = true;
+				onLinkedRoad = true;
 			}
 		}
 		// if ( changeLane ) {
-		changeLane(scope, agent, lane, newLane, ind, agentOn, newAgentOn);
+		if (onLinkedRoad)
+			changeLanetoReverse(scope, agent, lane, newLane, segment, agentOn, newAgentOn);
+		 else changeLane(scope, agent, lane, newLane, ind, agentOn, newAgentOn);
 		// }
 		return distMax;
 	}
