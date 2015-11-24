@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IShape.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -27,11 +27,11 @@ import com.vividsolutions.jts.io.WKTWriter;
 /**
  * Interface for objects that can be provided with a geometry (or which can be translated to
  * a GamaGeometry)
- * 
+ *
  * @author Alexis Drogoul
  * @since 16 avr. 2011
  * @modified November 2011 to include isPoint(), getInnerGeometry() and getEnvelope()
- * 
+ *
  */
 @vars({ @var(name = "perimeter", type = IType.FLOAT) })
 public interface IShape extends ILocated, IValue, IAttributed {
@@ -107,7 +107,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public abstract void setInnerGeometry(Geometry intersection);
 
 	public void setDepth(double depth);
-	
+
 	public void setRotate3D(GamaPair rot3D);
 
 }

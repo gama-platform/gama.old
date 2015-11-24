@@ -29,23 +29,44 @@ public class Operators {
 	
 	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" })
 	@doc(value = "a new predicate with the given is_true (name, is_true)",
-		examples = @example(value = "predicate(\"hasWater\", true )", test = false))
+		examples = @example(value = "predicate(\"hasWater\", true)", test = false))
 	public static Predicate newPredicate(final String name, final Boolean ist) throws GamaRuntimeException {
 		return new Predicate(name,ist);
 	}
 	
 	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" })
-	@doc(value = "a new predicate with the given properties (name, values)",
+	@doc(value = "a new predicate with the given is_true (name, priority)",
+		examples = @example(value = "predicate(\"hasWater\", 2.0 )", test = false))
+	public static Predicate newPredicate(final String name, final Double priority){
+		return new Predicate(name,priority);
+	}
+	
+	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new predicate with the given is_true (name, lifetime)",
+		examples = @example(value = "predicate(\"hasWater\", 10 ", test = false))
+	public static Predicate newPredicate(final String name, final int lifetime){
+		return new Predicate(name,lifetime);
+	}
+	
+	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new predicate with the given properties (name, values, priority)",
 		examples = @example(value = "predicate(\"people to meet\", people1, [\"time\"::10])", test = false))
 	public static Predicate newPredicate(final String name, final Map values, final Double priority) throws GamaRuntimeException {
-		return new Predicate(name,/*value,*/priority,values);
+		return new Predicate(name,priority,values);
 	}
 	
 	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" })
 	@doc(value = "a new predicate with the given properties (name, values, is_true)",
 		examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], true)", test = false))
 	public static Predicate newPredicate(final String name, final Map values, final Boolean truth) throws GamaRuntimeException {
-		return new Predicate(name,/*value,*/values,truth);
+		return new Predicate(name,values,truth);
+	}
+	
+	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new predicate with the given properties (name, values, lifetime)",
+		examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], true)", test = false))
+	public static Predicate newPredicate(final String name, final Map values, final int lifetime) throws GamaRuntimeException {
+		return new Predicate(name,values,lifetime);
 	}
 	
 	@operator(value = "set_truth", can_be_const = true, category = { "BDI" })
@@ -66,9 +87,17 @@ public class Operators {
 	
 	@operator(value = "with_values", can_be_const = true, category = { "BDI" })
 	@doc(value = "change the parameters of the given predicate",
-		examples = @example(value = "predicate with_parameter [\"time\"::10]", test = false))
+		examples = @example(value = "predicate with_values [\"time\"::10]", test = false))
 	public static Predicate withValues(final Predicate predicate, final Map values) throws GamaRuntimeException {
 		predicate.values = values;
+		return predicate;
+	}
+	
+	@operator(value = "with_lifetime", can_be_const = true, category = { "BDI" })
+	@doc(value = "change the parameters of the given predicate",
+		examples = @example(value = "predicate with_lifetime 10", test = false))
+	public static Predicate withValues(final Predicate predicate, final int lifetime) throws GamaRuntimeException {
+		predicate.lifetime = lifetime;
 		return predicate;
 	}
 	
@@ -127,6 +156,16 @@ public class Operators {
 		}
 		else{
 			return null;
+		}
+	}
+	
+	@operator(value = "get_lifetime", can_be_const = true, category = {"BDI"})
+	public static int getLifetime(Predicate pred){
+		if(pred!=null){
+			return pred.lifetime;
+		}
+		else{
+			return 0;
 		}
 	}
 	

@@ -229,6 +229,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					selectDesireWithHighestPriority(scope);
 					if (currentIntention(scope) == null) {
 						addThoughts(scope, "I want nothing...");
+						//update the lifetime of beliefs
+						for ( Predicate pred : getBase(scope, BELIEF_BASE) ) {
+							pred.isUpdated=false;
+							pred.updateLifetime();
+						}
+						for ( Predicate pred : listBeliefsLifeTimeNull(scope)){
+							removeBelief(scope,pred);
+						}
 						return null;
 
 					}
@@ -266,7 +274,35 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 				}
-
+				if (!agent.dead()) {
+					for ( Predicate pred : getBase(scope, BELIEF_BASE) ) {
+						pred.isUpdated=false;
+					}
+					for ( Predicate pred : getBase(scope, DESIRE_BASE) ) {
+						pred.isUpdated=false;
+					}
+					for ( Predicate pred : getBase(scope, INTENTION_BASE) ) {
+						pred.isUpdated=false;
+					}
+					for ( Predicate pred : getBase(scope, BELIEF_BASE) ) {
+						pred.updateLifetime();
+					}
+					for ( Predicate pred : listBeliefsLifeTimeNull(scope)){
+						removeBelief(scope,pred);
+					}
+					for ( Predicate pred : getBase(scope, DESIRE_BASE) ) {
+						pred.updateLifetime();
+					}
+					for ( Predicate pred : listDesiresLifeTimeNull(scope)){
+						removeDesire(scope,pred);
+					}
+					for ( Predicate pred : getBase(scope, INTENTION_BASE) ) {
+						pred.updateLifetime();
+					}
+					for ( Predicate pred : listIntentionsLifeTimeNull(scope)){
+						removeIntention(scope,pred);
+					}
+				}
 			}
 		}
 
@@ -423,6 +459,36 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 
 		return resultStatement;
+	}
+	
+	private List<Predicate> listBeliefsLifeTimeNull(IScope scope){
+		List<Predicate> tempPred = new ArrayList<Predicate>();
+		for ( Predicate pred : getBase(scope, BELIEF_BASE) ) {
+			if(pred.getLifetime()==0){
+				tempPred.add(pred);
+			}
+		}
+		return tempPred;
+	}
+	
+	private List<Predicate> listDesiresLifeTimeNull(IScope scope){
+		List<Predicate> tempPred = new ArrayList<Predicate>();
+		for ( Predicate pred : getBase(scope, DESIRE_BASE) ) {
+			if(pred.getLifetime()==0){
+				tempPred.add(pred);
+			}
+		}
+		return tempPred;
+	}
+
+	private List<Predicate> listIntentionsLifeTimeNull(IScope scope){
+		List<Predicate> tempPred = new ArrayList<Predicate>();
+		for ( Predicate pred : getBase(scope, INTENTION_BASE) ) {
+			if(pred.getLifetime()==0){
+				tempPred.add(pred);
+			}
+		}
+		return tempPred;
 	}
 	
 	protected final List<SimpleBdiPlanStatement> listExecutablePlans(final IScope scope) {

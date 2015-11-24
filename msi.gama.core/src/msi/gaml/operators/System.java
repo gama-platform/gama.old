@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'System.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.operators;
 
@@ -29,27 +29,27 @@ import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 10 d�c. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class System {
 
 	@operator(value = "dead", category = { IOperatorCategory.SYSTEM })
 	@doc(value = "true if the agent is dead, false otherwise.", examples = @example(value = "dead(agent_A)",
-		equals = "true or false",
-		isExecutable = false))
+	equals = "true or false",
+	isExecutable = false))
 	public static Boolean opDead(final IScope scope, final IAgent a) {
 		return a == null || a.dead();
 	}
 
 	@operator(value = "every", category = { IOperatorCategory.SYSTEM })
-	@doc(value = "true every operand time step, false otherwise",
-		comment = "the value of the every operator depends deeply on the time step. It can be used to do something not every step.",
-		examples = { @example("if every(2) {write \"the time step is even\";}"),
-			@example("	     else {write \"the time step is odd\";}") })
+	@doc(value = "true every operand * cycle, false otherwise",
+	comment = "the value of the every operator depends on the cycle. It can be used to do something every x cycle.",
+	examples = { @example("if every(2) {write \"the time step is even\";}"),
+		@example("	     else {write \"the time step is odd\";}") })
 	public static
-		Boolean opEvery(final IScope scope, final Integer period) {
+	Boolean opEvery(final IScope scope, final Integer period) {
 		final int time = scope.getClock().getCycle();
 		return period > 0 && time >= period && time % period == 0;
 	}
@@ -60,13 +60,14 @@ public class System {
 		index_type = ITypeProvider.SECOND_KEY_TYPE,
 		category = { IOperatorCategory.SYSTEM })
 	@doc(value = "It has two different uses: it can be the dot product between 2 matrices or return an evaluation of the expresion (right-hand operand) in the scope the given agent.",
-		masterDoc= true,
-		special_cases = "if the agent is nil or dead, throws an exception",
-		usages = @usage(value="if the left operand is an agent, it evaluates of the expresion (right-hand operand) in the scope the given agent", examples = {
-				@example(value = "agent1.location", equals = "the location of the agent agent1", isExecutable = false),
-				@example(value = "map(nil).keys", raises = "exception", isTestOnly= false) }))
-	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
-		throws GamaRuntimeException {
+	masterDoc = true,
+	special_cases = "if the agent is nil or dead, throws an exception",
+	usages = @usage(value = "if the left operand is an agent, it evaluates of the expresion (right-hand operand) in the scope the given agent",
+			examples = {
+		@example(value = "agent1.location", equals = "the location of the agent agent1", isExecutable = false),
+		@example(value = "map(nil).keys", raises = "exception", isTestOnly = false) }))
+	public static
+		Object opGetValue(final IScope scope, final IAgent a, final IExpression s) throws GamaRuntimeException {
 		if ( a == null ) {
 			if ( !scope.interrupted() ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.serialize(false) +
 				" as the target agent is null"); }
@@ -96,29 +97,29 @@ public class System {
 
 	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL })
 	@doc(value = "asks the user for some values (not defined as parameters)",
-		masterDoc = true,
-		comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
-			+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
+	masterDoc = true,
+	comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
+		+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
 		examples = {
-			@example("map<string,unknown> values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
-			@example(value = "assert (values at \"Number\") equals: 100;", isTestOnly = true),
-			@example(value = "assert (values at \"Location\") equals: {10,10};", isTestOnly = true),
-			@example(value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
-				isExecutable = false) })
+		@example("map<string,unknown> values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
+		@example(value = "assert (values at \"Number\") equals: 100;", isTestOnly = true),
+		@example(value = "assert (values at \"Location\") equals: {10,10};", isTestOnly = true),
+		@example(value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
+		isExecutable = false) })
 	public static
-		GamaMap<String, Object> userInput(final IScope scope, final IExpression map) {
+	GamaMap<String, Object> userInput(final IScope scope, final IExpression map) {
 		final IAgent agent = scope.getAgentScope();
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
 	}
 
 	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL })
 	@doc(value = "asks the user for some values (not defined as parameters)",
-		examples = {
-			@example("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
-			@example(value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
-				isExecutable = false) })
+	examples = {
+		@example("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
+		@example(value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
+		isExecutable = false) })
 	public static
-		GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
+	GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
 		Map<String, Object> initialValues = new TOrderedHashMap();
 		final Map<String, IType> initialTypes = new TOrderedHashMap();
 		if ( expr instanceof MapExpression ) {
@@ -142,7 +143,7 @@ public class System {
 
 	@operator(value = "eval_gaml", can_be_const = false, category = { IOperatorCategory.SYSTEM })
 	@doc(value = "evaluates the given GAML string.",
-		examples = { @example(value = "eval_gaml(\"2+3\")", equals = "5") })
+	examples = { @example(value = "eval_gaml(\"2+3\")", equals = "5") })
 	public static Object opEvalGaml(final IScope scope, final String gaml) {
 		final IAgent agent = scope.getAgentScope();
 		final IDescription d = agent.getSpecies().getDescription();
