@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AgentInspectView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views;
 
@@ -16,7 +16,7 @@ import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.ParameterExpandItem;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -174,6 +174,11 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	protected ParameterExpandItem buildConcreteItem(final ParameterExpandBar bar, final IAgent data) {
+		return new ParameterExpandItem(bar, data, SWT.None, 0);
 	}
 
 	private List<IParameter> getParametersToInspect(final IAgent agent) {

@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ExpandableItemsView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views;
 
@@ -63,7 +63,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
 		final Composite control, final ParameterExpandBar bar, final boolean expanded) {
 		System.out.println("ExpandItem created for name " + name);
-		ParameterExpandItem i = new ParameterExpandItem(bar, data, SWT.None);
+		ParameterExpandItem i = buildConcreteItem(bar, data);
 		if ( name != null ) {
 			i.setText(name);
 		}
@@ -75,6 +75,10 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		i.setExpanded(expanded);
 		parent.layout();
 		return i;
+	}
+
+	protected ParameterExpandItem buildConcreteItem(final ParameterExpandBar bar, final T data) {
+		return new ParameterExpandItem(bar, data, SWT.None);
 	}
 
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,

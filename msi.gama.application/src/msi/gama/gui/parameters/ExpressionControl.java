@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ExpressionControl.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
@@ -33,7 +33,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	private final Text text;
 	private final ExpressionBasedEditor editor;
 	private GamaUIColor background;
-	protected Object currentValue;
+	private Object currentValue;
 	protected Exception currentException;
 	final boolean evaluateExpression;
 	private final IAgent hostAgent;
@@ -100,15 +100,16 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			editor.internalModification = true;
 		}
 		currentException = null;
+		Object value = computeValue();
 		if ( !text.isDisposed() ) {
-			text.setText(StringUtils.toGaml(currentValue, false));
+			text.setText(StringUtils.toGaml(value, false));
 		}
 		if ( editor != null ) {
 			IScope scope = GAMA.obtainNewScope();
-			if ( editor.acceptNull && currentValue == null ) {
+			if ( editor.acceptNull && value == null ) {
 				editor.modifyValue(null);
 			} else {
-				editor.modifyValue(editor.getExpectedType().cast(scope, currentValue, false, false));
+				editor.modifyValue(editor.getExpectedType().cast(scope, value, false, false));
 			}
 			GAMA.releaseScope(scope);
 			editor.internalModification = false;
@@ -126,7 +127,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		}
 	}
 
-	private void computeValue() {
+	private Object computeValue() {
 		try {
 			currentException = null;
 			IAgent agent = getHostAgent();
@@ -137,33 +138,37 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 				agent = getHostAgent().getExperiment();
 			}
 			if ( NumberEditor.UNDEFINED_LABEL.equals(s) ) {
-				currentValue = null;
+				return null;
+				// setCurrentValue(null);
 			} else if ( agent == null ) {
-				currentValue = Cast.as(s, expectedType.toClass(), false);
+				return Cast.as(s, expectedType.toClass(), false);
+				// setCurrentValue(Cast.as(s, expectedType.toClass(), false));
 			} else {
-				currentValue =
-					evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s, agent);
+				return evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s, agent);
+				// setCurrentValue(evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s,
+				// agent));
 			}
 		} catch (final Exception e) {
 			currentException = e;
+			return null;
 		}
 	}
 
 	public void modifyValue() {
-		final Object oldValue = currentValue;
-		computeValue();
+		// final Object oldValue = getCurrentValue();
+		Object value = computeValue();
 		if ( currentException != null ) {
-			currentValue = oldValue;
+			// setCurrentValue(oldValue);
 			return;
 		}
 		if ( editor != null ) {
 			try {
 				IScope scope = GAMA.obtainNewScope();
-				editor.modifyValue(expectedType.cast(scope, currentValue, false, false));
+				editor.modifyValue(expectedType.cast(scope, value, false, false));
 				GAMA.releaseScope(scope);
 				editor.checkButtons();
 			} catch (final GamaRuntimeException e) {
-				currentValue = oldValue;
+				// setCurrentValue(oldValue);
 				currentException = e;
 			}
 		}
@@ -175,14 +180,16 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 	@Override
 	public void focusGained(final FocusEvent e) {
+		if ( e.widget == null || !e.widget.equals(text) ) { return; }
 		computeValue();
 	}
 
 	@Override
 	public void focusLost(final FocusEvent e) {
+		if ( e.widget == null || !e.widget.equals(text) ) { return; }
 		/* async is needed to wait until focus reaches its new Control */
 		removeTooltip();
-		SwtGui.getDisplay().asyncExec(new Runnable() {
+		SwtGui.getDisplay().timerExec(100, new Runnable() {
 
 			@Override
 			public void run() {
@@ -203,19 +210,14 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	@Override
 	public void widgetSelected(final SelectionEvent e) {}
 
-	public void setFocus() {
-		text.setFocus();
-		// displayTooltip();
-	}
-
 	/**
 	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupText()
 	 */
 	public String getPopupText() {
 		String result = "";
-		if ( currentValue == null ) {
-			computeValue();
-		}
+		// if ( getCurrentValue() == null ) {
+		final Object value = computeValue();
+		// }
 		if ( currentException != null ) {
 			background = IGamaColors.ERROR;
 			result += currentException.getMessage();
@@ -225,9 +227,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 				@Override
 				public Boolean run(final IScope scope) {
 					if ( evaluateExpression ) {
-						return expectedType.canBeTypeOf(scope, currentValue);
-					} else if ( currentValue instanceof IExpression ) {
-						return expectedType.isAssignableFrom(((IExpression) currentValue).getType());
+						return expectedType.canBeTypeOf(scope, value);
+					} else if ( value instanceof IExpression ) {
+						return expectedType.isAssignableFrom(((IExpression) value).getType());
 					} else {
 						return false;
 					}
@@ -245,5 +247,25 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	IAgent getHostAgent() {
 		return hostAgent == null ? editor == null ? null : editor.getAgent() : hostAgent;
 	}
+
+	/**
+	 * @return the currentValue
+	 */
+	// protected Object getCurrentValue() {
+	// return currentValue;
+	// }
+
+	/**
+	 * @param currentValue the currentValue to set
+	 */
+	// protected void setCurrentValue(final Object currentValue) {
+	// String name = editor.getParam().getName();
+	// if (currentValue != null && currentValue.equals(495) && name.equals("neighbours_size")) {
+	// System.out.println("Expression Control of Editor " + name + " receives new value :" +
+	// currentValue);
+	// }
+	//
+	// this.currentValue = currentValue;
+	// }
 
 }

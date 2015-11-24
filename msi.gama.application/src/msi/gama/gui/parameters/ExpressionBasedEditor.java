@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 30 nov. 2014
- * 
+ *
  */
 package msi.gama.gui.parameters;
 
@@ -13,10 +13,10 @@ import org.eclipse.swt.widgets.*;
 
 /**
  * Class ExpressionBasedEditor.
- * 
+ *
  * @author drogoul
  * @since 30 nov. 2014
- * 
+ *
  */
 public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 
