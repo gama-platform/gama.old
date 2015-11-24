@@ -41,6 +41,8 @@ public class Predicate implements IValue {
 	Predicate superIntention;
 	boolean everyPossibleValues = false;
 	boolean is_true=true;
+	int lifetime = -1;
+	boolean isUpdated = false;
 	
 	@getter("name")
 	public String getName() {
@@ -81,6 +83,10 @@ public class Predicate implements IValue {
 		return onHoldUntil;
 	}
 
+	public int getLifetime(){
+		return lifetime;
+	}
+	
 	public void setSuperIntention(Predicate superPredicate){
 		this.superIntention = superPredicate;
 	}
@@ -114,6 +120,10 @@ public class Predicate implements IValue {
 		this.subintentions = subintentions;
 	}
 
+	public void setLifetime(final int lifetime){
+		this.lifetime = lifetime;
+	}
+	
 	public Predicate() {
 		super();
 		this.name = "";
@@ -132,7 +142,21 @@ public class Predicate implements IValue {
 		everyPossibleValues = true;
 		is_true=ist;
 	}
-
+	
+	public Predicate(final String name, double priority){
+		super();
+		this.name = name;
+		everyPossibleValues = true;
+		this.priority = priority;
+	}
+	
+	public Predicate(final String name, int lifetime){
+		super();
+		this.name = name;
+		everyPossibleValues = true;
+		this.lifetime = lifetime;
+	}
+	
 	public Predicate(final String name, final Map<String, Object> values) {
 		super();
 		this.name = name;
@@ -148,6 +172,14 @@ public class Predicate implements IValue {
 		everyPossibleValues = values == null;;
 	}
 
+	public Predicate(final String name, final Map<String, Object> values, final int lifetime) {
+		super();
+		this.name = name;
+		this.values = (Map<String, Object>) GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), values);
+		this.lifetime=lifetime;
+		everyPossibleValues = values == null;;
+	}
+	
 	public Predicate(final String name, final double priority, final Map<String, Object> values) {
 		super();
 		this.name = name;
@@ -181,7 +213,14 @@ public class Predicate implements IValue {
 	public IValue copy(final IScope scope) throws GamaRuntimeException {
 		return new Predicate(name, priority, new LinkedHashMap<String, Object>(values));
 	}
-
+	
+	public void updateLifetime(){
+		if((this.lifetime>0) && (!this.isUpdated)){
+			this.lifetime = this.lifetime-1;
+			this.isUpdated = true;
+		}
+	}
+	
 	public boolean isSimilarName(final Predicate other) {
 		if ( this == other ) { return true; }
 		if ( other == null ) { return false; }
@@ -216,6 +255,7 @@ public class Predicate implements IValue {
 			if(other.superIntention != null){return false;}
 		}else if(!superIntention.equals(other.superIntention)){return false;}
 		if(is_true!=other.is_true){return false;}
+		if(lifetime!=other.lifetime){return false;}
 		if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
 		if ( values == null ) {
 			if ( other.values != null ) { return false; }
