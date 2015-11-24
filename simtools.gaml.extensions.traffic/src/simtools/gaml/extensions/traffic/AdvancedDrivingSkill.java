@@ -855,7 +855,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		List<IAgent> roadsIn = (List<IAgent>) node.getAttribute(RoadNodeSkill.ROADS_IN);
 
 		double probaUseLinkedRoad = getProbaUseLinkedRoad(driver);
-		boolean testUseLinkedRoad = Random.opFlip(scope, probaUseLinkedRoad);
+		boolean testUseLinkedRoad = false;//Random.opFlip(scope, probaUseLinkedRoad);
 
 		if ( onLinkedRoad ) {
 			currentLane = lanes - 1;
@@ -869,8 +869,9 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		boolean ready = isReadyNextRoad(scope, road, driver, secDistCoeff, vL, block);
 		if ( !ready ) { return -1; }
 
-		if ( lanes == 0 && !onLinkedRoad ) {
+		if ( lanes == 0 /*&& !onLinkedRoad */) {
 			int lane = testBlockNode || nextRoadTestLane(driver, road, 0, secDistCoeff, vL) ? 0 : -1;
+			if (onLinkedRoad) java.lang.System.out.println("lane 1 : " + lane);
 			if ( lane != -1 ) {
 				addBlockingDriver(0, testBlockNode, driver, currentRoad, road, node, roadsIn, block);
 				return lane;
@@ -884,6 +885,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		int cvTmp = Math.min(currentLane, lanes - 1);
 		int cv = testBlockNode || nextRoadTestLane(driver, road, cvTmp, secDistCoeff, vL) ? cvTmp : -1;
+		if (onLinkedRoad) java.lang.System.out.println("cv 1 : " + cv);
+		
 		if ( cv != -1 ) {
 			addBlockingDriver(cv, testBlockNode, driver, currentRoad, road, node, roadsIn, block);
 			return cv;
@@ -921,7 +924,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				if ( newLane > -1 ) { return newLane + lanes; }
 			}
 		}
-
+		if (onLinkedRoad) java.lang.System.out.println("cv 2: " + cv);
+		
 		return cv;
 	}
 
@@ -983,25 +987,34 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		final double security_distance, final GamaPoint currentLocation, final GamaPoint target, final int lane,
 		final int segmentIndex, final boolean onLinkedRoad, final IAgent currentRoad, final boolean changeLane) {
 		// long t = java.lang.System.currentTimeMillis();
-		IList aglanes = (IList) ((GamaList) currentRoad.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
-		Collection<IAgent> agents = (IList<IAgent>) aglanes.get(segmentIndex);
-		boolean moreSegment = ! onLinkedRoad && (segmentIndex <= aglanes.size() - 2);
+			//java.lang.System.out.println(agent + " agents: " + agents);
 		double distanceToGoal = getDistanceToGoal(agent);
 		boolean nextSegment = distanceToGoal < distance;
+		final IAgent theRoad = onLinkedRoad ? RoadSkill.getLinkedRoad(currentRoad): currentRoad;
+		int segment = onLinkedRoad ? currentRoad.getInnerGeometry().getNumPoints() - 2 - segmentIndex : segmentIndex;
+		IList aglanes = (IList) ((GamaList) currentRoad.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
+		Collection<IAgent> agents = (IList<IAgent>) aglanes.get(segment);
+		boolean moreSegment = ! onLinkedRoad && (segmentIndex <= aglanes.size() - 2);
+		
+		
 		boolean contains = agents.contains(agent);
-		//java.lang.System.out.println("agent:" + agent + " contains: " + contains  + " distanceToGoal:" + distanceToGoal);
+		GamaPoint targetLoc = new GamaPoint(currentRoad.getInnerGeometry().getCoordinates()[segment + 1]);
+		//java.lang.System.out.println("agent:" + agent + " theRoad: "  + theRoad + " segment: " + segment + " targetLoc: " + targetLoc);
+		//if (changeLane && onLinkedRoad)
+		//	java.lang.System.out.println("agent:" + agent + " contains: " + contains  + " distanceToGoal:" + distanceToGoal);
 		double vL = getVehiculeLength(agent);
 		if ( (contains && agents.size() < 2) || (!contains && agents.isEmpty())) {
-			//java.lang.System.out.println("<2 agent:" + agent  + " nextSegment:  " + nextSegment + " moreSegment: " + moreSegment);
+			//if (changeLane && onLinkedRoad)
+			//		java.lang.System.out.println("<2 agent:" + agent  + " nextSegment:  " + nextSegment + " moreSegment: " + moreSegment);
 			
-			if ( changeLane && distance < vL ) { return 0; }
+			if (changeLane && distance < vL ) { return 0; }
+			if (onLinkedRoad  && nextSegment) {return 0;}
 			if ( nextSegment && moreSegment ) {
-				Collection<IAgent> ags = (Collection<IAgent>) aglanes.get(segmentIndex + 1);
+				Collection<IAgent> ags = (Collection<IAgent>) aglanes.get(segment + 1);
 				double length =
-					currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 1].distance(currentRoad
-						.getInnerGeometry().getCoordinates()[segmentIndex + 2]);
+						currentRoad.getInnerGeometry().getCoordinates()[segment + 2].distance(targetLoc);
 				for ( IAgent ag : ags ) {
-					double distTG = getDistanceToGoal(ag);
+					double distTG = getOnLinkedRoad(ag) ? distance2D((GamaPoint) ag.getLocation(), targetLoc) : getDistanceToGoal(ag);
 					double vLa = 0.5 * vL + 0.5 * getVehiculeLength(ag);
 					if ( length - distTG < vLa ) { return distanceToGoal - (vLa - (length - distTG)); }
 				}
@@ -1022,12 +1035,22 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		// t = java.lang.System.currentTimeMillis();
 
 		if ( onLinkedRoad ) {
+			if (onLinkedRoad  && nextSegment) {return 0;}
+			
 			for ( IAgent ag : agents ) {
+				//if (changeLane && onLinkedRoad)
+				//	java.lang.System.out.println("ag: " + ag );
+				
 				if ( ag == agent || ag == null ) {
 					continue;
 				}
-				double dist = distance2D((GamaPoint) ag.getLocation(), target);
+				double dist = distance2D((GamaPoint) ag.getLocation(), targetLoc);
+				
+				
 				double diff = distanceToGoal - dist;
+			//	if (changeLane && onLinkedRoad)
+			//		java.lang.System.out.println("dist:" + dist  + " diff: " + diff);
+				
 				if ( changeLane && Math.abs(diff) < vL ) { return 0; }
 				if ( diff <= 0.0 ) {
 					continue;
@@ -1044,7 +1067,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				if ( ag == agent || ag == null) {
 					continue;
 				}
-				double dist = getDistanceToGoal(ag);// distance2D((GamaPoint) ag.getLocation(), target);
+				
+				double dist = getOnLinkedRoad(ag) ? distance2D((GamaPoint) ag.getLocation(), targetLoc): getDistanceToGoal(ag);// distance2D((GamaPoint) ag.getLocation(), target);
 				double diff = distanceToGoal - dist;
 				//java.lang.System.out.println("ag: " + ag + " dist: " + dist);
 				if ( changeLane && Math.abs(diff) < vL ) { return 0; }
@@ -1058,26 +1082,26 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			}
 		}
 	
-		// /System.out.println("agent : " + agent + " minDiff : " + minDiff + " nextAgent : " + nextAgent);
+		//if (changeLane && onLinkedRoad)
+		//	java.lang.System.out.println("agent : " + agent + " minDiff : " + minDiff + " nextAgent : " + nextAgent);
 		// t344+= java.lang.System.currentTimeMillis() - t;
 		// t = java.lang.System.currentTimeMillis();
-	/*	if (currentRoad.getIndex() == 1) 
-			java.lang.System.out.println("nextAgent" + nextAgent + " minDiff: " + minDiff);
-	*/
+		//	java.lang.System.out.println("nextAgent" + nextAgent + " minDiff: " + minDiff);
+	
 		//java.lang.System.out.println("agent:" + agent + " nextAgent: " + nextAgent);
 		
 		if ( nextAgent == null ) {
-		//	java.lang.System.out.println("agent:" + agent + " nextSegment: " + nextSegment+ " moreSegment: " + moreSegment);
+			//	java.lang.System.out.println("agent:" + agent + " nextSegment: " + nextSegment+ " moreSegment: " + moreSegment);
 			
 			if ( nextSegment && moreSegment ) {
-				Collection<IAgent> ags = (Collection<IAgent>) aglanes.get(segmentIndex + 1);
+				Collection<IAgent> ags = (Collection<IAgent>) aglanes.get(segment + 1);
 				double length =
-					currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 1].distance(currentRoad
-						.getInnerGeometry().getCoordinates()[segmentIndex + 2]);
+						currentRoad.getInnerGeometry().getCoordinates()[segment + 1].distance(currentRoad
+						.getInnerGeometry().getCoordinates()[segment + 2]);
 			//	java.lang.System.out.println("length: " + length);
 				
 				for ( IAgent ag : ags ) {
-					double distTG = getDistanceToGoal(ag);
+					double distTG =  getOnLinkedRoad(ag) ? distance2D((GamaPoint) ag.getLocation(), targetLoc) : getDistanceToGoal(ag);
 					double vLa = 0.5 * vL + 0.5 * getVehiculeLength(ag);
 					//java.lang.System.out.println("distTG: " + distTG + " vLa: " + vLa );
 					if ( distTG > length - vLa ) { 
@@ -1098,9 +1122,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 
 		if ( changeLane && realDist < vL ) { return 0; }
 		realDist = Math.max(0.0, (int) (0.5 + realDist * 1000) / 1000.0);
-		/*if (currentRoad.getIndex() == 1) 
-			java.lang.System.out.println("realDist" + realDist + " secDistance: " + secDistance);
-	*/
+		//	java.lang.System.out.println("realDist" + realDist + " secDistance: " + secDistance);
+	
 		return realDist;
 	}
 
@@ -1162,13 +1185,13 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		List agentOnLinkedRoad = (List) linkedRoad.getAttribute(RoadSkill.AGENTS_ON);
 		List newAgentOn = agentOnLinkedRoad;
 		boolean onLinkedRoad = true;
-		int segmentLinkedRoad = linkedRoad.getInnerGeometry().getNumPoints() - 2 - segment;
-
+		
 		if ( scope.getRandom().next() < probaChangeLaneDown ) {
 			if ( lane < nbLinkedLanes - 1 ) {
+				
 				double val =
 					avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane + 1,
-						segmentLinkedRoad, true, linkedRoad, true);
+							segment, true, currentRoad, true);
 				if ( val == distance ) {
 					newLane = lane + 1;
 					changeLaneReverse(scope, agent, lane, lane, segment, agentOnLinkedRoad, agentOnLinkedRoad);
@@ -1197,8 +1220,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			}
 		}
 		double val =
-			avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane, segmentLinkedRoad,
-				true, linkedRoad, false);
+			avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane, segment,
+				true, currentRoad, false);
 		if ( val == distance ) {
 			changeLaneReverse(scope, agent, lane, lane, segment, agentOnLinkedRoad, agentOnLinkedRoad);
 
@@ -1213,7 +1236,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		if ( lane > 0 && scope.getRandom().next() < probaChangeLaneUp ) {
 			val =
 				avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane - 1,
-					segmentLinkedRoad, true, linkedRoad, true);
+						segment, true, currentRoad, true);
 			if ( val > distMax && val > 0 ) {
 				distMax = val;
 				newLane = lane - 1;
@@ -1247,8 +1270,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		List agentOn = (List) currentRoad.getAttribute(RoadSkill.AGENTS_ON);
 		List newAgentOn = agentOn;
 		boolean changeLane = false;
-		int segmentLinkedRoad = linkedRoad != null ? linkedRoad.getInnerGeometry().getNumPoints() - 2 - segment : 0;
-
+		
 		if ( lane > 0 && scope.getRandom().next() < probaChangeLaneDown ) {
 			double val =
 				avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane - 1, segment,
@@ -1278,7 +1300,6 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			newLane = lane;
 			changeLane = false;
 		}
-		int ind = segment;
 		if ( lane < (Integer) currentRoad.getAttribute(RoadSkill.LANES) - 1 &&
 			scope.getRandom().next() < probaChangeLaneUp ) {
 			val =
@@ -1295,13 +1316,13 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			int nbLinkedLanes = (Integer) linkedRoad.getAttribute(RoadSkill.LANES);
 			val =
 				avoidCollision(scope, agent, distance, security_distance, currentLocation, target, nbLinkedLanes - 1,
-					segmentLinkedRoad, true, linkedRoad, true);
+					segment, true, currentRoad, true);
+				
 			if ( val > distMax && val > vl ) {
 				distMax = val;
 				newLane = nbLinkedLanes - 1;
 				newAgentOn = (List) linkedRoad.getAttribute(RoadSkill.AGENTS_ON);
 				setOnLinkedRoad(agent, true);
-				ind = segmentLinkedRoad;
 				changeLane = true;
 				onLinkedRoad = true;
 			}
@@ -1309,7 +1330,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		// if ( changeLane ) {
 		if (onLinkedRoad)
 			changeLanetoReverse(scope, agent, lane, newLane, segment, agentOn, newAgentOn);
-		 else changeLane(scope, agent, lane, newLane, ind, agentOn, newAgentOn);
+		 else changeLane(scope, agent, lane, newLane, segment, agentOn, newAgentOn);
 		// }
 		return distMax;
 	}
