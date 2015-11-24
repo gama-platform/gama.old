@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
@@ -328,6 +328,12 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		toolbar.setVisible(true);
 		composite.setBackground(HOVERED_BACKGROUND);
 		composite.layout();
+
+		if ( combo != null ) {
+			combo.forceFocus();
+		} else {
+			getEditorControl().forceFocus();
+		}
 	}
 
 	private String computeUnitLabel() {
@@ -553,7 +559,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		currentValue = val;
 		if ( titleLabel != null && !titleLabel.isDisposed() ) {
 			titleLabel
-				.setBackground(isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
+			.setBackground(isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
 		}
 		if ( !internalModification ) {
 			setParameterValue(val);

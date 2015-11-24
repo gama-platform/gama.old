@@ -234,12 +234,12 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 			@Override
 			public void modifyValue() {
-				Object oldVal = currentValue;
+				Object oldVal = getCurrentValue();
 				super.modifyValue();
-				if ( oldVal == null ? currentValue == null : oldVal.equals(currentValue) ) {
+				if ( oldVal == null ? getCurrentValue() == null : oldVal.equals(getCurrentValue()) ) {
 					if ( outputs.isEmpty() ) { return; }
 					try {
-						getOutput().setNewExpression((IExpression) currentValue);
+						getOutput().setNewExpression((IExpression) getCurrentValue());
 					} catch (final GamaRuntimeException e) {
 						e.printStackTrace();
 					}
