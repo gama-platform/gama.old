@@ -17,7 +17,6 @@ public class GamaAgentConverter implements Converter {
 
 	@Override
 	public boolean canConvert(Class arg0) {
-//		return arg0.equals(GamlAgent.class);
 		return (GamlAgent.class).isAssignableFrom(arg0);
 	}
 
@@ -36,7 +35,6 @@ public class GamaAgentConverter implements Converter {
 		 reader.moveDown();
 		 String res = reader.getValue();
 		 reader.moveUp();
-		
 		return res;
 	}
 

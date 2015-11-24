@@ -11,30 +11,68 @@
  **********************************************************************************************/
 package msi.gama.common.util;
 
-import static msi.gama.metamodel.shape.IShape.Type.*;
-import java.util.*;
+import static msi.gama.metamodel.shape.IShape.Type.LINESTRING;
+import static msi.gama.metamodel.shape.IShape.Type.MULTILINESTRING;
+import static msi.gama.metamodel.shape.IShape.Type.MULTIPOINT;
+import static msi.gama.metamodel.shape.IShape.Type.NULL;
+import static msi.gama.metamodel.shape.IShape.Type.POINT;
+import static msi.gama.metamodel.shape.IShape.Type.POLYGON;
 
-import msi.gama.database.sql.*;
-import msi.gama.metamodel.shape.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import msi.gama.database.sql.SqlConnection;
+import msi.gama.database.sql.SqlUtils;
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Files;
+import msi.gaml.operators.Graphs;
 import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.ThreeD;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.Types;
+
 import org.geotools.geometry.jts.JTS;
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.prep.*;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
-import com.vividsolutions.jts.triangulate.*;
+import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
+import com.vividsolutions.jts.triangulate.ConstraintEnforcementException;
+import com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder;
+import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 
 /**
@@ -292,9 +330,21 @@ public class GeometryUtils {
 		if ( dist3 <= dist1 && dist3 <= dist2 ) { return coordstest2; }
 		return coords;
 	}
+	
+	public static int nbCommonPoints (final Geometry p1, final Geometry p2) {
+		Set<Coordinate> cp = new HashSet<Coordinate>() ;
+		List<Coordinate> coords = Arrays.asList(p1.getCoordinates());
+		for (Coordinate pt : p2.getCoordinates()) {
+			if (coords.contains(pt)) {
+				cp.add(pt);
+			}
+		}
+		return cp.size();
+	}
 
-	public static Coordinate[] extractPoints(final IShape triangle, final Geometry geom, final int degree) {
+	public static Coordinate[] extractPoints(final IShape triangle, final Set<IShape> connectedNodes) {
 		final Coordinate[] coords = triangle.getInnerGeometry().getCoordinates();
+		int degree = connectedNodes.size();
 		final Coordinate[] c1 = { coords[0], coords[1] };
 		final Coordinate[] c2 = { coords[1], coords[2] };
 		final Coordinate[] c3 = { coords[2], coords[3] };
@@ -308,27 +358,20 @@ public class GeometryUtils {
 			pts[2] = l3.getCentroid().getCoordinate();
 			return minimiseLength(pts);
 		} else if ( degree == 2 ) {
-			final Geometry bounds = geom.getBoundary().buffer(1);
-			final double val1 = bounds.intersection(l1).getLength() / l1.getLength();
-			final double val2 = bounds.intersection(l2).getLength() / l2.getLength();
-			final double val3 = bounds.intersection(l3).getLength() / l3.getLength();
-			if ( val1 > val2 ) {
-				if ( val1 > val3 ) {
-					pts[0] = l2.getCentroid().getCoordinate();
-					pts[1] = l3.getCentroid().getCoordinate();
-				} else {
-					pts[0] = l1.getCentroid().getCoordinate();
-					pts[1] = l2.getCentroid().getCoordinate();
-				}
-			} else {
-				if ( val2 > val3 ) {
-					pts[0] = l1.getCentroid().getCoordinate();
-					pts[1] = l3.getCentroid().getCoordinate();
-				} else {
-					pts[0] = l1.getCentroid().getCoordinate();
-					pts[1] = l2.getCentroid().getCoordinate();
-				}
+			int cpt = 0;
+			for (IShape n : connectedNodes) {
+				if (nbCommonPoints(l1,n.getInnerGeometry()) == 2) {
+					pts[cpt] = l1.getCentroid().getCoordinate();
+					cpt++;
+				} else if (nbCommonPoints(l2,n.getInnerGeometry()) == 2) {
+					pts[cpt] = l2.getCentroid().getCoordinate();
+					cpt++;
+				} else if (nbCommonPoints(l3,n.getInnerGeometry()) == 2) {
+					pts[cpt] = l3.getCentroid().getCoordinate();
+					cpt++;
+				} 
 			}
+	
 		} else {
 			return null;
 		}
@@ -619,7 +662,7 @@ public class GeometryUtils {
 
 				final Geometry gg = tri.getGeometryN(i);
 
-				if ( env.covers(gg) && pg.covers(gg) ) {
+				if ( env.covers(gg) && pg.covers(gg) && gg.intersects(polygon) && gg.intersection(polygon).getArea() > 0.2 * gg.getArea() ) {
 					geoms.add(new GamaShape(gg));
 				}
 			}
@@ -631,15 +674,13 @@ public class GeometryUtils {
 		final List<LineString> network = new ArrayList<LineString>();
 		final IList polys = GeometryUtils.triangulation(scope, geom);
 		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
-
 		final Collection<GamaShape> nodes = graph.vertexSet();
 		for ( final GamaShape node : nodes ) {
-			final Coordinate[] coordsArr = GeometryUtils.extractPoints(node, geom, graph.degreeOf(node) / 2);
+			final Coordinate[] coordsArr = GeometryUtils.extractPoints(node,new HashSet(Graphs.neighboursOf(scope, graph, node)));
 			if ( coordsArr != null ) {
 				network.add(FACTORY.createLineString(coordsArr));
 			}
 		}
-
 		return network;
 	}
 

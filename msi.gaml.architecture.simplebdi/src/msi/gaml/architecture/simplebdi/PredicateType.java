@@ -1,7 +1,6 @@
 package msi.gaml.architecture.simplebdi;
 
 import java.util.Map;
-import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -21,6 +20,9 @@ public class PredicateType extends GamaType<Predicate> {
 	public Predicate cast(final IScope scope, final Object obj, final Object val, final boolean copy)
 		throws GamaRuntimeException {
 		if ( obj instanceof Predicate ) { return (Predicate) obj; }
+		if (obj instanceof String) {
+			return new Predicate((String) obj);
+		}
 		if ( obj != null && obj instanceof Map ) {
 			Map<String, Object> map = (Map<String, Object>) obj;
 			String nm = (String) (map.containsKey("name") ? map.get("name") : "predicate");

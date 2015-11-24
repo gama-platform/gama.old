@@ -1,7 +1,7 @@
 /**
  *  simpleOSMLoading
- *  Author: patricktaillandier
- *  Description: 
+ *  Author: Patrick Taillandier
+ *  Description: Show how to import a OSM file and create agents from it. Concerning the use of OSM file for traffic models, more details are given in the driving skill folder
  */
 
 model simpleOSMLoading 
@@ -38,10 +38,7 @@ global{
 			target <- any_location_in(one_of (road)) ;
 			location <- any_location_in (one_of(road));
 		} 
-	}
-	
-	
-		
+	}	
 }
 
 species osm_agent frequency: 0{
@@ -49,27 +46,24 @@ species osm_agent frequency: 0{
 	string building_str;
 } 
 	
-	
-
 species road frequency: 0{
-	rgb color <- rgb(rnd(255),rnd(255),rnd(255));
+	rgb color <- rnd_color(255);
 	string type;
-	aspect base_ligne {
+	aspect default {
 		draw shape color: color; 
 	}
-	
 } 
 	
 species node_agent {
 	string type;
-	aspect base { 
+	aspect default { 
 		draw square(3) color: #red ;
 	}
 } 
 	
 species building frequency: 0{
 	rgb color <-  rgb(200,200,200);
-	aspect base { 
+	aspect default { 
 		draw shape color: color;
 	}
 }  
@@ -79,7 +73,7 @@ species people skills: [moving] {
 	reflex movement {
 		do goto on:the_graph target:target speed:1;
 	}
-	aspect base {
+	aspect default {
 		draw circle(3) color: #green;
 	}
 		
@@ -87,11 +81,11 @@ species people skills: [moving] {
 
 experiment load_OSM type: gui {
 	output {
-		display carte_principale type: opengl ambient_light: 100{
-			species building aspect: base refresh: false;
-			species road aspect: base_ligne  refresh: false  ;
-			species node_agent aspect: base   refresh: false ;
-			species people aspect: base  ;
+		display map type: opengl ambient_light: 100{
+			species building refresh: false;
+			species road refresh: false  ;
+			species node_agent refresh: false ;
+			species people;
 		}
 	}
 }

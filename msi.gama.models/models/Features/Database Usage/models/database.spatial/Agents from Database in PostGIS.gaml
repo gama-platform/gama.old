@@ -28,8 +28,8 @@ global {
 		  	
 	init {
 		create DB_accessor {
-			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ 'name'::"name",'type'::"type", 'shape':: "geom"];
+			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
+							 with:[ 'name'::"name",'type'::"type", 'shape':: geometry("geom")];
 		 }
 	}
 }

@@ -41,19 +41,14 @@ import msi.gaml.types.IType;
  */
 
 @facets(value = { /* @facet(name = IKeyword.VAR, type = IType.NONE, optional = true), */
-	@facet(name = IKeyword.NAME,
-		type = IType.NONE,
-		optional = false,
-		doc = @doc("the name of an existin variable or attribute to be modified")),
-	@facet(name = IKeyword.VALUE,
-		type = { IType.NONE },
-		optional = false,
+	@facet(name = IKeyword.NAME, type = IType.NONE, optional = false,
+		doc = @doc("the name of an existing variable or attribute to be modified")),
+	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = false,
 		doc = @doc("the value to affect to the variable or attribute")) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @validator(AssignmentValidator.class)
-@doc(value = "Allows to assign a value to the variable or attribute specified", usages = { @usage(value = "",
-	examples = { @example() }) })
+@doc(value = "Allows to assign a value to the variable or attribute specified")
 @serializer(AssignmentSerializer.class)
 public class SetStatement extends AbstractStatement {
 

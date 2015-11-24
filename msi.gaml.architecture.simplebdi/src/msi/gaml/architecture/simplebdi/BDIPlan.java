@@ -11,19 +11,14 @@
  **********************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
-import java.util.*;
-
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @vars({ @var(name = "name", type = IType.STRING),
 	 @var(name = "todo", type = IType.STRING),

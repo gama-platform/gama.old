@@ -38,16 +38,6 @@ public class StorableData {
 	public GamaObjectMatrix distribhistoryparams; //one line per step, params for the distribhistory: cl et st: xmin=st * 2^cl le nb de clust max est un param global
 	public GamaObjectMatrix distribhistory; //one line per step, one GamaIntMatrix per cell
 	 
-	/*public GamaMatrix multi_metadatahistory; 
-	public GamaMatrix multi_lastdetailedvarvalues;
-	public GamaFloatMatrix multi_averagehistory; 
-	public GamaFloatMatrix multi_stdevhistory;
-	public GamaFloatMatrix multi_minhistory;
-	public GamaFloatMatrix multi_maxhistory;
-	public GamaMatrix multi_distribhistoryparams; 
-	public GamaMatrix multi_distribhistory; 
-	*/
-	
 	public GamaMap getVarmap() { return varmap; }
 	public void setVarmap(GamaMap varmap) { this.varmap = varmap; }
 	public GamaMap getNumvarmap() { return numvarmap; }
@@ -71,24 +61,6 @@ public class StorableData {
 	public GamaMatrix getDitribhistory() { return distribhistory; }
 	public void setDitribhistory(GamaObjectMatrix ditribhistory) { this.distribhistory = ditribhistory; }
 	
-	/*public GamaMatrix getMultiMetadatahistory() { return multi_metadatahistory; }
-	public void setMultiMetadatahistory(GamaMatrix multi_metadatahistory) { this.multi_metadatahistory = multi_metadatahistory; }
-	public GamaMatrix getMultiLastdetailedvarvalues() { return multi_lastdetailedvarvalues; }
-	public void setMultiLastdetailedvarvalues( GamaMatrix multi_lastdetailedvarvalues) { this.multi_lastdetailedvarvalues = multi_lastdetailedvarvalues; }
-	public GamaFloatMatrix getMultiAveragehistory() { return multi_averagehistory; }
-	public void setMultiAveragehistory(GamaFloatMatrix multi_averagehistory) { this.multi_averagehistory = multi_averagehistory; }
-	public GamaFloatMatrix getMultiStdevhistory() { return multi_stdevhistory; }
-	public void setMultiStdevhistory(GamaFloatMatrix multi_stdevhistory) { this.multi_stdevhistory = multi_stdevhistory; }
-	public GamaFloatMatrix getMultiMinhistory() { return multi_minhistory; }
-	public void setMultiMinhistory(GamaFloatMatrix multi_minhistory) { this.multi_minhistory = multi_minhistory; }
-	public GamaFloatMatrix getMultiMaxhistory() { return multi_maxhistory; }
-	public void setMultiMaxhistory(GamaFloatMatrix multi_maxhistory) { this.multi_maxhistory = multi_maxhistory; }
-	public GamaMatrix getMultiDistribhistoryparams() { return multi_distribhistoryparams;}
-	public void setMultiDistribhistoryparams(GamaMatrix multi_distribhistoryparams) { this.multi_distribhistoryparams = multi_distribhistoryparams; }
-	public GamaMatrix getMultiDistribhistory() { return multi_distribhistory; }
-	public void setMultiDistribhistory(GamaMatrix multi_distribhistory) { this.multi_distribhistory = multi_distribhistory; }
-	*/
-	
 	Boolean isAgentCreated;
 
 	public Boolean getIsAgentCreated() {
@@ -99,8 +71,7 @@ public class StorableData {
 	}
 	public void init(IScope scope)
 	{
-		isAgentCreated = false;
-		
+		isAgentCreated = false;	
 		varmap = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 		numvarmap = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 		qualivarmap = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
@@ -114,75 +85,6 @@ public class StorableData {
 		distribhistory = new GamaObjectMatrix(0,0,msi.gaml.types.Types.NO_TYPE);
 		IList premlist=GamaListFactory.create(Types.NO_TYPE);
 		premlist.add(0);
-		premlist.add(0);
-		//premlist.add(0);
 		distribhistory.set(scope, 0, 0, premlist);
-							
-		/*multi_metadatahistory = new GamaObjectMatrix(0,0);
-		multi_lastdetailedvarvalues = new GamaObjectMatrix(0,0);
-		multi_averagehistory = new GamaFloatMatrix(0,0);
-		multi_stdevhistory = new GamaFloatMatrix(0,0);
-		multi_minhistory = new GamaFloatMatrix(0,0);
-		multi_maxhistory = new GamaFloatMatrix(0,0);
-		multi_distribhistoryparams = new GamaObjectMatrix(0,0);
-		multi_distribhistory = new GamaObjectMatrix(0,0);
-		GamaList deuzlist=new GamaList();
-		deuzlist.add(0);
-		deuzlist.add(0);
-		//deuzlist.add(0);
-		multi_distribhistory.set(scope, 0, 0, deuzlist);
-*/
 	}
-	/*
-	public String toString(IScope scope)
-	{
-		String s=new String();
-		try {
-//			XStream xstream = new XStream();
-			com.thoughtworks.xstream.XStream x=new com.thoughtworks.xstream.XStream();
-			s= x.toXML(metadatahistory);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("ser: "+s);
-		GamaList<Object> gm=new GamaList<Object>();
-		gm.add(metadatahistory.numCols);
-		gm.add(metadatahistory.numRows);
-		for (int i=0; i<metadatahistory.numCols; i++)
-			for (int j=0; j<metadatahistory.numRows; j++)
-				gm.add(metadatahistory.get(scope,i,j));
-		gm.add(lastdetailedvarvalues);
-		gm.add(averagehistory);
-		gm.add(stdevhistory);
-		gm.add(minhistory);
-		gm.add(maxhistory);
-		gm.add(distribhistoryparams);
-		gm.add(distribhistory);
-		return(s);
-	}
-	public void fromString(IScope scope,String s)
-	{
-		try {
-//			XStreamer xs=new XStreamer();
-			com.thoughtworks.xstream.XStream x=new com.thoughtworks.xstream.XStream();
-			metadatahistory=(GamaObjectMatrix) x.fromXML(s);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		IList<Object> gm= Cast.asList(scope, s);
-		int ind=0;
-		int nc=Cast.asInt(scope, gm.get(ind++));
-		int nr=Cast.asInt(scope, gm.get(ind++));
-		GamaObjectMatrix mat=new GamaObjectMatrix(nc,nr);
-		for (int i=0; i<nc; i++)
-			for (int j=0; j<nr; j++)
-				mat.set(scope,i,j,gm.get(ind++));
-//		metadatahistory=mat;
-		
-		
-	}
-	
-	*/
 }

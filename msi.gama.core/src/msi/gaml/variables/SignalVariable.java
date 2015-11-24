@@ -76,11 +76,9 @@ import msi.gaml.variables.SignalVariable.SignalValidator;
 		doc = @doc("Indicates the distance (in meter) at which the signal stops propagating")),
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) },
 	omissible = IKeyword.NAME)
-@symbol(name = IKeyword.SIGNAL,
-	kind = ISymbolKind.Variable.SIGNAL,
-	with_sequence = false,
-	doc = @doc("A special attribute that holds signals that can be propagated in the environment. Signals have a fixed name, a variable float intensity (represented by their facet 'value'), propagate in only one grid environment (facet 'environment'), can be limited to a specific range (facet 'range', in meter), and can see their intensity decrease over time (facet 'decay'). Signals can be propagated using different combinations of the 'variation', 'proportion' and 'propagation' facets. "))
+@symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.Variable.SIGNAL, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES })
+@doc("A special attribute that holds signals that can be propagated in the environment. Signals have a fixed name, a variable float intensity (represented by their facet 'value'), propagate in only one grid environment (facet 'environment'), can be limited to a specific range (facet 'range', in meter), and can see their intensity decrease over time (facet 'decay'). Signals can be propagated using different combinations of the 'variation', 'proportion' and 'propagation' facets. ")
 @validator(SignalValidator.class)
 public class SignalVariable extends NumberVariable {
 

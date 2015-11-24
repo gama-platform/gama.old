@@ -33,7 +33,7 @@ global torus: true{
 
 grid space parent: base width: dimensions height: dimensions neighbours: 8  {
 	rgb color <- black;
-	list<space> my_neighbours <- self neighbours_at neighbours_distance;
+	list<space> my_neighbours <- self neighbors_at neighbours_distance;
 	action migrate {
 		if !is_happy {
 			space pp <- any(my_neighbours where (each.color = black));

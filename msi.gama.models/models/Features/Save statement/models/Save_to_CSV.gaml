@@ -1,7 +1,7 @@
 /**
  *  SavetoCSV
  *  Author: Patrick Taillandier
- *  Description: 
+ *  Description: Show how to save agent attributes into a csv file
  */
 
 model SavetoCSV
@@ -37,11 +37,11 @@ species bug skills:[moving]{
 	}
 	
 	aspect default {
-		draw circle(size) color: °red;
+		draw circle(size) color: #red;
 	}
 }
 
-experiment SavetoCSV type: gui {
+experiment main type: gui {
 	output {
 		display map {
 			species bug;

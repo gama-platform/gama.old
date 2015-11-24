@@ -13,10 +13,12 @@ package msi.gaml.statements;
 
 import java.io.*;
 import java.util.*;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -39,12 +41,14 @@ import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.SaveStatement.SaveValidator;
 import msi.gaml.types.*;
+
 import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.SchemaException;
 import org.opengis.feature.simple.*;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import com.vividsolutions.jts.geom.*;
 
 @symbol(name = IKeyword.SAVE,
@@ -184,7 +188,20 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final IExpression item = getFacet(IKeyword.DATA);
 			saveText(type, item, fileTxt, scope);
 
-		} else if ( AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase()) ) {
+		} else if (type.equals("asc")) {
+			final IExpression item = getFacet(IKeyword.DATA);
+			ISpecies species;
+			if ( item == null ) {
+				return null;
+			}
+			species = Cast.asSpecies(scope, item.value(scope));
+			if ( species == null || ! species.isGrid()) {
+				return null;
+			}
+			
+			saveAsc(species, path, scope);
+		}else if ( AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase()) ) {
+		
 
 			final IExpression item = getFacet(IKeyword.DATA);
 			IGraph g;
@@ -215,6 +232,48 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
+	public void saveAsc(final ISpecies species, final String path, final IScope scope) {
+		String newLine = System.getProperty("line.separator");
+		File f = new File(path);
+		if (f.exists()) {
+			f.delete();
+		}
+		try {
+			FileWriter fw = new FileWriter(f);
+			String header = "";
+			GridPopulation gp = (GridPopulation) species.getPopulation(scope);
+			int nbCols = gp.getNbCols();
+			int nbRows = gp.getNbRows();
+			header += "ncols         " + nbCols + newLine;
+			header += "nrows         " + nbRows + newLine;
+			boolean nullProjection = scope.getSimulationScope().getProjectionFactory().getWorld() == null ;
+			header += "xllcorner     " + (nullProjection ? "0" : scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX())+ newLine;
+			header += "yllcorner     " + (nullProjection ? "0" : scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY())+ newLine;
+			double dx = scope.getSimulationScope().getEnvelope().getWidth()/nbCols;
+			double dy = scope.getSimulationScope().getEnvelope().getHeight()/nbRows;
+			if (dx == dy)
+				header += "cellsize      " + dx + newLine;
+			else {
+				header += "dx            " + dx + newLine;
+				header += "dy            " + dy + newLine;
+			}
+			fw.write(header); 
+			
+			for (int i = 0; i < nbRows; i++) {
+				String val = "";
+				for (int j = 0; j < nbCols; j++) {
+					val += gp.getGridValue(j, i) + " ";
+				}
+				fw.write(val + newLine);
+			}
+			fw.close();
+		} catch (IOException e) { 
+			return;
+		}
+		
+	
+	}
+	
 	public void saveShape(final List<? extends IAgent> agents, final String path, final IScope scope)
 		throws GamaRuntimeException {
 		final Map<String, String> attributes = GamaMapFactory.create(Types.STRING, Types.STRING);

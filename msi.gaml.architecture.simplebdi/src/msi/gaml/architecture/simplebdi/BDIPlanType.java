@@ -1,7 +1,5 @@
 package msi.gaml.architecture.simplebdi;
 
-import java.util.Map;
-import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;

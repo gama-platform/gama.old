@@ -1,6 +1,6 @@
 /**
  *  CSVfileloading
- *  Author: administrateur
+ *  Author: Patrick Taillandier
  *  Description: Shows how to import a CSV file and use it
  */
 
@@ -19,5 +19,4 @@ global {
 	}
 }
 
-experiment main type: gui{
-}
+experiment main type: gui;

@@ -489,6 +489,22 @@ public class GraphTopology extends AbstractTopology {
 		// return new GamaPath(this, source, target, edges);
 		return PathFactory.newInstance(this, source, target, edges);
 	}
+	
+	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target, final IShape existingEdge) {
+			IList<IShape> edges;
+			if ( source.equals(target) ) {
+				edges = GamaListFactory.create(Types.GEOMETRY);
+				if (existingEdge != null)
+					edges.add(existingEdge);
+				return PathFactory.newInstance(this, source, target, edges);
+			}
+			edges = getPlaces().computeBestRouteBetween(scope, source, target);
+			if (existingEdge != null)
+				edges.add(0, existingEdge);
+			if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
+			
+			return PathFactory.newInstance(this, source, target, edges);
+		}
 
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target) {

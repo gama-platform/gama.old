@@ -31,7 +31,7 @@ species people skills: [moving] {
 		draw circle(0.5) color: #green;
 	}
 	reflex move when: location != target{
-		list<cell> neighs <- (cell(location) neighbours_at speed) + cell(location);
+		list<cell> neighs <- (cell(location) neighbors_at speed) + cell(location);
 		path followed_path <- self goto (on:cell, target:target, speed:speed, return_path:true);
 		if (followed_path != nil) and not empty(followed_path.segments) {
 			geometry path_geom <- geometry(followed_path.segments);

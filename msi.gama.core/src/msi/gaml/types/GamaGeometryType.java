@@ -178,7 +178,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		}
 		final MultiPolygon m=GeometryUtils.FACTORY.createMultiPolygon(polys); 
 
-		if ( m.isValid() ) { return new GamaShape(m.buffer(0.0)); } // Why buffer (0.0) ???
+//		if ( m.isValid() ) { return new GamaShape(m.buffer(0.0)); } // Why buffer (0.0) ???
 		 return new GamaShape(m.buffer(0.0));	
 	}
 
@@ -449,6 +449,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	// FIXME: Be sure that a buffer on a sphere returns a sphere.
 	public static IShape buildSphere(final double radius, final ILocation location) {
+		final IShape g = buildCircle(radius, location);
+		g.setDepth(radius);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, SPHERE);
+		return g;
+	}
+	
+	public static IShape buildObjFile(final double radius, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
 		g.setDepth(radius);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, SPHERE);

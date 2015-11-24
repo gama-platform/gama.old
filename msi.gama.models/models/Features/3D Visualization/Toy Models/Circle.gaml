@@ -37,7 +37,7 @@ species cells skills: [moving] {
 	}
 	
 	reflex flee_others {
-		cells close <- one_of ( ( (self neighbours_at range) of_species cells) sort_by (self distance_to each) );
+		cells close <- one_of ( ( (self neighbors_at range) of_species cells) sort_by (self distance_to each) );
 		if close != nil {
 			heading <- (self towards close) - 180;
 			float dist <- self distance_to close;

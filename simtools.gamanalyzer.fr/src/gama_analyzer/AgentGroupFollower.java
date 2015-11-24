@@ -4,102 +4,50 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
-import msi.gaml.variables.IVariable;
 import msi.gaml.variables.Variable;
 import msi.gaml.types.Types;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+
 
 import autres.Analyse_statement;
-import msi.gama.metamodel.agent.*;
 import msi.gama.util.*;
 import msi.gama.util.matrix.GamaFloatMatrix;
-import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
-import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Random;
-import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Maths;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.ObjectOutputStream;
+import java.awt.Color;
 import java.lang.Object;
 import java.lang.Math;
 
-//import javax.jms.DeliveryMode;
-//import javax.jms.JMSException;
-//import javax.jms.MapMessage;
-//import javax.jms.Message;
-//import javax.jms.MessageListener;
-//import javax.jms.MessageProducer;
-//import javax.jms.ObjectMessage;
-//import javax.jms.Queue;
-//import javax.jms.Session;
-//import javax.jms.Topic;
-//import javax.jms.TopicConnection;
-//import javax.jms.TopicConnectionFactory;
-//import javax.jms.TopicSession;
-//import javax.jms.TopicSubscriber;
-//import javax.naming.Context;
-//import javax.naming.InitialContext;
-//import javax.naming.NamingException;
-//
-//
-//
-//
 
-
-
-import org.apache.commons.math3.analysis.function.Min;
-import org.opengis.geometry.Geometry;
-
-
-
-
-
-
-//import ummisco.gama.communicator.CommunicatorSkill;
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instance;
-import weka.core.Instances;
 
 import com.thoughtworks.xstream.*;
 
@@ -126,12 +74,12 @@ import com.thoughtworks.xstream.*;
 	@var(name = "multi_distribhistory", type = IType.MATRIX, doc = @doc("")),
 
 	@var(name = "color", type = IType.COLOR, doc = @doc("couleur de l'agent_group_follower")),
-
 	@var(name = "dbscann", type = IType.INT, init = "3", doc = @doc("number of points for DBSCAN")),
-	@var(name = "dbscane", type = IType.FLOAT, init = "0.1", doc = @doc("epsilon for DBSCAN")),
-	@var(name = "display_mode", type = IType.STRING,doc = @doc("displaying DBScan, global or SimGlobal"))
-	//@var(name = "clear_matrix", type = IType.STRING, doc = @doc(""))
-
+	@var(name = "dbscane", type = IType.FLOAT, init = "25", doc = @doc("epsilon for DBSCAN")),
+	@var(name = "display_mode", type = IType.STRING, doc = @doc("displaying global or SimGlobal")),
+	@var(name = "clustering_mode", type = IType.STRING, doc = @doc("dbscan, none")),
+	@var(name = "allSimShape", type = IType.LIST, doc = @doc("shape of all the simulation of the agent folllower")),
+	@var(name = "colorList", type = IType.LIST, doc = @doc("color correponding to each simulation"))
 })
 
 @species(name = "agent_group_follower")
@@ -150,6 +98,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	List<IAgent> virtualAgents;
 	HashMap<String,Boolean> parallelsims=new HashMap<String,Boolean>();
 
+	
+	//FIXME: This variable is a static one. Each data of each experiment is stored in this object.
 	public static MultiSimManager manager = new MultiSimManager();
 
 	public GroupIdRule getRule() { return rule; }
@@ -161,11 +111,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	public String getNom_espece() { return nom_espece; }
 	public void setNom_espece(String nom_espece) { this.nom_espece = nom_espece; }
 
-	//public String getNom_contrainte() { return nom_contrainte; }
-	//public void setNom_contrainte(String nom_contrainte) { this.nom_contrainte = nom_contrainte; }
-
 	public static final String ANALYSE_STATEMENT_VARIABLE = "species_to_analyse";
-	//public static final String ANALYSE_STATEMENT_VAR = "list_to_analyse";
 	public static final String ANALYSE_STATEMENT_CONSTRAINT = "with_constraint";
 
 	public final static String VARMAP = "varmap";
@@ -189,10 +135,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	public final static String MULTI_DISTRIBHISTORYPARAMS = "multi_distribhistoryparams";
 	public final static String MULTI_DISTRIBHISTORY = "multi_distribhistory";
 
-	/*public final static String TRALALA = "tralala";
-	public final static String LALALA = "lalala";
-	//public final static String CYCLE = "cycle";
-	 */
 	public final static String WITH_MATRIX = "with_matrix";
 	public final static String WITH_VAR = "with_var";
 
@@ -211,15 +153,18 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	int preval;
 	int postval;
 	String analysedSpecies;
-	IShape mageom;
-	List<IShape> polygone = new ArrayList<IShape>();
-	List<List<IShape>> mespoly = new ArrayList();
+	
+	IShape myShape; //geometry courante 
+	List<IShape> allSimulationShape= new ArrayList<IShape>();
 
+	
+	List<IShape> curSimulationMutliPolygon= new ArrayList<IShape>(); //
+	List<List<IShape>> allSimulationMultiPoly = new ArrayList(); //
+	
 	public StorableData mydata;
 	public StorableData multidata;
 
 	public ArrayList my_big_list = new ArrayList<Object>();
-	//public static GamaList<GamaList> my_very_big_list = new GamaList<GamaList>(); 
 
 	@getter(VARMAP) public GamaMap getVarMap (IAgent agent) { return (GamaMap) ((AgentGroupFollower)agent).mydata.varmap; }
 	@setter(VARMAP) public void setVarMap(final IAgent agent, final GamaMap latt) { ((AgentGroupFollower)agent).mydata.varmap = latt; }
@@ -287,55 +232,88 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	@getter("display_mode") public String getDisplay(final IAgent agent) { return (String) agent.getAttribute("display_mode"); }
 	@setter("display_mode") public void setDisplay(final IAgent agent, final String os) { agent.setAttribute("display_mode",os); }
+	
+	@getter("clustering_mode") public String getClusteringMode(final IAgent agent) { return (String) agent.getAttribute("clustering_mode"); }
+	@setter("clustering_mode") public void setClusteringMode(final IAgent agent, final String os) { agent.setAttribute("clustering_mode",os); }
+	
+	@getter("allSimShape") public List<IShape> getAllSimulationShape() {return allSimulationShape;}
+	@setter("allSimShape") public void setAllSimulationShape(List<IShape> allSimulationMultiPoly) {this.allSimulationShape = allSimulationShape;}
+	
+	@getter("colorList") public IList<Color> getColorList() {return manager.simColorList;}
+	//@setter("colorList") public void setColorList(IList<Color> colorList) {manager.simColorList = colorList;}
 
+	
+	
+	
+
+	public boolean init(final IScope scope)
+	{
+		boolean res=super.init(scope);
+		firsttime=System.currentTimeMillis();
+		this.setAttribute("display_mode", "simglobal");
+		this.setAttribute("clustering_mode", "dbscan");
+		messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
+	
+	   	xstream = new XStream();
+	   	xstream.registerConverter(new GamaAgentConverter());
+	   	xstream.registerConverter(new GamaScopeConverter());
+	   	xstream.registerConverter(new GamaSimulationAgentConverter());
+	   	xstream.registerConverter(new GamaShapeConverter());
+	   	 
+		if (doparallelsim())
+		{
+			this.setAttribute("netAgtName",this.getNetName());
+			this.connect("rmi://127.0.0.1:1099","sampleTopic",this.getNetName());
+			System.out.println("connecté!! "+this.getNetName());
+			if (ismaster())
+			{
+				Map<String,Object> message= new HashMap<String,Object>();
+				message.put("type","mastername");
+				message.put("follower",this.getName());
+				message.put("value",this.getNetName());	
+			}
+		}
+		return res;
+	}
+	
 	public String getUniqueSimName(final IScope scope) {
-
-		String nom = scope.getName().toString();
-		String identifiant = nom + "_" + manager.hasard;
-		System.out.println("identifiant de la simulation: " + identifiant);
-
-
-		return identifiant;
-
+		 return scope.getName().toString() + "_" + manager.hasard;
 	}
 
+	public void updateMetaDataHistory(final IScope scope, final int nrow){	
+		GamaObjectMatrix maMatriceMETA = GamaObjectMatrix.from(9,nrow+1,mydata.metadatahistory);
+		mydata.metadatahistory = maMatriceMETA;
+		mydata.metadatahistory.set(scope, 0, nrow, scope.getSimulationScope());
+		mydata.metadatahistory.set(scope, 1, nrow, scope.getClock().getCycle());
+		mydata.metadatahistory.set(scope, 2, nrow, getUniqueSimName(scope)); 
+		mydata.metadatahistory.set(scope, 3, nrow, rule);
+		mydata.metadatahistory.set(scope, 4, nrow, scope.getAgentScope().getName()); //supgroupid, Useless for the moment but could be use if an agent_group_follower create a sub agent 
+		mydata.metadatahistory.set(scope, 5, nrow, this.getName()); //supruleid, Useless for the moment  
+		mydata.metadatahistory.set(scope, 6, nrow, this.agentsCourants.copy(scope));
+		mydata.metadatahistory.set(scope, 7, nrow, this.agentsCourants.size());
+		mydata.metadatahistory.set(scope, 8, nrow, this.getGeometry());
+	}
+	
 	public void updatedata(final IScope scope)
 	{
+		
+		System.out.println("updatedata cycle : " + scope.getSimulationScope().getClock().getCycle());
 		if(mydata.getIsAgentCreated() == false ) {
 			//GamaList varlist=(GamaList)this.getSpecies().getVarNames();
 		}
 
 		// METADATAHISTORY .........................................................................
-
 		int nrow = mydata.metadatahistory.getRows(scope);
-		GamaObjectMatrix maMatriceMETA = GamaObjectMatrix.from(9,nrow+1,mydata.metadatahistory);
-		mydata.metadatahistory = maMatriceMETA;
-
-		//System.out.println("nrow: " + nrow);
-
-		mydata.metadatahistory.set(scope, 0, nrow, scope.getSimulationScope());
-
-		//System.out.println("encore nrow: " + nrow);
-
-		mydata.metadatahistory.set(scope, 1, nrow, scope.getClock().getCycle());
-		mydata.metadatahistory.set(scope, 2, nrow, getUniqueSimName(scope)); 
-		mydata.metadatahistory.set(scope, 3, nrow, rule);
-		mydata.metadatahistory.set(scope, 4, nrow, scope.getAgentScope().getName()); //supgroupid,  
-		mydata.metadatahistory.set(scope, 5, nrow, this.getName()); //supruleid
-		mydata.metadatahistory.set(scope, 6, nrow, this.agentsCourants.copy(scope));
-		mydata.metadatahistory.set(scope, 7, nrow, this.agentsCourants.size());
-		mydata.metadatahistory.set(scope, 8, nrow, this.getGeometry());
+		updateMetaDataHistory(scope, nrow);
+		
 
 
 		// LASTDETAILEDVARVALUES & VARMAP & NUMVARMAP & QUALIVARMAP................................................
-
 		GamaMap<Integer, Object> gmap1 = mydata.varmap.copy(scope);		
 		GamaMap<Integer, Object> gmap2 = mydata.numvarmap.copy(scope);
 		GamaMap<Integer, Object> gmap3 = mydata.qualivarmap.copy(scope);
 
 		int nbAgents = this.agentsCourants.size();
-
-		//System.out.println("voici les agents courants: " + agentsCourants);
 
 		if (nbAgents>0)
 		{		
@@ -382,11 +360,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			int step = scope.getSimulationScope().getClock().getCycle();
 			step=mydata.metadatahistory.numRows-1;
 
-			//System.out.println("on va faire la moyenne de: " + nbVar + " variables");
-			System.out.println("on est au cycle : " + step);
-			//System.out.println("il y a: " + nbVar + " variables dont il faut faire la moyenne.");
-
-			//step = mydata.averagehistory.getRows(scope);
 			GamaFloatMatrix maMatriceAV = GamaFloatMatrix.from(scope,nbVar,step+1,mydata.averagehistory);
 			mydata.averagehistory = maMatriceAV;
 
@@ -398,7 +371,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 			float moyenne = 0;
 
-			//for(int i=0; i<step+1; i++) {
 			for(int j=0;j<nbVar;j++) {
 				moyenne = 0;
 				float minimum = Float.parseFloat(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap_reverse.get(scope,mydata.numvarmap.getValues().get(j)),0).toString());
@@ -416,33 +388,23 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					if(valeur < minimum) {
 						minimum = valeur;
 						agmin.clear();
-						//agmin.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
 						agmin.add(mydata.lastdetailedvarvalues.get(scope, j, k).toString());
-						//System.out.println("agmin = " + agmin);
-
-						//System.out.println("je suis un minimum: " + minimum);
-						//System.out.println("je suis un agent min: " + agmin.toString());
 					}
 					else if(valeur == minimum) {
-						//agmin.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
 						agmin.add(mydata.lastdetailedvarvalues.get(scope, j, k).toString());
 					}
 
 					if(valeur > maximum) {
 						maximum = valeur;
 						agmax.clear();
-						//	agmax.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
 						agmax.add(mydata.lastdetailedvarvalues.get(scope, j, k).toString());
 
 					}
 					else if(valeur == maximum) {
-						//agmax.add(mydata.lastdetailedvarvalues.get(scope, (Integer)mydata.varmap.reverse(scope).get(scope,mydata.numvarmap.getValues().get(0)),k).toString());
 						agmax.add(mydata.lastdetailedvarvalues.get(scope, j, k).toString());
 					} 
 				}
 				moyenne = moyenne / (float)nbAgents;
-
-				//System.out.println("la MOYENNE FINALE au step: " + step + " pour la colonne " + j + " est de " + moyenne);
 
 				mydata.averagehistory.set(scope, j, step, moyenne);
 				mydata.minhistory.set(scope, j, step, minimum) ;
@@ -451,7 +413,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 			// STDEVHISTORY...........................................................................
 
-			//step = mydata.stdevhistory.getRows(scope);
 			GamaFloatMatrix maMatriceSTDEV = GamaFloatMatrix.from(scope,nbVar,step+1,mydata.stdevhistory);
 			mydata.stdevhistory = maMatriceSTDEV; 
 
@@ -469,9 +430,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				}
 
 				ecartype = (float) Math.sqrt(ecartype/nbAgents);
-
-				//System.out.println("l'ECARTYPE pour la variable  " + j + " est de : " + ecartype);
-
 				mydata.stdevhistory.set(scope, j, step, ecartype);
 			}
 
@@ -494,10 +452,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 				float min = Float.parseFloat(mydata.minhistory.get(scope, j, step).toString());
 				float max = Float.parseFloat(mydata.maxhistory.get(scope, j, step).toString());
-
-				/*	if(min==Float.parseFloat(mydata.minhistory.get(scope, j, step-1).toString()) & max==Float.parseFloat(mydata.maxhistory.get(scope, j, step-1).toString())) {
-					mydata.distribhistoryparams.set(scope, j, step, mydata.distribhistoryparams.get(scope, j, step-1));					
-				}*/
 
 				if(min==max) {
 					intervalle.clear();
@@ -530,14 +484,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					else {
 						double N = Math.log10((maxInt-minInt)/(nbBarres-1))/Math.log10(2);
 
-						//System.out.println("dist: " + (maxInt-minInt));
-						//System.out.println("pas normal: " + (maxInt-minInt)/(nbBarres-1));
-						//System.out.println("N= " + N);
-
 						if(maxInt-minInt<nbBarres) { k = (int)N; }
 						else { k = (int)N + 1; }
-
-						//System.out.println("k= " + k);
 
 						if(k<0) {
 							float kprime = -k;
@@ -553,34 +501,23 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 							if(minInt%deuxpuissancek!=0) {
 								newminInt = (int)deuxpuissancek*(int)((minInt/deuxpuissancek)-1);
 								n = (int)((minInt/deuxpuissancek)-1);
-								//System.out.println("je suis passé par le if1- n= " + n);
-								//System.out.println("je suis passé par le if1- newMinInt= " + newminInt);
 							}
 							else {
 								newminInt = minInt;
 								n = (int) ((int)minInt/deuxpuissancek)-1;
-								//System.out.println("je suis passé par le else- newMinInt= " + newminInt);
 							}
 						}
 						else {
 							if(minInt%deuxpuissancek!=0) {
 								newminInt = (int)deuxpuissancek*(int)((minInt/deuxpuissancek));
 								n = (int)((minInt/deuxpuissancek));
-								//System.out.println("minInt= " + minInt);
-								//System.out.println("deuxpuissancek= " + deuxpuissancek);
-								//System.out.println("je suis passé par le if2- n= " + n);
-								//System.out.println("je suis passé par le if2- newMinInt= " + newminInt);
 							}
 							else {
 								newminInt = minInt;
 								n = (int) ((int)minInt/deuxpuissancek);
-								//System.out.println("je suis passé par le else- newMinInt= " + newminInt);
 							}
 						}
 					}
-
-					//System.out.println("k= " + k);
-					//System.out.println("n= " + n);
 
 					intervalle.add(k);
 					intervalle.add(n);
@@ -589,7 +526,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				}
 
 				preval = (int)newminInt;
-				//System.out.println("preval INITIAL= " + preval);
 
 				if(min!=max) {
 					for(int i=0;i<nbBarres;i++) {
@@ -623,7 +559,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			if(!manager.idSimList.contains(getUniqueSimName(scope))) {
 				manager.idSimList.add(getUniqueSimName(scope));	
 				if (manager.simColorList.size()+1<11)
-
 					{
 					int i=manager.simColorList.size();
 						if (i==0) manager.simColorList.add((GamaColor)Cast.asColor(scope,GamaColor.CYAN));
@@ -637,17 +572,13 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 						if (i==8) manager.simColorList.add((GamaColor)Cast.asColor(scope,GamaColor.LIGHT_GRAY));
 						if (i==9) manager.simColorList.add((GamaColor)Cast.asColor(scope,GamaColor.DARK_GRAY));
 					}					
-			//	manager.simColorList.add((GamaColor)GamaColor.int_colors.values().toArray()[manager.simColorList.size()+1]);
 				else
 					manager.simColorList.add((GamaColor)GamaColor.getInt(Random.opRnd(scope, 10000)));
 			}
-			//System.out.println("1) manager.idSimList " + manager.idSimList);
 
 			if(!manager.agentGroupFollowerList.toString().contains(scope.getAgentScope().getName().toString())) {
 				manager.agentGroupFollowerList.add((AgentGroupFollower)scope.getAgentScope());
 			}
-			//System.out.println("2) manager.agentGroupFollowerList" + manager.agentGroupFollowerList);
-
 
 
 			if(mydata.metadatahistory.numRows==1) {
@@ -669,28 +600,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				multidata.distribhistory = matrice8;
 
 				if(manager.idSimList.length(scope)>1) {
-/*
-					for (int i=0; i<manager.idSimList.size(); i++)
-					{
-
-						ISpecies sp=this.getPopulationFor("agent").getSpecies();
-						if (!sp.hasVar("color"))
-						{
-							Variable nc=new Variable(this.getSpecies().getVar("color").getDescription());
-							List<Variable> nv= new ArrayList<Variable>();
-							nv.add(nc);
-							sp.setChildren(nv);
-						}
-						GamlAgent nagent=new GamlAgent(this.getPopulationFor("agent"));
-						this.getPopulationFor("agent").add(nagent);
-
-						nagent._init_(scope);
-						nagent.setName("virtual"+manager.idSimList.get(i));
-						nagent.setDirectVarValue(scope,"color", manager.simColorList.get(i));
-						virtualAgents.add(nagent);
-						System.out.println("new virtual "+nagent.getName());
-
-					}*/
 					for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 						if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 
@@ -704,7 +613,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 							manager.storableDataList.get(i).stdevhistory=(GamaFloatMatrix)manager.storableDataList.get(i).stdevhistory._opAppendVertically(scope, multidata.stdevhistory); // .opAppendVertically(scope, manager.storableDataList.get(i).stdevhistory, multidata.stdevhistory);							
 							manager.storableDataList.get(i).distribhistoryparams=(GamaObjectMatrix)manager.storableDataList.get(i).distribhistoryparams._opAppendVertically(scope, multidata.distribhistoryparams); // .opAppendVertically(scope, manager.storableDataList.get(i).distribhistoryparams, multidata.distribhistoryparams);							
 							manager.storableDataList.get(i).distribhistory=(GamaObjectMatrix)manager.storableDataList.get(i).distribhistory._opAppendVertically(scope, multidata.distribhistory); //.opAppendVertically(scope, manager.storableDataList.get(i).distribhistory, multidata.distribhistory);							
-
 							multidata=manager.storableDataList.get(i);
 
 						}
@@ -715,8 +623,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 						if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 							manager.storableDataList.add(i,multidata);
 							System.out.println("B- manager.storableDataList: " + manager.storableDataList);
-
-							//multidata=manager.storableDataList.get(i); // totalement inutile
 						}
 					}
 				}
@@ -737,81 +643,37 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 						//SEND my data
 					}
 				}
-
-
-
-
-				IList nl1=mydata.metadatahistory.getLine(scope, mydata.metadatahistory, mydata.metadatahistory.numRows-1);
 				
-				/*
-	public GamaObjectMatrix(final IScope scope, final IList objects, final ILocation preferredSize,
-		final IType contentsType) {
-				 */
+				IList nl1=mydata.metadatahistory.getLine(scope, mydata.metadatahistory, mydata.metadatahistory.numRows-1);
 				GamaObjectMatrix nm1=new GamaObjectMatrix(scope, nl1, new GamaPoint(mydata.metadatahistory.numCols,1), Types.NO_TYPE);
-				multidata.metadatahistory=(GamaObjectMatrix)multidata.metadatahistory._opAppendVertically(scope, nm1); // .opAppendVertically(scope, multidata.metadatahistory, nm1);
-				//System.out.println("je suis passé par metadata!");
+				multidata.metadatahistory=(GamaObjectMatrix)multidata.metadatahistory._opAppendVertically(scope, nm1); 
 
 				GamaObjectMatrix matrice2 = GamaObjectMatrix.from(nbAttributes+1,nbAgents,mydata.lastdetailedvarvalues);
 				multidata.lastdetailedvarvalues = matrice2;
 
 				IList nl2=mydata.minhistory.getLine(scope, mydata.minhistory, mydata.minhistory.numRows-1);
-				/*
-	public GamaFloatMatrix(final IScope scope, final List objects, final ILocation preferredSize)
-				 */
 				GamaFloatMatrix nm2=new GamaFloatMatrix(scope, nl2,new GamaPoint(mydata.minhistory.numCols,1));
-				multidata.minhistory=(GamaFloatMatrix)multidata.minhistory._opAppendVertically(scope, nm2); // .opAppendVertically(scope, multidata.minhistory, nm2);
-				//System.out.println("je suis passé par minhistory!");
-
+				multidata.minhistory=(GamaFloatMatrix)multidata.minhistory._opAppendVertically(scope, nm2); 
+			
 				IList nl3=mydata.maxhistory.getLine(scope, mydata.maxhistory, mydata.maxhistory.numRows-1);
 				GamaFloatMatrix nm3=new GamaFloatMatrix(scope,nl3,new GamaPoint(mydata.maxhistory.numCols,1));
-				multidata.maxhistory=(GamaFloatMatrix)multidata.maxhistory._opAppendVertically(scope, nm3); // .opAppendVertically(scope, multidata.maxhistory, nm3);
-				//System.out.println("je suis passé par maxhistory!");
-
+				multidata.maxhistory=(GamaFloatMatrix)multidata.maxhistory._opAppendVertically(scope, nm3); 
+			
 				IList nl4=mydata.averagehistory.getLine(scope, mydata.averagehistory, mydata.averagehistory.numRows-1);
 				GamaFloatMatrix nm4=new GamaFloatMatrix(scope,nl4,new GamaPoint(mydata.averagehistory.numCols,1));
-				multidata.averagehistory=(GamaFloatMatrix)multidata.averagehistory._opAppendHorizontally(scope, nm4); // .opAppendVertically(scope, multidata.averagehistory, nm4);
-				//System.out.println("je suis passé par averagehistory!");
-
+				multidata.averagehistory=(GamaFloatMatrix)multidata.averagehistory._opAppendVertically(scope, nm4); 
+			
 				IList nl5=mydata.stdevhistory.getLine(scope, mydata.stdevhistory, mydata.stdevhistory.numRows-1);
 				GamaFloatMatrix nm5=new GamaFloatMatrix(scope,nl5,new GamaPoint(mydata.stdevhistory.numCols,1));
-				multidata.stdevhistory=(GamaFloatMatrix)multidata.stdevhistory._opAppendVertically(scope, nm5); //.opAppendVertically(scope, multidata.stdevhistory, nm5);
-				//System.out.println("je suis passé par stdevhistory!");
-
+				multidata.stdevhistory=(GamaFloatMatrix)multidata.stdevhistory._opAppendVertically(scope, nm5);
+				
 				IList nl6=mydata.distribhistoryparams.getLine(scope, mydata.distribhistoryparams, mydata.distribhistoryparams.numRows-1);
 				GamaObjectMatrix nm6=new GamaObjectMatrix(scope,nl6,new GamaPoint(mydata.distribhistoryparams.numCols,1), Types.NO_TYPE);
-				multidata.distribhistoryparams=(GamaObjectMatrix)multidata.distribhistoryparams._opAppendVertically(scope, nm6); // .opAppendVertically(scope, multidata.distribhistoryparams, nm6);
-				//System.out.println("je suis passé par distribhistoryparams!");
-
+				multidata.distribhistoryparams=(GamaObjectMatrix)multidata.distribhistoryparams._opAppendVertically(scope, nm6); 
+			
 				IList nl7=mydata.distribhistory.getLine(scope, mydata.distribhistory, mydata.distribhistory.numRows-1);
 				GamaObjectMatrix nm7=new GamaObjectMatrix(scope,nl7,new GamaPoint(mydata.distribhistory.numCols,1), Types.NO_TYPE);
-				multidata.distribhistory=(GamaObjectMatrix)multidata.distribhistory._opAppendHorizontally(scope, nm7); //.opAppendVertically(scope, multidata.distribhistory, nm7);
-				//System.out.println("je suis passé par distribhistory!");
-
-
-/*
-				if (virtualAgents.size()>0)
-					if(manager.idSimList.length(scope)>1) {
-						for (int i=0; i<virtualAgents.size(); i++)
-						{
-							String n=virtualAgents.get(i).getName();
-							for (int j=0; j<multidata.metadatahistory.numRows; j++)
-							{
-
-								if ((Integer)multidata.metadatahistory.get(scope, 1, j)==this.getClock().getCycle()-2)
-									if (n.contains(multidata.metadatahistory.get(scope, 2, j).toString()))
-									{
-										System.out.println("new geom "+multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());
-										virtualAgents.get(i).setGeometry((GamaShape)multidata.metadatahistory.get(scope, 8,j));
-									}
-
-							}
-
-
-
-						}
-					
-					}
-				*/
+				multidata.distribhistory=(GamaObjectMatrix)multidata.distribhistory._opAppendVertically(scope, nm7); 
 		
 			}
 
@@ -823,48 +685,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	}
 
 
-	public boolean init(final IScope scope)
-	{
-		/*		ISpecies sp=this.getSpecies();
-		if (!sp.implementsSkill("communicator"))
-		{
-			SpeciesDescription sd=(SpeciesDescription) sp.getDescription();
-				sd.addSkill(CommunicatorSkill.class);
-			System.out.println("has skill: "+sp.implementsSkill("communicator"));
 
-		}*/
-		boolean res=super.init(scope);
-		firsttime=System.currentTimeMillis();
-		this.setAttribute("display_mode", "dbscan");
-		messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
-
-	   	  xstream = new XStream();
-	   	 xstream.registerConverter(new GamaAgentConverter());
-	   	 xstream.registerConverter(new GamaScopeConverter());
-	   	 xstream.registerConverter(new GamaSimulationAgentConverter());
-	   	 xstream.registerConverter(new GamaShapeConverter());
-	   	 
-		if (doparallelsim())
-		{
-			this.setAttribute("netAgtName",this.getNetName());
-			//				this.connectToTopic("rmi://127.0.0.1:1099",this.name+this.getScope().getName());
-			//				System.out.println("reconnect");
-			this.connect("rmi://127.0.0.1:1099","sampleTopic",this.getNetName());
-			
-			System.out.println("connecté!! "+this.getNetName());
-			if (ismaster())
-			{
-				Map<String,Object> message= new HashMap<String,Object>();
-				message.put("type","mastername");
-				message.put("follower",this.getName());
-				message.put("value",this.getNetName());	
-//				this.sendMessage("all", this.getNetName(), message);
-
-			}
-		}
-
-		return res;
-	}
 
 	public boolean step(final IScope scope) {
 
@@ -872,10 +693,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		{
 			if (ismaster())
 			{
-				//test
-				//				checknewslaves();
-//				senddata(); // a supprimer_
-//				senddata();
 			}
 			else
 			{
@@ -883,12 +700,11 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 		}
 
-		System.out.println("agentsCourants dans stepa: " + agentsCourants);
+		System.out.println("agentsCourants dans step avant update: " + agentsCourants);
 		agentsCourants = rule.update(scope,agentsCourants);
-		//System.out.println("step");
 		System.out.println("agentsCourants dans step après update: " + agentsCourants);
 		updatedata(scope);
-		create_cluster(scope);
+		updateShape(scope);
 
 
 		if (doparallelsim())
@@ -908,79 +724,132 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 	}
 
 
-	//@operator("clear_matrices")
 	public static void clearmatrices (final IScope scope) {
-	manager.getAgentGroupFollowerList().clear();
-		//manager.getGroupIdRuleList().clear();
-	//manager.getIdSimList().clear();
-	//manager.getStorableDataList().clear();
-	return;
+	  manager.getAgentGroupFollowerList().clear();
+	  return;
 	}
 
-	public void create_cluster(final IScope scope)
+	public void updateShape(final IScope scope)
 	{		
-		System.out.println("test3: " + scope.getAgentScope().toString());
-		System.out.println("test4: " + analysedSpecies);
 
+		List<IAgent> groupe = (List<IAgent>)this.agentsCourants;
+		curSimulationMutliPolygon= new ArrayList<IShape>();
 
-		if (this.getAttribute("display_mode").equals("global")) {  //  à tester!!: --> chaque follower se fait son enveloppe
-			List<IAgent> groupe = (List<IAgent>)this.agentsCourants;
-			polygone= new ArrayList<IShape>();
-			for (int i=0;i<groupe.size();i++) {
-						polygone.add((IShape)groupe.get(i).getLocation());	
-			}
-				mageom=(IShape)GamaGeometryType.buildPolygon(polygone);
-				this.setGeometry(((GamaShape)mageom));
-		}
 		
-		if (this.getAttribute("display_mode").equals("simglobal")) {  //  à tester!!: --> une grande enveloppe pour tous les agents de toutes les simulations
-			List<IAgent> groupe = (List<IAgent>)this.agentsCourants;
-			polygone=new ArrayList<IShape>();
+		allSimulationMultiPoly.clear();
+		allSimulationShape.clear();
+		
+		//CREATE THE CURRENT SHAPE
+		
+		if(this.getAttribute("clustering_mode").equals("none"))
+		{
+			for (int i=0;i<groupe.size();i++) {
+			  curSimulationMutliPolygon.add((IShape)groupe.get(i).getLocation());	
+			}
+			myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
+			this.setGeometry(((GamaShape)myShape));	
+		}
+		else{
+			this.setAttribute("agents", agentsCourants);
+			IList<String> listarg=GamaListFactory.create(Types.STRING);
+			listarg.add("location.x");
+			listarg.add("location.y");
+			this.setAttribute("attributes", listarg);
+			this.setAttribute("epsilon", (Double)this.getAttribute("dbscane"));
+			this.setAttribute("min_points", (Integer)this.getAttribute("dbscann"));
+
+			System.out.println("listarg: " + listarg);
+			
+			List<List<IAgent>> groupes = primClusteringDBScan(this.getScope());
+
+			allSimulationMultiPoly.clear();
+
+			if(groupes==null) {
+				System.out.println("Pas de groupe.");
+			}
+
+			
+			else if(groupes.size()>0) {
+				for(int i=0;i<groupes.size();i++) {
+
+					System.out.println("nombre de groupes: " + groupes.size());
+					curSimulationMutliPolygon=new ArrayList<IShape>();
+					for(int j=0;j<groupes.get(i).size();j++) {
+						if(groupes.get(i).size()>1 || groupes.get(i).size()==0 ) {
+							curSimulationMutliPolygon.add((IShape)groupes.get(i).get(j).getLocation());
+						}
+					}
+					allSimulationMultiPoly.add(curSimulationMutliPolygon);
+	
+				}
+				myShape=(IShape)GamaGeometryType.buildMultiPolygon(allSimulationMultiPoly);
+				this.setGeometry(((GamaShape)myShape));
+			}
+			
+		}
+			
+				
+		if (this.getAttribute("display_mode").equals("global")) {
+			allSimulationShape.add(myShape);
+		}	
+		
+
+		if (this.getAttribute("display_mode").equals("simglobal")) {  //  à tester!!: --> chaque follower se fait son enveloppe
+				allSimulationShape.add(myShape);
+				
+				if(manager.idSimList.length(scope)>1) {
+						for (int j=0; j<multidata.metadatahistory.numRows; j++)
+						{
+							if ((Integer)multidata.metadatahistory.get(scope, 1, j) == this.getClock().getCycle())
+								if (!scope.getSimulationScope().toString().equals(multidata.metadatahistory.get(scope, 0, j).toString()))
+								{
+									System.out.println("metadatahistory "+ multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());		
+									allSimulationShape.add((GamaShape) multidata.metadatahistory.get(scope, 8,j));						
+								}
+						}
+					}				
+		}
+
+		
+		
+		
+		if (this.getAttribute("display_mode").equals("simglobalparal")) {  //  à tester!!: --> une grande enveloppe pour tous les agents de toutes les simulations
+			System.out.println("manager.getAgentGroupFollowerList().length(scope)" + manager.getAgentGroupFollowerList().length(scope) );
+			
 			for (int i=0;i<manager.getAgentGroupFollowerList().length(scope);i++) {
-					if (!manager.getAgentGroupFollowerList().get(i).getName().equals(this.getName())) {
+					if (manager.getAgentGroupFollowerList().get(i).getName().equals(this.getName())) {
 						for (int j=0;j<manager.getAgentGroupFollowerList().get(i).agentsCourants.length(scope);j++) {
 							groupe.add(manager.getAgentGroupFollowerList().get(i).agentsCourants.get(j));
 						}
 						
-						for (int k=0;k<groupe.size();k++) {
-							polygone.add((IShape)groupe.get(i).getLocation());	
-						}
 					}
 			}
-				mageom=(IShape)GamaGeometryType.buildPolygon(polygone);
-				this.setGeometry(((GamaShape)mageom));
-		}
 
-		if ((!(this.getAttribute("display_mode").equals("global")))   //  à tester!!: --> chaque follower se fait son enveloppe
-			&(!(this.getAttribute("display_mode").equals("simglobal")))) {  //  à tester!!: --> chaque follower se fait son enveloppe
-//		if (this.getAttribute("display_mode").equals("dbscan")) {  // si on veut utiliser DBScan
 			
-//			scope.addVarWithValue("agents", agentsCourants);
+			for (int k=0;k<groupe.size();k++) {
+				curSimulationMutliPolygon.add((IShape)groupe.get(k).getLocation());	
+			}
+			myShape=(IShape)new GamaShape(GamaGeometryType.buildPolygon(curSimulationMutliPolygon).getInnerGeometry().convexHull());
+				this.setGeometry(((GamaShape)myShape));
+		}
+		
+		
+
+		if ((!(this.getAttribute("display_mode").equals("global"))) & (!(this.getAttribute("display_mode").equals("simglobal")))) {  //  à tester!!: --> chaque follower se fait son enveloppe
 			this.setAttribute("agents", agentsCourants);
-			List<String> listarg=new ArrayList<String>();
+			IList<String> listarg=GamaListFactory.create(Types.STRING);
 			listarg.add("location.x");
 			listarg.add("location.y");
-			//listarg.add(this.getAttributes().toString());
-//			scope.addVarWithValue("attributes", listarg);
 			this.setAttribute("attributes", listarg);
-			//scope.addVarWithValue("epsilon", 5);
-			//scope.addVarWithValue("min_points", 5);
-
 			this.setAttribute("epsilon", (Double)this.getAttribute("dbscane"));
 			this.setAttribute("min_points", (Integer)this.getAttribute("dbscann"));
-//			scope.addVarWithValue("epsilon", (Double)this.getAttribute("dbscane"));
-//			scope.addVarWithValue("min_points", (Integer)this.getAttribute("dbscann"));
-
-			//scope.addVarWithValue("num_clusters", 7);
-
 
 			System.out.println("listarg: " + listarg);
-			//System.out.println("scope....: " + scope.toString());
+
 			
 			List<List<IAgent>> groupes = primClusteringDBScan(this.getScope());
 
-			mespoly.clear();
-			//		mespolyenv.clear();
+			allSimulationMultiPoly.clear();
 
 			if(groupes==null) {
 				System.out.println("Pas de groupe.");
@@ -990,14 +859,13 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				for(int i=0;i<groupes.size();i++) {
 
 					System.out.println("nombre de groupes: " + groupes.size());
-					polygone=new ArrayList<IShape>();
+					curSimulationMutliPolygon=new ArrayList<IShape>();
 					for(int j=0;j<groupes.get(i).size();j++) {
 						if(groupes.get(i).size()>1 || groupes.get(i).size()==0 ) {
-							//if (polygone.size()<3)
-							polygone.add((IShape)groupes.get(i).get(j).getLocation());
+							curSimulationMutliPolygon.add((IShape)groupes.get(i).get(j).getLocation());
 						}
 					}
-					mespoly.add(polygone);
+					allSimulationMultiPoly.add(curSimulationMutliPolygon);
 					//System.out.println("mespoly= " + mespoly);
 
 
@@ -1017,20 +885,15 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					//mageom= GamaGeometryType.buildPolygon(polygone);
 					//this.setInnerGeometry(((GamaShape)mageom).getInnerGeometry().convexHull()); // polygones pleins!!!
 
-					System.out.println("mg: "+mageom);
-					System.out.println("pg: "+polygone);
-					//System.out.println("mespoly: "+ mespoly);
 				}
 
-				mageom=(IShape)GamaGeometryType.buildMultiPolygon(mespoly);
-				this.setGeometry(((GamaShape)mageom));
-				System.out.println("je suis un multipolygone!");
+				myShape=(IShape)GamaGeometryType.buildMultiPolygon(allSimulationMultiPoly);
+				this.setGeometry(((GamaShape)myShape));
 			}
 		}
 	}
 
 	String nom_espece = Analyse_statement.getAnalyseStatementVariable(); 
-	//String nom_liste = Analyse_statement.getAnalyseStatementVar(); 
 	String nom_contrainte = Analyse_statement.getAnalyseStatementConstraint(); 
 
 	public AgentGroupFollower(final IPopulation s) throws GamaRuntimeException {
@@ -1053,7 +916,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	@action(name = "analyse_cluster", args = {
 			@arg(name = ANALYSE_STATEMENT_VARIABLE, type = IType.STRING, optional = false) 
-			//	@arg(name = ANALYSE_STATEMENT_VAR, type = IType.STRING, optional = false) })
 	})
 	public void analyseCluster(final IScope scope) throws GamaRuntimeException  {
 
@@ -1069,15 +931,12 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	@action(name = "at_cycle", args = {
 			@arg(name = WITH_MATRIX, type = IType.STRING, optional = false), 
-			@arg(name = WITH_VAR, type = IType.STRING, optional = false)//,
-			//@arg(name = CYCLE, type = IType.INT, optional = false)
+			@arg(name = WITH_VAR, type = IType.STRING, optional = false)
 	})
 	public List at_cycle(final IScope scope) throws GamaRuntimeException  {
 
 		String my_matrix = (String) scope.getStringArg(WITH_MATRIX);  
 		String my_variable = (String) scope.getStringArg(WITH_VAR);
-
-		System.out.println("je passe par at_cycle !");
 
 		System.out.println("chosen_matrix: " + my_matrix);
 		System.out.println("chosen_variable: " + my_variable);
@@ -1090,7 +949,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		Object objvaleur;
 
 		if(my_matrix.equals("multi_minhistory")) {
-			//System.out.println("c'est multi_min qui a été choisie.");
+			at_cycle_manager=new ArrayList<Double>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 					//System.out.println("on est à l'agent group follower: " + manager.agentGroupFollowerList.get(i).toString());					
@@ -1110,6 +969,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 		}
 		else if(my_matrix.equals("multi_maxhistory")) {
+			at_cycle_manager=new ArrayList<Double>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 					for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
@@ -1126,6 +986,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 		}
 		else if(my_matrix.equals("multi_averagehistory")) {
+			at_cycle_manager=new ArrayList<Double>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {				
 					for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
@@ -1142,6 +1003,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 		}
 		else if(my_matrix.equals("multi_stdevhistory")) {
+			at_cycle_manager=new ArrayList<Double>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 					for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
@@ -1158,6 +1020,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 		}
 		else if(my_matrix.equals("multi_distribhistory")) {
+			at_cycle_manager=new ArrayList<Object>();
 			for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
 				if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
 					for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
@@ -1184,15 +1047,13 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	@action(name = "at_var", args = {
 			@arg(name = WITH_MATRIX, type = IType.STRING, optional = false), 
-			@arg(name = WITH_VAR, type = IType.STRING, optional = false)//,
-			//@arg(name = CYCLE, type = IType.INT, optional = false)
+			@arg(name = WITH_VAR, type = IType.STRING, optional = false)
 	})
 	public List at_var(final IScope scope) throws GamaRuntimeException  {
 
 		String my_matrix = (String) scope.getStringArg(WITH_MATRIX);
 		String my_variable = (String) scope.getStringArg(WITH_VAR);
 
-		System.out.println("je passe par at_var !");
 		System.out.println("my_matrix: " + my_matrix);
 		System.out.println("my_variable: " + my_variable);
 
@@ -1342,7 +1203,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				}
 			}
 		}
-		else { System.out.println("perdu");}
+		else {}
 
 		at_var_manager = my_very_big_list;
 
@@ -1351,12 +1212,79 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 		return at_var_manager;
 	}
+	
+	@action(name = "distrib_legend", args = {
+			//@arg(name = WITH_MATRIX, type = IType.STRING, optional = false), 
+			@arg(name = WITH_VAR, type = IType.STRING, optional = false)//,
+			//@arg(name = CYCLE, type = IType.INT, optional = false)
+	})
+	public List distrib_legend(final IScope scope) throws GamaRuntimeException  {
 
-	/*public void creationMessageMF(IScope scope) {
-	Object message = manager.storableDataList.get(0);
-	ObjectMessage objectMessage = session.createObjectMessage();
-	ObjectMessage.setObject(message);
-	}*/
+		List<String> legende_suivante = new ArrayList<String>();
+
+		//String my_matrix = (String) scope.getStringArg(WITH_MATRIX);
+		String my_variable = (String) scope.getStringArg(WITH_VAR);
+
+		int step = scope.getClock().getCycle()-1;
+
+		List<String> legende = new ArrayList<String>();
+		//String intervalle;
+		List obj = new ArrayList<Object>();
+		double value;
+		double single_value;
+
+
+		for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
+			if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
+				for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
+					if(Float.parseFloat(manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).get(j).toString())==step) {
+						for(int k=0; k<mydata.numvarmap.getValues().length(scope);k++) {
+							if(mydata.numvarmap.getValues().get(k).equals(my_variable)) {
+								if(legende.size()>=10) {
+									legende.clear();
+								}
+								obj = (List)manager.storableDataList.get(i).distribhistoryparams.getColumn(scope, k).get(j);
+								System.out.println("obj= " + obj);
+								if(obj.size()==1) {
+									single_value = (Float) obj.get(0);
+									legende.add(String.valueOf(single_value));
+									for(int l=1; l<10;l++) {
+										legende.add("0");
+									}
+								}
+								else {
+									double ecart;
+									if(Float.parseFloat(obj.get(0).toString())>=0) {
+										ecart = Maths.pow(2, Integer.parseInt(obj.get(0).toString()));
+									}
+									else { 
+										float temp = (-1)*Float.parseFloat(obj.get(0).toString());
+										System.out.println("temp= " + temp);
+										double temppow = Maths.pow(2, (int)temp);
+										System.out.println("tempow= " + String.valueOf(temppow));
+										ecart = (float) (1/temppow); 
+										System.out.println("ecart= " + ecart);
+									}
+
+									value = ecart*Float.parseFloat(obj.get(1).toString());
+									for(int l=0;l<10; l++) {
+										double temp = value+ecart;
+										legende.add(new String(String.valueOf(value) + "-" + String.valueOf(temp)));
+										value = temp;
+									}									
+								}
+							}
+						}
+					}				
+				}
+			}
+		}
+		// }
+		System.out.println("LEGENDE: les valeurs de la variable: " + my_variable + " sont réparties sur les intervalles suivants: " + legende);
+		legende_suivante = legende;
+
+		return legende;
+	}
 
 	public void senddata()
 	{
@@ -1366,17 +1294,12 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		multidata.lastdetailedvarvalues=mydata.lastdetailedvarvalues;
 		mydata.lastdetailedvarvalues=null;
 		message.put("value",mydata);
-//		this.sendMessage("all", this.getNetName(),  message);
 		mydata.lastdetailedvarvalues=multidata.lastdetailedvarvalues;
 
 	}
-
+    //For parrallel simulation
 	public void getdatafromslaves(IScope scope)
 	{
-//		String s=mydata.toString(scope);
-		//		mydata.fromString(getScope(), s);
-//		System.out.println("le s c'est par ici: " + s);
-//		mydata.fromString(scope, s);
 		for (String source:parallelsims.keySet())
 		{
 			parallelsims.put(source, false);
@@ -1412,12 +1335,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 					{
 						parallelsims.put(source, true);
 
-//						String newstring=(String)content.get("value");
-
-//						GamaList nm=(GamaList) Cast.asList(scope, newstring);
-						//						GamaList nt=(GamaList) Cast.asList(scope, nm.get(0));
-						//						GamaList<GamaList> nt2=(GamaList<GamaList>) Cast.asList(scope, newstring);
-
 						StorableData newdata=(StorableData)content.get("value");
 
 						System.out.println("new data "+this.getNetName()+" is "+newdata);
@@ -1446,18 +1363,15 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 						IList nl4=mydata.averagehistory.getLine(scope, mydata.averagehistory, mydata.averagehistory.numRows-1);
 						GamaFloatMatrix nm4=new GamaFloatMatrix(scope,nl4,new GamaPoint(mydata.averagehistory.numCols,1));
 						multidata.averagehistory=(GamaFloatMatrix)multidata.averagehistory._opAppendHorizontally(scope, nm4); // .opAppendVertically(scope, multidata.averagehistory, nm4);
-						//System.out.println("je suis passé par averagehistory!");
 						
 
 						IList nl5=mydata.stdevhistory.getLine(scope, mydata.stdevhistory, mydata.stdevhistory.numRows-1);
 						GamaFloatMatrix nm5=new GamaFloatMatrix(scope,nl5,new GamaPoint(mydata.stdevhistory.numCols,1));
 						multidata.stdevhistory=(GamaFloatMatrix)multidata.stdevhistory._opAppendVertically(scope, nm5); //.opAppendVertically(scope, multidata.stdevhistory, nm5);
-						//System.out.println("je suis passé par stdevhistory!");
 
 						IList nl6=mydata.distribhistoryparams.getLine(scope, mydata.distribhistoryparams, mydata.distribhistoryparams.numRows-1);
 						GamaObjectMatrix nm6=new GamaObjectMatrix(scope,nl6,new GamaPoint(mydata.distribhistoryparams.numCols,1), Types.NO_TYPE);
 						multidata.distribhistoryparams=(GamaObjectMatrix)multidata.distribhistoryparams._opAppendVertically(scope, nm6); // .opAppendVertically(scope, multidata.distribhistoryparams, nm6);
-						//System.out.println("je suis passé par distribhistoryparams!");
 
 						IList nl7=mydata.distribhistory.getLine(scope, mydata.distribhistory, mydata.distribhistory.numRows-1);
 						GamaObjectMatrix nm7=new GamaObjectMatrix(scope,nl7,new GamaPoint(mydata.distribhistory.numCols,1), Types.NO_TYPE);
@@ -1504,7 +1418,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 								virtualAgents.add(nagent);
 								System.out.println("new virtual "+nagent.getName());
 
-						
 						}
 						
 					}
@@ -1530,9 +1443,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 	public boolean doparallelsim()
 	{
-		//		ISpecies sp=getSpecies();
-		//		if (!sp.implementsSkill("communicator")) return false;
-		//		System.out.println("communicator ok");
 		return doparallelsim;
 	}
 
@@ -1568,11 +1478,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 						mastername=(String)content.get("value");
 						System.out.println("the master of "+this.getNetName()+" is "+mastername);
 					}
-
 				}
-
-
-
 			}
 
 		}
@@ -1631,8 +1537,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		message.put("type","release");
 		message.put("follower",this.getName());
 		message.put("value",this.getClock().getCycle());
-	//	this.sendMessage("all", this.getNetName(), (GamaMap<String, Object>) message);
-
 	}
 
 
@@ -1642,17 +1546,8 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		return this.getName()+this.getUniqueSimName(this.getScope())+ismastervar;
 	}
 
-//	 MessageProducer producer = null;
-//	 Session session=null;
 	 HashMap<String,LinkedList<GamaMap<String,Object>>> messages;
 	 XStream xstream ;
-
-
-	//	public CommunicatorSkill()
-	//	{
-	//		messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
-	//	}
-
 
 	public void connect(String serverUrl, String mytopic, String name)
 	{
@@ -1728,10 +1623,6 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		if(mList.isEmpty())
 			return null;
 		GamaMap<String, Object> mess=this.messages.get(tmpName).pollFirst();
-/*		while (((Long)mess.get("date")<firsttime)&!(this.messages.get(tmpName).isEmpty()))
-			mess=this.messages.get(tmpName).pollFirst();
-		if((Long)mess.get("date")<firsttime)
-			return null;*/
 		return mess;
 	}
 
@@ -1749,7 +1640,12 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		return (this.messages.get(tmpName).isEmpty());*/
 		return mList.isEmpty();
 	}
-/*
+
+
+
+
+	
+	/*
 	private InitialContext initialiseContext(String url) throws NamingException
 	{
 		Hashtable<String, String> props = new Hashtable<String, String>();
@@ -1863,79 +1759,5 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 
 
 	}*/
-
-
-	@action(name = "distrib_legend", args = {
-			//@arg(name = WITH_MATRIX, type = IType.STRING, optional = false), 
-			@arg(name = WITH_VAR, type = IType.STRING, optional = false)//,
-			//@arg(name = CYCLE, type = IType.INT, optional = false)
-	})
-	public List distrib_legend(final IScope scope) throws GamaRuntimeException  {
-
-		List<String> legende_suivante = new ArrayList<String>();
-
-		//String my_matrix = (String) scope.getStringArg(WITH_MATRIX);
-		String my_variable = (String) scope.getStringArg(WITH_VAR);
-
-		int step = scope.getClock().getCycle()-1;
-
-		List<String> legende = new ArrayList<String>();
-		//String intervalle;
-		List obj = new ArrayList<Object>();
-		double value;
-		double single_value;
-
-
-		for(int i=0;i<manager.agentGroupFollowerList.length(scope);i++) {
-			if(manager.agentGroupFollowerList.get(i).toString().contains(scope.getAgentScope().getName().toString())) {
-				for(int j=0;j<manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).length(scope);j++) {
-					if(Float.parseFloat(manager.storableDataList.get(i).metadatahistory.getColumn(scope, 1).get(j).toString())==step) {
-						for(int k=0; k<mydata.numvarmap.getValues().length(scope);k++) {
-							if(mydata.numvarmap.getValues().get(k).equals(my_variable)) {
-								if(legende.size()>=10) {
-									legende.clear();
-								}
-								obj = (List)manager.storableDataList.get(i).distribhistoryparams.getColumn(scope, k).get(j);
-								System.out.println("obj= " + obj);
-								if(obj.size()==1) {
-									single_value = (Float) obj.get(0);
-									legende.add(String.valueOf(single_value));
-									for(int l=1; l<10;l++) {
-										legende.add("0");
-									}
-								}
-								else {
-									double ecart;
-									if(Float.parseFloat(obj.get(0).toString())>=0) {
-										ecart = Maths.pow(2, Integer.parseInt(obj.get(0).toString()));
-									}
-									else { 
-										float temp = (-1)*Float.parseFloat(obj.get(0).toString());
-										System.out.println("temp= " + temp);
-										double temppow = Maths.pow(2, (int)temp);
-										System.out.println("tempow= " + String.valueOf(temppow));
-										ecart = (float) (1/temppow); 
-										System.out.println("ecart= " + ecart);
-									}
-
-									value = ecart*Float.parseFloat(obj.get(1).toString());
-									for(int l=0;l<10; l++) {
-										double temp = value+ecart;
-										legende.add(new String(String.valueOf(value) + "-" + String.valueOf(temp)));
-										value = temp;
-									}									
-								}
-							}
-						}
-					}				
-				}
-			}
-		}
-		// }
-		System.out.println("LEGENDE: les valeurs de la variable: " + my_variable + " sont réparties sur les intervalles suivants: " + legende);
-		legende_suivante = legende;
-
-		return legende;
-	}
 
 }

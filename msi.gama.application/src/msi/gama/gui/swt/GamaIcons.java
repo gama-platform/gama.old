@@ -42,10 +42,10 @@ public class GamaIcons /* implements IGamaIcons */{
 	static final String SIZER_PREFIX = "sizer_";
 	static final String COLOR_PREFIX = "color_";
 
-	Map<String, GamaIcon> iconCache = new THashMap();
-	Map<String, Image> imageCache = new THashMap();
+	Map<String, GamaIcon> iconCache = new THashMap<String, GamaIcon>();
+	Map<String, Image> imageCache = new THashMap<String, Image>();
 	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences
-		.create("core.icons_brightness", "Icons and buttons dark mode", true, IType.BOOL).in(GamaPreferences.UI)
+		.create("core.icons_brightness", "Icons and buttons dark mode (restart to see the change)", true, IType.BOOL).in(GamaPreferences.UI)
 		.group("Icons");
 	public static GamaPreferences.Entry<Integer> CORE_ICONS_HEIGHT = GamaPreferences
 		.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
@@ -122,7 +122,7 @@ public class GamaIcons /* implements IGamaIcons */{
 		String name = COLOR_PREFIX + s;
 		GamaIcon icon = getInstance().getIcon(s);
 		if ( icon == null ) {
-			Color color = gcolor.color();
+//			Color color = gcolor.color();
 			// RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
 			Image image = new Image(Display.getDefault(), width, height);
 			GC gc = new GC(image);
@@ -148,7 +148,7 @@ public class GamaIcons /* implements IGamaIcons */{
 	 * @return
 	 */
 	public static Image createTempColorIcon(final GamaUIColor gcolor) {
-		Color color = gcolor.color();
+//		Color color = gcolor.color();
 		GamaIcon blank = create("display.color2");
 		Image image = new Image(Display.getDefault(), blank.image().getImageData());
 		GC gc = new GC(image);

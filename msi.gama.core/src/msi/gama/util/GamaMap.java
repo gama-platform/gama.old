@@ -41,7 +41,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	// this(10, key, content);
 	// }
 
-	protected GamaMap(final int capacity, final IType key, final IType content) {
+	/*protected*/public GamaMap(final int capacity, final IType key, final IType content) {
 		super(capacity);
 		type = Types.MAP.of(key, content);
 	}

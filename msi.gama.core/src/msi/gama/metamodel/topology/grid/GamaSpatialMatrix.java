@@ -312,6 +312,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 		return result;
 	}
+	
+	
+	public double getGridValue(final int col, final int row) {
+		final int index = getPlaceIndexAt(col, row);
+		if ( index != -1 ) { return gridValue[index]; }
+		return 0.0;
+	}
 
 	private final int getPlaceIndexAt(final int xx, final int yy) {
 		if ( isHexagon ) { return yy * numCols + xx; }
@@ -1043,6 +1050,26 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return true;
 		}
 
+		public int getNbCols() {
+			return GamaSpatialMatrix.this.numCols;
+		}
+		
+		public int getNbRows() {
+			return GamaSpatialMatrix.this.numRows;
+		}
+		
+		
+		public IAgent getAgent(final Integer col, final Integer row) {
+			if ( col >= getNbCols() || col < 0 || row >= getNbRows() || row < 0) { return null; }
+			final IShape s = GamaSpatialMatrix.this.get(null, col, row);
+			return s == null ? null : s.getAgent();
+		}
+		
+		public Double getGridValue(final Integer col, final Integer row) {
+			if ( col >= getNbCols() || col < 0 || row >= getNbRows() || row < 0) { return 0.0; }
+			return GamaSpatialMatrix.this.getGridValue(col, row);
+		}
+		
 		@Override
 		public IAgent getAgent(final Integer index) {
 			if ( index >= size() || index < 0 ) { return null; }

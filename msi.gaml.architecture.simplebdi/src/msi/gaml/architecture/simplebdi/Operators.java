@@ -10,7 +10,6 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IVarExpression.Agent;
 
 public class Operators {
 
@@ -112,9 +111,23 @@ public class Operators {
 						.value(scope));
 	}
 	
-//	@operator(value = "focus", can_be_const = true, category = {"BDI"})
-//	public static Boolean focus(final Agent agent,final int var ){
-//		agent.
-//		return true;
-//	}
+	@operator(value = "get_super_intention", can_be_const = true, category = { "BDI" })
+	public static Predicate getSuperIntention(Predicate pred1){
+		if(pred1.getSuperIntention()!=null){
+			return pred1.getSuperIntention();
+		}else{
+			return null;
+		}
+	}
+	
+	@operator(value = "get_priority", can_be_const = true, category = {"BDI"})
+	public static Double getPriority(Predicate pred){
+		if(pred!=null){
+			return pred.priority;
+		}
+		else{
+			return null;
+		}
+	}
+	
 }

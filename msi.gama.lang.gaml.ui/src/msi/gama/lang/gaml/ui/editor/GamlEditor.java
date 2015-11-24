@@ -323,6 +323,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 					String msg = state.getStatus();
 					if ( msg != null ) {
 						toolbar.status((Image) null, msg, c, SWT.LEFT);
+						// without the 2 following lines, the display of the text "msg" is not updated
+						// correctly (at least for Windows OS)
+						toolbar.sep(4, SWT.LEFT);
+						toolbar.refresh(true);
 					} else {
 						toolbar.wipe(SWT.LEFT, true);
 						int i = 0;

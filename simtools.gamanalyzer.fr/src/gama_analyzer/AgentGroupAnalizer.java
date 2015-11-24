@@ -22,18 +22,12 @@ import weka.core.*;
 @species(name = "AgGroupAnalizer")
 public class AgentGroupAnalizer extends ClusterBuilder  {
 	
-	//private LinkedList<GamlAgent> cluster;
-	// private listeCluster;
-
 	public AgentGroupAnalizer(final IPopulation s) throws GamaRuntimeException {
 			super(s);
-		}
+	}
 	
 	@action(name = "creation_cluster")
 	public void creationCluster(final IScope scope) throws GamaRuntimeException  {
-		int i;
-		//for(i=1;i<)
-		//scope.getSimulationScope().getSpecies().get(i);
 	}
 	
 }

@@ -54,7 +54,7 @@ species ant skills: [ moving ] control: fsm {
 
 grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbours: 8 use_regular_agents: false frequency: 0{
 	rgb color <- (rnd(100)) < density_percent ? (colors at rnd(number_of_different_colors - 1)) as rgb : world.black ;
-	list<ant_grid> neighbours <- self neighbours_at 1;    
+	list<ant_grid> neighbours <- self neighbors_at 1;    
 }
 
 

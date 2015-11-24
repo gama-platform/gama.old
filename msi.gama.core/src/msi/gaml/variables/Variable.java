@@ -72,10 +72,9 @@ import msi.gaml.types.*;
 		optional = true,
 		doc = @doc("A list of constant values among which the attribute can take its value")) },
 	omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.REGULAR,
-	with_sequence = false,
-	doc = @doc("Allows to declare an attribute of a species or an experiment"))
+@symbol(kind = ISymbolKind.Variable.REGULAR, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
+@doc("Allows to declare an attribute of a species or an experiment")
 @validator(msi.gaml.variables.Variable.VarValidator.class)
 public class Variable extends Symbol implements IVariable {
 

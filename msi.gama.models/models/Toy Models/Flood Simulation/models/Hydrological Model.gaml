@@ -39,7 +39,7 @@ global {
    action init_cells {
       ask cell {
          altitude <- grid_value;
-         neighbour_cells <- (self neighbours_at 1) ;
+         neighbour_cells <- (self neighbors_at 1) ;
       }
    }
    action init_water {

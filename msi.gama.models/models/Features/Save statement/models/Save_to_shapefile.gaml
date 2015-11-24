@@ -1,7 +1,7 @@
 /**
  *  Savetoshapefile
  *  Author: Patrick Taillandier
- *  Description: 
+ *  Description: Show how to save a species (or a list of agents) into a shapefile
  */
 
 model Savetoshapefile
@@ -22,10 +22,10 @@ global {
 species building {
 	string type <- flip(0.8) ? "residential" : "industrial";
 	aspect default {
-		draw shape color: type = "residential" ? °gray : °pink;
+		draw shape color: type = "residential" ? #gray : #pink;
 	}
 }
-experiment Savetoshapefile type: gui {
+experiment main type: gui {
 	output {
 		display map {
 			species building;

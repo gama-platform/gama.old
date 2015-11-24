@@ -48,7 +48,7 @@ global {
 
 grid sir_grid width: 50 height: 50 {
 		rgb color <- #black;
-		list<sir_grid> neighbours <- (self neighbours_at neighbours_size) of_species sir_grid;
+		list<sir_grid> neighbours <- (self neighbors_at neighbours_size) of_species sir_grid;
 	}
 species Host {
 	bool is_susceptible <- true;
@@ -57,7 +57,7 @@ species Host {
 	rgb color <- #green;
 	int sic_count <- 0;
 	sir_grid myPlace;
-    int ngb_infected_number function: {self neighbours_at(neighbours_size) count(each.is_infected)};
+    int ngb_infected_number function: {self neighbors_at(neighbours_size) count(each.is_infected)};
 	
 	init {
 		myPlace <- one_of(sir_grid as list);

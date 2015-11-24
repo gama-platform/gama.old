@@ -11,19 +11,24 @@
  **********************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.types.*;
+import msi.gama.util.GamaMapFactory;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @vars({ @var(name = "name", type = IType.STRING), @var(name = "is_true", type = IType.BOOL),
-/*	@var(name = "parameters", type = IType.MAP),*/@var(name = "values", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
+	@var(name = "values", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
 	@var(name = "date", type = IType.FLOAT), @var(name = "subintentions", type = IType.LIST),
-	@var(name = "on_hold_until", type = IType.NONE) })
+	@var(name = "on_hold_until", type = IType.NONE), @var(name = "super_intention", type = IType.NONE) })
 public class Predicate implements IValue {
 
 	String name;
@@ -33,6 +38,7 @@ public class Predicate implements IValue {
 //	Object onHoldUntil;
 	List<Predicate> onHoldUntil;
 	List<Predicate> subintentions;
+	Predicate superIntention;
 	boolean everyPossibleValues = false;
 	boolean is_true=true;
 	
@@ -66,10 +72,19 @@ public class Predicate implements IValue {
 		return subintentions;
 	}
 
+	@getter("superIntention")
+	public Predicate getSuperIntention(){
+		return superIntention;
+	}
+	
 	public List<Predicate> getOnHoldUntil() {
 		return onHoldUntil;
 	}
 
+	public void setSuperIntention(Predicate superPredicate){
+		this.superIntention = superPredicate;
+	}
+	
 //	public void setOnHoldUntil(final Object onHoldUntil) {
 //		this.onHoldUntil = onHoldUntil;
 //	}
@@ -79,7 +94,7 @@ public class Predicate implements IValue {
 	}
 	
 	public void setValues(final Map<String, Object> values){
-		this.values = values;
+		this.values = (Map<String, Object>) GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), values);
 		everyPossibleValues = values == null;
 	}
 
@@ -121,14 +136,14 @@ public class Predicate implements IValue {
 	public Predicate(final String name, final Map<String, Object> values) {
 		super();
 		this.name = name;
-		this.values = values;
+		this.values = (Map<String, Object>) GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), values);
 		everyPossibleValues = values == null;;
 	}
 
 	public Predicate(final String name, final Map<String, Object> values, final Boolean truth) {
 		super();
 		this.name = name;
-		this.values = values;
+		this.values = (Map<String, Object>) GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), values);
 		this.is_true=truth;
 		everyPossibleValues = values == null;;
 	}
@@ -136,7 +151,7 @@ public class Predicate implements IValue {
 	public Predicate(final String name, final double priority, final Map<String, Object> values) {
 		super();
 		this.name = name;
-		this.values = values;
+		this.values = (Map<String, Object>) GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), values);
 		this.priority = priority;
 		everyPossibleValues = values == null;
 	}
@@ -194,15 +209,18 @@ public class Predicate implements IValue {
 		if ( name == null ) {
 			if ( other.name != null ) { return false; }
 		} else if ( !name.equals(other.name) ) { return false; }
-
+		if(subintentions == null){
+			if (other.subintentions!=null){return false;}
+		} else if(!subintentions.equals(other.subintentions)) {return false;}
+		if(superIntention == null){
+			if(other.superIntention != null){return false;}
+		}else if(!superIntention.equals(other.superIntention)){return false;}
+		if(is_true!=other.is_true){return false;}
 		if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
 		if ( values == null ) {
 			if ( other.values != null ) { return false; }
 		} else if ( !values.equals(other.values) ) { return false; }
-		//ajouter une comparaison sur les sous intentions sur le même modèle qu'au dessus.
-		if(subintentions == null){
-			if (other.subintentions!=null){return false;}
-		} else if(!subintentions.equals(other.subintentions)) {return false;}
+		
 		return true;
 	}
 

@@ -12,17 +12,13 @@
 package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -37,7 +33,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = SimpleBdiPlanStatement.INTENTION, type = IType.NONE, optional = true),
 	@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true)}, omissible = IKeyword.NAME)
-//Ajouter un facet "intention" qui complèterait le when.
+//Ajouter un facet "intention" qui complï¿½terait le when.
 public class SimpleBdiPlan extends AbstractStatementSequence {
 	
 	public static final String INTENTION = "intention";
