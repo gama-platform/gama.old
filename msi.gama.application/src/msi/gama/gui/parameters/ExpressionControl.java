@@ -251,9 +251,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	/**
 	 * @return the currentValue
 	 */
-	// protected Object getCurrentValue() {
-	// return currentValue;
-	// }
+	 protected Object getCurrentValue() {
+	 return currentValue;
+	 }
 
 	/**
 	 * @param currentValue the currentValue to set
