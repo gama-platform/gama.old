@@ -54,7 +54,7 @@ public class MessageBroker {
 		for ( Message m : messagesForA ) {
 			Conversation conv = m.getConversation();
 			try {
-				conv.addMessage(scope, m);
+				conv.addMessage(scope, m, a);
 			} catch (GamaRuntimeException e) {
 				failedDeliveries.add(m);
 				failureMessageInReplyTo(m);
@@ -99,7 +99,7 @@ public class MessageBroker {
 	 */
 	public void scheduleForDelivery(final IScope scope, final Message m) {
 		for ( IAgent a : m.getReceivers().iterable(scope) ) {
-			scheduleForDelivery(m.clone(), a);
+			scheduleForDelivery(m.clone(), a); 
 		}
 	}
 
