@@ -79,10 +79,29 @@ public class GraphTopology extends AbstractTopology {
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target) {
 		GamaSpatialGraph graph = (GamaSpatialGraph) getPlaces();
-		boolean sourceNode = graph.getVertexMap().containsKey(source);
+		IShape sourceN = source;
+		IShape targetN = target;
 		boolean targetNode = graph.getVertexMap().containsKey(target);
-		if ( sourceNode && targetNode ) { return (GamaSpatialPath) graph.computeShortestPathBetween(scope, source,
-			target); }
+		boolean isAgentVertex = graph.isEmpty(scope) ? false : (graph.getVertices().get(0) instanceof IAgent);
+		boolean targetNSame = isAgentVertex == (target instanceof IAgent);
+		boolean sourceNSame = isAgentVertex == (source instanceof IAgent);
+		boolean sourceNode = graph.getVertexMap().containsKey(source);
+		if ((!sourceNSame && !sourceNode) || (!targetNSame && !targetNode)) {
+			for (Object ed : graph.getVertices()) {
+				if (((IShape) ed).getLocation().equals(source.getLocation())) {
+					sourceN = (IShape)ed;
+					sourceNode = true;
+				}
+				if (((IShape) ed).getLocation().equals(target.getLocation())) {
+					targetN = (IShape)ed;
+					targetNode = true;
+				}
+				if (sourceNode && targetNode) break;
+			}
+			
+		} 
+		if ( sourceNode && targetNode ) { return (GamaSpatialPath) graph.computeShortestPathBetween(scope, sourceN,
+			targetN); }
 
 		IShape edgeS = null, edgeT = null;
 
@@ -130,10 +149,10 @@ public class GraphTopology extends AbstractTopology {
 			if ( !sourceNode && edgeS == null || !targetNode && edgeT == null ) { return null; }
 		}
 
-		if ( getPlaces().isDirected() ) { return pathBetweenCommonDirected(scope, edgeS, edgeT, source, target,
+		if ( getPlaces().isDirected() ) { return pathBetweenCommonDirected(scope, edgeS, edgeT, sourceN, targetN,
 			sourceNode, targetNode); }
 
-		return pathBetweenCommon(scope, graph, edgeS, edgeT, source, target, sourceNode, targetNode);
+		return pathBetweenCommon(scope, graph, edgeS, edgeT, sourceN, targetN, sourceNode, targetNode);
 	}
 	
 	public IShape getPathEdge(IScope scope, IShape ref) {
