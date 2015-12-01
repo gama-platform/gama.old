@@ -127,7 +127,7 @@ public class GamaToolbarFactory {
 				setIcon();
 			}
 		};
-		// Install the toogle in the view site
+		// Install the toggle in the view site
 		IWorkbenchSite site = view.getSite();
 		if ( site instanceof IViewSite ) {
 			IToolBarManager tm = ((IViewSite) site).getActionBars().getToolBarManager();

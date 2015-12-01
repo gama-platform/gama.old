@@ -275,7 +275,7 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 
 		}, SWT.RIGHT);
 
-		warningAction = tb.check("build.warnings2", "", "Toogle display of warning markers", new SelectionAdapter() {
+		warningAction = tb.check("build.warnings2", "", "Toggle display of warning markers", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -285,7 +285,7 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 		}, SWT.RIGHT);
 		warningAction.setSelection(GamaPreferences.WARNINGS_ENABLED.getValue());
 
-		infoAction = tb.check("build.infos2", "", "Toogle display of information markers", new SelectionAdapter() {
+		infoAction = tb.check("build.infos2", "", "Toggle display of information markers", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
