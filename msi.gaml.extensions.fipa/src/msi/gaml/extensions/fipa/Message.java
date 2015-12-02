@@ -298,7 +298,7 @@ public class Message implements IValue, Cloneable {
 
 	@Override
 	public IValue copy(final IScope scope) throws GamaRuntimeException {
-		return this;
+		return this.clone();
 	}
 
 	/**
