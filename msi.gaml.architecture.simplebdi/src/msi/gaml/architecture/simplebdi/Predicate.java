@@ -249,7 +249,7 @@ public class Predicate implements IValue {
 			if ( other.name != null ) { return false; }
 		} else if ( !name.equals(other.name) ) { return false; }
 		if(subintentions == null){
-			if (other.subintentions!=null){return false;}
+			if (other.subintentions!=null && !other.subintentions.isEmpty()){return false;}
 		} else if(!subintentions.equals(other.subintentions)) {return false;}
 		if(superIntention == null){
 			if(other.superIntention != null){return false;}
