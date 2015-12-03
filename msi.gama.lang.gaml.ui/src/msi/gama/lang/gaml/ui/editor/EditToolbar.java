@@ -113,7 +113,7 @@ public class EditToolbar {
 
 		// toolbar.label("Presentation");
 		// toolbar.sep(16);
-		line = toolbar.check("editor.line2", null, "Toogle the display of line numbers", new SelectionAdapter() {
+		line = toolbar.check("editor.line2", null, "Toggle the display of line numbers", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -121,7 +121,7 @@ public class EditToolbar {
 			}
 		});
 		line.setSelection(editor.isLineNumberRulerVisible());
-		folding = toolbar.check("editor.folding2", null, "Toogle the folding of lines", new SelectionAdapter() {
+		folding = toolbar.check("editor.folding2", null, "Toggle the folding of lines", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
