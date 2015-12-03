@@ -92,15 +92,10 @@ public class Conversation extends GamaList<Message> {
 		if ( protocol == null ) { throw new UnknownProtocolException(scope, proto); }
 		initiator = message.getSender();
 
+		
+		participants.addAll(message.getReceivers());
 		if ( participants == null || participants.isEmpty() || participants.contains(null) ) { throw new ProtocolErrorException(
 			scope, "The message : " + message.toString() + " has no receivers."); }
-		participants.addAll(message.getReceivers());
-
-		// TODO A REVOIR COMPLETEMENT
-
-		final List<IAgent> members = GamaListFactory.create(Types.AGENT);
-		members.addAll(message.getReceivers());
-		members.add(initiator);
 
 		MessageBroker.getInstance().addConversation(this);
 	}
@@ -118,6 +113,7 @@ public class Conversation extends GamaList<Message> {
 	 * Adds a message to the conversation.
 	 * 
 	 * @param message The Message to be added
+	 * @param receiver The agent who receive the message
 	 * 
 	 * @throws ProtocolErrorException the protocol error exception
 	 * @throws InvalidConversationException the invalid conversation exception
@@ -129,7 +125,7 @@ public class Conversation extends GamaList<Message> {
 	 *                different to that of the conversation
 	 * @exception ConversationFinishedException Thrown when the conversation has already finished
 	 */
-	protected void addMessage(final IScope scope, final Message message) throws ProtocolErrorException,
+	protected void addMessage(final IScope scope, final Message message, final IAgent receiver) throws ProtocolErrorException,
 		InvalidConversationException, ConversationFinishedException {
 
 		// OutputManager.debug(name + " adds message " + message);
@@ -147,8 +143,7 @@ public class Conversation extends GamaList<Message> {
 			ProtocolNode currentNode;
 
 			if ( senderIsInitiator ) {
-				final List<IAgent> msgReceivers = message.getReceivers();
-				for ( final IAgent receiver : msgReceivers ) {
+				if (message.getReceivers().contains(receiver)) {
 					if ( protocolNodeParticipantMap.containsKey(receiver) ) {
 						currentNode = protocolNodeParticipantMap.remove(receiver);
 						protocolNodeParticipantMap
@@ -162,7 +157,12 @@ public class Conversation extends GamaList<Message> {
 							protocolNodeParticipantMap.put(receiver, currentNode);
 						}
 					}
+				} else {
+					throw new CommunicatingException(scope, "Receiver " + receiver.getName() + " is not in the available message's receivers.");
 				}
+
+				
+				
 			} else if ( participants.contains(message.getSender()) ) {
 				if ( protocolNodeParticipantMap.containsKey(message.getSender()) ) {
 					currentNode = protocolNodeParticipantMap.remove(message.getSender());
@@ -181,19 +181,17 @@ public class Conversation extends GamaList<Message> {
 			Message currentMessage;
 
 			if ( senderIsInitiator ) {
-				final List<IAgent> msgReceivers = message.getReceivers();
-				for ( final IAgent receiver : msgReceivers ) {
-					currentMessage = noProtocolNodeParticipantMap.get(receiver);
+				currentMessage = noProtocolNodeParticipantMap.get(receiver);
 
-					if ( currentMessage != null &&
-						currentMessage.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION ) { throw new ConversationFinishedException(
-						scope, "Message received in conversation which has already ended." + message + this); }
+				if ( currentMessage != null &&
+					currentMessage.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION ) { throw new ConversationFinishedException(
+					scope, "Message received in conversation which has already ended." + message + this); }
 
-					if ( currentMessage != null ) {
-						noProtocolNodeParticipantMap.remove(receiver);
-					}
-					noProtocolNodeParticipantMap.put(receiver, message);
+				if ( currentMessage != null ) {
+					noProtocolNodeParticipantMap.remove(receiver);
 				}
+				noProtocolNodeParticipantMap.put(receiver, message);
+				
 			} else if ( participants.contains(message.getSender()) ) {
 				currentMessage = noProtocolNodeParticipantMap.get(message.getSender());
 

@@ -1,30 +1,27 @@
 package msi.gama.lang.gaml.ui;
 
-import java.util.*;
-import java.util.List;
-import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.lang.gaml.ui.decorators.GamlMarkerImageProvider;
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.core.commands.Command;
+import java.util.HashMap;
+import org.eclipse.core.commands.*;
+import org.eclipse.core.expressions.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.views.markers.internal.*;
+import org.eclipse.ui.internal.views.markers.ConfigureContentsDialogHandler;
+import org.eclipse.ui.views.markers.MarkerSupportView;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 
-public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedView {
+public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecoratedView {
 
 	// Syntax Error View Actions (see IGamaViewActions)
 	public final static int CLEAN = 32;
@@ -36,62 +33,14 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 
 	protected Composite parent;
 	protected GamaToolbar2 toolbar;
-	protected IAction filterAction;
-
-	class ErrorField extends FieldSeverityAndMessage {
-
-		@Override
-		public Image getImage(final Object obj) {
-			if ( obj == null || !(obj instanceof MarkerNode) ) { return null; }
-			MarkerNode node = (MarkerNode) obj;
-			if ( node.isConcrete() ) {
-				if ( node instanceof ProblemMarker ) {
-					return GamlMarkerImageProvider.getImage(((ProblemMarker) obj).getSeverity()).image();
-				} else {
-					return null;
-				}
-			} else {
-				GamaIcon icon = GamlMarkerImageProvider.getImage(node.getDescription());
-				return icon == null ? null : icon.image();
-			}
-		}
-
-		@Override
-		public Image getDescriptionImage() {
-			return super.getDescriptionImage();
-		}
-
-	}
-
-	class LineNumberField extends FieldLineNumber {
-
-		@Override
-		public String getColumnHeaderText() {
-			return "Line ";
-		}
-
-		@Override
-		public String getValue(final Object obj) {
-			String s = super.getValue(obj);
-			if ( s == null || s.isEmpty() ) { return s; }
-			String[] segments = StringUtils.split(s);
-			if ( segments.length < 2 ) { return StringUtils.EMPTY; }
-			return segments[1];
-		}
-
-		@Override
-		public int getPreferredWidth() {
-			return 30;
-		}
-
-	}
+	// protected IAction filterAction;
 
 	ToolItem warningAction, infoAction;
 	final BuildPreferenceChangeListener listener;
-	final ErrorField errorField = new ErrorField();
-	final LineNumberField lineField = new LineNumberField();
 
 	public SyntaxErrorsView() {
+		super("msi.gama.lang.gaml.ui.error.generator");
+		// super(MarkerSupportRegistry.PROBLEMS_GENERATOR);
 		listener = new BuildPreferenceChangeListener(this);
 		GamaPreferences.WARNINGS_ENABLED.addChangeListener(listener);
 		GamaPreferences.INFO_ENABLED.addChangeListener(listener);
@@ -101,88 +50,6 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 	public void createPartControl(final Composite compo) {
 		this.parent = GamaToolbarFactory.createToolbars(this, compo);
 		super.createPartControl(parent);
-	}
-
-	@Override
-	protected void initToolBar(final IToolBarManager tbm) {
-		// Just to gather the action contributed before
-		super.initToolBar(tbm);
-		IContributionItem[] items = tbm.getItems();
-		for ( IContributionItem item : items ) {
-			if ( item instanceof ActionContributionItem ) {
-				ActionContributionItem actionItem = (ActionContributionItem) item;
-				IAction action = actionItem.getAction();
-				if ( action instanceof GamaToolbarFactory.ToggleAction ) {
-					continue;
-				}
-				filterAction = actionItem.getAction();
-				tbm.remove(actionItem);
-			}
-		}
-		// tbm.removeAll();
-	}
-
-	@Override
-	protected String getMarkerName() {
-		return super.getMarkerName();
-	}
-
-	@Override
-	public void refreshViewer() {
-		super.refreshViewer();
-	}
-
-	@Override
-	protected void initMenu(final IMenuManager menu) {}
-
-	@Override
-	public IField[] getAllFields() {
-		// super: return new IField[] { severityAndMessage, resource, folder, lineNumber,
-		// creationTime };
-		IField[] fields = super.getAllFields();
-		IField[] newFields = new IField[4];
-		newFields[0] = errorField;
-		newFields[1] = fields[1];
-		newFields[2] = lineField;
-		newFields[3] = fields[2];
-		return newFields;
-	}
-
-	@Override
-	public IField[] getSortingFields() {
-		// super: return new IField[] { severityAndMessage, resource, folder, lineNumber,
-		// creationTime };
-		IField[] fields = super.getSortingFields();
-		IField[] newFields = new IField[5];
-		newFields[0] = errorField;
-		newFields[1] = fields[1];
-		newFields[2] = lineField;
-		newFields[3] = fields[2];
-		newFields[4] = fields[5];
-		return newFields;
-	}
-
-	@Override
-	protected Tree createTree(final Composite parent) {
-		Tree tree = super.createTree(parent);
-		tree.setLinesVisible(false);
-		tree.setHeaderVisible(false);
-		return tree;
-	}
-
-	@Override
-	protected void createColumns(final Tree tree) {
-		super.createColumns(tree);
-	}
-
-	@Override
-	protected TreeViewer getViewer() {
-		return super.getViewer();
-	}
-
-	@Override
-	protected Tree getTree() {
-		return super.getTree();
 	}
 
 	@Override
@@ -232,32 +99,6 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 	}
 
 	@Override
-	public Object getAdapter(final Class adaptable) {
-
-		if ( adaptable.equals(IShowInSource.class) ) { return new IShowInSource() {
-
-			@Override
-			public ShowInContext getShowInContext() {
-				ISelection selection = getViewer().getSelection();
-				if ( !(selection instanceof IStructuredSelection) ) { return null; }
-				IStructuredSelection structured = (IStructuredSelection) selection;
-				Iterator markerIterator = structured.iterator();
-				List newSelection = new ArrayList();
-				while (markerIterator.hasNext()) {
-					Object temp = markerIterator.next();
-					if ( temp instanceof ConcreteMarker ) {
-						ConcreteMarker element = (ConcreteMarker) temp;
-						newSelection.add(element.getResource());
-					}
-				}
-				return new ShowInContext(getViewer().getInput(), new StructuredSelection(newSelection));
-			}
-
-		}; }
-		return super.getAdapter(adaptable);
-	}
-
-	@Override
 	protected void setContentDescription(final String description) {
 		toolbar.status((Image) null, description, IGamaColors.BLUE, SWT.LEFT);
 	}
@@ -270,12 +111,12 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				filterAction.run();
+				openFilterDialog();
 			}
 
 		}, SWT.RIGHT);
 
-		warningAction = tb.check("build.warnings2", "", "Toogle display of warning markers", new SelectionAdapter() {
+		warningAction = tb.check("build.warnings2", "", "Toggle display of warning markers", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -285,7 +126,7 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 		}, SWT.RIGHT);
 		warningAction.setSelection(GamaPreferences.WARNINGS_ENABLED.getValue());
 
-		infoAction = tb.check("build.infos2", "", "Toogle display of information markers", new SelectionAdapter() {
+		infoAction = tb.check("build.infos2", "", "Toggle display of information markers", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -316,10 +157,10 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try {
-					ICommandService service = (ICommandService) getSite().getService(ICommandService.class);
+					ICommandService service = getSite().getService(ICommandService.class);
 					Command c = service.getCommand("msi.gama.lang.gaml.Gaml.validate");
 					if ( c.isEnabled() ) {
-						IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+						IHandlerService handlerService = getSite().getService(IHandlerService.class);
 						handlerService.executeCommand("msi.gama.lang.gaml.Gaml.validate", null);
 					}
 				} catch (Exception e1) {
@@ -346,6 +187,13 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 			}
 		}, SWT.RIGHT).setSelection(true);
 
+	}
+
+	void openFilterDialog() {
+		IEvaluationContext ec = new EvaluationContext(null, this);
+		ec.addVariable(ISources.ACTIVE_PART_NAME, this);
+		ExecutionEvent ev = new ExecutionEvent(null, new HashMap(), this, ec);
+		new ConfigureContentsDialogHandler().execute(ev);
 	}
 
 }
