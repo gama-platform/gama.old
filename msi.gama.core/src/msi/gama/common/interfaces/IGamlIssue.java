@@ -74,5 +74,6 @@ public interface IGamlIssue {
 	public static String DEPRECATED = "gaml.deprecated.code.issue";
 	public static String UNUSED = "gaml.unused.code.issue";
 	public static String CONFLICTING_FACETS = "gaml.conflicting.facets";
+	public static String WRONG_VALUE = "gaml.wrong.value";
 
 }
