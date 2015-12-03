@@ -12,16 +12,14 @@
 package msi.gama.metamodel.shape;
 
 import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
+import com.vividsolutions.jts.algorithm.PointLocator;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.algorithm.PointLocator;
-import com.vividsolutions.jts.geom.*;
 
 /**
  * Written by drogoul Modified on 25 ao�t 2010
@@ -35,7 +33,7 @@ import com.vividsolutions.jts.geom.*;
 	@var(name = "points", type = IType.LIST, of = IType.POINT), @var(name = "envelope", type = IType.GEOMETRY),
 	@var(name = "geometries", type = IType.LIST, of = IType.GEOMETRY), @var(name = "multiple", type = IType.BOOL),
 	@var(name = "holes", type = IType.LIST, of = IType.GEOMETRY), @var(name = "contour", type = IType.GEOMETRY) })
-public class GamaShape implements IShape /* , IContainer */{
+public class GamaShape implements IShape /* , IContainer */ {
 
 	// private static final boolean USE_PREPARED_OPERATIONS = false;
 
@@ -119,8 +117,8 @@ public class GamaShape implements IShape /* , IContainer */{
 		final ILocation newLocation) {
 		this(source, geom);
 		if ( !isPoint() && vector != null && rotation != null ) {
-			geometry.apply(AffineTransform3D.createRotationVector(Math.toRadians(rotation), vector.x, vector.y,
-				vector.z));
+			geometry
+				.apply(AffineTransform3D.createRotationVector(Math.toRadians(rotation), vector.x, vector.y, vector.z));
 		}
 		if ( newLocation != null ) {
 			setLocation(newLocation);
@@ -135,7 +133,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	 * @param rotation can be null, expressed in degrees
 	 * @param newLocation can be null
 	 * @param isBoundingBox indicates whether the previous parameter should be considered as an absolute bounding box
-	 *            (width, height, ) or as a set of coefficients.
+	 * (width, height, ) or as a set of coefficients.
 	 */
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation,
 		final GamaPoint bounds, final boolean isBoundingBox) {
@@ -156,8 +154,8 @@ public class GamaShape implements IShape /* , IContainer */{
 			} else {
 				Double scaling = Math.min(Math.min(bounds.x, bounds.y), bounds.z);
 				Double box = Math.max(Math.max(bounds.x, bounds.y), bounds.z);
-				setAttribute(IShape.DEPTH_ATTRIBUTE, isBoundingBox ? box
-					: (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
+				setAttribute(IShape.DEPTH_ATTRIBUTE,
+					isBoundingBox ? box : (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
 			}
 		}
 	}
@@ -229,13 +227,11 @@ public class GamaShape implements IShape /* , IContainer */{
 		final IList<GamaShape> holes = getHoles();
 		String result = "";
 		if ( getInnerGeometry() instanceof LineString ) {
-			result =
-				"polyline (" +
-					GamaListFactory.createWithoutCasting(Types.POINT, getPoints()).serialize(includingBuiltIn) + ")";
+			result = "polyline (" +
+				GamaListFactory.createWithoutCasting(Types.POINT, getPoints()).serialize(includingBuiltIn) + ")";
 		} else {
-			result =
-				"polygon (" +
-					GamaListFactory.createWithoutCasting(Types.POINT, getPoints()).serialize(includingBuiltIn) + ")";
+			result = "polygon (" +
+				GamaListFactory.createWithoutCasting(Types.POINT, getPoints()).serialize(includingBuiltIn) + ")";
 		}
 		if ( holes.isEmpty() ) { return result; }
 		for ( final GamaShape g : holes ) {
@@ -383,15 +379,15 @@ public class GamaShape implements IShape /* , IContainer */{
 			result = ((Polygon) result).getExteriorRing();
 		} else
 
-			if ( result instanceof MultiPolygon ) {
-				final MultiPolygon mp = (MultiPolygon) result;
-				final LineString lines[] = new LineString[mp.getNumGeometries()];
-				for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
-					lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
-				}
-				result = GeometryUtils.FACTORY.createMultiLineString(lines);
-
+		if ( result instanceof MultiPolygon ) {
+			final MultiPolygon mp = (MultiPolygon) result;
+			final LineString lines[] = new LineString[mp.getNumGeometries()];
+			for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
+				lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
 			}
+			result = GeometryUtils.FACTORY.createMultiLineString(lines);
+
+		}
 		return new GamaShape(result);
 	}
 
@@ -431,7 +427,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	@getter("points")
 	public IList<? extends ILocation> getPoints() {
 		final IList<GamaPoint> result = GamaListFactory.create(Types.POINT);
-		if (getInnerGeometry() == null) return result;
+		if ( getInnerGeometry() == null ) { return result; }
 		final Coordinate[] points = getInnerGeometry().getCoordinates();
 		for ( final Coordinate c : points ) {
 			result.add(new GamaPoint(c));
@@ -553,7 +549,10 @@ public class GamaShape implements IShape /* , IContainer */{
 	@Override
 	public boolean equals(final Object o) {
 		if ( o instanceof GamaShape ) {
-			if ( geometry == null ) { return ((GamaShape) o).geometry == null; }
+			Geometry shape = ((GamaShape) o).geometry;
+			// Fix a possible NPE when calling equalsExact with a null shape
+			if ( shape == null ) { return geometry == null; }
+			if ( geometry == null ) { return false; }
 			return geometry.equalsExact(((GamaShape) o).geometry);
 		}
 		return false;
@@ -656,7 +655,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	 * operators. Can be used in Java too, of course, to retrieve any value stored in the shape
 	 * @param s
 	 * @return the corresponding value of the attribute named 's' in the feature, or null if it is
-	 *         not present
+	 * not present
 	 */
 	@Override
 	public Object getAttribute(final Object s) {

@@ -1,18 +1,17 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MapExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
 import java.util.*;
-
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -20,7 +19,7 @@ import msi.gaml.types.*;
 
 /**
  * ListValueExpr.
- * 
+ *
  * @author drogoul 23 août 07
  */
 public class MapExpression extends AbstractExpression {
@@ -29,15 +28,15 @@ public class MapExpression extends AbstractExpression {
 		MapExpression u = new MapExpression(elements);
 		if ( u.isConst() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
-			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
+			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
 		return u;
 	}
 
 	private final IExpression[] keys;
 	private final IExpression[] vals;
-	private final GamaMap values;
-	private boolean isConst, computed;
+	// private final GamaMap values;
+	// private boolean isConst, computed;
 
 	MapExpression(final List<? extends IExpression> pairs) {
 		keys = new IExpression[pairs.size()];
@@ -52,7 +51,7 @@ public class MapExpression extends AbstractExpression {
 		}
 		IType keyType = GamaType.findCommonType(keys, GamaType.TYPE);
 		IType contentsType = GamaType.findCommonType(vals, GamaType.TYPE);
-		values = GamaMapFactory.create(keyType, contentsType, keys.length);
+		// values = GamaMapFactory.create(keyType, contentsType, keys.length);
 		setName(pairs.toString());
 		type = Types.MAP.of(keyType, contentsType);
 	}
@@ -68,7 +67,7 @@ public class MapExpression extends AbstractExpression {
 		}
 		IType keyType = GamaType.findCommonType(keys, GamaType.TYPE);
 		IType contentsType = GamaType.findCommonType(vals, GamaType.TYPE);
-		values = GamaMapFactory.create(keyType, contentsType, keys.length);
+		// values = GamaMapFactory.create(keyType, contentsType, keys.length);
 		setName(pairs.toString());
 		type = Types.MAP.of(keyType, contentsType);
 	}
@@ -88,16 +87,17 @@ public class MapExpression extends AbstractExpression {
 
 	@Override
 	public GamaMap value(final IScope scope) throws GamaRuntimeException {
-		if ( isConst && computed ) { return (GamaMap) values.clone(); }
+		// if ( isConst && computed ) { return (GamaMap) values.clone(); }
+		GamaMap values = GamaMapFactory.create(type.getKeyType(), type.getContentType());
 		for ( int i = 0; i < keys.length; i++ ) {
 			if ( keys[i] == null || vals[i] == null ) {
-				computed = false;
+				// computed = false;
 				return GamaMapFactory.EMPTY_MAP;
 			}
 			values.put(keys[i].value(scope), vals[i].value(scope));
 		}
-		computed = true;
-		return (GamaMap) values.clone();
+		// computed = true;
+		return values;
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class MapExpression extends AbstractExpression {
 			}
 			if ( vals[i] != null || !keys[i].isConst() || vals[i] != null && !vals[i].isConst() ) { return false; }
 		}
-		isConst = true;
+		// isConst = true;
 		return true;
 	}
 
@@ -147,6 +147,7 @@ public class MapExpression extends AbstractExpression {
 	}
 
 	public GamaMap<IExpression, IExpression> getElements() {
+		// TODO Verify the key and content types in that case...
 		GamaMap result = GamaMapFactory.create(type.getKeyType(), type.getContentType(), keys.length);
 		for ( int i = 0; i < keys.length; i++ ) {
 			if ( keys[i] == null ) {
