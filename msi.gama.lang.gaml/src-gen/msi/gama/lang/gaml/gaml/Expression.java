@@ -11,12 +11,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Expression#getLeft <em>Left</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Expression#getOp <em>Op</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Expression#getRight <em>Right</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getExpression()
  * @model

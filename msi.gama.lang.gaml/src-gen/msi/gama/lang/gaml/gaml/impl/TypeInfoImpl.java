@@ -21,11 +21,11 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.TypeInfoImpl#getFirst <em>First</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.TypeInfoImpl#getSecond <em>Second</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

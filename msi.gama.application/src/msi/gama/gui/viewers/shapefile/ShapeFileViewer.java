@@ -2,18 +2,8 @@ package msi.gama.gui.viewers.shapefile;
 
 import java.awt.Color;
 import java.io.*;
-import java.util.*;
 import java.util.List;
-import msi.gama.gui.navigator.FileMetaDataProvider;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.commands.AgentsMenu;
-import msi.gama.gui.swt.controls.*;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
-import msi.gama.util.file.*;
-import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
@@ -35,6 +25,16 @@ import org.geotools.swt.tool.CursorTool;
 import org.geotools.swt.utils.Utils;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import msi.gama.gui.navigator.FileMetaDataProvider;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.commands.AgentsMenu;
+import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.util.file.GamaShapeFile;
+import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 
 public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
 
@@ -211,7 +211,8 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 						}
 						m2 = new MenuItem(menu, SWT.NONE);
 						m2.setEnabled(false);
-						m2.setText("     - dimensions : " + (int) env.getWidth() + "m x " + (int) env.getHeight() + "m");
+						m2.setText(
+							"     - dimensions : " + (int) env.getWidth() + "m x " + (int) env.getHeight() + "m");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

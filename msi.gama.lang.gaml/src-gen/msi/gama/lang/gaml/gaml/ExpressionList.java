@@ -11,10 +11,10 @@ import org.eclipse.emf.common.util.EList;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.ExpressionList#getExprs <em>Exprs</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getExpressionList()
  * @model

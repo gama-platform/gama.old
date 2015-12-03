@@ -13,10 +13,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.ActionArguments#getArgs <em>Args</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getActionArguments()
  * @model

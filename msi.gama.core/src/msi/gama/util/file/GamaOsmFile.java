@@ -1,26 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaOsmFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.set.hash.TLongHashSet;
 import java.io.*;
 import java.util.*;
-import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.GamlAnnotations.file;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.types.*;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
@@ -29,6 +21,15 @@ import org.openstreetmap.osmosis.core.task.v0_6.*;
 import org.openstreetmap.osmosis.xml.common.CompressionMethod;
 import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
 import com.vividsolutions.jts.geom.*;
+import crosby.binary.osmosis.OsmosisReader;
+import gnu.trove.map.hash.TLongObjectHashMap;
+import gnu.trove.set.hash.TLongHashSet;
+import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.*;
+import msi.gaml.types.*;
 
 @file(name = "osm",
 	extensions = { "osm", "pbf", "bz2", "gz" },
@@ -167,9 +168,8 @@ public class GamaOsmFile extends GamaGisFile {
 				String key = tg.getKey();
 				values.put(key, tg.getValue());
 			}
-			boolean isPolyline =
-				values.containsKey("highway") ||
-					way.getWayNodes().get(0).equals(way.getWayNodes().get(way.getWayNodes().size() - 1));
+			boolean isPolyline = values.containsKey("highway") ||
+				way.getWayNodes().get(0).equals(way.getWayNodes().get(way.getWayNodes().size() - 1));
 			if ( isPolyline ) {
 				((List) geometries).addAll(createSplitRoad(way, values, intersectionNodes, nodesPt));
 
@@ -177,7 +177,9 @@ public class GamaOsmFile extends GamaGisFile {
 				List<IShape> points = GamaListFactory.create(Types.GEOMETRY);
 				for ( WayNode node : way.getWayNodes() ) {
 					GamaShape pp = nodesPt.get(node.getNodeId());
-					if (pp == null) continue;
+					if ( pp == null ) {
+						continue;
+					}
 					points.add(pp);
 				}
 				if ( points.size() < 3 ) {
@@ -207,7 +209,9 @@ public class GamaOsmFile extends GamaGisFile {
 		for ( WayNode node : way.getWayNodes() ) {
 			Long id = node.getNodeId();
 			GamaShape pt = nodesPt.get(id);
-			if (pt == null) continue;
+			if ( pt == null ) {
+				continue;
+			}
 			points.add(pt);
 			if ( intersectionNodes.contains(id) || node == endNode ) {
 				if ( points.size() > 1 ) {
@@ -231,8 +235,8 @@ public class GamaOsmFile extends GamaGisFile {
 	private IShape createRoad(final List<IShape> points, final Map<String, Object> values) {
 		if ( points.size() < 2 ) { return null; }
 		IShape geom = GamaGeometryType.buildPolyline(points);
-		if ( geom != null && geom.getInnerGeometry() != null &&  !geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isSimple() &&
-			geom.getPerimeter() > 0 ) {
+		if ( geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty() &&
+			geom.getInnerGeometry().isSimple() && geom.getPerimeter() > 0 ) {
 			for ( String key : values.keySet() ) {
 				geom.setAttribute(key, values.get(key));
 			}
@@ -243,7 +247,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
@@ -288,7 +292,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 		if ( pbf ) {
 			try {
-				reader = new crosby.binary.osmosis.OsmosisReader(new FileInputStream(osmFile));
+				reader = new OsmosisReader(new FileInputStream(osmFile));
 			} catch (FileNotFoundException e) {
 				System.out.println("Ignored exception in GamaOSMFile readFile: " + e.getMessage());
 				return;

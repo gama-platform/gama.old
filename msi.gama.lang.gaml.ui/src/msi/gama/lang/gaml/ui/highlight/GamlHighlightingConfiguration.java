@@ -1,28 +1,29 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlHighlightingConfiguration.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
 
 /**
  * Written by drogoul
  * Modified on 16 nov. 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
+import msi.gama.gui.swt.SwtGui;
 
 public class GamlHighlightingConfiguration extends DefaultHighlightingConfiguration {
 
@@ -36,6 +37,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	public static final String TYPE_ID = "typeDef";
 	public static final String ASSIGN_ID = "assignment";
 	public static final String UNIT_ID = "unit";
+	public static final String TASK_ID = "task";
 
 	@Override
 	public void configure(final IHighlightingConfigurationAcceptor acceptor) {
@@ -53,6 +55,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 		acceptor.acceptDefaultHighlighting(TYPE_ID, "Type", typeTextStyle());
 		acceptor.acceptDefaultHighlighting(ASSIGN_ID, "Assignment signs", assignTextStyle());
 		acceptor.acceptDefaultHighlighting(UNIT_ID, "Unit names", unitTextStyle());
+		acceptor.acceptDefaultHighlighting(TASK_ID, "Tasks", taskTextStyle());
 	}
 
 	public TextStyle facetTextStyle() {
@@ -147,6 +150,23 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.NONE);
 		textStyle.setColor(new RGB(0, 0, 153));
+		return textStyle;
+	}
+
+	@Override
+	public TextStyle taskTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setFontData(SwtGui.getNavigHeaderFont().getFontData());
+		textStyle.setColor(new RGB(150, 132, 106));
+		textStyle.setStyle(SWT.ITALIC | SWT.BOLD);
+		return textStyle;
+	}
+
+	@Override
+	public TextStyle commentTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setFontData(SwtGui.getNavigFolderFont().getFontData());
+		textStyle.setColor(new RGB(63, 127, 95));
 		return textStyle;
 	}
 

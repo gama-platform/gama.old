@@ -1,8 +1,8 @@
-package msi.gama.lang.gaml.ui.decorators;
+package msi.gama.lang.gaml.ui.markers;
 
-import msi.gama.gui.swt.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.internal.ide.IMarkerImageProvider;
+import msi.gama.gui.swt.*;
 
 public class GamlMarkerImageProvider implements IMarkerImageProvider {
 
@@ -12,11 +12,11 @@ public class GamlMarkerImageProvider implements IMarkerImageProvider {
 	 * Returns the relative path for the image
 	 * to be used for displaying an marker in the workbench.
 	 * This path is relative to the plugin location
-	 * 
+	 *
 	 * Returns <code>null</code> if there is no appropriate image.
-	 * 
+	 *
 	 * @param marker The marker to get an image path for.
-	 * 
+	 *
 	 */
 	@Override
 	public String getImagePath(final IMarker marker) {
@@ -31,7 +31,7 @@ public class GamlMarkerImageProvider implements IMarkerImageProvider {
 			return getImage(IMarker.SEVERITY_ERROR);
 		} else if ( description.contains("Warnings") ) {
 			return getImage(IMarker.SEVERITY_WARNING);
-		} else if ( description.contains("Infos") ) { return getImage(IMarker.SEVERITY_INFO); }
+		} else if ( description.contains("Info") ) { return getImage(IMarker.SEVERITY_INFO); }
 		return null;
 	}
 

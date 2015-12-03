@@ -20,12 +20,12 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ExpressionImpl#getLeft <em>Left</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ExpressionImpl#getOp <em>Op</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ExpressionImpl#getRight <em>Right</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

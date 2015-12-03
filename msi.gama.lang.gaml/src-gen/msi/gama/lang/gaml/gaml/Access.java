@@ -10,10 +10,10 @@ package msi.gama.lang.gaml.gaml;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Access#getArgs <em>Args</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getAccess()
  * @model

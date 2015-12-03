@@ -10,11 +10,11 @@ package msi.gama.lang.gaml.gaml;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.TypeRef#getRef <em>Ref</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.TypeRef#getParameter <em>Parameter</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getTypeRef()
  * @model

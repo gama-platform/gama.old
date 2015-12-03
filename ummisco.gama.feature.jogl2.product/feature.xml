@@ -18,19 +18,16 @@
    </license>
 
    <includes
-         id="ummisco.gama.feature.core"
-         version="0.0.0"
-         optional="true"/>
+         id="ummisco.gama.feature.dependencies"
+         version="0.0.0"/>
 
    <includes
-         id="ummisco.gama.feature.dependencies"
-         version="0.0.0"
-         optional="true"/>
+         id="ummisco.gama.feature.core"
+         version="0.0.0"/>
 
    <includes
          id="ummisco.gama.feature.models"
-         version="0.0.0"
-         optional="true"/>
+         version="0.0.0"/>
 
    <includes
          id="ummisco.gama.feature.opengl.jogl2"

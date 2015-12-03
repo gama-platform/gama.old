@@ -1,18 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlCompatibilityConverter.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.parsing;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
+import org.eclipse.emf.common.util.*;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.diagnostics.Diagnostic;
+import org.eclipse.xtext.diagnostics.Severity;
+import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 import msi.gama.common.GamaPreferences;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
@@ -21,25 +26,20 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
-import org.eclipse.emf.common.util.*;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.diagnostics.*;
-import org.eclipse.xtext.diagnostics.Diagnostic;
-import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 /**
- * 
+ *
  * The class GamlCompatibilityConverter. Performs a series of transformations between the EObject
  * based representation of GAML models and the representation based on SyntacticElements in GAMA.
- * 
+ *
  * @author drogoul
  * @since 16 mars 2013
- * 
+ *
  */
 public class GamlCompatibilityConverter {
 
-	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
-		ISymbolKind.OUTPUT, ISymbolKind.MODEL);
+	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES =
+		Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
 	// private static final Set<String> EXTS = GamaFileType.extensionsToFullType.keySet();
 
@@ -79,6 +79,7 @@ public class GamlCompatibilityConverter {
 	}
 
 	private static void addInfo(final String message, final EObject object, final Set<Diagnostic> errors) {
+		if ( !GamaPreferences.INFO_ENABLED.getValue() ) { return; }
 		Diagnostic d = new EObjectDiagnosticImpl(Severity.INFO, "", message, object, null, 0, null);
 		errors.add(d);
 	}
@@ -330,9 +331,8 @@ public class GamlCompatibilityConverter {
 					if ( args.size() == 1 ) { // Integer index
 						addFacet(elt, AT, convExpr(args.get(0), errors), errors);
 					} else { // Point index
-						IExpressionDescription p =
-							new OperatorExpressionDescription(POINT, convExpr(args.get(0), errors), convExpr(
-								args.get(1), errors));
+						IExpressionDescription p = new OperatorExpressionDescription(POINT,
+							convExpr(args.get(0), errors), convExpr(args.get(1), errors));
 						addFacet(elt, AT, p, errors);
 					}
 				}

@@ -29,11 +29,11 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.BlockImpl#getStatements <em>Statements</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.BlockImpl#getFunction <em>Function</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

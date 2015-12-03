@@ -346,10 +346,6 @@
                value="Gama">
          </property>
          <property
-               name="preferenceCustomization"
-               value="plugin_customization.ini">
-         </property>
-         <property
                name="aboutImage"
                value="icons/launcher_icons/icon205.png">
          </property>
@@ -372,6 +368,10 @@
          <property
                name="startupProgressRect"
                value="30,468,541,10">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
          </property>
       </product>
    </extension>

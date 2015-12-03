@@ -1,19 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SymbolDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import static msi.gama.util.GAML.getExpressionFactory;
-import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
+import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -22,18 +23,17 @@ import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
 import msi.gaml.types.*;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 16 mars 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public abstract class SymbolDescription implements IDescription {
 
-	protected static List<String> typeProviderFacets = Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX,
-		FUNCTION, UPDATE, INIT, DEFAULT);
+	protected static List<String> typeProviderFacets =
+		Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX, FUNCTION, UPDATE, INIT, DEFAULT);
 
 	protected final Facets facets;
 	protected final EObject element;
@@ -114,7 +114,7 @@ public abstract class SymbolDescription implements IDescription {
 	private void flagError(final String s, final String code, final boolean warning, final boolean info,
 		final EObject source, final String ... data) throws GamaRuntimeException {
 
-		if ( warning && !GamaPreferences.WARNINGS_ENABLED.getValue() ) { return; }
+		if ( warning && !info && !GamaPreferences.WARNINGS_ENABLED.getValue() ) { return; }
 		if ( info && !GamaPreferences.INFO_ENABLED.getValue() ) { return; }
 
 		IDescription desc = this;
@@ -134,8 +134,9 @@ public abstract class SymbolDescription implements IDescription {
 		}
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
-		if ( e == null || e.eResource().getURI().path().contains(IExpressionCompiler.SYNTHETIC_RESOURCES_PREFIX) ) { throw warning
-			? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s); }
+		if ( e == null ||
+			e.eResource().getURI().path().contains(IExpressionCompiler.SYNTHETIC_RESOURCES_PREFIX) ) { throw warning
+				? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s); }
 		ErrorCollector c = getErrorCollector();
 		if ( c == null ) {
 			System.out.println((warning ? "Warning" : "Error") + ": " + s);
@@ -166,17 +167,17 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void info(final String message, final String code) {
-		flagError(message, code, true, true, getUnderlyingElement(null), (String[]) null);
+		flagError(message, code, false, true, getUnderlyingElement(null), (String[]) null);
 	}
 
 	@Override
 	public void info(final String s, final String code, final EObject facet, final String ... data) {
-		flagError(s, code, true, true, facet, data);
+		flagError(s, code, false, true, facet, data);
 	}
 
 	@Override
 	public void info(final String s, final String code, final String facet, final String ... data) {
-		flagError(s, code, true, true, this.getUnderlyingElement(facet), data);
+		flagError(s, code, false, true, this.getUnderlyingElement(facet), data);
 	}
 
 	@Override

@@ -19,7 +19,7 @@ global torus: true {
 	reflex new_Value {
 		ask selected_cells{
 			phero <- 1.0;
-		}
+		}  
 	}
 
 	reflex diff {

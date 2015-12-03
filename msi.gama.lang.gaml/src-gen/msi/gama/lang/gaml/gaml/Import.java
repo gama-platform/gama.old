@@ -10,10 +10,10 @@ package msi.gama.lang.gaml.gaml;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Import#getImportURI <em>Import URI</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getImport()
  * @model

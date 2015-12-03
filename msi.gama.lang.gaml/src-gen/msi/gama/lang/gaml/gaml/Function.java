@@ -10,13 +10,13 @@ package msi.gama.lang.gaml.gaml;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Function#getAction <em>Action</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Function#getParameters <em>Parameters</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Function#getType <em>Type</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction()
  * @model

@@ -328,7 +328,7 @@
              class="org.eclipse.ui.views.contentoutline.ContentOutline"
              icon="platform:/plugin/msi.gama.application/icons/view.outline2.png"
              id="msi.gama.application.outline"
-             name="Model outline"
+             name="Outline"
              restorable="true">
        </view>
        <view
@@ -337,39 +337,185 @@
              class="msi.gama.lang.gaml.ui.SyntaxErrorsView"
              icon="platform:/plugin/msi.gama.application/icons/view.problems2.png"
              id="msi.gama.application.problems"
-             name="Syntax errors"
+             name="Validation"
              restorable="true">
        </view>
        <view
              class="msi.gama.lang.gaml.ui.templates.TemplatesView"
              id="msi.gama.lang.gaml.ui.templates"
-             name="GAML templates"
+             name="Templates"
              restorable="true">
        </view>
-    </extension>
-    <extension
-          point="org.eclipse.ui.ide.markerImageProviders">
-       <imageprovider
-             class="msi.gama.lang.gaml.ui.decorators.GamlMarkerImageProvider"
-             id="msi.gama.lang.gaml.ui.imageprovider.normal"
-             markertype="msi.gama.lang.gaml.ui.gaml.check.normal">
-       </imageprovider>
-       <imageprovider
-             class="msi.gama.lang.gaml.ui.decorators.GamlMarkerImageProvider"
-             id="msi.gama.lang.gaml.ui.imageprovider.expensive"
-             markertype="msi.gama.lang.gaml.ui.gaml.check.expensive">
-       </imageprovider>
-       <imageprovider
-             class="msi.gama.lang.gaml.ui.decorators.GamlMarkerImageProvider"
-             id="msi.gama.lang.gaml.ui.imageprovider.fast"
-             markertype="msi.gama.lang.gaml.ui.gaml.check.fast">
-       </imageprovider>
     </extension>
     <extension
           point="org.eclipse.ui.startup">
        <startup
              class="msi.gama.lang.gaml.ui.AutoStartup">
        </startup>
+    </extension>
+    <extension
+          point="org.eclipse.ui.ide.markerSupport">
+          
+      
+      
+      
+      
+      
+      
+          
+          
+          
+       <markerContentGenerator
+             defaultMarkerGrouping="org.eclipse.ui.ide.allMarkers.severity"
+             id="msi.gama.lang.gaml.ui.error.generator"
+             name="Error Generator">             
+             
+             
+          <markerTypeReference
+                id="msi.gama.lang.gaml.ui.gaml.check.expensive">
+          </markerTypeReference>
+          <markerTypeReference
+                id="msi.gama.lang.gaml.ui.gaml.check.normal">
+          </markerTypeReference>
+          <markerTypeReference
+                id="msi.gama.lang.gaml.ui.gaml.check.fast">
+          </markerTypeReference>
+             
+         <markerGrouping
+               id="org.eclipse.ui.ide.allMarkers.severity"
+               label="Severity">
+            <markerGroupingEntry
+                  id="org.eclipse.ui.ide.allmarkers.errorSeverity"
+                  label="Errors"
+                  priority="30">
+            </markerGroupingEntry>
+            <markerGroupingEntry
+                  id="org.eclipse.ui.ide.allmarkers.warningSeverity"
+                  label="Warnings"
+                  priority="20">
+            </markerGroupingEntry>
+            <markerGroupingEntry
+                  id="org.eclipse.ui.ide.allmarkers.other"
+                  label="Information"
+                  priority="10">
+            </markerGroupingEntry>
+            <markerAttributeGrouping
+                  attribute="severity"
+                  defaultGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                  markerType="msi.gama.lang.gaml.ui.gaml.check.fast">
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.errorSeverity"
+                     value="2">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.warningSeverity"
+                     value="1">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     value="0">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     value="-1">
+               </markerAttributeMapping>
+            </markerAttributeGrouping>
+                        <markerAttributeGrouping
+                              attribute="severity"
+                              defaultGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                              markerType="msi.gama.lang.gaml.ui.gaml.check.normal">
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.errorSeverity"
+                     value="2">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.warningSeverity"
+                     value="1">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     value="0">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     value="-1">
+               </markerAttributeMapping>
+            </markerAttributeGrouping>
+                        <markerAttributeGrouping
+                              attribute="severity"
+                              defaultGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                              markerType="msi.gama.lang.gaml.ui.gaml.check.expensive">
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.errorSeverity"
+                     value="2">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.warningSeverity"
+                     value="1">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     value="0">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     value="-1">
+               </markerAttributeMapping>
+            </markerAttributeGrouping>
+            
+         </markerGrouping>
+          <markerFieldConfiguration
+                enabled="true"
+                id="msi.gama.lang.gaml.ui.markerFieldConfiguration1"
+                name="Problems"
+                scope="ON_ANY"
+                values="msi.gama.lang.gaml.ui.GamlProblems">
+          </markerFieldConfiguration>
+          <markerFieldReference
+                id="msi.gama.lang.gaml.ui.description.field"
+                visible="true">
+          </markerFieldReference>
+          <markerFieldReference
+                id="msi.gama.lang.gaml.ui.project.field"
+                visible="true">
+          </markerFieldReference>
+          <markerFieldReference
+                id="org.eclipse.ui.ide.resourceField"
+                visible="true">
+          </markerFieldReference>
+          <markerFieldReference
+                id="org.eclipse.ui.ide.locationField"
+                visible="true">
+          </markerFieldReference>
+       </markerContentGenerator>
+       <markerField
+             class="msi.gama.lang.gaml.ui.markers.ProjectMarkerField"
+             id="msi.gama.lang.gaml.ui.project.field"
+             name="Project">
+       </markerField>
+       <markerField
+             class="msi.gama.lang.gaml.ui.markers.GamlDescriptionMarkerField"
+             id="msi.gama.lang.gaml.ui.description.field"
+             name="Description">
+       </markerField>
+    </extension>
+    <extension
+          point="org.eclipse.ui.ide.markerImageProviders">
+       <imageprovider
+             class="msi.gama.lang.gaml.ui.markers.GamlMarkerImageProvider"
+             id="msi.gama.lang.gaml.ui.imageprovider.normal"
+             markertype="msi.gama.lang.gaml.ui.gaml.check.normal">
+       </imageprovider>
+       <imageprovider
+             class="msi.gama.lang.gaml.ui.markers.GamlMarkerImageProvider"
+             id="msi.gama.lang.gaml.ui.imageprovider.expensive"
+             markertype="msi.gama.lang.gaml.ui.gaml.check.expensive">
+       </imageprovider>
+       <imageprovider
+             class="msi.gama.lang.gaml.ui.markers.GamlMarkerImageProvider"
+             id="msi.gama.lang.gaml.ui.imageprovider.fast"
+             markertype="msi.gama.lang.gaml.ui.gaml.check.fast">
+       </imageprovider>
     </extension>
 
 </plugin>

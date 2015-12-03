@@ -30,12 +30,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getName <em>Name</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getImports <em>Imports</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getBlock <em>Block</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

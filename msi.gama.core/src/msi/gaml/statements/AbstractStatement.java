@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.statements;
 
@@ -22,7 +22,7 @@ import msi.gaml.operators.Cast;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
- * 
+ *
  */
 
 public abstract class AbstractStatement extends Symbol implements IStatement {
@@ -86,6 +86,11 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 			sb.append(e.getKey()).append(": [ ").append(exprString).append(" ] ").append(exprValue).append(" ");
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public StatementDescription getDescription() {
+		return (StatementDescription) super.getDescription();
 	}
 
 }

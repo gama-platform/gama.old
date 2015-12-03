@@ -1,41 +1,34 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Physical3DWorldAgent.java', in plugin 'simtools.gaml.extensions.physics', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package simtools.gaml.extensions.physics;
 
 import java.util.HashMap;
 import javax.vecmath.Vector3f;
+import com.bulletphysics.collision.shapes.*;
+import com.bulletphysics.dynamics.RigidBody;
+import com.vividsolutions.jts.geom.Coordinate;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
-import com.bulletphysics.collision.shapes.*;
-import com.bulletphysics.dynamics.RigidBody;
-import com.vividsolutions.jts.geom.Coordinate;
 
 /*
  * species: The PhysicalWorldAgent is defined in this class. PhysicalWorldAgent supports the action
- * 
+ *
  * @author Javier Gil-Quijano - Arnaud Grignard - 18-Nov-2012 (Gama Winter School)
  * Last Modified: 23-Mar-2012
  */
@@ -44,7 +37,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 	@var(name = "gravity",
 		type = IType.BOOL,
 		init = "true",
-		doc = @doc("Define if the physical world has a gravity or not")),
+		doc = @doc("Define if the physical world has a gravity or not") ),
 	@var(name = "registeredAgents", type = IType.LIST, init = "[]") })
 public class Physical3DWorldAgent extends GamlAgent {
 
@@ -103,7 +96,7 @@ public class Physical3DWorldAgent extends GamlAgent {
 	 * Read the value define in GAML of collisionBound to set the collisionShape of the JBullet
 	 * world.
 	 * If collisionBound is not define it will create a sphere of radius= 1 and mass =1.
-	 * 
+	 *
 	 * Once the CollisionShape is defined it is added in the JBulletPhysicWorld
 	 */
 	private RigidBody CollisionBoundToCollisionShape(final IAgent geom) {

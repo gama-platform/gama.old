@@ -11,11 +11,11 @@ import org.eclipse.emf.common.util.EList;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Model#getImports <em>Imports</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Model#getBlock <em>Block</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getModel()
  * @model

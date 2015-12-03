@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getKey <em>Key</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFirstFacet <em>First Facet</em>}</li>
@@ -37,7 +38,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFacets <em>Facets</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getBlock <em>Block</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

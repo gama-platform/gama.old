@@ -7,4 +7,3 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: msi.gama.core;bundle-version="1.4.0",
  msi.gama.processor;bundle-version="1.4.0",
  msi.gama.ext;bundle-version="1.0.0"
-Import-Package: com.vividsolutions.jts

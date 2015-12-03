@@ -13,7 +13,7 @@ global {
 		create foyer number: 500;
 		reseau_route <- as_edge_graph(route);
 	}
-}
+} 
 
 species foyer {
 	float revenu <- gauss(1500, 500);

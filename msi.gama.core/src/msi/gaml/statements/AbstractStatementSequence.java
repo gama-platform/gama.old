@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractStatementSequence.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.statements;
 
@@ -58,6 +58,10 @@ public class AbstractStatementSequence extends AbstractStatement {
 	}
 
 	public void leaveScope(final IScope scope) {
+		// Clears any action_halted status in case we are a top-level behavior (reflex, init, state, etc.)
+		if ( getDescription().getMeta().isTopLevel() ) {
+			scope.popAction();
+		}
 		scope.pop(this);
 	}
 

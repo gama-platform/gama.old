@@ -10,7 +10,7 @@
  *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (meteo_DB here) AND IMPORTED THE FILE (../../includes/meteo_DB_dump.sql)
  *        IN ORDER THAT THE MODEL CAN RUN PROPERLY.
  */
-model create_agents_Insert_result_MySQL
+model create_agents_Insert_result_MySQL 
 
 global {
 	string res_DB <- '`result_DB`';
@@ -38,7 +38,7 @@ global {
 		}
 
 		write "DROP the result table";
-		do halt;
+		do halt; 
 	}
 
 }

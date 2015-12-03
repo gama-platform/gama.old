@@ -1,24 +1,24 @@
 /**
  * Created by drogoul, 24 janv. 2015
- * 
+ *
  */
 package msi.gama.gui.navigator.images;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
-import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
+import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 
 /**
  * Class ImageDataLoader.
- * 
+ *
  * @author drogoul
  * @since 24 janv. 2015
- * 
+ *
  */
 public class ImageDataLoader {
 
@@ -91,6 +91,7 @@ public class ImageDataLoader {
 			String filetype = infile.nextLine();
 			if ( !filetype.equalsIgnoreCase("p2") ) {
 				System.out.println("Not a PGM");
+				infile.close();
 				return null;
 			}
 			// infile.nextLine();
@@ -137,6 +138,7 @@ public class ImageDataLoader {
 		}
 		ImageData result = SWTUtils.convertAWTImageToSWT(img);
 		result.type = ImagePropertyPage.IMAGE_PGM;
+		infile.close();
 		return result;
 	}
 
@@ -149,6 +151,7 @@ public class ImageDataLoader {
 			// Not a ASC file
 			if ( !infile.hasNext("ncols") ) {
 				System.out.println("Not an ASC");
+				infile.close();
 				return null;
 			}
 
@@ -224,6 +227,7 @@ public class ImageDataLoader {
 		}
 		ImageData result = SWTUtils.convertAWTImageToSWT(img);
 		result.type = ImagePropertyPage.IMAGE_ASC;
+		infile.close();
 		return result;
 	}
 

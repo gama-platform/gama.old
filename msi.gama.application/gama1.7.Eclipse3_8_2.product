@@ -30,13 +30,14 @@ openFile
 -Xms256m -Xmx2048m
 -Xmn128m
 -Xss2m
--XX:PermSize=128m
--XX:MaxPermSize=256m
 -XX:+UseParallelGC
 -XX:+UseAdaptiveSizePolicy
 -XX:+OptimizeStringConcat
       </vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      <vmArgsMac>-XstartOnFirstThread 
+-Dorg.eclipse.swt.internal.carbon.smallFonts 
+-Dorg.eclipse.swt.internal.carbon.noFocusRing
+         <argsX86>-d32</argsX86>
       </vmArgsMac>
    </launcherArgs>
 
@@ -63,8 +64,9 @@ openFile
       </win>
    </launcher>
 
+
    <vm>
-      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</macos>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
    </vm>
 
    <license>
@@ -258,7 +260,6 @@ openFile
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>
       <feature id="org.eclipse.equinox.p2.user.ui"/>
-      <feature id="org.eclipse.rcp" version="4.4.2.v20150204-1700"/>
       <feature id="org.eclipse.ecf.filetransfer.httpclient4.feature"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"/>
@@ -268,6 +269,7 @@ openFile
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
       <feature id="org.eclipse.e4.rcp"/>
+      <feature id="org.eclipse.rcp" version="4.5.1.v20150904-0015"/>
    </features>
 
    <configurations>
@@ -276,7 +278,14 @@ openFile
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="version" value="1.6.1" />
+      <property name="version" value="1.7" />
    </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>

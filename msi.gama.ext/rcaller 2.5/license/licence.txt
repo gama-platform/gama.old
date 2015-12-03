@@ -1,0 +1,14 @@
+This software (RCaller 2.0) is distributed under the 
+LGPL (GNU Lesser General Public Licence) v3.0
+
+Author: Dr.Mehmet Hakan Satman (mhsatman@yahoo.com)
+Source Code: http://code.google.com/p/rcaller/
+Home Page: http://www.mhsatman.com/rcaller.php
+Links to RCaller: http://stdioe.blogspot.com
+
+Research paper for citations:
+Satman, M.H., RCaller: A Software Library for Calling R from Java, British Journal of Mathematics and Computer Science, ISSN: 2231-0851,Vol.: 4, Issue.: 15 (01-15 August), 2014
+http://www.sciencedomain.org/abstract.php?iid=550&id=6&aid=4838#.U5XU3PmSy1Y
+
+
+

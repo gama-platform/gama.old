@@ -1,34 +1,34 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'EGaml.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.utils;
 
 import java.util.*;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.resource.IResourceServiceProvider;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.SyntacticFactory;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.resource.IResourceServiceProvider;
 
 /**
  * The class EGaml. A bunch of utilities to work with the various GAML statements and expressions.
- * 
+ *
  * @author drogoul
  * @since 7 f�vr. 2012
- * 
+ *
  */
 public class EGaml {
 
@@ -193,8 +193,8 @@ public class EGaml {
 	}
 
 	public static List<? extends Statement> getStatementsOf(final Block block) {
-		if ( block != null && ((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS) ) { return block
-			.getStatements(); }
+		if ( block != null &&
+			((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS) ) { return block.getStatements(); }
 		return Collections.EMPTY_LIST;
 	}
 
@@ -325,9 +325,8 @@ public class EGaml {
 
 	public static <T> T getInstance(final Class<T> c) {
 		if ( injector == null ) {
-			injector =
-				IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(URI.createPlatformResourceURI(
-					"dummy/dummy.gaml", false));
+			injector = IResourceServiceProvider.Registry.INSTANCE
+				.getResourceServiceProvider(URI.createPlatformResourceURI("dummy/dummy.gaml", false));
 		}
 		return injector.get(c);
 	}

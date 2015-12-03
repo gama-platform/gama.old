@@ -10,11 +10,11 @@ package msi.gama.lang.gaml.gaml;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Facet#getKey <em>Key</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Facet#getExpr <em>Expr</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getFacet()
  * @model

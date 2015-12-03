@@ -1,22 +1,22 @@
 /*********************************************************************************************
- * 
  *
- * 'IGamlIssue.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'IGamlIssue.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
 /**
  * The class IGamlIssue.
- * 
+ *
  * @author drogoul
  * @since 26 avr. 2012
- * 
+ *
  */
 public interface IGamlIssue {
 
@@ -28,13 +28,13 @@ public interface IGamlIssue {
 	public static String GENERAL = "gaml.general.issue";
 	public static String IS_A_TYPE = "gaml.is.a.type.issue";
 	public static String IS_RESERVED = "gaml.is.reserved.issue";
-	public static String IS_A_UNIT = "gaml.is.a.unit.issue";
+	// Obsolete public static String IS_A_UNIT = "gaml.is.a.unit.issue";
 	public static String MISSING_ACTION = "gaml.missing.action.issue";
 	public static String MISSING_ARGUMENT = "gaml.missing.argument.issue";
 	public static String MISSING_DEFINITION = "gaml.missing.definition.issue";
 	public static String MISSING_NAME = "gaml.missing.name.issue";
 	public static String MISSING_TYPE = "gaml.missing.type.issue";
-	public static String NO_ENVIRONMENT = "gaml.no.environment.issue";
+	// Obsolete public static String NO_ENVIRONMENT = "gaml.no.environment.issue";
 	public static String NO_INIT = "gaml.no.init.issue";
 	public static String NOT_A_TYPE = "gaml.not.a.type.issue";
 	public static String NOT_AN_AGENT = "gaml.not.an.agent.issue";
@@ -73,5 +73,6 @@ public interface IGamlIssue {
 	public static String MISSING_RETURN = "gaml.missing.return.issue";
 	public static String DEPRECATED = "gaml.deprecated.code.issue";
 	public static String UNUSED = "gaml.unused.code.issue";
+	public static String CONFLICTING_FACETS = "gaml.conflicting.facets";
 
 }

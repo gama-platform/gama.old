@@ -22,10 +22,10 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.S_SpeciesImpl#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

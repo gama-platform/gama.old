@@ -1,40 +1,46 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlSemanticHighlightingCalculator.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
 
 import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.*;
+import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.TASK_ID;
 import static org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration.*;
 import java.util.*;
-import msi.gama.common.util.StringUtils;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.gaml.util.GamlSwitch;
-import msi.gama.lang.utils.EGaml;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.*;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.tasks.*;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
+import com.google.inject.Inject;
+import msi.gama.common.util.StringUtils;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.util.GamlSwitch;
+import msi.gama.lang.utils.EGaml;
 
 /**
- * 
+ *
  * @author Pierrick
- *         cf. http://www.eclipse.org/Xtext/documentation/latest/xtext.html#highlighting
- * 
+ * cf. http://www.eclipse.org/Xtext/documentation/latest/xtext.html#highlighting
+ *
  */
 public class GamlSemanticHighlightingCalculator extends GamlSwitch implements ISemanticHighlightingCalculator {
 
-	private static Set<String> ASSIGNMENTS = new HashSet(Arrays.asList("<-", "<<", ">>", "->", "<+", ">-", "<<+",
-		">>-", "+<-"));
+	@Inject
+	private ITaskFinder taskFinder;
+
+	private static Set<String> ASSIGNMENTS =
+		new HashSet(Arrays.asList("<-", "<<", ">>", "->", "<+", ">-", "<<+", ">>-", "+<-"));
 
 	private IHighlightedPositionAcceptor acceptor;
 	Set<INode> done = new HashSet();
@@ -48,6 +54,14 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 			doSwitch(root.next());
 		}
 		done.clear();
+		highlightTasks(resource, acceptor);
+	}
+
+	protected void highlightTasks(final XtextResource resource, final IHighlightedPositionAcceptor acceptor) {
+		List<Task> tasks = taskFinder.findTasks(resource);
+		for ( Task task : tasks ) {
+			acceptor.addPosition(task.getOffset(), task.getTagLength(), TASK_ID);
+		}
 	}
 
 	@Override

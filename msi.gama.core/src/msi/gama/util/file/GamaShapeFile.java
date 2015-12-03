@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaShapeFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.file;
 
@@ -15,15 +15,6 @@ import static org.apache.commons.lang.StringUtils.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
-import msi.gama.precompiler.GamlAnnotations.file;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.operators.Strings;
-import msi.gaml.types.*;
 import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.*;
@@ -36,13 +27,23 @@ import org.opengis.feature.type.*;
 import org.opengis.referencing.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.*;
+import msi.gaml.operators.Strings;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul
  * Modified on 13 nov. 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @file(name = "shape",
 	extensions = { "shp" },
@@ -167,9 +168,8 @@ public class GamaShapeFile extends GamaGisFile {
 		public String toPropertyString() {
 			String attributeNames = join(attributes.keySet(), SUB_DELIMITER);
 			String types = join(attributes.values(), SUB_DELIMITER);
-			Object[] toSave =
-				new Object[] { super.toPropertyString(), itemNumber, crs == null ? "null" : crs.toWKT(), width, height,
-					attributeNames, types };
+			Object[] toSave = new Object[] { super.toPropertyString(), itemNumber, crs == null ? "null" : crs.toWKT(),
+				width, height, attributeNames, types };
 			return join(toSave, DELIMITER);
 		}
 	}
@@ -219,7 +219,7 @@ public class GamaShapeFile extends GamaGisFile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
@@ -261,15 +261,16 @@ public class GamaShapeFile extends GamaGisFile {
 				GuiUtils.updateSubStatusCompletion(index++ / size);
 				Feature feature = reader.next();
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
-				if ( g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */) {
+				if ( g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 					g = gis.transform(g);
 					list.add(new GamaGisGeometry(g, feature));
 				} else {
 					// See Issue 725
-					GAMA.reportError(
-						scope,
-						GamaRuntimeException.warning("GamaShapeFile.fillBuffer; geometry could not be added : " +
-							feature.getIdentifier(), scope), false);
+					GAMA.reportError(scope,
+						GamaRuntimeException.warning(
+							"GamaShapeFile.fillBuffer; geometry could not be added : " + feature.getIdentifier(),
+							scope),
+						false);
 				}
 			}
 		} catch (final IOException e) {
@@ -311,16 +312,16 @@ public class GamaShapeFile extends GamaGisFile {
 					GuiUtils.updateSubStatusCompletion(i++ / size);
 					final SimpleFeature feature = it.next();
 					Geometry g = (Geometry) feature.getDefaultGeometry();
-					if ( g != null && !g.isEmpty() /* Fix for Issue 725 */) {
+					if ( g != null && !g.isEmpty() /* Fix for Issue 725 */ ) {
 						// Fix for Issue 677
 						g = gis.transform(g);
 						((IList) getBuffer()).add(new GamaGisGeometry(g, feature));
 					} else {
 						// See Issue 725
-						GAMA.reportError(
-							scope,
-							GamaRuntimeException.warning("GamaShapeFile.fillBuffer; geometry could not be added : " +
-								feature.getID(), scope), false);
+						GAMA.reportError(scope,
+							GamaRuntimeException.warning(
+								"GamaShapeFile.fillBuffer; geometry could not be added : " + feature.getID(), scope),
+							false);
 					}
 				}
 			} else {

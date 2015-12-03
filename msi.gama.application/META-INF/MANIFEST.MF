@@ -24,10 +24,6 @@ Bundle-Vendor: UMMISCO
 Bundle-Version: 1.7.0.qualifier
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: msi.gama.application;singleton:=true
-Bundle-ClassPath: .,
- libs/gt-swt-11.4.jar,
- libs/svnkit-javahl.jar,
- libs/svnkit.jar
 Export-Package: msi.gama.gui.displays.awt,
  msi.gama.gui.displays.layers,
  msi.gama.gui.navigator,

@@ -356,7 +356,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				final double dist = sh.getLocation().euclidianDistanceTo(p);
 				if ( dist < dMin ) {
 					dMin = dist;
-					final GamaPoint pt = (GamaPoint) hexAgentToLoc.get(sh);
+					final GamaPoint pt = (GamaPoint) hexAgentToLoc.get(sh.getGeometry());
 					x = (int) pt.x;
 					y = (int) pt.y;
 				}

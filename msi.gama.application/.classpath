@@ -8,8 +8,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/gt-swt-11.4.jar" sourcepath="/Users/drogoul/Downloads/geotools-master/modules/unsupported/swt/src"/>
-	<classpathentry exported="true" kind="lib" path="libs/svnkit-javahl.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/svnkit.jar"/>
+	<classpathentry kind="lib" path="gt-swt-13.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

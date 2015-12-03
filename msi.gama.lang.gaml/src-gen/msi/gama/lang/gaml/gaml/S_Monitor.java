@@ -13,13 +13,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.S_Monitor#getKey <em>Key</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.S_Monitor#getFirstFacet <em>First Facet</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.S_Monitor#getName <em>Name</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.S_Monitor#getFacets <em>Facets</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getS_Monitor()
  * @model

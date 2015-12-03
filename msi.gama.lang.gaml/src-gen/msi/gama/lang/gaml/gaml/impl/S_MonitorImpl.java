@@ -28,13 +28,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.S_MonitorImpl#getKey <em>Key</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.S_MonitorImpl#getFirstFacet <em>First Facet</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.S_MonitorImpl#getName <em>Name</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.S_MonitorImpl#getFacets <em>Facets</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -13,11 +13,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Block#getStatements <em>Statements</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Block#getFunction <em>Function</em>}</li>
  * </ul>
- * </p>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getBlock()
  * @model

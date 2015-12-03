@@ -18,10 +18,10 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlDefinitionImpl#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

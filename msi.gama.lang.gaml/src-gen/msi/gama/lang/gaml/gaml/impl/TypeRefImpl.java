@@ -21,11 +21,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.TypeRefImpl#getRef <em>Ref</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.TypeRefImpl#getParameter <em>Parameter</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
