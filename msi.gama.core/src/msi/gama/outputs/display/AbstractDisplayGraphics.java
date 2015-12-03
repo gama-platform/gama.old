@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractDisplayGraphics.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.display;
 
@@ -26,16 +26,16 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	protected double yRatioBetweenPixelsAndModelUnits;
 	final protected int widthOfDisplayInPixels;
 	final protected int heightOfDisplayInPixels;
-	final protected int widthOfEnvironmentInModelUnits;
-	final protected int heightOfEnvironmentInModelUnits;
+	final protected double widthOfEnvironmentInModelUnits;
+	final protected double heightOfEnvironmentInModelUnits;
 
 	public AbstractDisplayGraphics(final IDisplaySurface surface) {
-		widthOfEnvironmentInModelUnits = (int) surface.getEnvWidth();
-		heightOfEnvironmentInModelUnits = (int) surface.getEnvHeight();
+		widthOfEnvironmentInModelUnits = surface.getEnvWidth();
+		heightOfEnvironmentInModelUnits = surface.getEnvHeight();
 		widthOfDisplayInPixels = surface.getDisplayWidth();
 		heightOfDisplayInPixels = surface.getDisplayHeight();
-		xRatioBetweenPixelsAndModelUnits = (double) widthOfDisplayInPixels / (double) widthOfEnvironmentInModelUnits;
-		yRatioBetweenPixelsAndModelUnits = (double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits;
+		xRatioBetweenPixelsAndModelUnits = widthOfDisplayInPixels / widthOfEnvironmentInModelUnits;
+		yRatioBetweenPixelsAndModelUnits = heightOfDisplayInPixels / heightOfEnvironmentInModelUnits;
 		initFor(surface);
 	}
 
@@ -115,14 +115,14 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		yOffsetInPixels = layer.getPositionInPixels().y;
 		widthOfLayerInPixels = layer.getSizeInPixels().x;
 		heightOfLayerInPixels = layer.getSizeInPixels().y;
-		xRatioBetweenPixelsAndModelUnits = (double) widthOfLayerInPixels / (double) widthOfEnvironmentInModelUnits;
-		yRatioBetweenPixelsAndModelUnits = (double) heightOfLayerInPixels / (double) heightOfEnvironmentInModelUnits;
+		xRatioBetweenPixelsAndModelUnits = widthOfLayerInPixels / widthOfEnvironmentInModelUnits;
+		yRatioBetweenPixelsAndModelUnits = heightOfLayerInPixels / heightOfEnvironmentInModelUnits;
 	}
 
 	@Override
 	public void endDrawingLayer(final ILayer layer) {
-		xRatioBetweenPixelsAndModelUnits = (double) widthOfDisplayInPixels / (double) widthOfEnvironmentInModelUnits;
-		yRatioBetweenPixelsAndModelUnits = (double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits;
+		xRatioBetweenPixelsAndModelUnits = widthOfDisplayInPixels / widthOfEnvironmentInModelUnits;
+		yRatioBetweenPixelsAndModelUnits = heightOfDisplayInPixels / heightOfEnvironmentInModelUnits;
 	}
 
 }
