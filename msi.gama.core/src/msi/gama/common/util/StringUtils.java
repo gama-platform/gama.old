@@ -76,7 +76,7 @@ public class StringUtils {
 		StringBuilder writer = new StringBuilder(str.length());
 		unescapeJava(writer, str);
 		String result = writer.toString();
-		System.out.println("String en entrée:" + str + " ; en sortie:" + result);
+		// System.out.println("String en entrée:" + str + " ; en sortie:" + result);
 		// writer.setLength(0);
 		return result;
 
