@@ -1,24 +1,24 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ExperimentDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
-import org.eclipse.emf.ecore.EObject;
 
 public class ExperimentDescription extends SpeciesDescription {
 
@@ -37,6 +37,7 @@ public class ExperimentDescription extends SpeciesDescription {
 		if ( parameters == null ) {
 			parameters = new TOrderedHashMap();
 		}
+
 		parameters.put(var.getName(), var);
 	}
 

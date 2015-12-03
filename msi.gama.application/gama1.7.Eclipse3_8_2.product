@@ -269,14 +269,7 @@ openFile
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
       <feature id="org.eclipse.e4.rcp"/>
-<<<<<<< HEAD
       <feature id="org.eclipse.rcp" version="4.5.1.v20150904-0015"/>
-=======
-      <feature id="ummisco.gama.feature.models"/>
-      <feature id="ummisco.gama.feature.dependencies"/>
-      <feature id="ummisco.gama.feature.opengl.jogl2"/>
-      <feature id="ummisco.gama.feature.core"/>
->>>>>>> branch 'master' of https://github.com/gama-platform/gama.git
    </features>
 
    <configurations>

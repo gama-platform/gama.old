@@ -125,7 +125,7 @@
 	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/stax2-api-3.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/woodstox-core-lgpl-4.1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/xz-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-core-1.14.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-core-1.14.0.jar" sourcepath="jts 1.14/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jcommon-1.0.23.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jfreechart-1.0.19.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-math3 3.1.1/jars/commons-math3-3.1.1.jar"/>

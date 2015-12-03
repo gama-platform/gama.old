@@ -1,28 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ExperimentParameter.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -33,42 +26,46 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
 import msi.gaml.variables.*;
 
-@facets(value = {
-	@facet(name = IKeyword.NAME,
-		type = IType.LABEL,
-		optional = true,
-		doc = @doc("The message displayed in the interface")),
-	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the variable type")),
-	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("the init value")),
-	@facet(name = IKeyword.MIN, type = IType.NONE, optional = true, doc = @doc("the minimum value")),
-	@facet(name = IKeyword.MAX, type = IType.NONE, optional = true, doc = @doc("the maximum value")),
-	@facet(name = IKeyword.CATEGORY,
-		type = IType.LABEL,
-		optional = true,
-		doc = @doc("a category label, used to group parameters in the interface")),
-	@facet(name = IKeyword.VAR,
-		type = IType.ID,
-		optional = false,
-		doc = @doc("the name of the variable (that should be declared in the global)")),
-	@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true, doc = @doc("the variable unit")),
-	@facet(name = IKeyword.STEP,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
-	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values")) },
+@facets(
+	value = {
+		@facet(name = IKeyword.NAME,
+			type = IType.LABEL,
+			optional = true,
+			doc = @doc("The message displayed in the interface") ),
+		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the variable type") ),
+		@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("the init value") ),
+		@facet(name = IKeyword.MIN, type = IType.NONE, optional = true, doc = @doc("the minimum value") ),
+		@facet(name = IKeyword.MAX, type = IType.NONE, optional = true, doc = @doc("the maximum value") ),
+		@facet(name = IKeyword.CATEGORY,
+			type = IType.LABEL,
+			optional = true,
+			doc = @doc("a category label, used to group parameters in the interface") ),
+		@facet(name = IKeyword.VAR,
+			type = IType.ID,
+			optional = false,
+			doc = @doc("the name of the variable (that should be declared in the global)") ),
+		@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true, doc = @doc("the variable unit") ),
+		@facet(name = IKeyword.STEP,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)") ),
+		@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values") ) },
 	omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @validator(Variable.VarValidator.class)
-@doc(value = "The parameter statement specifies which global attributes (i) will change through the successive simulations (in batch experiments), (ii) can be modified by user via the interface (in gui experiments). In GUI experiments, parameters are displayed depending on their type.",
+@doc(
+	value = "The parameter statement specifies which global attributes (i) will change through the successive simulations (in batch experiments), (ii) can be modified by user via the interface (in gui experiments). In GUI experiments, parameters are displayed depending on their type.",
 	usages = {
 		@usage(value = "In gui experiment, the general syntax is the following:",
 			examples = { @example(value = "parameter title var: global_var category: cat;", isExecutable = false) }),
-		@usage(value = "In batch experiment, the two following syntaxes can be used to describe the possible values of a parameter:",
+		@usage(
+			value = "In batch experiment, the two following syntaxes can be used to describe the possible values of a parameter:",
 			examples = {
 				@example(value = "parameter 'Value of toto:' var: toto among: [1, 3, 7, 15, 100]; ",
 					isExecutable = false),
-				@example(value = "parameter 'Value of titi:' var: titi min: 1 max: 100 step: 2; ", isExecutable = false) }), })
+				@example(value = "parameter 'Value of titi:' var: titi min: 1 max: 100 step: 2; ",
+					isExecutable = false) }), })
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
@@ -101,9 +98,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		max = getFacet(IKeyword.MAX);
 		step = getFacet(IKeyword.STEP);
 		among = getFacet(IKeyword.AMONG);
-		init =
-			this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacets().getExpr(
-				IKeyword.INIT);
+		init = this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT)
+			: targetedGlobalVar.getFacets().getExpr(IKeyword.INIT);
 		order = desc.getDefinitionOrder();
 		isEditable = true;
 	}

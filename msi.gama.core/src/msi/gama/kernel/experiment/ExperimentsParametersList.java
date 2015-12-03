@@ -1,18 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ExperimentsParametersList.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.*;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;

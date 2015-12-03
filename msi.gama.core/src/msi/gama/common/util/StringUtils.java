@@ -14,11 +14,11 @@ package msi.gama.common.util;
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
+import org.apache.commons.lang.StringEscapeUtils;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.util.*;
 import msi.gaml.types.Types;
-import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * The class StringUtils.
@@ -72,10 +72,12 @@ public class StringUtils {
 	 */
 	static public String unescapeJava(final String str) {
 		if ( str == null ) { return null; }
+
 		StringBuilder writer = new StringBuilder(str.length());
 		unescapeJava(writer, str);
 		String result = writer.toString();
-		writer.setLength(0);
+		System.out.println("String en entrée:" + str + " ; en sortie:" + result);
+		// writer.setLength(0);
 		return result;
 
 	}
@@ -95,12 +97,15 @@ public class StringUtils {
 
 		boolean hadSlash = false;
 		boolean inUnicode = false;
+		StringBuilder unicode = null;
 		for ( int i = 0; i < sz; i++ ) {
 			final char ch = str.charAt(i);
 			if ( inUnicode ) {
 				// if in unicode, then we're reading unicode
 				// values in somehow
-				StringBuilder unicode = new StringBuilder(4);
+				if ( unicode == null ) {
+					unicode = new StringBuilder(4);
+				}
 				unicode.append(ch);
 				if ( unicode.length() == 4 ) {
 					// digits
