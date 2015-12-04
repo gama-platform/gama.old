@@ -290,7 +290,6 @@ public class JTSDrawer {
 		for ( int j = 0; j < p.getExteriorRing().getNumPoints(); j++ ) {
 			tempPolygon[j][0] = p.getExteriorRing().getPointN(j).getX();
 			tempPolygon[j][1] = yFlag * p.getExteriorRing().getPointN(j).getY();
-
 			if ( Double.isNaN(p.getExteriorRing().getPointN(j).getCoordinate().z) == true ) {
 				tempPolygon[j][2] = 0.0d;
 			} else {
@@ -710,6 +709,7 @@ public class JTSDrawer {
 			vertices[i].x = p.getExteriorRing().getPointN(i).getX();
 			vertices[i].y = yFlag * p.getExteriorRing().getPointN(i).getY();
 			vertices[i].z = p.getExteriorRing().getPointN(i).getCoordinate().z;
+			if (Double.isNaN(vertices[i].z)) vertices[i].z = 0.0d;
 		}
 		return vertices;
 	}
