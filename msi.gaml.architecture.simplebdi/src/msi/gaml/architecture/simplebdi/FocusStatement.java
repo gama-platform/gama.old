@@ -127,7 +127,7 @@ public class FocusStatement extends AbstractStatement {
 					}else{
 						tempValues.put(nameVar + "_value", variable.value(scope));
 					}
-					tempPred = new Predicate(namePred,(Map<String, Object>) GamaMapFactory.createWithoutCasting(((GamaMap<String,Object>) tempValues).getType().getKeyType(), ((GamaMap<String,Object>) tempValues).getType().getContentType(), tempValues));
+					tempPred = new Predicate(namePred,tempValues);
 					if(priority!=null){
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 					}
@@ -146,7 +146,7 @@ public class FocusStatement extends AbstractStatement {
 					String nameVar = "expression";
 					Map<String,Object> tempValues = (Map<String, Object>) new GamaMap<String,Object>(1, null, null);
 					tempValues.put(nameVar + "_value", expression.value(scope));
-					tempPred = new Predicate(namePred,(Map<String, Object>) GamaMapFactory.createWithoutCasting(((GamaMap<String,Object>) tempValues).getType().getKeyType(), ((GamaMap<String,Object>) tempValues).getType().getContentType(), tempValues));
+					tempPred = new Predicate(namePred,tempValues);
 					if(priority!=null){
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 					}

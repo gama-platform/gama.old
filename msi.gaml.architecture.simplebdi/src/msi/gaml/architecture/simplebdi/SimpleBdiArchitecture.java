@@ -275,6 +275,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 				if (!agent.dead()) {
+					//Part that manage the lifetime of predicates
 					for ( Predicate pred : getBase(scope, BELIEF_BASE) ) {
 						pred.isUpdated=false;
 					}
@@ -411,7 +412,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 //				System.out.println("isContextConditionSatisfied: " + isContextConditionSatisfied);
 				boolean isIntentionConditionSatisfied = 
 						((SimpleBdiPlanStatement) statement).getIntentionExpression() == null ||
-						((Predicate)((SimpleBdiPlanStatement) statement).getIntentionExpression().value(scope)).equals(currentIntention(scope));
+						((Predicate)((SimpleBdiPlanStatement) statement).getIntentionExpression().value(scope)).equalsIntentionPlan(currentIntention(scope));
 				if ( isContextConditionSatisfied && isIntentionConditionSatisfied) {
 //					System.out.println("is_probabilistic_choice: " + is_probabilistic_choice);
 					if(is_probabilistic_choice){
@@ -502,7 +503,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							.value(scope)))
 					continue;
 				if (((SimpleBdiPlanStatement) statement).getIntentionExpression() == null ||
-						((Predicate)((SimpleBdiPlanStatement) statement).getIntentionExpression().value(scope)).equals(currentIntention(scope)))
+						((Predicate)((SimpleBdiPlanStatement) statement).getIntentionExpression().value(scope)).equalsIntentionPlan(currentIntention(scope)))
 					plans.add((SimpleBdiPlanStatement) statement);
 		}
 		return plans;
