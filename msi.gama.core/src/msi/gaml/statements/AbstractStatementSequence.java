@@ -15,7 +15,7 @@ import java.util.List;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 
 public class AbstractStatementSequence extends AbstractStatement {
 
@@ -59,7 +59,8 @@ public class AbstractStatementSequence extends AbstractStatement {
 
 	public void leaveScope(final IScope scope) {
 		// Clears any action_halted status in case we are a top-level behavior (reflex, init, state, etc.)
-		if ( getDescription().getMeta().isTopLevel() ) {
+		StatementDescription description = getDescription();
+		if ( description != null && description.getMeta().isTopLevel() ) {
 			scope.popAction();
 		}
 		scope.pop(this);
