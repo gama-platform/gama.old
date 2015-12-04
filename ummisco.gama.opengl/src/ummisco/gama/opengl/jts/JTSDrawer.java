@@ -288,13 +288,13 @@ public class JTSDrawer {
 		tempPolygon = new double[p.getExteriorRing().getNumPoints()][3];
 		// Convert vertices as a list of double for gluTessVertex
 		for ( int j = 0; j < p.getExteriorRing().getNumPoints(); j++ ) {
-			tempPolygon[j][0] = p.getExteriorRing().getPointN(j).getX();
-			tempPolygon[j][1] = yFlag * p.getExteriorRing().getPointN(j).getY();
-
-			if ( Double.isNaN(p.getExteriorRing().getPointN(j).getCoordinate().z) == true ) {
+			Point pp = p.getExteriorRing().getPointN(j);
+			tempPolygon[j][0] = pp.getX();
+			tempPolygon[j][1] = yFlag * pp.getY();
+			if ( Double.isNaN(pp.getCoordinate().z) == true ) {
 				tempPolygon[j][2] = 0.0d;
 			} else {
-				tempPolygon[j][2] = 0.0d + p.getExteriorRing().getPointN(j).getCoordinate().z;
+				tempPolygon[j][2] = 0.0d + pp.getCoordinate().z;
 			}
 		}
 
@@ -311,13 +311,14 @@ public class JTSDrawer {
 			tempPolygon = new double[numIntPoints][3];
 			// Convert vertices as a list of double for gluTessVertex
 			for ( int j = 0; j < numIntPoints; j++ ) {
-				tempPolygon[j][0] = p.getInteriorRingN(i).getPointN(j).getX();
-				tempPolygon[j][1] = yFlag * p.getInteriorRingN(i).getPointN(j).getY();
+				Point pp = p.getInteriorRingN(i).getPointN(j);
+				tempPolygon[j][0] = pp.getX();
+				tempPolygon[j][1] = yFlag * pp.getY();
 
-				if ( Double.isNaN(p.getInteriorRingN(i).getPointN(j).getCoordinate().z) == true ) {
+				if ( Double.isNaN(pp.getCoordinate().z) == true ) {
 					tempPolygon[j][2] = 0.0d;
 				} else {
-					tempPolygon[j][2] = 0.0d + p.getInteriorRingN(i).getPointN(j).getCoordinate().z;
+					tempPolygon[j][2] = 0.0d +pp.getCoordinate().z;
 				}
 			}
 
@@ -710,6 +711,7 @@ public class JTSDrawer {
 			vertices[i].x = p.getExteriorRing().getPointN(i).getX();
 			vertices[i].y = yFlag * p.getExteriorRing().getPointN(i).getY();
 			vertices[i].z = p.getExteriorRing().getPointN(i).getCoordinate().z;
+			if (Double.isNaN(vertices[i].z)) vertices[i].z = 0.0d;
 		}
 		return vertices;
 	}

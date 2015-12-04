@@ -684,6 +684,9 @@ public class GeometryUtils {
 		return network;
 	}
 
+	public static Polygon fromLineToPoylgon(final Geometry line) {
+		return FACTORY.createPolygon(line.getCoordinates());
+	}
 	public static Geometry buildGeometryJTS(final List<List<List<ILocation>>> listPoints) {
 		final IShape.Type geometryType = geometryType(listPoints);
 		switch (geometryType) {

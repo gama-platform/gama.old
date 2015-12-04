@@ -355,7 +355,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 			final Polygon p = (Polygon) getInnerGeometry();
 			final int n = p.getNumInteriorRing();
 			for ( int i = 0; i < n; i++ ) {
-				holes.add(new GamaShape(p.getInteriorRingN(i)));
+				holes.add(new GamaShape(GeometryUtils.fromLineToPoylgon(p.getInteriorRingN(i))));
 			}
 		}
 		return holes;
