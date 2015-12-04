@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AgentLayerStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -15,15 +15,8 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.AgentLayerStatement.AgentLayerValidator;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
@@ -36,64 +29,72 @@ import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = {
-	@facet(name = IKeyword.VALUE, type = IType.CONTAINER, optional = false, doc = @doc("the set of agents to display")),
-	@facet(name = IKeyword.TRACE,
-		type = { IType.BOOL, IType.INT },
-		optional = true,
-		doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. ")),
-	@facet(name = IKeyword.SELECTABLE,
-		type = { IType.BOOL },
-		optional = true,
-		doc = @doc("Indicates whether the agents present on this layer are selectable by the user. Default is true")),
-	@facet(name = IKeyword.FADING,
-		type = { IType.BOOL },
-		optional = true,
-		doc = @doc("Used in conjunction with 'trace:', allows to apply a fading effect to the previous traces. Default is false")),
-	@facet(name = IKeyword.POSITION,
-		type = IType.POINT,
-		optional = true,
-		doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
-	@facet(name = IKeyword.SIZE,
-		type = IType.POINT,
-		optional = true,
-		doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
-	@facet(name = IKeyword.TRANSPARENCY,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("the transparency rate of the agents (between 0 and 1, 1 means no transparency)")),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the layer")),
-	@facet(name = IKeyword.FOCUS,
-		type = IType.AGENT,
-		optional = true,
-		doc = @doc("the agent on with will be focus the camera (it is dynamically computed)")),
-	@facet(name = IKeyword.ASPECT,
-		type = IType.ID,
-		optional = true,
-		doc = @doc("the name of the aspect that should be used to display the species")),
-	@facet(name = IKeyword.REFRESH,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("(openGL only) specify whether the display of the species is refreshed. (true by default, useful in case of agents that do not move)")) },
+@facets(
+	value = {
+		@facet(name = IKeyword.VALUE,
+			type = IType.CONTAINER,
+			optional = false,
+			doc = @doc("the set of agents to display") ),
+		@facet(name = IKeyword.TRACE,
+			type = { IType.BOOL, IType.INT },
+			optional = true,
+			doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. ") ),
+		@facet(name = IKeyword.SELECTABLE,
+			type = { IType.BOOL },
+			optional = true,
+			doc = @doc("Indicates whether the agents present on this layer are selectable by the user. Default is true") ),
+		@facet(name = IKeyword.FADING,
+			type = { IType.BOOL },
+			optional = true,
+			doc = @doc("Used in conjunction with 'trace:', allows to apply a fading effect to the previous traces. Default is false") ),
+		@facet(name = IKeyword.POSITION,
+			type = IType.POINT,
+			optional = true,
+			doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.") ),
+		@facet(name = IKeyword.SIZE,
+			type = IType.POINT,
+			optional = true,
+			doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)") ),
+		@facet(name = IKeyword.TRANSPARENCY,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("the transparency rate of the agents (between 0 and 1, 1 means no transparency)") ),
+		@facet(name = IKeyword.NAME,
+			type = IType.LABEL,
+			optional = true, // Changed for issue #1300
+			doc = @doc("Human readable title of the layer") ),
+		@facet(name = IKeyword.FOCUS,
+			type = IType.AGENT,
+			optional = true,
+			doc = @doc("the agent on with will be focus the camera (it is dynamically computed)") ),
+		@facet(name = IKeyword.ASPECT,
+			type = IType.ID,
+			optional = true,
+			doc = @doc("the name of the aspect that should be used to display the species") ),
+		@facet(name = IKeyword.REFRESH,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("(openGL only) specify whether the display of the species is refreshed. (true by default, useful in case of agents that do not move)") ) },
 	omissible = IKeyword.NAME)
 @validator(AgentLayerValidator.class)
 @doc(value = "`" + IKeyword.AGENTS + "` allows the modeler to display only the agents that fulfill a given condition.",
 	usages = {
-		@usage(value = "The general syntax is:", examples = {
-			@example(value = "display my_display {", isExecutable = false),
-			@example(value = "   agents layer_name value: expression [additional options];", isExecutable = false),
-			@example(value = "}", isExecutable = false) }),
+		@usage(value = "The general syntax is:",
+			examples = { @example(value = "display my_display {", isExecutable = false),
+				@example(value = "   agents layer_name value: expression [additional options];", isExecutable = false),
+				@example(value = "}", isExecutable = false) }),
 		@usage(value = "For instance, in a segregation model, `agents` will only display unhappy agents:",
-			examples = {
-				@example(value = "display Segregation {", isExecutable = false),
-				@example(value = "   agents agentDisappear value: people as list where (each.is_happy = false) aspect: with_group_color;",
-					isExecutable = false), @example(value = "}", isExecutable = false) }) },
+			examples = { @example(value = "display Segregation {", isExecutable = false),
+				@example(
+					value = "   agents agentDisappear value: people as list where (each.is_happy = false) aspect: with_group_color;",
+					isExecutable = false),
+				@example(value = "}", isExecutable = false) }) },
 	see = { IKeyword.DISPLAY, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
 		IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
 public class AgentLayerStatement extends AbstractLayerStatement {
@@ -132,8 +133,8 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 					if ( species.getAspect(a) != null ) {
 						ed.compileAsLabel();
 					} else {
-						description.error(a + " is not the name of an aspect of " + s, IGamlIssue.GENERAL, description
-							.getFacets().get(ASPECT).getTarget());
+						description.error(a + " is not the name of an aspect of " + s, IGamlIssue.GENERAL,
+							description.getFacets().get(ASPECT).getTarget());
 					}
 				}
 			}
@@ -141,7 +142,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 
 	}
 
-	private IExpression setOfAgents;
+	private IExpression agentsExpr;
 	// final HashSet<IAgent> agents;
 	HashSet<IAgent> agentsForLayer = new HashSet();
 	protected String constantAspectName = null;
@@ -153,6 +154,9 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	public AgentLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setAgentsExpr(getFacet(IKeyword.VALUE));
+		if ( name == null ) {
+			setName(agentsExpr.serialize(false));
+		}
 		aspectExpr = getFacet(IKeyword.ASPECT);
 		if ( aspectExpr != null && aspectExpr.isConst() ) {
 			constantAspectName = aspectExpr.literalValue();
@@ -166,7 +170,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	public List<? extends IAgent> computeAgents(final IScope sim) throws GamaRuntimeException {
-		// Attention ! Si setOfAgents contient un seul agent, ce sont ses
+		// Attention ! Si agentsExpr contient un seul agent, ce sont ses
 		// composants qui vont �tre affich�s.
 		return Cast.asList(sim, getAgentsExpr().value(sim));
 	}
@@ -197,9 +201,9 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	public void computeAspectName(final IScope scope) throws GamaRuntimeException {
-		final String aspectName =
-			constantAspectName == null ? aspectExpr == null ? IKeyword.DEFAULT : Cast.asString(scope,
-				aspectExpr.value(scope)) : constantAspectName;
+		final String aspectName = constantAspectName == null
+			? aspectExpr == null ? IKeyword.DEFAULT : Cast.asString(scope, aspectExpr.value(scope))
+			: constantAspectName;
 		setAspect(aspectName);
 	}
 
@@ -212,11 +216,11 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	public void setAgentsExpr(final IExpression setOfAgents) {
-		this.setOfAgents = setOfAgents;
+		this.agentsExpr = setOfAgents;
 	}
 
 	IExpression getAgentsExpr() {
-		return setOfAgents;
+		return agentsExpr;
 	}
 
 	public IExecutable getAspect() {
