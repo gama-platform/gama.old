@@ -1,55 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaProcessor.java', in plugin 'msi.gama.processor', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.precompiler;
 
 import static msi.gama.precompiler.GamlProperties.GAML;
 import static msi.gama.precompiler.JavaWriter.*;
-
 import java.io.*;
 import java.lang.annotation.Annotation;
+import java.nio.charset.Charset;
 import java.util.*;
-
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.*;
 import javax.tools.Diagnostic.Kind;
-import javax.tools.*;
+import javax.tools.StandardLocation;
+import msi.gama.precompiler.GamlAnnotations.*;
 
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.args;
-import msi.gama.precompiler.GamlAnnotations.constant;
-import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gama.precompiler.GamlAnnotations.file;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.populations_linker;
-import msi.gama.precompiler.GamlAnnotations.serializer;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
-
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
+@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class GamaProcessor extends AbstractProcessor {
 
 	class Pair {
@@ -118,7 +94,7 @@ public class GamaProcessor extends AbstractProcessor {
 			gp.store(createWriter(GAML));
 			Writer source = createSourceWriter();
 			// Writer doc = createDocSourceWriter();
-			if ( source != null /* && doc != null */) {
+			if ( source != null /* && doc != null */ ) {
 				// try {
 				try {
 					StringBuilder sourceBuilder = new StringBuilder();
@@ -494,7 +470,7 @@ public class GamaProcessor extends AbstractProcessor {
 	 * Format 0.value 1.deprecated 2.returns 3.comment 4.nb_cases 5.[specialCases$]* 6.nb_examples
 	 * 7.[examples$]*
 	 * Uses its own separator (DOC_SEP)
-	 * 
+	 *
 	 * @param docs an Array of @doc annotations (only the 1st is significant)
 	 * @return aString containing the documentation formatted using the format above
 	 */
@@ -758,8 +734,7 @@ public class GamaProcessor extends AbstractProcessor {
 					classes[begin + i] = args[i + shift];
 				}
 			} catch (Exception e1) {
-				processingEnv.getMessager().printMessage(
-					Kind.ERROR,
+				processingEnv.getMessager().printMessage(Kind.ERROR,
 					"Error in processing operator " + declClass + " " + methodName + " " + Arrays.toString(args) +
 						"; number of Java parameters: " + n + "; number of Gaml parameters:" + actual_args_number +
 						"; begin: " + begin + "; shift: " + shift);
@@ -873,10 +848,8 @@ public class GamaProcessor extends AbstractProcessor {
 					}
 				}
 			}
-			processingEnv.getMessager().printMessage(
-				Kind.NOTE,
-				"Adding action " + action.name() + ", implemented by " + rawNameOf(ex.getEnclosingElement()) + " " +
-					ex.getSimpleName());
+			processingEnv.getMessager().printMessage(Kind.NOTE, "Adding action " + action.name() + ", implemented by " +
+				rawNameOf(ex.getEnclosingElement()) + " " + ex.getSimpleName());
 			gp.put(sb.toString(), ""/* docToString(action.doc()) */); /* doc */
 		}
 	}
@@ -914,7 +887,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	/**
 	 * Format : prefix 0.name 1. class
-	 * 
+	 *
 	 * @param env
 	 */
 	private void processPopulationsLinkers(final RoundEnvironment env) {
@@ -928,7 +901,7 @@ public class GamaProcessor extends AbstractProcessor {
 			sb.append(pLinker.name()).append(SEP);
 			// class
 			sb.append(rawNameOf(e));
-			
+
 			processingEnv.getMessager().printMessage(Kind.NOTE, "Populations Linker processed: " + rawNameOf(e));
 			gp.put(sb.toString(), docToString(pLinker.doc())); /* doc */
 		}
@@ -947,7 +920,10 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createWriter(final String s) {
 		try {
-			return processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null).openWriter();
+			OutputStream output =
+				processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null).openOutputStream();
+			Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
+			return writer;
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
@@ -956,8 +932,10 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createSourceWriter() {
 		try {
-			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlAdditions", (Element[]) null)
-				.openWriter();
+			OutputStream output = processingEnv.getFiler()
+				.createSourceFile("gaml.additions.GamlAdditions", (Element[]) null).openOutputStream();
+			Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
+			return writer;
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
