@@ -112,7 +112,7 @@ public class MapExpression extends AbstractExpression {
 			if ( keys[i] == null || vals[i] == null ) {
 				continue;
 			}
-			if ( vals[i] != null || !keys[i].isConst() || vals[i] != null && !vals[i].isConst() ) { return false; }
+			if ( !keys[i].isConst() || !vals[i].isConst() ) { return false; }
 		}
 		// isConst = true;
 		return true;
