@@ -1,18 +1,19 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SpeciesLayer.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import com.google.common.collect.ImmutableSet;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
@@ -20,7 +21,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Written by drogoul Modified on 23 août 2008
@@ -34,9 +34,8 @@ public class SpeciesLayer extends AgentLayer {
 
 	@Override
 	public Set<IAgent> getAgentsForMenu(final IScope scope) {
-		final Set<IAgent> result =
-			ImmutableSet.copyOf(scope.getSimulationScope()
-				.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).iterator());
+		final Set<IAgent> result = ImmutableSet.copyOf(scope.getSimulationScope()
+			.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).iterator());
 		return result;
 	}
 
@@ -70,7 +69,7 @@ public class SpeciesLayer extends AgentLayer {
 
 		// draw the population. A copy of the population is made to avoid concurrent modification exceptions
 		for ( final IAgent a : /* population.iterable(scope) */population.toArray() ) {
-			if ( a.dead() ) {
+			if ( a == null || a.dead() ) {
 				continue;
 			}
 			Object[] result = new Object[1];
@@ -88,7 +87,7 @@ public class SpeciesLayer extends AgentLayer {
 			for ( final GridLayerStatement gl : gridLayers ) {
 				try {
 					a.acquireLock();
-					if ( a.dead() /* || scope.interrupted() */) {
+					if ( a.dead() /* || scope.interrupted() */ ) {
 						continue;
 					}
 					microPop = ((IMacroAgent) a).getMicroPopulation(gl.getName());

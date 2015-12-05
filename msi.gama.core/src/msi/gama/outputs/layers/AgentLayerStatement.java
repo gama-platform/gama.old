@@ -154,7 +154,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	public AgentLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setAgentsExpr(getFacet(IKeyword.VALUE));
-		if ( name == null ) {
+		if ( name == null && agentsExpr != null ) {
 			setName(agentsExpr.serialize(false));
 		}
 		aspectExpr = getFacet(IKeyword.ASPECT);

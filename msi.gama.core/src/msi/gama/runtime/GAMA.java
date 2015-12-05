@@ -1,17 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GAMA.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.runtime;
 
 import java.util.*;
+import com.google.common.collect.Lists;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
@@ -21,16 +22,17 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.species.ISpecies;
-import com.google.common.collect.Lists;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
- * 
+ *
  * @todo Description
  */
 public class GAMA {
 
-	public final static String VERSION = "GAMA 1.6.1";
+	private static GAMA instance;
+
+	public final static String VERSION = "GAMA 1.7";
 	// public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
 	// Minimum duration of a cycle in seconds
@@ -56,9 +58,9 @@ public class GAMA {
 
 	// end-hqnghi
 	/**
-	 * 
+	 *
 	 * Access to experiments and their components
-	 * 
+	 *
 	 */
 
 	public static SimulationAgent getSimulation() {
@@ -106,9 +108,9 @@ public class GAMA {
 	}
 
 	/**
-	 * 
+	 *
 	 * Exception and life-cycle related utilities
-	 * 
+	 *
 	 */
 
 	public static boolean reportError(final IScope scope, final GamaRuntimeException g,
@@ -158,9 +160,9 @@ public class GAMA {
 	}
 
 	/**
-	 * 
+	 *
 	 * Scoping utilities
-	 * 
+	 *
 	 */
 
 	public static void releaseScope(final IScope scope) {

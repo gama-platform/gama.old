@@ -40,7 +40,7 @@ public class GridLayer extends ImageLayer {
 	}
 
 	public boolean turnGridOn;
-	private double cellSize;
+	private double cellWidth;
 
 	public GridLayer(final IScope scope, final ILayerStatement layer) {
 		super(scope, layer);
@@ -64,7 +64,7 @@ public class GridLayer extends ImageLayer {
 		final ILocation p = m.getDimensions();
 		// in case the agents have been killed
 		if ( m.getAgents().size() > 0 ) {
-			cellSize = m.getAgents().get(0).getGeometry().getEnvelope().getWidth();
+			cellWidth = m.getAgents().get(0).getGeometry().getEnvelope().getWidth();
 		}
 
 		if ( image == null ) {
@@ -93,10 +93,10 @@ public class GridLayer extends ImageLayer {
 			if ( textureFile != null ) { // display grid dem:texturefile
 				BufferedImage texture = textureFile.getImage(scope);
 				dg.drawGrid(scope, texture, gridValueMatrix, true, g.isTriangulated(), g.isGrayScaled(),
-					g.isShowText(), lineColor, cellSize, this.getName());
+					g.isShowText(), lineColor, cellWidth, this.getName());
 			} else {
 				dg.drawGrid(scope, image, gridValueMatrix, g.isTextured(), g.isTriangulated(), g.isGrayScaled(),
-					g.isShowText(), lineColor, cellSize, this.getName());
+					g.isShowText(), lineColor, cellWidth, this.getName());
 			}
 
 		} else {
