@@ -91,28 +91,14 @@ public class RuleStatement extends AbstractStatement{
 				if( desire == null || SimpleBdiArchitecture.hasDesire(scope, (Predicate)(desire.value(scope)))) {
 					if (newDesire != null) {
 						Predicate newDes = ((Predicate)(newDesire.value(scope)));
-						//Moyen d'améliorer le code en enlevant le test sur les values ?
-						if(newDes.getValues()==null){
 							if(priority!=null){
 								newDes.setPriority(Cast.asFloat(scope, priority.value(scope)));
 							}
 							SimpleBdiArchitecture.addDesire(scope, null, newDes);
-						}else{
-							//Il faut copier la liste des valeurs.
-							if(priority!=null){
-								newDes.setPriority(Cast.asFloat(scope, priority.value(scope)));
-							}
-							SimpleBdiArchitecture.addDesire(scope, null, newDes);
-						}
 					}
 					if (newBelief != null) {
 						Predicate newBel = ((Predicate)(newBelief.value(scope)));
-						if(newBel.getValues()==null){
-							SimpleBdiArchitecture.addBelief(scope, newBel/*((Predicate)(newBelief.value(scope)))*/);
-						}else{
-							//Il faut copier la liste des valeurs.
 							SimpleBdiArchitecture.addBelief(scope, newBel);
-						}
 					}
 					if(removeBelief != null){
 						Predicate removBel = (Predicate)removeBelief.value(scope);
