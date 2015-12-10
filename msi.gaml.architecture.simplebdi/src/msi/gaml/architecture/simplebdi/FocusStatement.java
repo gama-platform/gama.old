@@ -86,34 +86,35 @@ public class FocusStatement extends AbstractStatement {
 			}
 			final Predicate tempPred;
 			if(variable!=null){
-//				if(variable.value(scope) instanceof IContainer){
-//					String namePred;
-//					if(name!=null){
-//						namePred = (String) name.value(scope);
-//					}else{
-//						namePred = variable.getName()+"_"+scope.getAgentScope().getSpeciesName();
-//					}
-//					String nameVarTemp;
-//					Map<String,Object> tempValues = (Map<String, Object>) new GamaMap<String,Object>(1, null, null);
+				//Pour la liste, faire un truc générique dans un premier temps avec un nom des variables du genre test_i, sans chercher à récupérer le nom précis des variables.
+				if(variable.value(scope) instanceof IContainer){
+					String namePred;
+					if(name!=null){
+						namePred = (String) name.value(scope);
+					}else{
+						namePred = variable.getName()+"_"+scope.getAgentScope().getSpeciesName();
+					}
+					String nameVarTemp;
+					Map<String,Object> tempValues = (Map<String, Object>) new GamaMap<String,Object>(1, null, null);
 //					Object truc = (Object)variable/*.value(scope)*/;
 //					final IList variablesTemp = (IList) truc;
-////					final IList variablesTemp = ((IContainer) variable.value(scope)).listValue(scope, null, true);
-//					for(int temp=0;temp<variablesTemp.length(scope);temp++){
-//						Object temp2 = variablesTemp.get(temp);
-//						nameVarTemp = ((Object) variablesTemp.get(temp)).toString();
+					final IList variablesTemp = ((IContainer) variable.value(scope)).listValue(scope, null, true);
+					for(int temp=0;temp<variablesTemp.length(scope);temp++){
+						Object temp2 = variablesTemp.get(temp);
+						nameVarTemp = "test"+temp;
 //						if(temp2 instanceof Integer){
-//							tempValues.put(nameVarTemp + "_value", Cast.asInt(scope, temp2));
+							tempValues.put(nameVarTemp + "_value", Cast.asInt(scope, temp2));
 //						}
-//					}
-//					tempPred = new Predicate(namePred,(Map<String, Object>) GamaMapFactory.createWithoutCasting(((GamaMap<String,Object>) tempValues).getType().getKeyType(), ((GamaMap<String,Object>) tempValues).getType().getContentType(), tempValues));
-//					if(priority!=null){
-//						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
-//					}
-//					if(!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)){
-//						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
-//					}
-//				}
-//				else{
+					}
+					tempPred = new Predicate(namePred,(Map<String, Object>) GamaMapFactory.createWithoutCasting(((GamaMap<String,Object>) tempValues).getType().getKeyType(), ((GamaMap<String,Object>) tempValues).getType().getContentType(), tempValues));
+					if(priority!=null){
+						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
+					}
+					if(!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)){
+						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+					}
+				}
+				else{
 					String namePred;
 					if(name!=null){
 						namePred = (String) name.value(scope);
@@ -134,7 +135,7 @@ public class FocusStatement extends AbstractStatement {
 					if(!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)){
 						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
 					}
-//				}
+				}
 			}else{
 				if(expression!=null){
 					String namePred;
