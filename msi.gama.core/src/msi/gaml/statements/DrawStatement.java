@@ -163,7 +163,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		public void validate(final IDescription description) {
 			IExpressionDescription geom = description.getFacets().get(GEOMETRY);
 			if ( geom != null ) {
-				for ( String s : Arrays.asList(TEXT, SHAPE, GEOMETRY) ) {
+				for ( String s : Arrays.asList(TEXT, SHAPE, IMAGE) ) {
 					IExpressionDescription other = description.getFacets().getDescr(s);
 					if ( other != null ) {
 						description.warning("'" + s + "' has no effect here", IGamlIssue.CONFLICTING_FACETS, s);
