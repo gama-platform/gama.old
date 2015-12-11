@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'DrawStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.statements;
 
@@ -19,122 +19,161 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.*;
+import msi.gaml.statements.DrawStatement.DrawValidator;
 import msi.gaml.types.*;
 
 // A command that is used to draw shapes, figures, text on the display
 
 @symbol(name = DRAW, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
-@facets(value = {
-	// Allows to pass any arbitrary geometry to the drawing command
-	@facet(name = IKeyword.GEOMETRY,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("any type of data (it can be geometry, image, text)")),
-	// AD 18/01/13: geometry is now accepting any type of data
-	@facet(name = SHAPE, type = IType.NONE, optional = true, doc = @doc("the shape to display")),
-	@facet(name = TEXT, type = IType.STRING, optional = true, doc = @doc("the text to draw")),
-	@facet(name = IMAGE, type = IType.STRING, optional = true, doc = @doc("path of the icon to draw (JPEG, PNG, GIF)")),
-	@facet(name = TEXTURE,
-		type = { IType.STRING, IType.LIST },
-		optional = true,
-		doc = @doc("the texture that should be applied to the geometry")),
-	@facet(name = EMPTY,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("a condition specifying whether the geometry is empty or full")),
-	@facet(name = BORDER,
-		type = { IType.COLOR, IType.BOOL },
-		optional = true,
-		doc = @doc("if used with a color, represents the color of the geometry border. If set to false, expresses that no border should be drawn. If not set, the borders will be drawn using the color of the geometry.")),
-	@facet(name = ROUNDED,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc(value = "specify whether the geometry have to be rounded (e.g. for squares)",
-			deprecated = "Use the squircle operator to draw rounded squares")),
-	@facet(name = AT, type = IType.POINT, optional = true, doc = @doc("location where the shape/text/icon is drawn")),
-	@facet(name = SIZE,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("size of the text/icon (not used in the context of the drawing of a geometry)")),
-	@facet(name = TO, type = IType.POINT, optional = true, doc = @doc(""), internal = true),
-	@facet(name = COLOR,
-		type = IType.COLOR,
-		optional = true,
-		doc = @doc("the color to use to display the text/icon/geometry")),
-	@facet(name = SCALE, type = IType.FLOAT, optional = true, doc = @doc("")),
-	@facet(name = ROTATE,
-		type = { IType.FLOAT, IType.INT },
-		optional = true,
-		doc = @doc("orientation of the shape/text/icon")),
-	@facet(name = ROTATE3D,
-		type = { IType.PAIR},
-		optional = true,
-		doc = @doc("orientation of the shape/text/icon")),
-	@facet(name = FONT,
-		type = { IType.FONT, IType.STRING },
-		optional = true,
-		doc = @doc("the font used to draw the text")),
-	@facet(name = BITMAP, type = IType.BOOL, optional = true, doc = @doc("")),
-	@facet(name = DEPTH,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("(only if the display type is opengl) Add a depth to the geometry previously defined (a line becomes a plan, a circle becomes a cylinder, a square becomes a cube, a polygon becomes a polyhedron with height equal to the depth value). Note: This only works if a the agent has not a point geometry")),
-	@facet(name = DrawStatement.BEGIN_ARROW,
-		type = { IType.INT, IType.FLOAT },
-		optional = true,
-		doc = @doc("the size of the arrow, located at the beginning of the drawn geometry")),
-	@facet(name = DrawStatement.END_ARROW,
-		type = { IType.INT, IType.FLOAT },
-		optional = true,
-		doc = @doc("the size of the arrow, located at the end of the drawn geometry")),
-	@facet(name = STYLE,
-		type = IType.ID,
-		values = { "plain", "bold", "italic" },
-		optional = true,
-		doc = @doc(value = "the style used to display text",
-			deprecated = "Use the font operator with constants #bold, #italic, #plain instead")) },
+@facets(
+	value = {
+		// Allows to pass any arbitrary geometry to the drawing command
+		@facet(name = IKeyword.GEOMETRY,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("any type of data (it can be geometry, image, text)") ),
+		// AD 18/01/13: geometry is now accepting any type of data
+		@facet(name = SHAPE,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc(value = "the shape to display", deprecated = "Please  use 'draw the_shape_to_draw' instead") ),
+		@facet(name = TEXT,
+			type = IType.STRING,
+			optional = true,
+			doc = @doc(value = "the text to draw", deprecated = "Please  use 'draw the_text_to_draw' instead") ),
+		@facet(name = IMAGE,
+			type = IType.STRING,
+			optional = true,
+			doc = @doc(value = "path of the icon to draw (JPEG, PNG, GIF)",
+				deprecated = "Please use 'draw the_image_file_to_draw' instead") ),
+		@facet(name = TEXTURE,
+			type = { IType.STRING, IType.LIST },
+			optional = true,
+			doc = @doc("the texture that should be applied to the geometry") ),
+		@facet(name = EMPTY,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("a condition specifying whether the geometry is empty or full") ),
+		@facet(name = BORDER,
+			type = { IType.COLOR, IType.BOOL },
+			optional = true,
+			doc = @doc("if used with a color, represents the color of the geometry border. If set to false, expresses that no border should be drawn. If not set, the borders will be drawn using the color of the geometry.") ),
+		@facet(name = ROUNDED,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc(value = "specify whether the geometry have to be rounded (e.g. for squares)",
+				deprecated = "Use the squircle operator to draw rounded squares") ),
+		@facet(name = AT,
+			type = IType.POINT,
+			optional = true,
+			doc = @doc("location where the shape/text/icon is drawn") ),
+		@facet(name = SIZE,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("size of the text/icon (not used in the context of the drawing of a geometry)") ),
+		@facet(name = TO, type = IType.POINT, optional = true, doc = @doc("") , internal = true),
+		@facet(name = COLOR,
+			type = IType.COLOR,
+			optional = true,
+			doc = @doc("the color to use to display the text/icon/geometry") ),
+		@facet(name = SCALE, type = IType.FLOAT, optional = true, doc = @doc("") ),
+		@facet(name = ROTATE,
+			type = { IType.FLOAT, IType.INT },
+			optional = true,
+			doc = @doc("orientation of the shape/text/icon") ),
+		@facet(name = ROTATE3D,
+			type = { IType.PAIR },
+			optional = true,
+			doc = @doc("orientation of the shape/text/icon") ),
+		@facet(name = FONT,
+			type = { IType.FONT, IType.STRING },
+			optional = true,
+			doc = @doc("the font used to draw the text") ),
+		@facet(name = BITMAP, type = IType.BOOL, optional = true, doc = @doc("") ),
+		@facet(name = DEPTH,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("(only if the display type is opengl) Add a depth to the geometry previously defined (a line becomes a plan, a circle becomes a cylinder, a square becomes a cube, a polygon becomes a polyhedron with height equal to the depth value). Note: This only works if a the agent has not a point geometry") ),
+		@facet(name = DrawStatement.BEGIN_ARROW,
+			type = { IType.INT, IType.FLOAT },
+			optional = true,
+			doc = @doc("the size of the arrow, located at the beginning of the drawn geometry") ),
+		@facet(name = DrawStatement.END_ARROW,
+			type = { IType.INT, IType.FLOAT },
+			optional = true,
+			doc = @doc("the size of the arrow, located at the end of the drawn geometry") ),
+		@facet(name = STYLE,
+			type = IType.ID,
+			values = { "plain", "bold", "italic" },
+			optional = true,
+			doc = @doc(value = "the style used to display text",
+				deprecated = "Use the font operator with constants #bold, #italic, #plain instead") ) },
 	omissible = IKeyword.GEOMETRY)
 @inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@doc(value = "`" +
-	DRAW +
-	"` is used in an aspect block to expresse how agents of the species will be drawn. It is evaluated each time the agent has to be drawn. It can also be used in the graphics block.",
+@doc(
+	value = "`" + DRAW +
+		"` is used in an aspect block to expresse how agents of the species will be drawn. It is evaluated each time the agent has to be drawn. It can also be used in the graphics block.",
 	usages = {
-		@usage(value = "Any kind of geometry as any location can be drawn when displaying an agent (independently of his shape)",
+		@usage(
+			value = "Any kind of geometry as any location can be drawn when displaying an agent (independently of his shape)",
 			examples = { @example(value = "aspect geometryAspect {", isExecutable = false),
 				@example(value = "	draw circle(1.0) empty: !hasFood color: #orange ;", isExecutable = false),
 				@example(value = "}", isExecutable = false) }),
 		@usage(value = "Image or text can also be drawn",
-			examples = {
-				@example(value = "aspect arrowAspect {", isExecutable = false),
-				@example(value = "	draw \"Current state= \"+state at: location + {-3,1.5} color: #white font: font('Default', 12, #bold) ;",
+			examples = { @example(value = "aspect arrowAspect {", isExecutable = false),
+				@example(
+					value = "	draw \"Current state= \"+state at: location + {-3,1.5} color: #white font: font('Default', 12, #bold) ;",
 					isExecutable = false),
 				@example(value = "	draw file(ant_shape_full) rotate: heading at: location size: 5",
-					isExecutable = false), @example(value = "}", isExecutable = false) }),
-		@usage(value = "Arrows can be drawn with any kind of geometry, using " + DrawStatement.BEGIN_ARROW + " and " +
-			DrawStatement.END_ARROW + " facets, combined with the empty: facet to specify whether it is plain or empty",
-			examples = {
-				@example(value = "aspect arrowAspect {", isExecutable = false),
-				@example(value = "	draw line([{20, 20}, {40, 40}]) color: #black begin_arrow:5;", isExecutable = false),
-				@example(value = "	draw line([{10, 10},{20, 50}, {40, 70}]) color: #green end_arrow: 2 begin_arrow: 2 empty: true;",
+					isExecutable = false),
+				@example(value = "}", isExecutable = false) }),
+		@usage(
+			value = "Arrows can be drawn with any kind of geometry, using " + DrawStatement.BEGIN_ARROW + " and " +
+				DrawStatement.END_ARROW +
+				" facets, combined with the empty: facet to specify whether it is plain or empty",
+			examples = { @example(value = "aspect arrowAspect {", isExecutable = false),
+				@example(value = "	draw line([{20, 20}, {40, 40}]) color: #black begin_arrow:5;",
+					isExecutable = false),
+				@example(
+					value = "	draw line([{10, 10},{20, 50}, {40, 70}]) color: #green end_arrow: 2 begin_arrow: 2 empty: true;",
 					isExecutable = false),
 				@example(value = "	draw square(10) at: {80,20} color: #purple begin_arrow: 2 empty: true;",
-					isExecutable = false), @example(value = "}", isExecutable = false) }) })
+					isExecutable = false),
+				@example(value = "}", isExecutable = false) }) })
+@validator(DrawValidator.class)
 public class DrawStatement extends AbstractStatementSequence {
+
+	public static class DrawValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription description) {
+			IExpressionDescription geom = description.getFacets().get(GEOMETRY);
+			if ( geom != null ) {
+				for ( String s : Arrays.asList(TEXT, SHAPE, GEOMETRY) ) {
+					IExpressionDescription other = description.getFacets().getDescr(s);
+					if ( other != null ) {
+						description.warning("'" + s + "' has no effect here", IGamlIssue.CONFLICTING_FACETS, s);
+					}
+				}
+
+			}
+		}
+
+	}
 
 	public static final String END_ARROW = "end_arrow";
 	public static final String BEGIN_ARROW = "begin_arrow";
@@ -142,6 +181,7 @@ public class DrawStatement extends AbstractStatementSequence {
 	static final GamaPoint LOC = new GamaPoint(1.0, 1.0);
 	public static final Map<String, Integer> CONSTANTS = new HashMap();
 	public static final Map<String, Integer> SHAPES = new HashMap();
+
 	static {
 		CONSTANTS.put("plain", 0);
 		CONSTANTS.put("bold", 1);
@@ -195,7 +235,7 @@ public class DrawStatement extends AbstractStatementSequence {
 	 * could be used to draw shapes
 	 * @param exp, the expression representing what is to be drawn
 	 * @param desc, the description of the statement (used as a context for creating new
-	 *            expressions)
+	 * expressions)
 	 * @return the new expression, patched for compatibility
 	 */
 	private IExpression patchForCompatibility(final IExpression exp, final IDescription desc) {
@@ -223,9 +263,8 @@ public class DrawStatement extends AbstractStatementSequence {
 					IExpression at = getFacet(AT);
 					final IExpression to = getFacet(TO);
 					if ( at == null ) {
-						at =
-							GAML.getExpressionFactory().createVar("location", Types.POINT, false, IVarExpression.AGENT,
-								desc);
+						at = GAML.getExpressionFactory().createVar("location", Types.POINT, false, IVarExpression.AGENT,
+							desc);
 					}
 					final List<IExpression> elements = new ArrayList();
 					elements.add(at);
@@ -276,7 +315,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		IExpression bord;
 
 		IExpression rot;
-		
+
 		IExpression rot3D;
 
 		IExpression depth;
@@ -292,7 +331,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		private final boolean hasBord;
 		private final ILocation constSize;
 		private final Double constRot;
-		private final GamaPair<Double,GamaPoint> constRot3D;
+		private final GamaPair<Double, GamaPoint> constRot3D;
 		private final Boolean constEmpty;
 		private final Boolean constRounded;
 		protected final ILocation constLoc;
@@ -317,9 +356,8 @@ public class DrawStatement extends AbstractStatementSequence {
 			rounded = getFacet(ROUNDED);
 			textures = getFacet(TEXTURE);
 
-			constSize =
-				getSizeExp() == null ? LOC : getSizeExp().isConst() ? Cast.asPoint(scope, getSizeExp().value(scope),
-					false) : null;
+			constSize = getSizeExp() == null ? LOC
+				: getSizeExp().isConst() ? Cast.asPoint(scope, getSizeExp().value(scope), false) : null;
 			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope), false) : null;
 			if ( bord != null && bord.isConst() ) {
 				IType type = bord.getType();
@@ -339,7 +377,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			}
 
 			constRot = rot != null && rot.isConst() ? Cast.asFloat(scope, rot.value(scope)) : null;
-			constRot3D = rot3D != null && rot3D.isConst() ? Cast.asPair(scope, rot3D.value(scope),false) : null;
+			constRot3D = rot3D != null && rot3D.isConst() ? Cast.asPair(scope, rot3D.value(scope), false) : null;
 			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope), false) : null;
 			constRounded =
 				rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope), false) : null;
@@ -355,18 +393,20 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		Color getColor(final IScope scope) {
-			return constCol == null ? color != null ? Cast.asColor(scope, color.value(scope)) : scope.getAgentScope()
-				.getSpecies().hasVar(COLOR) ? Cast.asColor(scope, scope.getAgentVarValue(scope.getAgentScope(), COLOR))
-				: Color.yellow : constCol;
+			return constCol == null
+				? color != null ? Cast.asColor(scope, color.value(scope))
+					: scope.getAgentScope().getSpecies().hasVar(COLOR)
+						? Cast.asColor(scope, scope.getAgentVarValue(scope.getAgentScope(), COLOR)) : Color.yellow
+				: constCol;
 		}
 
 		Color getBorder(final IScope scope) {
 			if ( !hasBord ) { return null; }
 			if ( constBord != null ) { return constBord; }
 
-			return bord != null ? Cast.asColor(scope, bord.value(scope)) : scope.getAgentScope().getSpecies()
-				.hasVar(BORDER) ? Cast.asColor(scope, scope.getAgentVarValue(scope.getAgentScope(), BORDER))
-				: Color.black;
+			return bord != null ? Cast.asColor(scope, bord.value(scope))
+				: scope.getAgentScope().getSpecies().hasVar(BORDER)
+					? Cast.asColor(scope, scope.getAgentVarValue(scope.getAgentScope(), BORDER)) : Color.black;
 		}
 
 		Boolean getRounded(final IScope scope) {
@@ -379,8 +419,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		ILocation getLocation(final IScope scope) {
-			return constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : scope.getAgentScope()
-				.getLocation() : constLoc;
+			return constLoc == null
+				? loc != null ? Cast.asPoint(scope, loc.value(scope)) : scope.getAgentScope().getLocation() : constLoc;
 		}
 
 		public IList getTextures(final IScope scope) throws GamaRuntimeException {
@@ -417,17 +457,17 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		@Override
-		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
+			Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
 			final IShape g1 = Cast.asGeometry(scope, item.value(scope), false); // WARNING Verify no side effect
 			if ( g1 == null ) { return null; }
 			IShape g2 = new GamaShape(g1, null, getRotation(scope), getLocation(scope, g1));
 			if ( depth != null ) {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
 			}
-			if(rot3D != null){
+			if ( rot3D != null ) {
 				g2.setAttribute(IShape.ROTATE_ATTRIBUTE, rot3D.value(scope));
 			}
-				
+
 			IList textures = getTextures(scope);
 			if ( textures != null ) {
 				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, textures);
@@ -452,9 +492,8 @@ public class DrawStatement extends AbstractStatementSequence {
 				int size = points.size();
 				if ( size < 2 ) { return; }
 				double width = Cast.asFloat(scope, endArrow.value(scope));
-				IShape geometry =
-					GamaGeometryType.buildArrow(new GamaPoint(points.get(size - 2)),
-						new GamaPoint(points.get(size - 1)), width, width + width / 3, fill);
+				IShape geometry = GamaGeometryType.buildArrow(new GamaPoint(points.get(size - 2)),
+					new GamaPoint(points.get(size - 1)), width, width + width / 3, fill);
 				gr.drawGamaShape(scope, geometry, color, fill, border, false);
 			}
 			if ( beginArrow != null ) {
@@ -462,9 +501,8 @@ public class DrawStatement extends AbstractStatementSequence {
 				int size = points.size();
 				if ( size < 2 ) { return; }
 				double width = Cast.asFloat(scope, beginArrow.value(scope));
-				IShape geometry =
-					GamaGeometryType.buildArrow(new GamaPoint(points.get(1)), new GamaPoint(points.get(0)), width,
-						width + width / 3, fill);
+				IShape geometry = GamaGeometryType.buildArrow(new GamaPoint(points.get(1)),
+					new GamaPoint(points.get(0)), width, width + width / 3, fill);
 				gr.drawGamaShape(scope, geometry, color, fill, border, false);
 			}
 		}
@@ -484,7 +522,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		// FIXME : Penser � placer des exceptions
 		// FIXME Optimiser tout �a
 		@Override
-		Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+			Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 			// final IAgent agent = scope.getAgentScope();
 			final ILocation from = getLocation(scope);
 			final Double displayWidth = getSize(scope).getX();
@@ -499,7 +537,8 @@ public class DrawStatement extends AbstractStatementSequence {
 
 			final Color c = getColor(scope);
 			if ( color != null ) {
-				if ( workImage == null || workImage.getWidth() != image_width || workImage.getHeight() != image_height ) {
+				if ( workImage == null || workImage.getWidth() != image_width ||
+					workImage.getHeight() != image_height ) {
 					if ( workImage != null ) {
 						workImage.flush();
 					}
@@ -516,14 +555,13 @@ public class DrawStatement extends AbstractStatementSequence {
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP));
 				g2d.fillRect(0, 0, image_width, image_height);
 
-				final Rectangle2D result =
-					g.drawImage(scope, workImage, new GamaPoint(x, y, from.getZ()), new GamaPoint(displayWidth,
-						displayHeight), null, getRotation(scope), false, null);
+				final Rectangle2D result = g.drawImage(scope, workImage, new GamaPoint(x, y, from.getZ()),
+					new GamaPoint(displayWidth, displayHeight), null, getRotation(scope), false, null);
 				workImage.flush();
 				return result;
 			}
-			return g.drawImage(scope, img, new GamaPoint(x, y, from.getZ()),
-				new GamaPoint(displayWidth, displayHeight), null, getRotation(scope), false, null);
+			return g.drawImage(scope, img, new GamaPoint(x, y, from.getZ()), new GamaPoint(displayWidth, displayHeight),
+				null, getRotation(scope), false, null);
 		}
 
 	}
@@ -543,13 +581,11 @@ public class DrawStatement extends AbstractStatementSequence {
 			final IScope scope = GAMA.obtainNewScope();
 			constText = item.isConst() ? Cast.asString(scope, item.value(scope)) : null;
 			font = getFacet(FONT);
-			constFont =
-				font == null ? (GamaFont) Types.FONT.getDefault() : font.isConst() ? GamaFontType.staticCast(scope,
-					font.value(scope), false) : null;
+			constFont = font == null ? (GamaFont) Types.FONT.getDefault()
+				: font.isConst() ? GamaFontType.staticCast(scope, font.value(scope), false) : null;
 			style = getFacet(STYLE);
-			constStyle =
-				style == null ? Font.PLAIN : style.isConst() ? CONSTANTS.get(Cast.asString(scope, style.value(scope)))
-					: null;
+			constStyle = style == null ? Font.PLAIN
+				: style.isConst() ? CONSTANTS.get(Cast.asString(scope, style.value(scope))) : null;
 			bitmap = getFacet(BITMAP);
 			constBitmap = bitmap != null && bitmap.isConst() ? Cast.asBool(scope, bitmap.value(scope)) : null;
 			GAMA.releaseScope(scope);
@@ -557,7 +593,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		@Override
-		Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+			Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 			// final IAgent agent = scope.getAgentScope();
 			final String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;
 			if ( info == null || info.length() == 0 ) { return null; }
