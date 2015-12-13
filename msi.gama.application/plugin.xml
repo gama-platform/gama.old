@@ -1394,6 +1394,11 @@
             schemeId="msi.gama.application.scheme"
             sequence="M1+V">
       </key>
+      <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="msi.gama.application.scheme"
+            sequence="M1+X">
+      </key>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
