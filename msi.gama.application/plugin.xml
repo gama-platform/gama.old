@@ -1348,23 +1348,23 @@
       <key
             commandId="msi.gama.application.commands.PlaySimulation"
             contextId="msi.gama.application.simulation.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="msi.gama.application.scheme"
             sequence="M1+P">
       </key>
       <key
             commandId="msi.gama.application.commands.RunModel"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="msi.gama.application.scheme"
             sequence="M1+R">
       </key>
       <key
             commandId="msi.gama.application.commands.SwitchPerspective"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="msi.gama.application.scheme"
             sequence="F6">
       </key>
       <key
             commandId="msi.gama.application.commands.StepByStepSimulation"
             contextId="msi.gama.application.simulation.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="msi.gama.application.scheme"
             sequence="M1+M2+P">
       </key>
       <key
@@ -1376,8 +1376,23 @@
       <key
             commandId="org.eclipse.ui.file.exit"
             contextId="msi.gama.application.simulation.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="msi.gama.application.scheme"
             sequence="M1+Q">
+      </key>
+      <scheme
+            id="msi.gama.application.scheme"
+            name="Removal of copy/paste operations"
+            parentId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </scheme>
+      <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="msi.gama.application.scheme"
+            sequence="M1+C">
+      </key>
+      <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="msi.gama.application.scheme"
+            sequence="M1+V">
       </key>
    </extension>
    <extension
