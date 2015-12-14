@@ -6,14 +6,14 @@ package ummisco.gama.opengl;
 
 import java.io.IOException;
 import java.net.*;
-import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
-import msi.gama.gui.views.LayeredDisplayView;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.Composite;
 import com.jogamp.common.util.JarUtil;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
+import msi.gama.gui.views.LayeredDisplayView;
 
 /**
  * Class OpenGLLayeredDisplayView.
@@ -97,6 +97,15 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 	@Override
 	public IDisplaySurface getDisplaySurface() {
 		return surface;
+	}
+
+	/**
+	 * Method zoomWhenScrolling()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
+	 */
+	@Override
+	public boolean zoomWhenScrolling() {
+		return true;
 	}
 
 }

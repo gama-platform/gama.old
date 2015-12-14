@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IScope.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.runtime;
 
@@ -27,9 +27,9 @@ import msi.gaml.statements.*;
 
 /**
  * Written by drogoul Modified on 18 janv. 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface IScope {
 
@@ -182,7 +182,7 @@ public interface IScope {
 	/**
 	 * Returns the current simulation in which this scope is defined.
 	 * @return the current simulation or null if none is defined (unlikely as the scope is created
-	 *         by a simulation)
+	 * by a simulation)
 	 */
 	public abstract SimulationAgent getSimulationScope();
 

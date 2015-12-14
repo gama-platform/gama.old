@@ -1,35 +1,35 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaViewPart.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views;
 
 import java.util.*;
-import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
-import msi.gama.outputs.*;
-import msi.gama.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
+import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
+import msi.gama.outputs.*;
+import msi.gama.runtime.GAMA;
 
 /**
  * @author drogoul
@@ -88,27 +88,27 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		IPartService ps = (IPartService) site.getService(IPartService.class);
+		IPartService ps = site.getService(IPartService.class);
 		ps.addPartListener(SwtGui.getPartListener());
 		final String s_id = site.getSecondaryId();
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
 		if ( GAMA.getExperiment() != null ) {
-			IOutputManager manager = GAMA.getExperiment().getSimulationOutputs();
-			if ( manager != null ) {
-				out = (IDisplayOutput) manager.getOutput(id);
-				if ( out == null ) {
-					manager = GAMA.getExperiment().getExperimentOutputs();
-					if ( manager != null ) {
-						out = (IDisplayOutput) manager.getOutput(id);
-					}
-				}
-			}
+			// IOutputManager manager = GAMA.getExperiment().getSimulationOutputs();
+			// if ( manager != null ) {
+			// out = (IDisplayOutput) manager.getOutput(id);
+			// if ( out == null ) {
+			// manager = GAMA.getExperiment().getExperimentOutputs();
+			// if ( manager != null ) {
+			// out = (IDisplayOutput) manager.getOutput(id);
+			// }
+			// }
+			// }
 
 			// hqnghi in case of multi-controller
 			if ( out == null ) {
-				for ( FrontEndController fec : GAMA.getControllers().values() ) {
-					manager = fec.getExperiment().getSimulationOutputs();
+				for ( IExperimentController fec : GAMA.getControllers() ) {
+					IOutputManager manager = fec.getExperiment().getSimulationOutputs();
 					if ( manager != null ) {
 						out = (IDisplayOutput) manager.getOutput(id);
 					}
@@ -132,7 +132,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 							for ( IAgent expAgent : externPop ) {
 								SimulationAgent spec = (SimulationAgent) ((ExperimentAgent) expAgent).getSimulation();
 								if ( spec != null ) {
-									manager = spec.getOutputManger();
+									IOutputManager manager = spec.getOutputManger();
 									if ( manager != null ) {
 										out = (IDisplayOutput) manager.getOutput(s_id);
 									}
@@ -157,7 +157,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	public abstract void ownCreatePartControl(Composite parent);
 
 	private void activateContext() {
-		final IContextService contextService = (IContextService) getSite().getService(IContextService.class);
+		final IContextService contextService = getSite().getService(IContextService.class);
 		contextService.activateContext("msi.gama.application.simulation.context");
 	}
 
@@ -220,7 +220,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		outputs.clear();
 		IWorkbenchPartSite s = getSite();
 		if ( s != null ) {
-			IPartService ps = (IPartService) s.getService(IPartService.class);
+			IPartService ps = s.getService(IPartService.class);
 			if ( ps != null ) {
 				ps.removePartListener(SwtGui.getPartListener());
 			}

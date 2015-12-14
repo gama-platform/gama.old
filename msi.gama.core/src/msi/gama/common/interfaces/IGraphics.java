@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IGraphics.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -19,9 +19,9 @@ import msi.gama.runtime.IScope;
 
 /**
  * Written by drogoul Modified on 22 janv. 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface IGraphics {
 
@@ -41,8 +41,8 @@ public interface IGraphics {
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Double angle,
 		boolean isDynamic, String name);
 
-	public abstract Rectangle2D drawString(final String string, final Color stringColor,
-		ILocation locationInModelUnits, Double heightInModelUnits, Font font, final Double angle, final Boolean bitmap);
+	public abstract Rectangle2D drawString(final String string, final Color stringColor, ILocation locationInModelUnits,
+		Double heightInModelUnits, Font font, final Double angle, final Boolean bitmap);
 
 	public abstract Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color,
 		final boolean fill, final Color border, final boolean rounded);
@@ -79,6 +79,10 @@ public interface IGraphics {
 	public abstract void beginHighlight();
 
 	public abstract void endHighlight();
+
+	public double getXOffsetInPixels();
+
+	public double getYOffsetInPixels();
 
 	public interface OpenGL extends IGraphics {
 

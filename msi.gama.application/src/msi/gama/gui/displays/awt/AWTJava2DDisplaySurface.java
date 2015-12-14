@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractAWTDisplaySurface.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.displays.awt;
 
@@ -38,7 +38,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 
 @display("java2D")
-public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
+public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurface {
 
 	private final LayeredDisplayOutput output;
 	protected final LayeredDisplayData data;
@@ -135,6 +135,11 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 		setOpaque(true);
 		setDoubleBuffered(true);
+		// Experimental
+		setIgnoreRepaint(true);
+
+		//
+
 		setLayout(new BorderLayout());
 		setBackground(data.getBackgroundColor());
 		setName(output.getName());
@@ -250,13 +255,11 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			e1.printStackTrace();
 			return;
 		}
-		String snapshotFile =
-			FileUtils.constructAbsoluteFilePath(scope, SNAPSHOT_FOLDER_NAME + "/" + GAMA.getModel().getName() +
-				"_display_" + output.getName(), false);
+		String snapshotFile = FileUtils.constructAbsoluteFilePath(scope,
+			SNAPSHOT_FOLDER_NAME + "/" + GAMA.getModel().getName() + "_display_" + output.getName(), false);
 
-		String file =
-			snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
-				scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
+		String file = snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
+			scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));
@@ -310,19 +313,53 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public BufferedImage getImage() {
-		Robot screenRobot;
-		try {
-			screenRobot = new Robot();
-		} catch (AWTException e) {
-			e.printStackTrace();
-			return null;
+
+		if ( buffImage == null ) {
+
+			BufferedImage image = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2d = image.createGraphics();
+
+			// Paint a background for non-opaque components,
+			// otherwise the background will be black
+
+			if ( !isOpaque() ) {
+				g2d.setColor(getBackground());
+				g2d.fillRect(0, 0, getSize().width, getSize().height);
+			}
+
+			paint(g2d);
+			g2d.dispose();
+			return image;
+		} else {
+			while (!canBeUpdated) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				canBeUpdated = false;
+
+				return ImageUtils.toCompatibleImage(buffImage);
+			} finally {
+				canBeUpdated = true;
+			}
 		}
-		if ( isDisplayable() && isShowing() ) {
-			Rectangle rectangle = new Rectangle(this.getLocationOnScreen(), this.getSize());
-			final BufferedImage buffImage = screenRobot.createScreenCapture(rectangle);
-			return buffImage;
-		}
-		return null;
+
+		// Robot screenRobot;
+		// try {
+		// screenRobot = new Robot();
+		// } catch (AWTException e) {
+		// e.printStackTrace();
+		// return null;
+		// }
+		// if ( isDisplayable() && isShowing() ) {
+		// Rectangle rectangle = new Rectangle(this.getLocationOnScreen(), this.getSize());
+		// final BufferedImage buffImage = screenRobot.createScreenCapture(rectangle);
+		// return buffImage;
+		// }
+		// return null;
 		// = renderer.getScreenShot();
 
 	}
@@ -434,8 +471,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public boolean isImageEdgeInPanel() {
 		if ( previousPanelSize == null ) { return false; }
 		Point origin = getOrigin();
-		return origin.x > 0 && origin.x < previousPanelSize.width || origin.y > 0 &&
-			origin.y < previousPanelSize.height;
+		return origin.x > 0 && origin.x < previousPanelSize.width ||
+			origin.y > 0 && origin.y < previousPanelSize.height;
 	}
 
 	// Tests whether the image is displayed in its entirety in the panel.
@@ -469,6 +506,15 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		return true;
 
 	}
+	//
+	// @Override
+	// public void paint(final Graphics g) {
+	// super.paint(g);
+	// ((Graphics2D) g).drawImage(buffImage, translation, null);
+	// if ( data.isAutosave() ) {
+	// snapshot();
+	// }
+	// }
 
 	@Override
 	public void paintComponent(final Graphics g) {
@@ -713,17 +759,15 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		boolean success = false;
 
 		try {
-			success =
-				resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
-					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
+			success = resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
+				Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 		} catch (Exception e) {
 			// System.gc();
 			// GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
 			real_factor = MAX_ZOOM_FACTOR;
 			try {
-				success =
-					resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
-						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
+				success = resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
+					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 			} catch (Exception e1) {
 				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
@@ -740,9 +784,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			// GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
 			real_factor = MAX_ZOOM_FACTOR;
 			try {
-				success =
-					resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
-						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
+				success = resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
+					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 			} catch (Exception e1) {
 				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
@@ -828,8 +871,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			case BACKGROUND:
 				setBackground(data.getBackgroundColor());
 				break;
-			default:
-				;
+			default:;
 		}
 
 	};

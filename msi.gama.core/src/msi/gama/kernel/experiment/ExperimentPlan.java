@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ExperimentPlan.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -20,13 +20,8 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.outputs.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
@@ -40,50 +35,51 @@ import msi.gaml.variables.IVariable;
 /**
  * Written by drogoul Modified on 28 mai 2011
  * Apr. 2013: Important modifications to enable running true experiment agents
- * 
+ *
  * Principe de base du batch :
  * - si batch, créer un agent "spécial" (BatchExperimentAgent ?)
  * - faire que ce soit lui qui gère tout ce qu'il y a dans BatchExperimentSpecies
- * 
- * 
+ *
+ * Dec 2015: ExperimentPlans now manage their own controller. They are entirely responsible for its life-cycle (creation, disposal)
  * @todo Description
- * 
+ *
  */
 @symbol(name = { IKeyword.EXPERIMENT }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the experiment")),
-	@facet(name = IKeyword.TITLE, type = IType.LABEL, optional = false, doc = @doc(""), internal = true),
-	@facet(name = IKeyword.PARENT,
-		type = IType.ID,
-		optional = true,
-		doc = @doc("the parent experiment (in case of inheritance between experiments)")),
-	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true, doc = @doc(""), internal = true),
-	@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true, doc = @doc(""), internal = true),
-	@facet(name = IKeyword.FREQUENCY,
-		type = IType.INT,
-		optional = true,
-		internal = true,
-		doc = @doc("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
-	@facet(name = IKeyword.SCHEDULES,
-		type = IType.CONTAINER,
-		optional = true,
-		internal = true,
-		doc = @doc("an ordered list of agents giving the order of their execution")),
-	@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true, doc = @doc("")),
-	@facet(name = IKeyword.REPEAT,
-		type = IType.INT,
-		optional = true,
-		doc = @doc("In case of a batch experiment, expresses hom many times the simulations must be repeated")),
-	@facet(name = IKeyword.UNTIL,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("In case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
-	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc(""), internal = true),
-	@facet(name = IKeyword.TYPE,
-		type = IType.LABEL,
-		values = { IKeyword.BATCH,/* IKeyword.REMOTE, */IKeyword.GUI_ },
-		optional = false,
-		doc = @doc("the type of the experiment (either 'gui' or 'batch'")) },
+@facets(
+	value = {
+		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the experiment") ),
+		@facet(name = IKeyword.TITLE, type = IType.LABEL, optional = false, doc = @doc("") , internal = true),
+		@facet(name = IKeyword.PARENT,
+			type = IType.ID,
+			optional = true,
+			doc = @doc("the parent experiment (in case of inheritance between experiments)") ),
+		@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true, doc = @doc("") , internal = true),
+		@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true, doc = @doc("") , internal = true),
+		@facet(name = IKeyword.FREQUENCY,
+			type = IType.INT,
+			optional = true,
+			internal = true,
+			doc = @doc("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.") ),
+		@facet(name = IKeyword.SCHEDULES,
+			type = IType.CONTAINER,
+			optional = true,
+			internal = true,
+			doc = @doc("an ordered list of agents giving the order of their execution") ),
+		@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true, doc = @doc("") ),
+		@facet(name = IKeyword.REPEAT,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("In case of a batch experiment, expresses hom many times the simulations must be repeated") ),
+		@facet(name = IKeyword.UNTIL,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("In case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated") ),
+		@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc("") , internal = true),
+		@facet(name = IKeyword.TYPE,
+			type = IType.LABEL,
+			values = { IKeyword.BATCH, /* IKeyword.REMOTE, */IKeyword.GUI_ },
+			optional = false,
+			doc = @doc("the type of the experiment (either 'gui' or 'batch'") ) },
 	omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.MODEL })
 @validator(BatchValidator.class)
@@ -107,6 +103,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 	}
 
+	protected final IExperimentController controller;
 	protected IOutputManager simulationOutputs;
 	protected IOutputManager experimentOutputs;
 	private ItemList parametersEditors;
@@ -118,15 +115,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected IExploration exploration;
 	private FileOutput log;
 
-	private String controllerName = "";
-
-	public String getControllerName() {
-		return controllerName;
-	}
-
-	public void setControllerName(final String controllerName) {
-		this.controllerName = controllerName;
-	}
+	// private String controllerName = "";
+	//
+	// public String getControllerName() {
+	// return controllerName;
+	// }
+	//
+	// public void setControllerName(final String controllerName) {
+	// this.controllerName = controllerName;
+	// }
 
 	// end-hqnghi
 
@@ -142,6 +139,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if ( type.equals(IKeyword.BATCH) ) {
 			exploration = new ExhaustiveSearch(null);
 		}
+		controller = new ExperimentController(this);
 	}
 
 	@Override
@@ -162,8 +160,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 		parameters.clear();
 
-		// Should be put somewhere around here, but probably not here exactly.
+		// FIXME Should be put somewhere around here, but probably not here exactly.
 		// ProjectionFactory.reset();
+
+		// Dec 2015 Addition
+		controller.dispose();
 		super.dispose();
 	}
 
@@ -221,7 +222,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		super.setChildren(children);
 		// We first verify if we are in a batch -- or normal -- situation
 		for ( final ISymbol s : children ) {
-			if ( s instanceof IExploration /* && (s.hasFacet(IKeyword.MAXIMIZE) || s.hasFacet(IKeyword.MINIMIZE)) */) {
+			if ( s instanceof IExploration /* && (s.hasFacet(IKeyword.MAXIMIZE) || s.hasFacet(IKeyword.MINIMIZE)) */ ) {
 				exploration = (IExploration) s;
 				break;
 			}
@@ -236,8 +237,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				fileOutputDescription = (BatchOutput) s;
 			} else if ( s instanceof SimulationOutputManager ) {
 				if ( simulationOutputs != null ) {
-					((SimulationOutputManager) simulationOutputs).setChildren(new ArrayList(((AbstractOutputManager) s)
-						.getOutputs().values()));
+					((SimulationOutputManager) simulationOutputs)
+						.setChildren(new ArrayList(((AbstractOutputManager) s).getOutputs().values()));
 				} else {
 					simulationOutputs = (SimulationOutputManager) s;
 				}
@@ -258,8 +259,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				}
 			} else if ( s instanceof ExperimentOutputManager ) {
 				if ( experimentOutputs != null ) {
-					((ExperimentOutputManager) experimentOutputs).setChildren(new ArrayList(((AbstractOutputManager) s)
-						.getOutputs().values()));
+					((ExperimentOutputManager) experimentOutputs)
+						.setChildren(new ArrayList(((AbstractOutputManager) s).getOutputs().values()));
 				} else {
 					experimentOutputs = (ExperimentOutputManager) s;
 				}
@@ -376,8 +377,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	protected IParameter.Batch checkGetParameter(final String name) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameter(name);
-		if ( v == null ) { throw GamaRuntimeException.error("No parameter named " + name + " in experiment " +
-			getName()); }
+		if ( v == null ) { throw GamaRuntimeException
+			.error("No parameter named " + name + " in experiment " + getName()); }
 		return v;
 	}
 
@@ -406,7 +407,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 * available, it refers to it and gains access to its global scope. If not, it throws the
 	 * appropriate runtime exceptions when a feature dependent on the existence of a simulation is
 	 * accessed
-	 * 
+	 *
 	 * @author Alexis Drogoul
 	 * @since November 2011
 	 */
@@ -515,5 +516,14 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public Map<String, IParameter.Batch> getExplorableParameters() {
 		return explorableParameters;
+	}
+
+	/**
+	 * Method getController()
+	 * @see msi.gama.kernel.experiment.IExperimentPlan#getController()
+	 */
+	@Override
+	public IExperimentController getController() {
+		return controller;
 	}
 }

@@ -13,6 +13,12 @@ package msi.gama.gui.parameters;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.swt.*;
@@ -22,12 +28,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 
 public abstract class AbstractEditor<T> implements SelectionListener, ModifyListener, Comparable<AbstractEditor>, IParameterEditor<T> {
 
@@ -155,8 +155,8 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	@Override
 	public void setActive(final Boolean active) {
 		if ( titleLabel != null ) {
-			titleLabel.setForeground(active ? SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK) : SwtGui.getDisplay()
-				.getSystemColor(SWT.COLOR_GRAY));
+			titleLabel.setForeground(active ? SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK)
+				: SwtGui.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 		}
 		if ( !active ) {
 			for ( ToolItem t : items ) {
@@ -180,7 +180,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 			}
 			param.setValue(a == null ? null : a.getScope(), newValue);
 		}
-		if ( a != null /* && a.getSpecies().hasVar(param.getName()) */) {
+		if ( a != null /* && a.getSpecies().hasVar(param.getName()) */ ) {
 			GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
 		}
 	}
@@ -213,9 +213,8 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	protected Control createEditorControl(final Composite composite) {
 		Control paramControl;
 		try {
-			paramControl =
-				!isEditable ? createLabelParameterControl(composite) : isCombo ? createComboParameterControl(composite)
-					: createCustomParameterControl(composite);
+			paramControl = !isEditable ? createLabelParameterControl(composite)
+				: isCombo ? createComboParameterControl(composite) : createCustomParameterControl(composite);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("The editor for " + name + " could not be created");
 			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
@@ -332,7 +331,10 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		if ( combo != null ) {
 			combo.forceFocus();
 		} else {
-			getEditorControl().forceFocus();
+			Control c = getEditorControl();
+			if ( c != null ) {
+				c.forceFocus();
+			}
 		}
 	}
 
@@ -478,8 +480,8 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 	protected Control createLabelParameterControl(final Composite composite) {
 		fixedValue = new CLabel(composite, SWT.READ_ONLY | SWT.BORDER_SOLID);
-		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue() : StringUtils.toGaml(
-			getOriginalValue(), false));
+		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue()
+			: StringUtils.toGaml(getOriginalValue(), false));
 		// addToolbarHiders(fixedValue);
 		return fixedValue;
 	}
@@ -559,7 +561,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		currentValue = val;
 		if ( titleLabel != null && !titleLabel.isDisposed() ) {
 			titleLabel
-			.setBackground(isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
+				.setBackground(isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
 		}
 		if ( !internalModification ) {
 			setParameterValue(val);

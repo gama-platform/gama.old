@@ -1,17 +1,17 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SimulationAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
-import java.util.*;
+import java.util.Map;
 import java.util.Map.Entry;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
@@ -19,17 +19,9 @@ import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
-import msi.gama.metamodel.topology.projection.WorldProjection;
+import msi.gama.metamodel.topology.projection.*;
 import msi.gama.outputs.*;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
@@ -43,34 +35,34 @@ import msi.gaml.types.IType;
  * Defines an instance of a model (a simulation). Serves as the support for model species (whose metaclass is
  * GamlModelSpecies)
  * Written by drogoul Modified on 1 d�c. 2010, May 2013
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @species(name = IKeyword.MODEL)
 @vars({
 	@var(name = IKeyword.STEP,
 		type = IType.FLOAT,
 		doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles",
-			comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
+			comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second") ),
 	@var(name = SimulationAgent.TIME,
 		type = IType.FLOAT,
 		doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation",
-			comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
-	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
+			comment = "Equal to cycle * step if the user does not arbitrarily initialize it.") ),
+	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation") ),
 	@var(name = SimulationAgent.DURATION,
 		type = IType.STRING,
-		doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
+		doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle") ),
 	@var(name = SimulationAgent.TOTAL_DURATION,
 		type = IType.STRING,
-		doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
+		doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ") ),
 	@var(name = SimulationAgent.AVERAGE_DURATION,
 		type = IType.STRING,
-		doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
+		doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.") ),
 	@var(name = SimulationAgent.MACHINE_TIME,
 		type = IType.FLOAT,
 		doc = @doc(value = "Returns the current system time in milliseconds",
-			comment = "The return value is a float number")), })
+			comment = "The return value is a float number") ), })
 public class SimulationAgent extends GamlAgent {
 
 	public static final String DURATION = "duration";
@@ -122,44 +114,25 @@ public class SimulationAgent extends GamlAgent {
 		// }
 		// }
 
-		// hqnghi: 2 case: multi controllers and mono controller
-		if ( !((ExperimentPlan) getExperiment().getSpecies()).getControllerName().equals("") ) {
-			GAMA.getController(((ExperimentPlan) getExperiment().getSpecies()).getControllerName()).getScheduler()
-				.schedule(scheduler, scope);
-			if ( outputs != null ) {
-				final IScope simulationScope = obtainNewScope();
-				if ( simulationScope != null ) {
-					GAMA.getController(((ExperimentPlan) getExperiment().getSpecies()).getControllerName())
-						.getScheduler().schedule(outputs, simulationScope);
-				} else {
-					// TODO What does it do here ? Should be elsewhere (but where ?)
-					GuiUtils.cleanAfterSimulation();
-					// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
-					// GuiUtils.hideMonitorView();
-				}
-			}
-		} else {
-			GAMA.controller.getScheduler().schedule(scheduler, scope);
-			if ( outputs != null ) {
-				final IScope simulationScope = obtainNewScope();
-				if ( simulationScope != null ) {
-					GAMA.controller.getScheduler().schedule(outputs, simulationScope);
-				} else {
-					// TODO What does it do here ? Should be elsewhere (but where ?)
-					GuiUtils.cleanAfterSimulation();
-					// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
-					// GuiUtils.hideMonitorView();
-				}
+		getExperiment().getSpecies().getController().getScheduler().schedule(scheduler, scope);
+		if ( outputs != null ) {
+			final IScope simulationScope = obtainNewScope();
+			if ( simulationScope != null ) {
+				getExperiment().getSpecies().getController().getScheduler().schedule(outputs, simulationScope);
+			} else {
+				// TODO What does it do here ? Should be elsewhere (but where ?)
+				GuiUtils.cleanAfterSimulation();
+				// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+				// GuiUtils.hideMonitorView();
 			}
 		}
-		// end-hqnghi
+
 	}
 
 	@Override
 	// TODO A redefinition of this method in GAML will lose all information regarding the clock and the advance of time,
 	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
-		public
-		Object _step_(final IScope scope) {
+	public Object _step_(final IScope scope) {
 
 		// System.out.println("Stepping simulation at cycle " + clock.getCycle());
 
@@ -190,7 +163,7 @@ public class SimulationAgent extends GamlAgent {
 
 	/**
 	 * Scope related utilities
-	 * 
+	 *
 	 */
 
 	@Override
@@ -246,14 +219,17 @@ public class SimulationAgent extends GamlAgent {
 	@Override
 	public synchronized void setGeometry(final IShape geom) {
 		if ( geometry != null ) {
-			GAMA.reportError(scope, GamaRuntimeException.warning(
-				"Changing the shape of the world after its creation can have unexpected consequences", scope), false);
+			GAMA.reportError(scope,
+				GamaRuntimeException.warning(
+					"Changing the shape of the world after its creation can have unexpected consequences", scope),
+				false);
 		}
 		// FIXME : AD 5/15 Revert the commit by PT: getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
 		final Envelope3D env = geom.getEnvelope();
-		if (getProjectionFactory() != null && getProjectionFactory().getWorld() != null)
-				((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
+		if ( getProjectionFactory() != null && getProjectionFactory().getWorld() != null ) {
+			((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
+		}
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry = Transformations.translated_by(getScope(), geom, p);
 		// projectionFactory.setWorldProjectionEnv(env);
@@ -341,25 +317,20 @@ public class SimulationAgent extends GamlAgent {
 	}
 
 	@action(name = "pause",
-		doc = @doc("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
+		doc = @doc("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user.") )
 	@args(names = {})
-	public
-		Object pause(final IScope scope) {
-		String ctrlName = ((ExperimentPlan) scope.getExperiment().getSpecies()).getControllerName();
-		if ( !ctrlName.equals("") ) {
-			GAMA.getController(ctrlName).directPause();
-		} else {
-			GAMA.controller.directPause();
-		}
+	public Object pause(final IScope scope) {
+		IExperimentController controller = scope.getExperiment().getSpecies().getController();
+		controller.directPause();
 		return null;
 	}
 
 	@action(name = "halt",
-		doc = @doc(deprecated = "It is preferable to use 'die' instead to kill a simulation, or 'pause' to stop it temporarily",
-			value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. "))
+		doc = @doc(
+			deprecated = "It is preferable to use 'die' instead to kill a simulation, or 'pause' to stop it temporarily",
+			value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. ") )
 	@args(names = {})
-	public
-		Object halt(final IScope scope) {
+	public Object halt(final IScope scope) {
 		getExperiment().closeSimulation();
 		return null;
 	}

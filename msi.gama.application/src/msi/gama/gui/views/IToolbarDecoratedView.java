@@ -1,21 +1,21 @@
 /**
  * Created by drogoul, 7 déc. 2014
- * 
+ *
  */
 package msi.gama.gui.views;
 
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchSite;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.outputs.IDisplayOutput;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbenchSite;
 
 /**
  * Class IToolbarDecoratedView.
- * 
+ *
  * @author drogoul
  * @since 7 déc. 2014
- * 
+ *
  */
 public interface IToolbarDecoratedView {
 
@@ -64,6 +64,11 @@ public interface IToolbarDecoratedView {
 		 * @return the controls that will react to gestures / mouse doucle-cliks
 		 */
 		Control[] getZoomableControls();
+
+		/**
+		 * @return true if the scroll triggers the zooming
+		 */
+		boolean zoomWhenScrolling();
 
 	}
 

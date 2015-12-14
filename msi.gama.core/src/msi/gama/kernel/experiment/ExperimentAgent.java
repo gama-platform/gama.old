@@ -1,18 +1,19 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ExperimentAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.runtime.Platform;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
@@ -24,27 +25,21 @@ import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IOutputManager;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
-import org.eclipse.core.runtime.Platform;
 
 /**
- * 
+ *
  * The class ExperimentAgent. Represents the support for the different experiment species
- * 
+ *
  * @author drogoul
  * @since 13 mai 2013
- * 
+ *
  */
 @species(name = IKeyword.EXPERIMENT)
 @vars({
@@ -52,41 +47,42 @@ import org.eclipse.core.runtime.Platform;
 	@var(name = IKeyword.SIMULATION,
 		type = IType.AGENT,
 		doc = @doc(value = "contains a reference to the current simulation being run by this experiment",
-			comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
+			comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one") ),
 	// @var(name = GAMA._FATAL, type = IType.BOOL),
 	@var(name = GAMA._WARNINGS, type = IType.BOOL),
 	@var(name = ExperimentAgent.MODEL_PATH,
 		type = IType.STRING,
 		constant = true,
 		doc = @doc(value = "Contains the absolute path to the folder in which the current model is located",
-			comment = "Always terminated with a trailing separator")),
-	@var(name = IKeyword.SEED, type = IType.FLOAT, doc = @doc(value = "The seed of the random number generator",
-		comment = "Each time it is set, the random number generator is reinitialized")),
+			comment = "Always terminated with a trailing separator") ),
+	@var(name = IKeyword.SEED,
+		type = IType.FLOAT,
+		doc = @doc(value = "The seed of the random number generator",
+			comment = "Each time it is set, the random number generator is reinitialized") ),
 	@var(name = IKeyword.RNG,
 		type = IType.STRING,
 		doc = @doc("The random number generator to use for this simulation. Four different ones are at the disposal of the modeler: " +
 			IKeyword.MERSENNE +
 			" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
 			IKeyword.CELLULAR +
-			" is a cellular automaton based generator that should be a bit faster, but less reliable; " +
-			IKeyword.XOR +
-			" is another choice. Much faster than the previous ones, but with short sequences; and " +
-			IKeyword.JAVA +
-			" invokes the standard Java generator")),
+			" is a cellular automaton based generator that should be a bit faster, but less reliable; " + IKeyword.XOR +
+			" is another choice. Much faster than the previous ones, but with short sequences; and " + IKeyword.JAVA +
+			" invokes the standard Java generator") ),
 	@var(name = ExperimentAgent.MINIMUM_CYCLE_DURATION,
 		type = IType.FLOAT,
-		doc = @doc(value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')",
-			comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
+		doc = @doc(
+			value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')",
+			comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process") ),
 	@var(name = ExperimentAgent.WORKSPACE_PATH,
 		type = IType.STRING,
 		constant = true,
 		doc = @doc(value = "Contains the absolute path to the workspace of GAMA",
-			comment = "Always terminated with a trailing separator")),
+			comment = "Always terminated with a trailing separator") ),
 	@var(name = ExperimentAgent.PROJECT_PATH,
 		type = IType.STRING,
 		constant = true,
 		doc = @doc(value = "Contains the absolute path to the project in which the current model is located",
-			comment = "Always terminated with a trailing separator")) })
+			comment = "Always terminated with a trailing separator") ) })
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public static final String MODEL_PATH = "model_path";
@@ -134,8 +130,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	public String getDefinedRng() {
-		if ( GamaPreferences.CORE_RND_EDITABLE.getValue() ) { return (String) ((ExperimentPlan) getSpecies()).parameters
-			.get(IKeyword.RNG).value(null); }
+		if ( GamaPreferences.CORE_RND_EDITABLE
+			.getValue() ) { return (String) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.RNG).value(null); }
 		return GamaPreferences.CORE_RNG.getValue();
 	}
 
@@ -161,12 +157,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			// GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
 
 			// hqnghi: in case experiment have its own controller
-			if ( !((ExperimentPlan) getSpecies()).getControllerName().equals("") ) {
-				GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler()
-					.unschedule(getSimulation().getScheduler());
-			} else {
-				GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
-			}
+			// if ( !((ExperimentPlan) getSpecies()).getControllerName().equals("") ) {
+			// GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler()
+			// .unschedule(getSimulation().getScheduler());
+			// } else {
+			getSpecies().getController().getScheduler().unschedule(getSimulation().getScheduler());
+			// }
 			// end-hqnghi
 
 			// TODO Should better be in SimulationOutputManager
@@ -243,21 +239,26 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		// hqnghi: in case experiment have its own controller
 
-		if ( !((ExperimentPlan) getSpecies()).getControllerName().isEmpty() ) {
-			if ( outputs != null ) {
-				GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler()
-					.schedule(outputs, getScope());
-			}
-			GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler()
-				.schedule(this, getScope());
-
-		} else {
-			if ( outputs != null ) {
-				GAMA.controller.getScheduler().schedule(outputs, getScope());
-			}
-			GAMA.controller.getScheduler().schedule(this, getScope());
-
+		if ( outputs != null ) {
+			getSpecies().getController().getScheduler().schedule(outputs, scope);
 		}
+		getSpecies().getController().getScheduler().schedule(this, scope);
+
+		// if ( !((ExperimentPlan) getSpecies()).getControllerName().isEmpty() ) {
+		// if ( outputs != null ) {
+		// GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler().schedule(outputs,
+		// getScope());
+		// }
+		// GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler().schedule(this,
+		// getScope());
+		//
+		// } else {
+		// if ( outputs != null ) {
+		// GAMA.controller.getScheduler().schedule(outputs, getScope());
+		// }
+		// GAMA.controller.getScheduler().schedule(this, getScope());
+
+		// }
 		// end-hqnghi
 	}
 
@@ -304,28 +305,26 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	/**
 	 * GAML global variables
-	 * 
+	 *
 	 */
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
 		if ( !GamaPreferences.CORE_RND_EDITABLE.getValue() ) { return new ArrayList(); }
 		List<ExperimentParameter> params = new ArrayList();
 		final String cat = getExperimentParametersCategory();
-		ExperimentParameter p =
-			new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG), "Random number generator", cat,
-				GamaPreferences.GENERATOR_NAMES, false);
+		ExperimentParameter p = new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG),
+			"Random number generator", cat, GamaPreferences.GENERATOR_NAMES, false);
 
 		params.add(p);
-		p =
-			new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.SEED), "Default random seed", cat,
-				"(current seed)", null, true) {
+		p = new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.SEED), "Default random seed", cat,
+			"(current seed)", null, true) {
 
-				@Override
+			@Override
 				Object getValue(final IScope scope) {
-					// tryToInit(scope);
-					return getSeed();
-				}
-			};
+				// tryToInit(scope);
+				return getSeed();
+			}
+		};
 		p.setDefined(GamaPreferences.CORE_SEED_DEFINED.getValue());
 		params.add(p);
 		return params;
@@ -338,7 +337,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@getter(value = ExperimentAgent.MINIMUM_CYCLE_DURATION, initializer = true)
 	public Double getMinimumDuration() {
 		//
-		return GAMA.getDelayInMilliseconds() / 1000;
+		return SimulationClock.getDelayInMilliseconds() / 1000;
 	}
 
 	@setter(ExperimentAgent.MINIMUM_CYCLE_DURATION)
@@ -346,9 +345,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// d is in seconds, but the slider expects milleseconds
 		// GAMA.setDelayFromExperiment(d);
 		// hqnghi
-		if ( GAMA.getControllers().size() == 0 ) {
-			GAMA.setDelayFromExperiment(d);
-		}
+		// if ( GAMA.getControllers().size() == 0 ) {
+		SimulationClock.setDelayFromExperiment(d);
+		// }
 		// end-hqnghi
 	}
 
@@ -492,16 +491,16 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	// }
 
 	/**
-	 * 
+	 *
 	 * The class ExperimentAgentScope. A "pass through" class used when the simulation is not yet computed and when an
 	 * experiment tries to have access to simulation attributes (which is the case in most of the models). It returns
 	 * and sets the values of parameters when they are defined in the experiment, and also allows extra parameters to be
 	 * set.
 	 * TODO Allow this class to read the init values of global variables that are not defined as parameters.
-	 * 
+	 *
 	 * @author drogoul
 	 * @since 22 avr. 2013
-	 * 
+	 *
 	 */
 	private class ExperimentAgentScope extends Scope {
 
@@ -536,8 +535,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				return super.getGlobalVarValue(name);
 			} else if ( getSimulation() != null && !getSimulation().dead() ) {
 				return getSimulation().getScope().getGlobalVarValue(name);
-			} else if ( getSpecies().hasParameter(name) ) { return getSpecies().getExperimentScope().getGlobalVarValue(
-				name); }
+			} else if ( getSpecies()
+				.hasParameter(name) ) { return getSpecies().getExperimentScope().getGlobalVarValue(name); }
 			return extraParametersMap.get(name);
 		}
 
@@ -548,7 +547,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			// }
 			if ( getSpecies().hasVar(name) ) {
 				super.setGlobalVarValue(name, v);
-			} else if ( getSimulation() != null && !getSimulation().dead() && getSimulation().getSpecies().hasVar(name) ) {
+			} else if ( getSimulation() != null && !getSimulation().dead() &&
+				getSimulation().getSpecies().hasVar(name) ) {
 				getSimulation().getScope().setGlobalVarValue(name, v);
 				// TODO extraParameter does not contains model's variables???
 				// } else if ( getSpecies().hasParameter(name) ) {

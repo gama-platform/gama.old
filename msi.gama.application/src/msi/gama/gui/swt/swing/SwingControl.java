@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SwingControl.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.swing;
 
@@ -23,9 +23,9 @@ import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -79,17 +79,17 @@ public abstract class SwingControl extends Composite {
 	 * </p>
 	 * <p>
 	 * The styles SWT.EMBEDDED and SWT.NO_BACKGROUND will be added to the specified style. Usually, no other style bits are needed.
-	 * 
+	 *
 	 * @param parent a widget which will be the parent of the new instance (cannot be null)
 	 * @param style the style of widget to construct
-	 * 
+	 *
 	 * @exception IllegalArgumentException <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 *                </ul>
+	 * <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 * </ul>
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
-	 *                </ul>
-	 * 
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
+	 * </ul>
+	 *
 	 * @see Widget#getStyle
 	 */
 	public SwingControl(final Composite parent, final int style) {
@@ -224,10 +224,10 @@ public abstract class SwingControl extends Composite {
 	 * provide their own root pane container implementation.
 	 * <p>
 	 * The steps above happen only on the first call to this method; subsequent calls have no effect.
-	 * 
+	 *
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
-	 *                </ul>
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
+	 * </ul>
 	 */
 	protected void populate() {
 		if ( isDisposed() ) { return; }
@@ -248,6 +248,7 @@ public abstract class SwingControl extends Composite {
 			SWT_AWT.embeddedFrameClass = "sun.lwawt.macosx.CViewEmbeddedFrame";
 		}
 		frame = SWT_AWT.new_Frame(borderlessChild);
+
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -299,11 +300,12 @@ public abstract class SwingControl extends Composite {
 				// org.eclipse.ui.internal.handlers.WidgetMethodHandler).
 				// TODO: can this be queried from the L&F?
 				KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-				if ( kfm.getDefaultFocusTraversalPolicy().getClass().getName() == "javax.swing.LegacyGlueFocusTraversalPolicy" ) {
+				if ( kfm.getDefaultFocusTraversalPolicy().getClass()
+					.getName() == "javax.swing.LegacyGlueFocusTraversalPolicy" ) {
 					kfm.setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
 				}
-				if ( frame.getFocusTraversalPolicy() != null &&
-					frame.getFocusTraversalPolicy().getClass().getName() == "javax.swing.LegacyGlueFocusTraversalPolicy" ) {
+				if ( frame.getFocusTraversalPolicy() != null && frame.getFocusTraversalPolicy().getClass()
+					.getName() == "javax.swing.LegacyGlueFocusTraversalPolicy" ) {
 					frame.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
 				}
 
@@ -366,7 +368,7 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * If you are defining your own root pane container, make sure that there is at least one heavyweight (AWT) component in the frame's containment hierarchy; otherwise, event processing will not
 	 * work correctly. See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4982522 for more information.
-	 * 
+	 *
 	 * @param frame the frame to which the root pane container is added
 	 * @return a non-null Swing component
 	 */
@@ -469,7 +471,7 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * Implement this method to provide the Swing component that will be shown inside this composite. The returned component will be added to the Swing content pane. At least one component must be
 	 * created by this method; null is not a valid return value.
-	 * 
+	 *
 	 * @return a non-null Swing component
 	 */
 	protected abstract JComponent createSwingComponent();
@@ -497,7 +499,7 @@ public abstract class SwingControl extends Composite {
 	 * Returns the Swing component contained in this control. This method may be
 	 * called from any thread.
 	 * @return The embedded Swing component, or <code>null</code> if it has not
-	 *         yet been initialized.
+	 * yet been initialized.
 	 */
 	public/* final */JComponent getSwingComponent() {
 		return swingComponent;
@@ -508,7 +510,7 @@ public abstract class SwingControl extends Composite {
 	 * parent of the embedded Swing component. This method may be called from
 	 * any thread.
 	 * @return An AWT container, usually a Window, or <code>null</code> if the
-	 *         initialization is not yet complete.
+	 * initialization is not yet complete.
 	 */
 	public/* final */Container getAWTHierarchyRoot() {
 		// Intentionally leaving out checkWidget() call. This method may be called from the
@@ -569,7 +571,7 @@ public abstract class SwingControl extends Composite {
 	// This code overwrites the size of the frame with a size that is not
 	// valid any more!
 	static final boolean INITIAL_CLIENT_AREA_WORKAROUND =
-	// This code is found in SWT_AWT.new_Frame for gtk, motif, win32.
+		// This code is found in SWT_AWT.new_Frame for gtk, motif, win32.
 		Platform.isGtk() || Platform.isMotif() || Platform.isWin32();
 	private Rectangle initialClientArea;
 
@@ -651,15 +653,15 @@ public abstract class SwingControl extends Composite {
 	 * several of them, therefore a Map.
 	 * Accessed only from the SWT thread(s).
 	 */
-	static Map /* <Thread,Integer> */onBehalfAWTTimes = Collections
-		.synchronizedMap(new HashMap /* <Thread,Integer> */());
+	static Map /* <Thread,Integer> */ onBehalfAWTTimes =
+		Collections.synchronizedMap(new HashMap /* <Thread,Integer> */());
 
 	/**
 	 * Given the minimum, preferred, and maximum sizes of the Swing
 	 * component, this method stores them in the cache and updates
 	 * this control accordingly.
 	 */
-	protected void updateCachedAWTSizes(final Dimension min, final Dimension pref, final Dimension max) {
+		protected void updateCachedAWTSizes(final Dimension min, final Dimension pref, final Dimension max) {
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 		if ( verboseSizeLayout ) {
 			System.err.println("AWT thread: updated component sizes: " + min + " <= " + pref + " <= " + max);
@@ -735,7 +737,7 @@ public abstract class SwingControl extends Composite {
 	 * @param pref Output parameter for the Swing component's preferred size.
 	 * @param max Output parameter for the Swing component's maximum size.
 	 * @return true if the sizes were available and the output parameters are
-	 *         filled
+	 * filled
 	 */
 	protected boolean getCachedAWTSizes(final Dimension min, final Dimension pref, final Dimension max) {
 		synchronized (this) {
@@ -790,7 +792,7 @@ public abstract class SwingControl extends Composite {
 		/**
 		 * Enqueues a request to this queue.
 		 * @param onBehalfAWTTime The AWT time of the notification that
-		 *            triggered this request, or null.
+		 * triggered this request, or null.
 		 * @param width The size to which the frame shall be resized.
 		 * @param height The size to which the frame shall be resized.
 		 * @return true if this queue needs to be started as a Runnable
@@ -798,8 +800,8 @@ public abstract class SwingControl extends Composite {
 		synchronized boolean enqueue(Integer onBehalfAWTTime, final int width, final int height) {
 			assert Display.getCurrent() != null; // On SWT event thread
 			if ( verboseSizeLayout ) {
-				System.err.println("SWT thread: Preparing to set size: " + width + " x " + height + " for " +
-					swingComponent);
+				System.err
+					.println("SWT thread: Preparing to set size: " + width + " x " + height + " for " + swingComponent);
 			}
 			// During the processing of a request, lastValidatedAWTTime is
 			// unreliable: it gets incremented to a value past the
@@ -819,9 +821,9 @@ public abstract class SwingControl extends Composite {
 				this.height = height;
 				// Use the OR of the old onBehalfAWTTime and the new onBehalfAWTTime.
 				if ( wasPending ) {
-					this.onBehalfAWTTime =
-						this.onBehalfAWTTime == null || onBehalfAWTTime == null ? null : this.onBehalfAWTTime
-							.intValue() - onBehalfAWTTime.intValue() < 0 ? onBehalfAWTTime : this.onBehalfAWTTime;
+					this.onBehalfAWTTime = this.onBehalfAWTTime == null || onBehalfAWTTime == null ? null
+						: this.onBehalfAWTTime.intValue() - onBehalfAWTTime.intValue() < 0 ? onBehalfAWTTime
+							: this.onBehalfAWTTime;
 				} else {
 					this.onBehalfAWTTime = onBehalfAWTTime;
 				}
@@ -836,7 +838,7 @@ public abstract class SwingControl extends Composite {
 		/**
 		 * Returns the enqueued request and removes it from the queue.
 		 * @return The size to which the frame shall be resized, or null if
-		 *         if does not need to be resized after all.
+		 * if does not need to be resized after all.
 		 */
 		private synchronized Dimension dequeue() {
 			assert EventQueue.isDispatchThread(); // On AWT event thread
@@ -933,8 +935,8 @@ public abstract class SwingControl extends Composite {
 			// from being displayed. Testcases: EmbeddedJTableView, TestResizeView.
 			// TODO: research the initial content display problem further
 			synchronized (this) {
-				if ( cachedSizesInitialized >= 2 || Platform.isGtk() &&
-					Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) || Platform.isWin32() ) {
+				if ( cachedSizesInitialized >= 2 ||
+					Platform.isGtk() && Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) || Platform.isWin32() ) {
 					setAWTSize(Math.max(width - 2 * borderWidth, 0), Math.max(height - 2 * borderWidth, 0));
 				}
 			}
@@ -969,14 +971,12 @@ public abstract class SwingControl extends Composite {
 				assert cachedSizesInitialized >= 1;
 				cachedSizesInitialized = 2;
 			}
-			int width =
-				widthHint == SWT.DEFAULT ? pref.width : widthHint < min.width ? min.width : widthHint > max.width
-					? max.width : widthHint;
+			int width = widthHint == SWT.DEFAULT ? pref.width
+				: widthHint < min.width ? min.width : widthHint > max.width ? max.width : widthHint;
 			// Augment by 2*borderWidth, avoiding integer overflow.
 			width = Math.min(width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth;
-			int height =
-				heightHint == SWT.DEFAULT ? pref.height : heightHint < min.width ? min.height : heightHint > max.width
-					? max.height : heightHint;
+			int height = heightHint == SWT.DEFAULT ? pref.height
+				: heightHint < min.width ? min.height : heightHint > max.width ? max.height : heightHint;
 			// Augment by 2*borderWidth, avoiding integer overflow.
 			height = Math.min(height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth;
 			if ( verboseSizeLayout ) {
@@ -991,7 +991,7 @@ public abstract class SwingControl extends Composite {
 	 * changes of this control. It is usually on this ancestor control that
 	 * you want to call <code>layout()</code> when the preferred size of this
 	 * control has changed.
-	 * 
+	 *
 	 * @return the parent, grandparent, or other ancestor of this control, or <code>null</code>
 	 * @see #preferredSizeChanged(Point, Point, Point)
 	 */
@@ -1022,11 +1022,11 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * The parameters <var>minPoint</var>, <var>prefPoint</var>, <var>maxPoint</var> can usually be ignored: It is often enough to rely on the {@link #layout()} method.
 	 * @param minSize The new minimum size for this control, as reported by
-	 *            AWT, plus the border width on each side.
+	 * AWT, plus the border width on each side.
 	 * @param prefSize The new preferred size for this control, as reported by
-	 *            AWT, plus the border width on each side.
+	 * AWT, plus the border width on each side.
 	 * @param maxSize The new maximum size for this control, as reported by
-	 *            AWT, plus the border width on each side.
+	 * AWT, plus the border width on each side.
 	 */
 	protected void preferredSizeChanged(final Point minSize, final Point prefSize, final Point maxSize) {
 		Composite ancestor = getLayoutAncestor();
@@ -1185,7 +1185,7 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * In most cases it is not necessary to override this method. Normally, the implementation of this class will automatically propogate font changes to the embedded Swing components through Swing's
 	 * Look and Feel support. However, if additional special processing is necessary, it can be done inside this method.
-	 * 
+	 *
 	 * @param newFont New AWT font
 	 */
 	protected void updateAwtFont(final java.awt.Font newFont) {
@@ -1288,7 +1288,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Configures the SwingControl's participation in SWT traversals. See {@link #isSwtTabOrderExtended} for more
 	 * information.
-	 * 
+	 *
 	 * @param isSwtTabOrderExtended
 	 */
 	public void setSwtTabOrderExtended(final boolean isSwtTabOrderExtended) {
@@ -1304,7 +1304,7 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * If this method returns false, then the SwingControl participates in the tab order only as a single opaque element. Focus on a child component will then be determined completely by the AWT focus
 	 * subsystem, independent of any current SWT traversal state. This normally means that focus will move to the most recently focused Swing component within the embedded frame.
-	 * 
+	 *
 	 * @return true if the child componets are SWT traversal participants. false otherwise.
 	 */
 	public boolean isSwtTabOrderExtended() {
@@ -1315,7 +1315,7 @@ public abstract class SwingControl extends Composite {
 	 * Returns whether a permanent focus lost event is forced on a SwingControl when focus moves to
 	 * another SWT component within the same shell. See {@link #setAWTPermanentFocusLossForced(boolean)} for more
 	 * information.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isAWTPermanentFocusLossForced() {
@@ -1332,9 +1332,9 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * For more information on permanent/temporary focus loss, see the <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html">AWT Focus Subsystem</a> spec. For an example
 	 * of the type of problem solved by keeping this property <code>true</code>, see <a href="http://bugs.eclipse.org/60967">bug 60967</a>.
-	 * 
+	 *
 	 * @param isAWTPermanentFocusLossForced - <code>true</code> to enable the forcing of permanent
-	 *            focus loss. <code>false</code> to disable it.
+	 * focus loss. <code>false</code> to disable it.
 	 */
 	public void setAWTPermanentFocusLossForced(final boolean isAWTPermanentFocusLossForced) {
 		this.isAWTPermanentFocusLossForced = isAWTPermanentFocusLossForced;
@@ -1411,7 +1411,7 @@ public abstract class SwingControl extends Composite {
 	 * Common focus setting/forcing code. Since this may be called for the SwingControl or
 	 * a borderless child component, and it may be called for setting or forcing focus,
 	 * the actual code to change focus is passed in a runnable
-	 * 
+	 *
 	 * @param focusSetter - invoked to set or force focus
 	 * @return the result of running the focus setter, or true if it was deferred
 	 */
@@ -1446,17 +1446,17 @@ public abstract class SwingControl extends Composite {
 	 * Adds the listener to the collection of listeners who will
 	 * be notified when the embedded Swing control has changed its size
 	 * preferences.
-	 * 
+	 *
 	 * @param listener the listener which should be notified
-	 * 
+	 *
 	 * @exception IllegalArgumentException <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 *                </ul>
+	 * <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
-	 * 
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
 	 * @see SizeListener
 	 * @see #removeSizeListener(SizeListener)
 	 */
@@ -1472,17 +1472,17 @@ public abstract class SwingControl extends Composite {
 	 * Removes the listener from the collection of listeners who will
 	 * be notified when the embedded swing control has changed its size
 	 * preferences.
-	 * 
+	 *
 	 * @param listener the listener which should no longer be notified
-	 * 
+	 *
 	 * @exception IllegalArgumentException <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 *                </ul>
+	 * <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
-	 * 
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
 	 * @see SizeListener
 	 * @see #addSizeListener(SizeListener)
 	 */
@@ -1550,13 +1550,13 @@ public abstract class SwingControl extends Composite {
 	 * This method can be overridden, to achieve dynamic popup menus.
 	 * @param component The component on which a popup event was received.
 	 * @param x The x coordinate, relative to the component's top left corner,
-	 *            of the mouse cursor when the event occurred.
+	 * of the mouse cursor when the event occurred.
 	 * @param y The y coordinate, relative to the component's top left corner,
-	 *            of the mouse cursor when the event occurred.
+	 * of the mouse cursor when the event occurred.
 	 * @param xAbsolute The x coordinate, relative to this control's top left
-	 *            corner, of the mouse cursor when the event occurred.
+	 * corner, of the mouse cursor when the event occurred.
 	 * @param yAbsolute The y coordinate, relative to this control's top left
-	 *            corner, of the mouse cursor when the event occurred.
+	 * corner, of the mouse cursor when the event occurred.
 	 */
 	public Menu getMenu(final java.awt.Component component, final int x, final int y, final int xAbsolute,
 		final int yAbsolute) {
@@ -1632,7 +1632,7 @@ public abstract class SwingControl extends Composite {
 
 	/**
 	 * Returns the set of keystrokes which will be consumed by this control. See {@link #addConsumedKeystroke(SwtKeystroke)} for more information.
-	 * 
+	 *
 	 * @return Set the keystrokes configured to be consumed.
 	 */
 	public Set getConsumedKeystrokes() {
@@ -1646,7 +1646,7 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * This method can be used to block a SWT keystroke from being propagated both to the embedded Swing component and to the native window system. By consuming a keystroke, you can avoid conflicts in
 	 * key handling between the Swing component and the rest of the application.
-	 * 
+	 *
 	 * @param key the keystroke to consume.
 	 */
 	public void addConsumedKeystroke(final SwtKeystroke key) {
@@ -1657,7 +1657,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Removes a SWT keystroke from the set of keystrokes to be consumed by this control.
 	 * See {@link #addConsumedKeystroke(SwtKeystroke)} for more information.
-	 * 
+	 *
 	 * @return <code>true</code> if a keystroke was successfully removed from the set.
 	 */
 	public boolean removeConsumedKeystroke(final SwtKeystroke key) {

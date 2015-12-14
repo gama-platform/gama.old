@@ -1,28 +1,27 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
-import gnu.trove.map.hash.THashMap;
-
 import java.util.*;
-
+import com.google.common.collect.Iterables;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -32,8 +31,6 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
-
-import com.google.common.collect.Iterables;
 
 /**
  * The Class GamlAgent. Represents agents that can be manipulated in GAML. They are provided with
@@ -133,7 +130,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 * @see GamlAgent#_init_()
 	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
 	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
-	 *          override _init_(IScope) instead.
+	 * override _init_(IScope) instead.
 	 */
 	@Override
 	public boolean init(final IScope scope) {
@@ -151,7 +148,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 * @see GamlAgent#_step_()
 	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
 	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
-	 *          override _step_(IScope) instead.
+	 * override _step_(IScope) instead.
 	 */
 	@Override
 	public boolean step(final IScope scope) {
@@ -165,7 +162,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/**
 	 * Callback Actions
-	 * 
+	 *
 	 */
 	static Object[] callbackResult = new Object[1];
 
@@ -196,7 +193,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	protected Object stepSubPopulations(final IScope scope) {
 		// AD: dont use getMicroPopulations() so that no temp array is created
 		// Object[] hash = attributes._set;
-		for ( Object pop : attributes.getRawValues() /* getMicroPopulations() */) {
+		for ( Object pop : attributes.getRawValues() /* getMicroPopulations() */ ) {
 			if ( pop instanceof IPopulation ) {
 				scope.step((IPopulation) pop);
 			}
@@ -257,7 +254,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	/**
 	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
 	 * species.
-	 * 
+	 *
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
@@ -289,7 +286,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	/**
 	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
 	 * species.
-	 * 
+	 *
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
@@ -319,7 +316,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	/**
 	 * A helper class to save agent and restore/recreate agent as a member of a population.
 	 */
-	private class SavedAgent {
+		private class SavedAgent {
 
 		Map<String, Object> variables;
 		Map<String, List<SavedAgent>> innerPopulations;
@@ -333,7 +330,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		/**
 		 * Saves agent's attributes to a map.
-		 * 
+		 *
 		 * @param agent
 		 * @throws GamaRuntimeException
 		 */
@@ -362,7 +359,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		/**
 		 * Recursively save micro-agents of an agent.
-		 * 
+		 *
 		 * @param agent The agent having micro-agents to be saved.
 		 * @throws GamaRuntimeException
 		 */
@@ -382,8 +379,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		/**
 		 * @param scope
-		 *            Restores the saved agent as a member of the target population.
-		 * 
+		 * Restores the saved agent as a member of the target population.
+		 *
 		 * @param targetPopulation The population that the saved agent will be restored to.
 		 * @return
 		 * @throws GamaRuntimeException
@@ -398,8 +395,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		}
 
 		/**
-		 * 
-		 * 
+		 *
+		 *
 		 * @param host
 		 * @throws GamaRuntimeException
 		 */
@@ -492,7 +489,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public/* synchronized */void setGeometry(final IShape newGeometry) {
 		// Addition to address Issue 817: if the new geometry is exactly the one possessed by the agent, no need to
 		// change anything.
-		if ( newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ||this.getSpecies().isGrid() ) { return; }
+		if ( newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ||
+			this.getSpecies().isGrid() ) { return; }
 
 		final ITopology topology = population.getTopology();
 		final ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
@@ -523,7 +521,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public/* synchronized */void setLocation(final ILocation point) {
-		if ( point == null || dead() || this.getSpecies().isGrid()) { return; }
+		if ( point == null || dead() || this.getSpecies().isGrid() ) { return; }
 		final ILocation newLocation = point.copy(getScope());
 		final ITopology topology = population.getTopology();
 		if ( topology == null ) { return; }
@@ -678,17 +676,18 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/**
 	 * Verifies if this agent can capture other agent as newSpecies.
-	 * 
+	 *
 	 * @return true if the following conditions are correct:
-	 *         1. newSpecies is one micro-species of this agent's species;
-	 *         2. newSpecies is a sub-species of this agent's species or other species is a
-	 *         sub-species of this agent's species;
-	 *         3. the "other" agent is not macro-agent of this agent;
-	 *         4. the "other" agent is not a micro-agent of this agent.
+	 * 1. newSpecies is one micro-species of this agent's species;
+	 * 2. newSpecies is a sub-species of this agent's species or other species is a
+	 * sub-species of this agent's species;
+	 * 3. the "other" agent is not macro-agent of this agent;
+	 * 4. the "other" agent is not a micro-agent of this agent.
 	 */
 	@Override
 	public boolean canCapture(final IAgent other, final ISpecies newSpecies) {
-		if ( other == null || other.dead() || newSpecies == null || !this.getSpecies().containMicroSpecies(newSpecies) ) { return false; }
+		if ( other == null || other.dead() || newSpecies == null ||
+			!this.getSpecies().containMicroSpecies(newSpecies) ) { return false; }
 		if ( this.getMacroAgents().contains(other) ) { return false; }
 		if ( other.getHost().equals(this) ) { return false; }
 		return true;
@@ -764,10 +763,16 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	@Override
-	public void setRotate3D(GamaPair rot3d) {
+	public void setRotate3D(final GamaPair rot3d) {
 		if ( geometry == null ) { return; }
 		geometry.setRotate3D(rot3d);
-		
+	}
+
+	@Override
+	public SimulationClock getClock() {
+		IMacroAgent host = getHost();
+		if ( host != null ) { return host.getClock(); }
+		return new SimulationClock();
 	}
 
 }

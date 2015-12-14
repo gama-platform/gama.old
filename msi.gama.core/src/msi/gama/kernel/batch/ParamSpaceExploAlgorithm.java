@@ -15,7 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
@@ -42,17 +42,17 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	protected IExpression fitnessExpression;
 	protected boolean isMaximize;
 	protected BatchAgent currentExperiment;
-	protected IScope scope;
+	// protected IScope scope;
 	private ParametersSet bestSolution;
 	private Double bestFitness;
 	protected short combination;
 
-	protected abstract ParametersSet findBestSolution() throws GamaRuntimeException;
+	protected abstract ParametersSet findBestSolution(IScope scope) throws GamaRuntimeException;
 
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		currentExperiment = agent;
-		this.scope = scope;
+		// this.scope = scope;
 	}
 
 	// protected ContinuousUniformGenerator getRandUniform() {
@@ -65,6 +65,14 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	protected void initializeTestedSolutions() {
 		testedSolutions = new HashMap<ParametersSet, Double>();
 	}
+
+	void initParams() {
+		IScope scope = GAMA.obtainNewScope();
+		initParams(scope);
+		GAMA.releaseScope(scope);
+	}
+
+	void initParams(final IScope scope) {}
 
 	public ParamSpaceExploAlgorithm(final IDescription desc) {
 		super(desc);
@@ -82,11 +90,11 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	}
 
 	@Override
-	public void run() {
+	public void run(final IScope scope) {
 		try {
-			findBestSolution();
+			findBestSolution(scope);
 		} catch (GamaRuntimeException e) {
-			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
+			GAMA.reportError(scope, e, false);
 		}
 	}
 
@@ -110,12 +118,11 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 			public Object value() {
 				List<Class> classes = Arrays.asList(CLASSES);
 				String name = IKeyword.METHODS[classes.indexOf(ParamSpaceExploAlgorithm.this.getClass())];
-				String fit =
-					fitnessExpression == null ? "" : "fitness = " + (isMaximize ? " maximize " : " minimize ") +
-						fitnessExpression.serialize(false);
-				String sim =
-					fitnessExpression == null ? "" : (combination == C_MAX ? " max " : combination == C_MIN ? " min "
-						: " average ") + "of " + agent.getSeeds().length + " simulations";
+				String fit = fitnessExpression == null ? ""
+					: "fitness = " + (isMaximize ? " maximize " : " minimize ") + fitnessExpression.serialize(false);
+				String sim = fitnessExpression == null ? ""
+					: (combination == C_MAX ? " max " : combination == C_MIN ? " min " : " average ") + "of " +
+						agent.getSeeds().length + " simulations";
 				return "Method " + name + " | " + fit + " | " + "compute the" + sim + " for each solution";
 			}
 

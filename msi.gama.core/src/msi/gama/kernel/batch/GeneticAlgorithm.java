@@ -11,18 +11,12 @@
  **********************************************************************************************/
 package msi.gama.kernel.batch;
 
-import gnu.trove.set.hash.THashSet;
 import java.util.*;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -32,45 +26,52 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.GENETIC, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
-	@facet(name = GeneticAlgorithm.POP_DIM,
-	type = IType.INT,
-	optional = true,
-	doc = @doc("size of the population (number of individual solutions)")),
-	@facet(name = GeneticAlgorithm.CROSSOVER_PROB,
-	type = IType.FLOAT,
-	optional = true,
-	doc = @doc("crossover probability between two individual solutions")),
-	@facet(name = GeneticAlgorithm.MUTATION_PROB,
-	type = IType.FLOAT,
-	optional = true,
-	doc = @doc("mutation probability for an individual solution")),
-	@facet(name = GeneticAlgorithm.NB_GEN,
-	type = IType.INT,
-	optional = true,
-	doc = @doc("number of random populations used to build the initial population")),
-	@facet(name = GeneticAlgorithm.MAX_GEN, type = IType.INT, optional = true, doc = @doc("number of generations")),
-	@facet(name = IKeyword.MAXIMIZE,
-	type = IType.FLOAT,
-	optional = true,
-	doc = @doc("the value the algorithm tries to maximize")),
-	@facet(name = IKeyword.MINIMIZE,
-	type = IType.FLOAT,
-	optional = true,
-	doc = @doc("the value the algorithm tries to minimize")),
-	@facet(name = IKeyword.AGGREGATION,
-	type = IType.LABEL,
-	optional = true,
-	values = { IKeyword.MIN, IKeyword.MAX },
-	doc = @doc("the agregation method")) }, omissible = IKeyword.NAME)
-@doc(value = "This is a simple implementation of Genetic Algorithms (GA). See the wikipedia article and [batch161 the batch dedicated page]. The principle of the GA is to search an optimal solution by applying evolution operators on an initial population of solutions. There are three types of evolution operators: crossover, mutation and selection. Different techniques can be applied for this selection. Most of them are based on the solution quality (fitness).",
-usages = {
-	@usage(value = "As other batch methods, the basic syntax of the `genetic` statement uses `method genetic` instead of the expected `genetic name: id` : ",
-		examples = { @example(value = "method genetic [facet: value];", isExecutable = false) }),
+@facets(
+	value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
+		@facet(name = GeneticAlgorithm.POP_DIM,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("size of the population (number of individual solutions)") ),
+		@facet(name = GeneticAlgorithm.CROSSOVER_PROB,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("crossover probability between two individual solutions") ),
+		@facet(name = GeneticAlgorithm.MUTATION_PROB,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("mutation probability for an individual solution") ),
+		@facet(name = GeneticAlgorithm.NB_GEN,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("number of random populations used to build the initial population") ),
+		@facet(name = GeneticAlgorithm.MAX_GEN,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("number of generations") ),
+		@facet(name = IKeyword.MAXIMIZE,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("the value the algorithm tries to maximize") ),
+		@facet(name = IKeyword.MINIMIZE,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("the value the algorithm tries to minimize") ),
+		@facet(name = IKeyword.AGGREGATION,
+			type = IType.LABEL,
+			optional = true,
+			values = { IKeyword.MIN, IKeyword.MAX },
+			doc = @doc("the agregation method") ) },
+	omissible = IKeyword.NAME)
+@doc(
+	value = "This is a simple implementation of Genetic Algorithms (GA). See the wikipedia article and [batch161 the batch dedicated page]. The principle of the GA is to search an optimal solution by applying evolution operators on an initial population of solutions. There are three types of evolution operators: crossover, mutation and selection. Different techniques can be applied for this selection. Most of them are based on the solution quality (fitness).",
+	usages = {
+		@usage(
+			value = "As other batch methods, the basic syntax of the `genetic` statement uses `method genetic` instead of the expected `genetic name: id` : ",
+			examples = { @example(value = "method genetic [facet: value];", isExecutable = false) }),
 		@usage(value = "For example: ",
-		examples = { @example(value = "method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20; ",
-		isExecutable = false) }) })
+			examples = { @example(
+				value = "method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20; ",
+				isExecutable = false) }) })
 public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 	private int populationDim = 3;
@@ -100,7 +101,8 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		super.initializeFor(scope, agent);
 	}
 
-	public void initParams() {
+	@Override
+	public void initParams(final IScope scope) {
 		initPop = new InitializationUniform();
 		crossOverOp = new CrossOver1Pt();
 		mutationOp = new Mutation1Var();
@@ -128,7 +130,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	}
 
 	@Override
-	public ParametersSet findBestSolution() throws GamaRuntimeException {
+	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
 		initializeTestedSolutions();
 		List<Chromosome> population =
@@ -158,7 +160,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			population = selectionOp.select(scope, population, populationDim, isMaximize());
 			nbGen++;
 		}
-		// System.out.println("Best solution : " + bestSolution + "  fitness : "
+		// System.out.println("Best solution : " + bestSolution + " fitness : "
 		// + bestFitness);
 		return getBestSolution();
 	}
@@ -217,14 +219,14 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 		});
 		params
-		.add(new ParameterAdapter("Max. number of generations", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			.add(new ParameterAdapter("Max. number of generations", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
-			@Override
-			public Object value() {
-				return maxGenerations;
-			}
+				@Override
+				public Object value() {
+					return maxGenerations;
+				}
 
-		});
+			});
 	}
 
 }

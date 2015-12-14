@@ -1,33 +1,17 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlEditor.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.controls.*;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.*;
-import msi.gama.lang.gaml.ui.XtextGui;
-import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
-import msi.gama.lang.gaml.ui.templates.*;
-import msi.gama.lang.gaml.validation.*;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -55,15 +39,31 @@ import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
-import ummisco.gaml.editbox.*;
 import com.google.common.collect.ObjectArrays;
 import com.google.inject.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.resource.*;
+import msi.gama.lang.gaml.ui.XtextGui;
+import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
+import msi.gama.lang.gaml.ui.templates.*;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.descriptions.*;
+import ummisco.gaml.editbox.*;
 
 /*
  * The class GamlEditor.
- * 
+ *
  * @author drogoul
- * 
+ *
  * @since 4 mars 2012
  */
 @SuppressWarnings("all")
@@ -179,8 +179,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 			public void widgetSelected(final SelectionEvent e) {
 				editToolbarEnabled = !editToolbarEnabled;
 				editToolbar.setVisible(editToolbarEnabled);
-				toggle.setImage(editToolbarEnabled ? GamaIcons.create("action.toolbar.toggle2").image() : GamaIcons
-					.create("action.toolbar.toggle3").image());
+				toggle.setImage(editToolbarEnabled ? GamaIcons.create("action.toolbar.toggle2").image()
+					: GamaIcons.create("action.toolbar.toggle3").image());
 				toolbarParent.layout();
 			}
 
@@ -191,8 +191,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	@Override
 	public boolean isLineNumberRulerVisible() {
 		IPreferenceStore store = getAdvancedPreferenceStore();
-		return store != null ? store
-			.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER) : false;
+		return store != null ? store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER)
+			: false;
 	}
 
 	public boolean isRangeIndicatorEnabled() {
@@ -280,12 +280,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 				});
 			} catch (GamaRuntimeException e) {
 				gotoEditor(e);
-				GuiUtils.error("Experiment " + name + " cannot be instantiated because of the following error: " +
-					e.getMessage());
+				GuiUtils.error(
+					"Experiment " + name + " cannot be instantiated because of the following error: " + e.getMessage());
 			}
 			if ( model == null ) { return; }
 
-			GAMA.controller.newExperiment(name, model);
+			GAMA.runGuiExperiment(name, model);
 		}
 
 	};

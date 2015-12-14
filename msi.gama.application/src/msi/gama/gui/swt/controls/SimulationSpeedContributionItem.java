@@ -1,29 +1,29 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SimulationSpeedContributionItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
-import msi.gama.gui.swt.*;
-import msi.gama.runtime.GAMA;
-import msi.gaml.operators.Maths;
 import org.eclipse.swt.graphics.Image;
+import msi.gama.gui.swt.*;
+import msi.gama.kernel.simulation.SimulationClock;
+import msi.gaml.operators.Maths;
 
 /**
  * The class SimulationSpeedContributionItem.
- * 
+ *
  * @author drogoul
  * @since 19 janv. 2012
- * 
+ *
  * @modification now obeys a cubic power law from 0 to BASE_UNIT milliseconds
- * 
+ *
  */
 public class SimulationSpeedContributionItem extends SpeedContributionItem {
 
@@ -32,7 +32,7 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 	private static Image knob = GamaIcons.create("toolbar.knob4").image(); // IGamaIcons.TOOLBAR_KNOB.image(), IGamaIcons.TOOLBAR_KNOB_HOVER.image()
 
 	/**
-	 * 
+	 *
 	 * @param v in milliseconds
 	 * @return
 	 */
@@ -51,19 +51,19 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 	}
 
 	public SimulationSpeedContributionItem() {
-		super(positionFromValue(GAMA.getDelayInMilliseconds()), new IPositionChangeListener() {
+		super(positionFromValue(SimulationClock.getDelayInMilliseconds()), new IPositionChangeListener() {
 
 			@Override
 			public void positionChanged(final double position) {
-				GAMA.setDelayFromUI(valueFromPosition(position));
+				SimulationClock.setDelayFromUI(valueFromPosition(position));
 			}
 
 		}, new IToolTipProvider() {
 
 			@Override
 			public String getToolTipText(final double value) {
-				return "Minimum duration of a cycle " + Maths.opTruncate(GAMA.getDelayInMilliseconds() / 1000, 3) +
-					" s";
+				return "Minimum duration of a cycle " +
+					Maths.opTruncate(SimulationClock.getDelayInMilliseconds() / 1000, 3) + " s";
 			}
 
 		}, knob, IGamaColors.GRAY_LABEL, IGamaColors.OK);
@@ -80,7 +80,7 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 
 	@Override
 	protected double getInitialValue() {
-		return positionFromValue(GAMA.getDelayInMilliseconds());
+		return positionFromValue(SimulationClock.getDelayInMilliseconds());
 	}
 
 	/*

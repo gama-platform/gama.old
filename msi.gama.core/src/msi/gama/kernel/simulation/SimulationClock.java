@@ -1,28 +1,32 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SimulationClock.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
-import msi.gama.runtime.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Strings;
 
 /**
  * The class GamaRuntimeInformation.
- * 
+ *
  * @author drogoul
  * @since 13 d�c. 2011
- * 
+ *
  */
 public class SimulationClock {
+
+	// Minimum duration of a cycle in seconds
+	private static double CYCLE_DELAY = 0d;
 
 	/**
 	 * OLD
@@ -31,7 +35,7 @@ public class SimulationClock {
 	 * simulation during 1 second for each cycle. Any intermediate value will be treated as a
 	 * percentage of a second equal to (1 - delay) * 100
 	 * OLD
-	 * 
+	 *
 	 * delay is the number of milliseconds that represents the minimum duration of a simulation cycle. It can be defined
 	 * through the user interface or by the model. A value of 0 now means no delay, a value of 1 means 1 second of
 	 * delay, and any value above the exact number of milliiseconds
@@ -78,7 +82,7 @@ public class SimulationClock {
 
 	/**
 	 * @throws GamaRuntimeException
-	 *             Sets a new value to the cycle.
+	 * Sets a new value to the cycle.
 	 * @param i the new value
 	 */
 
@@ -109,7 +113,7 @@ public class SimulationClock {
 
 	/**
 	 * Sets the value of the current time of the simulation. Cannot be negative.
-	 * 
+	 *
 	 * @throws GamaRuntimeException
 	 * @param i a positive double
 	 */
@@ -128,10 +132,10 @@ public class SimulationClock {
 
 	/**
 	 * @throws GamaRuntimeException
-	 *             Sets the value of the current step duration (in model time) of the simulation.
-	 *             Cannot be
-	 *             negative.
-	 * 
+	 * Sets the value of the current step duration (in model time) of the simulation.
+	 * Cannot be
+	 * negative.
+	 *
 	 * @throws GamaRuntimeException
 	 * @param i a positive double
 	 */
@@ -198,7 +202,7 @@ public class SimulationClock {
 	}
 
 	public void waitDelay() {
-		double delay = GAMA.getDelayInMilliseconds();
+		double delay = getDelayInMilliseconds();
 		if ( delay == 0d ) { return; }
 		try {
 			// GuiUtils.debug("SimulationClock.waitDelay " + delay + "ms");
@@ -261,6 +265,19 @@ public class SimulationClock {
 		// // GuiUtils.informStatus(info);
 		// // }
 		// }
+	}
+
+	public static double getDelayInMilliseconds() {
+		return CYCLE_DELAY * 1000;
+	}
+
+	public static void setDelayFromUI(final double newDelayInMilliseconds) {
+		CYCLE_DELAY = newDelayInMilliseconds / 1000;
+	}
+
+	public static void setDelayFromExperiment(final double newDelayInSeconds) {
+		CYCLE_DELAY = newDelayInSeconds;
+		GuiUtils.updateSpeedDisplay(CYCLE_DELAY * 1000, false);
 	}
 
 }

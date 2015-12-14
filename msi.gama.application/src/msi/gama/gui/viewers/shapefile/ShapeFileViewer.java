@@ -401,4 +401,13 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 		}
 		((StyleLayer) layer).setStyle(style);
 	}
+
+	/**
+	 * Method zoomWhenScrolling()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
+	 */
+	@Override
+	public boolean zoomWhenScrolling() {
+		return false;
+	}
 }

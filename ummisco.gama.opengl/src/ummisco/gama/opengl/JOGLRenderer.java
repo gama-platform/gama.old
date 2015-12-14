@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'JOGLAWTGLRenderer.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl;
 
@@ -17,7 +17,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.util.ArrayList;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.fixedfunc.*;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.swt.GLCanvas;
+import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -25,33 +31,21 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.*;
-import msi.gama.util.GamaColor;
-import msi.gama.util.GamaPair;
+import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-
 import ummisco.gama.opengl.camera.*;
+import ummisco.gama.opengl.files.GLModel;
 import ummisco.gama.opengl.scene.*;
 import ummisco.gama.opengl.utils.GLUtilLight;
-
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.fixedfunc.*;
-import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.swt.GLCanvas;
-import com.vividsolutions.jts.geom.Geometry;
-
-import ummisco.gama.opengl.files.*;
 
 /**
  * This class plays the role of Renderer and IGraphics.
  * Class JOGLRenderer.
- * 
+ *
  * @author drogoul
  * @since 27 avr. 2015
- * 
+ *
  */
 public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
@@ -84,8 +78,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
 	private volatile boolean inited;
-	
-	private GLModel chairModel = null;
+
+	private final GLModel chairModel = null;
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		displaySurface = d;
@@ -197,14 +191,13 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// We mark the renderer as inited
 		inited = true;
 
-		
-		//chairModel = ModelLoaderOBJ.LoadModel("/Users/Arno/Desktop/obj/c.obj", "/Users/Arno/Desktop/obj/c.mtl", gl);
+		// chairModel = ModelLoaderOBJ.LoadModel("/Users/Arno/Desktop/obj/c.obj", "/Users/Arno/Desktop/obj/c.mtl", gl);
 	}
-	
+
 	public boolean getDrawNormal() {
 		return data.isDraw_norm();
 	}
-	
+
 	public boolean getComputeNormal() {
 		return data.isComputingNormals;
 	}
@@ -278,8 +271,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			camera.doInertia();
 		}
 
-		
-		//chairModel.opengldraw(gl);
+		// chairModel.opengldraw(gl);
 		drawScene(gl);
 
 		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
@@ -291,9 +283,9 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	}
 
 	@Override
-	public void
-		reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width, final int height) {
-		//System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
+	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width,
+		final int height) {
+		// System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
 		// Get the OpenGL graphics context
 		if ( width <= 0 || height <= 0 ) { return; }
 		this.width = width;
@@ -303,11 +295,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// Enable the model view - any new transformations will affect the model-view matrix
 		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		gl.glLoadIdentity(); // reset
-		// System.out.println("	Renderer reshaping:" + "model view matrix reset");
+		// System.out.println(" Renderer reshaping:" + "model view matrix reset");
 		// perspective view
 		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
 		gl.glLoadIdentity();
-		// System.out.println("	Renderer reshaping:" + "projection matrix reset");
+		// System.out.println(" Renderer reshaping:" + "projection matrix reset");
 		// FIXME Update camera as well ??
 		// Only if zoomFit... camera.resetCamera(data.getEnvWidth(), data.getEnvHeight(), data.isOutput3D());
 		updatePerspective();
@@ -427,7 +419,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	}
 
 	public void updateCameraPosition() {
-		if(data.isCameraLock()){
+		if ( data.isCameraLock() ) {
 			ILocation cameraPos = data.getCameraPos();
 			if ( cameraPos != LayeredDisplayData.getNoChange() ) {
 				camera.updatePosition(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
@@ -442,7 +434,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			} else {
 				camera.upPosition(upVector.getX(), upVector.getY(), upVector.getZ());
 			}
-			camera.updateSphericalCoordinatesFromLocations();	
+			camera.updateSphericalCoordinatesFromLocations();
 		}
 	}
 
@@ -558,7 +550,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		final Color border, final boolean rounded) {
 		if ( shape == null ) { return null; }
 		Double depth = 0d;
-		GamaPair<Double,GamaPoint> rot3D = null;
+		GamaPair<Double, GamaPoint> rot3D = null;
 		java.util.List<BufferedImage> textures = null;
 		IShape.Type type = shape.getGeometricalType();
 		java.util.List<Double> ratio = new ArrayList<Double>();
@@ -567,11 +559,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
 		}
-		
+
 		if ( shape.hasAttribute(IShape.ROTATE_ATTRIBUTE) ) {
-			rot3D = Cast.asPair(scope, shape.getAttribute(IShape.ROTATE_ATTRIBUTE),false);
+			rot3D = Cast.asPair(scope, shape.getAttribute(IShape.ROTATE_ATTRIBUTE), false);
 		}
-		
+
 		if ( shape.hasAttribute(IShape.TEXTURE_ATTRIBUTE) ) {
 			java.util.List<String> textureNames = Cast.asList(scope, shape.getAttribute(IShape.TEXTURE_ATTRIBUTE));
 			textures = new ArrayList();
@@ -587,7 +579,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			}
 
 		}
-		
+
 		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
 			ratio = Cast.asList(scope, shape.getAttribute(IShape.RATIO_ATTRIBUTE));
 		}
@@ -627,11 +619,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	/**
 	 * Method drawImage.
-	 * 
+	 *
 	 * @param img
-	 *            Image
+	 * Image
 	 * @param angle
-	 *            Integer
+	 * Integer
 	 */
 	@Override
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
@@ -645,8 +637,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			dimensions.x = widthOfLayerInPixels / xRatioBetweenPixelsAndModelUnits;
 			dimensions.y = heightOfLayerInPixels / yRatioBetweenPixelsAndModelUnits;
 		}
-		sceneBuffer.getSceneToUpdate().addImage(img, scope == null ? null : scope.getAgentScope(), location,
-			dimensions, angle, isDynamic, name);
+		sceneBuffer.getSceneToUpdate().addImage(img, scope == null ? null : scope.getAgentScope(), location, dimensions,
+			angle, isDynamic, name);
 
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor/* , name */);
@@ -667,10 +659,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		IAgent a = scope.getAgentScope();
 		sceneBuffer.getSceneToUpdate().addDEM(valueMatrix, img, a, textured, triangulated, isGrayScaled, showText, env,
 			cellSize, name, gridColor);
-		/* This line has been removed to fix the issue 1174
+		/*
+		 * This line has been removed to fix the issue 1174
 		 * if ( gridColor != null ) {
-			drawGridLine(img, gridColor);
-		}*/
+		 * drawGridLine(img, gridColor);
+		 * }
+		 */
 		return rect;
 	}
 
@@ -683,11 +677,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			for ( int j = 0; j < image.getHeight(); j++ ) {
 				stepX = (i + 0.5) / image.getWidth() * image.getWidth();
 				stepY = (j + 0.5) / image.getHeight() * image.getHeight();
-				final Geometry g =
-					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
-						.getInnerGeometry();
+				final Geometry g = GamaGeometryType
+					.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio)).getInnerGeometry();
 				sceneBuffer.getSceneToUpdate().addGeometry(g, null, lineColor, false, lineColor, false, null, 0, 0,
-					false, IShape.Type.GRIDLINE, null, null,null);
+					false, IShape.Type.GRIDLINE, null, null, null);
 			}
 		}
 	}
@@ -704,9 +697,9 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	/**
 	 * Method drawChart.
-	 * 
+	 *
 	 * @param chart
-	 *            JFreeChart
+	 * JFreeChart
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final BufferedImage chart, final Double z) {
@@ -715,13 +708,13 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	/**
 	 * Method drawString.
-	 * 
+	 *
 	 * @param string
-	 *            String
+	 * String
 	 * @param stringColor
-	 *            Color
+	 * Color
 	 * @param angle
-	 *            Integer
+	 * Integer
 	 */
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
@@ -789,12 +782,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			z_scale = 1;
 		}
 
-		GamaPoint currentOffset =
-			new GamaPoint(xOffsetInPixels / (getWidth() / data.getEnvWidth()), yOffsetInPixels /
-				(getHeight() / data.getEnvHeight()), currentZLayer);
-		GamaPoint currentScale =
-			new GamaPoint(widthOfLayerInPixels / (double) getWidth(), heightOfLayerInPixels / (double) getHeight(),
-				z_scale);
+		GamaPoint currentOffset = new GamaPoint(xOffsetInPixels / (getWidth() / data.getEnvWidth()),
+			yOffsetInPixels / (getHeight() / data.getEnvHeight()), currentZLayer);
+		GamaPoint currentScale = new GamaPoint(widthOfLayerInPixels / (double) getWidth(),
+			heightOfLayerInPixels / (double) getHeight(), z_scale);
 
 		ModelScene scene = sceneBuffer.getSceneToUpdate();
 		if ( scene != null ) {
@@ -933,6 +924,24 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		drawModel(gl, scene);
 		gl.glTranslatef(0, 0, -envMaxDim);
 		gl.glRotatef(-90, 1, 0, 0);
+	}
+
+	/**
+	 * Method getXOffsetInPixels()
+	 * @see msi.gama.common.interfaces.IGraphics#getXOffsetInPixels()
+	 */
+	@Override
+	public double getXOffsetInPixels() {
+		return xOffsetInPixels;
+	}
+
+	/**
+	 * Method getYOffsetInPixels()
+	 * @see msi.gama.common.interfaces.IGraphics#getYOffsetInPixels()
+	 */
+	@Override
+	public double getYOffsetInPixels() {
+		return yOffsetInPixels;
 	}
 
 }

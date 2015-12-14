@@ -1,37 +1,37 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AgentAttributesEditorsList.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.*;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
 
 public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	private static final String DEAD_MARKER = " dead at step ";
 	private static final String AGENT_MARKER = "Agent" + ItemList.SEPARATION_CODE;
-	private static final Set<String> HIDDEN = new HashSet(Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS,
-		IKeyword.AGENTS));
+	private static final Set<String> HIDDEN =
+		new HashSet(Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS));
 
 	@Override
 	public String getItemDisplayName(final IAgent ag, final String name) {
 		if ( name == null ) { return AGENT_MARKER + ag.getName(); }
 		if ( ag.dead() && !name.contains(DEAD_MARKER) ) {
-			long cycle = ag.getClock().getCycle();
-			String result =
-				AGENT_MARKER + ItemList.ERROR_CODE + name.substring(name.indexOf(ItemList.SEPARATION_CODE) + 1) +
-					DEAD_MARKER + cycle;
+			long cycle = GAMA.getClock().getCycle();
+			String result = AGENT_MARKER + ItemList.ERROR_CODE +
+				name.substring(name.indexOf(ItemList.SEPARATION_CODE) + 1) + DEAD_MARKER + cycle;
 			return result;
 		}
 		return name;

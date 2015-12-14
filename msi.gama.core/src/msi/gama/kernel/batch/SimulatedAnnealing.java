@@ -1,28 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SimulatedAnnealing.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.batch;
 
 import java.util.*;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -32,17 +25,51 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.ANNEALING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
-	@facet(name = SimulatedAnnealing.TEMP_END, type = IType.FLOAT, optional = true, doc = @doc("final temperature")),
-	@facet(name = SimulatedAnnealing.TEMP_DECREASE, type = IType.FLOAT, optional = true, doc = @doc("temperature decrease coefficient")),
-	@facet(name = SimulatedAnnealing.TEMP_INIT, type = IType.FLOAT, optional = true, doc = @doc("initial temperature")),
-	@facet(name = SimulatedAnnealing.NB_ITER, type = IType.INT, optional = true, doc = @doc("number of iterations per level of temperature")),
-	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to maximize")),
-	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to minimize")),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }, doc = @doc("the agregation method")) }, omissible = IKeyword.NAME)
-@doc(value="This algorithm is an implementation of the Simulated Annealing algorithm. See the wikipedia article and [batch161 the batch dedicated page].", usages = {
-		@usage(value="As other batch methods, the basic syntax of the annealing statement uses `method annealing` instead of the expected `annealing name: id` : ", examples = {@example(value="method annealing [facet: value];", isExecutable=false)}), 
-		@usage(value="For example: ", examples = {@example(value="method annealing temp_init: 100  temp_end: 1 temp_decrease: 0.5 nb_iter_cst_temp: 5 maximize: food_gathered;", isExecutable=false)})})
+@facets(
+	value = { @facet(name = IKeyword.NAME,
+		type = IType.ID,
+		optional = false,
+		internal = true),
+		@facet(name = SimulatedAnnealing.TEMP_END,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("final temperature") ),
+		@facet(name = SimulatedAnnealing.TEMP_DECREASE,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("temperature decrease coefficient") ),
+		@facet(name = SimulatedAnnealing.TEMP_INIT,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("initial temperature") ),
+		@facet(name = SimulatedAnnealing.NB_ITER,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("number of iterations per level of temperature") ),
+		@facet(name = IKeyword.MAXIMIZE,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("the value the algorithm tries to maximize") ),
+		@facet(name = IKeyword.MINIMIZE,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("the value the algorithm tries to minimize") ),
+		@facet(name = IKeyword.AGGREGATION,
+			type = IType.LABEL,
+			optional = true,
+			values = { IKeyword.MIN, IKeyword.MAX },
+			doc = @doc("the agregation method") ) },
+	omissible = IKeyword.NAME)
+@doc(
+	value = "This algorithm is an implementation of the Simulated Annealing algorithm. See the wikipedia article and [batch161 the batch dedicated page].",
+	usages = {
+		@usage(
+			value = "As other batch methods, the basic syntax of the annealing statement uses `method annealing` instead of the expected `annealing name: id` : ",
+			examples = { @example(value = "method annealing [facet: value];", isExecutable = false) }),
+		@usage(value = "For example: ",
+			examples = { @example(
+				value = "method annealing temp_init: 100  temp_end: 1 temp_decrease: 0.5 nb_iter_cst_temp: 5 maximize: food_gathered;",
+				isExecutable = false) }) })
 public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 	private double temperatureEnd = 1;
@@ -64,8 +91,9 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
 	}
-	
-	public void initParams(){
+
+	// FIXME Scope is normally null at that point. Should be better called from initializeFor()
+	public void initParams(final IScope scope) {
 		final IExpression tempend = getFacet(TEMP_END);
 		if ( tempend != null ) {
 			temperatureEnd = Cast.asFloat(scope, tempend.value(scope));
@@ -86,7 +114,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	}
 
 	@Override
-	public ParametersSet findBestSolution() throws GamaRuntimeException {
+	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		initializeTestedSolutions();
 		setBestSolution(new ParametersSet(this.solutionInit));
 		double currentFitness = currentExperiment.launchSimulationsWithSolution(getBestSolution());
@@ -115,19 +143,17 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
 					testedSolutions.put(neighborSol, neighborFitness);
 				}
-				
 
 				if ( isMaximize() &&
-					(neighborFitness >= currentFitness || scope.getRandom().next() < Math
-						.exp((neighborFitness - currentFitness) / temperature)) ||
-					!isMaximize() &&
-					(neighborFitness <= currentFitness || scope.getRandom().next() < Math
-						.exp((currentFitness - neighborFitness) / temperature)) ) {
+					(neighborFitness >= currentFitness ||
+						scope.getRandom().next() < Math.exp((neighborFitness - currentFitness) / temperature)) ||
+					!isMaximize() && (neighborFitness <= currentFitness ||
+						scope.getRandom().next() < Math.exp((currentFitness - neighborFitness) / temperature)) ) {
 					bestSolutionAlgo = neighborSol;
 					currentFitness = neighborFitness;
 				}
-				if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() &&
-					currentFitness < getBestFitness() ) {
+				if ( isMaximize() && currentFitness > getBestFitness() ||
+					!isMaximize() && currentFitness < getBestFitness() ) {
 					setBestSolution(new ParametersSet(bestSolutionAlgo));
 					setBestFitness(currentFitness);
 				}
@@ -135,7 +161,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 			}
 			temperature *= tempDimCoeff;
 		}
-		
+
 		return getBestSolution();
 	}
 
@@ -158,8 +184,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Coefficient of diminution", IExperimentPlan.BATCH_CATEGORY_NAME,
-			IType.FLOAT) {
+		params.add(new ParameterAdapter("Coefficient of diminution", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {

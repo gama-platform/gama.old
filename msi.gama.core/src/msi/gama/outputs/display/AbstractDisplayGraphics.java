@@ -107,6 +107,16 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	}
 
 	@Override
+	public double getXOffsetInPixels() {
+		return xOffsetInPixels;
+	}
+
+	@Override
+	public double getYOffsetInPixels() {
+		return yOffsetInPixels;
+	}
+
+	@Override
 	public void beginDrawingLayers() {}
 
 	@Override

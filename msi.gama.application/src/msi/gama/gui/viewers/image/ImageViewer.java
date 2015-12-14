@@ -3,14 +3,6 @@ package msi.gama.gui.viewers.image;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.navigator.FileMetaDataProvider;
-import msi.gama.gui.navigator.images.ImageDataLoader;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
@@ -27,6 +19,14 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.navigator.FileMetaDataProvider;
+import msi.gama.gui.navigator.images.ImageDataLoader;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 
 /**
  * A simple image viewer editor.
@@ -46,8 +46,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		// we need either an IStorage or an input that can return an ImageData
-		if ( !(input instanceof IStorageEditorInput) && input.getAdapter(ImageData.class) == null ) { throw new PartInitException(
-			"Unable to read input: " + input); //$NON-NLS-1$
+		if ( !(input instanceof IStorageEditorInput) &&
+			input.getAdapter(ImageData.class) == null ) { throw new PartInitException("Unable to read input: " + input); //$NON-NLS-1$
 		}
 		setSite(site);
 		setInput(input, false);
@@ -318,10 +318,10 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	/**
 	 * Refresh the ui to display the current image. This needs to be run in the
 	 * SWT thread.
-	 * 
+	 *
 	 * @param createImage
-	 *            true to (re)create the image object from the imageData, false
-	 *            to reuse.
+	 * true to (re)create the image object from the imageData, false
+	 * to reuse.
 	 */
 	private void showImage(final boolean createImage) {
 		if ( imageData != null ) {
@@ -427,11 +427,12 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation(rule) {
 
 			@Override
-			protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException,
-				InterruptedException {
+			protected void execute(final IProgressMonitor monitor)
+				throws CoreException, InvocationTargetException, InterruptedException {
 				try {
 					if ( dest.exists() ) {
-						if ( !dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell()).isOK() ) { return; }
+						if ( !dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell())
+							.isOK() ) { return; }
 					}
 					saveTo(imageData, dest, imageType, monitor);
 				} catch (IOException ex) {
@@ -467,9 +468,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 		}
 	}
 
-	private void
-		saveTo(final ImageData imageData, final IFile dest, final int imageType, final IProgressMonitor monitor)
-			throws CoreException, InterruptedException, IOException {
+	private void saveTo(final ImageData imageData, final IFile dest, final int imageType,
+		final IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		// do an indeterminate progress monitor so that something shows, since
 		// the generation of the image data doesn't report progress
 		monitor.beginTask(dest.getFullPath().toPortableString(), IProgressMonitor.UNKNOWN/* taskSize */);
@@ -497,9 +497,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 						loader.save(pout, imageType);
 						pout.flush();
 					} catch (Exception ex) {
-						status =
-							new Status(IStatus.ERROR, "msi.gama.application", MessageFormat.format(
-								"Error getting image data for {0}", dest.getFullPath()), ex);
+						status = new Status(IStatus.ERROR, "msi.gama.application",
+							MessageFormat.format("Error getting image data for {0}", dest.getFullPath()), ex);
 					} finally {
 						try {
 							pout.close();
@@ -561,7 +560,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 	/**
 	 * Get the current image information.
-	 * 
+	 *
 	 * @return { SWT.IMAGE_* type, width, height } or null for no image
 	 */
 	public int[] getCurrentImageInformation() {
@@ -744,5 +743,14 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 			GuiUtils.run(rr);
 		}
 
+	}
+
+	/**
+	 * Method zoomWhenScrolling()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
+	 */
+	@Override
+	public boolean zoomWhenScrolling() {
+		return false;
 	}
 }

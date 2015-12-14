@@ -1,28 +1,28 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ImageDrawer.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
+import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.utils.*;
 
 /**
- * 
+ *
  * The class ImageDrawer.
- * 
+ *
  * @author Arnaud Grignard - Alexis Drogoul
  * @since 4 mai 2013
- * 
+ *
  */
 public class ImageDrawer extends ObjectDrawer<ImageObject> {
 
@@ -45,8 +45,7 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		// Binds the texture
 		curTexture.bind(gl);
 		gl.glColor4d(1.0d, 1.0d, 1.0d, img.getAlpha());
-		TextureCoords textureCoords;
-		textureCoords = curTexture.getImageTexCoords();
+		TextureCoords textureCoords = curTexture.getImageTexCoords();
 		float textureTop = textureCoords.top();
 		float textureBottom = textureCoords.bottom();
 		float textureLeft = textureCoords.left();
@@ -81,9 +80,8 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 			vertices[3].z = z;
 			GLUtilNormal.HandleNormal(vertices, null, img.getAlpha(), -1, renderer);
 		}
-
 		gl.glColor4d(1.0d, 1.0d, 1.0d, img.getAlpha());
-		gl.glBegin(GL2GL3.GL_QUADS);
+		gl.glBegin(GL2ES3.GL_QUADS);
 		// bottom-left of the texture and quad
 		gl.glTexCoord2f(textureLeft, textureBottom);
 		gl.glVertex3d(x, -(y + height), z);

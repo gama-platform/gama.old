@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GAML.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util;
 
@@ -20,10 +20,10 @@ import msi.gaml.factories.*;
 
 /**
  * Class GAML. Static support for various GAML constructs and functions
- * 
+ *
  * @author drogoul
  * @since 16 mai 2013
- * 
+ *
  */
 public class GAML {
 
@@ -40,15 +40,15 @@ public class GAML {
 	}
 
 	public static <T extends IContainer> T emptyCheck(final IScope scope, final T container) {
-		if ( nullCheck(scope, container).isEmpty(scope) ) { throw GamaRuntimeException.error(
-			"Error: the container is empty", scope); }
+		if ( nullCheck(scope, container)
+			.isEmpty(scope) ) { throw GamaRuntimeException.error("Error: the container is empty", scope); }
 		return container;
 	}
 
 	/**
-	 * 
+	 *
 	 * Parsing and compiling GAML utilities
-	 * 
+	 *
 	 */
 
 	public static ModelFactory getModelFactory() {
@@ -67,8 +67,8 @@ public class GAML {
 
 	public static Object evaluateExpression(final String expression, final IAgent a) throws GamaRuntimeException {
 		if ( a == null ) { return null; }
-		if ( expression == null || expression.isEmpty() ) { throw GamaRuntimeException.error(
-			"Enter a valid expression", a.getScope()); }
+		if ( expression == null ||
+			expression.isEmpty() ) { throw GamaRuntimeException.error("Enter a valid expression", a.getScope()); }
 		final IExpression expr = compileExpression(expression, a);
 		if ( expr == null ) { return null; }
 		IScope scope = a.getScope().copy();
@@ -83,8 +83,8 @@ public class GAML {
 	}
 
 	public static ModelDescription getModelContext() {
-		if ( GAMA.controller.getExperiment() == null ) { return null; }
-		return (ModelDescription) GAMA.controller.getExperiment().getModel().getDescription();
+		if ( GAMA.getFrontmostController() == null ) { return null; }
+		return (ModelDescription) GAMA.getFrontmostController().getExperiment().getModel().getDescription();
 	}
 
 	public static ExperimentDescription getExperimentContext(final IAgent a) {

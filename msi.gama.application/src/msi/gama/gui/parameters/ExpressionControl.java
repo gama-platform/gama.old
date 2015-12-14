@@ -11,9 +11,11 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -25,8 +27,6 @@ import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
 
 public class ExpressionControl implements /* IPopupProvider, */SelectionListener, ModifyListener, FocusListener {
 
@@ -131,6 +131,8 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		try {
 			currentException = null;
 			IAgent agent = getHostAgent();
+			// AD: fix for SWT Issue in Eclipse 4.4
+			if ( text == null || text.isDisposed() ) { return null; }
 			String s = text.getText();
 			// AD: Fix for Issue 1042
 			if ( getHostAgent() != null && getHostAgent().getScope().interrupted() &&
@@ -251,9 +253,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	/**
 	 * @return the currentValue
 	 */
-	 protected Object getCurrentValue() {
-	 return currentValue;
-	 }
+	protected Object getCurrentValue() {
+		return currentValue;
+	}
 
 	/**
 	 * @param currentValue the currentValue to set

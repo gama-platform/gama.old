@@ -1,31 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractOutputManager.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs;
 
 import java.util.*;
+import com.google.common.collect.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.*;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
-import com.google.common.collect.*;
 
 /**
  * Class AbstractOutputManager.
- * 
+ *
  * @author drogoul
  * @since 9 juin 2013
- * 
+ *
  */
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
@@ -54,14 +54,14 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void addOutput(final IOutput output) {
-		if ( output == null ) { return; }// || outputs.containsValue(output) ) { return; }
+		if ( output == null ) { return; } // || outputs.containsValue(output) ) { return; }
 		outputs.put(output.getId(), output);
 	}
 
 	// hqnghi add output with alias name from micro-model
 	@Override
 	public void addOutput(final String name, final IOutput output) {
-		if ( output == null ) { return; }// || outputs.containsValue(output) ) { return; }
+		if ( output == null ) { return; } // || outputs.containsValue(output) ) { return; }
 		outputs.put(name, output);
 	}
 
@@ -83,8 +83,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	// hqnghi
 	// for instant, multi-simulation cannot have their owns outputs display at same time.
-		public
-		void removeAllOutput() {
+	public void removeAllOutput() {
 		outputs.clear();
 	}
 
@@ -152,7 +151,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		}
 
 		if ( GamaPreferences.CORE_AUTO_RUN.getValue() ) {
-			GAMA.controller.userStart();
+			GAMA.startFrontmostExperiment();
 		} else {
 			GuiUtils.informStatus("Simulation ready");
 		}

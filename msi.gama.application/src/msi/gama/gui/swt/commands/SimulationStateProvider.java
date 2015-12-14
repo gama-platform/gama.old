@@ -1,20 +1,20 @@
 /*********************************************************************************************
- * 
  *
- * 'SimulationStateProvider.java', in plugin 'msi.gama.application', is part of the source code of the 
+ *
+ * 'SimulationStateProvider.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
 import java.util.*;
-import msi.gama.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.services.IServiceLocator;
+import msi.gama.runtime.*;
 
 public class SimulationStateProvider extends AbstractSourceProvider implements ISimulationStateProvider {
 
@@ -27,7 +27,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public void initialize(final IServiceLocator locator) {
-		GAMA.controller.state = this;
+		GAMA.state = this;
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public Map<String, String> getCurrentState() {
-		map.put(SIMULATION_RUNNING_STATE, GAMA.controller.getFrontmostSimulationState());
+		map.put(SIMULATION_RUNNING_STATE, GAMA.getFrontmostSimulationState());
 		return map;
 	}
 

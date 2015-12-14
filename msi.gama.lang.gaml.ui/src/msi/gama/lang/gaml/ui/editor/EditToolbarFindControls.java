@@ -1,12 +1,10 @@
 /**
  * Created by drogoul, 5 déc. 2014
- * 
+ *
  */
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.regex.Pattern;
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.controls.GamaToolbarSimple;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.*;
@@ -17,13 +15,15 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.swt.IFocusService;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.controls.GamaToolbarSimple;
 
 /**
  * The class EditToolbarFindControls.
- * 
+ *
  * @author drogoul
  * @since 5 déc. 2014
- * 
+ *
  */
 public class EditToolbarFindControls {
 
@@ -115,7 +115,7 @@ public class EditToolbarFindControls {
 
 		find.addModifyListener(modifyListener);
 		this.adjustEnablement(false, null);
-		IFocusService focusService = (IFocusService) editor.getSite().getService(IFocusService.class);
+		IFocusService focusService = editor.getSite().getService(IFocusService.class);
 		focusService.addFocusTracker(find, "findreplacebar.findCombo"); //$NON-NLS-1$
 
 	}
@@ -227,14 +227,12 @@ public class EditToolbarFindControls {
 				}
 				int newOffset = -1;
 				if ( findReplaceTarget instanceof IFindReplaceTargetExtension3 ) {
-					newOffset =
-						((IFindReplaceTargetExtension3) findReplaceTarget).findAndSelect(offset, findText, forward,
-							caseSensitive.getSelection(), wholeWord.getEnabled() && wholeWord.getSelection(), false
-						/* regularExpression.getSelection() */);
+					newOffset = ((IFindReplaceTargetExtension3) findReplaceTarget).findAndSelect(offset, findText,
+						forward, caseSensitive.getSelection(), wholeWord.getEnabled() && wholeWord.getSelection(), false
+					/* regularExpression.getSelection() */);
 				} else {
-					newOffset =
-						findReplaceTarget.findAndSelect(offset, findText, forward, caseSensitive.getSelection(),
-							wholeWord.getEnabled() && wholeWord.getSelection());
+					newOffset = findReplaceTarget.findAndSelect(offset, findText, forward, caseSensitive.getSelection(),
+						wholeWord.getEnabled() && wholeWord.getSelection());
 				}
 
 				if ( newOffset != -1 ) {
@@ -270,9 +268,9 @@ public class EditToolbarFindControls {
 
 	/**
 	 * Tests whether each character in the given string is a letter.
-	 * 
+	 *
 	 * @param str
-	 *            the string to check
+	 * the string to check
 	 * @return <code>true</code> if the given string is a word
 	 */
 	private boolean isWord(final String str) {

@@ -1,27 +1,27 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AWTDisplayView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views;
 
 import javax.swing.JComponent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
 
 public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider {
 
@@ -177,5 +177,14 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 	public int computePreferredSize(final boolean width, final int availableParallel, final int availablePerpendicular,
 		final int preferredResult) {
 		return 400;
+	}
+
+	/**
+	 * Method zoomWhenScrolling()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
+	 */
+	@Override
+	public boolean zoomWhenScrolling() {
+		return true;
 	}
 }

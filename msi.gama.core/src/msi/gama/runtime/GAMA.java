@@ -12,51 +12,133 @@
 package msi.gama.runtime;
 
 import java.util.*;
-import com.google.common.collect.Lists;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.TOrderedHashMap;
-import msi.gaml.species.ISpecies;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
+ *
+ * In GUI Mode, for the moment, only one controller allowed at a time (controllers[0])
  *
  * @todo Description
  */
 public class GAMA {
 
-	private static GAMA instance;
-
 	public final static String VERSION = "GAMA 1.7";
 	// public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
-	// Minimum duration of a cycle in seconds
-	private static double CYCLE_DELAY = 0d;
 
-	public final static FrontEndController controller = new FrontEndController(new FrontEndScheduler());
+	// private final static ExperimentController controller = new ExperimentController(new FrontEndScheduler());
 
 	// hqnghi: add several controllers to have multi-thread experiments
-	private final static Map<String, FrontEndController> controllers =
-		new TOrderedHashMap<String, FrontEndController>();
+	private final static List<IExperimentController> controllers = new ArrayList<IExperimentController>();
 
-	public static FrontEndController getController(final String ctrlName) {
-		return controllers.get(ctrlName);
-	}
+	// Needed by RCP for displaying the simulation state
+	public static ISimulationStateProvider state = null;
+	public final static String PAUSED = "STOPPED";
+	public final static String RUNNING = "RUNNING";
+	public final static String NOTREADY = "NOTREADY";
+	public final static String NONE = "NONE";
 
-	public static Map<String, FrontEndController> getControllers() {
+	public static List<IExperimentController> getControllers() {
 		return controllers;
 	}
 
-	public static void addController(final String ctrlName, final FrontEndController fec) {
-		controllers.put(ctrlName, fec);
+	public static IExperimentController getFrontmostController() {
+		return controllers.isEmpty() ? null : controllers.get(0);
 	}
 
-	// end-hqnghi
+	/**
+	 * New control architecture
+	 */
+
+	/**
+	 * Create a GUI experiment that replaces the current one (if any)
+	 * @param id
+	 * @param model
+	 */
+	public static void runGuiExperiment(final String id, final IModel model) {
+		final IExperimentPlan newExperiment = model.getExperiment(id);
+		if ( newExperiment == null ) { return; }
+		IExperimentController controller = getFrontmostController();
+		if ( controller != null ) {
+			IExperimentPlan existingExperiment = controller.getExperiment();
+			if ( existingExperiment != null ) {
+				controller.getScheduler().pause();
+				if ( !GuiUtils.confirmClose(existingExperiment) ) { return; }
+			}
+		}
+		controller = newExperiment.getController();
+		if ( controllers.size() > 0 ) {
+			shutdownAllExperiments();
+			controllers.clear();
+		}
+
+		GuiUtils.openSimulationPerspective();
+
+		controllers.add(controller);
+
+		controller.userOpen();
+
+	}
+
+	/**
+	 * Add a sub-experiment to the current GUI experiment
+	 * @param id
+	 * @param model
+	 */
+	public static void addGuiExperiment(final IExperimentPlan experiment) {
+
+	}
+
+	public static void openExperiment(final IExperimentPlan experiment) {
+		experiment.getController().directOpenExperiment();
+	}
+
+	/**
+	 * Add an experiment
+	 * @param id
+	 * @param model
+	 */
+	public static synchronized IExperimentPlan addHeadlessExperiment(final IModel model, final String expName,
+		final ParametersSet params, final Long seed) {
+
+		ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
+		if ( currentExperiment == null ) { throw GamaRuntimeException
+			.error("Experiment " + expName + " cannot be created"); }
+		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
+			currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
+				entry.getValue());
+		}
+		currentExperiment.createAgent();
+		if ( seed != null ) {
+			currentExperiment.getAgent().setSeed(Double.longBitsToDouble(seed));
+		}
+
+		currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
+
+		controllers.add(currentExperiment.getController());
+		/// FIXME ADD IT SOMEWHERE
+		return currentExperiment;
+
+	}
+
+	public static void closeFrontmostExperiment() {
+
+	}
+
+	public static void closeExperiment(final IExperimentPlan experiment) {
+
+	}
+
+	public static void closeAllExperiments() {
+
+	}
+
 	/**
 	 *
 	 * Access to experiments and their components
@@ -64,29 +146,32 @@ public class GAMA {
 	 */
 
 	public static SimulationAgent getSimulation() {
-		if ( controller.getExperiment() == null ) { return null; }
+		IExperimentController controller = getFrontmostController();
+		if ( controller == null || controller.getExperiment() == null ) { return null; }
 		return controller.getExperiment().getCurrentSimulation();
 	}
 
-	public static List<IPopulation> getModelPopulations() {
-		final SimulationAgent sim = getSimulation();
-		if ( sim == null ) { return Collections.EMPTY_LIST; }
-		final List<ISpecies> species = new ArrayList(getModel().getAllSpecies().values());
-		final List<IPopulation> populations = Lists.newArrayList();
-		for ( final ISpecies s : species ) {
-			if ( !s.getDescription().isBuiltIn() ) {
-				final IPopulation p = sim.getPopulationFor(s);
-				if ( p != null ) { // Multiple scale population
-					populations.add(p);
-				}
-			}
-		}
-		// Collections.sort(populations);
-		return populations;
-
-	}
+	// public static List<IPopulation> getModelPopulations() {
+	// final SimulationAgent sim = getSimulation();
+	// if ( sim == null ) { return Collections.EMPTY_LIST; }
+	// final List<ISpecies> species = new ArrayList(getModel().getAllSpecies().values());
+	// final List<IPopulation> populations = Lists.newArrayList();
+	// for ( final ISpecies s : species ) {
+	// if ( !s.getDescription().isBuiltIn() ) {
+	// final IPopulation p = sim.getPopulationFor(s);
+	// if ( p != null ) { // Multiple scale population
+	// populations.add(p);
+	// }
+	// }
+	// }
+	// // Collections.sort(populations);
+	// return populations;
+	//
+	// }
 
 	public static IExperimentPlan getExperiment() {
+		IExperimentController controller = getFrontmostController();
+		if ( controller == null ) { return null; }
 		return controller.getExperiment();
 	}
 
@@ -103,7 +188,8 @@ public class GAMA {
 	// }
 
 	public static IModel getModel() {
-		if ( controller.getExperiment() == null ) { return null; }
+		IExperimentController controller = getFrontmostController();
+		if ( controller == null || controller.getExperiment() == null ) { return null; }
 		return controller.getExperiment().getModel();
 	}
 
@@ -121,13 +207,11 @@ public class GAMA {
 			return true;
 		}
 		GuiUtils.runtimeError(g);
-		if ( controller.getExperiment() == null || controller.getExperiment().getAgent() == null ) { return false; }
+		IExperimentController controller = getFrontmostController();
+		if ( controller == null || controller.getExperiment() == null ||
+			controller.getExperiment().getAgent() == null ) { return false; }
 		boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
 		boolean shouldStop = isError && shouldStopSimulation && GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
-		// if ( shouldStop ) {
-		// controller.userPause();
-		// return false;
-		// }
 		return !shouldStop;
 	}
 
@@ -145,18 +229,66 @@ public class GAMA {
 		}
 		boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if ( shouldStop ) {
+			IExperimentController controller = getFrontmostController();
+			if ( controller == null ) { return; }
 			controller.userPause();
 			throw g;
 		}
 	}
 
-	public static void shutdown() {
-		controller.shutdown();
+	public static void shutdownAllExperiments() {
+		for ( IExperimentController controller : controllers ) {
+			controller.close();
+		}
+	}
+
+	public static void startPauseFrontmostExperiment() {
+		for ( IExperimentController controller : controllers ) {
+			controller.startPause();
+		}
+	}
+
+	public static void stepFrontmostExperiment() {
+		for ( IExperimentController controller : controllers ) {
+			controller.userStep();
+		}
+	}
+
+	public static void pauseFrontmostExperiment() {
+		for ( IExperimentController controller : controllers ) {
+			controller.directPause();
+		}
+	}
+
+	public static void reloadFrontmostExperiment() {
+		IExperimentController controller = getFrontmostController();
+		if ( controller != null ) {
+			controller.userReload();
+		}
+	}
+
+	public static void startFrontmostExperiment() {
+		IExperimentController controller = getFrontmostController();
+		if ( controller != null ) {
+			controller.userStart();
+		}
 	}
 
 	public static boolean isPaused() {
+		IExperimentController controller = getFrontmostController();
+		if ( controller == null || controller.getExperiment() == null ) { return true; }
 		return controller.getScheduler().paused;
 
+	}
+
+	/**
+	 *
+	 */
+	public static void InterruptFrontmostExperiment() {
+		IExperimentController controller = getFrontmostController();
+		if ( controller != null ) {
+			controller.userInterrupt();
+		}
 	}
 
 	/**
@@ -178,7 +310,8 @@ public class GAMA {
 	}
 
 	public static IScope getRuntimeScope() {
-		if ( controller.getExperiment() == null ) { return null; }
+		IExperimentController controller = getFrontmostController();
+		if ( controller == null || controller.getExperiment() == null ) { return new TemporaryScope(); }
 		final ExperimentAgent a = controller.getExperiment().getAgent();
 		if ( a == null || a.dead() ) { return controller.getExperiment().getExperimentScope(); }
 		final SimulationAgent s = (SimulationAgent) a.getSimulation();
@@ -204,8 +337,6 @@ public class GAMA {
 
 	public static <T> T run(final InScope<T> r) {
 		final IScope scope = obtainNewScope();
-		// if ( scope == null ) { return null; }
-		// if ( scope == null ) { throw GamaRuntimeException.error("Impossible to obtain a scope"); } // Exception?
 		try {
 			final T result = r.run(scope);
 			return result;
@@ -214,17 +345,34 @@ public class GAMA {
 		}
 	}
 
-	public static double getDelayInMilliseconds() {
-		return CYCLE_DELAY * 1000;
+	/**
+	 *
+	 * Simulation state related utilities for Eclipse GUI
+	 *
+	 */
+
+	public static String getFrontmostSimulationState() {
+		IExperimentController controller = getFrontmostController();
+		if ( controller == null ) {
+			return NONE;
+		} else if ( controller.getScheduler().paused ) { return PAUSED; }
+		return RUNNING;
 	}
 
-	public static void setDelayFromUI(final double newDelayInMilliseconds) {
-		CYCLE_DELAY = newDelayInMilliseconds / 1000;
-		// getExperiment().getAgent().setMinimumDuration(CYCLE_DELAY);
+	public static void updateSimulationState(final String forcedState) {
+		if ( state != null ) {
+			GuiUtils.run(new Runnable() {
+
+				@Override
+				public void run() {
+					state.updateStateTo(forcedState);
+				}
+			});
+		}
 	}
 
-	public static void setDelayFromExperiment(final double newDelayInSeconds) {
-		CYCLE_DELAY = newDelayInSeconds;
-		GuiUtils.updateSpeedDisplay(CYCLE_DELAY * 1000, false);
+	public static void updateSimulationState() {
+		updateSimulationState(getFrontmostSimulationState());
 	}
+
 }

@@ -1,31 +1,30 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'FrequencyItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.outputs.*;
-import msi.gama.runtime.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
 
 /**
  * The class SnapshotItem.
- * 
+ *
  * @author drogoul
  * @since 19 janv. 2012
- * 
+ *
  */
 public class FrequencyController {
 
@@ -104,22 +103,20 @@ public class FrequencyController {
 					IOutput output = view.getOutput();
 					if ( output != null ) {
 						if ( output.isPaused() ) {
+							output.getScope().getExperiment().getSpecies().getController().userStart();
 							// hqnghi resume thread of co-experiment
 							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
-							if ( !output.getDescription().getModelDescription().getAlias().equals("") ) {
-								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(
-									FrontEndController._START);
-							}
+							// if ( !output.getDescription().getModelDescription().getAlias().equals("") ) {
+							// GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(
+							// ExperimentController._START);
+							// }
 							// end-hqnghi
 							resume((ToolItem) e.widget, output);
 						} else {
 							pause((ToolItem) e.widget, output);
 							// hqnghi pause thread of co-experiment
 							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
-							if ( !output.getDescription().getModelDescription().getAlias().equals("") ) {
-								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(
-									FrontEndController._PAUSE);
-							}
+							output.getScope().getExperiment().getSpecies().getController().userPause();
 							// end-hqnghi
 						}
 					} else {

@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 22 avr. 2014
- * 
+ *
  */
 package msi.gaml.expressions;
 
@@ -9,10 +9,10 @@ import msi.gaml.types.IType;
 
 /**
  * Class UnitConstantExpression.
- * 
+ *
  * @author drogoul
  * @since 22 avr. 2014
- * 
+ *
  */
 public class UnitConstantExpression extends ConstantExpression {
 
@@ -21,6 +21,8 @@ public class UnitConstantExpression extends ConstantExpression {
 		if ( unit.equals("pixels") || unit.equals("px") ) { return new PixelUnitExpression(unit, doc); }
 		if ( unit.equals("display_width") ) { return new DisplayWidthUnitExpression(doc); }
 		if ( unit.equals("display_height") ) { return new DisplayHeightUnitExpression(doc); }
+		if ( unit.equals("view_x") || unit.equals("view_y") || unit.equals("view_width") ||
+			unit.equals("view_height") ) { return new ViewUnitExpression(unit, doc); }
 		return new UnitConstantExpression(val, t, unit, doc, names);
 	}
 

@@ -1,32 +1,45 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SwtGui.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt;
 
-import gnu.trove.map.hash.THashMap;
 import java.awt.Color;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.List;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.part.FileEditorInput;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.Entry;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.common.GamaPreferences.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.navigator.*;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.gui.viewers.html.HtmlViewer;
@@ -42,26 +55,12 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class SwtGui implements IGui {
 
@@ -131,13 +130,13 @@ public class SwtGui implements IGui {
 
 	public static final Entry<Color> ERROR_TEXT_COLOR = GamaPreferences
 		.create("error.text.color", "Text color of errors in error view",
-			GamaColors.toAwtColor(IGamaColors.ERROR.inactive()), IType.COLOR).in(GamaPreferences.SIMULATION)
-		.group("Errors");
+			GamaColors.toAwtColor(IGamaColors.ERROR.inactive()), IType.COLOR)
+		.in(GamaPreferences.SIMULATION).group("Errors");
 
 	public static final Entry<Color> WARNING_TEXT_COLOR = GamaPreferences
 		.create("warning.text.color", "Text color of warnings in error view",
-			GamaColors.toAwtColor(IGamaColors.WARNING.inactive()), IType.COLOR).in(GamaPreferences.SIMULATION)
-		.group("Errors");
+			GamaColors.toAwtColor(IGamaColors.WARNING.inactive()), IType.COLOR)
+		.in(GamaPreferences.SIMULATION).group("Errors");
 
 	public static final Entry<Color> IMAGE_VIEWER_BACKGROUND = GamaPreferences
 		.create("image.viewer.background", "Default image viewer background color", Color.white, IType.COLOR)
@@ -149,7 +148,8 @@ public class SwtGui implements IGui {
 
 	public static final Entry<GamaFont> BASE_BUTTON_FONT = GamaPreferences
 		.create("base_button_font", "Font of buttons (applies to new buttons)",
-			new GamaFont(baseFont, SWT.BOLD, baseSize), IType.FONT).in(GamaPreferences.UI).group("Fonts")
+			new GamaFont(baseFont, SWT.BOLD, baseSize), IType.FONT)
+		.in(GamaPreferences.UI).group("Fonts")
 		.addChangeListener(new GamaPreferences.IPreferenceChangeListener<GamaFont>() {
 
 			@Override
@@ -860,60 +860,60 @@ public class SwtGui implements IGui {
 	}
 
 	String currentPerspectiveId = null;
-	public static GamaPreferences.Entry<String> COLOR_MENU_SORT = GamaPreferences
-		.create("menu.colors.sort", "Sort colors menu by", "RGB value", IType.STRING).among(GamaColorMenu.SORT_NAMES)
-		.activates("menu.colors.reverse", "menu.colors.group").in(GamaPreferences.UI).group("Menus")
-		.addChangeListener(new IPreferenceChangeListener<String>() {
+	public static GamaPreferences.Entry<String> COLOR_MENU_SORT =
+		GamaPreferences.create("menu.colors.sort", "Sort colors menu by", "RGB value", IType.STRING)
+			.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
+			.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
 
-			@Override
-			public boolean beforeValueChange(final String newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final String pref) {
-				if ( pref.equals(GamaColorMenu.SORT_NAMES[0]) ) {
-					GamaColorMenu.colorComp = GamaColorMenu.byRGB;
-				} else if ( pref.equals(GamaColorMenu.SORT_NAMES[1]) ) {
-					GamaColorMenu.colorComp = GamaColorMenu.byName;
-				} else if ( pref.equals(GamaColorMenu.SORT_NAMES[2]) ) {
-					GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
-				} else {
-					GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
+				@Override
+				public boolean beforeValueChange(final String newValue) {
+					return true;
 				}
-				GamaColorMenu.instance.reset();
-			}
-		});
-	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE = GamaPreferences
-		.create("menu.colors.reverse", "Reverse order", false, IType.BOOL).in(GamaPreferences.UI).group("Menus")
-		.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
+				@Override
+				public void afterValueChange(final String pref) {
+					if ( pref.equals(GamaColorMenu.SORT_NAMES[0]) ) {
+						GamaColorMenu.colorComp = GamaColorMenu.byRGB;
+					} else if ( pref.equals(GamaColorMenu.SORT_NAMES[1]) ) {
+						GamaColorMenu.colorComp = GamaColorMenu.byName;
+					} else if ( pref.equals(GamaColorMenu.SORT_NAMES[2]) ) {
+						GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
+					} else {
+						GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
+					}
+					GamaColorMenu.instance.reset();
+				}
+			});
+	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE =
+		GamaPreferences.create("menu.colors.reverse", "Reverse order", false, IType.BOOL).in(GamaPreferences.UI)
+			.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-			@Override
-			public void afterValueChange(final Boolean pref) {
-				GamaColorMenu.reverse = pref ? -1 : 1;
-				GamaColorMenu.instance.reset();
-			}
-		});
-	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP = GamaPreferences
-		.create("menu.colors.group", "Group colors", false, IType.BOOL).in(GamaPreferences.UI).group("Menus")
-		.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+				@Override
+				public boolean beforeValueChange(final Boolean newValue) {
+					return true;
+				}
 
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
+				@Override
+				public void afterValueChange(final Boolean pref) {
+					GamaColorMenu.reverse = pref ? -1 : 1;
+					GamaColorMenu.instance.reset();
+				}
+			});
+	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP =
+		GamaPreferences.create("menu.colors.group", "Group colors", false, IType.BOOL).in(GamaPreferences.UI)
+			.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-			@Override
-			public void afterValueChange(final Boolean pref) {
-				GamaColorMenu.breakdown = pref;
-				GamaColorMenu.instance.reset();
-			}
-		});
+				@Override
+				public boolean beforeValueChange(final Boolean newValue) {
+					return true;
+				}
+
+				@Override
+				public void afterValueChange(final Boolean pref) {
+					GamaColorMenu.breakdown = pref;
+					GamaColorMenu.instance.reset();
+				}
+			});
 	public static final Entry<Boolean> NAVIGATOR_METADATA = GamaPreferences
 		.create("navigator.metadata", "Display metadata of data and GAML files in navigator", true, IType.BOOL)
 		.in(GamaPreferences.UI).group("Navigator").addChangeListener(new IPreferenceChangeListener<Boolean>() {
@@ -999,9 +999,8 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
-				final UserControlDialog dialog =
-					new UserControlDialog(getShell(), panel.getUserCommands(), "[" + scope.getAgentScope().getName() +
-						"] " + panel.getName(), scope);
+				final UserControlDialog dialog = new UserControlDialog(getShell(), panel.getUserCommands(),
+					"[" + scope.getAgentScope().getName() + "] " + panel.getName(), scope);
 				dialog.open();
 			}
 		});
@@ -1024,7 +1023,7 @@ public class SwtGui implements IGui {
 					part.initFor(scope, panel.getUserCommands(),
 						"[" + scope.getAgentScope().getName() + "] " + panel.getName());
 				}
-				GAMA.controller.getScheduler().setUserHold(true);
+				GAMA.getFrontmostController().getScheduler().setUserHold(true);
 				try {
 					getPage().showView(UserControlView.ID);
 				} catch (final PartInitException e) {
@@ -1094,9 +1093,8 @@ public class SwtGui implements IGui {
 			public void run() {
 				if ( exp.getParametersEditors() == null && exp.getUserCommands().isEmpty() ) { return; }
 				try {
-					final ExperimentParametersView view =
-						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
-							IWorkbenchPage.VIEW_VISIBLE);
+					final ExperimentParametersView view = (ExperimentParametersView) getPage()
+						.showView(ExperimentParametersView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 					// if ( view.getExperiment() != exp ) {
 					view.addItem(exp);
 					// }
@@ -1118,9 +1116,8 @@ public class SwtGui implements IGui {
 			public void run() {
 				if ( exp.getParametersEditors() == null && exp.getUserCommands().isEmpty() ) { return; }
 				try {
-					final ExperimentParametersView view =
-						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
-							IWorkbenchPage.VIEW_VISIBLE);
+					final ExperimentParametersView view = (ExperimentParametersView) getPage()
+						.showView(ExperimentParametersView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 					view.addItem(exp);
 				} catch (final PartInitException e) {
 					e.printStackTrace();
@@ -1224,6 +1221,7 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
+				if ( getPage() == null ) { return; }
 				final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
 				if ( r == null ) {
 					if ( a == null ) { return; }
@@ -1269,9 +1267,9 @@ public class SwtGui implements IGui {
 			// hqnghi:
 			// TODO in case of multi controllers, open an experiment cause "closing-reopen" many times displays,
 			// TODO so waitForViewsToBeClosed only with mono controller
-			if ( GAMA.getControllers().size() == 0 ) {
-				OutputSynchronizer.waitForViewsToBeClosed();
-			}
+			// if ( GAMA.getControllers().size() == 0 ) {
+			OutputSynchronizer.waitForViewsToBeClosed();
+			// }
 			// end-hqnghi
 		} else {
 			status = null;
@@ -1408,13 +1406,13 @@ public class SwtGui implements IGui {
 	/**
 	 * Adapt the specific object to the specified classes, supporting the
 	 * IAdaptable interface as well.
-	 * 
+	 *
 	 * @param o
-	 *            the object.
+	 * the object.
 	 * @param actualType
-	 *            the actual type that must be returned.
+	 * the actual type that must be returned.
 	 * @param adapterType
-	 *            the adapter type to check for.
+	 * the adapter type to check for.
 	 */
 	public static <T> T adaptTo(Object o, final Class<T> actualType, final Class<?> adapterType) {
 		if ( actualType.isInstance(o) ) {

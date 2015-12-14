@@ -1,27 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'TabuSearchReactive.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.batch;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -31,20 +25,63 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.REACTIVE_TABU, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
-	@facet(name = TabuSearchReactive.ITER_MAX, type = IType.INT, optional = true, doc = @doc("number of iterations")),
-	@facet(name = TabuSearchReactive.LIST_SIZE_INIT, type = IType.INT, optional = true, doc = @doc("initial size of the tabu list")),
-	@facet(name = TabuSearchReactive.LIST_SIZE_MAX, type = IType.INT, optional = true, doc = @doc("maximal size of the tabu list")),
-	@facet(name = TabuSearchReactive.LIST_SIZE_MIN, type = IType.INT, optional = true, doc = @doc("minimal size of the tabu list")),
-	@facet(name = TabuSearchReactive.NB_TESTS_MAX, type = IType.INT, optional = true, doc = @doc("number of movements without collision before shortening the tabu list")),
-	@facet(name = TabuSearchReactive.CYCLE_SIZE_MAX, type = IType.INT, optional = true, doc = @doc("minimal size of the considered cycles")),
-	@facet(name = TabuSearchReactive.CYCLE_SIZE_MIN, type = IType.INT, optional = true, doc = @doc("maximal size of the considered cycles")),
-	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to maximize")),
-	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to minimize")),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }, doc = @doc("the agregation method")) }, omissible = IKeyword.NAME)
-@doc(value="This algorithm is a simple implementation of the Reactive Tabu Search algorithm ((Battiti et al., 1993)). This Reactive Tabu Search is an enhance version of the Tabu search. It adds two new elements to the classic Tabu Search. The first one concerns the size of the tabu list: in the Reactive Tabu Search, this one is not constant anymore but it dynamically evolves according to the context. Thus, when the exploration process visits too often the same solutions, the tabu list is extended in order to favor the diversification of the search process. On the other hand, when the process has not visited an already known solution for a high number of iterations, the tabu list is shortened in order to favor the intensification of the search process. The second new element concerns the adding of cycle detection capacities. Thus, when a cycle is detected, the process applies random movements in order to break the cycle. See [batch161 the batch dedicated page].", usages = {
-	@usage(value="As other batch methods, the basic syntax of the reactive_tabu statement uses `method reactive_tabu` instead of the expected `reactive_tabu name: id` : ", examples = {@example(value="method reactive_tabu [facet: value];", isExecutable=false)}), 
-	@usage(value="For example: ", examples = {@example(value="method reactive_tabu iter_max: 50 tabu_list_size_init: 5 tabu_list_size_min: 2 tabu_list_size_max: 10 nb_tests_wthout_col_max: 20 cycle_size_min: 2 cycle_size_max: 20 maximize: food_gathered;", isExecutable=false)})})
+@facets(
+	value = { @facet(name = IKeyword.NAME,
+		type = IType.ID,
+		optional = false,
+		internal = true),
+		@facet(name = TabuSearchReactive.ITER_MAX,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("number of iterations") ),
+		@facet(name = TabuSearchReactive.LIST_SIZE_INIT,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("initial size of the tabu list") ),
+		@facet(name = TabuSearchReactive.LIST_SIZE_MAX,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("maximal size of the tabu list") ),
+		@facet(name = TabuSearchReactive.LIST_SIZE_MIN,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("minimal size of the tabu list") ),
+		@facet(name = TabuSearchReactive.NB_TESTS_MAX,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("number of movements without collision before shortening the tabu list") ),
+		@facet(name = TabuSearchReactive.CYCLE_SIZE_MAX,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("minimal size of the considered cycles") ),
+		@facet(name = TabuSearchReactive.CYCLE_SIZE_MIN,
+			type = IType.INT,
+			optional = true,
+			doc = @doc("maximal size of the considered cycles") ),
+		@facet(name = IKeyword.MAXIMIZE,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("the value the algorithm tries to maximize") ),
+		@facet(name = IKeyword.MINIMIZE,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("the value the algorithm tries to minimize") ),
+		@facet(name = IKeyword.AGGREGATION,
+			type = IType.LABEL,
+			optional = true,
+			values = { IKeyword.MIN, IKeyword.MAX },
+			doc = @doc("the agregation method") ) },
+	omissible = IKeyword.NAME)
+@doc(
+	value = "This algorithm is a simple implementation of the Reactive Tabu Search algorithm ((Battiti et al., 1993)). This Reactive Tabu Search is an enhance version of the Tabu search. It adds two new elements to the classic Tabu Search. The first one concerns the size of the tabu list: in the Reactive Tabu Search, this one is not constant anymore but it dynamically evolves according to the context. Thus, when the exploration process visits too often the same solutions, the tabu list is extended in order to favor the diversification of the search process. On the other hand, when the process has not visited an already known solution for a high number of iterations, the tabu list is shortened in order to favor the intensification of the search process. The second new element concerns the adding of cycle detection capacities. Thus, when a cycle is detected, the process applies random movements in order to break the cycle. See [batch161 the batch dedicated page].",
+	usages = {
+		@usage(
+			value = "As other batch methods, the basic syntax of the reactive_tabu statement uses `method reactive_tabu` instead of the expected `reactive_tabu name: id` : ",
+			examples = { @example(value = "method reactive_tabu [facet: value];", isExecutable = false) }),
+		@usage(value = "For example: ",
+			examples = { @example(
+				value = "method reactive_tabu iter_max: 50 tabu_list_size_init: 5 tabu_list_size_min: 2 tabu_list_size_max: 10 nb_tests_wthout_col_max: 20 cycle_size_min: 2 cycle_size_max: 20 maximize: food_gathered;",
+				isExecutable = false) }) })
 public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 	private int tabuListSizeInit = 5;
@@ -75,8 +112,8 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
 	}
-	
-	public void initParams(){
+
+	public void initParams(final IScope scope) {
 		final IExpression maxIt = getFacet(ITER_MAX);
 		if ( maxIt != null ) {
 			iterMax = Cast.asInt(scope, maxIt.value(scope));
@@ -109,7 +146,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 	}
 
 	@Override
-	public ParametersSet findBestSolution() throws GamaRuntimeException {
+	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		initializeTestedSolutions();
 		final List<ParametersSet> tabuList = new ArrayList<ParametersSet>();
 		int tabuListSize = tabuListSizeInit;
@@ -161,13 +198,13 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
-				if ( isMaximize() && neighborFitness > bestFitnessAlgo || !isMaximize() &&
-					neighborFitness < bestFitnessAlgo ) {
+				if ( isMaximize() && neighborFitness > bestFitnessAlgo ||
+					!isMaximize() && neighborFitness < bestFitnessAlgo ) {
 					bestNeighbor = neighborSol;
 					bestFitnessAlgo = neighborFitness;
 				}
-				if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() &&
-					currentFitness < getBestFitness() ) {
+				if ( isMaximize() && currentFitness > getBestFitness() ||
+					!isMaximize() && currentFitness < getBestFitness() ) {
 					setBestSolution(new ParametersSet(bestSolutionAlgo));
 					setBestFitness(currentFitness);
 				}
@@ -207,8 +244,8 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 					}
 					currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
 					testedSolutions.put(bestSolutionAlgo, currentFitness);
-					if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() &&
-						currentFitness < getBestFitness() ) {
+					if ( isMaximize() && currentFitness > getBestFitness() ||
+						!isMaximize() && currentFitness < getBestFitness() ) {
 						setBestSolution(new ParametersSet(bestSolutionAlgo));
 						setBestFitness(currentFitness);
 					}
@@ -234,7 +271,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			nbIt++;
 			endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		}
-		// System.out.println("Best solution : " + currentSol + "  fitness : "
+		// System.out.println("Best solution : " + currentSol + " fitness : "
 		// + currentFitness);
 
 		return getBestSolution();
@@ -292,15 +329,15 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME,
-			IType.FLOAT) {
+		params.add(
+			new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
-			@Override
-			public Object value() {
-				return iterMax;
-			}
+				@Override
+				public Object value() {
+					return iterMax;
+				}
 
-		});
+			});
 	}
 
 }

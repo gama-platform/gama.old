@@ -1,26 +1,28 @@
 /**
  * Created by drogoul, 9 févr. 2015
- * 
+ *
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.IToolbarDecoratedView.Zoomable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.Control;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.IToolbarDecoratedView.Zoomable;
 
 /**
  * Class ZoomController.
- * 
+ *
  * @author drogoul
  * @since 9 févr. 2015
- * 
+ *
  */
 public class ZoomController {
 
-	Zoomable view;
+	// Fix for Issue #1291
+	private final boolean includingScrolling;
+	private final Zoomable view;
 	private final GestureListener gl = new GestureListener() {
 
 		@Override
@@ -44,11 +46,24 @@ public class ZoomController {
 		}
 	};
 
+	private final MouseWheelListener mw = new MouseWheelListener() {
+
+		@Override
+		public void mouseScrolled(final MouseEvent e) {
+			if ( e.count < 0 ) {
+				view.zoomOut();
+			} else {
+				view.zoomIn();
+			}
+		}
+	};
+
 	/**
 	 * @param view
 	 */
 	public ZoomController(final Zoomable view) {
 		this.view = view;
+		this.includingScrolling = view.zoomWhenScrolling();
 	}
 
 	/**
@@ -65,7 +80,9 @@ public class ZoomController {
 					if ( c != null ) {
 						c.addGestureListener(gl);
 						c.addMouseListener(ml);
-						// c.addMouseWheelListener(ml);
+						if ( includingScrolling ) {
+							c.addMouseWheelListener(mw);
+						}
 						// once installed the listener removes itself from the toolbar
 						tb.removeControlListener(this);
 					}

@@ -1,27 +1,27 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MinimalAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
 import java.util.*;
+import com.google.common.primitives.Ints;
+import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -31,36 +31,34 @@ import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
-import com.google.common.primitives.Ints;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * 
+ *
  * Class MinimalAgent. An abstract class that tries to minimize the number of attributes manipulated by agents. In
  * particular, it declares no Geometry (leaving the programmer the possibility to redeclare getGeometry(), for example
  * in a dynamic fashion), no Population (leaving the programmer the possibility to redeclare getPopulation(), for
  * example in a dynamic fashion, etc.)
- * 
+ *
  * These agents have no sub-population by default (but subclasses can be declared by implementing IMacroAgent, and the
  * appropriate methods can be redefined). Their name is fixed by construction (but subclasses can always implement a
  * name).
- * 
+ *
  * From a functional point of view, this class delegates most of its methods to either the geometry (by calling
  * getGeometry()) or the population (by calling getPopulation()).
- * 
+ *
  * Furthermore, and contrary to GamlAgent, this class does not delegate its step() and init() behaviors to GAML actions
  * (_init_ and _step_).
- * 
+ *
  * Most of the methods observe a "fail-fast" pattern. That is, if either the population or the geometry of the agent is
  * null, it throws an exception and does not attempt to return guessed values.
- * 
+ *
  * Abstract methods to override:
  * - getGeometry()
  * - getPopulation()
- * 
+ *
  * @author drogoul
  * @since 18 mai 2013
- * 
+ *
  */
 public abstract class MinimalAgent implements IAgent {
 
@@ -81,10 +79,10 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the population of the agent if it not null, otherwise throws a runtime exeception.
 	 * @note If checking for a null value of population imposes too much overhead in cases where the population is sure
-	 *       not to be nil, this method can be safely overriden with a direct call to getPopulation()
+	 * not to be nil, this method can be safely overriden with a direct call to getPopulation()
 	 */
 	protected IPopulation checkedPopulation() {
 		return getPopulation();
@@ -92,10 +90,10 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the geometry of the agent if it not null, otherwise throws a runtime exeception.
 	 * @note If checking for a null value in geometry imposes too much overhead in cases where the geometry is sure not
-	 *       to be nil, this method can be safely overriden with a direct call to getGeometry()
+	 * to be nil, this method can be safely overriden with a direct call to getGeometry()
 	 */
 	protected IShape checkedGeometry() {
 		return getGeometry();
@@ -304,9 +302,8 @@ public abstract class MinimalAgent implements IAgent {
 		final IPopulation pop = getHost().getPopulationFor(this.getSpecies());
 		if ( pop != null ) {
 			IScope scope = getScope();
-			final IList<IAgent> retVal =
-				GamaListFactory.<IAgent> createWithoutCasting(scope.getModelContext().getTypeNamed(getSpeciesName()),
-					pop.toArray());
+			final IList<IAgent> retVal = GamaListFactory
+				.<IAgent> createWithoutCasting(scope.getModelContext().getTypeNamed(getSpeciesName()), pop.toArray());
 			retVal.remove(this);
 			return retVal;
 		}
@@ -414,15 +411,15 @@ public abstract class MinimalAgent implements IAgent {
 
 	/**
 	 * Solve the synchronization problem between Execution Thread and Event Dispatch Thread.
-	 * 
+	 *
 	 * The synchronization problem may happen when 1. The Event Dispatch Thread is drawing an agent
 	 * while the Execution Thread tries to it; 2. The Execution Thread is disposing the agent while
 	 * the Event Dispatch Thread tries to draw it.
-	 * 
+	 *
 	 * To avoid this, the corresponding thread has to invoke "acquireLock" to lock the agent before
 	 * drawing or disposing the agent. After finish the task, the thread invokes "releaseLock" to
 	 * release the agent's lock.
-	 * 
+	 *
 	 */
 	@Override
 	public synchronized void acquireLock() {
@@ -476,12 +473,12 @@ public abstract class MinimalAgent implements IAgent {
 		return getSpecies().implementsSkill(skill);
 	}
 
-	@Override
-	public SimulationClock getClock() {
-		final IMacroAgent a = getHost();
-		if ( a == null ) { return GAMA.getClock(); }
-		return a.getClock();
-	}
+	// @Override
+	// public SimulationClock getClock() {
+	// final IMacroAgent a = getHost();
+	// if ( a == null ) { return GAMA.getClock(); }
+	// return a.getClock();
+	// }
 
 	/**
 	 * Method getPopulationFor()

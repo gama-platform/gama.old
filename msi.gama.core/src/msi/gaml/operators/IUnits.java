@@ -1,22 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IUnits.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.operators;
 
 import java.awt.Font;
 import java.lang.reflect.Field;
 import java.util.*;
-import msi.gama.precompiler.GamlAnnotations.constant;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConstantCategory;
 import msi.gama.util.*;
 import msi.gaml.expressions.UnitConstantExpression;
 import msi.gaml.types.*;
@@ -29,91 +28,111 @@ public class IUnits {
 
 	@constant(value = "bold",
 		category = { IConstantCategory.GRAPHIC },
-		doc = @doc("This contant allows to build a font with a bold face. Can be combined with #italic"))
+		doc = @doc("This contant allows to build a font with a bold face. Can be combined with #italic") )
 	public final static int bold = Font.BOLD; /* 1 */
 
 	@constant(value = "italic",
 		category = { IConstantCategory.GRAPHIC },
-		doc = @doc("This contant allows to build a font with an italic face. Can be combined with #bold"))
+		doc = @doc("This contant allows to build a font with an italic face. Can be combined with #bold") )
 	public final static int italic = Font.ITALIC; /* 2 */
 
 	@constant(value = "plain",
 		category = { IConstantCategory.GRAPHIC },
-		doc = @doc("This contant allows to build a font with a plain face"))
+		doc = @doc("This contant allows to build a font with a plain face") )
 	public final static int plain = Font.PLAIN;
 	/**
 	 * Special units
 	 */
 
+	@constant(value = "view_x",
+		category = IConstantCategory.GRAPHIC,
+		doc = @doc("This unit, only available when running aspects or declaring displays, returns the x ordinate of the top-left corner of the view in the world") )
+	public final static double view_x = 1;
+
+	@constant(value = "view_y",
+		category = IConstantCategory.GRAPHIC,
+		doc = @doc("This unit, only available when running aspects or declaring displays, returns the y ordinate of the top-left corner of the view in the world") )
+	public final static double view_y = 1;
+
+	@constant(value = "view_width",
+		category = IConstantCategory.GRAPHIC,
+		doc = @doc("This unit, only available when running aspects or declaring displays, returns the width of the view in world units") )
+	public final static double view_width = 1;
+
+	@constant(value = "view_height",
+		category = IConstantCategory.GRAPHIC,
+		doc = @doc("This unit, only available when running aspects or declaring displays, returns the height of the  view in world units") )
+	public final static double view_height = 1;
+
 	@constant(value = "pixels",
 		altNames = { "px" },
 		category = { IConstantCategory.GRAPHIC },
-		doc = @doc("This unit, only available when running aspects or declaring displays, can be obtained using the same approach, but returns a dynamic value instead of a fixed one. px (or pixels), returns the value of one pixel on the current view in terms of model units."))
+		doc = @doc("This unit, only available when running aspects or declaring displays, can be obtained using the same approach, but returns a dynamic value instead of a fixed one. px (or pixels), returns the value of one pixel on the current view in terms of model units.") )
 	public final static double pixels = 1, px = pixels; // Represents the value of a pixel in terms
 														// of model units. Parsed early
 														// and never used as a constant.
 	@constant(value = "display_width",
 		category = { IConstantCategory.GRAPHIC },
-		doc = @doc("This constant is only accessible in a graphical context: display, graphics..."))
+		doc = @doc("This constant is only accessible in a graphical context: display, graphics...") )
 	public final static double display_width = 1;
 
 	@constant(value = "display_height",
 		category = { IConstantCategory.GRAPHIC },
-		doc = @doc("This constant is only accessible in a graphical context: display, graphics..."))
+		doc = @doc("This constant is only accessible in a graphical context: display, graphics...") )
 	public final static double display_height = 1;
 
 	/**
 	 * Mathematical constants
-	 * 
+	 *
 	 */
-	@constant(value = "pi", category = { IConstantCategory.CONSTANT }, doc = @doc("The PI constant"))
+	@constant(value = "pi", category = { IConstantCategory.CONSTANT }, doc = @doc("The PI constant") )
 	public final static double pi = Math.PI;
 
-	@constant(value = "e", category = { IConstantCategory.CONSTANT }, doc = @doc("The e constant"))
+	@constant(value = "e", category = { IConstantCategory.CONSTANT }, doc = @doc("The e constant") )
 	public final static double e = Math.E;
 
 	@constant(value = "to_deg",
 		category = { IConstantCategory.CONSTANT },
-		doc = @doc("A constant holding the value to convert radians into degrees"))
+		doc = @doc("A constant holding the value to convert radians into degrees") )
 	public final static double to_deg = 180d / Math.PI;
 	@constant(value = "to_rad",
 		category = { IConstantCategory.CONSTANT },
-		doc = @doc("A constant holding the value to convert degrees into radians"))
+		doc = @doc("A constant holding the value to convert degrees into radians") )
 	public final static double to_rad = Math.PI / 180d;
 
 	@constant(value = "nan",
 		category = { IConstantCategory.CONSTANT },
-		doc = @doc("A constant holding a Not-a-Number (NaN) value of type float (Java Double.POSITIVE_INFINITY)"))
+		doc = @doc("A constant holding a Not-a-Number (NaN) value of type float (Java Double.POSITIVE_INFINITY)") )
 	public final static double nan = Double.NaN;
 	@constant(value = "infinity",
 		category = { IConstantCategory.CONSTANT },
-		doc = @doc("A constant holding the positive infinity of type (Java Double.POSITIVE_INFINITY)"))
+		doc = @doc("A constant holding the positive infinity of type (Java Double.POSITIVE_INFINITY)") )
 	public final static double infinity = Double.POSITIVE_INFINITY;
 	@constant(value = "min_float",
 		category = { IConstantCategory.CONSTANT },
-		doc = @doc("A constant holding the smallest positive nonzero value of type float (Java Double.MIN_VALUE)"))
+		doc = @doc("A constant holding the smallest positive nonzero value of type float (Java Double.MIN_VALUE)") )
 	public final static double min_float = Double.MIN_VALUE;
 	@constant(value = "max_float",
 		category = { IConstantCategory.CONSTANT },
-		doc = @doc("A constant holding the largest positive finite value of type float (Java Double.MAX_VALUE)"))
+		doc = @doc("A constant holding the largest positive finite value of type float (Java Double.MAX_VALUE)") )
 	public final static double max_float = Double.MAX_VALUE;
 	@constant(value = "min_int",
 		category = { IConstantCategory.CONSTANT },
-		doc = @doc("A constant holding the minimum value an int can have (Java Integer.MIN_VALUE)"))
+		doc = @doc("A constant holding the minimum value an int can have (Java Integer.MIN_VALUE)") )
 	public final static double min_int = Integer.MIN_VALUE;
 	@constant(value = "max_int",
 		category = { IConstantCategory.CONSTANT },
-		doc = @doc("A constant holding the maximum value an int can have (Java Integer.MAX_VALUE)"))
+		doc = @doc("A constant holding the maximum value an int can have (Java Integer.MAX_VALUE)") )
 	public final static double max_int = Integer.MAX_VALUE;
 	/*
-	 * 
+	 *
 	 * Distance & size conversions
 	 */
 	/** The Constant m. */
 	@constant(value = "m",
 		altNames = { "meter", "meters" },
 		category = { IConstantCategory.LENGTH },
-		doc = @doc("meter: the length basic unit"))
+		doc = @doc("meter: the length basic unit") )
 	public final static double m = 1, meter = m, meters = m;
 
 	/** The Constant cm. */
@@ -149,14 +168,14 @@ public class IUnits {
 	public final static double foot = 30.48d * cm, feet = foot, ft = foot;
 
 	/*
-	 * 
+	 *
 	 * Time conversions
 	 */
 	/** The Constant s. */
 	@constant(value = "sec",
 		altNames = { "second", "seconds", "s" },
 		category = { IConstantCategory.TIME },
-		doc = @doc("second: the time basic unit"))
+		doc = @doc("second: the time basic unit") )
 	public final static double sec = 1, second = sec, seconds = sec, s = sec;
 
 	/** The Constant mn. */
@@ -175,14 +194,14 @@ public class IUnits {
 	@constant(value = "month",
 		altNames = { "months" },
 		category = { IConstantCategory.TIME },
-		doc = @doc("Note that 1 month equals 30 days and 1 year 360 days in these units"))
+		doc = @doc("Note that 1 month equals 30 days and 1 year 360 days in these units") )
 	public final static double month = 30 * day, months = month;
 
 	/** The Constant y. */
 	@constant(value = "year",
 		altNames = { "years", "y" },
 		category = { IConstantCategory.TIME },
-		doc = @doc("Note that 1 month equals 30 days and 1 year 360 days in these units"))
+		doc = @doc("Note that 1 month equals 30 days and 1 year 360 days in these units") )
 	public final static double year = 12 * month, years = year, y = year;
 
 	/** The Constant msec. */
@@ -190,7 +209,7 @@ public class IUnits {
 	public final static double msec = sec / 1000, millisecond = msec, milliseconds = msec;
 
 	/*
-	 * 
+	 *
 	 * Weight conversions
 	 */
 
@@ -198,7 +217,7 @@ public class IUnits {
 	@constant(value = "kg",
 		altNames = { "kilo", "kilogram", "kilos" },
 		category = { IConstantCategory.WEIGHT },
-		doc = @doc("second: the basic unit for weights"))
+		doc = @doc("second: the basic unit for weights") )
 	public final static double kg = 1, kilo = kg, kilogram = kg, kilos = kg;
 
 	/** The Constant g. */
@@ -218,13 +237,13 @@ public class IUnits {
 	public final static double pound = 0.45359237 * kg, lb = pound, pounds = pound, lbm = pound;
 
 	/*
-	 * 
+	 *
 	 * Volume conversions
 	 */
 	/** The Constant m3. */
 	@constant(value = "m3",
 		category = { IConstantCategory.VOLUME },
-		doc = @doc("cube meter: the basic unit for volumes"))
+		doc = @doc("cube meter: the basic unit for volumes") )
 	public final static double m3 = 1;
 
 	/** Constant field dm3. */
@@ -243,13 +262,13 @@ public class IUnits {
 	@constant(value = "hl", altNames = { "hectoliter", "hectoliters" }, category = { IConstantCategory.VOLUME })
 	public final static double hl = l * 100, hectoliter = hl, hectoliters = hl;
 	/*
-	 * 
+	 *
 	 * Surface conversions
 	 */
 	/** The Constant m2. */
 	@constant(value = "m2",
 		category = { IConstantCategory.SURFACE },
-		doc = @doc("square meter: the basic unit for surfaces"))
+		doc = @doc("square meter: the basic unit for surfaces") )
 	public final static double m2 = m * m, square_meter = m2, square_meters = m2;
 
 	/** The Constant square inch. */
@@ -282,9 +301,8 @@ public class IUnits {
 	static {
 		for ( Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet() ) {
 			GamaColor c = entry.getValue();
-			String doc =
-				"standard CSS color corresponding to " + "rgb (" + c.red() + ", " + c.green() + ", " + c.blue() + "," +
-					c.getAlpha() + ")";
+			String doc = "standard CSS color corresponding to " + "rgb (" + c.red() + ", " + c.green() + ", " +
+				c.blue() + "," + c.getAlpha() + ")";
 			add(entry.getKey(), c, doc, null);
 		}
 

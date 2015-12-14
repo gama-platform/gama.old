@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AgentScheduler.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -69,7 +69,8 @@ public class AgentScheduler implements IStepable {
 		// We wait for the scheduler to become "idle" (i.e. when all the interruptions have become
 		// effective) if the global scheduler is not paused.
 		// WARNING: if the scope is not marked as "interrupted", this will result in an endless loop
-		if ( !GAMA.controller.getScheduler().paused ) {
+		// FIXME Provide a safer and shorter access to the controller...
+		if ( !scope.getExperiment().getSpecies().getController().getScheduler().paused ) {
 			while (alive) {
 				try {
 					// GuiUtils.debug("ExperimentScheduler.dispose: DOING THE LAST STEP(S)");
@@ -185,15 +186,11 @@ public class AgentScheduler implements IStepable {
 
 	public synchronized void executeOneAction(final GamaHelper action) {
 		// hqnghi: check if it belong other controller beside default controller
-		String ctrlName =
-			((ExperimentPlan) scope.getSimulationScope().getExperiment().getSpecies()).getControllerName();
-		FrontEndScheduler sche = GAMA.controller.getScheduler();
-		if ( !ctrlName.equals("") ) {
-			sche = GAMA.getController(ctrlName).getScheduler();
-		}
-		// end-hqnghi
+		FrontEndScheduler sche = scope.getSimulationScope().getExperiment().getSpecies().getController().getScheduler();
+		// String ctrlName =
+		// ((ExperimentPlan) scope.getSimulationScope().getExperiment().getSpecies()).getControllerName();
+		// // end-hqnghi
 
-		// if ( GAMA.controller.getScheduler().paused || GAMA.controller.getScheduler().on_user_hold ) {
 		if ( sche.paused || sche.on_user_hold ) {
 			action.run(scope);
 		} else {

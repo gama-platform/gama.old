@@ -1,37 +1,37 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GuiUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.util;
 
 import java.util.Map;
+import org.eclipse.core.runtime.CoreException;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * The class GuiUtils. A static bridge to the SWT environment. The actual dependency on SWT is
  * represented by an instance of IGui, which must be initialize when the UI plugin launches.
- * 
+ *
  * @author drogoul
  * @since 18 dec. 2011
- * 
+ *
  */
 public class GuiUtils {
 
@@ -144,7 +144,7 @@ public class GuiUtils {
 	// public static void setViewRateOf(final IDisplayOutput abstractDisplayOutput, final int refresh) {}
 
 	/**
-	 * 
+	 *
 	 * See IWorkbenchPage.XXX for the code
 	 * @param viewId
 	 * @param string
@@ -283,7 +283,7 @@ public class GuiUtils {
 	}
 
 	public static void cleanAfterExperiment(final IExperimentPlan exp) {
-		GAMA.setDelayFromExperiment(0);
+		SimulationClock.setDelayFromExperiment(0);
 		if ( gui != null ) {
 			gui.cleanAfterExperiment(exp);
 		}

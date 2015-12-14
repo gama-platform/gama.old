@@ -1,27 +1,27 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ApplicationWorkbenchAdvisor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt;
 
 import java.util.Arrays;
-import msi.gama.common.interfaces.IGamaView;
-import msi.gama.gui.swt.perspectives.*;
-import msi.gama.runtime.*;
-import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.application.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
+import msi.gama.common.interfaces.IGamaView;
+import msi.gama.gui.swt.perspectives.*;
+import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.GamaBundleLoader;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
@@ -91,7 +91,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		// try {
 		// // Assumption here : a non-accessible / linked project means a built-in model that is not accessible
 		// // anymore. Maybe false sometimes... But how to check ?
-		// System.out.println("Project  = " + p.getName());
+		// System.out.println("Project = " + p.getName());
 		// System.out.println(" ==== > Accessible : " + p.isAccessible());
 		// System.out.println(" ==== > Open : " + p.isOpen());
 		// System.out.println(" ==== > Linked : " + p.isLinked());
@@ -158,11 +158,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public boolean preShutdown() {
 		try {
-			GAMA.controller.shutdown();
-			// hqnghi: if there are several controller, shut them down
-			for ( FrontEndController s : GAMA.getControllers().values() ) {
-				s.shutdown();
-			}
+			GAMA.shutdownAllExperiments();
 			// end-hqnghi
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,17 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'BatchAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import java.util.*;
+import org.jfree.data.statistics.Statistics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.batch.IExploration;
@@ -24,13 +25,12 @@ import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
-import org.jfree.data.statistics.Statistics;
 
 /**
  * Written by drogoul Modified on 28 mai 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 
 public class BatchAgent extends ExperimentAgent {
@@ -121,16 +121,16 @@ public class BatchAgent extends ExperimentAgent {
 	// }
 
 	/**
-	 * 
+	 *
 	 * Method step()
 	 * @see msi.gama.metamodel.agent.GamlAgent#step(msi.gama.runtime.IScope)
-	 *      This method, called once by the front controller, actually serves as "launching" the batch process (entirely
-	 *      piloted by the exploration algorithm)
+	 * This method, called once by the front controller, actually serves as "launching" the batch process (entirely
+	 * piloted by the exploration algorithm)
 	 */
 	@Override
 	public boolean step(final IScope scope) {
 		// We run the exloration algorithm (but dont start() it, as the thread is not used)
-		getSpecies().getExplorationAlgorithm().run();
+		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is killed.
 		GuiUtils.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
 		dispose();
@@ -178,7 +178,7 @@ public class BatchAgent extends ExperimentAgent {
 						getSeeds().length + " | Cycle " + simulation.getClock().getCycle());
 					// TODO This is where any update of the outputs of simulations should be introduced
 					// We then verify that the front scheduler has not been paused
-					while (GAMA.controller.getScheduler().paused && !dead) {
+					while (getSpecies().getController().getScheduler().paused && !dead) {
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {
@@ -207,8 +207,8 @@ public class BatchAgent extends ExperimentAgent {
 		// different simulation.
 		short fitnessCombination = getSpecies().getExplorationAlgorithm().getCombination();
 		return fitnessCombination == IExploration.C_MAX ? Collections.max(fitnessValues)
-			: fitnessCombination == IExploration.C_MIN ? Collections.min(fitnessValues) : Statistics
-				.calculateMean(fitnessValues);
+			: fitnessCombination == IExploration.C_MIN ? Collections.min(fitnessValues)
+				: Statistics.calculateMean(fitnessValues);
 
 	}
 
@@ -299,8 +299,8 @@ public class BatchAgent extends ExperimentAgent {
 
 			int getExplorationDimension(final IParameter.Batch p) {
 				if ( p.getAmongValue() != null ) { return p.getAmongValue().size(); }
-				return (int) ((p.getMaxValue().doubleValue() - p.getMinValue().doubleValue()) / p.getStepValue()
-					.doubleValue()) + 1;
+				return (int) ((p.getMaxValue().doubleValue() - p.getMinValue().doubleValue()) /
+					p.getStepValue().doubleValue()) + 1;
 			}
 
 		});

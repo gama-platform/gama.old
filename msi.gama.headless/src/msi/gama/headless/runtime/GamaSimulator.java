@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaSimulator.java', in plugin 'msi.gama.headless', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
@@ -15,13 +15,12 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
 import msi.gama.headless.common.*;
-import msi.gama.headless.core.*;
-import msi.gama.headless.core.Simulation.ListenedVariable;
-import msi.gama.headless.core.Simulation.OutputType;
+import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.core.Simulation.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.outputs.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaSimulator implements ISimulator {
@@ -33,7 +32,7 @@ public class GamaSimulator implements ISimulator {
 	private IModel model;
 	private String fileName;
 	private String experimentName;
-	private ExperimentPlan experiment;
+	private IExperimentPlan experiment;
 
 	public GamaSimulator() {
 		this.params = new ParametersSet();
@@ -156,7 +155,7 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void initialize() {
 		try {
-			experiment = HeadlessSimulationLoader.newHeadlessSimulation(this.model, this.experimentName, this.params, null);
+			experiment = GAMA.addHeadlessExperiment(this.model, this.experimentName, this.params, null);
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 			experiment = null;

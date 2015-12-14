@@ -1,25 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'DormandPrince853Solver.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.runtime.*;
-import msi.gama.util.*;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.types.Types;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.sampling.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.IScope;
+import msi.gama.util.*;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.types.Types;
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 public class DormandPrince853Solver extends Solver {
@@ -129,7 +129,7 @@ public class DormandPrince853Solver extends Solver {
 			}
 
 		}
-		if ( GAMA.getClock().getCycle() == 0 ) {
+		if ( scope.getClock().getCycle() == 0 ) {
 			integrated_time.add(time_initial);
 			for ( int i = 0; i < y.length; i++ ) {
 				integrated_val.get(i).add(y[i]);

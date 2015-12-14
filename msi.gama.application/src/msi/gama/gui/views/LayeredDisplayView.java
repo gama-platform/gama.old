@@ -11,6 +11,14 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
@@ -22,14 +30,6 @@ import msi.gama.gui.views.actions.*;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.*;
 import msi.gama.outputs.layers.AbstractLayer;
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 
 public abstract class LayeredDisplayView extends GamaViewPart implements IZoomListener, IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable {
 
@@ -229,6 +229,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 
 	public String getOverlayCoordInfo() {
 		IDisplayOutput output = getOutput();
+		if ( output == null ) { return ""; }
 		boolean paused = output.isPaused();
 		boolean synced = getOutput().getData().isSynchronized();
 		IDisplaySurface surface = getDisplaySurface();
@@ -236,8 +237,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
 		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
 		Object[] objects = new Object[] { x, y };
-		return String
-			.format("X%10s | Y%10s" + (paused ? " | Paused" : "") + (synced ? " | Synchronized" : ""), objects);
+		return String.format("X%10s | Y%10s" + (paused ? " | Paused" : "") + (synced ? " | Synchronized" : ""),
+			objects);
 
 	}
 
@@ -297,12 +298,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT.getCode(), "Take a snapshot", "Take a snapshot",
 			new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				getDisplaySurface().snapshot();
-			}
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					getDisplaySurface().snapshot();
+				}
 
-		}, SWT.RIGHT);
+			}, SWT.RIGHT);
 	}
 
 	@Override

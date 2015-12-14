@@ -1,29 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SystemOfEquationsStatement.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
 import java.util.*;
+import org.apache.commons.math3.exception.*;
+import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -33,8 +29,6 @@ import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.*;
-import org.apache.commons.math3.exception.*;
-import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.*;
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDynamics.ClassicalLVEquations;
 
@@ -42,43 +36,52 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
  * The class SystemOfEquationsStatement.
  * This class represents a system of equations (SingleEquationStatement) that implements the interface
  * FirstOrderDifferentialEquations and can be integrated by any of the integrators available in the Apache Commons Library.
- * 
+ *
  * @author drogoul
  * @since 26 janv. 2013
- * 
+ *
  */
 @symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false, doc = @doc("the equation identifier")),
-	@facet(name = IKeyword.TYPE, type = IType.ID /* CHANGE */, optional = true, values = { "SI", "SIS", "SIR", "SIRS",
-		"SEIR", "LV" }, doc = @doc(value = "the choice of one among classical models (SI, SIS, SIR, SIRS, SEIR, LV)")),
-	@facet(name = IKeyword.VARS,
-		type = IType.LIST,
-		optional = true,
-		doc = @doc("the list of variables used in predefined equation systems")),
-	@facet(name = IKeyword.PARAMS,
-		type = IType.LIST,
-		optional = true,
-		doc = @doc("the list of pramameters used in predefined equation systems")),
-	@facet(name = IKeyword.SIMULTANEOUSLY,
-		type = IType.LIST,
-		optional = true,
-		doc = @doc("a list of agents containing a system of equations (all systems will be solved simultaneously)")) },
+@facets(
+	value = {
+		@facet(name = IKeyword.NAME,
+			type = IType.ID /* CHANGE */,
+			optional = false,
+			doc = @doc("the equation identifier") ),
+		@facet(name = IKeyword.TYPE,
+			type = IType.ID /* CHANGE */,
+			optional = true,
+			values = { "SI", "SIS", "SIR", "SIRS", "SEIR", "LV" },
+			doc = @doc(value = "the choice of one among classical models (SI, SIS, SIR, SIRS, SEIR, LV)") ),
+		@facet(name = IKeyword.VARS,
+			type = IType.LIST,
+			optional = true,
+			doc = @doc("the list of variables used in predefined equation systems") ),
+		@facet(name = IKeyword.PARAMS,
+			type = IType.LIST,
+			optional = true,
+			doc = @doc("the list of pramameters used in predefined equation systems") ),
+		@facet(name = IKeyword.SIMULTANEOUSLY,
+			type = IType.LIST,
+			optional = true,
+			doc = @doc("a list of agents containing a system of equations (all systems will be solved simultaneously)") ) },
 	omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @doc(value = "The equation statement is used to create an equation system from several single equations.",
 	usages = {
-		@usage(value = "The basic syntax to define an equation system is:", examples = {
-			@example(value = "float t;", isExecutable = false), @example(value = "float S;", isExecutable = false),
-			@example(value = "float I;", isExecutable = false),
-			@example(value = "equation SI { ", isExecutable = false),
-			@example(value = "   diff(S,t) = (- 0.3 * S * I / 100);", isExecutable = false),
-			@example(value = "   diff(I,t) = (0.3 * S * I / 100);", isExecutable = false),
-			@example(value = "} ", isExecutable = false) }),
-		@usage(value = "If the type: facet is used, a predefined equation system is defined using variables vars: and parameters params: in the right order. All possible predefined equation systems are the following ones (see [EquationPresentation161 EquationPresentation161] for precise definition of each classical equation system): ",
+		@usage(value = "The basic syntax to define an equation system is:",
+			examples = { @example(value = "float t;", isExecutable = false),
+				@example(value = "float S;", isExecutable = false), @example(value = "float I;", isExecutable = false),
+				@example(value = "equation SI { ", isExecutable = false),
+				@example(value = "   diff(S,t) = (- 0.3 * S * I / 100);", isExecutable = false),
+				@example(value = "   diff(I,t) = (0.3 * S * I / 100);", isExecutable = false),
+				@example(value = "} ", isExecutable = false) }),
+		@usage(
+			value = "If the type: facet is used, a predefined equation system is defined using variables vars: and parameters params: in the right order. All possible predefined equation systems are the following ones (see [EquationPresentation161 EquationPresentation161] for precise definition of each classical equation system): ",
 			examples = {
 				@example(value = "equation eqSI type: SI vars: [S,I,t] params: [N,beta];", isExecutable = false),
-				@example(value = "equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma];", isExecutable = false),
+				@example(value = "equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma];",
+					isExecutable = false),
 				@example(value = "equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma];", isExecutable = false),
 				@example(value = "equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu];",
 					isExecutable = false),
@@ -86,7 +89,8 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
 					isExecutable = false),
 				@example(value = "equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;",
 					isExecutable = false) }),
-		@usage(value = "If the simultaneously: facet is used, system of all the agents will be solved simultaneously.") },
+		@usage(
+			value = "If the simultaneously: facet is used, system of all the agents will be solved simultaneously.") },
 	see = { "=", IKeyword.SOLVE })
 public class SystemOfEquationsStatement extends AbstractStatementSequence implements FirstOrderDifferentialEquations {
 
@@ -116,7 +120,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	/**
 	 * This method separates regular statements and equations.
-	 * 
+	 *
 	 * @see msi.gaml.statements.AbstractStatementSequence#setChildren(java.util.List)
 	 */
 	@Override
@@ -136,20 +140,18 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 					new ClassicalSISEquations(getDescription()).SIS(getFacet(IKeyword.VARS), getFacet(IKeyword.PARAMS));
 			} else if ( getFacet(IKeyword.TYPE).literalValue().equals("SIRS") ) {
 				cmd.clear();
-				cmd =
-					new ClassicalSIRSEquations(getDescription()).SIRS(getFacet(IKeyword.VARS),
-						getFacet(IKeyword.PARAMS));
+				cmd = new ClassicalSIRSEquations(getDescription()).SIRS(getFacet(IKeyword.VARS),
+					getFacet(IKeyword.PARAMS));
 			} else if ( getFacet(IKeyword.TYPE).literalValue().equals("SEIR") ) {
 				cmd.clear();
-				cmd =
-					new ClassicalSEIREquations(getDescription()).SEIR(getFacet(IKeyword.VARS),
-						getFacet(IKeyword.PARAMS));
+				cmd = new ClassicalSEIREquations(getDescription()).SEIR(getFacet(IKeyword.VARS),
+					getFacet(IKeyword.PARAMS));
 			} else if ( getFacet(IKeyword.TYPE).literalValue().equals("LV") ) {
 				cmd.clear();
 				cmd = new ClassicalLVEquations(getDescription()).LV(getFacet(IKeyword.VARS), getFacet(IKeyword.PARAMS));
 			} else {
-				GamaRuntimeException.error(getFacet(IKeyword.TYPE).literalValue().equals("SI") +
-					" is not a recognized classical equation");
+				GamaRuntimeException.error(
+					getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not a recognized classical equation");
 			}
 		}
 
@@ -184,7 +186,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		// We execute whatever is declared in addition to the equations (could
 		// be initializations,
 		// etc.)
-		if ( GAMA.getClock().getCycle() == 0 ) {
+		if ( scope.getClock().getCycle() == 0 ) {
 			integrated_times.clear();
 			integrated_values.clear();
 		}
@@ -336,7 +338,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * This method is bound to be called by the integrator of the equations
 	 * system (instantiated in SolveStatement).
-	 * 
+	 *
 	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#computeDerivatives(double, double[], double[])
 	 */
 
@@ -436,7 +438,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * The dimension of the equations system is simply, here, the number of
 	 * equations.
-	 * 
+	 *
 	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#getDimension()
 	 */
 	@Override

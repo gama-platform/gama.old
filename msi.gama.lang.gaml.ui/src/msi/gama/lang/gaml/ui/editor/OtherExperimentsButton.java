@@ -1,19 +1,11 @@
 /**
  * Created by drogoul, 4 déc. 2014
- * 
+ *
  */
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
-import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.*;
-import msi.gama.lang.gaml.ui.XtextGui;
-import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.ISyntacticElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
@@ -25,13 +17,21 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.controls.*;
+import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.resource.*;
+import msi.gama.lang.gaml.ui.XtextGui;
+import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.ISyntacticElement;
 
 /**
  * The class OtherExperimentsButton.
- * 
+ *
  * @author drogoul
  * @since 4 déc. 2014
- * 
+ *
  */
 public class OtherExperimentsButton {
 
@@ -42,13 +42,14 @@ public class OtherExperimentsButton {
 	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar2 toolbar) {
 		this.editor = editor;
 		this.parent = toolbar;
-		if (XtextGui.EDITOR_SHOW_OTHER.getValue()) 
-		createButton();
+		if ( XtextGui.EDITOR_SHOW_OTHER.getValue() ) {
+			createButton();
+		}
 	}
 
 	private void createButton() {
 
-		//parent.sep(5, SWT.RIGHT);
+		// parent.sep(5, SWT.RIGHT);
 		menu = parent.menu(IGamaColors.BLUE, "Other...", SWT.RIGHT);
 		menu.getControl().setToolTipText("Run other experiments defined in models belonging to the same project");
 		((FlatButton) menu.getControl()).addSelectionListener(new SelectionAdapter() {
@@ -70,7 +71,7 @@ public class OtherExperimentsButton {
 			}
 
 		});
-		//setVisible(XtextGui.EDITOR_SHOW_OTHER.getValue());
+		// setVisible(XtextGui.EDITOR_SHOW_OTHER.getValue());
 	}
 
 	private final SelectionAdapter adapter = new SelectionAdapter() {
@@ -93,7 +94,7 @@ public class OtherExperimentsButton {
 				});
 				if ( model == null ) { return; }
 				GuiUtils.openSimulationPerspective();
-				GAMA.controller.newExperiment(exp, model);
+				GAMA.runGuiExperiment(exp, model);
 			}
 		}
 	};
@@ -195,15 +196,15 @@ public class OtherExperimentsButton {
 	 * @param showOtherEnabled
 	 */
 	public void setVisible(final boolean enabled) {
-		if (enabled) {
-			if (menu != null) return;
+		if ( enabled ) {
+			if ( menu != null ) { return; }
 			createButton();
 		} else {
-			if (menu == null) return;
+			if ( menu == null ) { return; }
 			menu.dispose();
 			menu = null;
 		}
-		//menu.getControl().setVisible(enabled);
+		// menu.getControl().setVisible(enabled);
 	}
 
 }

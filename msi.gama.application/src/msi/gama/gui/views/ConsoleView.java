@@ -1,27 +1,29 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ConsoleView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views;
 
 import java.io.*;
-import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.console.*;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 
 public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable {
 
@@ -59,6 +61,8 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 		bw = new BufferedWriter(new OutputStreamWriter(stream));
 	}
 
+	private boolean indicated = false;
+
 	/**
 	 * Append the text to the console.
 	 * @param text to display in the console
@@ -88,6 +92,19 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 				} else if ( maxMemorized == -1 ) {
 					pauseBuffer.append(text);
 				}
+				if ( !indicated ) {
+					GuiUtils.run(new Runnable() {
+
+						@Override
+						public void run() {
+							if ( toolbar != null ) {
+								toolbar.status((Image) null, "New contents available", IGamaColors.BLUE, SWT.LEFT);
+							}
+							indicated = true;
+						}
+					});
+				}
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -117,6 +134,19 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 
 	@Override
 	public void pauseChanged() {
+		if ( paused ) {
+			GuiUtils.asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					if ( toolbar != null ) {
+						toolbar.wipe(SWT.LEFT, true);
+					}
+					indicated = false;
+				}
+			});
+
+		}
 		paused = !paused;
 		if ( paused ) {
 			pauseBuffer.setLength(0);
