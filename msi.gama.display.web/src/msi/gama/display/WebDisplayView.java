@@ -28,4 +28,13 @@ public class WebDisplayView extends LayeredDisplayView {
 		return surfaceComposite;
 	}
 
+	/**
+	 * Method zoomWhenScrolling()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
+	 */
+	@Override
+	public boolean zoomWhenScrolling() {
+		return false;
+	}
+
 }

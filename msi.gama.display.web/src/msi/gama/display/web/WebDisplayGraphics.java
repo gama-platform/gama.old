@@ -199,4 +199,22 @@ public class WebDisplayGraphics implements IGraphics {
 		return null;
 	}
 
+	/**
+	 * Method getXOffsetInPixels()
+	 * @see msi.gama.common.interfaces.IGraphics#getXOffsetInPixels()
+	 */
+	@Override
+	public double getXOffsetInPixels() {
+		return 0;
+	}
+
+	/**
+	 * Method getYOffsetInPixels()
+	 * @see msi.gama.common.interfaces.IGraphics#getYOffsetInPixels()
+	 */
+	@Override
+	public double getYOffsetInPixels() {
+		return 0;
+	}
+
 }
