@@ -1,27 +1,36 @@
 /**
  * Created by drogoul, 16 avr. 2014
- * 
+ *
  */
 package msi.gama.util;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import msi.gama.runtime.IScope;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
 import com.google.common.base.*;
 import com.google.common.cache.*;
 import com.google.common.collect.*;
 import com.google.common.collect.AbstractIterator;
+import msi.gama.runtime.IScope;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 
 /**
  * Class Guava.
- * 
+ *
  * @author drogoul
  * @since 16 avr. 2014
- * 
+ *
  */
 public class Guava {
+
+	public final static Function<Object, Iterable> transformToIterables = new Function<Object, Iterable>() {
+
+		@Override
+		public Iterable apply(final Object input) {
+			if ( input instanceof Iterable ) { return (Iterable) input; }
+			return ImmutableList.of(input);
+		}
+	};
 
 	public static class InContainer implements Predicate {
 
@@ -133,6 +142,20 @@ public class Guava {
 			}
 		}
 
+		public static Function<Object, Iterable> iterableFunction(final IScope scope, final IExpression filter) {
+			return new Function<Object, Iterable>() {
+
+				@Override
+				public Iterable apply(final Object input) {
+					final Object o = function(scope, filter).apply(input);
+					if ( o instanceof Iterable ) { return (Iterable) o; }
+					return ImmutableList.of(o);
+				}
+
+			};
+
+		}
+
 		static class GamlPredicate extends GamlGuavaHelper implements Predicate {
 
 			GamlPredicate(final IScope scope, final IExpression filter) {
@@ -188,20 +211,6 @@ public class Guava {
 
 	public static <T> Function function(final IScope scope, final IExpression filter) {
 		return GamlGuavaHelper.<T> getFunction(scope, filter);
-	}
-
-	public static Function<Object, Iterable> iterableFunction(final IScope scope, final IExpression filter) {
-		return new Function<Object, Iterable>() {
-
-			@Override
-			public Iterable apply(final Object input) {
-				final Object o = function(scope, filter).apply(input);
-				if ( o instanceof Iterable ) { return (Iterable) o; }
-				return ImmutableList.of(o);
-			}
-
-		};
-
 	}
 
 	public static Predicate withPredicate(final IScope scope, final IExpression filter) {

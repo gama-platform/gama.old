@@ -828,11 +828,37 @@ public class Containers {
 		if ( type.isContainer() ) {
 			type = type.getContentType();
 		}
-		Iterable source = nullCheck(scope, original).iterable(scope);
-		Function<Object, Iterable> function = Guava.iterableFunction(scope, filter);
-		Iterable<? extends Iterable<? extends Object>> inputs = Iterables.transform(source, function);
-		Iterable<Object> result = Iterables.concat(inputs);
+
+		IList collection = collect(scope, original, filter);
+		Iterable<? extends Iterable<? extends Object>> inputs =
+			Iterables.transform(collection, Guava.transformToIterables);
+
+		// Iterable source = nullCheck(scope, original).iterable(scope);
+		// Function<Object, Iterable> function = Guava.function(scope, filter);
+		// Iterable<? extends Iterable<? extends Object>> inputs = Iterables.transform(source, function);
+		Iterable result = Iterables.concat(inputs);
 		return GamaListFactory.create(scope, type, result);
+	}
+
+	@operator(value = { "collect" },
+		content_type = ITypeProvider.SECOND_TYPE,
+		iterator = true,
+		category = IOperatorCategory.CONTAINER)
+	@doc(value = "returns a new list, in which each element is the evaluation of the right-hand operand.",
+		comment = "collect is similar to accumulate except that accumulate always produces flat lists if the right-hand operand returns a list." +
+			"In addition, collect can be applied to any container.",
+		usages = { @usage("if the left-hand operand is nil, collect throws an error") },
+		examples = { @example(value = "[1,2,4] collect (each *2)", equals = "[2,4,8]"),
+			@example(value = "[1,2,4] collect ([2,4])", equals = "[[2,4],[2,4],[2,4]]"),
+			@example(value = "[1::2, 3::4, 5::6] collect (each + 2)", equals = "[4,6,8]"),
+			@example(value = "(list(node) collect (node(each).location.x * 2)",
+				equals = "the list of nodes with their x multiplied by 2",
+				isExecutable = false) },
+		see = { "accumulate" })
+	public static IList collect(final IScope scope, final IContainer original, final IExpression filter) {
+		IList list = GamaListFactory.create(scope, filter.getType(),
+			Iterables.transform(nullCheck(scope, original).iterable(scope), Guava.function(scope, filter)));
+		return list;
 	}
 
 	@operator(value = { "interleave" },
@@ -928,27 +954,6 @@ public class Containers {
 		Map result = Maps.transformValues(Maps.uniqueIndex(nullCheck(scope, original).iterable(scope), keyFunction),
 			valueFunction);
 		return GamaMapFactory.createWithoutCasting(pair.arg(0).getType(), pair.arg(1).getType(), result);
-	}
-
-	@operator(value = { "collect" },
-		content_type = ITypeProvider.SECOND_TYPE,
-		iterator = true,
-		category = IOperatorCategory.CONTAINER)
-	@doc(value = "returns a new list, in which each element is the evaluation of the right-hand operand.",
-		comment = "collect is similar to accumulate except that accumulate always produces flat lists if the right-hand operand returns a list." +
-			"In addition, collect can be applied to any container.",
-		usages = { @usage("if the left-hand operand is nil, collect throws an error") },
-		examples = { @example(value = "[1,2,4] collect (each *2)", equals = "[2,4,8]"),
-			@example(value = "[1,2,4] collect ([2,4])", equals = "[[2,4],[2,4],[2,4]]"),
-			@example(value = "[1::2, 3::4, 5::6] collect (each + 2)", equals = "[4,6,8]"),
-			@example(value = "(list(node) collect (node(each).location.x * 2)",
-				equals = "the list of nodes with their x multiplied by 2",
-				isExecutable = false) },
-		see = { "accumulate" })
-	public static IList collect(final IScope scope, final IContainer original, final IExpression filter) {
-		IList list = GamaListFactory.create(scope, filter.getType(),
-			Iterables.transform(nullCheck(scope, original).iterable(scope), Guava.function(scope, filter)));
-		return list;
 	}
 
 	@operator(value = IKeyword.PLUS,
