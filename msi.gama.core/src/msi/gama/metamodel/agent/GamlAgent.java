@@ -164,9 +164,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 * Callback Actions
 	 *
 	 */
-	static Object[] callbackResult = new Object[1];
 
 	protected Object executeCallbackAction(final IScope scope, final IStatement action) {
+		Object[] callbackResult = new Object[1];
 		scope.execute(action, this, null, callbackResult);
 		return callbackResult[0];
 	}

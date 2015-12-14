@@ -11,17 +11,18 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.IStatement.Breakable;
-import msi.gaml.statements.LoopStatement.LoopSerializer;
+import msi.gaml.statements.LoopStatement.*;
 import msi.gaml.types.IType;
 
 // A group of commands that can be executed repeatedly.
@@ -87,7 +88,104 @@ import msi.gaml.types.IType;
 				@example(value = "     }"),
 				@example(value = "} // every  agent of the list is asked to do something") }) })
 @serializer(LoopSerializer.class)
+@validator(LoopValidator.class)
 public class LoopStatement extends AbstractStatementSequence implements Breakable {
+
+	public static class LoopValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription description) {
+			IExpressionDescription times = description.getFacets().get(TIMES);
+			IExpressionDescription over = description.getFacets().get(OVER);
+			IExpressionDescription from = description.getFacets().get(FROM);
+			IExpressionDescription to = description.getFacets().get(TO);
+			IExpressionDescription step = description.getFacets().get(STEP);
+			IExpressionDescription cond = description.getFacets().get(WHILE);
+			IExpressionDescription name = description.getFacets().get(NAME);
+			if ( name != null && name.isConstant() && name.toString().startsWith(INTERNAL) ) {
+				name = null;
+			}
+
+			if ( times != null ) {
+				if ( over != null ) {
+					description.error("'times' and 'over' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES,
+						OVER);
+					return;
+				}
+				if ( cond != null ) {
+					description.error("'times' and 'while' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES,
+						WHILE);
+					return;
+				}
+				if ( from != null ) {
+					description.error("'times' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES,
+						FROM);
+					return;
+				}
+				if ( to != null ) {
+					description.error("'times' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES, TO);
+					return;
+				}
+				if ( name != null ) {
+					description.error("No variable should be declared", IGamlIssue.UNUSED, TIMES, NAME);
+					return;
+				}
+			} else if ( over != null ) {
+				if ( cond != null ) {
+					description.error("'over' and 'while' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER,
+						WHILE);
+					return;
+				}
+				if ( from != null ) {
+					description.error("'over' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER,
+						FROM);
+					return;
+				}
+				if ( to != null ) {
+					description.error("'over' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER, TO);
+					return;
+				}
+				if ( name == null ) {
+					description.error("No variable has been declared", IGamlIssue.MISSING_NAME, OVER);
+					return;
+				}
+			} else if ( cond != null ) {
+				if ( from != null ) {
+					description.error("'while' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, WHILE,
+						FROM);
+					return;
+				}
+				if ( to != null ) {
+					description.error("'while' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, WHILE, TO);
+					return;
+				}
+				if ( name != null ) {
+					description.error("No variable should be declared", IGamlIssue.UNUSED, WHILE, NAME);
+					return;
+				}
+			} else if ( from != null ) {
+				if ( name == null ) {
+					description.error("No variable has been declared", IGamlIssue.MISSING_NAME, NAME);
+					return;
+				}
+				if ( to == null ) {
+					description.error("'loop' is missing the 'to:' facet", IGamlIssue.MISSING_FACET, FROM);
+					return;
+				}
+			} else if ( to != null ) {
+				description.error("'loop' is missing the 'from:' facet", IGamlIssue.MISSING_FACET, TO);
+				return;
+			} else {
+				description.error("Missing the definitions of the loop to perform", IGamlIssue.MISSING_FACET);
+				return;
+			}
+		}
+
+	}
 
 	public static class LoopSerializer extends SymbolSerializer {
 

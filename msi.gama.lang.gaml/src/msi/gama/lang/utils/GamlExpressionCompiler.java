@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlExpressionCompiler.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.utils;
 
@@ -16,6 +16,12 @@ import static msi.gaml.expressions.IExpressionFactory.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.*;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.xtext.diagnostics.Diagnostic;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.model.IModel;
@@ -31,12 +37,6 @@ import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.*;
 import msi.gaml.types.*;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.*;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.xtext.diagnostics.Diagnostic;
-import org.eclipse.xtext.resource.XtextResourceSet;
 
 /**
  * The Class ExpressionParser.
@@ -44,7 +44,23 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 
 public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements IExpressionCompiler<Expression> {
 
-	private IVarExpression each_expr;
+	private class IteratorPair {
+
+		/**
+		 * @param key
+		 * @param value
+		 */
+		public IteratorPair(final String key, final IVarExpression value) {
+			super();
+			this.key = key;
+			this.value = value;
+		}
+
+		String key;
+		IVarExpression value;
+	}
+
+	private final Deque<IteratorPair> iteratorContexts = new LinkedList();
 	private IExpression world;
 	// To disable reentrant parsing (Issue 782)
 	private IExpressionDescription currentExpressionDescription;
@@ -72,7 +88,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public void reset() {
 		world = null;
-		setEach_Expr(null);
+		iteratorContexts.clear();
 		setCurrentExpressionDescription(null);
 		// synthetic = false;
 	}
@@ -279,18 +295,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// It is not an description so it must be an operator. We emit an error and stop compiling if it
 		// is not
 		if ( !OPERATORS.containsKey(op) ) {
-			getContext()
-				.error("Unknown action or operator: " + op, IGamlIssue.UNKNOWN_ACTION, e2.eContainer(), op);
+			getContext().error("Unknown action or operator: " + op, IGamlIssue.UNKNOWN_ACTION, e2.eContainer(), op);
 			return null;
 		}
 
 		// if the operator is an iterator, we must initialize the context sensitive "each" variable
 		if ( ITERATORS.contains(op) ) {
-
 			IType t = left.getType().getContentType();
-			// IType ct = t.getContentType();
-			// IType kt = t.getKeyType();
-			setEach_Expr(new EachExpression(t /* ct, kt */));
+			setEach_Expr(op, new EachExpression(t /* ct, kt */));
 		}
 		// If the right-hand expression is a list of expression, then we have a n-ary operator
 		if ( e2 instanceof ExpressionList ) {
@@ -310,6 +322,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		// Otherwise we can now safely compile the right-hand expression
 		IExpression right = compile(e2);
+		// We make sure to remove any mention of the each expression after the right member has been compiled
+		if ( ITERATORS.contains(op) ) {
+			iteratorContexts.pop();
+		}
 		// and return the binary expression
 		return factory.createOperator(op, getContext(), e2.eContainer(), left, right);
 
@@ -668,9 +684,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				IType elementType = e.getType();
 				if ( keyType != Types.NO_TYPE && !keyType.isAssignableFrom(e.getType()) ) {
 					if ( !(isMatrix && elementType.id() == IType.INT && size > 1) ) {
-						getContext().warning(
-							"a " + contType.toString() + " cannot be accessed using a " + elementType.toString() +
-								" index", IGamlIssue.WRONG_TYPE, eExpr);
+						getContext().warning("a " + contType.toString() + " cannot be accessed using a " +
+							elementType.toString() + " index", IGamlIssue.WRONG_TYPE, eExpr);
 					}
 				}
 				result.add(e);
@@ -858,7 +873,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if ( varName.equals(USER_LOCATION) ) { return factory.createVar(USER_LOCATION, Types.POINT, true,
 			IVarExpression.TEMP, getContext()); }
 		// HACK
-		if ( varName.equals(EACH) ) { return getEachExpr(); }
+		if ( varName.equals(EACH) ) { return getEachExpr(object); }
 		if ( varName.equals(NULL) ) { return IExpressionFactory.NIL_EXPR; }
 		if ( varName.equals(SELF) ) {
 			IDescription temp_sd = getContext().getSpeciesContext();
@@ -870,7 +885,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return factory.createVar(SELF, tt, true, IVarExpression.SELF, null);
 		}
 		if ( varName.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
-		if ( isSpeciesName(varName) ) { return factory.createConst(varName, GamaType.from(getSpeciesContext(varName))); }
+		if ( isSpeciesName(
+			varName) ) { return factory.createConst(varName, GamaType.from(getSpeciesContext(varName))); }
 		IDescription temp_sd = getContext() == null ? null : getContext().getDescriptionDeclaringVar(varName);
 
 		if ( temp_sd != null ) {
@@ -880,10 +896,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					SpeciesDescription found_sd = (SpeciesDescription) temp_sd;
 
 					if ( remote_sd != temp_sd && !remote_sd.isBuiltIn() && !remote_sd.hasMacroSpecies(found_sd) ) {
-						getContext().error(
-							"The variable " + varName + " is not accessible in this context (" + remote_sd.getName() +
-								"), but in the context of " + found_sd.getName() +
-								". It should be preceded by 'myself.'", IGamlIssue.UNKNOWN_VAR, object, varName);
+						getContext().error("The variable " + varName + " is not accessible in this context (" +
+							remote_sd.getName() + "), but in the context of " + found_sd.getName() +
+							". It should be preceded by 'myself.'", IGamlIssue.UNKNOWN_VAR, object, varName);
 					}
 				}
 			}
@@ -902,11 +917,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 			if ( getContext().getKeyword().equals(DRAW) ) {
 				if ( DrawStatement.SHAPES.keySet().contains(varName) ) {
-					getContext()
-						.warning(
-							"The symbol " + varName +
-								" is not used anymore in draw. Please use geometries instead, e.g. '" + varName +
-								"(size)'", IGamlIssue.UNKNOWN_KEYWORD, object, varName);
+					getContext().warning(
+						"The symbol " + varName +
+							" is not used anymore in draw. Please use geometries instead, e.g. '" + varName + "(size)'",
+						IGamlIssue.UNKNOWN_KEYWORD, object, varName);
 					return factory.createConst(varName + "__deprecated", Types.STRING);
 				}
 			}
@@ -970,7 +984,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			EObject e = resource.getContents().get(0);
 			if ( e instanceof StringEvaluator ) {
 				result = ((StringEvaluator) e).getExpr();
-				// System.out.println("   		-> Additional compilation of " + string + " as " + result);
+				// System.out.println(" -> Additional compilation of " + string + " as " + result);
 			}
 		} else {
 			Resource.Diagnostic d = resource.getErrors().get(0);
@@ -1039,7 +1053,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			GamlJavaValidator validator = new GamlJavaValidator();
 			List<GamlCompilationError> errors = new ArrayList();
 			lastModel =
-			/* GamlModelBuilder.getInstance() */new GamlModelBuilder().buildModelDescription(r.getURI(), errors);
+				/* GamlModelBuilder.getInstance() */new GamlModelBuilder().buildModelDescription(r.getURI(), errors);
 			if ( !r.getErrors().isEmpty() ) {
 				lastModel = null;
 			}
@@ -1072,12 +1086,17 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	// end-hqnghi
 	//
 
-	public IVarExpression getEachExpr() {
-		return each_expr;
+	public IVarExpression getEachExpr(final EObject object) {
+		IteratorPair p = iteratorContexts.peek();
+		if ( p == null ) {
+			getContext().error("'each' is not accessible in this context", IGamlIssue.UNKNOWN_VAR, object);
+			return null;
+		}
+		return p.value;
 	}
 
-	public void setEach_Expr(final IVarExpression each_expr) {
-		this.each_expr = each_expr;
+	public void setEach_Expr(final String iterator, final IVarExpression each_expr) {
+		iteratorContexts.push(new IteratorPair(iterator, each_expr));
 	}
 
 	private IExpressionDescription getCurrentExpressionDescription() {
