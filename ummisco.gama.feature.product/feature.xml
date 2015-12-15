@@ -32,10 +32,4 @@
          version="0.0.0"
          optional="true"/>
 
-   <includes
-         id="ummisco.gama.feature.opengl.jogl1"
-         version="0.0.0"
-         optional="true"
-         search-location="self"/>
-
 </feature>
