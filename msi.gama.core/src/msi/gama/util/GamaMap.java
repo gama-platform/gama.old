@@ -1,27 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaMap.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util;
 
 import java.util.*;
+import com.google.common.base.Objects;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
 import msi.gaml.types.*;
-import com.google.common.base.Objects;
 
 /**
  * The Class GamaMap.
@@ -41,7 +39,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	// this(10, key, content);
 	// }
 
-	/*protected*/public GamaMap(final int capacity, final IType key, final IType content) {
+	/* protected */public GamaMap(final int capacity, final IType key, final IType content) {
 		super(capacity);
 		type = Types.MAP.of(key, content);
 	}
@@ -183,7 +181,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	 * @see msi.gama.util.IContainer#addAll(msi.gama.runtime.IScope, msi.gama.util.IContainer)
 	 */
 	@Override
-	public void addValues(final IScope scope, final IContainer/* <?, GamaPair<K, V>> */values) {
+	public void addValues(final IScope scope, final IContainer/* <?, GamaPair<K, V>> */ values) {
 		// if ( values instanceof GamaMap ) {
 		// putAll((GamaMap) values);
 		// } else {
@@ -457,6 +455,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 
 	/**
 	 * WARNING: exposes raw internal values
+	 * WARNING The values are not ordered as they would be when accessing the map (cause of Issue #1335)
 	 * Never use this method unless you are sure of what you are doing
 	 */
 	public Object[] getRawValues() {

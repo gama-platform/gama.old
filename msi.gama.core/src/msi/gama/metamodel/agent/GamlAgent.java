@@ -193,7 +193,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	protected Object stepSubPopulations(final IScope scope) {
 		// AD: dont use getMicroPopulations() so that no temp array is created
 		// Object[] hash = attributes._set;
-		for ( Object pop : attributes.getRawValues() /* getMicroPopulations() */ ) {
+		// System.out.println("RAW VALUES OF ATTRIBUTES:" + Arrays.toString(attributes.getRawValues()));
+		// WARNING getRawValues() replaced by values() to fix Issue #1335. However, performances need to be evaluated
+		for ( Object pop : attributes.values() /* getRawValues() getMicroPopulations() */ ) {
 			if ( pop instanceof IPopulation ) {
 				scope.step((IPopulation) pop);
 			}
@@ -427,6 +429,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public void initializeMicroPopulation(final IScope scope, final String name) {
 		final ISpecies microSpec = getModel().getSpecies(name);
 		final IPopulation microPop = GamaPopulation.createPopulation(scope, this, microSpec);
+		System.out.println("Micro-pop added to attributes: " + name);
 		attributes.put(microSpec.getName(), microPop);
 		microPop.initializeFor(scope);
 	}
@@ -615,7 +618,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IContainer<?, IAgent> getMembers(final IScope scope) {
 		if ( dead() ) { return GamaListFactory.EMPTY_LIST; }
 		MetaPopulation mp = new MetaPopulation();
-		for ( final Object pop : attributes.getRawValues() ) {
+		for ( final Object pop : attributes.values() ) {
 			if ( pop instanceof IPopulation && ((IPopulation) pop).size() > 0 ) {
 				mp.addPopulation((IPopulation) pop);
 			}

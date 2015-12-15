@@ -1,32 +1,32 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ModelDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import java.io.File;
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class ModelDescription extends SpeciesDescription {
 
@@ -88,9 +88,8 @@ public class ModelDescription extends SpeciesDescription {
 		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
 		final ErrorCollector collector, final List<String> imports) {
 		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets);
-		types =
-			new TypesManager(parent instanceof ModelDescription ? ((ModelDescription) parent).types
-				: Types.builtInTypes);
+		types = new TypesManager(
+			parent instanceof ModelDescription ? ((ModelDescription) parent).types : Types.builtInTypes);
 		modelFilePath = modelPath;
 		modelFolderPath = new File(modelPath).getParent();
 		modelProjectPath = projectPath;
@@ -195,7 +194,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	/**
 	 * Gets the model file name.
-	 * 
+	 *
 	 * @return the model file name
 	 */
 	public String getModelFilePath() {
