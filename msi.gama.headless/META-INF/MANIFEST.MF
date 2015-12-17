@@ -15,7 +15,6 @@ Require-Bundle: com.ibm.icu;bundle-version="4.4.2",
  ummisco.gaml.extensions.maths;bundle-version="1.0.0",
  irit.gaml.extensions.database;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: 
  msi.gama.headless.classLoader,
  msi.gama.headless.common,

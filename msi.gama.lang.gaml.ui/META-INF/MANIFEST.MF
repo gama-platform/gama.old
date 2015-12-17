@@ -23,7 +23,6 @@ Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
 Import-Package: org.apache.commons.lang;version="2.6.0",
  org.apache.log4j,
  org.eclipse.xtext.ide.editor.syntaxcoloring
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: msi.gama.lang.gaml.ui,
  msi.gama.lang.gaml.ui.contentassist,
  msi.gama.lang.gaml.ui.contentassist.antlr,

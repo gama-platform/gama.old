@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GAMA Processor
 Bundle-SymbolicName: msi.gama.processor;singleton:=true
 Bundle-Version: 1.4
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: MSI
 Export-Package: msi.gama.precompiler;
   uses:="javax.annotation.processing,

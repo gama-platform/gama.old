@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'OpenGIS.java', in plugin 'dream.gama.opengis', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package dream.gama.opengis.operators;
 
@@ -16,12 +16,6 @@ import java.io.*;
 import java.net.*;
 import java.util.List;
 import javax.imageio.ImageIO;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.runtime.IScope;
-import msi.gama.util.*;
-import msi.gama.util.file.*;
-import msi.gaml.types.Types;
 import org.geotools.data.wms.WebMapServer;
 import org.geotools.data.wms.response.GetMapResponse;
 import org.geotools.swing.wms.WMSLayerChooser;
@@ -30,6 +24,11 @@ import org.geotools.xml.gml.GMLComplexTypes;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.xml.sax.*;
 import org.xml.sax.helpers.XMLReaderFactory;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.runtime.IScope;
+import msi.gama.util.*;
+import msi.gama.util.file.*;
+import msi.gaml.types.Types;
 
 public class OpenGIS {
 
@@ -47,6 +46,7 @@ public class OpenGIS {
 		try {
 			url = new URL(slink);
 			WebMapServer wms = new WebMapServer(url);
+			// WARNING: Use of SWING objects is not a good idea (it introduces problems)
 			List<org.geotools.data.ows.Layer> wmsLayers = WMSLayerChooser.showSelectLayer(wms);
 			org.geotools.data.wms.request.GetMapRequest request = wms.createGetMapRequest();
 
@@ -145,37 +145,37 @@ public class OpenGIS {
 
 		/*
 		 * Object types[] = ft.getTypes().toArray();
-		 * 
+		 *
 		 * try{
 		 * //create the parser with the gml 2.0 configuration
 		 * org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
 		 * org.geotools.xml.Parser parser = new org.geotools.xml.Parser( configuration );
-		 * 
+		 *
 		 * URL gmlURL = new java.net.URL(gmlLink);
-		 * 
+		 *
 		 * InputStream stream = null;
 		 * stream = gmlURL.openStream();
 		 * org.geotools.GML gml = new org.geotools.GML(GML.Version.GML2);
 		 * SimpleFeatureIterator iter = gml.decodeFeatureIterator(stream);
-		 * 
+		 *
 		 * while (iter.hasNext()) {
-		 * 
+		 *
 		 * GamaList<Object> row = new GamaList<Object>();
 		 * final SimpleFeature feature = iter.next();
-		 * 
+		 *
 		 * for(int cnt = 0; cnt < ft.getTypes().size(); cnt++)
 		 * {
 		 * Object obj=feature.getAttribute(ft.getTypes().get(cnt).getName());
-		 * 
+		 *
 		 * if(obj instanceof MultiPolygon){
 		 * Geometry g = ((MultiPolygon)obj).getGeometryN(0);
 		 * row.add(new GamaGisGeometry(g, feature));
-		 * 
+		 *
 		 * // Geometry g = (MultiPolygon) obj;
 		 * // g = scope.getSimulationScope().getProjectionFactory().getWorld().transform(g);
 		 * // row.add(g);
 		 * }else{
-		 * 
+		 *
 		 * row.add(obj);
 		 * }
 		 * }
@@ -192,7 +192,8 @@ public class OpenGIS {
 
 	@operator(value = "read_json_rest", can_be_const = true)
 	@doc(value = "REST: Read data from RESTService")
-	public static IList<IList<Object>> read_json_rest(final IScope scope, final String fakeFile, final String restLink) {
+	public static IList<IList<Object>> read_json_rest(final IScope scope, final String fakeFile,
+		final String restLink) {
 		IList<IList<Object>> featureList = GamaListFactory.create(Types.LIST);
 
 		return featureList;
