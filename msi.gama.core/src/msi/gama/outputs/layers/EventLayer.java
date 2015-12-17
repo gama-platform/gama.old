@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'EventLayer.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -83,7 +83,7 @@ public class EventLayer extends AbstractLayer {
 	// We explicitely translate by the origin of the surface
 	@Override
 	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
-		return super.getModelCoordinatesFrom(xOnScreen/* - g.getOriginX(), */, yOnScreen /*- g.getOriginY()*/, g);
+		return g.getModelCoordinates();
 	}
 
 	private class EventListener implements ILayerMouseListener {

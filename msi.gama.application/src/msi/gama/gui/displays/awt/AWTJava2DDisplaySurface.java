@@ -130,6 +130,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 	public AWTJava2DDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
 		output.setSurface(this);
+		setDisplayScope(output.getScope().copy());
 		data = output.getData();
 		data.addListener(this);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
