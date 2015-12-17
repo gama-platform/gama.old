@@ -547,7 +547,7 @@ species people skills: [advanced_driving] control: simple_bdi {
 //	}
 	
 	perceive target:catastrophe in: 100{
-		focus var: location agent: myself;
+		focus var: location /*agent: myself*/;
 		ask myself{
 			do clear_intentions();
 			do clear_desires();

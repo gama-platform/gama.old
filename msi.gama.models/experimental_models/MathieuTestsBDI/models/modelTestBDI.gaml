@@ -11,7 +11,7 @@ global {
 	init {
 		create fireArea number:100;
 		create waterArea number:1;
-		create helicopter number: 1;
+		create helicopter number: 2;
 	}
 	
 	reflex stop when: length(fireArea) = 0 {
@@ -32,7 +32,7 @@ species helicopter skills: [moving] control: simple_bdi{
 	//Definition of the variables featured in the BDI architecture.
 	float plan_persistence <- 1.0;
 	float intention_persistence <- 1.0;
-	bool probabilistic_choice <- true;
+	bool probabilistic_choice <- false;
 	
 	//Initialisation of the agent. At the begining, the agent just has the desire to patrol.
 	init {
@@ -55,7 +55,7 @@ species helicopter skills: [moving] control: simple_bdi{
 	
 	//The helicopter perceive the fires at a certain distance. It just record the location of the fire it obsrves. When it sees a fire, it stops it's intention of patroling.
 	perceive target:fireArea in: 10{
-		focus var:location agent:myself priority:5;
+		focus var:location /*agent:myself*/ priority:11;
 		ask myself{
 			do remove_intention(patrol_desire, true);
 		}
