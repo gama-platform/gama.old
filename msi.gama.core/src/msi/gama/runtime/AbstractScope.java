@@ -847,4 +847,10 @@ public abstract class AbstractScope implements IScope {
 		return root.getClock();
 	}
 
+	@Override
+	public IAgent[] getAgentsStack() {
+		IAgent[] result = new IAgent[agents.size()];
+		return agents.toArray(result);
+	}
+
 }

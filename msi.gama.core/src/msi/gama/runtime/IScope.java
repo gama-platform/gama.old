@@ -260,4 +260,6 @@ public interface IScope {
 
 	public boolean reportErrors();
 
+	public IAgent[] getAgentsStack();
+
 }

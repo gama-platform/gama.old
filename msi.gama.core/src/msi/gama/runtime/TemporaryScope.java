@@ -563,4 +563,13 @@ class TemporaryScope implements IScope {
 		return reportErrors;
 	}
 
+	/**
+	 * Method getAgentsStack()
+	 * @see msi.gama.runtime.IScope#getAgentsStack()
+	 */
+	@Override
+	public IAgent[] getAgentsStack() {
+		return new IAgent[0];
+	}
+
 }
