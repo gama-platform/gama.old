@@ -199,7 +199,7 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 					" compilation errors");
 				return;
 			}
-			GuiUtils.openSimulationPerspective();
+			GuiUtils.openSimulationPerspective(true);
 			GAMA.runGuiExperiment(exp, model);
 		}
 	}

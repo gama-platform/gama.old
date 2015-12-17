@@ -14,12 +14,11 @@ package msi.gama.gui.swt;
 import java.util.Arrays;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.application.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
-import msi.gama.common.interfaces.IGamaView;
-import msi.gama.gui.swt.perspectives.*;
+import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
 
@@ -35,12 +34,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(final IWorkbenchWindowConfigurer configurer) {
 		return new ApplicationWorkbenchWindowAdvisor(this, configurer);
 	}
-
-	// @Override
-	// public void eventLoopIdle(final Display display) {
-	// openDocProcessor.openFiles();
-	// super.eventLoopIdle(display);
-	// }
 
 	@Override
 	public void initialize(final IWorkbenchConfigurer configurer) {
@@ -158,39 +151,13 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public boolean preShutdown() {
 		try {
-			GAMA.shutdownAllExperiments();
+			GAMA.closeAllExperiments(false);
 			// end-hqnghi
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		/* Close all views created in simulation perspective */
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		String idCurrentPerspective = window.getActivePage().getPerspective().getId();
-		try {
-			if ( idCurrentPerspective.equals(SimulationPerspective.ID) ) {
-				closeSimulationViews();
-				window.getWorkbench().showPerspective(ModelingPerspective.ID, window);
-			} else {
-				window.getWorkbench().showPerspective(SimulationPerspective.ID, window);
-				closeSimulationViews();
-				window.getWorkbench().showPerspective(ModelingPerspective.ID, window);
-			}
-		} catch (WorkbenchException e) {
-			e.printStackTrace();
-		}
+
 		return super.preShutdown();
+
 	}
-
-	public static void closeSimulationViews() {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IViewReference[] views = page.getViewReferences();
-
-		for ( IViewReference view : views ) {
-			IViewPart part = view.getView(false);
-			if ( part instanceof IGamaView ) {
-				((IGamaView) part).close();
-			}
-		}
-	}
-
 }

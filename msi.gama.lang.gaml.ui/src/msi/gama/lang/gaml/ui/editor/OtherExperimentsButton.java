@@ -93,7 +93,7 @@ public class OtherExperimentsButton {
 
 				});
 				if ( model == null ) { return; }
-				GuiUtils.openSimulationPerspective();
+				GuiUtils.openSimulationPerspective(true);
 				GAMA.runGuiExperiment(exp, model);
 			}
 		}

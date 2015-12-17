@@ -1,26 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SpeedContributionItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
-import msi.gama.common.interfaces.ISpeedDisplayer;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gaml.operators.Comparison;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
+import msi.gama.common.interfaces.ISpeedDisplayer;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 
-public class SpeedContributionItem extends WorkbenchWindowControlContribution implements ISpeedDisplayer {
+public class SpeedContributionItem extends WorkbenchWindowControlContribution implements ISpeedDisplayer, IPositionChangeListener, IToolTipProvider {
 
 	public final static int widthSize = 100;
 	public final static int heightSize = 16;
@@ -36,9 +35,9 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 		thumb_image = thumb;
 		sliderColor = color;
 		this.popupColor = popupColor;
-		this.tip = tip;
+		this.tip = tip == null ? this : tip;
 		this.init = init;
-		this.listener = listener;
+		this.listener = listener == null ? this : listener;
 		// SwtGui.setSpeedControl(this);
 	}
 
@@ -64,8 +63,8 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 		slider.setTooltipInterperter(tip);
 		slider.setLayoutData(data);
 		slider.setSize(widthSize, heightSize);
-		slider.specifyHeight(heightSize); // fix the problem of wrong position 
-		// for the tooltip. Certainly not the best way but it does the trick 
+		slider.specifyHeight(heightSize); // fix the problem of wrong position
+		// for the tooltip. Certainly not the best way but it does the trick
 		slider.addPositionChangeListener(listener);
 		slider.setPopupBackground(popupColor);
 		slider.updateSlider(getInitialValue(), false);
@@ -84,10 +83,26 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 	public void setInit(final double i, final boolean notify) {
 		if ( slider == null ) { return; }
 		if ( slider.isDisposed() ) { return; }
-		if ( Comparison.different(i, slider.getCurrentPosition()) ) {
-			slider.updateSlider(i, notify);
-		}
+		// if ( Comparison.different(i, slider.getCurrentPosition()) ) {
+		slider.updateSlider(i, notify);
+		// }
 
 	}
+
+	/**
+	 * Method getToolTipText()
+	 * @see msi.gama.gui.swt.controls.IToolTipProvider#getToolTipText(double)
+	 */
+	@Override
+	public String getToolTipText(final double value) {
+		return "";
+	}
+
+	/**
+	 * Method positionChanged()
+	 * @see msi.gama.gui.swt.controls.IPositionChangeListener#positionChanged(double)
+	 */
+	@Override
+	public void positionChanged(final double position) {}
 
 }

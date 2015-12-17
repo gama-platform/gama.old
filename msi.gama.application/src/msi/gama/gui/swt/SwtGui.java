@@ -41,6 +41,7 @@ import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
+import msi.gama.gui.swt.perspectives.SimulationPerspective;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.*;
@@ -412,27 +413,6 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	// @Override
-	// public void updateViewOf(final IDisplayOutput output) {
-	// if ( views != null ) {
-	// views.update(output);
-	// }
-	// }
-
-	//
-	// public void setViewRateOf(final IDisplayOutput output, final int refresh) {
-	// if ( views != null ) {
-	// views.refresh(output, refresh);
-	// }
-	// }
-	//
-	// @Override
-	// public void closeViewOf(final IDisplayOutput output) {
-	// if ( views != null ) {
-	// views.close(output);
-	// }
-	// }
-
 	private Object internalShowView(final String viewId, final String secondaryId, final int code) {
 		final Object[] result = new Object[1];
 		run(new Runnable() {
@@ -453,7 +433,7 @@ public class SwtGui implements IGui {
 		return result[0];
 	}
 
-	public static final IEditorInput input = new IEditorInput() {
+	private static final IEditorInput input = new IEditorInput() {
 
 		@Override
 		public Object getAdapter(final Class adapter) {
@@ -574,22 +554,6 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	// public void resetMonitorView() {
-	// run(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// final IWorkbenchPage activePage = getPage();
-	// if ( activePage == null ) { return; } // Closing the workbench
-	// final IWorkbenchPart part = activePage.findView(MonitorView.ID);
-	// if ( part != null && part instanceof MonitorView && activePage.isPartVisible(part) ) {
-	// ((MonitorView) part).reset();
-	// }
-	// }
-	// });
-	//
-	// }
-
 	@Override
 	public void showConsoleView() {
 		console = (ConsoleView) showView(ConsoleView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
@@ -638,10 +602,6 @@ public class SwtGui implements IGui {
 				surfaces.add(view.getDisplaySurface());
 				view.fixSize();
 			}
-			// if ( partRef.getId().equals("org.eclipse.ui.views.ContentOutline") ) {
-			// IWorkbenchPart part = partRef.getPart(false);
-			// part.setFocus();
-			// }
 
 		}
 
@@ -785,11 +745,11 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public final boolean openModelingPerspective() {
-		return openPerspective(PERSPECTIVE_MODELING_ID);
+	public final boolean openModelingPerspective(final boolean immediately) {
+		return openPerspective(PERSPECTIVE_MODELING_ID, immediately);
 	}
 
-	public final boolean openPerspective(final String perspectiveId) {
+	public final boolean openPerspective(final String perspectiveId, final boolean immediately) {
 		loadPerspectives();
 		final IWorkbenchPage activePage = getPage(perspectiveId);
 		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
@@ -798,7 +758,7 @@ public class SwtGui implements IGui {
 
 		if ( currentDescriptor != null && currentDescriptor.equals(descriptor) ) { return true; }
 		if ( descriptor != null ) {
-			run(new Runnable() {
+			Runnable r = new Runnable() {
 
 				@Override
 				public void run() {
@@ -806,7 +766,12 @@ public class SwtGui implements IGui {
 					debug("Perspective " + perspectiveId + " open ");
 
 				}
-			});
+			};
+			if ( immediately ) {
+				run(r);
+			} else {
+				asyncRun(r);
+			}
 			return true;
 		}
 		return false;
@@ -851,12 +816,12 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public final boolean openSimulationPerspective() {
-		return openPerspective(PERSPECTIVE_SIMULATION_ID);
+	public final boolean openSimulationPerspective(final boolean immediately) {
+		return openPerspective(PERSPECTIVE_SIMULATION_ID, immediately);
 	}
 
-	public final boolean openBatchPerspective() {
-		return openPerspective(PERSPECTIVE_HPC_ID);
+	public final boolean openBatchPerspective(final boolean immediately) {
+		return openPerspective(PERSPECTIVE_HPC_ID, immediately);
 	}
 
 	String currentPerspectiveId = null;
@@ -944,13 +909,13 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void togglePerspective() {
+	public void togglePerspective(final boolean immediately) {
 		if ( isSimulationPerspective() ) {
-			openModelingPerspective();
+			openModelingPerspective(immediately);
 			// } else if ( isModelingPerspective() ) {
 			// openHeadlessPerspective();
 		} else {
-			openSimulationPerspective();
+			openSimulationPerspective(immediately);
 		}
 	}
 
@@ -1431,6 +1396,48 @@ public class SwtGui implements IGui {
 	@Override
 	public IFileMetaDataProvider getMetaDataProvider() {
 		return FileMetaDataProvider.getInstance();
+	}
+
+	/**
+	 * Method wipeExperiments()
+	 * @see msi.gama.common.interfaces.IGui#wipeExperiments()
+	 */
+	@Override
+	public void wipeExperiments() {
+		/* Close all views created in simulation perspective */
+
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		String idCurrentPerspective = window.getActivePage().getPerspective().getId();
+		try {
+			if ( idCurrentPerspective.equals(SimulationPerspective.ID) ) {
+				closeSimulationViews(true);
+			} else {
+				window.getWorkbench().showPerspective(SimulationPerspective.ID, window);
+				closeSimulationViews(true);
+			}
+		} catch (WorkbenchException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void closeSimulationViews(final boolean openModelingPerspective) {
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IViewReference[] views = page.getViewReferences();
+
+		for ( IViewReference view : views ) {
+			IViewPart part = view.getView(false);
+			if ( part instanceof IGamaView ) {
+				((IGamaView) part).close();
+
+			}
+		}
+		if ( openModelingPerspective ) {
+
+			openModelingPerspective(false);
+
+		}
+		setStatus("No simulation running", IGui.NEUTRAL);
 	}
 
 }

@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Strings;
@@ -26,7 +25,7 @@ import msi.gaml.operators.Strings;
 public class SimulationClock {
 
 	// Minimum duration of a cycle in seconds
-	private static double CYCLE_DELAY = 0d;
+	// private double currentCycleDelay = 0d;
 
 	/**
 	 * OLD
@@ -79,6 +78,12 @@ public class SimulationClock {
 	 * Whether to display the number of cycles or a more readable information (in model time)
 	 */
 	private boolean displayCycles = true;
+
+	private final SimulationAgent simulation;
+
+	public SimulationClock(final SimulationAgent sim) {
+		simulation = sim;
+	}
 
 	/**
 	 * @throws GamaRuntimeException
@@ -254,6 +259,10 @@ public class SimulationClock {
 
 	public static class ExperimentClock extends SimulationClock {
 
+		public ExperimentClock() {
+			super(null);
+		}
+
 		@Override
 		public void waitDelay() {}
 		//
@@ -267,17 +276,21 @@ public class SimulationClock {
 		// }
 	}
 
-	public static double getDelayInMilliseconds() {
-		return CYCLE_DELAY * 1000;
+	public double getDelayInMilliseconds() {
+		if ( simulation == null ) { return 0.0; }
+		return simulation.getExperiment().getMinimumDuration() * 1000;
+		// return currentCycleDelay * 1000;
 	}
 
-	public static void setDelayFromUI(final double newDelayInMilliseconds) {
-		CYCLE_DELAY = newDelayInMilliseconds / 1000;
-	}
+	// public void setDelayFromUI(final double newDelayInMilliseconds) {
+	// if ( simulation == null ) { return; }
+	// simulation.getExperiment().setMinimumDuration(newDelayInMilliseconds / 1000);
+	// // currentCycleDelay = newDelayInMilliseconds / 1000;
+	// }
 
-	public static void setDelayFromExperiment(final double newDelayInSeconds) {
-		CYCLE_DELAY = newDelayInSeconds;
-		GuiUtils.updateSpeedDisplay(CYCLE_DELAY * 1000, false);
-	}
+	// public void setDelayFromExperiment(final double newDelayInSeconds) {
+	// currentCycleDelay = newDelayInSeconds;
+	//
+	// }
 
 }

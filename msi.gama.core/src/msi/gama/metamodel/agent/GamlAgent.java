@@ -195,7 +195,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		// Object[] hash = attributes._set;
 		// System.out.println("RAW VALUES OF ATTRIBUTES:" + Arrays.toString(attributes.getRawValues()));
 		// WARNING getRawValues() replaced by values() to fix Issue #1335. However, performances need to be evaluated
-		for ( Object pop : attributes.values() /* getRawValues() getMicroPopulations() */ ) {
+		for ( Object pop : attributes.values().toArray() /* getRawValues() getMicroPopulations() */ ) {
 			if ( pop instanceof IPopulation ) {
 				scope.step((IPopulation) pop);
 			}
@@ -775,7 +775,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public SimulationClock getClock() {
 		IMacroAgent host = getHost();
 		if ( host != null ) { return host.getClock(); }
-		return new SimulationClock();
+		return null;
+		// return new SimulationClock();
 	}
 
 }

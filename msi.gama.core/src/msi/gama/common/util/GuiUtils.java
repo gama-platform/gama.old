@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
@@ -58,12 +58,6 @@ public class GuiUtils {
 	 * Method called by headless builder to change the GUI Mode
 	 * @see ModelFactory
 	 */
-	//
-	// public static void cycleDisplayViews(final Set<String> names) {
-	// if ( gui != null ) {
-	// gui.cycleDisplayViews(names);
-	// }
-	// }
 
 	public static void setHeadLessMode() {
 		headlessMode = true;
@@ -136,12 +130,6 @@ public class GuiUtils {
 	public static void updateSubStatusCompletion(final double n) {
 		gui.setSubStatusCompletion(n);
 	}
-
-	// /**
-	// * @param abstractDisplayOutput
-	// * @param refresh
-	// */
-	// public static void setViewRateOf(final IDisplayOutput abstractDisplayOutput, final int refresh) {}
 
 	/**
 	 *
@@ -229,13 +217,6 @@ public class GuiUtils {
 		}
 	}
 
-	//
-	// public static void updateViewOf(final IDisplayOutput output) {
-	// if ( gui != null ) {
-	// gui.updateViewOf(output);
-	// }
-	// }
-
 	public static void warn(final String string) {
 		if ( gui != null ) {
 			gui.warn(string);
@@ -283,7 +264,7 @@ public class GuiUtils {
 	}
 
 	public static void cleanAfterExperiment(final IExperimentPlan exp) {
-		SimulationClock.setDelayFromExperiment(0);
+		// GAMA.getClock().setDelayFromExperiment(0);
 		if ( gui != null ) {
 			gui.cleanAfterExperiment(exp);
 		}
@@ -307,12 +288,6 @@ public class GuiUtils {
 		}
 	}
 
-	// public static void closeViewOf(final IDisplayOutput out) {
-	// if ( gui != null ) {
-	// gui.closeViewOf(out);
-	// }
-	// }
-
 	public static IGamaView findView(final IDisplayOutput output) {
 		if ( gui != null ) { return gui.findView(output); }
 		return null;
@@ -328,9 +303,9 @@ public class GuiUtils {
 		return gui == null ? false : gui.isModelingPerspective();
 	}
 
-	public static void openModelingPerspective() {
+	public static void openModelingPerspective(final boolean immediately) {
 		if ( gui != null ) {
-			gui.openModelingPerspective();
+			gui.openModelingPerspective(immediately);
 		}
 	}
 
@@ -338,31 +313,17 @@ public class GuiUtils {
 		return gui == null ? false : gui.isSimulationPerspective();
 	}
 
-	public static IGui getGui() {
-		return gui;
-	}
-
-	public static void togglePerspective() {
+	public static void togglePerspective(final boolean immediately) {
 		if ( gui != null ) {
-			gui.togglePerspective();
+			gui.togglePerspective(immediately);
 		}
 	}
 
-	public static void openSimulationPerspective() {
+	public static void openSimulationPerspective(final boolean immediately) {
 		if ( gui != null ) {
-			gui.openSimulationPerspective();
+			gui.openSimulationPerspective(immediately);
 		}
 	}
-
-	//
-	// /**
-	// * @param newWidth
-	// * @param newHeight
-	// * @return
-	// */
-	// public static IGraphics newGraphics(final int width, final int height) {
-	// return gui != null ? gui.newGraphics(width, height) : null;
-	// }
 
 	/**
 	 * @param layerDisplayOutput
@@ -452,6 +413,21 @@ public class GuiUtils {
 	public static IFileMetaDataProvider getMetaDataProvider() {
 		if ( gui == null ) { return null; }
 		return gui.getMetaDataProvider();
+	}
+
+	public static void wipeExperiments() {
+		if ( gui != null ) {
+			gui.wipeExperiments();
+		}
+	}
+
+	/**
+	 *
+	 */
+	public static void closeSimulationViews(final boolean andOpenModelingPerspective) {
+		if ( gui != null ) {
+			gui.closeSimulationViews(andOpenModelingPerspective);
+		}
 	}
 
 }

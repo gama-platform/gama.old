@@ -1,19 +1,19 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractScope.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.runtime;
 
+import java.util.*;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
-import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
@@ -31,10 +31,10 @@ import msi.gaml.types.*;
 
 /**
  * Class TrialScope.
- * 
+ *
  * @author drogoul
  * @since 23 mai 2013
- * 
+ *
  */
 
 // TODO : PEUT ETRE FAIRE L'INVERSE : A CHAQUE FOIS QUE L'AGENT MEURT ("die"), QU'UNE BOUCLE EST INTERROMPUE ("break")
@@ -240,7 +240,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	/**
-	 * 
+	 *
 	 * Method interrupted(). Returns true if the scope is currently marked as interrupted.
 	 * @see msi.gama.runtime.IScope#interrupted()
 	 */
@@ -386,8 +386,8 @@ public abstract class AbstractScope implements IScope {
 	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public boolean
-		execute(final IExecutable statement, final IAgent agent, final Arguments args, final Object[] result) {
+	public boolean execute(final IExecutable statement, final IAgent agent, final Arguments args,
+		final Object[] result) {
 		// If the statement or the agent is null, we act as if the scope had been marked as INTERRUPTED
 		// IScope scope = agent == null ? this :(statement instanceof RemoteSequence ? this : agent.getScope());
 		IAgent caller = this.getAgentScope();
@@ -842,7 +842,8 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public SimulationClock getClock() {
-		if ( root == null ) { return new SimulationClock(); }
+		if ( root == null ) { return null; }
+		// if ( root == null ) { return new SimulationClock(); }
 		return root.getClock();
 	}
 

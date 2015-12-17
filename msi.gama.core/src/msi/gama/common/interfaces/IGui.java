@@ -1,18 +1,19 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IGui.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.Map;
+import org.eclipse.core.runtime.CoreException;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -23,14 +24,13 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * The class IGui.
- * 
+ *
  * @author drogoul
  * @since 18 d�c. 2011
- * 
+ *
  */
 public interface IGui {
 
@@ -94,13 +94,13 @@ public interface IGui {
 
 	boolean isModelingPerspective();
 
-	boolean openModelingPerspective();
+	boolean openModelingPerspective(boolean immediately);
 
 	boolean isSimulationPerspective();
 
-	void togglePerspective();
+	void togglePerspective(boolean immediately);
 
-	boolean openSimulationPerspective();
+	boolean openSimulationPerspective(boolean immediately);
 
 	IDisplaySurface getDisplaySurfaceFor(LayeredDisplayOutput layerDisplayOutput);
 
@@ -149,10 +149,20 @@ public interface IGui {
 	String getName();
 
 	/**
-	 * 
+	 *
 	 */
 	void resumeStatus();
 
 	IFileMetaDataProvider getMetaDataProvider();
+
+	/**
+	 *
+	 */
+	void wipeExperiments();
+
+	/**
+	 *
+	 */
+	void closeSimulationViews(boolean andOpenModelingPerspective);
 
 }

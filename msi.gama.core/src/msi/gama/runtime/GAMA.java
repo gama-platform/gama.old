@@ -16,7 +16,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -74,11 +74,10 @@ public class GAMA {
 		}
 		controller = newExperiment.getController();
 		if ( controllers.size() > 0 ) {
-			shutdownAllExperiments();
-			controllers.clear();
+			closeAllExperiments(false);
 		}
 
-		GuiUtils.openSimulationPerspective();
+		GuiUtils.openSimulationPerspective(true);
 
 		controllers.add(controller);
 
@@ -128,15 +127,27 @@ public class GAMA {
 	}
 
 	public static void closeFrontmostExperiment() {
-
+		IExperimentController controller = getFrontmostController();
+		if ( controller == null || controller.getExperiment() == null ) { return; }
+		controller.close();
+		controllers.remove(controller);
 	}
 
 	public static void closeExperiment(final IExperimentPlan experiment) {
-
+		if ( experiment == null ) { return; }
+		IExperimentController controller = experiment.getController();
+		if ( controller == null ) { return; }
+		controller.close();
+		controllers.remove(controller);
 	}
 
-	public static void closeAllExperiments() {
-
+	public static void closeAllExperiments(final boolean andOpenModelingPerspective) {
+		for ( IExperimentController controller : controllers ) {
+			controller.close();
+		}
+		controllers.clear();
+		GuiUtils.closeSimulationViews(andOpenModelingPerspective);
+		// GuiUtils.wipeExperiments();
 	}
 
 	/**
@@ -175,11 +186,12 @@ public class GAMA {
 		return controller.getExperiment();
 	}
 
-	public static SimulationClock getClock() {
-		final IScope scope = getRuntimeScope();
-		if ( scope == null ) { return new SimulationClock(); }
-		return scope.getClock();
-	}
+	// public static SimulationClock getClock() {
+	// final IScope scope = getRuntimeScope();
+	// if ( scope == null ) { return null; }
+	// // if ( scope == null ) { return new SimulationClock(); }
+	// return scope.getClock();
+	// }
 
 	// public static RandomUtils getRandom() {
 	// if ( controller.getExperiment() == null || controller.getExperiment().getAgent() == null ) { return RandomUtils
@@ -236,11 +248,12 @@ public class GAMA {
 		}
 	}
 
-	public static void shutdownAllExperiments() {
-		for ( IExperimentController controller : controllers ) {
-			controller.close();
-		}
-	}
+	// public static void shutdownAllExperiments() {
+	// for ( IExperimentController controller : controllers ) {
+	// controller.close();
+	// }
+	// controllers.clear();
+	// }
 
 	public static void startPauseFrontmostExperiment() {
 		for ( IExperimentController controller : controllers ) {
@@ -284,12 +297,14 @@ public class GAMA {
 	/**
 	 *
 	 */
-	public static void InterruptFrontmostExperiment() {
-		IExperimentController controller = getFrontmostController();
-		if ( controller != null ) {
-			controller.userInterrupt();
-		}
-	}
+	// public static void InterruptFrontmostExperiment() {
+	// IExperimentController controller = getFrontmostController();
+	// if ( controller != null ) {
+	// controller.close();
+	// // controller.userInterrupt();
+	// }
+	// controllers.remove(controller);
+	// }
 
 	/**
 	 *

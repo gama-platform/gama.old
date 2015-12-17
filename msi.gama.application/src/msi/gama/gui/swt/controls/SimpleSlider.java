@@ -2,13 +2,13 @@ package msi.gama.gui.swt.controls;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gaml.operators.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gaml.operators.*;
 
 public class SimpleSlider extends Composite implements IPopupProvider {
 
@@ -21,8 +21,6 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			popup.display();
 		}
 	};
-
-	public static final int SMOOTH_STYLE = 0;
 
 	private final Panel rightRegion;
 	private final Thumb thumb;
@@ -381,7 +379,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	@Override
 	public Point getAbsoluteOrigin() {
-		return leftRegion.toDisplay(new Point(leftRegion.getLocation().x, sliderHeight*2));
+		return leftRegion.toDisplay(new Point(leftRegion.getLocation().x, sliderHeight * 2));
 	}
 
 	@Override
@@ -389,7 +387,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		return leftRegion.getShell();
 	}
 
-	public void specifyHeight(int heightsize) {
-		sliderHeight = heightsize;		
+	public void specifyHeight(final int heightsize) {
+		sliderHeight = heightsize;
 	}
 }

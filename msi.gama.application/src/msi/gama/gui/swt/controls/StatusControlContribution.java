@@ -1,16 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'StatusControlContribution.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import msi.gama.common.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
@@ -20,12 +26,6 @@ import msi.gama.kernel.simulation.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Strings;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
 
@@ -82,7 +82,9 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 			@Override
 			public void mouseDown(final MouseEvent e) {
-				GAMA.getClock().toggleDisplay();
+				SimulationAgent simulation = GAMA.getSimulation();
+				if ( simulation == null ) { return; }
+				simulation.getClock().toggleDisplay();
 			}
 		});
 		popup = new Popup(this, label);
@@ -120,8 +122,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	public GamaUIColor getPopupBackground() {
 		if ( InUserStatus && color != null ) { return color; }
-		return state == IGui.ERROR ? IGamaColors.ERROR : state == IGui.WAIT ? IGamaColors.WARNING
-			: state == IGui.NEUTRAL ? IGamaColors.NEUTRAL : IGamaColors.OK;
+		return state == IGui.ERROR ? IGamaColors.ERROR
+			: state == IGui.WAIT ? IGamaColors.WARNING : state == IGui.NEUTRAL ? IGamaColors.NEUTRAL : IGamaColors.OK;
 	}
 
 	@Override
@@ -194,8 +196,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 		label.setColor(getPopupBackground());
 		if ( inSubTask ) {
-			label.setText(subTaskName +
-				(subTaskCompletion != null ? " [" + (int) (subTaskCompletion * 100) + "%]" : ""));
+			label.setText(
+				subTaskName + (subTaskCompletion != null ? " [" + (int) (subTaskCompletion * 100) + "%]" : ""));
 		} else {
 			label.setText(mainTaskName == null ? "" : mainTaskName);
 		}

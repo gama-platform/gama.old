@@ -89,7 +89,7 @@ public class SimulationAgent extends GamlAgent {
 
 	public SimulationAgent(final IPopulation pop) throws GamaRuntimeException {
 		super(pop);
-		clock = new SimulationClock();
+		clock = new SimulationClock(this);
 		scope = obtainNewScope();
 		scheduler = new AgentScheduler(scope, pop);
 		projectionFactory = new ProjectionFactory();

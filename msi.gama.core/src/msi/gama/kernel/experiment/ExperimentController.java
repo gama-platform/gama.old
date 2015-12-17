@@ -164,7 +164,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 			if ( m != null ) {
 				m.dispose();
 			}
-			GuiUtils.openModelingPerspective();
+			GuiUtils.wipeExperiments();
 		}
 	}
 

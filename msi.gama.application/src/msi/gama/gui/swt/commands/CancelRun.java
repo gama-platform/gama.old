@@ -18,7 +18,7 @@ public class CancelRun extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.InterruptFrontmostExperiment();
+		GAMA.closeAllExperiments(true);
 		return null;
 	}
 

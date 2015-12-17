@@ -13,7 +13,8 @@ package msi.gama.gui.swt.controls;
 
 import org.eclipse.swt.graphics.Image;
 import msi.gama.gui.swt.*;
-import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
 
 /**
@@ -27,7 +28,7 @@ import msi.gaml.operators.Maths;
  */
 public class SimulationSpeedContributionItem extends SpeedContributionItem {
 
-	private static final double BASE_UNIT = 1000;
+	double max = 1000;
 
 	private static Image knob = GamaIcons.create("toolbar.knob4").image(); // IGamaIcons.TOOLBAR_KNOB.image(), IGamaIcons.TOOLBAR_KNOB_HOVER.image()
 
@@ -36,9 +37,9 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 	 * @param v in milliseconds
 	 * @return
 	 */
-	public static double positionFromValue(final double v) {
-		// returns a percentage between 0 and 1 (0 -> BASE_UNIT milliseconds; 1 -> 0 milliseconds).
-		return 1 - v / BASE_UNIT;
+	public double positionFromValue(final double v) {
+		// returns a percentage between 0 and 1 (0 -> max milliseconds; 1 -> 0 milliseconds).
+		return 1 - v / max;
 	}
 
 	/**
@@ -46,27 +47,12 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 	 * @param v
 	 * @return
 	 */
-	public static double valueFromPosition(final double v) {
-		return BASE_UNIT - v * BASE_UNIT;
+	public double valueFromPosition(final double v) {
+		return max - v * max;
 	}
 
 	public SimulationSpeedContributionItem() {
-		super(positionFromValue(SimulationClock.getDelayInMilliseconds()), new IPositionChangeListener() {
-
-			@Override
-			public void positionChanged(final double position) {
-				SimulationClock.setDelayFromUI(valueFromPosition(position));
-			}
-
-		}, new IToolTipProvider() {
-
-			@Override
-			public String getToolTipText(final double value) {
-				return "Minimum duration of a cycle " +
-					Maths.opTruncate(SimulationClock.getDelayInMilliseconds() / 1000, 3) + " s";
-			}
-
-		}, knob, IGamaColors.GRAY_LABEL, IGamaColors.OK);
+		super(0, null, null, knob, IGamaColors.GRAY_LABEL, IGamaColors.OK);
 		SwtGui.setSpeedControl(this);
 	}
 
@@ -80,7 +66,17 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 
 	@Override
 	protected double getInitialValue() {
-		return positionFromValue(SimulationClock.getDelayInMilliseconds());
+		ExperimentAgent a = GAMA.getExperiment() == null ? null : GAMA.getExperiment().getAgent();
+		double value = 0d;
+		double maximum = 1000d;
+		if ( a != null ) {
+			value = a.getMinimumDuration() * 1000;
+			maximum = a.getInitialMinimumDuration() * 1000;
+		}
+		if ( maximum > max ) {
+			max = maximum;
+		}
+		return positionFromValue(value);
 	}
 
 	/*
@@ -88,7 +84,28 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 	 */
 	@Override
 	public void setInit(final double i, final boolean notify) {
+		if ( i > max ) {
+			max = i;
+		}
 		super.setInit(positionFromValue(i), notify);
+	}
+
+	/**
+	 * Method getToolTipText()
+	 * @see msi.gama.gui.swt.controls.IToolTipProvider#getToolTipText(double)
+	 */
+	@Override
+	public String getToolTipText(final double position) {
+		return "Minimum duration of a cycle " + Maths.opTruncate(valueFromPosition(position) / 1000, 3) + " s";
+	}
+
+	/**
+	 * Method positionChanged()
+	 * @see msi.gama.gui.swt.controls.IPositionChangeListener#positionChanged(double)
+	 */
+	@Override
+	public void positionChanged(final double position) {
+		GAMA.getExperiment().getAgent().setMinimumDurationExternal(valueFromPosition(position) / 1000);
 	}
 
 }

@@ -16,7 +16,6 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.GAMA;
 
 public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
@@ -29,7 +28,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	public String getItemDisplayName(final IAgent ag, final String name) {
 		if ( name == null ) { return AGENT_MARKER + ag.getName(); }
 		if ( ag.dead() && !name.contains(DEAD_MARKER) ) {
-			long cycle = GAMA.getClock().getCycle();
+			long cycle = ag.getScope().getClock().getCycle();
 			String result = AGENT_MARKER + ItemList.ERROR_CODE +
 				name.substring(name.indexOf(ItemList.SEPARATION_CODE) + 1) + DEAD_MARKER + cycle;
 			return result;

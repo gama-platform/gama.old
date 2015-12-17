@@ -94,7 +94,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected SimulationAgent simulation;
 	final Map<String, Object> extraParametersMap = new TOrderedHashMap();
 	protected RandomUtils random;
-	// protected Double minimumDuration = 0d;
+	protected Double initialMinimumDuration = null;
+	protected Double currentMinimumDuration = 0d;
 	// protected Double seed = GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue()
 	// : (Double) null;
 	// protected String rng = GamaPreferences.CORE_RNG.getValue();
@@ -334,21 +335,34 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return IExperimentPlan.SYSTEM_CATEGORY_PREFIX;
 	}
 
+	@Override
 	@getter(value = ExperimentAgent.MINIMUM_CYCLE_DURATION, initializer = true)
 	public Double getMinimumDuration() {
-		//
-		return SimulationClock.getDelayInMilliseconds() / 1000;
+		return currentMinimumDuration;
 	}
 
+	@Override
 	@setter(ExperimentAgent.MINIMUM_CYCLE_DURATION)
 	public void setMinimumDuration(final Double d) {
 		// d is in seconds, but the slider expects milleseconds
-		// GAMA.setDelayFromExperiment(d);
-		// hqnghi
-		// if ( GAMA.getControllers().size() == 0 ) {
-		SimulationClock.setDelayFromExperiment(d);
-		// }
-		// end-hqnghi
+		// System.out.println("Minimum duration set to " + d);
+		setMinimumDurationExternal(d);
+		if ( initialMinimumDuration == null ) {
+			initialMinimumDuration = d;
+		}
+		GuiUtils.updateSpeedDisplay(currentMinimumDuration * 1000, false);
+	}
+
+	/**
+	 * Called normally from UI directly. Does not notify the GUI.
+	 * @param d
+	 */
+	public void setMinimumDurationExternal(final Double d) {
+		currentMinimumDuration = d;
+	}
+
+	public Double getInitialMinimumDuration() {
+		return initialMinimumDuration;
 	}
 
 	@Override
@@ -452,6 +466,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			}
 			simulation = (SimulationAgent) sim;
 			simulation.setOutputs(getSpecies().getSimulationOutputs());
+			// simulation.getClock().setDelayFromExperiment(currentMinimumDuration);
 			// simulation.getClock().setDelay(this.minimumDuration);
 		}
 	}

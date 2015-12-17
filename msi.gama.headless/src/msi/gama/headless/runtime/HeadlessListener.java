@@ -1,18 +1,19 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'HeadlessListener.java', in plugin 'msi.gama.headless', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
 import java.util.Map;
 import java.util.logging.*;
+import org.eclipse.core.runtime.CoreException;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -25,11 +26,11 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
-import org.eclipse.core.runtime.CoreException;
 
 public class HeadlessListener implements IGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
+
 	static {
 
 		if ( GuiUtils.isInHeadLessMode() ) {
@@ -173,7 +174,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public boolean openModelingPerspective() {
+	public boolean openModelingPerspective(final boolean immediately) {
 		return false;
 	}
 
@@ -183,10 +184,10 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void togglePerspective() {}
+	public void togglePerspective(final boolean immediately) {}
 
 	@Override
-	public boolean openSimulationPerspective() {
+	public boolean openSimulationPerspective(final boolean immediately) {
 		return true;
 	}
 
@@ -356,4 +357,18 @@ public class HeadlessListener implements IGui {
 	public IFileMetaDataProvider getMetaDataProvider() {
 		return null;
 	}
+
+	/**
+	 * Method wipeExperiments()
+	 * @see msi.gama.common.interfaces.IGui#wipeExperiments()
+	 */
+	@Override
+	public void wipeExperiments() {}
+
+	/**
+	 * Method closeSimulationViews()
+	 * @see msi.gama.common.interfaces.IGui#closeSimulationViews(boolean)
+	 */
+	@Override
+	public void closeSimulationViews(final boolean andOpenModelingPerspective) {}
 }
