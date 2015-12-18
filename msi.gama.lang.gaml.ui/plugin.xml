@@ -517,5 +517,33 @@
              markertype="msi.gama.lang.gaml.ui.gaml.check.fast">
        </imageprovider>
     </extension>
+    <extension
+          point="org.eclipse.ui.editors.markerAnnotationSpecification">
+       <specification
+             annotationType="org.eclipse.ui.workbench.texteditor.info"
+             colorPreferenceKey="infoIndicationColor"
+             colorPreferenceValue="0,0,255"
+             contributesToHeader="false"
+             highlightPreferenceKey="infoIndicationHighlighting"
+             highlightPreferenceValue="false"
+             isGoToNextNavigationTarget="false"
+             isGoToNextNavigationTargetKey="isInfoGoToNextNavigationTarget"
+             isGoToPreviousNavigationTarget="false"
+             isGoToPreviousNavigationTargetKey="isInfoGoToPreviousNavigationTarget"
+             label="Information"
+             overviewRulerPreferenceKey="infoIndicationInOverviewRuler"
+             overviewRulerPreferenceValue="true"
+             presentationLayer="4"
+             showInNextPrevDropdownToolbarAction="true"
+             showInNextPrevDropdownToolbarActionKey="showInfoInNextPrevDropdownToolbarAction"
+             symbolicIcon="info"
+             textPreferenceKey="infoIndication"
+             textPreferenceValue="false"
+             textStylePreferenceKey="infoTextStyle"
+             textStylePreferenceValue="SQUIGGLES"
+             verticalRulerPreferenceKey="infoIndicationInVerticalRuler"
+             verticalRulerPreferenceValue="true">
+       </specification>
+    </extension>
 
 </plugin>
