@@ -1264,6 +1264,8 @@ public class SwtGui implements IGui {
 		setHighlightedAgent(null);
 		surfaces.clear();
 		status.resume();
+		// AD: Fix for issue #1342 -- verify that it does not break something else in the dynamics of closing/opening
+		closeDialogs();
 	}
 
 	/**

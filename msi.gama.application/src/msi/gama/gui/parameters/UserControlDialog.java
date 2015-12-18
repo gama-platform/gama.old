@@ -1,18 +1,24 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'UserControlDialog.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.dialogs.AbstractDetailsDialog;
@@ -22,19 +28,13 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.statements.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 
 /**
  * The class EditorsDialog.
- * 
+ *
  * @author drogoul
  * @since 10 mai 2012
- * 
+ *
  */
 public class UserControlDialog extends AbstractDetailsDialog {
 
@@ -75,6 +75,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	public boolean close() {
 		previous = new PreviousDialog(this);
 		current = null;
+		GAMA.getFrontmostController().getScheduler().setUserHold(false);
 		return super.close();
 	}
 
@@ -106,9 +107,8 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, "Continue", true);
-		detailsButton =
-			createButton(parent, IDialogConstants.DETAILS_ID, "Inspect " + scope.getAgentScope().getName() + "...",
-				false);
+		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
+			"Inspect " + scope.getAgentScope().getName() + "...", false);
 		detailsButton.setImage(IGamaIcons.MENU_INSPECT.image());
 
 	}
