@@ -137,7 +137,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 			if ( scope.init(output) ) {
 				output.setPaused(false);
-				if ( scope.step(output) ) {
+				if ( initialStep(scope, output) ) {
 					try {
 						output.open();
 						output.update();
@@ -156,6 +156,14 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			GuiUtils.informStatus("Simulation ready");
 		}
 		return true;
+	}
+
+	/**
+	 * @param output
+	 * @return
+	 */
+	protected boolean initialStep(final IScope scope, final IOutput output) {
+		return scope.step(output);
 	}
 
 	@Override
