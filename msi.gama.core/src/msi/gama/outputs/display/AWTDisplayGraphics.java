@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AWTDisplayGraphics.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 
 package msi.gama.outputs.display;
@@ -19,24 +19,24 @@ import java.awt.font.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
+import com.vividsolutions.jts.awt.*;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
-import com.vividsolutions.jts.awt.*;
-import com.vividsolutions.jts.geom.*;
 
 /**
- * 
+ *
  * Simplifies the drawing of circles, rectangles, and so forth. Rectangles are generally faster to
  * draw than circles. The Displays should take care of layouts while objects that wish to be drawn
  * as a shape need only call the appropriate method.
  * <p>
- * 
+ *
  * 29/04/2013: Deep revision to simplify the interface due to the changes in draw/aspects
- * 
+ *
  * @author Nick Collier, Alexis Drogoul, Patrick Taillandier
  * @version $Revision: 1.13 $ $Date: 2010-03-19 07:12:24 $
  */
@@ -119,7 +119,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curX = xFromModelUnitsToPixels(locationInModelUnits.getX());
 			curY = yFromModelUnitsToPixels(locationInModelUnits.getY());
 		}
-		int curWidth, curHeight;
+		double curWidth, curHeight;
 		if ( sizeInModelUnits == null ) {
 			curWidth = widthOfLayerInPixels;
 			curHeight = heightOfLayerInPixels;
@@ -130,7 +130,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		if ( angle != null ) {
 			renderer.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
 		}
-		renderer.drawImage(img, curX, curY, curWidth, curHeight, null);
+		renderer.drawImage(img, curX, curY, (int) curWidth, (int) curHeight, null);
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
@@ -172,7 +172,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curX = xFromModelUnitsToPixels(locationInModelUnits.getX());
 			curY = yFromModelUnitsToPixels(locationInModelUnits.getY());
 		}
-		int curHeight, curWidth;
+		double curHeight, curWidth;
 
 		if ( heightInModelUnits == null ) {
 			curWidth = widthOfLayerInPixels;
@@ -183,7 +183,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curHeight = hFromModelUnitsToPixels(heightInModelUnits);
 		}
 		final int style = styleName == null ? Font.PLAIN : styleName;
-		final Font f = new Font(fontName, style, curHeight);
+		final Font f = new Font(fontName, style, (int) curHeight);
 		renderer.setFont(f);
 		final AffineTransform saved = renderer.getTransform();
 		if ( angle != null ) {
@@ -194,16 +194,16 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		LineBreakMeasurer measurer =
 			new LineBreakMeasurer(new AttributedString(string).getIterator(), renderer.getFontRenderContext());
 		while (true) {
-			TextLayout layout = measurer.nextLayout(curWidth);
+			TextLayout layout = measurer.nextLayout((int) curWidth);
 			if ( layout == null ) {
 				break;
 			}
 			pen.y += layout.getAscent();
-			float dx = 0;
+			double dx = 0;
 			if ( layout.isLeftToRight() ) {
 				dx = curWidth - layout.getAdvance();
 			}
-			layout.draw(renderer, pen.x + dx, pen.y);
+			layout.draw(renderer, pen.x + (float) dx, pen.y);
 			pen.y += layout.getDescent() + layout.getLeading();
 		}
 		return new Rectangle2D.Double(curX, curY, curWidth, pen.y - curY);
@@ -223,18 +223,18 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curY = yFromModelUnitsToPixels(locationInModelUnits.getY());
 			// curZ = yFromModelUnitsToPixels(locationInModelUnits.getZ());
 		}
-		float curHeight;
+		double curHeight;
 		if ( heightInModelUnits == null ) {
 			curHeight = heightOfLayerInPixels;
-			// GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
+			// GuiUtils.debug("AWTDisplayGraphics.drawString " + string + " " + curHeight);
 		} else {
 			curHeight = hFromModelUnitsToPixels(heightInModelUnits);
-			// GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
+			// GuiUtils.debug("AWTDisplayGraphics.drawString " + string + " " + curHeight);
 
 		} // FIXME Optimize by keeping the current values
 			// final int style = styleName == null ? Font.PLAIN : styleName;
 			// final Font f = new Font(fontName, style, curHeight);
-		renderer.setFont(font.deriveFont(curHeight));
+		renderer.setFont(font.deriveFont((float) curHeight));
 		final AffineTransform saved = renderer.getTransform();
 		if ( angle != null ) {
 			final Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);
@@ -311,30 +311,30 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void fillBackground(final Color bgColor, final double opacity) {
 		setOpacity(opacity);
 		renderer.setColor(bgColor);
-		renderer.fillRect(0, 0, widthOfDisplayInPixels, heightOfDisplayInPixels);
+		renderer.fillRect(0, 0, (int) widthOfDisplayInPixels, (int) heightOfDisplayInPixels);
 	}
 
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 		final Line2D line = new Line2D.Double();
 		renderer.setColor(lineColor);
 		// The image contains the dimensions of the grid.
-		final double stepx = (double) widthOfLayerInPixels / image.getWidth();
+		final double stepx = widthOfLayerInPixels / image.getWidth();
 		for ( double step = 0.0, end = widthOfLayerInPixels; step < end + 1; step += stepx ) {
-			line.setLine(xOffsetInPixels + step, yOffsetInPixels, xOffsetInPixels + step, yOffsetInPixels +
-				heightOfLayerInPixels);
+			line.setLine(xOffsetInPixels + step, yOffsetInPixels, xOffsetInPixels + step,
+				yOffsetInPixels + heightOfLayerInPixels);
 			renderer.draw(line);
 		}
-		line.setLine(xOffsetInPixels + widthOfLayerInPixels - 1, yOffsetInPixels, xOffsetInPixels +
-			widthOfLayerInPixels - 1, yOffsetInPixels + heightOfLayerInPixels - 1);
+		line.setLine(xOffsetInPixels + widthOfLayerInPixels - 1, yOffsetInPixels,
+			xOffsetInPixels + widthOfLayerInPixels - 1, yOffsetInPixels + heightOfLayerInPixels - 1);
 		renderer.draw(line);
-		final double stepy = (double) heightOfLayerInPixels / image.getHeight();
+		final double stepy = heightOfLayerInPixels / image.getHeight();
 		for ( double step = 0.0, end = heightOfLayerInPixels; step < end + 1; step += stepy ) {
 			line.setLine(xOffsetInPixels, yOffsetInPixels + step, xOffsetInPixels + widthOfLayerInPixels,
 				yOffsetInPixels + step);
 			renderer.draw(line);
 		}
-		line.setLine(xOffsetInPixels, yOffsetInPixels + heightOfLayerInPixels - 1, xOffsetInPixels +
-			widthOfLayerInPixels - 1, yOffsetInPixels + heightOfLayerInPixels - 1);
+		line.setLine(xOffsetInPixels, yOffsetInPixels + heightOfLayerInPixels - 1,
+			xOffsetInPixels + widthOfLayerInPixels - 1, yOffsetInPixels + heightOfLayerInPixels - 1);
 		renderer.draw(line);
 
 	}

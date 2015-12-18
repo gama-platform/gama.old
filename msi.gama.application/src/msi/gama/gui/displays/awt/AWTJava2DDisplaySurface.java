@@ -163,8 +163,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 					}
 					updateDisplay(true);
 				}
-				final double newZoom =
-					Math.min(getWidth() / (double) getDisplayWidth(), getHeight() / (double) getDisplayHeight());
+				final double newZoom = Math.min(getWidth() / getDisplayWidth(), getHeight() / getDisplayHeight());
 				newZoomLevel(1 / newZoom);
 				previousPanelSize = getSize();
 			}
@@ -301,7 +300,8 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 	}
 
 	protected void centerImage() {
-		setOrigin((getWidth() - getDisplayWidth()) / 2, (getHeight() - getDisplayHeight()) / 2);
+		setOrigin((int) Math.round((getWidth() - getDisplayWidth()) / 2),
+			(int) Math.round((getHeight() - getDisplayHeight()) / 2));
 	}
 
 	protected int getOriginX() {
@@ -548,7 +548,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 	}
 
 	@Override
-	public int getDisplayWidth() {
+	public double getDisplayWidth() {
 		return viewPort.width;
 	}
 
@@ -562,7 +562,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 	}
 
 	@Override
-	public int getDisplayHeight() {
+	public double getDisplayHeight() {
 		return viewPort.height;
 	}
 
@@ -805,9 +805,9 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 			double widthHeightConstraint = getEnvHeight() / getEnvWidth();
 
 			if ( widthHeightConstraint < 1 ) {
-				newZoomLevel((double) getDisplayWidth() / (double) getWidth());
+				newZoomLevel(getDisplayWidth() / getWidth());
 			} else {
-				newZoomLevel((double) getDisplayHeight() / (double) getHeight());
+				newZoomLevel(getDisplayHeight() / getHeight());
 			}
 		}
 		return real_factor;

@@ -18,14 +18,14 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
 	protected double currentAlpha = 1;
-	protected int widthOfLayerInPixels;
-	protected int heightOfLayerInPixels;
+	protected double widthOfLayerInPixels;
+	protected double heightOfLayerInPixels;
 	protected int xOffsetInPixels;
 	protected int yOffsetInPixels;
 	protected double xRatioBetweenPixelsAndModelUnits;
 	protected double yRatioBetweenPixelsAndModelUnits;
-	final protected int widthOfDisplayInPixels;
-	final protected int heightOfDisplayInPixels;
+	final protected double widthOfDisplayInPixels;
+	final protected double heightOfDisplayInPixels;
 	final protected double widthOfEnvironmentInModelUnits;
 	final protected double heightOfEnvironmentInModelUnits;
 
@@ -47,12 +47,12 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	@Override
 	public int getDisplayWidthInPixels() {
-		return widthOfDisplayInPixels;
+		return (int) widthOfDisplayInPixels;
 	}
 
 	@Override
 	public int getDisplayHeightInPixels() {
-		return heightOfDisplayInPixels;
+		return (int) heightOfDisplayInPixels;
 	}
 
 	@Override

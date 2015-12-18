@@ -1,21 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ImageDisplaySurface.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs;
 
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.util.*;
 import java.util.List;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
@@ -182,7 +182,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.gui.graphics.IDisplaySurface#zoomIn(msi.gama.gui.views.IGamaView)
 	 */
 	@Override
@@ -193,7 +193,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.gui.graphics.IDisplaySurface#zoomOut(msi.gama.gui.views.IGamaView)
 	 */
 	@Override
@@ -204,7 +204,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.gui.graphics.IDisplaySurface#zoomFit(msi.gama.gui.views.IGamaView)
 	 */
 	@Override
@@ -215,7 +215,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.gui.graphics.IDisplaySurface#fireSelectionChanged(java.lang.Object)
 	 */
 	// @Override
@@ -226,7 +226,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.gui.graphics.IDisplaySurface#focusOn(msi.gama.util.GamaGeometry,
 	 * msi.gama.gui.displays.IDisplay)
 	 */
@@ -312,12 +312,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public int getDisplayWidth() {
+	public double getDisplayWidth() {
 		return width;
 	}
 
 	@Override
-	public int getDisplayHeight() {
+	public double getDisplayHeight() {
 		return this.getHeight();
 	}
 

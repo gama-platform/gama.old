@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'NullDisplaySurface.java', in plugin 'msi.gama.headless', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
@@ -24,10 +24,10 @@ import msi.gama.util.IList;
 
 /**
  * Class NullDisplaySurface.
- * 
+ *
  * @author drogoul
  * @since 26 mars 2014
- * 
+ *
  */
 public class NullDisplaySurface implements IDisplaySurface {
 
@@ -179,7 +179,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getDisplayWidth()
 	 */
 	@Override
-	public int getDisplayWidth() {
+	public double getDisplayWidth() {
 		return 0;
 	}
 
@@ -188,7 +188,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getDisplayHeight()
 	 */
 	@Override
-	public int getDisplayHeight() {
+	public double getDisplayHeight() {
 		return 0;
 	}
 

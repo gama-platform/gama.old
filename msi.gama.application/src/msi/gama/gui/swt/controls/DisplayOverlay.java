@@ -1,35 +1,35 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'DisplayOverlay.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
 import java.util.List;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.views.LayeredDisplayView;
-import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.views.LayeredDisplayView;
+import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 
 /**
  * The class DisplayOverlay.
- * 
+ *
  * @author drogoul
  * @since 19 august 2013
- * 
+ *
  */
 public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
@@ -67,7 +67,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	public DisplayOverlay(final LayeredDisplayView view, final Composite c, final IOverlayProvider provider) {
 		this.createExtraInfo = provider != null;
 		this.view = view;
-		IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+		IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 		ps.addPartListener(pl2);
 		referenceComposite = c;
 		parentShell = c.getShell();
@@ -185,6 +185,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	private String getScaleRight() {
 		double real = getView().getValueOfOnePixelInModelUnits() * 100;
+		System.out.println("GetScaleRight " + real);
 		if ( real > 1000 ) {
 			return String.format("%.1fkm", real / 1000d);
 		} else if ( real < 0.001 ) {
@@ -447,7 +448,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			if ( referenceComposite != null && !referenceComposite.isDisposed() ) {
 				referenceComposite.removeControlListener(listener);
 			}
-			IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+			IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 			if ( ps != null ) {
 				ps.removePartListener(pl2);
 			}

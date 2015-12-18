@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 25 mars 2015
- * 
+ *
  */
 package ummisco.gama.opengl;
 
@@ -9,6 +9,12 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import javax.imageio.ImageIO;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
@@ -24,19 +30,13 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Class OpenGLSWTDisplaySurface.
- * 
+ *
  * @author drogoul
  * @since 25 mars 2015
- * 
+ *
  */
 @msi.gama.precompiler.GamlAnnotations.display("opengl")
 public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
@@ -174,14 +174,16 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public int getDisplayWidth() {
-		return renderer.getCanvas().getSurfaceWidth();
+	public double getDisplayWidth() {
+		java.lang.System.out
+			.println("Surface width of the canvas: " + renderer.getCanvas().getSurfaceWidth() * getZoomLevel());
+		return renderer.getCanvas().getSurfaceWidth() * getZoomLevel();
 		// return viewPort.width;
 	}
 
 	@Override
-	public int getDisplayHeight() {
-		return renderer.getCanvas().getSurfaceHeight();
+	public double getDisplayHeight() {
+		return renderer.getCanvas().getSurfaceHeight() * getZoomLevel();
 		// return viewPort.height;
 	}
 
@@ -267,13 +269,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			e1.printStackTrace();
 			return;
 		}
-		String snapshotFile =
-			FileUtils.constructAbsoluteFilePath(scope, SNAPSHOT_FOLDER_NAME + "/" + GAMA.getModel().getName() +
-				"_display_" + output.getName(), false);
+		String snapshotFile = FileUtils.constructAbsoluteFilePath(scope,
+			SNAPSHOT_FOLDER_NAME + "/" + GAMA.getModel().getName() + "_display_" + output.getName(), false);
 
-		String file =
-			snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
-				scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
+		String file = snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
+			scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));
@@ -449,13 +449,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		Set<IAgent> agents = null;
 		IScope s = GAMA.obtainNewScope();
 		try {
-			agents =
-				(Set<IAgent>) GAMA
-					.getSimulation()
-					.getPopulation()
-					.getTopology()
-					.getNeighboursOf(s, new GamaPoint(pp.getX(), pp.getY()), renderer.getMaxEnvDim() / 100,
-						Different.with());
+			agents = (Set<IAgent>) GAMA.getSimulation().getPopulation().getTopology().getNeighboursOf(s,
+				new GamaPoint(pp.getX(), pp.getY()), renderer.getMaxEnvDim() / 100, Different.with());
 		} finally {
 			GAMA.releaseScope(s);
 		}
@@ -585,12 +580,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				}
 				Control swtControl = renderer.getCanvas();
 				DisplayedAgentsMenu menuBuilder = new DisplayedAgentsMenu();
-				menu =
-					menuBuilder.getMenu(SWTOpenGLDisplaySurface.this, swtControl, true, true, agents,
-						getModelCoordinates(), true);
+				menu = menuBuilder.getMenu(SWTOpenGLDisplaySurface.this, swtControl, true, true, agents,
+					getModelCoordinates(), true);
 				menu.setData(IKeyword.USER_LOCATION, getModelCoordinates());
-				menu.setLocation(swtControl.toDisplay(renderer.camera.getMousePosition().x,
-					renderer.camera.getMousePosition().y));
+				menu.setLocation(
+					swtControl.toDisplay(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y));
 				// menu.addMenuListener(new MenuListener() {
 				//
 				// @Override

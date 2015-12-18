@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IDisplaySurface.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -23,11 +23,11 @@ import msi.gama.runtime.IScope;
 
 /**
  * Written by drogoul Modified on 26 nov. 2009
- * 
+ *
  * @todo Description
- * 
+ *
  */
-public interface IDisplaySurface extends DisplayDataListener /* extends IPerspectiveListener, IPartListener */{
+public interface IDisplaySurface extends DisplayDataListener /* extends IPerspectiveListener, IPartListener */ {
 
 	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
 	static final int MAX_ZOOM_FACTOR = 2;
@@ -99,7 +99,7 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	/**
 	 * Whatever is needed to do when the simulation has been reloaded.
-	 * 
+	 *
 	 * @param layerDisplayOutput
 	 */
 	void outputReloaded();
@@ -112,9 +112,9 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	double getEnvHeight();
 
-	public abstract int getDisplayWidth();
+	public abstract double getDisplayWidth();
 
-	public abstract int getDisplayHeight();
+	public abstract double getDisplayHeight();
 
 	public abstract void setZoomListener(IZoomListener listener);
 
@@ -148,7 +148,7 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	boolean isDisposed();
 
 	/**
-	 * 
+	 *
 	 */
 	void layersChanged();
 
