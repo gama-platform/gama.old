@@ -29,6 +29,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 	@Override
 	protected Composite createSurfaceComposite() {
+		if ( getOutput() == null ) { return null; }
 
 		final Runnable displayOverlay = new Runnable() {
 
@@ -143,12 +144,14 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			public void run() {
+				if ( parent.isDisposed() ) { return; }
 				final Rectangle r = parent.getBounds();
 
 				java.awt.EventQueue.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
+						if ( surfaceComposite == null ) { return; }
 						((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
 						getDisplaySurface().resizeImage(r.width, r.height, false);
 						getDisplaySurface().updateDisplay(true);

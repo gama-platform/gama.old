@@ -45,7 +45,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		setPartName(getOutput().getViewName());
+		if ( getOutput() != null ) {
+			setPartName(getOutput().getViewName());
+		}
 
 	}
 
@@ -68,6 +70,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 
 	@Override
 	public void ownCreatePartControl(final Composite c) {
+		if ( getOutput() == null ) { return; }
 
 		Cursor cr = new Cursor(SwtGui.getDisplay(), SWT.CURSOR_WAIT);
 		c.setCursor(cr);
@@ -120,7 +123,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 
 	@Override
 	public void setFocus() {
-		surfaceComposite.setFocus();
+		if ( surfaceComposite != null ) {
+			surfaceComposite.setFocus();
+		}
 	}
 
 	protected abstract Composite createSurfaceComposite();

@@ -94,17 +94,6 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
 		if ( GAMA.getExperiment() != null ) {
-			// IOutputManager manager = GAMA.getExperiment().getSimulationOutputs();
-			// if ( manager != null ) {
-			// out = (IDisplayOutput) manager.getOutput(id);
-			// if ( out == null ) {
-			// manager = GAMA.getExperiment().getExperimentOutputs();
-			// if ( manager != null ) {
-			// out = (IDisplayOutput) manager.getOutput(id);
-			// }
-			// }
-			// }
-
 			// hqnghi in case of multi-controller
 			if ( out == null ) {
 				for ( IExperimentController fec : GAMA.getControllers() ) {
@@ -142,9 +131,19 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 					}
 				}
 			}
+		} else {
+			System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
+			GuiUtils.asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					GuiUtils.closeSimulationViews(false);
+					GuiUtils.openModelingPerspective(false);
+				}
+			});
+
 		}
 		addOutput(out);
-		// GamaToolbarFactory.buildToolbar(this, getToolbarActionsId());
 	}
 
 	@Override
