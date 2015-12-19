@@ -18,6 +18,7 @@ import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
@@ -162,42 +163,11 @@ public class GAMA {
 		return controller.getExperiment().getCurrentSimulation();
 	}
 
-	// public static List<IPopulation> getModelPopulations() {
-	// final SimulationAgent sim = getSimulation();
-	// if ( sim == null ) { return Collections.EMPTY_LIST; }
-	// final List<ISpecies> species = new ArrayList(getModel().getAllSpecies().values());
-	// final List<IPopulation> populations = Lists.newArrayList();
-	// for ( final ISpecies s : species ) {
-	// if ( !s.getDescription().isBuiltIn() ) {
-	// final IPopulation p = sim.getPopulationFor(s);
-	// if ( p != null ) { // Multiple scale population
-	// populations.add(p);
-	// }
-	// }
-	// }
-	// // Collections.sort(populations);
-	// return populations;
-	//
-	// }
-
 	public static IExperimentPlan getExperiment() {
 		IExperimentController controller = getFrontmostController();
 		if ( controller == null ) { return null; }
 		return controller.getExperiment();
 	}
-
-	// public static SimulationClock getClock() {
-	// final IScope scope = getRuntimeScope();
-	// if ( scope == null ) { return null; }
-	// // if ( scope == null ) { return new SimulationClock(); }
-	// return scope.getClock();
-	// }
-
-	// public static RandomUtils getRandom() {
-	// if ( controller.getExperiment() == null || controller.getExperiment().getAgent() == null ) { return RandomUtils
-	// .getDefault(); }
-	// return controller.getExperiment().getAgent().getRandomGenerator();
-	// }
 
 	public static IModel getModel() {
 		IExperimentController controller = getFrontmostController();
@@ -214,7 +184,8 @@ public class GAMA {
 	public static boolean reportError(final IScope scope, final GamaRuntimeException g,
 		final boolean shouldStopSimulation) {
 		// Returns whether or not to continue
-		if ( scope != null && !scope.reportErrors() ) {
+		if ( !(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors() ) {
+			// AD: we still throw exceptions related to files (Issue #1281)
 			g.printStackTrace();
 			return true;
 		}
@@ -229,7 +200,8 @@ public class GAMA {
 
 	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
 		final boolean shouldStopSimulation) throws GamaRuntimeException {
-		if ( scope != null && !scope.reportErrors() ) {
+		if ( !(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors() ) {
+			// AD: we still throw exceptions related to files (Issue #1281)
 			g.printStackTrace();
 			return;
 		}

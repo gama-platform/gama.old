@@ -1,27 +1,28 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaRuntimeException.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.runtime.exceptions;
 
+import java.io.*;
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.*;
 import msi.gaml.statements.IStatement;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
- * 
+ *
  * A kind of exception thrown when an abnormal situation happens while running a model.
- * 
+ *
  */
 
 public class GamaRuntimeException extends RuntimeException {
@@ -50,6 +51,8 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public static GamaRuntimeException create(final Throwable ex, final IScope scope) {
 		if ( ex instanceof GamaRuntimeException ) { return (GamaRuntimeException) ex; }
+		if ( ex instanceof IOException ||
+			ex instanceof FileNotFoundException ) { return new GamaRuntimeFileException(scope, ex); }
 		return new GamaRuntimeException(scope, ex);
 	}
 
@@ -60,7 +63,7 @@ public class GamaRuntimeException extends RuntimeException {
 	 */
 	@Deprecated
 	public static GamaRuntimeException error(final String s) {
-		// Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
+		// Uses the dangerous and error-prone GAMA.getRuntimeScope() method, which can return null or the scope of
 		// another simulation
 		return error(s, GAMA.getRuntimeScope());
 	}
@@ -93,6 +96,22 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	// Constructors
+
+	public static class GamaRuntimeFileException extends GamaRuntimeException {
+
+		/**
+		 * @param scope
+		 * @param ex
+		 */
+		public GamaRuntimeFileException(final IScope scope, final Throwable ex) {
+			super(scope, ex);
+		}
+
+		public GamaRuntimeFileException(final IScope scope, final String s) {
+			super(scope, s, false);
+		}
+
+	}
 
 	public GamaRuntimeException(final IScope scope, final Throwable ex) {
 		super(ex == null ? "Unknown error" : ex.toString(), ex);

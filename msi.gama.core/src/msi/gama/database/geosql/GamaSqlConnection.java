@@ -1,47 +1,31 @@
 package msi.gama.database.geosql;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import java.util.*;
 import javax.swing.JOptionPane;
-
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
+import org.geotools.data.*;
 import org.geotools.data.mysql.MySQLDataStoreFactory;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.data.simple.*;
 import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.jdbc.JDBCDataStoreFactory;
 import org.opengis.feature.Feature;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.GeometryType;
+import org.opengis.feature.type.*;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.FileUtils;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.metamodel.shape.GamaGisGeometry;
-import msi.gama.metamodel.shape.IShape;
+import com.vividsolutions.jts.geom.*;
+import msi.gama.common.util.*;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.IList;
-import msi.gama.util.file.GamaFileMetaData;
+import msi.gama.util.*;
 import msi.gama.util.file.GamaGisFile;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 
-//DataStore.dispose(); //close connection;
-public  class GamaSqlConnection extends GamaGisFile {
+// DataStore.dispose(); //close connection;
+public class GamaSqlConnection extends GamaGisFile {
+
 	protected static final boolean DEBUG = false; // Change DEBUG = false for release version
 	public static final String MYSQL = "mysql";
 	public static final String POSTGRES = "postgres";
@@ -78,92 +62,91 @@ public  class GamaSqlConnection extends GamaGisFile {
 	protected Boolean transformed = false;
 	protected String extension = null;
 	protected boolean loadExt = false;
-	
-	// Database object/ Database connection
-    protected DataStore dataStore;
-    protected String table =null;
-    protected String filter =null;
 
-//	public GamaSqlConnection(IScope scope, String localhost, Integer code) {
-//		super(scope, localhost, code);
-//		// TODO Auto-generated constructor stub
-//	}
-	
-	public GamaSqlConnection(IScope scope){
-		super(scope,
-			  FileUtils.constructAbsoluteFilePath(scope, "getfun.shp", false),0);
-		setParams(scope);		
+	// Database object/ Database connection
+	protected DataStore dataStore;
+	protected String table = null;
+	protected String filter = null;
+
+	// public GamaSqlConnection(IScope scope, String localhost, Integer code) {
+	// super(scope, localhost, code);
+	// // TODO Auto-generated constructor stub
+	// }
+
+	public GamaSqlConnection(final IScope scope) {
+		super(scope, FileUtils.constructAbsoluteFilePath(scope, "getfun.shp", false), 0);
+		setParams(scope);
 	}
-	
-	public GamaSqlConnection(IScope scope,  Map<String, Object> params) {
-//		super(scope,"F://GAMA_MODELS//GEODB//includes//bounds.shp",0);
-		super(scope,
-				  FileUtils.constructAbsoluteFilePath(scope, "getfun.shp", false),0);
+
+	public GamaSqlConnection(final IScope scope, final Map<String, Object> params) {
+		// super(scope,"F://GAMA_MODELS//GEODB//includes//bounds.shp",0);
+		super(scope, FileUtils.constructAbsoluteFilePath(scope, "getfun.shp", false), 0);
 
 		setParams(params);
 	}
-	
-	private void setParams(IScope scope){
+
+	private void setParams(final IScope scope) {
 		setConnectionParameters(scope);
 		setTableName(scope);
 		setFilter(scope);
 	}
-	
-	private void setParams(Map<String, Object> params,String table, String filter){
+
+	private void setParams(final Map<String, Object> params, final String table, final String filter) {
 		setConnectionParameters(params);
 		setTable(table);
 		setFilter(filter);
 	}
 
-	private void setParams(Map<String, Object> params){
+	private void setParams(final Map<String, Object> params) {
 		setConnectionParameters(params);
 	}
-	
-	private void setTable(String table){
-		this.table=table;
-	}
-	
-	private void setFilter(String filter){
-		this.filter=filter;
-	}
-	private void setConnectionParameters(IScope scope){
-		Map<String, Object> params = (Map<String, Object>) scope.getArg("params", IType.MAP);
-		 this.dbtype = (String) params.get("dbtype");
-		 this.host = (String) params.get("host");
-		 this.port = (String) params.get("port");
-		 this.database = (String) params.get("database");
-		 this.user = (String) params.get("user");
-		 this.passwd = (String) params.get("passwd");
+
+	private void setTable(final String table) {
+		this.table = table;
 	}
 
-	private void setTableName(IScope scope){
+	private void setFilter(final String filter) {
+		this.filter = filter;
+	}
+
+	private void setConnectionParameters(final IScope scope) {
+		Map<String, Object> params = (Map<String, Object>) scope.getArg("params", IType.MAP);
+		this.dbtype = (String) params.get("dbtype");
+		this.host = (String) params.get("host");
+		this.port = (String) params.get("port");
+		this.database = (String) params.get("database");
+		this.user = (String) params.get("user");
+		this.passwd = (String) params.get("passwd");
+	}
+
+	private void setTableName(final IScope scope) {
 		this.table = (String) scope.getArg("table", IType.STRING);
 	}
-	private void setFilter(IScope scope){
+
+	private void setFilter(final IScope scope) {
 		this.filter = (String) scope.getArg("filter", IType.STRING);
 	}
 
-	private void setConnectionParameters(Map<String, Object> params){
-		 this.dbtype = (String) params.get("dbtype");
-		 this.host = (String) params.get("host");
-		 this.port = (String) params.get("port");
-		 this.database = (String) params.get("database");
-		 this.user = (String) params.get("user");
-		 this.passwd = (String) params.get("passwd");
-//		 this.table = (String) params.get("table");
-//		 this.filter = (String) params.get("filter");
+	private void setConnectionParameters(final Map<String, Object> params) {
+		this.dbtype = (String) params.get("dbtype");
+		this.host = (String) params.get("host");
+		this.port = (String) params.get("port");
+		this.database = (String) params.get("database");
+		this.user = (String) params.get("user");
+		this.passwd = (String) params.get("passwd");
+		// this.table = (String) params.get("table");
+		// this.filter = (String) params.get("filter");
 	}
 
-	public static GamaSqlConnection createConnectionObject( IScope scope)
-			throws GamaRuntimeException, Exception {
+	public static GamaSqlConnection createConnectionObject(final IScope scope) throws GamaRuntimeException, Exception {
 		Map<String, Object> params = (Map<String, Object>) scope.getArg("params", IType.MAP);
 		return createConnectionObject(scope, params);
-	
+
 	}
 
-	//Connect connection parameters with the new parameter
-	public Map<String, Object>  createConnectionParams(IScope scope, Map<String, Object> params){
-		Map<String, Object> connectionParameters = new HashMap<String,Object>();
+	// Connect connection parameters with the new parameter
+	public Map<String, Object> createConnectionParams(final IScope scope, final Map<String, Object> params) {
+		Map<String, Object> connectionParameters = new HashMap<String, Object>();
 
 		String dbtype = (String) params.get("dbtype");
 		String host = (String) params.get("host");
@@ -171,217 +154,210 @@ public  class GamaSqlConnection extends GamaGisFile {
 		String database = (String) params.get("database");
 		String user = (String) params.get("user");
 		String passwd = (String) params.get("passwd");
-//		String table = (String) params.get("table");
-//		String filter = (String) params.get("filter");
+		// String table = (String) params.get("table");
+		// String filter = (String) params.get("filter");
 
-		if (dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGRES) || dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGIS))
-		{
-		      connectionParameters.put("host",host);
-		      connectionParameters.put("dbtype",dbtype);
-		      connectionParameters.put("port", port);
-		      connectionParameters.put("database",database);
-		      connectionParameters.put("user",user);
-		      connectionParameters.put("passwd",passwd);
-		      // advanced
-//		      params.put(PostgisDataStoreFactory.LOOSEBBOX, true );
-//		      params.put(PostgisDataStoreFactory.PREPARED_STATEMENTS, true );
-			
-		}else if (dbtype.equalsIgnoreCase(GamaSqlConnection.MYSQL))
-		{
-//			java.util.Map params = new java.util.HashMap();
-			connectionParameters.put(MySQLDataStoreFactory.DBTYPE.key, dbtype);
-			connectionParameters.put(MySQLDataStoreFactory.HOST.key, host);
-			connectionParameters.put(MySQLDataStoreFactory.PORT.key, new Integer(port));
-			connectionParameters.put(MySQLDataStoreFactory.DATABASE.key, database);
-			connectionParameters.put(MySQLDataStoreFactory.USER.key, user);
-			connectionParameters.put(MySQLDataStoreFactory.PASSWD.key, passwd);
-		}else if (dbtype.equalsIgnoreCase(GamaSqlConnection.MSSQL))
-		{
-		      connectionParameters.put("host",host);
-		      connectionParameters.put("dbtype",dbtype);
-		      connectionParameters.put("port", port);
-		      connectionParameters.put("database",database);
-		      connectionParameters.put("user",user);
-		      connectionParameters.put("passwd",passwd);
-				
-		}else if (dbtype.equalsIgnoreCase(GamaSqlConnection.SQLITE))
-		{
-			String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
-			//String EXTRelativeLocation = GamaPreferences.LIB_SPATIALITE.value(scope).getPath();
+		if ( dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGRES) ||
+			dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGIS) ) {
+			connectionParameters.put("host", host);
 			connectionParameters.put("dbtype", dbtype);
-			connectionParameters.put("database", DBRelativeLocation );
-			
+			connectionParameters.put("port", port);
+			connectionParameters.put("database", database);
+			connectionParameters.put("user", user);
+			connectionParameters.put("passwd", passwd);
+			// advanced
+			// params.put(PostgisDataStoreFactory.LOOSEBBOX, true );
+			// params.put(PostgisDataStoreFactory.PREPARED_STATEMENTS, true );
+
+		} else if ( dbtype.equalsIgnoreCase(GamaSqlConnection.MYSQL) ) {
+			// java.util.Map params = new java.util.HashMap();
+			connectionParameters.put(MySQLDataStoreFactory.DBTYPE.key, dbtype);
+			connectionParameters.put(JDBCDataStoreFactory.HOST.key, host);
+			connectionParameters.put(MySQLDataStoreFactory.PORT.key, new Integer(port));
+			connectionParameters.put(JDBCDataStoreFactory.DATABASE.key, database);
+			connectionParameters.put(JDBCDataStoreFactory.USER.key, user);
+			connectionParameters.put(JDBCDataStoreFactory.PASSWD.key, passwd);
+		} else if ( dbtype.equalsIgnoreCase(GamaSqlConnection.MSSQL) ) {
+			connectionParameters.put("host", host);
+			connectionParameters.put("dbtype", dbtype);
+			connectionParameters.put("port", port);
+			connectionParameters.put("database", database);
+			connectionParameters.put("user", user);
+			connectionParameters.put("passwd", passwd);
+
+		} else if ( dbtype.equalsIgnoreCase(GamaSqlConnection.SQLITE) ) {
+			String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
+			// String EXTRelativeLocation = GamaPreferences.LIB_SPATIALITE.value(scope).getPath();
+			connectionParameters.put("dbtype", dbtype);
+			connectionParameters.put("database", DBRelativeLocation);
+
 		}
 		return connectionParameters;
 	}
 
-	// Connect connection parameters with connection attributes of the object 
-	public Map<String, Object>  createConnectionParams(IScope scope){
-		Map<String, Object> connectionParameters = new HashMap<String,Object>();
-		
-		if (dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGRES) || dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGIS))
-		{
-		      connectionParameters.put("host",host);
-		      connectionParameters.put("dbtype",dbtype);
-		      connectionParameters.put("port", port);
-		      connectionParameters.put("database",database);
-		      connectionParameters.put("user",user);
-		      connectionParameters.put("passwd",passwd);
-		      // advanced
-//		      params.put(PostgisDataStoreFactory.LOOSEBBOX, true );
-//		      params.put(PostgisDataStoreFactory.PREPARED_STATEMENTS, true );
-			
-		}else if (dbtype.equalsIgnoreCase(GamaSqlConnection.MYSQL))
-		{
-//			java.util.Map params = new java.util.HashMap();
-			connectionParameters.put(MySQLDataStoreFactory.DBTYPE.key, dbtype);
-			connectionParameters.put(MySQLDataStoreFactory.HOST.key, host);
-			connectionParameters.put(MySQLDataStoreFactory.PORT.key, new Integer(port));
-			connectionParameters.put(MySQLDataStoreFactory.DATABASE.key, database);
-			connectionParameters.put(MySQLDataStoreFactory.USER.key, user);
-			connectionParameters.put(MySQLDataStoreFactory.PASSWD.key, passwd);
-		}else if (dbtype.equalsIgnoreCase(GamaSqlConnection.MSSQL))
-		{
-		      connectionParameters.put("host",host);
-		      connectionParameters.put("dbtype",dbtype);
-		      connectionParameters.put("port", port);
-		      connectionParameters.put("database",database);
-		      connectionParameters.put("user",user);
-		      connectionParameters.put("passwd",passwd);
-				
-		}else if (dbtype.equalsIgnoreCase(GamaSqlConnection.SQLITE))
-		{
-			String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
-			//String EXTRelativeLocation = GamaPreferences.LIB_SPATIALITE.value(scope).getPath();
+	// Connect connection parameters with connection attributes of the object
+	public Map<String, Object> createConnectionParams(final IScope scope) {
+		Map<String, Object> connectionParameters = new HashMap<String, Object>();
+
+		if ( dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGRES) ||
+			dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGIS) ) {
+			connectionParameters.put("host", host);
 			connectionParameters.put("dbtype", dbtype);
-			connectionParameters.put("database", DBRelativeLocation );
-			
+			connectionParameters.put("port", port);
+			connectionParameters.put("database", database);
+			connectionParameters.put("user", user);
+			connectionParameters.put("passwd", passwd);
+			// advanced
+			// params.put(PostgisDataStoreFactory.LOOSEBBOX, true );
+			// params.put(PostgisDataStoreFactory.PREPARED_STATEMENTS, true );
+
+		} else if ( dbtype.equalsIgnoreCase(GamaSqlConnection.MYSQL) ) {
+			// java.util.Map params = new java.util.HashMap();
+			connectionParameters.put(MySQLDataStoreFactory.DBTYPE.key, dbtype);
+			connectionParameters.put(JDBCDataStoreFactory.HOST.key, host);
+			connectionParameters.put(MySQLDataStoreFactory.PORT.key, new Integer(port));
+			connectionParameters.put(JDBCDataStoreFactory.DATABASE.key, database);
+			connectionParameters.put(JDBCDataStoreFactory.USER.key, user);
+			connectionParameters.put(JDBCDataStoreFactory.PASSWD.key, passwd);
+		} else if ( dbtype.equalsIgnoreCase(GamaSqlConnection.MSSQL) ) {
+			connectionParameters.put("host", host);
+			connectionParameters.put("dbtype", dbtype);
+			connectionParameters.put("port", port);
+			connectionParameters.put("database", database);
+			connectionParameters.put("user", user);
+			connectionParameters.put("passwd", passwd);
+
+		} else if ( dbtype.equalsIgnoreCase(GamaSqlConnection.SQLITE) ) {
+			String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
+			// String EXTRelativeLocation = GamaPreferences.LIB_SPATIALITE.value(scope).getPath();
+			connectionParameters.put("dbtype", dbtype);
+			connectionParameters.put("database", DBRelativeLocation);
+
 		}
 		return connectionParameters;
 	}
-	
+
 	/*
 	 * Create a connection to database with current connection parameter of the GamaSqlConnection object
 	 */
-    public DataStore Connect(IScope scope) throws Exception{
-	  Map<String, Object> connectionParameters = new HashMap<String,Object>();
-	  connectionParameters = createConnectionParams(scope);
-   	  DataStore dStore;
-      dStore = DataStoreFinder.getDataStore(connectionParameters); //get connection
-      System.out.println("data store postgress:"+dStore);
-      if (dStore == null) {
-          throw new IOException("Can't connect to " + database);
-      }
-      return dStore;	  
-    }
-    
+	public DataStore Connect(final IScope scope) throws Exception {
+		Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		connectionParameters = createConnectionParams(scope);
+		DataStore dStore;
+		dStore = DataStoreFinder.getDataStore(connectionParameters); // get connection
+		System.out.println("data store postgress:" + dStore);
+		if ( dStore == null ) { throw new IOException("Can't connect to " + database); }
+		return dStore;
+	}
+
 	/*
 	 * Create a connection to database with the connection parameter params
-	 */  
-    public DataStore Connect(IScope scope, Map<String, Object> params) throws IOException{
-  	  Map<String, Object> connectionParameters = new HashMap<String,Object>();
-	  connectionParameters = createConnectionParams(scope,params);
+	 */
+	public DataStore Connect(final IScope scope, final Map<String, Object> params) throws IOException {
+		Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		connectionParameters = createConnectionParams(scope, params);
 
-	  DataStore dStore;
-      dStore = DataStoreFinder.getDataStore(connectionParameters); //get connection
-      if (dStore == null) {
-    	  throw new IOException("Can't connect to " + database);
-      }
-      return dStore;	  
-    }
-    
-    /*
-     * Close the current connection of of the GamaSqlConnection object
-     */
-    public void close() throws GamaRuntimeException{
-    	if (dataStore != null){
-    		dataStore.dispose();
-    	}else {
-			throw GamaRuntimeException.error("The connection to "+ this.database + " is not opened ");
-    	}
-    }
-    
-	public static GamaSqlConnection createConnectionObject( IScope scope, Map<String, Object> params)
-			throws GamaRuntimeException, Exception {
-		
-			String dbtype = (String) params.get("dbtype");
-			String host = (String) params.get("host");
-			String port = (String) params.get("port");
-			String database = (String) params.get("database");
-			String user = (String) params.get("user");
-			String passwd = (String) params.get("passwd");
-			String table = (String) params.get("table");
-			String filter = (String) params.get("filter");
-           
-			Map<String, Object> connectionParameters = new HashMap<String,Object>();
-            connectionParameters.put("host",host);
-            connectionParameters.put("dbtype",dbtype);
-            connectionParameters.put("port",port);
-            connectionParameters.put("database",database);
-            connectionParameters.put("user",user);
-            connectionParameters.put("passwd",passwd);
+		DataStore dStore;
+		dStore = DataStoreFinder.getDataStore(connectionParameters); // get connection
+		if ( dStore == null ) { throw new IOException("Can't connect to " + database); }
+		return dStore;
+	}
 
-			if ( dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGRES) || dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGIS) ) {
-				DataStore dStore;
-			    dStore = DataStoreFinder.getDataStore(connectionParameters); //get connection
-			    if (dStore == null) {
-		            JOptionPane.showMessageDialog(null, "Could not connect - check parameters");
-		        }
-			    GamaSqlConnection sqlConn;
-				sqlConn = new GamaSqlConnection(scope,connectionParameters);
-				sqlConn.setTable(table);
-				sqlConn.setFilter(scope);
-		        sqlConn.setDataStore(dStore);// Create connection an get data store (database) for query
-		        
-		        return sqlConn;
-					
-			} else {
-				throw GamaRuntimeException.error("GAMA does not support databases of type: " + dbtype);
-			}
-
+	/*
+	 * Close the current connection of of the GamaSqlConnection object
+	 */
+	public void close() throws GamaRuntimeException {
+		if ( dataStore != null ) {
+			dataStore.dispose();
+		} else {
+			throw GamaRuntimeException.error("The connection to " + this.database + " is not opened ");
 		}
-	
-	public void setDataStore(DataStore dataStore){
+	}
+
+	public static GamaSqlConnection createConnectionObject(final IScope scope, final Map<String, Object> params)
+		throws GamaRuntimeException, Exception {
+
+		String dbtype = (String) params.get("dbtype");
+		String host = (String) params.get("host");
+		String port = (String) params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String) params.get("passwd");
+		String table = (String) params.get("table");
+		String filter = (String) params.get("filter");
+
+		Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		connectionParameters.put("host", host);
+		connectionParameters.put("dbtype", dbtype);
+		connectionParameters.put("port", port);
+		connectionParameters.put("database", database);
+		connectionParameters.put("user", user);
+		connectionParameters.put("passwd", passwd);
+
+		if ( dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGRES) ||
+			dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGIS) ) {
+			DataStore dStore;
+			dStore = DataStoreFinder.getDataStore(connectionParameters); // get connection
+			if ( dStore == null ) {
+				JOptionPane.showMessageDialog(null, "Could not connect - check parameters");
+			}
+			GamaSqlConnection sqlConn;
+			sqlConn = new GamaSqlConnection(scope, connectionParameters);
+			sqlConn.setTable(table);
+			sqlConn.setFilter(scope);
+			sqlConn.setDataStore(dStore);// Create connection an get data store (database) for query
+
+			return sqlConn;
+
+		} else {
+			throw GamaRuntimeException.error("GAMA does not support databases of type: " + dbtype, scope);
+		}
+
+	}
+
+	public void setDataStore(final DataStore dataStore) {
 		this.dataStore = dataStore;
 	}
-	
-	public DataStore getDataStore(DataStore dstore){
+
+	public DataStore getDataStore(final DataStore dstore) {
 		return this.dataStore;
 	}
+
 	protected void readTable(final IScope scope) {
 		String tableName = (String) scope.getArg("table", IType.STRING);
 		String filterStr = (String) scope.getArg("filter", IType.STRING);
 		readTable(scope, tableName, filterStr);
 	}
 
-	protected void readTable(final IScope scope, String tableName, String filterStr) {
-		
+	protected void readTable(final IScope scope, final String tableName, final String filterStr) {
+
 		SimpleFeatureIterator reader = null;
 		IList list = getBuffer();
 		try {
-			QueryInfo queryInfo= new QueryInfo(this.dataStore, tableName, filterStr);
+			QueryInfo queryInfo = new QueryInfo(this.dataStore, tableName, filterStr);
 			int size = queryInfo.getSize();
-			Envelope env= queryInfo.getEnvelope();
+			Envelope env = queryInfo.getEnvelope();
 			int index = 0;
-			computeProjection(scope, env);  //??
-			//reader = store.getFeatureReader();
-			reader =queryInfo.getRecordSet().features();
-			int i=0;
+			computeProjection(scope, env); // ??
+			// reader = store.getFeatureReader();
+			reader = queryInfo.getRecordSet().features();
+			int i = 0;
 			while (reader.hasNext()) {
 				GuiUtils.updateSubStatusCompletion(index++ / size);
 				Feature feature = reader.next();
-				
-				System.out.println("Record "+ i++ +": "+feature.getValue().toString());
-				
+
+				System.out.println("Record " + i++ + ": " + feature.getValue().toString());
+
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 				if ( g != null && !g.isEmpty() ) {
 					g = gis.transform(g);
 					list.add(new GamaGisGeometry(g, feature));
 				} else {
-					GAMA.reportError(
-						scope,
-						GamaRuntimeException.warning("GamaSqlConnection.fillBuffer; geometry could not be added : " +
-							feature.getIdentifier(), scope), false);
+					GAMA.reportError(scope,
+						GamaRuntimeException.warning(
+							"GamaSqlConnection.fillBuffer; geometry could not be added : " + feature.getIdentifier(),
+							scope),
+						false);
 				}
 			}
 		} catch (final Exception e) {
@@ -396,7 +372,7 @@ public  class GamaSqlConnection extends GamaGisFile {
 			}
 			GuiUtils.endSubStatus("Reading table " + tableName);
 		}
-    }
+	}
 
 	/**
 	 * @see msi.gama.util.GamaFile#fillBuffer()
@@ -407,13 +383,14 @@ public  class GamaSqlConnection extends GamaGisFile {
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		readTable(scope);
 	}
-	public void read(IScope scope){
+
+	public void read(final IScope scope) {
 		fillBuffer(scope);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
@@ -423,33 +400,33 @@ public  class GamaSqlConnection extends GamaGisFile {
 
 	@Override
 	protected CoordinateReferenceSystem getOwnCRS() {
-			return null;
+		return null;
 	}
 
-//_________________________________________________________________	
-	public static class QueryInfo  {
+	// _________________________________________________________________
+	public static class QueryInfo {
 
 		final int itemNumber; // Number of records
 		final CoordinateReferenceSystem crs;
 		final double width;
 		final double height;
 		final Envelope env;
-		final Map<String, String> attributes;   //meta data of query
-		final SimpleFeatureCollection features;  // data/recordsets
+		final Map<String, String> attributes; // meta data of query
+		final SimpleFeatureCollection features; // data/recordsets
 
-		public QueryInfo(DataStore dStore, String tableName, String filterStr) {
-			
-			SimpleFeatureSource source = null;   
-			SimpleFeatureCollection sfeatures=null;  // Query data
+		public QueryInfo(final DataStore dStore, final String tableName, final String filterStr) {
+
+			SimpleFeatureSource source = null;
+			SimpleFeatureCollection sfeatures = null; // Query data
 			Map<String, String> attributes = new LinkedHashMap(); // Meta data
 			ReferencedEnvelope env = new ReferencedEnvelope();
 			CoordinateReferenceSystem crs = null;
 			int number = 0;
 			try {
 
-				source = dStore.getFeatureSource(tableName);  // table
-				Filter filter = ECQL.toFilter(filterStr);     // create filter for read data
-				sfeatures = source.getFeatures(filter);        //read data
+				source = dStore.getFeatureSource(tableName); // table
+				Filter filter = ECQL.toFilter(filterStr); // create filter for read data
+				sfeatures = source.getFeatures(filter); // read data
 				try {
 					crs = source.getInfo().getCRS();
 				} catch (Exception e) {
@@ -461,9 +438,9 @@ public  class GamaSqlConnection extends GamaGisFile {
 						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
 					} catch (Exception e) {}
 				}
-				number = sfeatures.size();   // get number of records
+				number = sfeatures.size(); // get number of records
 				// get meta data
-				java.util.List<AttributeDescriptor> att_list = source.getSchema().getAttributeDescriptors();  
+				java.util.List<AttributeDescriptor> att_list = source.getSchema().getAttributeDescriptors();
 				for ( AttributeDescriptor desc : att_list ) {
 					String type;
 					if ( desc.getType() instanceof GeometryType ) {
@@ -480,10 +457,10 @@ public  class GamaSqlConnection extends GamaGisFile {
 				this.width = env.getWidth();
 				this.height = env.getHeight();
 				this.env = env;
-				this.itemNumber = number;      // number of records
+				this.itemNumber = number; // number of records
 				this.crs = crs;
-				this.features=sfeatures;       //  data
-				this.attributes = attributes;  //  attributes
+				this.features = sfeatures; // data
+				this.attributes = attributes; // attributes
 			}
 
 		}
@@ -491,15 +468,19 @@ public  class GamaSqlConnection extends GamaGisFile {
 		public CoordinateReferenceSystem getCRS() {
 			return crs;
 		}
+
 		public int getSize() {
 			return itemNumber;
 		}
+
 		public Envelope getEnvelope() {
 			return env;
 		}
+
 		public double getwidth() {
 			return width;
 		}
+
 		public double getheight() {
 			return height;
 		}
@@ -507,11 +488,10 @@ public  class GamaSqlConnection extends GamaGisFile {
 		public Map<String, String> getAttributes() {
 			return attributes;
 		}
+
 		public SimpleFeatureCollection getRecordSet() {
 			return features;
 		}
-	}// end of class QueryInfo	
-	
+	}// end of class QueryInfo
 
-	
 }
