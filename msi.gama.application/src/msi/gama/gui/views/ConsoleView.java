@@ -25,7 +25,7 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 
-public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable {
+public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
 	public static final String ID = "msi.gama.application.view.ConsoleView";
 	private BufferedWriter bw;
@@ -173,5 +173,12 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	protected GamaUIJob createUpdateJob() {
 		return null;
 	}
+
+	/**
+	 * Method synchronizeChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#synchronizeChanged()
+	 */
+	@Override
+	public void synchronizeChanged() {}
 
 }

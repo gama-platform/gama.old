@@ -34,7 +34,7 @@ import msi.gama.runtime.GAMA;
 /**
  * @author drogoul
  */
-public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolbarDecoratedView.Pausable, ITooltipDisplayer {
+public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
 	protected final List<IDisplayOutput> outputs = new ArrayList();
 	protected Composite parent;
@@ -160,11 +160,11 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		contextService.activateContext("msi.gama.application.simulation.context");
 	}
 
-	@Override
-	public void pauseChanged() {}
-
-	@Override
-	public void synchronizeChanged() {}
+	// @Override
+	// public void pauseChanged() {}
+	//
+	// @Override
+	// public void synchronizeChanged() {}
 
 	protected final GamaUIJob getUpdateJob() {
 		if ( updateJob == null ) {

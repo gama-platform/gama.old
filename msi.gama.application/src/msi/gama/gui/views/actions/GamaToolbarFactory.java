@@ -11,16 +11,16 @@
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
-import msi.gama.gui.views.*;
-import msi.gama.gui.views.IToolbarDecoratedView.Colorizable;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.IToolbarDecoratedView.Colorizable;
 
 /**
  * The class GamaToolbarFactory.
@@ -59,8 +59,8 @@ public class GamaToolbarFactory {
 		}
 
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create(show ? "action.toolbar.toggle.small2" : "action.toolbar.toggle.small3")
-				.descriptor());
+			setImageDescriptor(
+				GamaIcons.create(show ? "action.toolbar.toggle.small2" : "action.toolbar.toggle.small3").descriptor());
 		}
 
 	}
@@ -68,8 +68,8 @@ public class GamaToolbarFactory {
 	public static int TOOLBAR_HEIGHT = GamaIcons.CORE_ICONS_HEIGHT.getValue();
 	public static int TOOLBAR_SEP = 4;
 
-	private static Composite
-		createIntermediateCompositeFor(final IToolbarDecoratedView view, final Composite composite) {
+	private static Composite createIntermediateCompositeFor(final IToolbarDecoratedView view,
+		final Composite composite) {
 		// First, we create the background composite
 		FillLayout backgroundLayout = new FillLayout(SWT.VERTICAL);
 		backgroundLayout.marginHeight = 0;
@@ -135,9 +135,9 @@ public class GamaToolbarFactory {
 			tm.update(true);
 		} else if ( site instanceof IEditorSite ) {
 			// WARNING Disabled for the moment.
-			// IActionBars tm = ((IEditorSite) site).getActionBars();
-			// tm.getToolBarManager().add(toggle);
-			// tm.updateActionBars();
+			IActionBars tm = ((IEditorSite) site).getActionBars();
+			tm.getToolBarManager().add(toggle);
+			tm.updateActionBars();
 		}
 		return toolbarComposite;
 

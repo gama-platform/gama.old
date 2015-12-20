@@ -13,6 +13,10 @@ package msi.gama.gui.views;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
@@ -27,12 +31,8 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 
-public class AgentInspectView extends AttributesEditorsView<IAgent> implements IToolbarDecoratedView.Pausable /* implements GamaSelectionListener */{
+public class AgentInspectView extends AttributesEditorsView<IAgent> implements IToolbarDecoratedView.Pausable /* implements GamaSelectionListener */ {
 
 	public static final String ID = GuiUtils.AGENT_VIEW_ID;
 
@@ -211,6 +211,20 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 			removeOutput(found);
 		}
 	}
+
+	/**
+	 * Method pauseChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#pauseChanged()
+	 */
+	@Override
+	public void pauseChanged() {}
+
+	/**
+	 * Method synchronizeChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#synchronizeChanged()
+	 */
+	@Override
+	public void synchronizeChanged() {}
 
 	// /**
 	// * Method createToolItem()

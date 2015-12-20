@@ -14,6 +14,14 @@ package msi.gama.gui.views;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.gui.parameters.ExpressionControl;
@@ -34,14 +42,6 @@ import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 
 /**
  * Written by drogoul Modified on 18 mai 2011
@@ -60,8 +60,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	public final static int LOCK = 1;
 	public final static int POP = 2;
 	public final static int EXPR = 3;
-	public static final List<String> DONT_INSPECT_BY_DEFAULT = Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS,
-		IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
+	public static final List<String> DONT_INSPECT_BY_DEFAULT =
+		Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
 	IScope scope;
 	volatile boolean locked;
 	// volatile boolean refreshing;
@@ -144,6 +144,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 	@Override
 	public void addOutput(final IDisplayOutput output) {
+		if ( output == null ) { return; }
 		super.addOutput(output);
 		scope = null;
 		selectedColumns.clear();
@@ -228,9 +229,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		compo.setSize(new Point(150, 30));
 		compo.setBackground(IGamaColors.WHITE.color());
 		compo.setLayout(new GridLayout(1, false));
-		editor =
-			new ExpressionControl(compo, null, getScope().getAgentScope(), Types.CONTAINER.of(Types.AGENT), SWT.BORDER,
-				false) {
+		editor = new ExpressionControl(compo, null, getScope().getAgentScope(), Types.CONTAINER.of(Types.AGENT),
+			SWT.BORDER, false) {
 
 			@Override
 			public void modifyValue() {
@@ -284,8 +284,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		if ( CUSTOM.equals(speciesName) ) {
 			tooltipText = "A list of the attributes common to the agents returned by the custom expression";
 		} else {
-			tooltipText =
-				"A list of the attributes defined in species " + speciesName +
+			tooltipText = "A list of the attributes defined in species " + speciesName +
 				". Select the ones you want to display in the table";
 		}
 		attributesMenu.setToolTipText(tooltipText);
@@ -645,9 +644,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 			return;
 		}
 
-		String exportFileName =
-			FileUtils.constructAbsoluteFilePath(getScope(), exportFolder + "/" + speciesName + "_population" +
-				getScope().getClock().getCycle() + ".csv", false);
+		String exportFileName = FileUtils.constructAbsoluteFilePath(getScope(),
+			exportFolder + "/" + speciesName + "_population" + getScope().getClock().getCycle() + ".csv", false);
 		// File file = new File(exportFileName);
 		// FileWriter fileWriter = null;
 		// try {
@@ -738,12 +736,12 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		tb.button("menu.saveas2", "Save as CSV", "Save the attributes of agents into a CSV file",
 			new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				saveAsCSV();
-			}
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					saveAsCSV();
+				}
 
-		}, SWT.RIGHT);
+			}, SWT.RIGHT);
 	}
 
 	@Override
@@ -763,5 +761,19 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		provider.dispose();
 		super.close();
 	}
+
+	/**
+	 * Method pauseChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#pauseChanged()
+	 */
+	@Override
+	public void pauseChanged() {}
+
+	/**
+	 * Method synchronizeChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#synchronizeChanged()
+	 */
+	@Override
+	public void synchronizeChanged() {}
 
 }
