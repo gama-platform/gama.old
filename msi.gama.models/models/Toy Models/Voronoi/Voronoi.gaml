@@ -2,7 +2,7 @@ model voronoi
  
 global {
 	// Parameters 
-	int num_points <- 1 min: 1 max: 1000;
+	int num_points <- 4 min: 1 max: 1000;
 	int env_width <- 100 min: 10 max: 400;
 	int env_height <- 100 min: 10 max: 400;
 	
@@ -12,17 +12,13 @@ global {
 	init { 
 		write 'This model shows how Voronoi-like shapes can be drawn on a regular surface. A set of mobile agents is placed on a grid. Each agent possesses an attribute called *inside_color*. Each step, the agents move randomly and the grid cells paint themselves using the *inside_color* of the nearest agent. Dynamical boundaries then appear on the screen without any further calculations.';
 		create center number: num_points ;  
-		
-		loop a over: cell {
-			a.closest_center <- center closest_to a.location;
-		}
-		
 	}   
 } 
 
 
 grid cell width: env_width height: env_height neighbours: 8 use_regular_agents: false {
-	center closest_center <- nil update: center closest_to(self);
+	// Note: since GAMA 1.7, the topology needs to be specified for this computation to use continuous distances
+	center closest_center <- nil update: (center closest_to self.location) using topology(world);
 	rgb color <- #white update: (closest_center).color;
 }
 
@@ -32,7 +28,7 @@ species center skills: [moving] {
 		do wander amplitude: 90;
 	}  
 	aspect base {
-		draw circle(1.0) color: color;
+		draw square(1.0) color: color;
 	}
 }
 
@@ -45,7 +41,7 @@ experiment voronoi type: gui{
 	
 	output {
 		display Voronoi type: opengl {
-			grid cell triangulation: true elevation: closest_center = nil ? 0 : env_width/3 - self distance_to (closest_center);
+			grid cell  ;
 			species center aspect: base ;
 		}
 	}	
