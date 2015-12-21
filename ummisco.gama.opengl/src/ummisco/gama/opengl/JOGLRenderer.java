@@ -35,7 +35,6 @@ import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
-import ummisco.gama.opengl.files.GLModel;
 import ummisco.gama.opengl.scene.*;
 import ummisco.gama.opengl.utils.GLUtilLight;
 
@@ -79,7 +78,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	private ModelScene currentScene;
 	private volatile boolean inited;
 
-	private final GLModel chairModel = null;
+	// private final GLModel chairModel = null;
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		displaySurface = d;
@@ -410,12 +409,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		drawModel(gl, scene);
 	}
 
-	public int getWidth() {
-		return width;
+	public double getWidth() {
+		return width * displaySurface.getZoomLevel();
 	}
 
-	public int getHeight() {
-		return height;
+	public double getHeight() {
+		return height * displaySurface.getZoomLevel();
 	}
 
 	public void updateCameraPosition() {
@@ -611,6 +610,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		final java.util.List<BufferedImage> textures, final java.util.List<Double> ratio,
 		final java.util.List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
+		// System.out.println("Value of 1 pixel: " + 1d / getyRatioBetweenPixelsAndModelUnits());
 		sceneBuffer.getSceneToUpdate().addGeometry(geom, scope.getAgentScope(), color, fill, border,
 			textures == null || textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type,
 			ratio, colors, rotate3D);
@@ -784,8 +784,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 		GamaPoint currentOffset = new GamaPoint(xOffsetInPixels / (getWidth() / data.getEnvWidth()),
 			yOffsetInPixels / (getHeight() / data.getEnvHeight()), currentZLayer);
-		GamaPoint currentScale = new GamaPoint(widthOfLayerInPixels / (double) getWidth(),
-			heightOfLayerInPixels / (double) getHeight(), z_scale);
+		GamaPoint currentScale =
+			new GamaPoint(widthOfLayerInPixels / getWidth(), heightOfLayerInPixels / getHeight(), z_scale);
 
 		ModelScene scene = sceneBuffer.getSceneToUpdate();
 		if ( scene != null ) {
@@ -842,7 +842,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	 */
 	@Override
 	public int getDisplayWidthInPixels() {
-		return getWidth();
+		return (int) Math.round(getWidth());
 	}
 
 	/**
@@ -851,7 +851,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	 */
 	@Override
 	public int getDisplayHeightInPixels() {
-		return getHeight();
+		return (int) Math.round(getHeight());
 	}
 
 	/**

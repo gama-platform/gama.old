@@ -649,9 +649,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// AD: Hack to address Issue 387. If the unit is a pixel, we add +1 to the whole expression.
 		IExpression right = compile(object.getRight());
 		IExpression result = binary("*", object.getLeft(), object.getRight());
-		if ( result != null && ((BinaryOperator) result).arg(1) instanceof PixelUnitExpression ) {
-			result = factory.createOperator("+", getContext(), object, factory.createConst(1, Types.INT), result);
-		}
+		// AD: removal of the hack to address #1325 -- needs to be tested in OpenGL
+		// if ( result != null && ((BinaryOperator) result).arg(1) instanceof PixelUnitExpression ) {
+		// result = factory.createOperator("+", getContext(), object, factory.createConst(1, Types.INT), result);
+		// }
 		return result;
 	}
 

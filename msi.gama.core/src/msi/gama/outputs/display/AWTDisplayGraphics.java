@@ -111,7 +111,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final boolean isDynamic,
 		final String name) {
 		final AffineTransform saved = renderer.getTransform();
-		int curX, curY;
+		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = xOffsetInPixels;
 			curY = yOffsetInPixels;
@@ -130,7 +130,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		if ( angle != null ) {
 			renderer.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
 		}
-		renderer.drawImage(img, curX, curY, (int) curWidth, (int) curHeight, null);
+		renderer.drawImage(img, (int) Math.round(curX), (int) Math.round(curY), (int) curWidth, (int) curHeight, null);
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
@@ -164,7 +164,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final ILocation locationInModelUnits, final java.lang.Double heightInModelUnits, final String fontName,
 		final Integer styleName, final Double angle, final Double z, final Boolean bitmap) {
 		renderer.setColor(highlight ? data.getHighlightColor() : stringColor);
-		int curX, curY;
+		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = xOffsetInPixels;
 			curY = yOffsetInPixels;
@@ -190,7 +190,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			final Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);
 			renderer.rotate(Maths.toRad * angle, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
 		}
-		Point pen = new Point(curX, curY);
+		Point pen = new Point((int) curX, (int) curY);
 		LineBreakMeasurer measurer =
 			new LineBreakMeasurer(new AttributedString(string).getIterator(), renderer.getFontRenderContext());
 		while (true) {
@@ -213,7 +213,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
 		final java.lang.Double heightInModelUnits, final Font font, final Double angle, final Boolean bitmap) {
 		renderer.setColor(highlight ? data.getHighlightColor() : stringColor);
-		int curX, curY, curZ;
+		double curX, curY, curZ;
 		if ( locationInModelUnits == null ) {
 			curX = xOffsetInPixels;
 			curY = yOffsetInPixels;
@@ -240,7 +240,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			final Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);
 			renderer.rotate(Maths.toRad * angle, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
 		}
-		renderer.drawString(string, curX, curY);
+		renderer.drawString(string, (int) curX, (int) curY);
 		renderer.setTransform(saved);
 		return renderer.getFontMetrics().getStringBounds(string, renderer);
 
@@ -258,6 +258,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color, final boolean fill,
 		final Color border, final boolean rounded) {
 		if ( geometry == null ) { return null; }
+		Envelope e = geometry.getEnvelope();
+		// System.out.println("Original geometry width:" + e.getWidth() + " height: " + e.getHeight());
 		final ITopology topo = scope.getTopology();
 		Rectangle2D result = null;
 		if ( topo != null && topo.isTorus() ) {
@@ -284,7 +286,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final Shape s = sw.toShape(geom);
 		try {
 			final Rectangle2D r = s.getBounds2D();
-			final AffineTransform saved = renderer.getTransform();
+			// System.out.println("width : " + r.getWidth() + " height: " + r.getHeight());
+			// System.out.println("Value of 1 pixel: " + 1d / getyRatioBetweenPixelsAndModelUnits());
+			// final AffineTransform saved = renderer.getTransform();
 			// if ( angle != null ) {
 			// renderer.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
 			// }
@@ -298,7 +302,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			if ( border != null ) {
 				renderer.draw(s);
 			}
-			renderer.setTransform(saved);
+			// renderer.setTransform(saved);
 			return r;
 		} catch (final Exception e) {
 			e.printStackTrace();
