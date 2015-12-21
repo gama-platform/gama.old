@@ -44,25 +44,30 @@ public class IUnits {
 	 * Special units
 	 */
 
-	@constant(value = "view_x",
-		category = IConstantCategory.GRAPHIC,
-		doc = @doc("This unit, only available when running aspects or declaring displays, returns the x ordinate of the top-left corner of the view in the world") )
-	public final static double view_x = 1;
+	// @constant(value = "view_x",
+	// category = IConstantCategory.GRAPHIC,
+	// doc = @doc("This unit, only available when running aspects or declaring displays, returns the x ordinate of the top-left corner of the view in the world") )
+	// public final static double view_x = 1;
+	//
+	// @constant(value = "view_y",
+	// category = IConstantCategory.GRAPHIC,
+	// doc = @doc("This unit, only available when running aspects or declaring displays, returns the y ordinate of the top-left corner of the view in the world") )
+	// public final static double view_y = 1;
+	//
+	// @constant(value = "view_width",
+	// category = IConstantCategory.GRAPHIC,
+	// doc = @doc("This unit, only available when running aspects or declaring displays, returns the width of the view in world units") )
+	// public final static double view_width = 1;
+	//
+	// @constant(value = "view_height",
+	// category = IConstantCategory.GRAPHIC,
+	// doc = @doc("This unit, only available when running aspects or declaring displays, returns the height of the view in world units") )
+	// public final static double view_height = 1;
 
-	@constant(value = "view_y",
+	@constant(value = "zoom",
 		category = IConstantCategory.GRAPHIC,
-		doc = @doc("This unit, only available when running aspects or declaring displays, returns the y ordinate of the top-left corner of the view in the world") )
-	public final static double view_y = 1;
-
-	@constant(value = "view_width",
-		category = IConstantCategory.GRAPHIC,
-		doc = @doc("This unit, only available when running aspects or declaring displays, returns the width of the view in world units") )
-	public final static double view_width = 1;
-
-	@constant(value = "view_height",
-		category = IConstantCategory.GRAPHIC,
-		doc = @doc("This unit, only available when running aspects or declaring displays, returns the height of the  view in world units") )
-	public final static double view_height = 1;
+		doc = @doc("This unit, only available when running aspects or declaring displays, returns the current zoom level of the display as a positive float, where 1.0 represent the neutral zoom (100%)") )
+	public final static double zoom = 1;
 
 	@constant(value = "pixels",
 		altNames = { "px" },

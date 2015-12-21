@@ -18,6 +18,7 @@ public class UnitConstantExpression extends ConstantExpression {
 
 	public static UnitConstantExpression create(final Object val, final IType t, final String unit, final String doc,
 		final String[] names) {
+		if ( unit.equals("zoom") ) { return new ZoomUnitExpression(unit, doc); }
 		if ( unit.equals("pixels") || unit.equals("px") ) { return new PixelUnitExpression(unit, doc); }
 		if ( unit.equals("display_width") ) { return new DisplayWidthUnitExpression(doc); }
 		if ( unit.equals("display_height") ) { return new DisplayHeightUnitExpression(doc); }
