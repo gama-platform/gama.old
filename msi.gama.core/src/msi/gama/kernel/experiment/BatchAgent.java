@@ -23,6 +23,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
@@ -69,8 +70,8 @@ public class BatchAgent extends ExperimentAgent {
 	}
 
 	@Override
-	public void schedule() {
-		super.schedule();
+	public void scheduleAndExecute(final RemoteSequence sequence) {
+		super.scheduleAndExecute(sequence);
 		// Necessary to run it here, as if the seed has been fixed in the experiment, it is now defined and initialized
 		IExpression expr = getSpecies().getFacet(IKeyword.KEEP_SEED);
 		if ( expr != null && expr.isConst() ) {
@@ -160,7 +161,7 @@ public class BatchAgent extends ExperimentAgent {
 			if ( simulation != null && !simulation.dead() ) {
 				GuiUtils.prepareForSimulation(simulation);
 				IScope scope = simulation.getScope();
-				simulation.getScheduler().insertAgentToInit(simulation, scope);
+				simulation.getScheduler().insertAgentToInit(scope, simulation, null);
 				// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
 				simulation.getScheduler().init(scope);
 

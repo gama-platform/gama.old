@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SimulationPopulation.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.population;
 
@@ -26,6 +26,7 @@ import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.RemoteSequence;
 
 public class SimulationPopulation extends GamaPopulation {
 
@@ -45,7 +46,8 @@ public class SimulationPopulation extends GamaPopulation {
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<? extends Map> initialValues, final boolean toBeScheduled) throws GamaRuntimeException {
+		final List<? extends Map> initialValues, final boolean toBeScheduled, final RemoteSequence sequence)
+			throws GamaRuntimeException {
 		GuiUtils.waitStatus("Initializing simulation");
 		final SimulationAgent world = new SimulationAgent(this);
 		world.setIndex(currentAgentIndex++);
@@ -56,7 +58,7 @@ public class SimulationPopulation extends GamaPopulation {
 		GuiUtils.waitStatus("Instantiating agents");
 		createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
 		if ( toBeScheduled ) {
-			world.schedule();
+			world.scheduleAndExecute(sequence);
 			// hqnghi if simulation is created manually, it's not scheduled and have to init implicitely
 		}
 		// AD: Removed because of Issue 1051 (double init).

@@ -29,6 +29,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 
 /**
@@ -96,8 +97,8 @@ public class SimulationAgent extends GamlAgent {
 	}
 
 	@Override
-	public void schedule() {
-		super.schedule();
+	public void scheduleAndExecute(final RemoteSequence sequence) {
+		super.scheduleAndExecute(sequence);
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
 		GuiUtils.prepareForSimulation(this);

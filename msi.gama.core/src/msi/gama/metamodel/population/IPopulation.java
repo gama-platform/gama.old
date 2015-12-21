@@ -1,17 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IPopulation.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.population;
 
 import java.util.*;
+import com.google.common.base.Predicate;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.shape.*;
@@ -20,17 +21,16 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IExecutable;
+import msi.gaml.statements.*;
 import msi.gaml.variables.IVariable;
-import com.google.common.base.Predicate;
 
 /**
  * A population is a collection of agents of a species.
- * 
+ *
  * Written by drogoul Modified on 24 juin 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, IStepable, IPopulationSet {
 
@@ -67,20 +67,20 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	/**
 	 * Create agents as members of this population.
-	 * 
+	 *
 	 * @param scope
 	 * @param number The number of agent to create.
 	 * @param initialValues The initial values of agents' variables.
 	 * @param isRestored Indicates that the agents are newly created or they are restored (on a
-	 *            capture or release).
-	 *            If agents are restored on a capture or release then don't run their "init" reflex
-	 *            again.
-	 * 
+	 * capture or release).
+	 * If agents are restored on a capture or release then don't run their "init" reflex
+	 * again.
+	 *
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
 	public abstract IList<? extends IAgent> createAgents(IScope scope, int number, List<? extends Map> initialValues,
-		boolean isRestored) throws GamaRuntimeException;
+		boolean isRestored, RemoteSequence sequence) throws GamaRuntimeException;
 
 	public abstract IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries)
 		throws GamaRuntimeException;
@@ -108,7 +108,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	/**
 	 * Returns the topology associated to this population.
-	 * 
+	 *
 	 * @return
 	 */
 	public abstract ITopology getTopology();
@@ -117,20 +117,20 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	/**
 	 * Returns the macro-agent hosting this population.
-	 * 
+	 *
 	 * @return
 	 */
 	public abstract IMacroAgent getHost();
 
 	/**
 	 * @throws GamaRuntimeException
-	 *             When the "shape" of host changes, this method is invoked to update the topology.
+	 * When the "shape" of host changes, this method is invoked to update the topology.
 	 */
 	public abstract void hostChangesShape();
 
 	/**
 	 * Kills all the agents managed by this population.
-	 * 
+	 *
 	 * @throws GamaRuntimeException
 	 */
 	public abstract void killMembers() throws GamaRuntimeException;
@@ -155,6 +155,6 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	IAgent getAgent(IScope scope, ILocation coord);
 
 	@Override
-	IAgent[] toArray();
+		IAgent[] toArray();
 
 }

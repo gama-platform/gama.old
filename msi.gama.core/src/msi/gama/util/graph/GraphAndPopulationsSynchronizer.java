@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
  *
- * 'GraphAndPopulationsSynchronizer.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'GraphAndPopulationsSynchronizer.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.graph;
 
@@ -28,7 +28,7 @@ import msi.gama.util.IList;
  * <li>When a novel node agent is created, a novel node is created into the graph</li>
  * <li>When a novel edge agent is created, an exception is thrown (creating an edge without its targets is meaningless)</li>
  * </ul>
- * 
+ *
  * @author Samuel Thiriot
  */
 public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IGraphEventListener {
@@ -48,7 +48,8 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 
 	private final List<Map> initialValues = Collections.EMPTY_LIST;
 
-	public GraphAndPopulationsSynchronizer(final IPopulation popVertices, final IPopulation popEdges, final IGraph graph) {
+	public GraphAndPopulationsSynchronizer(final IPopulation popVertices, final IPopulation popEdges,
+		final IGraph graph) {
 		this.popVertices = popVertices;
 		this.popEdges = popEdges;
 		this.graph = graph;
@@ -87,7 +88,8 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 	@Override
 	public void notifyAgentAdded(final IPopulation pop, final IAgent agent) {
 
-		if ( pop != popVertices ) { throw GamaRuntimeException.error("Cannot create edge agents from the population (please add an edge in the graph instead)"); }
+		if ( pop != popVertices ) { throw GamaRuntimeException
+			.error("Cannot create edge agents from the population (please add an edge in the graph instead)"); }
 
 		if ( currentEventVertex != agent ) {
 			try {
@@ -112,9 +114,9 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 		 * "Cannot create edge agents from the population (please add an edge in the graph instead)"
 		 * );
 		 * }
-		 * 
+		 *
 		 * }
-		 * 
+		 *
 		 * }
 		 */
 		if ( pop == popVertices ) {
@@ -208,13 +210,13 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 				if ( currentEventEdge != event.edge ) {
 					currentEventEdge = event.edge;
 					// create the agent of the target specy
-					IList<? extends IAgent> createdAgents = popEdges.createAgents(event.scope, 1, initialValues, false);
+					IList<? extends IAgent> createdAgents =
+						popEdges.createAgents(event.scope, 1, initialValues, false, null);
 					IAgent createdAgent = createdAgents.get(0);
 
 					// create the shape for this agent
-					GamaDynamicLink dl =
-						new GamaDynamicLink((IShape) graph.getEdgeSource(event.edge),
-							(IShape) graph.getEdgeTarget(event.edge));
+					GamaDynamicLink dl = new GamaDynamicLink((IShape) graph.getEdgeSource(event.edge),
+						(IShape) graph.getEdgeTarget(event.edge));
 					createdAgent.setGeometry(dl);
 				}
 				currentEventEdge = null;
@@ -225,7 +227,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 					currentEventVertex = event.vertex;
 					// create an agent of the target specy
 					/* IList<? extends IAgent> createdAgents = */
-					popVertices.createAgents(event.scope, 1, initialValues, false);
+					popVertices.createAgents(event.scope, 1, initialValues, false, null);
 					// IAgent createdAgent = createdAgents.get(0);
 				}
 				currentEventVertex = null;
@@ -244,8 +246,8 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 	 * @param graph
 	 * @return
 	 */
-	public static GraphAndPopulationsSynchronizer synchronize(final IPopulation popVertices,
-		final IPopulation popEdges, final IGraph graph) {
+	public static GraphAndPopulationsSynchronizer synchronize(final IPopulation popVertices, final IPopulation popEdges,
+		final IGraph graph) {
 
 		GraphAndPopulationsSynchronizer res = new GraphAndPopulationsSynchronizer(popVertices, popEdges, graph);
 		popVertices.addListener(res);

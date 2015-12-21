@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ExperimentPopulation.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -20,6 +20,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
@@ -31,7 +32,8 @@ public class ExperimentPopulation extends GamaPopulation {
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<? extends Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
+		final List<? extends Map> initialValues, final boolean isRestored, final RemoteSequence sequence)
+			throws GamaRuntimeException {
 		for ( int i = 0; i < number; i++ ) {
 			boolean isBatch = ((ExperimentPlan) getSpecies()).isBatch();
 			final ExperimentAgent exp = isBatch ? new BatchAgent(this) : new ExperimentAgent(this);
@@ -64,7 +66,7 @@ public class ExperimentPopulation extends GamaPopulation {
 
 	@Override
 	public IList<IAgent> computeAgentsToSchedule(final IScope scope) {
-		return GamaListFactory.create(scope, Types.AGENT,/* agents. */Arrays.asList(get(0)));
+		return GamaListFactory.create(scope, Types.AGENT, /* agents. */Arrays.asList(get(0)));
 	}
 
 	@Override

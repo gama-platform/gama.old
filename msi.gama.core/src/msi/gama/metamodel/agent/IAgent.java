@@ -24,6 +24,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 
 /**
@@ -94,7 +95,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	@setter(IKeyword.HOST)
 	public abstract void setHost(final IMacroAgent macroAgent);
 
-	public abstract void schedule();
+	public abstract void scheduleAndExecute(RemoteSequence sequence);
 
 	/**
 	 * Allows to set attributes that will be accessed by the "read" or "get" operators. Used for

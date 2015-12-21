@@ -29,6 +29,7 @@ import msi.gaml.compilation.ISkillConstructor;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 
@@ -347,9 +348,9 @@ public abstract class MinimalAgent implements IAgent {
 	public void setHost(final IMacroAgent macroAgent) {}
 
 	@Override
-	public void schedule() {
+	public void scheduleAndExecute(final RemoteSequence sequence) {
 		if ( !dead() ) {
-			getScheduler().insertAgentToInit(this, getScope());
+			getScheduler().insertAgentToInit(getScope(), this, sequence);
 		}
 	}
 
