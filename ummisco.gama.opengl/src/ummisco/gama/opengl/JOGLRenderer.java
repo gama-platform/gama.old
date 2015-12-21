@@ -944,4 +944,13 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		return yOffsetInPixels;
 	}
 
+	/**
+	 * Method getZoomLevel()
+	 * @see msi.gama.common.interfaces.IGraphics#getZoomLevel()
+	 */
+	@Override
+	public Double getZoomLevel() {
+		return data.getZoomLevel();
+	}
+
 }

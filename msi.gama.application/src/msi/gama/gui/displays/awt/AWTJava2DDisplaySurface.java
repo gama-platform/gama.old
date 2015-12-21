@@ -41,7 +41,7 @@ import msi.gaml.operators.*;
 public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurface {
 
 	private final LayeredDisplayOutput output;
-	protected final LayeredDisplayData data;
+	// protected final LayeredDisplayData data;
 	protected final Rectangle viewPort = new Rectangle();
 	protected final ILayerManager manager;
 	protected final AffineTransform translation = new AffineTransform();
@@ -55,10 +55,9 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 
 	protected Dimension previousPanelSize;
 	protected double zoomIncrement = 0.1;
-	protected Double zoomLevel = null;
 	protected boolean zoomFit = true;
 	protected boolean disposed;
-	private IZoomListener zoomListener;
+	// private IZoomListener zoomListener;
 
 	private IScope scope;
 	private Point mousePosition;
@@ -131,8 +130,8 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 		output = (LayeredDisplayOutput) args[0];
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy());
-		data = output.getData();
-		data.addListener(this);
+		// data = output.getData();
+		output.getData().addListener(this);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 		setOpaque(true);
 		setDoubleBuffered(true);
@@ -142,7 +141,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 		//
 
 		setLayout(new BorderLayout());
-		setBackground(data.getBackgroundColor());
+		setBackground(output.getData().getBackgroundColor());
 		setName(output.getName());
 		manager = new LayerManager(this, output);
 		final DisplayMouseListener d = new DisplayMouseListener();
@@ -224,6 +223,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 	 */
 	@Override
 	public void snapshot() {
+		LayeredDisplayData data = output.getData();
 		if ( data.getImageDimension().getX() == -1 && data.getImageDimension().getY() == -1 ) {
 			save(getDisplayScope(), getImage());
 			return;
@@ -521,7 +521,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 		((Graphics2D) g).drawImage(buffImage, translation, null);
-		if ( data.isAutosave() ) {
+		if ( output.getData().isAutosave() ) {
 			snapshot();
 		}
 	}
@@ -539,12 +539,12 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 
 	@Override
 	public double getEnvWidth() {
-		return data.getEnvWidth();
+		return output.getData().getEnvWidth();
 	}
 
 	@Override
 	public double getEnvHeight() {
-		return data.getEnvHeight();
+		return output.getData().getEnvHeight();
 	}
 
 	@Override
@@ -558,7 +558,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 
 	@Override
 	public LayeredDisplayData getData() {
-		return data;
+		return output.getData();
 	}
 
 	@Override
@@ -576,24 +576,24 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 	}
 
 	public void newZoomLevel(final double newZoomLevel) {
-		zoomLevel = newZoomLevel;
-		if ( zoomListener != null ) {
-			zoomListener.newZoomLevel(zoomLevel);
-		}
+		getData().setZoomLevel(newZoomLevel);
+		// if ( zoomListener != null ) {
+		// zoomListener.newZoomLevel(getData().getZoomLevel());
+		// }
 	}
 
 	@Override
 	public double getZoomLevel() {
-		if ( zoomLevel == null ) {
-			zoomLevel = computeInitialZoomLevel();
+		if ( getData().getZoomLevel() == null ) {
+			getData().setZoomLevel(computeInitialZoomLevel());
 		}
-		return zoomLevel;
+		return getData().getZoomLevel();
 	}
-
-	@Override
-	public void setZoomListener(final IZoomListener listener) {
-		zoomListener = listener;
-	}
+	//
+	// @Override
+	// public void setZoomListener(final IZoomListener listener) {
+	// zoomListener = listener;
+	// }
 
 	@Override
 	public void zoomFit() {
@@ -678,7 +678,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 	@Override
 	public void dispose() {
 		java.lang.System.out.println("Disposing Java2D display");
-		data.removeListener(this);
+		getData().removeListener(this);
 		if ( disposed ) { return; }
 		disposed = true;
 		if ( manager != null ) {
@@ -756,7 +756,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 	}
 
 	public double applyZoom(final double factor) {
-		double real_factor = Math.min(factor, 10 / zoomLevel);
+		double real_factor = Math.min(factor, 10 / getZoomLevel());
 		boolean success = false;
 
 		try {
@@ -870,7 +870,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 
 		switch (property) {
 			case BACKGROUND:
-				setBackground(data.getBackgroundColor());
+				setBackground(getData().getBackgroundColor());
 				break;
 			default:;
 		}

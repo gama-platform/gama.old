@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 10 mars 2015
- * 
+ *
  */
 package msi.gama.outputs;
 
@@ -15,7 +15,7 @@ import msi.gama.util.GamaColor;
 public class LayeredDisplayData {
 
 	public enum Changes {
-		SPLIT_LAYER, CHANGE_CAMERA, THREED_VIEW, CAMERA_POS, BACKGROUND, HIGHLIGHT;
+		SPLIT_LAYER, CHANGE_CAMERA, THREED_VIEW, CAMERA_POS, BACKGROUND, HIGHLIGHT, ZOOM; // TODO Add Zoom
 	}
 
 	public static final String JAVA2D = "java2D";
@@ -61,6 +61,7 @@ public class LayeredDisplayData {
 	private double envHeight = 0d;
 	private boolean isAntialiasing = GamaPreferences.CORE_ANTIALIAS.getValue();
 	private ILocation imageDimension = new GamaPoint(-1, -1);
+	private Double zoomLevel = null;
 
 	/**
 	 * OpenGL
@@ -100,7 +101,7 @@ public class LayeredDisplayData {
 	private boolean isDisplayingScale = GamaPreferences.CORE_SCALE.getValue();
 
 	/**
-	 * 
+	 *
 	 */
 
 	/**
@@ -548,7 +549,7 @@ public class LayeredDisplayData {
 		isSplittingLayers = s;
 		notifyListeners(Changes.SPLIT_LAYER, s);
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -570,6 +571,22 @@ public class LayeredDisplayData {
 
 	public void setSynchronized(final boolean isSynchronized) {
 		this.isSynchronized = isSynchronized;
+	}
+
+	/**
+	 * @return the zoomLevel
+	 */
+	public Double getZoomLevel() {
+		return zoomLevel;
+	}
+
+	/**
+	 * @param zoomLevel the zoomLevel to set
+	 */
+	public void setZoomLevel(final Double zoomLevel) {
+		if ( this.zoomLevel != null && this.zoomLevel.equals(zoomLevel) ) { return; }
+		this.zoomLevel = zoomLevel;
+		notifyListeners(Changes.ZOOM, true);
 	}
 
 }

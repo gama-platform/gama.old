@@ -75,8 +75,7 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 			TextRenderer r = get(s.font, s.size, s.style);
 			r.setColor(s.getColor());
 			r.begin3DRendering();
-			r.draw3D(s.string, x, y, z, (float) (renderer.data.getEnvHeight() /
-				(renderer.getHeight() * renderer.displaySurface.getZoomLevel())));
+			r.draw3D(s.string, x, y, z, (float) (1f / renderer.getyRatioBetweenPixelsAndModelUnits()));
 			r.end3DRendering();
 			gl.glPopMatrix();
 		} else {

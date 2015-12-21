@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.LayerSideControls;
 import msi.gama.gui.swt.*;
@@ -29,16 +28,17 @@ import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.actions.*;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.*;
+import msi.gama.outputs.LayeredDisplayData.*;
 import msi.gama.outputs.layers.AbstractLayer;
 
-public abstract class LayeredDisplayView extends GamaViewPart implements IZoomListener, IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable {
+public abstract class LayeredDisplayView extends GamaViewPart implements DisplayDataListener, IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable {
 
 	protected SashForm form;
 	protected Composite surfaceComposite;
 	protected Composite layersPanel;
 	protected IPerspectiveListener perspectiveListener;
 	protected DisplayOverlay overlay;
-	protected Integer zoomLevel = null;
+	// protected Integer zoomLevel = null;
 	protected volatile boolean disposed;
 	protected ToolItem overlayItem;
 
@@ -104,7 +104,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		surfaceComposite.setLayoutData(gd);
 		overlay = new DisplayOverlay(this, parent, getOutput().getOverlayProvider());
 		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
-		getDisplaySurface().setZoomListener(this);
+		getOutput().getData().addListener(this);
+		// getDisplaySurface().setZoomListener(this);
 		overlay.update();
 		overlay.setVisible(GamaPreferences.CORE_OVERLAY.getValue());
 		parent.layout();
@@ -145,6 +146,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	public void dispose() {
 		// FIXME Should not be redefined, but we should add a DisposeListener instead
 		if ( disposed ) { return; }
+		if ( getOutput() != null ) {
+			getOutput().getData().removeListener(this);
+		}
 		disposed = true;
 		if ( surfaceComposite != null ) {
 			surfaceComposite.dispose();
@@ -169,15 +173,40 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	@Override
-	public void newZoomLevel(final double zoomLevel) {
-		this.zoomLevel = (int) (zoomLevel * 100);
-		GuiUtils.asyncRun(new Runnable() {
+	public void changed(final Changes changes, final boolean value) {
+		switch (changes) {
+			case ZOOM:
+				GuiUtils.asyncRun(new Runnable() {
 
-			@Override
-			public void run() {
-				overlay.update();
-			}
-		});
+					@Override
+					public void run() {
+						overlay.update();
+					}
+				});
+				break;
+			case BACKGROUND:
+				break;
+			case CAMERA_POS:
+				break;
+			case CHANGE_CAMERA:
+				break;
+			case HIGHLIGHT:
+				break;
+			case SPLIT_LAYER:
+				break;
+			case THREED_VIEW:
+				break;
+			default:
+				break;
+		}
+		// this.zoomLevel = (int) (zoomLevel * 100);
+		// GuiUtils.asyncRun(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// overlay.update();
+		// }
+		// });
 
 	}
 
@@ -185,14 +214,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	 * Between 0 and 100;
 	 */
 	public int getZoomLevel() {
-		if ( zoomLevel == null ) {
-			if ( getDisplaySurface() != null ) {
-				zoomLevel = (int) getDisplaySurface().getZoomLevel() * 100;
-			} else {
-				zoomLevel = 1;
-			}
+		Double dataZoom = getOutput().getData().getZoomLevel();
+		if ( dataZoom == null ) {
+			return 1;
+		} else {
+			return (int) (dataZoom * 100);
 		}
-		return zoomLevel;
 	}
 
 	public String getOverlayText() {

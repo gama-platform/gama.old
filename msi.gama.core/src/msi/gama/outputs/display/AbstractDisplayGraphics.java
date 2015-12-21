@@ -13,6 +13,7 @@ package msi.gama.outputs.display;
 
 import java.awt.geom.Rectangle2D;
 import msi.gama.common.interfaces.*;
+import msi.gama.outputs.LayeredDisplayData;
 
 public abstract class AbstractDisplayGraphics implements IGraphics {
 
@@ -28,6 +29,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	final protected double heightOfDisplayInPixels;
 	final protected double widthOfEnvironmentInModelUnits;
 	final protected double heightOfEnvironmentInModelUnits;
+	final protected LayeredDisplayData data;
 
 	public AbstractDisplayGraphics(final IDisplaySurface surface) {
 		widthOfEnvironmentInModelUnits = surface.getEnvWidth();
@@ -36,6 +38,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		heightOfDisplayInPixels = surface.getDisplayHeight();
 		xRatioBetweenPixelsAndModelUnits = widthOfDisplayInPixels / widthOfEnvironmentInModelUnits;
 		yRatioBetweenPixelsAndModelUnits = heightOfDisplayInPixels / heightOfEnvironmentInModelUnits;
+		data = surface.getData();
 		initFor(surface);
 	}
 
@@ -133,6 +136,15 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	public void endDrawingLayer(final ILayer layer) {
 		xRatioBetweenPixelsAndModelUnits = widthOfDisplayInPixels / widthOfEnvironmentInModelUnits;
 		yRatioBetweenPixelsAndModelUnits = heightOfDisplayInPixels / heightOfEnvironmentInModelUnits;
+	}
+
+	/**
+	 * Method getZoomLevel()
+	 * @see msi.gama.common.interfaces.IGraphics#getZoomLevel()
+	 */
+	@Override
+	public Double getZoomLevel() {
+		return data.getZoomLevel();
 	}
 
 }

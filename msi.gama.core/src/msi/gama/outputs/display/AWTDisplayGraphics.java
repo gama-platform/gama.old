@@ -24,7 +24,6 @@ import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
 
@@ -45,7 +44,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	private final Graphics2D renderer;
 	private final ShapeWriter sw = new ShapeWriter(this);
-	private final LayeredDisplayData data;
 	private boolean highlight;
 	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
 
@@ -73,7 +71,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	public AWTDisplayGraphics(final IDisplaySurface surface, final Graphics2D g2) {
 		super(surface);
-		data = surface.getData();
 		renderer = g2;
 		renderer.setFont(defaultFont);
 

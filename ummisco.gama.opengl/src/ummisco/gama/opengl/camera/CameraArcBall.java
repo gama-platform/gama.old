@@ -1,20 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'CameraArcBall.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
+import org.eclipse.swt.SWT;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gaml.operators.Maths;
-import org.eclipse.swt.SWT;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class CameraArcBall extends AbstractCamera {
@@ -59,7 +59,8 @@ public class CameraArcBall extends AbstractCamera {
 		double sinT = Math.sin(factorT);
 		double cosP = Math.cos(factorP);
 		double sinP = Math.sin(factorP);
-		position.setLocation(radius * sinT * sinP + target.x, radius * cosP + target.y, radius * cosT * sinP + target.z);
+		position.setLocation(radius * sinT * sinP + target.x, radius * cosP + target.y,
+			radius * cosT * sinP + target.z);
 	}
 
 	@Override
@@ -69,10 +70,10 @@ public class CameraArcBall extends AbstractCamera {
 		double z = position.z - target.z;
 		radius = Math.sqrt(x * x + y * y + z * z);
 		theta = Maths.toDeg * Math.atan2(x, z);
-		phi = Maths.toDeg * Math.acos(y/ radius);
-		if(upVector.getY() == -1){
-			phi= 360.0-phi;	
-			theta= 180+theta;
+		phi = Maths.toDeg * Math.acos(y / radius);
+		if ( upVector.getY() == -1 ) {
+			phi = 360.0 - phi;
+			theta = 180 + theta;
 		}
 	}
 
@@ -189,7 +190,8 @@ public class CameraArcBall extends AbstractCamera {
 	public void zoom(final boolean in) {
 		double step = radius != 0d ? radius / 10d : 0.1d;
 		radius = radius + (in ? -step : step);
-		getRenderer().displaySurface.newZoomLevel(zoomLevel());
+		getRenderer().data.setZoomLevel(zoomLevel());
+		// .newZoomLevel(zoomLevel());
 		// dump();
 		updateCartesianCoordinatesFromAngles();
 	}
@@ -344,8 +346,8 @@ public class CameraArcBall extends AbstractCamera {
 				velocityHoriz = velocityHoriz * damping;
 				velocityVert = velocityVert * damping;
 
-				moveXYPlan2(velocityHoriz, velocityVert, position.z, getRenderer().getWidth(), getRenderer()
-					.getHeight());
+				moveXYPlan2(velocityHoriz, velocityVert, position.z, getRenderer().getWidth(),
+					getRenderer().getHeight());
 
 				if ( Math.abs(velocityHoriz) < 0.01 || Math.abs(velocityVert) < 0.01 ) {
 					velocityHoriz = 0;
@@ -363,7 +365,5 @@ public class CameraArcBall extends AbstractCamera {
 		velocityHoriz = 0;
 		velocityVert = 0;
 	}
-
-	
 
 }// End of Class CameraArcBall
