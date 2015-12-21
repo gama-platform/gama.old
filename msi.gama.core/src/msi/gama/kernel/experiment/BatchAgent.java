@@ -167,7 +167,8 @@ public class BatchAgent extends ExperimentAgent {
 
 				// This inner while loop runs the simulation and controls its execution
 				while (simulation != null) {
-					boolean stepOk = simulation.step(scope);
+					// AD: replaced 'simulation.step(scope)' by the following to fix Issue #1264
+					boolean stepOk = scope.step(simulation.getPopulation());
 					if ( !stepOk ) {
 						break;
 					}
