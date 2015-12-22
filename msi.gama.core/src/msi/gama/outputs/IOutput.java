@@ -61,14 +61,14 @@ public interface IOutput extends ISymbol, IStepable {
 	public void setRefreshRate(int rate);
 
 	/*
-	 * Called by the output thread to perform the actual "update" of the logic of the output, which may involve any computation specified in GAML. Once they have been updated, outputs should in turn
-	 * update their concrete support.
+	 * Called by the output thread to perform the actual "refresh" of the concrete support of the output (whereas step(), from IStepable, performs the computations described in GAML, that will serve
+	 * as a model for this refresh).
 	 */
 	public void update() throws GamaRuntimeException;
 
 	/**
-	 * Returns the scope of the output, i.e. the scope it uses to perform its computations, independently of the main simulation scope
-	 * @return the scope of the output, which should never be null if the output is open
+	 * Returns the scope of the output, i.e. the scope it uses to perform its computations, independently of the main simulation scope. Access to this scope should be limited to a strict necessity
+	 * @return the scope of the output, which should never be null when the output is open. It might be null otherwise
 	 */
 	public IScope getScope();
 
