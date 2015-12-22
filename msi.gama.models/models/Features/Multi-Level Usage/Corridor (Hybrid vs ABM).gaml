@@ -217,10 +217,10 @@ species corridor_info_drawer {
 	
 	aspect base {
 		if target.capture_pedestrians {
-			draw text: 'Hybrid model (coupling: ABM and Mathematical Model)' color: #blue size: 7 at: {(target.location).x - 90, (target.location).y - 10};
-			draw text: 'Aggregated agents: ' + string(length(target.members)) color: #black size: 7 at: {(target.location).x - 30, (target.location).y + 2};
+			draw 'Hybrid model (coupling: ABM and Mathematical Model)' color: #blue size: 7 at: {(target.location).x - 90, (target.location).y - 10};
+			draw  'Aggregated agents: ' + string(length(target.members)) color: #black size: 7 at: {(target.location).x - 30, (target.location).y + 2};
 		} else {
-			draw text: 'Agent-Based Model (ABM)' color: #blue size: 7 at: {(target.location).x - 40, (target.location).y - 10};
+			draw 'Agent-Based Model (ABM)' color: #blue size: 7 at: {(target.location).x - 40, (target.location).y - 10};
 		}
 	}
 }

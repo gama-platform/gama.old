@@ -1,7 +1,7 @@
 /**
  *  HowToImportRaster
  *  Author: Maroussia Vavasseur and Benoit Gaudou
- *  Description: Importation of a vectorial image
+ *  Description: Importation of a shapefile, for more details about GIS data, have a look at the Model Library/Features/GIS data models
  */
 
 model HowToImportVectorial
@@ -17,9 +17,9 @@ global {
 	geometry shape <- envelope(ManagementUnitShape);
 	
 	init {
-		//Creation of managmentUnit agents from the shapefile (and reading of the shapefile attributes)
+		//Creation of managmentUnit agents from the shapefile: the MUcode, MULabel and pgeSAGE attributes of the agents are initialized according to the Code_UG, Libelle_UG and PGE_SAGE attributes of the shapefile
 		create managementUnit from: ManagementUnitShape 
-			with: [MUcode::int(read('Code_UG')), MULabel::string(read('Libelle_UG')), pgeSAGE::string(read('PGE_SAGE'))] ;
+			with: [MUcode::int(read('Code_UG')), MULabel::string(get('Libelle_UG')), pgeSAGE::string(get('PGE_SAGE'))] ;
     }
 }
 
@@ -37,7 +37,6 @@ species managementUnit{
 
 
 experiment main type: gui {
-	parameter 'Management unit' var: ManagementUnitShape category: 'MU' ;
 		
 	output {
 		display HowToImportVectorial {
