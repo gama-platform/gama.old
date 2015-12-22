@@ -40,8 +40,10 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.OUTPUT_FILE, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.DATA, type = IType.STRING, optional = false),
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = false,
+			doc = @doc(value = "The name of the file where you want to export the data")),
+	@facet(name = IKeyword.DATA, type = IType.STRING, optional = false,
+			doc = @doc(value = "The data you want to export")),
 	@facet(name = IKeyword.REFRESH_EVERY,
 		type = IType.INT,
 		optional = true,
@@ -51,13 +53,17 @@ import msi.gaml.types.IType;
 		type = IType.BOOL,
 		optional = true,
 		doc = @doc("Indicates the condition under which this file should be saved (default is true)")),
-	@facet(name = IKeyword.HEADER, type = IType.STRING, optional = true),
-	@facet(name = IKeyword.FOOTER, type = IType.STRING, optional = true),
-	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.HEADER, type = IType.STRING, optional = true,
+			doc = @doc(value = "Define a header for your export file")),
+	@facet(name = IKeyword.FOOTER, type = IType.STRING, optional = true,
+			doc = @doc(value = "Define a footer for your export file")),
+	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true,
+			doc = @doc(value = "Rewrite or not the existing file")),
 	@facet(name = IKeyword.TYPE,
 		type = IType.ID,
 		values = { IKeyword.CSV, IKeyword.TEXT, IKeyword.XML },
-		optional = true) }, omissible = IKeyword.NAME)
+		optional = true,
+		doc = @doc(value = "The type of your output data")) }, omissible = IKeyword.NAME)
 public class FileOutput extends AbstractOutput {
 
 	final static SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
@@ -191,8 +197,8 @@ public class FileOutput extends AbstractOutput {
 		boolean result = super.init(scope);
 		if ( !result ) { return false; }
 		createType();
-		createFileName(scope);
 		createRewrite();
+		createFileName(scope);
 		createHeader();
 		createFooter();
 		createExpression();
@@ -361,11 +367,11 @@ public class FileOutput extends AbstractOutput {
 		if ( footer == null ) {
 			setFooter("End of " + getName() + " " + sdf.format(Calendar.getInstance().getTime()));
 		}
-		return header;
+		return footer;
 	}
 
-	private void setFooter(final String header) {
-		this.header = header;
+	private void setFooter(final String footer) {
+		this.footer = footer;
 	}
 
 	private PrintWriter getWriter() {
