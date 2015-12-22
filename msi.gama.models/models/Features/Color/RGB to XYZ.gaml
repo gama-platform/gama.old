@@ -6,35 +6,31 @@
 model rgbCube
 
 global {
-	
+	//import an image
 	file imageRaster <- file('images/RGB.jpg');
+	
+	//list of points  create from the image 
 	list<point> p;
+	
+	//geometry of the world (environment)
 	geometry shape <- square(255);
+	
+	//create the list of points from the image: a point is defined per pixel, its coordinate correspond to the value of the red,green,blue color
 	init {
-		create myRGBCube {
-			p <- list<point> (rgb_to_xyz(imageRaster));
-			shape <- square(255);
-			location <- { 0, 0, 0 };
-		}
-
+		p <- list<point> (rgb_to_xyz(imageRaster));
 	}
-
 }
 
-species myRGBCube {
-	aspect rgb_to_xyz {
-		loop pp over: p {
-			draw circle(1) at: pp color: rgb(pp.x, pp.y, pp.z);
-		}
-
-	}
-
-}
 
 experiment Display type: gui {
 	output {
-		display RGB_to_XYZ type: opengl { species myRGBCube aspect: rgb_to_xyz;
-		image imageRaster.path;
+		display RGB_to_XYZ type: opengl { 
+			image imageRaster.path refresh: false;
+			graphics "pts" refresh: false{
+				loop pt over: p {
+					draw cube(1) at: pt color: rgb(pt.x, pt.y, pt.z);
+				}
+			}
 		}
 	}
 
