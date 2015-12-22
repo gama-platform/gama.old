@@ -1,5 +1,10 @@
-model si
-// A simple infection spreading model
+/**
+ *  batch_example
+ *  Author: Patrick Taillandier
+ *  Description: shows how to use the batch mode. It is based on a simple SIR infection model (agents are infected other and cen be immune for a certain time)
+ */
+
+model batch_example
 
 global {
     int number_people <- 300;  // The init number of people
@@ -17,8 +22,8 @@ global {
         	is_infected <- true;
         	color <- #red;
         }
-   }
-  }
+	}
+}
 
 species people skills:[moving] {
 	bool is_infected <- false;

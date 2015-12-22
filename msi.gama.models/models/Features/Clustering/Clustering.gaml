@@ -1,31 +1,45 @@
 /**
  *  clustering
  *  Author: Patrick Taillandier
- *  Description: shows how to use clustering algorithms
+ *  Description: shows how to use clustering operators (hierarchical_clustering and clusters_kmeans)
  */
 
 model clustering
 
 global {
+	//the number of groups to create (kmeans)
 	int k <- 4;
+	
+	//the maximum radius of the neighborhood (DBscan)
 	float eps <- 10.0; 
+	
+	//the minimum number of elements needed for a cluster (DBscan)
 	int minPoints <- 3;
+	
 	init {
+		//create dummy agents
 		create dummy number: 100;
 	}
 	
 	reflex cluster_building {
+		//create a list of list containing for each dummy agent a list composed of its x and y values
 		list<list> instances <- dummy collect ([each.location.x, each.location.y]);
+		
+		//from the previous list, create groups with the eps and minPoints parameters and the DBSCAN algorithm (https://en.wikipedia.org/wiki/DBSCAN)
 		list<list<int>> clusters_dbscan <- list<list<int>>(dbscan(instances, eps,minPoints));
 		
-		loop cluster over: clusters_dbscan {
+		//We give a random color to each group (i.e. to each dummy agents of the group)
+       loop cluster over: clusters_dbscan {
 			rgb col <- rnd_color(255);
 			loop i over: cluster {
 				ask dummy[i] {color_dbscan <- col;}
 			}
 		}
 		
+		//from the previous list, create k groups  with the Kmeans algorithm (https://en.wikipedia.org/wiki/K-means_clustering)
 		list<list<int>> clusters_kmeans <- list<list<int>>(kmeans(instances, k));
+		
+		//We give a random color to each group (i.e. to each dummy agents of the group)
 		loop cluster over: clusters_kmeans {
 			rgb col <- rnd_color(255);
 			loop i over: cluster {
