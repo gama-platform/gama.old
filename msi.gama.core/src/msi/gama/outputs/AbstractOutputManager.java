@@ -29,14 +29,14 @@ import msi.gaml.descriptions.IDescription;
  */
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
-	protected final Map<String, IOutput> outputs = new TOrderedHashMap<String, IOutput>();
+	protected final Map<String, AbstractOutput> outputs = new TOrderedHashMap<String, AbstractOutput>();
 
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
 	}
 
 	@Override
-	public Map<String, IOutput> getOutputs() {
+	public Map<String, ? extends IOutput> getOutputs() {
 		return outputs;
 	}
 
@@ -54,15 +54,16 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void addOutput(final IOutput output) {
-		if ( output == null ) { return; } // || outputs.containsValue(output) ) { return; }
-		outputs.put(output.getId(), output);
+		if ( !(output instanceof AbstractOutput) ) { return; } // || outputs.containsValue(output) ) { return; }
+		AbstractOutput aout = (AbstractOutput) output;
+		outputs.put(aout.getId(), aout);
 	}
 
 	// hqnghi add output with alias name from micro-model
 	@Override
 	public void addOutput(final String name, final IOutput output) {
-		if ( output == null ) { return; } // || outputs.containsValue(output) ) { return; }
-		outputs.put(name, output);
+		if ( !(output instanceof AbstractOutput) ) { return; } // || outputs.containsValue(output) ) { return; }
+		outputs.put(name, (AbstractOutput) output);
 	}
 
 	// end-hqnghi
@@ -89,8 +90,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void removeOutput(final IOutput o) {
-		if ( o == null ) { return; }
-		if ( o.isUserCreated() ) {
+		if ( !(o instanceof AbstractOutput) ) { return; }
+		if ( ((AbstractOutput) o).isUserCreated() ) {
 			o.dispose();
 			outputs.values().remove(o);
 		} else {
@@ -101,8 +102,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
 		for ( final ISymbol s : commands ) {
-			if ( s instanceof IOutput ) {
-				IOutput o = (IOutput) s;
+			if ( s instanceof AbstractOutput ) {
+				AbstractOutput o = (AbstractOutput) s;
 				addOutput(o);
 				o.setUserCreated(false);
 			}
@@ -169,7 +170,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public boolean step(final IScope scope) {
 		// final int cycle = scope.getClock().getCycle();
-		for ( final IOutput o : ImmutableList.copyOf(outputs.values()) ) {
+		for ( final AbstractOutput o : ImmutableList.copyOf(outputs.values()) ) {
 			if ( !o.isPaused() && o.isOpen() && o.isRefreshable() && o.getScope().step(o) ) {
 				try {
 					o.update();

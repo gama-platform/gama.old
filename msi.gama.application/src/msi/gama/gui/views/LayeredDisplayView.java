@@ -46,7 +46,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
 		if ( getOutput() != null ) {
-			setPartName(getOutput().getViewName());
+			setPartName(getOutput().getName());
 		}
 
 	}

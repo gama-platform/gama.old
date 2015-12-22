@@ -80,7 +80,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		final Text titleEditor =
-			(Text) EditorFactory.create(compo, "Title:", output.getViewName(), true, new EditorListener<String>() {
+			(Text) EditorFactory.create(compo, "Title:", output.getName(), true, new EditorListener<String>() {
 
 				@Override
 				public void valueModified(final String newValue) throws GamaRuntimeException {
@@ -154,7 +154,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		Object v = o.getLastValue();
 		final StringBuilder sb = new StringBuilder(100);
 		sb.setLength(0);
-		sb.append(o.getViewName()).append(ItemList.SEPARATION_CODE)
+		sb.append(o.getName()).append(ItemList.SEPARATION_CODE)
 			.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString());
 		if ( o.isPaused() ) {
 			sb.append(" (paused)");

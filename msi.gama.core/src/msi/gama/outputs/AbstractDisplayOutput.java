@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractDisplayOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs;
 
@@ -19,7 +19,7 @@ import msi.gaml.descriptions.IDescription;
 
 /**
  * The Class AbstractDisplayOutput.
- * 
+ *
  * @author drogoul
  */
 public abstract class AbstractDisplayOutput extends AbstractOutput implements IDisplayOutput {
@@ -75,11 +75,6 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	}
 
 	@Override
-	public String getViewName() {
-		return getName();
-	}
-
-	@Override
 	public void update() throws GamaRuntimeException {
 		if ( view != null ) {
 			view.update(this);
@@ -109,8 +104,8 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public String getId() {
 		String cName = ((AbstractOutput) this).getDescription().getModelDescription().getAlias();
-		if ( !cName.equals("") && !getName().contains("#") ) { return isUnique() ? getViewId() : getViewId() +
-			getName() + "#" + cName; }
+		if ( !cName.equals("") &&
+			!getName().contains("#") ) { return isUnique() ? getViewId() : getViewId() + getName() + "#" + cName; }
 		return isUnique() ? getViewId() : getViewId() + getName();
 	}
 

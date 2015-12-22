@@ -103,7 +103,7 @@ public class FrequencyController {
 					IOutput output = view.getOutput();
 					if ( output != null ) {
 						if ( output.isPaused() ) {
-							output.getScope().getExperiment().getSpecies().getController().userStart();
+							// output.getScope().getExperiment().getSpecies().getController().userStart();
 							// hqnghi resume thread of co-experiment
 							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
 							// if ( !output.getDescription().getModelDescription().getAlias().equals("") ) {
@@ -116,7 +116,7 @@ public class FrequencyController {
 							pause((ToolItem) e.widget, output);
 							// hqnghi pause thread of co-experiment
 							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
-							output.getScope().getExperiment().getSpecies().getController().userPause();
+							// output.getScope().getExperiment().getSpecies().getController().userPause();
 							// end-hqnghi
 						}
 					} else {

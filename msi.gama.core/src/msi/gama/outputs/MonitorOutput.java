@@ -1,26 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MonitorOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -31,30 +25,32 @@ import msi.gaml.types.IType;
 
 /**
  * The Class MonitorOutput.
- * 
+ *
  * @author drogoul
  */
 @symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false)
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the monitor")),
-	@facet(name = IKeyword.REFRESH_EVERY,
-		type = IType.INT,
-		optional = true,
-		doc = @doc(value = "Allows to refresh the monitor every n time steps (default is 1)",
-			deprecated = "Use refresh: every(n) instead")),
-	@facet(name = IKeyword.REFRESH,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Indicates the condition under which this output should be refreshed (default is true)")),
-	@facet(name = IKeyword.VALUE,
-		type = IType.NONE,
-		optional = false,
-		doc = @doc("expression that will be evaluated to be displayed in the monitor")) }, omissible = IKeyword.NAME)
+@facets(
+	value = {
+		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the monitor") ),
+		@facet(name = IKeyword.REFRESH_EVERY,
+			type = IType.INT,
+			optional = true,
+			doc = @doc(value = "Allows to refresh the monitor every n time steps (default is 1)",
+				deprecated = "Use refresh: every(n) instead") ),
+		@facet(name = IKeyword.REFRESH,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("Indicates the condition under which this output should be refreshed (default is true)") ),
+		@facet(name = IKeyword.VALUE,
+			type = IType.NONE,
+			optional = false,
+			doc = @doc("expression that will be evaluated to be displayed in the monitor") ) },
+	omissible = IKeyword.NAME)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @doc(value = "A monitor allows to follow the value of an arbitrary expression in GAML.",
 	usages = { @usage(value = "An example of use is:",
 		examples = @example(value = "monitor \"nb preys\" value: length(prey as list) refresh_every: 5;  ",
-			isExecutable = false)) })
+			isExecutable = false) ) })
 public class MonitorOutput extends AbstractDisplayOutput {
 
 	//
@@ -66,10 +62,10 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	}
 
 	public MonitorOutput(final String name, final String expr) {
-		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME, name == null ? expr
-			: name));
+		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME,
+			name == null ? expr : name));
 		setScope(GAMA.obtainNewScope());
-		setUserCreated(true);
+		// setUserCreated(true);
 		setNewExpressionText(expr);
 		if ( getScope().init(this) ) {
 			GAMA.getExperiment().getSimulationOutputs().addOutput(this);
@@ -133,8 +129,8 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public String getViewName() {
-		String result = super.getViewName();
+	public String getName() {
+		String result = super.getName();
 		if ( result == null ) {
 			result = getExpressionText();
 		}
