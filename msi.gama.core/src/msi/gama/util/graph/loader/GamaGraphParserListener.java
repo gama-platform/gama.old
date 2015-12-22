@@ -96,7 +96,7 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		if ( populationNodes != null ) {
 			// create an agent of the target specy
 			IList<? extends IAgent> createdAgents =
-				populationNodes.createAgents(scope, 1, Collections.EMPTY_LIST, false, null);
+				populationNodes.createAgents(scope, 1, Collections.EMPTY_LIST, false);
 			IAgent createdAgent = createdAgents.get(0);
 
 			// update internal mapping
@@ -157,7 +157,7 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		if ( populationEdges != null ) {
 			// create the agent of the target specy
 			IList<? extends IAgent> createdAgents =
-				populationEdges.createAgents(scope, 1, Collections.EMPTY_LIST, false, null);
+				populationEdges.createAgents(scope, 1, Collections.EMPTY_LIST, false);
 
 			IAgent createdAgent = createdAgents.get(0);
 

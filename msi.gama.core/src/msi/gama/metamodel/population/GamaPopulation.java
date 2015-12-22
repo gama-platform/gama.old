@@ -34,7 +34,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.*;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 
@@ -108,7 +108,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 				att.put("target", target);
 				attributes.add(att);
 			}
-			return pop.createAgents(scope, targets.size(), attributes, false, null);
+			return pop.createAgents(scope, targets.size(), attributes, false);
 		}
 
 	}
@@ -269,7 +269,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		/* agents. */addAll(list);
 
 		for ( final IAgent a : list ) {
-			a.scheduleAndExecute(null);
+			a.schedule();
+			// a.scheduleAndExecute(null);
 		}
 		createVariablesFor(scope, list, Collections.EMPTY_LIST);
 		fireAgentsAdded(list);
@@ -279,8 +280,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<? extends Map> initialValues, final boolean isRestored, final RemoteSequence sequence)
-			throws GamaRuntimeException {
+		final List<? extends Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
 		if ( number == 0 ) { return GamaListFactory.EMPTY_LIST; }
 		final IList<IAgent> list = GamaListFactory.create(getType().getContentType(), number);
 		final IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
@@ -312,7 +312,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			for ( final IAgent a : list ) {
 				// if agent is restored (on the capture or release); then don't need to run the "init"
 				// reflex
-				a.scheduleAndExecute(sequence);
+				a.schedule();
+				// a.scheduleAndExecute(sequence);
 			}
 		}
 		fireAgentsAdded(list);

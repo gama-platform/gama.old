@@ -1007,7 +1007,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				if ( s != null ) {
 					final IAgent g = usesRegularAgents ? new GamlGridAgent(i) : new MinimalGridAgent(i);
 					matrix[i] = g;
-					g.scheduleAndExecute(null);
+					g.schedule();
+					// g.scheduleAndExecute(null);
 				}
 			}
 

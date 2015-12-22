@@ -31,7 +31,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.*;
 
 /**
@@ -207,7 +206,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ps.putAll(parameters);
 		IList<Map> list = GamaListFactory.create(Types.MAP);
 		list.add(ps);
-		pop.createAgents(scope, 1, list, scheduleIt, null);
+		pop.createAgents(scope, 1, list, scheduleIt);
 	}
 
 	public ParametersSet getParameterValues() {
@@ -230,7 +229,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public void scheduleAndExecute(final RemoteSequence sequence) {
+	public void schedule() {
+		// public void scheduleAndExecute(final RemoteSequence sequence) {
 		scheduled = true;
 		// The experiment agent is scheduled in the global scheduler
 		IOutputManager outputs = getSpecies().getExperimentOutputs();

@@ -172,7 +172,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);
-		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, null).get(0);
+		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false).get(0);
 		addDefaultParameters();
 	}
 
@@ -292,7 +292,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public void open() {
 		createAgent();
 		// GuiUtils.prepareForExperiment(this);
-		agent.scheduleAndExecute(null);
+		agent.schedule();
+		// agent.scheduleAndExecute(null);
 		if ( isBatch() ) {
 			GuiUtils.informStatus(" Batch ready ");
 		}

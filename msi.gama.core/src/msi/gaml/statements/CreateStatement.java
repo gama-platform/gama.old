@@ -331,7 +331,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation population,
 		final List<Map> inits) {
-		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false, sequence);
+		boolean hasSequence = sequence != null && !sequence.isEmpty();
+		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
+
 		// hqnghi in case of creating experiment of micro-models, we must implicitely initialize it and its simulation output
 		if ( population instanceof ExperimentPopulation ) {
 			for ( final IAgent a : population ) {
@@ -346,6 +348,14 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			}
 		}
 		// end-hqnghi
+		if ( sequence != null && !sequence.isEmpty() ) {
+			for ( final IAgent remoteAgent : list.iterable(scope) ) {
+				Object[] result = new Object[1];
+				if ( !scope.execute(sequence, remoteAgent, null, result) ) {
+					break;
+				}
+			}
+		}
 		return list;
 	}
 

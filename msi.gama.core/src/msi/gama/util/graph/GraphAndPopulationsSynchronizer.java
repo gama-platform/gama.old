@@ -210,8 +210,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 				if ( currentEventEdge != event.edge ) {
 					currentEventEdge = event.edge;
 					// create the agent of the target specy
-					IList<? extends IAgent> createdAgents =
-						popEdges.createAgents(event.scope, 1, initialValues, false, null);
+					IList<? extends IAgent> createdAgents = popEdges.createAgents(event.scope, 1, initialValues, false);
 					IAgent createdAgent = createdAgents.get(0);
 
 					// create the shape for this agent
@@ -227,7 +226,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 					currentEventVertex = event.vertex;
 					// create an agent of the target specy
 					/* IList<? extends IAgent> createdAgents = */
-					popVertices.createAgents(event.scope, 1, initialValues, false, null);
+					popVertices.createAgents(event.scope, 1, initialValues, false);
 					// IAgent createdAgent = createdAgents.get(0);
 				}
 				currentEventVertex = null;

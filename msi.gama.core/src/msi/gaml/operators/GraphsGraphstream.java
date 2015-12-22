@@ -88,7 +88,7 @@ public class GraphsGraphstream {
 			}
 
 			// create the agent of the target specy
-			IList<? extends IAgent> createdAgents = populationEdges.createAgents(scope, 1, initialValues, false, null);
+			IList<? extends IAgent> createdAgents = populationEdges.createAgents(scope, 1, initialValues, false);
 			IAgent createdAgent = createdAgents.get(0);
 
 			// create the shape for this agent
@@ -104,7 +104,7 @@ public class GraphsGraphstream {
 		public void nodeAdded(final String sourceId, final long timeId, final String nodeId) {
 
 			// create an agent of the target specy
-			IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, initialValues, false, null);
+			IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, initialValues, false);
 			IAgent createdAgent = createdAgents.get(0);
 
 			// update internal mapping

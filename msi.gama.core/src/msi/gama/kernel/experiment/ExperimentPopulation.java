@@ -20,7 +20,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
@@ -32,8 +31,7 @@ public class ExperimentPopulation extends GamaPopulation {
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<? extends Map> initialValues, final boolean isRestored, final RemoteSequence sequence)
-			throws GamaRuntimeException {
+		final List<? extends Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
 		for ( int i = 0; i < number; i++ ) {
 			boolean isBatch = ((ExperimentPlan) getSpecies()).isBatch();
 			final ExperimentAgent exp = isBatch ? new BatchAgent(this) : new ExperimentAgent(this);

@@ -390,8 +390,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
 			final List<Map> agentAttrs = new ArrayList<Map>();
 			agentAttrs.add(variables);
-			final List<? extends IAgent> restoredAgents =
-				targetPopulation.createAgents(scope, 1, agentAttrs, true, null);
+			final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true);
 			restoreMicroAgents(scope, restoredAgents.get(0));
 
 			return restoredAgents.get(0);
@@ -416,7 +415,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 					}
 
 					final List<? extends IAgent> microAgents =
-						microPop.createAgents(scope, savedMicros.size(), microAttrs, true, null);
+						microPop.createAgents(scope, savedMicros.size(), microAttrs, true);
 
 					for ( int i = 0; i < microAgents.size(); i++ ) {
 						savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));

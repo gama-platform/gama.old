@@ -21,7 +21,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.*;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.variables.IVariable;
 
 /**
@@ -80,7 +80,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	 * @throws GamaRuntimeException
 	 */
 	public abstract IList<? extends IAgent> createAgents(IScope scope, int number, List<? extends Map> initialValues,
-		boolean isRestored, RemoteSequence sequence) throws GamaRuntimeException;
+		boolean isRestored) throws GamaRuntimeException;
 
 	public abstract IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries)
 		throws GamaRuntimeException;
