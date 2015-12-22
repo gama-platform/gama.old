@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.EditorListener;
@@ -50,9 +51,28 @@ public class EditorsDialog extends Dialog {
 	}
 
 	@Override
+	protected Control createButtonBar(final Composite parent) {
+		Control composite = super.createButtonBar(parent);
+		composite.setBackground(IGamaColors.WHITE.color());
+		return composite;
+	}
+
+	/**
+	 * Method createContents()
+	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	protected Control createContents(final Composite parent) {
+		Control composite = super.createContents(parent);
+		composite.setBackground(IGamaColors.WHITE.color());
+		return composite;
+	}
+
+	@Override
 	protected Control createDialogArea(final Composite parent) {
 		// getShell().setText(title);
 		Composite composite = (Composite) super.createDialogArea(parent);
+		composite.setBackground(IGamaColors.WHITE.color());
 		GridLayout layout = (GridLayout) composite.getLayout();
 		layout.numColumns = 2;
 		Label text = new Label(composite, SWT.None);
@@ -78,10 +98,19 @@ public class EditorsDialog extends Dialog {
 			};
 			EditorFactory.create(composite, param, listener, false);
 		}
+		// composite.setSize(composite.computeSize(300, SWT.DEFAULT));
 		composite.layout();
-		composite.pack();
+
+		// composite.pack();
+		// composite.setS
 
 		return composite;
+	}
+
+	@Override
+	protected Point getInitialSize() {
+		Point p = super.getInitialSize();
+		return new Point(p.x * 2, p.y);
 	}
 
 	@Override
