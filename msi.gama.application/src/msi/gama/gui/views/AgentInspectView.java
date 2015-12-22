@@ -35,6 +35,7 @@ import msi.gaml.variables.IVariable;
 public class AgentInspectView extends AttributesEditorsView<IAgent> implements IToolbarDecoratedView.Pausable /* implements GamaSelectionListener */ {
 
 	public static final String ID = GuiUtils.AGENT_VIEW_ID;
+	public String firstPartName = null;
 
 	@Override
 	public void addOutput(final IDisplayOutput output) {
@@ -162,13 +163,14 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 
 	@Override
 	public boolean addItem(final IAgent agent) {
-		System.out.println("Adding item " + agent.getName() + " to inspector");
+		// System.out.println("Adding item " + agent.getName() + " to inspector");
 		if ( editors == null ) {
 			editors = new AgentAttributesEditorsList();
 		}
+		updatePartName();
 		if ( !editors.getCategories().containsKey(agent) ) {
 			editors.add(getParametersToInspect(agent), agent);
-			System.out.println("Asking to create the item " + agent.getName() + " in inspector");
+			// System.out.println("Asking to create the item " + agent.getName() + " in inspector");
 			ParameterExpandItem item = createItem(parent, agent, true);
 			if ( item == null ) { return false; }
 			return true;
@@ -210,6 +212,23 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 			found.close();
 			removeOutput(found);
 		}
+		updatePartName();
+	}
+
+	public void updatePartName() {
+		if ( firstPartName == null ) {
+			InspectDisplayOutput out = getOutput();
+			firstPartName = out == null ? "Inspector" : out.getName();
+		}
+		Set<String> names = new LinkedHashSet();
+		for ( IOutput o : outputs ) {
+			InspectDisplayOutput out = (InspectDisplayOutput) o;
+			IAgent a = out.getLastValue()[0];
+			if ( a != null ) {
+				names.add(a.getName());
+			}
+		}
+		this.setPartName(firstPartName + " " + (names.isEmpty() ? "" : names.toString()));
 	}
 
 	/**

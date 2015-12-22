@@ -1187,18 +1187,22 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				if ( getPage() == null ) { return; }
-				final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
-				if ( r == null ) {
-					if ( a == null ) { return; }
-					try {
-						InspectDisplayOutput output =
-							new InspectDisplayOutput("Inspector", InspectDisplayOutput.INSPECT_AGENT, a);
-						output.launch();
-					} catch (final GamaRuntimeException g) {
-						g.addContext("In opening the agent inspector");
-						GAMA.reportError(GAMA.getRuntimeScope(), g, false);
-					}
+				// final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
+				// if ( r == null ) {
+				if ( a == null ) { return; }
+				try {
+					InspectDisplayOutput output =
+						new InspectDisplayOutput("Inspector", InspectDisplayOutput.INSPECT_AGENT, a);
+					output.launch();
+				} catch (final GamaRuntimeException g) {
+					g.addContext("In opening the agent inspector");
+					GAMA.reportError(GAMA.getRuntimeScope(), g, false);
 				}
+				final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
+				if ( r != null ) {
+					getPage().bringToTop(r.getPart(true));
+				}
+				// }
 				// AgentInspectView v =
 				// (AgentInspectView) showView(GuiUtils.AGENT_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 				// v.inspectAgent(a);

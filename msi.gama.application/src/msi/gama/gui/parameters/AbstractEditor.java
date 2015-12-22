@@ -180,7 +180,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 			}
 			param.setValue(a == null ? null : a.getScope(), newValue);
 		}
-		if ( a != null /* && a.getSpecies().hasVar(param.getName()) */ ) {
+		if ( a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null ) {
 			GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
 		}
 	}
