@@ -6,6 +6,7 @@
 model rgbCube
 
 global {
+	
 	file imageRaster <- file('images/RGB.jpg');
 	list<point> p;
 	geometry shape <- square(255);

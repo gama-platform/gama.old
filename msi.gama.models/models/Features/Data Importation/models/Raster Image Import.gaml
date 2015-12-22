@@ -58,14 +58,7 @@ grid cell  width: widthImg/factorDiscret height: heightImg/factorDiscret;
 
 
 
-experiment main type: gui {
-	// Parameters
-	parameter 'MNT file' var: mntImageRaster category: 'MNT' ;
-	parameter'Discretization factor' var: factorDiscret category:'Environment';
-	
-	parameter 'Nb of Izards' var: nbIzard category: 'Izard'; 
-	parameter 'Izard Shape' var: izardShape category: 'Izard';
-	
+experiment main type: gui {	
 	// We display:
 	// - the grid
 	// - the original MNT image as background
