@@ -1,37 +1,33 @@
-model AugmentedGrid
+model GridVisualization
 
 /**
- *  AugmentedGrid
- * 
+ *  GridVisualization
  *  Author: Arnaud Grignard
- * 
  *  Description: Initialize a grid with a random value between 0 and 255 and display using different aspects.
-
  */
 global {
+	//size of the grid
 	int width parameter: "width" min 1 <- 6 category: 'Initialization';
 	int height parameter: "height" min 1 <- 6 category: 'Initialization';
+	
+	//hue parameter for the hsb colors
 	float hue parameter: 'Hue (between 0.0 and 1.0)' min: 0.0 max: 1.0 <- 0.66;
+	
+	//definition of the size of the world
 	geometry shape <- rectangle(width, height);
-	init {
-		ask cell as list {
-			color <- hsb(hue, (cellValue / 255), 1.0);
-			elevation <- ((cellValue / 100) ^ 2);
-		}
-
-	}
-
 }
 
-grid cell width: width height: height neighbours: 4 {
+grid cell width: width height: height  {
+	
+	//definition of a random value for the cell between 0 and 255
 	int cellValue <- rnd(255);
-	float elevation;
-	reflex changeCellValue {
-		cellValue <- rnd(255);
-		color <- hsb(hue, (cellValue / 255), 1.0);
-		elevation <- ((cellValue / 100) ^ 2);
-	}
-
+	
+	//definition of the color of the cell from cellvalue
+	rgb color <- hsb(hue, (cellValue / 255), 1.0);
+	
+	//definition of the evelation from cellvalue
+	float elevation <- ((cellValue / 100) ^ 2);
+	
 	aspect base {
 		draw shape color: #white;
 		draw string(cellValue) size: 0.5 color: #black;
@@ -67,7 +63,7 @@ grid cell width: width height: height neighbours: 4 {
 
 }
 
-experiment AugmentedGrid type: gui {
+experiment visualization type: gui {
 	output {
 		display Circle type: opengl{
 			species cell aspect: circle;

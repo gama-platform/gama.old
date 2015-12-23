@@ -1,6 +1,6 @@
 model boids 
 global torus: torus_environment{ 
-	int number_of_agents <- 100 min: 1 max: 1000000;
+	int number_of_agents <- 10 min: 1 max: 1000000;
 	int number_of_obstacles <- 5 min: 0;
 	float maximal_speed <- 15.0 min: 0.1 max: 15.0;
 	int cohesion_factor <- 200;
@@ -171,7 +171,7 @@ species obstacle skills: [moving] {
 }
 
 
-experiment boids_gui type: gui {
+experiment Boids_gui type: gui {
 	parameter 'Number of agents' var: number_of_agents;
 	parameter 'Number of obstacles' var: number_of_obstacles;
 	parameter 'Maximal speed' var: maximal_speed;
