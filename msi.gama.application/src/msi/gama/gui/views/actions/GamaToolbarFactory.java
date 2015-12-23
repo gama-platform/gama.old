@@ -135,9 +135,9 @@ public class GamaToolbarFactory {
 			tm.update(true);
 		} else if ( site instanceof IEditorSite ) {
 			// WARNING Disabled for the moment.
-			IActionBars tm = ((IEditorSite) site).getActionBars();
-			tm.getToolBarManager().add(toggle);
-			tm.updateActionBars();
+			// IActionBars tm = ((IEditorSite) site).getActionBars();
+			// tm.getToolBarManager().add(toggle);
+			// tm.updateActionBars();
 		}
 		return toolbarComposite;
 

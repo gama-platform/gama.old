@@ -369,6 +369,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				if ( getDisplaySurface() == null ) { return Status.CANCEL_STATUS; }
 				getDisplaySurface().updateDisplay(false);
 				return Status.OK_STATUS;
 			}

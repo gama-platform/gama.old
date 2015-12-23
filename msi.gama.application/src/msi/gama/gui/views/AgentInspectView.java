@@ -44,15 +44,16 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 			reset();
 			return;
 		}
-		System.out.println("Adding output " + output.getName() + " to inspector");
+		// System.out.println("Adding output " + output.getName() + " to inspector");
 		if ( !(output instanceof InspectDisplayOutput) ) { return; }
 		InspectDisplayOutput out = (InspectDisplayOutput) output;
-		if ( out.getLastValue() == null || out.getLastValue().length == 0 ) {
+		IAgent[] agents = out.getLastValue();
+		if ( agents == null || agents.length == 0 ) {
 			reset();
 			return;
 		}
 
-		IAgent agent = out.getLastValue()[0];
+		IAgent agent = agents[0];
 		if ( parent == null ) {
 			super.addOutput(out);
 		} else if ( editors == null || !editors.getCategories().containsKey(agent) ) {
@@ -63,7 +64,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
-		System.out.println("Inspector creating its own part control");
+		// System.out.println("Inspector creating its own part control");
 		parent.setBackground(parent.getBackground());
 		if ( !outputs.isEmpty() ) {
 			IAgent[] init = getOutput().getLastValue();
@@ -218,7 +219,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 	public void updatePartName() {
 		if ( firstPartName == null ) {
 			InspectDisplayOutput out = getOutput();
-			firstPartName = out == null ? "Inspector" : out.getName();
+			firstPartName = out == null ? "Inspect: " : out.getName();
 		}
 		Set<String> names = new LinkedHashSet();
 		for ( IOutput o : outputs ) {

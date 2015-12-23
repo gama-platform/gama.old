@@ -64,6 +64,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 	@Override
 	public void modifyText(final ModifyEvent event) {
+		if ( editor == null ) { return; }
 		if ( editor != null && editor.internalModification ) { return; }
 		modifyValue();
 		displayTooltip();
@@ -120,6 +121,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	@Override
 	public void widgetDefaultSelected(final SelectionEvent me) {
 		try {
+			if ( text == null || text.isDisposed() ) { return; }
+			String s = text.getText();
+			System.out.println(s);
 			modifyValue();
 			modifyNoPopup();
 		} catch (final RuntimeException e) {
@@ -140,20 +144,21 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 				agent = getHostAgent().getExperiment();
 			}
 			if ( NumberEditor.UNDEFINED_LABEL.equals(s) ) {
-				return null;
-				// setCurrentValue(null);
+				setCurrentValue(null);
+				// return null;
 			} else if ( agent == null ) {
-				return Cast.as(s, expectedType.toClass(), false);
-				// setCurrentValue(Cast.as(s, expectedType.toClass(), false));
+				// return Cast.as(s, expectedType.toClass(), false);
+				setCurrentValue(Cast.as(s, expectedType.toClass(), false));
 			} else {
-				return evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s, agent);
-				// setCurrentValue(evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s,
-				// agent));
+				// return evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s, agent);
+				setCurrentValue(
+					evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s, agent));
 			}
 		} catch (final Exception e) {
 			currentException = e;
 			return null;
 		}
+		return getCurrentValue();
 	}
 
 	public void modifyValue() {
@@ -260,14 +265,8 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	/**
 	 * @param currentValue the currentValue to set
 	 */
-	// protected void setCurrentValue(final Object currentValue) {
-	// String name = editor.getParam().getName();
-	// if (currentValue != null && currentValue.equals(495) && name.equals("neighbours_size")) {
-	// System.out.println("Expression Control of Editor " + name + " receives new value :" +
-	// currentValue);
-	// }
-	//
-	// this.currentValue = currentValue;
-	// }
+	protected void setCurrentValue(final Object currentValue) {
+		this.currentValue = currentValue;
+	}
 
 }
