@@ -1,6 +1,6 @@
 /**
  *  discretization
- *  Author: Taillandier
+ *  Author: Patrick Taillandier
  *  Description: shows the geometry discrtization operators
  */
 

@@ -20,13 +20,13 @@ global {
 	geometry shape <- envelope(shape_file_name_background);
 	
 
-	reflex stop when: empty ( people ) {
+	reflex stop when: empty ( object ) {
 		do halt;
   	} 
 
 }
 
-species people topology: topology(shape_file_name_init) {
+species object topology: topology(shape_file_name_init) {
 	rgb color <- rgb ( [ rnd ( 255 ) , rnd ( 255 ) , rnd ( 255 ) ]);
 	point location_new_Ag <- nil;
 	rgb color_new_Ag <- nil;
@@ -48,7 +48,7 @@ species people topology: topology(shape_file_name_init) {
 	
 	reflex crossover when: ( shape.area > crossover_size ) and ( nb_last_rep > time_wthout_co ) { 
 		int nb_partners  <- 0;
-		list<people> list_people <- shuffle ( people );
+		list<object> list_people <- shuffle ( object );
 		loop p over: list_people {
 			if ( p != self ) and ( nb_partners <= nb_partners_max ) and (rnd ( 100 ) < ( crossover_rate * 100 ) ) and ( (p.shape).area > crossover_size ) and ( p . nb_last_rep > time_wthout_co ) and (shape intersects p.shape) {
 				nb_partners <- nb_partners + 1;
@@ -58,7 +58,7 @@ species people topology: topology(shape_file_name_init) {
 					ask p {
 						nb_last_rep <- 0;
 					}
-					create people  {
+					create object  {
 						color <- (myself.color + p.color) / 2;
 						shape <-  convex_hull(new_ag);
 					}
@@ -94,7 +94,7 @@ experiment example_spatial_operators type: gui {
 			graphics "background" {
 				draw world.shape color: rgb ([ 255 , 240 , 240 ]);
 			}
-			species people aspect: geometry;
+			species object aspect: geometry;
 		}
 	}
 }
