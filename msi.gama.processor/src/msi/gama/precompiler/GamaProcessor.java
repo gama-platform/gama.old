@@ -25,7 +25,7 @@ import javax.tools.Diagnostic.Kind;
 import javax.tools.StandardLocation;
 import msi.gama.precompiler.GamlAnnotations.*;
 
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+
 public class GamaProcessor extends AbstractProcessor {
 
 	class Pair {
