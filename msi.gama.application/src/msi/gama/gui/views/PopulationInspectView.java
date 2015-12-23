@@ -36,8 +36,7 @@ import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.CsvWriter;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
@@ -54,7 +53,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	protected static String exportFolder = "exports";
 	public static final String ID = GuiUtils.TABLE_VIEW_ID;
 	public static final String ID_ATTRIBUTE = "#";
-	public static final String CUSTOM = "custom";
+	// public static final String CUSTOM = "custom";
 
 	public final static int SAVE = 0;
 	public final static int LOCK = 1;
@@ -70,7 +69,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	org.eclipse.swt.widgets.List attributesMenu;
 	private AgentComparator comparator;
 	private ExpressionControl editor;
-	private String speciesName;
+	// private String speciesName;
 
 	IAgent[] elements = new IAgent[0];
 	Font currentFont = new Font(SwtGui.getDisplay(), SwtGui.getSmallFont().getFontData());
@@ -115,23 +114,17 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				TableViewer v = viewer;
+				if ( v == null || v.getTable() == null || v.getTable().isDisposed() ) { return Status.CANCEL_STATUS; }
 				if ( !locked ) {
 					IAgent[] agents = getOutput().getLastValue();
 					if ( Arrays.equals(elements, agents) ) {
-						if ( v != null && v.getTable() != null && !v.getTable().isDisposed() ) {
-							v.refresh();
-						}
+						v.refresh();
 					} else {
-						if ( v != null && v.getTable() != null && !v.getTable().isDisposed() ) {
-							viewer.setInput(agents);
-						}
+						viewer.setInput(agents);
 					}
 				} else {
-					if ( v != null && v.getTable() != null && !v.getTable().isDisposed() ) {
-						viewer.refresh();
-					}
+					viewer.refresh();
 				}
-
 				return Status.OK_STATUS;
 			}
 		};
@@ -144,40 +137,40 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 	@Override
 	public void addOutput(final IDisplayOutput output) {
-		if ( output == null ) { return; }
-		super.addOutput(output);
-		scope = null;
-		selectedColumns.clear();
-		final IExpression expr = getOutput().getValue();
-		if ( expr != null ) {
-			final String name = expr.getType().getContentType().getSpeciesName();
-			if ( expr.literalValue().equals(name) ) {
-				setSpeciesName(name, true);
-			} else {
-				setSpeciesName(CUSTOM, true);
-			}
+		// Either both are null or they are equal
+		if ( getOutput() == output ) { return; }
+		// super.addOutput(output);
+		// Only one output allowed for this view.
+		if ( getOutput() != null ) {
+			// We dont dispose the old one, as it would close the view... Instead, we set it to paused, knowing
+			// that the output manager has already removed it (otherwise, this view would not have been
+			// activated).
+			getOutput().setPaused(true);
+			outputs.clear();
 		}
+		outputs.add(output);
+		selectedColumns.clear();
+		updateSpecies();
 		comparator = new AgentComparator();
 
 		recreateViewer();
 	}
 
-	private void setSpeciesName(final String name, final boolean fromMenu) {
-		speciesName = name;
-		if ( fromMenu && editor != null ) {
-			editor.getControl().setText(name);
-		}
+	private void updateSpecies() {
+		ISpecies species = getOutput().getSpecies();
+		IExpression expr = getOutput().getValue();
+
+		String name = species == null ? IKeyword.AGENT : species.getName();
+		boolean isComplete = expr instanceof SpeciesConstantExpression;
+
 		if ( !selectedColumns.containsKey(name) ) {
 			selectedColumns.put(name, new ArrayList());
 			final List<String> names = getOutput().getAttributes();
 			if ( names != null ) {
 				selectedColumns.get(name).addAll(names);
 			} else if ( getOutput().getValue() != null ) {
-				final IExpression expr = getOutput().getValue();
-				final SpeciesDescription realSpecies = expr.getType().getContentType().getSpecies();
-				// final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
-				if ( realSpecies == null ) { return; }
-				selectedColumns.get(name).addAll(realSpecies.getVarNames());
+				if ( species == null ) { return; }
+				selectedColumns.get(name).addAll(species.getVarNames());
 				selectedColumns.get(name).removeAll(DONT_INSPECT_BY_DEFAULT);
 			}
 			Collections.sort(selectedColumns.get(name));
@@ -185,7 +178,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 			selectedColumns.get(name).add(0, ID_ATTRIBUTE);
 
 		}
-		changePartName(name);
+
+		changePartName(name, isComplete);
 
 	}
 
@@ -195,14 +189,14 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	// toolbar.status((Image) null, description, IGamaColors.BLUE);
 	// }
 
-	private void changePartName(final String name) {
+	private void changePartName(final String name, final boolean complete) {
 		if ( name == null ) { return; }
 		// this.setContentDescription(StringUtils.capitalize(name) + " population in macro-agent " +
 		// getOutput().getRootAgent().getName());
-		if ( name.equals(CUSTOM) ) {
-			setPartName("Custom population");
+		if ( !complete ) {
+			setPartName(getOutput().getName() + ": set of " + name);
 		} else {
-			setPartName("Population of " + name);
+			setPartName(getOutput().getName() + ": population of " + name);
 		}
 	}
 
@@ -236,15 +230,15 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 			public void modifyValue() {
 				Object oldVal = getCurrentValue();
 				super.modifyValue();
-				if ( oldVal == null ? getCurrentValue() == null : oldVal.equals(getCurrentValue()) ) {
+				if ( oldVal == null ? getCurrentValue() != null : !oldVal.equals(getCurrentValue()) ) {
 					if ( outputs.isEmpty() ) { return; }
 					try {
 						getOutput().setNewExpression((IExpression) getCurrentValue());
+
 					} catch (final GamaRuntimeException e) {
 						e.printStackTrace();
 					}
-					final ISpecies species = getOutput().getSpecies();
-					setSpeciesName(species == null ? null : species.getName(), false);
+					updateSpecies();
 					fillAttributeMenu();
 					// TODO Make a test on the columns.
 					recreateViewer();
@@ -256,9 +250,9 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.minimumHeight = 16;
 		data.heightHint = 16;
-		if ( speciesName != null ) {
-			editor.getControl().setText(speciesName);
-		}
+		// if ( speciesName != null ) {
+		editor.getControl().setText(getOutput().getExpressionText()); // TODO Output available ?
+		// }
 		editor.getControl().setLayoutData(data);
 		editor.getControl().setToolTipText("Enter a GAML expression returning one or several agents ");
 		toolbar.control(compo, 150, SWT.RIGHT);
@@ -269,48 +263,47 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			selectedColumns.put(speciesName, Arrays.asList(attributesMenu.getSelection()));
+			selectedColumns.put(getSpeciesName(), Arrays.asList(attributesMenu.getSelection()));
 			recreateViewer();
 			update(getOutput());
 		}
 
 	};
 
+	private String getSpeciesName() {
+		return getOutput().getSpecies().getName();
+	}
+
 	private void fillAttributeMenu() {
 		// Not yet declared or already disposed
 		if ( attributesMenu == null || attributesMenu.isDisposed() ) { return; }
 		attributesMenu.removeAll();
 		String tooltipText;
-		if ( CUSTOM.equals(speciesName) ) {
+		String speciesName = getSpeciesName();
+		if ( speciesName.equals(IKeyword.AGENT) ) {
 			tooltipText = "A list of the attributes common to the agents returned by the custom expression";
 		} else {
 			tooltipText = "A list of the attributes defined in species " + speciesName +
 				". Select the ones you want to display in the table";
 		}
 		attributesMenu.setToolTipText(tooltipText);
-		final IExpression expr = getOutput().getValue();
-		if ( expr != null ) {
-			final SpeciesDescription realSpecies = expr.getType().getContentType().getSpecies();
-			// final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
-			if ( realSpecies != null ) {
-				final List<String> names = new ArrayList(realSpecies.getVarNames());
-				Collections.sort(names);
-				attributesMenu.setItems(names.toArray(new String[0]));
-				for ( int i = 0; i < names.size(); i++ ) {
-					if ( selectedColumns.get(speciesName) != null &&
-						selectedColumns.get(speciesName).contains(names.get(i)) ) {
-						attributesMenu.select(i);
-					}
-				}
-				attributesMenu.addSelectionListener(attributeAdapter);
+
+		final List<String> names = new ArrayList(getOutput().getSpecies().getVarNames());
+		Collections.sort(names);
+		attributesMenu.setItems(names.toArray(new String[0]));
+		for ( int i = 0; i < names.size(); i++ ) {
+			if ( selectedColumns.get(speciesName) != null && selectedColumns.get(speciesName).contains(names.get(i)) ) {
+				attributesMenu.select(i);
 			}
 		}
+		attributesMenu.addSelectionListener(attributeAdapter);
+
 	}
 
 	@Override
 	public void ownCreatePartControl(final Composite c) {
 		final Composite view = new Composite(c, SWT.None);
-		speciesName = getOutput().getExpressionText();
+		// speciesName = getOutput().getExpressionText();
 		final GridLayout viewLayout = new GridLayout(1, false);
 		viewLayout.marginWidth = 0;
 		viewLayout.marginHeight = 0;
@@ -645,7 +638,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		}
 
 		String exportFileName = FileUtils.constructAbsoluteFilePath(getScope(),
-			exportFolder + "/" + speciesName + "_population" + getScope().getClock().getCycle() + ".csv", false);
+			exportFolder + "/" + getSpeciesName() + "_population" + getScope().getClock().getCycle() + ".csv", false);
 		// File file = new File(exportFileName);
 		// FileWriter fileWriter = null;
 		// try {
@@ -721,7 +714,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 								@Override
 								public void widgetSelected(final SelectionEvent e) {
-									setSpeciesName(p.getName(), true);
+									editor.getControl().setText(p.getName());
+									editor.widgetDefaultSelected(null);
 								}
 
 							}, GamaIcons.create("display.agents2").image());
@@ -733,7 +727,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("menu.saveas2", "Save as CSV", "Save the attributes of agents into a CSV file",
+		tb.button("menu.saveas2", "Save as CSV", "Save the agents and their attributes into a CSV file",
 			new SelectionAdapter() {
 
 				@Override
@@ -757,7 +751,9 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 	@Override
 	public void close() {
-		attributesMenu.removeAll();
+		if ( attributesMenu != null && !attributesMenu.isDisposed() ) {
+			attributesMenu.removeAll();
+		}
 		provider.dispose();
 		super.close();
 	}

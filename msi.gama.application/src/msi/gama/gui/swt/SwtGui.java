@@ -315,6 +315,7 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				v.clearErrors();
+				v.close();
 			}
 		});
 	}
@@ -1191,8 +1192,7 @@ public class SwtGui implements IGui {
 				// if ( r == null ) {
 				if ( a == null ) { return; }
 				try {
-					InspectDisplayOutput output =
-						new InspectDisplayOutput("Inspector", InspectDisplayOutput.INSPECT_AGENT, a);
+					InspectDisplayOutput output = new InspectDisplayOutput(a);
 					output.launch();
 				} catch (final GamaRuntimeException g) {
 					g.addContext("In opening the agent inspector");
