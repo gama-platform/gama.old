@@ -86,7 +86,7 @@ species ant skills: [moving] control: fsm {
 		} else {
 			draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
 		}
-		if condition: display_state {
+		if display_state {
 			draw state at: location + {-3,1.5} color: °white size: 0.8 ;
 		}
 	}

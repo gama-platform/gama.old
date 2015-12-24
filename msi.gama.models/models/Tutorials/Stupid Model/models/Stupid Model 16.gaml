@@ -70,7 +70,7 @@ species bug schedules:[]{
 		list<cell> possible_nests <- my_place.neighbours3 where empty(each.agents);
        	create bug number: 5 {
             cell nest <- one_of(possible_nests);
-            if condition: nest != nil {
+            if(nest != nil) {
             	remove nest from: possible_nests;
             	my_place <- nest;
             	location <- nest.location;

@@ -52,7 +52,7 @@ species bug schedules: bug sort_by ( - each.size){
 		list possible_nests <- my_place.neighbours3 where empty(each.agents);
        	create bug number: 5 {
             cell nest <- one_of(possible_nests);
-            if condition: nest != nil {
+            if(nest != nil) {
             	possible_nests >- nest;
             	my_place <- nest;
             	location <- nest.location;
