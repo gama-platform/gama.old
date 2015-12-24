@@ -38,16 +38,14 @@ global {
 	}
 }
 
-entities {
-	species DB_accessor skills: [SQLSKILL];
-	
-	species buildings {
-		string type;
-		aspect default {
-			draw shape color: #gray ;
-		}	
+species DB_accessor skills: [SQLSKILL];
+
+species buildings {
+	string type;
+	aspect default {
+		draw shape color: #gray ;
 	}	
-}
+}	
 
 experiment DB2agentSQLite type: gui {
 	output {

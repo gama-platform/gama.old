@@ -41,11 +41,9 @@ global {
 		}
 	}
 }
-entities {
-	species test_species skills: [ SQLSKILL ] {
 
-	}
-}
+species test_species skills: [ SQLSKILL ] { }
+
 experiment default_expr type: gui {
 
 }

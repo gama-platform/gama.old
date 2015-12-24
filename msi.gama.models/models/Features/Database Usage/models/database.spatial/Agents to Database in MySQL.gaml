@@ -33,46 +33,46 @@ global {
 		write "Click on <<Step>> button to save data of agents to DB";		 
 	}
 }   
+ 
+species DB_Accessor skills: [SQLSKILL] ;   
 
-entities {   
-	species DB_Accessor skills: [SQLSKILL] ;   
-	species bounds {
-		reflex printdata{
-			 write ' name : ' + (name) ;
-		}
-		
-		reflex savetosql{  // save data into MySQL
-			write "begin"+ name;
-			ask DB_Accessor {
-				do insert params: PARAMS into: "bounds"
-						  columns: ["geom"]
-						  values: [myself.shape];
-			}
-		    write "finish "+ name;
-		}		
+species bounds {
+	reflex printdata{
+		 write ' name : ' + (name) ;
 	}
-	species buildings {
-		string type;
-		
-		reflex printdata{
-			 write ' name : ' + (name) + '; type: ' + (type) + "shape:" + shape;
+	
+	reflex savetosql{  // save data into MySQL
+		write "begin"+ name;
+		ask DB_Accessor {
+			do insert params: PARAMS into: "bounds"
+					  columns: ["geom"]
+					  values: [myself.shape];
 		}
-		
-		reflex savetosql{  // save data into MySQL
-			write "begin"+ name;
-			ask DB_Accessor {
-				do insert params: PARAMS into: "buildings"
-						  columns: ["name", "type","geom"]
-						  values: [myself.name,myself.type,myself.shape];
-			}
-		    write "finish "+ name;
-		}	
-		
-		aspect default {
-			draw shape color: #gray ;
-		}
+	    write "finish "+ name;
+	}		
+}
+
+species buildings {
+	string type;
+	
+	reflex printdata{
+		 write ' name : ' + (name) + '; type: ' + (type) + "shape:" + shape;
 	}
-}      
+	
+	reflex savetosql{  // save data into MySQL
+		write "begin"+ name;
+		ask DB_Accessor {
+			do insert params: PARAMS into: "buildings"
+					  columns: ["name", "type","geom"]
+					  values: [myself.name,myself.type,myself.shape];
+		}
+	    write "finish "+ name;
+	}	
+	
+	aspect default {
+		draw shape color: #gray ;
+	}
+}     
 
 experiment default_expr type: gui {
 	output {
