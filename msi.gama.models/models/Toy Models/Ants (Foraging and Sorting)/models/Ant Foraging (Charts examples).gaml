@@ -55,7 +55,7 @@ species ant skills: [moving] control: fsm {
 		if (list_places count (each.food > 0)) > 0  {
 			return (list_places first_with (each.food > 0)) ;
 		} else {
-				let min_nest  <-  (list_places min_of (each.nest)) ;
+				int min_nest  <-  (list_places min_of (each.nest)) ;
 				list_places <- list_places sort ((each.nest = min_nest) ? each.road :  0.0) ;
 				return last(list_places) ;
 			}
