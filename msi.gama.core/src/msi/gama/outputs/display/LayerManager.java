@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'LayerManager.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.display;
 
@@ -19,12 +19,13 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
 
 /**
  * Written by drogoul Modified on 23 janv. 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class LayerManager implements ILayerManager {
 
@@ -175,6 +176,11 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public String getItemDisplayName(final ILayer obj, final String previousName) {
 		return obj.getMenuName();
+	}
+
+	@Override
+	public GamaColor getItemDisplayColor(final ILayer o) {
+		return null;
 	}
 
 	@Override

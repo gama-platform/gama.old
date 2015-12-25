@@ -1,17 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ExperimentParametersView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views;
 
 import java.util.Collection;
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
@@ -19,12 +25,6 @@ import msi.gama.kernel.experiment.*;
 import msi.gama.runtime.*;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.statements.*;
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
 
 public class ExperimentParametersView extends AttributesEditorsView<String> {
 
@@ -47,7 +47,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	}
 
 	public void addItem(final IExperimentPlan exp) {
-		if ( exp != null /* && exp != experiment */) {
+		if ( exp != null /* && exp != experiment */ ) {
 			experiment = exp;
 			reset();
 			editors = (EditorsList<String>) exp.getParametersEditors();
@@ -72,9 +72,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	protected void displayCommands() {
 		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
 
-		String expInfo =
-			"Model " + experiment.getModel().getDescription().getTitle() + " / " +
-				StringUtils.capitalize(experiment.getDescription().getTitle());
+		String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / " +
+			StringUtils.capitalize(experiment.getDescription().getTitle());
 		toolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL, SWT.LEFT);
 		toolbar.sep(2, SWT.LEFT);
 		for ( final IStatement command : userCommands ) {
@@ -120,7 +119,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 	@Override
 	public boolean addItem(final String object) {
-		createItem(parent, object, true);
+		createItem(parent, object, true, null);
 		return true;
 	}
 

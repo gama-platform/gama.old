@@ -19,12 +19,12 @@ import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.outputs.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
+import msi.gama.util.*;
 import msi.gaml.expressions.*;
 import msi.gaml.types.Types;
 
@@ -62,7 +62,8 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	@Override
 	public boolean addItem(final MonitorOutput output) {
 		if ( output != null ) {
-			createItem(parent, output, output.getValue() == null);
+			createItem(parent, output, output.getValue() == null,
+				output.getColor() == null ? null : GamaColors.get(output.getColor()));
 			return true;
 		}
 		return false;
@@ -161,6 +162,11 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		}
 		return sb.toString();
 
+	}
+
+	@Override
+	public GamaColor getItemDisplayColor(final MonitorOutput o) {
+		return o.getColor();
 	}
 
 	public static void createNewMonitor() {

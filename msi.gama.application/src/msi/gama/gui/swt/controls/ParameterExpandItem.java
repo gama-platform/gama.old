@@ -16,6 +16,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.util.GamaColor;
 
 /**
  * Instances of this class represent a selectable user interface object that represents a expandable
@@ -48,6 +50,7 @@ public class ParameterExpandItem extends Item {
 	int visiblePosition = -1;
 	int selectablePosition = -1;
 	int closePosition = -1;
+	Color backgroundColor = IGamaColors.PARAMETERS_BACKGROUND.color();
 
 	private static int imageHeight = 16, imageWidth = 16;
 	boolean isPaused = false;
@@ -82,8 +85,9 @@ public class ParameterExpandItem extends Item {
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
-	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style) {
-		this(parent, data, style, parent.getItemCount());
+	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style,
+		final GamaUIColor color) {
+		this(parent, data, style, parent.getItemCount(), color);
 	}
 
 	/**
@@ -113,8 +117,12 @@ public class ParameterExpandItem extends Item {
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
-	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style, final int index) {
+	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style, final int index,
+		final GamaUIColor color) {
 		super(parent, style);
+		if ( color != null ) {
+			backgroundColor = color.color();
+		}
 		this.parent = parent;
 		setData(data);
 		parent.createItem(this, style, index);
@@ -143,7 +151,7 @@ public class ParameterExpandItem extends Item {
 		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6, 6);
-		gc.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
+		gc.setBackground(backgroundColor);
 		gc.fillRoundRectangle(x, y, width, headerHeight, 6, 6);
 		if ( drawHover ) {
 			gc.setForeground(IGamaColors.GRAY_LABEL.color());
@@ -215,7 +223,8 @@ public class ParameterExpandItem extends Item {
 					other = other.substring(l + 1);
 					gc.setForeground(IGamaColors.WARNING.color());
 				} else {
-					gc.setForeground(IGamaColors.BLACK.color());
+					gc.setForeground(GamaColors.get(backgroundColor.getRGB()).isDark()
+						? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK));
 				}
 				// gc.setFont(SwtGui.getParameterEditorsFont());
 				drawX += size.x + 2 * SEPARATION;
@@ -419,6 +428,15 @@ public class ParameterExpandItem extends Item {
 	public boolean selectableRequested(final int x2, final int y2) {
 		if ( selectablePosition == -1 ) { return false; }
 		return clickIn(x2, y2, x + selectablePosition);
+	}
+
+	/**
+	 * @param itemDisplayColor
+	 */
+	public void setColor(final GamaColor color) {
+		if ( color != null ) {
+			backgroundColor = GamaColors.get(color).color();
+		}
 	}
 
 }

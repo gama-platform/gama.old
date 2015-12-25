@@ -17,10 +17,11 @@ import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
+import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 /**
@@ -37,6 +38,10 @@ import msi.gaml.types.IType;
 			optional = true,
 			doc = @doc(value = "Allows to refresh the monitor every n time steps (default is 1)",
 				deprecated = "Use refresh: every(n) instead") ),
+		@facet(name = IKeyword.COLOR,
+			type = IType.COLOR,
+			optional = true,
+			doc = @doc("Indicates the (possibly dynamic) color of this output (default is a light gray)") ),
 		@facet(name = IKeyword.REFRESH,
 			type = IType.BOOL,
 			optional = true,
@@ -58,7 +63,18 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
 		setValue(getFacet(IKeyword.VALUE));
+		setColor(getFacet(IKeyword.COLOR));
 		expressionText = getValue() == null ? "" : getValue().serialize(false);
+	}
+
+	/**
+	 * @param facet
+	 */
+	private void setColor(final IExpression facet) {
+		colorExpression = facet;
+		if ( facet != null && facet.isConst() ) {
+			constantColor = Cast.as(facet, GamaColor.class, false);
+		}
 	}
 
 	public MonitorOutput(final String name, final String expr) {
@@ -76,6 +92,9 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	protected String expressionText = "";
 	protected IExpression value;
+	protected IExpression colorExpression = null;
+	protected GamaColor color = null;
+	protected GamaColor constantColor = null;
 	protected Object lastValue = "";
 
 	public Object getLastValue() {
@@ -104,7 +123,14 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		} else {
 			lastValue = null;
 		}
+		if ( constantColor == null && colorExpression != null ) {
+			color = Cast.asColor(scope, colorExpression.value(scope));
+		}
 		return true;
+	}
+
+	public GamaColor getColor() {
+		return constantColor == null ? color : constantColor;
 	}
 
 	public String getExpressionText() {

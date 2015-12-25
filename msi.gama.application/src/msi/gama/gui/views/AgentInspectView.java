@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.experiment.*;
@@ -172,7 +173,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 		if ( !editors.getCategories().containsKey(agent) ) {
 			editors.add(getParametersToInspect(agent), agent);
 			// System.out.println("Asking to create the item " + agent.getName() + " in inspector");
-			ParameterExpandItem item = createItem(parent, agent, true);
+			ParameterExpandItem item = createItem(parent, agent, true, null);
 			if ( item == null ) { return false; }
 			return true;
 		}
@@ -180,8 +181,9 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 	}
 
 	@Override
-	protected ParameterExpandItem buildConcreteItem(final ParameterExpandBar bar, final IAgent data) {
-		return new ParameterExpandItem(bar, data, SWT.None, 0);
+	protected ParameterExpandItem buildConcreteItem(final ParameterExpandBar bar, final IAgent data,
+		final GamaUIColor color) {
+		return new ParameterExpandItem(bar, data, SWT.None, 0, color);
 	}
 
 	private List<IParameter> getParametersToInspect(final IAgent agent) {

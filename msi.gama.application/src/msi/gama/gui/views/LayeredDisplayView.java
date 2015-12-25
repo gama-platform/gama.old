@@ -439,7 +439,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				LayerSideControls.fill(compo, layer, getDisplaySurface());
 			}
 			Composite control = compo;
-			ParameterExpandItem i = new ParameterExpandItem(viewer, layer, SWT.None);
+			ParameterExpandItem i = new ParameterExpandItem(viewer, layer, SWT.None, null);
 			if ( name != null ) {
 				i.setText(name);
 			}

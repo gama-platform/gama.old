@@ -171,7 +171,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		if ( editor != null ) {
 			try {
 				IScope scope = GAMA.obtainNewScope();
-				editor.modifyValue(expectedType.cast(scope, value, false, false));
+				editor.modifyValue(evaluateExpression ? expectedType.cast(scope, value, false, false) : value);
 				GAMA.releaseScope(scope);
 				editor.checkButtons();
 			} catch (final GamaRuntimeException e) {

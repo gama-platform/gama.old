@@ -16,6 +16,7 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.util.GamaColor;
 
 public class ExperimentsParametersList extends EditorsList<String> {
 
@@ -27,6 +28,11 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	@Override
 	public String getItemDisplayName(final String obj, final String previousName) {
 		return obj;
+	}
+
+	@Override
+	public GamaColor getItemDisplayColor(final String o) {
+		return null;
 	}
 
 	@Override

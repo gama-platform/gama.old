@@ -40,7 +40,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 
 	@Override
 	public boolean addItem(final GamaRuntimeException e) {
-		createItem(parent, e, false);
+		createItem(parent, e, false, null);
 		return true;
 	}
 
