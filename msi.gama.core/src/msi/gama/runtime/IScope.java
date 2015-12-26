@@ -262,4 +262,14 @@ public interface IScope {
 
 	public IAgent[] getAgentsStack();
 
+	/**
+	 * Used to store the attributes read from shape files, etc. It involves a distinct stack.
+	 * @param values
+	 */
+	public abstract void pushReadAttributes(Map values);
+
+	public abstract Map popReadAttributes();
+
+	public abstract Map peekReadAttributes();
+
 }

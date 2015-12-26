@@ -556,6 +556,26 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	/**
+	 * Method get()
+	 * @see msi.gama.util.IContainer.Addressable#get(msi.gama.runtime.IScope, java.lang.Object)
+	 */
+	@Override
+	public Object get(final IScope scope, final String index) throws GamaRuntimeException {
+		return attributes.get(scope, index);
+	}
+
+	/**
+	 * Method getFromIndicesList()
+	 * @see msi.gama.util.IContainer.Addressable#getFromIndicesList(msi.gama.runtime.IScope, msi.gama.util.IList)
+	 */
+	@Override
+	public Object getFromIndicesList(final IScope scope, final IList<String> indices) throws GamaRuntimeException {
+		IList<Object> list = GamaListFactory.create();
+		list.addAll(indices);
+		return attributes.getFromIndicesList(scope, list);
+	}
+
+	/**
 	 * Method asShapeWithGeometry()
 	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope, com.vividsolutions.jts.geom.Geometry)
 	 */

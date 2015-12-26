@@ -21,7 +21,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -36,7 +36,7 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.HOST, type = IType.AGENT),
 	@var(name = IKeyword.LOCATION, type = IType.POINT, depends_on = IKeyword.SHAPE),
 	@var(name = IKeyword.SHAPE, type = IType.GEOMETRY) })
-public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, IStepable {
+public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, IStepable, IContainer.Addressable<String, Object> {
 
 	/**
 	 * Returns the topology which manages this agent.

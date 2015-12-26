@@ -362,7 +362,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	// TODO Call it before calling the ICreateDelegate createFrom method !
 	void fillWithUserInit(final IScope scope, final Map values) {
 		if ( init == null ) { return; }
-		Files.tempAttributes.push(values);
+		scope.pushReadAttributes(values);
+		// Files.tempAttributes.push(values);
 		try {
 			for ( final Map.Entry<String, IExpressionDescription> f : init.entrySet() ) {
 				if ( f != null ) {
@@ -370,7 +371,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				}
 			}
 		} finally {
-			Files.tempAttributes.pop();
+			scope.popReadAttributes();
 		}
 	}
 
