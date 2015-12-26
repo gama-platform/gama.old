@@ -183,7 +183,7 @@ public class Files {
 				isExecutable = false) ) })
 	public static Object opRead(final IScope scope, final IAgent g, final String s) throws GamaRuntimeException {
 		if ( g == null ) { return null; }
-		return g.getAttribute(s);
+		return g.get(scope, s);
 	}
 
 	@operator(value = "get", category = IOperatorCategory.FILE)

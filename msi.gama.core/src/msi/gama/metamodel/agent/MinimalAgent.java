@@ -561,7 +561,12 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public Object get(final IScope scope, final String index) throws GamaRuntimeException {
-		return attributes.get(scope, index);
+		if ( getPopulation().hasVar(index) ) {
+			return scope.getAgentVarValue(this, index);
+		} else {
+			return attributes.get(scope, index);
+			// return attributes.get(scope, index);
+		}
 	}
 
 	/**
@@ -570,9 +575,8 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public Object getFromIndicesList(final IScope scope, final IList<String> indices) throws GamaRuntimeException {
-		IList<Object> list = GamaListFactory.create();
-		list.addAll(indices);
-		return attributes.getFromIndicesList(scope, list);
+		if ( indices == null || indices.isEmpty() ) { return null; }
+		return get(scope, indices.firstValue(scope));
 	}
 
 	/**

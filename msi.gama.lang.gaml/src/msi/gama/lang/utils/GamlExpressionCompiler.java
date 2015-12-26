@@ -229,8 +229,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return t;
 		}
 
-		// / SEE IF IT WORKS
-
 		if ( t.isAgentType() ) { return t; }
 
 		// /
@@ -243,17 +241,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if ( second == null ) { return GamaType.from(t, t.getKeyType(), fromTypeRef(first)); }
 		return GamaType.from(t, fromTypeRef(first), fromTypeRef(second));
 	}
-
-	// IType fromSpeciesRef(final SpeciesRef object) {
-	// IType t = Types.get(IKeyword.SPECIES);
-	// TypeInfo parameter = object.getParameter();
-	// if ( parameter == null ) { return t; }
-	// TypeRef first = (TypeRef) parameter.getFirst();
-	// if ( first == null ) { return t; }
-	// TypeRef second = (TypeRef) parameter.getSecond();
-	// if ( second == null ) { return GamaType.from(t, t.getKeyType(), fromTypeRef(first)); }
-	// return GamaType.from(t, fromTypeRef(first), fromTypeRef(second));
-	// }
 
 	private IExpression binary(final String op, final IExpression left, final Expression e2) {
 		if ( left == null ) { return null; }
@@ -355,7 +342,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		ModelDescription m = getContext().getModelDescription();
 		SpeciesDescription sd = m.getSpeciesDescription(s);
 		return sd != null && !(sd instanceof ExperimentDescription);
-		// return getContext().getModelDescription().hasSpeciesDescription(s);
 	}
 
 	private boolean isSkillName(final String s) {
@@ -458,23 +444,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if ( context == null ) { return GAML.getModelContext(); }
 		return context;
 	}
-
-	// FIXME Possibility to simplify here as we recreate a map that will be later decompiled...
-	// Create Arguments directly ?
-	// private List<IExpressionDescription> compileArguments(final StatementDescription description, final EObject args) {
-	// Map<String, IExpressionDescription> descriptions = parseArguments(description, args, getContext());
-	// if ( descriptions == null ) { return null; }
-	// final List list = new ArrayList();
-	// for ( Map.Entry<String, IExpressionDescription> d : descriptions.entrySet() ) {
-	// IExpressionDescription right = d.getValue();
-	// EObject target = right.getTarget();
-	// IExpression argName = factory.createConst(d.getKey(), Types.STRING);
-	// IExpression value = compile(right, getContext());
-	// IExpression result = factory.createOperator("::", getContext(), target, argName, value);
-	// list.add(result);
-	// }
-	// return factory.createMap(list);
-	// }
 
 	/**
 	 * @see msi.gaml.expressions.IExpressionParser#parseArguments(msi.gaml.descriptions.ExpressionDescription, msi.gaml.descriptions.IDescription)
@@ -591,7 +560,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	public IExpression caseUnitName(final UnitName object) {
 		String s = EGaml.getKeyOf(object);
 		if ( IExpressionFactory.UNITS_EXPR.containsKey(s) ) { return factory.getUnitExpr(s); }
-		// If it is a unit, we return its float value
 		getContext().error(s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
 		return null;
 	}
