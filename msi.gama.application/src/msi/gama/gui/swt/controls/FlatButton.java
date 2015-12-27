@@ -1,15 +1,15 @@
 /**
  * Created by drogoul, 22 nov. 2014
- * 
+ *
  */
 package msi.gama.gui.swt.controls;
 
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 
 public class FlatButton extends Canvas implements PaintListener, Listener {
 
@@ -21,7 +21,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return button(comp, color, text).disabled();
 	}
 
-	public static FlatButton label(final Composite comp, final GamaUIColor color, final String text, final Image image) {
+	public static FlatButton label(final Composite comp, final GamaUIColor color, final String text,
+		final Image image) {
 		return label(comp, color, text).setImage(image);
 	}
 
@@ -29,8 +30,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return create(comp, SWT.None).setText(text).setColor(color);
 	}
 
-	public static FlatButton
-		button(final Composite comp, final GamaUIColor color, final String text, final Image image) {
+	public static FlatButton button(final Composite comp, final GamaUIColor color, final String text,
+		final Image image) {
 		return button(comp, color, text).setImage(image);
 	}
 
@@ -82,14 +83,13 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 					doHover(true);
 				}
 				break;
-			default:
-				;
+			default:;
 		}
 	}
 
 	/**
 	 * SelectionListeners are notified when the button is clicked
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
@@ -110,7 +110,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	private void doHover(final boolean hover) {
-		if ( hover && hovered || !hover && !hovered ) { return; }
+		// if ( hover && hovered || !hover && !hovered ) { return; }
 		hovered = hover;
 		redraw();
 	}
@@ -242,7 +242,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * to the left of the text; however, setImageStyle can be used to
 	 * specify that it's either to the right or left. If there is no
 	 * text, the image will be centered inside the button.
-	 * 
+	 *
 	 * @param image
 	 */
 	public FlatButton setImage(final Image image) {
@@ -254,7 +254,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	/**
 	 * Set the style with which the side image is drawn, either IMAGE_LEFT
 	 * or IMAGE_RIGHT (default is IMAGE_LEFT).
-	 * 
+	 *
 	 * @param imageStyle
 	 */
 	public FlatButton setImageStyle(final int imageStyle) {

@@ -14,8 +14,8 @@ package msi.gama.gui.parameters;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -187,26 +187,33 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 	@Override
 	public void focusGained(final FocusEvent e) {
-		if ( e.widget == null || !e.widget.equals(text) ) { return; }
-		computeValue();
+		if ( editor != null ) {
+			System.out.println("Focus gained:" + editor.getParam().getName());
+		}
+		// if ( e.widget == null || !e.widget.equals(text) ) { return; }
+		// computeValue();
 	}
 
 	@Override
 	public void focusLost(final FocusEvent e) {
 		if ( e.widget == null || !e.widget.equals(text) ) { return; }
+		if ( editor != null ) {
+			System.out.println("Focus lost:" + editor.getParam().getName());
+		}
+		widgetDefaultSelected(null);
 		/* async is needed to wait until focus reaches its new Control */
 		removeTooltip();
-		SwtGui.getDisplay().timerExec(100, new Runnable() {
-
-			@Override
-			public void run() {
-				if ( SwtGui.getDisplay().isDisposed() ) { return; }
-				final Control control = SwtGui.getDisplay().getFocusControl();
-				if ( control != text ) {
-					widgetDefaultSelected(null);
-				}
-			}
-		});
+		// SwtGui.getDisplay().timerExec(100, new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// if ( SwtGui.getDisplay().isDisposed() ) { return; }
+		// final Control control = SwtGui.getDisplay().getFocusControl();
+		// if ( control != text ) {
+		// widgetDefaultSelected(null);
+		// }
+		// }
+		// });
 
 	}
 

@@ -25,6 +25,17 @@ import msi.gama.gui.swt.*;
  */
 public class ParameterExpandBar extends Composite/* implements IPopupProvider */ {
 
+	/**
+	 * Method setFocus()
+	 * @see org.eclipse.swt.widgets.Composite#setFocus()
+	 */
+	@Override
+	public boolean setFocus() {
+		// AD 27/12/2015 Added to fix issue #1248
+		return false;
+		// return super.setFocus();
+	}
+
 	private ParameterExpandItem[] items;
 	private ParameterExpandItem focusItem, hoverItem;
 	private int spacing, yCurrentScroll, itemCount;

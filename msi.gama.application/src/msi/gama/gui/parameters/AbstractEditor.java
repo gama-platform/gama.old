@@ -1,5 +1,4 @@
-/*********************************************************************************************
- *
+/**
  *
  * 'AbstractEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
@@ -328,14 +327,15 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		composite.setBackground(HOVERED_BACKGROUND);
 		composite.layout();
 
-		if ( combo != null ) {
-			combo.forceFocus();
-		} else {
-			Control c = getEditorControl();
-			if ( c != null ) {
-				c.forceFocus();
-			}
-		}
+		// AD 26/12/15 Commented for the moment to not force the focus (see Issues #1339 and #1248)
+		// if ( combo != null ) {
+		// combo.forceFocus();
+		// } else {
+		// Control c = getEditorControl();
+		// if ( c != null ) {
+		// c.forceFocus();
+		// }
+		// }
 	}
 
 	private String computeUnitLabel() {
