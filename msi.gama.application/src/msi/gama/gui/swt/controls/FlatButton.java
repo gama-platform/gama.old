@@ -66,16 +66,23 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public void handleEvent(final Event e) {
 		switch (e.type) {
 			case SWT.MouseExit:
+				System.out.println("Mouse exited from " + this.getText());
 				doHover(false);
+				break;
+			case SWT.MouseMove:
+				System.out.println("Mouse moved in " + this.getText());
 				break;
 			case SWT.MouseEnter:
 			case SWT.MouseHover:
+				System.out.println("Mouse entered/hovered on " + this.getText());
 				doHover(true);
 				e.doit = true;
 				break;
 			case SWT.MouseUp:
-				if ( e.button == 1 && e.count == 1 && getClientArea().contains(e.x, e.y) ) {
-					doButtonClicked();
+				if ( e.button == 1 && e.count >= 1 && getClientArea().contains(e.x, e.y) ) {
+					for ( int i = 0; i < e.count; i++ ) {
+						doButtonClicked();
+					}
 				}
 				break;
 			case SWT.MouseDown:
@@ -93,10 +100,12 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * @param listener
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
+		if ( listener == null ) { return; }
 		addListener(SWT.Selection, new TypedListener(listener));
 	}
 
 	public void removeSelectionListener(final SelectionListener listener) {
+		if ( listener == null ) { return; }
 		removeListener(SWT.Selection, listener);
 	}
 
@@ -284,6 +293,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		addListener(SWT.MouseEnter, this);
 		addListener(SWT.MouseHover, this);
 		addListener(SWT.MouseUp, this);
+		addListener(SWT.MouseMove, this);
 	}
 
 	@Override
@@ -301,6 +311,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 				removeListener(SWT.MouseEnter, (Listener) this);
 				removeListener(SWT.MouseHover, (Listener) this);
 				removeListener(SWT.MouseUp, (Listener) this);
+				removeListener(SWT.MouseMove, (Listener) this);
 			}
 			redraw();
 		}

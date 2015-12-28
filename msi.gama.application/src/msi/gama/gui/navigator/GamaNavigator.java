@@ -11,10 +11,6 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
@@ -24,10 +20,14 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
 import org.eclipse.ui.navigator.*;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 
 public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedView, ISelectionChangedListener {
 
@@ -44,26 +44,26 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	protected CommonNavigatorManager createCommonManager() {
 		CommonNavigatorManager manager = new CommonNavigatorManager(this, memento);
 		commonDescriptionProvider = /* getNavigatorContentService().createCommonDescriptionProvider(); */
-		new IDescriptionProvider() {
+			new IDescriptionProvider() {
 
-			@Override
-			public String getDescription(final Object anElement) {
-				if ( anElement instanceof IStructuredSelection ) {
-					IStructuredSelection selection = (IStructuredSelection) anElement;
-					if ( selection.isEmpty() ) { return ""; }
-					String message = null;
-					if ( selection.size() > 1 ) {
-						message = "Multiple elements";
-					} else if ( selection.getFirstElement() instanceof VirtualContent ) {
-						message = ((VirtualContent) selection.getFirstElement()).getName();
-					} else if ( selection.getFirstElement() instanceof IResource ) {
-						message = ((IResource) selection.getFirstElement()).getName();
+				@Override
+				public String getDescription(final Object anElement) {
+					if ( anElement instanceof IStructuredSelection ) {
+						IStructuredSelection selection = (IStructuredSelection) anElement;
+						if ( selection.isEmpty() ) { return ""; }
+						String message = null;
+						if ( selection.size() > 1 ) {
+							message = "Multiple elements";
+						} else if ( selection.getFirstElement() instanceof VirtualContent ) {
+							message = ((VirtualContent) selection.getFirstElement()).getName();
+						} else if ( selection.getFirstElement() instanceof IResource ) {
+							message = ((IResource) selection.getFirstElement()).getName();
+						}
+						return message;
 					}
-					return message;
+					return "";
 				}
-				return "";
-			}
-		};
+			};
 		getCommonViewer().addPostSelectionChangedListener(this);
 		return manager;
 	}
@@ -288,7 +288,19 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		}
 		String message = commonDescriptionProvider.getDescription(selection);
 		Image img = ((ILabelProvider) getCommonViewer().getLabelProvider()).getImage(selection.getFirstElement());
-		toolbar.status(img, message, IGamaColors.BLUE, SWT.LEFT);
+		SelectionListener l = new SelectionListener() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				getViewSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId()).run();
+			}
+
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e) {
+				widgetSelected(e);
+			}
+		};
+		toolbar.status(img, message, l, IGamaColors.BLUE, SWT.LEFT);
 	}
 
 	public Menu getSubMenu(final String text) {

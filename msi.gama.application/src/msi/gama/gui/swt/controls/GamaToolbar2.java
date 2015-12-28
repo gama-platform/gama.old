@@ -5,10 +5,6 @@
 package msi.gama.gui.swt.controls;
 
 import java.io.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gaml.operators.Strings;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
@@ -16,6 +12,10 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gaml.operators.Strings;
 
 /**
  * Class GamaToolbar. A declarative wrapper around 2 toolbars (left, right).
@@ -77,16 +77,24 @@ public class GamaToolbar2 extends Composite {
 		return item;
 	}
 
-	public
-	ToolItem
-	status(final String image, final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
+	public ToolItem status(final String image, final String s, final GamaUIColor color,
+		final int side /* SWT.LEFT or SWT.RIGHT */) {
 		return status(GamaIcons.create(image).image(), s, color, side);
 	}
 
-	public ToolItem
-	status(final Image image, final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
+	public ToolItem status(final Image image, final String s, final GamaUIColor color,
+		final int side /* SWT.LEFT or SWT.RIGHT */) {
 		wipe(side, true);
 		ToolItem item = button(color, s, image, side);
+		refresh(true);
+		return item;
+	}
+
+	public ToolItem status(final Image image, final String s, final SelectionListener l, final GamaUIColor color,
+		final int side /* SWT.LEFT or SWT.RIGHT */) {
+		wipe(side, true);
+		ToolItem item = button(color, s, image, side);
+		((FlatButton) item.getControl()).addSelectionListener(l);
 		refresh(true);
 		return item;
 	}
@@ -135,8 +143,8 @@ public class GamaToolbar2 extends Composite {
 		return create(image, text, tip, listener, SWT.PUSH, false, null, side);
 	}
 
-	public ToolItem
-	button(final GamaUIColor color, final String text, final SelectionListener listener, final int side) {
+	public ToolItem button(final GamaUIColor color, final String text, final SelectionListener listener,
+		final int side) {
 		FlatButton button = FlatButton.button(side == SWT.LEFT ? left : right, color, text, null);
 		button.addSelectionListener(listener);
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
