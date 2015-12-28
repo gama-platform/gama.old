@@ -1,6 +1,7 @@
 package msi.gama.lang.gaml.ui.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.views.markers.MarkerSeverityAndDescriptionField;
@@ -22,8 +23,16 @@ public class GamlDescriptionMarkerField extends MarkerSeverityAndDescriptionFiel
 		if ( item.getMarker() == null ) {
 			image = GamlMarkerImageProvider.getImage(item.getAttributeValue(IMarker.MESSAGE, "")).image();
 		} else {
-			image = GamlMarkerImageProvider
-				.getImage(item.getMarker().getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING)).image();
+			try {
+				if ( item.getMarker().isSubtypeOf(IMarker.TASK) ) {
+					image = GamlMarkerImageProvider.getImage(-1).image();
+				} else {
+					image = GamlMarkerImageProvider
+						.getImage(item.getMarker().getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING)).image();
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
 		}
 
 		cell.setText(getValue(item));

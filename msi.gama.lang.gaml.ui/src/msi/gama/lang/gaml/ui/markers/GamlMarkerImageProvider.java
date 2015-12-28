@@ -31,8 +31,13 @@ public class GamlMarkerImageProvider implements IMarkerImageProvider {
 			return getImage(IMarker.SEVERITY_ERROR);
 		} else if ( description.contains("Warnings") ) {
 			return getImage(IMarker.SEVERITY_WARNING);
-		} else if ( description.contains("Info") ) { return getImage(IMarker.SEVERITY_INFO); }
-		return null;
+		} else if ( description.contains("Info") ) {
+			return getImage(IMarker.SEVERITY_INFO);
+		} else if ( description.contains("Task") ) {
+			return getImage(-1);
+		} else {
+			return null;
+		}
 	}
 
 	public static GamaIcon getImage(final int severity) {
@@ -43,7 +48,11 @@ public class GamlMarkerImageProvider implements IMarkerImageProvider {
 				return GamaIcons.create("marker.warning2");
 			case IMarker.SEVERITY_INFO:
 				return GamaIcons.create("marker.info2");
+			case -1: {
+				return GamaIcons.create("marker.task2");
+			}
 		}
+
 		return null;
 	}
 
