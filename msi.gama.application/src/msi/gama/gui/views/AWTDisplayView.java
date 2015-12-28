@@ -19,7 +19,7 @@ import org.eclipse.ui.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.*;
 
@@ -88,6 +88,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
 					overlay.setVisible(true);
 				}
+				WorkaroundForIssue1353.installOn(surfaceComposite);
 			}
 
 			@Override
@@ -101,6 +102,29 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
+		// surfaceComposite.addFocusListener(new FocusAdapter() {
+		//
+		// /**
+		// * Method focusGained()
+		// * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
+		// */
+		// @Override
+		// public void focusGained(final FocusEvent e) {
+		// System.out.println("Focus gained for display");
+		// super.focusGained(e);
+		// }
+		//
+		// /**
+		// * Method focusLost()
+		// * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
+		// */
+		// @Override
+		// public void focusLost(final FocusEvent e) {
+		// System.out.println("Focus lost for display");
+		// super.focusLost(e);
+		// }
+		//
+		// });
 
 		perspectiveListener = new IPerspectiveListener() {
 

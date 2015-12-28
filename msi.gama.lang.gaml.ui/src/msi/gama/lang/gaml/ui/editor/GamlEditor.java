@@ -229,6 +229,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		super.createPartControl(editor);
 		toolbarParent.layout();
 		installGestures();
+		WorkaroundForIssue1353.installOn(getStyledText());
 	}
 
 	private void installGestures() {
@@ -595,5 +596,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 		}
 	}
+
+	@Override
+	public void setFocus() {}
 
 }

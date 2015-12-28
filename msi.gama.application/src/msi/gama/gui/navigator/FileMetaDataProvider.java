@@ -122,6 +122,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	@Override
 	public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated) {
 		IFile file = SwtGui.adaptTo(element, IFile.class, IFile.class);
+
 		if ( file == null ) {
 			if ( element instanceof java.io.File ) {
 				IPath p = Path.fromOSString(((java.io.File) element).getAbsolutePath());

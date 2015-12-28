@@ -124,9 +124,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	@Override
 	public void setFocus() {
-		if ( surfaceComposite != null ) {
-			surfaceComposite.setFocus();
-		}
+		// if ( surfaceComposite != null ) {
+		// surfaceComposite.setFocus();
+		// }
 	}
 
 	protected abstract Composite createSurfaceComposite();

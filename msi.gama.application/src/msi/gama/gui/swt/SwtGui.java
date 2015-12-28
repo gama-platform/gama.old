@@ -71,6 +71,7 @@ public class SwtGui implements IGui {
 	static {
 		if ( !GuiUtils.isInHeadLessMode() ) {
 			GuiUtils.setSwtGui(new SwtGui());
+			WorkaroundForIssue1358.install();
 		} else {
 			System.out.println("Configuring HEADLESS MODE");
 		}

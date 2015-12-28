@@ -1,18 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'DisplaySurfaceMenu.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.displays.awt;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
@@ -20,8 +22,6 @@ import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
 
 public class DisplaySurfaceMenu {
 
@@ -75,9 +75,8 @@ public class DisplaySurfaceMenu {
 				if ( menu != null && !menu.isDisposed() ) {
 					menu.dispose();
 				}
-				menu =
-					menuBuilder.getMenu(view.getDisplaySurface(), swtControl, true, byLayer, agents, modelCoordinates,
-						view.isOpenGL());
+				menu = menuBuilder.getMenu(view.getDisplaySurface(), swtControl, true, byLayer, agents,
+					modelCoordinates, view.isOpenGL());
 				menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
 				menu.setLocation(swtControl.toDisplay(mousex, mousey));
 				menu.setVisible(true);
@@ -101,7 +100,6 @@ public class DisplaySurfaceMenu {
 						Shell shell = new Shell(SwtGui.getDisplay(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
 						shell.setSize(10, 10); // big enough to avoid errors from the gtk layer
 						shell.setLocation(menu.getShell().getLocation());
-						// shell.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_RED));
 						shell.setText("Not visible");
 						shell.setVisible(false);
 						shell.open();

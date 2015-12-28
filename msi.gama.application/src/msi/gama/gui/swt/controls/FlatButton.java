@@ -66,15 +66,15 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public void handleEvent(final Event e) {
 		switch (e.type) {
 			case SWT.MouseExit:
-				System.out.println("Mouse exited from " + this.getText());
+				// System.out.println("Mouse exited from " + this.getText());
 				doHover(false);
 				break;
 			case SWT.MouseMove:
-				System.out.println("Mouse moved in " + this.getText());
+				// System.out.println("Mouse moved in " + this.getText());
 				break;
 			case SWT.MouseEnter:
 			case SWT.MouseHover:
-				System.out.println("Mouse entered/hovered on " + this.getText());
+				// System.out.println("Mouse entered/hovered on " + this.getText());
 				doHover(true);
 				e.doit = true;
 				break;
