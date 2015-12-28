@@ -4,17 +4,8 @@
  */
 package msi.gama.gui.navigator;
 
-import gnu.trove.map.hash.THashMap;
 import java.net.MalformedURLException;
 import java.util.*;
-import msi.gama.gui.navigator.images.ImageDataLoader;
-import msi.gama.gui.swt.SwtGui;
-import msi.gama.util.file.GAMLFile.GamlInfo;
-import msi.gama.util.file.*;
-import msi.gama.util.file.GamaCSVFile.CSVInfo;
-import msi.gama.util.file.GamaImageFile.ImageInfo;
-import msi.gama.util.file.GamaShapeFile.ShapeInfo;
-import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
@@ -22,6 +13,15 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import gnu.trove.map.hash.THashMap;
+import msi.gama.gui.navigator.images.ImageDataLoader;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.util.file.*;
+import msi.gama.util.file.GAMLFile.GamlInfo;
+import msi.gama.util.file.GamaCSVFile.CSVInfo;
+import msi.gama.util.file.GamaImageFile.ImageInfo;
+import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import msi.gaml.factories.DescriptionFactory;
 
 /**
  * Class FileMetaDataProvider.
@@ -145,6 +145,10 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			} else if ( SHAPEFILE_SUPPORT_CT_ID.equals(ct) ) {
 				data = createShapeFileSupportMetaData(file);
 			}
+			// Last chance: we generate a generic info
+			if ( data == null ) {
+				data = createGenericFileMetaData(file);
+			}
 			System.out.println("Storing the metadata just created (or recreated) while reading it for " + file);
 			storeMetadata(file, data);
 		}
@@ -179,8 +183,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			if ( data != null ) {
 				data.setModificationStamp(file.getModificationStamp());
 			}
-			ResourcesPlugin.getWorkspace().getSynchronizer()
-				.setSyncInfo(CACHE_KEY, file, data == null ? null : data.toPropertyString().getBytes("UTF-8"));
+			ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(CACHE_KEY, file,
+				data == null ? null : data.toPropertyString().getBytes("UTF-8"));
 			System.out.println("Success: sync info written");
 			// file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
 
@@ -291,9 +295,15 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if ( r == null ) { return null; }
 		String ext = file.getFileExtension();
 		String type = longNames.containsKey(ext) ? longNames.get(ext) : "Data";
-		info = new GenericFileInfo(file.getModificationStamp(), " (" + type + " for '" + r.getName() + "')");
+		info = new GenericFileInfo(file.getModificationStamp(), "" + type + " for '" + r.getName() + "'");
 		return info;
 
+	}
+
+	private GenericFileInfo createGenericFileMetaData(final IFile file) {
+		String ext = file.getFileExtension();
+		ext = ext.toUpperCase();
+		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");
 	}
 
 	public static boolean isGAML(final IFile p) {
