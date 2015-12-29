@@ -11,14 +11,16 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import gnu.trove.set.hash.THashSet;
+import java.io.*;
+import java.net.*;
 import java.util.Set;
+import org.eclipse.core.runtime.*;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.util.GuiUtils;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
-import org.eclipse.core.runtime.*;
 
 /**
  * The class GamaBundleLoader.
@@ -34,18 +36,24 @@ public class GamaBundleLoader {
 	public static String GRAMMAR_EXTENSION = "gaml.grammar.addition";
 	public static String CREATE_EXTENSION = "gama.create";
 	private static Set<String> plugins = new THashSet();
+	private static Set<String> pluginsWithModels = new THashSet();
 
 	public static void preBuildContributions() {
 		final long start = System.currentTimeMillis();
-		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(GRAMMAR_EXTENSION) ) {
+		for ( IConfigurationElement e : Platform.getExtensionRegistry()
+			.getConfigurationElementsFor(GRAMMAR_EXTENSION) ) {
 			plugins.add(e.getContributor().getName());
+			if ( hasModels(e.getContributor()) ) {
+				pluginsWithModels.add(e.getContributor().getName());
+			}
 		}
 		plugins.remove(CORE_PLUGIN);
 		preBuild(CORE_PLUGIN);
 		for ( String addition : plugins ) {
 			preBuild(addition);
 		}
-		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(CREATE_EXTENSION) ) {
+		for ( IConfigurationElement e : Platform.getExtensionRegistry()
+			.getConfigurationElementsFor(CREATE_EXTENSION) ) {
 			try {
 				CreateStatement.addDelegate((ICreateDelegate) e.createExecutableExtension("class"));
 			} catch (CoreException e1) {
@@ -56,6 +64,31 @@ public class GamaBundleLoader {
 		AbstractGamlAdditions.buildMetaModel();
 		Types.init();
 		GuiUtils.debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+	}
+
+	/**
+	 * @param contributor
+	 * @return
+	 */
+	private static boolean hasModels(final IContributor c) {
+		URL url = null;
+		try {
+			url = new URL("platform:/plugin/" + c.getName() + "/models");
+			url = FileLocator.find(url);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		if ( url == null ) { return false; }
+		File file = null;
+		try {
+			URI uri = FileLocator.resolve(url).toURI().normalize();
+			file = new File(uri);
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return file != null && file.exists() && file.isDirectory();
 	}
 
 	public static void preBuild(final String s) {
