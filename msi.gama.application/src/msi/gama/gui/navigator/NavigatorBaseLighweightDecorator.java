@@ -1,21 +1,19 @@
 /**
  * Created by drogoul, 11 févr. 2015
- * 
+ *
  */
 package msi.gama.gui.navigator;
 
+import org.eclipse.jface.viewers.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.util.file.IGamaFileMetaData;
-import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 /**
  * Class NavigatorBaseLighweightDecorator.
- * 
+ *
  * @author drogoul
  * @since 11 févr. 2015
- * 
+ *
  */
 public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecorator {
 
@@ -24,10 +22,10 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 		if ( SwtGui.NAVIGATOR_METADATA.getValue() ) {
-			IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element,false);
+			IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element, false);
 			if ( data == null ) { return; }
 			String suffix = data.getSuffix();
-			if ( suffix != null ) {
+			if ( suffix != null && !suffix.isEmpty() ) {
 				decoration.addSuffix(" (" + suffix + ")");
 			}
 			// Object thumbnail = data.getThumbnail();
@@ -38,26 +36,26 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 	}
 
 	@Override
-	public void addListener(ILabelProviderListener listener) {
+	public void addListener(final ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public boolean isLabelProperty(Object element, String property) {
+	public boolean isLabelProperty(final Object element, final String property) {
 		return true;
 	}
 
 	@Override
-	public void removeListener(ILabelProviderListener listener) {
+	public void removeListener(final ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	// private void replaceImage(final IDecoration decoration, final ImageDescriptor thumbnail) {

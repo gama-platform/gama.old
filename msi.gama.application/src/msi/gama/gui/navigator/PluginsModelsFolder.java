@@ -13,34 +13,34 @@ package msi.gama.gui.navigator;
 
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.swt.graphics.Image;
-import msi.gama.application.projects.BuiltinNature;
+import msi.gama.application.projects.PluginNature;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 
-public class ModelsLibraryFolder extends TopLevelFolder {
+public class PluginsModelsFolder extends TopLevelFolder {
 
-	public ModelsLibraryFolder(final Object root, final String name) {
+	public PluginsModelsFolder(final Object root, final String name) {
 		super(root, name);
 	}
 
 	@Override
 	public Image getImage() {
-		return IGamaIcons.FOLDER_BUILTIN.image();
+		return IGamaIcons.FOLDER_PLUGIN.image();
 	}
 
 	@Override
 	public Image getImageForStatus() {
-		return GamaIcons.create("navigator/folder.status.library").image();
+		return GamaIcons.create("navigator/folder.status.plugin").image();
 	}
 
 	@Override
 	public String getMessageForStatus() {
-		return "Models shipped with GAMA";
+		return "Models present in GAMA plugins";
 	}
 
 	@Override
 	public GamaUIColor getColorForStatus() {
-		return IGamaColors.BLUE;
+		return IGamaColors.WARNING;
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class ModelsLibraryFolder extends TopLevelFolder {
 	 */
 	@Override
 	protected boolean accepts(final IProjectDescription desc) {
-		return desc.hasNature(BuiltinNature.NATURE_ID);
+		return desc.hasNature(PluginNature.NATURE_ID);
 	}
 
 }

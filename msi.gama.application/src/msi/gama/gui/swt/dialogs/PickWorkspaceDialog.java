@@ -16,12 +16,12 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
-import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import msi.gama.application.projects.WorkspaceModelsManager;
 
 /**
  * Dialog that lets/forces a user to enter/select a workspace that will be used when saving all

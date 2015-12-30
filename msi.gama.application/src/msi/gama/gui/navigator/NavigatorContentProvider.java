@@ -12,10 +12,10 @@
 package msi.gama.gui.navigator;
 
 import java.util.*;
-import msi.gama.util.file.GAMLFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import msi.gama.util.file.GAMLFile;
 
 public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 
@@ -34,8 +34,8 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 				if ( folder.isParentOf(element) ) { return folder; }
 			}
 		}
-		if ( element instanceof IFile &&
-			FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID.equals(FileMetaDataProvider.getContentTypeId((IFile) element)) ) {
+		if ( element instanceof IFile && FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID
+			.equals(FileMetaDataProvider.getContentTypeId((IFile) element)) ) {
 			IResource r = FileMetaDataProvider.shapeFileSupportedBy((IFile) element);
 			if ( r != null ) { return r; }
 		}
@@ -106,8 +106,8 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 	}
 
 	private void initializeVirtualFolders(final Object parentElement) {
-		virtualFolders =
-			new VirtualContent[] { new UserProjectsFolder(parentElement, "User models"),
-			new ModelsLibraryFolder(parentElement, "Models library") };
+		virtualFolders = new VirtualContent[] { new UserProjectsFolder(parentElement, "User models"),
+			new PluginsModelsFolder(parentElement, "Plugin models"),
+			new ModelsLibraryFolder(parentElement, "Library models") };
 	}
 }

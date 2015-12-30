@@ -22,7 +22,6 @@
  *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
-import gnu.trove.map.hash.THashMap;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -34,6 +33,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import gnu.trove.map.hash.THashMap;
 
 /**
  * An environment to enable the proper display of AWT/Swing windows within a SWT or RCP
@@ -57,7 +57,7 @@ public final class AwtEnvironment {
 	// Map from Display to AwtEnvironment.
 	// This does not need to be a WeakHashMap: Display instances don't go away
 	// silently; they are disposed, and we install a Dispose listener.
-	private static Map<Display, AwtEnvironment> /* Display -> AwtEnvironment */environmentMap = new THashMap();
+	private static Map<Display, AwtEnvironment> /* Display -> AwtEnvironment */ environmentMap = new THashMap();
 
 	/**
 	 * Returns the single instance of AwtEnvironment for the given display. On
@@ -70,12 +70,12 @@ public final class AwtEnvironment {
 	 * The first call to this method must occur before any AWT/Swing APIs are called.
 	 *
 	 * @param display
-	 *            the non-null SWT display
+	 * the non-null SWT display
 	 * @return the AWT environment
 	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the display is null</li>
-	 *                </ul>
+	 * <ul>
+	 * <li>ERROR_NULL_ARGUMENT - if the display is null</li>
+	 * </ul>
 	 */
 	public static AwtEnvironment getInstance(final Display display) {
 		// For now assume a single display. If necessary, this implementation
@@ -126,7 +126,7 @@ public final class AwtEnvironment {
 	// ============================= Constructor =============================
 
 	private final Display display;
-	private final AwtDialogListener dialogListener;
+	// private final AwtDialogListener dialogListener;
 	private final GlobalFocusHandler globalFocusHandler;
 
 	// Private constructor - clients use getInstance() to obtain instances
@@ -151,7 +151,7 @@ public final class AwtEnvironment {
 		 * It's important to wait for the L&F to be set so that any subsequent calls
 		 * to SwingControl.createFrame() will be return a frame with the proper L&F (note
 		 * that createFrame() happens on the SWT thread).
-		 * 
+		 *
 		 * The calls to syncExec and invokeAndWait are safe because
 		 * the first call AwtEnvironment.getInstance should happen
 		 * before any (potential deadlocking) activity occurs on the
@@ -186,16 +186,46 @@ public final class AwtEnvironment {
 		// }
 
 		// Listen for AWT modal dialogs to make them modal application-wide
-		dialogListener = new AwtDialogListener(display);
+		// dialogListener = new AwtDialogListener(display);
 
 		// Dismiss AWT popups when SWT menus are shown
 		initSwingPopupsDismissal();
 
 		globalFocusHandler = new GlobalFocusHandler(display);
+
+		// ADDITION
+
+		Listener listenerHover = new Listener() {
+
+			@Override
+			public void handleEvent(final Event event) {
+				System.out.println("HOVER:  " + event.toString());
+			}
+		};
+		Listener listenerEnter = new Listener() {
+
+			@Override
+			public void handleEvent(final Event event) {
+				System.out.println("ENTER:  " + event.toString());
+			}
+		};
+		Listener listenerExit = new Listener() {
+
+			@Override
+			public void handleEvent(final Event event) {
+				System.out.println("EXIT:  " + event.toString());
+			}
+		};
+		display.addFilter(SWT.MouseHover, listenerHover);
+		display.addFilter(SWT.MouseEnter, listenerEnter);
+		display.addFilter(SWT.MouseExit, listenerExit);
+
+		// ADDITION
+
 	}
 
 	void dispose() {
-		dialogListener.dispose();
+		// dialogListener.dispose();
 		if ( popupParent != null ) {
 			popupParent.setVisible(false);
 			popupParent.dispose();
@@ -235,9 +265,9 @@ public final class AwtEnvironment {
 	 * Dismiss AWT popups when SWT menus are shown (not needed in JDK1.6)
 	 */
 
-	private static final boolean HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN = Platform.isGtk() &&
-		Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) || // GTK: pre-Java1.6
-		Platform.isWin32(); // Win32: all JDKs
+	private static final boolean HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN =
+		Platform.isGtk() && Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) || // GTK: pre-Java1.6
+			Platform.isWin32(); // Win32: all JDKs
 
 	private void initSwingPopupsDismissal() {
 		if ( HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN ) {
@@ -341,56 +371,56 @@ public final class AwtEnvironment {
 	 * This method must be called from the SWT event thread.
 	 *
 	 * @param runnable
-	 *            the code to schedule on the AWT event thread
+	 * the code to schedule on the AWT event thread
 	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the runnable is null</li>
-	 *                </ul>
+	 * <ul>
+	 * <li>ERROR_NULL_ARGUMENT - if the runnable is null</li>
+	 * </ul>
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
-	 *                </ul>
+	 * <ul>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
+	 * </ul>
 	 */
-	public void invokeAndBlockSwt(final Runnable runnable) {
-		assert display != null;
+	// public void invokeAndBlockSwt(final Runnable runnable) {
+	// assert display != null;
+	//
+	// /*
+	// * This code snippet is based on the following thread on
+	// * news.eclipse.platform.swt:
+	// * http://dev.eclipse.org/newslists/news.eclipse.platform.swt/msg24234.html
+	// */
+	// if ( runnable == null ) {
+	// SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	// return;
+	// }
+	// if ( !display.equals(Display.getCurrent()) ) {
+	// SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
+	// }
+	//
+	// // Switch to the AWT thread...
+	// EventQueue.invokeLater(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// try {
+	// // do swing work...
+	// runnable.run();
+	// } finally {
+	// ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// // Unblock SWT
+	// SwtInputBlocker.unblock();
+	// }
+	// });
+	// }
+	// }
+	// });
 
-		/*
-		 * This code snippet is based on the following thread on
-		 * news.eclipse.platform.swt:
-		 * http://dev.eclipse.org/newslists/news.eclipse.platform.swt/msg24234.html
-		 */
-		if ( runnable == null ) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-			return;
-		}
-		if ( !display.equals(Display.getCurrent()) ) {
-			SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
-		}
-
-		// Switch to the AWT thread...
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					// do swing work...
-					runnable.run();
-				} finally {
-					ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
-
-						@Override
-						public void run() {
-							// Unblock SWT
-							SwtInputBlocker.unblock();
-						}
-					});
-				}
-			}
-		});
-
-		// Prevent user input on SWT components
-		SwtInputBlocker.block(dialogListener);
-	}
+	// Prevent user input on SWT components
+	// SwtInputBlocker.block(dialogListener);
+	// }
 
 	/**
 	 * Creates an AWT frame suitable as a parent for AWT/Swing dialogs.
@@ -403,11 +433,11 @@ public final class AwtEnvironment {
 	 *
 	 * @return a {@link java.awt.Frame} to be used for parenting dialogs
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
-	 *                </ul>
+	 * <ul>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
+	 * </ul>
 	 * @exception IllegalStateException
-	 *                if the current display has no shells
+	 * if the current display has no shells
 	 */
 	public Frame createDialogParentFrame() {
 		if ( !display.equals(Display.getCurrent()) ) {
@@ -437,11 +467,11 @@ public final class AwtEnvironment {
 	 * @param parent - the SWT parent shell of the shell that will contain the returned frame
 	 * @return a {@link java.awt.Frame} to be used for parenting dialogs
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
-	 *                </ul>
+	 * <ul>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
+	 * </ul>
 	 * @exception IllegalStateException
-	 *                if the current display has no shells
+	 * if the current display has no shells
 	 */
 	public Frame createDialogParentFrame(final Shell parent) {
 		if ( parent == null ) {
@@ -512,7 +542,7 @@ public final class AwtEnvironment {
 	 * Otherwise, the popup menu may not display on some platforms.
 	 *
 	 * @param control the SwingControl that owns the AWT component which will have
-	 *            a menu attached.
+	 * a menu attached.
 	 * @return
 	 */
 	public Shell getSwtPopupParent(final SwingControl control) {

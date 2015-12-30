@@ -51,8 +51,8 @@
             base-type="org.eclipse.core.runtime.text"
             file-extensions="html, HTML, htm, HTM, svg, SVG"
             id="msi.gama.gui.html.type"
-            name="HTML"
-            priority="high">
+            name="HTML (in GAMA)"
+            priority="normal">
       </content-type>
    </extension>
 
@@ -60,7 +60,7 @@
    <extension
          point="org.eclipse.ui.decorators">
             <decorator
-                  adaptable="true"
+                  adaptable="false"
                   class="msi.gama.gui.navigator.NavigatorBaseLighweightDecorator"
                   id="msi.gama.application.decorator"
                   label="Metadata Decorator"
@@ -99,6 +99,9 @@
                   </objectState>
                   </or>
                </and>
+               <objectClass
+                     name="org.eclipse.core.resources.IProject">
+               </objectClass>
             </or>
                </enablement>
             </decorator>
@@ -307,7 +310,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="msi.gama.gui.swt.Application">
+               class="msi.gama.application.Application">
             <parameter
                   name="preferenceCustomization"
                   value="plugin_customization.ini">
@@ -1077,16 +1080,6 @@
       </menuContribution>
    </extension>
    <extension
-         id="gamaNature"
-         name="Project Nature"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="msi.gama.gui.swt.GamaNature">
-         </run>
-      </runtime>
-   </extension>
-   <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
             icon="icons/folder.icon2.png"
@@ -1841,16 +1834,6 @@
             </action>
          </actionSet>
       </extension>
-      <extension
-            id="msi.gama.builtin.model"
-            name="Built-In Model"
-            point="org.eclipse.core.resources.natures">
-         <runtime>
-            <run
-                  class="msi.gama.gui.navigator.BuiltInProjectNature">
-            </run>
-         </runtime>
-      </extension>
          <extension
          point="org.eclipse.ui.commandImages">
       <image
@@ -1914,4 +1897,41 @@
             icon="icons/menu.open.preferences2.png">
       </image>
    </extension>
+      <extension
+         id="gamaNature"
+         name="GAMA project"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="msi.gama.application.projects.GamaNature">
+         </run>
+      </runtime>
+      <content-type
+            id="msi.gama.gui.gaml.type">
+      </content-type>
+   </extension>
+   
+         <extension
+               id="builtinNature"
+               name="GAMA built-in project"
+               point="org.eclipse.core.resources.natures">
+            <runtime>
+               <run
+                     class="msi.gama.application.projects.BuiltinNature">
+               </run>
+            </runtime>
+            <requires-nature
+                  id="msi.gama.application.gamaNature">
+            </requires-nature>
+         </extension>
+         <extension
+               id="pluginNature"
+               name="GAMA plugin project"
+               point="org.eclipse.core.resources.natures">
+            <runtime>
+               <run
+                     class="msi.gama.application.projects.PluginNature">
+               </run>
+            </runtime>
+         </extension>
 </plugin>

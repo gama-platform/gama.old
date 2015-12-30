@@ -9,11 +9,13 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.swt;
+package msi.gama.application;
 
 import java.net.URL;
 import java.util.Arrays;
+import msi.gama.application.projects.WorkspaceModelsManager;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.*;

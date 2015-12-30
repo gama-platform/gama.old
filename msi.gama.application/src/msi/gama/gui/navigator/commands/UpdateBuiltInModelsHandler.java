@@ -11,11 +11,11 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator.commands;
 
-import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.*;
+import msi.gama.application.projects.WorkspaceModelsManager;
 
 public class UpdateBuiltInModelsHandler extends AbstractHandler {
 

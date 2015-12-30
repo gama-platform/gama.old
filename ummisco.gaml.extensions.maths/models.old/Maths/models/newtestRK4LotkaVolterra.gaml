@@ -56,9 +56,9 @@ species my_maths {
 //			diff(I,t) =I;// (beta * S * I) - (gamma * I) - (mi * I);
 //			diff(R,t) =R;// (gamma * I) - (mi * R) - (f * R);		
         }
-                
+                init {
         solve SIRS method: "rk4" step:0.001{// with:[S::1500.0,I::1.0,R::0.0 ]{ 
-        }
+        }}
         
 }
 }

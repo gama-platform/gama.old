@@ -79,16 +79,16 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 				e.doit = true;
 				break;
 			case SWT.MouseUp:
-				if ( e.button == 1 && e.count >= 1 && getClientArea().contains(e.x, e.y) ) {
-					for ( int i = 0; i < e.count; i++ ) {
-						doButtonClicked();
-					}
+				if ( e.button == 1 && getClientArea().contains(e.x, e.y) ) {
+					// for ( int i = 0; i < e.count; i++ ) {
+					doButtonClicked();
+					// }
 				}
 				break;
 			case SWT.MouseDown:
-				if ( e.button == 1 ) {
-					doHover(true);
-				}
+				// if ( e.button == 1 ) {
+				// doHover(true);
+				// }
 				break;
 			default:;
 		}

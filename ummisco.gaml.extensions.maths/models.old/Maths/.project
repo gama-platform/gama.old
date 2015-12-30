@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>comodel</name>
-	<comment></comment>
+	<name>Math Plugin</name>
+	<comment>ummisco.gaml.extensions.maths</comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -12,7 +12,8 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>msi.gama.application.gamaNature</nature>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
+		<nature>msi.gama.application.gamaNature</nature>
+		<nature>msi.gama.application.pluginNature</nature>
 	</natures>
 </projectDescription>

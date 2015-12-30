@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'FocusHandler.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.swing;
 
@@ -16,8 +16,8 @@ import java.awt.event.*;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.*;
 import java.util.Set;
-import javax.swing.text.*;
 import javax.swing.text.Caret;
+import javax.swing.text.JTextComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -31,7 +31,6 @@ public class FocusHandler {
 
 	// Whether to print debugging information regarding focus events.
 	public static final boolean verboseFocusEvents = false;
-	public static final boolean verboseKFHEvents = false;
 	public static final boolean verboseTraverseOut = false;
 
 	// synthesizeWindowActivation method on the frame's class (Win32 only,
@@ -56,10 +55,10 @@ public class FocusHandler {
 	private boolean pendingDeactivate = false;
 
 	// Listeners
-	private final KeyEventDispatcher keyEventDispatcher = new AwtKeyDispatcher();
-	private final WindowFocusListener awtWindowFocusListener = new AwtWindowFocusListener();
-	private final FocusListener swtFocusListener = new SwtFocusListener();
-	private final Listener swtEventFilter = new SwtEventFilter();
+	// private final KeyEventDispatcher keyEventDispatcher = new AwtKeyDispatcher();
+	// private final WindowFocusListener awtWindowFocusListener = new AwtWindowFocusListener();
+	// private final FocusListener swtFocusListener = new SwtFocusListener();
+	// private final Listener swtEventFilter = new SwtEventFilter();
 
 	public FocusHandler(final SwingControl swingControl, final GlobalFocusHandler globalHandler,
 		final Composite borderless, final Frame frame) {
@@ -77,20 +76,20 @@ public class FocusHandler {
 
 		getSynthesizeMethod(frame.getClass());
 
-		globalHandler.addEventFilter(swtEventFilter);
+		// globalHandler.addEventFilter(swtEventFilter);
 
-		frame.addWindowFocusListener(awtWindowFocusListener);
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
+		// frame.addWindowFocusListener(awtWindowFocusListener);
+		// KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
 
-		borderless.addFocusListener(swtFocusListener);
+		// borderless.addFocusListener(swtFocusListener);
 
 	}
 
 	public void dispose() {
-		globalHandler.removeEventFilter(swtEventFilter);
-		frame.removeWindowFocusListener(awtWindowFocusListener);
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(keyEventDispatcher);
-		borderless.removeFocusListener(swtFocusListener);
+		// globalHandler.removeEventFilter(swtEventFilter);
+		// frame.removeWindowFocusListener(awtWindowFocusListener);
+		// KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(keyEventDispatcher);
+		// borderless.removeFocusListener(swtFocusListener);
 	}
 
 	// ================
@@ -290,7 +289,7 @@ public class FocusHandler {
 	 * workaround bugs in earlier (pre-3.4) versions of SWT, and to handle cases
 	 * where the Composite is not properly activated/deactivated, even today. See
 	 * the callers of this method for more information.
-	 * 
+	 *
 	 * @param activate <code>true</code> if the embedded frame whould be activated; <code>false</code> otherwise
 	 * @return
 	 */
@@ -410,8 +409,8 @@ public class FocusHandler {
 
 		if ( !borderless.isDisposed() &&
 
-		// Make sure that this control is in the active shell, so focus is not stolen from other windows.
-		// (Note: display.getActiveShell() is not always accurate here, so we use the static instead)
+			// Make sure that this control is in the active shell, so focus is not stolen from other windows.
+			// (Note: display.getActiveShell() is not always accurate here, so we use the static instead)
 			activeShell == borderless.getShell() &&
 
 			// Check that this control currently the focus control

@@ -1,49 +1,26 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'UserProjectsFolder.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-import java.util.*;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.swt.graphics.Image;
+import msi.gama.application.projects.*;
 import msi.gama.gui.swt.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.swt.graphics.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 
-public class UserProjectsFolder extends VirtualContent {
+public class UserProjectsFolder extends TopLevelFolder {
 
 	public UserProjectsFolder(final Object root, final String name) {
 		super(root, name);
-	}
-
-	@Override
-	public Font getFont() {
-		return SwtGui.getNavigHeaderFont();
-	}
-
-	@Override
-	public boolean hasChildren() {
-		return getNavigatorChildren().length > 0;
-	}
-
-	@Override
-	public Object[] getNavigatorChildren() {
-		List<IProject> totalList = Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
-		List<IProject> resultList = new ArrayList();
-		// We only add the projects whose path does not contain the built-in models path
-		for ( IProject project : totalList ) {
-			if ( isParentOf(project) ) {
-				resultList.add(project);
-			}
-		}
-		return resultList.toArray();
 	}
 
 	@Override
@@ -52,33 +29,30 @@ public class UserProjectsFolder extends VirtualContent {
 	}
 
 	@Override
-	public boolean isParentOf(final Object element) {
-		// System.out.println("Location to project : " + projectPath);
-		if ( element instanceof IProject ) {
-			IPath path = ((IProject) element).getLocation();
-			if ( path == null ) { return false; }
-			String projectPath = path.toString();
-			if ( !projectPath.contains("msi.gama.models/models") ) { return true; }
-		}
-		return false;
+	public Image getImageForStatus() {
+		return GamaIcons.create("navigator/folder.status.user").image();
+	}
 
+	@Override
+	public String getMessageForStatus() {
+		return "User-defined models";
+	}
+
+	@Override
+	public GamaUIColor getColorForStatus() {
+		return IGamaColors.OK;
 	}
 
 	/**
-	 * Method getColor()
-	 * @see msi.gama.gui.navigator.VirtualContent#getColor()
+	 * Method accepts()
+	 * @see msi.gama.gui.navigator.TopLevelFolder#accepts(org.eclipse.core.resources.IProjectDescription)
 	 */
 	@Override
-	public Color getColor() {
-		return IGamaColors.GRAY_LABEL.color();
+	protected boolean accepts(final IProjectDescription desc) {
+		// Addition of a test regarding the "old" versions thay may still be labeled as 'built-in'. The simplest way is to verify that no other natures have been added to the project (i.e. it only has
+		// Xtext and GAMA). If the number of versions is greater than 2 we return false.
+		if ( !desc.hasNature(GamaNature.NATURE_ID) || desc.getNatureIds().length > 2 ) { return false; }
+		return !(desc.hasNature(BuiltinNature.NATURE_ID) || desc.hasNature(PluginNature.NATURE_ID));
 	}
 
-	/**
-	 * Method canBeDecorated()
-	 * @see msi.gama.gui.navigator.VirtualContent#canBeDecorated()
-	 */
-	@Override
-	public boolean canBeDecorated() {
-		return true;
-	}
 }

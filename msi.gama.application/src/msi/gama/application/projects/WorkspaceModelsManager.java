@@ -1,22 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'WorkspaceModelsManager.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
-package msi.gama.gui.swt;
+package msi.gama.application.projects;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.*;
-import msi.gama.common.util.GuiUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -24,13 +23,15 @@ import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
+import msi.gama.common.util.GuiUtils;
+import msi.gaml.compilation.GamaBundleLoader;
 
 /**
  * Class InitialModelOpener.
- * 
+ *
  * @author drogoul
  * @since 16 nov. 2013
- * 
+ *
  */
 public class WorkspaceModelsManager {
 
@@ -82,7 +83,10 @@ public class WorkspaceModelsManager {
 
 	public static QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
 	public static String BUILTIN_VERSION = Platform.getProduct().getDefiningBundle().getVersion().toString();
-	public final static String builtInNature = "msi.gama.builtin.model";
+	public final static String GAMA_NATURE = GamaNature.NATURE_ID;
+	public final static String XTEXT_NATURE = "org.eclipse.xtext.ui.shared.xtextNature";
+	public final static String PLUGIN_NATURE = PluginNature.NATURE_ID;
+	public final static String BUILTIN_NATURE = BuiltinNature.NATURE_ID;
 
 	public void openModelPassedAsArgument(final String modelPath) {
 
@@ -132,9 +136,9 @@ public class WorkspaceModelsManager {
 		// 2nd case: the path is outside the workspace
 		result = findOutsideWorkspace(path);
 		if ( result != null ) { return result; }
-		System.out.println("File " + filePath +
-			" cannot be located. Please check its name and location. Arguments provided were : " +
-			Arrays.toString(CommandLineArgs.getApplicationArgs()));
+		System.out.println(
+			"File " + filePath + " cannot be located. Please check its name and location. Arguments provided were : " +
+				Arrays.toString(CommandLineArgs.getApplicationArgs()));
 		return null;
 	}
 
@@ -181,10 +185,8 @@ public class WorkspaceModelsManager {
 		}
 
 		if ( dotFile == null || projectFileBean == null ) {
-			GuiUtils
-				.tell("The model '" +
-					modelFile.getAbsolutePath() +
-					"' does not seem to belong to an existing GAML project. It will be imported as part of the 'Unclassified models' project.");
+			GuiUtils.tell("The model '" + modelFile.getAbsolutePath() +
+				"' does not seem to belong to an existing GAML project. It will be imported as part of the 'Unclassified models' project.");
 			return createUnclassifiedModelsProjectAndAdd(originalPath);
 		}
 
@@ -199,8 +201,8 @@ public class WorkspaceModelsManager {
 				WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 					@Override
-					protected void execute(final IProgressMonitor monitor) throws CoreException,
-						InvocationTargetException, InterruptedException {
+					protected void execute(final IProgressMonitor monitor)
+						throws CoreException, InvocationTargetException, InterruptedException {
 						// We try to get the project in the workspace
 						IProject proj = workspace.getRoot().getProject(pathToProject);
 						// If it does not exist, we create it
@@ -210,8 +212,8 @@ public class WorkspaceModelsManager {
 							String name = description.getName();
 							for ( IProject p : projects ) {
 								if ( p.getName().equals(name) ) {
-									GuiUtils
-										.tell("A project with the same name already exists in the workspace. The model '" +
+									GuiUtils.tell(
+										"A project with the same name already exists in the workspace. The model '" +
 											modelFile.getAbsolutePath() +
 											" will be imported as part of the 'Unclassified models' project.");
 									createUnclassifiedModelsProjectAndAdd(originalPath);
@@ -231,7 +233,7 @@ public class WorkspaceModelsManager {
 						// We open the project
 						proj.open(IResource.NONE, monitor);
 						// And we set some properties to it
-						setValuesProjectDescription(proj, false);
+						setValuesProjectDescription(proj, false, false, null);
 					}
 				};
 				operation.run(new NullProgressMonitor() {
@@ -317,9 +319,8 @@ public class WorkspaceModelsManager {
 			Pattern p = Pattern.compile("(.*?)(\\d+)?(\\..*)?");
 			Matcher m = p.matcher(fName);
 			if ( m.matches() ) {// group 1 is the prefix, group 2 is the number, group 3 is the suffix
-				fName =
-					m.group(1) + (m.group(2) == null ? 1 : Integer.parseInt(m.group(2)) + 1) +
-						(m.group(3) == null ? "" : m.group(3));
+				fName = m.group(1) + (m.group(2) == null ? 1 : Integer.parseInt(m.group(2)) + 1) +
+					(m.group(3) == null ? "" : m.group(3));
 			}
 			file = modelFolder.getFile(fName);
 		}
@@ -327,11 +328,25 @@ public class WorkspaceModelsManager {
 
 	}
 
+	private static void linkPluginsModelsToWorkspace() {
+		for ( String plugin : GamaBundleLoader.getPluginsWithModels() ) {
+			linkModelsToWorkspace(plugin, false);
+		}
+	}
+
 	public static void linkSampleModelsToWorkspace() {
+		linkModelsToWorkspace("msi.gama.models", true);
+		linkPluginsModelsToWorkspace();
+	}
+
+	/**
+	 * @param plugin
+	 */
+	private static void linkModelsToWorkspace(final String plugin, final boolean core) {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		URL urlRep = null;
 		try {
-			urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"));
+			urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + plugin + "/models/"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -367,8 +382,8 @@ public class WorkspaceModelsManager {
 			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 				@Override
-				protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException,
-					InterruptedException {
+				protected void execute(final IProgressMonitor monitor)
+					throws CoreException, InvocationTargetException, InterruptedException {
 					IProject proj = workspace.getRoot().getProject(project.getName());
 					if ( !proj.exists() ) {
 						proj.create(description, monitor);
@@ -381,7 +396,7 @@ public class WorkspaceModelsManager {
 						}
 					}
 					proj.open(IResource.NONE, monitor);
-					setValuesProjectDescription(proj, true);
+					setValuesProjectDescription(proj, true, !core, plugin);
 				}
 			};
 			try {
@@ -394,6 +409,7 @@ public class WorkspaceModelsManager {
 			}
 
 		}
+
 	}
 
 	static private IProject createOrUpdateProject(final String name) {
@@ -415,7 +431,7 @@ public class WorkspaceModelsManager {
 				if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }
 				project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
 				projectHandle[0] = project;
-				setValuesProjectDescription(project, false);
+				setValuesProjectDescription(project, false, false, null);
 			}
 		};
 		try {
@@ -428,7 +444,8 @@ public class WorkspaceModelsManager {
 		return projectHandle[0];
 	}
 
-	static public void setValuesProjectDescription(final IProject proj, final boolean builtin) {
+	static public void setValuesProjectDescription(final IProject proj, final boolean builtin, final boolean inPlugin,
+		final String pluginName) {
 		/* Modify the project description */
 		IProjectDescription desc = null;
 		try {
@@ -437,13 +454,18 @@ public class WorkspaceModelsManager {
 			// String[] ids = desc.getNatureIds();
 			String[] newIds = new String[builtin ? 3 : 2];
 			// System.arraycopy(ids, 0, newIds, 0, ids.length);
-			newIds[1] = "msi.gama.application.gamaNature";
-			newIds[0] = "org.eclipse.xtext.ui.shared.xtextNature";
+			newIds[1] = GAMA_NATURE;
+			newIds[0] = XTEXT_NATURE;
 			// Addition of a special nature to the project.
 			if ( builtin ) {
-				newIds[2] = "msi.gama.builtin.model";
+				newIds[2] = inPlugin ? PLUGIN_NATURE : BUILTIN_NATURE;
 			}
 			desc.setNatureIds(newIds);
+			if ( inPlugin && pluginName != null ) {
+				desc.setComment(pluginName);
+			} else {
+				desc.setComment("");
+			}
 			proj.setDescription(desc, IResource.FORCE, null);
 			// Addition of a special persistent property to indicate that the project is built-in
 			if ( builtin ) {

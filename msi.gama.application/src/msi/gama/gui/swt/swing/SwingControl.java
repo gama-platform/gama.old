@@ -12,17 +12,13 @@
 package msi.gama.gui.swt.swing;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.im.InputContext;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 import org.eclipse.swt.*;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -42,13 +38,13 @@ public abstract class SwingControl extends Composite {
 
 	public static final String SWT_PARENT_PROPERTY_KEY = "msi.gama.gui.swt.swing.experimental.swtParent";
 
-	private final Listener settingsListener = new Listener() {
-
-		@Override
-		public void handleEvent(final Event event) {
-			handleSettingsChange();
-		}
-	};
+	// private final Listener settingsListener = new Listener() {
+	//
+	// @Override
+	// public void handleEvent(final Event event) {
+	// handleSettingsChange();
+	// }
+	// };
 	final/* private */Display display;
 	private Composite layoutDeferredAncestor;
 
@@ -97,7 +93,7 @@ public abstract class SwingControl extends Composite {
 		setLayout(new FillLayout());
 		display = getDisplay();
 
-		display.addListener(SWT.Settings, settingsListener);
+		// display.addListener(SWT.Settings, settingsListener);
 
 		// Avoid a layout() on the outer Controls until we have been able to
 		// determine our preferred size - which takes a roundtrip to the AWT
@@ -159,6 +155,7 @@ public abstract class SwingControl extends Composite {
 								success = superForceFocus();
 								success = postProcessForceFocus(success);
 							}
+
 							setResult(success);
 						}
 					});
@@ -176,6 +173,7 @@ public abstract class SwingControl extends Composite {
 						@Override
 						public void run() {
 							boolean success = isDisposed() ? false : superSetFocus();
+
 							setResult(success);
 						}
 					});
@@ -268,11 +266,11 @@ public abstract class SwingControl extends Composite {
 
 		initializeFocusManagement();
 		initKeystrokeManagement();
-		initFirstResizeActions();
+		// initFirstResizeActions();
 
-		if ( HIDE_SWING_POPUPS_ON_SWT_SHELL_BOUNDS_CHANGE ) {
-			getShell().addControlListener(shellControlListener);
-		}
+		// if ( HIDE_SWING_POPUPS_ON_SWT_SHELL_BOUNDS_CHANGE ) {
+		// getShell().addControlListener(shellControlListener);
+		// }
 
 	}
 
@@ -310,7 +308,7 @@ public abstract class SwingControl extends Composite {
 				}
 
 				rootPaneContainer = addRootPaneContainer(frame);
-				initPopupMenuSupport(rootPaneContainer.getRootPane());
+				// initPopupMenuSupport(rootPaneContainer.getRootPane());
 
 				// The color of the frame is visible during redraws. Use the
 				// same color, to reduce flickering, and set it as soon as possible
@@ -322,7 +320,7 @@ public abstract class SwingControl extends Composite {
 					// The color of the content Pane is visible permanently.
 					setComponentForeground(rootPaneContainer.getContentPane(), foreground, true);
 					setComponentBackground(rootPaneContainer.getContentPane(), background, true);
-					setComponentFont(font, fontData, true);
+					// setComponentFont(font, fontData, true);
 
 					rootPaneContainer.getRootPane().getContentPane().add(swingComponent);
 					swingComponent.putClientProperty(SWT_PARENT_PROPERTY_KEY, SwingControl.this);
@@ -425,10 +423,6 @@ public abstract class SwingControl extends Composite {
 			return null;
 		}
 
-		@Override
-		public void removeNotify() {
-			super.removeNotify();
-		}
 	}
 
 	/**
@@ -460,10 +454,6 @@ public abstract class SwingControl extends Composite {
 			return null;
 		}
 
-		@Override
-		public void removeNotify() {
-			super.removeNotify();
-		}
 	}
 
 	/**
@@ -1130,52 +1120,52 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * Overridden to propagate the font to the embedded Swing component.
 	 */
-	@Override
-	public void setFont(final Font font) {
-		super.setFont(font);
-		final FontData[] fontData = font.getFontData();
-		EventQueue.invokeLater(new Runnable() {
+	// @Override
+	// public void setFont(final Font font) {
+	// super.setFont(font);
+	// final FontData[] fontData = font.getFontData();
+	// EventQueue.invokeLater(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// setComponentFont(font, fontData, false);
+	// }
+	// });
+	// }
 
-			@Override
-			public void run() {
-				setComponentFont(font, fontData, false);
-			}
-		});
-	}
+	// private void updateDefaultFont(final Font swtFont, final FontData[] swtFontData) {
+	// assert EventQueue.isDispatchThread(); // On AWT event thread
+	//
+	// java.awt.Font awtFont = LookAndFeelHandler.getInstance().propagateSwtFont(swtFont, swtFontData);
+	// if ( awtFont == null ) { return; }
+	//
+	// // Allow subclasses to react to font change if necessary.
+	// //updateAwtFont(awtFont);
+	//
+	// if ( swingComponent != null ) {
+	// // Allow components to update their UI based on new font
+	// // TODO: should the update method be called on the root pane instead?
+	// Container contentPane = swingComponent.getRootPane().getContentPane();
+	// SwingUtilities.updateComponentTreeUI(contentPane);
+	// }
+	// }
 
-	private void updateDefaultFont(final Font swtFont, final FontData[] swtFontData) {
-		assert EventQueue.isDispatchThread(); // On AWT event thread
-
-		java.awt.Font awtFont = LookAndFeelHandler.getInstance().propagateSwtFont(swtFont, swtFontData);
-		if ( awtFont == null ) { return; }
-
-		// Allow subclasses to react to font change if necessary.
-		updateAwtFont(awtFont);
-
-		if ( swingComponent != null ) {
-			// Allow components to update their UI based on new font
-			// TODO: should the update method be called on the root pane instead?
-			Container contentPane = swingComponent.getRootPane().getContentPane();
-			SwingUtilities.updateComponentTreeUI(contentPane);
-		}
-	}
-
-	protected void setComponentFont(final Font swtFont, final FontData[] swtFontData, final boolean preserveDefaults) {
-		assert EventQueue.isDispatchThread();
-
-		ResourceConverter converter = ResourceConverter.getInstance();
-		java.awt.Font awtFont = converter.convertFont(swtFont, swtFontData);
-
-		// Allow subclasses to react to font change if necessary.
-		updateAwtFont(awtFont);
-
-		if ( rootPaneContainer != null ) {
-			Container contentPane = rootPaneContainer.getContentPane();
-			if ( !contentPane.getFont().equals(awtFont) || !preserveDefaults ) {
-				contentPane.setFont(awtFont);
-			}
-		}
-	}
+	// protected void setComponentFont(final Font swtFont, final FontData[] swtFontData, final boolean preserveDefaults) {
+	// assert EventQueue.isDispatchThread();
+	//
+	// ResourceConverter converter = ResourceConverter.getInstance();
+	// java.awt.Font awtFont = converter.convertFont(swtFont, swtFontData);
+	//
+	// // Allow subclasses to react to font change if necessary.
+	// // updateAwtFont(awtFont);
+	//
+	// if ( rootPaneContainer != null ) {
+	// Container contentPane = rootPaneContainer.getContentPane();
+	// if ( !contentPane.getFont().equals(awtFont) || !preserveDefaults ) {
+	// contentPane.setFont(awtFont);
+	// }
+	// }
+	// }
 
 	/**
 	 * Performs custom updates to newly set fonts. This method is called whenever a change
@@ -1192,17 +1182,17 @@ public abstract class SwingControl extends Composite {
 		// Do nothing by default; subclasses can override to insert behavior
 	}
 
-	private void handleSettingsChange() {
-		final Font newFont = getDisplay().getSystemFont();
-		final FontData[] newFontData = newFont.getFontData();
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				updateDefaultFont(newFont, newFontData);
-			}
-		});
-	}
+	// private void handleSettingsChange() {
+	// final Font newFont = getDisplay().getSystemFont();
+	// final FontData[] newFontData = newFont.getFontData();
+	// EventQueue.invokeLater(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// updateDefaultFont(newFont, newFontData);
+	// }
+	// });
+	// }
 
 	private void handleDispose() {
 		if ( focusHandler != null ) {
@@ -1211,7 +1201,37 @@ public abstract class SwingControl extends Composite {
 		if ( borderlessChild != this ) {
 			borderlessChild.dispose();
 		}
-		display.removeListener(SWT.Settings, settingsListener);
+		// display.removeListener(SWT.Settings, settingsListener);
+		// if ( HIDE_SWING_POPUPS_ON_SWT_SHELL_BOUNDS_CHANGE ) {
+		// getShell().removeControlListener(shellControlListener);
+		// }
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=275811
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				if ( rootPaneContainer != null ) {
+					if ( swingComponent != null ) {
+						rootPaneContainer.getRootPane().getContentPane().remove(swingComponent);
+					}
+					if ( rootPaneContainer.getRootPane() != null ) {
+						rootPaneContainer.getRootPane().removeAll();
+						rootPaneContainer.getRootPane().validate();
+					}
+					if ( frame != null ) {
+						frame.remove(rootPaneContainer.getRootPane());
+						frame.removeAll();
+						frame.validate();
+						frame.dispose();
+					}
+				}
+				rootPaneContainer = null;
+				frame = null;
+				swingComponent = null;
+				borderlessChild = null;
+				layoutDeferredAncestor = null;
+			}
+		});
 	}
 
 	// ============================= Painting =============================
@@ -1373,27 +1393,28 @@ public abstract class SwingControl extends Composite {
 	 */
 	@Override
 	public boolean forceFocus() {
-		checkWidget();
-
-		if ( borderlessChild == this ) {
-			return handleFocusOperation(new RunnableWithResult() {
-
-				@Override
-				public void run() {
-					Boolean success;
-					if ( isDisposed() ) {
-						success = false;
-					} else {
-						success = superForceFocus();
-						// Handle the return value
-						success = postProcessForceFocus(success);
-					}
-					setResult(success);
-				}
-			});
-		} else {
-			return borderlessChild.forceFocus();
-		}
+		return false;
+		// checkWidget();
+		//
+		// if ( borderlessChild == this ) {
+		// return handleFocusOperation(new RunnableWithResult() {
+		//
+		// @Override
+		// public void run() {
+		// Boolean success;
+		// if ( isDisposed() ) {
+		// success = false;
+		// } else {
+		// success = superForceFocus();
+		// // Handle the return value
+		// success = postProcessForceFocus(success);
+		// }
+		// setResult(success);
+		// }
+		// });
+		// } else {
+		// return borderlessChild.forceFocus();
+		// }
 
 	}
 
@@ -1416,18 +1437,19 @@ public abstract class SwingControl extends Composite {
 	 * @return the result of running the focus setter, or true if it was deferred
 	 */
 	protected boolean handleFocusOperation(final RunnableWithResult focusSetter) {
-		assert Display.getCurrent() != null; // On SWT event thread
-
-		// TODO: find a reasonable way to return false when nothing is focusable in the swingComponent.
-		// It needs to be done without transferring to the AWT thread.
-
-		if ( swingComponent != null ) {
-			focusSetter.run();
-			return ((Boolean) focusSetter.getResult()).booleanValue();
-		} else {
-			// Fail if there is no underlying swing component
-			return false;
-		}
+		return false;
+		// assert Display.getCurrent() != null; // On SWT event thread
+		//
+		// // TODO: find a reasonable way to return false when nothing is focusable in the swingComponent.
+		// // It needs to be done without transferring to the AWT thread.
+		//
+		// if ( swingComponent != null ) {
+		// focusSetter.run();
+		// return ((Boolean) focusSetter.getResult()).booleanValue();
+		// } else {
+		// // Fail if there is no underlying swing component
+		// return false;
+		// }
 	}
 
 	private boolean superSetFocus() {
@@ -1570,9 +1592,9 @@ public abstract class SwingControl extends Composite {
 		return menu;
 	}
 
-	protected void initPopupMenuSupport(final javax.swing.JRootPane root) {
-		SwtPopupHandler.getInstance().monitorAwtComponent(root);
-	}
+	// protected void initPopupMenuSupport(final javax.swing.JRootPane root) {
+	// SwtPopupHandler.getInstance().monitorAwtComponent(root);
+	// }
 
 	@Override
 	public String toString() {
@@ -1677,40 +1699,40 @@ public abstract class SwingControl extends Composite {
 	// is itself nested inside a syncExec. So the bounds can be set after any
 	// invokeLater() in called as part of createSwingComponent().
 
-	protected void initFirstResizeActions() {
-		frame.addComponentListener(new ComponentAdapter() {
-
-			@Override
-			public void componentResized(final ComponentEvent e) {
-				// GuiUtils.debug("First resize actions. Frame has been resized to " + frame.getWidth() + " " +
-				// frame.getHeight());
-				scrollTextFields(frame);
-				// We care about only the first resize
-				frame.removeComponentListener(this);
-			}
-		});
-	}
+	// protected void initFirstResizeActions() {
+	// frame.addComponentListener(new ComponentAdapter() {
+	//
+	// @Override
+	// public void componentResized(final ComponentEvent e) {
+	// // GuiUtils.debug("First resize actions. Frame has been resized to " + frame.getWidth() + " " +
+	// // frame.getHeight());
+	// // scrollTextFields(frame);
+	// // We care about only the first resize
+	// frame.removeComponentListener(this);
+	// }
+	// });
+	// }
 
 	// Scroll all the text fields (JTextComponent) so that the caret will be visible
 	// when they are focused.
-	protected void scrollTextFields(final Component c) {
-		if ( c instanceof JTextComponent ) {
-			JTextComponent tc = (JTextComponent) c;
-			if ( tc.getDocument() != null && tc.getDocument().getLength() > 0 ) {
-				// Reset the caret position to force a scroll of
-				// the text component to the proper place
-				int position = tc.getCaretPosition();
-				int tempPosition = position > 0 ? 0 : 1;
-				tc.setCaretPosition(tempPosition);
-				tc.setCaretPosition(position);
-			}
-		} else if ( c instanceof Container ) {
-			Component[] children = ((Container) c).getComponents();
-			for ( int i = 0; i < children.length; i++ ) {
-				scrollTextFields(children[i]);
-			}
-		}
-	}
+	// protected void scrollTextFields(final Component c) {
+	// if ( c instanceof JTextComponent ) {
+	// JTextComponent tc = (JTextComponent) c;
+	// if ( tc.getDocument() != null && tc.getDocument().getLength() > 0 ) {
+	// // Reset the caret position to force a scroll of
+	// // the text component to the proper place
+	// int position = tc.getCaretPosition();
+	// int tempPosition = position > 0 ? 0 : 1;
+	// tc.setCaretPosition(tempPosition);
+	// tc.setCaretPosition(position);
+	// }
+	// } else if ( c instanceof Container ) {
+	// Component[] children = ((Container) c).getComponents();
+	// for ( int i = 0; i < children.length; i++ ) {
+	// scrollTextFields(children[i]);
+	// }
+	// }
+	// }
 
 	public Frame getFrame() {
 		return frame;

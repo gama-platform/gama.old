@@ -89,6 +89,38 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		}
 	}
 
+	public static class ProjectInfo extends GamaFileMetaData {
+
+		final String comment;
+
+		public ProjectInfo(final IProject project) throws CoreException {
+			super(project.getModificationStamp());
+			IProjectDescription desc = project.getDescription();
+			comment = desc.getComment();
+		}
+
+		public ProjectInfo(final String propertiesString) {
+			super(propertiesString);
+			String[] segments = split(propertiesString);
+			comment = segments[1];
+		}
+
+		@Override
+		public String getSuffix() {
+			return comment;
+		}
+
+		@Override
+		public String toPropertyString() {
+			return super.toPropertyString() + DELIMITER + comment;
+		}
+
+		@Override
+		public String getDocumentation() {
+			return comment;
+		}
+	}
+
 	public static final Map<String, Class> CLASSES = new HashMap() {
 
 		{
@@ -97,6 +129,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			put(GAML_CT_ID, GamlInfo.class);
 			put(SHAPEFILE_CT_ID, ShapeInfo.class);
 			put(SHAPEFILE_SUPPORT_CT_ID, GenericFileInfo.class);
+			put("project", ProjectInfo.class);
 		}
 	};
 
@@ -115,12 +148,31 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return data.getSuffix();
 	}
 
+	private IGamaFileMetaData getMetaData(final IProject project, final boolean includeOutdated) {
+		if ( !project.isAccessible() ) { return null; }
+		String ct = "project";
+		Class infoClass = CLASSES.get(ct);
+		if ( infoClass == null ) { return null; }
+		IGamaFileMetaData data = readMetadata(project, infoClass, includeOutdated);
+		if ( data == null ) {
+			try {
+				data = new ProjectInfo(project);
+				storeMetadata(project, data);
+			} catch (CoreException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return data;
+	}
+
 	/**
 	 * Method getMetaData()
 	 * @see msi.gama.gui.navigator.IFileMetaDataProvider#getMetaData(org.eclipse.core.resources.IFile)
 	 */
 	@Override
 	public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated) {
+		if ( element instanceof IProject ) { return getMetaData((IProject) element, includeOutdated); }
 		IFile file = SwtGui.adaptTo(element, IFile.class, IFile.class);
 
 		if ( file == null ) {
@@ -156,7 +208,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return data;
 	}
 
-	private <T extends IGamaFileMetaData> T readMetadata(final IFile file, final Class<T> clazz,
+	private <T extends IGamaFileMetaData> T readMetadata(final IResource file, final Class<T> clazz,
 		final boolean includeOutdated) {
 		IGamaFileMetaData result = null;
 		long modificationStamp = file.getModificationStamp();
@@ -174,7 +226,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return (T) result;
 	}
 
-	public void storeMetadata(final IFile file, final IGamaFileMetaData data) {
+	public void storeMetadata(final IResource file, final IGamaFileMetaData data) {
 		try {
 			System.out.println("Writing back metadata to " + file);
 			if ( ResourcesPlugin.getWorkspace().isTreeLocked() ) {

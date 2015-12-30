@@ -24,6 +24,7 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
 import org.eclipse.ui.navigator.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
@@ -282,25 +283,37 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+		String message = null;
+		Image img = null;
+		SelectionListener l;
+		GamaUIColor color = null;
 		if ( selection == null || selection.isEmpty() ) {
 			toolbar.wipe(SWT.LEFT, true);
 			return;
+		} else if ( selection.getFirstElement() instanceof TopLevelFolder && selection.size() == 1 ) {
+			TopLevelFolder folder = (TopLevelFolder) selection.getFirstElement();
+			message = folder.getMessageForStatus();
+			img = folder.getImageForStatus();
+			color = folder.getColorForStatus();
+			l = null;
+		} else {
+			message = commonDescriptionProvider.getDescription(selection);
+			img = ((ILabelProvider) getCommonViewer().getLabelProvider()).getImage(selection.getFirstElement());
+			color = IGamaColors.GRAY_LABEL;
+			l = new SelectionListener() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					getViewSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId()).run();
+				}
+
+				@Override
+				public void widgetDefaultSelected(final SelectionEvent e) {
+					widgetSelected(e);
+				}
+			};
 		}
-		String message = commonDescriptionProvider.getDescription(selection);
-		Image img = ((ILabelProvider) getCommonViewer().getLabelProvider()).getImage(selection.getFirstElement());
-		SelectionListener l = new SelectionListener() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				getViewSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId()).run();
-			}
-
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent e) {
-				widgetSelected(e);
-			}
-		};
-		toolbar.status(img, message, l, IGamaColors.BLUE, SWT.LEFT);
+		toolbar.status(img, message, l, color, SWT.LEFT);
 	}
 
 	public Menu getSubMenu(final String text) {

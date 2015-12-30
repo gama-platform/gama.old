@@ -293,6 +293,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
+				// shell.close();
 				shell.setVisible(false);
 			}
 
@@ -307,6 +308,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 				// for ( IPreferenceNode pn : preferencePages.values() ) {
 				// pn.getPage().performOk();
 				// }
+				// shell.close();
 				shell.setVisible(false);
 				GamaPreferences.setNewPreferences(modelValues);
 			}

@@ -123,4 +123,11 @@ public class GamaBundleLoader {
 
 	}
 
+	/**
+	 * @return
+	 */
+	public static Set<String> getPluginsWithModels() {
+		return pluginsWithModels;
+	}
+
 }
