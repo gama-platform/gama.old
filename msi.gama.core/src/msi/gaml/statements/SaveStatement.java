@@ -70,6 +70,10 @@ import com.vividsolutions.jts.geom.*;
 		type = IType.BOOL,
 		optional = true,
 		doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
+	@facet(name = IKeyword.HEADER,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
 	@facet(name = IKeyword.TO,
 		type = IType.STRING,
 		optional = false,
@@ -88,6 +92,8 @@ import com.vividsolutions.jts.geom.*;
 			examples = { @example(value = "save (string(cycle) + \"->\"  + name + \":\" + location) to: \"save_data.txt\" type: \"text\";") }),
 		@usage(value = "To save the values of some attributes of the current agent in csv file:",
 			examples = { @example(value = "save [name, location, host] to: \"save_data.csv\" type: \"csv\";") }),
+		@usage(value = "To save the values of all attributes of all the agents of a species into a csv (with optional attributes):",
+			examples = { @example(value = "save species_of(self) to: \"save_csvfile.csv\" type: \"csv\" header: false;") }),
 		@usage(value = "To save the geometries of all the agents of a species into a shapefile (with optional attributes):",
 			examples = { @example(value = "save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" with: [name::\"nameAgent\", location::\"locationAgent\"] crs: \"EPSG:4326\";") }),
 		@usage(value = "The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.") })
@@ -167,13 +173,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if ( agents.isEmpty() ) {}
 			saveShape(agents, path, scope);
 		} else if ( type.equals("text") || type.equals("csv") ) {
-
 			final File fileTxt = new File(path);
+			boolean exists = fileTxt.exists();
 			if ( rewriteExp != null ) {
 				final boolean rewrite = Cast.asBool(scope, rewriteExp.value(scope));
 				if ( rewrite ) {
 					if ( fileTxt.exists() ) {
 						fileTxt.delete();
+						exists = false;
 					}
 				}
 			}
@@ -186,7 +193,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				throw GamaRuntimeException.create(e);
 			}
 			final IExpression item = getFacet(IKeyword.DATA);
-			saveText(type, item, fileTxt, scope);
+			final IExpression header = getFacet(IKeyword.HEADER);
+			final boolean addHeader = !exists && (header == null || Cast.asBool(scope, header.value(scope))) ;
+			
+			saveText(type, item, fileTxt, addHeader,scope);
 
 		} else if (type.equals("asc")) {
 			final IExpression item = getFacet(IKeyword.DATA);
@@ -322,22 +332,60 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	public void saveText(final String type, final IExpression item, final File fileTxt, final IScope scope)
+	public void saveText(final String type, final IExpression item, final File fileTxt, final boolean header, final IScope scope)
 		throws GamaRuntimeException {
 		try {
 			final FileWriter fw = new FileWriter(fileTxt, true);
-
+			
 			if ( item != null ) {
 				if ( type.equals("text") ) {
 					fw.write(Cast.asString(scope, item.value(scope)) + System.getProperty("line.separator"));
 				} else if ( type.equals("csv") ) {
 					// item.getContentType();
-					if ( item.getType().id() == IType.LIST ) {
+					if ( item.getType().isContainer() ) {
 						final IList values = Cast.asList(scope, item.value(scope));
-						for ( int i = 0; i < values.size() - 1; i++ ) {
-							fw.write(Cast.asString(scope, values.get(i)) + ",");
+						if (values.isEmpty()) {fw.close(); return;}
+						if (values.get(0) instanceof IAgent) {
+							if (header) {
+								final IAgent ag0 = Cast.asAgent(scope, values.get(0));
+								fw.write("cycle,name,location.x,location.y,location.z");
+								for ( Object v : ag0.getAttributes().keySet()) {
+									fw.write(","+Cast.asString(scope, v));
+								}
+								fw.write(System.getProperty("line.separator"));
+							}
+							for (Object obj : values) {
+								if (obj instanceof IAgent) {
+									final IAgent ag = Cast.asAgent(scope, obj);
+									fw.write(scope.getClock().getCycle() + ","+ag.getName() +"," +ag.getLocation().getX()+"," + ag.getLocation().getY()+"," +ag.getLocation().getZ());
+									for ( Object v : ag.getAttributes().values()) {
+										fw.write(","+Cast.asString(scope, v));
+									}
+									fw.write(System.getProperty("line.separator"));
+								}
+							
+							}
+						} else {
+							for ( int i = 0; i < values.size() - 1; i++ ) {
+								fw.write(Cast.asString(scope, values.get(i)) + ",");
+							}
+							fw.write(Cast.asString(scope, values.lastValue(scope)) + System.getProperty("line.separator"));
 						}
-						fw.write(Cast.asString(scope, values.lastValue(scope)) + System.getProperty("line.separator"));
+						
+					} else 	if ( item.getType().isAgentType() ) {
+						final IAgent ag = Cast.asAgent(scope, item.value(scope));
+						if (header) {
+							fw.write("cycle,name,location.x,location.y,location.z");
+							for ( Object v : ag.getAttributes().keySet()) {
+								fw.write(","+Cast.asString(scope, v));
+							}
+							fw.write(System.getProperty("line.separator"));
+						}
+						fw.write(scope.getClock().getCycle() + ","+ag.getName() +"," +ag.getLocation().getX()+"," + ag.getLocation().getY()+"," +ag.getLocation().getZ());
+						for ( Object v : ag.getAttributes().values()) {
+							fw.write(","+Cast.asString(scope, v));
+						}
+						fw.write(System.getProperty("line.separator"));
 					} else {
 						fw.write(Cast.asString(scope, item.value(scope)) + System.getProperty("line.separator"));
 					}
