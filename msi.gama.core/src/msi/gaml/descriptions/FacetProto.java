@@ -1,18 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'FacetProto.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import gnu.trove.set.hash.THashSet;
 import java.util.*;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.JavaWriter;
 import msi.gaml.types.*;
@@ -58,6 +58,12 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 
 	boolean isLabel() {
 		return isLabel;
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		// returns null as facets cannot be defined alone (the symbol already carries this information)
+		return null;
 	}
 
 	public boolean isId() {

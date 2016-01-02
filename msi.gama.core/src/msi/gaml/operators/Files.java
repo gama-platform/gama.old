@@ -222,7 +222,7 @@ public class Files {
 		if ( file.exists() && !file.isDirectory() ) { throw GamaRuntimeException
 			.error("The folder " + folder + " can not overwrite a file with the same name", scope); }
 		if ( !file.exists() ) {
-			file.mkdir();
+			file.mkdirs();
 		}
 		return new GamaFolderFile(scope, folder);
 

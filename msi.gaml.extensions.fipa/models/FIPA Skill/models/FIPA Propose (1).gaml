@@ -29,7 +29,7 @@ global {
 species Initiator skills: [communicating] {
 	reflex send_propose_message when: (time = 1) {
 		write name + ' sends a propose message';
-		do start_conversation with: [ receivers :: [p], protocol :: 'fipa-propose', performative :: 'propose', content :: ['Go swimming?'] ];
+		do start_conversation ( receivers : [p], protocol : 'fipa-propose', performative : 'propose', content : ['Go swimming?'] );
 	}
 	
 	reflex read_accept_proposals when: !(empty(accept_proposals)) {
@@ -45,7 +45,7 @@ species Participant skills: [communicating] {
 	reflex accept_proposal when: !(empty(proposes)) {
 		message proposalFromInitiator <- proposes at 0;
 		
-		do accept_proposal with: [ message :: proposalFromInitiator, content :: ['OK! It \'s hot today!'] ];
+		do accept_proposal ( message : proposalFromInitiator, content : ['OK! It \'s hot today!'] );
 	}
 }
 

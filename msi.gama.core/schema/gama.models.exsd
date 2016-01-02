@@ -6,15 +6,14 @@
          <meta.schema plugin="msi.gama.core" id="gaml.grammar.addition" name="Addition to the grammar of GAML"/>
       </appinfo>
       <documentation>
-         *** Deprecated. Use gaml.extension instead. 
-Indicates that this plugin provides additions to GAML (either types, skills, species, operators, etc.). Extensions like types of displays or extensions of create should be declared using their respective extension points.
+         Indicates that this plugin provides models that should be made available to the user in GAMA. The path should be provided. If not, model projects are considered to be inside a folder named &apos;models&apos; at the root of the plugin.
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
          <appinfo>
-            <meta.element deprecated="true" replacement="gaml.extension" />
+            <meta.element />
          </appinfo>
       </annotation>
       <complexType>
@@ -50,10 +49,10 @@ Indicates that this plugin provides additions to GAML (either types, skills, spe
 
    <element name="path">
       <complexType>
-         <attribute name="name" type="string" use="default" value="gaml">
+         <attribute name="name" type="string" use="default" value="models">
             <annotation>
                <documentation>
-                  The path of the folder containing the different additions to the grammar (std.gaml, binaries.properties, etc.). Without any leading and ending &quot;/&quot;.
+                  The path of the folder containing the model projects. Without any leading and ending &quot;/&quot;. Projects will be searched for in this folder.
                </documentation>
             </annotation>
          </attribute>

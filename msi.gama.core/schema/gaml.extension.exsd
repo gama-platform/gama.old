@@ -3,23 +3,21 @@
 <schema targetNamespace="msi.gama.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="msi.gama.core" id="gaml.grammar.addition" name="Addition to the grammar of GAML"/>
+         <meta.schema plugin="msi.gama.core" id="gaml.extension" name="Addition to the grammar of GAML"/>
       </appinfo>
       <documentation>
-         *** Deprecated. Use gaml.extension instead. 
-Indicates that this plugin provides additions to GAML (either types, skills, species, operators, etc.). Extensions like types of displays or extensions of create should be declared using their respective extension points.
+         Indicates that this plugin provides additions to GAML (either types, skills, species, operators, etc.). Extensions like types of displays or extensions of create should be declared using their respective extension points. The additions will be searched for in the source folder created by the annotation processor (plugin &gt; gaml &gt; ...).
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
          <appinfo>
-            <meta.element deprecated="true" replacement="gaml.extension" />
+            <meta.element />
          </appinfo>
       </annotation>
       <complexType>
          <sequence>
-            <element ref="path"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -43,18 +41,6 @@ Indicates that this plugin provides additions to GAML (either types, skills, spe
                <appinfo>
                   <meta.attribute translatable="true"/>
                </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="path">
-      <complexType>
-         <attribute name="name" type="string" use="default" value="gaml">
-            <annotation>
-               <documentation>
-                  The path of the folder containing the different additions to the grammar (std.gaml, binaries.properties, etc.). Without any leading and ending &quot;/&quot;.
-               </documentation>
             </annotation>
          </attribute>
       </complexType>

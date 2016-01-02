@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'TypeExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
@@ -17,10 +17,10 @@ import msi.gaml.types.IType;
 
 /**
  * Class TypeExpression.
- * 
+ *
  * @author drogoul
  * @since 7 sept. 2013
- * 
+ *
  */
 public class TypeExpression extends AbstractExpression {
 
@@ -32,6 +32,11 @@ public class TypeExpression extends AbstractExpression {
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		// Normally never evaluated
 		return getType();
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return type.getDefiningPlugin();
 	}
 
 	@Override

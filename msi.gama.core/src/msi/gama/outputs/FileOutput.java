@@ -17,12 +17,8 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -39,31 +35,41 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.OUTPUT_FILE, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false,
-			doc = @doc(value = "The name of the file where you want to export the data")),
-	@facet(name = IKeyword.DATA, type = IType.STRING, optional = false,
-			doc = @doc(value = "The data you want to export")),
+@facets(value = { @facet(name = IKeyword.NAME,
+	type = IType.ID,
+	optional = false,
+	doc = @doc(value = "The name of the file where you want to export the data") ),
+	@facet(name = IKeyword.DATA,
+		type = IType.STRING,
+		optional = false,
+		doc = @doc(value = "The data you want to export") ),
 	@facet(name = IKeyword.REFRESH_EVERY,
 		type = IType.INT,
 		optional = true,
 		doc = @doc(value = "Allows to save the file every n time steps (default is 1)",
-			deprecated = "Use refresh: every(n) instead")),
+			deprecated = "Use refresh: every(n) instead") ),
 	@facet(name = IKeyword.REFRESH,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("Indicates the condition under which this file should be saved (default is true)")),
-	@facet(name = IKeyword.HEADER, type = IType.STRING, optional = true,
-			doc = @doc(value = "Define a header for your export file")),
-	@facet(name = IKeyword.FOOTER, type = IType.STRING, optional = true,
-			doc = @doc(value = "Define a footer for your export file")),
-	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true,
-			doc = @doc(value = "Rewrite or not the existing file")),
+		doc = @doc("Indicates the condition under which this file should be saved (default is true)") ),
+	@facet(name = IKeyword.HEADER,
+		type = IType.STRING,
+		optional = true,
+		doc = @doc(value = "Define a header for your export file") ),
+	@facet(name = IKeyword.FOOTER,
+		type = IType.STRING,
+		optional = true,
+		doc = @doc(value = "Define a footer for your export file") ),
+	@facet(name = IKeyword.REWRITE,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc(value = "Rewrite or not the existing file") ),
 	@facet(name = IKeyword.TYPE,
 		type = IType.ID,
 		values = { IKeyword.CSV, IKeyword.TEXT, IKeyword.XML },
 		optional = true,
-		doc = @doc(value = "The type of your output data")) }, omissible = IKeyword.NAME)
+		doc = @doc(value = "The type of your output data") ) },
+	omissible = IKeyword.NAME)
 public class FileOutput extends AbstractOutput {
 
 	final static SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
@@ -171,7 +177,7 @@ public class FileOutput extends AbstractOutput {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.outputs.AbstractOutput#close()
 	 */
 	@Override
@@ -240,7 +246,7 @@ public class FileOutput extends AbstractOutput {
 		final String dir = scope.getExperiment().getWorkingPath() + "/" + LOG_FOLDER + "/";
 		final File logFolder = new File(dir);
 		if ( !logFolder.exists() ) {
-			final boolean isCreated = logFolder.mkdir();
+			final boolean isCreated = logFolder.mkdirs();
 			if ( !isCreated ) {
 				GuiUtils.error("Impossible to create " + dir);
 			}

@@ -6,7 +6,7 @@
          <meta.schema plugin="msi.gama.core" id="gama.display" name="Implementations of IDisplaySurface"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         Allows the plugin to declare that a type of display is made available to GAMA. 
       </documentation>
    </annotation>
 

@@ -396,6 +396,11 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
+	public String getDefiningPlugin() {
+		return getMeta().getDefiningPlugin();
+	}
+
+	@Override
 	public ErrorCollector getErrorCollector() {
 		ModelDescription model = getModelDescription();
 		if ( model == null ) { return null; }

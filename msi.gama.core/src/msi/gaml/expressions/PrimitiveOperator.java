@@ -1,17 +1,19 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'PrimitiveOperator.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
 import java.util.*;
+import com.google.common.base.Function;
+import com.google.common.collect.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -20,12 +22,10 @@ import msi.gaml.descriptions.*;
 import msi.gaml.operators.*;
 import msi.gaml.statements.*;
 import msi.gaml.types.IType;
-import com.google.common.base.Function;
-import com.google.common.collect.*;
 
 /**
  * PrimitiveOperator. An operator that wraps a primitive or an action.
- * 
+ *
  * @author drogoul 4 sept. 07
  */
 
@@ -125,6 +125,11 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return action.getDefiningPlugin();
 	}
 
 	@Override

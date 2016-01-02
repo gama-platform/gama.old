@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ScopedExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
@@ -17,10 +17,10 @@ import msi.gaml.types.IType;
 
 /**
  * Class ScopedExpression.
- * 
+ *
  * @author drogoul
  * @since 20 janv. 2014
- * 
+ *
  */
 public class ScopedExpression implements IExpression {
 
@@ -44,6 +44,11 @@ public class ScopedExpression implements IExpression {
 	@Override
 	public void dispose() {
 		wrapped.dispose();
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return wrapped.getDefiningPlugin();
 	}
 
 	/**

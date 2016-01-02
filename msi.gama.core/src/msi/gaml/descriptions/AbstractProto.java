@@ -1,29 +1,31 @@
 /**
  * Created by drogoul, 17 déc. 2014
- * 
+ *
  */
 package msi.gaml.descriptions;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gaml.compilation.GamaBundleLoader;
 
 /**
  * Class AbstractProto.
- * 
+ *
  * @author drogoul
  * @since 17 déc. 2014
- * 
+ *
  */
 public abstract class AbstractProto implements IGamlDescription, INamed, IGamlable {
 
 	private final String name;
+	private final String plugin;
 	protected final AnnotatedElement support;
 
 	AbstractProto(final String name, final AnnotatedElement support) {
 		this.name = name;
+		plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 		this.support = support;
 	}
 
@@ -92,6 +94,11 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 			if ( tt.length > 0 ) { return new ArrayList(Arrays.asList(tt)); }
 		}
 		return Collections.EMPTY_LIST;
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return plugin;
 	}
 
 	public doc getDocAnnotation() {

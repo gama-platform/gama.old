@@ -1,31 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ParametricType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Class ParametrizedType. A class that allows to build composed types with a content type and a key type
- * 
+ *
  * @author drogoul
  * @since 19 janv. 2014
- * 
+ *
  */
 public class ParametricType implements IContainerType {
 
@@ -50,6 +50,11 @@ public class ParametricType implements IContainerType {
 	@Override
 	public int hashCode() {
 		return type.hashCode() + contentsType.hashCode() * 100 + keyType.hashCode() * 10000;
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return type.getDefiningPlugin();
 	}
 
 	/**

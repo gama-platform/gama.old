@@ -6,7 +6,7 @@
          <meta.schema plugin="msi.gama.core" id="gama.create" name="Implementations of ICreateDelegate"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         Allows plug-in developers to add new implementations of ICreateDelegate, so that the &quot;create&quot; statement can be extended. 
       </documentation>
    </annotation>
 

@@ -13,7 +13,7 @@ package msi.gama.application.projects;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import java.util.regex.*;
 import org.apache.commons.lang.StringUtils;
@@ -38,10 +38,8 @@ public class WorkspaceModelsManager {
 	private final static FileFilter noHiddenFiles = new FileFilter() {
 
 		@Override
-		public boolean accept(final File arg0) {
-			File f = arg0;
-			String s = f.getName();
-			return !s.startsWith(".");
+		public boolean accept(final File f) {
+			return f != null && f.isDirectory() && !f.isHidden() && !f.getName().startsWith(".");
 		}
 	};
 
@@ -329,56 +327,78 @@ public class WorkspaceModelsManager {
 	}
 
 	private static void linkPluginsModelsToWorkspace() {
-		for ( String plugin : GamaBundleLoader.getPluginsWithModels() ) {
-			linkModelsToWorkspace(plugin, false);
+		for ( String plugin : GamaBundleLoader.getPluginsWithModels().keySet() ) {
+			linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithModels().get(plugin), false);
 		}
 	}
 
 	public static void linkSampleModelsToWorkspace() {
-		linkModelsToWorkspace("msi.gama.models", true);
+		linkModelsToWorkspace("msi.gama.models", "models", true);
 		linkPluginsModelsToWorkspace();
 	}
 
 	/**
 	 * @param plugin
 	 */
-	private static void linkModelsToWorkspace(final String plugin, final boolean core) {
+
+	private static void linkModelsToWorkspace(final String plugin, final String path, final boolean core) {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		URL urlRep = null;
 		try {
-			urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + plugin + "/models/"));
+			String ext = path == "." ? "/" : "/" + path + "/";
+			urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + plugin + ext));
+			urlRep = urlRep.toURI().normalize().toURL();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
 		}
-		File modelsRep = new File(urlRep.getPath());
-		// FileBean gFile = new FileBean(modelsRep);
-		File[] projects = modelsRep.listFiles(noHiddenFiles);
-		for ( final File project : projects ) {
-			File dotFile = null;
-			/* parcours des fils pour trouver le dot file et creer le lien vers le projet */
-			File[] children = project.listFiles();
-			for ( int i = 0; i < children.length; i++ ) {
-				if ( children[i].getName().equals(".project") ) {
-					dotFile = new File(children[i].getPath());
-					break;
-				}
-			}
-			IProjectDescription tempDescription = null;
-			/* If the '.project' doesn't exists we create one */
-			if ( dotFile == null ) {
-				/* Initialize file content */
-				tempDescription = setProjectDescription(project);
-			} else {
-				final IPath location = new Path(dotFile.getAbsolutePath());
-				try {
-					tempDescription = workspace.loadProjectDescription(location);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-			}
-			final IProjectDescription description = tempDescription;
 
+		File modelsRep = new File(urlRep.getPath());
+		Map<File, IPath> foundProjects = new HashMap();
+		findProjects(modelsRep, foundProjects);
+		importBuiltInProjects(plugin, core, workspace, foundProjects);
+
+		stampWorkspaceFromModels();
+
+	}
+
+	private static final FilenameFilter isDotFile = new FilenameFilter() {
+
+		@Override
+		public boolean accept(final File dir, final String name) {
+			return name.equals(".project");
+		}
+
+	};
+
+	private static void findProjects(final File folder, final Map<File, IPath> found) {
+		if ( folder == null ) { return; }
+		File[] dotFile = folder.listFiles(isDotFile);
+		if ( dotFile == null ) { return; } // not a directory
+		if ( dotFile.length == 0 ) { // no .project file
+			for ( File f : folder.listFiles() ) {
+				findProjects(f, found);
+			}
+			return;
+		}
+		found.put(folder, new Path(dotFile[0].getAbsolutePath()));
+
+	}
+
+	/**
+	 * @param plugin
+	 * @param core
+	 * @param workspace
+	 * @param project
+	 */
+	private static void importBuiltInProjects(final String plugin, final boolean core, final IWorkspace workspace,
+		final Map<File, IPath> projects) {
+
+		for ( Map.Entry<File, IPath> entry : projects.entrySet() ) {
+			final File project = entry.getKey();
+			final IPath location = entry.getValue();
 			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 				@Override
@@ -386,13 +406,13 @@ public class WorkspaceModelsManager {
 					throws CoreException, InvocationTargetException, InterruptedException {
 					IProject proj = workspace.getRoot().getProject(project.getName());
 					if ( !proj.exists() ) {
-						proj.create(description, monitor);
+						proj.create(workspace.loadProjectDescription(location), monitor);
 					} else {
 						// project exists but is not accessible
 						if ( !proj.isAccessible() ) {
 							proj.delete(true, null);
 							proj = workspace.getRoot().getProject(project.getName());
-							proj.create(description, monitor);
+							proj.create(workspace.loadProjectDescription(location), monitor);
 						}
 					}
 					proj.open(IResource.NONE, monitor);
@@ -401,13 +421,11 @@ public class WorkspaceModelsManager {
 			};
 			try {
 				operation.run(null);
-				stampWorkspaceFromModels();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
-
 		}
 
 	}

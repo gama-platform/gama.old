@@ -1,45 +1,64 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import java.util.*;
+import org.apache.commons.lang.StringUtils;
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.GamaBundleLoader;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Written by drogoul Modified on 25 ao�t 2010
- * 
+ *
  * The superclass of all types descriptions in GAMA. Provides convenience methods, as well as some
  * basic definitions. Types allow to manipulate any Java class as a type in GAML. To be recognized
  * by GAML, subclasses must be annotated with the @type annotation (see GamlAnnotations).
- * 
+ *
  * Types are primarily used for conversions between values. They are also intended to support the
  * operators specific to the objects they encompass (but this is not mandatory, as these operators
  * need to be defined as static ones (and thus can be defined anywhere)
- * 
+ *
  * Primary (simple) types also serve as the basis of parametric types (see ParametricType).
- * 
+ *
  */
 
 public abstract class GamaType<Support> implements IType<Support> {
 
+	protected int id;
+	protected String name;
+	protected Class[] supports;
+	Map<String, OperatorProto> getters;
+	protected IType parent;
+	protected boolean parented;
+	protected int varKind;
+	protected final String plugin;
+
+	public GamaType() {
+		plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
+	}
+
 	@Override
 	public String getTitle() {
 		return getName();
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return plugin;
 	}
 
 	@Override
@@ -61,14 +80,6 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public String serialize(final boolean includingBuiltIn) {
 		return name;
 	}
-
-	protected int id;
-	protected String name;
-	protected Class[] supports;
-	Map<String, OperatorProto> getters;
-	protected IType parent;
-	protected boolean parented;
-	protected int varKind;
 
 	@Override
 	public void init(final int varKind, final int id, final String name, final Class ... supports) {
@@ -384,7 +395,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	public static boolean requiresCasting(final IType castingType, final IType originalType) {
-		if ( castingType == null || castingType == Types.NO_TYPE || castingType.isAssignableFrom(originalType) ) { return false; }
+		if ( castingType == null || castingType == Types.NO_TYPE ||
+			castingType.isAssignableFrom(originalType) ) { return false; }
 		return true;
 	}
 

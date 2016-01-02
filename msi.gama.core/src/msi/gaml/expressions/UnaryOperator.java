@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'UnaryOperator.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
@@ -26,12 +26,12 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	final protected IExpression child;
 	final OperatorProto prototype;
 
-	public static IExpression
-		create(final OperatorProto proto, final IDescription context, final IExpression ... child) {
+	public static IExpression create(final OperatorProto proto, final IDescription context,
+		final IExpression ... child) {
 		UnaryOperator u = new UnaryOperator(proto, context, child);
 		if ( u.isConst() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
-			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
+			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
 		return u;
 	}
@@ -39,6 +39,11 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public boolean isConst() {
 		return prototype.canBeConst && child.isConst();
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return prototype.getDefiningPlugin();
 	}
 
 	public UnaryOperator(final OperatorProto proto, final IDescription context, final IExpression ... child) {
