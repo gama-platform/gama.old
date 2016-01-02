@@ -46,17 +46,20 @@ public class GamaBundleLoader {
 		final long start = System.currentTimeMillis();
 		// We first retrieve the elements declared as extensions to the GAML language, either with the new or the deprecated extension
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		Set<IConfigurationElement> elements = new HashSet();
-		elements.addAll(Arrays.asList(registry.getConfigurationElementsFor(GRAMMAR_EXTENSION)));
-		elements.addAll(Arrays.asList(registry.getConfigurationElementsFor(GRAMMAR_EXTENSION_DEPRECATED)));
+		Set<IExtension> extensions = new HashSet();
+		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
+		extensions.addAll(Arrays.asList(p.getExtensions()));
+		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
+		extensions.addAll(Arrays.asList(p.getExtensions()));
 		// We retrieve their contributor plugin and add them to the plugins. In addition, we verify if they declare a folder called `models`
-		for ( IConfigurationElement e : elements ) {
+		for ( IExtension e : extensions ) {
 			IContributor plugin = e.getContributor();
 			plugins.add(plugin.getName());
 			if ( hasModels(plugin) ) {
 				pluginsWithModels.put(plugin.getName(), "models");
 			}
 		}
+
 		// We remove the core plugin, in order to build it first (important)
 		plugins.remove(CORE_PLUGIN);
 		preBuild(CORE_PLUGIN);

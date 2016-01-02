@@ -7,12 +7,6 @@
    <extension-point id="gaml.extension" name="Additions to the GAML language" schema="schema/gaml.extension.exsd"/>
    <extension-point id="gama.models" name="Allow plugins to add sample models to GAMA" schema="schema/gama.models.exsd"/>
    <extension
-         point="gaml.grammar.addition">
-      <path
-            name="gaml">
-      </path>
-   </extension>
-   <extension
          point="gama.display">
       <implementation
             class="msi.gama.outputs.ImageDisplaySurface"
@@ -61,6 +55,9 @@
             class="msi.gaml.statements.CreateFromGenstarDelegate"
             description="Create agents from CSV Genstar files">
       </implementation>
+   </extension>
+   <extension
+         point="gaml.extension">
    </extension>
 
 </plugin>
