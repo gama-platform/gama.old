@@ -1328,6 +1328,16 @@
       <handler
             class="msi.gama.gui.swt.commands.PreferencesHandler"
             commandId="org.eclipse.ui.window.preferences">
+         <activeWhen>
+            <or>
+               <reference
+                     definitionId="isInModelingPerspective">
+               </reference>
+               <reference
+                     definitionId="isInSimulationPerspective">
+               </reference>
+            </or>
+         </activeWhen>
       </handler>
    </extension>
    <extension
