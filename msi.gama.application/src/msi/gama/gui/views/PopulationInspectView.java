@@ -650,6 +650,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		Table table = viewer.getTable();
 		TableColumn[] columns = table.getColumns();
 		CsvWriter writer = new CsvWriter(exportFileName);
+		// AD 2/1/16 Replaces the comma by ';' to properly output points and lists
+		writer.setDelimiter(';');
 
 		List<String[]> contents = new ArrayList();
 		String[] headers = new String[columns.length];

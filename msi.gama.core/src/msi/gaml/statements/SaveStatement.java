@@ -126,12 +126,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	private Arguments init;
-	private final IExpression crsCode;
+	private final IExpression crsCode, item, file, rewriteExpr, header;
 
 	public SaveStatement(final IDescription desc) {
 		super(desc);
 		crsCode = desc.getFacets().getExpr("crs");
-
+		item = desc.getFacets().getExpr(IKeyword.DATA);
+		file = getFacet(IKeyword.TO);
+		rewriteExpr = getFacet(IKeyword.REWRITE);
+		header = getFacet(IKeyword.HEADER);
 	}
 
 	// TODO rewrite this with the GamaFile framework
@@ -139,8 +142,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final String typeExp = getLiteral(IKeyword.TYPE);
-		final IExpression file = getFacet(IKeyword.TO);
-		final IExpression rewriteExp = getFacet(IKeyword.REWRITE);
 
 		String path = "";
 		if ( file == null ) {
@@ -157,7 +158,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			type = typeExp;
 		}
 		if ( type.equals("shp") ) {
-			final IExpression item = getFacet(IKeyword.DATA);
 			if ( item == null ) { return null; }
 			IList<? extends IShape> agents = Cast.asList(scope, item.value(scope));
 			if ( agents == null || agents.isEmpty() ) { return null; }
@@ -165,8 +165,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		} else if ( type.equals("text") || type.equals("csv") ) {
 			final File fileTxt = new File(path);
 			boolean exists = fileTxt.exists();
-			if ( rewriteExp != null ) {
-				final boolean rewrite = Cast.asBool(scope, rewriteExp.value(scope));
+			if ( rewriteExpr != null ) {
+				final boolean rewrite = Cast.asBool(scope, rewriteExpr.value(scope));
 				if ( rewrite ) {
 					if ( fileTxt.exists() ) {
 						fileTxt.delete();
@@ -182,14 +182,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			} catch (final IOException e) {
 				throw GamaRuntimeException.create(e);
 			}
-			final IExpression item = getFacet(IKeyword.DATA);
-			final IExpression header = getFacet(IKeyword.HEADER);
+
 			final boolean addHeader = !exists && (header == null || Cast.asBool(scope, header.value(scope)));
 
-			saveText(type, item, fileTxt, addHeader, scope);
+			saveText(type, fileTxt, addHeader, scope);
 
 		} else if ( type.equals("asc") ) {
-			final IExpression item = getFacet(IKeyword.DATA);
 			ISpecies species;
 			if ( item == null ) { return null; }
 			species = Cast.asSpecies(scope, item.value(scope));
@@ -198,7 +196,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			saveAsc(species, path, scope);
 		} else if ( AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase()) ) {
 
-			final IExpression item = getFacet(IKeyword.DATA);
 			IGraph g;
 			if ( item == null ) {
 				// scope.setStatus(ExecutionStatus.failure);
@@ -316,8 +313,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	public void saveText(final String type, final IExpression item, final File fileTxt, final boolean header,
-		final IScope scope) throws GamaRuntimeException {
+	public void saveText(final String type, final File fileTxt, final boolean header, final IScope scope)
+		throws GamaRuntimeException {
 		try {
 			if ( item == null ) { return; }
 			final FileWriter fw = new FileWriter(fileTxt, true);
