@@ -1,19 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractSpecies.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.species;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.*;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
@@ -32,9 +33,9 @@ import msi.gaml.variables.IVariable;
 
 /**
  * Written by drogoul Modified on 29 d�c. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
@@ -139,13 +140,25 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
+	public IList<ISpecies> getSubSpecies(final IScope scope) {
+		IList<ISpecies> subspecies = GamaListFactory.create(Types.SPECIES);
+		GamlModelSpecies model = (GamlModelSpecies) scope.getModel().getSpecies();
+		for ( ISpecies s : model.getAllSpecies().values() ) {
+			if ( s.getParentSpecies() == this ) {
+				subspecies.add(s);
+			}
+		}
+		return subspecies;
+	}
+
+	@Override
 	public Collection<String> getMicroSpeciesNames() {
 		return microSpecies.keySet();
 	}
 
 	/**
 	 * Returns a micro-species with the specified name or null otherwise.
-	 * 
+	 *
 	 * @param microSpeciesName
 	 * @return a species or null
 	 */
@@ -245,6 +258,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public Collection<String> getVarNames() {
 		return getDescription().getVarNames();
+	}
+
+	@Override
+	public IList<String> getAttributeNames(final IScope scope) {
+		return GamaListFactory.create(scope, Types.STRING, getVarNames());
 	}
 
 	@Override
