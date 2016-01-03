@@ -132,18 +132,28 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 				}
 			}
 		} else {
-			System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
-			GuiUtils.asyncRun(new Runnable() {
+			if ( shouldBeClosedWhenNoExperiments() ) {
+				System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
+				GuiUtils.asyncRun(new Runnable() {
 
-				@Override
-				public void run() {
-					GuiUtils.closeSimulationViews(false);
-					GuiUtils.openModelingPerspective(false);
-				}
-			});
+					@Override
+					public void run() {
+						GuiUtils.closeSimulationViews(false);
+						GuiUtils.openModelingPerspective(false);
+					}
+				});
 
+			}
 		}
 		addOutput(out);
+	}
+
+	/**
+	 * Can be redefined by subclasses that accept that their instances remain open when no experiment is running.
+	 * @return
+	 */
+	protected boolean shouldBeClosedWhenNoExperiments() {
+		return true;
 	}
 
 	@Override

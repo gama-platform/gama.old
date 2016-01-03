@@ -54,7 +54,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
-import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
 
 /**
@@ -752,7 +751,7 @@ public class SwtGui implements IGui {
 	}
 
 	public final boolean openPerspective(final String perspectiveId, final boolean immediately) {
-		loadPerspectives();
+		// loadPerspectives();
 		final IWorkbenchPage activePage = getPage(perspectiveId);
 		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
@@ -791,31 +790,31 @@ public class SwtGui implements IGui {
 
 	}
 
-	static final Map<String, Class> perspectiveClasses = new THashMap();
-
-	public final boolean loadPerspectives() {
-		if ( !perspectiveClasses.isEmpty() ) { return true; }
-
-		final IConfigurationElement[] config =
-			Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.perspectives");
-		for ( final IConfigurationElement e : config ) {
-			final String pluginID = e.getAttribute("id");
-			final String pluginClass = e.getAttribute("class");
-			final String pluginName = e.getContributor().getName();
-			// Check if is a gama perspective...
-			if ( pluginID.contains("msi.gama") ) {
-				final ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-				try {
-					perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
-				} catch (final ClassNotFoundException e1) {
-					e1.printStackTrace();
-				}
-				System.out.println("Gama perspective " + pluginID + " is loaded");
-			}
-		}
-
-		return false; // openPerspective(I);
-	}
+	// static final Map<String, Class> perspectiveClasses = new THashMap();
+	//
+	// public final boolean loadPerspectives() {
+	// if ( !perspectiveClasses.isEmpty() ) { return true; }
+	//
+	// final IConfigurationElement[] config =
+	// Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.perspectives");
+	// for ( final IConfigurationElement e : config ) {
+	// final String pluginID = e.getAttribute("id");
+	// final String pluginClass = e.getAttribute("class");
+	// final String pluginName = e.getContributor().getName();
+	// // Check if is a gama perspective...
+	// if ( pluginID.contains("msi.gama") ) {
+	// final ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+	// try {
+	// perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
+	// } catch (final ClassNotFoundException e1) {
+	// e1.printStackTrace();
+	// }
+	// System.out.println("Gama perspective " + pluginID + " is loaded");
+	// }
+	// }
+	//
+	// return false; // openPerspective(I);
+	// }
 
 	@Override
 	public final boolean openSimulationPerspective(final boolean immediately) {
@@ -826,7 +825,6 @@ public class SwtGui implements IGui {
 		return openPerspective(PERSPECTIVE_HPC_ID, immediately);
 	}
 
-	String currentPerspectiveId = null;
 	public static GamaPreferences.Entry<String> COLOR_MENU_SORT =
 		GamaPreferences.create("menu.colors.sort", "Sort colors menu by", "RGB value", IType.STRING)
 			.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")

@@ -27,7 +27,7 @@ public class WorkaroundForIssue1358 {
 						for ( StackTraceElement s : traces ) {
 							if ( s.getMethodName().contains("internal_new_GC") ) {
 								System.out.println(
-									"Harmless exception caught in Control.internal_new_GC() -- waiting from the fix in Eclipse 4.5.2");
+									"Harmless exception caught in Control.internal_new_GC() -- waiting for the fix in Eclipse 4.5.2");
 								return;
 							}
 						}

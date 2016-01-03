@@ -175,6 +175,17 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	}
 
 	/**
+	 * As ConsoleView is automatically opened by moving to the simulation perspective, the automatic closing can cause problems. So the view is stated as accepting an "experiment-less" mode. See Issue
+	 * #1361
+	 * Method shouldBeClosedWhenNoExperiments()
+	 * @see msi.gama.gui.views.GamaViewPart#shouldBeClosedWhenNoExperiments()
+	 */
+	@Override
+	protected boolean shouldBeClosedWhenNoExperiments() {
+		return false;
+	}
+
+	/**
 	 * Method synchronizeChanged()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */

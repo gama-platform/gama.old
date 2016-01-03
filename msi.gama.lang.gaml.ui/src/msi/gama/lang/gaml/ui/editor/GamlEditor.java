@@ -52,7 +52,6 @@ import msi.gama.lang.gaml.resource.*;
 import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
 import msi.gama.lang.gaml.ui.templates.*;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -84,12 +83,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	@Inject
 	IResourceSetProvider resourceSetProvider;
-
-	@Inject
-	private CompoundXtextEditorCallback callback;
-
-	@Inject
-	private GamlJavaValidator validator;
+	//
+	// @Inject
+	// private CompoundXtextEditorCallback callback;
+	//
+	// @Inject
+	// private GamlJavaValidator validator;
 
 	@Inject
 	Injector injector;
