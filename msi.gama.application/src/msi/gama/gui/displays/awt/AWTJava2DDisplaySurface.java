@@ -38,7 +38,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 
 @display("java2D")
-public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurface {
+public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private final LayeredDisplayOutput output;
 	// protected final LayeredDisplayData data;
@@ -136,7 +136,7 @@ public class AWTJava2DDisplaySurface extends JComponent implements IDisplaySurfa
 		setOpaque(true);
 		setDoubleBuffered(true);
 		// Experimental
-		setIgnoreRepaint(true);
+		//setIgnoreRepaint(true);
 
 		//
 
