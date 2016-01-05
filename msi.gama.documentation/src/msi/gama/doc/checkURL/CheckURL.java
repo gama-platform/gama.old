@@ -186,13 +186,6 @@ public class CheckURL {
 				// case of other links, have to be in githubUrl format.
 				// extract the filename
 				String fileName = stringMatched.split(File.separator+File.separator)[stringMatched.split(File.separator+File.separator).length-1];
-				// make changes (in case it is an old version)
-				if (!fileName.endsWith(".md"))
-					fileName = fileName + ".md";
-				if (fileName.startsWith("G__"))
-					fileName = fileName.replace("G__", "");
-				if (fileName.startsWith("Tutorial__"))
-					fileName = fileName.replace("Tutorial__", "");
 				
 				// if the link contains an anchor, extract the anchor
 				String anchor = "";
@@ -201,6 +194,14 @@ public class CheckURL {
 					anchor = "#"+fileName.split("#")[1];
 					fileName = fileName.split("#")[0];
 				}
+				
+				// make changes (in case it is an old version)
+				if (!fileName.endsWith(".md"))
+					fileName = fileName + ".md";
+				if (fileName.startsWith("G__"))
+					fileName = fileName.replace("G__", "");
+				if (fileName.startsWith("Tutorial__"))
+					fileName = fileName.replace("Tutorial__", "");
 				
 				// check if the file exists in the map
 				if (!fileMap.containsKey(fileName)) {
