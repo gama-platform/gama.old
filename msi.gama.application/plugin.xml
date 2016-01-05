@@ -1145,7 +1145,6 @@
       </activityPatternBinding>-->
       <activityPatternBinding
             activityId="msi.gama.application.activities"
-            isEqualityPattern="true"
             pattern="MarkOccurrences">
       </activityPatternBinding>
       <activityPatternBinding
