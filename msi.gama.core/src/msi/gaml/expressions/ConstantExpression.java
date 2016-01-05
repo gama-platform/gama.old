@@ -1,23 +1,24 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ConstantExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
 /**
  * ConstantValueExpr.
- * 
+ *
  * @author drogoul 22 août 07
  */
 
@@ -80,6 +81,15 @@ public class ConstantExpression extends AbstractExpression {
 	@Override
 	public boolean shouldBeParenthesized() {
 		return false;
+	}
+
+	/**
+	 * Method collectPlugins()
+	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 */
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+
 	}
 
 }

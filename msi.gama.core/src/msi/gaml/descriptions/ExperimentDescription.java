@@ -30,7 +30,7 @@ public class ExperimentDescription extends SpeciesDescription {
 	// and keep it for when the relationship will be reversed (i.e. when the model will be *inside* the experiment)
 	public ExperimentDescription(final String keyword, final IDescription enclosing, final ChildrenProvider cp,
 		final EObject source, final Facets facets) {
-		super(keyword, null, enclosing, null, cp, source, facets);
+		super(keyword, null, enclosing, null, cp, source, facets, null);
 	}
 
 	private void addParameterNoCheck(final VariableDescription var) {

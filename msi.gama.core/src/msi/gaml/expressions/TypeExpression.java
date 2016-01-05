@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
@@ -76,6 +77,15 @@ public class TypeExpression extends AbstractExpression {
 	@Override
 	public String literalValue() {
 		return type.serialize(false);
+	}
+
+	/**
+	 * Method collectPlugins()
+	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 */
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		type.collectPlugins(plugins);
 	}
 
 }

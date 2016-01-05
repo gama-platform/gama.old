@@ -12,6 +12,7 @@
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
+import java.util.Set;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -167,6 +168,16 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public OperatorProto getPrototype() {
 		return prototype;
+	}
+
+	/**
+	 * Method collectPlugins()
+	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 */
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		prototype.collectPlugins(plugins);
+		child.collectPlugins(plugins);
 	}
 
 }

@@ -195,6 +195,13 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	}
 
 	/**
+	 * Method collectPlugins()
+	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 */
+	@Override
+	public void collectPlugins(final Set<String> plugins) {}
+
+	/**
 	 * @return
 	 */
 

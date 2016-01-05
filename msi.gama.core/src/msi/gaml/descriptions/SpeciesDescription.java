@@ -11,10 +11,11 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.*;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
@@ -30,7 +31,6 @@ import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
-import org.eclipse.emf.ecore.EObject;
 
 public class SpeciesDescription extends TypeDescription {
 
@@ -42,13 +42,14 @@ public class SpeciesDescription extends TypeDescription {
 	private IAgentConstructor agentConstructor;
 
 	public SpeciesDescription(final String keyword, final IDescription macroDesc, final ChildrenProvider cp,
-		final EObject source, final Facets facets) {
-		this(keyword, null, macroDesc, null, cp, source, facets);
+		final EObject source, final Facets facets, final String plugin) {
+		this(keyword, null, macroDesc, null, cp, source, facets, plugin);
 	}
 
 	public SpeciesDescription(final String keyword, final Class clazz, final IDescription macroDesc,
-		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets) {
-		super(keyword, clazz, macroDesc, parent, cp, source, facets);
+		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets,
+		final String plugin) {
+		super(keyword, clazz, macroDesc, parent, cp, source, facets, plugin);
 		setSkills(facets.get(SKILLS), Collections.EMPTY_SET);
 	}
 
@@ -57,8 +58,10 @@ public class SpeciesDescription extends TypeDescription {
 	 * ModelFactory to provide it
 	 */
 	public SpeciesDescription(final String name, final Class clazz, final IDescription superDesc,
-		final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills2, final Facets ff) {
-		super(SPECIES, clazz, superDesc, null, ChildrenProvider.NONE, null, new Facets(KEYWORD, SPECIES, NAME, name));
+		final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills2, final Facets ff,
+		final String plugin) {
+		super(SPECIES, clazz, superDesc, null, ChildrenProvider.NONE, null, new Facets(KEYWORD, SPECIES, NAME, name),
+			plugin);
 		if ( ff.containsKey(CONTROL) ) {
 			facets.putAsLabel(CONTROL, ff.get(CONTROL).toString());
 		}
@@ -602,7 +605,7 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 * @param parentName the name of the potential parent
 	 * @throws GamlException if the species with the specified name can not be a parent of this
-	 *             species.
+	 * species.
 	 */
 	protected void verifyParent() {
 		if ( parent == null ) { return; }
@@ -631,9 +634,8 @@ public class SpeciesDescription extends TypeDescription {
 
 		final List<SpeciesDescription> parentsOfParent = ((SpeciesDescription) potentialParent).getSelfWithParents();
 		if ( parentsOfParent.contains(this) ) {
-			final String error =
-				this.getName() + " species and " + potentialParent.getName() +
-					" species can't be sub-species of each other.";
+			final String error = this.getName() + " species and " + potentialParent.getName() +
+				" species can't be sub-species of each other.";
 			// potentialParent.error(error);
 			error(error);
 			return;
@@ -673,10 +675,8 @@ public class SpeciesDescription extends TypeDescription {
 				final VariableDescription var =
 					(VariableDescription) DescriptionFactory.create(CONTAINER, this, NAME, microSpec.getName());
 				var.setSyntheticSpeciesContainer();
-				var.getFacets().put(
-					OF,
-					GAML.getExpressionFactory().createTypeExpression(
-						getModelDescription().getTypeNamed(microSpec.getName())));
+				var.getFacets().put(OF, GAML.getExpressionFactory()
+					.createTypeExpression(getModelDescription().getTypeNamed(microSpec.getName())));
 				// We compute the dependencies of micro species with respect to the variables
 				// defined in the macro species.
 				final IExpressionDescription exp = microSpec.getFacets().get(DEPENDS_ON);

@@ -17,7 +17,6 @@ import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamaBundleLoader;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 
@@ -45,11 +44,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	protected IType parent;
 	protected boolean parented;
 	protected int varKind;
-	protected final String plugin;
-
-	public GamaType() {
-		plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
-	}
+	protected String plugin;
 
 	@Override
 	public String getTitle() {
@@ -398,6 +393,16 @@ public abstract class GamaType<Support> implements IType<Support> {
 		if ( castingType == null || castingType == Types.NO_TYPE ||
 			castingType.isAssignableFrom(originalType) ) { return false; }
 		return true;
+	}
+
+	@Override
+	public void setDefiningPlugin(final String plugin) {
+		this.plugin = plugin;
+	}
+
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		plugins.add(getDefiningPlugin());
 	}
 
 }

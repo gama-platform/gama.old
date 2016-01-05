@@ -8,7 +8,6 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gaml.compilation.GamaBundleLoader;
 
 /**
  * Class AbstractProto.
@@ -23,9 +22,9 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 	private final String plugin;
 	protected final AnnotatedElement support;
 
-	AbstractProto(final String name, final AnnotatedElement support) {
+	AbstractProto(final String name, final AnnotatedElement support, final String plugin) {
 		this.name = name;
-		plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
+		this.plugin = plugin;
 		this.support = support;
 	}
 
@@ -101,6 +100,11 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 		return plugin;
 	}
 
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		plugins.add(plugin);
+	}
+
 	public doc getDocAnnotation() {
 		doc d = null;
 		if ( support != null && support.isAnnotationPresent(doc.class) ) {
@@ -108,11 +112,6 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 		}
 		return d;
 	}
-
-	//
-	// public int getDoc() {
-	// return doc;
-	// }
 
 	/**
 	 * @return

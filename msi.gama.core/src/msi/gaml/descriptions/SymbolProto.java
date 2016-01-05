@@ -50,8 +50,8 @@ public class SymbolProto extends AbstractProto {
 		/* final String[][] possibleCombinations, */final Set<String> contextKeywords, final TIntHashSet contextKinds,
 		final boolean isRemoteContext, final boolean isUniqueInContext, final boolean nameUniqueInContext,
 		final ISymbolConstructor constr, final IDescriptionValidator validator, final SymbolSerializer serializer,
-		final String name) {
-		super(name, clazz);
+		final String name, final String plugin) {
+		super(name, clazz, plugin);
 		factory = DescriptionFactory.getFactory(kind);
 		this.validator = validator;
 		this.serializer = serializer;

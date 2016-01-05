@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ListExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
@@ -19,7 +19,7 @@ import msi.gaml.types.*;
 
 /**
  * ListValueExpr.
- * 
+ *
  * @author drogoul 23 août 07
  */
 public class ListExpression extends AbstractExpression {
@@ -28,7 +28,7 @@ public class ListExpression extends AbstractExpression {
 		ListExpression u = new ListExpression(elements);
 		if ( u.isConst() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
-			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
+			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
 		return u;
 	}
@@ -115,6 +115,19 @@ public class ListExpression extends AbstractExpression {
 	 */
 	public boolean isEmpty() {
 		return elements.length == 0;
+	}
+
+	/**
+	 * Method collectPlugins()
+	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 */
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		for ( IExpression e : elements ) {
+			if ( e != null ) {
+				e.collectPlugins(plugins);
+			}
+		}
 	}
 
 }

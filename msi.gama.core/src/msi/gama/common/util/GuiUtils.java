@@ -14,6 +14,7 @@ package msi.gama.common.util;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -428,6 +429,15 @@ public class GuiUtils {
 		if ( gui != null ) {
 			gui.closeSimulationViews(andOpenModelingPerspective);
 		}
+	}
+
+	/**
+	 * @param type
+	 * @return
+	 */
+	public static DisplayDescription getDisplayDescriptionFor(final String type) {
+		if ( gui != null ) { return gui.getDisplayDescriptionFor(type); }
+		return null;
 	}
 
 }

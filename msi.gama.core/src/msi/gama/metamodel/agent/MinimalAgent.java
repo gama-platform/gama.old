@@ -588,4 +588,12 @@ public abstract class MinimalAgent implements IAgent {
 	// return getGeometry().asShapeWithGeometry(scope, g);
 	// }
 
+	@Override
+	public String getDefiningPlugin() {
+		return null;
+	}
+
+	public void setDefiningPlugin(final String plugin) {
+
+	}
 }

@@ -1,16 +1,17 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'TempVariableExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -57,4 +58,11 @@ public class TempVariableExpression extends VariableExpression {
 	public IExpression resolveAgainst(final IScope scope) {
 		return GAML.getExpressionFactory().createConst(value(scope), type, name);
 	}
+
+	/**
+	 * Method collectPlugins()
+	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 */
+	@Override
+	public void collectPlugins(final Set<String> plugins) {}
 }

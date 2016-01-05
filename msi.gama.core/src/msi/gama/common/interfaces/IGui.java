@@ -14,6 +14,7 @@ package msi.gama.common.interfaces;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -164,5 +165,7 @@ public interface IGui {
 	 *
 	 */
 	void closeSimulationViews(boolean andOpenModelingPerspective);
+
+	public DisplayDescription getDisplayDescriptionFor(final String name);
 
 }

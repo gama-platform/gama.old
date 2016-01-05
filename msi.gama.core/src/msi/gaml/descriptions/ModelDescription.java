@@ -87,7 +87,7 @@ public class ModelDescription extends SpeciesDescription {
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
 		final ErrorCollector collector, final List<String> imports) {
-		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets);
+		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets, null);
 		types = new TypesManager(
 			parent instanceof ModelDescription ? ((ModelDescription) parent).types : Types.builtInTypes);
 		modelFilePath = modelPath;

@@ -85,7 +85,7 @@ public class SwitchButton extends Canvas {
 	/**
 	 * Gap between the button and the text (default value is 5)
 	 */
-	private int gap;
+	private final int gap;
 
 	/**
 	 * Margin inside the button
@@ -768,78 +768,6 @@ public class SwitchButton extends Canvas {
 	public void setButtonBorderColor(final Color buttonBorderColor) {
 		// this.checkWidget();
 		this.buttonBorderColor = buttonBorderColor;
-	}
-
-	/**
-	 * @return the first color of the toggle button
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 */
-	// public Color getButtonBackgroundColor1() {
-	// // this.checkWidget();
-	// return this.buttonBackgroundColor1;
-	// }
-
-	/**
-	 * @param buttonBackgroundColor1 the first color of the toggle button
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 */
-	// public void setButtonBackgroundColor1(final Color buttonBackgroundColor1) {
-	// // this.checkWidget();
-	// this.buttonBackgroundColor1 = buttonBackgroundColor1;
-	// }
-
-	/**
-	 * @return the second color of the toggle button
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 */
-	// public Color getButtonBackgroundColor2() {
-	// // this.checkWidget();
-	// return this.buttonBackgroundColor2;
-	// }
-
-	/**
-	 * @param buttonBackgroundColor2 the second color of the toggle button
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 */
-	// public void setButtonBackgroundColor2(final Color buttonBackgroundColor2) {
-	// // this.checkWidget();
-	// this.buttonBackgroundColor2 = buttonBackgroundColor2;
-	// }
-
-	/**
-	 * @return the gap value
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 */
-	public int getGap() {
-		this.checkWidget();
-		return this.gap;
-	}
-
-	/**
-	 * @param gap the gap value to set
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 */
-	public void setGap(final int gap) {
-		this.checkWidget();
-		this.gap = gap;
 	}
 
 }

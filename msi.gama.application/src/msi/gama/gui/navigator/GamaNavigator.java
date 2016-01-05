@@ -304,7 +304,11 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					getViewSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId()).run();
+					IAction action =
+						getViewSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId());
+					if ( action != null ) {
+						action.run();
+					}
 				}
 
 				@Override

@@ -12,6 +12,7 @@
 package msi.gama.lang.gaml.resource;
 
 import java.nio.charset.Charset;
+import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -81,6 +82,13 @@ public class GamlResourceDocManager implements IDocManager {
 			doc = encode(documentation);
 
 		}
+
+		/**
+		 * Method collectPlugins()
+		 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+		 */
+		@Override
+		public void collectPlugins(final Set<String> plugins) {}
 
 		@Override
 		public String getDocumentation() {

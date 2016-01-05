@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.Set;
 import msi.gama.common.interfaces.INamed;
 
 /**
@@ -27,5 +28,7 @@ public interface IGamlDescription extends INamed {
 	public String getDocumentation();
 
 	public String getDefiningPlugin();
+
+	public void collectPlugins(Set<String> plugins);
 
 }

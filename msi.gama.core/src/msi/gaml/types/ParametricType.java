@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import java.util.Map;
+import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -427,6 +427,20 @@ public class ParametricType implements IContainerType {
 		}
 		return new ParametricType(this, kt, ct);
 
+	}
+
+	/**
+	 * Method setDefiningPlugin()
+	 * @see msi.gaml.types.IType#setDefiningPlugin(java.lang.String)
+	 */
+	@Override
+	public void setDefiningPlugin(final String plugin) {}
+
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		type.collectPlugins(plugins);
+		contentsType.collectPlugins(plugins);
+		keyType.collectPlugins(plugins);
 	}
 
 }

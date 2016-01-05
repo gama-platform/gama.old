@@ -11,11 +11,13 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
+import java.io.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import msi.gama.util.file.GAMLFile;
+import msi.gaml.compilation.GamaBundleLoader;
 
 public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 
@@ -66,6 +68,7 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 				if ( !info.uses.isEmpty() ) {
 					l.add(new WrappedFolder((IFile) p, info.uses, "Uses"));
 				}
+				addPluginsTo((IFile) p, l);
 				return l.toArray();
 
 			} else if ( ctid.equals(FileMetaDataProvider.SHAPEFILE_CT_ID) ) {
@@ -86,6 +89,38 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 
 		}
 		return super.getChildren(p);
+	}
+
+	/**
+	 * @param p
+	 * @param l
+	 */
+	private void addPluginsTo(final IFile f, final List l) {
+		IProject p = f.getProject();
+		IPath path = f.getProjectRelativePath();
+		String s = ".metadata/" + path.toPortableString() + ".meta";
+		path = Path.fromPortableString(s);
+		IResource r = p.findMember(path);
+		if ( r == null || !(r instanceof IFile) ) { return; }
+		IFile m = (IFile) r;
+		try {
+			InputStream is = m.getContents();
+			BufferedReader in = new BufferedReader(new InputStreamReader(is));
+			List<String> contents = new ArrayList();
+			String inputLine;
+
+			while ((inputLine = in.readLine()) != null) {
+				if ( !inputLine.equals(GamaBundleLoader.CORE_PLUGIN) && !inputLine.isEmpty() ) {
+					contents.add(inputLine);
+				}
+			}
+			in.close();
+
+			if ( contents.isEmpty() ) { return; }
+			l.add(new WrappedPlugins(f, contents, "Requires"));
+		} catch (CoreException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

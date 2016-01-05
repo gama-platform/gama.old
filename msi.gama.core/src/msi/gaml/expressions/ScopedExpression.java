@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
@@ -167,6 +168,15 @@ public class ScopedExpression implements IExpression {
 	@Override
 	public String toString() {
 		return wrapped.toString();
+	}
+
+	/**
+	 * Method collectPlugins()
+	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 */
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		wrapped.collectPlugins(plugins);
 	}
 
 }

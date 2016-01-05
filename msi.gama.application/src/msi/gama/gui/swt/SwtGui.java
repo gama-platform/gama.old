@@ -34,6 +34,7 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.navigator.*;
 import msi.gama.gui.parameters.*;
@@ -927,11 +928,12 @@ public class SwtGui implements IGui {
 		return EditorFactory.getInstance();
 	}
 
-	static final Map<String, Class> displayClasses = new THashMap();
+	public DisplayDescription getDisplayDescriptionFor(final String name) {
+		return (DisplayDescription) DISPLAYS.get(name);
+	}
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output) {
-
 		IDisplaySurface surface = null;
 		String keyword = output.getData().getDisplayType();
 		final IDisplayCreator creator = DISPLAYS.get(keyword);

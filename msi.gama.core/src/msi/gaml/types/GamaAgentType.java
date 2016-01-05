@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaAgentType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
@@ -21,11 +21,11 @@ import msi.gaml.species.ISpecies;
 /**
  * The type used to represent an agent of a species. Should be used by the species for all the
  * operations relative to casting, etc.
- * 
+ *
  * Written by drogoul Modified on 1 ao�t 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class GamaAgentType extends GamaType<IAgent> {
 
@@ -36,6 +36,14 @@ public class GamaAgentType extends GamaType<IAgent> {
 		this.name = name;
 		id = speciesId;
 		supports = new Class[] { base };
+		if ( species != null ) {
+			setDefiningPlugin(species.getDefiningPlugin());
+		}
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return species.getDefiningPlugin();
 	}
 
 	@Override
@@ -48,7 +56,8 @@ public class GamaAgentType extends GamaType<IAgent> {
 		}
 		if ( species == null ) { return (IAgent) Types.AGENT.cast(scope, obj, param, copy); }
 		if ( obj instanceof IAgent ) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
-		if ( obj instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species).getAgent((Integer) obj); }
+		if ( obj instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species)
+			.getAgent((Integer) obj); }
 		if ( obj instanceof ILocation ) {
 			final IAgent result = scope.getAgentScope().getPopulationFor(species).getAgent(scope, (ILocation) obj);
 			return result;

@@ -1,28 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlRuntimeModule.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml;
 
-import msi.gama.lang.gaml.linking.*;
-import msi.gama.lang.gaml.parsing.GamlSyntacticParser;
-import msi.gama.lang.gaml.resource.*;
-import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.AllImportUriGlobalScopeProvider;
-import msi.gama.lang.gaml.scoping.*;
-import msi.gama.lang.gaml.validation.*;
-import msi.gama.lang.utils.*;
-import msi.gaml.compilation.IModelBuilder;
-import msi.gaml.expressions.*;
-import msi.gaml.factories.*;
-import msi.gaml.factories.ModelFactory.IModelBuilderProvider;
 import org.eclipse.emf.ecore.util.Diagnostician;
+import org.eclipse.xtext.generator.*;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.*;
 import org.eclipse.xtext.parser.*;
@@ -31,6 +21,18 @@ import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
 import org.eclipse.xtext.scoping.impl.ImportUriGlobalScopeProvider;
 import org.eclipse.xtext.service.*;
 import com.google.inject.Binder;
+import msi.gama.lang.gaml.generator.*;
+import msi.gama.lang.gaml.linking.*;
+import msi.gama.lang.gaml.parsing.GamlSyntacticParser;
+import msi.gama.lang.gaml.resource.*;
+import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.AllImportUriGlobalScopeProvider;
+import msi.gama.lang.gaml.scoping.GamlQualifiedNameProvider;
+import msi.gama.lang.gaml.validation.*;
+import msi.gama.lang.utils.*;
+import msi.gaml.compilation.IModelBuilder;
+import msi.gaml.expressions.*;
+import msi.gaml.factories.*;
+import msi.gaml.factories.ModelFactory.IModelBuilderProvider;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension
@@ -65,6 +67,8 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
 		binder.bind(ImportUriGlobalScopeProvider.class).to(AllImportUriGlobalScopeProvider.class);
+		binder.bind(IGenerator.class).to(GamlGenerator.class);
+		binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
 		// binder.bind(IResourceDescription.class).to(GamlResourceDescription.class);
 		// binder.bind(DescriptionUtils.class).to(GamlDescriptionUtils.class);
 	}
@@ -76,8 +80,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	@Override
 	// @SingletonBinding(eager = true)
-		public
-		Class<? extends GamlJavaValidator> bindGamlJavaValidator() {
+	public Class<? extends GamlJavaValidator> bindGamlJavaValidator() {
 		return GamlJavaValidator.class;
 	}
 

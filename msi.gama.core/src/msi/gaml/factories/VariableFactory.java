@@ -34,7 +34,7 @@ public class VariableFactory extends SymbolFactory {
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
+		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto, final String plugin) {
 		if ( keyword.equals(PARAMETER) ) {
 
 			final Map<String, FacetProto> possibleFacets = proto.getPossibleFacets();

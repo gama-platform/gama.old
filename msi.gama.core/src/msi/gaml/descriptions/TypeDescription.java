@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.*;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
@@ -40,12 +40,13 @@ public abstract class TypeDescription extends SymbolDescription {
 	private final String plugin;
 
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
-		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets) {
+		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets,
+		final String plugin) {
 		super(keyword, macroDesc, cp, source, facets);
 		// parent can be null
 		setJavaBase(clazz);
 		setParent((TypeDescription) parent);
-		plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
+		this.plugin = plugin;
 	}
 
 	@Override

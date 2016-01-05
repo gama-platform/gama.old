@@ -153,4 +153,12 @@ public class GamaBundleLoader {
 		return pluginsWithModels;
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
+	public static boolean contains(final String name) {
+		return plugins.contains(name);
+	}
+
 }

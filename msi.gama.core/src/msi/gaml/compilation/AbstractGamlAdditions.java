@@ -1,23 +1,24 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractGamlAdditions.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.*;
 import java.lang.reflect.*;
 import java.util.*;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.precompiler.*;
 import msi.gama.util.TOrderedHashMap;
@@ -32,12 +33,12 @@ import msi.gaml.skills.ISkill;
 import msi.gaml.types.*;
 
 /**
- * 
+ *
  * The class AbstractGamlAdditions. Default base implementation for plugins' gaml additions.
- * 
+ *
  * @author drogoul
  * @since 17 mai 2012
- * 
+ *
  */
 public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
@@ -91,10 +92,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _display(final String string, final Class class1, final IDisplayCreator d) {
 		CONSTANTS.add(string);
-		IGui.DISPLAYS.put(string, d);
+		DisplayDescription dd = new DisplayDescription(d, string, GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		IGui.DISPLAYS.put(string, dd);
 	}
 
-	public void _species(final String name, final Class clazz, final IAgentConstructor helper, final String ... skills) {
+	public void _species(final String name, final Class clazz, final IAgentConstructor helper,
+		final String ... skills) {
 		SpeciesProto proto = new SpeciesProto(name, clazz, helper, skills);
 		DescriptionFactory.addSpeciesNameAsType(name);
 		tempSpecies.put(name, proto);
@@ -139,6 +142,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		String name = proto.name;
 		IAgentConstructor helper = proto.helper;
 		String[] skills = proto.skills;
+		String plugin = proto.plugin;
 		Set<String> allSkills = new HashSet(Arrays.asList(skills));
 		Set<String> builtInSkills = SPECIES_SKILLS.get(name);
 		if ( builtInSkills != null ) {
@@ -146,7 +150,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 		SpeciesDescription desc;
 		if ( !isGlobal ) {
-			desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills);
+			desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
+				plugin);
 		} else {
 			desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
 			Types.builtInTypes.addSpeciesType(desc);
@@ -174,12 +179,15 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	private static class SpeciesProto {
 
-		String name;
-		Class clazz;
-		IAgentConstructor helper;
-		String[] skills;
+		final String name;
+		final String plugin;
+		final Class clazz;
+		final IAgentConstructor helper;
+		final String[] skills;
 
-		public SpeciesProto(final String name, final Class clazz, final IAgentConstructor helper, final String[] skills) {
+		public SpeciesProto(final String name, final Class clazz, final IAgentConstructor helper,
+			final String[] skills) {
+			plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 			this.name = name;
 			this.clazz = clazz;
 			this.helper = helper;
@@ -217,6 +225,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		if ( additions != null ) {
 			for ( IDescription desc : additions ) {
 				desc.setOriginName("skill " + name);
+				desc.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 			}
 		}
 	}
@@ -271,10 +280,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// GuiUtils.debug("## Individual validator found for " + c.getSimpleName());
 		// }
 
-		SymbolProto md =
-			new SymbolProto(c, sequence, args, sKind, !scope, facets, omissible,/* combinations, */contextKeywords,
-				contextKinds, remote, unique, name_unique, sc, validator, serializer, names == null ||
-					names.length == 0 ? "variable declaration" : names[0]);
+		SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, facets, omissible,
+			/* combinations, */contextKeywords, contextKinds, remote, unique, name_unique, sc, validator, serializer,
+			names == null || names.length == 0 ? "variable declaration" : names[0],
+			GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		// if ( names == null || names.length == 0 ) {
 		// md.setName("variable declaration");
 		// } else {
@@ -294,6 +303,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final int[] expectedContentTypes, final Class ret, final boolean c, final int t, final int content,
 		final int index, final GamaHelper helper/* , final int doc */) {
 		Signature signature = new Signature(classes);
+		String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 		for ( int i = 0; i < keywords.length; i++ ) {
 			String kw = keywords[i];
 			if ( !OPERATORS.containsKey(kw) ) {
@@ -304,30 +314,26 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				OperatorProto proto;
 				IType rt = Types.get(ret);
 				if ( classes.length == 1 ) { // unary
-					proto =
-						new OperatorProto(kw, method, helper, c, false, rt, signature,
-							IExpression.class.equals(classes[0]), t, content, index, expectedContentTypes);
+					proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
+						IExpression.class.equals(classes[0]), t, content, index, expectedContentTypes, plugin);
 					// new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes,
 					// IExpression.class.equals(classes[0]), signature);
 				} else if ( classes.length == 2 ) { // binary
 					if ( (kw.equals(OF) || kw.equals(_DOT)) && signature.get(0).isAgentType() ) {
-						proto =
-							new OperatorProto(kw, method, helper, c, true, rt, signature,
-								IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes);
+						proto = new OperatorProto(kw, method, helper, c, true, rt, signature,
+							IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes, plugin);
 						// new BinaryVarOperator(rt, helper, c, t, content, index,
 						// IExpression.class.equals(classes[1]), expectedContentTypes, signature);
 					} else {
-						proto =
-							new OperatorProto(kw, method, helper, c, false, rt, signature,
-								IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes);
+						proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
+							IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes, plugin);
 						// new BinaryOperator(rt, helper, c, t, content, index, IExpression.class.equals(classes[1]),
 						// expectedContentTypes, signature);
 					}
 				} else {
-					proto =
-						new OperatorProto(kw, method, helper, c, false, rt, signature,
-							IExpression.class.equals(classes[classes.length - 1]), t, content, index,
-							expectedContentTypes);
+					proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
+						IExpression.class.equals(classes[classes.length - 1]), t, content, index, expectedContentTypes,
+						plugin);
 					// new NAryOperator(rt, helper, c, t, content, index,
 					// IExpression.class.equals(classes[classes.length - 1]), expectedContentTypes, signature);
 					// FIXME The lazy attribute is completely wrong here: it only applies to the last argument
@@ -366,6 +372,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final GamaHelper set) {
 		add(clazz, desc);
 		((VariableDescription) desc).addHelpers(get, init, set);
+		((VariableDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 	}
 
 	protected void _field(final Class clazz, final OperatorProto getter) {
@@ -403,12 +410,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	protected void _action(final String methodName, final Class clazz, final GamaHelper e, final IDescription desc) {
 		((PrimitiveDescription) desc).setHelper(e);
+		((PrimitiveDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		add(clazz, desc);
 	}
 
 	public static void initType(final String keyword, final IType typeInstance, final int id, final int varKind,
 		final Class ... wraps) {
-		Types.builtInTypes.initType(keyword, typeInstance, id, varKind, wraps);
+		IType type = Types.builtInTypes.initType(keyword, typeInstance, id, varKind, wraps);
+		type.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		Types.cache(id, typeInstance);
 		if ( !VARTYPE2KEYWORDS.containsKey(varKind) ) {
 			VARTYPE2KEYWORDS.put(varKind, new HashSet());
@@ -470,7 +479,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			// GuiUtils.debug("#### Adding implementation classes " + classes);
 			for ( final Class c1 : classes ) {
 				List<IDescription> toAdd = getAdditions(c1);
-				// GuiUtils.debug("    #### " + c1.getSimpleName() + ": " + toAdd);
+				// GuiUtils.debug(" #### " + c1.getSimpleName() + ": " + toAdd);
 				if ( toAdd != null && !toAdd.isEmpty() ) {
 					children.addAll(toAdd);
 				}
