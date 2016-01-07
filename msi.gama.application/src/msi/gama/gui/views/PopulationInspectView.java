@@ -271,7 +271,9 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	};
 
 	private String getSpeciesName() {
-		return getOutput().getSpecies().getName();
+		ISpecies species = getOutput().getSpecies();
+		if ( species == null ) { return IKeyword.AGENT; }
+		return species.getName();
 	}
 
 	private void fillAttributeMenu() {

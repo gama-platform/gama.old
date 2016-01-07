@@ -22,7 +22,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
@@ -252,7 +252,10 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public ISpecies getSpecies() {
 		if ( getValue() == null ) { return null; }
-		String speciesName = getValue().getType().getContentType().getSpeciesName();
+		SpeciesDescription sd = getValue().getType().getContentType().getSpecies();
+		if ( sd == null ) { return getScope().getModel().getSpecies(IKeyword.AGENT); }
+		if ( sd.equals(getScope().getModel().getDescription()) ) { return getScope().getModel().getSpecies(); }
+		String speciesName = sd.getName();
 		if ( speciesName == null ) {
 			speciesName = IKeyword.AGENT;
 		}

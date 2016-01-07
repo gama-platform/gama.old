@@ -100,9 +100,6 @@ public class SpeciesDescription extends TypeDescription {
 
 	protected void setSkills(final IExpressionDescription userDefinedSkills, final Set<String> builtInSkills) {
 		final Set<ISkill> skillInstances = new TLinkedHashSet();
-		if ( getName().equals("ball_in_group") ) {
-			System.out.println();
-		}
 		/* We try to add the control architecture if any is defined */
 		IExpressionDescription c = facets.get(CONTROL);
 		if ( c != null ) {
