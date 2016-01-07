@@ -105,6 +105,10 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 		plugins.add(plugin);
 	}
 
+	public AnnotatedElement getSupport() {
+		return support;
+	}
+
 	protected void setSupport(final AnnotatedElement support) {
 		this.support = support;
 	}

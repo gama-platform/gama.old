@@ -360,14 +360,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		ADDITIONS.get(clazz).add(desc);
 	}
 
-	private void add(final Class clazz, final OperatorProto expr) {
-		if ( !FIELDS.containsKey(clazz) ) {
-			FIELDS.put(clazz, new ArrayList());
-		}
-		FIELDS.get(clazz).add(expr);
-
-	}
-
 	protected void _var(final Class clazz, final IDescription desc, final GamaHelper get, final GamaHelper init,
 		final GamaHelper set) {
 		add(clazz, desc);
@@ -376,7 +368,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	protected void _field(final Class clazz, final OperatorProto getter) {
-		add(clazz, getter);
+		if ( !FIELDS.containsKey(clazz) ) {
+			FIELDS.put(clazz, new ArrayList());
+		}
+		FIELDS.get(clazz).add(getter);
 	}
 
 	// public static List<IDescription> getFieldDescriptions(final Class clazz) {

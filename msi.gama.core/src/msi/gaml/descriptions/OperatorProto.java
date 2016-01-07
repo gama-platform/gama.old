@@ -75,7 +75,7 @@ public class OperatorProto extends AbstractProto {
 		}
 	}
 
-	public OperatorProto(final String name, final AccessibleObject method, final GamaHelper helper,
+	public OperatorProto(final String name, final AnnotatedElement method, final GamaHelper helper,
 		final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final IType returnType,
 		final Signature signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
 		final int keyTypeProvider, final int[] expectedContentType, final String plugin) {
@@ -111,13 +111,13 @@ public class OperatorProto extends AbstractProto {
 		return result;
 	}
 
-	public OperatorProto(final String name, final AccessibleObject method, final GamaHelper helper,
+	public OperatorProto(final String name, final AnnotatedElement method, final GamaHelper helper,
 		final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final int returnType,
 		final Class signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
 		final int keyTypeProvider, final int[] expectedContentType) {
-		this(name, method, helper, canBeConst, isVarOrField, /* doc, */Types.get(returnType), new Signature(signature),
-			lazy, typeProvider, contentTypeProvider, keyTypeProvider, expectedContentType,
-			GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		this(name, method == null ? signature : method, helper, canBeConst, isVarOrField,
+			/* doc, */Types.get(returnType), new Signature(signature), lazy, typeProvider, contentTypeProvider,
+			keyTypeProvider, expectedContentType, GamaBundleLoader.CURRENT_PLUGIN_NAME);
 	}
 
 	public void setSignature(final IType ... t) {

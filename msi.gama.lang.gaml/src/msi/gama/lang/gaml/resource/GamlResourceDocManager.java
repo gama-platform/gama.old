@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import gnu.trove.map.hash.THashMap;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IOperator;
 import msi.gaml.factories.DescriptionFactory.IDocManager;
 
 /**
@@ -65,17 +64,7 @@ public class GamlResourceDocManager implements IDocManager {
 		Documentation(final IGamlDescription desc) {
 			plugin = desc.getDefiningPlugin();
 			title = encode(desc.getTitle());
-			String documentation = null;
-			if ( desc instanceof IOperator ) {
-				OperatorProto proto = ((IOperator) desc).getPrototype();
-				if ( proto != null ) {
-					documentation = proto.getMainDoc();
-				} else {
-					documentation = desc.getDocumentation();
-				}
-			} else {
-				documentation = desc.getDocumentation();
-			}
+			String documentation = desc.getDocumentation();
 			if ( plugin != null ) {
 				documentation += "\n<p/><i> [defined in " + plugin + "] </i>";
 			}
