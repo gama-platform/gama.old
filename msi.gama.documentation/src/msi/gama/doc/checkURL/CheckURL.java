@@ -21,10 +21,22 @@ public class CheckURL {
 	
 	static final String localPathFileName = "localPath.txt";
 	static final String githubContentUrl = "https://github.com/gama-platform/gama/wiki/Content";
+	static final String githubGamaSourceUrl = "https://github.com/gama-platform/gama/tree/master";
 	static String pathToContent;
 	static Map<String,String> fileMap = new HashMap<String,String>();
+	
+	static int numberOf_img_src_Syntax = 0;
+	static int numberOf_a_href_Syntax = 0;
+	static Map<String,Integer> forbiddenSyntaxMap = new HashMap<String,Integer>();
+	static final String[] listOfForbiddenSyntax = {"<img src","<a href"};
 
 	public static void main(String[] args) {
+		// init forbiddenSyntaxMap
+		for (int i=0; i<listOfForbiddenSyntax.length; i++)
+		{
+			forbiddenSyntaxMap.put(listOfForbiddenSyntax[i], 0);
+		}
+		
 		// find the local path to the wiki content
 		try {
 			if (!loadPathToContent())
@@ -51,6 +63,9 @@ public class CheckURL {
 				readAndRewriteMDFile(mdFiles.get(i));
 			} catch (IOException e) {}
 		}
+		
+		// display message if forbidden syntax has been found.
+		printForbiddenSyntax();
 	}
 	
 	private static boolean loadPathToContent() throws FileNotFoundException{
@@ -176,10 +191,20 @@ public class CheckURL {
 		if (matcher.find()) {
 			String firstPart = recursiveFindAndReplaceRegex(matcher.group(1),file, matcher.group(2)+matcher.group(3));
 			String stringMatched = matcher.group(2);
+			stringMatched = formatString(stringMatched);
 			String newURL = stringMatched;
 			if (stringMatched.startsWith("images"+File.separator) || stringMatched.startsWith("images/")) {
 				// case of image link. Image links are relative path
 				checkIfFileExists(path+File.separator+matcher.group(2));
+			}
+			else if (stringMatched.startsWith(githubGamaSourceUrl))
+			{
+				// case of link to a file of gamaSource. Check if the file exists
+				checkIfFileExists(getGamaSourceLocalPath()+stringMatched.split(githubGamaSourceUrl)[1]);
+			}
+			else if (stringMatched.contains("www."))
+			{
+				// case of web URL. Do nothing.
 			}
 			else
 			{
@@ -216,6 +241,40 @@ public class CheckURL {
 			}
 			str = firstPart+newURL+matcher.group(3);
 		}
+		checkPresenceOfForbiddenSyntax(str);
 		return str;
+	}
+	
+	private static void checkPresenceOfForbiddenSyntax(String str)
+	{
+		for (int i=0; i<listOfForbiddenSyntax.length; i++)
+		{
+			if (str.contains(listOfForbiddenSyntax[i]))
+			{
+				int newValue = forbiddenSyntaxMap.get(listOfForbiddenSyntax[i])+1;
+				forbiddenSyntaxMap.replace(listOfForbiddenSyntax[i], newValue);
+			}
+		}
+	}
+	
+	private static void printForbiddenSyntax()
+	{
+		for (int i=0; i<listOfForbiddenSyntax.length; i++)
+		{
+			if (forbiddenSyntaxMap.get(listOfForbiddenSyntax[i])>0)
+			{
+				System.out.println("WARNING : The forbidden syntax "+listOfForbiddenSyntax[i]+" has been detected "+forbiddenSyntaxMap.get(listOfForbiddenSyntax[i])+" times in the folder content...");
+			}
+		}
+	}
+	
+	private static String getGamaSourceLocalPath()
+	{
+		return Paths.get("").toAbsolutePath().toString()+File.separator+"..";
+	}
+	
+	private static String formatString(String str)
+	{
+		return str.replace("%20", " ");
 	}
 }
