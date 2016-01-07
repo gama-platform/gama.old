@@ -19,6 +19,7 @@ import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.ChildrenProvider;
+import msi.gaml.skills.ISkill;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
@@ -315,7 +316,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		this.parent = parent;
 	}
 
-	public Set<Class> getSkillClasses() {
+	public Set<Class<? extends ISkill>> getSkillClasses() {
 		return Collections.EMPTY_SET;
 	}
 

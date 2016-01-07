@@ -7,10 +7,8 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
-import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
-import msi.gaml.skills.ISkill;
 
 /**
  * Class IDescriptionSerializer.
@@ -69,32 +67,32 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
-		@Override
-		protected void collectPluginsInFacetValue(final SpeciesDescription s, final String key,
-			final Set<String> plugins) {
-			if ( key.equals(SKILLS) ) {
-				IExpressionDescription ed = s.getFacets().get(key);
-				if ( ed == null ) { return; }
-				Set<String> strings = ed.getStrings(s, true);
-				for ( String name : strings ) {
-					ISkill sk = AbstractGamlAdditions.getSkillInstanceFor(name);
-					if ( sk != null ) {
-						plugins.add(sk.getDefiningPlugin());
-					}
-				}
-			} else if ( key.equals(CONTROL) ) {
-				IExpressionDescription ed = s.getFacets().get(key);
-				if ( ed == null ) { return; }
-				String name = ed.getExpression().literalValue();
-				ISkill sk = AbstractGamlAdditions.getSkillInstanceFor(name);
-				if ( sk != null ) {
-					plugins.add(sk.getDefiningPlugin());
-				}
-			} else {
-				super.collectPluginsInFacetValue(s, key, plugins);
-			}
-		}
-
+		// @Override
+		// protected void collectPluginsInFacetValue(final SpeciesDescription s, final String key,
+		// final Set<String> plugins) {
+		// if ( key.equals(SKILLS) ) {
+		// IExpressionDescription ed = s.getFacets().get(key);
+		// if ( ed == null ) { return; }
+		// Set<String> strings = ed.getStrings(s, true);
+		// for ( String name : strings ) {
+		// ISkill sk = AbstractGamlAdditions.getSkillInstanceFor(name);
+		// if ( sk != null ) {
+		// plugins.add(sk.getDefiningPlugin());
+		// }
+		// }
+		// } else if ( key.equals(CONTROL) ) {
+		// IExpressionDescription ed = s.getFacets().get(key);
+		// if ( ed == null ) { return; }
+		// String name = ed.getExpression().literalValue();
+		// ISkill sk = AbstractGamlAdditions.getSkillInstanceFor(name);
+		// if ( sk != null ) {
+		// plugins.add(sk.getDefiningPlugin());
+		// }
+		// } else {
+		// super.collectPluginsInFacetValue(s, key, plugins);
+		// }
+		// }
+		//
 	}
 
 	public static class ModelSerializer extends SpeciesSerializer {

@@ -44,23 +44,7 @@ import msi.gaml.types.*;
 
 public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements IExpressionCompiler<Expression> {
 
-	private class IteratorPair {
-
-		/**
-		 * @param key
-		 * @param value
-		 */
-		public IteratorPair(final String key, final IVarExpression value) {
-			super();
-			this.key = key;
-			this.value = value;
-		}
-
-		String key;
-		IVarExpression value;
-	}
-
-	private final Deque<IteratorPair> iteratorContexts = new LinkedList();
+	private final Deque<IVarExpression> iteratorContexts = new LinkedList();
 	private IExpression world;
 	// To disable reentrant parsing (Issue 782)
 	private IExpressionDescription currentExpressionDescription;
@@ -140,7 +124,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	private IExpression skill(final String name) {
-		return factory.createConst(name, Types.STRING);
+		return factory.createConst(name, Types.SKILL);
 	}
 
 	// KEEP
@@ -162,8 +146,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		// The unary "unit" operator should let the value of its child pass through
 		if ( op.equals("°") || op.equals("#") ) { return expr; }
-		if ( isSpeciesName(op) ) { return factory.createOperator(AS, getContext(), e, expr,
-			factory.createConst(op, GamaType.from(getSpeciesContext(op)))); }
+		if ( isSpeciesName(
+			op) ) { return factory.createOperator(AS, getContext(), e, expr, getSpeciesContext(op).getSpeciesExpr()); }
 		// if ( isSkillName(op) ) { return factory.createOperator(AS, context, e, expr, skill(op)); }
 		return factory.createOperator(op, getContext(), e, expr);
 	}
@@ -262,7 +246,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if ( isTypeName(type) ) { return factory.createOperator(op, getContext(), e2.eContainer(), left,
 				factory.createConst(type, Types.STRING)); }
 			if ( isSkillName(type) ) { return factory.createOperator(IS_SKILL, getContext(), e2.eContainer(), left,
-				factory.createConst(type, Types.STRING)); }
+				factory.createConst(type, Types.SKILL)); }
 			getContext().error(
 				"'is' must be followed by a type, species or skill name. " + type + " is neither of these.",
 				IGamlIssue.NOT_A_TYPE, e2, type);
@@ -334,7 +318,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return binary(op, left, right);
 	}
 
-	private TypeDescription getSpeciesContext(final String e) {
+	private SpeciesDescription getSpeciesContext(final String e) {
 		return getContext().getSpeciesDescription(e);
 	}
 
@@ -350,6 +334,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	private boolean isTypeName(final String s) {
 		TypesManager tm = getContext().getModelDescription().getTypesManager();
+		if ( tm == null ) {
+			tm = Types.builtInTypes;
+		}
 		if ( !tm.containsType(s) ) { return false; }
 		IType t = tm.get(s);
 		SpeciesDescription sd = t.getSpecies();
@@ -540,7 +527,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// - type inconnu n'est pas mentionné (electors ??)
 		// - lors d'une affectation de nil warning sur le type (candidate)
 
-		if ( t.isAgentType() ) { return factory.createConst(t.getSpeciesName(), GamaType.from(t.getSpecies())); }
+		if ( t.isAgentType() ) { return t.getSpecies()
+			.getSpeciesExpr(); /* return factory.createSpeciesConstant(GamaType.from(t.getSpecies())); */ }
 		return factory.createTypeExpression(t);
 	}
 
@@ -854,8 +842,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return factory.createVar(SELF, tt, true, IVarExpression.SELF, null);
 		}
 		if ( varName.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
-		if ( isSpeciesName(
-			varName) ) { return factory.createConst(varName, GamaType.from(getSpeciesContext(varName))); }
+		if ( isSpeciesName(varName) ) {
+			SpeciesDescription sd = getSpeciesContext(varName);
+			return sd == null ? null : sd.getSpeciesExpr();
+			// IExpression expr = factory.createSpeciesConstant(GamaType.from(getSpeciesContext(varName)));
+			// return expr;
+		}
 		IDescription temp_sd = getContext() == null ? null : getContext().getDescriptionDeclaringVar(varName);
 
 		if ( temp_sd != null ) {
@@ -1056,16 +1048,16 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	//
 
 	public IVarExpression getEachExpr(final EObject object) {
-		IteratorPair p = iteratorContexts.peek();
+		IVarExpression p = iteratorContexts.peek();
 		if ( p == null ) {
 			getContext().error("'each' is not accessible in this context", IGamlIssue.UNKNOWN_VAR, object);
 			return null;
 		}
-		return p.value;
+		return p;
 	}
 
 	public void setEach_Expr(final String iterator, final IVarExpression each_expr) {
-		iteratorContexts.push(new IteratorPair(iterator, each_expr));
+		iteratorContexts.push(each_expr);
 	}
 
 	private IExpressionDescription getCurrentExpressionDescription() {

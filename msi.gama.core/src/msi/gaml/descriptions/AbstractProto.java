@@ -18,11 +18,11 @@ import msi.gama.precompiler.GamlAnnotations.*;
  */
 public abstract class AbstractProto implements IGamlDescription, INamed, IGamlable {
 
-	private final String name;
-	private final String plugin;
-	protected final AnnotatedElement support;
+	protected String name;
+	protected String plugin;
+	protected AnnotatedElement support;
 
-	AbstractProto(final String name, final AnnotatedElement support, final String plugin) {
+	protected AbstractProto(final String name, final AnnotatedElement support, final String plugin) {
 		this.name = name;
 		this.plugin = plugin;
 		this.support = support;
@@ -103,6 +103,10 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 	@Override
 	public void collectPlugins(final Set<String> plugins) {
 		plugins.add(plugin);
+	}
+
+	protected void setSupport(final AnnotatedElement support) {
+		this.support = support;
 	}
 
 	public doc getDocAnnotation() {

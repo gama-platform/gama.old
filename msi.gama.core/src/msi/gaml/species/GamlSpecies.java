@@ -79,7 +79,10 @@ import msi.gaml.types.*;
 			optional = true,
 			doc = @doc("is the topology toric (defaut: false). Needs to be defined on the global species.") ),
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the species") ),
-		@facet(name = IKeyword.PARENT, type = IType.ID, optional = true, doc = @doc("the parent class (inheritance)") ),
+		@facet(name = IKeyword.PARENT,
+			type = IType.SPECIES,
+			optional = true,
+			doc = @doc("the parent class (inheritance)") ),
 		@facet(name = IKeyword.EDGE_SPECIES,
 			type = IType.ID,
 			optional = true,
@@ -93,7 +96,7 @@ import msi.gaml.types.*;
 			optional = true,
 			doc = @doc("The species this species is mirroring. The population of this current species will be dependent of that of the species mirrored (i.e. agents creation and death are entirely taken in charge by GAMA with respect to the demographics of the species mirrored). In addition, this species is provided with an attribute called 'target', which allows each agent to know which agent of the mirrored species it is representing.") ),
 		@facet(name = IKeyword.CONTROL,
-			type = IType.LABEL, /* values = { ISpecies.EMF, IKeyword.FSM }, */
+			type = IType.SKILL, /* values = { ISpecies.EMF, IKeyword.FSM }, */
 			optional = true,
 			doc = @doc("defines the architecture of the species (e.g. fsm...)") ),
 		@facet(name = "compile", type = IType.BOOL, optional = true, doc = @doc("") , internal = true),

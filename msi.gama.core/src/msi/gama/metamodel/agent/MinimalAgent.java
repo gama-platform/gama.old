@@ -25,9 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.compilation.ISkillConstructor;
 import msi.gaml.operators.Cast;
-import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
@@ -72,11 +70,11 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public abstract IShape getGeometry();
-
-	@Override
-	public void setDuplicator(final ISkillConstructor duplicator) {
-		// Nothing to do here
-	}
+	//
+	// @Override
+	// public void setDuplicator(final ISkillConstructor duplicator) {
+	// // Nothing to do here
+	// }
 
 	/**
 	 *
@@ -100,10 +98,10 @@ public abstract class MinimalAgent implements IAgent {
 		// return nullCheck(getGeometry(), "The agent's shape is nil");
 	}
 
-	@Override
-	public ISkill duplicate() {
-		return this;
-	}
+	// @Override
+	// public ISkill duplicate() {
+	// return this;
+	// }
 
 	@Override
 	public IAgent getAgent() {
@@ -588,10 +586,10 @@ public abstract class MinimalAgent implements IAgent {
 	// return getGeometry().asShapeWithGeometry(scope, g);
 	// }
 
-	@Override
-	public String getDefiningPlugin() {
-		return null;
-	}
+	// @Override
+	// public String getDefiningPlugin() {
+	// return null;
+	// }
 
 	public void setDefiningPlugin(final String plugin) {
 

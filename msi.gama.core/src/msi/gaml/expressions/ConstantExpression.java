@@ -29,7 +29,7 @@ public class ConstantExpression extends AbstractExpression {
 	public ConstantExpression(final Object val, final IType t, final String name) {
 		value = val;
 		type = t;
-		setName(name);
+		setName(name == null ? val == null ? "nil" : val.toString() : name);
 	}
 
 	public ConstantExpression(final Object val, final IType t) {

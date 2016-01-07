@@ -1,31 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'FsmStateStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.architecture.finite_state_machine;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.*;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.finite_state_machine.FsmStateStatement.StateValidator;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -36,25 +30,27 @@ import msi.gaml.types.IType;
 
 /**
  * The Class FsmStateStatement.
- * 
+ *
  * @author drogoul
  */
 
 @symbol(name = FsmStateStatement.STATE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
 @inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@facets(value = {
-	@facet(name = FsmStateStatement.INITIAL,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("specifies whether the state is the initial one (default value = false)")),
-	@facet(name = FsmStateStatement.FINAL,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("specifies whether the state is a final one (i.e. there is no transition from this state to another state) (default value= false)")),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the state")) },
+@facets(
+	value = {
+		@facet(name = FsmStateStatement.INITIAL,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("specifies whether the state is the initial one (default value = false)") ),
+		@facet(name = FsmStateStatement.FINAL,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("specifies whether the state is a final one (i.e. there is no transition from this state to another state) (default value= false)") ),
+		@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the state") ) },
 	omissible = IKeyword.NAME)
 @validator(StateValidator.class)
-@doc(value = "A state, like a reflex, can contains several statements that can be executed at each time step by the agent.",
+@doc(
+	value = "A state, like a reflex, can contains several statements that can be executed at each time step by the agent.",
 	usages = { @usage(value = "Here is an exemple integrating 2 states and the statements in the FSM architecture:",
 		examples = { @example(value = "	state s_init initial: true {", isExecutable = false),
 			@example(value = "		enter { write \"Enter in\" + state; }", isExecutable = false),
@@ -72,8 +68,8 @@ import msi.gaml.types.IType;
 			@example(value = "", isExecutable = false), @example(value = "	write state;", isExecutable = false),
 			@example(value = "", isExecutable = false),
 			@example(value = "	exit {write 'EXIT from '+state;}", isExecutable = false),
-			@example(value = "}", isExecutable = false) }) }, see = { FsmStateStatement.ENTER, FsmStateStatement.EXIT,
-		FsmTransitionStatement.TRANSITION })
+			@example(value = "}", isExecutable = false) }) },
+	see = { FsmStateStatement.ENTER, FsmStateStatement.EXIT, FsmTransitionStatement.TRANSITION })
 public class FsmStateStatement extends AbstractStatementSequence {
 
 	static List<String> AllowedArchitectures = Arrays.asList(IKeyword.USER_CONTROLLED, IKeyword.USER_FIRST,
@@ -90,18 +86,19 @@ public class FsmStateStatement extends AbstractStatementSequence {
 			// Verify that the state is inside a species with fsm control
 			SpeciesDescription species = description.getSpeciesContext();
 			String keyword = description.getKeyword();
-			String control = species.getControlName();
-			if ( keyword.equals(STATE) ) {
-				if ( !control.equals(IKeyword.FSM) && !AllowedArchitectures.contains(control) ) {
+			IArchitecture control = species.getControl();
+			// String control = species.getControlName();
+			if ( !(control instanceof FsmArchitecture) ) {
+				if ( keyword.equals(STATE) ) {
 					description.error("A state can only be defined in an fsm-controlled or user-controlled species",
 						IGamlIssue.WRONG_CONTEXT);
 					return;
+				} else if ( control.getClass() == FsmArchitecture.class ) {
+					description.error("A " + description.getKeyword() +
+						" can only be defined in a user-controlled species (one of" + AllowedArchitectures + ")",
+						IGamlIssue.WRONG_CONTEXT);
+					return;
 				}
-			} else if ( !AllowedArchitectures.contains(control) ) {
-				description.error("A " + description.getKeyword() +
-					" can only be defined in a user-controlled species (one of" + AllowedArchitectures + ")",
-					IGamlIssue.WRONG_CONTEXT);
-				return;
 			}
 			if ( !Assert.nameIsValid(description) ) { return; }
 			Facets ff = description.getFacets();

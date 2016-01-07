@@ -1,26 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Variable.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.variables;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -34,43 +29,52 @@ import msi.gaml.types.*;
 
 /**
  * The Class Var.
- * 
- * 
+ *
+ *
  * FIXME FOR THE MOMENT SPECIES_WIDE CONSTANTS ARE NOT CONSIDERED (TOO MANY THINGS TO CONSIDER AND
  * POSSIBILITIES TO MAKE FALSE POSITIVE)
  */
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false, doc = @doc("The name of the attribute")),
-	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("The initial value of the attribute")),
-	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc(value = "",
-		deprecated = "Use 'update' instead")),
-	@facet(name = IKeyword.UPDATE,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
-	@facet(name = IKeyword.FUNCTION,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
-	@facet(name = IKeyword.CONST,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Indicates whether this attribute can be subsequently modified or not")),
-	@facet(name = IKeyword.CATEGORY,
-		type = IType.LABEL,
-		optional = true,
-		doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
-	@facet(name = IKeyword.PARAMETER,
-		type = IType.LABEL,
-		optional = true,
-		doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
-	@facet(name = IKeyword.AMONG,
-		type = IType.LIST,
-		optional = true,
-		doc = @doc("A list of constant values among which the attribute can take its value")) },
+@facets(
+	value = {
+		@facet(name = IKeyword.NAME,
+			type = IType.NEW_VAR_ID,
+			optional = false,
+			doc = @doc("The name of the attribute") ),
+		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
+		@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
+		@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
+		@facet(name = IKeyword.INIT,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("The initial value of the attribute") ),
+		@facet(name = IKeyword.VALUE,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc(value = "", deprecated = "Use 'update' instead") ),
+		@facet(name = IKeyword.UPDATE,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute") ),
+		@facet(name = IKeyword.FUNCTION,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'") ),
+		@facet(name = IKeyword.CONST,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("Indicates whether this attribute can be subsequently modified or not") ),
+		@facet(name = IKeyword.CATEGORY,
+			type = IType.LABEL,
+			optional = true,
+			doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead") ),
+		@facet(name = IKeyword.PARAMETER,
+			type = IType.LABEL,
+			optional = true,
+			doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead") ),
+		@facet(name = IKeyword.AMONG,
+			type = IType.LIST,
+			optional = true,
+			doc = @doc("A list of constant values among which the attribute can take its value") ) },
 	omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.REGULAR, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
@@ -102,8 +106,8 @@ public class Variable extends Symbol implements IVariable {
 				// Verifying that the name is not a type
 				IType t = cd.getTypeNamed(name);
 				if ( t != Types.NO_TYPE && !t.isAgentType() ) {
-					cd.error(name + " is a type name. It cannot be used as a variable name", IGamlIssue.IS_A_TYPE,
-						NAME, name);
+					cd.error(name + " is a type name. It cannot be used as a variable name", IGamlIssue.IS_A_TYPE, NAME,
+						name);
 					return;
 				}
 				// Verifying that the name is not reserved
@@ -116,7 +120,8 @@ public class Variable extends Symbol implements IVariable {
 			// The name is ok. Now verifying the logic of facets
 			Facets ff = cd.getFacets();
 			// Verifying that 'function' is not used in conjunction with other "value" facets
-			if ( ff.containsKey(FUNCTION) && (ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)) ) {
+			if ( ff.containsKey(FUNCTION) &&
+				(ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)) ) {
 				cd.error("A function cannot have an 'init' or 'update' facet", IGamlIssue.REMOVE_VALUE, FUNCTION);
 				return;
 			}
@@ -197,8 +202,8 @@ public class Variable extends Symbol implements IVariable {
 
 			if ( init == null ) {
 				String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + " must have an initial value", IGamlIssue.NO_INIT, cd.getUnderlyingElement(null), cd
-					.getType().toString());
+				cd.error(p + " must have an initial value", IGamlIssue.NO_INIT, cd.getUnderlyingElement(null),
+					cd.getType().toString());
 				return;
 			}
 			// AD 15/04/14: special case for files
@@ -220,7 +225,7 @@ public class Variable extends Symbol implements IVariable {
 	protected boolean isNotModifiable /* , doUpdate */;
 	private final int definitionOrder;
 	public GamaHelper getter, initer, setter;
-	protected String /* gName, sName, iName, */pName, cName;
+	protected String /* gName, sName, iName, */ pName, cName;
 	protected ISkill gSkill/* , iSkill */, sSkill;
 
 	public Variable(final IDescription sd) {
@@ -337,7 +342,8 @@ public class Variable extends Symbol implements IVariable {
 			} else if ( initExpression != null ) {
 				_setVal(a, scope, scope.evaluate(initExpression, a));
 			} else if ( initer != null ) {
-				_setVal(a, scope, initer.run(scope, a, gSkill == null ? (ISkill) a : gSkill));
+				Object val = initer.run(scope, a, gSkill == null ? a : gSkill);
+				_setVal(a, scope, val);
 			} else {
 				// doUpdate = true;
 				_setVal(a, scope, getType().getDefault());
@@ -401,8 +407,8 @@ public class Variable extends Symbol implements IVariable {
 		if ( among == null ) { return val; }
 		if ( among.contains(val) ) { return val; }
 		if ( among.isEmpty() ) { return null; }
-		throw GamaRuntimeException.error(
-			"Value " + val + " is not included in the possible values of variable " + name, scope);
+		throw GamaRuntimeException.error("Value " + val + " is not included in the possible values of variable " + name,
+			scope);
 	}
 
 	@Override
@@ -464,7 +470,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public Object getInitialValue(final IScope scope) {
-		if ( initExpression != null /* && initExpression.isConst() */) {
+		if ( initExpression != null /* && initExpression.isConst() */ ) {
 			try {
 				return initExpression.value(scope);
 			} catch (final GamaRuntimeException e) {
@@ -492,9 +498,9 @@ public class Variable extends Symbol implements IVariable {
 	// return false;
 	// }
 
-	public ISkill getgSkill() {
-		return gSkill;
-	}
+	// public ISkill getgSkill() {
+	// return gSkill;
+	// }
 
 	/**
 	 * Method isDefined()

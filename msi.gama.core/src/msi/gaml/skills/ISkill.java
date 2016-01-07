@@ -11,8 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.skills;
 
-import msi.gama.common.interfaces.INamed;
-import msi.gaml.compilation.ISkillConstructor;
+import msi.gama.common.interfaces.IVarAndActionSupport;
+import msi.gaml.descriptions.IGamlDescription;
 
 /**
  * SkillInterface - convenience interface for any object that might be used as a "skill" for an
@@ -20,13 +20,11 @@ import msi.gaml.compilation.ISkillConstructor;
  *
  * @author drogoul 4 juil. 07
  */
-public interface ISkill extends INamed {
+public interface ISkill extends IGamlDescription, IVarAndActionSupport {
 
 	public abstract ISkill duplicate();
 
-	public void setDuplicator(ISkillConstructor duplicator);
-
-	public String getDefiningPlugin();
+	// public void setDuplicator(ISkillConstructor duplicator);
 
 	public void setDefiningPlugin(final String plugin);
 }

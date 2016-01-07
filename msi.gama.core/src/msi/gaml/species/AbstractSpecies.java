@@ -314,7 +314,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public void setChildren(final List<? extends ISymbol> children) {
 		// First we verify the control architecture
 		final IArchitecture control = getArchitecture();
-		if ( control == null ) { throw GamaRuntimeException.error("The control of this species cannot be computed"); }
+		if ( control == null ) { throw GamaRuntimeException
+			.error("The control of species " + description.getName() + " cannot be computed"); }
 		// Then we classify the children in their categories
 		for ( final ISymbol s : children ) {
 			if ( s instanceof ISpecies ) {

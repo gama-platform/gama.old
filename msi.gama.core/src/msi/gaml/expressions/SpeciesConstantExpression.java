@@ -20,10 +20,8 @@ import msi.gaml.types.IType;
 
 public class SpeciesConstantExpression extends ConstantExpression {
 
-	boolean computed = false;
-
-	public SpeciesConstantExpression(final String val, final IType t) {
-		super(val, t);
+	public SpeciesConstantExpression(final String string, final IType t) {
+		super(string, t);
 	}
 
 	@Override
@@ -56,8 +54,13 @@ public class SpeciesConstantExpression extends ConstantExpression {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		if ( computed ) { return super.serialize(includingBuiltIn); }
+		// if ( computed ) { return super.serialize(includingBuiltIn); }
 		return (String) value;
+	}
+
+	@Override
+	public String getDocumentation() {
+		return getType().getContentType().getSpecies().getDocumentationWithoutMeta();
 	}
 
 	/**
@@ -66,7 +69,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	 */
 	@Override
 	public void collectPlugins(final Set<String> plugins) {
-		SpeciesDescription sd = ModelDescription.ROOT.getSpeciesDescription((String) value);
+		SpeciesDescription sd = getType().getContentType().getSpecies();
 		if ( sd != null ) {
 			plugins.add(sd.getDefiningPlugin());
 		}

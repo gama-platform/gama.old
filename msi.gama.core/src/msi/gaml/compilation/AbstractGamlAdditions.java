@@ -29,7 +29,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.extensions.genstar.*;
 import msi.gaml.factories.*;
-import msi.gaml.skills.ISkill;
+import msi.gaml.skills.*;
 import msi.gaml.types.*;
 
 /**
@@ -208,14 +208,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		GamaFileType.addFileTypeDefinition(string, Types.get(keyType), Types.get(contentType), clazz, helper, s);
 	}
 
-	protected void _skill(final String name, final Class clazz, final ISkillConstructor helper,
-		final String ... species) {
-		ISkill skill = helper.newInstance();
+	protected void _skill(final String name, final Class clazz, final String ... species) {
+		ISkill skill = Skill.Factory.create(name, clazz, GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		// ISkill skill = helper.newInstance();
 		if ( skill instanceof AbstractArchitecture ) {
 			ARCHITECTURES.add(name);
 		}
-		skill.setName(name);
-		skill.setDuplicator(helper);
+		// skill.setName(name);
+		// skill.setDuplicator(helper);
 		SKILL_INSTANCES.put(clazz, skill);
 		for ( String spec : species ) {
 			SPECIES_SKILLS.put(spec, name);
@@ -448,7 +448,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return getSkillInstanceFor(getSkillClassFor(skillName));
 	}
 
-	public static Class getSkillClassFor(final String skillName) {
+	public static Class<? extends ISkill> getSkillClassFor(final String skillName) {
 		return SKILL_CLASSES.get(skillName);
 	}
 
@@ -461,12 +461,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static ISkill getSkillInstanceFor(final Class skillClass) {
 		ISkill skill = SKILL_INSTANCES.get(skillClass);
-		// FIXME Replace this with an ISkillCreator that simply returns a new instance
-		// Generates this ISkillCreator in GamaProcessor/JavaWriter
 		return skill == null ? null : skill.duplicate();
 	}
 
-	public static Set<IDescription> getAllChildrenOf(final Class base, final Set<Class> skills) {
+	public static Set<IDescription> getAllChildrenOf(final Class base, final Set<Class<? extends ISkill>> skills) {
 		Set<Class> key = new HashSet();
 		if ( base != null ) {
 			key.add(base);

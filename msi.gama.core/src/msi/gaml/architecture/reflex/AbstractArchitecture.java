@@ -1,20 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractArchitecture.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.architecture.reflex;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.compilation.ISkillConstructor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.skills.*;
@@ -22,32 +20,18 @@ import msi.gaml.species.ISpecies;
 
 public abstract class AbstractArchitecture extends Skill implements IArchitecture {
 
-	ISkillConstructor duplicator;
-
 	public AbstractArchitecture() {
 		super();
 	}
 
 	@Override
-	public void setDuplicator(final ISkillConstructor duplicator) {
-		this.duplicator = duplicator;
-	}
-
-	@Override
 	public IArchitecture duplicate() {
-		ISkill duplicate = null;
-		if ( duplicator == null ) {
-			duplicate = new ReflexArchitecture();
-			duplicate.setName(IKeyword.REFLEX);
-		} else {
-			duplicate = duplicator.newInstance();
-			duplicate.setName(getName());
-		}
+		ISkill duplicate = Skill.Factory.create(getName(), getClass(), getDefiningPlugin());
 		return (IArchitecture) duplicate;
 	}
 
 	@Override
-	public String serialize(boolean includingBuiltIn) {
+	public String serialize(final boolean includingBuiltIn) {
 		return getName();
 	}
 
