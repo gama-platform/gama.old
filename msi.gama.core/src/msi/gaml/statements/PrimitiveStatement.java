@@ -66,7 +66,7 @@ public class PrimitiveStatement extends ActionStatement {
 		Object result = null;
 		scope.stackArguments(actualArgs);
 		final IAgent agent = scope.getAgentScope();
-		helper.run(scope, agent, skill == null ? agent : skill);
+		result = helper.run(scope, agent, skill == null ? agent : skill);
 		return result;
 	}
 
