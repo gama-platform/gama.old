@@ -28,7 +28,7 @@ public class CheckURL {
 	static int numberOf_img_src_Syntax = 0;
 	static int numberOf_a_href_Syntax = 0;
 	static Map<String,Integer> forbiddenSyntaxMap = new HashMap<String,Integer>();
-	static final String[] listOfForbiddenSyntax = {"<img src","<a href"};
+	static final String[] listOfForbiddenSyntax = {"<img src","<a href","TODO","Under Construction"};
 
 	public static void main(String[] args) {
 		// init forbiddenSyntaxMap
