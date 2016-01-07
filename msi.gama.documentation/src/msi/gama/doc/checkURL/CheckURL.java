@@ -25,10 +25,9 @@ public class CheckURL {
 	static String pathToContent;
 	static Map<String,String> fileMap = new HashMap<String,String>();
 	
-	static int numberOf_img_src_Syntax = 0;
-	static int numberOf_a_href_Syntax = 0;
 	static Map<String,Integer> forbiddenSyntaxMap = new HashMap<String,Integer>();
 	static final String[] listOfForbiddenSyntax = {"<img src","<a href","TODO","Under Construction"};
+	static int numberOfErrorsDetected = 0;
 
 	public static void main(String[] args) {
 		// init forbiddenSyntaxMap
@@ -63,6 +62,9 @@ public class CheckURL {
 				readAndRewriteMDFile(mdFiles.get(i));
 			} catch (IOException e) {}
 		}
+		
+		// display number of errors detected.
+		printNumberOfErrorDetected();
 		
 		// display message if forbidden syntax has been found.
 		printForbiddenSyntax();
@@ -118,6 +120,7 @@ public class CheckURL {
 		if (f.exists() && !f.isDirectory())
 			return true;
 		System.out.println("----> ERROR : File "+filePath+" does not exist.");
+		numberOfErrorsDetected++;
 		return false;
 	}
 	
@@ -231,6 +234,7 @@ public class CheckURL {
 				// check if the file exists in the map
 				if (!fileMap.containsKey(fileName)) {
 					System.out.println("----> ERROR in file "+file.getName()+": " + fileName + " is not a referenced file...");
+					numberOfErrorsDetected++;
 				}
 				else {
 					// find in the map the correct URL to put
@@ -252,7 +256,7 @@ public class CheckURL {
 			if (str.contains(listOfForbiddenSyntax[i]))
 			{
 				int newValue = forbiddenSyntaxMap.get(listOfForbiddenSyntax[i])+1;
-				forbiddenSyntaxMap.replace(listOfForbiddenSyntax[i], newValue);
+				forbiddenSyntaxMap.put(listOfForbiddenSyntax[i], newValue);
 			}
 		}
 	}
@@ -266,6 +270,12 @@ public class CheckURL {
 				System.out.println("WARNING : The forbidden syntax "+listOfForbiddenSyntax[i]+" has been detected "+forbiddenSyntaxMap.get(listOfForbiddenSyntax[i])+" times in the folder content...");
 			}
 		}
+	}
+	
+	private static void printNumberOfErrorDetected()
+	{
+		System.out.println("---------------------");
+		System.out.println(numberOfErrorsDetected+" links could not be verified.");
 	}
 	
 	private static String getGamaSourceLocalPath()
