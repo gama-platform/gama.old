@@ -89,7 +89,7 @@ public class GamaOsmFile extends GamaGisFile {
 					if ( entity instanceof Node ) {
 						Node node = (Node) entity;
 						nodes.add(node);
-						Geometry g =
+						Geometry g = gis == null ? new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry() :
 							gis.transform(new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry());
 						nodesPt.put(node.getId(), new GamaShape(g));
 					} else if ( entity instanceof Way ) {

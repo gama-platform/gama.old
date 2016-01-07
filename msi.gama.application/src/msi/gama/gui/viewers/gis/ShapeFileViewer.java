@@ -1,4 +1,4 @@
-package msi.gama.gui.viewers.shapefile;
+package msi.gama.gui.viewers.gis;
 
 import java.awt.Color;
 import java.io.*;
@@ -24,7 +24,6 @@ import org.geotools.swt.styling.simple.*;
 import org.geotools.swt.tool.CursorTool;
 import org.geotools.swt.utils.Utils;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
@@ -91,8 +90,8 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	SwtMapPane pane;
 	MapContent content;
 	GamaToolbar2 toolbar;
-	ShapefileDataStore store;
 	IFile file;
+	SimpleFeatureSource featureSource;
 	boolean noCRS = false;
 	Mode mode;
 	FeatureTypeStyle fts;
@@ -113,9 +112,9 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 		IPath path = fi.getPath();
 		File f = path.makeAbsolute().toFile();
 		try {
-			store = new ShapefileDataStore(f.toURI().toURL());
+			ShapefileDataStore store = new ShapefileDataStore(f.toURI().toURL());
 			content = new MapContent();
-			SimpleFeatureSource featureSource = store.getFeatureSource();
+			featureSource = store.getFeatureSource();
 			style = Utils.createStyle(f, featureSource);
 			layer = new FeatureLayer(featureSource, style);
 			mode = determineMode(featureSource.getSchema(), "Polygon");
@@ -158,7 +157,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 		pane.redraw();
 	}
 
-	private void displayInfoString() {
+	protected void displayInfoString() {
 		String s;
 		GamaUIColor color;
 
@@ -197,7 +196,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 				private void fillMenu() {
 					AgentsMenu.separate(menu, "Bounds");
 					try {
-						ReferencedEnvelope env = store.getFeatureSource().getBounds();
+						ReferencedEnvelope env = featureSource.getBounds();
 						MenuItem m2 = new MenuItem(menu, SWT.NONE);
 						m2.setEnabled(false);
 						m2.setText("     - upper corner : " + env.getUpperCorner().getOrdinate(0) + " " +
@@ -224,7 +223,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 							m2.setEnabled(false);
 							m2.setText("     - " + entry.getKey() + " (" + entry.getValue() + ")");
 						}
-						java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
+						//java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

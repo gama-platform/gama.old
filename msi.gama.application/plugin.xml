@@ -54,6 +54,12 @@
             name="HTML (in GAMA)"
             priority="normal">
       </content-type>
+      <content-type
+            file-extensions="osm,OSM,pbf,PBF,bz2,BZ2,gz,GZ "
+            id="msi.gama.gui.osmfile.type"
+            name="OSM"
+            priority="high">
+      </content-type>
    </extension>
 
 
@@ -191,7 +197,7 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="msi.gama.gui.viewers.shapefile.ShapeFileViewer"
+            class="msi.gama.gui.viewers.gis.ShapeFileViewer"
             default="true"
             extensions="shp"
             icon="icons/file.shape2.png"
@@ -199,6 +205,17 @@
             name="ShapeFile Viewer">
          <contentTypeBinding
                contentTypeId="msi.gama.gui.shapefile.type">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="msi.gama.gui.viewers.gis.OSMFileViewer"
+            default="true"
+            extensions="osm,pbf,bz2,gz "
+            icon="icons/file.shape2.png"
+            id="msi.gama.application.osm.viewer"
+            name="OSMFile Viewer">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.osmfile.type">
          </contentTypeBinding>
       </editor>
    </extension>
