@@ -244,6 +244,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	 */
 	@Override
 	public void stopDisplayingTooltips() {
+		if ( toolbar == null || toolbar.isDisposed() ) { return; }
 		if ( toolbar.hasTooltip() ) {
 			toolbar.wipe(SWT.LEFT, false);
 		}
