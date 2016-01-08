@@ -11,15 +11,31 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
+import static org.apache.commons.lang.StringUtils.join;
+import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveAllTokens;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.geotools.data.DataUtilities;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.Bound;
@@ -50,6 +66,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -61,8 +78,116 @@ import msi.gaml.types.Types;
 	buffer_index = IType.INT)
 public class GamaOsmFile extends GamaGisFile {
 
+	public static class OSMInfo extends GamaFileMetaData {
+
+		final int itemNumber;
+		final CoordinateReferenceSystem crs;
+		final double width;
+		final double height;
+		final Map<String, String> attributes = new LinkedHashMap();
+
+		public OSMInfo(final URL url, final long modificationStamp) {
+			super(modificationStamp);
+			CoordinateReferenceSystem crs = null;
+			ReferencedEnvelope env2 = new ReferencedEnvelope();
+		
+			int number = 0;
+			try {
+				File f = new File(url.toURI());
+				GamaOsmFile osmfile = new GamaOsmFile(null,f.getAbsolutePath());
+				attributes.putAll(osmfile.getAttributes());
+				
+				SimpleFeatureType TYPE = DataUtilities.createType("geometries","geom:LineString");
+				ArrayList<SimpleFeature> list = new ArrayList<SimpleFeature>();
+				for (IShape shape : osmfile.iterable(null)) {
+					list.add( SimpleFeatureBuilder.build( TYPE, new Object[]{ shape.getInnerGeometry()}, null) );
+				}
+				SimpleFeatureCollection collection = new ListFeatureCollection(TYPE,list);
+				SimpleFeatureSource featureSource = DataUtilities.source( collection ); 
+				
+				env2 = featureSource.getBounds();
+				number = osmfile.nbObjects;
+				crs = osmfile.getOwnCRS();
+			} catch (Exception e) {
+				System.out.println("Error in reading metadata of " + url);
+
+			} finally {
+				width = env2 != null ? env2.getWidth()* (Math.PI/180) * 6378137 : 0;
+				height = env2 != null ? env2.getHeight() * (Math.PI/180) * 6378137: 0;
+				itemNumber = number;
+				this.crs = crs;
+			}
+
+		}
+
+		public CoordinateReferenceSystem getCRS() {
+			return crs;
+		}
+
+		public OSMInfo(final String propertiesString) throws NoSuchAuthorityCodeException, FactoryException {
+			super(propertiesString);
+			String[] segments = split(propertiesString);
+			itemNumber = Integer.valueOf(segments[1]);
+			String crsString = segments[2];
+			if ( "null".equals(crsString) ) {
+				crs = null;
+			} else {
+				crs = CRS.parseWKT(crsString);
+			}
+			width = Double.valueOf(segments[3]);
+			height = Double.valueOf(segments[4]);
+			if ( segments.length > 5 ) {
+				String[] names = splitByWholeSeparatorPreserveAllTokens(segments[5], SUB_DELIMITER);
+				String[] types = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
+				for ( int i = 0; i < names.length; i++ ) {
+					attributes.put(names[i], types[i]);
+				}
+			}
+		}
+
+		/**
+		 * Method getSuffix()
+		 * @see msi.gama.util.file.GamaFileMetaInformation#getSuffix()
+		 */
+		@Override
+		public String getSuffix() {
+			return "" + itemNumber + " objects | " + Math.round(width) + "m x " + Math.round(height) +
+				"m";
+		}
+
+		@Override
+		public String getDocumentation() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Shapefile").append(Strings.LN);
+			sb.append(itemNumber).append(" objects").append(Strings.LN);
+			sb.append("Dimensions: ").append(Math.round(width) + "m x " + Math.round(height) + "m").append(Strings.LN);
+			sb.append("Coordinate Reference System: ").append(crs == null ? "No CRS" : crs.getName().getCode())
+				.append(Strings.LN);
+			if ( !attributes.isEmpty() ) {
+				sb.append("Attributes: ").append(Strings.LN);
+				for ( Map.Entry<String, String> entry : attributes.entrySet() ) {
+					sb.append("<li>").append(entry.getKey()).append(" (" + entry.getValue() + ")").append("</li>");
+				}
+			}
+			return sb.toString();
+		}
+
+		public Map<String, String> getAttributes() {
+			return attributes;
+		}
+
+		@Override
+		public String toPropertyString() {
+			String attributeNames = join(attributes.keySet(), SUB_DELIMITER);
+			String types = join(attributes.values(), SUB_DELIMITER);
+			Object[] toSave = new Object[] { super.toPropertyString(), itemNumber, crs == null ? "null" : crs.toWKT(),
+				width, height, attributeNames, types };
+			return join(toSave, DELIMITER);
+		}
+	}
 	GamaMap<String, GamaList> filteringOptions;
 	Map<String, String> attributes;
+	int nbObjects;
 
 	/**
 	 * @throws GamaRuntimeException
@@ -98,7 +223,7 @@ public class GamaOsmFile extends GamaGisFile {
 		final List<Way> ways = new ArrayList<Way>();
 		final TLongHashSet intersectionNodes = new TLongHashSet();
 		final TLongHashSet usedNodes = new TLongHashSet();
-
+		
 		Sink sinkImplementation = new Sink() {
 
 			@Override
@@ -239,7 +364,7 @@ public class GamaOsmFile extends GamaGisFile {
 			}
 
 		}
-		System.out.println("attributes : " + attributes);
+		nbObjects = geometries == null ? 0 : geometries.size();
 		return geometries;
 	}
 

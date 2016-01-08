@@ -20,6 +20,7 @@ import msi.gama.util.file.*;
 import msi.gama.util.file.GAMLFile.GamlInfo;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import msi.gama.util.file.GamaImageFile.ImageInfo;
+import msi.gama.util.file.GamaOsmFile.OSMInfo;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gaml.factories.DescriptionFactory;
 
@@ -37,10 +38,20 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	public static final String IMAGE_CT_ID = "msi.gama.gui.images.type";
 	public static final String GAML_CT_ID = "msi.gama.gui.gaml.type";
 	public static final String SHAPEFILE_CT_ID = "msi.gama.gui.shapefile.type";
+	public static final String OSM_CT_ID = "msi.gama.gui.osm.type";
 	public static final String SHAPEFILE_SUPPORT_CT_ID = "msi.gama.gui.shapefile.support.type";
 
 	private final static FileMetaDataProvider instance = new FileMetaDataProvider();
 
+	public static final ArrayList<String> OSMExt = new ArrayList<String>() {
+
+		{
+			add("osm");
+			add("gz");
+			add("pbf");
+			add("bz2");
+		}
+	};
 	public static final THashMap<String, String> longNames = new THashMap() {
 
 		{
@@ -128,6 +139,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			put(IMAGE_CT_ID, ImageInfo.class);
 			put(GAML_CT_ID, GamlInfo.class);
 			put(SHAPEFILE_CT_ID, ShapeInfo.class);
+			put(OSM_CT_ID, OSMInfo.class);
 			put(SHAPEFILE_SUPPORT_CT_ID, GenericFileInfo.class);
 			put("project", ProjectInfo.class);
 		}
@@ -189,6 +201,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if ( data == null ) {
 			if ( SHAPEFILE_CT_ID.equals(ct) ) {
 				data = createShapeFileMetaData(file);
+			} else if ( OSM_CT_ID.equals(ct) ) {
+				data = createOSMMetaData(file);
 			} else if ( IMAGE_CT_ID.equals(ct) ) {
 				data = createImageFileMetaData(file);
 			} else if ( CSV_CT_ID.equals(ct) ) {
@@ -341,6 +355,17 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return info;
 
 	}
+	
+	private GamaOsmFile.OSMInfo createOSMMetaData(final IFile file) {
+		OSMInfo info = null;
+		try {
+			info = new OSMInfo(file.getLocationURI().toURL(), file.getModificationStamp());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return info;
+
+	}
 
 	private GenericFileInfo createShapeFileSupportMetaData(final IFile file) {
 		GenericFileInfo info = null;
@@ -375,6 +400,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		String ext = p.getFileExtension();
 		if ( "gaml".equals(ext) ) { return GAML_CT_ID; }
 		if ( "shp".equals(ext) ) { return SHAPEFILE_CT_ID; }
+		if ( OSMExt.contains(ext) ) { return OSM_CT_ID; }
 		if ( longNames.contains(ext) ) { return SHAPEFILE_SUPPORT_CT_ID; }
 		return "";
 	}

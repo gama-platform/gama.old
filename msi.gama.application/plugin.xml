@@ -55,7 +55,7 @@
             priority="normal">
       </content-type>
       <content-type
-            file-extensions="osm,OSM,pbf,PBF,bz2,BZ2,gz,GZ "
+            file-extensions="osm,OSM,pbf,PBF,bz2,BZ2,gz,GZ"
             id="msi.gama.gui.osm.type"
             name="OSM"
             priority="high">
@@ -214,7 +214,7 @@
       <editor
             class="msi.gama.gui.viewers.gis.OSMFileViewer"
             default="true"
-            extensions="gz, osm, pbf, bz2"
+            extensions="gz,osm,pbf,bz2"
             icon="icons/file.shape2.png"
             id="msi.gama.application.osm.viewer"
             name="OSM Viewer">
