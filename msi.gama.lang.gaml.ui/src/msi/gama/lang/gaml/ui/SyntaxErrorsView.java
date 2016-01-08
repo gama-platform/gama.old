@@ -5,6 +5,7 @@ import org.eclipse.core.commands.*;
 import org.eclipse.core.expressions.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
@@ -196,4 +197,6 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		new ConfigureContentsDialogHandler().execute(ev);
 	}
 
+	@Override
+	public void setToogle(final Action toggle) {}
 }

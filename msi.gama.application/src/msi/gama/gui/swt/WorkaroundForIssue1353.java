@@ -5,10 +5,10 @@
 package msi.gama.gui.swt;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.swing.Platform;
+import msi.gama.gui.views.LayeredDisplayView;
 
 /**
  * Class WorkaroundForIssue1353. Only for MacOS X, Eclipse Mars and Java 1.7
@@ -25,15 +25,18 @@ public class WorkaroundForIssue1353 {
 
 	private static Shell getShell() {
 		if ( invisibleShell == null ) {
-			invisibleShell = new Shell(SwtGui.getShell(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
+			invisibleShell = new Shell(SwtGui.getShell(), SWT.APPLICATION_MODAL);
 		}
+		invisibleShell.setAlpha(0);
 		return invisibleShell;
 	}
 
 	private static void manipulateShell() {
+		System.out.println("Manipulating Shell");
 		if ( !getShell().isFocusControl() ) {
 			getShell().open();
 		}
+		getShell().setSize(20, 20);
 		getShell().setVisible(false);
 	}
 
@@ -78,7 +81,7 @@ public class WorkaroundForIssue1353 {
 		return editorExitEnterTracker;
 	}
 
-	public static void installOn(final Composite control) {
+	public static void installOn(final Composite control, final LayeredDisplayView view) {
 		if ( !Platform.isCocoa() ) { return; }
 		control.addMouseTrackListener(getDisplayListener());
 		control.addDisposeListener(new DisposeListener() {
@@ -91,7 +94,7 @@ public class WorkaroundForIssue1353 {
 		});
 	}
 
-	public static void installOn(final StyledText control) {
+	public static void installOn(final Composite control) {
 		if ( !Platform.isCocoa() ) { return; }
 		control.addMouseTrackListener(getEditorListener());
 		control.addDisposeListener(new DisposeListener() {

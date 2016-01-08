@@ -739,7 +739,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 						}
 					}
 				};
-				menu.open(toolbar, trigger);
+				menu.open(toolbar.getToolbar(SWT.RIGHT), trigger);
 			}
 
 		}, SWT.RIGHT);
