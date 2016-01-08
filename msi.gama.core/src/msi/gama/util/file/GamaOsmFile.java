@@ -11,25 +11,48 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
-import org.openstreetmap.osmosis.core.domain.v0_6.*;
-import org.openstreetmap.osmosis.core.task.v0_6.*;
+import org.openstreetmap.osmosis.core.domain.v0_6.Bound;
+import org.openstreetmap.osmosis.core.domain.v0_6.Entity;
+import org.openstreetmap.osmosis.core.domain.v0_6.Node;
+import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
+import org.openstreetmap.osmosis.core.domain.v0_6.Way;
+import org.openstreetmap.osmosis.core.domain.v0_6.WayNode;
+import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
+import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 import org.openstreetmap.osmosis.xml.common.CompressionMethod;
 import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
-import com.vividsolutions.jts.geom.*;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+
 import crosby.binary.osmosis.OsmosisReader;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.hash.TLongHashSet;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.types.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
+import msi.gama.util.TOrderedHashMap;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @file(name = "osm",
 	extensions = { "osm", "pbf", "bz2", "gz" },
@@ -39,6 +62,7 @@ import msi.gaml.types.*;
 public class GamaOsmFile extends GamaGisFile {
 
 	GamaMap<String, GamaList> filteringOptions;
+	Map<String, String> attributes;
 
 	/**
 	 * @throws GamaRuntimeException
@@ -132,6 +156,18 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 	}
 
+	private void addAttribute(String nameAt, Object val) {
+		String type = attributes.get(nameAt);
+		if (type.equals("string")) return;
+		String newType = "int";
+		try {Integer.parseInt(val.toString()); }catch(Exception e) {
+			try {Double.parseDouble(val.toString()); }catch(Exception e2) {
+				newType = "string";
+			}
+		}
+		
+		if (type == null || newType.equals("string")) attributes.put(nameAt, newType);
+	}
 	/**
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
@@ -150,8 +186,10 @@ public class GamaOsmFile extends GamaGisFile {
 			boolean hasAttributes = !node.getTags().isEmpty();
 			if ( pt != null ) {
 				for ( Tag tg : node.getTags() ) {
-					String key = tg.getKey();
-					pt.setAttribute(key, tg.getValue());
+					String key = (tg.getKey().split(":"))[0];
+					Object val =  tg.getValue();
+					if (val != null) addAttribute(key,val);
+					pt.setAttribute(key,val);
 					if ( key.equals("highway") ) {
 						intersectionNodes.add(node.getId());
 					}
@@ -165,7 +203,10 @@ public class GamaOsmFile extends GamaGisFile {
 		for ( Way way : ways ) {
 			Map<String, Object> values = new TOrderedHashMap<String, Object>();
 			for ( Tag tg : way.getTags() ) {
-				String key = tg.getKey();
+				
+				String key = (tg.getKey().split(":"))[0];
+				Object val =  tg.getValue();
+				if (val != null) addAttribute(key,val);
 				values.put(key, tg.getValue());
 			}
 			boolean isPolyline = values.containsKey("highway") ||
@@ -189,14 +230,16 @@ public class GamaOsmFile extends GamaGisFile {
 				if ( geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty() &&
 					geom.getInnerGeometry().getArea() > 0 ) {
 					for ( String key : values.keySet() ) {
-						geom.setAttribute(key, values.get(key));
+						Object val =  values.get(key);
+						
+						geom.setAttribute(key, val);
 					}
 					geometries.add(geom);
 				}
 			}
 
 		}
-
+		System.out.println("attributes : " + attributes);
 		return geometries;
 	}
 
@@ -333,5 +376,15 @@ public class GamaOsmFile extends GamaGisFile {
 		// Is it always true ?
 		return DefaultGeographicCRS.WGS84;
 	}
+
+	public Map<String,String> getAttributes() {
+		if ( attributes == null ) {
+			attributes = new HashMap<String,String>();
+			getFeatureIterator(null, true);
+		}
+		return attributes;
+	}
+	
+	
 
 }
