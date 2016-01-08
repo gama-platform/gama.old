@@ -128,6 +128,14 @@ public class SwitchButton extends Canvas {
 	 * </ul>
 	 *
 	 */
+	public SwitchButton(final Composite parent, final int style, final String trueText, final String falseText,
+		final String text) {
+		this(parent, style);
+		this.textForSelect = trueText;
+		this.textForUnselect = falseText;
+		this.text = text;
+	}
+
 	public SwitchButton(final Composite parent, final int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
 
@@ -211,7 +219,7 @@ public class SwitchButton extends Canvas {
 
 		final Point buttonSize = this.computeButtonSize();
 		this.drawSwitchButton(buttonSize);
-		// this.drawText(buttonSize);
+		this.drawText(buttonSize);
 
 		// if ( this.borderColor != null ) {
 		// this.drawBorder();
@@ -331,22 +339,22 @@ public class SwitchButton extends Canvas {
 		return new Point(width, height);
 	}
 
-	// /**
-	// * Draws the text besides the button
-	// *
-	// * @param buttonSize whole size of the button
-	// */
-	// private void drawText(final Point buttonSize) {
-	// this.gc.setForeground(this.getForeground());
-	// this.gc.setBackground(this.getBackground());
-	//
-	// final int widgetHeight = this.computeSize(0, 0, true).y;
-	// final int textHeight = this.gc.stringExtent(this.text).y;
-	// final int x = 2 + buttonSize.x + this.gap;
-	//
-	// this.gc.drawString(this.text, x, (widgetHeight - textHeight) / 2);
-	// }
-	//
+	/**
+	 * Draws the text besides the button
+	 *
+	 * @param buttonSize whole size of the button
+	 */
+	private void drawText(final Point buttonSize) {
+		this.gc.setForeground(this.getForeground());
+		this.gc.setBackground(this.getBackground());
+
+		final int widgetHeight = this.computeSize(0, 0, true).y;
+		final int textHeight = this.gc.stringExtent(this.text).y;
+		final int x = 2 + buttonSize.x + this.gap;
+
+		this.gc.drawString(this.text, x, (widgetHeight - textHeight) / 2);
+	}
+
 	// /**
 	// * Draw (eventually) the border around the button
 	// */

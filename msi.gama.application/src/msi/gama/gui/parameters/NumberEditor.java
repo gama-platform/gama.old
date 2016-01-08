@@ -1,23 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'NumberEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.GamaIcons;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
 
 public abstract class NumberEditor<T extends Number> extends ExpressionBasedEditor<T> {
 
@@ -79,7 +79,9 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 			modifyValue(null);
 		} else {
 			param.setDefined(true);
-			expression.modifyNoPopup();
+			internalModification = true;
+			expression.modifyValue();
+			internalModification = false;
 		}
 		checkButtons();
 	}

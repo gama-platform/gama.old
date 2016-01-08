@@ -27,7 +27,7 @@ import msi.gama.common.util.*;
 import msi.gama.gui.parameters.ExpressionControl;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.*;
-import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -66,7 +66,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	// volatile boolean refreshing;
 	ToolItem populationMenu;
 	TableViewer viewer;
-	org.eclipse.swt.widgets.List attributesMenu;
+	Composite attributesMenu;
 	private AgentComparator comparator;
 	private ExpressionControl editor;
 	// private String speciesName;
@@ -201,21 +201,17 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private void createMenus(final Composite parent) {
-		final Composite menuComposite = new Composite(parent, SWT.NONE);
-		menuComposite.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		attributesMenu = new Composite(parent, SWT.NONE);
+		attributesMenu.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		final GridLayout layout = new GridLayout(1, false);
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.verticalSpacing = 1;
-		menuComposite.setLayout(layout);
-		Label attributesLabel = new Label(menuComposite, SWT.NONE);
-		attributesLabel.setText("Attributes");
-		attributesLabel.setFont(SwtGui.getLabelfont());
-		attributesMenu = new org.eclipse.swt.widgets.List(menuComposite, SWT.V_SCROLL | SWT.MULTI);
-		attributesMenu.setBackground(parent.getBackground());
-		attributesMenu.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		attributesMenu.setLayout(layout);
+		attributesMenu.setBackground(IGamaColors.WHITE.color());
+		// attributesMenu.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fillAttributeMenu();
-		menuComposite.pack(true);
+		attributesMenu.pack(true);
 	}
 
 	private void createExpressionComposite() {
@@ -259,11 +255,24 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		toolbar.refresh(true);
 	}
 
+	private List<String> getAttributesSelection() {
+		ArrayList<String> result = new ArrayList();
+		for ( Control c : attributesMenu.getChildren() ) {
+			if ( c instanceof SwitchButton ) {
+				SwitchButton b = (SwitchButton) c;
+				if ( b.getSelection() ) {
+					result.add(b.getText());
+				}
+			}
+		}
+		return result;
+	}
+
 	private final SelectionAdapter attributeAdapter = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			selectedColumns.put(getSpeciesName(), Arrays.asList(attributesMenu.getSelection()));
+			selectedColumns.put(getSpeciesName(), getAttributesSelection());
 			recreateViewer();
 			update(getOutput());
 		}
@@ -279,7 +288,14 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	private void fillAttributeMenu() {
 		// Not yet declared or already disposed
 		if ( attributesMenu == null || attributesMenu.isDisposed() ) { return; }
-		attributesMenu.removeAll();
+		for ( Control c : attributesMenu.getChildren() ) {
+			c.dispose();
+		}
+		Label attributesLabel = new Label(attributesMenu, SWT.NONE);
+		attributesLabel.setText("Attributes");
+		attributesLabel.setFont(SwtGui.getNavigFolderFont());
+		attributesLabel = new Label(attributesMenu, SWT.None);
+		attributesLabel.setText(" ");
 		String tooltipText;
 		String speciesName = getSpeciesName();
 		if ( speciesName.equals(IKeyword.AGENT) ) {
@@ -289,17 +305,14 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 				". Select the ones you want to display in the table";
 		}
 		attributesMenu.setToolTipText(tooltipText);
-
+		boolean hasPreviousSelection = selectedColumns.get(speciesName) != null;
 		final List<String> names = new ArrayList(getOutput().getSpecies().getVarNames());
 		Collections.sort(names);
-		attributesMenu.setItems(names.toArray(new String[0]));
-		for ( int i = 0; i < names.size(); i++ ) {
-			if ( selectedColumns.get(speciesName) != null && selectedColumns.get(speciesName).contains(names.get(i)) ) {
-				attributesMenu.select(i);
-			}
+		for ( String name : names ) {
+			SwitchButton b = new SwitchButton(attributesMenu, SWT.NONE, "   ", "   ", name);
+			b.setSelection(hasPreviousSelection && selectedColumns.get(speciesName).contains(name));
+			b.addSelectionListener(attributeAdapter);
 		}
-		attributesMenu.addSelectionListener(attributeAdapter);
-
 	}
 
 	@Override
@@ -386,7 +399,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private void createColumns() {
-		final List<String> selection = new ArrayList(Arrays.asList(attributesMenu.getSelection()));
+		final List<String> selection = new ArrayList(getAttributesSelection());
 		selection.remove(ID_ATTRIBUTE);
 		selection.add(0, ID_ATTRIBUTE);
 		for ( final String title : selection ) {
@@ -756,7 +769,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	@Override
 	public void close() {
 		if ( attributesMenu != null && !attributesMenu.isDisposed() ) {
-			attributesMenu.removeAll();
+			attributesMenu.dispose();
 		}
 		provider.dispose();
 		super.close();
