@@ -14,6 +14,7 @@ package msi.gama.lang.gaml.ui.editor;
 import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Region;
@@ -229,6 +230,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		toolbarParent.layout();
 		installGestures();
 		WorkaroundForIssue1353.installOn(getStyledText());
+		// WorkaroundForIssue1353.installOn(editor);
 	}
 
 	private void installGestures() {
@@ -597,6 +599,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	}
 
 	@Override
-	public void setFocus() {}
+	public void setFocus() {
+		getStyledText().setFocus();
+	}
+
+	@Override
+	public void setToogle(final Action toggle) {}
 
 }

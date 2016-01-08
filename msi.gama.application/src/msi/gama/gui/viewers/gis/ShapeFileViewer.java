@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -223,7 +224,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 							m2.setEnabled(false);
 							m2.setText("     - " + entry.getKey() + " (" + entry.getValue() + ")");
 						}
-						//java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
+						// java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -409,4 +410,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	public boolean zoomWhenScrolling() {
 		return false;
 	}
+
+	@Override
+	public void setToogle(final Action toggle) {}
 }

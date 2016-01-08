@@ -12,6 +12,7 @@
 package msi.gama.gui.views;
 
 import java.util.*;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
@@ -40,6 +41,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	protected Composite parent;
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
+	Action toggle;
 
 	enum UpdatePriority {
 		HIGH, LOW, HIGHEST, LOWEST;
@@ -161,6 +163,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		this.parent = GamaToolbarFactory.createToolbars(this, composite);
 		ownCreatePartControl(parent);
 		activateContext();
+		// toggle.run();
 	}
 
 	public abstract void ownCreatePartControl(Composite parent);
@@ -289,6 +292,21 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		if ( outputs.isEmpty() ) {
 			close();
 		}
+	}
+
+	@Override
+	public void showToolbar() {
+		// toggle.run();
+	}
+
+	@Override
+	public void hideToolbar() {
+		// toggle.run();
+	}
+
+	@Override
+	public void setToogle(final Action toggle) {
+		this.toggle = toggle;
 	}
 
 }

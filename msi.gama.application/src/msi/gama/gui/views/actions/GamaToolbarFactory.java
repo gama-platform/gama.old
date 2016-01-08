@@ -43,10 +43,15 @@ public class GamaToolbarFactory {
 	}
 
 	public static ITooltipDisplayer findTooltipDisplayer(final Control c) {
+		GamaComposite gc = findGamaComposite(c);
+		return gc == null ? null : gc.displayer;
+	}
+
+	public static GamaComposite findGamaComposite(final Control c) {
 		if ( c instanceof Shell ) { return null; }
-		if ( c instanceof GamaComposite ) { return ((GamaComposite) c).displayer; }
+		if ( c instanceof GamaComposite ) { return (GamaComposite) c; }
 		// Control t = c;
-		return findTooltipDisplayer(c.getParent());
+		return findGamaComposite(c.getParent());
 	}
 
 	public static class ToggleAction extends Action {
@@ -133,6 +138,7 @@ public class GamaToolbarFactory {
 			IToolBarManager tm = ((IViewSite) site).getActionBars().getToolBarManager();
 			tm.add(toggle);
 			tm.update(true);
+			view.setToogle(toggle);
 		} else if ( site instanceof IEditorSite ) {
 			// WARNING Disabled for the moment.
 			// IActionBars tm = ((IEditorSite) site).getActionBars();

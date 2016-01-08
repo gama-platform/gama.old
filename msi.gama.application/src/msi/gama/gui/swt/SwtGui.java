@@ -570,10 +570,10 @@ public class SwtGui implements IGui {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
-			// IWorkbenchPart part = partRef.getPart(false);
-			// if ( part instanceof IGamaView ) {
-			// ((IGamaView) part).showToolbars(true);
-			// }
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( part instanceof IGamaView ) {
+				((IGamaView) part).showToolbar();
+			}
 		}
 
 		@Override
@@ -590,9 +590,10 @@ public class SwtGui implements IGui {
 
 		@Override
 		public void partDeactivated(final IWorkbenchPartReference partRef) {
-			// IWorkbenchPart part = partRef.getPart(false);
-			// if ( part instanceof IGamaView ) {
-			// ((IGamaView) part).showToolbars(false);
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( part instanceof IGamaView ) {
+				((IGamaView) part).hideToolbar();
+			}
 			// }
 
 		}
@@ -928,6 +929,7 @@ public class SwtGui implements IGui {
 		return EditorFactory.getInstance();
 	}
 
+	@Override
 	public DisplayDescription getDisplayDescriptionFor(final String name) {
 		return (DisplayDescription) DISPLAYS.get(name);
 	}

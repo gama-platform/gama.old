@@ -44,6 +44,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			public void mouseMoved(final java.awt.event.MouseEvent e) {
+				System.out.println("We move inside the AWT component");
 				GuiUtils.asyncRun(displayOverlay);
 			}
 
@@ -53,7 +54,6 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			}
 		};
 
-		// final boolean isOpenGL = getOutput().isOpenGL();
 		final String outputName = getOutput().getName();
 
 		OutputSynchronizer.incInitializingViews(outputName, getOutput().isPermanent()); // incremented in the SWT thread
@@ -88,7 +88,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
 					overlay.setVisible(true);
 				}
-				WorkaroundForIssue1353.installOn(surfaceComposite);
+				WorkaroundForIssue1353.installOn(surfaceComposite, AWTDisplayView.this);
 			}
 
 			@Override
@@ -203,7 +203,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 	@Override
 	public int computePreferredSize(final boolean width, final int availableParallel, final int availablePerpendicular,
 		final int preferredResult) {
-		return 400;
+		return 600;
 	}
 
 	/**

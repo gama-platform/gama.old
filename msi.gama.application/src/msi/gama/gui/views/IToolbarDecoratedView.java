@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchSite;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
@@ -71,5 +72,10 @@ public interface IToolbarDecoratedView {
 		boolean zoomWhenScrolling();
 
 	}
+
+	/**
+	 * @param toggle
+	 */
+	public void setToogle(Action toggle);
 
 }
