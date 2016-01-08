@@ -158,7 +158,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 	private void addAttribute(String nameAt, Object val) {
 		String type = attributes.get(nameAt);
-		if (type.equals("string")) return;
+		if (type != null && type.equals("string")) return;
 		String newType = "int";
 		try {Integer.parseInt(val.toString()); }catch(Exception e) {
 			try {Double.parseDouble(val.toString()); }catch(Exception e2) {

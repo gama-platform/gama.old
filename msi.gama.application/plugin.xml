@@ -56,7 +56,7 @@
       </content-type>
       <content-type
             file-extensions="osm,OSM,pbf,PBF,bz2,BZ2,gz,GZ "
-            id="msi.gama.gui.osmfile.type"
+            id="msi.gama.gui.osm.type"
             name="OSM"
             priority="high">
       </content-type>
@@ -102,6 +102,10 @@
                   <objectState
                         name="contentTypeId"
                         value="msi.gama.gui.shapefile.support.type">
+                  </objectState>
+                  <objectState
+                        name="contentTypeId"
+                        value="msi.gama.gui.osm.type">
                   </objectState>
                   </or>
                </and>
@@ -210,12 +214,12 @@
       <editor
             class="msi.gama.gui.viewers.gis.OSMFileViewer"
             default="true"
-            extensions="osm,pbf,bz2,gz "
+            extensions="gz, osm, pbf, bz2"
             icon="icons/file.shape2.png"
             id="msi.gama.application.osm.viewer"
-            name="OSMFile Viewer">
+            name="OSM Viewer">
          <contentTypeBinding
-               contentTypeId="msi.gama.gui.osmfile.type">
+               contentTypeId="msi.gama.gui.osm.type">
          </contentTypeBinding>
       </editor>
    </extension>
