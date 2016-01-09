@@ -132,7 +132,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		final Path path = createClipping(rect);
 		GamaUIColor color = GamaColors.get(colorCode);
 		Color background = hovered ? color.lighter() : color.color();
-		Color foreground = GamaColors.isDark(background) ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color();
+		Color foreground = GamaColors.getTextColorForBackground(background).color();
 
 		gc.setClipping(path);
 		gc.setForeground(foreground);

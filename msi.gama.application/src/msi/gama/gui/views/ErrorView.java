@@ -120,7 +120,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 	private void gotoEditor(final GamaRuntimeException exception) {
 
 		final EObject o = exception.getEditorContext();
-		if ( o != null && GamaPreferences.CORE_REVEAL_AND_STOP.getValue() ) {
+		if ( o != null ) {
 			GuiUtils.asyncRun(new Runnable() {
 
 				@Override
@@ -136,10 +136,11 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 	protected Composite createItemContentsFor(final GamaRuntimeException exception) {
 		final ScrolledComposite compo = new ScrolledComposite(getViewer(), SWT.NONE);
 		final GridLayout layout = new GridLayout(1, false);
-		final GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		final GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		final Table t = new Table(compo, SWT.H_SCROLL | SWT.V_SCROLL);
+		t.setFont(SwtGui.getExpandfont());
 
 		t.addSelectionListener(new SelectionListener() {
 
@@ -153,7 +154,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 		});
 		t.setLayoutData(firstColData);
 		final java.util.List<String> strings = exception.getContextAsList();
-		t.setLinesVisible(true);
+		// t.setLinesVisible(true);
 		t.setForeground(exception.isWarning() ? GamaColors.get(SwtGui.WARNING_TEXT_COLOR.getValue()).color()
 			: GamaColors.get(SwtGui.ERROR_TEXT_COLOR.getValue()).color());
 		final TableColumn c = new TableColumn(t, SWT.NONE);
@@ -166,6 +167,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 		c.pack();
 		column2.pack();
 		t.setSize(t.computeSize(1000, SWT.DEFAULT));
+
 		compo.setContent(t);
 		compo.setSize(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return compo;

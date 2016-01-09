@@ -154,8 +154,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	@Override
 	public void setActive(final Boolean active) {
 		if ( titleLabel != null ) {
-			titleLabel.setForeground(active ? SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK)
-				: SwtGui.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			titleLabel.setForeground(active ? IGamaColors.BLACK.color() : GamaColors.system(SWT.COLOR_GRAY));
 		}
 		if ( !active ) {
 			for ( ToolItem t : items ) {

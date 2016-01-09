@@ -1,26 +1,26 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaIcons.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt;
 
-import gnu.trove.map.hash.THashMap;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
+import gnu.trove.map.hash.THashMap;
 
 /**
  * Class GamaIcons.
- * 
+ *
  * @author drogoul
  * @since 12 sept. 2013
- * 
+ *
  */
 public class GamaColors {
 
@@ -231,14 +231,26 @@ public class GamaColors {
 
 	public static int luminanceOf(final Color color) {
 		// return (int) (0.2126 * color.getRed() * color.getRed() / 255+ 0.7152 * color.getGreen() * color.getGreen() / 255+ 0.0722 * color.getBlue()* color.getRed() / 255); //first formula
-		return (int) (0.299 * color.getRed() * color.getRed() / 255 + 0.587 * color.getGreen() * color.getGreen() / 255 + 0.114 *
-			color.getBlue() * color.getBlue() / 255); // http://alienryderflex.com/hsp.html
+		return (int) (0.299 * color.getRed() * color.getRed() / 255 +
+			0.587 * color.getGreen() * color.getGreen() / 255 + 0.114 * color.getBlue() * color.getBlue() / 255); // http://alienryderflex.com/hsp.html
 		// return (int) (0.241 * color.getRed() * color.getRed() / 255 + 0.691 * color.getGreen() * color.getGreen() / 255 + 0.068 * color.getBlue()* color.getBlue() / 255); //
 		// http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
 	}
 
 	public static java.awt.Color toAwtColor(final Color color) {
 		return new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue());
+	}
+
+	/**
+	 * @param background
+	 * @return
+	 */
+	public static GamaUIColor getTextColorForBackground(final Color background) {
+		return isDark(background) ? IGamaColors.WHITE : IGamaColors.BLACK;
+	}
+
+	public static GamaUIColor getTextColorForBackground(final GamaUIColor background) {
+		return getTextColorForBackground(background.color());
 	}
 
 }

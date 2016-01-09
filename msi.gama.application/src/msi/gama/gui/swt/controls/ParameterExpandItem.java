@@ -223,8 +223,7 @@ public class ParameterExpandItem extends Item {
 					other = other.substring(l + 1);
 					gc.setForeground(IGamaColors.WARNING.color());
 				} else {
-					gc.setForeground(GamaColors.get(backgroundColor.getRGB()).isDark()
-						? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK));
+					gc.setForeground(GamaColors.getTextColorForBackground(backgroundColor).color());
 				}
 				// gc.setFont(SwtGui.getParameterEditorsFont());
 				drawX += size.x + 2 * SEPARATION;
