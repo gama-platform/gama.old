@@ -96,7 +96,7 @@ public class System {
 	}
 
 	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL })
-	@doc(value = "asks the user for some values (not defined as parameters)",
+	@doc(value = "asks the user for some values (not defined as parameters). Takes a string (optionnal) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
 	masterDoc = true,
 	comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
 		+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
@@ -113,7 +113,7 @@ public class System {
 	}
 
 	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL })
-	@doc(value = "asks the user for some values (not defined as parameters)",
+	@doc(value = "asks the user for some values (not defined as parameters). Takes a string (optionnal) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
 	examples = {
 		@example("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
 		@example(value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",

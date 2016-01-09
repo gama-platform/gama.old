@@ -30,25 +30,20 @@ import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.swt.utils.Utils;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaOsmFile;
-import msi.gama.util.file.GamaShapeFile;
-import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 
 public class OSMFileViewer extends ShapeFileViewer {
 
 	
 
-
+	Map<String,String> attributes;
 	
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
@@ -61,8 +56,9 @@ public class OSMFileViewer extends ShapeFileViewer {
 		
 		try {
 			GamaOsmFile osmfile = new GamaOsmFile(null,f.getAbsolutePath());
+			attributes = osmfile.getAttributes();
 			SimpleFeatureType TYPE = DataUtilities.createType("geometries","geom:LineString");
-			
+				
 			ArrayList<SimpleFeature> list = new ArrayList<SimpleFeature>();
 			
 			for (IShape shape : osmfile.iterable(null)) {
@@ -150,11 +146,10 @@ public class OSMFileViewer extends ShapeFileViewer {
 				AgentsMenu.separate(menu);
 				AgentsMenu.separate(menu, "Attributes");
 				try {
-					for (AttributeDescriptor attd : featureSource.getSchema().getAttributeDescriptors()) {
-						if (attd.getName().equals("geom")) continue;
+					for (String att : attributes.keySet()) {
 						MenuItem m2 = new MenuItem(menu, SWT.NONE);
 						m2.setEnabled(false);
-						m2.setText("     - " + attd.getName() + " (" +attd.getType() + ")");
+						m2.setText("     - " + att + " ("+ attributes.get(att)+ ")");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
