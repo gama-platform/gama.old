@@ -23,13 +23,13 @@ global{
 		//from the created generic agents, creation of the selected agents
 		ask osm_agent {
 			if (length(shape.points) = 1 and highway_str != nil ) {
-				create node_agent with: [shape ::shape, type:: highway_str];
+				create node_agent with: [shape ::shape, type:: highway_str]; 
 			} else {
 				if (highway_str != nil ) {
 					create road with: [shape ::shape, type:: highway_str];
 				} else if (building_str != nil){
 					create building with: [shape ::shape];
-				} 
+				}  
 			}
 			//do the generic agent die
 			do die;

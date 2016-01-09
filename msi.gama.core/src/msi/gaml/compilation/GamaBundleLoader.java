@@ -39,32 +39,35 @@ public class GamaBundleLoader {
 	public static String GRAMMAR_EXTENSION = "gaml.extension";
 	public static String CREATE_EXTENSION = "gama.create";
 	public static String MODELS_EXTENSION = "gama.models";
-	private static Set<String> plugins = new THashSet();
-	private static Map<String, String> pluginsWithModels = new THashMap();
+	public static String CONTENT_EXTENSION = "org.eclipse.core.contenttype.contentTypes";
+	private static Set<String> GAMA_PLUGINS = new THashSet();
+	private static Map<String, String> MODEL_PLUGINS = new THashMap();
+	public static Set<String> HANDLED_FILE_EXTENSIONS = new THashSet();
 
 	public static void preBuildContributions() {
 		final long start = System.currentTimeMillis();
-		// We first retrieve the elements declared as extensions to the GAML language, either with the new or the deprecated extension
+
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		// We retrieve the elements declared as extensions to the GAML language, either with the new or the deprecated extension
 		Set<IExtension> extensions = new HashSet();
 		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
 		extensions.addAll(Arrays.asList(p.getExtensions()));
 		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
 		extensions.addAll(Arrays.asList(p.getExtensions()));
-		// We retrieve their contributor plugin and add them to the plugins. In addition, we verify if they declare a folder called `models`
+		// We retrieve their contributor plugin and add them to the GAMA_PLUGINS. In addition, we verify if they declare a folder called `models`
 		for ( IExtension e : extensions ) {
 			IContributor plugin = e.getContributor();
-			plugins.add(plugin.getName());
+			GAMA_PLUGINS.add(plugin.getName());
 			if ( hasModels(plugin) ) {
-				pluginsWithModels.put(plugin.getName(), "models");
+				MODEL_PLUGINS.put(plugin.getName(), "models");
 			}
 		}
 
 		// We remove the core plugin, in order to build it first (important)
-		plugins.remove(CORE_PLUGIN);
+		GAMA_PLUGINS.remove(CORE_PLUGIN);
 		preBuild(CORE_PLUGIN);
 		// We then build the other extensions to the language
-		for ( String addition : plugins ) {
+		for ( String addition : GAMA_PLUGINS ) {
 			CURRENT_PLUGIN_NAME = addition;
 			preBuild(addition);
 		}
@@ -78,13 +81,29 @@ public class GamaBundleLoader {
 				e1.printStackTrace();
 			}
 		}
-		// We gather all the plugins that explicitly declare models using the non-default scheme (plugin > models ...).
+		// We gather all the GAMA_PLUGINS that explicitly declare models using the non-default scheme (plugin > models ...).
 		for ( IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION) ) {
-			pluginsWithModels.put(e.getContributor().getName(), e.getAttribute("name"));
+			MODEL_PLUGINS.put(e.getContributor().getName(), e.getAttribute("name"));
 		}
 		// CRUCIAL INITIALIZATIONS
 		AbstractGamlAdditions.buildMetaModel();
 		Types.init();
+
+		// We gather all the content types extensions defined in GAMA plugins (not in the other ones)
+		IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
+		Set<IExtension> contentExtensions = new HashSet();
+		contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
+		for ( IExtension ext : contentExtensions ) {
+			if ( GAMA_PLUGINS.contains(ext.getContributor().getName()) ) {
+				IConfigurationElement[] configs = ext.getConfigurationElements();
+				for ( IConfigurationElement config : configs ) {
+					HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(config.getAttribute("file-extensions").split(",")));
+					// System.out.println(ext.getContributor().getName() + ": " + config.getAttribute("file-extensions"));
+				}
+			}
+		}
+
+		//
 		GuiUtils.debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
 
@@ -146,11 +165,11 @@ public class GamaBundleLoader {
 	}
 
 	/**
-	 * The list of plugins declaring models, together with the inner path to the folder containing model projects
+	 * The list of GAMA_PLUGINS declaring models, together with the inner path to the folder containing model projects
 	 * @return
 	 */
 	public static Map<String, String> getPluginsWithModels() {
-		return pluginsWithModels;
+		return MODEL_PLUGINS;
 	}
 
 	/**
@@ -158,7 +177,7 @@ public class GamaBundleLoader {
 	 * @return
 	 */
 	public static boolean contains(final String name) {
-		return plugins.contains(name);
+		return GAMA_PLUGINS.contains(name);
 	}
 
 }
