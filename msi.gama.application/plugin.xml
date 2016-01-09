@@ -215,7 +215,7 @@
             class="msi.gama.gui.viewers.gis.OSMFileViewer"
             default="true"
             extensions="gz,osm,pbf,bz2"
-            icon="icons/file.shape2.png"
+            icon="icons/file.osm2.png"
             id="msi.gama.application.osm.viewer"
             name="OSM Viewer">
          <contentTypeBinding
