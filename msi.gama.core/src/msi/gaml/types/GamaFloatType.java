@@ -1,20 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaFloatType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaFont;
@@ -22,14 +22,15 @@ import msi.gaml.descriptions.IDescription;
 
 /**
  * Written by drogoul Modified on 1 ao�t 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @type(name = IKeyword.FLOAT,
 	id = IType.FLOAT,
 	wraps = { Double.class, double.class },
-	kind = ISymbolKind.Variable.NUMBER)
+	kind = ISymbolKind.Variable.NUMBER,
+	doc = { @doc("Represents floating point numbers (equivalent to Double in Java)") })
 public class GamaFloatType extends GamaType<Double> {
 
 	@Override

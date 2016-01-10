@@ -1,23 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Message.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -25,16 +22,34 @@ import msi.gaml.types.*;
 
 /**
  * The Class MessageProxy.
- * 
+ *
  * @author drogoul
  */
 
-@vars({ @var(name = Message.SENDER, type = IType.AGENT), @var(name = Message.RECEIVERS, type = IType.LIST),
-	@var(name = Message.PERFORMATIVE, type = IType.STRING), @var(name = Message.CONTENT, type = IType.LIST),
-	@var(name = Message.UNREAD, type = IType.BOOL, init = IKeyword.TRUE),
-	@var(name = Message.CONVERSATION, type = ConversationType.CONV_ID),
-	@var(name = Message.PROTOCOL, type = IType.STRING, depends_on = Message.CONVERSATION),
-	@var(name = Message.TIMESTAMP, type = IType.STRING) })
+@vars({ @var(name = Message.SENDER, type = IType.AGENT, doc = { @doc("Returns the agent that has sent this message") }),
+	@var(name = Message.RECEIVERS, type = IType.LIST, doc = { @doc("Returns the receivers of this message") }),
+	@var(name = Message.PERFORMATIVE,
+		type = IType.STRING,
+		doc = { @doc("Returns the name of the performative used in this message") }),
+	@var(name = Message.CONTENT,
+		type = IType.LIST,
+		doc = { @doc("Returns the contents of this message, as a list of arbitrary objects") }),
+	@var(name = Message.UNREAD,
+		type = IType.BOOL,
+		init = IKeyword.TRUE,
+		doc = { @doc("Returns whether this message is unread or not") }),
+	@var(name = Message.CONVERSATION,
+		type = ConversationType.CONV_ID,
+		doc = { @doc("Returns the conversation to which this message is belonging") }),
+	@var(name = Message.PROTOCOL,
+		type = IType.STRING,
+		depends_on = Message.CONVERSATION,
+		doc = {
+			@doc("Returns the protocol followed by the conversation in which this message has been produced (equivalent to 'msg.current_conversation.protocol')") }),
+	@var(name = Message.TIMESTAMP,
+		type = IType.STRING,
+		doc = {
+			@doc("Returns the time stamp of this message (I.e. at what cycle it has been produced) as a string") }) })
 public class Message implements IValue, Cloneable {
 
 	public final static String CONVERSATION = "current_conversation";
@@ -54,10 +69,10 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * @throws GamaRuntimeException Instantiates a new message proxy.
-	 * 
+	 *
 	 * @param sim the sim
 	 * @param s the s
-	 * 
+	 *
 	 * @throws GamlException the gaml exception
 	 */
 	public Message() {
@@ -66,10 +81,10 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * @throws GamaRuntimeException Instantiates a new message proxy.
-	 * 
+	 *
 	 * @param sim the sim
 	 * @param m the m
-	 * 
+	 *
 	 * @throws GamlException the gaml exception
 	 */
 	public Message(final Message m) throws GamaRuntimeException {
@@ -78,14 +93,14 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * @throws GamaRuntimeException Instantiates a new message proxy.
-	 * 
+	 *
 	 * @param sim the sim
 	 * @param sender the sender
 	 * @param receivers the receivers
 	 * @param content the content
 	 * @param performative the performative
 	 * @param conversation the conversation
-	 * 
+	 *
 	 * @throws GamlException the gaml exception
 	 */
 	public Message(final IAgent sender, final IList<IAgent> receivers, final IList content, final int performative,
@@ -105,7 +120,7 @@ public class Message implements IValue, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.extensions.fipa.IMessage#getMessage()
 	 */
 	public MessageData getData() {
@@ -114,7 +129,7 @@ public class Message implements IValue, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.extensions.fipa.IMessage#getSender()
 	 */
 	@getter(Message.SENDER)
@@ -124,7 +139,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Sets the sender.
-	 * 
+	 *
 	 * @param sender the sender
 	 */
 	@setter(Message.SENDER)
@@ -134,7 +149,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Gets the receivers.
-	 * 
+	 *
 	 * @return the receivers a list of the receivers' name.
 	 */
 	@getter(Message.RECEIVERS)
@@ -144,7 +159,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Sets the intended receivers.
-	 * 
+	 *
 	 * @param receivers the list of the receivers' name.
 	 */
 	@setter(Message.RECEIVERS)
@@ -154,7 +169,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Gets the contents of the message.
-	 * 
+	 *
 	 * @return the contents
 	 */
 	@getter(Message.CONTENT)
@@ -166,7 +181,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Sets the contents of the message.
-	 * 
+	 *
 	 * @param content the content
 	 */
 	@setter(Message.CONTENT)
@@ -176,7 +191,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Gets the performative.
-	 * 
+	 *
 	 * @return the performative
 	 */
 	@getter(Message.PERFORMATIVE)
@@ -186,7 +201,7 @@ public class Message implements IValue, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.extensions.fipa.IMessage#getPerformative()
 	 */
 	public int getPerformative() {
@@ -195,7 +210,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Sets the performative.
-	 * 
+	 *
 	 * @param performative the performative to set
 	 */
 	@setter(Message.PERFORMATIVE)
@@ -205,7 +220,7 @@ public class Message implements IValue, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.extensions.fipa.IMessage#setPerformative(int)
 	 */
 	public void setPerformative(final int performative) {
@@ -214,7 +229,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Gets the conversation.
-	 * 
+	 *
 	 * @return the conversationID
 	 */
 	@getter(Message.CONVERSATION)
@@ -224,7 +239,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Sets the conversation.
-	 * 
+	 *
 	 * @param conv the conv
 	 */
 	@setter(Message.CONVERSATION)
@@ -234,7 +249,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Checks if is unread.
-	 * 
+	 *
 	 * @return true, if is unread
 	 */
 	@getter(Message.UNREAD)
@@ -244,7 +259,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Sets the unread.
-	 * 
+	 *
 	 * @param unread the new unread
 	 */
 	@setter(Message.UNREAD)
@@ -254,7 +269,7 @@ public class Message implements IValue, Cloneable {
 
 	/**
 	 * Gets the protocol name.
-	 * 
+	 *
 	 * @return the protocol name
 	 */
 	@getter(Message.PROTOCOL)
@@ -265,7 +280,7 @@ public class Message implements IValue, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.extensions.fipa.IMessage#getTimestamp()
 	 */
 	@getter(Message.TIMESTAMP)

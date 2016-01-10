@@ -934,7 +934,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public IList getSpanningTree(final IScope scope) {
 		final KruskalMinimumSpanningTree tree = new KruskalMinimumSpanningTree(this);
-		return GamaListFactory.create(scope, getType().getContentType(), tree.getEdgeSet());
+		return GamaListFactory.create(scope, getType().getContentType(), tree.getMinimumSpanningTreeEdgeSet());
 	}
 
 	@Override
