@@ -47,6 +47,7 @@ species people parent: base {
 		} 
 		do move_to_new_place;
 	}
+
 	aspect simple {
 		draw circle(5) color: color;
 	}
