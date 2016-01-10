@@ -1,21 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AgentLayer.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
@@ -24,9 +25,9 @@ import msi.gaml.statements.*;
 
 /**
  * Written by drogoul Modified on 23 août 2008
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class AgentLayer extends AbstractLayer {
 
@@ -50,14 +51,23 @@ public class AgentLayer extends AbstractLayer {
 			aspectName = ((AgentLayerStatement) definition).getAspectName();
 
 			for ( final IAgent a : getAgentsToDisplay() ) {
-				if ( a != null/* && !scope.interrupted() */) {
-					IExecutable aspect = ((AgentLayerStatement) definition).getAspect();
-					if ( aspect == null ) {
-						aspect = a.getSpecies().getAspect(aspectName);
+				IExecutable aspect = null;
+				if ( a != null/* && !scope.interrupted() */ ) {
+					if ( a == GuiUtils.getHighlightedAgent() ) {
+						aspect = a.getSpecies().getAspect("highlighted");
+						// if ( aspect == null ) {
+						// aspect = AspectStatement.HIGHLIGHTED_ASPECT;
+						// }
+					} else {
+						aspect = ((AgentLayerStatement) definition).getAspect();
+						if ( aspect == null ) {
+							aspect = a.getSpecies().getAspect(aspectName);
+						}
 					}
 					if ( aspect == null ) {
 						aspect = AspectStatement.DEFAULT_ASPECT;
 					}
+
 					Object[] result = new Object[1];
 					scope.execute(aspect, a, null, result);
 					final Rectangle2D r = (Rectangle2D) result[0];
@@ -70,7 +80,7 @@ public class AgentLayer extends AbstractLayer {
 		} else if ( definition instanceof GridLayerStatement ) {
 
 			for ( final IAgent a : getAgentsToDisplay() ) {
-				if ( a != null/* && !scope.interrupted() */) {
+				if ( a != null/* && !scope.interrupted() */ ) {
 					IExecutable aspect = AspectStatement.DEFAULT_ASPECT;
 
 					Object[] result = new Object[1];
@@ -103,8 +113,8 @@ public class AgentLayer extends AbstractLayer {
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
 		final Set<IAgent> selectedAgents = new THashSet();
 		final Rectangle2D selection = new Rectangle2D.Double();
-		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2, y + IDisplaySurface.SELECTION_SIZE /
-			2);
+		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
+			y + IDisplaySurface.SELECTION_SIZE / 2);
 		for ( final Map.Entry<IAgent, Rectangle2D> entry : shapes.entrySet() ) {
 			if ( entry.getValue().intersects(selection) ) {
 				selectedAgents.add(entry.getKey());

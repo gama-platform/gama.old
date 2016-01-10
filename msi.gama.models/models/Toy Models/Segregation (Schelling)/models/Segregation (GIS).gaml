@@ -73,6 +73,10 @@ species space {
 		color <- empty(insiders) ? #white : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
 		draw shape color: color border: #black;
 	} 
+	aspect highlighted {
+		color <- #blue;
+		draw shape+10 color: color;
+	}
 }
 
 
