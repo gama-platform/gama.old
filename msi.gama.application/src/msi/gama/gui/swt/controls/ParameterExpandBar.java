@@ -623,7 +623,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		setScrollbar();
 	}
 
-	void onScroll(final Event event) {
+	public void onScroll(final Event event) {
 		ScrollBar verticalBar = getVerticalBar();
 		if ( verticalBar != null ) {
 			yCurrentScroll = verticalBar.getSelection();

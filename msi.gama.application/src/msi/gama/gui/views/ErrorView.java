@@ -166,11 +166,15 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 		}
 		c.pack();
 		column2.pack();
-		t.setSize(t.computeSize(1000, SWT.DEFAULT));
-
+		t.setSize(t.computeSize(SWT.DEFAULT, 300));
 		compo.setContent(t);
-		compo.setSize(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		// compo.setAlwaysShowScrollBars(true);
 		return compo;
+	}
+
+	@Override
+	public void setFocus() {
+
 	}
 
 	@Override
