@@ -27,12 +27,42 @@ import msi.gaml.types.*;
  *
  *
  */
-@vars({ @var(name = "area", type = IType.FLOAT), @var(name = "volume", type = IType.FLOAT),
-	@var(name = "centroid", type = IType.POINT), @var(name = "width", type = IType.FLOAT),
-	@var(name = "depth", type = IType.FLOAT), @var(name = "height", type = IType.FLOAT),
-	@var(name = "points", type = IType.LIST, of = IType.POINT), @var(name = "envelope", type = IType.GEOMETRY),
-	@var(name = "geometries", type = IType.LIST, of = IType.GEOMETRY), @var(name = "multiple", type = IType.BOOL),
-	@var(name = "holes", type = IType.LIST, of = IType.GEOMETRY), @var(name = "contour", type = IType.GEOMETRY) })
+@vars({ @var(name = "area", type = IType.FLOAT, doc = { @doc("Returns the total area of this geometry") }),
+	@var(name = "volume", type = IType.FLOAT, doc = { @doc("Returns the total volume of this geometry") }),
+	@var(name = "centroid", type = IType.POINT, doc = { @doc("Returns the centroid of this geometry") }),
+	@var(name = "width",
+		type = IType.FLOAT,
+		doc = { @doc("Returns the width (length on the x-axis) of the rectangular envelope of this  geometry") }),
+	@var(name = "depth",
+		type = IType.FLOAT,
+		doc = { @doc("Returns the depth (length on the z-axis) of the rectangular envelope of this geometry") }),
+	@var(name = "height",
+		type = IType.FLOAT,
+		doc = { @doc("Returns the height (length on the y-axis) of the rectangular envelope of this geometry") }),
+	@var(name = "points",
+		type = IType.LIST,
+		of = IType.POINT,
+		doc = {
+			@doc("Returns the list of points that delimit this geometry. A point will return a list with itself") }),
+	@var(name = "envelope",
+		type = IType.GEOMETRY,
+		doc = { @doc("Returns the envelope of this geometry (the smallest rectangle that contains the geometry)") }),
+	@var(name = "geometries",
+		type = IType.LIST,
+		of = IType.GEOMETRY,
+		doc = {
+			@doc("Returns the list of geometries that compose this geometry, or a list containing the geometry itself if it is simple") }),
+	@var(name = "multiple",
+		type = IType.BOOL,
+		doc = { @doc("Returns whether this geometry is composed of multiple geometries or not") }),
+	@var(name = "holes",
+		type = IType.LIST,
+		of = IType.GEOMETRY,
+		doc = {
+			@doc("Returns the list of holes inside this geometry as a list of geometries, and an emptly list if this geometry is solid") }),
+	@var(name = "contour",
+		type = IType.GEOMETRY,
+		doc = { @doc("Returns the polyline representing the contour of this geometry") }) })
 public class GamaShape implements IShape /* , IContainer */ {
 
 	// private static final boolean USE_PREPARED_OPERATIONS = false;
