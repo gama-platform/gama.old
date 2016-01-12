@@ -21,8 +21,16 @@ import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
-@vars({ @var(name = IKeyword.MEMBERS, type = IType.LIST),
-	@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT) })
+@vars({
+	@var(name = IKeyword.MEMBERS,
+		type = IType.LIST,
+		doc = {
+			@doc("Returns the list of agents for the population(s) of which the receiver agent is a direct host") }),
+	@var(name = IKeyword.AGENTS,
+		type = IType.LIST,
+		of = IType.AGENT,
+		doc = {
+			@doc("Returns the list of agents for the population(s) of which the receiver agent is a direct or undirect host") }) })
 public interface IMacroAgent extends IAgent {
 
 	/**

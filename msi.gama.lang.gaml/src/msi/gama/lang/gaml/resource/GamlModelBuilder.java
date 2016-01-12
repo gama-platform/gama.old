@@ -1,19 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlResourceBuilder.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import java.io.*;
 import java.util.*;
+import org.eclipse.emf.common.util.*;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.resource.*;
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
@@ -21,18 +25,13 @@ import msi.gama.lang.utils.EGaml;
 import msi.gama.util.file.GAMLFile;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.types.GamaFileType;
-import org.eclipse.emf.common.util.*;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.*;
 
 /**
  * Class GamlResourceBuilder.
- * 
+ *
  * @author drogoul
  * @since 8 avr. 2014
- * 
+ *
  */
 public class GamlModelBuilder implements IModelBuilder {
 
@@ -79,7 +78,7 @@ public class GamlModelBuilder implements IModelBuilder {
 	 * Builds an IModel from the resource.
 	 * @param resource must not be null
 	 * @return an instance of IModel or null if the validation has returned errors (use validate(GamlResource) to
-	 *         retrieve them if it is the case, or use the alternate form).
+	 * retrieve them if it is the case, or use the alternate form).
 	 */
 	@Override
 	public IModel compile(final Resource resource) {
@@ -95,7 +94,7 @@ public class GamlModelBuilder implements IModelBuilder {
 	 * Builds an IModel from the resource, listing all the errors, warnings and infos that occured
 	 * @param resource must not be null
 	 * @param a list of errors, warnings and infos that occured during the build. Must not be null and must accept the
-	 *            addition of new elements
+	 * addition of new elements
 	 * @return an instance of IModel or null if the validation has returned errors.
 	 */
 	@Override
@@ -149,7 +148,7 @@ public class GamlModelBuilder implements IModelBuilder {
 		}
 	}
 
-	private static final Set<String> EXTS = GamaFileType.extensionsToFullType.keySet();
+	// private static final Set<String> EXTS = GamaFileType.extensionsToFullType.keySet();
 
 	@Override
 	public GAMLFile.GamlInfo getInfo(final URI uri, final long stamp) {
@@ -167,8 +166,9 @@ public class GamlModelBuilder implements IModelBuilder {
 				if ( e instanceof StringLiteral ) {
 					String s = ((StringLiteral) e).getOp();
 					if ( s.length() > 4 ) {
-						String ext = s.substring(s.length() - 3, s.length());
-						if ( EXTS.contains(ext) ) {
+						URI u = URI.createFileURI(s);
+						String ext = u.fileExtension();
+						if ( GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(ext) ) {
 							uses.add(s);
 						}
 					}

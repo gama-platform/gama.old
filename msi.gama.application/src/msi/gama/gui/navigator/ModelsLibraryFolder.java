@@ -52,4 +52,13 @@ public class ModelsLibraryFolder extends TopLevelFolder {
 		return desc.hasNature(BuiltinNature.NATURE_ID);
 	}
 
+	/**
+	 * Method getModelsLocation()
+	 * @see msi.gama.gui.navigator.TopLevelFolder#getModelsLocation()
+	 */
+	@Override
+	protected Location getModelsLocation() {
+		return Location.CoreModels;
+	}
+
 }

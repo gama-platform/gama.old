@@ -29,8 +29,7 @@ import msi.gaml.types.IType;
  * @param <K>
  * @param <V>
  */
-@vars({
-	@var(name = IKeyword.NAME, type = IType.STRING, doc = { @doc("Returns the name (name.ext) of the receiver file") }),
+@vars({ @var(name = IKeyword.NAME, type = IType.STRING, doc = { @doc("Returns the name of the receiver file") }),
 	@var(name = IKeyword.EXTENSION, type = IType.STRING, doc = { @doc("Returns the extension of the receiver file") }),
 	@var(name = IKeyword.PATH, type = IType.STRING, doc = { @doc("Returns the absolute path of the receiver file") }),
 	@var(name = IKeyword.EXISTS,

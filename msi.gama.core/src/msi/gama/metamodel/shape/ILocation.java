@@ -1,33 +1,32 @@
 /*********************************************************************************************
- * 
  *
- * 'ILocation.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'ILocation.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * The class ILocation.
- * 
+ *
  * @author drogoul
  * @since 15 d�c. 2011
- * 
+ *
  */
-@vars({ @var(name = IKeyword.X, type = IType.FLOAT), @var(name = IKeyword.Y, type = IType.FLOAT),
-	@var(name = IKeyword.Z, type = IType.FLOAT) })
+@vars({ @var(name = IKeyword.X, type = IType.FLOAT, doc = { @doc("Returns the x ordinate of this point") }),
+	@var(name = IKeyword.Y, type = IType.FLOAT, doc = { @doc("Returns the y ordinate of this point") }),
+	@var(name = IKeyword.Z, type = IType.FLOAT, doc = { @doc("Returns the z ordinate of this point") }) })
 public interface ILocation extends IShape, Comparable {
 
 	@getter(IKeyword.X)

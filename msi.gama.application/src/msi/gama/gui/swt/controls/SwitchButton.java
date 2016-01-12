@@ -69,12 +69,12 @@ public class SwitchButton extends Canvas {
 	/**
 	 * Colors when the button is selected
 	 */
-	private Color selectedForegroundColor, selectedBackgroundColor;
+	private Color/* selectedForegroundColor, */ selectedBackgroundColor;
 
 	/**
 	 * Colors when the button is not selected
 	 */
-	private Color unselectedForegroundColor, unselectedBackgroundColor;
+	private Color /* unselectedForegroundColor, */ unselectedBackgroundColor;
 
 	/**
 	 * Colors for the button
@@ -146,9 +146,9 @@ public class SwitchButton extends Canvas {
 		this.round = true;
 		this.borderColor = null;
 		this.focusColor = null;
-		this.selectedForegroundColor = this.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+		// this.selectedForegroundColor = this.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 		this.selectedBackgroundColor = IGamaColors.OK.color();
-		this.unselectedForegroundColor = IGamaColors.WHITE.color();
+		/// this.unselectedForegroundColor = IGamaColors.WHITE.color();
 		this.unselectedBackgroundColor = IGamaColors.ERROR.color();
 		this.buttonBorderColor = IGamaColors.NEUTRAL.color();
 		// this.buttonBackgroundColor1 = IGamaColors.WHITE.color();
@@ -261,7 +261,7 @@ public class SwitchButton extends Canvas {
 		} else {
 			this.gc.fillRectangle(2, 2, buttonSize.x, buttonSize.y);
 		}
-		this.gc.setForeground(this.selectedForegroundColor);
+		this.gc.setForeground(GamaColors.getTextColorForBackground(selectedBackgroundColor).color());
 		final Point textSize = this.gc.textExtent(this.textForSelect);
 		this.gc.drawString(this.textForSelect, (buttonSize.x / 2 - textSize.x) / 2 + 3,
 			(buttonSize.y - textSize.y) / 2 + 3);
@@ -281,7 +281,7 @@ public class SwitchButton extends Canvas {
 		} else {
 			this.gc.fillRectangle(2, 2, buttonSize.x, buttonSize.y);
 		}
-		this.gc.setForeground(this.unselectedForegroundColor);
+		this.gc.setForeground(GamaColors.getTextColorForBackground(unselectedBackgroundColor).color());
 		final Point textSize = this.gc.textExtent(this.textForUnselect);
 
 		this.gc.drawString(this.textForUnselect, buttonSize.x / 2 + (buttonSize.x / 2 - textSize.x) / 2 + 3,
@@ -661,11 +661,12 @@ public class SwitchButton extends Canvas {
 	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>
+	 * //
 	 */
-	public Color getSelectedForegroundColor() {
-		// this.checkWidget();
-		return this.selectedForegroundColor;
-	}
+	// public Color getSelectedForegroundColor() {
+	// // this.checkWidget();
+	// return this.selectedForegroundColor;
+	// }
 
 	/**
 	 * @param the foreground color of the left part of the widget (selection is
@@ -674,11 +675,12 @@ public class SwitchButton extends Canvas {
 	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>
+	 * //
 	 */
-	public void setSelectedForegroundColor(final Color selectedForegroundColor) {
-		// this.checkWidget();
-		this.selectedForegroundColor = selectedForegroundColor;
-	}
+	// public void setSelectedForegroundColor(final Color selectedForegroundColor) {
+	// // this.checkWidget();
+	// this.selectedForegroundColor = selectedForegroundColor;
+	// }
 
 	/**
 	 * @return the background color of the left part of the widget (selection is
@@ -709,24 +711,25 @@ public class SwitchButton extends Canvas {
 	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>
+	 * //
 	 */
-	public Color getUnselectedForegroundColor() {
-		// this.checkWidget();
-		return this.unselectedForegroundColor;
-	}
-
-	/**
-	 * @param unselectedForegroundColor the foreground color of the left part of
-	 * the widget (selection is on)
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 */
-	public void setUnselectedForegroundColor(final Color unselectedForegroundColor) {
-		// this.checkWidget();
-		this.unselectedForegroundColor = unselectedForegroundColor;
-	}
+	// public Color getUnselectedForegroundColor() {
+	// // this.checkWidget();
+	// return this.unselectedForegroundColor;
+	// }
+	//
+	// /**
+	// * @param unselectedForegroundColor the foreground color of the left part of
+	// * the widget (selection is on)
+	// * @exception SWTException <ul>
+	// * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	// * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	// * </ul>
+	// */
+	// public void setUnselectedForegroundColor(final Color unselectedForegroundColor) {
+	// // this.checkWidget();
+	// this.unselectedForegroundColor = unselectedForegroundColor;
+	// }
 
 	/**
 	 * @return the background color of the left part of the widget (selection is

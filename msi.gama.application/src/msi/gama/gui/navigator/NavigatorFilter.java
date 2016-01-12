@@ -14,7 +14,7 @@ public class NavigatorFilter extends ViewerFilter {
 			if ( p.getLastSegment() instanceof IFolder ) {
 				IResource r = FileMetaDataProvider.shapeFileSupportedBy((IFile) element);
 				if ( r != null ) {
-					System.out.println("Filtering out " + element);
+					// System.out.println("Filtering out " + element);
 					return false;
 				}
 			}

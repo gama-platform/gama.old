@@ -55,4 +55,13 @@ public class UserProjectsFolder extends TopLevelFolder {
 		return !(desc.hasNature(BuiltinNature.NATURE_ID) || desc.hasNature(PluginNature.NATURE_ID));
 	}
 
+	/**
+	 * Method getModelsLocation()
+	 * @see msi.gama.gui.navigator.TopLevelFolder#getModelsLocation()
+	 */
+	@Override
+	protected Location getModelsLocation() {
+		return Location.Other;
+	}
+
 }

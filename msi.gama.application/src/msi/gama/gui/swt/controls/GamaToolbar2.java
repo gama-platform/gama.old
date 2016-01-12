@@ -112,7 +112,7 @@ public class GamaToolbar2 extends Composite {
 		int width = mySize - remainingLeftSize - rightSize - 100;
 		// wipe(side, false);
 		Label label = new Label(tb, SWT.WRAP);
-		label.setForeground(color.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color());
+		label.setForeground(GamaColors.getTextColorForBackground(color).color());
 		String newString = "";
 		// java.util.List<String> result = new ArrayList();
 		try {

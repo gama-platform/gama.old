@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IPath.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.path;
 
@@ -16,9 +16,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -27,22 +25,28 @@ import msi.gaml.types.IType;
 
 /**
  * The class IPath.
- * 
+ *
  * @author drogoul
  * @since 14 d�c. 2011
- * 
+ *
  */
 @vars({ @var(name = IKeyword.TARGET, type = IType.NONE), @var(name = IKeyword.SOURCE, type = IType.NONE),
 	@var(name = IKeyword.GRAPH, type = IType.GRAPH), @var(name = IKeyword.SHAPE, type = IType.GEOMETRY),
-	@var(name = IKeyword.SEGMENTS, type = IType.LIST, of = IType.GEOMETRY),
-	@var(name = "distance", type = IType.FLOAT), @var(name = "weight", type = IType.FLOAT),
-	@var(name = "edges", type = IType.LIST), @var(name = "vertices", type = IType.LIST)
-// @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
-// Could be replaced by "geometries"
-/*
- * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type =
- * IType.LIST, of = IType.POINT)
- */
+	@var(name = IKeyword.SEGMENTS,
+		type = IType.LIST,
+		of = IType.GEOMETRY,
+		doc = { @doc("Returns the list of segments that compose this path") }),
+	@var(name = "distance",
+		type = IType.FLOAT,
+		doc = { @doc("Returns the total lenght of all the segments that compose this path") }),
+	@var(name = "weight", type = IType.FLOAT), @var(name = "edges", type = IType.LIST),
+	@var(name = "vertices", type = IType.LIST)
+	// @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
+	// Could be replaced by "geometries"
+	/*
+	 * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type =
+	 * IType.LIST, of = IType.POINT)
+	 */
 })
 public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends IShape {
 

@@ -1,31 +1,29 @@
 /**
  * Created by drogoul, 22 mars 2015
- * 
+ *
  */
 package msi.gama.util;
 
 import java.awt.Font;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
 
 /**
  * Class GamaFont. A simple wrapper on an AWT Font
- * 
+ *
  * @author drogoul
  * @since 22 mars 2015
- * 
+ *
  */
-@vars({ @var(name = IKeyword.NAME, type = IType.STRING), @var(name = IKeyword.SIZE, type = IType.INT),
-	@var(name = IKeyword.STYLE, type = IType.INT) })
+@vars({ @var(name = IKeyword.NAME, type = IType.STRING, doc = { @doc("Returns the name of this font") }),
+	@var(name = IKeyword.SIZE, type = IType.INT, doc = { @doc("Returns the size (in points) of this font") }),
+	@var(name = IKeyword.STYLE,
+		type = IType.INT,
+		doc = { @doc("Returns the style of this font (0 for plain, 1 for bold, 2 for italic, 3 for bold+italic)") }) })
 public class GamaFont extends Font implements IValue {
 
 	/**
@@ -115,12 +113,12 @@ public class GamaFont extends Font implements IValue {
 	}
 
 	@operator(value = "font", category = { IOperatorCategory.CASTING }, can_be_const = true)
-	@doc(value = "Creates a new font, by specifying its name (either a font face name like 'Lucida Grande Bold' or 'Helvetica', or a logical name like 'Dialog', 'SansSerif', 'Serif', etc.), a size in points and a style, either #bold, #italic or #plain or a combination (addition) of them.",
+	@doc(
+		value = "Creates a new font, by specifying its name (either a font face name like 'Lucida Grande Bold' or 'Helvetica', or a logical name like 'Dialog', 'SansSerif', 'Serif', etc.), a size in points and a style, either #bold, #italic or #plain or a combination (addition) of them.",
 		examples = @example(value = "font ('Helvetica Neue',12, #bold + #italic)",
 			equals = "a bold and italic face of the Helvetica Neue family",
-			test = false))
-	public static
-		GamaFont font(final String name, final Integer size, final Integer style) {
+			test = false) )
+	public static GamaFont font(final String name, final Integer size, final Integer style) {
 		return new GamaFont(name, style, size);
 	}
 

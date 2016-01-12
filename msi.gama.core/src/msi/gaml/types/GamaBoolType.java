@@ -1,35 +1,36 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaBoolType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
 import java.io.File;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 
 /**
  * Written by drogoul Modified on 1 ao�t 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @type(name = IKeyword.BOOL,
 	id = IType.BOOL,
 	wraps = { Boolean.class, boolean.class },
-	kind = ISymbolKind.Variable.REGULAR)
+	kind = ISymbolKind.Variable.REGULAR,
+	doc = { @doc("Represents boolean values, either true or false") })
 public class GamaBoolType extends GamaType<Boolean> {
 
 	@Override

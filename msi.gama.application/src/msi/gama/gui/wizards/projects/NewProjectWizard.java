@@ -100,8 +100,8 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			proj.create(description, new SubProgressMonitor(monitor, 1000));
 
 			if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }
-
-			proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
+			proj.open(new SubProgressMonitor(monitor, 1000));
+			// proj.open(IResource., new SubProgressMonitor(monitor, 1000));
 
 			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, null);
 

@@ -81,9 +81,9 @@ public class WrappedPlugin extends VirtualContent {
 	 * Method isParentOf()
 	 * @see msi.gama.gui.navigator.VirtualContent#isParentOf(java.lang.Object)
 	 */
-	@Override
-	public boolean isParentOf(final Object element) {
-		return false;
-	}
+	// @Override
+	// public boolean isParentOf(final Object element) {
+	// return false;
+	// }
 
 }

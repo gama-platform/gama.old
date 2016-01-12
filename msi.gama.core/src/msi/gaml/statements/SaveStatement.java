@@ -349,10 +349,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					for ( Object obj : values ) {
 						if ( obj instanceof IAgent ) {
 							final IAgent ag = Cast.asAgent(scope, obj);
-							fw.write(scope.getClock().getCycle() + ";" + ag.getName() + ";" + ag.getLocation().getX() +
-								";" + ag.getLocation().getY() + ";" + ag.getLocation().getZ());
+							fw.write(scope.getClock().getCycle() + ";" + ag.getName().replace(';', ',') + ";" +
+								ag.getLocation().getX() + ";" + ag.getLocation().getY() + ";" +
+								ag.getLocation().getZ());
 							for ( String v : attributeNames ) {
-								fw.write(";" + Cast.toGaml(ag.getDirectVarValue(scope, v)));
+								fw.write(";" + Cast.toGaml(ag.getDirectVarValue(scope, v)).replace(';', ','));
 							}
 							fw.write(Strings.LN);
 						}
@@ -360,9 +361,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					}
 				} else {
 					for ( int i = 0; i < values.size() - 1; i++ ) {
-						fw.write(Cast.toGaml(values.get(i)) + ",");
+						fw.write(Cast.toGaml(values.get(i)).replace(',', ';') + ",");
 					}
-					fw.write(Cast.toGaml(values.lastValue(scope)) + Strings.LN);
+					fw.write(Cast.toGaml(values.lastValue(scope)).replace(',', ';') + Strings.LN);
 				}
 
 			}

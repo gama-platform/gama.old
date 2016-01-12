@@ -1,26 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'FsmArchitecture.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.architecture.finite_state_machine;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.Map;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -31,13 +26,18 @@ import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 12 sept. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
-@vars({ @var(name = IKeyword.STATE, type = IType.STRING, doc = @doc("the current state")),
-	@var(name = IKeyword.STATES, type = IType.LIST, constant = true, doc = @doc("the list of all possible states")) })
-@skill(name = IKeyword.FSM, doc = @doc("the Final State Machine architecture"))
+@vars({
+	@var(name = IKeyword.STATE, type = IType.STRING, doc = @doc("Returns the current state in which the agent is") ),
+	@var(name = IKeyword.STATES,
+		type = IType.LIST,
+		constant = true,
+		doc = @doc("Returns the list of all possible states the agents can be in") ) })
+@skill(name = IKeyword.FSM,
+	doc = @doc("The Finite State Machine architecture, that allows to program agents using a finite set of states and conditional transitions between them") )
 public class FsmArchitecture extends ReflexArchitecture {
 
 	protected final Map<String, FsmStateStatement> states = new THashMap();

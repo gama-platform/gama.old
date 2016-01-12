@@ -24,10 +24,6 @@ public interface IToolbarDecoratedView {
 
 	public IWorkbenchSite getSite();
 
-	// public void setToolbar(GamaToolbar2 toolbar);
-
-	// public Integer[] getToolbarActionsId();
-
 	public void createToolItems(GamaToolbar2 tb);
 
 	public static interface Pausable extends IToolbarDecoratedView {

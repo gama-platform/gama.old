@@ -667,6 +667,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		CsvWriter writer = new CsvWriter(exportFileName);
 		// AD 2/1/16 Replaces the comma by ';' to properly output points and lists
 		writer.setDelimiter(';');
+		writer.setUseTextQualifier(false);
 
 		List<String[]> contents = new ArrayList();
 		String[] headers = new String[columns.length];

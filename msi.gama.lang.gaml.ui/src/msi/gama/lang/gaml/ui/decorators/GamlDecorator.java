@@ -1,38 +1,37 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlDecorator.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.decorators;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
 /**
  * Copyright (c) 2011 Cloudsmith Inc. and other contributors, as listed below.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Cloudsmith
- * 
+ *
  */
-
 import msi.gama.gui.navigator.*;
 import msi.gama.gui.swt.GamaIcons;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
 
 /**
  * Simple decorator for error and warning
- * 
+ *
  */
 public class GamlDecorator implements ILightweightLabelDecorator {
 
@@ -76,7 +75,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.
 	 * ILabelProviderListener)
 	 */
@@ -85,7 +84,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object,
 	 * org.eclipse.jface.viewers.IDecoration)
 	 */
@@ -101,7 +100,12 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 		}
 		// See plugin.xml . Only applicable to IResource or VirtualContent
 		IResource resource = (IResource) element;
-		if ( !resource.isAccessible() ) { return; }
+		if ( !resource.isAccessible() ) {
+			if ( resource instanceof IProject ) {
+				decoration.addOverlay(getClosedImageDescriptor(), IDecoration.BOTTOM_LEFT);
+				return;
+			}
+		}
 		if ( NavigatorLabelProvider.isResource(resource) ) { return; }
 		int severity = -1;
 		try {
@@ -180,7 +184,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	@Override
@@ -203,9 +207,13 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 		return GamaIcons.create("overlay.warning2").descriptor();
 	}
 
+	private ImageDescriptor getClosedImageDescriptor() {
+		return GamaIcons.create("overlay.closed2").descriptor();
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
 	 * java.lang.String)
 	 */
@@ -216,7 +224,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.
 	 * ILabelProviderListener)
 	 */

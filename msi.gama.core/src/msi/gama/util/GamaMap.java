@@ -24,9 +24,19 @@ import msi.gaml.types.*;
 /**
  * The Class GamaMap.
  */
-@vars({ @var(name = GamaMap.KEYS, type = IType.LIST, of = ITypeProvider.FIRST_KEY_TYPE),
-	@var(name = GamaMap.VALUES, type = IType.LIST, of = ITypeProvider.FIRST_CONTENT_TYPE),
-	@var(name = GamaMap.PAIRS, type = IType.LIST, of = IType.PAIR) })
+@vars({
+	@var(name = GamaMap.KEYS,
+		type = IType.LIST,
+		of = ITypeProvider.FIRST_KEY_TYPE,
+		doc = { @doc("Returns the list of keys of this map (in their order of insertion)") }),
+	@var(name = GamaMap.VALUES,
+		type = IType.LIST,
+		of = ITypeProvider.FIRST_CONTENT_TYPE,
+		doc = { @doc("Returns the list of values of this map (in their order of insertion)") }),
+	@var(name = GamaMap.PAIRS,
+		type = IType.LIST,
+		of = IType.PAIR,
+		doc = { @doc("Returns the list of pairs (key, value) that compose this map") }) })
 public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableContainer<K, V, K, V>, IAddressableContainer<K, V, K, V> {
 
 	public static final String KEYS = "keys";

@@ -1,22 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Application.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.application;
 
 import java.net.URL;
 import java.util.Arrays;
-import msi.gama.application.projects.WorkspaceModelsManager;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.*;
 import org.eclipse.equinox.internal.app.CommandLineArgs;
@@ -26,6 +22,10 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import msi.gama.application.projects.WorkspaceModelsManager;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.ApplicationWorkbenchAdvisor;
+import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
@@ -35,8 +35,9 @@ public class Application implements IApplication {
 		System.out.println(Arrays.toString(CommandLineArgs.getAllArgs()));
 		// System.out.println(Platform.getProduct() == null ? "No product" : Platform.getProduct().getId() + " version " +
 		// Platform.getProduct().getDefiningBundle().getVersion());
-		System.err
-			.println("If you are running the developer version of GAMA, be sure to perform a clean build of your projects before launching it. Unexpected compilation errors can occur if the annotations are somehow out of sync with the code.");
+
+		System.err.println(
+			"If you are running the developer version of GAMA, be sure to perform a clean build of your projects before launching it. Unexpected compilation errors can occur if the annotations are somehow out of sync with the code.");
 
 		Display display = PlatformUI.createDisplay();
 		WorkspaceModelsManager.createProcessor(display);
@@ -56,9 +57,8 @@ public class Application implements IApplication {
 		String lastUsedWs = null;
 		if ( instanceLoc.isSet() ) {
 			lastUsedWs = instanceLoc.getURL().getFile();
-			String ret =
-				PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(), lastUsedWs, false,
-					false, false);
+			String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(), lastUsedWs,
+				false, false, false);
 			if ( ret != null ) {
 				GuiUtils.debug(ret);
 				// remember = false;
@@ -83,16 +83,13 @@ public class Application implements IApplication {
 				/*
 				 * If there's any problem with the workspace, force a dialog
 				 */
-				String ret =
-					PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(), lastUsedWs,
-						false, false, false);
+				String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(),
+					lastUsedWs, false, false, false);
 				if ( ret != null ) {
 					if ( ret.equals("models") ) {
-						remember =
-							!MessageDialog
-								.openConfirm(Display.getDefault().getActiveShell(),
-									"Outdated version of the models library",
-									"The workspace contains an old version of the models library. Do you want to create a new workspace ?");
+						remember = !MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
+							"Outdated version of the models library",
+							"The workspace contains an old version of the models library. Do you want to create a new workspace ?");
 
 					} else {
 						GuiUtils.debug(ret);

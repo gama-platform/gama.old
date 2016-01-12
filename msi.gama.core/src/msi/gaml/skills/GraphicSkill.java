@@ -33,7 +33,7 @@ import msi.gaml.types.*;
 @vars({ @var(name = IKeyword.TRANSPARENCY,
 	type = IType.FLOAT,
 	init = "1.0",
-	doc = @doc("the transparency of the agent (between 0.0 and 1.0)") ), })
+	doc = @doc("Represents the transparency of the agent (between 0.0 and 1.0)") ), })
 @skill(name = IKeyword.GRAPHIC_SKILL)
 public class GraphicSkill extends Skill {
 

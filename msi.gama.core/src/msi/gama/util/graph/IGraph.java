@@ -1,39 +1,53 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IGraph.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.graph;
 
 import java.util.*;
+import org.jgrapht.*;
 import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.path.IPath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractContainerStatement.GraphObjectToAdd;
 import msi.gaml.types.IType;
-import org.jgrapht.*;
 
 /**
  * Written by drogoul
  * Modified on 24 nov. 2011
- * 
- * An interface for the different kinds of graphs encountered in GAML. Nodes are the keys (actually, pairs of nodes), while edges are the values
- * 
+ *
+ * An interface for the different kinds of graphs encountered in GAML. Vertices are the keys (actually, pairs of nodes), while edges are the values
+ *
  */
-@vars({ @var(name = "spanning_tree", type = IType.LIST), @var(name = "circuit", type = IType.PATH),
-	@var(name = "connected", type = IType.BOOL), @var(name = "edges", type = IType.LIST),
-	@var(name = "vertices", type = IType.LIST) })
+@vars({
+	@var(name = "spanning_tree",
+		type = IType.LIST,
+		of = ITypeProvider.FIRST_CONTENT_TYPE,
+		doc = { @doc("Returns the list of edges that compose the minimal spanning tree of this graph") }),
+	@var(name = "circuit",
+		type = IType.PATH,
+		doc = {
+			@doc("Returns a polynomial approximation of the Hamiltonian cycle (the optimal tour passing through each vertex) of this graph") }),
+	@var(name = "connected", type = IType.BOOL, doc = { @doc("Returns whether this graph is connected or not") }),
+	@var(name = "edges",
+		type = IType.LIST,
+		of = ITypeProvider.FIRST_CONTENT_TYPE,
+		doc = { @doc("Returns the list of edges of the receiver graph") }),
+	@var(name = "vertices",
+		type = IType.LIST,
+		of = ITypeProvider.FIRST_KEY_TYPE,
+		doc = { @doc("Returns the list of vertices of the receiver graph") }) })
 public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, GraphObjectToAdd>, IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, WeightedGraph<Node, Edge>, DirectedGraph<Node, Edge>, UndirectedGraph<Node, Edge>, IGraphEventProvider {
 
 	public abstract double getVertexWeight(final Object v);
@@ -115,9 +129,9 @@ public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, Gam
 	public GamaPair<Node, Node> buildIndex(IScope scope, Object object);
 
 	public IContainer<?, GamaPair<Node, Node>> buildIndexes(IScope scope, IContainer value);
-	
+
 	public ISpecies getVertexSpecies();
-	
+
 	public ISpecies getEdgeSpecies();
 
 }

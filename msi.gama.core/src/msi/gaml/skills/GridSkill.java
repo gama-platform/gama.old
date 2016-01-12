@@ -1,40 +1,47 @@
 /*********************************************************************************************
- * 
  *
- * 'GridSkill.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'GridSkill.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.skills;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 24 juin 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @vars({
-	@var(name = IKeyword.COLOR, type = IType.COLOR),
+	@var(name = IKeyword.COLOR,
+		type = IType.COLOR,
+		doc = { @doc("Represents the color of the cell, used by default to represent the grid on displays") }),
 	// @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = @doc(deprecated =
 	// "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
-	@var(name = IKeyword.GRID_VALUE, type = IType.FLOAT),
-	@var(name = IKeyword.GRID_X, type = IType.INT, constant = true),
-	@var(name = IKeyword.GRID_Y, type = IType.INT, constant = true) })
+	@var(name = IKeyword.GRID_VALUE,
+		type = IType.FLOAT,
+		doc = {
+			@doc("Represents a floating point value (automatically set when the grid is initialized from a DEM, and used by default to represent the elevation of the cell when displaying it on a display)") }),
+	@var(name = IKeyword.GRID_X,
+		type = IType.INT,
+		constant = true,
+		doc = { @doc("Returns the 0-based index of the column of the cell in the grid") }),
+	@var(name = IKeyword.GRID_Y,
+		type = IType.INT,
+		constant = true,
+		doc = { @doc("Returns the 0-based index of the row of the cell in the grid") }) })
 @skill(name = GridSkill.SKILL_NAME)
 public class GridSkill extends Skill {
 

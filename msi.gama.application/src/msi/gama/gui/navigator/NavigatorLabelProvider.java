@@ -1,29 +1,29 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'NavigatorLabelProvider.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-import java.util.*;
-import msi.gama.gui.swt.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import msi.gama.gui.swt.*;
+import msi.gaml.compilation.GamaBundleLoader;
 
 public class NavigatorLabelProvider extends CellLabelProvider implements ILabelProvider, IColorProvider, IFontProvider {
 
 	// TODO BUILD A LIST FROM THE FILES LOADED IN GAMAFILE
-	private static final Set<String> HANDLED = new HashSet(Arrays.asList("shp", "gaml", "jpg", "jpeg", "png", "bmp",
-		"html", "htm", "gif", "csv", "ico", "asc", "pgm", "svg"));
+	// private static final Set<String> HANDLED = new HashSet(Arrays.asList("shp", "gaml", "jpg", "jpeg", "png", "bmp",
+	// "html", "htm", "gif", "csv", "ico", "asc", "pgm", "svg"));
 
 	@Override
 	public String getText(final Object element) {
@@ -61,7 +61,11 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 			IFile f = (IFile) element;
 			String s = f.getFileExtension();
 			if ( isHandled(s) ) {
-				return null;
+				if ( FileMetaDataProvider.getContentTypeId(f) == FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID ) {
+					return GamaIcons.create("file.shapesupport2").image();
+				} else {
+					return null;
+				}
 			} else {
 				return GamaIcons.create("file.text2").image();
 			}
@@ -74,10 +78,7 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 	 * @return
 	 */
 	private boolean isHandled(final String s) {
-		for ( String ext : HANDLED ) {
-			if ( ext.equalsIgnoreCase(s) ) { return true; }
-		}
-		return false;
+		return GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(s);
 	}
 
 	@Override

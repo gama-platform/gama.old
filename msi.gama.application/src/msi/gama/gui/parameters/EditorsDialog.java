@@ -77,7 +77,7 @@ public class EditorsDialog extends Dialog {
 		layout.numColumns = 2;
 		Label text = new Label(composite, SWT.None);
 		text.setBackground(IGamaColors.OK.inactive());
-		text.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		text.setForeground(GamaColors.getTextColorForBackground(text.getBackground()).color());
 		text.setText(title);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		text.setLayoutData(data);
