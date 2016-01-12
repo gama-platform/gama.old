@@ -62,7 +62,7 @@ import msi.gaml.types.*;
 			doc = @doc("the list of attributes to inspect") ),
 		@facet(name = IKeyword.TYPE,
 			type = IType.ID,
-			values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.POPULATION, IKeyword.TABLE },
+			values = { IKeyword.AGENT, IKeyword.TABLE },
 			optional = true,
 			doc = @doc("the way to inspect agents: in a table, or a set of inspectors") ) },
 	omissible = IKeyword.NAME)
