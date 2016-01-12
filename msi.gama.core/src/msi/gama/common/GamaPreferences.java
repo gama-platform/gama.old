@@ -1,20 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaPreferences.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common;
 
-import gnu.trove.map.hash.THashMap;
 import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
+import org.geotools.referencing.CRS;
+import com.vividsolutions.jts.geom.Envelope;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
@@ -23,15 +25,13 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gaml.types.*;
-import org.geotools.referencing.CRS;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Class GamaPreferencesView.
- * 
+ *
  * @author drogoul
  * @since 26 août 2013
- * 
+ *
  */
 public class GamaPreferences {
 
@@ -357,207 +357,227 @@ public class GamaPreferences {
 	 */
 
 	// GENERAL PAGE
-	public static final List<String> GENERATOR_NAMES = Arrays.asList(IKeyword.CELLULAR, IKeyword.XOR, IKeyword.JAVA,
-		IKeyword.MERSENNE);
-	/**
-	 * Random Number Generation
-	 */
-	public static final Entry<String> CORE_RNG = create("core.rng", "Random number generator", IKeyword.MERSENNE,
-		IType.STRING).among(GENERATOR_NAMES).in(SIMULATION).group("Random Number Generation");
-	public static final Entry<Boolean> CORE_SEED_DEFINED = create("core.seed_defined", "Define a default seed", false,
-		IType.BOOL).activates("core.seed").in(SIMULATION).group("Random Number Generation");
-	public static final Entry<Double> CORE_SEED = create("core.seed", "Default seed value (0 means undefined)", 1d,
-		IType.FLOAT).in(SIMULATION).group("Random Number Generation");
-	public static final Entry<Boolean> CORE_RND_EDITABLE = create("core.define_rng",
-		"Include in the parameters of models", true, IType.BOOL).in(SIMULATION).group("Random Number Generation");
-	/**
-	 * User Interface
-	 */
-	public static final Entry<Integer> CORE_MENU_SIZE = create("core.menu_size", "Break down agents in menus every",
-		50, IType.INT).between(10, 100).in(UI).group("Menus");
+	public static final List<String> GENERATOR_NAMES =
+		Arrays.asList(IKeyword.CELLULAR, IKeyword.XOR, IKeyword.JAVA, IKeyword.MERSENNE);
+		/**
+		 * Random Number Generation
+		 */
+		public static final Entry<String> CORE_RNG =
+			create("core.rng", "Random number generator", IKeyword.MERSENNE, IType.STRING).among(GENERATOR_NAMES)
+				.in(SIMULATION).group("Random Number Generation");
+	public static final Entry<Boolean> CORE_SEED_DEFINED =
+		create("core.seed_defined", "Define a default seed", false, IType.BOOL).activates("core.seed").in(SIMULATION)
+			.group("Random Number Generation");
+	public static final Entry<Double> CORE_SEED =
+		create("core.seed", "Default seed value (0 means undefined)", 1d, IType.FLOAT).in(SIMULATION)
+			.group("Random Number Generation");
+	public static final Entry<Boolean> CORE_RND_EDITABLE =
+		create("core.define_rng", "Include in the parameters of models", true, IType.BOOL).in(SIMULATION)
+			.group("Random Number Generation");
+			/**
+			 * User Interface
+			 */
+			public static final Entry<Integer> CORE_MENU_SIZE =
+				create("core.menu_size", "Break down agents in menus every", 50, IType.INT).between(10, 100).in(UI)
+					.group("Menus");
 
-	public static final Entry<Integer> CORE_CONSOLE_SIZE = create("core.console_size",
-		"Max. number of characters to display in the console (-1 means no limit) ", 20000, IType.INT).in(UI).group(
-		"Console");
+	public static final Entry<Integer> CORE_CONSOLE_SIZE =
+		create("core.console_size", "Max. number of characters to display in the console (-1 means no limit) ", 20000,
+			IType.INT).in(UI).group("Console");
 	public static final Entry<Integer> CORE_CONSOLE_BUFFER = create("core.console_buffer",
-		"Max. number of characters to keep in memory when console is paused (-1 means no limit)", 20000, IType.INT).in(
-		UI).group("Console");
-	/**
-	 * Simulation Errors
-	 */
-	public static final Entry<Boolean> CORE_SHOW_ERRORS = create("core.display_errors", "Display errors", true,
-		IType.BOOL).in(SIMULATION).activates("core.errors_number", "core.recent").group("Errors");
-	public static final Entry<Integer> CORE_ERRORS_NUMBER = create("core.errors_number", "Number of errors to display",
-		10, IType.INT).in(SIMULATION).group("Errors").between(1, null);
-	public static final Entry<Boolean> CORE_RECENT = create("core.recent", "Display most recent first", true,
-		IType.BOOL).in(SIMULATION).group("Errors");
-	public static final Entry<Boolean> CORE_REVEAL_AND_STOP = create("core.stop", "Stop simulation at first error",
-		true, IType.BOOL).in(SIMULATION).group("Errors");
-	public static final Entry<Boolean> CORE_WARNINGS = create("core.warnings", "Treat warnings as errors", false,
-		IType.BOOL).in(SIMULATION).group("Errors");
-	/**
-	 * Startup
-	 */
-	public static final Entry<Boolean> CORE_SHOW_PAGE = create("core.show_page", "Display Welcome page at startup",
-		true, IType.BOOL).in(GENERAL).group("Startup");
-	/**
-	 * Runtime
-	 */
-	public static final Entry<Double> CORE_DELAY_STEP = create("core.delay_step",
-		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(SIMULATION).group("Runtime");
-	public static final Entry<Boolean> CORE_AUTO_RUN = create("core.auto_run",
-		"Auto-run experiments when they are launched", false, IType.BOOL).in(SIMULATION).group("Runtime");
-	public static final Entry<Boolean> CORE_ASK_CLOSING = create("core.ask_closing",
-		"Ask to close the previous simulation before launching a new one ?", true, IType.BOOL).in(SIMULATION).group(
-		"Runtime");
+		"Max. number of characters to keep in memory when console is paused (-1 means no limit)", 20000, IType.INT)
+			.in(UI).group("Console");
+			/**
+			 * Simulation Errors
+			 */
+			public static final Entry<Boolean> CORE_SHOW_ERRORS =
+				create("core.display_errors", "Display errors", true, IType.BOOL).in(SIMULATION)
+					.activates("core.errors_number", "core.recent").group("Errors");
+	public static final Entry<Integer> CORE_ERRORS_NUMBER =
+		create("core.errors_number", "Number of errors to display", 10, IType.INT).in(SIMULATION).group("Errors")
+			.between(1, null);
+	public static final Entry<Boolean> CORE_RECENT =
+		create("core.recent", "Display most recent first", true, IType.BOOL).in(SIMULATION).group("Errors");
+	public static final Entry<Boolean> CORE_REVEAL_AND_STOP =
+		create("core.stop", "Stop simulation at first error", true, IType.BOOL).in(SIMULATION).group("Errors");
+	public static final Entry<Boolean> CORE_WARNINGS =
+		create("core.warnings", "Treat warnings as errors", false, IType.BOOL).in(SIMULATION).group("Errors");
+		/**
+		 * Startup
+		 */
+		public static final Entry<Boolean> CORE_SHOW_PAGE =
+			create("core.show_page", "Display Welcome page at startup", true, IType.BOOL).in(GENERAL).group("Startup");
+			/**
+			 * Runtime
+			 */
+			public static final Entry<Double> CORE_DELAY_STEP =
+				create("core.delay_step", "Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(SIMULATION)
+					.group("Runtime");
+	public static final Entry<Boolean> CORE_AUTO_RUN =
+		create("core.auto_run", "Auto-run experiments when they are launched", false, IType.BOOL).in(SIMULATION)
+			.group("Runtime");
+	public static final Entry<Boolean> CORE_ASK_CLOSING =
+		create("core.ask_closing", "Ask to close the previous simulation before launching a new one ?", true,
+			IType.BOOL).in(SIMULATION).group("Runtime");
 
 	// DISPLAY PAGE
 	/**
 	 * Properties
 	 */
-	public static final Entry<String> CORE_DISPLAY = create("core.display",
-		"Default display method when none is specified", "Java2D", IType.STRING).among("Java2D", "OpenGL").in(DISPLAY)
-		.group("Properties (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_SYNC = create("core.sync", "Synchronize displays with simulations", false,
-		IType.BOOL).in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_DISPLAY_PERSPECTIVE =
+		create("core.display_perspective", "Continue to draw displays (in the background) when in Modeling perspective",
+			false, IType.BOOL).in(DISPLAY).group("Behavior of displays");
+	public static final Entry<String> CORE_DISPLAY =
+		create("core.display", "Default display method when none is specified", "Java2D", IType.STRING)
+			.among("Java2D", "OpenGL").in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_SYNC =
+		create("core.sync", "Synchronize displays with simulations", false, IType.BOOL).in(DISPLAY)
+			.group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlay", false, IType.BOOL)
 		.in(DISPLAY).activates("core.scale").group("Properties (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_SCALE =
-		create("core.scale", "Show scale bar in overlay", false, IType.BOOL).in(DISPLAY).group(
-			"Properties (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_ANTIALIAS = create("core.antialias", "Apply antialiasing", false,
-		IType.BOOL).in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
-	public static final Entry<Color> CORE_BACKGROUND = create("core.background", "Default background color",
-		Color.white, IType.COLOR).in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
-	public static final Entry<Color> CORE_HIGHLIGHT = create("core.highlight", "Default highlight color",
-		new Color(0, 200, 200), IType.COLOR).in(DISPLAY).group(
-		"Properties (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_DISPLAY_ORDER = create("core.display_order",
-		"Stack displays on screen in the order defined by the model", true, IType.BOOL).in(DISPLAY).group(
-		"Properties (settings effective after experiment relaunch)");
-	/**
-	 * Default Aspect
-	 */
-	public static final Entry<String> CORE_SHAPE = create("core.shape", "Defaut shape to use for agents", "shape",
-		IType.STRING).among("shape", "circle", "square", "triangle", "point", "cube", "sphere").in(DISPLAY)
-		.group("Default aspect (settings effective after experiment relaunch)");
-	public static final Entry<Double> CORE_SIZE = create("core.size", "Default size to use for agents", 1.0,
-		IType.FLOAT).between(0.01, null).in(DISPLAY)
-		.group("Default aspect (settings effective after experiment relaunch)");
-	public static final Entry<Color> CORE_COLOR = create("core.color", "Default color to use for agents", Color.yellow,
-		IType.COLOR).in(DISPLAY).group("Default aspect (settings effective after experiment relaunch)");
-	/**
-	 * OpenGL
-	 */
-	public static final Entry<Boolean> CORE_Z_FIGHTING = create("core.z_fighting", "Use improved z positioning", true,
-		IType.BOOL).in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_SCALE = create("core.scale", "Show scale bar in overlay", false, IType.BOOL)
+		.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_ANTIALIAS =
+		create("core.antialias", "Apply antialiasing", false, IType.BOOL).in(DISPLAY)
+			.group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Color> CORE_BACKGROUND =
+		create("core.background", "Default background color", Color.white, IType.COLOR).in(DISPLAY)
+			.group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Color> CORE_HIGHLIGHT =
+		create("core.highlight", "Default highlight color", new Color(0, 200, 200), IType.COLOR).in(DISPLAY)
+			.group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_DISPLAY_ORDER =
+		create("core.display_order", "Stack displays on screen in the order defined by the model", true, IType.BOOL)
+			.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
+			/**
+			 * Default Aspect
+			 */
+			public static final Entry<String> CORE_SHAPE =
+				create("core.shape", "Defaut shape to use for agents", "shape", IType.STRING)
+					.among("shape", "circle", "square", "triangle", "point", "cube", "sphere").in(DISPLAY)
+					.group("Default aspect (settings effective after experiment relaunch)");
+	public static final Entry<Double> CORE_SIZE =
+		create("core.size", "Default size to use for agents", 1.0, IType.FLOAT).between(0.01, null).in(DISPLAY)
+			.group("Default aspect (settings effective after experiment relaunch)");
+	public static final Entry<Color> CORE_COLOR =
+		create("core.color", "Default color to use for agents", Color.yellow, IType.COLOR).in(DISPLAY)
+			.group("Default aspect (settings effective after experiment relaunch)");
+			/**
+			 * OpenGL
+			 */
+			public static final Entry<Boolean> CORE_Z_FIGHTING =
+				create("core.z_fighting", "Use improved z positioning", true, IType.BOOL).in(DISPLAY)
+					.group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env", "Draw 3D referential", true, IType.BOOL)
 		.in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_SHOW_FPS = create("core.show_fps", "Show number of frames per second",
-		false, IType.BOOL).in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_SHOW_FPS =
+		create("core.show_fps", "Show number of frames per second", false, IType.BOOL).in(DISPLAY)
+			.group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Enable lighting", true, IType.BOOL)
 		.in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normals to objects", false,
-		IType.BOOL).in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_CUBEDISPLAY = create("core.cubedisplay", "Display as a cube", false,
-		IType.BOOL).in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_DRAW_NORM =
+		create("core.draw_norm", "Draw normals to objects", false, IType.BOOL).in(DISPLAY)
+			.group("OpenGL (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_CUBEDISPLAY =
+		create("core.cubedisplay", "Display as a cube", false, IType.BOOL).in(DISPLAY)
+			.group("OpenGL (settings effective after experiment relaunch)");
 
 	// EDITOR PAGE
-	public static final Entry<Boolean> CORE_PERSPECTIVE = create("core.perspective",
-		"Automatically switch to modeling perspective when editing a model", false, IType.BOOL).in(EDITOR).group(
-		"Options");
+	public static final Entry<Boolean> CORE_PERSPECTIVE =
+		create("core.perspective", "Automatically switch to modeling perspective when editing a model", false,
+			IType.BOOL).in(EDITOR).group("Options");
 
 	/**
 	 * Validation
 	 */
-	public static final GamaPreferences.Entry<Boolean> WARNINGS_ENABLED = GamaPreferences
-		.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL)
-		.in(GamaPreferences.EDITOR).group("Validation");
+			public static final GamaPreferences.Entry<Boolean> WARNINGS_ENABLED = GamaPreferences
+				.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL)
+				.in(GamaPreferences.EDITOR).group("Validation");
 
-	public static final GamaPreferences.Entry<Boolean> INFO_ENABLED = GamaPreferences
-		.create("editor.info.enabled", "Show information markers when editing a model", true, IType.BOOL)
-		.in(GamaPreferences.EDITOR).group("Validation");
+	public static final GamaPreferences.Entry<Boolean> INFO_ENABLED =
+		GamaPreferences.create("editor.info.enabled", "Show information markers when editing a model", true, IType.BOOL)
+			.in(GamaPreferences.EDITOR).group("Validation");
 
 	// LIBRARIES PAGE
 	/**
 	 * Spatialite
 	 */
-	public static final Entry<IGamaFile> LIB_SPATIALITE = create("core.lib_spatialite",
-		"Path to the Spatialite (see http://www.gaia-gis.it/gaia-sins/) library",
-		new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group("Paths");
-	/**
-	 * R
-	 */
-	public static final Entry<IGamaFile> LIB_R = create("core.lib_r",
-		"Path to the RScript (see http://www.r-project.org) library", new GenericFile(getDefaultRPath()), IType.FILE)
-		.in(LIBRARIES).group("Paths");
-	/**
-	 * GeoTools
-	 */
-	public static final Entry<Boolean> LIB_TARGETED = create("core.lib_targeted",
-		"Let GAMA decide which CRS to use to project GIS data", true, IType.BOOL).deactivates("core.lib_target_crs")
-		.in(LIBRARIES)
-		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
-	public static final Entry<Integer> LIB_TARGET_CRS = create("core.lib_target_crs",
-		"...or use the following CRS (EPSG code)", 32648, IType.INT).in(LIBRARIES)
-		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-		.addChangeListener(new IPreferenceChangeListener<Integer>() {
+	public static final Entry<IGamaFile> LIB_SPATIALITE =
+		create("core.lib_spatialite", "Path to the Spatialite (see http://www.gaia-gis.it/gaia-sins/) library",
+			new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group("Paths");
+			/**
+			 * R
+			 */
+			public static final Entry<IGamaFile> LIB_R =
+				create("core.lib_r", "Path to the RScript (see http://www.r-project.org) library",
+					new GenericFile(getDefaultRPath()), IType.FILE).in(LIBRARIES).group("Paths");
+					/**
+					 * GeoTools
+					 */
+					public static final Entry<Boolean> LIB_TARGETED = create("core.lib_targeted",
+						"Let GAMA decide which CRS to use to project GIS data", true,
+						IType.BOOL).deactivates("core.lib_target_crs").in(LIBRARIES).group(
+							"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+	public static final Entry<Integer> LIB_TARGET_CRS =
+		create("core.lib_target_crs", "...or use the following CRS (EPSG code)", 32648, IType.INT).in(LIBRARIES)
+			.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+			.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
-			@Override
-			public boolean beforeValueChange(final Integer newValue) {
-				Set<String> codes = CRS.getSupportedCodes(newValue.toString());
-				if ( codes.isEmpty() ) { return false; }
-				return true;
-			}
+				@Override
+				public boolean beforeValueChange(final Integer newValue) {
+					Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+					if ( codes.isEmpty() ) { return false; }
+					return true;
+				}
 
-			@Override
-			public void afterValueChange(final Integer newValue) {}
-		});
-	public static final Entry<Boolean> LIB_PROJECTED =
-		create("core.lib_projected",
-			"When no .prj file or CRS is supplied, consider GIS data to be already projected in this CRS", true,
-			IType.BOOL).deactivates("core.lib_initial_crs").in(LIBRARIES)
+				@Override
+				public void afterValueChange(final Integer newValue) {}
+			});
+	public static final Entry<Boolean> LIB_PROJECTED = create("core.lib_projected",
+		"When no .prj file or CRS is supplied, consider GIS data to be already projected in this CRS", true, IType.BOOL)
+			.deactivates("core.lib_initial_crs").in(LIBRARIES)
 			.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
-	public static final Entry<Integer> LIB_INITIAL_CRS = create("core.lib_initial_crs",
-		"...or use the following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES)
-		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-		.addChangeListener(new IPreferenceChangeListener<Integer>() {
+	public static final Entry<Integer> LIB_INITIAL_CRS =
+		create("core.lib_initial_crs", "...or use the following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES)
+			.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+			.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
-			@Override
-			public boolean beforeValueChange(final Integer newValue) {
-				Set<String> codes = CRS.getSupportedCodes(newValue.toString());
-				if ( codes.isEmpty() ) { return false; }
-				return true;
-			}
+				@Override
+				public boolean beforeValueChange(final Integer newValue) {
+					Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+					if ( codes.isEmpty() ) { return false; }
+					return true;
+				}
 
-			@Override
-			public void afterValueChange(final Integer newValue) {}
-		});
-	public static final Entry<Boolean> LIB_USE_DEFAULT = create("core.lib_use_default",
-		"When no CRS is provided, save the GIS data with the current CRS", true, IType.BOOL)
-		.deactivates("core.lib_output_crs").in(LIBRARIES)
-		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
-	public static final Entry<Integer> LIB_OUTPUT_CRS = create("core.lib_output_crs",
-		"... or use this following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES)
-		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-		.addChangeListener(new IPreferenceChangeListener<Integer>() {
+				@Override
+				public void afterValueChange(final Integer newValue) {}
+			});
+	public static final Entry<Boolean> LIB_USE_DEFAULT =
+		create("core.lib_use_default", "When no CRS is provided, save the GIS data with the current CRS", true,
+			IType.BOOL).deactivates("core.lib_output_crs").in(LIBRARIES)
+				.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+	public static final Entry<Integer> LIB_OUTPUT_CRS =
+		create("core.lib_output_crs", "... or use this following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES)
+			.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+			.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
-			@Override
-			public boolean beforeValueChange(final Integer newValue) {
-				Set<String> codes = CRS.getSupportedCodes(newValue.toString());
-				if ( codes.isEmpty() ) { return false; }
-				return true;
-			}
+				@Override
+				public boolean beforeValueChange(final Integer newValue) {
+					Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+					if ( codes.isEmpty() ) { return false; }
+					return true;
+				}
 
-			@Override
-			public void afterValueChange(final Integer newValue) {}
-		});
+				@Override
+				public void afterValueChange(final Integer newValue) {}
+			});
 
 	private static String getDefaultRPath() {
 		String os = System.getProperty("os.name");
 		String osbit = System.getProperty("os.arch");
 		if ( os.startsWith("Mac") ) {
-			if ( osbit.endsWith("64") ) { return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript"; }
+			if ( osbit.endsWith(
+				"64") ) { return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript"; }
 			return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/i386/RScript";
 		} else if ( os.startsWith("Linux") ) { return "usr/bin/RScript"; }
 		if ( os.startsWith("Windows") ) {

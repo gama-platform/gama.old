@@ -138,15 +138,19 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 				if ( perspective.getId().equals(ModelingPerspective.ID) ) {
 					if ( getOutput() != null && getDisplaySurface() != null ) {
-						previousState = getOutput().isPaused();
-						getOutput().setPaused(true);
+						if ( !GamaPreferences.CORE_DISPLAY_PERSPECTIVE.getValue() ) {
+							previousState = getOutput().isPaused();
+							getOutput().setPaused(true);
+						}
 					}
 					if ( overlay != null ) {
 						overlay.hide();
 					}
 				} else {
-					if ( getOutput() != null && getDisplaySurface() != null ) {
-						getOutput().setPaused(previousState);
+					if ( !GamaPreferences.CORE_DISPLAY_PERSPECTIVE.getValue() ) {
+						if ( getOutput() != null && getDisplaySurface() != null ) {
+							getOutput().setPaused(previousState);
+						}
 					}
 					if ( overlay != null ) {
 						overlay.update();
