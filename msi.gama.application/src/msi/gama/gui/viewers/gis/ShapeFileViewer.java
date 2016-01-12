@@ -99,6 +99,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	Style style;
 	Layer layer;
 
+	
 	@Override
 	public void doSave(final IProgressMonitor monitor) {}
 
@@ -302,7 +303,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	}
 
 	public Stroke getStroke(final Mode mode, final FeatureTypeStyle fts) {
-		Stroke stroke = null;
+		//Stroke stroke = null;
 		if ( mode == Mode.LINE ) {
 			LineSymbolizer sym = SLD.lineSymbolizer(fts);
 			return SLD.stroke(sym);
@@ -409,6 +410,10 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	@Override
 	public boolean zoomWhenScrolling() {
 		return false;
+	}
+	
+	public DragTool newDragTool() {
+		return new DragTool();
 	}
 
 	@Override

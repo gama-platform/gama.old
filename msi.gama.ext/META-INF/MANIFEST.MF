@@ -557,6 +557,7 @@ Export-Package: .,
  org.opengis.referencing,
  org.opengis.referencing.crs,
  org.opengis.referencing.operation,
+ org.opengis.style,
  org.openstreetmap.osmosis.core.container.v0_6;
   uses:="org.openstreetmap.osmosis.core.task.v0_6,
    org.openstreetmap.osmosis.core.task.common,

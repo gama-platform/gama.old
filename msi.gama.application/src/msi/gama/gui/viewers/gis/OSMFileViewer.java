@@ -3,13 +3,16 @@ package msi.gama.gui.viewers.gis;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
@@ -26,15 +29,20 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
 import org.geotools.map.StyleLayer;
+import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.swt.MapLayerComposite;
+import org.geotools.swt.SwtMapPane;
 import org.geotools.swt.utils.Utils;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.controls.FlatButton;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaOsmFile;
@@ -44,6 +52,22 @@ public class OSMFileViewer extends ShapeFileViewer {
 	
 
 	Map<String,String> attributes;
+	Map<String, FeatureLayer> layers = new HashMap<String, FeatureLayer>();
+	
+	@Override
+	public void createPartControl(final Composite composite) {
+		Composite parent = GamaToolbarFactory.createToolbars(this, composite);
+		SashForm sashForm  = new SashForm(parent, SWT.HORIZONTAL | SWT.NULL);
+		displayInfoString();
+		MapLayerComposite mapLayerTable = new CustomMapLayerComposite(sashForm, SWT.BORDER);
+		pane = new SwtMapPane(sashForm, SWT.BORDER | SWT.NO_BACKGROUND, new StreamingRenderer(), content);
+		pane.setBackground(GamaColors.system(SWT.COLOR_WHITE));
+		pane.setCursorTool(newDragTool());
+		mapLayerTable.setMapPane(pane);
+		sashForm .setWeights(new int[]{1, 5});
+		pane.redraw();
+		
+	}
 	
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
@@ -58,6 +82,7 @@ public class OSMFileViewer extends ShapeFileViewer {
 			GamaOsmFile osmfile = new GamaOsmFile(null,f.getAbsolutePath());
 			attributes = osmfile.getAttributes();
 			SimpleFeatureType TYPE = DataUtilities.createType("geometries","geom:LineString");
+			Map<String, SimpleFeatureType> TYPES = new HashMap<String,SimpleFeatureType >();
 				
 			ArrayList<SimpleFeature> list = new ArrayList<SimpleFeature>();
 			
