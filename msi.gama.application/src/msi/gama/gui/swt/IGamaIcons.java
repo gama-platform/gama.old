@@ -155,6 +155,7 @@ public interface IGamaIcons {
 	public static final GamaIcon FOLDER_BUILTIN = GamaIcons.create(/* "folder.builtin2" */"navigator/folder.library2");
 	public static final GamaIcon FOLDER_PLUGIN = GamaIcons.create("navigator/folder.plugin2");
 	public static final GamaIcon FOLDER_PROJECT = GamaIcons.create("folder.user2");
+	public static final GamaIcon FOLDER_CLOSED = GamaIcons.create("folder.closed2");
 	public static final GamaIcon FOLDER_MODEL = GamaIcons.create("folder.model3");
 	public static final GamaIcon FOLDER_RESOURCES = GamaIcons.create("folder.resources2");
 	public static final GamaIcon FILE_ICON = GamaIcons.create("file.icon2");

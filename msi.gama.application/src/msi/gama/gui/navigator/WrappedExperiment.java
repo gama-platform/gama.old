@@ -1,21 +1,21 @@
 /**
  * Created by drogoul, 19 nov. 2014
- * 
+ *
  */
 package msi.gama.gui.navigator;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.graphics.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.util.file.GAMLFile;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.swt.graphics.*;
 
 /**
  * Class WrappedExperiment.
- * 
+ *
  * @author drogoul
  * @since 19 nov. 2014
- * 
+ *
  */
 public class WrappedExperiment extends WrappedGamlObject {
 
@@ -43,10 +43,10 @@ public class WrappedExperiment extends WrappedGamlObject {
 		return false;
 	}
 
-	@Override
-	public boolean isParentOf(final Object element) {
-		return false;
-	}
+	// @Override
+	// public boolean isParentOf(final Object element) {
+	// return false;
+	// }
 
 	@Override
 	public Image getImage() {

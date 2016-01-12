@@ -1,23 +1,23 @@
 /**
  * Created by drogoul, 5 févr. 2015
- * 
+ *
  */
 package msi.gama.gui.navigator;
 
-import msi.gama.gui.swt.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
+import msi.gama.gui.swt.*;
 
 /**
  * Class WrappedFile.
- * 
+ *
  * @author drogoul
  * @since 5 févr. 2015
- * 
+ *
  */
 public class WrappedFile extends VirtualContent implements IAdaptable {
 
@@ -83,10 +83,10 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 	 * Method isParentOf()
 	 * @see msi.gama.gui.navigator.VirtualContent#isParentOf(java.lang.Object)
 	 */
-	@Override
-	public boolean isParentOf(final Object element) {
-		return false;
-	}
+	// @Override
+	// public boolean isParentOf(final Object element) {
+	// return false;
+	// }
 
 	@Override
 	public boolean handleDoubleClick() {

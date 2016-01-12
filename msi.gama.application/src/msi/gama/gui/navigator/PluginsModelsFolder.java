@@ -52,4 +52,13 @@ public class PluginsModelsFolder extends TopLevelFolder {
 		return desc.hasNature(PluginNature.NATURE_ID);
 	}
 
+	/**
+	 * Method getModelsLocation()
+	 * @see msi.gama.gui.navigator.TopLevelFolder#getModelsLocation()
+	 */
+	@Override
+	protected Location getModelsLocation() {
+		return Location.Plugins;
+	}
+
 }

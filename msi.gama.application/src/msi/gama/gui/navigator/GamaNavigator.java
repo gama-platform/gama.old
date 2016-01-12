@@ -12,7 +12,7 @@
 package msi.gama.gui.navigator;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
+import org.eclipse.ui.internal.navigator.*;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
 import org.eclipse.ui.navigator.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
@@ -103,11 +103,11 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	protected void initListeners(final TreeViewer viewer) {
 		super.initListeners(viewer);
+
 		listener = new IResourceChangeListener() {
 
 			@Override
 			public void resourceChanged(final IResourceChangeEvent event) {
-
 				if ( event.getType() == IResourceChangeEvent.PRE_BUILD ||
 					event.getType() == IResourceChangeEvent.PRE_CLOSE ||
 					event.getType() == IResourceChangeEvent.PRE_DELETE ) { return; }
@@ -116,16 +116,23 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 					@Override
 					public void run() {
-						TreePath[] treePaths = viewer.getExpandedTreePaths();
-						if ( !viewer.isBusy() ) {
-							viewer.refresh();
-							viewer.setExpandedTreePaths(treePaths);
+						if ( viewer.getControl().isDisposed() ) { return; }
+
+						IResourceDelta d = event == null ? null : event.getDelta();
+						if ( d != null ) {
+							IResourceDelta[] addedChildren = d.getAffectedChildren(IResourceDelta.ADDED);
+							if ( addedChildren.length > 0 && viewer != null ) {
+								safeRefresh(d.getResource().getParent());
+							}
+
+						} else {
+							safeRefresh(null);
 						}
 					}
 				});
 			}
 		};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 
 		// viewer.getControl().addMouseTrackListener(new MouseTrackListener() {
 		//
@@ -249,11 +256,9 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 				} catch (CoreException e) {
 					e.printStackTrace();
 				}
-
+				safeRefresh(null);
 				FileFolderSorter.BY_DATE = enabled;
-				Object[] expanded = getCommonViewer().getExpandedElements();
-				getCommonViewer().refresh();
-				getCommonViewer().setExpandedElements(expanded);
+
 			}
 
 		}, SWT.RIGHT);
@@ -330,5 +335,37 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 	@Override
 	public void setToogle(final Action toggle) {}
+
+	public void safeRefresh(final IResource resource) {
+
+		final CommonViewer localViewer = getCommonViewer();
+
+		if ( localViewer == null || localViewer.getControl().isDisposed() ) { return; }
+		Display display = localViewer.getControl().getDisplay();
+		if ( display.isDisposed() ) { return; }
+		display.syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				if ( localViewer.getControl().isDisposed() ) { return; }
+				Object[] expanded = localViewer.getExpandedElements();
+				SafeRunner.run(new NavigatorSafeRunnable() {
+
+					@Override
+					public void run() throws Exception {
+						localViewer.getControl().setRedraw(false);
+						if ( resource == null ) {
+							localViewer.refresh();
+						} else {
+							localViewer.refresh(resource);
+						}
+					}
+				});
+				localViewer.getControl().setRedraw(true);
+				getCommonViewer().setExpandedElements(expanded);
+			}
+		});
+
+	}
 
 }

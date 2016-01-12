@@ -96,11 +96,11 @@ public class WrappedFolder extends VirtualContent {
 	 * Method isParentOf()
 	 * @see msi.gama.gui.navigator.VirtualContent#isParentOf(java.lang.Object)
 	 */
-	@Override
-	public boolean isParentOf(final Object element) {
-		if ( !(element instanceof WrappedFile) ) { return false; }
-		String path = ((WrappedFile) element).getFile().getLocation()
-			.makeRelativeTo(((IFile) getParent()).getLocation()).toString();
-		return fileNames.contains(path);
-	}
+	// @Override
+	// public boolean isParentOf(final Object element) {
+	// if ( !(element instanceof WrappedFile) ) { return false; }
+	// String path = ((WrappedFile) element).getFile().getLocation()
+	// .makeRelativeTo(((IFile) getParent()).getLocation()).toString();
+	// return fileNames.contains(path);
+	// }
 }

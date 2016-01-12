@@ -33,6 +33,7 @@ import msi.gaml.types.Types;
 public class GamaBundleLoader {
 
 	public static String CORE_PLUGIN = "msi.gama.core";
+	public static String CORE_MODELS = "msi.gama.models";
 	public static String CURRENT_PLUGIN_NAME = CORE_PLUGIN;
 	public static String ADDITIONS = "gaml.additions.GamlAdditions";
 	public static String GRAMMAR_EXTENSION_DEPRECATED = "gaml.grammar.addition";

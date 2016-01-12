@@ -15,13 +15,18 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.model.WorkbenchContentProvider;
 import msi.gama.util.file.GAMLFile;
 import msi.gaml.compilation.GamaBundleLoader;
 
-public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
+public class NavigatorContentProvider extends WorkbenchContentProvider {
 
-	private VirtualContent[] virtualFolders;
+	private TopLevelFolder[] virtualFolders;
+
+	public NavigatorContentProvider() {
+
+	}
 
 	@Override
 	public Object[] getElements(final Object inputElement) {
@@ -32,8 +37,8 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 	public Object getParent(final Object element) {
 		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getParent(); }
 		if ( element instanceof IProject ) {
-			for ( VirtualContent folder : virtualFolders ) {
-				if ( folder.isParentOf(element) ) { return folder; }
+			for ( TopLevelFolder folder : virtualFolders ) {
+				if ( folder.accepts((IProject) element) ) { return folder; }
 			}
 		}
 		if ( element instanceof IFile && FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID
@@ -129,7 +134,8 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 		if ( element instanceof NavigatorRoot ) { return true; }
 		if ( element instanceof IFile ) {
 			String ext = FileMetaDataProvider.getContentTypeId((IFile) element);
-			return FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext);
+			return (FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext)) &&
+				getChildren(element).length > 0;
 		}
 		return super.hasChildren(element);
 	}
@@ -140,9 +146,20 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 		this.virtualFolders = null;
 	}
 
+	@Override
+	protected void processDelta(final IResourceDelta delta) {
+		super.processDelta(delta);
+
+	}
+
 	private void initializeVirtualFolders(final Object parentElement) {
-		virtualFolders = new VirtualContent[] { new UserProjectsFolder(parentElement, "User models"),
+		virtualFolders = new TopLevelFolder[] { new UserProjectsFolder(parentElement, "User models"),
 			new PluginsModelsFolder(parentElement, "Plugin models"),
 			new ModelsLibraryFolder(parentElement, "Library models") };
+	}
+
+	@Override
+	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
+		super.inputChanged(viewer, null, ResourcesPlugin.getWorkspace());
 	}
 }
