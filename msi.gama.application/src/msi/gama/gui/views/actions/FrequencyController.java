@@ -13,9 +13,9 @@ package msi.gama.gui.views.actions;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
+import org.eclipse.swt.widgets.ToolItem;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.outputs.*;
 
@@ -70,7 +70,7 @@ public class FrequencyController {
 	 * @param tb
 	 */
 	public void install(final GamaToolbar2 tb) {
-		createFrequencyItem(tb);
+		// createFrequencyItem(tb);
 		createPauseItem(tb);
 		createSynchronizeItem(tb);
 	}
@@ -132,27 +132,27 @@ public class FrequencyController {
 	/**
 	 * @param tb
 	 */
-	private void createFrequencyItem(final GamaToolbar2 tb) {
-
-		SpeedContributionItem i = new SpeedContributionItem(getInit(), new IPositionChangeListener() {
-
-			@Override
-			public void positionChanged(final double position) {
-				IDisplayOutput output = view.getOutput();
-				if ( output == null ) { return; }
-				output.setRefreshRate(getRefresh(position));
-			}
-		}, new IToolTipProvider() {
-
-			@Override
-			public String getToolTipText(final double value) {
-				int i = getRefresh(value);
-				return "Update every" + (i > 1 ? " " + i + " steps" : " step");
-			}
-		}, IGamaIcons.DISPLAY_TOOLBAR_KNOB.image(), IGamaColors.BLUE, IGamaColors.GRAY_LABEL);
-		Control c = i.createControl(tb.getToolbar(SWT.RIGHT));
-		tb.control(c, SWT.DEFAULT, SWT.RIGHT);
-
-	}
+	// private void createFrequencyItem(final GamaToolbar2 tb) {
+	//
+	// SpeedContributionItem i = new SpeedContributionItem(getInit(), new IPositionChangeListener() {
+	//
+	// @Override
+	// public void positionChanged(final double position) {
+	// IDisplayOutput output = view.getOutput();
+	// if ( output == null ) { return; }
+	// output.setRefreshRate(getRefresh(position));
+	// }
+	// }, new IToolTipProvider() {
+	//
+	// @Override
+	// public String getToolTipText(final double value) {
+	// int i = getRefresh(value);
+	// return "Update every" + (i > 1 ? " " + i + " steps" : " step");
+	// }
+	// }, IGamaIcons.DISPLAY_TOOLBAR_KNOB.image(), IGamaColors.BLUE, IGamaColors.GRAY_LABEL);
+	// Control c = i.createControl(tb.getToolbar(SWT.RIGHT));
+	// tb.control(c, SWT.DEFAULT, SWT.RIGHT);
+	//
+	// }
 
 }
