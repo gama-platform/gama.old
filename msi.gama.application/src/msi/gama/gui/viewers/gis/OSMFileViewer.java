@@ -64,7 +64,7 @@ public class OSMFileViewer extends ShapeFileViewer {
 		pane.setBackground(GamaColors.system(SWT.COLOR_WHITE));
 		pane.setCursorTool(newDragTool());
 		mapLayerTable.setMapPane(pane);
-		sashForm .setWeights(new int[]{1, 5});
+		sashForm .setWeights(new int[]{1, 4});
 		pane.redraw();
 		
 	}
