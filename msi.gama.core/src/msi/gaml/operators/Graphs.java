@@ -410,11 +410,7 @@ public class Graphs {
 
 		ConnectivityInspector ci;
 		//there is an error with connectivity inspector of JGrapht....
-		if ( graph.isDirected() ) {
-			ci = new ConnectivityInspector((UndirectedGraph) graph);
-		} else {
-			ci = new ConnectivityInspector((DirectedGraph) graph);
-		}
+		ci = new ConnectivityInspector((DirectedGraph) graph);
 		IList<IList> results = GamaListFactory.create(Types.LIST);
 		for ( Object obj : ci.connectedSets() ) {
 			results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));

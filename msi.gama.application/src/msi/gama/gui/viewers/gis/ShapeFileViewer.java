@@ -38,7 +38,7 @@ import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 
 public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
 
-	private class DragTool extends CursorTool {
+	public class DragTool extends CursorTool {
 
 		private Point panePos;
 		boolean panning;
