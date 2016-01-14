@@ -56,6 +56,8 @@ public class GamaOsmFile extends GamaGisFile {
 		final double width;
 		final double height;
 		final Map<String, String> attributes = new LinkedHashMap();
+		
+				
 
 		public OSMInfo(final URL url, final long modificationStamp) {
 			super(modificationStamp);
@@ -75,7 +77,7 @@ public class GamaOsmFile extends GamaGisFile {
 				}
 				SimpleFeatureCollection collection = new ListFeatureCollection(TYPE, list);
 				SimpleFeatureSource featureSource = DataUtilities.source(collection);
-
+				
 				env2 = featureSource.getBounds();
 				number = osmfile.nbObjects;
 				crs = osmfile.getOwnCRS();
@@ -83,6 +85,8 @@ public class GamaOsmFile extends GamaGisFile {
 				System.out.println("Error in reading metadata of " + url);
 
 			} finally {
+				
+				//approximation of the width and height in meters.
 				width = env2 != null ? env2.getWidth() * (Math.PI / 180) * 6378137 : 0;
 				height = env2 != null ? env2.getHeight() * (Math.PI / 180) * 6378137 : 0;
 				itemNumber = number;
@@ -158,6 +162,38 @@ public class GamaOsmFile extends GamaGisFile {
 
 	GamaMap<String, GamaList> filteringOptions;
 	Map<String, String> attributes;
+
+	final Map<String,List<IShape>> layers = GamaMapFactory.create(Types.STRING, Types.LIST);
+	final static List<String> featureTypes = new ArrayList<String>() {
+		{
+			add("aerialway");
+			add("aeroway");
+			add("amenity");
+			add("barrier");
+			add("boundary");
+			add("building");
+			add("craft");
+			add("emergency");
+			add("geological");
+			add("highway");
+			add("historic");
+			add("landuse");
+			add("leisure");
+			add("man_made");
+			add("military");
+			add("natural");
+			add("office");
+			add("place");
+			add("power");
+			add("public_transport");
+			add("railway");
+			add("route");
+			add("shop");
+			add("sport");
+			add("tourism");
+			add("waterway");
+		}
+};
 	int nbObjects;
 
 	/**
@@ -302,6 +338,18 @@ public class GamaOsmFile extends GamaGisFile {
 				}
 				if ( hasAttributes ) {
 					geometries.add(pt);
+					for (Object att : pt.getAttributes().keySet()) {
+						String idType = att+" (point)";
+						if (featureTypes.contains(att)) {
+							List objs = layers.get(idType);
+							if (objs == null) {
+								objs = GamaListFactory.create(Types.GEOMETRY);
+								layers.put(idType, objs);
+							}
+							objs.add(pt);
+							break;
+						}
+					}
 				}
 			}
 
@@ -317,10 +365,28 @@ public class GamaOsmFile extends GamaGisFile {
 				}
 				values.put(key, tg.getValue());
 			}
-			boolean isPolyline = values.containsKey("highway") ||
-				way.getWayNodes().get(0).equals(way.getWayNodes().get(way.getWayNodes().size() - 1));
+			//boolean isPolyline = values.containsKey("highway") ||
+			//	!way.getWayNodes().get(0).equals(way.getWayNodes().get(way.getWayNodes().size() - 1));
+			boolean isPolyline = !(way.getWayNodes().get(0).getNodeId() == way.getWayNodes().get(way.getWayNodes().size() - 1).getNodeId());
 			if ( isPolyline ) {
-				((List) geometries).addAll(createSplitRoad(way, values, intersectionNodes, nodesPt));
+				List<IShape> geoms = createSplitRoad(way, values, intersectionNodes, nodesPt);
+				((List) geometries).addAll(geoms);
+				if (!geoms.isEmpty()) {
+					for (Object att : values.keySet()) {
+						String idType = att+" (line)";
+						if (featureTypes.contains(att)) {
+							List objs = layers.get(idType);
+							if (objs == null) {
+								objs = GamaListFactory.create(Types.GEOMETRY);
+								layers.put(idType, objs);
+							}
+							objs.addAll(geoms);
+							break;
+						}
+					}
+				}
+					
+				
 
 			} else {
 				List<IShape> points = GamaListFactory.create(Types.GEOMETRY);
@@ -339,10 +405,24 @@ public class GamaOsmFile extends GamaGisFile {
 					geom.getInnerGeometry().getArea() > 0 ) {
 					for ( String key : values.keySet() ) {
 						Object val = values.get(key);
-
 						geom.setAttribute(key, val);
 					}
 					geometries.add(geom);
+					if (geom.getAttributes() != null) {
+						for (Object att : geom.getAttributes().keySet()) {
+							String idType = att+" (polygon)";
+							if (featureTypes.contains(att)) {
+								List objs = layers.get(idType);
+								if (objs == null) {
+									objs = GamaListFactory.create(Types.GEOMETRY);
+									layers.put(idType, objs);
+								}
+								objs.add(geom);
+								break;
+							}
+						}
+					}
+					
 				}
 			}
 
@@ -492,5 +572,15 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 		return attributes;
 	}
+
+	public Map<String, List<IShape>> getLayers() {
+		return layers;
+	}
+
+	public List<String> getFeatureTypes() {
+		return featureTypes;
+	}
+	
+	
 
 }

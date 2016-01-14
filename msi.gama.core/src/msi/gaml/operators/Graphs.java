@@ -409,10 +409,11 @@ public class Graphs {
 			"In the nb_connected_components_of operator, the graph should not be null!", scope); }
 
 		ConnectivityInspector ci;
+		//there is an error with connectivity inspector of JGrapht....
 		if ( graph.isDirected() ) {
-			ci = new ConnectivityInspector((DirectedGraph) graph);
-		} else {
 			ci = new ConnectivityInspector((UndirectedGraph) graph);
+		} else {
+			ci = new ConnectivityInspector((DirectedGraph) graph);
 		}
 		IList<IList> results = GamaListFactory.create(Types.LIST);
 		for ( Object obj : ci.connectedSets() ) {
