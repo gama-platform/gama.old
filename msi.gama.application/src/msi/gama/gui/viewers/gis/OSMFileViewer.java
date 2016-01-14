@@ -29,9 +29,7 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
-import org.geotools.map.StyleLayer;
 import org.geotools.renderer.lite.StreamingRenderer;
-import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Style;
 import org.geotools.swt.MapLayerComposite;
 import org.geotools.swt.SwtMapPane;
@@ -41,7 +39,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
@@ -49,7 +46,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaOsmFile;
 
-public class OSMFileViewer extends ShapeFileViewer {
+public class OSMFileViewer extends GISFileViewer {
 
 	Map<String, String> attributes;
 
@@ -92,7 +89,7 @@ public class OSMFileViewer extends ShapeFileViewer {
 			content = new MapContent();
 			style = Utils.createStyle(f, featureSource);
 			layer = new FeatureLayer(featureSource, style);
-			mode = determineMode(featureSource.getSchema(), "Polygon");
+			/*mode = determineMode(featureSource.getSchema(), "Polygon");
 			List<FeatureTypeStyle> ftsList = style.featureTypeStyles();
 			if ( ftsList.size() > 0 ) {
 				fts = ftsList.get(0);
@@ -103,7 +100,7 @@ public class OSMFileViewer extends ShapeFileViewer {
 				this.setFillColor(SwtGui.SHAPEFILE_VIEWER_FILL.getValue(), mode, fts);
 				this.setStrokeColor(SwtGui.SHAPEFILE_VIEWER_LINE_COLOR.getValue(), mode, fts);
 				((StyleLayer) layer).setStyle(style);
-			}
+			}*/
 			// content.addLayer(layer);
 			List<String> layers = new ArrayList<String>(osmfile.getLayers().keySet());
 			Collections.sort(layers);

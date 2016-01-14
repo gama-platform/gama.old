@@ -60,7 +60,6 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 
 /**
