@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -24,6 +25,7 @@ public class CheckURL {
 	static final String githubGamaSourceUrl = "https://github.com/gama-platform/gama/tree/master";
 	static String pathToContent;
 	static Map<String,String> fileMap = new HashMap<String,String>();
+	static List<String> imagesList = new ArrayList<String>();
 	
 	static Map<String,Integer> forbiddenSyntaxMap = new HashMap<String,Integer>();
 	static final String[] listOfForbiddenSyntax = {"<img src","<a href","TODO","Under Construction"};
@@ -54,6 +56,9 @@ public class CheckURL {
 		// init the map <fileName,relativePath>. If 2 fileNames are the same, write error message
 		if (!initMap(mdFiles))
 			return;
+		
+		// init the list <imageNames>
+		initImagesList(listFiles);
 
 		// for each files, find the pattern [xxx](path), and check if the path exists. 
 		//... If it is not correct, change it is possible, or write an error message if not possible.
@@ -68,6 +73,9 @@ public class CheckURL {
 		
 		// display message if forbidden syntax has been found.
 		printForbiddenSyntax();
+		
+		// display message if some images are not used.
+		printImagesNotUsed();
 	}
 	
 	private static boolean loadPathToContent() throws FileNotFoundException{
@@ -117,6 +125,9 @@ public class CheckURL {
 	
 	private static boolean checkIfFileExists(String filePath) {
 		File f = new File(filePath);
+		if (imagesList.contains(f.getAbsolutePath())) {
+			imagesList.remove(f.getAbsolutePath());
+		}
 		if (f.exists() && !f.isDirectory())
 			return true;
 		System.out.println("----> ERROR : File "+filePath+" does not exist.");
@@ -152,6 +163,16 @@ public class CheckURL {
 		}
 		System.out.println("List of the referenced files : "+fileMap.keySet());
 		return true;
+	}
+	
+	private static void initImagesList(ArrayList<File> fileList) {
+		for (int i=0; i<fileList.size(); i++) {
+			String filePathName = fileList.get(i).getAbsolutePath();
+			String[] filePathNameSplitted = filePathName.split((File.separator+File.separator));
+			if (filePathNameSplitted[filePathNameSplitted.length-2].startsWith("images")) {
+				imagesList.add(filePathName);
+			}
+		}
 	}
 	
 	private static ArrayList<File> filterFilesByExtension(ArrayList<File> inputList, String ext)
@@ -195,10 +216,39 @@ public class CheckURL {
 			String firstPart = recursiveFindAndReplaceRegex(matcher.group(1),file, matcher.group(2)+matcher.group(3));
 			String stringMatched = matcher.group(2);
 			stringMatched = formatString(stringMatched);
+//			String isolatedFileName = isolateFileName(stringMatched);
+//			switch (isolatedFileName.split(".")[1])
+//			{
+//			case ("png") :
+//				
+//			}
+//			System.out.println(isolateFileName(stringMatched));
 			String newURL = stringMatched;
 			if (stringMatched.startsWith("images"+File.separator) || stringMatched.startsWith("images/")) {
 				// case of image link. Image links are relative path
 				checkIfFileExists(path+File.separator+matcher.group(2));
+			}
+			else if (fileMap.containsValue(stringMatched))
+			{
+				// the link already exists in the map. Nothing have to be done
+			}
+			else if (fileMap.containsKey(isolateFileName(stringMatched)))
+			{
+				// the file exists in the map, but the link seems to be wrong. 
+				String fileName = isolateFileName(stringMatched);
+				
+				// if the link contains an anchor, extract the anchor
+				String anchor = "";
+				if (fileName.contains("#"))
+				{
+					anchor = "#"+fileName.split("#")[1];
+					fileName = fileName.split("#")[0];
+				}
+				
+				// find in the map the correct URL to put
+				newURL = fileMap.get(fileName)+anchor;
+				if (!newURL.equals(stringMatched))
+					System.out.println("----> MODIFICATION : "+stringMatched+" changed into "+newURL);
 			}
 			else if (stringMatched.startsWith(githubGamaSourceUrl))
 			{
@@ -209,11 +259,16 @@ public class CheckURL {
 			{
 				// case of web URL. Do nothing.
 			}
+			else if (stringMatched.startsWith(githubContentUrl))
+			{
+				// case of link to a file of gamaSource. Check if the file exists
+				checkIfFileExists(pathToContent+stringMatched.split(githubContentUrl)[1].split("#")[0]);
+			}
 			else
 			{
 				// case of other links, have to be in githubUrl format.
 				// extract the filename
-				String fileName = stringMatched.split(File.separator+File.separator)[stringMatched.split(File.separator+File.separator).length-1];
+				String fileName = isolateFileName(stringMatched);
 				
 				// if the link contains an anchor, extract the anchor
 				String anchor = "";
@@ -245,7 +300,9 @@ public class CheckURL {
 			}
 			str = firstPart+newURL+matcher.group(3);
 		}
-		checkPresenceOfForbiddenSyntax(str);
+		if (!isolateFileName(file.getAbsolutePath()).startsWith("WriteTheContent"))
+			// check the presence of forbidden syntax for every files but the "write the content" file.
+			checkPresenceOfForbiddenSyntax(str);
 		return str;
 	}
 	
@@ -278,6 +335,14 @@ public class CheckURL {
 		System.out.println(numberOfErrorsDetected+" links could not be verified.");
 	}
 	
+	private static void printImagesNotUsed()
+	{
+		for (int i=0; i<imagesList.size(); i++)
+		{
+			System.out.println("WARNING : The image "+imagesList.get(i)+" is never used.");
+		}
+	}
+	
 	private static String getGamaSourceLocalPath()
 	{
 		return Paths.get("").toAbsolutePath().toString()+File.separator+"..";
@@ -286,5 +351,24 @@ public class CheckURL {
 	private static String formatString(String str)
 	{
 		return str.replace("%20", " ");
+	}
+	
+	private static String isolateFileName(String str)
+	{
+		String result;
+		String[] separatorList = {"/","\\\\"};
+		String chosenSeparator = "";
+		for (int i = 0 ; i<separatorList.length ; i++) {
+			if (chosenSeparator == "") {
+				chosenSeparator = separatorList[i];
+			}
+			int strLen = str.split(separatorList[i])[str.split(separatorList[i]).length-1].length();
+			if (str.split(chosenSeparator)[str.split(chosenSeparator).length-1].length()>strLen) {
+				chosenSeparator = separatorList[i];
+			}
+		}
+		result = str.split(chosenSeparator)[str.split(chosenSeparator).length-1];
+		
+		return result;
 	}
 }
