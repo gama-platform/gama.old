@@ -188,10 +188,21 @@ public class OSMFileViewer extends ShapeFileViewer {
 				AgentsMenu.separate(menu);
 				AgentsMenu.separate(menu, "Attributes");
 				try {
-					for ( String att : attributes.keySet() ) {
+					List<String> atts = new ArrayList<String>(attributes.keySet());
+					Collections.sort(atts);
+					String currentType = "";
+					
+					for ( String att : atts ) {
+						String[] attP = att.split(";");
+						if (!currentType.equals(attP[0]) ) {
+							currentType = attP[0];
+							MenuItem m3 = new MenuItem(menu, SWT.NONE);
+							m3.setEnabled(false);
+							m3.setText("  * " + currentType );
+						}
 						MenuItem m2 = new MenuItem(menu, SWT.NONE);
 						m2.setEnabled(false);
-						m2.setText("     - " + att + " (" + attributes.get(att) + ")");
+						m2.setText("       - " + attP[1] + " (" + attributes.get(att) + ")");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

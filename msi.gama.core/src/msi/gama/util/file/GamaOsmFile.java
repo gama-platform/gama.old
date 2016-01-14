@@ -289,8 +289,8 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 	}
 
-	private void addAttribute(final String nameAt, final Object val) {
-		String type = attributes.get(nameAt);
+	private void addAttribute(final Map<String, String> atts, final String nameAt, final Object val) {
+		String type = atts.get(nameAt);
 		if ( type != null && type.equals("string") ) { return; }
 		String newType = "int";
 		try {
@@ -304,7 +304,7 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 
 		if ( type == null || newType.equals("string") ) {
-			attributes.put(nameAt, newType);
+			atts.put(nameAt, newType);
 		}
 	}
 
@@ -324,12 +324,13 @@ public class GamaOsmFile extends GamaGisFile {
 		for ( Node node : nodes ) {
 			GamaShape pt = nodesPt.get(node.getId());
 			boolean hasAttributes = !node.getTags().isEmpty();
+			Map<String,String> atts = new Hashtable<String,String>();
 			if ( pt != null ) {
 				for ( Tag tg : node.getTags() ) {
 					String key = tg.getKey().split(":")[0];
 					Object val = tg.getValue();
 					if ( val != null ) {
-						addAttribute(key, val);
+						addAttribute(atts, key, val);
 					}
 					pt.setAttribute(key, val);
 					if ( key.equals("highway") ) {
@@ -339,14 +340,18 @@ public class GamaOsmFile extends GamaGisFile {
 				if ( hasAttributes ) {
 					geometries.add(pt);
 					for (Object att : pt.getAttributes().keySet()) {
-						String idType = att+" (point)";
 						if (featureTypes.contains(att)) {
+							String idType = att+" (point)";
 							List objs = layers.get(idType);
 							if (objs == null) {
 								objs = GamaListFactory.create(Types.GEOMETRY);
 								layers.put(idType, objs);
 							}
 							objs.add(pt);
+							for (String v : atts.keySet())  {
+								String id = idType + ";" +v;
+								attributes.put(id, atts.get(v));
+							}
 							break;
 						}
 					}
@@ -356,13 +361,15 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 		for ( Way way : ways ) {
 			Map<String, Object> values = new TOrderedHashMap<String, Object>();
+			Map<String,String> atts = new Hashtable<String,String>();
+			
 			for ( Tag tg : way.getTags() ) {
 
 				String key = tg.getKey().split(":")[0];
 				Object val = tg.getValue();
 				if ( val != null ) {
-					addAttribute(key, val);
-				}
+					addAttribute(atts, key, val);
+				} 
 				values.put(key, tg.getValue());
 			}
 			//boolean isPolyline = values.containsKey("highway") ||
@@ -381,6 +388,10 @@ public class GamaOsmFile extends GamaGisFile {
 								layers.put(idType, objs);
 							}
 							objs.addAll(geoms);
+							for (String v : atts.keySet())  {
+								String id = idType + ";" +v;
+								attributes.put(id, atts.get(v));
+							}
 							break;
 						}
 					}
@@ -418,6 +429,10 @@ public class GamaOsmFile extends GamaGisFile {
 									layers.put(idType, objs);
 								}
 								objs.add(geom);
+								for (String v : atts.keySet())  {
+									String id = idType + ";" +v;
+									attributes.put(id, atts.get(v));
+								}
 								break;
 							}
 						}
