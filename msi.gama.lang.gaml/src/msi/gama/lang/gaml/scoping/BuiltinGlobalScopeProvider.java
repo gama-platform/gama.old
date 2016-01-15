@@ -1,30 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'BuiltinGlobalScopeProvider.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 // (c) Vincent Simonet, 2011
 package msi.gama.lang.gaml.scoping;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.utils.EGaml;
-import msi.gama.util.GamaPair;
-import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.descriptions.*;
-import msi.gaml.expressions.*;
-import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -36,6 +24,18 @@ import org.eclipse.xtext.scoping.impl.*;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.utils.EGaml;
+import msi.gama.util.GamaPair;
+import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.*;
+import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.types.*;
 
 /**
  * Global GAML scope provider supporting built-in definitions.
@@ -46,15 +46,15 @@ import com.google.inject.Inject;
  * <li>Built-in definitions which are defined in the diffents plug-in bundles providing contributions to GAML,</li>
  * <li>A global scope, which is computed by a ImportURI global scope provider.</li>
  * </ul>
- * 
+ *
  * @author Vincent Simonet, adapted for GAML by Alexis Drogoul, 2012
  */
 public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 	@Inject
 	private ImportUriGlobalScopeProvider uriScopeProvider;
-	@Inject
-	private ResourceSetGlobalScopeProvider resourceSetScopeProvider;
+	// @Inject
+	// private ResourceSetGlobalScopeProvider resourceSetScopeProvider;
 
 	static final THashMap EMPTY_MAP = new THashMap();
 	private static THashMap<EClass, Resource> resources;
@@ -67,8 +67,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 		@Override
 		protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
-			return new LinkedHashSet(((GamlResource) resource).computeAllImportedURIs(resource.getResourceSet())
-				.keySet());
+			return new LinkedHashSet(
+				((GamlResource) resource).computeAllImportedURIs(resource.getResourceSet()).keySet());
 		}
 	}
 
@@ -449,9 +449,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			// parent = resourceSetScopeProvider.getScope(context, reference, filter);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
-			Diagnostic d =
-				new EObjectDiagnosticImpl(Severity.ERROR, "", "The imports of this model are not valid", context
-					.getContents().get(0), null, 0, null);
+			Diagnostic d = new EObjectDiagnosticImpl(Severity.ERROR, "", "The imports of this model are not valid",
+				context.getContents().get(0), null, 0, null);
 			context.getErrors().add(d);
 			return IScope.NULLSCOPE;
 		}
