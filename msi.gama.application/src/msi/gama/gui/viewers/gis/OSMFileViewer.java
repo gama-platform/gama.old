@@ -205,11 +205,11 @@ public class OSMFileViewer extends GISFileViewer {
 	public void saveAsCSV() {
 		HashSet<String> atts = new HashSet<String>();
 		for (String at : attributes.keySet()) {
-			atts.add(at.split(" ")[0]);
+			atts.add(at.split(";")[1]);
 		}
-		System.out.println("atts: " + atts);
-		
-		saveAsCSV(new ArrayList<String>(atts), osmfile.getContents(null));
+		List<String> attsOrd =  new ArrayList<String>(atts);
+		Collections.sort(attsOrd);
+		saveAsCSV(attsOrd, osmfile.getContents(null));
 	}
 
 }
