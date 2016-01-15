@@ -1,23 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'StaticLayerObject.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.*;
-import msi.gama.metamodel.shape.*;
-import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Geometry;
+import msi.gama.metamodel.shape.*;
+import msi.gaml.types.GamaGeometryType;
+import ummisco.gama.opengl.JOGLRenderer;
 
 public class StaticLayerObject extends LayerObject {
 
@@ -41,7 +41,7 @@ public class StaticLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void clear(final GL gl, final int traceSize) {}
+	public void clear(final GL gl) {}
 
 	public static class WaitingLayerObject extends StaticLayerObject {
 
@@ -128,46 +128,45 @@ public class StaticLayerObject extends LayerObject {
 			Color c = new Color(150, 150, 150);
 			GamaPoint origin = new GamaPoint();
 			Geometry g = GamaGeometryType.buildLine(origin, new GamaPoint(w, 0)).getInnerGeometry();
-			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, null, null,null);
+			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, null, null, null);
 			g = GamaGeometryType.buildLine(new GamaPoint(w, 0), new GamaPoint(w, h)).getInnerGeometry();
-			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, null, null,null);
+			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, null, null, null);
 			g = GamaGeometryType.buildLine(new GamaPoint(w, h), new GamaPoint(0, h)).getInnerGeometry();
-			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, null, null,null);
+			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, null, null, null);
 			g = GamaGeometryType.buildLine(new GamaPoint(0, h), origin).getInnerGeometry();
-			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, null, null,null);
+			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, null, null, null);
 			// addGeometry(g, GAMA.getSimulation().getAgent(), c, false, c, false, null, 0, size / 20, false,
 			// IShape.Type.ENVIRONMENT, 0);
 			// build the lines
 
 			g = GamaGeometryType.buildLine(origin, new GamaPoint(size, 0, 0)).getInnerGeometry();
 			addGeometry(g, null, Color.red, true, Color.red, false, null, 0, 0, false, IShape.Type.LINESTRING, null,
-				null,null);
+				null, null);
 			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, size, 0)).getInnerGeometry();
-			addGeometry(g, null, Color.green, true, Color.green, false, null, 0, 0, false, IShape.Type.LINESTRING,
-				null, null,null);
+			addGeometry(g, null, Color.green, true, Color.green, false, null, 0, 0, false, IShape.Type.LINESTRING, null,
+				null, null);
 			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, 0, size)).getInnerGeometry();
 			addGeometry(g, null, Color.blue, true, Color.blue, false, null, 0, 0, false, IShape.Type.LINESTRING, null,
-				null,null);
+				null, null);
 			// add the legends
 			addString("X", new GamaPoint(1.2f * size, 0.0d, 0.0d), 12, 12d, Color.black, "Arial", Font.BOLD, 0d, false);
-			addString("Y", new GamaPoint(0.0d, -1.2f * size, 0.0d), 12, 12d, Color.black, "Arial", Font.BOLD, 0d, false);
+			addString("Y", new GamaPoint(0.0d, -1.2f * size, 0.0d), 12, 12d, Color.black, "Arial", Font.BOLD, 0d,
+				false);
 			addString("Z", new GamaPoint(0.0d, 0.0d, 1.2f * size), 12, 12d, Color.black, "Arial", Font.BOLD, 0d, false);
 			// add the triangles
-			g =
-				GamaGeometryType.buildArrow(origin, new GamaPoint(size + size / 10, 0, 0), size / 4, size / 4, true)
-					.getInnerGeometry();
-			addGeometry(g, null, Color.red, true, Color.red, false, null, 0, 0, false, IShape.Type.POLYGON, null, null,null);
-			g =
-				GamaGeometryType.buildArrow(origin, new GamaPoint(0, size + size / 10, 0), size / 4, size / 4, true)
-					.getInnerGeometry();
+			g = GamaGeometryType.buildArrow(origin, new GamaPoint(size + size / 10, 0, 0), size / 4, size / 4, true)
+				.getInnerGeometry();
+			addGeometry(g, null, Color.red, true, Color.red, false, null, 0, 0, false, IShape.Type.POLYGON, null, null,
+				null);
+			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, size + size / 10, 0), size / 4, size / 4, true)
+				.getInnerGeometry();
 			addGeometry(g, null, Color.green, true, Color.green, false, null, 0, 0, false, IShape.Type.POLYGON, null,
-				null,null);
-			g =
-				GamaGeometryType.buildArrow(origin, new GamaPoint(0, 0, size + size / 10), size / 4, size / 4, true)
-					.getInnerGeometry();
+				null, null);
+			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, 0, size + size / 10), size / 4, size / 4, true)
+				.getInnerGeometry();
 			// FIXME See Issue 832: depth cannot be applied here.
 			addGeometry(g, null, Color.blue, true, Color.blue, false, null, 0, 0, false, IShape.Type.POLYGON, null,
-				null,null);
+				null, null);
 
 		}
 	}
