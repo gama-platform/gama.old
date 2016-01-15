@@ -161,7 +161,7 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	GamaMap<String, GamaList> filteringOptions;
-	Map<String, String> attributes;
+	Map<String, String> attributes = new Hashtable<String, String>();
 
 	final Map<String,List<IShape>> layers = GamaMapFactory.create(Types.STRING, Types.LIST);
 	final static List<String> featureTypes = new ArrayList<String>() {
