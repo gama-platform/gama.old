@@ -110,6 +110,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 	public void setUrl(final String url) {
 		browser.setUrl(url);
+		this.setPartName(url.substring(url.lastIndexOf('/') + 1));
 		checkButtons();
 	}
 
@@ -123,6 +124,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 	public void setHtml(final String html) {
 		browser.setText(html, true);
+		this.setPartName("HTML Viewer");
 		toolbar.wipe(SWT.LEFT, true);
 	}
 

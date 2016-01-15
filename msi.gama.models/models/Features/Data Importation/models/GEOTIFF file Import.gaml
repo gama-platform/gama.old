@@ -1,8 +1,9 @@
 /**
- * 
- *  Author: Patrick Taillandier
- *  Description: Show how to import a geotiff file to initialize a grid
- */
+* Name: GeoTIFF file to Grid of Cells 
+* Author:  Patrick Taillandier
+* Description: Model which shows how to create a grid of cells by using a GeoTIFF File. 
+* Tag :  Import Files, GIS
+*/
 
 model geotiffimport
 

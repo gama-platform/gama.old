@@ -1,8 +1,9 @@
 /**
- *  ascimport
- *  Author: Patrick Taillandier
- *  Description: Show how to import an asc file (ESRI ASCII file) to initialize a grid
- */
+* Name: ESRI ASCII to grid model
+* Author:  Patrick Taillandier
+* Description: Model which shows how to initialize a grid using a ESRI ASCII file
+* Tag : Grid, Import Files
+*/
 
 model ascimport
 

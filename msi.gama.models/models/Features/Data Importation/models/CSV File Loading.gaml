@@ -1,8 +1,10 @@
 /**
- *  CSVfileloading
- *  Author: Patrick Taillandier
- *  Description: Shows how to import a CSV file and use it
- */
+* Name: Convertion of CSV data to Matrix
+* Author:  Patrick Taillandier
+* Description: Model which shows how to initialize a matrix by using the content of a CSV File. The model load a CSV File, and write its content in the console. 
+* Tag : CSV, Import Files
+*/
+
 
 model CSVfileloading
 

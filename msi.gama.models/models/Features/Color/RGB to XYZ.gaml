@@ -1,8 +1,12 @@
+
 /**
- *  rgb_to_xyz
- *  Author: Arnaud Grignard
- *  Description: Display a RGB value of a picture in 3D. 
- */
+* Name: RGB color to XYZ position
+* Author:  Arnaud Grignard
+* Description: A model to show how to convert rgb values in xyz position using the operator rgb_to_xyz. Each pixel of a given image is used to create a point with 
+* 	its coordinates depending on its color : red value for x coordinate, green value for y coordinate and blue value for the z coordinate.
+* Tag : Color, 3D Display
+*/
+
 model rgbCube
 
 global {

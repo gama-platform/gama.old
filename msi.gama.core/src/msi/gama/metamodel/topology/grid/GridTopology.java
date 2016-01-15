@@ -138,12 +138,12 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	
-	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target,final IList<IShape> on)
+	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target,final IList<IAgent> on)
 		throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, on);
 	}
 
-	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target,final IList<IShape> on)
+	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target,final IList<IAgent> on)
 		throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, on);
 	}

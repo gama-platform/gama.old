@@ -49,7 +49,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	public abstract IAgent getAgentAt(final ILocation c);
 
 	public abstract GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source,
-		final IShape target, final ITopology topo, final IList<IShape> on) throws GamaRuntimeException;
+		final IShape target, final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException;
 
 	// public abstract Iterator<IAgent> getNeighboursOf(final IScope scope, final ILocation shape, final Double
 	// distance,
