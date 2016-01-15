@@ -374,7 +374,7 @@ public class GamaOsmFile extends GamaGisFile {
 			}
 			//boolean isPolyline = values.containsKey("highway") ||
 			//	!way.getWayNodes().get(0).equals(way.getWayNodes().get(way.getWayNodes().size() - 1));
-			boolean isPolyline = !(way.getWayNodes().get(0).getNodeId() == way.getWayNodes().get(way.getWayNodes().size() - 1).getNodeId());
+			boolean isPolyline = values.containsKey("highway")  || !(way.getWayNodes().get(0).getNodeId() == way.getWayNodes().get(way.getWayNodes().size() - 1).getNodeId());
 			if ( isPolyline ) {
 				List<IShape> geoms = createSplitRoad(way, values, intersectionNodes, nodesPt);
 				((List) geometries).addAll(geoms);
