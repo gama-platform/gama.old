@@ -429,6 +429,14 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	}
 
 	static {
+		// AD 15/01/16: added to make sure that the XText builder can wait until, at least, the main artefacts of GAMA have been built.
+		while (ModelDescription.ROOT == null) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		createDescriptions();
 	}
 
