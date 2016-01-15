@@ -8,7 +8,7 @@ model shape
 
 global {
 	
-	file gamaRaster <- file('images/Gama.png');
+	file gamaRaster <- file('../images/Gama.png');
 	
 	int size <- 10;
 	list<geometry> geometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size/2),triangle(size),hexagon(size),rgb_triangle(size)];
