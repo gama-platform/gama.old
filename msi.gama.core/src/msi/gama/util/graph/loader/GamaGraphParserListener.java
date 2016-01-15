@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaGraphParserListener.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.graph.loader;
 
@@ -32,9 +32,9 @@ import msi.gaml.types.*;
  * <li>x,y,z attributes are processed as special attributes related to the location</li>
  * <li>TODO directionality of the resulting graph is automatically detected: if every edge is not directed, then the graph is not directed.
  * </ul>
- * 
+ *
  * @author Samuel Thiriot
- * 
+ *
  */
 public class GamaGraphParserListener implements IGraphParserListener {
 
@@ -140,11 +140,11 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		if ( populationNodes != null ) {
 			// retrieve the agents for this edge
 			nodeFrom = nodeId2agent.get(fromNodeId);
-			if ( nodeFrom == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " +
-				fromNodeId + " was not declared"); }
+			if ( nodeFrom == null ) { throw GamaRuntimeException
+				.error("Error while parsing graph: the node " + fromNodeId + " was not declared"); }
 			nodeTo = nodeId2agent.get(toNodeId);
-			if ( nodeTo == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " + toNodeId +
-				" was not declared");
+			if ( nodeTo == null ) { throw GamaRuntimeException
+				.error("Error while parsing graph: the node " + toNodeId + " was not declared");
 			// TODO : add support for nodes that were not declared ? (may be supported in some file
 			// formats)
 			}
@@ -194,15 +194,15 @@ public class GamaGraphParserListener implements IGraphParserListener {
 
 		if ( populationNodes == null ) {
 			// can't set an attribute for a graph without agents
-			warnings
-				.addWarning("a node attribute was ignored, because no specy of agent is associated with nodes: attribute '" +
+			warnings.addWarning(
+				"a node attribute was ignored, because no specy of agent is associated with nodes: attribute '" +
 					attributeName + "'");
 			return;
 		}
 
 		IAgent agent = nodeId2agent.get(nodeId);
-		if ( agent == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " + nodeId +
-			" was not declared"); }
+		if ( agent == null ) { throw GamaRuntimeException
+			.error("Error while parsing graph: the node " + nodeId + " was not declared"); }
 
 		// special case of attributes for position: x,y,z
 		if ( attributeName.equalsIgnoreCase("X") ) {
@@ -224,11 +224,11 @@ public class GamaGraphParserListener implements IGraphParserListener {
 				agent.getLocation().setY(parseValueAsDouble(values[1]));
 				agent.getLocation().setY(parseValueAsDouble(values[2]));
 			} catch (ClassCastException e) {
-				warnings
-					.addWarning("unable to process node attribute 'xyz': expected an array of locations, but this was not the case.");
+				warnings.addWarning(
+					"unable to process node attribute 'xyz': expected an array of locations, but this was not the case.");
 			} catch (IndexOutOfBoundsException e) {
-				warnings
-					.addWarning("unable to process node attribute 'xyz': expected an array of 3 locations, but the array was not big enough.");
+				warnings.addWarning(
+					"unable to process node attribute 'xyz': expected an array of 3 locations, but the array was not big enough.");
 			}
 			return;
 		}
@@ -261,15 +261,15 @@ public class GamaGraphParserListener implements IGraphParserListener {
 
 		if ( populationEdges == null ) {
 			// can't set an attribute for a graph without agents
-			warnings
-				.addWarning("an edge attribute was ignored, because no specy of agent is associated with edges: attribute '" +
+			warnings.addWarning(
+				"an edge attribute was ignored, because no specy of agent is associated with edges: attribute '" +
 					attributeName + "'");
 			return;
 		}
 
 		IAgent agent = edgeId2agent.get(edgeId);
-		if ( agent == null ) { throw GamaRuntimeException.error("Error while parsing graph: the edge " + edgeId +
-			" was not declared"); }
+		if ( agent == null ) { throw GamaRuntimeException
+			.error("Error while parsing graph: the edge " + edgeId + " was not declared"); }
 
 		if ( edgeGraphAttribute2AgentAttribute == null ) {
 			if ( agent.getAttributes().containsKey(attributeName) ) {

@@ -16,6 +16,7 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.util.GamaColor;
 
 public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
@@ -34,6 +35,11 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 			return result;
 		}
 		return name;
+	}
+
+	@Override
+	public GamaColor getItemDisplayColor(final IAgent o) {
+		return null;
 	}
 
 	@Override

@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SimulationPerspective.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.perspectives;
 
@@ -36,7 +36,7 @@ public class SimulationPerspective implements IPerspectiveFactory {
 			layout.createPlaceholderFolder("inspectorsFolder", IPageLayout.RIGHT, 0.52f, "layersFolder");
 
 		inspectorsFolder.addPlaceholder("msi.gama.application.view.ParameterView");
-		inspectorsFolder.addPlaceholder("msi.gama.application.view.TableAgentInspectView");
+		inspectorsFolder.addPlaceholder("msi.gama.application.view.PopulationInspectView:*");
 		inspectorsFolder.addPlaceholder("msi.gama.application.view.AgentInspectView");
 
 		IPlaceholderFolderLayout inspectorsFolder2 =

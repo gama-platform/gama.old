@@ -4,12 +4,12 @@
  */
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
 
 /**
  * Class ExpressionBasedEditor.
@@ -54,6 +54,7 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
+		expression.displayValue(currentValue);
 		expression.getControl().setText(StringUtils.toGaml(currentValue, false));
 		internalModification = false;
 	}

@@ -1,23 +1,23 @@
 /**
  * Created by drogoul, 5 févr. 2015
- * 
+ *
  */
 package msi.gama.gui.navigator;
 
 import java.util.*;
-import msi.gama.gui.swt.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.*;
+import msi.gama.gui.swt.*;
 
 /**
  * Class ImportFolder.
- * 
+ *
  * @author drogoul
  * @since 5 févr. 2015
- * 
+ *
  */
 public class WrappedFolder extends VirtualContent {
 
@@ -96,10 +96,11 @@ public class WrappedFolder extends VirtualContent {
 	 * Method isParentOf()
 	 * @see msi.gama.gui.navigator.VirtualContent#isParentOf(java.lang.Object)
 	 */
-	@Override
-	public boolean isParentOf(final Object element) {
-		if ( !(element instanceof IFile) ) { return false; }
-		String path = ((IFile) element).getLocation().makeRelativeTo(((IFile) getParent()).getLocation()).toString();
-		return fileNames.contains(path);
-	}
+	// @Override
+	// public boolean isParentOf(final Object element) {
+	// if ( !(element instanceof WrappedFile) ) { return false; }
+	// String path = ((WrappedFile) element).getFile().getLocation()
+	// .makeRelativeTo(((IFile) getParent()).getLocation()).toString();
+	// return fileNames.contains(path);
+	// }
 }

@@ -7,6 +7,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.*;
@@ -753,4 +754,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	public boolean zoomWhenScrolling() {
 		return false;
 	}
+
+	@Override
+	public void setToogle(final Action toggle) {}
 }

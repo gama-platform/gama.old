@@ -55,8 +55,8 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public void addOutput(final IOutput output) {
-		if ( output == null ) { return; }
-		output.setPermanent();
+		if ( !(output instanceof AbstractOutput) ) { return; }
+		((AbstractOutput) output).setPermanent();
 		super.addOutput(output);
 	}
 

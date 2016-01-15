@@ -1,29 +1,29 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IExpressionFactory.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.IUnits;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.*;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 27 d�c. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface IExpressionFactory {
 
@@ -38,6 +38,8 @@ public interface IExpressionFactory {
 
 	public abstract ConstantExpression createConst(final Object val, final IType type, String name)
 		throws GamaRuntimeException;
+
+	public SpeciesConstantExpression createSpeciesConstant(final IType type);
 
 	public abstract IExpression createExpr(final IExpressionDescription s, final IDescription context);
 

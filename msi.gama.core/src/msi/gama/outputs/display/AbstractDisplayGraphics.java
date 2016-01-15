@@ -13,6 +13,7 @@ package msi.gama.outputs.display;
 
 import java.awt.geom.Rectangle2D;
 import msi.gama.common.interfaces.*;
+import msi.gama.outputs.LayeredDisplayData;
 
 public abstract class AbstractDisplayGraphics implements IGraphics {
 
@@ -28,6 +29,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	final protected double heightOfDisplayInPixels;
 	final protected double widthOfEnvironmentInModelUnits;
 	final protected double heightOfEnvironmentInModelUnits;
+	final protected LayeredDisplayData data;
 
 	public AbstractDisplayGraphics(final IDisplaySurface surface) {
 		widthOfEnvironmentInModelUnits = surface.getEnvWidth();
@@ -36,6 +38,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		heightOfDisplayInPixels = surface.getDisplayHeight();
 		xRatioBetweenPixelsAndModelUnits = widthOfDisplayInPixels / widthOfEnvironmentInModelUnits;
 		yRatioBetweenPixelsAndModelUnits = heightOfDisplayInPixels / heightOfEnvironmentInModelUnits;
+		data = surface.getData();
 		initFor(surface);
 	}
 
@@ -62,39 +65,39 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		currentAlpha = alpha;
 	}
 
-	protected final int xFromModelUnitsToPixels(final double mu) {
-		return xOffsetInPixels + (int) (xRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */);
+	protected final double xFromModelUnitsToPixels(final double mu) {
+		return xOffsetInPixels + xRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */;
 	}
 
-	protected final int yFromModelUnitsToPixels(final double mu) {
-		return yOffsetInPixels + (int) (yRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */);
+	protected final double yFromModelUnitsToPixels(final double mu) {
+		return yOffsetInPixels + yRatioBetweenPixelsAndModelUnits * mu;
 	}
 
-	protected final int wFromModelUnitsToPixels(final double mu) {
-		return (int) (xRatioBetweenPixelsAndModelUnits * mu /* +0.5 */);
+	protected final double wFromModelUnitsToPixels(final double mu) {
+		return xRatioBetweenPixelsAndModelUnits * mu;
 	}
 
-	protected final int hFromModelUnitsToPixels(final double mu) {
-		return (int) (yRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */);
+	protected final double hFromModelUnitsToPixels(final double mu) {
+		return yRatioBetweenPixelsAndModelUnits * mu;
 	}
 
-	protected double wFromPixelsToModelUnits(final int px) {
-		return px / xRatioBetweenPixelsAndModelUnits;
-	}
+	// protected double wFromPixelsToModelUnits(final int px) {
+	// return px / xRatioBetweenPixelsAndModelUnits;
+	// }
+	//
+	// protected double hFromPixelsToModelUnits(final int py) {
+	// return py / yRatioBetweenPixelsAndModelUnits;
+	// }
 
-	protected double hFromPixelsToModelUnits(final int py) {
-		return py / yRatioBetweenPixelsAndModelUnits;
-	}
-
-	protected double xFromPixelsToModelUnits(final int px) {
-		double mu = (px - xOffsetInPixels) / xRatioBetweenPixelsAndModelUnits;
-		return mu;
-	}
-
-	protected double yFromPixelsToModelUnits(final int px) {
-		double mu = (px - yOffsetInPixels) / yRatioBetweenPixelsAndModelUnits;
-		return mu;
-	}
+	// protected double xFromPixelsToModelUnits(final int px) {
+	// double mu = (px - xOffsetInPixels) / xRatioBetweenPixelsAndModelUnits;
+	// return mu;
+	// }
+	//
+	// protected double yFromPixelsToModelUnits(final int px) {
+	// double mu = (px - yOffsetInPixels) / yRatioBetweenPixelsAndModelUnits;
+	// return mu;
+	// }
 
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
@@ -133,6 +136,15 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	public void endDrawingLayer(final ILayer layer) {
 		xRatioBetweenPixelsAndModelUnits = widthOfDisplayInPixels / widthOfEnvironmentInModelUnits;
 		yRatioBetweenPixelsAndModelUnits = heightOfDisplayInPixels / heightOfEnvironmentInModelUnits;
+	}
+
+	/**
+	 * Method getZoomLevel()
+	 * @see msi.gama.common.interfaces.IGraphics#getZoomLevel()
+	 */
+	@Override
+	public Double getZoomLevel() {
+		return data.getZoomLevel();
 	}
 
 }

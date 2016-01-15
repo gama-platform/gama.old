@@ -1,27 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'PrimitiveStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IDescriptionValidator.NullValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.skills.ISkill;
@@ -29,7 +25,7 @@ import msi.gaml.types.IType;
 
 /**
  * The Class ActionCommand.
- * 
+ *
  * @author drogoul
  */
 @symbol(name = IKeyword.PRIMITIVE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, with_args = true, internal = true)
@@ -48,7 +44,7 @@ public class PrimitiveStatement extends ActionStatement {
 
 	/**
 	 * The Constructor.
-	 * 
+	 *
 	 * @param actionDesc the action desc
 	 * @param sim the sim
 	 */

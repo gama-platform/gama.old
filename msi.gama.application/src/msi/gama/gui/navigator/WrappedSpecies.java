@@ -1,21 +1,21 @@
 /**
  * Created by drogoul, 19 nov. 2014
- * 
+ *
  */
 package msi.gama.gui.navigator;
 
 import java.util.*;
+import org.eclipse.swt.graphics.Image;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.GamaIcons;
 import msi.gaml.descriptions.SpeciesDescription;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * Class WrappedSpecies.
- * 
+ *
  * @author drogoul
  * @since 19 nov. 2014
- * 
+ *
  */
 public class WrappedSpecies extends WrappedGamlObject {
 
@@ -52,11 +52,11 @@ public class WrappedSpecies extends WrappedGamlObject {
 		return result.toArray();
 	}
 
-	@Override
-	public boolean isParentOf(final Object element) {
-		if ( !(element instanceof WrappedSpecies) ) { return false; }
-		return getObject().getMicroSpecies(((WrappedSpecies) element).getObject().getName()) != null;
-	}
+	// @Override
+	// public boolean isParentOf(final Object element) {
+	// if ( !(element instanceof WrappedSpecies) ) { return false; }
+	// return getObject().getMicroSpecies(((WrappedSpecies) element).getObject().getName()) != null;
+	// }
 
 	@Override
 	public Image getImage() {

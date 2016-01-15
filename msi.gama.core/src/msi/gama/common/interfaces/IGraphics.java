@@ -91,4 +91,9 @@ public interface IGraphics {
 
 	}
 
+	/**
+	 * @return
+	 */
+	public abstract Double getZoomLevel();
+
 }

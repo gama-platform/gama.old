@@ -53,8 +53,8 @@ species boids_goal skills: [moving] {
 	}
 	
 	aspect default {
-		draw shape: circle(10) color: #red ;
-		draw shape: circle(40) color: #orange empty: true;
+		draw circle(10) color: #red ;
+		draw circle(40) color: #orange empty: true;
 	}
 } 
 
@@ -171,7 +171,7 @@ species obstacle skills: [moving] {
 }
 
 
-experiment Boids2 type: gui {
+experiment boids_gui type: gui {
 	parameter 'Number of agents' var: number_of_agents;
 	parameter 'Number of obstacles' var: number_of_obstacles;
 	parameter 'Maximal speed' var: maximal_speed;

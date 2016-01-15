@@ -172,4 +172,23 @@ public class MapExpression extends AbstractExpression {
 		return "Constant " + isConst() + "<br>Contains elements of type " + type.getContentType().getTitle();
 	}
 
+	/**
+	 * Method collectPlugins()
+	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 */
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		for ( IExpression e : keys ) {
+			if ( e != null ) {
+				e.collectPlugins(plugins);
+			}
+		}
+
+		for ( IExpression e : vals ) {
+			if ( e != null ) {
+				e.collectPlugins(plugins);
+			}
+		}
+	}
+
 }

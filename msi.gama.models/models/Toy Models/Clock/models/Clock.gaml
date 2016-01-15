@@ -46,7 +46,7 @@ species  clock {
 			if (cycle = alarmCycle) {
 				 write "Time to leave" ; 
 
-				 // Un comment the following statement to play the Alarm.mp3
+				 // Uncomment the following statement to play the Alarm.mp3
 				 // But firstly, you need to go to "Help -> Install New Software..." to install the "Audio" feature (which is still in the experimental stage). 
 				//start_sound source:"../includes/Alarm.mp3" ;
 			}
@@ -64,7 +64,7 @@ experiment Display type: gui {
 	parameter 'alarm Seconds' var: alarm_seconds;
 	output {
 		display ClockView type: opengl ambient_light:50 diffuse_light:100 { 
-		species clock ;//position: {0.1,0} //{world.shape.width/10,world.shape.height/10} ;
+			species clock ;
 		}
 	}
 

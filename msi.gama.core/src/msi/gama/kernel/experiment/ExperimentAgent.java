@@ -230,6 +230,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public void schedule() {
+		// public void scheduleAndExecute(final RemoteSequence sequence) {
 		scheduled = true;
 		// The experiment agent is scheduled in the global scheduler
 		IOutputManager outputs = getSpecies().getExperimentOutputs();

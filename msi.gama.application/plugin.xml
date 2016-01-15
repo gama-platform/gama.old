@@ -51,7 +51,13 @@
             base-type="org.eclipse.core.runtime.text"
             file-extensions="html, HTML, htm, HTM, svg, SVG"
             id="msi.gama.gui.html.type"
-            name="HTML"
+            name="HTML (in GAMA)"
+            priority="normal">
+      </content-type>
+      <content-type
+            file-extensions="osm,OSM,pbf,PBF,bz2,BZ2,gz,GZ"
+            id="msi.gama.gui.osm.type"
+            name="OSM"
             priority="high">
       </content-type>
    </extension>
@@ -60,7 +66,7 @@
    <extension
          point="org.eclipse.ui.decorators">
             <decorator
-                  adaptable="true"
+                  adaptable="false"
                   class="msi.gama.gui.navigator.NavigatorBaseLighweightDecorator"
                   id="msi.gama.application.decorator"
                   label="Metadata Decorator"
@@ -97,8 +103,15 @@
                         name="contentTypeId"
                         value="msi.gama.gui.shapefile.support.type">
                   </objectState>
+                  <objectState
+                        name="contentTypeId"
+                        value="msi.gama.gui.osm.type">
+                  </objectState>
                   </or>
                </and>
+               <objectClass
+                     name="org.eclipse.core.resources.IProject">
+               </objectClass>
             </or>
                </enablement>
             </decorator>
@@ -188,7 +201,7 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="msi.gama.gui.viewers.shapefile.ShapeFileViewer"
+            class="msi.gama.gui.viewers.gis.ShapeFileViewer"
             default="true"
             extensions="shp"
             icon="icons/file.shape2.png"
@@ -196,6 +209,17 @@
             name="ShapeFile Viewer">
          <contentTypeBinding
                contentTypeId="msi.gama.gui.shapefile.type">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="msi.gama.gui.viewers.gis.OSMFileViewer"
+            default="true"
+            extensions="gz,osm,pbf,bz2"
+            icon="icons/file.osm2.png"
+            id="msi.gama.application.osm.viewer"
+            name="OSM Viewer">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.osm.type">
          </contentTypeBinding>
       </editor>
    </extension>
@@ -307,7 +331,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="msi.gama.gui.swt.Application">
+               class="msi.gama.application.Application">
             <parameter
                   name="preferenceCustomization"
                   value="plugin_customization.ini">
@@ -1077,16 +1101,6 @@
       </menuContribution>
    </extension>
    <extension
-         id="gamaNature"
-         name="Project Nature"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="msi.gama.gui.swt.GamaNature">
-         </run>
-      </runtime>
-   </extension>
-   <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
             icon="icons/folder.icon2.png"
@@ -1152,7 +1166,6 @@
       </activityPatternBinding>-->
       <activityPatternBinding
             activityId="msi.gama.application.activities"
-            isEqualityPattern="true"
             pattern="MarkOccurrences">
       </activityPatternBinding>
       <activityPatternBinding
@@ -1335,6 +1348,16 @@
       <handler
             class="msi.gama.gui.swt.commands.PreferencesHandler"
             commandId="org.eclipse.ui.window.preferences">
+         <activeWhen>
+            <or>
+               <reference
+                     definitionId="isInModelingPerspective">
+               </reference>
+               <reference
+                     definitionId="isInSimulationPerspective">
+               </reference>
+            </or>
+         </activeWhen>
       </handler>
    </extension>
    <extension
@@ -1841,16 +1864,6 @@
             </action>
          </actionSet>
       </extension>
-      <extension
-            id="msi.gama.builtin.model"
-            name="Built-In Model"
-            point="org.eclipse.core.resources.natures">
-         <runtime>
-            <run
-                  class="msi.gama.gui.navigator.BuiltInProjectNature">
-            </run>
-         </runtime>
-      </extension>
          <extension
          point="org.eclipse.ui.commandImages">
       <image
@@ -1914,4 +1927,41 @@
             icon="icons/menu.open.preferences2.png">
       </image>
    </extension>
+      <extension
+         id="gamaNature"
+         name="GAMA project"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="msi.gama.application.projects.GamaNature">
+         </run>
+      </runtime>
+      <content-type
+            id="msi.gama.gui.gaml.type">
+      </content-type>
+   </extension>
+   
+         <extension
+               id="builtinNature"
+               name="GAMA built-in project"
+               point="org.eclipse.core.resources.natures">
+            <runtime>
+               <run
+                     class="msi.gama.application.projects.BuiltinNature">
+               </run>
+            </runtime>
+            <requires-nature
+                  id="msi.gama.application.gamaNature">
+            </requires-nature>
+         </extension>
+         <extension
+               id="pluginNature"
+               name="GAMA plugin project"
+               point="org.eclipse.core.resources.natures">
+            <runtime>
+               <run
+                     class="msi.gama.application.projects.PluginNature">
+               </run>
+            </runtime>
+         </extension>
 </plugin>

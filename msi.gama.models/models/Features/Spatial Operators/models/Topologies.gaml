@@ -1,7 +1,7 @@
 /**
  *  gridfilter
- *  Author: administrateur
- *  Description: 
+ *  Author: Patrick Taillandier
+ *  Description: Show the influence of topology on spatial operators
  */
 
 model gridfilter
@@ -14,17 +14,17 @@ global {
  
 
 		
-		//do test_agents_at_distance;
-		//do test_distance_between;
+		do test_agents_at_distance;
+		do test_distance_between;
 		do test_distance_to;
-		//do test_at_distance;
-		//do test_neighbors_at;
-		//do test_neighbors_of;
-	/*do test_path_between;
-		do test_path_to;*/
-		//do test_simple_clustering_by_distance;
-		//do test_hierarchical_clustering;
-		/*do test_agent_closest_to; */	
+		do test_at_distance;
+		do test_neighbors_at;
+		do test_neighbors_of;
+		do test_path_between;
+		do test_path_to;
+		do test_simple_clustering_by_distance;
+		do test_hierarchical_clustering;
+		do test_agent_closest_to; 	
 	}  
 	
 	action test_agent_closest_to {

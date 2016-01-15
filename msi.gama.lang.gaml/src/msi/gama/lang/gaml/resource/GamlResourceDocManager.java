@@ -1,32 +1,32 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlResourceDocManager.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import gnu.trove.map.hash.THashMap;
 import java.nio.charset.Charset;
-import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IOperator;
-import msi.gaml.factories.DescriptionFactory.IDocManager;
+import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
+import gnu.trove.map.hash.THashMap;
+import msi.gaml.descriptions.*;
+import msi.gaml.factories.DescriptionFactory.IDocManager;
 
 /**
  * Class GamlResourceDocManager.
- * 
+ *
  * @author drogoul
  * @since 13 avr. 2014
- * 
+ *
  */
 public class GamlResourceDocManager implements IDocManager {
 
@@ -59,22 +59,25 @@ public class GamlResourceDocManager implements IDocManager {
 
 		final byte[] doc;
 		final byte[] title;
+		final String plugin;
 
 		Documentation(final IGamlDescription desc) {
-
+			plugin = desc.getDefiningPlugin();
 			title = encode(desc.getTitle());
-			if ( desc instanceof IOperator ) {
-				OperatorProto proto = ((IOperator) desc).getPrototype();
-				if ( proto != null ) {
-					doc = encode(proto.getMainDoc());
-				} else {
-					doc = encode(desc.getDocumentation());
-				}
-			} else {
-				doc = encode(desc.getDocumentation());
+			String documentation = desc.getDocumentation();
+			if ( plugin != null ) {
+				documentation += "\n<p/><i> [defined in " + plugin + "] </i>";
 			}
+			doc = encode(documentation);
 
 		}
+
+		/**
+		 * Method collectPlugins()
+		 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+		 */
+		@Override
+		public void collectPlugins(final Set<String> plugins) {}
 
 		@Override
 		public String getDocumentation() {
@@ -89,6 +92,11 @@ public class GamlResourceDocManager implements IDocManager {
 		@Override
 		public String getName() {
 			return "Online documentation";
+		}
+
+		@Override
+		public String getDefiningPlugin() {
+			return plugin;
 		}
 
 		@Override

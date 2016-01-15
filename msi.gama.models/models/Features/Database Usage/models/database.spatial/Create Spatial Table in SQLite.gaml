@@ -30,16 +30,12 @@ global {
                    " name TEXT NOT NULL," +
                    " type TEXT NOT NULL," +
                    " geom BLOB NOT NULL); "  ;
- 			 	
-		
-					
+
 		}
 	}
 }  
-entities {  
-	species dummy skills: [SQLSKILL] {  
-	} 
-} 
+
+species dummy skills: [SQLSKILL] { } 
 
 experiment default_expr type:gui {
 

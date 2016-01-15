@@ -18,14 +18,12 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.*;
 import javax.annotation.processing.*;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.*;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.StandardLocation;
 import msi.gama.precompiler.GamlAnnotations.*;
 
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class GamaProcessor extends AbstractProcessor {
 
 	class Pair {
@@ -141,13 +139,20 @@ public class GamaProcessor extends AbstractProcessor {
 		return true;
 	}
 
-	TypeMirror iSkill;
+	TypeMirror iSkill, iAgent;
 
 	TypeMirror getISkill() {
 		if ( iSkill == null ) {
 			iSkill = processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
 		}
 		return iSkill;
+	}
+
+	TypeMirror getIAgent() {
+		if ( iAgent == null ) {
+			iAgent = processingEnv.getElementUtils().getTypeElement("msi.gama.metamodel.agent.IAgent").asType();
+		}
+		return iAgent;
 	}
 
 	String rawNameOf(final Element e) {
@@ -185,9 +190,10 @@ public class GamaProcessor extends AbstractProcessor {
 	private void processVars(final RoundEnvironment env) {
 		Set<? extends Element> elements = env.getElementsAnnotatedWith(vars.class);
 		for ( Element e : elements ) {
-			boolean isISkill;
+			boolean isField;
 			TypeMirror clazz = e.asType();
-			isISkill = processingEnv.getTypeUtils().isAssignable(clazz, getISkill());
+			isField = !processingEnv.getTypeUtils().isAssignable(clazz, getISkill()) &&
+				!processingEnv.getTypeUtils().isAssignable(clazz, getIAgent());
 
 			vars vars = e.getAnnotation(vars.class);
 			for ( final var s : vars.value() ) {
@@ -251,7 +257,7 @@ public class GamaProcessor extends AbstractProcessor {
 						// dynamic ?
 						sb.append(!scope && n > 0 || scope && n > 1).append(SEP);
 						// field ?
-						sb.append(!isISkill).append(SEP);
+						sb.append(isField).append(SEP);
 						// scope ?
 						sb.append(scope);
 						sb.append(SEP).append(getter.initializer());

@@ -1,23 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaPair.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util;
 
 import java.util.Map;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
@@ -27,8 +25,13 @@ import msi.gaml.types.*;
 /**
  * The Class GamaPair.
  */
-@vars({ @var(name = GamaPair.KEY, type = ITypeProvider.FIRST_KEY_TYPE),
-	@var(name = GamaPair.VALUE, type = ITypeProvider.FIRST_CONTENT_TYPE) })
+@vars({
+	@var(name = GamaPair.KEY,
+		type = ITypeProvider.FIRST_KEY_TYPE,
+		doc = { @doc("Returns the key of this pair (can be nil)") }),
+	@var(name = GamaPair.VALUE,
+		type = ITypeProvider.FIRST_CONTENT_TYPE,
+		doc = { @doc("Returns the value of this pair (can be ni)") }) })
 public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.Addressable<Integer, Object>, Map.Entry<K, V> {
 
 	// TODO Makes it inherit from Map.Entry<K,V> in order to tighten the link between it and GamaMap

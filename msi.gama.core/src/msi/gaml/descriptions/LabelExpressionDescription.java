@@ -1,31 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'LabelExpressionDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.*;
+import org.eclipse.emf.ecore.EObject;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * The class LabelExpressionDescription.
- * 
+ *
  * @author drogoul
  * @since 31 mars 2012
- * 
+ *
  */
 public class LabelExpressionDescription extends BasicExpressionDescription {
 
@@ -54,7 +54,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		}
 
 		@Override
-		public String serialize(boolean includingBuiltIn) {
+		public String serialize(final boolean includingBuiltIn) {
 			return StringUtils.toGamlString(getName());
 		}
 
@@ -67,6 +67,13 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		public String getTitle() {
 			return "constant string '" + getName() + "'";
 		}
+
+		/**
+		 * Method collectPlugins()
+		 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+		 */
+		@Override
+		public void collectPlugins(final Set<String> plugins) {}
 
 	}
 
@@ -94,7 +101,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	}
 
 	@Override
-	public String serialize(boolean includingBuiltIn) {
+	public String serialize(final boolean includingBuiltIn) {
 		return value;
 		// return StringUtils.toGamlString(value);
 	}

@@ -1,30 +1,28 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlModelSpecies.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.kernel.model;
 
 import java.util.*;
+import org.apache.commons.lang.StringUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.outputs.AbstractOutputManager;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.species.*;
 import msi.gaml.types.IType;
-import org.apache.commons.lang.StringUtils;
 
 @symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true, internal = true)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
@@ -34,7 +32,7 @@ import org.apache.commons.lang.StringUtils;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true),
-	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
+	@facet(name = IKeyword.CONTROL, type = IType.SKILL, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)

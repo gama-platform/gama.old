@@ -1,20 +1,33 @@
 /**
  *  clustering
  *  Author: Patrick Taillandier
- *  Description: example of use of the spatial clustering operators
+ *  Description: example of use of the spatial clustering operators (simple_clustering_by_distance and hierarchical_clustering).
  */
 
 model clustering
 
 global {
+	//define the maximal distance between people in the continuous environement (in meters): if the distance between 2 people is lower than this value, they will be in the same group
 	float max_dist_people <- 20.0;
+	
+	//define the maximal distance between cells (in number of cells): if the distance between 2 cells is lower than this value, they will be in the same group
 	int max_dist_cell <- 1;
+	
+	//probability for a cell to have vegetation
 	float proba_vegetation <- 0.2;
+	
+	//create the people agents
 	init {
 		create people number:20; 
     }
+    
+    //reflex that builds the people clusters
     reflex people_clustering {
+    	//clustering by using the simple clustering operator: two people agents are in the same groups if their distance is lower than max_dist_people (in meters)
+    	//returns a list of lists (i.e. a list of groups, a group is a list of people agents)
     	list<list<people>> clusters <- list<list<people>>(simple_clustering_by_distance(people, max_dist_people));
+        
+        //We give a random color to each group (i.e. to each people agents of the group)
         loop cluster over: clusters {
         	rgb rnd_color <- rnd_color(255);
         	ask cluster {
@@ -22,10 +35,14 @@ global {
         	}
         }
         
+        //build the hierchical clustering (https://en.wikipedia.org/wiki/Hierarchical_clustering)
         list clustering_tree <- hierarchical_clustering (people, max_dist_people);
+        
+        //create groups from the results of the hierarchical clustering
         do create_groups(clustering_tree, nil);
     }
     
+    //recursive action that create group_people agents from the list of group.
     action create_groups (list group, group_people parent_gp) {
     	bool compute_shape <- false;
     	loop el over: group {
@@ -50,6 +67,7 @@ global {
     		
     	}
     }
+    //reflex that builds the cell clusters
     reflex forest_clustering {
     	list<list<vegetation_cell>> clusters <- list<list<vegetation_cell>>(simple_clustering_by_distance(vegetation_cell where (each.color = °green), max_dist_cell));
         loop cluster over: clusters {
@@ -63,7 +81,7 @@ global {
     
 }
 grid vegetation_cell width: 25 height: 25 neighbours: 4{
-	rgb color <- flip (proba_vegetation) ? °green : °white;
+	rgb color <- flip (proba_vegetation) ? #green : #white;
 }
 
 species forest {
@@ -72,6 +90,7 @@ species forest {
 		draw shape.contour + 0.5 color: °red;
 	}
 }
+
 species people {
 	rgb color_cluster <- °black;
 	rgb color_tree <- °black;

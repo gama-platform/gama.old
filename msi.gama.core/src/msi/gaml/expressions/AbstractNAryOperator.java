@@ -1,18 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractNAryOperator.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
-import java.util.Arrays;
+import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.types.*;
@@ -171,6 +171,25 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public String getDocumentation() {
 		return prototype.getDocumentation();
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return prototype.getDefiningPlugin();
+	}
+
+	/**
+	 * Method collectPlugins()
+	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 */
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		prototype.collectPlugins(plugins);
+		for ( IExpression e : exprs ) {
+			if ( e != null ) {
+				e.collectPlugins(plugins);
+			}
+		}
 	}
 
 	/**

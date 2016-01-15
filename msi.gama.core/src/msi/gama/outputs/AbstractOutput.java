@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs;
 
@@ -24,7 +24,7 @@ import msi.gaml.operators.Cast;
 
 /**
  * The Class AbstractOutput.
- * 
+ *
  * @author drogoul
  */
 @inside(symbols = IKeyword.OUTPUT)
@@ -54,13 +54,13 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		}
 	}
 
-	@Override
-	public final boolean isUserCreated() {
+	// @Override
+	final boolean isUserCreated() {
 		return isUserCreated;
 	}
 
-	@Override
-	public final void setUserCreated(final boolean isUserCreated) {
+	// @Override
+	final void setUserCreated(final boolean isUserCreated) {
 		this.isUserCreated = isUserCreated;
 	}
 
@@ -80,8 +80,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		setOpen(false);
 	}
 
-	@Override
-	public boolean isOpen() {
+	// @Override
+	boolean isOpen() {
 		return open;
 	}
 
@@ -95,8 +95,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		setOpen(true);
 	}
 
-	@Override
-	public boolean isRefreshable() {
+	// @Override
+	boolean isRefreshable() {
 		IScope scope = getScope();
 		return Cast.asBool(scope, refresh.value(scope)) && refreshRate > 0 &&
 			scope.getClock().getCycle() % refreshRate == 0;
@@ -136,8 +136,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		return Collections.EMPTY_LIST;
 	}
 
-	@Override
-	public String getId() {
+	// @Override
+	String getId() {
 		if ( !this.getDescription().getModelDescription().getAlias().equals("") ) { return getName() + "#" +
 			this.getDescription().getModelDescription().getAlias() + "#" + getScope().getExperiment().getName(); }
 		return getName(); // by default
@@ -151,9 +151,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		ModelDescription main = (ModelDescription) scope.getModel().getDescription();
 		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 		if ( fromMicroModel ) {
-			ExperimentAgent exp =
-				(ExperimentAgent) scope.getAgentScope()
-					.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
+			ExperimentAgent exp = (ExperimentAgent) scope.getAgentScope()
+				.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
 			this.scope = exp.getSimulation().getScope();
 		} else {
 			this.scope = scope;
@@ -165,8 +164,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		return scope;
 	}
 
-	@Override
-	public void setPermanent() {
+	// @Override
+	void setPermanent() {
 		permanent = true;
 	}
 

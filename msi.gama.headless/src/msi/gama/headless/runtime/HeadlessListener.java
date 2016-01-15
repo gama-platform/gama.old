@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.logging.*;
 import org.eclipse.core.runtime.CoreException;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -371,4 +372,13 @@ public class HeadlessListener implements IGui {
 	 */
 	@Override
 	public void closeSimulationViews(final boolean andOpenModelingPerspective) {}
+
+	/**
+	 * Method getDisplayDescriptionFor()
+	 * @see msi.gama.common.interfaces.IGui#getDisplayDescriptionFor(java.lang.String)
+	 */
+	@Override
+	public DisplayDescription getDisplayDescriptionFor(final String name) {
+		return null;
+	}
 }

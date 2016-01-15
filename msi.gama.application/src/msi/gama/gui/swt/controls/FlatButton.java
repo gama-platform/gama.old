@@ -1,15 +1,15 @@
 /**
  * Created by drogoul, 22 nov. 2014
- * 
+ *
  */
 package msi.gama.gui.swt.controls;
 
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 
 public class FlatButton extends Canvas implements PaintListener, Listener {
 
@@ -21,7 +21,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return button(comp, color, text).disabled();
 	}
 
-	public static FlatButton label(final Composite comp, final GamaUIColor color, final String text, final Image image) {
+	public static FlatButton label(final Composite comp, final GamaUIColor color, final String text,
+		final Image image) {
 		return label(comp, color, text).setImage(image);
 	}
 
@@ -29,8 +30,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return create(comp, SWT.None).setText(text).setColor(color);
 	}
 
-	public static FlatButton
-		button(final Composite comp, final GamaUIColor color, final String text, final Image image) {
+	public static FlatButton button(final Composite comp, final GamaUIColor color, final String text,
+		final Image image) {
 		return button(comp, color, text).setImage(image);
 	}
 
@@ -65,38 +66,46 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public void handleEvent(final Event e) {
 		switch (e.type) {
 			case SWT.MouseExit:
+				// System.out.println("Mouse exited from " + this.getText());
 				doHover(false);
+				break;
+			case SWT.MouseMove:
+				// System.out.println("Mouse moved in " + this.getText());
 				break;
 			case SWT.MouseEnter:
 			case SWT.MouseHover:
+				// System.out.println("Mouse entered/hovered on " + this.getText());
 				doHover(true);
 				e.doit = true;
 				break;
 			case SWT.MouseUp:
-				if ( e.button == 1 && e.count == 1 && getClientArea().contains(e.x, e.y) ) {
+				if ( e.button == 1 && getClientArea().contains(e.x, e.y) ) {
+					// for ( int i = 0; i < e.count; i++ ) {
 					doButtonClicked();
+					// }
 				}
 				break;
 			case SWT.MouseDown:
-				if ( e.button == 1 ) {
-					doHover(true);
-				}
+				// if ( e.button == 1 ) {
+				// doHover(true);
+				// }
 				break;
-			default:
-				;
+			default:;
 		}
 	}
 
 	/**
 	 * SelectionListeners are notified when the button is clicked
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
+		if ( listener == null ) { return; }
 		addListener(SWT.Selection, new TypedListener(listener));
 	}
 
 	public void removeSelectionListener(final SelectionListener listener) {
+		if ( listener == null ) { return; }
 		removeListener(SWT.Selection, listener);
 	}
 
@@ -110,7 +119,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	private void doHover(final boolean hover) {
-		if ( hover && hovered || !hover && !hovered ) { return; }
+		// if ( hover && hovered || !hover && !hovered ) { return; }
 		hovered = hover;
 		redraw();
 	}
@@ -123,7 +132,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		final Path path = createClipping(rect);
 		GamaUIColor color = GamaColors.get(colorCode);
 		Color background = hovered ? color.lighter() : color.color();
-		Color foreground = GamaColors.isDark(background) ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color();
+		Color foreground = GamaColors.getTextColorForBackground(background).color();
 
 		gc.setClipping(path);
 		gc.setForeground(foreground);
@@ -242,7 +251,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * to the left of the text; however, setImageStyle can be used to
 	 * specify that it's either to the right or left. If there is no
 	 * text, the image will be centered inside the button.
-	 * 
+	 *
 	 * @param image
 	 */
 	public FlatButton setImage(final Image image) {
@@ -254,7 +263,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	/**
 	 * Set the style with which the side image is drawn, either IMAGE_LEFT
 	 * or IMAGE_RIGHT (default is IMAGE_LEFT).
-	 * 
+	 *
 	 * @param imageStyle
 	 */
 	public FlatButton setImageStyle(final int imageStyle) {
@@ -284,6 +293,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		addListener(SWT.MouseEnter, this);
 		addListener(SWT.MouseHover, this);
 		addListener(SWT.MouseUp, this);
+		addListener(SWT.MouseMove, this);
 	}
 
 	@Override
@@ -301,6 +311,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 				removeListener(SWT.MouseEnter, (Listener) this);
 				removeListener(SWT.MouseHover, (Listener) this);
 				removeListener(SWT.MouseUp, (Listener) this);
+				removeListener(SWT.MouseMove, (Listener) this);
 			}
 			redraw();
 		}

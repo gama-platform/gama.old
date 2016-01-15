@@ -321,9 +321,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		return this.getHeight();
 	}
 
-	@Override
-	public void setZoomListener(final IZoomListener listener) {}
-
+	// @Override
+	// public void setZoomListener(final IZoomListener listener) {}
+	//
 	/**
 	 * Method getModelCoordinates()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()

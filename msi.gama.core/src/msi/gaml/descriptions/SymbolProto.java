@@ -1,19 +1,19 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SymbolProto.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.*;
 import gnu.trove.procedure.TIntProcedure;
 import gnu.trove.set.hash.*;
-import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
@@ -23,9 +23,9 @@ import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 8 févr. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class SymbolProto extends AbstractProto {
 
@@ -42,16 +42,16 @@ public class SymbolProto extends AbstractProto {
 	private final Set<String> mandatoryFacets = new THashSet<String>();
 	private final String omissibleFacet;
 
-	static final TIntHashSet ids = new TIntHashSet(new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
-		IType.NEW_VAR_ID });
+	static final TIntHashSet ids =
+		new TIntHashSet(new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID });
 
 	public SymbolProto(final Class clazz, final boolean hasSequence, final boolean hasArgs, final int kind,
 		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets, final String omissible,
 		/* final String[][] possibleCombinations, */final Set<String> contextKeywords, final TIntHashSet contextKinds,
 		final boolean isRemoteContext, final boolean isUniqueInContext, final boolean nameUniqueInContext,
 		final ISymbolConstructor constr, final IDescriptionValidator validator, final SymbolSerializer serializer,
-		final String name) {
-		super(name, clazz);
+		final String name, final String plugin) {
+		super(name, clazz, plugin);
 		factory = DescriptionFactory.getFactory(kind);
 		this.validator = validator;
 		this.serializer = serializer;

@@ -572,4 +572,31 @@ class TemporaryScope implements IScope {
 		return new IAgent[0];
 	}
 
+	/**
+	 * Method pushReadAttributes()
+	 * @see msi.gama.runtime.IScope#pushReadAttributes(java.util.Map)
+	 */
+	@Override
+	public void pushReadAttributes(final Map values) {
+
+	}
+
+	/**
+	 * Method popReadAttributes()
+	 * @see msi.gama.runtime.IScope#popReadAttributes()
+	 */
+	@Override
+	public Map popReadAttributes() {
+		return null;
+	}
+
+	/**
+	 * Method peekReadAttributes()
+	 * @see msi.gama.runtime.IScope#peekReadAttributes()
+	 */
+	@Override
+	public Map peekReadAttributes() {
+		return null;
+	}
+
 }

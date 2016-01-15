@@ -196,8 +196,8 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * Method setZoomListener()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setZoomListener(msi.gama.common.interfaces.IDisplaySurface.IZoomListener)
 	 */
-	@Override
-	public void setZoomListener(final IZoomListener listener) {}
+	// @Override
+	// public void setZoomListener(final IZoomListener listener) {}
 
 	/**
 	 * Method getModelCoordinates()

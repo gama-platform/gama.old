@@ -19,6 +19,7 @@ import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.ChildrenProvider;
+import msi.gaml.skills.ISkill;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
@@ -37,13 +38,21 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected Class javaBase;
 	protected TypeDescription parent;
 	private static int varCount = 0;
+	private final String plugin;
 
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
-		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets) {
+		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets,
+		final String plugin) {
 		super(keyword, macroDesc, cp, source, facets);
 		// parent can be null
 		setJavaBase(clazz);
 		setParent((TypeDescription) parent);
+		this.plugin = plugin;
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return plugin;
 	}
 
 	public void copyJavaAdditions() {
@@ -307,7 +316,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		this.parent = parent;
 	}
 
-	public Set<Class> getSkillClasses() {
+	public Set<Class<? extends ISkill>> getSkillClasses() {
 		return Collections.EMPTY_SET;
 	}
 

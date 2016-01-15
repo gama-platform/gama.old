@@ -18,6 +18,7 @@ import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.application.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
+import msi.gama.application.projects.WorkspaceModelsManager;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;

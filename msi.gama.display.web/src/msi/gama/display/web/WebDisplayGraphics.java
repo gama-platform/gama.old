@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'WebDisplayGraphics.java', in plugin 'msi.gama.display.web', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.display.web;
 
@@ -20,10 +20,10 @@ import msi.gama.runtime.IScope;
 
 /**
  * Class WebDisplayGraphics.
- * 
+ *
  * @author drogoul
  * @since 2 janv. 2014
- * 
+ *
  */
 public class WebDisplayGraphics implements IGraphics {
 
@@ -48,7 +48,7 @@ public class WebDisplayGraphics implements IGraphics {
 	/**
 	 * Method drawGrid()
 	 * @see msi.gama.common.interfaces.IGraphics#drawGrid(msi.gama.runtime.IScope, java.awt.image.BufferedImage, double[], boolean, boolean, boolean, msi.gama.metamodel.shape.ILocation,
-	 *      msi.gama.metamodel.shape.ILocation, java.awt.Color, java.lang.Integer, java.lang.Double, double, java.lang.String)
+	 * msi.gama.metamodel.shape.ILocation, java.awt.Color, java.lang.Integer, java.lang.Double, double, java.lang.String)
 	 */
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
@@ -60,7 +60,7 @@ public class WebDisplayGraphics implements IGraphics {
 	/**
 	 * Method drawImage()
 	 * @see msi.gama.common.interfaces.IGraphics#drawImage(msi.gama.runtime.IScope, java.awt.image.BufferedImage, msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.shape.ILocation,
-	 *      java.awt.Color, java.lang.Integer, java.lang.Double, boolean, java.lang.String)
+	 * java.awt.Color, java.lang.Integer, java.lang.Double, boolean, java.lang.String)
 	 */
 	@Override
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
@@ -72,7 +72,7 @@ public class WebDisplayGraphics implements IGraphics {
 	/**
 	 * Method drawString()
 	 * @see msi.gama.common.interfaces.IGraphics#drawString(java.lang.String, java.awt.Color, msi.gama.metamodel.shape.ILocation, java.lang.Double, java.lang.String, java.lang.Integer,
-	 *      java.lang.Integer, java.lang.Double, java.lang.Boolean)
+	 * java.lang.Integer, java.lang.Double, java.lang.Boolean)
 	 */
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
@@ -215,6 +215,15 @@ public class WebDisplayGraphics implements IGraphics {
 	@Override
 	public double getYOffsetInPixels() {
 		return 0;
+	}
+
+	/**
+	 * Method getZoomLevel()
+	 * @see msi.gama.common.interfaces.IGraphics#getZoomLevel()
+	 */
+	@Override
+	public Double getZoomLevel() {
+		return null;
 	}
 
 }

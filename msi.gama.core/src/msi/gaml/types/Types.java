@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Types.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
@@ -20,9 +20,9 @@ import msi.gaml.types.TypeTree.Order;
 
 /**
  * Written by drogoul Modified on 9 juin 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 
 public class Types {
@@ -30,7 +30,7 @@ public class Types {
 	public final static TypesManager builtInTypes = new TypesManager(null);
 
 	public final static IType NO_TYPE = new GamaNoType();
-	public static IType INT, FLOAT, BOOL, COLOR, STRING, POINT, GEOMETRY, TOPOLOGY, AGENT, PATH, FONT;
+	public static IType INT, FLOAT, BOOL, COLOR, STRING, POINT, GEOMETRY, TOPOLOGY, AGENT, PATH, FONT, SKILL;
 	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
 
 	public static void cache(final int id, final IType instance) {
@@ -92,6 +92,9 @@ public class Types {
 			case IType.FONT:
 				FONT = instance;
 				break;
+			case IType.SKILL:
+				SKILL = instance;
+				break;
 			default:
 		}
 	}
@@ -135,6 +138,8 @@ public class Types {
 				return CONTAINER;
 			case IType.SPECIES:
 				return SPECIES;
+			case IType.SKILL:
+				return SKILL;
 		}
 		return builtInTypes.get(String.valueOf(type));
 	}
@@ -218,7 +223,8 @@ public class Types {
 	 * @return
 	 */
 	public static boolean intFloatCase(final IType t1, final IType t2) {
-		return t1.id() == IType.FLOAT && t2.id() == IType.INT || t2.id() == IType.FLOAT && t1.id() == IType.INT;
+		return t1 == FLOAT && t2 == INT || t2 == FLOAT && t1 == INT;
+		// return t1.id() == IType.FLOAT && t2.id() == IType.INT || t2.id() == IType.FLOAT && t1.id() == IType.INT;
 	}
 
 	/**
@@ -228,11 +234,11 @@ public class Types {
 	 * @return
 	 */
 	public static boolean mapListCase(final IType receiverType, final IType assignedType, final IExpression expr2) {
-		if ( receiverType.id() == IType.MAP && assignedType.id() == IType.LIST ) {
+		if ( receiverType.getType() == MAP && assignedType.getType() == LIST ) {
 			if ( expr2 instanceof ListExpression ) { return ((ListExpression) expr2).isEmpty(); }
 			if ( expr2.isConst() && ((List) expr2.value(null)).isEmpty() ) { return true; }
 		}
-		if ( receiverType.id() == IType.MAP && assignedType.id() == IType.MAP ) {
+		if ( receiverType.getType() == MAP && assignedType.getType() == MAP ) {
 			if ( expr2.isConst() && ((Map) expr2.value(null)).isEmpty() ) { return true; }
 		}
 		return false;

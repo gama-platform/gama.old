@@ -1,26 +1,27 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'JavaUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.util;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import com.google.common.collect.*;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
+import msi.gaml.skills.ISkill;
 
 /**
  * Written by drogoul Modified on 28 d�c. 2010
- * 
+ *
  * Provides some utilities for dealing with reflection.
- * 
+ *
  */
 public class JavaUtils {
 
@@ -72,8 +73,8 @@ public class JavaUtils {
 		return result;
 	}
 
-	public static List<Class> collectImplementationClasses(final Class baseClass, final Set<Class> skillClasses,
-		final Set<Class> in) {
+	public static List<Class> collectImplementationClasses(final Class baseClass,
+		final Set<Class<? extends ISkill>> skillClasses, final Set<Class> in) {
 		final Set<Class> classes = new THashSet();
 		if ( baseClass != null ) {
 			classes.add(baseClass);

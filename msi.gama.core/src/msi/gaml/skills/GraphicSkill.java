@@ -1,39 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GraphicSkill.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.skills;
 
 import java.awt.Color;
+import org.geotools.brewer.color.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
-import org.geotools.brewer.color.*;
 
 /**
  * GraphicSkill : This class is intended to define the minimal set of behaviours required from a
  * graphical agent. Each member that has a meaning in GAML is annotated with the
  * respective tags (vars, getter, setter, init, action & args)
- * 
+ *
  * @author Grignard Feb 2014
  */
 
@@ -41,7 +33,7 @@ import org.geotools.brewer.color.*;
 @vars({ @var(name = IKeyword.TRANSPARENCY,
 	type = IType.FLOAT,
 	init = "1.0",
-	doc = @doc("the transparency of the agent (between 0.0 and 1.0)")), })
+	doc = @doc("Represents the transparency of the agent (between 0.0 and 1.0)") ), })
 @skill(name = IKeyword.GRAPHIC_SKILL)
 public class GraphicSkill extends Skill {
 
@@ -63,12 +55,12 @@ public class GraphicSkill extends Skill {
 	}
 
 	@action(name = "twinkle",
-		args = { @arg(name = "period", type = IType.INT, doc = @doc("make the agent twinkle with a given period")) },
-		doc = @doc(examples = { @example("do twinkle period: 10;") }))
+		args = { @arg(name = "period", type = IType.INT, doc = @doc("make the agent twinkle with a given period") ) },
+		doc = @doc(examples = { @example("do twinkle period: 10;") }) )
 	public void twinkle(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		double curTrans = getTransparency(agent);
-		double curStep = scope.getSimulationScope().getTime(scope, agent);
+		double curStep = scope.getSimulationScope().getTime(scope);
 
 		Integer period = (Integer) scope.getArg("period", IType.INT);
 
@@ -83,10 +75,10 @@ public class GraphicSkill extends Skill {
 
 	@action(name = "brewer_color",
 		args = {
-			@arg(name = "type", type = IType.STRING, doc = @doc("Palette Type (Sequential, Diverging, Qualitative)")),
-			@arg(name = "class", type = IType.INT, optional = false, doc = @doc("Number of class")),
-			@arg(name = "index", type = IType.INT, optional = false, doc = @doc("index")) },
-		doc = @doc(examples = { @example("rgb myColor<-self.brewer_color(\"sequential\",nb_class,myClass);") }))
+			@arg(name = "type", type = IType.STRING, doc = @doc("Palette Type (Sequential, Diverging, Qualitative)") ),
+			@arg(name = "class", type = IType.INT, optional = false, doc = @doc("Number of class") ),
+			@arg(name = "index", type = IType.INT, optional = false, doc = @doc("index") ) },
+		doc = @doc(examples = { @example("rgb myColor<-self.brewer_color(\"sequential\",nb_class,myClass);") }) )
 	public GamaColor getBrewerColors(final IScope scope) {
 		String type = scope.getStringArg("type");
 		int nbClass = scope.getIntArg("class");
@@ -140,9 +132,9 @@ public class GraphicSkill extends Skill {
 	@action(name = "brewer_palette",
 		args = { @arg(name = "type",
 			type = IType.STRING,
-			doc = @doc("Palette Type (Sequential, Diverging, Qualitative)")) },
+			doc = @doc("Palette Type (Sequential, Diverging, Qualitative)") ) },
 		doc = @doc(examples = { @example("list<rgb> colors <- brewer_palette(\"6-class Blues\");") },
-			comment = "You can get the type of the palette form this websiten http://colorbrewer2.org/"))
+			comment = "You can get the type of the palette form this websiten http://colorbrewer2.org/") )
 	public IList<Color> getBrewerPaletteColors(final IScope scope) {
 		String type = scope.getStringArg("type");
 

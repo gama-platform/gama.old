@@ -11,18 +11,16 @@
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.Map;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.WKTWriter;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTWriter;
 
 /**
  * Interface for objects that can be provided with a geometry (or which can be translated to
@@ -33,7 +31,9 @@ import com.vividsolutions.jts.io.WKTWriter;
  * @modified November 2011 to include isPoint(), getInnerGeometry() and getEnvelope()
  *
  */
-@vars({ @var(name = "perimeter", type = IType.FLOAT) })
+@vars({ @var(name = "perimeter",
+	type = IType.FLOAT,
+	doc = { @doc("Returns the length of the contour of this geometry") }) })
 public interface IShape extends ILocated, IValue, IAttributed {
 
 	static enum Type {

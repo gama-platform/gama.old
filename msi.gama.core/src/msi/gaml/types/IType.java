@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
@@ -20,9 +20,9 @@ import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul Modified on 9 juin 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
@@ -58,6 +58,7 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public static final int FONT = 19;
 	public static final int IMAGE = 20;
 	public final static int REGRESSION = 21;
+	public final static int SKILL = 22;
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 
@@ -149,9 +150,9 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
 	/**
 	 * @param context
-	 *            When casting an expression, the type returned is usually that of this type. However, some types will
-	 *            compute
-	 *            another type based on the type of the expressoin to cast (for instance, species or agent)
+	 * When casting an expression, the type returned is usually that of this type. However, some types will
+	 * compute
+	 * another type based on the type of the expressoin to cast (for instance, species or agent)
 	 * @param exp
 	 * @return
 	 */
@@ -172,9 +173,8 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public String asPattern();
 
 	/**
-	 * @param context
-	 * @param toCast
-	 * @return
+	 * @param plugin name
 	 */
+	public void setDefiningPlugin(String plugin);
 
 }

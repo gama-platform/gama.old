@@ -1,29 +1,29 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import java.util.List;
+import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 31 ao�t 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable, IGamlable {
 
@@ -94,6 +94,8 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public abstract String getOriginName();
 
 	public abstract void setOriginName(String name);
+
+	public abstract void setDefiningPlugin(String plugin);
 
 	public abstract void info(final String s, final String code, final String facet, final String ... data);
 

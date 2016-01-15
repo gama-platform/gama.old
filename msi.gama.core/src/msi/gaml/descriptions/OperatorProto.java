@@ -1,34 +1,34 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'OperatorProto.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import gnu.trove.set.hash.THashSet;
 import java.lang.reflect.*;
 import java.util.*;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamaHelper;
+import msi.gaml.compilation.*;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
 
 /**
  * Class OperatorProto.
- * 
+ *
  * @author drogoul
  * @since 7 avr. 2014
- * 
+ *
  */
 public class OperatorProto extends AbstractProto {
 
@@ -36,8 +36,8 @@ public class OperatorProto extends AbstractProto {
 	public static Set<String> binaries = new THashSet(Arrays.asList("=", "+", "-", "/", "*", "^", "<", ">", "<=", ">=",
 		"?", "!=", ":", ".", "where", "select", "collect", "first_with", "last_with", "overlapping", "at_distance",
 		"in", "inside", "among", "contains", "contains_any", "contains_all", "min_of", "max_of", "with_max_of",
-		"with_min_of", "of_species", "of_generic_species", "sort_by", "accumulate", "or", "and", "at", "is",
-		"group_by", "index_of", "last_index_of", "index_by", "count", "sort", "::", "as_map"));
+		"with_min_of", "of_species", "of_generic_species", "sort_by", "accumulate", "or", "and", "at", "is", "group_by",
+		"index_of", "last_index_of", "index_by", "count", "sort", "::", "as_map"));
 
 	public final boolean isVarOrField, canBeConst;
 	public final IType returnType;
@@ -75,11 +75,11 @@ public class OperatorProto extends AbstractProto {
 		}
 	}
 
-	public OperatorProto(final String name, final AccessibleObject method, final GamaHelper helper,
+	public OperatorProto(final String name, final AnnotatedElement method, final GamaHelper helper,
 		final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final IType returnType,
 		final Signature signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
-		final int keyTypeProvider, final int[] expectedContentType) {
-		super(name, method);
+		final int keyTypeProvider, final int[] expectedContentType, final String plugin) {
+		super(name, method, plugin);
 		this.returnType = returnType;
 		this.canBeConst = canBeConst;
 		this.isVarOrField = isVarOrField;
@@ -111,12 +111,13 @@ public class OperatorProto extends AbstractProto {
 		return result;
 	}
 
-	public OperatorProto(final String name, final AccessibleObject method, final GamaHelper helper,
+	public OperatorProto(final String name, final AnnotatedElement method, final GamaHelper helper,
 		final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final int returnType,
 		final Class signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
 		final int keyTypeProvider, final int[] expectedContentType) {
-		this(name, method, helper, canBeConst, isVarOrField, /* doc, */Types.get(returnType), new Signature(signature),
-			lazy, typeProvider, contentTypeProvider, keyTypeProvider, expectedContentType);
+		this(name, method == null ? signature : method, helper, canBeConst, isVarOrField,
+			/* doc, */Types.get(returnType), new Signature(signature), lazy, typeProvider, contentTypeProvider,
+			keyTypeProvider, expectedContentType, GamaBundleLoader.CURRENT_PLUGIN_NAME);
 	}
 
 	public void setSignature(final IType ... t) {

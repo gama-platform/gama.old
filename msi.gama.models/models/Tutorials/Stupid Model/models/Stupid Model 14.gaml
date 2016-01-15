@@ -51,18 +51,18 @@ species bug schedules: bug sort_by ( - each.size){
         }
 	reflex reproduce when: size >= 10 {
 		list<cell> possible_nests <- my_place.neighbours3 where empty(each.agents);
-       		create bug number: 5 {
-           		cell nest <- one_of(possible_nests);
-           		if condition: nest != nil {
-            			remove nest from: possible_nests;
-            			my_place <- nest;
-            			location <- nest.location;
-            			size <- 0.0;
-           	 	} else {
-            			do die;
-           	 	}
+   		create bug number: 5 {
+       		cell nest <- one_of(possible_nests);
+        	if(nest != nil) {
+    			remove nest from: possible_nests;
+    			my_place <- nest;
+    			location <- nest.location;
+    			size <- 0.0;
+       	 	} else {
+    			do die;
        	 	}
-      	  	do die;
+   	 	}
+  	  	do die;
   	}
 	aspect basic {
 		int val <- int(255 * (1 - min([1.0,size/10.0])));

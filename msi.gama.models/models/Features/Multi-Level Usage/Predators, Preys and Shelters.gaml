@@ -154,7 +154,7 @@ species shelter skills: [moving]  frequency: 2 {
 	
 	aspect default {
 		draw geometry:shape color: shelter_color;
-		draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 6 at: {(location).x - 20, (location).y};
+		draw 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 6 at: {(location).x - 20, (location).y};
 	}
 }
 

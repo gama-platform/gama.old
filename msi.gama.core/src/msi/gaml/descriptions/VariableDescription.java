@@ -1,31 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'VariableDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import gnu.trove.set.hash.*;
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
+import gnu.trove.set.hash.*;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.descriptions.SymbolSerializer.VarSerializer;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class VariableDescription extends SymbolDescription {
 
@@ -33,11 +33,11 @@ public class VariableDescription extends SymbolDescription {
 	// Represents the variable that are not declared in the species but that the variable depends
 	// on.
 	private Set<String> extraDependencies;
-
+	private String plugin;
 	private int definitionOrder = -1;
 	private IExpression varExpr = null;
 	private IType type = null;
-	private final boolean _isGlobal,/* _isFunction, */_isNotModifiable, _isParameter;
+	private final boolean _isGlobal, /* _isFunction, */_isNotModifiable, _isParameter;
 	private boolean _isUpdatable;
 	// for variables automatically added to species for containing micro-agents
 	private boolean _isSyntheticSpeciesContainer;
@@ -198,9 +198,8 @@ public class VariableDescription extends SymbolDescription {
 
 	public IExpression getVarExpr() {
 		if ( varExpr != null ) { return varExpr; }
-		varExpr =
-			msi.gama.util.GAML.getExpressionFactory().createVar(getName(), getType(), isNotModifiable(),
-				_isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
+		varExpr = msi.gama.util.GAML.getExpressionFactory().createVar(getName(), getType(), isNotModifiable(),
+			_isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
 		return varExpr;
 	}
 
@@ -235,9 +234,8 @@ public class VariableDescription extends SymbolDescription {
 		String title = "a" + (isParameter() ? "  parameter " : isNotModifiable() ? " constant " : "n attribute ");
 		if ( getEnclosingDescription() == null ) { return "This statement declares " + getName() + " as " + title +
 			"<br/>" + super.getDocumentation(); }
-		String s =
-			"This statement declares " + getName() + " as " + title + ", of type " + getType().getTitle() + ", in " +
-				this.getEnclosingDescription().getTitle() + "<br/>";
+		String s = "This statement declares " + getName() + " as " + title + ", of type " + getType().getTitle() +
+			", in " + this.getEnclosingDescription().getTitle() + "<br/>";
 		return s + super.getDocumentation();
 	}
 
@@ -270,6 +268,19 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public List<IDescription> getChildren() {
 		return Collections.EMPTY_LIST;
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return plugin;
+	}
+
+	/**
+	 * @param plugin name
+	 */
+	@Override
+	public void setDefiningPlugin(final String plugin) {
+		this.plugin = plugin;
 	}
 
 }

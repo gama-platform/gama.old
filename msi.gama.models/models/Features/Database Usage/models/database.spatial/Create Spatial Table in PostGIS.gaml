@@ -39,11 +39,9 @@ global {
 		}
 	}
 }
-entities {
-	species dummy skills: [ SQLSKILL ] {
 
-	}
-}      
+species dummy skills: [ SQLSKILL ] { }
+   
 experiment default_expr type: gui {
 
 }

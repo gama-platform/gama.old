@@ -25,9 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.compilation.ISkillConstructor;
 import msi.gaml.operators.Cast;
-import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
@@ -72,11 +70,11 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public abstract IShape getGeometry();
-
-	@Override
-	public void setDuplicator(final ISkillConstructor duplicator) {
-		// Nothing to do here
-	}
+	//
+	// @Override
+	// public void setDuplicator(final ISkillConstructor duplicator) {
+	// // Nothing to do here
+	// }
 
 	/**
 	 *
@@ -100,10 +98,10 @@ public abstract class MinimalAgent implements IAgent {
 		// return nullCheck(getGeometry(), "The agent's shape is nil");
 	}
 
-	@Override
-	public ISkill duplicate() {
-		return this;
-	}
+	// @Override
+	// public ISkill duplicate() {
+	// return this;
+	// }
 
 	@Override
 	public IAgent getAgent() {
@@ -348,8 +346,10 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public void schedule() {
+		// public void scheduleAndExecute(final RemoteSequence sequence) {
 		if ( !dead() ) {
-			getScheduler().insertAgentToInit(this, getScope());
+			getScope().init(this);
+			// getScheduler().insertAgentToInit(getScope(), this, sequence);
 		}
 	}
 
@@ -554,6 +554,30 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	/**
+	 * Method get()
+	 * @see msi.gama.util.IContainer.Addressable#get(msi.gama.runtime.IScope, java.lang.Object)
+	 */
+	@Override
+	public Object get(final IScope scope, final String index) throws GamaRuntimeException {
+		if ( getPopulation().hasVar(index) ) {
+			return scope.getAgentVarValue(this, index);
+		} else {
+			return attributes.get(scope, index);
+			// return attributes.get(scope, index);
+		}
+	}
+
+	/**
+	 * Method getFromIndicesList()
+	 * @see msi.gama.util.IContainer.Addressable#getFromIndicesList(msi.gama.runtime.IScope, msi.gama.util.IList)
+	 */
+	@Override
+	public Object getFromIndicesList(final IScope scope, final IList<String> indices) throws GamaRuntimeException {
+		if ( indices == null || indices.isEmpty() ) { return null; }
+		return get(scope, indices.firstValue(scope));
+	}
+
+	/**
 	 * Method asShapeWithGeometry()
 	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope, com.vividsolutions.jts.geom.Geometry)
 	 */
@@ -562,4 +586,12 @@ public abstract class MinimalAgent implements IAgent {
 	// return getGeometry().asShapeWithGeometry(scope, g);
 	// }
 
+	// @Override
+	// public String getDefiningPlugin() {
+	// return null;
+	// }
+
+	public void setDefiningPlugin(final String plugin) {
+
+	}
 }

@@ -12,13 +12,15 @@
 package msi.gama.gui.views;
 
 import java.util.List;
-import msi.gama.common.interfaces.ItemList;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.controls.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
+import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.controls.*;
+import msi.gama.util.GamaColor;
 
 public abstract class ExpandableItemsView<T> extends GamaViewPart implements ItemList<T> {
 
@@ -35,8 +37,8 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	public void createViewer(final Composite parent) {
 		if ( parent == null ) { return; }
 		if ( viewer == null ) {
-			viewer =
-				new ParameterExpandBar(parent, SWT.V_SCROLL, areItemsClosable(), areItemsPausable(), false, false, this);
+			viewer = new ParameterExpandBar(parent, SWT.V_SCROLL, areItemsClosable(), areItemsPausable(), false, false,
+				this);
 			Object layout = parent.getLayout();
 			if ( layout instanceof GridLayout ) {
 				GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -56,14 +58,14 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	}
 
 	protected ParameterExpandItem createItem(final Composite parent, final T data, final Composite control,
-		final boolean expanded) {
-		return createItem(parent, getItemDisplayName(data, null), data, control, expanded);
+		final boolean expanded, final GamaUIColor color) {
+		return createItem(parent, getItemDisplayName(data, null), data, control, expanded, color);
 	}
 
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
-		final Composite control, final ParameterExpandBar bar, final boolean expanded) {
-		System.out.println("ExpandItem created for name " + name);
-		ParameterExpandItem i = buildConcreteItem(bar, data);
+		final Composite control, final ParameterExpandBar bar, final boolean expanded, final GamaUIColor color) {
+		// System.out.println("ExpandItem created for name " + name);
+		ParameterExpandItem i = buildConcreteItem(bar, data, color);
 		if ( name != null ) {
 			i.setText(name);
 		}
@@ -77,23 +79,25 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		return i;
 	}
 
-	protected ParameterExpandItem buildConcreteItem(final ParameterExpandBar bar, final T data) {
-		return new ParameterExpandItem(bar, data, SWT.None);
+	protected ParameterExpandItem buildConcreteItem(final ParameterExpandBar bar, final T data,
+		final GamaUIColor color) {
+		return new ParameterExpandItem(bar, data, SWT.None, color);
 	}
 
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
-		final Composite control, final boolean expanded) {
+		final Composite control, final boolean expanded, final GamaUIColor color) {
 		createViewer(parent);
 		if ( viewer == null ) { return null; }
-		return createItem(parent, name, data, control, viewer, expanded);
+		return createItem(parent, name, data, control, viewer, expanded, color);
 	}
 
-	protected ParameterExpandItem createItem(final Composite parent, final T data, final boolean expanded) {
+	protected ParameterExpandItem createItem(final Composite parent, final T data, final boolean expanded,
+		final GamaUIColor color) {
 		createViewer(parent);
 		if ( viewer == null ) { return null; }
 		Composite control = createItemContentsFor(data);
 		if ( control == null ) { return null; }
-		return createItem(parent, data, control, expanded);
+		return createItem(parent, data, control, expanded, color);
 	}
 
 	protected abstract Composite createItemContentsFor(T data);
@@ -157,6 +161,11 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		return null;
 	}
 
+	@Override
+	public GamaColor getItemDisplayColor(final T o) {
+		return null;
+	}
+
 	public void displayItems() {
 		List<T> items = getItems();
 		for ( T obj : items ) {
@@ -178,6 +187,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 				if ( !isOpen ) { return Status.CANCEL_STATUS; }
 				if ( getViewer() != null && !getViewer().isDisposed() ) {
 					getViewer().updateItemNames();
+					getViewer().updateItemColors();
 					updateItemValues();
 				}
 				return Status.OK_STATUS;

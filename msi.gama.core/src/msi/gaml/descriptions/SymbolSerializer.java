@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 10 nov. 2014
- * 
+ *
  */
 package msi.gaml.descriptions;
 
@@ -12,10 +12,10 @@ import msi.gaml.operators.Strings;
 
 /**
  * Class IDescriptionSerializer.
- * 
+ *
  * @author drogoul
  * @since 10 nov. 2014
- * 
+ *
  */
 
 public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
@@ -45,11 +45,12 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		}
 
 		@Override
-		protected String
-			serializeFacetKey(final VariableDescription s, final String key, final boolean includingBuiltIn) {
+		protected String serializeFacetKey(final VariableDescription s, final String key,
+			final boolean includingBuiltIn) {
 			if ( key.equals(INIT) ) { return "<- "; }
 			return super.serializeFacetKey(s, key, includingBuiltIn);
 		}
+
 	}
 
 	public static class SpeciesSerializer extends SymbolSerializer<SpeciesDescription> {
@@ -66,6 +67,32 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
+		// @Override
+		// protected void collectPluginsInFacetValue(final SpeciesDescription s, final String key,
+		// final Set<String> plugins) {
+		// if ( key.equals(SKILLS) ) {
+		// IExpressionDescription ed = s.getFacets().get(key);
+		// if ( ed == null ) { return; }
+		// Set<String> strings = ed.getStrings(s, true);
+		// for ( String name : strings ) {
+		// ISkill sk = AbstractGamlAdditions.getSkillInstanceFor(name);
+		// if ( sk != null ) {
+		// plugins.add(sk.getDefiningPlugin());
+		// }
+		// }
+		// } else if ( key.equals(CONTROL) ) {
+		// IExpressionDescription ed = s.getFacets().get(key);
+		// if ( ed == null ) { return; }
+		// String name = ed.getExpression().literalValue();
+		// ISkill sk = AbstractGamlAdditions.getSkillInstanceFor(name);
+		// if ( sk != null ) {
+		// plugins.add(sk.getDefiningPlugin());
+		// }
+		// } else {
+		// super.collectPluginsInFacetValue(s, key, plugins);
+		// }
+		// }
+		//
 	}
 
 	public static class ModelSerializer extends SpeciesSerializer {
@@ -137,6 +164,15 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	public static class StatementSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
+		protected void collectPluginsInFacets(final StatementDescription desc, final Set<String> plugins) {
+			super.collectPluginsInFacets(desc, plugins);
+			if ( desc.args == null || desc.args.isEmpty() ) { return; }
+			for ( StatementDescription arg : desc.args.values() ) {
+				collectPlugins(arg, plugins);
+			}
+		}
+
+		@Override
 		protected void serializeFacets(final StatementDescription s, final StringBuilder sb,
 			final boolean includingBuiltIn) {
 			super.serializeFacets(s, sb, includingBuiltIn);
@@ -163,14 +199,14 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	}
 
-	public static final Set<String> uselessFacets = new HashSet(Arrays.asList(DEPENDS_ON, KEYWORD, INTERNAL_FUNCTION,
-		WITH));
+	public static final Set<String> uselessFacets =
+		new HashSet(Arrays.asList(DEPENDS_ON, KEYWORD, INTERNAL_FUNCTION, WITH));
 
 	/**
 	 * Method serialize()
 	 * @see msi.gaml.descriptions.IDescriptionSerializer#serialize(msi.gaml.descriptions.IDescription)
 	 */
-	public final String serialize(final C description, final boolean includingBuiltIn) {
+		public final String serialize(final C description, final boolean includingBuiltIn) {
 		if ( description.isBuiltIn() && !includingBuiltIn ) { return ""; }
 		StringBuilder sb = new StringBuilder();
 		serialize(description, sb, includingBuiltIn);
@@ -258,4 +294,44 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		return exprString;
 
 	}
+
+	protected void collectPlugins(final C desc, final Set<String> plugins) {
+		plugins.add(desc.getDefiningPlugin());
+		collectPluginsInFacets(desc, plugins);
+		collectPluginsInChildren(desc, plugins);
+		desc.getType().collectPlugins(plugins);
+	}
+
+	/**
+	 * @param desc
+	 * @param plugins
+	 */
+	protected void collectPluginsInFacets(final C desc, final Set<String> plugins) {
+		for ( final String key : desc.getFacets().keySet() ) {
+			collectPluginsInFacetValue(desc, key, plugins);
+		}
+	}
+
+	/**
+	 * @param desc
+	 * @param key
+	 * @param plugins
+	 */
+	protected void collectPluginsInFacetValue(final C desc, final String key, final Set<String> plugins) {
+		IExpressionDescription ed = desc.getFacets().get(key);
+		if ( ed == null ) { return; }
+		ed.collectPlugins(plugins);
+	}
+
+	/**
+	 * @param desc
+	 * @param plugins
+	 */
+	protected void collectPluginsInChildren(final C desc, final Set<String> plugins) {
+		List<IDescription> children = desc.getChildren();
+		for ( IDescription s : children ) {
+			s.collectPlugins(plugins);
+		}
+	}
+
 }

@@ -368,7 +368,10 @@
        <markerContentGenerator
              defaultMarkerGrouping="org.eclipse.ui.ide.allMarkers.severity"
              id="msi.gama.lang.gaml.ui.error.generator"
-             name="Error Generator">             
+             name="Error Generator">
+          <markerTypeReference
+                id="org.eclipse.xtext.ui.task">
+          </markerTypeReference>             
              
              
           <markerTypeReference
@@ -399,6 +402,11 @@
                   label="Information"
                   priority="10">
             </markerGroupingEntry>
+                        <markerGroupingEntry
+                              id="org.eclipse.ui.ide.allmarkers.toDoSeverity"
+                              label="Tasks"
+                              priority="5">
+                        </markerGroupingEntry>
             <markerAttributeGrouping
                   attribute="severity"
                   defaultGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
@@ -462,6 +470,27 @@
                      value="-1">
                </markerAttributeMapping>
             </markerAttributeGrouping>
+                        <markerAttributeGrouping
+                              attribute="severity"
+                              defaultGroupingEntry="org.eclipse.ui.ide.allmarkers.toDoSeverity"
+                              markerType="org.eclipse.xtext.ui.task">
+                           <markerAttributeMapping
+                                 markerGroupingEntry="org.eclipse.ui.ide.allmarkers.toDoSeverity"
+                                 value="2">
+                           </markerAttributeMapping>
+                           <markerAttributeMapping
+                                 markerGroupingEntry="org.eclipse.ui.ide.allmarkers.toDoSeverity"
+                                 value="1">
+                           </markerAttributeMapping>
+                           <markerAttributeMapping
+                                 markerGroupingEntry="org.eclipse.ui.ide.allmarkers.toDoSeverity"
+                                 value="0">
+                           </markerAttributeMapping>
+                           <markerAttributeMapping
+                                 markerGroupingEntry="org.eclipse.ui.ide.allmarkers.toDoSeverity"
+                                 value="-1">
+                           </markerAttributeMapping>
+                        </markerAttributeGrouping>
             
          </markerGrouping>
           <markerFieldConfiguration

@@ -11,15 +11,22 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
+import java.io.*;
 import java.util.*;
-import msi.gama.util.file.GAMLFile;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import msi.gama.util.file.GAMLFile;
+import msi.gaml.compilation.GamaBundleLoader;
 
-public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
+public class NavigatorContentProvider extends WorkbenchContentProvider {
 
-	private VirtualContent[] virtualFolders;
+	private TopLevelFolder[] virtualFolders;
+
+	public NavigatorContentProvider() {
+
+	}
 
 	@Override
 	public Object[] getElements(final Object inputElement) {
@@ -30,12 +37,12 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 	public Object getParent(final Object element) {
 		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getParent(); }
 		if ( element instanceof IProject ) {
-			for ( VirtualContent folder : virtualFolders ) {
-				if ( folder.isParentOf(element) ) { return folder; }
+			for ( TopLevelFolder folder : virtualFolders ) {
+				if ( folder.accepts((IProject) element) ) { return folder; }
 			}
 		}
-		if ( element instanceof IFile &&
-			FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID.equals(FileMetaDataProvider.getContentTypeId((IFile) element)) ) {
+		if ( element instanceof IFile && FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID
+			.equals(FileMetaDataProvider.getContentTypeId((IFile) element)) ) {
 			IResource r = FileMetaDataProvider.shapeFileSupportedBy((IFile) element);
 			if ( r != null ) { return r; }
 		}
@@ -66,6 +73,7 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 				if ( !info.uses.isEmpty() ) {
 					l.add(new WrappedFolder((IFile) p, info.uses, "Uses"));
 				}
+				addPluginsTo((IFile) p, l);
 				return l.toArray();
 
 			} else if ( ctid.equals(FileMetaDataProvider.SHAPEFILE_CT_ID) ) {
@@ -88,13 +96,46 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 		return super.getChildren(p);
 	}
 
+	/**
+	 * @param p
+	 * @param l
+	 */
+	private void addPluginsTo(final IFile f, final List l) {
+		IProject p = f.getProject();
+		IPath path = f.getProjectRelativePath();
+		String s = ".metadata/" + path.toPortableString() + ".meta";
+		path = Path.fromPortableString(s);
+		IResource r = p.findMember(path);
+		if ( r == null || !(r instanceof IFile) ) { return; }
+		IFile m = (IFile) r;
+		try {
+			InputStream is = m.getContents();
+			BufferedReader in = new BufferedReader(new InputStreamReader(is));
+			List<String> contents = new ArrayList();
+			String inputLine;
+
+			while ((inputLine = in.readLine()) != null) {
+				if ( !inputLine.equals(GamaBundleLoader.CORE_PLUGIN) && !inputLine.isEmpty() ) {
+					contents.add(inputLine);
+				}
+			}
+			in.close();
+
+			if ( contents.isEmpty() ) { return; }
+			l.add(new WrappedPlugins(f, contents, "Requires"));
+		} catch (CoreException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public boolean hasChildren(final Object element) {
 		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).hasChildren(); }
 		if ( element instanceof NavigatorRoot ) { return true; }
 		if ( element instanceof IFile ) {
 			String ext = FileMetaDataProvider.getContentTypeId((IFile) element);
-			return FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext);
+			return (FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext)) &&
+				getChildren(element).length > 0;
 		}
 		return super.hasChildren(element);
 	}
@@ -105,9 +146,20 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 		this.virtualFolders = null;
 	}
 
+	@Override
+	protected void processDelta(final IResourceDelta delta) {
+		super.processDelta(delta);
+
+	}
+
 	private void initializeVirtualFolders(final Object parentElement) {
-		virtualFolders =
-			new VirtualContent[] { new UserProjectsFolder(parentElement, "User models"),
-			new ModelsLibraryFolder(parentElement, "Models library") };
+		virtualFolders = new TopLevelFolder[] { new UserProjectsFolder(parentElement, "User models"),
+			new PluginsModelsFolder(parentElement, "Plugin models"),
+			new ModelsLibraryFolder(parentElement, "Library models") };
+	}
+
+	@Override
+	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
+		super.inputChanged(viewer, null, ResourcesPlugin.getWorkspace());
 	}
 }

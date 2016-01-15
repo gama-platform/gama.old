@@ -1,7 +1,7 @@
 /**
  *  spatialinterpolation
  *  Author: Taillandier
- *  Description: 
+ *  Description: Show an example of the IDW spatial interpolation operator
  */
 
 model spatialinterpolation

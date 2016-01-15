@@ -54,6 +54,7 @@ public abstract class AbstractScope implements IScope {
 	private IStatement currentStatement;
 	private int tabLevel = -1;
 	private boolean trace;
+	public Deque<Map> readAttributes = new LinkedList();
 
 	// Allows to disable error reporting for this scope (the value will be read by the error reporting mechnanism).
 	private boolean reportErrors = true;
@@ -283,6 +284,7 @@ public abstract class AbstractScope implements IScope {
 		graphics = null;
 		topology = null;
 		currentStatement = null;
+		readAttributes.clear();
 	}
 
 	/**
@@ -851,6 +853,28 @@ public abstract class AbstractScope implements IScope {
 	public IAgent[] getAgentsStack() {
 		IAgent[] result = new IAgent[agents.size()];
 		return agents.toArray(result);
+	}
+
+	/**
+	 * Method pushReadAttributes()
+	 * @see msi.gama.runtime.IScope#pushReadAttributes(java.util.Map)
+	 */
+	@Override
+	public void pushReadAttributes(final Map values) {
+		readAttributes.push(values);
+	}
+
+	/**
+	 * Method popReadAttributes()
+	 * @see msi.gama.runtime.IScope#popReadAttributes()
+	 */
+	@Override
+	public Map popReadAttributes() {
+		return readAttributes.pop();
+	}
+
+	public Map peekReadAttributes() {
+		return readAttributes.peek();
 	}
 
 }

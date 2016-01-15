@@ -39,7 +39,6 @@ public abstract class SymbolDescription implements IDescription {
 	protected final EObject element;
 	protected IDescription enclosing;
 	protected String originName;
-	// protected final List<IDescription> children;
 	protected final String keyword;
 	protected boolean validated = false;
 
@@ -84,6 +83,11 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return getSerializer().serialize(this, includingBuiltIn);
+	}
+
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		getSerializer().collectPlugins(this, plugins);
 	}
 
 	@Override
@@ -393,6 +397,16 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public String getDocumentation() {
 		return getMeta().getDocumentation();
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return getMeta().getDefiningPlugin();
+	}
+
+	@Override
+	public void setDefiningPlugin(final String plugin) {
+		// Nothing to do here
 	}
 
 	@Override

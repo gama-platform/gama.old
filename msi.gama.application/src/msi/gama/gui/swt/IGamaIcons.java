@@ -1,23 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IGamaIcons.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt;
 
-
 /**
  * Class IGamaIcons.
- * 
+ *
  * @author drogoul
  * @since 13 sept. 2013
- * 
+ *
  */
 public interface IGamaIcons {
 
@@ -154,7 +153,9 @@ public interface IGamaIcons {
 
 	public static final GamaIcon FOLDER_SHARED = GamaIcons.create(/* "folder.shared2" */"navigator/folder.shared");
 	public static final GamaIcon FOLDER_BUILTIN = GamaIcons.create(/* "folder.builtin2" */"navigator/folder.library2");
+	public static final GamaIcon FOLDER_PLUGIN = GamaIcons.create("navigator/folder.plugin2");
 	public static final GamaIcon FOLDER_PROJECT = GamaIcons.create("folder.user2");
+	public static final GamaIcon FOLDER_CLOSED = GamaIcons.create("folder.closed2");
 	public static final GamaIcon FOLDER_MODEL = GamaIcons.create("folder.model3");
 	public static final GamaIcon FOLDER_RESOURCES = GamaIcons.create("folder.resources2");
 	public static final GamaIcon FILE_ICON = GamaIcons.create("file.icon2");

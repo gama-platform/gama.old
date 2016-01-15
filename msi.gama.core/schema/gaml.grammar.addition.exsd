@@ -6,14 +6,15 @@
          <meta.schema plugin="msi.gama.core" id="gaml.grammar.addition" name="Addition to the grammar of GAML"/>
       </appinfo>
       <documentation>
-         Indicates that this plugin provides an addition to the standard GAML grammar (usually through the definition of a gaml/std.gaml file created by the pre-processor).
+         *** Deprecated. Use gaml.extension instead. 
+Indicates that this plugin provides additions to GAML (either types, skills, species, operators, etc.). Extensions like types of displays or extensions of create should be declared using their respective extension points.
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
          <appinfo>
-            <meta.element />
+            <meta.element deprecated="true" replacement="gaml.extension" />
          </appinfo>
       </annotation>
       <complexType>
@@ -64,7 +65,7 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         version 1.5 
+         version 1.5
       </documentation>
    </annotation>
 

@@ -13,7 +13,6 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.IStepable;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaHelper;
@@ -30,9 +29,9 @@ public class AgentScheduler implements IStepable {
 
 	List<GamaHelper>[] actions = null;
 	/* The agents that need to be initialized */
-	private final ArrayList<IStepable> stepablesToInit = new ArrayList();
+	// private final TOrderedHashMap<IStepable, RemoteSequence> stepablesToInit = new TOrderedHashMap();
 	/* Whether or not the scheduler is in its initialization sequence */
-	private boolean inInitSequence = true;
+	// private boolean inInitSequence = true;
 	/* The stepable scheduled by this scheduler */
 	protected final IStepable owner;
 	protected final IScope scope;
@@ -41,7 +40,7 @@ public class AgentScheduler implements IStepable {
 	public AgentScheduler(final IScope scope, final IStepable owner) {
 		this.owner = owner;
 		this.scope = scope;
-		stepablesToInit.add(owner);
+		// stepablesToInit.put(owner, null);
 		// GuiUtils.debug("AgentScheduler.AgentScheduler: creating scheduler for " + owner);
 	}
 
@@ -57,8 +56,8 @@ public class AgentScheduler implements IStepable {
 
 	public void reset() {
 		actions = null;
-		stepablesToInit.clear();
-		inInitSequence = true;
+		// stepablesToInit.clear();
+		// inInitSequence = true;
 	}
 
 	@Override
@@ -102,39 +101,62 @@ public class AgentScheduler implements IStepable {
 		return alive;
 	}
 
-	public void insertAgentToInit(final IAgent entity, final IScope scope) throws GamaRuntimeException {
-		// if ( entity instanceof SimulationAgent || entity instanceof ExperimentAgent ) {
-		// //GuiUtils.debug("AgentScheduler.insertAgentToInit : " + entity);
-		// if ( entity.getName().equals("ants_model0") ) {
-		// //GuiUtils.debug("AgentScheduler.insertAgentToInit SIMULATION");
-		// }
-		// }
-		if ( inInitSequence ) {
-			stepablesToInit.add(entity);
-		} else {
-			scope.init(entity);
-		}
-	}
+	// public void insertAgentToInit(final IScope scope, final IAgent entity, final RemoteSequence sequence)
+	// throws GamaRuntimeException {
+	// // if ( entity instanceof SimulationAgent || entity instanceof ExperimentAgent ) {
+	// // //GuiUtils.debug("AgentScheduler.insertAgentToInit : " + entity);
+	// // if ( entity.getName().equals("ants_model0") ) {
+	// // //GuiUtils.debug("AgentScheduler.insertAgentToInit SIMULATION");
+	// // }
+	// // }
+	// if ( inInitSequence ) {
+	// stepablesToInit.put(entity, sequence);
+	// } else {
+	// scope.init(entity);
+	// // AD: this block added to address Issue #1277
+	//
+	// if ( sequence != null && !sequence.isEmpty() ) {
+	// Object[] result = new Object[1];
+	// scope.execute(sequence, entity, null, result);
+	// }
+	// }
+	// }
+	//
+	// @Override
+	// public boolean init(final IScope scope) throws GamaRuntimeException {
+	// inInitSequence = true;
+	// try {
+	// while (!stepablesToInit.isEmpty()) {
+	// final IStepable[] toInit = stepablesToInit.keySet().toArray(new IStepable[stepablesToInit.size()]);
+	// final RemoteSequence[] sequences =
+	// stepablesToInit.values().toArray(new RemoteSequence[stepablesToInit.size()]);
+	// stepablesToInit.clear();
+	// for ( int i = 0, n = toInit.length; i < n; i++ ) {
+	// scope.init(toInit[i]);
+	// if ( toInit[i] instanceof IAgent && sequences[i] != null && !sequences[i].isEmpty() ) {
+	// // AD: this block added to address Issue #1277
+	// // for ( final IAgent remoteAgent : list.iterable(scope) ) {
+	// Object[] result = new Object[1];
+	// if ( !scope.execute(sequences[i], (IAgent) toInit[i], null, result) ) {
+	// break;
+	// }
+	// // }
+	// }
+	// // if ( !scope.init(toInit[i]) ) {
+	// // inInitSequence = false;
+	// // return false;
+	// // }
+	// }
+	// }
+	// } finally {
+	// inInitSequence = false;
+	// }
+	// return true;
+	// }
 
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
-		inInitSequence = true;
-		try {
-			while (!stepablesToInit.isEmpty()) {
-				final IStepable[] toInit = stepablesToInit.toArray(new IStepable[stepablesToInit.size()]);
-				stepablesToInit.clear();
-				for ( int i = 0, n = toInit.length; i < n; i++ ) {
-					scope.init(toInit[i]);
-					// if ( !scope.init(toInit[i]) ) {
-					// inInitSequence = false;
-					// return false;
-					// }
-				}
-			}
-		} finally {
-			inInitSequence = false;
-		}
-		return true;
+		return scope.init(owner);
 	}
 
 	public void executeActions(final IScope scope, final int type) {

@@ -82,7 +82,7 @@ Workflow {
 			fragment = generator.GeneratorFragment auto-inject {
 				generateMwe = false
 				generateJavaMain = true
-				generateStub = true
+				generateStub = false
 				generateXtendMain = false
 			}
 

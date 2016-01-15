@@ -14,6 +14,7 @@ package msi.gama.common.interfaces;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+// import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
@@ -32,7 +33,7 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
 	static final int MAX_ZOOM_FACTOR = 2;
 
-	public interface OpenGL extends IDisplaySurface, IZoomListener {
+	public interface OpenGL extends IDisplaySurface/* , IZoomListener */ {
 
 		/**
 		 * @return the position of the camera
@@ -46,11 +47,11 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 		void selectSeveralAgents(Collection<IAgent> shapes);
 
 	}
-
-	public interface IZoomListener {
-
-		public void newZoomLevel(double zoomLevel);
-	}
+	//
+	// public interface IZoomListener {
+	//
+	// public void newZoomLevel(double zoomLevel);
+	// }
 
 	public static final double SELECTION_SIZE = 5; // pixels
 	public static final int MAX_SIZE = Integer.MAX_VALUE; // pixels
@@ -116,7 +117,7 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	public abstract double getDisplayHeight();
 
-	public abstract void setZoomListener(IZoomListener listener);
+	// public abstract void setZoomListener(IZoomListener listener);
 
 	public ILocation getModelCoordinates();
 

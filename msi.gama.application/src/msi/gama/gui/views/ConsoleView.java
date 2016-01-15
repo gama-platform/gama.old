@@ -25,7 +25,7 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 
-public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable {
+public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
 	public static final String ID = "msi.gama.application.view.ConsoleView";
 	private BufferedWriter bw;
@@ -173,5 +173,23 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	protected GamaUIJob createUpdateJob() {
 		return null;
 	}
+
+	/**
+	 * As ConsoleView is automatically opened by moving to the simulation perspective, the automatic closing can cause problems. So the view is stated as accepting an "experiment-less" mode. See Issue
+	 * #1361
+	 * Method shouldBeClosedWhenNoExperiments()
+	 * @see msi.gama.gui.views.GamaViewPart#shouldBeClosedWhenNoExperiments()
+	 */
+	@Override
+	protected boolean shouldBeClosedWhenNoExperiments() {
+		return false;
+	}
+
+	/**
+	 * Method synchronizeChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#synchronizeChanged()
+	 */
+	@Override
+	public void synchronizeChanged() {}
 
 }

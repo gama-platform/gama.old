@@ -44,6 +44,7 @@ import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
 
 /**
@@ -64,7 +65,31 @@ public abstract class Spatial {
 
 	final static PointLocator pl = new PointLocator();
 
-	public static class Common extends Object {}
+	public static abstract class Common {
+
+		@operator(value = "using",
+			category = { IOperatorCategory.SPATIAL },
+			type = ITypeProvider.FIRST_TYPE,
+			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			index_type = ITypeProvider.FIRST_KEY_TYPE)
+		@doc(value = "Allows to specify in which topology a spatial computation should take place.",
+			usages = { @usage(value = "has no effect if the topology passed as a parameter is nil") },
+			examples = { @example(value = "(agents closest_to self) using topology(world)",
+				equals = "the closest agent to self (the caller) in the continuous topology of the world",
+				test = false) })
+		public static Object using(final IScope scope, final IExpression expression, final ITopology topology) {
+			ITopology oldTopo = scope.getTopology();
+			try {
+				if ( topology != null ) {
+					scope.setTopology(topology);
+				}
+				return expression.value(scope);
+			} finally {
+				scope.setTopology(oldTopo);
+			}
+		}
+
+	}
 
 	public static abstract class Creation {
 

@@ -1132,6 +1132,21 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	@action(name = "add_intention", args = { @arg(name = PREDICATE,
+			type = IType.MAP,
+			optional = true,
+			doc = @doc("predicate to check")) }, doc = @doc(value = "check if the predicates is in the desire base.",
+			returns = "true if it is in the base.",
+			examples = { @example("") }))
+		// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
+			public
+			Boolean primAddIntention(final IScope scope) throws GamaRuntimeException {
+			Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+			return addToBase(scope, predicateDirect, INTENTION_BASE);
+
+		}
+	
 	@action(name = "get_intention", args = { @arg(name = PREDICATE,
 			type = PredicateType.id,
 			optional = false,

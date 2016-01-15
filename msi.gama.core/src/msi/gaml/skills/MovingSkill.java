@@ -1,35 +1,27 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MovingSkill.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.skills;
 
-import gnu.trove.map.hash.THashMap;
-
 import java.util.Map;
-
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -39,32 +31,28 @@ import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.*;
 
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
-
 /**
  * MovingSkill : This class is intended to define the minimal set of behaviours required from an
  * agent that is able to move. Each member that has a meaning in GAML is annotated with the
  * respective tags (vars, getter, setter, init, action & args)
- * 
+ *
  * @author drogoul 4 juil. 07
  */
 
 @doc("The moving skill is intended to define the minimal set of behaviours required for agents that are able to move on different topologies")
-@vars({
-	@var(name = IKeyword.LOCATION, type = IType.POINT, depends_on = IKeyword.SHAPE),
+@vars({ @var(name = IKeyword.LOCATION, type = IType.POINT, depends_on = IKeyword.SHAPE),
 	@var(name = IKeyword.SPEED,
 		type = IType.FLOAT,
 		init = "1.0",
-		doc = @doc("the speed of the agent (in meter/second)")),
+		doc = @doc("Represents the speed of the agent (in meter/second)") ),
 	@var(name = IKeyword.HEADING,
 		type = IType.INT,
 		init = "rnd(359)",
-		doc = @doc("the absolute heading of the agent in degrees (in the range 0-359)")),
+		doc = @doc("Represents the absolute heading of the agent in degrees (in the range 0-359)") ),
 	@var(name = IKeyword.DESTINATION,
 		type = IType.POINT,
 		depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },
-		doc = @doc("continuously updated destination of the agent with respect to its speed and heading (read-only)")) })
+		doc = @doc("Represents the next location of the agent if it keeps its current speed and heading (read-only)") ) })
 @skill(name = IKeyword.MOVING_SKILL)
 public class MovingSkill extends Skill {
 
@@ -113,8 +101,7 @@ public class MovingSkill extends Skill {
 
 	@setter(IKeyword.LOCATION)
 	// Correctly manages the heading
-		public
-		void setLocation(final IAgent agent, final ILocation p) {
+	public void setLocation(final IAgent agent, final ILocation p) {
 		final ITopology topology = getTopology(agent);
 		final ILocation oldLocation = agent.getLocation();
 		if ( !topology.isTorus() && p != null && !p.equals(oldLocation) ) {
@@ -129,14 +116,14 @@ public class MovingSkill extends Skill {
 	/**
 	 * @throws GamaRuntimeException
 	 * @throws GamaRuntimeException Prim: move randomly. Has to be redefined for every class that
-	 *             implements this interface.
-	 * 
+	 * implements this interface.
+	 *
 	 * @param args the args speed (meter/sec) : the speed with which the agent wants to move
-	 *            distance (meter) : the distance the agent want to cover in one step amplitude (in
-	 *            degrees) : 360 or 0 means completely random move, while other values, combined
-	 *            with the heading of the agent, define the angle in which the agent will choose a
-	 *            new place. A bounds (geometry, agent, list of agents, list of geometries, species)
-	 *            can be specified
+	 * distance (meter) : the distance the agent want to cover in one step amplitude (in
+	 * degrees) : 360 or 0 means completely random move, while other values, combined
+	 * with the heading of the agent, define the angle in which the agent will choose a
+	 * new place. A bounds (geometry, agent, list of agents, list of geometries, species)
+	 * can be specified
 	 * @return the path followed
 	 */
 
@@ -180,15 +167,14 @@ public class MovingSkill extends Skill {
 		if ( topo == null ) { return scope.getTopology(); }
 		return topo;
 	}
-	 
+
 	protected Object computeTopologyEdge(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final Object on = scope.getArg("on", IType.NONE);
-		if (on instanceof IShape && ((IShape) on).isLine()) {return (IShape) on;}
+		if ( on instanceof IShape && ((IShape) on).isLine() ) { return on; }
 		final ITopology topo = Cast.asTopology(scope, on);
 		if ( topo == null ) { return scope.getTopology(); }
 		return topo;
 	}
-	
 
 	protected Map computeMoveWeights(final IScope scope) throws GamaRuntimeException {
 		return scope.hasArg("move_weights") ? (Map) scope.getArg("move_weights", IType.MAP) : null;
@@ -199,19 +185,18 @@ public class MovingSkill extends Skill {
 			@arg(name = IKeyword.SPEED,
 				type = IType.FLOAT,
 				optional = true,
-				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+				doc = @doc("the speed to use for this move (replaces the current value of speed)") ),
 			@arg(name = "amplitude",
 				type = IType.INT,
 				optional = true,
-				doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
+				doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)") ),
 			@arg(name = IKeyword.BOUNDS,
 				type = { IType.AGENT, IType.GEOMETRY },
 				optional = true,
-				doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) },
+				doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry") ) },
 		doc = @doc(examples = { @example("do wander speed: speed - 10 amplitude: 120 bounds: agentA;") },
-			value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
-	public
-		void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
+			value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading.") )
+	public void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
 		final int heading = computeHeadingFromAmplitude(scope, agent);
@@ -245,23 +230,22 @@ public class MovingSkill extends Skill {
 			@arg(name = IKeyword.SPEED,
 				type = IType.FLOAT,
 				optional = true,
-				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+				doc = @doc("the speed to use for this move (replaces the current value of speed)") ),
 			@arg(name = "amplitude",
 				type = IType.INT,
 				optional = true,
-				doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
+				doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)") ),
 			@arg(name = "z_max",
 				type = IType.INT,
 				optional = true,
-				doc = @doc("the maximum alltitude (z) the geometry can reach")),
+				doc = @doc("the maximum alltitude (z) the geometry can reach") ),
 			@arg(name = IKeyword.BOUNDS,
 				type = { IType.AGENT, IType.GEOMETRY },
 				optional = true,
-				doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) },
+				doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry") ) },
 		doc = @doc(examples = { @example("do wander_3D speed: speed - 10 amplitude: 120 bounds: agentA;") },
-			value = "Moves the agent towards a random location (3D point) at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
-	public
-		IPath primMoveRandomly3D(final IScope scope) throws GamaRuntimeException {
+			value = "Moves the agent towards a random location (3D point) at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading.") )
+	public IPath primMoveRandomly3D(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
@@ -302,19 +286,18 @@ public class MovingSkill extends Skill {
 			@arg(name = IKeyword.SPEED,
 				type = IType.FLOAT,
 				optional = true,
-				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+				doc = @doc("the speed to use for this move (replaces the current value of speed)") ),
 			@arg(name = IKeyword.HEADING,
 				type = IType.INT,
 				optional = true,
-				doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
+				doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)") ),
 			@arg(name = IKeyword.BOUNDS,
 				type = { IType.GEOMETRY, IType.AGENT },
 				optional = true,
-				doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) },
+				doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry") ) },
 		doc = @doc(examples = { @example("do move speed: speed - 10 heading: heading + rnd (30) bounds: agentA;") },
-			value = "moves the agent forward, the distance being computed with respect to its speed and heading. The value of the corresponding variables are used unless arguments are passed."))
-	public
-		IPath primMoveForward(final IScope scope) throws GamaRuntimeException {
+			value = "moves the agent forward, the distance being computed with respect to its speed and heading. The value of the corresponding variables are used unless arguments are passed.") )
+	public IPath primMoveForward(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
 		final double dist = computeDistance(scope, agent);
@@ -344,16 +327,16 @@ public class MovingSkill extends Skill {
 			@arg(name = IKeyword.SPEED,
 				type = IType.FLOAT,
 				optional = true,
-				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-			@arg(name = "path", type = IType.PATH, optional = false, doc = @doc("a path to be followed.")),
-			@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weights used for the moving.")),
+				doc = @doc("the speed to use for this move (replaces the current value of speed)") ),
+			@arg(name = "path", type = IType.PATH, optional = false, doc = @doc("a path to be followed.") ),
+			@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weights used for the moving.") ),
 			@arg(name = "return_path",
 				type = IType.BOOL,
 				optional = true,
-				doc = @doc("if true, return the path followed (by default: false)")) },
+				doc = @doc("if true, return the path followed (by default: false)") ) },
 		doc = @doc(value = "moves the agent along a given path passed in the arguments.",
 			returns = "optional: the path followed by the agent.",
-			examples = { @example("do follow speed: speed * 2 path: road_path;") }))
+			examples = { @example("do follow speed: speed * 2 path: road_path;") }) )
 	public IPath primFollow(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final double dist = computeDistance(scope, agent);
@@ -383,26 +366,28 @@ public class MovingSkill extends Skill {
 			@arg(name = "target",
 				type = { IType.AGENT, IType.POINT, IType.GEOMETRY },
 				optional = false,
-				doc = @doc("the location or entity towards which to move.")),
+				doc = @doc("the location or entity towards which to move.") ),
 			@arg(name = IKeyword.SPEED,
 				type = IType.FLOAT,
 				optional = true,
-				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-			@arg(name = "on", type = { IType.GRAPH }, optional = true, doc = @doc("graph that restrains this move")),
+				doc = @doc("the speed to use for this move (replaces the current value of speed)") ),
+			@arg(name = "on", type = { IType.GRAPH }, optional = true, doc = @doc("graph that restrains this move") ),
 			@arg(name = "recompute_path",
 				type = IType.BOOL,
 				optional = true,
-				doc = @doc("if false, the path is not recompute even if the graph is modified (by default: true)")),
+				doc = @doc("if false, the path is not recompute even if the graph is modified (by default: true)") ),
 			@arg(name = "return_path",
 				type = IType.BOOL,
 				optional = true,
-				doc = @doc("if true, return the path followed (by default: false)")),
-			@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weights used for the moving.")) },
+				doc = @doc("if true, return the path followed (by default: false)") ),
+			@arg(name = "move_weights",
+				type = IType.MAP,
+				optional = true,
+				doc = @doc("Weights used for the moving.") ) },
 		doc = @doc(value = "moves the agent towards the target passed in the arguments.",
 			returns = "optional: the path followed by the agent.",
-			examples = { @example("do goto target: (one_of road).location speed: speed * 2 on: road_network;") }))
-	public
-		IPath primGoto(final IScope scope) throws GamaRuntimeException {
+			examples = { @example("do goto target: (one_of road).location speed: speed * 2 on: road_network;") }) )
+	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);
 		final double maxDist = computeDistance(scope, agent);
@@ -410,19 +395,22 @@ public class MovingSkill extends Skill {
 		final Boolean returnPath =
 			scope.hasArg("return_path") ? (Boolean) scope.getArg("return_path", IType.NONE) : false;
 		final Object rt = computeTopologyEdge(scope, agent);
-		final IShape edge = (rt instanceof IShape) ? (IShape) rt : null;
-		final ITopology topo = (rt instanceof ITopology) ? (ITopology) rt : scope.getTopology();
-		
+		final IShape edge = rt instanceof IShape ? (IShape) rt : null;
+		final ITopology topo = rt instanceof ITopology ? (ITopology) rt : scope.getTopology();
+
 		if ( goal == null ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST, false); }
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST,
+				false); }
 			return null;
 		}
 		if ( topo == null ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST, false); }
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST,
+				false); }
 			return null;
 		}
 		if ( source.equals(goal) ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST, false); }
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST,
+				false); }
 			return null;
 		}
 
@@ -433,16 +421,18 @@ public class MovingSkill extends Skill {
 		IPath path = (GamaPath) agent.getAttribute("current_path");
 		if ( path == null || path.getTopology(scope) != null && !path.getTopology(scope).equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
-			if (edge !=null) {
+			if ( edge != null ) {
 				IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 				edges.add(edge);
 				path = new GamaSpatialPath(source.getGeometry(), goal, edges, true);
-			} else path = topo.pathBetween(scope, source, goal);
+			} else {
+				path = topo.pathBetween(scope, source, goal);
+			}
 		} else {
 
 			if ( topo instanceof GraphTopology ) {
-				if ( ((GraphTopology) topo).getPlaces() != path.getGraph() || recomputePath &&
-					((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion() ) {
+				if ( ((GraphTopology) topo).getPlaces() != path.getGraph() ||
+					recomputePath && ((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion() ) {
 					path = topo.pathBetween(scope, source, goal);
 				}
 			}
@@ -468,8 +458,8 @@ public class MovingSkill extends Skill {
 
 	/**
 	 * @throws GamaRuntimeException
-	 *             Return the next location toward a target on a line
-	 * 
+	 * Return the next location toward a target on a line
+	 *
 	 * @param coords coordinates of the line
 	 * @param source current location
 	 * @param target location to reach
@@ -538,9 +528,8 @@ public class MovingSkill extends Skill {
 					} else {
 						ILocation c0 = line.getPoints().get(0);
 						ILocation c1 = line.getPoints().get(1);
-						currentLocation.z =
-							c0.getZ() + (c1.getZ() - c0.getZ()) * currentLocation.distance((Coordinate) c0) /
-								line.getPerimeter();
+						currentLocation.z = c0.getZ() +
+							(c1.getZ() - c0.getZ()) * currentLocation.distance((Coordinate) c0) / line.getPerimeter();
 					}
 				}
 			}
@@ -574,9 +563,8 @@ public class MovingSkill extends Skill {
 				} else {
 					ILocation c0 = lineEnd.getPoints().get(0);
 					ILocation c1 = lineEnd.getPoints().get(1);
-					falseTarget.z =
-						c0.getZ() + (c1.getZ() - c0.getZ()) * falseTarget.distance((Coordinate) c0) /
-							lineEnd.getPerimeter();
+					falseTarget.z = c0.getZ() +
+						(c1.getZ() - c0.getZ()) * falseTarget.distance((Coordinate) c0) / lineEnd.getPerimeter();
 				}
 			}
 		}
@@ -811,9 +799,8 @@ public class MovingSkill extends Skill {
 		} catch (final Exception e) {
 			// frontier = buff.intersection(geom.buffer(0.0));
 			final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-			frontier =
-				GeometryPrecisionReducer.reducePointwise(geom, pm).intersection(
-					GeometryPrecisionReducer.reducePointwise(buff, pm));
+			frontier = GeometryPrecisionReducer.reducePointwise(geom, pm)
+				.intersection(GeometryPrecisionReducer.reducePointwise(buff, pm));
 
 		}
 

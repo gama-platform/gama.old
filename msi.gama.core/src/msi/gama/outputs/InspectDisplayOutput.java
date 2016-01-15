@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'InspectDisplayOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs;
 
@@ -16,19 +16,13 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
@@ -37,41 +31,46 @@ import msi.gaml.types.*;
 
 /**
  * The Class AbstractInspectOutput.
- * 
+ *
  * @author drogoul
  */
 @SuppressWarnings("unchecked")
 @symbol(name = { IKeyword.INSPECT, IKeyword.BROWSE }, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.NONE, optional = false, doc = @doc("the identifier of the inspector")),
-	@facet(name = IKeyword.REFRESH_EVERY,
-		type = IType.INT,
-		optional = true,
-		doc = @doc(value = "Allows to refresh the inspector every n time steps (default is 1)",
-			deprecated = "Use refresh: every(n) instead")),
-	@facet(name = IKeyword.REFRESH,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Indicates the condition under which this output should be refreshed (default is true)")),
-	@facet(name = IKeyword.VALUE,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("the set of agents to inspect, could be a species, a list of agents or an agent")),
-	@facet(name = IKeyword.ATTRIBUTES,
-		type = IType.LIST,
-		optional = true,
-		doc = @doc("the list of attributes to inspect")),
-	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.POPULATION,
-		IKeyword.TABLE }, optional = true, doc = @doc("the way to inspect agents: in a table, or a set of inspectors")) },
+@facets(
+	value = {
+		@facet(name = IKeyword.NAME,
+			type = IType.NONE,
+			optional = false,
+			doc = @doc("the identifier of the inspector") ),
+		@facet(name = IKeyword.REFRESH_EVERY,
+			type = IType.INT,
+			optional = true,
+			doc = @doc(value = "Allows to refresh the inspector every n time steps (default is 1)",
+				deprecated = "Use refresh: every(n) instead") ),
+		@facet(name = IKeyword.REFRESH,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("Indicates the condition under which this output should be refreshed (default is true)") ),
+		@facet(name = IKeyword.VALUE,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("the set of agents to inspect, could be a species, a list of agents or an agent") ),
+		@facet(name = IKeyword.ATTRIBUTES,
+			type = IType.LIST,
+			optional = true,
+			doc = @doc("the list of attributes to inspect") ),
+		@facet(name = IKeyword.TYPE,
+			type = IType.ID,
+			values = { IKeyword.AGENT, IKeyword.TABLE },
+			optional = true,
+			doc = @doc("the way to inspect agents: in a table, or a set of inspectors") ) },
 	omissible = IKeyword.NAME)
-@doc(value = "`" +
-	IKeyword.INSPECT +
-	"` (and `" +
-	IKeyword.BROWSE +
-	"`) statements allows modeler to inspect a set of agents, in a table with agents and all their attributes or an agent inspector per agent, depending on the type: chosen. Modeler can choose which attributes to display. When `" +
-	IKeyword.BROWSE + "` is used, type: default value is table, whereas when`" + IKeyword.INSPECT +
-	"` is used, type: default value is agent.",
+@doc(
+	value = "`" + IKeyword.INSPECT + "` (and `" + IKeyword.BROWSE +
+		"`) statements allows modeler to inspect a set of agents, in a table with agents and all their attributes or an agent inspector per agent, depending on the type: chosen. Modeler can choose which attributes to display. When `" +
+		IKeyword.BROWSE + "` is used, type: default value is table, whereas when`" + IKeyword.INSPECT +
+		"` is used, type: default value is agent.",
 	usages = { @usage(value = "An example of syntax is:",
 		examples = { @example(value = "inspect \"my_inspector\" value: ant attributes: [\"name\", \"location\"];",
 			isExecutable = false) }) })
@@ -153,31 +152,26 @@ public class InspectDisplayOutput extends MonitorOutput {
 		return true;
 	}
 
-	public InspectDisplayOutput(final String name, final short type, final IAgent a) {
+	public InspectDisplayOutput(final IAgent a) {
 		// Opens directly an inspector
-		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME,
-			StringUtils.toGamlString(name + (type != INSPECT_TABLE ? count++ : "")), IKeyword.TYPE, types.get(type))
-			.validate());
+		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, StringUtils.toGamlString("Inspect: "),
+			IKeyword.TYPE, types.get(INSPECT_AGENT)).validate());
 		setValue(null);
 		lastValue = a;
 	}
 
 	private InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {
 		// Opens a table inspector on the agents of this species
-		this(DescriptionFactory.create(
-			IKeyword.INSPECT,
-			GAML.getExperimentContext(rootAgent),
-			IKeyword.NAME,
-			species == null ? StringUtils.toGamlString("Custom " + count++) : StringUtils.toGamlString(species
-				.getName()), IKeyword.VALUE, species == null ? "nil" : species.getName(), IKeyword.TYPE,
-			types.get(INSPECT_TABLE)).validate());
+		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(rootAgent), IKeyword.NAME,
+			StringUtils.toGamlString("Browse(" + count++ + ")"), IKeyword.VALUE,
+			species == null ? "nil" : species.getName(), IKeyword.TYPE, types.get(INSPECT_TABLE)).validate());
 		this.rootAgent = rootAgent;
 	}
 
 	private InspectDisplayOutput(final IMacroAgent agent, final Collection<IAgent> agents) {
 		// Opens a table inspector on the agents of this container
 		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
-			StringUtils.toGamlString("Custom " + count++), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
+			StringUtils.toGamlString("Browse(" + count++ + ")"), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
 			types.get(INSPECT_TABLE)).validate());
 		lastValue = agents;
 		this.rootAgent = agent;
@@ -186,7 +180,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 	private InspectDisplayOutput(final IMacroAgent agent, final IExpression agents) {
 		// Opens a table inspector on the agents of this container
 		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
-			StringUtils.toGamlString("Custom " + count++), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
+			StringUtils.toGamlString("Browse(" + count++ + ")"), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
 			types.get(INSPECT_TABLE)).validate());
 		// lastValue = agents;
 		this.rootAgent = agent;
@@ -244,17 +238,28 @@ public class InspectDisplayOutput extends MonitorOutput {
 		if ( IKeyword.TABLE.equals(type) ) {
 			if ( rootAgent == null || rootAgent.dead() ) { return EMPTY; }
 		}
+		// System.out.println("Last value :" + lastValue);
 		if ( lastValue instanceof IAgent ) { return new IAgent[] { (IAgent) lastValue }; }
-		if ( lastValue instanceof ISpecies && rootAgent != null ) { return rootAgent.getMicroPopulation(
-			(ISpecies) lastValue).toArray(new IAgent[0]); }
-		if ( lastValue instanceof IContainer ) { return (IAgent[]) ((IContainer) lastValue).listValue(getScope(),
-			Types.NO_TYPE, false).toArray(new IAgent[0]); }
+		if ( lastValue instanceof ISpecies && rootAgent != null ) {
+			IPopulation pop = rootAgent.getMicroPopulation((ISpecies) lastValue);
+			IAgent[] result = pop.toArray();
+			return result;
+		}
+		if ( lastValue instanceof IContainer ) { return (IAgent[]) ((IContainer) lastValue)
+			.listValue(getScope(), Types.NO_TYPE, false).toArray(new IAgent[0]); }
 		return EMPTY;
 	}
 
 	public ISpecies getSpecies() {
 		if ( getValue() == null ) { return null; }
-		return rootAgent.getSpecies().getMicroSpecies(getValue().getType().getContentType().getSpeciesName());
+		SpeciesDescription sd = getValue().getType().getContentType().getSpecies();
+		if ( sd == null ) { return getScope().getModel().getSpecies(IKeyword.AGENT); }
+		if ( sd.equals(getScope().getModel().getDescription()) ) { return getScope().getModel().getSpecies(); }
+		String speciesName = sd.getName();
+		if ( speciesName == null ) {
+			speciesName = IKeyword.AGENT;
+		}
+		return rootAgent.getSpecies().getMicroSpecies(speciesName);
 	}
 
 	public List<String> getAttributes() {

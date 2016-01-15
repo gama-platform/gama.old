@@ -4,12 +4,8 @@
    <extension-point id="gaml.grammar.addition" name="Addition to the grammar of GAML" schema="schema/gaml.grammar.addition.exsd"/>
    <extension-point id="gama.display" name="Implementations of IDisplaySurface" schema="schema/gama.display.exsd"/>
    <extension-point id="gama.create" name="Implementations of ICreateDelegate" schema="schema/gama.create.exsd"/>
-   <extension
-         point="gaml.grammar.addition">
-      <path
-            name="gaml">
-      </path>
-   </extension>
+   <extension-point id="gaml.extension" name="Additions to the GAML language" schema="schema/gaml.extension.exsd"/>
+   <extension-point id="gama.models" name="Allow plugins to add sample models to GAMA" schema="schema/gama.models.exsd"/>
    <extension
          point="gama.display">
       <implementation
@@ -59,6 +55,9 @@
             class="msi.gaml.statements.CreateFromGenstarDelegate"
             description="Create agents from CSV Genstar files">
       </implementation>
+   </extension>
+   <extension
+         point="gaml.extension">
    </extension>
 
 </plugin>

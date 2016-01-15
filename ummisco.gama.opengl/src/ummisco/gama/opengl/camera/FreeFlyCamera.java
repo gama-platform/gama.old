@@ -1,23 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'FreeFlyCamera.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
+import org.eclipse.swt.SWT;
+import com.jogamp.opengl.glu.GLU;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gaml.operators.Maths;
-import org.eclipse.swt.SWT;
 import ummisco.gama.opengl.JOGLRenderer;
-import com.jogamp.opengl.glu.GLU;
 
 public class FreeFlyCamera extends AbstractCamera {
 
@@ -116,7 +116,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		GamaPoint vector = forward.times(speed * 800 + step);
 		position.setLocation(getPosition().plus(in ? vector : vector.negated()));
 		target.setLocation(forward.plus(getPosition()));
-		getRenderer().displaySurface.newZoomLevel(zoomLevel());
+		getRenderer().data.setZoomLevel(zoomLevel());
 	}
 
 	@Override

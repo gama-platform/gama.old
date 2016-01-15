@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchSite;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
@@ -22,10 +23,6 @@ public interface IToolbarDecoratedView {
 	public final static int SEP = Integer.MAX_VALUE;
 
 	public IWorkbenchSite getSite();
-
-	// public void setToolbar(GamaToolbar2 toolbar);
-
-	// public Integer[] getToolbarActionsId();
 
 	public void createToolItems(GamaToolbar2 tb);
 
@@ -71,5 +68,10 @@ public interface IToolbarDecoratedView {
 		boolean zoomWhenScrolling();
 
 	}
+
+	/**
+	 * @param toggle
+	 */
+	public void setToogle(Action toggle);
 
 }

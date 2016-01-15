@@ -1,23 +1,23 @@
 /**
  * Created by drogoul, 24 nov. 2014
- * 
+ *
  */
 package msi.gama.lang.gaml.ui.outline;
 
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.xtext.ui.editor.outline.impl.OutlinePage;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 
 /**
  * The class GamlOutlinePage.
- * 
+ *
  * @author drogoul
  * @since 24 nov. 2014
- * 
+ *
  */
 public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedView {
 
@@ -64,5 +64,8 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
 	}
+
+	@Override
+	public void setToogle(final Action toggle) {}
 
 }

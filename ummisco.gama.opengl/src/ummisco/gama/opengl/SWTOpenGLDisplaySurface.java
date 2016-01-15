@@ -45,9 +45,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	final JOGLRenderer renderer;
 	// protected volatile boolean canBeUpdated = true;
 	protected double zoomIncrement = 0.1;
-	protected Double zoomLevel = null;
+	// protected Double zoomLevel = null;
 	protected boolean zoomFit = true;
-	private IZoomListener zoomListener;
+	// private IZoomListener zoomListener;
 	Map<ILayerMouseListener, MouseListener> listeners = new HashMap();
 	final LayeredDisplayOutput output;
 	final LayerManager manager;
@@ -215,7 +215,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		renderer.frame = 0;
 		renderer.camera.zeroVelocity();
 		renderer.camera.resetCamera(getEnvWidth(), getEnvHeight(), output.getData().isOutput3D());
-		newZoomLevel(1d);
+		output.getData().setZoomLevel(1d);
+		// newZoomLevel(1d);
 		zoomFit = true;
 
 	}
@@ -405,14 +406,14 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return output.getData().getEnvHeight();
 	}
 
-	/**
-	 * Method setZoomListener()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setZoomListener(msi.gama.common.interfaces.IDisplaySurface.IZoomListener)
-	 */
-	@Override
-	public void setZoomListener(final IZoomListener listener) {
-		zoomListener = listener;
-	}
+	// /**
+	// * Method setZoomListener()
+	// * @see msi.gama.common.interfaces.IDisplaySurface#setZoomListener(msi.gama.common.interfaces.IDisplaySurface.IZoomListener)
+	// */
+	// @Override
+	// public void setZoomListener(final IZoomListener listener) {
+	// zoomListener = listener;
+	// }
 
 	/**
 	 * Method getModelCoordinates()
@@ -487,10 +488,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public double getZoomLevel() {
-		if ( zoomLevel == null ) {
-			zoomLevel = computeInitialZoomLevel();
+		if ( output.getData().getZoomLevel() == null ) {
+			output.getData().setZoomLevel(computeInitialZoomLevel());
 		}
-		return zoomLevel;
+		return output.getData().getZoomLevel();
 	}
 
 	protected Double computeInitialZoomLevel() {
@@ -548,18 +549,18 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agent);
 	}
 
-	/**
-	 * Method newZoomLevel()
-	 * @see msi.gama.common.interfaces.IDisplaySurface.IZoomListener#newZoomLevel(double)
-	 */
-	@Override
-	public void newZoomLevel(final double newZoomLevel) {
-		zoomLevel = newZoomLevel;
-		if ( zoomListener != null ) {
-			zoomListener.newZoomLevel(zoomLevel);
-		}
-		// animator.getRenderer().initFor(this);
-	}
+	// /**
+	// * Method newZoomLevel()
+	// * @see msi.gama.common.interfaces.IDisplaySurface.IZoomListener#newZoomLevel(double)
+	// */
+	// @Override
+	// public void newZoomLevel(final double newZoomLevel) {
+	// output.getData().setZoomLevel(newZoomLevel);
+	// if ( zoomListener != null ) {
+	// zoomListener.newZoomLevel(output.getData().getZoomLevel());
+	// }
+	// // animator.getRenderer().initFor(this);
+	// }
 
 	org.eclipse.swt.widgets.Menu menu;
 

@@ -1,20 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'DescriptionFactory.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.AGENT;
+import java.util.*;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import com.google.common.collect.Iterables;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntProcedure;
-import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.*;
@@ -22,15 +25,12 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import com.google.common.collect.Iterables;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class DescriptionFactory {
 
@@ -178,12 +178,12 @@ public class DescriptionFactory {
 
 	public static void addSpeciesNameAsType(final String name) {
 		if ( !name.equals(AGENT) && !name.equals(IKeyword.EXPERIMENT) ) {
-			// System.err.println("						=====================================");
-			// System.err.println("						Registering " + name + " as a species type in the global registry");
+			// System.err.println(" =====================================");
+			// System.err.println(" Registering " + name + " as a species type in the global registry");
 			// if ( VAR_KEYWORDS_PROTOS.containsKey(name) ) {
-			// System.err.println("						Another value has already been registered");
+			// System.err.println(" Another value has already been registered");
 			// }
-			// System.err.println("						=====================================");
+			// System.err.println(" =====================================");
 			VAR_KEYWORDS_PROTOS.putIfAbsent(name, VAR_KEYWORDS_PROTOS.get(AGENT));
 		}
 	}
@@ -227,9 +227,9 @@ public class DescriptionFactory {
 
 	public static SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,
 		final IDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
-		final Set<String> skills) {
+		final Set<String> skills, final String plugin) {
 		return ((SpeciesFactory) getFactory(ISymbolKind.SPECIES)).createBuiltInSpeciesDescription(name, clazz,
-			superDesc, parent, helper, skills, new Facets());
+			superDesc, parent, helper, skills, new Facets(), plugin);
 	}
 
 	public static ModelDescription createRootModelDescription(final String name, final Class clazz,
@@ -259,7 +259,8 @@ public class DescriptionFactory {
 		}
 		Facets facets = source.copyFacets(md);
 		EObject element = source.getElement();
-		final IDescription desc = md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md);
+		final IDescription desc =
+			md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md, null);
 		return desc;
 
 	}

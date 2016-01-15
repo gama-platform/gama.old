@@ -1,36 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'LayeredDisplayOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.Envelope3D;
-import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
+import msi.gama.outputs.LayeredDisplayOutput.*;
 import msi.gama.outputs.layers.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -39,11 +34,10 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * The Class LayerDisplayOutput.
- * 
+ *
  * @author drogoul
  */
 @symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true)
@@ -51,103 +45,128 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.BACKGROUND,
 		type = IType.COLOR,
 		optional = true,
-		doc = @doc("Allows to fill the background of the display with a specific color")),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the display")),
+		doc = @doc("Allows to fill the background of the display with a specific color") ),
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the display") ),
 	@facet(name = IKeyword.FOCUS,
 		type = IType.GEOMETRY,
 		optional = true,
-		doc = @doc("the geometry (or agent) on which the displau will (dynamically) focus")),
+		doc = @doc("the geometry (or agent) on which the displau will (dynamically) focus") ),
 	// WARNING VALIDER EN VERIFIANT LE TYPE DU DISPLAY
 	@facet(name = IKeyword.TYPE,
 		type = IType.LABEL,
 		optional = true,
-		doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
+		doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem") ),
 	@facet(name = IKeyword.REFRESH_EVERY,
 		type = IType.INT,
 		optional = true,
 		doc = @doc(value = "Allows to refresh the display every n time steps (default is 1)",
-			deprecated = "Use refresh: every(n) instead")),
+			deprecated = "Use refresh: every(n) instead") ),
 	@facet(name = IKeyword.REFRESH,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("Indicates the condition under which this output should be refreshed (default is true)")),
-	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
+		doc = @doc("Indicates the condition under which this output should be refreshed (default is true)") ),
+	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("") ),
 	@facet(name = IKeyword.ZFIGHTING,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
+		doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways") ),
 	@facet(name = IKeyword.TRACE,
 		type = { IType.BOOL, IType.INT },
 		optional = true,
-		doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. This facet can also be applied to individual layers")),
+		doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. This facet can also be applied to individual layers") ),
 	@facet(name = IKeyword.SCALE,
 		type = { IType.BOOL, IType.FLOAT },
 		optional = true,
-		doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
+		doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name") ),
 	@facet(name = IKeyword.SHOWFPS,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
+		doc = @doc("Allows to enable/disable the drawing of the number of frames per second") ),
 	@facet(name = IKeyword.DRAWENV,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
+		doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences") ),
 	@facet(name = IKeyword.ORTHOGRAPHIC_PROJECTION,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("Allows to enable/disable the orthographic projection. Default can be configured in Preferences")),
+		doc = @doc("Allows to enable/disable the orthographic projection. Default can be configured in Preferences") ),
 	@facet(name = IKeyword.AMBIENT_LIGHT,
 		type = { IType.INT, IType.COLOR },
 		optional = true,
-		doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(125,125,125)")),
+		doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(125,125,125)") ),
 	@facet(name = IKeyword.DIFFUSE_LIGHT,
 		type = { IType.INT, IType.COLOR },
 		optional = true,
-		doc = @doc("Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is rgb(125,125,125)")),
+		doc = @doc("Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is rgb(125,125,125)") ),
 	@facet(name = IKeyword.DIFFUSE_LIGHT_POS,
 		type = IType.POINT,
 		optional = true,
-		doc = @doc("Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width`*`2}")),
+		doc = @doc("Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width`*`2}") ),
 	@facet(name = IKeyword.IS_LIGHT_ON,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("Allows to enable/disable the light. Default is true")),
+		doc = @doc("Allows to enable/disable the light. Default is true") ),
 	@facet(name = IKeyword.DRAW_DIFFUSE_LIGHT,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("Allows to enable/disable the drawing of the diffuse light. Default is false")),
+		doc = @doc("Allows to enable/disable the drawing of the diffuse light. Default is false") ),
 	@facet(name = IKeyword.CAMERA_POS,
 		type = { IType.POINT, IType.AGENT },
 		optional = true,
-		doc = @doc("Allows to define the position of the camera")),
+		doc = @doc("Allows to define the position of the camera") ),
 	@facet(name = IKeyword.CAMERA_LOOK_POS,
 		type = IType.POINT,
 		optional = true,
-		doc = @doc("Allows to define the direction of the camera")),
+		doc = @doc("Allows to define the direction of the camera") ),
 	@facet(name = IKeyword.CAMERA_UP_VECTOR,
 		type = IType.POINT,
 		optional = true,
-		doc = @doc("Allows to define the orientation of the camera")),
-	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true, doc = @doc("")),
+		doc = @doc("Allows to define the orientation of the camera") ),
+	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true, doc = @doc("") ),
 	@facet(name = IKeyword.AUTOSAVE,
 		type = { IType.BOOL, IType.POINT },
 		optional = true,
-		doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
-	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) },
-	omissible = IKeyword.NAME)
+		doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions") ),
+	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @validator(InfoValidator.class)
-@doc(value = "A display refers to a independent and mobile part of the interface that can display species, images, texts or charts.",
+@serializer(DisplaySerializer.class)
+@doc(
+	value = "A display refers to a independent and mobile part of the interface that can display species, images, texts or charts.",
 	usages = {
 		@usage(value = "The general syntax is:",
-			examples = @example(value = "display my_display [additional options] { ... }", isExecutable = false)),
-		@usage(value = "Each display can include different layers (like in a GIS).", examples = {
-			@example(value = "display gridWithElevationTriangulated type: opengl ambient_light: 100 {",
-				isExecutable = false),
-			@example(value = "	grid cell elevation: true triangulation: true;", isExecutable = false),
-			@example(value = "	species people aspect: base;", isExecutable = false),
-			@example(value = "}", isExecutable = false) }) })
+			examples = @example(value = "display my_display [additional options] { ... }", isExecutable = false) ),
+		@usage(value = "Each display can include different layers (like in a GIS).",
+			examples = {
+				@example(value = "display gridWithElevationTriangulated type: opengl ambient_light: 100 {",
+					isExecutable = false),
+				@example(value = "	grid cell elevation: true triangulation: true;", isExecutable = false),
+				@example(value = "	species people aspect: base;", isExecutable = false),
+				@example(value = "}", isExecutable = false) }) })
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
+
+	public static class DisplaySerializer extends SymbolSerializer {
+
+		/**
+		 * Method collectPluginsInFacetValue()
+		 * @see msi.gaml.descriptions.SymbolSerializer#collectPluginsInFacetValue(msi.gaml.descriptions.SymbolDescription, java.lang.String, java.util.Set)
+		 */
+		@Override
+		protected void collectPluginsInFacetValue(final SymbolDescription desc, final String key, final Set plugins) {
+			super.collectPluginsInFacetValue(desc, key, plugins);
+			if ( key.equals(TYPE) ) {
+				IExpressionDescription exp = desc.getFacets().get(TYPE);
+				if ( exp.getExpression() != null ) {
+					String type = exp.getExpression().literalValue();
+					DisplayDescription dd = GuiUtils.getDisplayDescriptionFor(type);
+					if ( dd != null ) {
+						plugins.add(dd.getDefiningPlugin());
+					}
+				}
+			}
+		}
+
+	}
 
 	public static class InfoValidator implements IDescriptionValidator {
 
@@ -197,8 +216,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				zfight == null ? zFightDefault : zfight.getExpression().literalValue().equals(IKeyword.TRUE);
 			if ( zFightWanted ) {
 				String prefs = zFightDefault ? "(enabled by default in the Preferences)" : "";
-				d.info("z_fighting " + prefs +
-					" improves the rendering, but disables the selection of a single cell in a grid layer",
+				d.info(
+					"z_fighting " + prefs +
+						" improves the rendering, but disables the selection of a single cell in a grid layer",
 					IGamlIssue.GENERAL, zfight == null ? null : zfight.getTarget(), IKeyword.AUTOSAVE);
 			}
 		}
@@ -338,20 +358,20 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( camera != null ) {
 			this.data.setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
 			constantCamera = camera.isConst();
-			cameraFix= true;
+			cameraFix = true;
 		}
 
 		final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 		if ( cameraLook != null ) {
 			this.data.setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 			constantCameraLook = cameraLook.isConst();
-			cameraFix= true;
+			cameraFix = true;
 		}
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
 		if ( cameraUp != null ) {
 			this.data.setCameraUpVector(Cast.asPoint(getScope(), cameraUp.value(getScope())));
-			cameraFix= true;
+			cameraFix = true;
 		}
 
 		final IExpression poly = getFacet(IKeyword.POLYGONMODE);
@@ -374,9 +394,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		ModelDescription main = (ModelDescription) scope.getModel().getDescription();
 		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 		if ( fromMicroModel ) {
-			ExperimentAgent exp =
-				(ExperimentAgent) scope.getAgentScope()
-					.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
+			ExperimentAgent exp = (ExperimentAgent) scope.getAgentScope()
+				.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
 			sim = (SimulationAgent) exp.getSimulation();
 		}
 		// end-hqnghi

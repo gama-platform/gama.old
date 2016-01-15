@@ -87,7 +87,7 @@ public class ModelDescription extends SpeciesDescription {
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
 		final ErrorCollector collector, final List<String> imports) {
-		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets);
+		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets, null);
 		types = new TypesManager(
 			parent instanceof ModelDescription ? ((ModelDescription) parent).types : Types.builtInTypes);
 		modelFilePath = modelPath;
@@ -264,11 +264,13 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
+		if ( types == null ) { return null; }
 		return (SpeciesDescription) types.getSpecies(spec);
 	}
 
 	@Override
 	public IType getTypeNamed(final String s) {
+		if ( types == null ) { return Types.NO_TYPE; }
 		return types.get(s);
 	}
 

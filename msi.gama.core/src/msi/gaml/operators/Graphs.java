@@ -60,7 +60,6 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 
 /**
@@ -409,11 +408,8 @@ public class Graphs {
 			"In the nb_connected_components_of operator, the graph should not be null!", scope); }
 
 		ConnectivityInspector ci;
-		if ( graph.isDirected() ) {
-			ci = new ConnectivityInspector((DirectedGraph) graph);
-		} else {
-			ci = new ConnectivityInspector((UndirectedGraph) graph);
-		}
+		//there is an error with connectivity inspector of JGrapht....
+		ci = new ConnectivityInspector((DirectedGraph) graph);
 		IList<IList> results = GamaListFactory.create(Types.LIST);
 		for ( Object obj : ci.connectedSets() ) {
 			results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));

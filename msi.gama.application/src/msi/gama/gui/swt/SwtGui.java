@@ -34,6 +34,7 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.navigator.*;
 import msi.gama.gui.parameters.*;
@@ -54,7 +55,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
-import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
 
 /**
@@ -71,6 +71,7 @@ public class SwtGui implements IGui {
 	static {
 		if ( !GuiUtils.isInHeadLessMode() ) {
 			GuiUtils.setSwtGui(new SwtGui());
+			WorkaroundForIssue1358.install();
 		} else {
 			System.out.println("Configuring HEADLESS MODE");
 		}
@@ -315,6 +316,7 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				v.clearErrors();
+				v.close();
 			}
 		});
 	}
@@ -568,10 +570,10 @@ public class SwtGui implements IGui {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
-			// IWorkbenchPart part = partRef.getPart(false);
-			// if ( part instanceof IGamaView ) {
-			// ((IGamaView) part).showToolbars(true);
-			// }
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( part instanceof IGamaView ) {
+				((IGamaView) part).showToolbar();
+			}
 		}
 
 		@Override
@@ -588,9 +590,10 @@ public class SwtGui implements IGui {
 
 		@Override
 		public void partDeactivated(final IWorkbenchPartReference partRef) {
-			// IWorkbenchPart part = partRef.getPart(false);
-			// if ( part instanceof IGamaView ) {
-			// ((IGamaView) part).showToolbars(false);
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( part instanceof IGamaView ) {
+				((IGamaView) part).hideToolbar();
+			}
 			// }
 
 		}
@@ -750,7 +753,7 @@ public class SwtGui implements IGui {
 	}
 
 	public final boolean openPerspective(final String perspectiveId, final boolean immediately) {
-		loadPerspectives();
+		// loadPerspectives();
 		final IWorkbenchPage activePage = getPage(perspectiveId);
 		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
@@ -789,31 +792,31 @@ public class SwtGui implements IGui {
 
 	}
 
-	static final Map<String, Class> perspectiveClasses = new THashMap();
-
-	public final boolean loadPerspectives() {
-		if ( !perspectiveClasses.isEmpty() ) { return true; }
-
-		final IConfigurationElement[] config =
-			Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.perspectives");
-		for ( final IConfigurationElement e : config ) {
-			final String pluginID = e.getAttribute("id");
-			final String pluginClass = e.getAttribute("class");
-			final String pluginName = e.getContributor().getName();
-			// Check if is a gama perspective...
-			if ( pluginID.contains("msi.gama") ) {
-				final ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-				try {
-					perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
-				} catch (final ClassNotFoundException e1) {
-					e1.printStackTrace();
-				}
-				System.out.println("Gama perspective " + pluginID + " is loaded");
-			}
-		}
-
-		return false; // openPerspective(I);
-	}
+	// static final Map<String, Class> perspectiveClasses = new THashMap();
+	//
+	// public final boolean loadPerspectives() {
+	// if ( !perspectiveClasses.isEmpty() ) { return true; }
+	//
+	// final IConfigurationElement[] config =
+	// Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.perspectives");
+	// for ( final IConfigurationElement e : config ) {
+	// final String pluginID = e.getAttribute("id");
+	// final String pluginClass = e.getAttribute("class");
+	// final String pluginName = e.getContributor().getName();
+	// // Check if is a gama perspective...
+	// if ( pluginID.contains("msi.gama") ) {
+	// final ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+	// try {
+	// perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
+	// } catch (final ClassNotFoundException e1) {
+	// e1.printStackTrace();
+	// }
+	// System.out.println("Gama perspective " + pluginID + " is loaded");
+	// }
+	// }
+	//
+	// return false; // openPerspective(I);
+	// }
 
 	@Override
 	public final boolean openSimulationPerspective(final boolean immediately) {
@@ -824,7 +827,6 @@ public class SwtGui implements IGui {
 		return openPerspective(PERSPECTIVE_HPC_ID, immediately);
 	}
 
-	String currentPerspectiveId = null;
 	public static GamaPreferences.Entry<String> COLOR_MENU_SORT =
 		GamaPreferences.create("menu.colors.sort", "Sort colors menu by", "RGB value", IType.STRING)
 			.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
@@ -927,11 +929,13 @@ public class SwtGui implements IGui {
 		return EditorFactory.getInstance();
 	}
 
-	static final Map<String, Class> displayClasses = new THashMap();
+	@Override
+	public DisplayDescription getDisplayDescriptionFor(final String name) {
+		return (DisplayDescription) DISPLAYS.get(name);
+	}
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output) {
-
 		IDisplaySurface surface = null;
 		String keyword = output.getData().getDisplayType();
 		final IDisplayCreator creator = DISPLAYS.get(keyword);
@@ -1187,18 +1191,21 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				if ( getPage() == null ) { return; }
-				final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
-				if ( r == null ) {
-					if ( a == null ) { return; }
-					try {
-						InspectDisplayOutput output =
-							new InspectDisplayOutput("Inspector", InspectDisplayOutput.INSPECT_AGENT, a);
-						output.launch();
-					} catch (final GamaRuntimeException g) {
-						g.addContext("In opening the agent inspector");
-						GAMA.reportError(GAMA.getRuntimeScope(), g, false);
-					}
+				// final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
+				// if ( r == null ) {
+				if ( a == null ) { return; }
+				try {
+					InspectDisplayOutput output = new InspectDisplayOutput(a);
+					output.launch();
+				} catch (final GamaRuntimeException g) {
+					g.addContext("In opening the agent inspector");
+					GAMA.reportError(GAMA.getRuntimeScope(), g, false);
 				}
+				final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
+				if ( r != null ) {
+					getPage().bringToTop(r.getPart(true));
+				}
+				// }
 				// AgentInspectView v =
 				// (AgentInspectView) showView(GuiUtils.AGENT_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 				// v.inspectAgent(a);

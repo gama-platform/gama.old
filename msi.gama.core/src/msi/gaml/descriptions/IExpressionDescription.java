@@ -1,28 +1,28 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IExpressionDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import java.util.Set;
+import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * The class IExpressionDescription.
- * 
+ *
  * @author drogoul
  * @since 31 mars 2012
- * 
+ *
  */
 public interface IExpressionDescription extends IGamlable {
 
@@ -49,5 +49,7 @@ public interface IExpressionDescription extends IGamlable {
 	public abstract IExpressionDescription cleanCopy();
 
 	public abstract IType getDenotedType(IDescription context);
+
+	public abstract void collectPlugins(Set<String> plugins);
 
 }

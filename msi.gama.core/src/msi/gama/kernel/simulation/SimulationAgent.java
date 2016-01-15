@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.*;
@@ -97,7 +97,9 @@ public class SimulationAgent extends GamlAgent {
 
 	@Override
 	public void schedule() {
+		// public void scheduleAndExecute(final RemoteSequence sequence) {
 		super.schedule();
+		// super.scheduleAndExecute(sequence);
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
 		GuiUtils.prepareForSimulation(this);
@@ -255,21 +257,21 @@ public class SimulationAgent extends GamlAgent {
 	}
 
 	@getter(CYCLE)
-	public Integer getCycle(final IScope scope, final IAgent agent) {
+	public Integer getCycle(final IScope scope) {
 		final SimulationClock clock = getClock();
 		if ( clock != null ) { return clock.getCycle(); }
 		return 0;
 	}
 
 	@getter(IKeyword.STEP)
-	public double getTimeStep(final IScope scope, final IAgent agent) {
+	public double getTimeStep(final IScope scope) {
 		final SimulationClock clock = getClock();
 		if ( clock != null ) { return clock.getStep(); }
 		return 1d;
 	}
 
 	@setter(IKeyword.STEP)
-	public void setTimeStep(final IScope scope, final IAgent agent, final double t) throws GamaRuntimeException {
+	public void setTimeStep(final IScope scope, final double t) throws GamaRuntimeException {
 		final SimulationClock clock = getClock();
 		if ( clock != null ) {
 			clock.setStep(t);
@@ -277,14 +279,14 @@ public class SimulationAgent extends GamlAgent {
 	}
 
 	@getter(TIME)
-	public double getTime(final IScope scope, final IAgent agent) {
+	public double getTime(final IScope scope) {
 		final SimulationClock clock = getClock();
 		if ( clock != null ) { return clock.getTime(); }
 		return 0d;
 	}
 
 	@setter(TIME)
-	public void setTime(final IScope scope, final IAgent agent, final double t) throws GamaRuntimeException {
+	public void setTime(final IScope scope, final double t) throws GamaRuntimeException {
 		final SimulationClock clock = getClock();
 		if ( clock != null ) {
 			clock.setTime(t);

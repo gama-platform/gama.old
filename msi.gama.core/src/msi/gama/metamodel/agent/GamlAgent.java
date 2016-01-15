@@ -429,7 +429,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public void initializeMicroPopulation(final IScope scope, final String name) {
 		final ISpecies microSpec = getModel().getSpecies(name);
 		final IPopulation microPop = GamaPopulation.createPopulation(scope, this, microSpec);
-		System.out.println("Micro-pop added to attributes: " + name);
+		// System.out.println("Micro-pop added to attributes: " + name);
 		attributes.put(microSpec.getName(), microPop);
 		microPop.initializeFor(scope);
 	}

@@ -13,8 +13,13 @@ package msi.gama.gui.views;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.experiment.*;
@@ -27,14 +32,11 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 
-public class AgentInspectView extends AttributesEditorsView<IAgent> implements IToolbarDecoratedView.Pausable /* implements GamaSelectionListener */{
+public class AgentInspectView extends AttributesEditorsView<IAgent> implements IToolbarDecoratedView.Pausable /* implements GamaSelectionListener */ {
 
 	public static final String ID = GuiUtils.AGENT_VIEW_ID;
+	public String firstPartName = null;
 
 	@Override
 	public void addOutput(final IDisplayOutput output) {
@@ -43,15 +45,16 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 			reset();
 			return;
 		}
-		System.out.println("Adding output " + output.getName() + " to inspector");
+		// System.out.println("Adding output " + output.getName() + " to inspector");
 		if ( !(output instanceof InspectDisplayOutput) ) { return; }
 		InspectDisplayOutput out = (InspectDisplayOutput) output;
-		if ( out.getLastValue() == null || out.getLastValue().length == 0 ) {
+		IAgent[] agents = out.getLastValue();
+		if ( agents == null || agents.length == 0 ) {
 			reset();
 			return;
 		}
 
-		IAgent agent = out.getLastValue()[0];
+		IAgent agent = agents[0];
 		if ( parent == null ) {
 			super.addOutput(out);
 		} else if ( editors == null || !editors.getCategories().containsKey(agent) ) {
@@ -62,7 +65,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
-		System.out.println("Inspector creating its own part control");
+		// System.out.println("Inspector creating its own part control");
 		parent.setBackground(parent.getBackground());
 		if ( !outputs.isEmpty() ) {
 			IAgent[] init = getOutput().getLastValue();
@@ -162,14 +165,15 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 
 	@Override
 	public boolean addItem(final IAgent agent) {
-		System.out.println("Adding item " + agent.getName() + " to inspector");
+		// System.out.println("Adding item " + agent.getName() + " to inspector");
 		if ( editors == null ) {
 			editors = new AgentAttributesEditorsList();
 		}
+		updatePartName();
 		if ( !editors.getCategories().containsKey(agent) ) {
 			editors.add(getParametersToInspect(agent), agent);
-			System.out.println("Asking to create the item " + agent.getName() + " in inspector");
-			ParameterExpandItem item = createItem(parent, agent, true);
+			// System.out.println("Asking to create the item " + agent.getName() + " in inspector");
+			ParameterExpandItem item = createItem(parent, agent, true, null);
 			if ( item == null ) { return false; }
 			return true;
 		}
@@ -177,8 +181,9 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 	}
 
 	@Override
-	protected ParameterExpandItem buildConcreteItem(final ParameterExpandBar bar, final IAgent data) {
-		return new ParameterExpandItem(bar, data, SWT.None, 0);
+	protected ParameterExpandItem buildConcreteItem(final ParameterExpandBar bar, final IAgent data,
+		final GamaUIColor color) {
+		return new ParameterExpandItem(bar, data, SWT.None, 0, color);
 	}
 
 	private List<IParameter> getParametersToInspect(final IAgent agent) {
@@ -210,7 +215,38 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 			found.close();
 			removeOutput(found);
 		}
+		updatePartName();
 	}
+
+	public void updatePartName() {
+		if ( firstPartName == null ) {
+			InspectDisplayOutput out = getOutput();
+			firstPartName = out == null ? "Inspect: " : out.getName();
+		}
+		Set<String> names = new LinkedHashSet();
+		for ( IOutput o : outputs ) {
+			InspectDisplayOutput out = (InspectDisplayOutput) o;
+			IAgent a = out.getLastValue()[0];
+			if ( a != null ) {
+				names.add(a.getName());
+			}
+		}
+		this.setPartName(firstPartName + " " + (names.isEmpty() ? "" : names.toString()));
+	}
+
+	/**
+	 * Method pauseChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#pauseChanged()
+	 */
+	@Override
+	public void pauseChanged() {}
+
+	/**
+	 * Method synchronizeChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#synchronizeChanged()
+	 */
+	@Override
+	public void synchronizeChanged() {}
 
 	// /**
 	// * Method createToolItem()

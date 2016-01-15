@@ -12,20 +12,10 @@
 package msi.gama.lang.gaml.resource;
 
 import static msi.gaml.factories.DescriptionFactory.getModelFactory;
+import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.Map.Entry;
-import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.gaml.impl.ImportImpl;
-import msi.gama.lang.gaml.parsing.*;
-import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
-import msi.gama.lang.gaml.validation.*;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
-import msi.gama.util.*;
-import msi.gaml.compilation.*;
-import msi.gaml.descriptions.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
@@ -34,6 +24,17 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import com.google.common.collect.ImmutableList;
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.impl.ImportImpl;
+import msi.gama.lang.gaml.parsing.GamlCompatibilityConverter;
+import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
+import msi.gama.util.*;
+import msi.gaml.compilation.*;
+import msi.gaml.descriptions.*;
 
 /*
  *
@@ -49,6 +50,7 @@ public class GamlResource extends LazyLinkingResource {
 	private volatile ErrorCollector collector;
 	private volatile boolean isValidating;
 	private volatile boolean isEdited;
+	private final Set<String> requires = new LinkedHashSet();
 
 	public ErrorCollector getErrorCollector() {
 		if ( collector == null ) {
@@ -63,6 +65,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public void resetErrorCollector() {
+		requires.clear();
 		if ( collector == null ) {
 			getErrorCollector();
 		} else {
@@ -95,8 +98,8 @@ public class GamlResource extends LazyLinkingResource {
 	public void updateWith(final ModelDescription model) {
 		if ( listener != null ) {
 			if ( listener instanceof IGamlBuilderListener2 ) {
-				((IGamlBuilderListener2) listener).validationEnded(
-					model == null ? Collections.EMPTY_SET : model.getExperiments(), collector);
+				((IGamlBuilderListener2) listener)
+					.validationEnded(model == null ? Collections.EMPTY_SET : model.getExperiments(), collector);
 			} else {
 				listener.validationEnded(model == null ? Collections.EMPTY_SET : model.getExperimentNames(), collector);
 			}
@@ -125,20 +128,6 @@ public class GamlResource extends LazyLinkingResource {
 		}
 		return parseResult.getSyntacticContents();
 	}
-
-	// AD 8/4/14 The resource itself is now responsible for returning the whole syntactic contents of the set of files
-	// that constitute the model
-
-	// private Iterable<ISyntacticElement> getAllSyntacticContents(final Set<GamlResource> totalResources) {
-	// return Iterables.transform(totalResources, new Function<GamlResource, ISyntacticElement>() {
-	//
-	// @Override
-	// public ISyntacticElement apply(final GamlResource r) {
-	// return r.getSyntacticContents();
-	// }
-	//
-	// });
-	// }
 
 	private ModelDescription buildModelDescription(final Map<GamlResource, String> resources) {
 
@@ -176,10 +165,9 @@ public class GamlResource extends LazyLinkingResource {
 			aliasName = (String) microModels.values().toArray()[0];
 			List<ISyntacticElement> res = getListMicroSyntacticElement(microModels, aliasName);
 			microModels.keySet().removeAll(res);
-			ModelDescription mic =
-				getModelFactory().createModelDescription(projectPath, modelPath, res, getErrorCollector(), isEdited,
-					Collections.<String, ModelDescription> emptyMap(),
-					((SyntacticModelElement) res.get(0)).getImports());
+			ModelDescription mic = getModelFactory().createModelDescription(projectPath, modelPath, res,
+				getErrorCollector(), isEdited, Collections.<String, ModelDescription> emptyMap(),
+				((SyntacticModelElement) res.get(0)).getImports());
 			mic.setAlias(aliasName);
 			mm.put(aliasName, mic);
 		}
@@ -275,8 +263,8 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	private void invalidateBecauseOfImportedProblem(final String msg, final GamlResource resource) {
-		getErrorCollector().add(
-			new GamlCompilationError(msg, IGamlIssue.GENERAL, resource.getContents().get(0), false, false));
+		getErrorCollector()
+			.add(new GamlCompilationError(msg, IGamlIssue.GENERAL, resource.getContents().get(0), false, false));
 		updateWith(null);
 	}
 
@@ -287,6 +275,53 @@ public class GamlResource extends LazyLinkingResource {
 		set.getResource(getURI(), true);
 		ModelDescription model = null;
 
+		// If plugins, required for building this model, are missing in the current version of GAMA
+		// raise an error and abort the build.
+		IPath path = getPath();
+		List<String> plugins = new ArrayList();
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+		if ( resource != null ) {
+			IProject project = resource.getProject();
+			if ( project != null ) {
+				path = resource.getProjectRelativePath();
+				String s = ".metadata/" + path.toPortableString() + ".meta";
+				path = Path.fromPortableString(s);
+				IResource r = project.findMember(path);
+				if ( r != null && r instanceof IFile ) {
+					IFile m = (IFile) r;
+					BufferedReader in = null;
+					try {
+						in = new BufferedReader(new InputStreamReader(m.getContents()));
+						String inputLine;
+
+						while ((inputLine = in.readLine()) != null) {
+							if ( !inputLine.equals(GamaBundleLoader.CORE_PLUGIN) && !inputLine.isEmpty() ) {
+								plugins.add(inputLine);
+							}
+						}
+
+					} catch (CoreException | IOException e) {
+						e.printStackTrace();
+					} finally {
+						if ( in != null ) {
+							try {
+								in.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+		}
+		if ( !plugins.isEmpty() ) {
+			for ( String plugin : plugins ) {
+				if ( !GamaBundleLoader.contains(plugin) ) {
+					invalidateBecauseOfImportedProblem("The plugin " + plugin + " is required to run this model", this);
+					return null;
+				}
+			}
+		}
 		// If one of the resources has already errors, no need to validate
 		// We first build the list of resources (including this);
 		Map<GamlResource, String> imports = loadAllResources(set);
@@ -301,8 +336,8 @@ public class GamlResource extends LazyLinkingResource {
 
 		// If, for whatever reason, the description is null, we stop the semantic validation
 		if ( model == null ) {
-			invalidateBecauseOfImportedProblem("Impossible to validate model " + getURI().lastSegment() +
-				" (check the logs)", this);
+			invalidateBecauseOfImportedProblem(
+				"Impossible to validate model " + getURI().lastSegment() + " (check the logs)", this);
 		}
 		return model;
 	}
@@ -310,8 +345,8 @@ public class GamlResource extends LazyLinkingResource {
 	/**
 	 * Validates the resource by compiling its contents into a ModelDescription.
 	 * @return errors an ErrorCollector which contains semantic errors (as opposed to the ones obtained via
-	 *         resource.getErrors(), which are syntactic errors), This collector can be probed for compilation
-	 *         errors via its hasErrors(), hasInternalErrors(), hasImportedErrors() methods
+	 * resource.getErrors(), which are syntactic errors), This collector can be probed for compilation
+	 * errors via its hasErrors(), hasInternalErrors(), hasImportedErrors() methods
 	 *
 	 */
 	public void validate(final ResourceSet set) {
@@ -332,30 +367,33 @@ public class GamlResource extends LazyLinkingResource {
 			// marked as 'edited'
 			model.validate(isEdited);
 			updateWith(model);
+			model.collectPlugins(requires);
 			model.dispose();
 
 			//
 			System.out.println("****************************************************");
 			System.out.println("Thread [" + Thread.currentThread().getName() + "] | Resource set [" +
 				getResourceSet().getResources().size() + " resources]");
-			System.out.println("'" + getURI().lastSegment() + "' validated in " + (System.nanoTime() - begin) /
-				1000000d + " ms [ ~" + (mem - Runtime.getRuntime().freeMemory()) / mb + " kb used ]");
+			System.out
+				.println("'" + getURI().lastSegment() + "' validated in " + (System.nanoTime() - begin) / 1000000d +
+					" ms [ ~" + (mem - Runtime.getRuntime().freeMemory()) / mb + " kb used ]");
 			System.out.println("****************************************************");
 
 			// return !getErrorCollector().hasInternalErrors();
 		} catch (final Exception e) {
 			e.printStackTrace();
-			invalidateBecauseOfImportedProblem("An exception has occured during the validation of " +
-				getURI().lastSegment() + ": " + e.getMessage(), this);
+			invalidateBecauseOfImportedProblem(
+				"An exception has occured during the validation of " + getURI().lastSegment() + ": " + e.getMessage(),
+				this);
 			// return false;
 		} finally {
 			setValidating(false);
 		}
 	}
 
-	IModel build(final ResourceSet set) {
-		return build(set, new ArrayList());
-	}
+	// IModel build(final ResourceSet set) {
+	// return build(set, new ArrayList());
+	// }
 
 	ModelDescription buildDescription(final ResourceSet set, final List<GamlCompilationError> errors) {
 
@@ -368,9 +406,8 @@ public class GamlResource extends LazyLinkingResource {
 
 		// Syntactic errors detected, we cannot build the resource
 		if ( !getErrors().isEmpty() ) {
-			getErrorCollector().add(
-				new GamlCompilationError("Syntactic errors detected in " + getURI().lastSegment(), IGamlIssue.GENERAL,
-					getContents().get(0), false, false));
+			getErrorCollector().add(new GamlCompilationError("Syntactic errors detected in " + getURI().lastSegment(),
+				IGamlIssue.GENERAL, getContents().get(0), false, false));
 			return null;
 		}
 
@@ -395,6 +432,10 @@ public class GamlResource extends LazyLinkingResource {
 		return model == null ? null : (IModel) model.compile();
 	}
 
+	/**
+	 * Returns the path from the root of the workspace
+	 * @return
+	 */
 	public IPath getPath() {
 		IPath path;
 		URI uri = getURI();
@@ -424,6 +465,14 @@ public class GamlResource extends LazyLinkingResource {
 
 	public boolean isEdited() {
 		return isEdited;
+	}
+
+	/**
+	 * @return the requires
+	 */
+	public Set<String> getRequires() {
+		requires.remove(null);
+		return requires;
 	}
 
 }

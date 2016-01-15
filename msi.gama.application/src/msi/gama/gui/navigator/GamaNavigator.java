@@ -11,12 +11,8 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -24,10 +20,15 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.internal.navigator.*;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
 import org.eclipse.ui.navigator.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 
 public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedView, ISelectionChangedListener {
 
@@ -44,26 +45,26 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	protected CommonNavigatorManager createCommonManager() {
 		CommonNavigatorManager manager = new CommonNavigatorManager(this, memento);
 		commonDescriptionProvider = /* getNavigatorContentService().createCommonDescriptionProvider(); */
-		new IDescriptionProvider() {
+			new IDescriptionProvider() {
 
-			@Override
-			public String getDescription(final Object anElement) {
-				if ( anElement instanceof IStructuredSelection ) {
-					IStructuredSelection selection = (IStructuredSelection) anElement;
-					if ( selection.isEmpty() ) { return ""; }
-					String message = null;
-					if ( selection.size() > 1 ) {
-						message = "Multiple elements";
-					} else if ( selection.getFirstElement() instanceof VirtualContent ) {
-						message = ((VirtualContent) selection.getFirstElement()).getName();
-					} else if ( selection.getFirstElement() instanceof IResource ) {
-						message = ((IResource) selection.getFirstElement()).getName();
+				@Override
+				public String getDescription(final Object anElement) {
+					if ( anElement instanceof IStructuredSelection ) {
+						IStructuredSelection selection = (IStructuredSelection) anElement;
+						if ( selection.isEmpty() ) { return ""; }
+						String message = null;
+						if ( selection.size() > 1 ) {
+							message = "Multiple elements";
+						} else if ( selection.getFirstElement() instanceof VirtualContent ) {
+							message = ((VirtualContent) selection.getFirstElement()).getName();
+						} else if ( selection.getFirstElement() instanceof IResource ) {
+							message = ((IResource) selection.getFirstElement()).getName();
+						}
+						return message;
 					}
-					return message;
+					return "";
 				}
-				return "";
-			}
-		};
+			};
 		getCommonViewer().addPostSelectionChangedListener(this);
 		return manager;
 	}
@@ -102,11 +103,11 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	protected void initListeners(final TreeViewer viewer) {
 		super.initListeners(viewer);
+
 		listener = new IResourceChangeListener() {
 
 			@Override
 			public void resourceChanged(final IResourceChangeEvent event) {
-
 				if ( event.getType() == IResourceChangeEvent.PRE_BUILD ||
 					event.getType() == IResourceChangeEvent.PRE_CLOSE ||
 					event.getType() == IResourceChangeEvent.PRE_DELETE ) { return; }
@@ -115,16 +116,23 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 					@Override
 					public void run() {
-						TreePath[] treePaths = viewer.getExpandedTreePaths();
-						if ( !viewer.isBusy() ) {
-							viewer.refresh();
-							viewer.setExpandedTreePaths(treePaths);
+						if ( viewer.getControl().isDisposed() ) { return; }
+
+						IResourceDelta d = event == null ? null : event.getDelta();
+						if ( d != null ) {
+							IResourceDelta[] addedChildren = d.getAffectedChildren(IResourceDelta.ADDED);
+							if ( addedChildren.length > 0 && viewer != null ) {
+								safeRefresh(d.getResource().getParent());
+							}
+
+						} else {
+							safeRefresh(null);
 						}
 					}
 				});
 			}
 		};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 
 		// viewer.getControl().addMouseTrackListener(new MouseTrackListener() {
 		//
@@ -248,11 +256,9 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 				} catch (CoreException e) {
 					e.printStackTrace();
 				}
-
+				safeRefresh(null);
 				FileFolderSorter.BY_DATE = enabled;
-				Object[] expanded = getCommonViewer().getExpandedElements();
-				getCommonViewer().refresh();
-				getCommonViewer().setExpandedElements(expanded);
+
 			}
 
 		}, SWT.RIGHT);
@@ -282,13 +288,41 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+		String message = null;
+		Image img = null;
+		SelectionListener l;
+		GamaUIColor color = null;
 		if ( selection == null || selection.isEmpty() ) {
 			toolbar.wipe(SWT.LEFT, true);
 			return;
+		} else if ( selection.getFirstElement() instanceof TopLevelFolder && selection.size() == 1 ) {
+			TopLevelFolder folder = (TopLevelFolder) selection.getFirstElement();
+			message = folder.getMessageForStatus();
+			img = folder.getImageForStatus();
+			color = folder.getColorForStatus();
+			l = null;
+		} else {
+			message = commonDescriptionProvider.getDescription(selection);
+			img = ((ILabelProvider) getCommonViewer().getLabelProvider()).getImage(selection.getFirstElement());
+			color = IGamaColors.GRAY_LABEL;
+			l = new SelectionListener() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					IAction action =
+						getViewSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId());
+					if ( action != null ) {
+						action.run();
+					}
+				}
+
+				@Override
+				public void widgetDefaultSelected(final SelectionEvent e) {
+					widgetSelected(e);
+				}
+			};
 		}
-		String message = commonDescriptionProvider.getDescription(selection);
-		Image img = ((ILabelProvider) getCommonViewer().getLabelProvider()).getImage(selection.getFirstElement());
-		toolbar.status(img, message, IGamaColors.BLUE, SWT.LEFT);
+		toolbar.status(img, message, l, color, SWT.LEFT);
 	}
 
 	public Menu getSubMenu(final String text) {
@@ -297,6 +331,41 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			if ( text.equals(mi.getText()) ) { return mi.getMenu(); }
 		}
 		return m;
+	}
+
+	@Override
+	public void setToogle(final Action toggle) {}
+
+	public void safeRefresh(final IResource resource) {
+
+		final CommonViewer localViewer = getCommonViewer();
+
+		if ( localViewer == null || localViewer.getControl().isDisposed() ) { return; }
+		Display display = localViewer.getControl().getDisplay();
+		if ( display.isDisposed() ) { return; }
+		display.syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				if ( localViewer.getControl().isDisposed() ) { return; }
+				Object[] expanded = localViewer.getExpandedElements();
+				SafeRunner.run(new NavigatorSafeRunnable() {
+
+					@Override
+					public void run() throws Exception {
+						localViewer.getControl().setRedraw(false);
+						if ( resource == null ) {
+							localViewer.refresh();
+						} else {
+							localViewer.refresh(resource);
+						}
+					}
+				});
+				localViewer.getControl().setRedraw(true);
+				getCommonViewer().setExpandedElements(expanded);
+			}
+		});
+
 	}
 
 }

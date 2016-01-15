@@ -1,23 +1,23 @@
 /**
  * Created by drogoul, 30 janv. 2015
- * 
+ *
  */
 package msi.gama.util;
 
 import java.util.*;
+import com.google.common.collect.Iterables;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
-import com.google.common.collect.Iterables;
 
 /**
  * Class GamaListFactory. The factory for creating lists from various other objects. All the methods that accept the scope as a parameter
  * will observe the contract of GAML containers, which is that the objects contained in the list will be casted to the content type of the list.
  * To avoid unecessary castings, some methods (without the scope parameter) will simply copy the objects.
- * 
+ *
  * @author drogoul
  * @since 30 janv. 2015
- * 
+ *
  */
 public class GamaListFactory {
 
@@ -26,7 +26,7 @@ public class GamaListFactory {
 
 	/**
 	 * Create a GamaList from an array of objects, but does not attempt casting its values.
-	 * 
+	 *
 	 * @param contentType
 	 * @param collection
 	 * @warning ***WARNING*** This operation can end up putting values of the wrong type into the list
@@ -41,7 +41,7 @@ public class GamaListFactory {
 
 	/**
 	 * Create a GamaList from an iterable, but does not attempt casting its values.
-	 * 
+	 *
 	 * @param contentType
 	 * @param collection
 	 * @warning ***WARNING*** This operation can end up putting values of the wrong type into the list
@@ -104,7 +104,7 @@ public class GamaListFactory {
 		return list;
 	}
 
-	public static <T> IList<T> create(final IScope scope, final IType contentType, final T[] objects) {
+	public static <T> IList<T> create(final IScope scope, final IType contentType, final T ... objects) {
 		IList<T> list = create(contentType, objects == null ? 0 : objects.length);
 		if ( objects != null ) {
 			for ( Object o : objects ) {

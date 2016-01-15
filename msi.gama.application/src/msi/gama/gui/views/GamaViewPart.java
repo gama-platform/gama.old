@@ -12,6 +12,7 @@
 package msi.gama.gui.views;
 
 import java.util.*;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
@@ -34,12 +35,13 @@ import msi.gama.runtime.GAMA;
 /**
  * @author drogoul
  */
-public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolbarDecoratedView.Pausable, ITooltipDisplayer {
+public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
 	protected final List<IDisplayOutput> outputs = new ArrayList();
 	protected Composite parent;
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
+	Action toggle;
 
 	enum UpdatePriority {
 		HIGH, LOW, HIGHEST, LOWEST;
@@ -94,17 +96,6 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
 		if ( GAMA.getExperiment() != null ) {
-			// IOutputManager manager = GAMA.getExperiment().getSimulationOutputs();
-			// if ( manager != null ) {
-			// out = (IDisplayOutput) manager.getOutput(id);
-			// if ( out == null ) {
-			// manager = GAMA.getExperiment().getExperimentOutputs();
-			// if ( manager != null ) {
-			// out = (IDisplayOutput) manager.getOutput(id);
-			// }
-			// }
-			// }
-
 			// hqnghi in case of multi-controller
 			if ( out == null ) {
 				for ( IExperimentController fec : GAMA.getControllers() ) {
@@ -142,9 +133,29 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 					}
 				}
 			}
+		} else {
+			if ( shouldBeClosedWhenNoExperiments() ) {
+				System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
+				GuiUtils.asyncRun(new Runnable() {
+
+					@Override
+					public void run() {
+						GuiUtils.closeSimulationViews(false);
+						GuiUtils.openModelingPerspective(false);
+					}
+				});
+
+			}
 		}
 		addOutput(out);
-		// GamaToolbarFactory.buildToolbar(this, getToolbarActionsId());
+	}
+
+	/**
+	 * Can be redefined by subclasses that accept that their instances remain open when no experiment is running.
+	 * @return
+	 */
+	protected boolean shouldBeClosedWhenNoExperiments() {
+		return true;
 	}
 
 	@Override
@@ -152,6 +163,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		this.parent = GamaToolbarFactory.createToolbars(this, composite);
 		ownCreatePartControl(parent);
 		activateContext();
+		// toggle.run();
 	}
 
 	public abstract void ownCreatePartControl(Composite parent);
@@ -161,11 +173,11 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		contextService.activateContext("msi.gama.application.simulation.context");
 	}
 
-	@Override
-	public void pauseChanged() {}
-
-	@Override
-	public void synchronizeChanged() {}
+	// @Override
+	// public void pauseChanged() {}
+	//
+	// @Override
+	// public void synchronizeChanged() {}
 
 	protected final GamaUIJob getUpdateJob() {
 		if ( updateJob == null ) {
@@ -235,6 +247,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	 */
 	@Override
 	public void stopDisplayingTooltips() {
+		if ( toolbar == null || toolbar.isDisposed() ) { return; }
 		if ( toolbar.hasTooltip() ) {
 			toolbar.wipe(SWT.LEFT, false);
 		}
@@ -279,6 +292,21 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		if ( outputs.isEmpty() ) {
 			close();
 		}
+	}
+
+	@Override
+	public void showToolbar() {
+		// toggle.run();
+	}
+
+	@Override
+	public void hideToolbar() {
+		// toggle.run();
+	}
+
+	@Override
+	public void setToogle(final Action toggle) {
+		this.toggle = toggle;
 	}
 
 }

@@ -11,8 +11,8 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
+import msi.gama.application.projects.WorkspaceModelsManager;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.core.commands.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;

@@ -1,33 +1,33 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ModelFactory.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.io.InputStream;
 import java.util.*;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.file.GAMLFile;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 
 /**
  * Written by drogoul Modified on 27 oct. 2009
- * 
+ *
  * @todo Description
  */
 @factory(handles = { ISymbolKind.MODEL })
@@ -60,7 +60,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
+		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto, final String plugin) {
 		// This method is actually never called.
 		return null;
 	}

@@ -11,11 +11,13 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
-import msi.gama.common.interfaces.ItemList;
-import msi.gama.gui.swt.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import msi.gama.common.interfaces.ItemList;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.util.GamaColor;
 
 /**
  * Instances of this class represent a selectable user interface object that represents a expandable
@@ -48,6 +50,7 @@ public class ParameterExpandItem extends Item {
 	int visiblePosition = -1;
 	int selectablePosition = -1;
 	int closePosition = -1;
+	Color backgroundColor = IGamaColors.PARAMETERS_BACKGROUND.color();
 
 	private static int imageHeight = 16, imageWidth = 16;
 	boolean isPaused = false;
@@ -68,22 +71,23 @@ public class ParameterExpandItem extends Item {
 	 * </p>
 	 *
 	 * @param parent a composite control which will be the parent of the new instance (cannot be
-	 *            null)
+	 * null)
 	 * @param style the style of control to construct
 	 *
 	 * @exception IllegalArgumentException <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 *                </ul>
+	 * <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 * </ul>
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
-	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
-	 *                </ul>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
+	 * <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
+	 * </ul>
 	 *
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
-	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style) {
-		this(parent, data, style, parent.getItemCount());
+	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style,
+		final GamaUIColor color) {
+		this(parent, data, style, parent.getItemCount(), color);
 	}
 
 	/**
@@ -97,24 +101,28 @@ public class ParameterExpandItem extends Item {
 	 * </p>
 	 *
 	 * @param parent a composite control which will be the parent of the new instance (cannot be
-	 *            null)
+	 * null)
 	 * @param style the style of control to construct
 	 * @param index the zero-relative index to store the receiver in its parent
 	 *
 	 * @exception IllegalArgumentException <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the parent (inclusive)</li>
-	 *                </ul>
+	 * <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 * <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the parent (inclusive)</li>
+	 * </ul>
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
-	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
-	 *                </ul>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
+	 * <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
+	 * </ul>
 	 *
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
-	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style, final int index) {
+	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style, final int index,
+		final GamaUIColor color) {
 		super(parent, style);
+		if ( color != null ) {
+			backgroundColor = color.color();
+		}
 		this.parent = parent;
 		setData(data);
 		parent.createItem(this, style, index);
@@ -143,7 +151,7 @@ public class ParameterExpandItem extends Item {
 		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6, 6);
-		gc.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
+		gc.setBackground(backgroundColor);
 		gc.fillRoundRectangle(x, y, width, headerHeight, 6, 6);
 		if ( drawHover ) {
 			gc.setForeground(IGamaColors.GRAY_LABEL.color());
@@ -152,7 +160,7 @@ public class ParameterExpandItem extends Item {
 
 		// gc.drawRoundRectangle(x, y, width, headerHeight + (expanded ? height : 0), 6, 6);
 		int drawX = x;
-		int imageY = y - 1 + (headerHeight - imageHeight) / 2;
+		int imageY = y /*- 1*/ + (headerHeight - imageHeight) / 2;
 		if ( getImage() != null ) {
 			drawX += ParameterExpandItem.TEXT_INSET;
 			gc.drawImage(getImage(), drawX, imageY);
@@ -174,17 +182,16 @@ public class ParameterExpandItem extends Item {
 		if ( parent.hasVisibleToggle ) {
 			Image image =
 				isVisible ? GamaIcons.create("small.inspect").image() : GamaIcons.create("small.hidden").image();
-				endX -= 2 * TEXT_INSET + imageWidth;
-				visiblePosition = endX;
-				gc.drawImage(image, endX, imageY);
+			endX -= 2 * TEXT_INSET + imageWidth;
+			visiblePosition = endX;
+			gc.drawImage(image, endX, imageY);
 		}
 		if ( parent.hasSelectableToggle ) {
-			Image image =
-				isSelectable ? GamaIcons.create("small.selectable").image() : GamaIcons.create("small.unselectable")
-					.image();
-				endX -= 2 * TEXT_INSET + imageWidth;
-				selectablePosition = endX;
-				gc.drawImage(image, endX, imageY);
+			Image image = isSelectable ? GamaIcons.create("small.selectable").image()
+				: GamaIcons.create("small.unselectable").image();
+			endX -= 2 * TEXT_INSET + imageWidth;
+			selectablePosition = endX;
+			gc.drawImage(image, endX, imageY);
 		}
 		if ( getText().length() > 0 ) {
 			String title, other = null;
@@ -216,7 +223,7 @@ public class ParameterExpandItem extends Item {
 					other = other.substring(l + 1);
 					gc.setForeground(IGamaColors.WARNING.color());
 				} else {
-					gc.setForeground(IGamaColors.BLACK.color());
+					gc.setForeground(GamaColors.getTextColorForBackground(backgroundColor).color());
 				}
 				// gc.setFont(SwtGui.getParameterEditorsFont());
 				drawX += size.x + 2 * SEPARATION;
@@ -234,9 +241,9 @@ public class ParameterExpandItem extends Item {
 	 * @return the height of the header
 	 *
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
 	 */
 	public int getHeaderHeight() {
 		// checkWidget();
@@ -268,7 +275,8 @@ public class ParameterExpandItem extends Item {
 		parent.redraw(x, y, width, headerHeight + height, false);
 	}
 
-	void setBounds(final int x, final int y, final int width, final int height, final boolean move, final boolean size) {
+	void setBounds(final int x, final int y, final int width, final int height, final boolean move,
+		final boolean size) {
 		redraw();
 		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
@@ -304,13 +312,13 @@ public class ParameterExpandItem extends Item {
 	 * @param control the new control (or null)
 	 *
 	 * @exception IllegalArgumentException <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the control has been disposed</li>
-	 *                <li>ERROR_INVALID_PARENT - if the control is not in the same widget tree</li>
-	 *                </ul>
+	 * <li>ERROR_INVALID_ARGUMENT - if the control has been disposed</li>
+	 * <li>ERROR_INVALID_PARENT - if the control is not in the same widget tree</li>
+	 * </ul>
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
 	 */
 	public void setControl(final Control control) {
 		// checkWidget();
@@ -338,9 +346,9 @@ public class ParameterExpandItem extends Item {
 	 * @param expanded the new expanded state
 	 *
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
 	 */
 	public void setExpanded(final boolean expanded) {
 		if ( parent == null ) { return; }
@@ -374,9 +382,9 @@ public class ParameterExpandItem extends Item {
 	 * @param height the new height
 	 *
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
 	 */
 	public void setHeight(final int height) {
 		// checkWidget();
@@ -419,6 +427,15 @@ public class ParameterExpandItem extends Item {
 	public boolean selectableRequested(final int x2, final int y2) {
 		if ( selectablePosition == -1 ) { return false; }
 		return clickIn(x2, y2, x + selectablePosition);
+	}
+
+	/**
+	 * @param itemDisplayColor
+	 */
+	public void setColor(final GamaColor color) {
+		if ( color != null ) {
+			backgroundColor = GamaColors.get(color).color();
+		}
 	}
 
 }

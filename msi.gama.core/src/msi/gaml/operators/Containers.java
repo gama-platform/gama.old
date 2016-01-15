@@ -44,7 +44,7 @@ import msi.gaml.types.*;
 public class Containers {
 
 	@operator(value = { "internal_at" }, content_type = IType.NONE, category = { IOperatorCategory.CONTAINER })
-	@doc("For internal use only. Corresponds to the implementation of the access to containers with [index]")
+	@doc("For internal use only. Corresponds to the implementation, for geometries, of the access to containers with [index]")
 	public static Object internal_at(final IScope scope, final IShape shape, final IList indices)
 		throws GamaRuntimeException {
 		// TODO How to test if the index is correct ?
@@ -52,6 +52,14 @@ public class Containers {
 		final GamaMap map = shape.getAttributes();
 		if ( map == null ) { return null; }
 		return map.getFromIndicesList(scope, indices);
+	}
+
+	@operator(value = { "internal_at" }, content_type = IType.NONE, category = { IOperatorCategory.CONTAINER })
+	@doc("For internal use only. Corresponds to the implementation, for agents, of the access to containers with [index]")
+	public static Object internal_at(final IScope scope, final IAgent agent, final IList indices)
+		throws GamaRuntimeException {
+		if ( agent == null ) { return null; }
+		return agent.getFromIndicesList(scope, indices);
 	}
 
 	@operator(value = { "grid_at" },

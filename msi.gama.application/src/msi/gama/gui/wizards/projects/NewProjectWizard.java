@@ -1,19 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'NewProjectWizard.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.wizards.projects;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,6 +21,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import msi.gama.application.projects.WorkspaceModelsManager;
 
 public class NewProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
@@ -85,7 +85,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 	/**
 	 * This creates the project in the workspace.
-	 * 
+	 *
 	 * @param description
 	 * @param projectHandle
 	 * @param monitor
@@ -100,10 +100,10 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			proj.create(description, new SubProgressMonitor(monitor, 1000));
 
 			if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }
+			proj.open(new SubProgressMonitor(monitor, 1000));
+			// proj.open(IResource., new SubProgressMonitor(monitor, 1000));
 
-			proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
-
-			WorkspaceModelsManager.setValuesProjectDescription(proj, false);
+			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, null);
 
 			/*
 			 * We now have the project and we can do more things with it before updating
@@ -142,7 +142,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
 	 * org.eclipse.jface.viewers.IStructuredSelection)
 	 */

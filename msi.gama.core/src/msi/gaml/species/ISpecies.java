@@ -1,37 +1,47 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ISpecies.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.species;
 
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
+import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
 /**
  * Written by drogoul Modified on 25 avr. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
+@vars({ @var(name = IKeyword.ATTRIBUTES, type = IType.LIST, of = IType.STRING),
+	@var(name = IKeyword.PARENT, type = IType.SPECIES), @var(name = IKeyword.NAME, type = IType.STRING),
+	@var(name = ISpecies.SUBSPECIES, type = IType.LIST, of = IType.SPECIES),
+	@var(name = ISpecies.POPULATION, type = IType.LIST, of = ITypeProvider.FIRST_CONTENT_TYPE) })
 public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet {
 
 	public static final String stepActionName = "_step_";
 	public static final String initActionName = "_init_";
+	public static final String POPULATION = "population";
+	public static final String SUBSPECIES = "subspecies";
 
 	public abstract IExpression getFrequency();
 
@@ -44,42 +54,47 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	public abstract boolean isGraph();
 
 	/**
+	 * Return all the direct subspecies of this species, properly typed for GAMA
+	 * @return
+	 */
+	@getter(SUBSPECIES)
+	@doc("Returns all the direct subspecies of this species")
+	public abstract IList<ISpecies> getSubSpecies(IScope scope);
+
+	@Override
+	@getter(IKeyword.NAME)
+	public abstract String getName();
+
+	/**
 	 * Returns all the micro-species.
 	 * Micro-species includes:
 	 * 1. the "direct" micro-species;
 	 * 2. the micro-species of the parent-species.
-	 * 
+	 *
 	 * @return
 	 */
 	public abstract IList<ISpecies> getMicroSpecies();
 
 	/**
 	 * Returns a micro-species with the specified name or null otherwise.
-	 * 
+	 *
 	 * @param microSpeciesName
 	 * @return a species or null
 	 */
 	public abstract ISpecies getMicroSpecies(String microSpeciesName);
 
 	/**
-	 * Returns a list of name of all micro-species.
-	 * 
-	 * @return
-	 */
-	// public abstract IList<String> getMicroSpeciesNames();
-
-	/**
 	 * Verifies if this species has micro-species or not.
-	 * 
+	 *
 	 * @return
-	 *         true if this species has micro-species
-	 *         false otherwise
+	 * true if this species has micro-species
+	 * false otherwise
 	 */
 	public abstract boolean hasMicroSpecies();
 
 	/**
 	 * Verifies of the specified species is a micro-species of this species of not.
-	 * 
+	 *
 	 * @param species
 	 * @return
 	 */
@@ -87,45 +102,22 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 
 	/**
 	 * Returns the parent species.
-	 * 
+	 *
 	 * @return
 	 */
+	@getter(IKeyword.PARENT)
+	@doc("Returns the direct parent of the species. Experiments, models and species with no explicit parents will return nil")
 	public abstract ISpecies getParentSpecies();
 
 	/**
-	 * Returns all the species sharing the same direct macro-species with this species.
-	 * 
-	 * @return
-	 */
-	// public abstract IList<ISpecies> getPeersSpecies();
-
-	/**
-	 * Returns a peer species with the specified name.
-	 * 
-	 * @param peerName name of the peer species.
-	 * @return a peer species with the specified name or null.
-	 */
-	// public abstract ISpecies getPeerSpecies(String peerName);
-
-	/**
 	 * Verifies that if this species is the peer species of other species.
-	 * 
+	 *
 	 * @param other
 	 * @return
 	 */
 	public abstract boolean isPeer(ISpecies other);
 
 	public abstract List<ISpecies> getSelfWithParents();
-
-	// public abstract void addAction(final IStatement ce);
-
-	// public abstract void addAspect(final IStatement ce);
-
-	// public abstract void addBehavior(IStatement b);
-
-	// public abstract void addChild(final ISymbol s);
-
-	// public abstract void addVariable(final IVariable v);
 
 	public abstract Collection<UserCommandStatement> getUserCommands();
 
@@ -135,10 +127,6 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	public abstract IStatement.WithArgs getAction(final String name);
 
 	public Collection<ActionStatement> getActions();
-
-	// public abstract IAgentConstructor getAgentConstructor();
-
-	// public abstract IType getAgentType();
 
 	public abstract IExecutable getAspect(final String n);
 
@@ -159,6 +147,15 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	public abstract IVariable getVar(final String n);
 
 	public abstract Collection<String> getVarNames();
+
+	/**
+	 * Similar to getVarNames(), but returns a correctly initialized IList of attribute names
+	 * @param scope
+	 * @return the list of all the attributes defined in this species
+	 */
+	@getter(IKeyword.ATTRIBUTES)
+	@doc("retuns the list of attributes defined in this species (incl. the ones inherited from its parent")
+	public IList<String> getAttributeNames(final IScope scope);
 
 	public abstract Collection<IVariable> getVars();
 
@@ -182,9 +179,13 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	public abstract boolean isStepOverriden();
 
 	/**
+	 * Returns the population of agents that belong to this species and that are hosted in the same host
 	 * @param scope
 	 * @return
+	 *
 	 */
+	@getter(POPULATION)
+	@doc("Returns the population of agents that belong to this species")
 	public abstract IPopulation getPopulation(IScope scope);
 
 }

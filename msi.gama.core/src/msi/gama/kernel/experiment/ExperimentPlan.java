@@ -293,6 +293,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		createAgent();
 		// GuiUtils.prepareForExperiment(this);
 		agent.schedule();
+		// agent.scheduleAndExecute(null);
 		if ( isBatch() ) {
 			GuiUtils.informStatus(" Batch ready ");
 		}

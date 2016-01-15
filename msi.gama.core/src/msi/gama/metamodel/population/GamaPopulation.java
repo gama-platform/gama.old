@@ -1,19 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaPopulation.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.population;
 
+import java.util.*;
+import com.google.common.collect.*;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.shape.*;
@@ -36,13 +37,12 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
-import com.google.common.collect.*;
 
 /**
  * Written by drogoul Modified on 6 sept. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
@@ -114,8 +114,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	protected GamaPopulation(final IMacroAgent host, final ISpecies species) {
-		super(0, host == null ? Types.get(IKeyword.EXPERIMENT) : host.getScope().getModelContext()
-			.getTypeNamed(species.getName()));
+		super(0, host == null ? Types.get(IKeyword.EXPERIMENT)
+			: host.getScope().getModelContext().getTypeNamed(species.getName()));
 		this.host = host;
 		this.species = species;
 		architecture = species.getArchitecture();
@@ -173,7 +173,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	/**
-	 * 
+	 *
 	 * @see msi.gama.interfaces.IPopulation#computeAgentsToSchedule(msi.gama.interfaces.IScope, msi.gama.util.GamaList)
 	 */
 	// @Override
@@ -270,6 +270,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 		for ( final IAgent a : list ) {
 			a.schedule();
+			// a.scheduleAndExecute(null);
 		}
 		createVariablesFor(scope, list, Collections.EMPTY_LIST);
 		fireAgentsAdded(list);
@@ -312,6 +313,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 				// if agent is restored (on the capture or release); then don't need to run the "init"
 				// reflex
 				a.schedule();
+				// a.scheduleAndExecute(sequence);
 			}
 		}
 		fireAgentsAdded(list);
@@ -393,7 +395,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	/**
 	 * Initializes the appropriate topology.
-	 * 
+	 *
 	 * @param scope
 	 * @return
 	 * @throws GamaRuntimeException
@@ -406,8 +408,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 				topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host), false);
 				return;
 			}
-			throw GamaRuntimeException.warning("Impossible to assign a topology to " + species.getName() +
-				" as it already defines one.", scope);
+			throw GamaRuntimeException.warning(
+				"Impossible to assign a topology to " + species.getName() + " as it already defines one.", scope);
 		}
 		if ( species.isGrid() ) {
 			topology = buildGridTopology(scope, species, getHost());
@@ -418,9 +420,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			IType edgeType = scope.getModelContext().getTypeNamed(edgeName);
 			IType nodeType = getType().getContentType();
 			// TODO Specifier directed quelque part dans l'esp�ce
-			final GamaSpatialGraph g =
-				new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, false, false,
-					new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope, nodeType, edgeType);
+			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, false, false,
+				new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope, nodeType, edgeType);
 			this.addListener(g);
 			g.postRefreshManagementAction(scope);
 			topology = new GraphTopology(scope, this.getHost(), g);
@@ -432,16 +433,20 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	protected static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
 		IExpression exp = species.getFacet(IKeyword.WIDTH);
-		final int rows = exp == null ? (species.hasFacet(IKeyword.CELL_WIDTH) ? 
-				(int)(scope.getSimulationScope().getGeometry().getEnvelope().getWidth() / Cast.asInt(scope,species.getFacet(IKeyword.CELL_WIDTH).value(scope)) ):  100) : 
-					Cast.asInt(scope, exp.value(scope));
+		final int rows = exp == null
+			? species.hasFacet(IKeyword.CELL_WIDTH)
+				? (int) (scope.getSimulationScope().getGeometry().getEnvelope().getWidth() /
+					Cast.asInt(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope)))
+				: 100
+			: Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
-		final int columns = exp == null ? (species.hasFacet(IKeyword.CELL_HEIGHT) ? 
-				(int)(scope.getSimulationScope().getGeometry().getEnvelope().getHeight() / Cast.asInt(scope,species.getFacet(IKeyword.CELL_HEIGHT).value(scope))):  100) : 
-					Cast.asInt(scope, exp.value(scope));
-		
-		
-		
+		final int columns = exp == null
+			? species.hasFacet(IKeyword.CELL_HEIGHT)
+				? (int) (scope.getSimulationScope().getGeometry().getEnvelope().getHeight() /
+					Cast.asInt(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope)))
+				: 100
+			: Cast.asInt(scope, exp.value(scope));
+
 		// exp = species.getFacet(IKeyword.TORUS);
 		// final boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
 		boolean isTorus = host.getPopulation().getTopology().isTorus();

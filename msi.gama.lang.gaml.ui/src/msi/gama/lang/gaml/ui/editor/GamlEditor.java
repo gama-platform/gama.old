@@ -14,6 +14,7 @@ package msi.gama.lang.gaml.ui.editor;
 import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Region;
@@ -52,7 +53,6 @@ import msi.gama.lang.gaml.resource.*;
 import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
 import msi.gama.lang.gaml.ui.templates.*;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -84,12 +84,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	@Inject
 	IResourceSetProvider resourceSetProvider;
-
-	@Inject
-	private CompoundXtextEditorCallback callback;
-
-	@Inject
-	private GamlJavaValidator validator;
+	//
+	// @Inject
+	// private CompoundXtextEditorCallback callback;
+	//
+	// @Inject
+	// private GamlJavaValidator validator;
 
 	@Inject
 	Injector injector;
@@ -229,6 +229,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		super.createPartControl(editor);
 		toolbarParent.layout();
 		installGestures();
+		WorkaroundForIssue1353.installOn(getStyledText());
+		// WorkaroundForIssue1353.installOn(editor);
 	}
 
 	private void installGestures() {
@@ -595,5 +597,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 		}
 	}
+
+	@Override
+	public void setFocus() {
+		getStyledText().setFocus();
+	}
+
+	@Override
+	public void setToogle(final Action toggle) {}
 
 }

@@ -1,5 +1,4 @@
-/*********************************************************************************************
- *
+/**
  *
  * 'AbstractEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
@@ -155,8 +154,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	@Override
 	public void setActive(final Boolean active) {
 		if ( titleLabel != null ) {
-			titleLabel.setForeground(active ? SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK)
-				: SwtGui.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			titleLabel.setForeground(active ? IGamaColors.BLACK.color() : GamaColors.system(SWT.COLOR_GRAY));
 		}
 		if ( !active ) {
 			for ( ToolItem t : items ) {
@@ -180,7 +178,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 			}
 			param.setValue(a == null ? null : a.getScope(), newValue);
 		}
-		if ( a != null /* && a.getSpecies().hasVar(param.getName()) */ ) {
+		if ( a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null ) {
 			GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
 		}
 	}
@@ -328,14 +326,15 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		composite.setBackground(HOVERED_BACKGROUND);
 		composite.layout();
 
-		if ( combo != null ) {
-			combo.forceFocus();
-		} else {
-			Control c = getEditorControl();
-			if ( c != null ) {
-				c.forceFocus();
-			}
-		}
+		// AD 26/12/15 Commented for the moment to not force the focus (see Issues #1339 and #1248)
+		// if ( combo != null ) {
+		// combo.forceFocus();
+		// } else {
+		// Control c = getEditorControl();
+		// if ( c != null ) {
+		// c.forceFocus();
+		// }
+		// }
 	}
 
 	private String computeUnitLabel() {

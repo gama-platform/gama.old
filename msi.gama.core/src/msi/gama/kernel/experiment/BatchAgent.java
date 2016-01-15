@@ -70,7 +70,9 @@ public class BatchAgent extends ExperimentAgent {
 
 	@Override
 	public void schedule() {
+		// public void scheduleAndExecute(final RemoteSequence sequence) {
 		super.schedule();
+		// super.scheduleAndExecute(sequence);
 		// Necessary to run it here, as if the seed has been fixed in the experiment, it is now defined and initialized
 		IExpression expr = getSpecies().getFacet(IKeyword.KEEP_SEED);
 		if ( expr != null && expr.isConst() ) {
@@ -159,14 +161,16 @@ public class BatchAgent extends ExperimentAgent {
 			createSimulation(currentSolution, false);
 			if ( simulation != null && !simulation.dead() ) {
 				GuiUtils.prepareForSimulation(simulation);
+				simulation.schedule();
 				IScope scope = simulation.getScope();
-				simulation.getScheduler().insertAgentToInit(simulation, scope);
+				// simulation.getScheduler().insertAgentToInit(scope, simulation, null);
 				// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
 				simulation.getScheduler().init(scope);
 
 				// This inner while loop runs the simulation and controls its execution
 				while (simulation != null) {
-					boolean stepOk = simulation.step(scope);
+					// AD: replaced 'simulation.step(scope)' by the following to fix Issue #1264
+					boolean stepOk = scope.step(simulation.getPopulation());
 					if ( !stepOk ) {
 						break;
 					}

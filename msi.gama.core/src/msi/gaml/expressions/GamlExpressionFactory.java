@@ -1,27 +1,27 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlExpressionFactory.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.*;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * The static class ExpressionFactory.
- * 
+ *
  * @author drogoul
  */
 
@@ -70,15 +70,21 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public ConstantExpression createConst(final Object val, final IType type) {
-		if ( type.id() == IType.SPECIES ) { return new SpeciesConstantExpression((String) val, type); }
-		if ( val == null ) { return NIL_EXPR; }
-		if ( val instanceof Boolean ) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
-		return new ConstantExpression(val, type);
+		return createConst(val, type, null);
+	}
+
+	@Override
+	public SpeciesConstantExpression createSpeciesConstant(final IType type) {
+		if ( type.getType() != Types.SPECIES ) { return null; }
+		SpeciesDescription sd = type.getContentType().getSpecies();
+		if ( sd == null ) { return null; }
+		return new SpeciesConstantExpression(sd.getName(), type);
 	}
 
 	@Override
 	public ConstantExpression createConst(final Object val, final IType type, final String name) {
-		if ( type.id() == IType.SPECIES ) { return new SpeciesConstantExpression((String) val, type); }
+		if ( type.getType() == Types.SPECIES ) { return createSpeciesConstant(type); }
+		if ( type == Types.SKILL ) { return new SkillConstantExpression((String) val, type); }
 		if ( val == null ) { return NIL_EXPR; }
 		if ( val instanceof Boolean ) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
 		return new ConstantExpression(val, type, name);
@@ -114,8 +120,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		final IDescription definitionDescription) {
 		switch (scope) {
 			case IVarExpression.GLOBAL:
-				return GlobalVariableExpression
-					.create(name, type, isConst, definitionDescription.getModelDescription());
+				return GlobalVariableExpression.create(name, type, isConst,
+					definitionDescription.getModelDescription());
 			case IVarExpression.AGENT:
 				return new AgentVariableExpression(name, type, isConst, definitionDescription);
 			case IVarExpression.TEMP:
@@ -167,8 +173,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				}
 				// No signature has been found, we throw an exception
 				if ( temp_types.size() == 0 ) {
-					context.error("No operator found for applying '" + op + "' to " + signature +
-						" (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")",
+					context.error(
+						"No operator found for applying '" + op + "' to " + signature + " (operators available for " +
+							Arrays.toString(ops.keySet().toArray()) + ")",
 						IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
 					return null;
 				}
@@ -220,36 +227,10 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createAction(final String op, final IDescription callerContext,
 		final StatementDescription action, final IExpression call, final Arguments arguments) {
 		// Arguments args = createArgs(arguments);
-		if ( action.verifyArgs(callerContext, arguments) ) { return new PrimitiveOperator(null, callerContext, action,
-			call, arguments); }
+		if ( action.verifyArgs(callerContext,
+			arguments) ) { return new PrimitiveOperator(null, callerContext, action, call, arguments); }
 		return null;
 	}
-
-	// /**
-	// * @param arguments
-	// * @return
-	// */
-	// private Arguments createArgs(final Map<String, IExpressionDescription> arguments) {
-	// return null;
-	// }
-	//
-	// private Arguments createArgs(final IExpression mapExpression) {
-	// final Arguments result = new Arguments();
-	// if ( !(mapExpression instanceof MapExpression) ) { return result; }
-	// final IExpression[] keys = ((MapExpression) mapExpression).keysArray();
-	// final IExpression[] values = ((MapExpression) mapExpression).valuesArray();
-	// for ( int i = 0; i < keys.length; i++ ) {
-	// result.put(keys[i].literalValue(), values[i]);
-	// }
-	// return result;
-	// }
-
-	// @Override
-	// public Set<String> parseLiteralArray(final IExpressionDescription s,
-	// final IDescription context, final boolean skills) {
-	// if ( s == null ) { return Collections.EMPTY_SET; }
-	// return parser.parseLiteralArray(s, context, skills);
-	// }
 
 	/**
 	 * Method createCastingExpression()

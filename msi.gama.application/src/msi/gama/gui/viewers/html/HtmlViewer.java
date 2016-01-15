@@ -1,18 +1,13 @@
 /**
  * Created by drogoul, 28 avr. 2014
- * 
+ *
  */
 package msi.gama.gui.viewers.html;
 
 import java.io.IOException;
 import java.net.*;
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.events.*;
@@ -21,13 +16,19 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.osgi.framework.Bundle;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 
 /**
  * Class BrowserEditor.
- * 
+ *
  * @author drogoul
  * @since 28 avr. 2014
- * 
+ *
  */
 public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
@@ -113,7 +114,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void checkButtons() {
 		back.setEnabled(browser.isBackEnabled());
@@ -188,5 +189,8 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 		}, SWT.RIGHT);
 
 	}
+
+	@Override
+	public void setToogle(final Action toggle) {}
 
 }

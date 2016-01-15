@@ -1,29 +1,30 @@
 /**
  * Created by drogoul, 17 déc. 2014
- * 
+ *
  */
 package msi.gaml.descriptions;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.*;
 
 /**
  * Class AbstractProto.
- * 
+ *
  * @author drogoul
  * @since 17 déc. 2014
- * 
+ *
  */
 public abstract class AbstractProto implements IGamlDescription, INamed, IGamlable {
 
-	private final String name;
-	protected final AnnotatedElement support;
+	protected String name;
+	protected String plugin;
+	protected AnnotatedElement support;
 
-	AbstractProto(final String name, final AnnotatedElement support) {
+	protected AbstractProto(final String name, final AnnotatedElement support, final String plugin) {
 		this.name = name;
+		this.plugin = plugin;
 		this.support = support;
 	}
 
@@ -94,6 +95,24 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 		return Collections.EMPTY_LIST;
 	}
 
+	@Override
+	public String getDefiningPlugin() {
+		return plugin;
+	}
+
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		plugins.add(plugin);
+	}
+
+	public AnnotatedElement getSupport() {
+		return support;
+	}
+
+	protected void setSupport(final AnnotatedElement support) {
+		this.support = support;
+	}
+
 	public doc getDocAnnotation() {
 		doc d = null;
 		if ( support != null && support.isAnnotationPresent(doc.class) ) {
@@ -101,11 +120,6 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 		}
 		return d;
 	}
-
-	//
-	// public int getDoc() {
-	// return doc;
-	// }
 
 	/**
 	 * @return

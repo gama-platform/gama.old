@@ -1,26 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaPreferencesView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.Entry;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.common.interfaces.IParameterEditor;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
@@ -30,15 +22,22 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.*;
+import msi.gama.common.interfaces.IParameterEditor;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.parameters.*;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.controls.*;
 
 /**
  * Class GamaPreferencesView.
- * 
+ *
  * @author drogoul
  * @since 31 août 2013
- * 
+ *
  */
-public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IPreferencePageContainer */{
+public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IPreferencePageContainer */ {
 
 	Map<String, IPreferenceNode> preferencePages = new LinkedHashMap();
 	static Map<String, String> preferenceNames = new LinkedHashMap();
@@ -164,7 +163,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		viewer.setSpacing(10);
 		tab.setControl(viewer);
 		for ( String groupName : entries.keySet() ) {
-			ParameterExpandItem item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE);
+			ParameterExpandItem item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
 			Composite compo = new Composite(viewer, SWT.NONE);
 			GridLayout layout = new GridLayout(2, false);
@@ -173,7 +172,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			compo.setLayout(layout);
 			compo.setBackground(viewer.getBackground());
 			buildGroupContents(compo, entries.get(groupName));
-	
+
 			item.setControl(compo);
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			// item.setImage(GamaIcons.menu_action);
@@ -294,6 +293,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
+				// shell.close();
 				shell.setVisible(false);
 			}
 
@@ -308,6 +308,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 				// for ( IPreferenceNode pn : preferencePages.values() ) {
 				// pn.getPage().performOk();
 				// }
+				// shell.close();
 				shell.setVisible(false);
 				GamaPreferences.setNewPreferences(modelValues);
 			}

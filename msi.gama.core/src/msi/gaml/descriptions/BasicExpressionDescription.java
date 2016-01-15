@@ -1,22 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'BasicExpressionDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.util.StringUtils;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
-import org.eclipse.emf.ecore.EObject;
 
 public class BasicExpressionDescription implements IExpressionDescription {
 
@@ -43,6 +43,13 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return expression == null ? toOwnString() : expression.serialize(includingBuiltIn);
+	}
+
+	@Override
+	public void collectPlugins(final Set<String> plugins) {
+		if ( expression != null ) {
+			expression.collectPlugins(plugins);
+		}
 	}
 
 	@Override

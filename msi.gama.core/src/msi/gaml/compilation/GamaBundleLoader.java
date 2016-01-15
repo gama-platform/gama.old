@@ -11,14 +11,17 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import org.eclipse.core.runtime.*;
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import java.util.Set;
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.util.GuiUtils;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
-import org.eclipse.core.runtime.*;
 
 /**
  * The class GamaBundleLoader.
@@ -30,32 +33,104 @@ import org.eclipse.core.runtime.*;
 public class GamaBundleLoader {
 
 	public static String CORE_PLUGIN = "msi.gama.core";
+	public static String CORE_MODELS = "msi.gama.models";
+	public static String CURRENT_PLUGIN_NAME = CORE_PLUGIN;
 	public static String ADDITIONS = "gaml.additions.GamlAdditions";
-	public static String GRAMMAR_EXTENSION = "gaml.grammar.addition";
+	public static String GRAMMAR_EXTENSION_DEPRECATED = "gaml.grammar.addition";
+	public static String GRAMMAR_EXTENSION = "gaml.extension";
 	public static String CREATE_EXTENSION = "gama.create";
-	private static Set<String> plugins = new THashSet();
+	public static String MODELS_EXTENSION = "gama.models";
+	public static String CONTENT_EXTENSION = "org.eclipse.core.contenttype.contentTypes";
+	private static Set<String> GAMA_PLUGINS = new THashSet();
+	private static Map<String, String> MODEL_PLUGINS = new THashMap();
+	public static Set<String> HANDLED_FILE_EXTENSIONS = new THashSet();
 
 	public static void preBuildContributions() {
 		final long start = System.currentTimeMillis();
-		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(GRAMMAR_EXTENSION) ) {
-			plugins.add(e.getContributor().getName());
+
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		// We retrieve the elements declared as extensions to the GAML language, either with the new or the deprecated extension
+		Set<IExtension> extensions = new HashSet();
+		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
+		extensions.addAll(Arrays.asList(p.getExtensions()));
+		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
+		extensions.addAll(Arrays.asList(p.getExtensions()));
+		// We retrieve their contributor plugin and add them to the GAMA_PLUGINS. In addition, we verify if they declare a folder called `models`
+		for ( IExtension e : extensions ) {
+			IContributor plugin = e.getContributor();
+			GAMA_PLUGINS.add(plugin.getName());
+			if ( hasModels(plugin) ) {
+				MODEL_PLUGINS.put(plugin.getName(), "models");
+			}
 		}
-		plugins.remove(CORE_PLUGIN);
+
+		// We remove the core plugin, in order to build it first (important)
+		GAMA_PLUGINS.remove(CORE_PLUGIN);
 		preBuild(CORE_PLUGIN);
-		for ( String addition : plugins ) {
+		// We then build the other extensions to the language
+		for ( String addition : GAMA_PLUGINS ) {
+			CURRENT_PLUGIN_NAME = addition;
 			preBuild(addition);
 		}
-		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(CREATE_EXTENSION) ) {
+		CURRENT_PLUGIN_NAME = null;
+		// We gather all the extensions to the `create` statement and add them as delegates to CreateStatement
+		for ( IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION) ) {
 			try {
+				// TODO Add the defining plug-in
 				CreateStatement.addDelegate((ICreateDelegate) e.createExecutableExtension("class"));
 			} catch (CoreException e1) {
 				e1.printStackTrace();
 			}
 		}
+		// We gather all the GAMA_PLUGINS that explicitly declare models using the non-default scheme (plugin > models ...).
+		for ( IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION) ) {
+			MODEL_PLUGINS.put(e.getContributor().getName(), e.getAttribute("name"));
+		}
 		// CRUCIAL INITIALIZATIONS
 		AbstractGamlAdditions.buildMetaModel();
 		Types.init();
+
+		// We gather all the content types extensions defined in GAMA plugins (not in the other ones)
+		IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
+		Set<IExtension> contentExtensions = new HashSet();
+		contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
+		for ( IExtension ext : contentExtensions ) {
+			if ( GAMA_PLUGINS.contains(ext.getContributor().getName()) ) {
+				IConfigurationElement[] configs = ext.getConfigurationElements();
+				for ( IConfigurationElement config : configs ) {
+					HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(config.getAttribute("file-extensions").split(",")));
+					// System.out.println(ext.getContributor().getName() + ": " + config.getAttribute("file-extensions"));
+				}
+			}
+		}
+
+		//
 		GuiUtils.debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+	}
+
+	/**
+	 * @param contributor
+	 * @return
+	 */
+	private static boolean hasModels(final IContributor c) {
+		URL url = null;
+		try {
+			url = new URL("platform:/plugin/" + c.getName() + "/models");
+			url = FileLocator.find(url);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		if ( url == null ) { return false; }
+		File file = null;
+		try {
+			URI uri = FileLocator.resolve(url).toURI().normalize();
+			file = new File(uri);
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return file != null && file.exists() && file.isDirectory();
 	}
 
 	public static void preBuild(final String s) {
@@ -88,6 +163,22 @@ public class GamaBundleLoader {
 		}
 		GuiUtils.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
 
+	}
+
+	/**
+	 * The list of GAMA_PLUGINS declaring models, together with the inner path to the folder containing model projects
+	 * @return
+	 */
+	public static Map<String, String> getPluginsWithModels() {
+		return MODEL_PLUGINS;
+	}
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	public static boolean contains(final String name) {
+		return GAMA_PLUGINS.contains(name);
 	}
 
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 csvedit
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,16 @@
  */
 package msi.gama.gui.viewers.csv;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.*;
 import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.swt.commands.GamaMenu;
 import msi.gama.gui.swt.controls.GamaToolbar2;
@@ -23,15 +33,6 @@ import msi.gama.gui.viewers.csv.text.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
 
 /**
  *
@@ -760,4 +761,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		}, SWT.RIGHT);
 
 	}
+
+	@Override
+	public void setToogle(final Action toggle) {}
 }

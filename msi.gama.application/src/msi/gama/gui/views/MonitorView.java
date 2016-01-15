@@ -1,32 +1,32 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MonitorView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views;
 
 import java.util.List;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.outputs.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
-import msi.gaml.expressions.*;
-import msi.gaml.types.Types;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.outputs.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.*;
+import msi.gaml.expressions.*;
+import msi.gaml.types.Types;
 
 /**
  * @author Alexis Drogoul
@@ -62,7 +62,8 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	@Override
 	public boolean addItem(final MonitorOutput output) {
 		if ( output != null ) {
-			createItem(parent, output, output.getValue() == null);
+			createItem(parent, output, output.getValue() == null,
+				output.getColor() == null ? null : GamaColors.get(output.getColor()));
 			return true;
 		}
 		return false;
@@ -80,7 +81,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		final Text titleEditor =
-			(Text) EditorFactory.create(compo, "Title:", output.getViewName(), true, new EditorListener<String>() {
+			(Text) EditorFactory.create(compo, "Title:", output.getName(), true, new EditorListener<String>() {
 
 				@Override
 				public void valueModified(final String newValue) throws GamaRuntimeException {
@@ -92,17 +93,16 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 		IExpression expr = GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulationScope());
 
-		Text c =
-			(Text) EditorFactory.createExpression(compo, "Expression:",
-				output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, new EditorListener<IExpression>() {
+		Text c = (Text) EditorFactory.createExpression(compo, "Expression:",
+			output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, new EditorListener<IExpression>() {
 
-					@Override
-					public void valueModified(final IExpression newValue) throws GamaRuntimeException {
-						output.setNewExpression(newValue);
-						update(output);
-					}
+				@Override
+				public void valueModified(final IExpression newValue) throws GamaRuntimeException {
+					output.setNewExpression(newValue);
+					update(output);
+				}
 
-				}, Types.NO_TYPE).getEditor();
+			}, Types.NO_TYPE).getEditor();
 
 		c.addSelectionListener(new SelectionListener() {
 
@@ -155,13 +155,18 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		Object v = o.getLastValue();
 		final StringBuilder sb = new StringBuilder(100);
 		sb.setLength(0);
-		sb.append(o.getViewName()).append(ItemList.SEPARATION_CODE)
+		sb.append(o.getName()).append(ItemList.SEPARATION_CODE)
 			.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString());
 		if ( o.isPaused() ) {
 			sb.append(" (paused)");
 		}
 		return sb.toString();
 
+	}
+
+	@Override
+	public GamaColor getItemDisplayColor(final MonitorOutput o) {
+		return o.getColor();
 	}
 
 	public static void createNewMonitor() {
@@ -230,5 +235,19 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	public void outputReloaded(final IDisplayOutput output) {
 
 	}
+
+	/**
+	 * Method pauseChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#pauseChanged()
+	 */
+	@Override
+	public void pauseChanged() {}
+
+	/**
+	 * Method synchronizeChanged()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Pausable#synchronizeChanged()
+	 */
+	@Override
+	public void synchronizeChanged() {}
 
 }

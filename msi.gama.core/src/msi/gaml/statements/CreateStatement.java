@@ -18,16 +18,8 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.serializer;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -37,8 +29,7 @@ import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.CreateStatement.CreateSerializer;
-import msi.gaml.statements.CreateStatement.CreateValidator;
+import msi.gaml.statements.CreateStatement.*;
 import msi.gaml.types.*;
 
 /**
@@ -62,80 +53,99 @@ import msi.gaml.types.*;
  * read(int), the index of the column.
  */
 @symbol(name = IKeyword.CREATE,
-kind = ISymbolKind.SEQUENCE_STATEMENT,
-with_sequence = true,
-with_args = true,
-remote_context = true)
+	kind = ISymbolKind.SEQUENCE_STATEMENT,
+	with_sequence = true,
+	with_args = true,
+	remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@facets(value = {
-	@facet(name = IKeyword.SPECIES,
-		type = IType.SPECIES,
-		optional = true,
-		doc = @doc("an expression that evaluates to a species, the species of created agents")),
+@facets(
+	value = {
+		@facet(name = IKeyword.SPECIES,
+			type = IType.SPECIES,
+			optional = true,
+			doc = @doc("an expression that evaluates to a species, the species of created agents") ),
 		@facet(name = IKeyword.RETURNS,
-		type = IType.NEW_TEMP_ID,
-		optional = true,
-		doc = @doc("a new temporary variable name containing the list of created agents (a lsit even if only one agent has been created)")),
+			type = IType.NEW_TEMP_ID,
+			optional = true,
+			doc = @doc("a new temporary variable name containing the list of created agents (a lsit even if only one agent has been created)") ),
 		@facet(name = IKeyword.FROM,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("an expression that evaluates to a localized entity, a list of localized entities, a string (the path of a shapefile, a .csv, a .asc or a OSM file) or a container returned by a request to a database")),
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("an expression that evaluates to a localized entity, a list of localized entities, a string (the path of a shapefile, a .csv, a .asc or a OSM file) or a container returned by a request to a database") ),
 		@facet(name = IKeyword.NUMBER,
-		type = IType.INT,
-		optional = true,
-		doc = @doc("an expression that evaluates to an int, the number of created agents")),
-		@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc = @doc("")),
+			type = IType.INT,
+			optional = true,
+			doc = @doc("an expression that evaluates to an int, the number of created agents") ),
+		@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc = @doc("") ),
 		@facet(name = IKeyword.WITH,
-		type = { IType.MAP },
-		optional = true,
-		doc = @doc("an expression that evaluates to a map, for each pair the key is a species attribute and the value the assigned value")),
+			type = { IType.MAP },
+			optional = true,
+			doc = @doc("an expression that evaluates to a map, for each pair the key is a species attribute and the value the assigned value") ),
 		@facet(name = IKeyword.HEADER,
-		type = { IType.BOOL },
-		optional = true,
-		doc = @doc("an expression that evaluates to a boolean, when creating agents from csv file, specify whether the file header is loaded")) },
-		omissible = IKeyword.SPECIES)
-@doc(value = "Allows an agent to create `number` agents of species `species`, to create agents of species `species` from a shapefile or to create agents of species `species` from one or several localized entities (discretization of the localized entity geometries).",
-usages = {
-	@usage(value = "Its simple syntax to create `an_int` agents of species `a_species` is:", examples = {
-		@example(value = "create a_species number: an_int;", isExecutable = false),
-		@example(value = "create species_of(self) number: 5 returns: list5Agents;", isTestOnly = false),
-		@example(var = "list5Agents", returnType = "list", value = "5", isExecutable = false) }),
+			type = { IType.BOOL },
+			optional = true,
+			doc = @doc("an expression that evaluates to a boolean, when creating agents from csv file, specify whether the file header is loaded") ) },
+	omissible = IKeyword.SPECIES)
+@doc(
+	value = "Allows an agent to create `number` agents of species `species`, to create agents of species `species` from a shapefile or to create agents of species `species` from one or several localized entities (discretization of the localized entity geometries).",
+	usages = {
+		@usage(value = "Its simple syntax to create `an_int` agents of species `a_species` is:",
+			examples = { @example(value = "create a_species number: an_int;", isExecutable = false),
+				@example(value = "create species_of(self) number: 5 returns: list5Agents;", isTestOnly = false),
+				@example(var = "list5Agents", returnType = "list", value = "5", isExecutable = false) }),
 		@usage("If `number` equals 0 or species is not a species, the statement is ignored."),
-		@usage(value = "In GAML modelers can create agents of species `a_species  (with two attributes `type` and `nature` with types corresponding to the types of the shapefile attributes) from a shapefile `the_shapefile` while reading attributes 'TYPE_OCC' and 'NATURE' of the shapefile. One agent will be created by object contained in the shapefile:",
-		examples = @example(value = "create a_species from: the_shapefile with: [type:: 'TYPE_OCC', nature::'NATURE'];",
-		isExecutable = false)),
-		@usage(value = "In order to create agents from a .csv file, facet `header` can be used to specified whether we can use columns header:",
-		examples = {
-			@example(value = "create toto from: \"toto.csv\" header: true with:[att1::read(\"NAME\"), att2::read(\"TYPE\")];",
-				isExecutable = false),
+		@usage(
+			value = "In GAML modelers can create agents of species `a_species  (with two attributes `type` and `nature` with types corresponding to the types of the shapefile attributes) from a shapefile `the_shapefile` while reading attributes 'TYPE_OCC' and 'NATURE' of the shapefile. One agent will be created by object contained in the shapefile:",
+			examples = @example(
+				value = "create a_species from: the_shapefile with: [type:: 'TYPE_OCC', nature::'NATURE'];",
+				isExecutable = false) ),
+		@usage(
+			value = "In order to create agents from a .csv file, facet `header` can be used to specified whether we can use columns header:",
+			examples = {
+				@example(
+					value = "create toto from: \"toto.csv\" header: true with:[att1::read(\"NAME\"), att2::read(\"TYPE\")];",
+					isExecutable = false),
 				@example(value = "or", isExecutable = false),
-				@example(value = "create toto from: \"toto.csv\" with:[att1::read(0), att2::read(1)]; //with read(int), the index of the column",
-				isExecutable = false) }),
-				@usage(value = "Similarly to the creation from shapefile, modelers can create agents from a set of geometries. In this case, one agent per geometry will be created (with the geometry as shape)",
-				examples = {
-					@example(value = "create species_of(self) from: [square(4),circle(4)]; 	// 2 agents have been created, with shapes respectively square(4) and circle(4)"),
-					@example(value = "create species_of(self) from: [square(4),circle(4)] returns: new_agt;",
+				@example(
+					value = "create toto from: \"toto.csv\" with:[att1::read(0), att2::read(1)]; //with read(int), the index of the column",
+					isExecutable = false) }),
+		@usage(
+			value = "Similarly to the creation from shapefile, modelers can create agents from a set of geometries. In this case, one agent per geometry will be created (with the geometry as shape)",
+			examples = {
+				@example(
+					value = "create species_of(self) from: [square(4),circle(4)]; 	// 2 agents have been created, with shapes respectively square(4) and circle(4)"),
+				@example(value = "create species_of(self) from: [square(4),circle(4)] returns: new_agt;",
 					isTestOnly = true),
-					@example(value = "new_agt[0].shape", equals = "square(4)", returnType = "geometry", isTestOnly = true),
-					@example(value = "new_agt[1].shape", equals = "circle(4)", returnType = "geometry", isTestOnly = true) }),
-					@usage(value = "Created agents are initialized following the rules of their species. If one wants to refer to them after the statement is executed, the returns keyword has to be defined: the agents created will then be referred to by the temporary variable it declares. For instance, the following statement creates 0 to 4 agents of the same species as the sender, and puts them in the temporary variable children for later use.",
-					examples = { @example(value = "create species (self) number: rnd (4) returns: children;", test = false),
-						@example(value = "ask children {", test = true), @example(value = "        // ...", test = false),
-						@example(value = "}", test = false) }),
-						@usage(value = "If one wants to specify a special initialization sequence for the agents created, create provides the same possibilities as ask. This extended syntax is:",
-						examples = { @example(value = "create a_species number: an_int {", isExecutable = false),
-							@example(value = "     [statements]", isExecutable = false),
-							@example(value = "}", isExecutable = false) }),
-							@usage(value = "The same rules as in ask apply. The only difference is that, for the agents created, the assignments of variables will bypass the initialization defined in species. For instance:",
-							examples = {
-								@example(value = "create species(self) number: rnd (4) returns: children {", isExecutable = false),
-								@example(value = "     set location <- myself.location + {rnd (2), rnd (2)}; // tells the children to be initially located close to me",
-								isExecutable = false),
-								@example(value = "     set parent <- myself; // tells the children that their parent is me (provided the variable parent is declared in this species) ",
-								isExecutable = false), @example(value = "}", isExecutable = false) }),
-								@usage(value = "Desprecated uses: ", examples = { @example(value = "// Simple syntax", isExecutable = false),
-									@example(value = "create species: a_species number: an_int;", isExecutable = false),
-									@example(value = "", isExecutable = false) }) })
+				@example(value = "new_agt[0].shape", equals = "square(4)", returnType = "geometry", isTestOnly = true),
+				@example(value = "new_agt[1].shape",
+					equals = "circle(4)",
+					returnType = "geometry",
+					isTestOnly = true) }),
+		@usage(
+			value = "Created agents are initialized following the rules of their species. If one wants to refer to them after the statement is executed, the returns keyword has to be defined: the agents created will then be referred to by the temporary variable it declares. For instance, the following statement creates 0 to 4 agents of the same species as the sender, and puts them in the temporary variable children for later use.",
+			examples = { @example(value = "create species (self) number: rnd (4) returns: children;", test = false),
+				@example(value = "ask children {", test = true), @example(value = "        // ...", test = false),
+				@example(value = "}", test = false) }),
+		@usage(
+			value = "If one wants to specify a special initialization sequence for the agents created, create provides the same possibilities as ask. This extended syntax is:",
+			examples = { @example(value = "create a_species number: an_int {", isExecutable = false),
+				@example(value = "     [statements]", isExecutable = false),
+				@example(value = "}", isExecutable = false) }),
+		@usage(
+			value = "The same rules as in ask apply. The only difference is that, for the agents created, the assignments of variables will bypass the initialization defined in species. For instance:",
+			examples = {
+				@example(value = "create species(self) number: rnd (4) returns: children {", isExecutable = false),
+				@example(
+					value = "     set location <- myself.location + {rnd (2), rnd (2)}; // tells the children to be initially located close to me",
+					isExecutable = false),
+				@example(
+					value = "     set parent <- myself; // tells the children that their parent is me (provided the variable parent is declared in this species) ",
+					isExecutable = false),
+				@example(value = "}", isExecutable = false) }),
+		@usage(value = "Desprecated uses: ",
+			examples = { @example(value = "// Simple syntax", isExecutable = false),
+				@example(value = "create species: a_species number: an_int;", isExecutable = false),
+				@example(value = "", isExecutable = false) }) })
 @validator(CreateValidator.class)
 @serializer(CreateSerializer.class)
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
@@ -160,10 +170,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 					return;
 				} else if ( species.isBuiltIn() ) {
 					cd.error(
-						"Species " +
-							species.getName() +
+						"Species " + species.getName() +
 							" is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
-							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
 					return;
 				}
 				SpeciesDescription callerSpecies = cd.getSpeciesContext();
@@ -190,8 +199,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 						}
 					}
 					if ( !found ) {
-						cd.warning("Facet 'from' expects an expression with one of the following types: " +
-							delegateTypes, IGamlIssue.WRONG_TYPE, FROM);
+						cd.warning(
+							"Facet 'from' expects an expression with one of the following types: " + delegateTypes,
+							IGamlIssue.WRONG_TYPE, FROM);
 					}
 				}
 
@@ -279,8 +289,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			pop = executor.getPopulationFor(description.getSpeciesContext().getName());
 		} else {
 			final ISpecies s = Cast.asSpecies(scope, species.value(scope));
-			if ( s == null ) { throw GamaRuntimeException.error("No population of " + species.serialize(false) +
-				" is accessible in the context of " + executor + ".", scope); }
+			if ( s == null ) { throw GamaRuntimeException.error(
+				"No population of " + species.serialize(false) + " is accessible in the context of " + executor + ".",
+				scope); }
 			pop = executor.getPopulationFor(s);
 			// hqnghi population of micro-model's experiment is not exist, we must create the new one
 			if ( pop == null && s instanceof ExperimentPlan ) {
@@ -318,9 +329,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		return source;
 	}
 
-	private IList<? extends IAgent>
-	createAgents(final IScope scope, final IPopulation population, final List<Map> inits) {
+	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation population,
+		final List<Map> inits) {
+		boolean hasSequence = sequence != null && !sequence.isEmpty();
 		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
+
 		// hqnghi in case of creating experiment of micro-models, we must implicitely initialize it and its simulation output
 		if ( population instanceof ExperimentPopulation ) {
 			for ( final IAgent a : population ) {
@@ -335,7 +348,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			}
 		}
 		// end-hqnghi
-		if ( !sequence.isEmpty() ) {
+		if ( sequence != null && !sequence.isEmpty() ) {
 			for ( final IAgent remoteAgent : list.iterable(scope) ) {
 				Object[] result = new Object[1];
 				if ( !scope.execute(sequence, remoteAgent, null, result) ) {
@@ -349,7 +362,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	// TODO Call it before calling the ICreateDelegate createFrom method !
 	void fillWithUserInit(final IScope scope, final Map values) {
 		if ( init == null ) { return; }
-		Files.tempAttributes.push(values);
+		scope.pushReadAttributes(values);
+		// Files.tempAttributes.push(values);
 		try {
 			for ( final Map.Entry<String, IExpressionDescription> f : init.entrySet() ) {
 				if ( f != null ) {
@@ -357,7 +371,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				}
 			}
 		} finally {
-			Files.tempAttributes.pop();
+			scope.popReadAttributes();
 		}
 	}
 

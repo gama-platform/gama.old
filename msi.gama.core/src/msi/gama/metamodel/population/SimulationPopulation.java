@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SimulationPopulation.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.population;
 
@@ -57,6 +57,7 @@ public class SimulationPopulation extends GamaPopulation {
 		createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
 		if ( toBeScheduled ) {
 			world.schedule();
+			// world.scheduleAndExecute(sequence);
 			// hqnghi if simulation is created manually, it's not scheduled and have to init implicitely
 		}
 		// AD: Removed because of Issue 1051 (double init).
