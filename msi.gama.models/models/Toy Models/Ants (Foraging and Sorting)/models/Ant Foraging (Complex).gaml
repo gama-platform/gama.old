@@ -179,7 +179,7 @@ experiment Complete type: gui {
 
 
 	output {
-		display Ants background: #white {
+		display Ants background: #white type: opengl{
 			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;

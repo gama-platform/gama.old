@@ -329,7 +329,11 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			final IAgent a = agents.get(i);
 			try {
 				a.acquireLock();
-				inits = empty ? Collections.EMPTY_MAP : initialValues.get(i);
+				if ( empty ) {
+					inits = Collections.EMPTY_MAP;
+				} else {
+					inits = initialValues.get(i);
+				}
 				for ( final String s : orderedVarNames ) {
 					final IVariable var = species.getVar(s);
 					var.initializeWith(scope, a, empty ? null : inits.get(s));

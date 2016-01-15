@@ -35,13 +35,13 @@ import msi.gaml.compilation.GamaBundleLoader;
  */
 public class WorkspaceModelsManager {
 
-	private final static FileFilter noHiddenFiles = new FileFilter() {
-
-		@Override
-		public boolean accept(final File f) {
-			return f != null && f.isDirectory() && !f.isHidden() && !f.getName().startsWith(".");
-		}
-	};
+	// private final static FileFilter noHiddenFiles = new FileFilter() {
+	//
+	// @Override
+	// public boolean accept(final File f) {
+	// return f != null && f.isDirectory() && !f.isHidden() && !f.getName().startsWith(".");
+	// }
+	// };
 
 	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
 	public static OpenDocumentEventProcessor processor;
@@ -494,12 +494,12 @@ public class WorkspaceModelsManager {
 		}
 	}
 
-	static private IProjectDescription setProjectDescription(final File project) {
-		final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
-		final IPath location = new Path(project.getAbsolutePath());
-		description.setLocation(location);
-		return description;
-	}
+	// static private IProjectDescription setProjectDescription(final File project) {
+	// final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
+	// final IPath location = new Path(project.getAbsolutePath());
+	// description.setLocation(location);
+	// return description;
+	// }
 
 	public static void stampWorkspaceFromModels() {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();

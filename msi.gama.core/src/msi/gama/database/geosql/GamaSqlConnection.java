@@ -91,11 +91,11 @@ public class GamaSqlConnection extends GamaGisFile {
 		setFilter(scope);
 	}
 
-	private void setParams(final Map<String, Object> params, final String table, final String filter) {
-		setConnectionParameters(params);
-		setTable(table);
-		setFilter(filter);
-	}
+	// private void setParams(final Map<String, Object> params, final String table, final String filter) {
+	// setConnectionParameters(params);
+	// setTable(table);
+	// setFilter(filter);
+	// }
 
 	private void setParams(final Map<String, Object> params) {
 		setConnectionParameters(params);
@@ -104,10 +104,10 @@ public class GamaSqlConnection extends GamaGisFile {
 	private void setTable(final String table) {
 		this.table = table;
 	}
-
-	private void setFilter(final String filter) {
-		this.filter = filter;
-	}
+	//
+	// private void setFilter(final String filter) {
+	// this.filter = filter;
+	// }
 
 	private void setConnectionParameters(final IScope scope) {
 		Map<String, Object> params = (Map<String, Object>) scope.getArg("params", IType.MAP);
