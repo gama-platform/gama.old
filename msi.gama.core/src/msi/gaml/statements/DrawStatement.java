@@ -619,12 +619,16 @@ public class DrawStatement extends AbstractStatementSequence {
 				double stringLenghtMax = 0;
 				for (String line : info.split("\n")){
 					g.drawString(line, getColor(scope), p, fSize, fName, getRotation(scope), fBitmap);
-					p.y= p.y + fSize;
+					if(fBitmap){
+						p.y = p.y + fSize;	
+					}
+					else{
+						p.y = p.y + fSize*2;
+					}
 					if(line.length()>stringLenghtMax){
 						stringLenghtMax = line.length();
 					}
 				}
-
 				return new Rectangle2D.Double(getLocation(scope).getX(), getLocation(scope).getY(), stringLenghtMax,3);
 			}
 			else{
