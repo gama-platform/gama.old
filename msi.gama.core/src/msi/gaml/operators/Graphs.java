@@ -580,8 +580,14 @@ public class Graphs {
 				test = false) }) ,
 		see = { "as_intersection_graph", "as_distance_graph" })
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
-		return new GamaSpatialGraph(edges, true, false, null, null, scope, Types.GEOMETRY,
-			edges.getType().getContentType());
+		
+		IGraph createdGraph = new GamaSpatialGraph(edges, true, false, null, null, scope, Types.GEOMETRY,
+				edges.getType().getContentType());
+		if(Types.AGENT.equals(edges.getType().getContentType())){
+			GraphFromAgentContainerSynchronizer.synchronize(scope,null, edges, createdGraph);			
+		}
+		
+		return createdGraph;
 	}
 
 	// @operator(value = "graph_from_edges")
@@ -619,8 +625,12 @@ public class Graphs {
 		examples = @example(value = "list(ant) as_intersection_graph 0.5", isExecutable = false) ,
 		see = { "as_distance_graph", "as_edge_graph" })
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance) {
-		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance), null, scope,
-			vertices.getType().getContentType(), Types.GEOMETRY);
+		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance), null, scope,
+				vertices.getType().getContentType(), Types.GEOMETRY);
+		if(Types.AGENT.equals(vertices.getType().getContentType())){
+			GraphFromAgentContainerSynchronizer.synchronize(scope,vertices, null, createdGraph);		
+		}
+		return createdGraph;
 	}
 
 	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
@@ -639,8 +649,12 @@ public class Graphs {
 		examples = @example(value = "list(ant) as_distance_graph 3.0", isExecutable = false) ,
 		see = { "as_intersection_graph", "as_edge_graph" })
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null, scope,
+		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null, scope,
 			vertices.getType().getContentType(), Types.GEOMETRY);
+		if(Types.AGENT.equals(vertices.getType().getContentType())){
+			GraphFromAgentContainerSynchronizer.synchronize(scope,vertices, null, createdGraph);		
+		}
+		return createdGraph;
 	}
 
 	@operator(value = "grid_cells_to_graph",
@@ -671,8 +685,12 @@ public class Graphs {
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance,
 		final ISpecies edgeSpecies) {
 		IType edgeType = scope.getModelContext().getTypeNamed(edgeSpecies.getName());
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope,
+		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope,
 			vertices.getType().getContentType(), edgeType);
+		
+		GraphFromAgentContainerSynchronizer.synchronize(scope,vertices, edgeSpecies, createdGraph);		
+		
+		return createdGraph;
 	}
 
 	@operator(value = "as_distance_graph", category = { IOperatorCategory.GRAPH })
@@ -684,8 +702,13 @@ public class Graphs {
 		ISpecies edgeSpecies = (ISpecies) params.get("species");
 		IType edgeType =
 			edgeSpecies == null ? Types.GEOMETRY : scope.getModelContext().getTypeNamed(edgeSpecies.getName());
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope,
+		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope,
 			vertices.getType().getContentType(), edgeType);
+		
+		if(Types.AGENT.equals(vertices.getType().getContentType())){
+			GraphFromAgentContainerSynchronizer.synchronize(scope,vertices, edgeSpecies, createdGraph);		
+		}
+		return createdGraph;				
 	}
 
 	@operator(value = "spatial_graph",

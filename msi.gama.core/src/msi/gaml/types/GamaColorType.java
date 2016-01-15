@@ -97,7 +97,7 @@ public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override
 	public GamaColor getDefault() {
-		return new GamaColor(Color.white);
+		return new GamaColor(Color.black);
 	}
 
 	@Override
