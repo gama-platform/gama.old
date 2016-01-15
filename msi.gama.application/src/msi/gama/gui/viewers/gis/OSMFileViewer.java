@@ -29,10 +29,10 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
-import org.geotools.swt.MapLayerComposite;
 import org.geotools.swt.SwtMapPane;
 import org.geotools.swt.utils.Utils;
 import org.opengis.feature.simple.SimpleFeature;
@@ -51,13 +51,14 @@ public class OSMFileViewer extends GISFileViewer {
 
 	Map<String, String> attributes;
 	GamaOsmFile osmfile;
+	CustomMapLayerComposite mapLayerTable;
 	
 	@Override
 	public void createPartControl(final Composite composite) {
 		Composite parent = GamaToolbarFactory.createToolbars(this, composite);
 		SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL | SWT.NULL);
 		displayInfoString();
-		MapLayerComposite mapLayerTable = new CustomMapLayerComposite(sashForm, SWT.BORDER);
+		mapLayerTable = new CustomMapLayerComposite(sashForm, SWT.BORDER);
 		pane = new SwtMapPane(sashForm, SWT.BORDER | SWT.NO_BACKGROUND, new StreamingRenderer(), content);
 		pane.setBackground(GamaColors.system(SWT.COLOR_WHITE));
 		pane.setCursorTool(newDragTool());
@@ -204,12 +205,20 @@ public class OSMFileViewer extends GISFileViewer {
 	@Override
 	public void saveAsCSV() {
 		HashSet<String> atts = new HashSet<String>();
+		Layer layer = mapLayerTable.getMapLayerTableViewer().getSelectedMapLayer();
+		String layerName = layer.getFeatureSource().getName().toString();
 		for (String at : attributes.keySet()) {
-			atts.add(at.split(";")[1]);
+			String[] dec = at.split(";");
+			 
+			if (layer == null || layerName.equals(dec[0])) {
+				atts.add(dec[1]);
+				
+			}
 		}
+		List<IShape> geoms = layer == null ? new ArrayList<IShape>(osmfile.getContents(null)): osmfile.getLayers().get(layerName);
 		List<String> attsOrd =  new ArrayList<String>(atts);
 		Collections.sort(attsOrd);
-		saveAsCSV(attsOrd, osmfile.getContents(null));
+		saveAsCSV(attsOrd, geoms,layerName);
 	}
 
 }

@@ -28,7 +28,6 @@ import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.util.IList;
 import msi.gaml.operators.Strings;
 
 public abstract class GISFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.CSVExportable{
@@ -192,12 +191,15 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 	public void setToogle(final Action toggle) {}
 	
 	
-	public void saveAsCSV(List<String> attributes, IList<IShape> geoms) {
+	public void saveAsCSV(List<String> attributes, List<IShape> geoms, String name) {
 		String path = "";
 		String[] decomp = pathStr.split("\\."); 
 		for (int i = 0; i < (decomp.length - 1); i++) {
-			path += decomp[i] + ".";
+			path += decomp[i] + (i < (decomp.length -1)? ".":"");
 		}
+		if (name != null)
+			path +=name+".";
+		else path += ".";
 		path += "csv";
 		File fcsv = new File(path);
 		FileWriter fw;

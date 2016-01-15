@@ -1,10 +1,12 @@
 package msi.gama.gui.viewers.gis;
 
+import java.lang.reflect.Field;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.geotools.swt.MapLayerComposite;
+import org.geotools.swt.control.MaplayerTableViewer;
 
 public class CustomMapLayerComposite extends MapLayerComposite {
 
@@ -21,6 +23,24 @@ public class CustomMapLayerComposite extends MapLayerComposite {
 				}
 			}
 		}
+	}
+	
+	 MaplayerTableViewer getMapLayerTableViewer(){
+		Field privateField;
+		try {
+			privateField = MapLayerComposite.class.getDeclaredField("mapLayerTableViewer");
+			privateField.setAccessible(true);
+			return (MaplayerTableViewer)privateField.get(this);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
 		
 	}
 
