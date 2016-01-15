@@ -176,12 +176,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public void dispose() {
+//		System.out.println("ExperimentAgent.dipose BEGIN");
 		if ( dead ) { return; }
 		super.dispose();
 		closeSimulation();
 		if ( getSimulation() != null ) {
 			getSimulation().dispose();
 		}
+//		System.out.println("ExperimentAgent.dipose END");
 	}
 
 	/**

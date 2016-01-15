@@ -183,6 +183,9 @@ public class GAMA {
 
 	public static boolean reportError(final IScope scope, final GamaRuntimeException g,
 		final boolean shouldStopSimulation) {
+		IExperimentController controller = getFrontmostController();
+		if ( controller == null || controller.getExperiment() == null || controller.isDisposing() ||
+			controller.getExperiment().getAgent() == null ) { return false; }
 		// Returns whether or not to continue
 		if ( !(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors() ) {
 			// AD: we still throw exceptions related to files (Issue #1281)
@@ -190,9 +193,7 @@ public class GAMA {
 			return true;
 		}
 		GuiUtils.runtimeError(g);
-		IExperimentController controller = getFrontmostController();
-		if ( controller == null || controller.getExperiment() == null ||
-			controller.getExperiment().getAgent() == null ) { return false; }
+
 		boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
 		boolean shouldStop = isError && shouldStopSimulation && GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
 		return !shouldStop;
@@ -200,11 +201,14 @@ public class GAMA {
 
 	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
 		final boolean shouldStopSimulation) throws GamaRuntimeException {
-		if ( !(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors() ) {
-			// AD: we still throw exceptions related to files (Issue #1281)
-			g.printStackTrace();
-			return;
+		if ( getExperiment() == null ) {
+			if ( !(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors() ) {
+				// AD: we still throw exceptions related to files (Issue #1281)
+				g.printStackTrace();
+				return;
+			}
 		}
+		// System.out.println("reportAndThrowIfNeeded : " + g.getMessage());
 		if ( scope != null && scope.getAgentScope() != null ) {
 			String name = scope.getAgentScope().getName();
 			if ( !g.getAgentsNames().contains(name) ) {
@@ -214,7 +218,7 @@ public class GAMA {
 		boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if ( shouldStop ) {
 			IExperimentController controller = getFrontmostController();
-			if ( controller == null ) { return; }
+			if ( controller == null || controller.isDisposing() ) { return; }
 			controller.userPause();
 			throw g;
 		}

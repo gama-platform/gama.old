@@ -1,3 +1,12 @@
+/**
+* Name: 3D Display model of differents shapes and a special Object
+* Author: 
+* Description: Model presenting a 3D display of differents shapes (pyramid, cone, cylinder, sphere and a teapot object) to represent the same agents but with
+*       different aspects. Five experiments are possible, one for each of the shapes presented previously. In each experiment, the agents move to create a big circle but flee
+*       from their closest neighbour. 
+* Tag: 3D Display, Shapes
+*/
+
 model circle   
 
 global {
@@ -27,8 +36,11 @@ species cells skills: [moving] {
 	rgb color;
 	const size type: float <- float(size_of_agents);
 	const range type: float <- float(range_of_agents); 
+	
+	//built-in variable derivated from the skill moving, heading representing the direction where the agent head to move
 	const speed type: float <- speed_of_agents;   
 	int heading <- rnd(359);
+	
 	int z <- rnd(100);
 	
 	reflex go_to_center {
@@ -37,7 +49,9 @@ species cells skills: [moving] {
 	}
 	
 	reflex flee_others {
+		//We chose only one of the cells in a certain range of distance from the agent
 		cells close <- one_of ( ( (self neighbors_at range) of_species cells) sort_by (self distance_to each) );
+		
 		if close != nil {
 			heading <- (self towards close) - 180;
 			float dist <- self distance_to close;

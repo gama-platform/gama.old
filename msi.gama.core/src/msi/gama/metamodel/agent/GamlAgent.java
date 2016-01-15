@@ -15,7 +15,7 @@ import java.util.*;
 import com.google.common.collect.Iterables;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.RandomUtils;
+import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.population.*;
@@ -437,6 +437,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public void dispose() {
 		if ( dead() ) { return; }
+//		GuiUtils.debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in GamlAgent)");
 		try {
 			acquireLock();
 			for ( final Map.Entry<Object, Object> entry : attributes.entrySet() ) {

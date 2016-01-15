@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SWTChartEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 
 package msi.gama.gui.swt.controls;
@@ -15,9 +15,7 @@ package msi.gama.gui.swt.controls;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.geom.*;
-import java.awt.image.*;
 import javax.swing.JPanel;
-import msi.gama.gui.swt.GamaColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -38,6 +36,7 @@ import org.jfree.chart.axis.*;
 import org.jfree.chart.editor.ChartEditor;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.title.*;
+import msi.gama.gui.swt.GamaColors;
 
 /**
  * An editor for chart properties.
@@ -65,7 +64,7 @@ public class SWTChartEditor implements ChartEditor {
 
 	/**
 	 * Creates a new editor.
-	 * 
+	 *
 	 * @param display the display.
 	 * @param chart2edit the chart to edit.
 	 */
@@ -143,7 +142,7 @@ public class SWTChartEditor implements ChartEditor {
 
 	/**
 	 * Updates the chart properties.
-	 * 
+	 *
 	 * @param chart the chart.
 	 */
 	@Override
@@ -189,11 +188,11 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Standard constructor: builds a panel for displaying/editing the
 		 * properties of the specified title.
-		 * 
+		 *
 		 * @param parent the parent.
 		 * @param style the style.
 		 * @param title the title, which should be changed.
-		 * 
+		 *
 		 */
 		SWTTitleEditor(final Composite parent, final int style, final Title title) {
 			super(parent, style);
@@ -291,7 +290,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the title text entered in the panel.
-		 * 
+		 *
 		 * @return The title text entered in the panel.
 		 */
 		public String getTitleText() {
@@ -300,7 +299,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the font selected in the panel.
-		 * 
+		 *
 		 * @return The font selected in the panel.
 		 */
 		public FontData getTitleFont() {
@@ -309,7 +308,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the font selected in the panel.
-		 * 
+		 *
 		 * @return The font selected in the panel.
 		 */
 		public Color getTitleColor() {
@@ -319,7 +318,7 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Sets the properties of the specified title to match the properties
 		 * defined on this panel.
-		 * 
+		 *
 		 * @param chart the chart whose title is to be modified.
 		 */
 		public void setTitleProperties(final JFreeChart chart) {
@@ -358,7 +357,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Creates a new editor for the specified plot.
-		 * 
+		 *
 		 * @param parent the parent.
 		 * @param style the style.
 		 * @param plot the plot.
@@ -410,7 +409,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the current outline stroke.
-		 * 
+		 *
 		 * @return The current outline stroke.
 		 */
 		public Color getBackgroundPaint() {
@@ -419,7 +418,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the current outline stroke.
-		 * 
+		 *
 		 * @return The current outline stroke.
 		 */
 		public Color getOutlinePaint() {
@@ -428,7 +427,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the current outline stroke.
-		 * 
+		 *
 		 * @return The current outline stroke.
 		 */
 		public Stroke getOutlineStroke() {
@@ -438,7 +437,7 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Updates the plot properties to match the properties
 		 * defined on the panel.
-		 * 
+		 *
 		 * @param plot The plot.
 		 */
 		public void updatePlotProperties(final Plot plot) {
@@ -503,7 +502,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Creates a new instance.
-		 * 
+		 *
 		 * @param parent the parent.
 		 * @param style the style.
 		 * @param chart the chart.
@@ -551,7 +550,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Updates the chart.
-		 * 
+		 *
 		 * @param chart the chart.
 		 */
 		public void updateChartProperties(final JFreeChart chart) {
@@ -582,15 +581,15 @@ public class SWTChartEditor implements ChartEditor {
 		 * possible, this fact is platform dependent. To address this issue, it is possible to enforce the method to return a font with the same size (or at least as close as possible) as the awt one.
 		 * <p>
 		 * When the object is no more used, the user must explicitly call the dispose method on the returned font to free the operating system resources (the garbage collector won't do it).
-		 * 
+		 *
 		 * @param device The swt device to draw on (display or gc device).
 		 * @param font The awt font from which to get the data.
 		 * @param ensureSameSize A boolean used to enforce the same size
-		 *            (in pixels) between the awt font and the newly created swt font.
+		 * (in pixels) between the awt font and the newly created swt font.
 		 * @return a <code>FontData</code> object.
 		 */
-		public static FontData
-			toSwtFontData(final Device device, final java.awt.Font font, final boolean ensureSameSize) {
+		public static FontData toSwtFontData(final Device device, final java.awt.Font font,
+			final boolean ensureSameSize) {
 			FontData fontData = new FontData();
 			fontData.setName(font.getFamily());
 			int style = SWT.NORMAL;
@@ -647,15 +646,15 @@ public class SWTChartEditor implements ChartEditor {
 		 * <p>
 		 * Generally speaking, given a font size, an swt font will display differently on the screen than the corresponding awt one. Because the SWT toolkit use native graphical ressources whenever it
 		 * is possible, this fact is platform dependent. To address this issue, it is possible to enforce the method to return an awt font with the same height as the swt one.
-		 * 
+		 *
 		 * @param device The swt device being drawn on (display or gc device).
 		 * @param fontData The swt font to convert.
 		 * @param ensureSameSize A boolean used to enforce the same size
-		 *            (in pixels) between the swt font and the newly created awt font.
+		 * (in pixels) between the swt font and the newly created awt font.
 		 * @return An awt font converted from the provided swt font.
 		 */
-		public static java.awt.Font
-			toAwtFont(final Device device, final FontData fontData, final boolean ensureSameSize) {
+		public static java.awt.Font toAwtFont(final Device device, final FontData fontData,
+			final boolean ensureSameSize) {
 			int style;
 			switch (fontData.getStyle()) {
 				case SWT.NORMAL:
@@ -700,7 +699,7 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Create an awt font by converting as much information
 		 * as possible from the provided swt <code>Font</code>.
-		 * 
+		 *
 		 * @param device The swt device to draw on (display or gc device).
 		 * @param font The swt font to convert.
 		 * @return An awt font converted from the provided swt font.
@@ -715,7 +714,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * of the specified awt paint. For now, this method test
 		 * if the paint is a color and then return the adequate
 		 * swt color. Otherwise plain black is assumed.
-		 * 
+		 *
 		 * @param device The swt device to draw on (display or gc device).
 		 * @param paint The awt color to match.
 		 * @return a swt color object.
@@ -726,8 +725,8 @@ public class SWTChartEditor implements ChartEditor {
 				color = (java.awt.Color) paint;
 			} else {
 				try {
-					throw new Exception("only color is supported at present... "
-						+ "setting paint to uniform black color");
+					throw new Exception(
+						"only color is supported at present... " + "setting paint to uniform black color");
 				} catch (Exception e) {
 					e.printStackTrace();
 					color = new java.awt.Color(0, 0, 0);
@@ -741,7 +740,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * of the specified awt color. alpha channel is not supported.
 		 * Note that the dispose method will need to be called on the
 		 * returned object.
-		 * 
+		 *
 		 * @param device The swt device to draw on (display or gc device).
 		 * @param color The awt color to match.
 		 * @return a swt color object.
@@ -765,7 +764,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * Transform a swt Rectangle instance into an awt one.
 		 * @param rect the swt <code>Rectangle</code>
 		 * @return a Rectangle2D.Double instance with
-		 *         the eappropriate location and size.
+		 * the eappropriate location and size.
 		 */
 		public static Rectangle2D toAwtRectangle(final Rectangle rect) {
 			Rectangle2D rect2d = new Rectangle2D.Double();
@@ -776,11 +775,11 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Returns an AWT point with the same coordinates as the specified
 		 * SWT point.
-		 * 
+		 *
 		 * @param p the SWT point (<code>null</code> not permitted).
-		 * 
+		 *
 		 * @return An AWT point with the same coordinates as <code>p</code>.
-		 * 
+		 *
 		 * @see #toSwtPoint(java.awt.Point)
 		 */
 		public static Point2D toAwtPoint(final Point p) {
@@ -790,11 +789,11 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Returns an SWT point with the same coordinates as the specified
 		 * AWT point.
-		 * 
+		 *
 		 * @param p the AWT point (<code>null</code> not permitted).
-		 * 
+		 *
 		 * @return An SWT point with the same coordinates as <code>p</code>.
-		 * 
+		 *
 		 * @see #toAwtPoint(Point)
 		 */
 		public static Point toSwtPoint(final java.awt.Point p) {
@@ -804,11 +803,11 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Returns an SWT point with the same coordinates as the specified AWT
 		 * point (rounded to integer values).
-		 * 
+		 *
 		 * @param p the AWT point (<code>null</code> not permitted).
-		 * 
+		 *
 		 * @return An SWT point with the same coordinates as <code>p</code>.
-		 * 
+		 *
 		 * @see #toAwtPoint(Point)
 		 */
 		public static Point toSwtPoint(final java.awt.geom.Point2D p) {
@@ -844,86 +843,9 @@ public class SWTChartEditor implements ChartEditor {
 			if ( (event.stateMask & SWT.ALT) != 0 ) {
 				modifiers |= InputEvent.ALT_DOWN_MASK;
 			}
-			java.awt.event.MouseEvent awtMouseEvent =
-				new java.awt.event.MouseEvent(DUMMY_PANEL, event.hashCode(), event.time, modifiers, event.x, event.y,
-					event.count, false, button);
+			java.awt.event.MouseEvent awtMouseEvent = new java.awt.event.MouseEvent(DUMMY_PANEL, event.hashCode(),
+				event.time, modifiers, event.x, event.y, event.count, false, button);
 			return awtMouseEvent;
-		}
-
-		/**
-		 * Converts an AWT image to SWT.
-		 * 
-		 * @param image the image (<code>null</code> not permitted).
-		 * 
-		 * @return Image data.
-		 */
-		public static ImageData convertAWTImageToSWT(final java.awt.Image image) {
-			if ( image == null ) { throw new IllegalArgumentException("Null 'image' argument."); }
-			int w = image.getWidth(null);
-			int h = image.getHeight(null);
-			if ( w == -1 || h == -1 ) { return null; }
-			BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-			Graphics g = bi.getGraphics();
-			g.drawImage(image, 0, 0, null);
-			g.dispose();
-			return convertToSWT(bi);
-		}
-
-		/**
-		 * Converts a buffered image to SWT <code>ImageData</code>.
-		 * 
-		 * @param bufferedImage the buffered image (<code>null</code> not
-		 *            permitted).
-		 * 
-		 * @return The image data.
-		 */
-		public static ImageData convertToSWT(final BufferedImage bufferedImage) {
-			if ( bufferedImage.getColorModel() instanceof DirectColorModel ) {
-				DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
-				PaletteData palette =
-					new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(), colorModel.getBlueMask());
-				ImageData data =
-					new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(),
-						palette);
-				WritableRaster raster = bufferedImage.getRaster();
-				int[] pixelArray = new int[3];
-				for ( int y = 0; y < data.height; y++ ) {
-					for ( int x = 0; x < data.width; x++ ) {
-						raster.getPixel(x, y, pixelArray);
-						int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
-						data.setPixel(x, y, pixel);
-					}
-				}
-				return data;
-			} else if ( bufferedImage.getColorModel() instanceof IndexColorModel ) {
-				IndexColorModel colorModel = (IndexColorModel) bufferedImage.getColorModel();
-				int size = colorModel.getMapSize();
-				byte[] reds = new byte[size];
-				byte[] greens = new byte[size];
-				byte[] blues = new byte[size];
-				colorModel.getReds(reds);
-				colorModel.getGreens(greens);
-				colorModel.getBlues(blues);
-				RGB[] rgbs = new RGB[size];
-				for ( int i = 0; i < rgbs.length; i++ ) {
-					rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
-				}
-				PaletteData palette = new PaletteData(rgbs);
-				ImageData data =
-					new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(),
-						palette);
-				data.transparentPixel = colorModel.getTransparentPixel();
-				WritableRaster raster = bufferedImage.getRaster();
-				int[] pixelArray = new int[1];
-				for ( int y = 0; y < data.height; y++ ) {
-					for ( int x = 0; x < data.width; x++ ) {
-						raster.getPixel(x, y, pixelArray);
-						data.setPixel(x, y, pixelArray[0]);
-					}
-				}
-				return data;
-			}
-			return null;
 		}
 
 	}
@@ -973,11 +895,11 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Standard constructor: builds a composite for displaying/editing
 		 * the properties of the specified axis.
-		 * 
+		 *
 		 * @param parent The parent composite.
 		 * @param style The SWT style of the SwtAxisEditor.
 		 * @param axis the axis whose properties are to be displayed/edited
-		 *            in the composite.
+		 * in the composite.
 		 */
 		public SWTAxisEditor(final Composite parent, final int style, final Axis axis) {
 			super(parent, style);
@@ -1095,8 +1017,8 @@ public class SWTChartEditor implements ChartEditor {
 						// label
 						SWTAxisEditor.this.font = new Font(getShell().getDisplay(), dlg.getFontList());
 						// tickLabelFontField.setFont(font);
-						SWTAxisEditor.this.tickLabelFontField.setText(SWTAxisEditor.this.font.getFontData()[0]
-							.toString());
+						SWTAxisEditor.this.tickLabelFontField
+							.setText(SWTAxisEditor.this.font.getFontData()[0].toString());
 						SWTAxisEditor.this.tickLabelFont = SWTAxisEditor.this.font.getFontData()[0];
 					}
 				}
@@ -1111,11 +1033,11 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * A static method that returns a panel that is appropriate
 		 * for the axis type.
-		 * 
+		 *
 		 * @param parent the parent.
 		 * @param style the style.
 		 * @param axis the axis whose properties are to be displayed/edited
-		 *            in the composite.
+		 * in the composite.
 		 * @return A composite or <code>null</code< if axis is <code>null</code>.
 		 */
 		public static SWTAxisEditor getInstance(final Composite parent, final int style, final Axis axis) {
@@ -1134,7 +1056,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns a reference to the tabbed composite.
-		 * 
+		 *
 		 * @return A reference to the tabbed composite.
 		 */
 		public TabFolder getOtherTabs() {
@@ -1143,7 +1065,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the current axis label.
-		 * 
+		 *
 		 * @return The current axis label.
 		 */
 		public String getLabel() {
@@ -1152,7 +1074,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the current label font.
-		 * 
+		 *
 		 * @return The current label font.
 		 */
 		public java.awt.Font getLabelFont() {
@@ -1161,7 +1083,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the current label paint.
-		 * 
+		 *
 		 * @return The current label paint.
 		 */
 		public Paint getTickLabelPaint() {
@@ -1170,7 +1092,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the current label font.
-		 * 
+		 *
 		 * @return The current label font.
 		 */
 		public java.awt.Font getTickLabelFont() {
@@ -1179,7 +1101,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the current label paint.
-		 * 
+		 *
 		 * @return The current label paint.
 		 */
 		public Paint getLabelPaint() {
@@ -1189,7 +1111,7 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Sets the properties of the specified axis to match
 		 * the properties defined on this panel.
-		 * 
+		 *
 		 * @param axis the axis.
 		 */
 		public void setAxisProperties(final Axis axis) {
@@ -1209,7 +1131,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Creates a new instance.
-		 * 
+		 *
 		 * @param parent the parent.
 		 * @param style the style.
 		 * @param color the color.
@@ -1221,7 +1143,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Creates a new instance.
-		 * 
+		 *
 		 * @param parent the parent.
 		 * @param style the style.
 		 */
@@ -1242,7 +1164,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Sets the color.
-		 * 
+		 *
 		 * @param color the color.
 		 */
 		public void setColor(final Color color) {
@@ -1255,7 +1177,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the color.
-		 * 
+		 *
 		 * @return The color.
 		 */
 		public Color getColor() {
@@ -1264,7 +1186,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Overridden to do nothing.
-		 * 
+		 *
 		 * @param c the color.
 		 */
 		@Override
@@ -1274,7 +1196,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Overridden to do nothing.
-		 * 
+		 *
 		 * @param c the color.
 		 */
 		@Override
@@ -1430,7 +1352,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the plot orientation.
-		 * 
+		 *
 		 * @return The plot orientation.
 		 */
 		public PlotOrientation getPlotOrientation() {
@@ -1439,7 +1361,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the background paint.
-		 * 
+		 *
 		 * @return The background paint.
 		 */
 		public Color getBackGroundPaint() {
@@ -1448,7 +1370,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the outline paint.
-		 * 
+		 *
 		 * @return The outline paint.
 		 */
 		public Color getOutlinePaint() {
@@ -1457,7 +1379,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the stroke.
-		 * 
+		 *
 		 * @return The stroke.
 		 */
 		public Stroke getStroke() {
@@ -1493,7 +1415,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Creates a new editor.
-		 * 
+		 *
 		 * @param parent the parent.
 		 * @param style the style.
 		 * @param axis the axis.
@@ -1558,9 +1480,9 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Revalidate the range minimum:
 		 * it should be less than the current maximum.
-		 * 
+		 *
 		 * @param candidate the minimum value
-		 * 
+		 *
 		 * @return A boolean.
 		 */
 		public boolean validateMinimum(final String candidate) {
@@ -1578,9 +1500,9 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Revalidate the range maximum:
 		 * it should be greater than the current minimum
-		 * 
+		 *
 		 * @param candidate the maximum value
-		 * 
+		 *
 		 * @return A boolean.
 		 */
 		public boolean validateMaximum(final String candidate) {
@@ -1597,7 +1519,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.swt.events.FocusListener#focusGained(
 		 * org.eclipse.swt.events.FocusEvent)
 		 */
@@ -1608,7 +1530,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.swt.events.FocusListener#focusLost(
 		 * org.eclipse.swt.events.FocusEvent)
 		 */
@@ -1634,7 +1556,7 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Sets the properties of the specified axis to match
 		 * the properties defined on this panel.
-		 * 
+		 *
 		 * @param axis the axis.
 		 */
 		@Override
@@ -1652,7 +1574,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Creates a new instance.
-		 * 
+		 *
 		 * @param parent the parent.
 		 * @param style the style.
 		 * @param image the image.
@@ -1663,7 +1585,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Creates a new instance.
-		 * 
+		 *
 		 * @param parent the parent.
 		 * @param style the style.
 		 */
@@ -1694,7 +1616,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Sets the stroke.
-		 * 
+		 *
 		 * @param stroke the stroke.
 		 */
 		public void setStroke(final Stroke stroke) {
@@ -1707,7 +1629,7 @@ public class SWTChartEditor implements ChartEditor {
 
 		/**
 		 * Returns the stroke.
-		 * 
+		 *
 		 * @return The stroke.
 		 */
 		public BasicStroke getStroke() {

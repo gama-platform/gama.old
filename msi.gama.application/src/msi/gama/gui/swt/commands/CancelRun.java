@@ -18,7 +18,14 @@ public class CancelRun extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.closeAllExperiments(true);
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				GAMA.closeAllExperiments(true);
+			}
+		}).start();
+
 		return null;
 	}
 

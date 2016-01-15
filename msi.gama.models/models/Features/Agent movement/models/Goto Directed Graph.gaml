@@ -1,8 +1,10 @@
 /**
- *  simplemodel
- *  Author: patrick
- *  Description: 
- */
+* Name:  Directed Graph Model
+* Author:  Patrick Taillandier
+* Description: Model representing how to directed graph using GIS Data for the road networks : the GIS contains a column defining the direction of the roads  
+* 	and people moving from one random point to another on this graph
+* Tag : Directed Graph, Movement of Agents 
+*/
 
 model simplemodel
 
@@ -29,8 +31,12 @@ global {
 				} 
 			}
 		}
+		//The operator directed modify the graph created by as_edge_graph(road) to a directed graph
 		the_graph <- directed(as_edge_graph(road)) ;
+		
+		
 		create people number: 1000 {
+			//The operator any_location_in returns a random point located in one of the road agents
 			target <- any_location_in(one_of (road)) ;
 			location <- any_location_in (one_of(road));
 			source <- location;
@@ -45,7 +51,7 @@ species road {
 		draw shape color: color;
 	}
 }
-	
+//The people agents use the skill moving which have built-in variables such as speed, target, location, heading and built-in operators
 species people skills: [moving] {
 	point target;
 	path my_path; 
@@ -55,8 +61,14 @@ species people skills: [moving] {
 	aspect circle {
 		draw circle(10) color: #green;
 	}
+	
 	reflex movement {
+		
+		//The operator goto is a built-in operator derivated from the moving skill, moving the agent from its location to its target, 
+		//   restricted by the on variable, with the speed and returning the path followed
 		my_path <- self goto (on:the_graph, target:target, speed:10, return_path: true);
+		
+		//If the agent arrived to its target location, then it choose randomly an other target on the road
 		if (target = location) {			
 			target <- any_location_in(one_of (road)) ;
 			source <- location;
@@ -65,7 +77,6 @@ species people skills: [moving] {
 }
 
 experiment simplemodel type: gui {
-	/** Insert here the definition of the input and output of the model */
 	output {
 		display map {
 			species road aspect: geom;

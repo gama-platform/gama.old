@@ -77,7 +77,7 @@ public interface IExperimentController {
 	/**
 	 *
 	 */
-	void userInterrupt();
+	// void userInterrupt();
 
 	/**
 	 *
@@ -88,5 +88,7 @@ public interface IExperimentController {
 	 *
 	 */
 	void userOpen();
+
+	public boolean isDisposing();
 
 }

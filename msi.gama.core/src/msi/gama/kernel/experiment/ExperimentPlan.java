@@ -144,6 +144,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public void dispose() {
+//		System.out.println("ExperimentPlan.dipose BEGIN");
 		parametersEditors = null;
 		if ( agent != null ) {
 			GAMA.releaseScope(agent.getScope());
@@ -166,6 +167,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// Dec 2015 Addition
 		controller.dispose();
 		super.dispose();
+//		System.out.println("ExperimentPlan.dipose END");
 	}
 
 	public void createAgent() {

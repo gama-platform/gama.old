@@ -14,13 +14,13 @@ package msi.gama.kernel.experiment;
 import java.util.concurrent.ArrayBlockingQueue;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class ExperimentController implements Runnable, IExperimentController {
 
 	private final IExperimentPlan experiment;
+	private boolean disposing;
 	protected volatile ArrayBlockingQueue<Integer> commands;
 	public volatile Thread commandThread;
 	protected volatile boolean running = true;
@@ -44,6 +44,11 @@ public class ExperimentController implements Runnable, IExperimentController {
 	}
 
 	@Override
+	public boolean isDisposing() {
+		return disposing;
+	}
+
+	@Override
 	public IExperimentPlan getExperiment() {
 		return experiment;
 	}
@@ -63,6 +68,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 	}
 
 	public void offer(final int command) {
+		if ( isDisposing() ) { return; }
 		if ( commandThread == null || !commandThread.isAlive() ) {
 			processUserCommand(command);
 		} else {
@@ -154,19 +160,19 @@ public class ExperimentController implements Runnable, IExperimentController {
 		offer(IExperimentController._STEP);
 	}
 
-	@Override
-	public void userInterrupt() {
-		if ( experiment != null ) {
-			IModel m = experiment.getModel();
-			GuiUtils.neutralStatus("No simulation running");
-			dispose(/* GamaRuntimeException.warning("Interrupted by user") */);
-
-			if ( m != null ) {
-				m.dispose();
-			}
-			GuiUtils.wipeExperiments();
-		}
-	}
+	// @Override
+	// public void userInterrupt() {
+	// if ( experiment != null ) {
+	// IModel m = experiment.getModel();
+	// GuiUtils.neutralStatus("No simulation running");
+	// dispose(/* GamaRuntimeException.warning("Interrupted by user") */);
+	//
+	// if ( m != null ) {
+	// m.dispose();
+	// }
+	// GuiUtils.wipeExperiments();
+	// }
+	// }
 
 	@Override
 	public void userReload() {
@@ -199,6 +205,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 	@Override
 	public void dispose() {
 		if ( experiment != null ) {
+//			System.out.println("Contoller.dipose BEGIN");
 			try {
 				scheduler.pause();
 				GAMA.updateSimulationState(GAMA.NOTREADY);
@@ -211,6 +218,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 				scheduler.wipe();
 				scheduler.dispose();
 				GAMA.updateSimulationState(GAMA.NONE);
+//				System.out.println("Contoller.dipose END");
 			}
 		}
 	}
@@ -232,9 +240,12 @@ public class ExperimentController implements Runnable, IExperimentController {
 	}
 
 	public void closeExperiment(final Exception e) {
+		disposing = true;
+//		System.out.println("CloseExperiment : disposing = true");
 		if ( e != null ) {
 			GuiUtils.errorStatus(e.getMessage());
 		}
+
 		experiment.dispose(); // will call own dispose() later
 	}
 

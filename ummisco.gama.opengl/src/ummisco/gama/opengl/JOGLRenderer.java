@@ -548,6 +548,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public Rectangle2D drawGamaShape(final IScope scope, final IShape shape, final Color c, final boolean fill,
 		final Color border, final boolean rounded) {
 		if ( shape == null ) { return null; }
+//		GuiUtils.debug(shape.getClass().getSimpleName() + " " + " .being drawn (in JOGLRenderer)");
 		Double depth = 0d;
 		GamaPair<Double, GamaPoint> rot3D = null;
 		java.util.List<BufferedImage> textures = null;

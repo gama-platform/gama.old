@@ -1,8 +1,10 @@
 /**
- *  Procedural City
- *  Author: Arnaud Grignard
- *  Description: Display a procedural city with textured building
- */
+* Name: Procedural City
+* Author: Arnaud Grignard
+* Description: Model with a 3D Display representing buildings with a random size. The model proposes two experiments : the first one represents
+*      the buildings with 3D shapes with textures, the second one without textures but the color of the buildings depends on the rotation of a ball-shaped light
+* Tag: 3D Display, Textures
+*/
 
 model procedural_city   
 
@@ -64,3 +66,4 @@ experiment DisplayWithDynamicDiffuseLight  type: gui {
 		}
 	}
 }
+

@@ -288,6 +288,8 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void runtimeError(final GamaRuntimeException g) {
+		if ( GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing() ) { return; }
+
 		// if ( g != null ) {
 		// g.printStackTrace();
 		// }
@@ -416,6 +418,7 @@ public class SwtGui implements IGui {
 	}
 
 	private Object internalShowView(final String viewId, final String secondaryId, final int code) {
+		if ( GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing() ) { return null; }
 		final Object[] result = new Object[1];
 		run(new Runnable() {
 
@@ -1431,22 +1434,29 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void closeSimulationViews(final boolean openModelingPerspective) {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IViewReference[] views = page.getViewReferences();
+		run(new Runnable() {
 
-		for ( IViewReference view : views ) {
-			IViewPart part = view.getView(false);
-			if ( part instanceof IGamaView ) {
-				((IGamaView) part).close();
+			@Override
+			public void run() {
+				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				IViewReference[] views = page.getViewReferences();
 
+				for ( IViewReference view : views ) {
+					IViewPart part = view.getView(false);
+					if ( part instanceof IGamaView ) {
+						((IGamaView) part).close();
+
+					}
+				}
+				if ( openModelingPerspective ) {
+
+					openModelingPerspective(false);
+
+				}
+				setStatus("No simulation running", IGui.NEUTRAL);
 			}
-		}
-		if ( openModelingPerspective ) {
+		});
 
-			openModelingPerspective(false);
-
-		}
-		setStatus("No simulation running", IGui.NEUTRAL);
 	}
 
 }

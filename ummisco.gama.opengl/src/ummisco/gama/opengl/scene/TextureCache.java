@@ -15,10 +15,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.concurrent.*;
-import msi.gama.common.util.ImageUtils;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import msi.gama.common.util.ImageUtils;
 
 public class TextureCache {
 
@@ -107,12 +107,12 @@ public class TextureCache {
 			long t0 = System.currentTimeMillis();
 			GLProfile profile = GLProfile.getDefault();
 			long t1 = System.currentTimeMillis();
-			System.out.println("GLProfile took: " + (t1 - t0) + "ms");
+			// System.out.println("GLProfile took: " + (t1 - t0) + "ms");
 			GLCapabilities cap = new GLCapabilities(profile);
 			cap.setStencilBits(8);
 			cap.setDoubleBuffered(true);
 			cap.setHardwareAccelerated(true);
-			cap.setOnscreen(false);
+			cap.setFBO(true);
 			loadingThread = new Thread(this, "Texture building thread");
 			drawable = GLDrawableFactory.getFactory(profile).createDummyAutoDrawable(null, true, cap, null);
 			loadingThread.start();

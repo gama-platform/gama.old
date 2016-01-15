@@ -338,12 +338,12 @@ experiment trajectory_analysis type: gui {
 			species obstacle position:{0,0,0.1}; 		
 		}
 				
-		display AggregatedBoidsTrajectory  ambient_light:50 diffuse_light:100 type:opengl trace:true{
+		display AggregatedBoidsTrajectory  ambient_light:50 diffuse_light:100 type:opengl trace: true {
 			image name:'background' file:file_path_to_ocean;
-			species aggregatedboids  aspect: base;
+			species aggregatedboids  aspect: base trace:100 fading: true;
 			species boids_goal aspect:sphere;		
 		}
-	}
+	} 
 }
 
 experiment SpaceTimeCube type: gui {

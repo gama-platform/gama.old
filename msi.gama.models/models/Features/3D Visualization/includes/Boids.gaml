@@ -1,4 +1,6 @@
+
 model boids 
+
 global torus: torus_environment{ 
 	int number_of_agents <- 10 min: 1 max: 1000000;
 	int number_of_obstacles <- 5 min: 0;
@@ -191,7 +193,8 @@ experiment Boids_gui type: gui {
 	parameter 'Direction of the wind' var: wind_vector ;  
 	
 	output {
-		display Sky {
+		display Sky
+		{
 			image 'background' file:'../images/sky.jpg';
 			species boids aspect: image;
 			species boids_goal;

@@ -194,6 +194,7 @@ public abstract class MinimalAgent implements IAgent {
 		if ( dead() ) { return; }
 		acquireLock();
 		try {
+//			GuiUtils.debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in MinimalAgent)");
 			dead = true;
 			final IPopulation p = getPopulation();
 			if ( p != null ) {
