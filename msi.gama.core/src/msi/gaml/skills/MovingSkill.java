@@ -21,6 +21,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
@@ -169,7 +170,7 @@ public class MovingSkill extends Skill {
 		return topo;
 	}
 
-	protected Object computeTopologyEdge(final IScope scope, final IAgent agent, IList<IShape> on) throws GamaRuntimeException {
+	protected Object computeTopologyEdge(final IScope scope, final IAgent agent, IList<IAgent> on) throws GamaRuntimeException {
 		Object onV = scope.getArg("on", IType.NONE);
 		if ( onV instanceof IShape && ((IShape) onV).isLine() ) { return onV; }
 		if (onV instanceof IList) {
@@ -343,12 +344,12 @@ public class MovingSkill extends Skill {
 			examples = { @example("do goto target: (one_of road).location speed: speed * 2 on: road_network;") }) )
 	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		final ILocation source = agent.getLocation().copy(scope);
+		ILocation source = agent.getLocation().copy(scope);
 		final double maxDist = computeDistance(scope, agent);
-		final IShape goal = computeTarget(scope, agent);
+		IShape goal = computeTarget(scope, agent);
 		final Boolean returnPath =
 			scope.hasArg("return_path") ? (Boolean) scope.getArg("return_path", IType.NONE) : false;
-		IList<IShape> on = GamaListFactory.create(Types.AGENT);
+		IList<IAgent> on = GamaListFactory.create(Types.AGENT);
 		final Object rt = computeTopologyEdge(scope, agent, on);
 		if (on.isEmpty()) on = null;
 		final IShape edge = rt instanceof IShape ? (IShape) rt : null;
@@ -363,6 +364,10 @@ public class MovingSkill extends Skill {
 				false); }
 			return null;
 		}
+		if (topo instanceof GridTopology) {
+			//source = ((GamaSpatialMatrix)topo.getPlaces()).getAgentAt(source).getLocation();
+			goal = ((GamaSpatialMatrix)topo.getPlaces()).getAgentAt(goal.getLocation()).getLocation();
+		}
 		if ( source.equals(goal) ) {
 			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST,
 				false); }
@@ -374,7 +379,7 @@ public class MovingSkill extends Skill {
 			recomputePath = true;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if ( path == null || path.getTopology(scope) != null && !path.getTopology(scope).equals(topo) ||
+		if ( path == null || (path.getTopology(scope) != null && !path.getTopology(scope).equals(topo)) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
 			if ( edge != null ) {
 				IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
@@ -382,7 +387,6 @@ public class MovingSkill extends Skill {
 				path = new GamaSpatialPath(source.getGeometry(), goal, edges, true);
 			} else {
 				if (topo instanceof GridTopology) {
-					java.lang.System.out.println("lalal");
 					path = ((GridTopology) topo).pathBetween(scope, source, goal,on);
 				} else 
 					path = topo.pathBetween(scope, source, goal);

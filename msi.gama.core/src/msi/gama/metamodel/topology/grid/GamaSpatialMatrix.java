@@ -672,88 +672,87 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source, final IShape target,
-		final ITopology topo, IList<IShape> on) throws GamaRuntimeException {
-		final GamaMap<IAgent, Integer> dists = GamaMapFactory.create(Types.AGENT, Types.INT);
+		final ITopology topo, IList<IAgent> on) throws GamaRuntimeException {
 		final int currentplace = getPlaceIndexAt(source.getLocation());
 		final int targetplace = getPlaceIndexAt(target.getLocation());
 		final IAgent startAg = matrix[currentplace].getAgent();
 		final IAgent endAg = matrix[targetplace].getAgent();
-
+		final IList<IAgent> nodes = GamaListFactory.create(Types.GEOMETRY);
+		final int[] dists = new int[this.getAgents().size()]; 
+		if (startAg == endAg) {
+			return PathFactory.newInstance(topo, nodes);
+		}
+		
+		for (IAgent ag: this.getAgents()) {
+			if (on != null)
+				dists[ag.getIndex()] = -2;
+			else 
+				dists[ag.getIndex()] = -1;
+		}
+		if (on != null) {
+			for (IAgent ag: on) {
+				dists[ag.getIndex()] = -1;
+			}
+		}
+		
 		int cpt = 0;
-		dists.put(startAg, cpt);
+		dists[startAg.getIndex()] = 0;
 		final int max = this.numCols * this.numRows;
-		Set<IAgent> neighb = getNeighs(scope, startAg, dists, on,new THashSet<IAgent>());
+		final Set<IAgent> agentsTmp = getNeighboursOf(scope, startAg.getLocation(), 1.0, null);
+		Set<IAgent> neighb  = new THashSet<IAgent>(); 
+		for (IAgent ag : agentsTmp ) {
+			if (dists[ag.getIndex()] == -1) neighb.add(ag);
+		}
 		while (true) {
 			cpt++;
-			final Set<IAgent> neighb2 = new THashSet<IAgent>();
-			for ( final IAgent ag : neighb ) {
-				dists.put(ag, cpt);
-				if ( ag == endAg ) {
-					final List<ILocation> pts = GamaListFactory.create(Types.POINT);
-					pts.add(ag.getLocation());
-					IAgent agDes = ag;
-					while (cpt > 0) {
-						cpt--;
-						agDes = getNeighDesc(scope, agDes, dists, cpt);
-						pts.add(agDes.getLocation());
+			final Set<IAgent> neighb2 = new THashSet<IAgent>(); 
+			for ( final IAgent cel : neighb ) {
+				if (dists[cel.getIndex()]  == -1) {
+					dists[cel.getIndex()] = cpt;
+					if (cel == endAg) {
+						nodes.add(cel) ;
+						IAgent cel2 = cel;
+						while ( cpt > 0 ) {
+							cpt-- ;
+							final List<IAgent> agsTmp = scope.getRandom().shuffle(new ArrayList(getNeighboursOf(scope, cel2.getLocation(), 1.0, null)));
+							double minDist = Double.MAX_VALUE;
+							IAgent ca = null;
+							for (IAgent ag : agsTmp) {
+								if (dists[ag.getIndex()] == cpt) {
+									double dist = ag.getLocation().euclidianDistanceTo(cel2.getLocation());
+									if (dist < minDist) {
+										ca = ag;
+										minDist = dist;
+									}
+								}
+							}
+							cel2 = ca;
+							nodes.add(cel2);
+						}
+						nodes.remove(startAg);
+						IList<IShape> nodesPt = GamaListFactory.create(Types.GEOMETRY);
+						for (IAgent nd : nodes) {
+							nodesPt.add(nd.getLocation());
+						}
+						Collections.reverse(nodesPt);
+						return PathFactory.newInstance(topo, nodesPt); 
 					}
-					final IList<IShape> nodes = GamaListFactory.create(Types.GEOMETRY);
-					for ( int i = pts.size() - 1; i >= 0; i-- ) {
-						nodes.add(pts.get(i));
+					final Set<IAgent> agentsTmp2 = getNeighboursOf(scope, cel.getLocation(), 1.0, null);
+					for (IAgent ag : agentsTmp2 ) {
+						if (dists[ag.getIndex()]  == -1) neighb2.add(ag);
 					}
-					// return new GamaPath(topo, nodes);
-					return PathFactory.newInstance(topo, nodes);
 				}
-				neighb2.addAll(getNeighs(scope, ag, dists, on,neighb));
 			}
-			neighb = new THashSet<IAgent>(neighb2);
-			if ( cpt > max ) { return null; }
-		}
-	}
-
-	/**
-	 * @throws GamaRuntimeException
-	 * Method used by square discretisation pathfinder to find the valid neighborhood of
-	 * a location
-	 *
-	 * @param i index of the x position of the current position
-	 * @param j index of the y position of the current position
-	 * @param matrix representing the background geometry
-	 * @return the "valid" neighborhood of the current position (Van Neuman)
-	 */
-	private Set<IAgent> getNeighs(final IScope scope, final IAgent agent, final Map dists, final IList<IShape> on,
-		final Set<IAgent> currentList) throws GamaRuntimeException {
-		final Set<IAgent> agents = getNeighboursOf(scope, agent.getLocation(), 1.0, null);
-		final Set<IAgent> neighs = new THashSet<IAgent>();
-		for ( IAgent ag : agents ) {
-			if ( !dists.containsKey(ag) && !currentList.contains(ag) && (on == null || on.contains(ag)) ) {
-				neighs.add(ag);
+			
+			neighb =  neighb2 ; 
+			if ( cpt > max ) {
+				return null ;
 			}
+	
 		}
-
-		return neighs;
 	}
 
-	/**
-	 * @throws GamaRuntimeException
-	 * Method used by square discretisation pathfinder to obtain the best path
-	 *
-	 * @param cpt current distance to the target (in number of cells)
-	 * @param i index of the x position of the current position
-	 * @param j index of the y position of the current position
-	 * @param matrix representing the background geometry
-	 * @return the next position of the shortest path
-	 * @return
-	 */
-	private IAgent getNeighDesc(final IScope scope, final IAgent agent, final GamaMap dists, final int cpt)
-		throws GamaRuntimeException {
-		final Set<IAgent> agents = getNeighboursOf(scope, agent.getLocation(), 1.0, null);
-		scope.getRandom().shuffle2(agents);
-		for ( final IAgent ag : agents ) {
-			if ( dists.containsKey(ag) && dists.get(ag).equals(cpt) ) { return ag; }
-		}
-		return null;
-	}
+
 
 	@Override
 	public final IAgent getAgentAt(final ILocation c) {
