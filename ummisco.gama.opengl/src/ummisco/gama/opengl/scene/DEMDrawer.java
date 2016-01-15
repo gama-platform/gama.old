@@ -1,31 +1,30 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'DEMDrawer.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
-import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.*;
-
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
+import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.utils.*;
 
 /**
- * 
+ *
  * The class DEMDrawer.
- * 
+ *
  * @author grignard
  * @since 15 mai 2013
- * 
+ *
  */
 public class DEMDrawer extends ObjectDrawer<DEMObject> {
 
@@ -90,39 +89,39 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 					if ( demObj.dem != null ) {
 						zValue = demObj.dem[(int) (j * envWidth + i)];
 					}
-					if(demObj.lineColor != null){
-						gl.glColor3d((float)demObj.lineColor.getRed()/255.0f,(float)demObj.lineColor.getGreen()/255.0f,(float)demObj.lineColor.getBlue()/255.0f);
-						gl.glBegin(GL2GL3.GL_LINE_STRIP);
+					if ( demObj.lineColor != null ) {
+						gl.glColor3d(demObj.lineColor.getRed() / 255.0f, demObj.lineColor.getGreen() / 255.0f,
+							demObj.lineColor.getBlue() / 255.0f);
+						gl.glBegin(GL.GL_LINE_STRIP);
 						gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
 						gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
 						gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
 						gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
 						gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
 						gl.glEnd();
-					}
-					else{
-					  if ( demObj.isGrayScaled ) {
-						gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
-						gl.glBegin(GL2GL3.GL_QUADS);
-						gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
-						gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
-						gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
-						gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
-						gl.glEnd();
+					} else {
+						if ( demObj.isGrayScaled ) {
+							gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
+							gl.glBegin(GL2ES3.GL_QUADS);
+							gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
+							gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
+							gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
+							gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
+							gl.glEnd();
 
-					  } else {
-						gl.glBegin(GL2GL3.GL_QUADS);
-						gl.glTexCoord2d(envWidthStep * i, envHeightStep * j);
-						gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
-						gl.glTexCoord2d(envWidthStep * (i + 1), envHeightStep * j);
-						gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
-						gl.glTexCoord2d(envWidthStep * (i + 1), envHeightStep * (j + 1));
-						gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
-						gl.glTexCoord2d(envWidthStep * i, envHeightStep * (j + 1));
-						gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
-						gl.glEnd();
-					  }
-					}	
+						} else {
+							gl.glBegin(GL2ES3.GL_QUADS);
+							gl.glTexCoord2d(envWidthStep * i, envHeightStep * j);
+							gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
+							gl.glTexCoord2d(envWidthStep * (i + 1), envHeightStep * j);
+							gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
+							gl.glTexCoord2d(envWidthStep * (i + 1), envHeightStep * (j + 1));
+							gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
+							gl.glTexCoord2d(envWidthStep * i, envHeightStep * (j + 1));
+							gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
+							gl.glEnd();
+						}
+					}
 				}
 			}
 		}
@@ -197,19 +196,19 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 						vertices[3].z = z3 * altFactor;
 						double[] normal = GLUtilNormal.CalculateNormal(vertices[2], vertices[1], vertices[0]);
 						gl.glNormal3dv(normal, 0);
-						//GLUtilNormal.HandleNormal(vertices, null, 0,-1, renderer);
+						// GLUtilNormal.HandleNormal(vertices, null, 0,-1, renderer);
 					}
-					if(demObj.lineColor != null){
-						gl.glColor3d((float)(demObj.lineColor.getRed())/255.0f,(float)(demObj.lineColor.getGreen())/255.0f,(float)(demObj.lineColor.getBlue())/255.0f);
-						gl.glBegin(GL2GL3.GL_LINE_STRIP);
+					if ( demObj.lineColor != null ) {
+						gl.glColor3d(demObj.lineColor.getRed() / 255.0f, demObj.lineColor.getGreen() / 255.0f,
+							demObj.lineColor.getBlue() / 255.0f);
+						gl.glBegin(GL.GL_LINE_STRIP);
 						gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, z1 * altFactor);
 						gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, z2 * altFactor);
 						gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, z4 * altFactor);
 						gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, z3 * altFactor);
 						gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, z1 * altFactor);
 						gl.glEnd();
-					}
-					else{
+					} else {
 						if ( demObj.isGrayScaled ) {
 							gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
 							gl.glBegin(GL.GL_TRIANGLE_STRIP);
@@ -218,7 +217,7 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 							gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, z4 * altFactor);
 							gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, z3 * altFactor);
 							gl.glEnd();
-	
+
 						} else {
 							gl.glBegin(GL.GL_TRIANGLE_STRIP);
 							gl.glTexCoord2d(envWidthStep * i, envHeightStep * j);
@@ -231,7 +230,7 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 							gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, z3 * altFactor);
 							gl.glEnd();
 						}
-					}			
+					}
 				}
 			}
 		}

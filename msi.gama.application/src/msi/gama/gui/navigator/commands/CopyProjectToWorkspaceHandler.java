@@ -20,7 +20,7 @@ public class CopyProjectToWorkspaceHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		try {
 			handlerService.executeCommand("org.eclipse.ui.edit.copy", null);
 			handlerService.executeCommand("org.eclipse.ui.edit.paste", null);

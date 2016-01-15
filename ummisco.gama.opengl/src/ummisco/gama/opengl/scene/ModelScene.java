@@ -1,41 +1,38 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ModelScene.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
-
-import msi.gama.common.interfaces.ILayer;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.GamaColor;
-import msi.gama.util.GamaPair;
-import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
-
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
+import msi.gama.common.interfaces.ILayer;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.*;
+import msi.gama.util.*;
+import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
 
 /**
- * 
+ *
  * The class ModelScene. A repository for all the objects that constitute the scene of a model : strings, images,
  * shapes...
  * 04/03/14: Now organized by layers to address the issue of z depth
- * 
+ *
  * @author drogoul
  * @since 3 mai 2013
- * 
+ *
  */
 public class ModelScene {
 
@@ -68,16 +65,16 @@ public class ModelScene {
 
 	/**
 	 * @param context
-	 *            Called every new iteration when updateDisplay() is called on the surface
+	 * Called every new iteration when updateDisplay() is called on the surface
 	 */
-	public void wipe(final GL gl, final int requestedTraceSize) {
+	public void wipe(final GL gl) {
 		// The display is cleared every iteration if not in a trace display mode or when reloading a simulation
-		int traceSize = Math.max(requestedTraceSize, 0);
+		// int traceSize = Math.max(requestedTraceSize, 0);
 
 		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
 			LayerObject obj = entry.getValue();
 			if ( obj != null && (!obj.isStatic() || obj.isInvalid()) ) {
-				obj.clear(gl, traceSize);
+				obj.clear(gl);
 			}
 		}
 		// Wipe the textures. However, might be necessary to know what to do for the trace...
@@ -142,19 +139,19 @@ public class ModelScene {
 		currentLayer.addImage(img, agent, location, dimensions, angle, isDynamic, name);
 	}
 
-	public void
-		addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition, final Envelope3D bounds) {
+	public void addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition,
+		final Envelope3D bounds) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( demTexture != null ) {
 			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
 		}
 		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds, 1,
-			null,null);
+			null, null);
 	}
 
-	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent,
-		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
-		final Envelope3D env, final double cellSize, final String name, final Color lineColor) {
+	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent, final boolean isTextured,
+		final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final Envelope3D env,
+		final double cellSize, final String name, final Color lineColor) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( demTexture != null ) {
 			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
@@ -164,9 +161,9 @@ public class ModelScene {
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
-		final Color border, final boolean isTextured, final java.util.List<BufferedImage> textures,
-		final Integer angle, final double height, final boolean roundCorner, final IShape.Type type,
-		final java.util.List<Double> ratio, final java.util.List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
+		final Color border, final boolean isTextured, final java.util.List<BufferedImage> textures, final Integer angle,
+		final double height, final boolean roundCorner, final IShape.Type type, final java.util.List<Double> ratio,
+		final java.util.List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( textures != null && !textures.isEmpty() ) {
 			for ( BufferedImage img : textures ) {
@@ -175,8 +172,8 @@ public class ModelScene {
 				}
 			}
 		}
-		currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textures, angle, height,
-			roundCorner, type, ratio, colors, rotate3D);
+		currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textures, angle, height, roundCorner,
+			type, ratio, colors, rotate3D);
 	}
 
 	public void dispose() {
@@ -209,8 +206,8 @@ public class ModelScene {
 		layers.put(name, null);
 	}
 
-	public void
-		beginDrawingLayer(final ILayer layer, final GamaPoint offset, final GamaPoint scale, final Double alpha) {
+	public void beginDrawingLayer(final ILayer layer, final GamaPoint offset, final GamaPoint scale,
+		final Double alpha) {
 		int id = layer.getOrder();
 		String key = layer.getName() + id;
 		currentLayer = layers.get(key);
@@ -230,7 +227,7 @@ public class ModelScene {
 	public ModelScene copyStatic() {
 		ModelScene newScene = new ModelScene(renderer, false);
 		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
-			if ( entry.getValue().isStatic() && !entry.getValue().isInvalid() ) {
+			if ( (entry.getValue().isStatic() || entry.getValue().hasTrace()) && !entry.getValue().isInvalid() ) {
 				newScene.layers.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -238,7 +235,7 @@ public class ModelScene {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void invalidateLayers() {
 		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
