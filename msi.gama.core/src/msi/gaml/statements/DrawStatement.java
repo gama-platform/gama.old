@@ -612,8 +612,24 @@ public class DrawStatement extends AbstractStatementSequence {
 			} else {
 				fSize = getSize(scope).getY();
 			}
-			return g.drawString(info, getColor(scope), getLocation(scope), fSize, fName, getRotation(scope), fBitmap);
+					
+			//added to fix issue #780
+			if(info.contains("\n")){
+				GamaPoint p = new GamaPoint(getLocation(scope));
+				double stringLenghtMax = 0;
+				for (String line : info.split("\n")){
+					g.drawString(line, getColor(scope), p, fSize, fName, getRotation(scope), fBitmap);
+					p.y= p.y + fSize;
+					if(line.length()>stringLenghtMax){
+						stringLenghtMax = line.length();
+					}
+				}
 
+				return new Rectangle2D.Double(getLocation(scope).getX(), getLocation(scope).getY(), stringLenghtMax,3);
+			}
+			else{
+				return g.drawString(info, getColor(scope), getLocation(scope), fSize, fName, getRotation(scope), fBitmap);
+			}
 		}
 	}
 
