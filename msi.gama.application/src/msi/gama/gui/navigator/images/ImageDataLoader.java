@@ -4,14 +4,12 @@
  */
 package msi.gama.gui.navigator.images;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.graphics.ImageData;
-import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
+import org.eclipse.swt.graphics.*;
 
 /**
  * Class ImageDataLoader.
@@ -83,7 +81,6 @@ public class ImageDataLoader {
 
 	private static ImageData readPGM(final InputStream filename) {
 		int[][] pixels;
-		BufferedImage img = null;
 		Scanner infile = null;
 		try {
 			infile = new Scanner(filename);
@@ -118,33 +115,31 @@ public class ImageDataLoader {
 			}
 		} catch (Exception e) {
 			System.out.println(e);
+			if ( infile != null ) {
+				infile.close();
+			}
 			return null;
 		} finally {
-			// if ( infile != null ) {
-			// infile.close();
-			// }
-		}
-		if ( pixels != null ) {
-			int g;
-			img = new BufferedImage(pixels[0].length, pixels.length, BufferedImage.TYPE_INT_ARGB);
-			// copy the pixels values
-			for ( int row = 0; row < pixels.length; ++row ) {
-				for ( int col = 0; col < pixels[row].length; ++col ) {
-					g = pixels[row][col];
-					img.setRGB(col, row, 255 << 24 | g << 16 | g << 8 | g);
-				}
+			if ( infile != null ) {
+				infile.close();
 			}
-
 		}
-		ImageData result = SWTUtils.convertAWTImageToSWT(img);
+		int g;
+		PaletteData palette = new PaletteData(16711680, 65280, 255);
+		ImageData data = new ImageData(pixels[0].length, pixels.length, 24, palette);
+		for ( int row = 0; row < pixels.length; ++row ) {
+			for ( int col = 0; col < pixels[row].length; ++col ) {
+				g = pixels[row][col];
+				data.setPixel(col, row, g << 16 | g << 8 | g);
+			}
+		}
+		ImageData result = data;
 		result.type = ImagePropertyPage.IMAGE_PGM;
-		infile.close();
 		return result;
 	}
 
 	private static ImageData readASC(final InputStream filename) {
 		int[][] pixels;
-		BufferedImage img = null;
 		Scanner infile = null;
 		try {
 			infile = new Scanner(filename);
@@ -211,21 +206,22 @@ public class ImageDataLoader {
 			}
 		} catch (Exception e) {
 			System.out.println(e);
+			if ( infile != null ) {
+				infile.close();
+			}
 			return null;
 		}
-		if ( pixels != null ) {
-			int g;
-			img = new BufferedImage(pixels[0].length, pixels.length, BufferedImage.TYPE_INT_ARGB);
-			// copy the pixels values
-			for ( int row = 0; row < pixels.length; ++row ) {
-				for ( int col = 0; col < pixels[row].length; ++col ) {
-					g = pixels[row][col];
-					img.setRGB(col, row, 255 << 24 | g << 16 | g << 8 | g);
-				}
+		int g;
+		PaletteData palette = new PaletteData(16711680, 65280, 255);
+		ImageData data = new ImageData(pixels[0].length, pixels.length, 24, palette);
+		for ( int row = 0; row < pixels.length; ++row ) {
+			for ( int col = 0; col < pixels[row].length; ++col ) {
+				g = pixels[row][col];
+				data.setPixel(col, row, g << 16 | g << 8 | g);
 			}
-
 		}
-		ImageData result = SWTUtils.convertAWTImageToSWT(img);
+
+		ImageData result = data;
 		result.type = ImagePropertyPage.IMAGE_ASC;
 		infile.close();
 		return result;
