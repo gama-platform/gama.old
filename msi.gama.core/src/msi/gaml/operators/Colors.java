@@ -12,16 +12,28 @@
 package msi.gaml.operators;
 
 import java.awt.Color;
+
+import org.geotools.brewer.color.BrewerPalette;
+import org.geotools.brewer.color.ColorBrewer;
+import org.geotools.brewer.color.PaletteType;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gaml.types.GamaColorType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 10 d�c. 2010
@@ -256,5 +268,62 @@ public class Colors {
 		GamaColor blend(final GamaColor color1, final GamaColor color2) {
 		return blend(color1, color2, 0.5);
 	}
+	
+	
+	@operator(value = "brewer_palette", category = { IOperatorCategory.COLOR })
+	@doc(value = "Build a palette of colors (i.e. list) of a given type (see website http://colorbrewer2.org/)",
+			examples = {
+				@example(value = "list<rgb> colors <- brewer_palette(\"6-class Blues\");",
+					equals = "a list of 6 blue colors",
+					isExecutable = false) }, see = { "brewer_color" })
+	public IList<GamaColor> brewerPaletteColors(final String type) {
+			IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
+			ColorBrewer brewer = ColorBrewer.instance();
+			if ( brewer.hasPalette(type) ) {
+				for ( Color col : brewer.getPalette(type).getColors()) {
+					colors.add(new GamaColor(col));
+				}
+			} else {
+				throw GamaRuntimeException.error(type + "does not exist", null);
+			}
+			return colors;
+		}
+
+
+
+
+
+	@action(name = "brewer_color",
+		args = {
+			@arg(name = "type", type = IType.STRING, doc = @doc("Palette Type (Sequential, Diverging, Qualitative)") ),
+			@arg(name = "class", type = IType.INT, optional = false, doc = @doc("Number of class") ),
+			@arg(name = "index", type = IType.INT, optional = false, doc = @doc("index") ) },
+		doc = @doc(examples = { @example("rgb myColor<-self.brewer_color(\"sequential\",nb_class,myClass);") }) )
+	@operator(value = "brewer_palette", category = { IOperatorCategory.COLOR })
+	@doc(value = "Build a palette of colors (i.e. list) of a given type (see website http://colorbrewer2.org/) with a given number of classes",
+			examples = {
+				@example(value = "list<rgb> colors <- brewer_palette(\"SEQUENTIAL\", 10);",
+					equals = "a list of 10 sequential colors",
+					isExecutable = false) }, see = { "brewer_color" })
+	public IList<GamaColor> brewerPaletteColors(final String type, final int nbClasses) {
+		IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
+		ColorBrewer brewer = ColorBrewer.instance();
+		if ( brewer.hasPalette(type) ) {
+			final PaletteType paletteType = new PaletteType(true, true, type);
+			BrewerPalette[] palettes = brewer.getPalettes(paletteType, nbClasses);
+			if (palettes == null || palettes.length == 0) {
+				throw GamaRuntimeException.error("no palette of type " + type +" usable for this number of classes", null);
+			} else {
+				for ( Color col : palettes[0].getColors()) {
+					colors.add(new GamaColor(col));
+				}
+			}
+			
+		} else {
+			throw GamaRuntimeException.error(type + "does not exist", null);
+		}
+		return colors;
+	}
+		
 
 }
