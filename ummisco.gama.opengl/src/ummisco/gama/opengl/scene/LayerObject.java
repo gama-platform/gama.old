@@ -70,7 +70,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		images.draw(gl, picking && isPickable());
 		gl.glDisable(GL.GL_TEXTURE_2D);
-
 		//
 		gl.glPopMatrix();
 		// Strings are treated apart for the moment, since they have a very special draw that already applies the scale
