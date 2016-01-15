@@ -213,7 +213,11 @@ public class Types {
 	}
 
 	public static Collection<TypeDescription> getBuiltInSpecies() {
-		Collection<TypeDescription> result = ModelDescription.ROOT.getTypesManager().getAllSpecies();
+		Collection<TypeDescription> result;
+		ModelDescription root = ModelDescription.ROOT;
+
+		TypesManager tm = root.getTypesManager();
+		result = tm.getAllSpecies();
 		return result;
 	}
 

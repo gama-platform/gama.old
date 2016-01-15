@@ -1,25 +1,25 @@
 /**
  * Created by drogoul, 8 avr. 2015
- * 
+ *
  */
 package ummisco.gama.opengl.scene;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.GL2;
+import ummisco.gama.opengl.JOGLRenderer;
 
 /**
  * Class SceneBuffer. Manages the interactions between the updating and the rendering tasks by keeping hold of three different scenes:
  * - A back scene, which is updated by the simulation
  * - A front scene, which is displayed by the renderer
  * - A static scene, which maintains the static layers shared by these two scenes
- * 
+ *
  * And making the appropriate swtiches between them when appropriate (beginning and end of udpate, mainly)
- * 
+ *
  * @author drogoul
  * @since 8 avr. 2015
- * 
+ *
  */
 public class SceneBuffer {
 
@@ -120,7 +120,7 @@ public class SceneBuffer {
 		ModelScene[] scenes = garbage.toArray(new ModelScene[0]);
 		garbage.clear();
 		for ( ModelScene scene : scenes ) {
-			scene.wipe(gl, 0);
+			scene.wipe(gl);
 			scene.dispose();
 		}
 	}

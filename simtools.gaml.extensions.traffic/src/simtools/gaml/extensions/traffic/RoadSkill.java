@@ -1,48 +1,39 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'RoadSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
 import java.util.List;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
-import com.vividsolutions.jts.geom.*;
 
-@vars({
-	@var(name = "agents_on",
-		type = IType.LIST,
-		of = IType.LIST,
-		doc = @doc("for each lane of the road, the list of agents for each segment")),
-	@var(name = "all_agents", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of agents on the road")),
-	@var(name = "source_node", type = IType.AGENT, doc = @doc("the source node of the road")),
-	@var(name = "target_node", type = IType.AGENT, doc = @doc("the target node of the road")),
-	@var(name = "lanes", type = IType.INT, doc = @doc("the number of lanes")),
+@vars({ @var(name = "agents_on",
+	type = IType.LIST,
+	of = IType.LIST,
+	doc = @doc("for each lane of the road, the list of agents for each segment") ),
+	@var(name = "all_agents", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of agents on the road") ),
+	@var(name = "source_node", type = IType.AGENT, doc = @doc("the source node of the road") ),
+	@var(name = "target_node", type = IType.AGENT, doc = @doc("the target node of the road") ),
+	@var(name = "lanes", type = IType.INT, doc = @doc("the number of lanes") ),
 	@var(name = "linked_road",
 		type = IType.AGENT,
-		doc = @doc("the linked road: the lanes of this linked road will be usable by drivers on the road")),
-	@var(name = "maxspeed", type = IType.FLOAT, doc = @doc("the maximal speed on the road")) })
+		doc = @doc("the linked road: the lanes of this linked road will be usable by drivers on the road") ),
+	@var(name = "maxspeed", type = IType.FLOAT, doc = @doc("the maximal speed on the road") ) })
 @skill(name = "skill_road")
 public class RoadSkill extends Skill {
 
@@ -128,11 +119,11 @@ public class RoadSkill extends Skill {
 				Integer segmentIndex = (Integer) driver.getAttribute(AdvancedDrivingSkill.SEGMENT_INDEX);
 				if ( agentOnLinkedRoad ) {
 					IAgent lr = getLinkedRoad(cr);
-					List agsLane = ((List) ((List) getAgentsOn(lr).get(pl)));
+					List agsLane = (List) getAgentsOn(lr).get(pl);
 					if ( segmentIndex == null ) {
 						segmentIndex = getSegmentIndex(lr, driver);
 					}
-					((List)agsLane.get(agsLane.size() - 1 - segmentIndex)).remove(driver);
+					((List) agsLane.get(agsLane.size() - 1 - segmentIndex)).remove(driver);
 					getAgents(cr).remove(driver);
 				} else {
 					if ( segmentIndex == null ) {
@@ -148,10 +139,10 @@ public class RoadSkill extends Skill {
 				int nbLanesLinked = (Integer) linkedRoad.getAttribute(LANES);
 				onLinkedRoad = true;
 				lane = nbLanesLinked - nbLanes - lane + 1;
-				
+
 				lane = Math.max(0, Math.min(lane, nbLanesLinked - 1));
 				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, true);
-				
+
 				List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
 				List ags = (List) agentsOn.get(lane);
 				((List) ags.get(ags.size() - 1)).add(driver);
@@ -164,11 +155,12 @@ public class RoadSkill extends Skill {
 				((List) ((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
 				getAgents(road).add(driver);
 			}
-			driver.setAttribute(AdvancedDrivingSkill.DISTANCE_TO_GOAL, driver.getLocation().euclidianDistanceTo(road.getPoints().get(indexSegment+1)));
+			driver.setAttribute(AdvancedDrivingSkill.DISTANCE_TO_GOAL,
+				driver.getLocation().euclidianDistanceTo(road.getPoints().get(indexSegment + 1)));
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_ROAD, road);
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_LANE, lane);
-			driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, onLinkedRoad ? road.getInnerGeometry()
-				.getNumPoints() - indexSegment - 2 : indexSegment);
+			driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX,
+				onLinkedRoad ? road.getInnerGeometry().getNumPoints() - indexSegment - 2 : indexSegment);
 
 		}
 	}
@@ -202,15 +194,17 @@ public class RoadSkill extends Skill {
 
 	@action(name = "register",
 		args = {
-			@arg(name = "agent", type = IType.AGENT, optional = false, doc = @doc("the agent to register on the road.")),
+			@arg(name = "agent",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc("the agent to register on the road.") ),
 			@arg(name = "lane",
 				type = IType.INT,
 				optional = false,
-				doc = @doc("the lane index on which to register; if lane index >= number of lanes, then register on the linked road")) },
+				doc = @doc("the lane index on which to register; if lane index >= number of lanes, then register on the linked road") ) },
 		doc = @doc(value = "register the agent on the road at the given lane",
-			examples = { @example("do register agent: the_driver lane: 0") }))
-	public
-		void primRegister(final IScope scope) throws GamaRuntimeException {
+			examples = { @example("do register agent: the_driver lane: 0") }) )
+	public void primRegister(final IScope scope) throws GamaRuntimeException {
 		IAgent road = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
 		final IAgent linkedRoad = getLinkedRoad(road);
@@ -226,11 +220,11 @@ public class RoadSkill extends Skill {
 				Integer segmentIndex = (Integer) driver.getAttribute(AdvancedDrivingSkill.SEGMENT_INDEX);
 				if ( agentOnLinkedRoad ) {
 					IAgent lr = getLinkedRoad(cr);
-					List agsLane = ((List) ((List) getAgentsOn(lr).get(pl)));
+					List agsLane = (List) getAgentsOn(lr).get(pl);
 					if ( segmentIndex == null ) {
 						segmentIndex = getSegmentIndex(lr, driver);
 					}
-					((List)agsLane.get(agsLane.size() - 1 - segmentIndex)).remove(driver);
+					((List) agsLane.get(agsLane.size() - 1 - segmentIndex)).remove(driver);
 					getAgents(cr).remove(driver);
 				} else {
 					if ( segmentIndex == null ) {
@@ -244,10 +238,10 @@ public class RoadSkill extends Skill {
 			if ( lane >= nbLanes && linkedRoad != null ) {
 				int nbLanesLinked = (Integer) linkedRoad.getAttribute(LANES);
 				lane = nbLanesLinked - nbLanes - lane + 1;
-				
+
 				lane = Math.max(0, Math.min(lane, nbLanesLinked - 1));
 				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, true);
-				
+
 				List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
 				List ags = (List) agentsOn.get(lane);
 				((List) ags.get(ags.size() - 1)).add(driver);
@@ -284,16 +278,14 @@ public class RoadSkill extends Skill {
 			// driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, 0);
 		}
 	}
-	
-	
-	
-	
 
-	@action(name = "unregister", args = { @arg(name = "agent",
-		type = IType.AGENT,
-		optional = false,
-		doc = @doc("the agent to unregister on the road.")) }, doc = @doc(value = "unregister the agent on the road",
-		examples = { @example("do unregister agent: the_driver") }))
+	@action(name = "unregister",
+		args = { @arg(name = "agent",
+			type = IType.AGENT,
+			optional = false,
+			doc = @doc("the agent to unregister on the road.") ) },
+		doc = @doc(value = "unregister the agent on the road",
+			examples = { @example("do unregister agent: the_driver") }) )
 	public void primUnregister(final IScope scope) throws GamaRuntimeException {
 		// final IAgent agent = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
@@ -306,11 +298,11 @@ public class RoadSkill extends Skill {
 			if ( cr != null && pl != null ) {
 				if ( agentOnLinkedRoad ) {
 					IAgent lr = getLinkedRoad(cr);
-					List agsLane = ((List) ((List) getAgentsOn(lr).get(pl)));
+					List agsLane = (List) getAgentsOn(lr).get(pl);
 					if ( segmentIndex == null ) {
 						segmentIndex = getSegmentIndex(lr, driver);
 					}
-					((List)agsLane.get(agsLane.size() - 1 - segmentIndex)).remove(driver);
+					((List) agsLane.get(agsLane.size() - 1 - segmentIndex)).remove(driver);
 					getAgents(cr).remove(driver);
 				} else {
 					if ( segmentIndex == null ) {

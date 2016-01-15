@@ -1,14 +1,6 @@
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.ArrayList;
-import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.GamaToolbarSimple;
-import msi.gama.lang.gaml.ui.XtextGui;
-import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.core.commands.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.*;
@@ -24,12 +16,20 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.GamaToolbarSimple;
+import msi.gama.lang.gaml.ui.XtextGui;
+import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.factories.DescriptionFactory;
 
 /**
  * This class implements the GAML editors' toolbar
- * 
+ *
  * @author Alexis Drogoul, dec 2014
- * 
+ *
  */
 // @SuppressWarnings("restriction")
 public class EditToolbar {
@@ -100,9 +100,8 @@ public class EditToolbar {
 	}
 
 	public void createToolbar(final Composite parentComposite) {
-		toolbar =
-			new GamaToolbarSimple(parentComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.FILL | SWT.BORDER)
-				./*
+		toolbar = new GamaToolbarSimple(parentComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.FILL | SWT.BORDER)
+			./*
 				 * color(
 				 * IGamaColors.WHITE.color()).
 				 */width(parentComposite);
@@ -180,11 +179,10 @@ public class EditToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try {
-					ICommandService service = (ICommandService) editor.getSite().getService(ICommandService.class);
+					ICommandService service = editor.getSite().getService(ICommandService.class);
 					Command c = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
 					if ( c.isEnabled() ) {
-						IHandlerService handlerService =
-							(IHandlerService) editor.getSite().getService(IHandlerService.class);
+						IHandlerService handlerService = editor.getSite().getService(IHandlerService.class);
 						handlerService.executeCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY, null);
 					}
 				} catch (Exception e1) {
@@ -198,11 +196,10 @@ public class EditToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try {
-					ICommandService service = (ICommandService) editor.getSite().getService(ICommandService.class);
+					ICommandService service = editor.getSite().getService(ICommandService.class);
 					Command c = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
 					if ( c.isEnabled() ) {
-						IHandlerService handlerService =
-							(IHandlerService) editor.getSite().getService(IHandlerService.class);
+						IHandlerService handlerService = editor.getSite().getService(IHandlerService.class);
 						handlerService.executeCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY, null);
 					}
 				} catch (Exception e1) {
@@ -212,7 +209,7 @@ public class EditToolbar {
 		});
 
 		// Attaching listeners to the global commands in order to enable/disable the toolbar items
-		ICommandService service = (ICommandService) editor.getSite().getService(ICommandService.class);
+		ICommandService service = editor.getSite().getService(ICommandService.class);
 		final Command nextCommand = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
 		nextEdit.setEnabled(nextCommand.isEnabled());
 		final ICommandListener nextListener = new ICommandListener() {

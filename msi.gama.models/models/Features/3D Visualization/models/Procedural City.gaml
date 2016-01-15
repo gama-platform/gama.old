@@ -12,9 +12,9 @@ global {
 	
 	geometry shape <- square(width_and_height_of_environment);
 		
-	file roof_texture <- file('images/building_texture/roof_top.png') ;		
-	list textures <- [file('images/building_texture/texture1.jpg'),file('images/building_texture/texture2.jpg'),file('images/building_texture/texture3.jpg'),file('images/building_texture/texture4.jpg'),file('images/building_texture/texture5.jpg'),
-	file('images/building_texture/texture6.jpg'),file('images/building_texture/texture7.jpg'),file('images/building_texture/texture8.jpg'),file('images/building_texture/texture9.jpg'),file('images/building_texture/texture10.jpg')];
+	file roof_texture <- file('../images/building_texture/roof_top.png') ;		
+	list textures <- [file('../images/building_texture/texture1.jpg'),file('../images/building_texture/texture2.jpg'),file('../images/building_texture/texture3.jpg'),file('../images/building_texture/texture4.jpg'),file('../images/building_texture/texture5.jpg'),
+	file('../images/building_texture/texture6.jpg'),file('../images/building_texture/texture7.jpg'),file('../images/building_texture/texture8.jpg'),file('../images/building_texture/texture9.jpg'),file('../images/building_texture/texture10.jpg')];
 
 	init { 
       create Building number:number_of_building{
