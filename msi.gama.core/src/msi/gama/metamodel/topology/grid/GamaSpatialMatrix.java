@@ -672,7 +672,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source, final IShape target,
-		final ITopology topo) throws GamaRuntimeException {
+		final ITopology topo, IList<IShape> on) throws GamaRuntimeException {
 		final GamaMap<IAgent, Integer> dists = GamaMapFactory.create(Types.AGENT, Types.INT);
 		final int currentplace = getPlaceIndexAt(source.getLocation());
 		final int targetplace = getPlaceIndexAt(target.getLocation());
@@ -682,7 +682,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		int cpt = 0;
 		dists.put(startAg, cpt);
 		final int max = this.numCols * this.numRows;
-		Set<IAgent> neighb = getNeighs(scope, startAg, dists, new THashSet<IAgent>());
+		Set<IAgent> neighb = getNeighs(scope, startAg, dists, on,new THashSet<IAgent>());
 		while (true) {
 			cpt++;
 			final Set<IAgent> neighb2 = new THashSet<IAgent>();
@@ -704,7 +704,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					// return new GamaPath(topo, nodes);
 					return PathFactory.newInstance(topo, nodes);
 				}
-				neighb2.addAll(getNeighs(scope, ag, dists, neighb));
+				neighb2.addAll(getNeighs(scope, ag, dists, on,neighb));
 			}
 			neighb = new THashSet<IAgent>(neighb2);
 			if ( cpt > max ) { return null; }
@@ -721,12 +721,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 * @param matrix representing the background geometry
 	 * @return the "valid" neighborhood of the current position (Van Neuman)
 	 */
-	private Set<IAgent> getNeighs(final IScope scope, final IAgent agent, final Map dists,
+	private Set<IAgent> getNeighs(final IScope scope, final IAgent agent, final Map dists, final IList<IShape> on,
 		final Set<IAgent> currentList) throws GamaRuntimeException {
 		final Set<IAgent> agents = getNeighboursOf(scope, agent.getLocation(), 1.0, null);
 		final Set<IAgent> neighs = new THashSet<IAgent>();
 		for ( IAgent ag : agents ) {
-			if ( !dists.containsKey(ag) && !currentList.contains(ag) ) {
+			if ( !dists.containsKey(ag) && !currentList.contains(ag) && (on == null || on.contains(ag)) ) {
 				neighs.add(ag);
 			}
 		}
