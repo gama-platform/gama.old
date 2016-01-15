@@ -1527,7 +1527,7 @@ public abstract class SwingControl extends Composite {
 
 	// ==================== Swing Popup Management ================================
 
-	private static final boolean HIDE_SWING_POPUPS_ON_SWT_SHELL_BOUNDS_CHANGE = Platform.isWin32(); // Win32: all JDKs
+	// private static final boolean HIDE_SWING_POPUPS_ON_SWT_SHELL_BOUNDS_CHANGE = Platform.isWin32(); // Win32: all JDKs
 
 	// Dismiss Swing popups when the main window is moved or resized. (It would be
 	// better to dismiss popups whenever the titlebar or trim is clicked, but
@@ -1536,28 +1536,28 @@ public abstract class SwingControl extends Composite {
 	// This is particularly important when the Swing popup overlaps an edge of the
 	// containing SWT shell. If (on win32) the shell is moved, the overlapping
 	// popup will not move which looks very strange.
-	private final ControlListener shellControlListener = new ControlListener() {
-
-		@Override
-		public void controlMoved(final ControlEvent e) {
-			scheduleHide();
-		}
-
-		@Override
-		public void controlResized(final ControlEvent e) {
-			scheduleHide();
-		}
-
-		private void scheduleHide() {
-			EventQueue.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					AwtEnvironment.getInstance(display).hidePopups();
-				}
-			});
-		}
-	};
+	// private final ControlListener shellControlListener = new ControlListener() {
+	//
+	// @Override
+	// public void controlMoved(final ControlEvent e) {
+	// scheduleHide();
+	// }
+	//
+	// @Override
+	// public void controlResized(final ControlEvent e) {
+	// scheduleHide();
+	// }
+	//
+	// private void scheduleHide() {
+	// EventQueue.invokeLater(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// AwtEnvironment.getInstance(display).hidePopups();
+	// }
+	// });
+	// }
+	// };
 
 	// ============================= SWT Popup Management =============================
 
