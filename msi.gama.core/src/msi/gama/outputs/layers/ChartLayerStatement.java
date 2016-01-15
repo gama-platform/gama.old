@@ -540,7 +540,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 			plot.setRenderer(i, (CategoryItemRenderer) e.getRenderer(), false);
 			final Color c = e.getColor();
-			plot.getRenderer(i).setSeriesPaint(0, c);
+			plot.getRenderer(i).setSeriesPaint(i, c);
 			// plot.setDataset(i, (DefaultCategoryDataset) dataset);
 			i++;
 			history.append(legend);
@@ -1273,8 +1273,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 							// GuiUtils.debug("ChartLayerStatement._step row " + ((DefaultCategoryDataset)
 							// dataset).getRowCount() +
 							// " col " + ((DefaultCategoryDataset) dataset).getColumnCount());
-							((DefaultCategoryDataset) dataset).setValue(n, Integer.valueOf(0), s/* , s */);
-							((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(0, datas.get(cpt).color);
+							((DefaultCategoryDataset) dataset).setValue(n, Integer.valueOf(cpt), s/* , s */);
+							((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(cpt, datas.get(cpt).color);
 							cpt++;
 							break;
 						}
