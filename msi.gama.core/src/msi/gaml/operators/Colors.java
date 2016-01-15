@@ -19,20 +19,17 @@ import org.geotools.brewer.color.PaletteType;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.GamaColorType;
-import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
@@ -293,12 +290,6 @@ public class Colors {
 
 
 
-	@action(name = "brewer_color",
-		args = {
-			@arg(name = "type", type = IType.STRING, doc = @doc("Palette Type (Sequential, Diverging, Qualitative)") ),
-			@arg(name = "class", type = IType.INT, optional = false, doc = @doc("Number of class") ),
-			@arg(name = "index", type = IType.INT, optional = false, doc = @doc("index") ) },
-		doc = @doc(examples = { @example("rgb myColor<-self.brewer_color(\"sequential\",nb_class,myClass);") }) )
 	@operator(value = "brewer_palette", category = { IOperatorCategory.COLOR })
 	@doc(value = "Build a palette of colors (i.e. list) of a given type (see website http://colorbrewer2.org/) with a given number of classes",
 			examples = {
