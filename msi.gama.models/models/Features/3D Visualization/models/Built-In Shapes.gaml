@@ -1,18 +1,23 @@
 /**
- *  primitive_shape
- *  Author: Arnaud Grignard
- *  Description: Display the basic 3D shape in an opengl display
- */
+* Name: Visualisation of the primitive shapes
+* Author: Arnaud Grignard
+* Description: Model presenting a 3D display with all the primitive shapes existing in GAMA in 2D and 3D, with or without textures. 
+* Tag: 3D Display, Shapes, Textures
+*/
 
 model shape   
 
 global {
 	
 	file gamaRaster <- file('../images/Gama.png');
+	
 	int size <- 10;
 	list<geometry> geometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size/2),triangle(size),hexagon(size),rgb_triangle(size)];
 	list<geometry> geometries3D <-[sphere(size/2),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size),rgb_cube(size)];
+    
+    //The textures can be applied on sphere, cylinder, quad and rectangle
     list<geometry> texturedGeometries <-[sphere(size/2),point([0,0]),point([0,0]),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),point([0,0]),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size)];
+    
     list<geometry> pie3Ds <-[spherical_pie(size/2,[0.1,0.1,0.1]),spherical_pie(size/2,[0.1,0.9],[°red,°green]),spherical_pie(size/2,[rnd(100),rnd(100),rnd(100),rnd(100),rnd(100),rnd(100)],[rnd_color(255),rnd_color(255),rnd_color(255),rnd_color(255),rnd_color(255),rnd_color(255)])];
    
 	
@@ -99,7 +104,6 @@ experiment Display  type: gui {
 
 	}
 }
-
 
 
 

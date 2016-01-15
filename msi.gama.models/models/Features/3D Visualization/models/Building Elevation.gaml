@@ -1,9 +1,22 @@
+/**
+* Name: 3D Display model and Height of Building using shapefiles
+* Author: 
+* Description: Model presenting a 3D display of people and buildings moving on a road network imported thanks to shapefiles. 
+*       Three experiments are proposed : one showing people represented by a yellow sphere moving from a living 3D building to a working 3D building and coming back
+* 	using a road network (road_traffic). The second experiment distinguish the species by using different layers for species (road_traffic_multi_layer). The last one increases
+* 	the Z location of the buildings and the people according to the time simulated (road_traffic_flying_off).
+* Tag: 3D Display, Shapefiles
+*/
 model tutorial_gis_city_traffic
 
 global {
+	//Load of the different shapefiles used by the model
 	file shape_file_buildings <- shape_file('../includes/building.shp', 0);
 	file shape_file_roads <- shape_file('../includes/road.shp', 0);
 	file shape_file_bounds <- shape_file('../includes/bounds.shp', 0);
+	
+	//Definition of the shape of the world as the bounds of the shapefiles to show everything contained
+	// by the area delimited by the bounds
 	geometry shape <- envelope(shape_file_bounds);
 	int nb_people <- 100;
 	int day_time update: cycle mod 144;
@@ -13,6 +26,8 @@ global {
 	int max_work_end <- 132;
 	float min_speed <- 50.0;
 	float max_speed <- 100.0;
+	
+	//Declaration of a graph that will represent our road network
 	graph the_graph;
 	init {
 		create building from: shape_file_buildings with: [type:: string(read('NATURE'))] {
@@ -140,9 +155,9 @@ experiment road_traffic_multi_layer type: gui {
 
 }
 
-experiment AnimatedView type: gui {
+experiment road_traffic_flying_off type: gui {
 	output {
-		display animatedView type: opengl ambient_light: 100 {
+		display flyingOffAgents type: opengl ambient_light: 100 {
 			species road aspect: base;
 			species building aspect: base position: { 0, 0, (time * 2)/1000 };
 			species people aspect: base position: { 0, 0, (time * 4)/1000 };

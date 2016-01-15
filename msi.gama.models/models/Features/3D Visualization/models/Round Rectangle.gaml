@@ -1,21 +1,27 @@
 /**
- *  round_rectangle
- *  Author: Arnaud Grignard
- *  Description: Display random rectangle with roundCorner
- */
+* Name: 3D Display model of Rounded Rectangle
+* Author: Arnaud Grignard
+* Description: Model presenting a 3D display of rounded rectangle
+* Tag: 3D Display, Shapes
+*/
 
-model primitive_shape   
+
+model rounded_rectangle   
 
 global {
+	//Parameter to define the number of agents to create
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 category: 'Initialization';
+	
+	//Parameter to define the dimensions of a square environment
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 100 category: 'Initialization';
 	
+	//Parameter to define the depth of a rounded rectangle
 	int elevation parameter: 'Elevation' min: 0 <- 0 ;
 	
 	rgb global_color;
 	int maxSize;
 	
-	file imageRaster <- file('images/Gama.png') ;
+	file imageRaster <- file('../images/Gama.png') ;
 	
 	list blueCombination <- [([0,113,188]),([68,199,244]),([157,220,249]),([212,239,252])];
 	list blueNeutral <- [([0,107,145]),([211,198,173]),([241,223,183])];
@@ -49,6 +55,7 @@ species mySquare{
 	}
 
 	aspect RoundCorner {
+		//the smooth facet allows to have a high fit (near 1.0)  or low fit (near 0.0)
 		draw rectangle(self.width, self.height) smooth 0.5 color: color border:color  depth:elevation; 
 	}
 }	

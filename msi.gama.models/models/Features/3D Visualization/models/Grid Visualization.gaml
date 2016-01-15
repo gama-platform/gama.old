@@ -1,14 +1,16 @@
+/**
+* Name: 3D Display model of differents shapes and a special Object
+* Author: Arnaud Grignard
+* Description: Model presenting a 3D display of different aspects of the same grid cells in the same experiment but different displays
+* Tag: 3D Display, Grid
+*/
+
 model GridVisualization
 
-/**
- *  GridVisualization
- *  Author: Arnaud Grignard
- *  Description: Initialize a grid with a random value between 0 and 255 and display using different aspects.
- */
 global {
 	//size of the grid
-	int width parameter: "width" min 1 <- 6 category: 'Initialization';
-	int height parameter: "height" min 1 <- 6 category: 'Initialization';
+	int width parameter: "width" min: 1 <- 6 category: 'Initialization';
+	int height parameter: "height" min: 1 <- 6 category: 'Initialization';
 	
 	//hue parameter for the hsb colors
 	float hue parameter: 'Hue (between 0.0 and 1.0)' min: 0.0 max: 1.0 <- 0.66;
