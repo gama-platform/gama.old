@@ -27,6 +27,7 @@ import msi.gaml.types.IType;
 @vars({
 	@var(name = IKeyword.COLOR,
 		type = IType.COLOR,
+		init = "#white",
 		doc = { @doc("Represents the color of the cell, used by default to represent the grid on displays") }),
 	// @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = @doc(deprecated =
 	// "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
