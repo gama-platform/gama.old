@@ -33,7 +33,9 @@ species agent_with_SIR_dynamic {
 		diff(R,t) = (alpha * I);
 	}
                 
-    reflex solving {solve SIR method: "rk4" step: h cycle_length: 1/h ;	    }    
+    reflex solving {
+    	solve SIR method: "rk4" step: h cycle_length: 1/h ;
+    }    
 }
 
 
