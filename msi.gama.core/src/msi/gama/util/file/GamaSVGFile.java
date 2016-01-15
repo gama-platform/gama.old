@@ -78,7 +78,8 @@ public class GamaSVGFile extends GamaGeometryFile {
 			}
 			setBuffer(GamaListFactory.createWithoutCasting(Types.GEOMETRY, gs));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw GamaRuntimeException.create(e, scope);
+			//e.printStackTrace();
 		}
 	}
 
