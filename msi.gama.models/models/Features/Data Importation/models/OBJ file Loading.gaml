@@ -1,8 +1,10 @@
 /**
- *  Complex Object Loading
- *  Author: Arnaud Grignard
- *  Description: Display complex object (svg,obj and 3ds)
- */
+* Name: OBJ File to Geometry
+* Author:  Arnaud Grignard
+* Description: Model which shows how to use a OBJ, SVG or 3DS File to create a geometry
+* Tag :  Import Files, 3D Display
+*/
+
 
 model complexobjectloading   
 
@@ -16,7 +18,8 @@ global {
 
 species ComplexObject{
 	aspect obj {
-		draw geometry (file("./includes/teapot.obj"))  at:{5.0,5.0,0} color:#blue;
+		//draw the geometry of the agent as the obj contained in the file
+		draw geometry (file("../includes/teapot.obj"))  at:{5.0,5.0,0} color:#blue;
 	}
 }	
 

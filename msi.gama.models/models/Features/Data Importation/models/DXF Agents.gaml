@@ -1,8 +1,9 @@
 /**
- *  DXFAgents
- *  Author: Patrick Taillandier
- *  Description: Show how to import a DXF file and to create agents from it
- */
+* Name: DXF to Agents Model
+* Author:  Patrick Taillandier
+* Description: Model which shows how to create agents by importing data of a DXF file
+* Tag :  Import Files
+*/
 
 model DXFAgents 
 

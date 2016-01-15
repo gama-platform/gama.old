@@ -1,13 +1,18 @@
 /**
- *  bubblesort3D
- *  Author: Arnaud Grignard
- */
+* Name: Creating color and sort cubes by color
+* Author:  Arnaud Grignard
+* Description: A model to show how to create color by using the rgb operator, the color depending on the position of cube in the xyz space.
+* 	The cubes are randomly mixed to finally be sorted according to the color of each vertix of the whole big cube, using the bubble sort 
+*        algorithm (https://en.wikipedia.org/wiki/Bubble_sort). 
+* Tag : Color, 3D Display
+*/
 
 model bubblesort3D
 
 
 global {
 
+//Number of cubes by faces of the whole big cube
 int nb_cells<-15;
 
 geometry shape <- cube(nb_cells) ;
@@ -16,21 +21,26 @@ geometry shape <- cube(nb_cells) ;
 bool change <- true;
 
 init {
-
-	loop i from:0 to:nb_cells{
-		loop j from:0 to: nb_cells{
-			loop k from:0 to:nb_cells{
+	//We create nb_cells^3 cubes and we define their color depending on their position in XYZ
+	loop i from:0 to:nb_cells-1{
+		loop j from:0 to: nb_cells-1{
+			loop k from:0 to:nb_cells-1{
 			  create cells{
 				location <-{i mod nb_cells,j mod nb_cells, k mod nb_cells};
+				
+				//The canal RGB limit color to 255 by canal
 				red <- float((i mod nb_cells)* int(255 / nb_cells));
 				green <- float((j mod nb_cells) * int(255 / nb_cells));
 				blue <- float((k mod nb_cells) * int(255 / nb_cells));
+				
+				//We create the color according to the value of the red, green and blue canals
 				color <- rgb(red,green,blue);
 			  }	
 			}	
 	    }
 	}
 	
+	//We mix all the cubes randomly by permuting two randomly chosen cubes
 	loop times: 10000 {
 			ask one_of(cells) {
 				cells one_cells <- one_of(cells);
@@ -46,6 +56,7 @@ init {
 
 }
 
+//Reflex to finish the execution of the model when nothing has changed during the cycle
 reflex end {
 	if (not change) {
 		do pause;	
@@ -62,11 +73,13 @@ species cells{
 	float green;
 	float blue;
 	list<cells> neigbhours update: cells at_distance (1.1);
+	
+	//Update of the neighbours cubes at each cycle of the simulation according to their location
 	cells upper_cell_y update: neigbhours first_with (shape.location.y > each.shape.location.y);
 	cells upper_cell_x update: neigbhours first_with (shape.location.x > each.shape.location.x);
 	cells upper_cell_z update: neigbhours first_with (shape.location.z > each.shape.location.z);
 	
-
+	//We permute the cube agent with its neighbour if its intensity is greater according to the canal related to its axis (z for canal blue, y for green and x for red)
 	reflex swap_z when: upper_cell_z != nil and blue < upper_cell_z.blue{ 
 		point tmp1Loc <-location;
 		location <- upper_cell_z.location;  

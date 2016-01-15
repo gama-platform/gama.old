@@ -1,8 +1,10 @@
 /**
- *  clustering
- *  Author: Patrick Taillandier
- *  Description: shows how to use clustering operators (hierarchical_clustering and clusters_kmeans)
- */
+* Name:  Clustering of agents by K Means and DBScan
+* Author:  Patrick Taillandier
+* Description: A model to show how to use clustering operators and two methods of clustering (K Means and DBScan) 
+*      with the goal of regrouping agents in clusters
+* Tag : Clustering
+*/
 
 model clustering
 

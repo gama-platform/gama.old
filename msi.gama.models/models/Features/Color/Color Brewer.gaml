@@ -1,8 +1,13 @@
+
 /**
- *  ColorBrewer 
- *  Author: Arnaud Grignard & Patrick Taillandier
- * Description: show how to use the color brewer: this feature allow to directly build Palettes of colors adapted to different needs
- */
+* Name: Color defined by choosing a Color Brewer
+* Author:  Arnaud Grignard & Patrick Taillandier
+* Description: A model to show how to use color brewer. In this model, two experiments are presents : one just to show the different colors present
+* 	in some selected brewer, and a second one to show in a grid the different colors of brewler having at least a minimal number of colors passed
+* 	in parameter.
+* Tag : Color
+*/
+
 
 model ColorBrewer
 
@@ -10,7 +15,7 @@ model ColorBrewer
 global {
 
 //number of colors
-int nb_classes<-10 min:5 max: 10;
+int nb_classes<-5 min:5 max: 10;
 
 int square_size <- 10;
 

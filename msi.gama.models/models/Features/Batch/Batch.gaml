@@ -1,8 +1,13 @@
 /**
- *  batch_example
- *  Author: Patrick Taillandier
- *  Description: shows how to use the batch mode. It is based on a simple SIR infection model (agents are infected other and cen be immune for a certain time)
- */
+* Name:  Model using Batch mode
+* Author:  Patrick Taillandier
+* Description: A model showing how to use batch experiments to find the best combination of parameters to minimize the numbers of infected people
+*      in a SIR infection model where agents infect others and become immune for a certain time. The batch mode uses three different methods : Exhaustive,
+*      GA and Tabu Search. The model proposes five experiments : one simple with a User Interface, one running 5 experiments and saving the data, and one
+*      for each strategy. 
+* Tag : Batch
+*/
+
 
 model batch_example
 
