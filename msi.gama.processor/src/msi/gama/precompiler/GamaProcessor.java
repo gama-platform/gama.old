@@ -121,7 +121,7 @@ public class GamaProcessor extends AbstractProcessor {
 					docProc.processDocXML(env, createWriter("docGAMA.xml"));
 					docProc.firstParsing = false;
 				} else {
-					processingEnv.getMessager().printMessage(Kind.NOTE, "Documentation file has already been produced");
+					// processingEnv.getMessager().printMessage(Kind.NOTE, "Documentation file has already been produced");
 				}
 			}
 
@@ -197,6 +197,11 @@ public class GamaProcessor extends AbstractProcessor {
 
 			vars vars = e.getAnnotation(vars.class);
 			for ( final var s : vars.value() ) {
+				doc[] docs = s.doc();
+				if ( docs.length == 0 ) {
+					processingEnv.getMessager().printMessage(Kind.WARNING,
+						"GAML: var '" + s.name() + "' is not documented", e);
+				}
 				StringBuilder sb = new StringBuilder();
 				int type = s.type();
 				int contentType = s.of();
@@ -306,6 +311,18 @@ public class GamaProcessor extends AbstractProcessor {
 	public void processFiles(final RoundEnvironment env) {
 		for ( Element e : env.getElementsAnnotatedWith(file.class) ) {
 			file f = e.getAnnotation(file.class);
+			doc[] docs = f.doc();
+			doc doc;
+			if ( docs.length == 0 ) {
+				doc = e.getAnnotation(doc.class);
+			} else {
+				doc = docs[0];
+			}
+			if ( doc == null ) {
+				processingEnv.getMessager().printMessage(Kind.WARNING,
+					"GAML: file declaration '" + f.name() + "' is not documented", e);
+			}
+
 			StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(FILE_PREFIX);
@@ -459,7 +476,7 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append('0').append(SEP).append(SEP).append(SEP);
 			} else {
 				sb.append(facets.value().length).append(SEP);
-				sb.append(facetsToString(facets)).append(SEP);
+				sb.append(facetsToString(facets, e)).append(SEP);
 				sb.append(facets.omissible()).append(SEP);
 			}
 			// names
@@ -468,6 +485,11 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 			sb.setLength(sb.length() - 1);
 			doc doc = e.getAnnotation(doc.class);
+
+			if ( doc == null ) {
+				processingEnv.getMessager().printMessage(Kind.WARNING,
+					"GAML: symbol '" + symbol.name()[0] + "' is not documented", e);
+			}
 			gp.put(sb.toString(), "" /* docToString(doc) */); /* doc */
 		}
 	}
@@ -513,10 +535,15 @@ public class GamaProcessor extends AbstractProcessor {
 		return sb.toString();
 	}
 
-	private String facetsToString(final facets facets) {
+	private String facetsToString(final facets facets, final Element e) {
 		StringBuilder sb = new StringBuilder();
 		if ( facets.value() != null ) {
 			for ( facet f : facets.value() ) {
+				doc[] docs = f.doc();
+				if ( docs.length == 0 ) {
+					processingEnv.getMessager().printMessage(Kind.WARNING,
+						"GAML: facet '" + f.name() + "' is not documented", e);
+				}
 				sb.append(facetToString(f)).append(SEP);
 			}
 			if ( facets.value().length > 0 ) {
@@ -622,6 +649,19 @@ public class GamaProcessor extends AbstractProcessor {
 			for ( String s : spec.skills() ) {
 				sb.append(SEP).append(s);
 			}
+
+			doc[] docs = spec.doc();
+			doc doc;
+			if ( docs.length == 0 ) {
+				doc = e.getAnnotation(doc.class);
+			} else {
+				doc = docs[0];
+			}
+			if ( doc == null ) {
+				processingEnv.getMessager().printMessage(Kind.WARNING,
+					"GAML: species '" + spec.name() + "' is not documented", e);
+			}
+
 			gp.put(sb.toString(), "" /* docToString(spec.doc()) */); /* doc */
 		}
 	}
@@ -662,7 +702,19 @@ public class GamaProcessor extends AbstractProcessor {
 			for ( String s : skill.attach_to() ) {
 				sb.append(SEP).append(s);
 			}
-			processingEnv.getMessager().printMessage(Kind.NOTE, "Skill processed: " + rawNameOf(e));
+			doc[] docs = skill.doc();
+			doc doc;
+			if ( docs.length == 0 ) {
+				doc = e.getAnnotation(doc.class);
+			} else {
+				doc = docs[0];
+			}
+			if ( doc == null ) {
+				processingEnv.getMessager().printMessage(Kind.WARNING,
+					"GAML: skill '" + skill.name() + "' is not documented", e);
+			}
+
+			// processingEnv.getMessager().printMessage(Kind.NOTE, "Skill processed: " + rawNameOf(e));
 			gp.put(sb.toString(), "" /* docToString(skill.doc()) */); /* doc */
 		}
 	}
@@ -702,6 +754,18 @@ public class GamaProcessor extends AbstractProcessor {
 			for ( TypeMirror tm : wraps ) {
 				sb.append(SEP).append(rawNameOf(tm, e));
 			}
+			doc[] docs = t.doc();
+			doc doc;
+			if ( docs.length == 0 ) {
+				doc = e.getAnnotation(doc.class);
+			} else {
+				doc = docs[0];
+			}
+			if ( doc == null ) {
+				processingEnv.getMessager().printMessage(Kind.WARNING,
+					"GAML: type '" + t.name() + "' is not documented", e);
+			}
+
 			gp.put(sb.toString(), ""/* docToString(t.doc()) */);
 		}
 	}
@@ -717,6 +781,12 @@ public class GamaProcessor extends AbstractProcessor {
 			ExecutableElement ex = (ExecutableElement) e;
 			operator op = ex.getAnnotation(operator.class);
 			doc documentation = ex.getAnnotation(doc.class);
+
+			if ( documentation == null ) {
+				processingEnv.getMessager().printMessage(Kind.WARNING,
+					"GAML: operator '" + op.value()[0] + "' is not documented", e);
+			}
+
 			boolean stat = ex.getModifiers().contains(Modifier.STATIC);
 			String declClass = rawNameOf(ex.getEnclosingElement());
 			List<? extends VariableElement> argParams = ex.getParameters();
@@ -740,10 +810,10 @@ public class GamaProcessor extends AbstractProcessor {
 					classes[begin + i] = args[i + shift];
 				}
 			} catch (Exception e1) {
-				processingEnv.getMessager().printMessage(Kind.ERROR,
-					"Error in processing operator " + declClass + " " + methodName + " " + Arrays.toString(args) +
-						"; number of Java parameters: " + n + "; number of Gaml parameters:" + actual_args_number +
-						"; begin: " + begin + "; shift: " + shift);
+				// processingEnv.getMessager().printMessage(Kind.ERROR,
+				// "Error in processing operator " + declClass + " " + methodName + " " + Arrays.toString(args) +
+				// "; number of Java parameters: " + n + "; number of Gaml parameters:" + actual_args_number +
+				// "; begin: " + begin + "; shift: " + shift);
 			}
 
 			String ret = rawNameOf(ex.getReturnType(), ex);
@@ -796,7 +866,7 @@ public class GamaProcessor extends AbstractProcessor {
 		for ( Element e : env.getElementsAnnotatedWith(action.class) ) {
 			action action = e.getAnnotation(action.class);
 			ExecutableElement ex = (ExecutableElement) e;
-			note("Action processed: " + ex.getSimpleName());
+			// note("Action processed: " + ex.getSimpleName());
 			StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(ACTION_PREFIX);
@@ -804,7 +874,7 @@ public class GamaProcessor extends AbstractProcessor {
 			sb.append(ex.getSimpleName()).append(SEP);
 			// declClass
 			sb.append(rawNameOf(ex.getEnclosingElement())).append(SEP);
-			note("On class: " + ex.getSimpleName());
+			// note("On class: " + ex.getSimpleName());
 			// retClass
 			TypeMirror tm = ex.getReturnType();
 			if ( tm.getKind().equals(TypeKind.VOID) ) {
@@ -839,6 +909,11 @@ public class GamaProcessor extends AbstractProcessor {
 					sb.append(arg.name()).append(SEP);
 					sb.append(arrayToString(arg.type())).append(SEP);
 					sb.append(arg.optional()).append(SEP);
+					doc[] docs = arg.doc();
+					if ( docs.length == 0 ) {
+						processingEnv.getMessager().printMessage(Kind.WARNING,
+							"GAML: argument '" + arg.name() + "' is not documented", e);
+					}
 					sb.append(docToString(arg.doc())).append(SEP);
 					strings.add(args[i].name());
 				}
@@ -854,21 +929,27 @@ public class GamaProcessor extends AbstractProcessor {
 					}
 				}
 			}
-			processingEnv.getMessager().printMessage(Kind.NOTE, "Adding action " + action.name() + ", implemented by " +
-				rawNameOf(ex.getEnclosingElement()) + " " + ex.getSimpleName());
+			// processingEnv.getMessager().printMessage(Kind.NOTE, "Adding action " + action.name() + ", implemented by " +
+			// rawNameOf(ex.getEnclosingElement()) + " " + ex.getSimpleName());
 			gp.put(sb.toString(), ""/* docToString(action.doc()) */); /* doc */
 		}
 	}
 
-	private void note(final String s) {
-		processingEnv.getMessager().printMessage(Kind.NOTE, s);
-	}
+	// private void note(final String s) {
+	// processingEnv.getMessager().printMessage(Kind.NOTE, s);
+	// }
 
 	public void processConstants(final RoundEnvironment env) {
 		for ( Element e : env.getElementsAnnotatedWith(constant.class) ) {
 			VariableElement ve = (VariableElement) e;
 			constant constant = ve.getAnnotation(constant.class);
 			doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
+
+			if ( documentation == null ) {
+				processingEnv.getMessager().printMessage(Kind.WARNING,
+					"GAML: constant '" + constant.value() + "' is not documented", e);
+			}
+
 			String ret = rawNameOf(ve.asType(), ve);
 			String constantName = constant.value();
 			Object valueConstant = ve.getConstantValue();
@@ -908,7 +989,7 @@ public class GamaProcessor extends AbstractProcessor {
 			// class
 			sb.append(rawNameOf(e));
 
-			processingEnv.getMessager().printMessage(Kind.NOTE, "Populations Linker processed: " + rawNameOf(e));
+			// processingEnv.getMessager().printMessage(Kind.NOTE, "Populations Linker processed: " + rawNameOf(e));
 			gp.put(sb.toString(), docToString(pLinker.doc())); /* doc */
 		}
 	}
