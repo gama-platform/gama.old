@@ -13,9 +13,7 @@ package msi.gaml.operators;
 
 import java.awt.Color;
 
-import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
-import org.geotools.brewer.color.PaletteType;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
@@ -30,6 +28,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.GamaColorType;
+import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
@@ -267,21 +266,21 @@ public class Colors {
 	}
 	
 	
-	@operator(value = "brewer_palette", category = { IOperatorCategory.COLOR })
-	@doc(value = "Build a palette of colors (i.e. list) of a given type (see website http://colorbrewer2.org/)",
+	@operator(value = "brewer_colors", category = { IOperatorCategory.COLOR })
+	@doc(value = "Build a list of colors of a given type (see website http://colorbrewer2.org/)",
 			examples = {
-				@example(value = "list<rgb> colors <- brewer_palette(\"6-class Blues\");",
+				@example(value = "list<rgb> colors <- brewer_colors(\"OrRd\");",
 					equals = "a list of 6 blue colors",
-					isExecutable = false) }, see = { "brewer_color" })
-	public IList<GamaColor> brewerPaletteColors(final String type) {
+					isExecutable = false) }, see = { "brewer_palettes" })
+	public static IList<GamaColor> brewerPaletteColors(final String type) {
 			IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
 			ColorBrewer brewer = ColorBrewer.instance();
 			if ( brewer.hasPalette(type) ) {
 				for ( Color col : brewer.getPalette(type).getColors()) {
-					colors.add(new GamaColor(col));
+					if (col != null) colors.add(new GamaColor(col));
 				}
 			} else {
-				throw GamaRuntimeException.error(type + "does not exist", null);
+				throw GamaRuntimeException.error(type + " does not exist", null);
 			}
 			return colors;
 		}
@@ -290,31 +289,62 @@ public class Colors {
 
 
 
-	@operator(value = "brewer_palette", category = { IOperatorCategory.COLOR })
-	@doc(value = "Build a palette of colors (i.e. list) of a given type (see website http://colorbrewer2.org/) with a given number of classes",
+	@operator(value = "brewer_colors", 
+			content_type = IType.COLOR,category = { IOperatorCategory.COLOR })
+	@doc(value = "Build a list of colors of a given type (see website http://colorbrewer2.org/) with a given number of classes",
 			examples = {
-				@example(value = "list<rgb> colors <- brewer_palette(\"SEQUENTIAL\", 10);",
+				@example(value = "list<rgb> colors <- brewer_colors(\"Pastel1\", 10);",
 					equals = "a list of 10 sequential colors",
-					isExecutable = false) }, see = { "brewer_color" })
-	public IList<GamaColor> brewerPaletteColors(final String type, final int nbClasses) {
-		IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
-		ColorBrewer brewer = ColorBrewer.instance();
-		if ( brewer.hasPalette(type) ) {
-			final PaletteType paletteType = new PaletteType(true, true, type);
-			BrewerPalette[] palettes = brewer.getPalettes(paletteType, nbClasses);
-			if (palettes == null || palettes.length == 0) {
-				throw GamaRuntimeException.error("no palette of type " + type +" usable for this number of classes", null);
-			} else {
-				for ( Color col : palettes[0].getColors()) {
-					colors.add(new GamaColor(col));
-				}
-			}
-			
-		} else {
-			throw GamaRuntimeException.error(type + "does not exist", null);
+					isExecutable = false) }, see = { "brewer_palettes" })
+	public static IList<GamaColor> brewerPaletteColors(final String type, final int nbClasses) {
+		IList<GamaColor> cols = brewerPaletteColors(type);
+		if (cols.size() < nbClasses) {
+			throw GamaRuntimeException.error(type + " has less than " + nbClasses + " colors", null);
 		}
-		return colors;
+		else {
+			while (cols.size() > nbClasses) {
+				cols.remove(cols.size() - 1);
+			}
+			return cols;
+		}
 	}
 		
+	
+	@operator(value = "brewer_palettes", 
+			content_type = IType.COLOR,category = { IOperatorCategory.COLOR })
+	@doc(value = "returns the list a palette with a given min number of classes and max number of classes)",
+			examples = {
+				@example(value = "list<rgb> colors <- brewer_palettes(5,10);",
+					equals = "a list of palettes that are composed of a min of 5 colors and a max of 10 colors",
+					isExecutable = false) }, see = { "brewer_colors" })
+	public static IList<String> brewerPaletteNames(final int min, final int max) {
+			IList<String> palettes = GamaListFactory.create(Types.STRING);
+			ColorBrewer brewer = ColorBrewer.instance();
+			for (String name : brewer.getPaletteNames()) {
+				java.lang.System.out.println(name);
+			}
+			for (String name : brewer.getPaletteNames(min, max)) {
+				palettes.add(name);
+			}
+			return palettes;
+		}
+
+
+
+	@operator(value = "brewer_palettes", 
+			content_type = IType.STRING,category = { IOperatorCategory.COLOR })
+	@doc(value = "returns the list a palette with a given min number of classes and max number of classes)",
+			examples = {
+				@example(value = "list<rgb> colors <- brewer_palettes(5,10);",
+					equals = "a list of palettes that are composed of a min of 5 colors and a max of 10 colors",
+					isExecutable = false) }, see = { "brewer_colors" })
+	public static IList<String> brewerPaletteNames(final int min) {
+			IList<String> palettes = GamaListFactory.create(Types.STRING);
+			ColorBrewer brewer = ColorBrewer.instance();
+			for (String name : brewer.getPaletteNames(min, brewer.getPaletteNames().length)) {
+				palettes.add(name);
+			}
+			return palettes;
+		}
 
 }
