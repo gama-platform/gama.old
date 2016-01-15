@@ -72,7 +72,7 @@ public class LayeredDisplayData {
 	private boolean isOutputtingIn3D = false;
 	private boolean isTesselating = false;
 	private boolean isTriangulating = false;
-	private int traceSize = 0;
+	// private int traceSize = 0;
 	private boolean isZFighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
 	private boolean isDrawingNormals = GamaPreferences.CORE_DRAW_NORM.getValue();
 	public boolean isComputingNormals = true;
@@ -173,16 +173,16 @@ public class LayeredDisplayData {
 	/**
 	 * @return the traceDisplay
 	 */
-	public int getTraceDisplay() {
-		return traceSize;
-	}
+	// public int getTraceDisplay() {
+	// return traceSize;
+	// }
 
 	/**
 	 * @param traceDisplay the traceDisplay to set
 	 */
-	public void setTraceDisplay(final int traceDisplay) {
-		this.traceSize = traceDisplay;
-	}
+	// public void setTraceDisplay(final int traceDisplay) {
+	// this.traceSize = traceDisplay;
+	// }
 
 	/**
 	 * @return the z_fighting

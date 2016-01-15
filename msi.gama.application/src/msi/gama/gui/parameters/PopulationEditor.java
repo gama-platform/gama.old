@@ -1,26 +1,26 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'PopulationEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
 import java.util.Collection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.util.IContainer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
 
 public class PopulationEditor extends AbstractEditor<IContainer> {
 
@@ -57,9 +57,8 @@ public class PopulationEditor extends AbstractEditor<IContainer> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		String s =
-			currentValue instanceof IPopulation ? ((IPopulation) currentValue).getName()
-				: currentValue instanceof IContainer ? currentValue.serialize(true) : "nil";
+		String s = currentValue instanceof IPopulation ? ((IPopulation) currentValue).getName()
+			: currentValue == null ? "nil" : currentValue.serialize(true);
 		populationDisplayer.setText(s);
 		populationDisplayer.setToolTipText(s);
 		internalModification = false;

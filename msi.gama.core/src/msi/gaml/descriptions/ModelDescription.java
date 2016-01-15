@@ -32,7 +32,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	// TODO Move elsewhere
 	public static final String MODEL_SUFFIX = "_model";
-	public static ModelDescription ROOT;
+	public static volatile ModelDescription ROOT;
 	private final Map<String, ExperimentDescription> experiments = new TOrderedHashMap();
 	private final Map<String, ExperimentDescription> titledExperiments = new TOrderedHashMap();
 	private IDescription output;

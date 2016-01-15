@@ -73,7 +73,8 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.TRACE,
 		type = { IType.BOOL, IType.INT },
 		optional = true,
-		doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. This facet can also be applied to individual layers") ),
+		doc = @doc(deprecated = "The value of the trace must instead be defined in each layer's definition now.",
+			value = "Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. This facet can also be applied to individual layers") ),
 	@facet(name = IKeyword.SCALE,
 		type = { IType.BOOL, IType.FLOAT },
 		optional = true,
@@ -198,30 +199,43 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			Boolean isOpenGLWanted =
 				type == null ? isOpenGLDefault : type.getExpression().literalValue().equals(LayeredDisplayData.OPENGL);
 
-			if ( !isOpenGLWanted ) { return; }
+			if ( isOpenGLWanted ) {
 
-			// Do we display a grid ?
+				// Do we display a grid ?
 
-			Boolean gridDisplayed = false;
-			for ( IDescription desc : d.getChildren() ) {
-				if ( desc.getKeyword().equals(GRID_POPULATION) ) {
-					gridDisplayed = true;
-					break;
+				Boolean gridDisplayed = false;
+				for ( IDescription desc : d.getChildren() ) {
+					if ( desc.getKeyword().equals(GRID_POPULATION) ) {
+						gridDisplayed = true;
+						break;
+					}
+				}
+				if ( gridDisplayed ) {
+					IExpressionDescription zfight = d.getFacets().get(ZFIGHTING);
+					Boolean zFightDefault = GamaPreferences.CORE_Z_FIGHTING.getValue();
+					Boolean zFightWanted =
+						zfight == null ? zFightDefault : zfight.getExpression().literalValue().equals(IKeyword.TRUE);
+					if ( zFightWanted ) {
+						String prefs = zFightDefault ? "(enabled by default in the Preferences)" : "";
+						d.info(
+							"z_fighting " + prefs +
+								" improves the rendering, but disables the selection of a single cell in a grid layer",
+							IGamlIssue.GENERAL, zfight == null ? null : zfight.getTarget(), IKeyword.AUTOSAVE);
+					}
 				}
 			}
-			if ( !gridDisplayed ) { return; }
-			IExpressionDescription zfight = d.getFacets().get(ZFIGHTING);
-			Boolean zFightDefault = GamaPreferences.CORE_Z_FIGHTING.getValue();
-			Boolean zFightWanted =
-				zfight == null ? zFightDefault : zfight.getExpression().literalValue().equals(IKeyword.TRUE);
-			if ( zFightWanted ) {
-				String prefs = zFightDefault ? "(enabled by default in the Preferences)" : "";
-				d.info(
-					"z_fighting " + prefs +
-						" improves the rendering, but disables the selection of a single cell in a grid layer",
-					IGamlIssue.GENERAL, zfight == null ? null : zfight.getTarget(), IKeyword.AUTOSAVE);
+
+			// AD: addressing the deprecation of the "trace:" facet
+			IExpressionDescription trace = d.getFacets().get(TRACE);
+			if ( d != null ) {
+				for ( IDescription layer : d.getChildren() ) {
+					if ( !layer.getFacets().containsKey(TRACE) ) {
+						layer.getFacets().put(TRACE, trace);
+					}
+				}
 			}
 		}
+
 	}
 
 	private List<AbstractLayerStatement> layers;
@@ -304,7 +318,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			this.data.setShowfps(Cast.asBool(getScope(), fps.value(getScope())));
 		}
 
-		computeTrace(getScope());
+		// computeTrace(getScope());
 
 		final IExpression denv = getFacet(IKeyword.DRAWENV);
 		if ( denv != null ) {
@@ -484,7 +498,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				this.data.setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 			}
 		}
-		computeTrace(getScope());
+		// computeTrace(getScope());
 
 		if ( overlayInfo != null ) {
 			getScope().step(overlayInfo);
@@ -498,18 +512,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	}
 
-	private void computeTrace(final IScope scope) {
-		final IExpression agg = getFacet(IKeyword.TRACE);
-		if ( agg != null ) {
-			int limit = 0;
-			if ( agg.getType().id() == IType.BOOL && Cast.asBool(scope, agg.value(scope)) ) {
-				limit = Integer.MAX_VALUE;
-			} else {
-				limit = Cast.asInt(scope, agg.value(scope));
-			}
-			this.data.setTraceDisplay(limit);
-		}
-	}
+	// private void computeTrace(final IScope scope) {
+	// final IExpression agg = getFacet(IKeyword.TRACE);
+	// if ( agg != null ) {
+	// int limit = 0;
+	// if ( agg.getType().id() == IType.BOOL && Cast.asBool(scope, agg.value(scope)) ) {
+	// limit = Integer.MAX_VALUE;
+	// } else {
+	// limit = Cast.asInt(scope, agg.value(scope));
+	// }
+	// this.data.setTraceDisplay(limit);
+	// }
+	// }
 
 	public boolean shouldDisplayScale() {
 		return data.isDisplayScale();

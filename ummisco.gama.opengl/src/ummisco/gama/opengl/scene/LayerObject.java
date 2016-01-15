@@ -1,36 +1,33 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'LayerObject.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
-
+import com.jogamp.opengl.*;
+import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.util.GamaColor;
-import msi.gama.util.GamaPair;
+import msi.gama.util.*;
 import ummisco.gama.opengl.JOGLRenderer;
-
-import com.jogamp.opengl.*;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Class LayerObject.
- * 
+ *
  * @author drogoul
  * @since 3 mars 2014
- * 
+ *
  */
 public class LayerObject implements Iterable<GeometryObject> {
 
@@ -39,10 +36,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 	Double alpha = 1d;
 	final ILayer layer;
 	volatile boolean isInvalid;
-	// final Integer id;
-	// int trace = 0;
-	// boolean fading = false;
-	// boolean isPickable = true;
 
 	protected final ISceneObjects<GeometryObject> geometries;
 	protected final ISceneObjects<ImageObject> images;
@@ -77,7 +70,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		images.draw(gl, picking && isPickable());
 		gl.glDisable(GL.GL_TEXTURE_2D);
-
 		//
 		gl.glPopMatrix();
 		// Strings are treated apart for the moment, since they have a very special draw that already applies the scale
@@ -119,8 +111,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public void addString(final String string, final GamaPoint location, final Integer size,
 		final Double sizeInModelUnits, final Color color, final String font, final Integer style, final Double angle,
 		final Boolean bitmap) {
-		strings.add(new StringObject(string, font, style, offset, scale, color, angle, location, sizeInModelUnits,
-			size, alpha, bitmap));
+		strings.add(new StringObject(string, font, style, offset, scale, color, angle, location, sizeInModelUnits, size,
+			alpha, bitmap));
 	}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,
@@ -141,17 +133,15 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
 		final Color border, final boolean isTextured, final List<BufferedImage> textures, final Integer angle,
 		final double height, final boolean roundCorner, final IShape.Type type, final List<Double> ratio,
-		final List<GamaColor> colors, final GamaPair<Double,GamaPoint> rotate3D) {
+		final List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
 		final GeometryObject curJTSGeometry;
 		if ( type == IShape.Type.PIESPHERE || type == IShape.Type.PIESPHEREWITHDYNAMICALCOLOR ||
 			type == IShape.Type.PACMAN || type == IShape.Type.ANTISLICE || type == IShape.Type.SLICE ) {
-			curJTSGeometry =
-				new Pie3DObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border, isTextured,
-					textures, angle == null ? 0 : angle, height, roundCorner, type, ratio, colors);
+			curJTSGeometry = new Pie3DObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border,
+				isTextured, textures, angle == null ? 0 : angle, height, roundCorner, type, ratio, colors);
 		} else {
-			curJTSGeometry =
-				new GeometryObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border, isTextured,
-					textures, angle == null ? 0 : angle, height, roundCorner, type, rotate3D);
+			curJTSGeometry = new GeometryObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border,
+				isTextured, textures, angle == null ? 0 : angle, height, roundCorner, type, rotate3D);
 		}
 		geometries.add(curJTSGeometry);
 	}
@@ -172,14 +162,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 		return fading == null ? false : fading;
 	}
 
-	public void clear(final GL gl, final int requestedDisplayTraceSize) {
+	public void clear(final GL gl) {
 		int trace = getTrace();
-		int traceSize = trace == 0 ? requestedDisplayTraceSize : trace;
+		// int traceSize = trace == 0 ? requestedDisplayTraceSize : trace;
 		boolean fading = getFading();
-		geometries.clear(gl, traceSize, fading);
-		images.clear(gl, traceSize, fading);
-		dems.clear(gl, traceSize, fading);
-		strings.clear(gl, traceSize, fading);
+		geometries.clear(gl, trace, fading);
+		images.clear(gl, trace, fading);
+		dems.clear(gl, trace, fading);
+		strings.clear(gl, trace, fading);
 	}
 
 	/**
@@ -199,8 +189,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void invalidate() {
-
 		isInvalid = true;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean hasTrace() {
+		return getTrace() > 0;
 	}
 
 }
