@@ -48,6 +48,12 @@ public interface IToolbarDecoratedView {
 
 		public void setColor(int index, GamaUIColor c);
 	}
+	
+	public static interface CSVExportable extends IToolbarDecoratedView {
+
+		public void saveAsCSV();
+		
+	}
 
 	public static interface Zoomable extends IToolbarDecoratedView {
 

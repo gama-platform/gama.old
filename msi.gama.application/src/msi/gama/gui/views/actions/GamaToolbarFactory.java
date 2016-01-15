@@ -208,6 +208,11 @@ public class GamaToolbarFactory {
 			BackgroundChooser b = new BackgroundChooser((Colorizable) view);
 			b.install(tb);
 		}
+		if ( view instanceof IToolbarDecoratedView.CSVExportable ) {
+			CSVExportationController csv = new CSVExportationController((IToolbarDecoratedView.CSVExportable) view);
+			csv.install(tb);
+		}
+		
 		view.createToolItems(tb);
 		tb.refresh(true);
 	}

@@ -49,6 +49,7 @@ public interface IGamaIcons {
 	public static final GamaIcon DISPLAY_TOOLBAR_SYNC = GamaIcons.create("display.sync2");
 	public static final GamaIcon DISPLAY_TOOLBAR_SNAPSHOT = GamaIcons.create("display.snapshot2");
 	public static final GamaIcon DISPLAY_TOOLBAR_ZOOMIN = GamaIcons.create("display.zoomin2");
+	public static final GamaIcon DISPLAY_TOOLBAR_CSVEXPORT = GamaIcons.create("menu.saveas2");
 	public static final GamaIcon DISPLAY_TOOLBAR_ZOOMOUT = GamaIcons.create("display.zoomout2");
 	public static final GamaIcon DISPLAY_TOOLBAR_ZOOMFIT = GamaIcons.create("display.zoomfit2");
 	public static final GamaIcon DISPLAY_TOOLBAR_AGENTS = GamaIcons.create("display.agents2");

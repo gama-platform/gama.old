@@ -1,5 +1,9 @@
 package msi.gama.gui.viewers.gis;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -18,12 +22,16 @@ import org.geotools.styling.Style;
 import org.geotools.swt.SwtMapPane;
 import org.geotools.swt.event.MapMouseEvent;
 import org.geotools.swt.tool.CursorTool;
+import org.opengis.feature.simple.SimpleFeature;
 import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.util.IList;
+import msi.gaml.operators.Strings;
 
-public abstract class GISFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable{
+public abstract class GISFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.CSVExportable{
 
 	public class DragTool extends CursorTool {
 
@@ -83,6 +91,7 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 	boolean noCRS = false;
 	Style style;
 	Layer layer;
+	String pathStr;
 
 	
 	@Override
@@ -181,4 +190,50 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 	@Override
 	public void setToogle(final Action toggle) {}
+	
+	
+	public void saveAsCSV(List<String> attributes, IList<IShape> geoms) {
+		String path = "";
+		String[] decomp = pathStr.split("\\."); 
+		for (int i = 0; i < (decomp.length - 1); i++) {
+			path += decomp[i] + ".";
+		}
+		path += "csv";
+		File fcsv = new File(path);
+		FileWriter fw;
+		try {
+			fw = new FileWriter(fcsv, false);
+			fw.write("id");
+			for (String att : attributes) {
+				fw.write(";" + att);
+			}
+			fw.write(Strings.LN);
+			if (geoms != null) {
+				int cpt = 0;
+				for ( IShape obj : geoms) {
+					fw.write(cpt + "");
+					cpt ++;
+					for ( String v : attributes) {
+						String val = obj.hasAttribute(v) ? obj.getAttribute(v).toString().replace(';', ',') : "-";
+						fw.write(";" + val);
+					}
+					fw.write(Strings.LN);
+				}
+			} else  {
+				for ( Object obj : layer.getFeatureSource().getFeatures().toArray()) {
+					SimpleFeature feature = (SimpleFeature) obj;
+					fw.write(feature.getID());
+					for ( String v : attributes) {
+						fw.write(";" + feature.getAttribute(v).toString().replace(';', ','));
+					}
+					fw.write(Strings.LN);
+				}
+			}
+			
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

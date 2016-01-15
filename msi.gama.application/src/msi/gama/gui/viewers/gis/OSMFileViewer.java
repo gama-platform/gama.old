@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.IPath;
@@ -49,7 +50,8 @@ import msi.gama.util.file.GamaOsmFile;
 public class OSMFileViewer extends GISFileViewer {
 
 	Map<String, String> attributes;
-
+	GamaOsmFile osmfile;
+	
 	@Override
 	public void createPartControl(final Composite composite) {
 		Composite parent = GamaToolbarFactory.createToolbars(this, composite);
@@ -75,7 +77,8 @@ public class OSMFileViewer extends GISFileViewer {
 		File f = path.makeAbsolute().toFile();
 
 		try {
-			GamaOsmFile osmfile = new GamaOsmFile(null, f.getAbsolutePath());
+			pathStr = f.getAbsolutePath();
+			osmfile = new GamaOsmFile(null, pathStr);
 			attributes = osmfile.getAttributes();
 			SimpleFeatureType TYPE = DataUtilities.createType("geometries", "geom:LineString");
 
@@ -89,19 +92,6 @@ public class OSMFileViewer extends GISFileViewer {
 			content = new MapContent();
 			style = Utils.createStyle(f, featureSource);
 			layer = new FeatureLayer(featureSource, style);
-			/*mode = determineMode(featureSource.getSchema(), "Polygon");
-			List<FeatureTypeStyle> ftsList = style.featureTypeStyles();
-			if ( ftsList.size() > 0 ) {
-				fts = ftsList.get(0);
-			} else {
-				fts = null;
-			}
-			if ( fts != null ) {
-				this.setFillColor(SwtGui.SHAPEFILE_VIEWER_FILL.getValue(), mode, fts);
-				this.setStrokeColor(SwtGui.SHAPEFILE_VIEWER_LINE_COLOR.getValue(), mode, fts);
-				((StyleLayer) layer).setStyle(style);
-			}*/
-			// content.addLayer(layer);
 			List<String> layers = new ArrayList<String>(osmfile.getLayers().keySet());
 			Collections.sort(layers);
 			Collections.reverse(layers);
@@ -209,6 +199,17 @@ public class OSMFileViewer extends GISFileViewer {
 
 		});
 
+	}
+
+	@Override
+	public void saveAsCSV() {
+		HashSet<String> atts = new HashSet<String>();
+		for (String at : attributes.keySet()) {
+			atts.add(at.split(" ")[0]);
+		}
+		System.out.println("atts: " + atts);
+		
+		saveAsCSV(new ArrayList<String>(atts), osmfile.getContents(null));
 	}
 
 }

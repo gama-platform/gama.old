@@ -2,7 +2,9 @@ package msi.gama.gui.viewers.gis;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.IPath;
@@ -19,6 +21,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.feature.type.PropertyDescriptorImpl;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
@@ -34,7 +37,9 @@ import org.geotools.styling.StyleBuilder;
 import org.geotools.swt.styling.simple.Mode;
 import org.geotools.swt.styling.simple.SLDs;
 import org.geotools.swt.utils.Utils;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.PropertyDescriptor;
 import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
@@ -46,6 +51,7 @@ import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import msi.gaml.operators.Strings;
 
 public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedView.Colorizable {
 
@@ -62,6 +68,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 		IPath path = fi.getPath();
 		File f = path.makeAbsolute().toFile();
 		try {
+			pathStr = f.getAbsolutePath();
 			ShapefileDataStore store = new ShapefileDataStore(f.toURI().toURL());
 			content = new MapContent();
 			featureSource = store.getFeatureSource();
@@ -281,5 +288,17 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 		}
 		((StyleLayer) layer).setStyle(style);
 	}
+	
+	
+	@Override
+	public void saveAsCSV() {
+		List<String> attributes = new ArrayList<String>();
+		for ( PropertyDescriptor v : layer.getFeatureSource().getSchema().getDescriptors() ) {
+			attributes.add(v.getName().toString());
+		}
+		saveAsCSV(attributes,null);
+	}
+
+
 
 }
