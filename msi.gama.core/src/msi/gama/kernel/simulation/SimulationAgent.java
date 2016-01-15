@@ -189,6 +189,7 @@ public class SimulationAgent extends GamlAgent {
 
 	@Override
 	public void dispose() {
+//		System.out.println("SimulationAgent.dipose BEGIN");
 		if ( dead ) { return; }
 		super.dispose();
 		// We dispose of any scheduler still running
@@ -206,7 +207,7 @@ public class SimulationAgent extends GamlAgent {
 		}
 		// end-hqnghi
 		projectionFactory = new ProjectionFactory();
-
+//		System.out.println("SimulationAgent.dipose END");
 	}
 
 	@Override
@@ -364,5 +365,15 @@ public class SimulationAgent extends GamlAgent {
 	public SimulationOutputManager getOutputManger() {
 		return (SimulationOutputManager) outputs;
 	}
+
+	// @Override
+	// public synchronized void acquireLock() {
+	//
+	// }
+	//
+	// @Override
+	// public synchronized void releaseLock() {
+	//
+	// }
 
 }

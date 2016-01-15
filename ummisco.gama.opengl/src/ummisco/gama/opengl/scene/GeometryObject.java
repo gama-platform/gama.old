@@ -1,29 +1,27 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GeometryObject.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.List;
-
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.util.GamaPair;
-import ummisco.gama.opengl.JOGLRenderer;
-
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.*;
+import msi.gama.util.GamaPair;
+import ummisco.gama.opengl.JOGLRenderer;
 
 public class GeometryObject extends AbstractObject implements Cloneable {
 
@@ -37,12 +35,12 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public double height;
 	public boolean rounded;
 	private final Texture[] textures;
-	public GamaPair<Double,GamaPoint> rotate3D = null;
+	public GamaPair<Double, GamaPoint> rotate3D = null;
 
 	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
 		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
 		final List<BufferedImage> textures, final int angle, final double height, final boolean rounded,
-		final IShape.Type type, final GamaPair<Double,GamaPoint> rotate3D) {
+		final IShape.Type type, final GamaPair<Double, GamaPoint> rotate3D) {
 		super(color, alpha);
 
 		if ( type == IShape.Type.GRIDLINE ) {
@@ -111,12 +109,13 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	@Override
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
 		// GL2 gl = GLContext.getCurrentGL().getGL2();
+//		GuiUtils.debug("OpenGL drawing " + agent);
 		if ( picking ) {
 			JOGLRenderer renderer = drawer.renderer;
 			gl.glPushMatrix();
 			gl.glLoadName(pickingIndex);
 			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				if ( agent != null /* && !picked */) {
+				if ( agent != null /* && !picked */ ) {
 					renderer.setPicking(false);
 					pick();
 					renderer.currentPickedObject = this;

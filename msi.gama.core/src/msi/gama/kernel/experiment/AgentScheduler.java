@@ -13,6 +13,7 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.IStepable;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaHelper;
@@ -63,7 +64,7 @@ public class AgentScheduler implements IStepable {
 	@Override
 	public void dispose() {
 		executeActions(scope, DISPOSE);
-		// GuiUtils.debug("AgentScheduler.dispose");
+		GuiUtils.debug("AgentScheduler.dispose");
 		// scope.setInterrupted(true);
 		// We wait for the scheduler to become "idle" (i.e. when all the interruptions have become
 		// effective) if the global scheduler is not paused.
@@ -72,13 +73,15 @@ public class AgentScheduler implements IStepable {
 		if ( !scope.getExperiment().getSpecies().getController().getScheduler().paused ) {
 			while (alive) {
 				try {
-					// GuiUtils.debug("ExperimentScheduler.dispose: DOING THE LAST STEP(S)");
+//					GuiUtils.debug("AgentScheduler.dispose: DOING THE LAST STEP(S)");
 					// Give it a chance to cleanup before being disposed
 					step(scope);
 					Thread.sleep(100);
 				} catch (final Exception e) {
 					// GuiUtils.debug("Interruption experiment exception: " + e.getMessage());
 					alive = false;
+				} finally {
+//					GuiUtils.debug("ExperimentScheduler.dispose: LAST STEP DONE");
 				}
 			}
 		}
