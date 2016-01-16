@@ -56,6 +56,7 @@ public class GraphsGraphstream {
 		private final List<Map> initialValues;
 
 		private final Map<String, IAgent> nodeId2agent = new HashMap<String, IAgent>();
+		private final Map<String, IAgent> edgeId2agent = new HashMap<String, IAgent>();
 
 		public GraphStreamGamaGraphSink(final IGraph gamaGraph, final IScope scope, final IPopulation populationNodes,
 			final IPopulation populationEdges) {
@@ -97,6 +98,7 @@ public class GraphsGraphstream {
 
 			// actually add the edge
 			gamaGraph.addEdge(agentFrom, agentTo, createdAgent);
+			edgeId2agent.put(edgeId, createdAgent);
 
 		}
 
@@ -114,6 +116,24 @@ public class GraphsGraphstream {
 			gamaGraph.addVertex(createdAgent);
 
 		}
+
+		@Override
+		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+			super.edgeRemoved(sourceId, timeId, edgeId);
+			IAgent edge = edgeId2agent.get(edgeId);
+			gamaGraph.removeEdge(edge);
+			edge.dispose();
+		}
+
+		@Override
+		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+			super.nodeRemoved(sourceId, timeId, nodeId);
+			IAgent node = nodeId2agent.get(nodeId);
+			gamaGraph.removeVertex(node);
+			node.dispose();
+		}
+		
+		
 
 	}
 
@@ -162,6 +182,7 @@ public class GraphsGraphstream {
 		} else {
 			generator.begin();
 			for ( int i = 0; i < maxLinks; i++ ) {
+				java.lang.System.out.println("createdGraph: " + createdGraph.getVertices().size());
 				generator.nextEvents();
 			}
 			generator.end();
@@ -236,9 +257,14 @@ public class GraphsGraphstream {
 		see = { "generate_barabasi_albert" })
 	public static IGraph generateGraphstreamWattsStrogatz(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final Double p, final Integer k, final Boolean isSychronized) {
-
+		WattsStrogatzGenerator gen = null;
+		try {
+			gen = new WattsStrogatzGenerator(size, k, p);
+		} catch (Exception e) {
+			throw GamaRuntimeException.error("Error during the WattsStrogatzGenerator generation: " + e.getMessage(), scope);
+		}
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
-			new WattsStrogatzGenerator(size, k, p), -1, isSychronized);
+			gen, -1, isSychronized);
 	}
 
 	@operator(value = "generate_complete_graph")
