@@ -225,6 +225,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				}
 			}
 
+			IExpressionDescription camera = d.getFacets().getDescr(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR);
+			if ( !isOpenGLWanted && camera != null ) {
+				d.warning(
+					"camera-related facets will have no effect on 2D displays. Use 'focus:' instead if you want to change the default zoom and position.",
+					IGamlIssue.UNUSED, CAMERA_POS);
+			}
+
 			// AD: addressing the deprecation of the "trace:" facet
 			IExpressionDescription trace = d.getFacets().get(TRACE);
 			if ( d != null ) {
