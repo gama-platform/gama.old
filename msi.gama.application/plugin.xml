@@ -375,7 +375,7 @@
          </property>
          <property
                name="aboutText"
-               value="GAMA - V1.6.1&#x0A;Generic Agent-based Modelling Architecture&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2014 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;Visit http://code.google.com/p/gama-platform/">
+               value="GAMA Platform - V1.7.0&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2016 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;&#x0A;Visit http://gama-platform.org">
          </property>
          <property
                name="windowImages"

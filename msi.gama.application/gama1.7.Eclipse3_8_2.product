@@ -6,13 +6,13 @@
    <aboutInfo>
       <image path="/msi.gama.application/icons/launcher_icons/icon205.png"/>
       <text>
-         GAMA - V1.6.1
-Generic Agent-based Modelling Architecture
+         GAMA Platform - V1.7.0
 
 (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
 (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
-(c) 2012-2014 UMI 209 UMMISCO IRD/UPMC &amp; Partners
-Visit http://code.google.com/p/gama-platform/
+(c) 2012-2016 UMI 209 UMMISCO IRD/UPMC &amp; Partners
+
+Visit http://gama-platform.org
       </text>
    </aboutInfo>
 
@@ -63,6 +63,7 @@ openFile
             winLargeLow="/msi.gama.application/icons/launcher_icons/icon-48x48x8b.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
