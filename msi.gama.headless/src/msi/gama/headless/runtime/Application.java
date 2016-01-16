@@ -14,6 +14,7 @@ package msi.gama.headless.runtime;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
@@ -21,6 +22,7 @@ import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.core.Simulation;
 import msi.gama.headless.openmole.IMoleExperiment;
 import msi.gama.headless.openmole.MoleSimulationLoader;
+import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.kernel.model.IModel;
@@ -31,13 +33,44 @@ import org.eclipse.equinox.app.IApplicationContext;
 
 public class Application implements IApplication {
 
+	final public static String CONSOLE_PARAMETER = "-c";
+	final public static String THREAD_PARAMERTER = "-t";
+	
+	
 	public static boolean headLessSimulation = false;
-
+	public int numberOfThread = -1;
+	public boolean consoleMode = false;
+	public SimulationRuntime processorQueue;
+	
+	
+	private static boolean containConsoleParameter(final String[] args)
+	{
+		for(String p:args)
+			{
+				if(p.equals(CONSOLE_PARAMETER))
+					return true;
+			}
+		return false;
+	}
+	
+	private static int getNumberOfThread(final String[] args)
+	{
+		for(int n = 0; n<args.length; n++)
+		{
+			if(args[n].equals(THREAD_PARAMERTER))
+				return Integer.valueOf(args[n+1]).intValue();
+		}
+		return SimulationRuntime.UNDEFINED_QUEUE_SIZE;
+	}
 	private static boolean checkParameters(final String[] args) {
 		if ( args == null ) { return showError(HeadLessErrors.LAUNCHING_ERROR, null); }
 		if ( args.length < 2 ) { return showError(HeadLessErrors.PARAMETER_ERROR, null); }
-		Globals.OUTPUT_PATH = args[1];
-		Globals.IMAGES_PATH = args[1] + "/snapshot";
+	
+		int outIndex = args.length -1;
+		int inIndex = args.length -2;
+		
+		Globals.OUTPUT_PATH = args[outIndex];
+		Globals.IMAGES_PATH = args[outIndex] + "/snapshot";
 		File output = new File(Globals.OUTPUT_PATH);
 		if(!output.exists())
 			output.mkdir();
@@ -46,9 +79,9 @@ public class Application implements IApplication {
 		if(!images.exists())
 			images.mkdir();
 			
-		File input = new File(args[0]);
+		File input = new File(args[inIndex]);
 		if (!input.exists()) {
-			return showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args[0]);
+			return showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args[inIndex]);
 		}
 		return true;
 	}
@@ -58,123 +91,44 @@ public class Application implements IApplication {
 		return false;
 	}
 
+
+	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-/*
- * 
- * FOR NGHI
- * 
- * 
- * 
- */
-		
-		
-		
-		
-		/*
-	MoleSimulationLoader.loadGAMA();
-//		
-		for(int i =0;i<100;i++)
-		{
-			Thread myThread =new Thread()
-			{
-				public void run()
-				{
-					System.out.println("starting ");
-					IModel mdl = MoleSimulationLoader.loadModel(new File("/tmp/headless/samples/predatorPrey/predatorPrey.gaml"));
-					IMoleExperiment exp = MoleSimulationLoader.newExperiment(mdl);
-					exp.setParameter("nb_preys_init", 678);
-////					
-					exp.setup("preyPred",123);
-					try {
-						Thread.sleep(10000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					for(int j = 0; j<1000000; j++)
-					{
-						exp.step();
-						exp.step();
-						exp.step();
-						exp.step();
-						System.out.println("coucocy "+ exp.getOutput("number_of_preys")+ "  "+ j+ " " + this);
-					}	
-					exp.step();
-					exp.step();
-					exp.step();
-					System.out.println("coucocy "+ exp.getOutput("number_of_preys"));
-//					System.out.println("coucocy "+ exp.getVariableOutput("nb_preys"));
-//			//
-					System.out.println("fin loading;");
-				}
-			};
-//			
-			myThread.start();
-//		
-		}
-		
-	
-		
-		
-		Thread.sleep(1000000);
-		*/
-
-//		
-	//	System.exit(-1);
-
-/*
- * 
- * END FOR NGHI
- * 
- * 
- * 
- */
-		
-		
-		
 		HeadlessSimulationLoader.preloadGAMA();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
 		if ( !checkParameters(args) ) {
 			System.exit(-1);
 		}
-		Reader in = new Reader(args[0]);
-		in.parseXmlFile();
-		int numSim = 1;
-		if (args.length>2 && args[2] != null) {
-			numSim = Cast.asInt(null, args[2]);
+		this.numberOfThread = Application.getNumberOfThread(args);
+		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
+		
+		this.consoleMode = Application.containConsoleParameter(args);
+		Reader in = null;
+		if(this.consoleMode)
+		{
+			in =new Reader(ConsoleReader.readOnConsole());
 		}
+		else
+		 in = new Reader(args[args.length-2]);
+		in.parseXmlFile();
+
 		Iterator<Simulation> it = in.getSimulation().iterator();
-		FakeApplication fa[] = new FakeApplication[50];
-		int n = 0;
 		while (it.hasNext()) {
 			Simulation sim = it.next();
-			for (int i = 0; i < numSim; i++) {
-				Simulation si = new Simulation(sim);
-				try {
-					XMLWriter ou = new XMLWriter(Globals.OUTPUT_PATH + "/"
-							+ Globals.OUTPUT_FILENAME + i + ".xml");
-					si.setBufferedWriter(ou);
-					si.loadAndBuild();
-				} catch (Exception e) {
-					e.printStackTrace();
-					System.exit(-1);
-				}
-				fa[i] = new FakeApplication(si);
-				fa[i].start();
-				n++;
+			try {
+				XMLWriter ou = new XMLWriter(Globals.OUTPUT_PATH + "/"
+						+ Globals.OUTPUT_FILENAME + sim.getExperimentID() + ".xml");
+				sim.setBufferedWriter(ou);
+				processorQueue.pushSimulation(sim);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(-1);
 			}
 		}
-		boolean done = false;
-		while (!done) {
-			done = true;
-			for (int i = 0; i < n; i++) {
-
-				if (fa[i].isAlive()) {
-					done = false;
-				}
-			}
+		while (processorQueue.isPerformingSimulation()) {
+			Thread.sleep(1000);
 		}
 		return null;
 	}

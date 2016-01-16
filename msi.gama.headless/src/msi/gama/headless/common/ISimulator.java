@@ -36,7 +36,7 @@ public interface ISimulator {
 	 */
 	public void retrieveOutputValue(ListenedVariable v);
 
-	public void load(String var, String exp, String expName);
+	public void load(String var, String exp, String expName, long seed);
 
 	/**
 	 * @param name

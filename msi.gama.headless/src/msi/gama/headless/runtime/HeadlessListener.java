@@ -206,43 +206,6 @@ public class HeadlessListener implements IGui {
 			return new NullDisplaySurface();
 			// throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", scope);
 		}
-
-		// if ( displayClasses == null ) {
-		// displayClasses = new HashMap();
-		// IConfigurationElement[] config =
-		// Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
-		// for ( IConfigurationElement e : config ) {
-		// final String pluginKeyword = e.getAttribute("keyword");
-		// final String pluginClass = e.getAttribute("class");
-		// // final Class<IDisplaySurface> displayClass = .
-		// final String pluginName = e.getContributor().getName();
-		// // System.out.println("displays " + pluginKeyword + " " + pluginName);
-		// ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-		// try {
-		// displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
-		// } catch (ClassNotFoundException e1) {
-		// e1.printStackTrace();
-		// }
-		// }
-		// }
-		// // keyword = "image";
-		// Class<IDisplaySurface> clazz = displayClasses.get("image");
-		// if ( clazz == null ) { return new NullDisplaySurface(); /*
-		// * throw GamaRuntimeException.error("Display " + keyword
-		// * + " is not defined anywhere.");
-		// */}
-		// try {
-		// IDisplaySurface surface = clazz.newInstance();
-		// System.out.println("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
-		// // debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
-		// surface.initialize(scope, w, h, layerDisplayOutput);
-		// return surface;
-		// } catch (InstantiationException e1) {
-		// e1.printStackTrace();
-		// } catch (IllegalAccessException e1) {
-		// e1.printStackTrace();
-		// }
-
 		return surface;
 	}
 

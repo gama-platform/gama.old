@@ -33,7 +33,8 @@ public class GamaSimulator implements ISimulator {
 	private String fileName;
 	private String experimentName;
 	private IExperimentPlan experiment;
-
+	private long seed;
+	
 	public GamaSimulator() {
 		this.params = new ParametersSet();
 	}
@@ -41,9 +42,8 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void nextStep(final int currentStep) {
 		this.currentStep = currentStep;
-		IScope simScope = experiment.getCurrentSimulation().getScope();
-		experiment.getCurrentSimulation().step(simScope);
-		experiment.getSimulationOutputs().step(simScope);
+		experiment.getController().userStep();
+		experiment.getSimulationOutputs().step(experiment.getCurrentSimulation().getScope());
 	}
 
 	@Override
@@ -72,6 +72,7 @@ public class GamaSimulator implements ISimulator {
 				if ( output == null ) {
 					output = ((AbstractOutputManager) experiment.getSimulationOutputs()).getOutputWithName(v.getName());
 				}
+				output.update();
 				if ( output instanceof MonitorOutput ) {
 					v.setValue(((MonitorOutput) output).getLastValue());
 				} else if ( output instanceof LayeredDisplayOutput ) {
@@ -104,49 +105,15 @@ public class GamaSimulator implements ISimulator {
 		return new Display2D(name + this.getExperimentID() + "-" + currentStep + ".png");
 	}
 
-	//
-	// @Override
-	// public DataType getVariableTypeWithName(final String name) {
-	// IOutput output = ((AbstractOutputManager) GAMA.getExperiment().getSimulationOutputs()).getOutputWithName(name);
-	// if ( output instanceof LayeredDisplayOutput ) { return DataType.DISPLAY2D; }
-	// if ( !(output instanceof MonitorOutput) ) { return DataType.UNDEFINED; }
-	//
-	// Object res = ((MonitorOutput) output).getLastValue();
-	// Class type = null;
-	// type = res.getClass();
-	//
-	// if ( type.equals(Integer.class) || type.equals(Long.class) || type.equals(int.class) ) {
-	// return DataType.INT;
-	// } else if ( type.equals(Float.class) || type.equals(Double.class) ) {
-	// return DataType.FLOAT;
-	// } else if ( type.equals(Boolean.class) ) {
-	// return DataType.BOOLEAN;
-	// } else if ( type.equals(String.class) ) {
-	// return DataType.STRING;
-	// } else {
-	// return DataType.UNDEFINED;
-	// }
-	// }
-	//
-	// @Override
-	// public boolean containVariableWithName(final String name) {
-	// IOutput output = ((AbstractOutputManager) experiment.getSimulationOutputs()).getOutputWithName(name);
-	// return output == null;
-	// }
 
 	@Override
-	public void load(final String var, final String exp, final String expName) {
+	public void load(final String var, final String exp, final String expName, final long s) {
 		this.fileName = var;
 		this.experimentID = exp;
 		this.experimentName = expName;
+		this.seed = s;
 		this.model = HeadlessSimulationLoader.loadModel(new File(this.fileName));
 	}
-
-	//
-	// @Override
-	// public void setSeed(final long seed) {
-	// this.experiment.getAgent().getRandomGenerator().setSeed(seed);
-	// }
 
 	public String getExperimentID() {
 		return experimentID;
@@ -155,7 +122,7 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void initialize() {
 		try {
-			experiment = GAMA.addHeadlessExperiment(this.model, this.experimentName, this.params, null);
+			experiment = GAMA.addHeadlessExperiment(this.model, this.experimentName, this.params, this.seed);
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 			experiment = null;
