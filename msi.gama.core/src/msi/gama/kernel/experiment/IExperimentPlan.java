@@ -77,6 +77,8 @@ public interface IExperimentPlan extends ISpecies {
 	 */
 	public abstract boolean isHeadless();
 
+	public abstract void setHeadless(boolean headless);
+
 	// public abstract void setController(ExperimentController controller);
 
 }
