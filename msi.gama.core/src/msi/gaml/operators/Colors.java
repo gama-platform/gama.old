@@ -13,6 +13,7 @@ package msi.gaml.operators;
 
 import java.awt.Color;
 
+import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -318,16 +319,14 @@ public class Colors {
 					equals = "a list of palettes that are composed of a min of 5 colors and a max of 10 colors",
 					isExecutable = false) }, see = { "brewer_colors" })
 	public static IList<String> brewerPaletteNames(final int min, final int max) {
-			IList<String> palettes = GamaListFactory.create(Types.STRING);
-			ColorBrewer brewer = ColorBrewer.instance();
-			for (String name : brewer.getPaletteNames()) {
-				java.lang.System.out.println(name);
-			}
-			for (String name : brewer.getPaletteNames(min, max)) {
-				palettes.add(name);
-			}
-			return palettes;
+		IList<String> palettes = GamaListFactory.create(Types.STRING);
+		ColorBrewer brewer = ColorBrewer.instance();
+		for (BrewerPalette p: brewer.getPalettes())  {
+			if (p.getCount() >= min && p.getCount() <= max)
+				palettes.add(p.getName());
 		}
+		return palettes;
+	}
 
 
 
@@ -335,16 +334,19 @@ public class Colors {
 			content_type = IType.STRING,category = { IOperatorCategory.COLOR })
 	@doc(value = "returns the list a palette with a given min number of classes and max number of classes)",
 			examples = {
-				@example(value = "list<rgb> colors <- brewer_palettes(5,10);",
-					equals = "a list of palettes that are composed of a min of 5 colors and a max of 10 colors",
+				@example(value = "list<rgb> colors <- brewer_palettes();",
+					equals = "a list of palettes that are composed of a min of 5 colors",
 					isExecutable = false) }, see = { "brewer_colors" })
 	public static IList<String> brewerPaletteNames(final int min) {
 			IList<String> palettes = GamaListFactory.create(Types.STRING);
 			ColorBrewer brewer = ColorBrewer.instance();
-			for (String name : brewer.getPaletteNames(min, brewer.getPaletteNames().length)) {
-				palettes.add(name);
+			for (BrewerPalette p: brewer.getPalettes())  {
+				if (p.getCount() >= min)
+					palettes.add(p.getName());
 			}
 			return palettes;
 		}
+	
+	
 
 }
