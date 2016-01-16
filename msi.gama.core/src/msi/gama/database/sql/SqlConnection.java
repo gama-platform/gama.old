@@ -1,27 +1,26 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SqlConnection.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
+import org.opengis.referencing.FactoryException;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
-import org.opengis.referencing.FactoryException;
-import com.vividsolutions.jts.geom.*;
 
 /*
  * @Author
@@ -106,20 +105,22 @@ public abstract class SqlConnection {
 				return scope.getSimulationScope().getProjectionFactory().forSavingWith(crs);
 			} catch (FactoryException e) {
 
-				throw GamaRuntimeException.error("No factory found for decoding the EPSG " + crs +
-					" code. GAMA may be unable to save any GIS data", scope);
+				throw GamaRuntimeException.error(
+					"No factory found for decoding the EPSG " + crs + " code. GAMA may be unable to save any GIS data",
+					scope);
 
 			}
 		}
 		String srid = (String) params.get("srid");
 		if ( srid != null ) {
 			try {
-				return scope.getSimulationScope().getProjectionFactory()
-					.forSavingWith(Cast.asInt(scope, srid), longitudeFirst);
+				return scope.getSimulationScope().getProjectionFactory().forSavingWith(Cast.asInt(scope, srid),
+					longitudeFirst);
 			} catch (FactoryException e) {
 
-				throw GamaRuntimeException.error("No factory found for decoding the EPSG " + srid +
-					" code. GAMA may be unable to save any GIS data", scope);
+				throw GamaRuntimeException.error(
+					"No factory found for decoding the EPSG " + srid + " code. GAMA may be unable to save any GIS data",
+					scope);
 
 			}
 			// return scope.getSimulationScope().getProjectionFactory().forSavingWith(srid, longitudeFirst);
@@ -130,9 +131,9 @@ public abstract class SqlConnection {
 					.forSavingWith(GamaPreferences.LIB_OUTPUT_CRS.getValue());
 			} catch (FactoryException e) {
 
-				throw GamaRuntimeException
-					.error("No factory found for decoding the EPSG " + GamaPreferences.LIB_OUTPUT_CRS.getValue() +
-						" code. GAMA may be unable to save any GIS data", scope);
+				throw GamaRuntimeException.error("No factory found for decoding the EPSG " +
+					GamaPreferences.LIB_OUTPUT_CRS.getValue() + " code. GAMA may be unable to save any GIS data",
+					scope);
 
 			}
 		}
@@ -188,42 +189,42 @@ public abstract class SqlConnection {
 	/*
 	 * Make a connection to BDMS
 	 */
-	public abstract Connection connectDB() throws ClassNotFoundException, InstantiationException, SQLException,
-		IllegalAccessException;
+	public abstract Connection connectDB()
+		throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException;
 
 	/*
 	 * @Method:resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs)
-	 * 
+	 *
 	 * @Description: Convert RecordSet to GamaList
-	 * 
+	 *
 	 * @param ResultSetMetaData,ResultSet
-	 * 
+	 *
 	 * @return GamaList<GamaList<Object>>
 	 */
 	protected abstract IList<IList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs);
 
 	/*
 	 * @Meththod: getGeometryColumns(ResultSetMetaData rsmd)
-	 * 
+	 *
 	 * @Description: Get columns id of field with geometry type
-	 * 
+	 *
 	 * @param ResultSetMetaData
-	 * 
+	 *
 	 * @return List<Integer>
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	protected abstract List<Integer> getGeometryColumns(ResultSetMetaData rsmd) throws SQLException;
 
 	/*
 	 * @Method: getColumnTypeName
-	 * 
+	 *
 	 * @Description: Get columns type name
-	 * 
+	 *
 	 * @param ResultSetMetaData
-	 * 
+	 *
 	 * @return GamaList<String>
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	protected abstract IList<Object> getColumnTypeName(ResultSetMetaData rsmd) throws SQLException;
@@ -242,7 +243,7 @@ public abstract class SqlConnection {
 
 	/*
 	 * Make a connection to BDMS and execute the select statement
-	 * 
+	 *
 	 * @return GamaList<GamaList<Object>>
 	 */
 	public IList<? super IList<? super IList>> selectDB(final IScope scope, final String selectComm) {
@@ -258,7 +259,7 @@ public abstract class SqlConnection {
 		}
 
 		if ( DEBUG ) {
-			GuiUtils.informConsole(selectComm + " was run");
+			scope.getGui().informConsole(selectComm + " was run");
 		}
 		// return repRequest;
 		return result;
@@ -266,7 +267,7 @@ public abstract class SqlConnection {
 
 	/*
 	 * Make a connection to BDMS and execute the select statement
-	 * 
+	 *
 	 * @return GamaList<GamaList<Object>>
 	 */
 	// public GamaList<GamaList<Object>> selectDB(String selectComm)
@@ -276,7 +277,7 @@ public abstract class SqlConnection {
 		ResultSet rs;
 		IList<? super IList<? super IList>> result =
 			GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
-		// GamaList<? extends GamaList<? super GamaList>> result = new GamaList();
+			// GamaList<? extends GamaList<? super GamaList>> result = new GamaList();
 
 		// GamaList<Object> rowList = new GamaList<Object>();
 		IList repRequest = GamaListFactory.create(msi.gaml.types.Types.NO_TYPE);
@@ -286,7 +287,7 @@ public abstract class SqlConnection {
 
 			ResultSetMetaData rsmd = rs.getMetaData();
 			if ( DEBUG ) {
-				GuiUtils.debug("MetaData:" + rsmd.toString());
+				scope.getGui().debug("MetaData:" + rsmd.toString());
 			}
 			result.add(getColumnName(rsmd));
 			IList<Object> columns = getColumnTypeName(rsmd);
@@ -326,9 +327,9 @@ public abstract class SqlConnection {
 			// result.add(repRequest);
 
 			if ( DEBUG ) {
-				GuiUtils.debug("list of column name:" + result.get(0));
-				GuiUtils.debug("list of column type:" + result.get(1));
-				GuiUtils.debug("list of data:" + result.get(2));
+				scope.getGui().debug("list of column name:" + result.get(0));
+				scope.getGui().debug("list of column type:" + result.get(1));
+				scope.getGui().debug("list of data:" + result.get(2));
 			}
 
 			st.close();
@@ -350,14 +351,14 @@ public abstract class SqlConnection {
 		int n = 0;
 		try {
 			conn = connectDB();
-			if ( DEBUG ) {
-				GuiUtils.debug("Update Command:" + updateComm);
-			}
+			// if ( DEBUG ) {
+			// scope.getGui().debug("Update Command:" + updateComm);
+			// }
 			Statement st = conn.createStatement();
 			n = st.executeUpdate(updateComm);
-			if ( DEBUG ) {
-				GuiUtils.debug("Updated records :" + n);
-			}
+			// if ( DEBUG ) {
+			// scope.getGui().debug("Updated records :" + n);
+			// }
 
 			st.close();
 			// st=null;
@@ -368,9 +369,9 @@ public abstract class SqlConnection {
 			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		}
 
-		if ( DEBUG ) {
-			GuiUtils.informConsole(updateComm + " was run");
-		}
+		// if ( DEBUG ) {
+		// scope.getGui().informConsole(updateComm + " was run");
+		// }
 
 		return n;
 
@@ -382,16 +383,16 @@ public abstract class SqlConnection {
 	public int executeUpdateDB(final Connection conn, final String updateComm) throws GamaRuntimeException {
 		int n = 0;
 		try {
-			if ( DEBUG ) {
-				GuiUtils.debug("Update Command:" + updateComm);
-			}
+			// if ( DEBUG ) {
+			// scope.getGui().debug("Update Command:" + updateComm);
+			// }
 			Statement st = conn.createStatement();
 			n = st.executeUpdate(updateComm);
 			st.close();
 
-			if ( DEBUG ) {
-				GuiUtils.debug("Updated records :" + n);
-			}
+			// if ( DEBUG ) {
+			// scope.getGui().debug("Updated records :" + n);
+			// }
 		} catch (SQLException e) {
 			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		}
@@ -406,13 +407,13 @@ public abstract class SqlConnection {
 
 	/*
 	 * @Method: getColumnName
-	 * 
+	 *
 	 * @Description: Get columns name
-	 * 
+	 *
 	 * @param ResultSetMetaData
-	 * 
+	 *
 	 * @return GamaList<String>
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	protected IList<Object> getColumnName(final ResultSetMetaData rsmd) throws SQLException {
@@ -438,13 +439,13 @@ public abstract class SqlConnection {
 
 	/*
 	 * @Method: getBounds( GamaList<Object> gamaList)
-	 * 
+	 *
 	 * @Description: Get Envelope of a set of geometry
-	 * 
+	 *
 	 * @param GamaList<Object> gamaList: gamalist is a set of geometry type
-	 * 
+	 *
 	 * @return Envelope: Envelope/boundary of the geometry set.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 
@@ -499,18 +500,18 @@ public abstract class SqlConnection {
 	 * Make Insert a reccord into table
 	 *
 	 */
-	public int insertDB(final IScope scope, final Connection conn, final String table_name,
-		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final Connection conn, final String table_name, final GamaList<Object> cols,
+		final GamaList<Object> values) throws GamaRuntimeException {
 		int rec_no = -1;
-		if ( values.size() != cols.size() ) { throw new IndexOutOfBoundsException(
-			"Size of columns list and values list are not equal"); }
+		if ( values.size() != cols
+			.size() ) { throw new IndexOutOfBoundsException("Size of columns list and values list are not equal"); }
 		try {
 			// Get Insert command
 			Statement st = conn.createStatement();
 			// String sqlStr = getInsertString(gis, conn, table_name, cols, values);
 			String sqlStr = getInsertString(scope, conn, table_name, cols, values);
 			if ( DEBUG ) {
-				GuiUtils.debug("SQLConnection.insertBD.STR:" + sqlStr);
+				scope.getGui().debug("SQLConnection.insertBD.STR:" + sqlStr);
 			}
 			// rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, cols, values));
 			rec_no = st.executeUpdate(sqlStr);
@@ -519,7 +520,7 @@ public abstract class SqlConnection {
 			// System.gc();
 
 			if ( DEBUG ) {
-				GuiUtils.debug("SQLConnection.insertBD.rec_no:" + rec_no);
+				scope.getGui().debug("SQLConnection.insertBD.rec_no:" + rec_no);
 			}
 
 		} catch (SQLException e) {
@@ -535,9 +536,8 @@ public abstract class SqlConnection {
 	 *  Insert a reccord into table
 	 *
 	 */
-	public int insertDB(final IScope scope, final Connection conn, final String table_name,
-		final GamaList<Object> cols, final GamaList<Object> values, final Boolean transformed)
-		throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final Connection conn, final String table_name, final GamaList<Object> cols,
+		final GamaList<Object> values, final Boolean transformed) throws GamaRuntimeException {
 		this.transformed = transformed;
 		int rec_no = -1;
 		// Get Insert command
@@ -589,7 +589,7 @@ public abstract class SqlConnection {
 			// st=null;
 			// System.gc();
 			if ( DEBUG ) {
-				GuiUtils.debug("SQLConnection.insertBD.rec_no:" + rec_no);
+				scope.getGui().debug("SQLConnection.insertBD.rec_no:" + rec_no);
 			}
 
 		} catch (SQLException e) {
@@ -634,16 +634,16 @@ public abstract class SqlConnection {
 
 	/*
 	 * @Method: executeQueryDB(Connection conn,String queryStr, GamaList<Object> condition_value)
-	 * 
+	 *
 	 * @Description: Executes the SQL query in this PreparedStatement object and returns the ResultSet object generated
 	 * by the query
-	 * 
+	 *
 	 * @param queryStr: SQL query string with question mark (?).
-	 * 
+	 *
 	 * @param condition_value:List of values that are used to assign into conditions of queryStr
-	 * 
+	 *
 	 * @return ResultSet:returns the ResultSet object generated by the query.
-	 * 
+	 *
 	 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet
 	 * object
 	 */
@@ -666,7 +666,7 @@ public abstract class SqlConnection {
 
 			ResultSetMetaData rsmd = rs.getMetaData();
 			if ( DEBUG ) {
-				GuiUtils.debug("MetaData:" + rsmd.toString());
+				scope.getGui().debug("MetaData:" + rsmd.toString());
 			}
 			result.add(getColumnName(rsmd));
 			IList columns = getColumnTypeName(rsmd);
@@ -707,9 +707,9 @@ public abstract class SqlConnection {
 			// result.add(repRequest);
 
 			if ( DEBUG ) {
-				GuiUtils.debug("list of column name:" + result.get(0));
-				GuiUtils.debug("list of column type:" + result.get(1));
-				GuiUtils.debug("list of data:" + result.get(2));
+				scope.getGui().debug("list of column name:" + result.get(0));
+				scope.getGui().debug("list of column type:" + result.get(1));
+				scope.getGui().debug("list of data:" + result.get(2));
 			}
 
 			pstmt.close();
@@ -727,24 +727,23 @@ public abstract class SqlConnection {
 
 	/*
 	 * @Method: ExecuteQueryDB(Connection conn,String queryStr, GamaList<Object> condition_values)
-	 * 
+	 *
 	 * @Description: Executes the SQL query in this PreparedStatement object and returns the ResultSet object generated
 	 * by the query
-	 * 
+	 *
 	 * @param conn: MAP of Connection parameters to RDBM
-	 * 
+	 *
 	 * @param queryStr: SQL query (select) string with question mark (?).
-	 * 
+	 *
 	 * @param condition_value:List of values that are used to assign into conditions of queryStr
-	 * 
+	 *
 	 * @return ResultSet:returns the ResultSet object generated by the query.
-	 * 
+	 *
 	 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet
 	 * object
 	 */
-	public IList<Object>
-		executeQueryDB(final IScope scope, final String queryStr, final IList<Object> condition_values)
-			throws GamaRuntimeException {
+	public IList<Object> executeQueryDB(final IScope scope, final String queryStr, final IList<Object> condition_values)
+		throws GamaRuntimeException {
 		IList<Object> result = GamaListFactory.create();
 		Connection conn;
 		try {
@@ -761,19 +760,19 @@ public abstract class SqlConnection {
 
 	/*
 	 * @Method: executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_value)
-	 * 
+	 *
 	 * @Description: Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT, UPDATE or
 	 * DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
-	 * 
+	 *
 	 * @param conn: MAP of Connection parameters to RDBM
-	 * 
+	 *
 	 * @param queryStr: an SQL INSERT, UPDATE or DELETE statement with question mark (?).
-	 * 
+	 *
 	 * @param condition_values: List of values that are used to assign into conditions of queryStr.
-	 * 
+	 *
 	 * @return row_count:either (1) the row count for INSERT, UPDATE, or DELETE statements or (2) 0 for SQL statements
 	 * that return nothing
-	 * 
+	 *
 	 * @throws GamaRuntimeException
 	 */
 	public int executeUpdateDB(final Connection conn, final String queryStr, final GamaList<Object> condition_values)
@@ -784,10 +783,10 @@ public abstract class SqlConnection {
 		try {
 			pstmt = conn.prepareStatement(queryStr);
 			// set value for each condition
-			if ( DEBUG ) {
-				GuiUtils.debug("SqlConnection.ExecuteUpdateDB.values.size:" + condition_count);
-				GuiUtils.debug("SqlConnection.ExecuteUpdateDB.values.size:" + condition_values.serialize(false));
-			}
+			// if ( DEBUG ) {
+			// scope.getGui().debug("SqlConnection.ExecuteUpdateDB.values.size:" + condition_count);
+			// scope.getGui().debug("SqlConnection.ExecuteUpdateDB.values.size:" + condition_values.serialize(false));
+			// }
 
 			for ( int i = 0; i < condition_count; i++ ) {
 				pstmt.setObject(i + 1, condition_values.get(i));
@@ -804,17 +803,17 @@ public abstract class SqlConnection {
 
 	/*
 	 * @Method: executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_value)
-	 * 
+	 *
 	 * @Description: Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT, UPDATE or
 	 * DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
-	 * 
+	 *
 	 * @param queryStr: an SQL INSERT, UPDATE or DELETE statement with question mark (?).
-	 * 
+	 *
 	 * @param condition_values:
-	 * 
+	 *
 	 * @return row_count:either (1) the row count for INSERT, UPDATE, or DELETE statements or (2) 0 for SQL statements
 	 * that return nothing
-	 * 
+	 *
 	 * @throws GamaRuntimeException
 	 */
 	public int executeUpdateDB(final String queryStr, final GamaList<Object> condition_values)

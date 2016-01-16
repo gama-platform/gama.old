@@ -1,40 +1,34 @@
 /*********************************************************************************************
- * 
  *
- * 'HeadlessParam.java', in plugin 'msi.gama.hpc', is part of the source code of the 
+ *
+ * 'HeadlessParam.java', in plugin 'msi.gama.hpc', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.hpc.gui.perspective.explorer;
 
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.ViewPart;
-
-import msi.gama.hpc.gui.common.GUIUtils;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.hpc.gui.perspective.chart.HeadlessChart;
-import msi.gama.hpc.simulation.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class HeadlessParam extends ViewPart {
 
-	public static final String ID = GUIUtils.HEADLESSPARAM_ID;
+	public static final String ID = IGui.HEADLESSPARAM_ID;
 
 	public HeadlessParam() {
 		super();
 	}
 
-
-
-
-
+	@Override
 	public void createPartControl(final Composite parent) {
 
 		// GridLayout parentLayout = new GridLayout(3, true);
@@ -56,19 +50,16 @@ public class HeadlessParam extends ViewPart {
 		//
 		// parent.setLayout(rowLayout);
 
-
 		final DirectoryFieldEditor de_bin =
 			new DirectoryFieldEditor("the GAMA binary folder", "Select GAMA binary folder", parent);
 
-		final DirectoryFieldEditor de_inp =
-			new DirectoryFieldEditor("the Input folder", "Select input folder", parent);
+		final DirectoryFieldEditor de_inp = new DirectoryFieldEditor("the Input folder", "Select input folder", parent);
 		final DirectoryFieldEditor de_out =
 			new DirectoryFieldEditor("the Output folder", "Select output folder", parent);
 
-		final IntegerFieldEditor ie =
-			new IntegerFieldEditor("Cores number", "Enter number of cores", parent);
+		final IntegerFieldEditor ie = new IntegerFieldEditor("Cores number", "Enter number of cores", parent);
 		// parent.pack();
-		
+
 		Button b = new Button(parent, SWT.PUSH);
 		b.setText("Run simulation");
 
@@ -76,30 +67,28 @@ public class HeadlessParam extends ViewPart {
 		String[] extensions = new String[] { "*.xml" }; // NON-NLS-1
 		fe.setFileExtensions(extensions);
 
-
 		b.addMouseListener(new MouseListener() {
 
 			@Override
-			public void mouseUp(MouseEvent e) {
+			public void mouseUp(final MouseEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void mouseDown(MouseEvent e) throws GamaRuntimeException {
+			public void mouseDown(final MouseEvent e) throws GamaRuntimeException {
 				// TODO Auto-generated method stub
 
-				//BatchExecutor.submitExperiment(de_bin.getStringValue(), de_inp.getStringValue(),
-				//	de_out.getStringValue(), ie.getIntValue());
-				
-				
+				// BatchExecutor.submitExperiment(de_bin.getStringValue(), de_inp.getStringValue(),
+				// de_out.getStringValue(), ie.getIntValue());
+
 				// BatchExecutor.submitExperiment("C://Users//Administrator//Desktop//GAMA//eclipse",
 				// "C://Users//Administrator//Desktop//GAMA//eclipse//samples",
 				// "C://Users//Administrator//Desktop//GAMA//eclipse//samples", 10);
 			}
 
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(final MouseEvent e) {
 				// TODO Auto-generated method stub
 
 			}
@@ -111,20 +100,20 @@ public class HeadlessParam extends ViewPart {
 		b1.addMouseListener(new MouseListener() {
 
 			@Override
-			public void mouseUp(MouseEvent e) {
+			public void mouseUp(final MouseEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void mouseDown(MouseEvent e) throws GamaRuntimeException {
-				HeadlessChart.xmlfilename=fe.getStringValue();
-			//	GuiUtils.showHeadlessChartView();
+			public void mouseDown(final MouseEvent e) throws GamaRuntimeException {
+				HeadlessChart.xmlfilename = fe.getStringValue();
+				// scope.getGui().showHeadlessChartView();
 
 			}
 
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(final MouseEvent e) {
 				// TODO Auto-generated method stub
 
 			}

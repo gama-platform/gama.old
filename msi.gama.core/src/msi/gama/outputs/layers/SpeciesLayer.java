@@ -15,7 +15,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 import com.google.common.collect.ImmutableSet;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
@@ -74,7 +74,7 @@ public class SpeciesLayer extends AgentLayer {
 				continue;
 			}
 			Object[] result = new Object[1];
-			if ( a == GuiUtils.getHighlightedAgent() ) {
+			if ( a == scope.getGui().getHighlightedAgent() ) {
 				IExecutable hAspect = population.getSpecies().getAspect("highlighted");
 				if ( hAspect == null ) {
 					hAspect = aspect;

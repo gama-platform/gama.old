@@ -504,7 +504,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if ( geom == null || geom == this ) { return; }
 		// location = geom.getLocation();
 		// if ( Double.isNaN(location.getX()) ) {
-		// GuiUtils.debug("GamaShape.setGeometry");
+		// scope.getGui().debug("GamaShape.setGeometry");
 		// }
 		setGeometry(geom.getInnerGeometry(), false);
 	}

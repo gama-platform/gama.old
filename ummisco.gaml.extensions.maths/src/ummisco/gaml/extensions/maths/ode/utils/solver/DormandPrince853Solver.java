@@ -15,7 +15,7 @@ import java.util.*;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.sampling.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.expressions.IExpression;
@@ -119,7 +119,7 @@ public class DormandPrince853Solver extends Solver {
 				final IList obj = GamaListFactory.create(Types.NO_TYPE);
 				integrated_val.add(obj);
 			} catch (final Exception ex1) {
-				GuiUtils.debug(ex1.getMessage());
+				scope.getGui().debug(ex1.getMessage());
 			} finally {
 				if ( eq.equaAgents.size() > 0 ) {
 					if ( pushed ) {

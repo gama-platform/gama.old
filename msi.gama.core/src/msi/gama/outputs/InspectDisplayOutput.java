@@ -12,8 +12,8 @@
 package msi.gama.outputs;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -147,7 +147,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 		}
 		if ( rootAgent == null || rootAgent.dead() ) {
 			rootAgent = getScope().getSimulationScope();
-			// GuiUtils.debug("InspectDisplayOutput.init rootAgent = " + rootAgent);
+			// scope.getGui().debug("InspectDisplayOutput.init rootAgent = " + rootAgent);
 		}
 		return true;
 	}
@@ -226,8 +226,8 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	@Override
 	public String getViewId() {
-		if ( IKeyword.TABLE.equals(type) ) { return GuiUtils.TABLE_VIEW_ID; }
-		return GuiUtils.AGENT_VIEW_ID;
+		if ( IKeyword.TABLE.equals(type) ) { return IGui.TABLE_VIEW_ID; }
+		return IGui.AGENT_VIEW_ID;
 
 	}
 

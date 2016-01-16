@@ -1,29 +1,29 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlDocumentationProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
 
-import msi.gama.common.util.GuiUtils;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
-import msi.gama.lang.utils.EGaml;
-import msi.gama.util.file.IGamaFileMetaData;
-import msi.gaml.descriptions.*;
-import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.Strings;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 import com.google.inject.Inject;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
+import msi.gama.lang.utils.EGaml;
+import msi.gama.runtime.GAMA;
+import msi.gama.util.file.IGamaFileMetaData;
+import msi.gaml.descriptions.*;
+import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.operators.Strings;
 
 public class GamlDocumentationProvider extends MultiLineCommentDocumentationProvider {
 
@@ -36,7 +36,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			URI iu = detector.getURI((StringLiteral) o);
 			if ( iu != null ) {
 				IFile file = detector.getFile(iu);
-				IGamaFileMetaData data = GuiUtils.getMetaDataProvider().getMetaData(file, false);
+				IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false);
 				if ( data != null ) {
 					String s = data.getDocumentation();
 					if ( s != null ) {
@@ -47,7 +47,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			}
 		}
 
-		// GuiUtils.debug("GamlDocumentationProvider.getDocumentation for " + o);
+		// scope.getGui().debug("GamlDocumentationProvider.getDocumentation for " + o);
 		String comment = super.getDocumentation(o);
 		if ( comment == null ) {
 			comment = "";

@@ -6,8 +6,8 @@ package msi.gama.gui.navigator;
 
 import java.util.*;
 import org.eclipse.swt.graphics.Image;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.GamaIcons;
+import msi.gama.runtime.GAMA;
 import msi.gaml.descriptions.SpeciesDescription;
 
 /**
@@ -66,7 +66,7 @@ public class WrappedSpecies extends WrappedGamlObject {
 
 	@Override
 	public boolean handleDoubleClick() {
-		GuiUtils.editModel(getObject().getUnderlyingElement(null));
+		GAMA.getGui().editModel(getObject().getUnderlyingElement(null));
 		return true;
 	}
 

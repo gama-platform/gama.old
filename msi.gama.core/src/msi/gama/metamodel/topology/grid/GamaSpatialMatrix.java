@@ -96,7 +96,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final boolean isTorus, final boolean usesVN, final boolean indiv, final boolean useNeighboursCache)
 			throws GamaRuntimeException {
 		super(cols, rows, Types.GEOMETRY);
-		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
+		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / cols;
@@ -120,7 +120,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public GamaSpatialMatrix(final IScope scope, final GamaGridFile gfile, final boolean isTorus, final boolean usesVN,
 		final boolean indiv, final boolean useNeighboursCache) throws GamaRuntimeException {
 		super(100, 100, Types.GEOMETRY);
-		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
+		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		numRows = gfile.getNbRows(scope);
 		numCols = gfile.getNbCols(scope);
 		environmentFrame = gfile.getGeometry(scope);
@@ -155,7 +155,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean indiv,
 		final boolean useNeighboursCache) {
 		super(cols, rows, Types.GEOMETRY);
-		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
+		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / cols;
@@ -260,7 +260,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				if ( firstCell == -1 ) {
 					firstCell = i;
 				}
-				// GuiUtils.debug("GamaSpatialMatrix.createCells: " + rect.getLocation() + " at " + xx + ";" + yy);
+				// scope.getGui().debug("GamaSpatialMatrix.createCells: " + rect.getLocation() + " at " + xx + ";" + yy);
 				matrix[i] = rect;
 				actualNumberOfCells++;
 				lastCell = i;
@@ -824,7 +824,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	//
 	@Override
 	public Set<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
-		// GuiUtils.debug("GamaSpatialMatrix.allAtDistance");
+		// scope.getGui().debug("GamaSpatialMatrix.allAtDistance");
 		final double exp = dist * Maths.SQRT2;
 		Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
@@ -848,7 +848,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
-		// GuiUtils.debug("GamaSpatialMatrix.firstAtDistance");
+		// scope.getGui().debug("GamaSpatialMatrix.firstAtDistance");
 		final double exp = dist * Maths.SQRT2;
 		Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
@@ -899,7 +899,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public Set<IAgent> allInEnvelope(final IScope scope, final IShape source, final Envelope env, final IAgentFilter f,
 		final boolean covered) {
-		// GuiUtils.debug("GamaSpatialMatrix.allInEnvelope");
+		// scope.getGui().debug("GamaSpatialMatrix.allInEnvelope");
 		// if ( !f.filterSpecies(cellSpecies) ) { return Iterators.emptyIterator(); }
 		Set<IAgent> shapes = inEnvelope(env);
 		shapes.remove(source);
@@ -1078,7 +1078,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		@Override
 		public void initializeFor(final IScope scope) throws GamaRuntimeException {
 			topology.initialize(scope, this);
-			// GuiUtils.debug("GamaSpatialMatrix.GridPopulation.initializeFor : size " + size());
+			// scope.getGui().debug("GamaSpatialMatrix.GridPopulation.initializeFor : size " + size());
 		}
 
 		@Override

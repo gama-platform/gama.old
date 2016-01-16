@@ -41,7 +41,7 @@ public class ConstantExpressionDescription extends BasicExpressionDescription {
 
 	@Override
 	public void setExpression(final IExpression expr) {
-		// GuiUtils.debug("Trying to set a new expression " + expr + " to description " + expression);
+		// scope.getGui().debug("Trying to set a new expression " + expr + " to description " + expression);
 	}
 
 	@Override

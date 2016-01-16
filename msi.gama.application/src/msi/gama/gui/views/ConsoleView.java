@@ -20,10 +20,10 @@ import org.eclipse.ui.console.*;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.runtime.GAMA;
 
 public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
@@ -93,7 +93,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 					pauseBuffer.append(text);
 				}
 				if ( !indicated ) {
-					GuiUtils.run(new Runnable() {
+					GAMA.getGui().run(new Runnable() {
 
 						@Override
 						public void run() {
@@ -135,7 +135,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	@Override
 	public void pauseChanged() {
 		if ( paused ) {
-			GuiUtils.asyncRun(new Runnable() {
+			GAMA.getGui().asyncRun(new Runnable() {
 
 				@Override
 				public void run() {

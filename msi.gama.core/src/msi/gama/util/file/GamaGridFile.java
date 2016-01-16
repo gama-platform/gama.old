@@ -25,7 +25,6 @@ import org.geotools.geometry.*;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
@@ -114,7 +113,7 @@ public class GamaGridFile extends GamaGisFile {
 			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 			AbstractGridCoverage2DReader store = null;
 			try {
-				GuiUtils.beginSubStatus("Reading file " + getName());
+				scope.getGui().beginSubStatus("Reading file " + getName());
 				// Necessary to compute it here, because it needs to be passed to the Hints
 				CoordinateReferenceSystem crs = getExistingCRS(scope);
 				if ( getFile().getName().endsWith("tif") ) {
@@ -159,7 +158,7 @@ public class GamaGridFile extends GamaGisFile {
 				boolean intValues = false;
 				boolean byteValues = false;
 				for ( int i = 0, n = numRows * numCols; i < n; i++ ) {
-					GuiUtils.updateSubStatusCompletion(i / (double) n);
+					scope.getGui().setSubStatusCompletion(i / (double) n);
 					final int yy = i / numCols;
 					final int xx = i - yy * numCols;
 					p.x = originX + xx * cellWidth + cmx;
@@ -209,7 +208,7 @@ public class GamaGridFile extends GamaGisFile {
 				if ( store != null ) {
 					store.dispose();
 				}
-				GuiUtils.endSubStatus("Opening file " + getName());
+				scope.getGui().endSubStatus("Opening file " + getName());
 			}
 		}
 	}

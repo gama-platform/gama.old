@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -447,7 +447,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 	protected void setParameterValue(final Object val) {
 		// if ( listener == null ) { return; }
-		GuiUtils.run(new Runnable() {
+		GAMA.getGui().run(new Runnable() {
 
 			@Override
 			public void run() {
@@ -585,7 +585,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	}
 
 	private void displayParameterValueAndCheckButtons() {
-		GuiUtils.run(new Runnable() {
+		GAMA.getGui().run(new Runnable() {
 
 			@Override
 			public void run() {

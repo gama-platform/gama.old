@@ -17,11 +17,11 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.osgi.framework.Bundle;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.runtime.GAMA;
 
 /**
  * Class BrowserEditor.
@@ -49,7 +49,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 			HOME_URL = url.toString();
 		}
 		if ( HOME_URL != null ) {
-			GuiUtils.showWebEditor(HOME_URL, null);
+			GAMA.getGui().showWebEditor(HOME_URL, null);
 		}
 	}
 

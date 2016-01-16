@@ -1,25 +1,24 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'PostgresConnection.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.*;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.*;
 
 /*
  * @Author
@@ -31,8 +30,8 @@ import com.vividsolutions.jts.io.*;
  * Modified:
  * 15-Jan-2014
  * Fix null error of getInsertString method
- * 
- * 
+ *
+ *
  * Last Modified: 15-Jan-2014
  */
 public class PostgresConnection extends SqlConnection {
@@ -67,16 +66,15 @@ public class PostgresConnection extends SqlConnection {
 	}
 
 	@Override
-	public Connection connectDB() throws ClassNotFoundException, InstantiationException, SQLException,
-		IllegalAccessException {
+	public Connection connectDB()
+		throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
 		// TODO Auto-generated method stub
 		Connection conn = null;
 		try {
 			if ( vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS) ) {
 				Class.forName(POSTGRESDriver).newInstance();
-				conn =
-					DriverManager.getConnection("jdbc:postgresql://" + url + ":" + port + "/" + dbName + "?user=" +
-						userName + "&password=" + password);
+				conn = DriverManager.getConnection("jdbc:postgresql://" + url + ":" + port + "/" + dbName + "?user=" +
+					userName + "&password=" + password);
 			} else {
 				throw new ClassNotFoundException("PostgresConnection.connectSQL: The " + vender + " is not supported!");
 			}
@@ -110,28 +108,28 @@ public class PostgresConnection extends SqlConnection {
 			List<Integer> geoColumn = getGeometryColumns(rsmd);
 			int nbCol = rsmd.getColumnCount();
 			int i = 1;
-			if ( DEBUG ) {
-				GuiUtils.debug("Number of col:" + nbCol);
-			}
-			if ( DEBUG ) {
-				GuiUtils.debug("Number of row:" + rs.getFetchSize());
-			}
+			// if ( DEBUG ) {
+			// scope.getGui().debug("Number of col:" + nbCol);
+			// }
+			// if ( DEBUG ) {
+			// scope.getGui().debug("Number of row:" + rs.getFetchSize());
+			// }
 			while (rs.next()) {
 				// InputStream inputStream = rs.getBinaryStream(i);
-				if ( DEBUG ) {
-					GuiUtils.debug("processing at row:" + i);
-				}
+				// if ( DEBUG ) {
+				// scope.getGui().debug("processing at row:" + i);
+				// }
 
 				IList<Object> rowList = GamaListFactory.create();
 				for ( int j = 1; j <= nbCol; j++ ) {
 					// check column is geometry column?
-					if ( DEBUG ) {
-						GuiUtils.debug("col " + j + ": " + rs.getObject(j));
-					}
+					// if ( DEBUG ) {
+					// scope.getGui().debug("col " + j + ": " + rs.getObject(j));
+					// }
 					if ( geoColumn.contains(j) ) {
-						if ( DEBUG ) {
-							GuiUtils.debug("convert at [" + i + "," + j + "]: ");
-						}
+						// if ( DEBUG ) {
+						// scope.getGui().debug("convert at [" + i + "," + j + "]: ");
+						// }
 						rowList.add(SqlUtils.read(rs.getBytes(j)));
 					} else {
 						rowList.add(rs.getObject(j));
@@ -140,9 +138,9 @@ public class PostgresConnection extends SqlConnection {
 				repRequest.add(rowList);
 				i++;
 			}
-			if ( DEBUG ) {
-				GuiUtils.debug("Number of row:" + i);
-			}
+			// if ( DEBUG ) {
+			// scope.getGui().debug("Number of row:" + i);
+			// }
 		} catch (Exception e) {
 
 		}
@@ -157,13 +155,13 @@ public class PostgresConnection extends SqlConnection {
 		List<Integer> geoColumn = new ArrayList<Integer>();
 		for ( int i = 1; i <= numberOfColumns; i++ ) {
 
-			if ( DEBUG ) {
-				GuiUtils.debug("col " + i + ": " + rsmd.getColumnName(i));
-				GuiUtils.debug("   - Type: " + rsmd.getColumnType(i));
-				GuiUtils.debug("   - TypeName: " + rsmd.getColumnTypeName(i));
-				GuiUtils.debug("  - size: " + rsmd.getColumnDisplaySize(i));
-
-			}
+			// if ( DEBUG ) {
+			// scope.getGui().debug("col " + i + ": " + rsmd.getColumnName(i));
+			// scope.getGui().debug(" - Type: " + rsmd.getColumnType(i));
+			// scope.getGui().debug(" - TypeName: " + rsmd.getColumnTypeName(i));
+			// scope.getGui().debug(" - size: " + rsmd.getColumnDisplaySize(i));
+			//
+			// }
 
 			/*
 			 * for Geometry
@@ -175,8 +173,9 @@ public class PostgresConnection extends SqlConnection {
 			 */
 			// Search column with Geometry type
 			if ( vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i) == 1111 ||
-				vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i) == -2 || vender.equalsIgnoreCase(POSTGIS) &
-				rsmd.getColumnType(i) == 1111 || vender.equalsIgnoreCase(POSTGIS) & rsmd.getColumnType(i) == -2 ) {
+				vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i) == -2 ||
+				vender.equalsIgnoreCase(POSTGIS) & rsmd.getColumnType(i) == 1111 ||
+				vender.equalsIgnoreCase(POSTGIS) & rsmd.getColumnType(i) == -2 ) {
 				geoColumn.add(i);
 			}
 		}
@@ -199,8 +198,9 @@ public class PostgresConnection extends SqlConnection {
 			 */
 			// Search column with Geometry type
 			if ( vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i) == 1111 ||
-				vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i) == -2 || vender.equalsIgnoreCase(POSTGIS) &
-				rsmd.getColumnType(i) == 1111 || vender.equalsIgnoreCase(POSTGIS) & rsmd.getColumnType(i) == -2 ) {
+				vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i) == -2 ||
+				vender.equalsIgnoreCase(POSTGIS) & rsmd.getColumnType(i) == 1111 ||
+				vender.equalsIgnoreCase(POSTGIS) & rsmd.getColumnType(i) == -2 ) {
 				columnType.add(GEOMETRYTYPE);
 			} else {
 				columnType.add(rsmd.getColumnTypeName(i).toUpperCase());
@@ -234,7 +234,7 @@ public class PostgresConnection extends SqlConnection {
 		selectStr = selectStr + colStr + " FROM " + table_name + " LIMIT 1 ;";
 
 		if ( DEBUG ) {
-			GuiUtils.debug("PostgresConnection.getInsertString.select command:" + selectStr);
+			scope.getGui().debug("PostgresConnection.getInsertString.select command:" + selectStr);
 		}
 
 		try {
@@ -246,8 +246,8 @@ public class PostgresConnection extends SqlConnection {
 			IList<Object> col_Types = getColumnTypeName(rsmd);
 
 			if ( DEBUG ) {
-				GuiUtils.debug("list of column Name:" + col_Names);
-				GuiUtils.debug("list of column type:" + col_Types);
+				scope.getGui().debug("list of column Name:" + col_Names);
+				scope.getGui().debug("list of column type:" + col_Types);
 			}
 			// Insert command
 			// set parameter value
@@ -299,7 +299,7 @@ public class PostgresConnection extends SqlConnection {
 			insertStr = insertStr + table_name + "(" + colStr + ") " + "VALUES(" + valueStr + ")";
 
 			if ( DEBUG ) {
-				GuiUtils.debug("PostgresConection.getInsertString:" + insertStr);
+				scope.getGui().debug("PostgresConection.getInsertString:" + insertStr);
 			}
 
 		} catch (SQLException e) {
@@ -329,7 +329,7 @@ public class PostgresConnection extends SqlConnection {
 		selectStr = selectStr + " * " + " FROM " + table_name + " LIMIT 1 ;";
 
 		if ( DEBUG ) {
-			GuiUtils.debug("PostgresConnection.getInsertString.select command:" + selectStr);
+			scope.getGui().debug("PostgresConnection.getInsertString.select command:" + selectStr);
 		}
 
 		try {
@@ -341,12 +341,12 @@ public class PostgresConnection extends SqlConnection {
 			IList<Object> col_Types = getColumnTypeName(rsmd);
 			int col_no = col_Names.size();
 			// Check size of parameters
-			if ( values.size() != col_Names.size() ) { throw new IndexOutOfBoundsException(
-				"Size of columns list and values list are not equal"); }
+			if ( values.size() != col_Names
+				.size() ) { throw new IndexOutOfBoundsException("Size of columns list and values list are not equal"); }
 
 			if ( DEBUG ) {
-				GuiUtils.debug("list of column Name:" + col_Names);
-				GuiUtils.debug("list of column type:" + col_Types);
+				scope.getGui().debug("list of column Name:" + col_Names);
+				scope.getGui().debug("list of column type:" + col_Types);
 			}
 			// Insert command
 			// set parameter value
@@ -403,7 +403,7 @@ public class PostgresConnection extends SqlConnection {
 			insertStr = insertStr + table_name + "(" + colStr + ") " + "VALUES(" + valueStr + ")";
 
 			if ( DEBUG ) {
-				GuiUtils.debug("PostgresConection.getInsertString:" + insertStr);
+				scope.getGui().debug("PostgresConection.getInsertString:" + insertStr);
 			}
 
 		} catch (SQLException e) {

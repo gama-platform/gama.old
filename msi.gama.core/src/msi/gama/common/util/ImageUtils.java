@@ -1,24 +1,24 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ImageUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.util;
 
-import gnu.trove.map.hash.THashMap;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.*;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import msi.gama.runtime.IScope;
+import gnu.trove.map.hash.THashMap;
+import msi.gama.runtime.*;
 
 public class ImageUtils {
 
@@ -154,7 +154,7 @@ public class ImageUtils {
 
 	public static BufferedImage createCompatibleImage(final int width, final int height) {
 		BufferedImage new_image = null;
-		if ( DEBUG_OPTION || GuiUtils.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) {
+		if ( DEBUG_OPTION || GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) {
 			new_image =
 				new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024, BufferedImage.TYPE_INT_ARGB);
 		} else {
@@ -166,7 +166,7 @@ public class ImageUtils {
 	}
 
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
-		if ( DEBUG_OPTION || GuiUtils.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) { return image; }
+		if ( DEBUG_OPTION || GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) { return image; }
 		// final GraphicsConfiguration gfx_config =
 		// GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
@@ -253,19 +253,19 @@ public class ImageUtils {
 	/**
 	 * Convenience method that returns a scaled instance of the
 	 * provided {@code BufferedImage}.
-	 * 
+	 *
 	 * @param img the original image to be scaled
 	 * @param targetWidth the desired width of the scaled instance,
-	 *            in pixels
+	 * in pixels
 	 * @param targetHeight the desired height of the scaled instance,
-	 *            in pixels
+	 * in pixels
 	 * @param hint one of the rendering hints that corresponds to {@code RenderingHints.KEY_INTERPOLATION} (e.g. {@code RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
-	 *            {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR}, {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
+	 * {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR}, {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
 	 * @param higherQuality if true, this method will use a multi-step
-	 *            scaling technique that provides higher quality than the usual
-	 *            one-step technique (only useful in downscaling cases, where {@code targetWidth} or {@code targetHeight} is
-	 *            smaller than the original dimensions, and generally only when
-	 *            the {@code BILINEAR} hint is specified)
+	 * scaling technique that provides higher quality than the usual
+	 * one-step technique (only useful in downscaling cases, where {@code targetWidth} or {@code targetHeight} is
+	 * smaller than the original dimensions, and generally only when
+	 * the {@code BILINEAR} hint is specified)
 	 * @return a scaled version of the original {@code BufferedImage}
 	 */
 	public static BufferedImage downScale(final BufferedImage img, final int targetWidth, final int targetHeight,

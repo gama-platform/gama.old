@@ -9,7 +9,7 @@
  *
  *
  **********************************************************************************************/
-package msi.gama.headless.runtime;
+package msi.gama.outputs.display;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;

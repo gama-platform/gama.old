@@ -19,10 +19,10 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
+import msi.gama.runtime.GAMA;
 
 /**
  * The class DisplayOverlay.
@@ -293,7 +293,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 				try {
 					zoom.setText(getView().getOverlayZoomInfo());
 				} catch (Exception e) {
-					GuiUtils.debug("Error in updating overlay: " + e.getMessage());
+					GAMA.getGui().debug("Error in updating overlay: " + e.getMessage());
 					zoom.setText("Not initialized yet");
 				}
 			}
@@ -391,7 +391,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	public void resume() {}
 
 	protected void run(final Runnable r) {
-		GuiUtils.run(r);
+		GAMA.getGui().run(r);
 	}
 
 	public Shell getPopup() {
@@ -469,7 +469,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	private boolean viewIsDetached() {
 		// Uses the trick from http://eclipsesource.com/blogs/2010/06/23/tip-how-to-detect-that-a-view-was-detached/
 		final boolean[] result = new boolean[] { false };
-		GuiUtils.run(new Runnable() {
+		GAMA.getGui().run(new Runnable() {
 
 			@Override
 			public void run() {

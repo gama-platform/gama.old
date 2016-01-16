@@ -27,7 +27,6 @@ import org.opengis.feature.type.*;
 import org.opengis.referencing.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -35,8 +34,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Strings;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul
@@ -204,7 +202,7 @@ public class GamaShapeFile extends GamaGisFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		ShapeInfo s;
-		IFileMetaDataProvider p = GuiUtils.getMetaDataProvider();
+		IFileMetaDataProvider p = scope.getGui().getMetaDataProvider();
 		if ( p != null ) {
 			s = (ShapeInfo) p.getMetaData(getFile(), false);
 		} else {
@@ -245,7 +243,7 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 
 	protected void readShapes(final IScope scope) {
-		GuiUtils.beginSubStatus("Reading file" + getName());
+		scope.getGui().beginSubStatus("Reading file" + getName());
 		ShapefileDataStore store = null;
 		FeatureReader reader = null;
 		File file = getFile();
@@ -258,7 +256,7 @@ public class GamaShapeFile extends GamaGisFile {
 			computeProjection(scope, env);
 			reader = store.getFeatureReader();
 			while (reader.hasNext()) {
-				GuiUtils.updateSubStatusCompletion(index++ / size);
+				scope.getGui().setSubStatusCompletion(index++ / size);
 				Feature feature = reader.next();
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 				if ( g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
@@ -286,7 +284,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if ( store != null ) {
 				store.dispose();
 			}
-			GuiUtils.endSubStatus("Reading file " + getName());
+			scope.getGui().endSubStatus("Reading file " + getName());
 		}
 	}
 
@@ -296,7 +294,7 @@ public class GamaShapeFile extends GamaGisFile {
 		FeatureIterator<SimpleFeature> it = null;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = null;
 		try {
-			GuiUtils.beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName());
+			scope.getGui().beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName());
 			store = new ShapefileDataStore(file.toURI().toURL());
 			features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 			Envelope env = store.getFeatureSource().getBounds();
@@ -309,7 +307,7 @@ public class GamaShapeFile extends GamaGisFile {
 				// return returnIt ? features.features() : null;
 				int i = 0;
 				while (it.hasNext()) {
-					GuiUtils.updateSubStatusCompletion(i++ / size);
+					scope.getGui().setSubStatusCompletion(i++ / size);
 					final SimpleFeature feature = it.next();
 					Geometry g = (Geometry) feature.getDefaultGeometry();
 					if ( g != null && !g.isEmpty() /* Fix for Issue 725 */ ) {
@@ -336,7 +334,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if ( store != null ) {
 				store.dispose();
 			}
-			GuiUtils.endSubStatus("Opening file " + getName());
+			scope.getGui().endSubStatus("Opening file " + getName());
 		}
 	}
 

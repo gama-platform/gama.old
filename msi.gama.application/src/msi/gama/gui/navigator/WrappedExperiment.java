@@ -5,9 +5,10 @@
 package msi.gama.gui.navigator;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GAMLFile;
 
 /**
@@ -61,7 +62,11 @@ public class WrappedExperiment extends WrappedGamlObject {
 
 	@Override
 	public boolean handleDoubleClick() {
-		GuiUtils.runModel(getParent(), internalName);
+		try {
+			GAMA.getGui().runModel(getParent(), internalName);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 		return true;
 	}
 

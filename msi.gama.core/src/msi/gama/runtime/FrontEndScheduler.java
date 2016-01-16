@@ -1,21 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'FrontEndScheduler.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.runtime;
 
-import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import java.util.concurrent.Semaphore;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IStepable;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
 
@@ -31,9 +31,11 @@ public class FrontEndScheduler implements Runnable {
 	private volatile Set<IStepable> toStop = new THashSet();
 	private Thread executionThread;
 	volatile Semaphore lock = new Semaphore(1);
+	final IExperimentPlan experiment;
 
-	public FrontEndScheduler() {
-		if ( !GuiUtils.isInHeadLessMode() ) {
+	public FrontEndScheduler(IExperimentPlan experiment) {
+		this.experiment = experiment;
+		if ( !experiment.isHeadless() ) {
 			executionThread = new Thread(null, this, "Front end scheduler");
 			try {
 				lock.acquire();
@@ -56,7 +58,7 @@ public class FrontEndScheduler implements Runnable {
 				e.printStackTrace();
 				GamaRuntimeException ee = GamaRuntimeException.create(e);
 				ee.addContext("Error in front end scheduler. Reloading thread, but it would be safer to reload GAMA");
-				GuiUtils.raise(ee);
+				experiment.getExperimentScope().getGui().raise(ee);
 				executionThread = new Thread(null, this, "Front end scheduler");
 				executionThread.start();
 			}
@@ -67,7 +69,7 @@ public class FrontEndScheduler implements Runnable {
 	private IScope[] scopes = null;
 
 	public void step() {
-		if ( !GuiUtils.isInHeadLessMode() && paused ) {
+		if ( !experiment.isHeadless() && paused ) {
 			try {
 				lock.acquire();
 			} catch (final InterruptedException e) {
@@ -76,22 +78,22 @@ public class FrontEndScheduler implements Runnable {
 			}
 		}
 
-		// GuiUtils.debug("FrontEndScheduler.step");
+		// scope.getGui().debug("FrontEndScheduler.step");
 		stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
 		scopes = toStep.values().toArray(new IScope[toStep.size()]);
 		for ( int i = 0; i < stepables.length; i++ ) {
 			final IScope scope = scopes[i];
 			try {
-				// GuiUtils.debug("FrontEndScheduler.step : stepping " + stepables[i]);
+				// scope.getGui().debug("FrontEndScheduler.step : stepping " + stepables[i]);
 				if ( !scope.step(stepables[i]) ) {
-					// GuiUtils.debug("FrontEndScheduler.step : removal of " + stepables[i]);
+					// scope.getGui().debug("FrontEndScheduler.step : removal of " + stepables[i]);
 					toStop.add(stepables[i]);
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();
 				// if ( scope.interrupted() ) {
 				//
-				// // GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
+				// // scope.getGui().debug("Exception in experiment interruption: " + e.getMessage());
 				// } else {
 				// // GAMA.reportError(e, true);
 				// }
@@ -105,11 +107,11 @@ public class FrontEndScheduler implements Runnable {
 			for ( final IStepable s : toStop ) {
 				final IScope scope = toStep.get(s);
 				if ( scope != null && !scope.interrupted() ) {
-					// GuiUtils.debug("FrontEndScheduler.clean : Interrupting " + scope);
+					// scope.getGui().debug("FrontEndScheduler.clean : Interrupting " + scope);
 					scope.setInterrupted(true);
 				}
 				toStep.remove(s);
-				// GuiUtils.debug("FrontEndScheduler.clean : Removed " + s);
+				// scope.getGui().debug("FrontEndScheduler.clean : Removed " + s);
 				// s.dispose();
 			}
 			if ( toStep.isEmpty() ) {
@@ -153,7 +155,7 @@ public class FrontEndScheduler implements Runnable {
 		}
 		toStep.put(stepable, scope);
 		// We first init the stepable before it is scheduled
-		// GuiUtils.debug("FrontEndScheduler.schedule " + stepable);
+		// scope.getGui().debug("FrontEndScheduler.schedule " + stepable);
 		try {
 			if ( !scope.init(stepable) ) {
 				toStop.add(stepable);
@@ -162,7 +164,7 @@ public class FrontEndScheduler implements Runnable {
 			// paused = false;
 			// }
 		} catch (final Exception e) {
-			// GuiUtils.debug("WARNING :: Exception in front end scheduler: " + e.getMessage());
+			// scope.getGui().debug("WARNING :: Exception in front end scheduler: " + e.getMessage());
 			e.printStackTrace();
 			if ( scope != null && scope.interrupted() ) {
 				toStop.add(stepable);

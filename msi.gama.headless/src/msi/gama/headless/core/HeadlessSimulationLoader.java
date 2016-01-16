@@ -16,10 +16,9 @@ import java.util.*;
 import java.util.logging.Logger;
 import org.eclipse.emf.common.util.URI;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.*;
@@ -37,13 +36,13 @@ public class HeadlessSimulationLoader {
 	 */
 	private static void configureHeadLessSimulation() {
 		System.setProperty("java.awt.headless", "true");
-		GuiUtils.setHeadLessMode();
+		GAMA.setHeadLessMode();
 	}
 
 	public static void preloadGAMA() {
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA configuring and loading...");
 		configureHeadLessSimulation();
-		GuiUtils.setSwtGui(new HeadlessListener());
+		GAMA.setHeadlessGui(new HeadlessListener());
 
 		try {
 			// We initialize the extensions of Gaml

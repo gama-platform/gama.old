@@ -13,7 +13,7 @@ package msi.gaml.operators;
 
 import java.util.Map;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -74,9 +74,9 @@ public class System {
 			return null;
 		}
 		if ( a.dead() ) {
-			// GuiUtils.debug("System.opGetValue");
+			// scope.getGui().debug("System.opGetValue");
 			if ( !scope.interrupted() ) {
-				// GuiUtils.debug("System.opGetValue error");
+				// scope.getGui().debug("System.opGetValue error");
 				throw GamaRuntimeException.warning("Cannot evaluate " + s.serialize(false) +
 					" as the target agent is dead");
 			}
@@ -138,7 +138,7 @@ public class System {
 		}
 		if ( initialValues.isEmpty() ) { return GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
 		return GamaMapFactory.create(scope, Types.STRING, Types.NO_TYPE,
-			GuiUtils.openUserInputDialog(title, initialValues, initialTypes));
+			scope.getGui().openUserInputDialog(title, initialValues, initialTypes));
 	}
 
 	@operator(value = "eval_gaml", can_be_const = false, category = { IOperatorCategory.SYSTEM })
@@ -151,7 +151,7 @@ public class System {
 			final IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
 			return scope.evaluate(e, agent);
 		} catch (final GamaRuntimeException e) {
-			GuiUtils.informConsole("Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgentScope() +
+			scope.getGui().informConsole("Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgentScope() +
 				java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage());
 
 			return null;
@@ -172,7 +172,7 @@ public class System {
 	//
 	// // Version sans arguments pour l'instant.
 	// } catch (final Exception e) {
-	// GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
+	// scope.getGui().informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
 	// java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage());
 	// return null;
 	// }

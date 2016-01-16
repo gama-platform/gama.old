@@ -16,7 +16,7 @@ import java.util.*;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
@@ -53,7 +53,7 @@ public class AgentLayer extends AbstractLayer {
 			for ( final IAgent a : getAgentsToDisplay() ) {
 				IExecutable aspect = null;
 				if ( a != null/* && !scope.interrupted() */ ) {
-					if ( a == GuiUtils.getHighlightedAgent() ) {
+					if ( a == scope.getGui().getHighlightedAgent() ) {
 						aspect = a.getSpecies().getAspect("highlighted");
 						// if ( aspect == null ) {
 						// aspect = AspectStatement.HIGHLIGHTED_ASPECT;

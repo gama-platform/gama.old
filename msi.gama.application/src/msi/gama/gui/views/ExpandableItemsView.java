@@ -17,9 +17,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 
 public abstract class ExpandableItemsView<T> extends GamaViewPart implements ItemList<T> {
@@ -105,7 +105,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	protected void disposeViewer() {
 		try {
 			if ( viewer != null ) {
-				GuiUtils.run(new Runnable() {
+				GAMA.getGui().run(new Runnable() {
 
 					@Override
 					public void run() {

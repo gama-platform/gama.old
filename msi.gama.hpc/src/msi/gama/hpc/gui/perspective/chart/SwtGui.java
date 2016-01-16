@@ -15,7 +15,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.hpc.gui.perspective.chart.HeadlessChart;
 import msi.gama.hpc.gui.perspective.explorer.HeadlessParam;
 import msi.gama.hpc.simulation.*;
@@ -46,7 +46,7 @@ public class SwtGui /*implements IGui */{
 
 	static {
 		System.out.println("Configuring user interface access through SWT");
-		GuiUtils.setSwtGui(new SwtGui());
+		scope.getGui().setSwtGui(new SwtGui());
 	}
 
 	private SwtGui() {}
@@ -208,7 +208,7 @@ public class SwtGui /*implements IGui */{
 				try {
 					final Message m = messages.take();
 					if ( m == null || m.message == null ) { return; }
-					GuiUtils.run(new Runnable() {
+					scope.getGui().run(new Runnable() {
 
 						@Override
 						public void run() {
@@ -322,7 +322,7 @@ public class SwtGui /*implements IGui */{
 		g.printStackTrace();
 		final ErrorView v = (ErrorView) showView(ErrorView.ID, null);
 		if ( v != null ) {
-			GuiUtils.asyncRun(new Runnable() {
+			scope.getGui().asyncRun(new Runnable() {
 
 				@Override
 				public void run() {

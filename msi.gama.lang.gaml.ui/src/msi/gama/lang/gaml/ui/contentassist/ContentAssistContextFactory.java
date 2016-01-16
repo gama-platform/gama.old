@@ -1,30 +1,29 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ContentAssistContextFactory.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.contentassist;
 
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
 import org.eclipse.xtext.AbstractElement;
-import org.eclipse.xtext.ui.editor.contentassist.antlr.*;
-import org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.FollowElementCalculator;
-import org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory;
+import org.eclipse.xtext.ui.editor.contentassist.antlr.FollowElement;
+import org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.*;
 import com.google.common.collect.Multimap;
+import msi.gama.runtime.GAMA;
 
 /**
  * The class ContentAssistContextFactory.
- * 
+ *
  * @author drogoul
  * @since 9 avr. 2013
- * 
+ *
  */
 public class ContentAssistContextFactory extends StatefulFactory {
 
@@ -33,13 +32,13 @@ public class ContentAssistContextFactory extends StatefulFactory {
 		final Collection<AbstractElement> result) {
 		// stop = false;
 		// recurse.clear();
-		// GuiUtils.debug(" Computing FollowElements : " + followElements);
+		// scope.getGui().debug(" Computing FollowElements : " + followElements);
 		super.computeFollowElements(followElements, result);
 	}
 
 	@Override
 	protected void computeFollowElements(final FollowElementCalculator calculator, final FollowElement element) {
-		// GuiUtils.debug(" Computing FollowElement : " + element);
+		// scope.getGui().debug(" Computing FollowElement : " + element);
 		super.computeFollowElements(calculator, element);
 	}
 
@@ -61,13 +60,13 @@ public class ContentAssistContextFactory extends StatefulFactory {
 			recurse.put(e, recurse.get(e) + 1);
 		}
 		if ( recurse.get(e) > 3 ) {
-			GuiUtils.debug("Infinite recursion detected in completion proposal for " + e);
+			GAMA.getGui().debug("Infinite recursion detected in completion proposal for " + e);
 			stop = true;
 			recurse.clear();
 			return;
 		}
 
-		// GuiUtils.debug(" Computing FollowElement -- + visited : " + element +
+		// scope.getGui().debug(" Computing FollowElement -- + visited : " + element +
 		// " ; number of times : " + recurse.get(e));
 		super.computeFollowElements(calculator, element, visited);
 	}

@@ -449,7 +449,7 @@ public abstract class AbstractTopology implements ITopology {
 	//
 	// protected Iterator<IAgent> getNeighboursOf(final IScope scope, final ILocation source, final Double distance,
 	// final IAgentFilter filter) throws GamaRuntimeException {
-	// // GuiUtils.debug("AbstractTopology.getNeighboursOf");
+	// // scope.getGui().debug("AbstractTopology.getNeighboursOf");
 	// if ( !isTorus() ) {
 	// final Iterator<IShape> shapes = getSpatialIndex().allAtDistance(scope, source, distance, filter);
 	// return toAgents(shapes);

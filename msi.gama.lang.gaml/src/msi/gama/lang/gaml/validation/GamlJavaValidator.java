@@ -1,25 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlJavaValidator.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
-import msi.gama.common.util.GuiUtils;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.gaml.impl.StatementImpl;
-import msi.gama.lang.gaml.resource.*;
-import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.descriptions.ErrorCollector;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.xtext.util.Arrays;
 import org.eclipse.xtext.validation.*;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.impl.StatementImpl;
+import msi.gama.lang.gaml.resource.*;
+import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.ErrorCollector;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
@@ -36,7 +36,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		ErrorCollector errors = /* GamlModelBuilder.getInstance() */new GamlModelBuilder().validate(newResource);
 		if ( !errors.hasInternalSyntaxErrors() ) {
 			if ( errors.hasInternalErrors() ) {
-				GuiUtils.debug("GamlJavaValidator.validate");
+				GAMA.getGui().debug("GamlJavaValidator.validate");
 			}
 			for ( GamlCompilationError error : errors ) {
 				manageCompilationIssue(error);
@@ -104,8 +104,8 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			} else if ( e.isWarning() ) {
 				acceptWarning(e.toString(), object, feature, index, e.getCode(), e.getData());
 			} else {
-				System.out.println("One compilation error accepted: " + e.toString() + " thread: " +
-					Thread.currentThread().getName());
+				System.out.println(
+					"One compilation error accepted: " + e.toString() + " thread: " + Thread.currentThread().getName());
 				acceptError(e.toString(), object, feature, index, e.getCode(), e.getData());
 			}
 		}

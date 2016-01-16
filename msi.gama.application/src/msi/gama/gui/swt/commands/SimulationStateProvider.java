@@ -14,6 +14,9 @@ package msi.gama.gui.swt.commands;
 import java.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.services.IServiceLocator;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.*;
 
 public class SimulationStateProvider extends AbstractSourceProvider implements ISimulationStateProvider {
@@ -27,7 +30,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public void initialize(final IServiceLocator locator) {
-		GAMA.state = this;
+		SwtGui.state = this;
 	}
 
 	@Override
@@ -37,7 +40,13 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public Map<String, String> getCurrentState() {
-		map.put(SIMULATION_RUNNING_STATE, GAMA.getFrontmostSimulationState());
+		String state = IGui.NOTREADY;
+		IExperimentPlan exp = GAMA.getExperiment();
+		if ( exp != null ) {
+			state = exp.getExperimentScope().getGui().getFrontmostSimulationState();
+		}
+		map.put(SIMULATION_RUNNING_STATE, state);
+
 		return map;
 	}
 

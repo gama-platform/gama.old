@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
@@ -148,7 +148,7 @@ public class UserControlView extends GamaViewPart {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				GuiUtils.setSelectedAgent(scope.getAgentScope());
+				scope.getGui().setSelectedAgent(scope.getAgentScope());
 			}
 
 		}, SWT.RIGHT);
@@ -159,7 +159,7 @@ public class UserControlView extends GamaViewPart {
 			public void widgetSelected(final SelectionEvent e) {
 				GAMA.getFrontmostController().getScheduler().setUserHold(false);
 				deactivate(parent);
-				GuiUtils.hideView(ID);
+				scope.getGui().hideView(ID);
 			}
 
 			@Override

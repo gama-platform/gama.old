@@ -226,10 +226,10 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		double curHeight;
 		if ( heightInModelUnits == null ) {
 			curHeight = heightOfLayerInPixels;
-			// GuiUtils.debug("AWTDisplayGraphics.drawString " + string + " " + curHeight);
+			// scope.getGui().debug("AWTDisplayGraphics.drawString " + string + " " + curHeight);
 		} else {
 			curHeight = hFromModelUnitsToPixels(heightInModelUnits);
-			// GuiUtils.debug("AWTDisplayGraphics.drawString " + string + " " + curHeight);
+			// scope.getGui().debug("AWTDisplayGraphics.drawString " + string + " " + curHeight);
 
 		} // FIXME Optimize by keeping the current values
 			// final int style = styleName == null ? Font.PLAIN : styleName;

@@ -13,7 +13,7 @@ package msi.gama.runtime;
 
 import java.util.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -37,13 +37,6 @@ public class GAMA {
 
 	// hqnghi: add several controllers to have multi-thread experiments
 	private final static List<IExperimentController> controllers = new ArrayList<IExperimentController>();
-
-	// Needed by RCP for displaying the simulation state
-	public static ISimulationStateProvider state = null;
-	public final static String PAUSED = "STOPPED";
-	public final static String RUNNING = "RUNNING";
-	public final static String NOTREADY = "NOTREADY";
-	public final static String NONE = "NONE";
 
 	public static List<IExperimentController> getControllers() {
 		return controllers;
@@ -70,7 +63,7 @@ public class GAMA {
 			IExperimentPlan existingExperiment = controller.getExperiment();
 			if ( existingExperiment != null ) {
 				controller.getScheduler().pause();
-				if ( !GuiUtils.confirmClose(existingExperiment) ) { return; }
+				if ( !getGui().confirmClose(existingExperiment) ) { return; }
 			}
 		}
 		controller = newExperiment.getController();
@@ -78,7 +71,7 @@ public class GAMA {
 			closeAllExperiments(false);
 		}
 
-		GuiUtils.openSimulationPerspective(true);
+		getGui().openSimulationPerspective(true);
 
 		controllers.add(controller);
 
@@ -108,13 +101,14 @@ public class GAMA {
 		final ParametersSet params, final Long seed) {
 
 		ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
+		currentExperiment.setHeadless(true);
 		if ( currentExperiment == null ) { throw GamaRuntimeException
 			.error("Experiment " + expName + " cannot be created"); }
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
 				entry.getValue());
 		}
-		currentExperiment.createAgent();
+		currentExperiment.open();
 		if ( seed != null ) {
 			currentExperiment.getAgent().setSeed(Double.longBitsToDouble(seed));
 		}
@@ -147,8 +141,8 @@ public class GAMA {
 			controller.close();
 		}
 		controllers.clear();
-		GuiUtils.closeSimulationViews(andOpenModelingPerspective);
-		// GuiUtils.wipeExperiments();
+		getGui().closeSimulationViews(andOpenModelingPerspective);
+		// scope.getGui().wipeExperiments();
 	}
 
 	/**
@@ -192,7 +186,7 @@ public class GAMA {
 			g.printStackTrace();
 			return true;
 		}
-		GuiUtils.runtimeError(g);
+		scope.getGui().runtimeError(g);
 
 		boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
 		boolean shouldStop = isError && shouldStopSimulation && GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
@@ -342,28 +336,54 @@ public class GAMA {
 	 *
 	 */
 
-	public static String getFrontmostSimulationState() {
-		IExperimentController controller = getFrontmostController();
-		if ( controller == null ) {
-			return NONE;
-		} else if ( controller.getScheduler().paused ) { return PAUSED; }
-		return RUNNING;
-	}
+	static IGui regularGui;
+	static IGui headlessGui = new HeadlessListener();
 
-	public static void updateSimulationState(final String forcedState) {
-		if ( state != null ) {
-			GuiUtils.run(new Runnable() {
-
-				@Override
-				public void run() {
-					state.updateStateTo(forcedState);
-				}
-			});
+	/**
+	 * @return
+	 */
+	public static IGui getGui() {
+		// either a headless listener or a fully configured gui
+		if ( isInHeadlessMode || regularGui == null ) {
+			return headlessGui;
+		} else {
+			return regularGui;
 		}
 	}
 
-	public static void updateSimulationState() {
-		updateSimulationState(getFrontmostSimulationState());
+	public static IGui getHeadlessGui() {
+		return headlessGui;
+	}
+
+	public static IGui getRegularGui() {
+		return regularGui;
+	}
+
+	/**
+	 * @param IGui gui
+	 */
+	public static void setHeadlessGui(final IGui g) {
+		headlessGui = g;
+	}
+
+	public static void setRegularGui(final IGui g) {
+		regularGui = g;
+	}
+
+	static boolean isInHeadlessMode;
+
+	/**
+	 * @return
+	 */
+	public static boolean isInHeadLessMode() {
+		return isInHeadlessMode;
+	}
+
+	/**
+	 *
+	 */
+	public static void setHeadLessMode() {
+		isInHeadlessMode = true;
 	}
 
 }

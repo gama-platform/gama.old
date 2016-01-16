@@ -11,9 +11,9 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.Composite;
 import com.jogamp.common.util.JarUtil;
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.views.LayeredDisplayView;
+import msi.gama.runtime.GAMA;
 
 /**
  * Class OpenGLLayeredDisplayView.
@@ -68,7 +68,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 	@Override
 	public void close() {
 
-		GuiUtils.asyncRun(new Runnable() {
+		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
@@ -87,7 +87,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 
 	@Override
 	public void mouseMove(final MouseEvent e) {
-		GuiUtils.asyncRun(new Runnable() {
+		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {

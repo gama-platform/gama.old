@@ -437,7 +437,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public void dispose() {
 		if ( dead() ) { return; }
-//		GuiUtils.debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in GamlAgent)");
+//		scope.getGui().debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in GamlAgent)");
 		try {
 			acquireLock();
 			for ( final Map.Entry<Object, Object> entry : attributes.entrySet() ) {
@@ -726,7 +726,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		@Override
 		public void setInterrupted(final boolean interrupted) {
 			this.interrupted = true;
-			// GuiUtils.debug("GamlAgent.Scope.setInterrupted : " + this);
+			// scope.getGui().debug("GamlAgent.Scope.setInterrupted : " + this);
 			// if ( !GamlAgent.this.dead ) {
 			// GamlAgent.this.dispose();
 			// }

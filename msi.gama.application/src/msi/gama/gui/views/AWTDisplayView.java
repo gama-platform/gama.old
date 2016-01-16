@@ -17,15 +17,16 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.*;
+import msi.gama.runtime.GAMA;
 
 public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider {
 
-	public static final String ID = GuiUtils.LAYER_VIEW_ID;
+	public static final String ID = IGui.LAYER_VIEW_ID;
 
 	@Override
 	protected Composite createSurfaceComposite() {
@@ -45,12 +46,12 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			@Override
 			public void mouseMoved(final java.awt.event.MouseEvent e) {
 				System.out.println("We move inside the AWT component");
-				GuiUtils.asyncRun(displayOverlay);
+				GAMA.getGui().asyncRun(displayOverlay);
 			}
 
 			@Override
 			public void mouseDragged(final java.awt.event.MouseEvent e) {
-				GuiUtils.asyncRun(displayOverlay);
+				GAMA.getGui().asyncRun(displayOverlay);
 			}
 		};
 
@@ -185,7 +186,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 						getDisplaySurface().resizeImage(r.width, r.height, false);
 						getDisplaySurface().updateDisplay(true);
 
-						GuiUtils.run(new Runnable() {
+						GAMA.getGui().run(new Runnable() {
 
 							@Override
 							public void run() {

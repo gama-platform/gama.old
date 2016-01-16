@@ -421,7 +421,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	private IDescription setContext(final IDescription context) {
-		// GuiUtils.debug("GamlExpressionCompiler.setContext : Replacing " + );
+		// scope.getGui().debug("GamlExpressionCompiler.setContext : Replacing " + );
 		IDescription previous = this.context;
 		this.context = context;
 		return previous;

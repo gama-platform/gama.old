@@ -12,7 +12,7 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -63,15 +63,15 @@ public class WriteStatement extends AbstractStatement {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		IAgent agent = stack.getAgentScope();
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		IAgent agent = scope.getAgentScope();
 		String mes = null;
 		if ( agent != null && !agent.dead() ) {
-			mes = Cast.asString(stack, message.value(stack));
+			mes = Cast.asString(scope, message.value(scope));
 			if ( mes == null ) {
 				mes = "nil";
 			}
-			GuiUtils.informConsole(mes);
+			scope.getGui().informConsole(mes);
 		}
 		return mes;
 	}

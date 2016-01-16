@@ -150,12 +150,12 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	}
 
 	protected void setBestSolution(final ParametersSet bestSolution) {
-		// GuiUtils.debug("ParamSpaceExploAlgorithm.setBestSolution : " + bestSolution);
+		// scope.getGui().debug("ParamSpaceExploAlgorithm.setBestSolution : " + bestSolution);
 		this.bestSolution = new ParametersSet(bestSolution);
 	}
 
 	protected void setBestFitness(final Double bestFitness) {
-		// GuiUtils.debug("ParamSpaceExploAlgorithm.setBestFitness : " + bestFitness);
+		// scope.getGui().debug("ParamSpaceExploAlgorithm.setBestFitness : " + bestFitness);
 		this.bestFitness = bestFitness;
 	}
 }

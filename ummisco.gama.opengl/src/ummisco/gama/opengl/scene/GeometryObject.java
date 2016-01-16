@@ -17,7 +17,7 @@ import java.util.List;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaPair;
@@ -112,7 +112,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	@Override
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
 		// GL2 gl = GLContext.getCurrentGL().getGL2();
-//		GuiUtils.debug("OpenGL drawing " + agent);
+//		scope.getGui().debug("OpenGL drawing " + agent);
 		if ( picking ) {
 			JOGLRenderer renderer = drawer.renderer;
 			gl.glPushMatrix();

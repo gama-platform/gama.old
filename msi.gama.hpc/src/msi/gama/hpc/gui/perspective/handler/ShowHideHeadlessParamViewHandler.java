@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.hpc.gui.perspective.handler;
 
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import org.eclipse.core.commands.*;
 
 public class ShowHideHeadlessParamViewHandler extends AbstractHandler {

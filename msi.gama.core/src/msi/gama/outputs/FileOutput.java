@@ -15,7 +15,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
@@ -248,7 +248,7 @@ public class FileOutput extends AbstractOutput {
 		if ( !logFolder.exists() ) {
 			final boolean isCreated = logFolder.mkdirs();
 			if ( !isCreated ) {
-				GuiUtils.error("Impossible to create " + dir);
+				scope.getGui().error("Impossible to create " + dir);
 			}
 		}
 

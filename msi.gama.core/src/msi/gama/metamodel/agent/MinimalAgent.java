@@ -15,7 +15,7 @@ import java.util.*;
 import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
@@ -194,7 +194,7 @@ public abstract class MinimalAgent implements IAgent {
 		if ( dead() ) { return; }
 		acquireLock();
 		try {
-//			GuiUtils.debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in MinimalAgent)");
+//			scope.getGui().debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in MinimalAgent)");
 			dead = true;
 			final IPopulation p = getPopulation();
 			if ( p != null ) {
@@ -509,7 +509,7 @@ public abstract class MinimalAgent implements IAgent {
 	@args(names = { "message" })
 	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
 		final String m = (String) scope.getArg("message", IType.STRING);
-		GuiUtils.debugConsole(scope.getClock().getCycle(), m + "\nsender: " + Cast.asMap(scope, this, false));
+		scope.getGui().debugConsole(scope.getClock().getCycle(), m + "\nsender: " + Cast.asMap(scope, this, false));
 		return m;
 	}
 
@@ -517,7 +517,7 @@ public abstract class MinimalAgent implements IAgent {
 	@args(names = { "message" })
 	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
 		final String s = (String) scope.getArg("message", IType.STRING);
-		GuiUtils.informConsole(s);
+		scope.getGui().informConsole(s);
 		return s;
 	}
 
@@ -525,7 +525,7 @@ public abstract class MinimalAgent implements IAgent {
 	@args(names = { "message" })
 	public final Object primError(final IScope scope) throws GamaRuntimeException {
 		final String error = (String) scope.getArg("message", IType.STRING);
-		GuiUtils.error(error);
+		scope.getGui().error(error);
 		return error;
 	}
 
@@ -533,7 +533,7 @@ public abstract class MinimalAgent implements IAgent {
 	@args(names = { "message" })
 	public final Object primTell(final IScope scope) throws GamaRuntimeException {
 		final String s = getName() + " says : " + scope.getArg("message", IType.STRING);
-		GuiUtils.tell(s);
+		scope.getGui().tell(s);
 		return s;
 	}
 

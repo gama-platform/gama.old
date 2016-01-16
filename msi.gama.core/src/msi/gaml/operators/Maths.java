@@ -207,10 +207,10 @@ public class Maths {
 			" distance : " + distDiff1);
 		// java.lang.System.out.println("Infinity to int:" + (int) Double.POSITIVE_INFINITY);
 		// java.lang.System.out.println("NaN to int:" + (int) Double.NaN);
-		// GuiUtils.debug("(int) (1.0/0.0):" + (int) (1.0 / 0.0));
-		// GuiUtils.debug("(int) (1.0/0):" + (int) (1.0 / 0));
-		// GuiUtils.debug("(int) (1.0/0d):" + (int) (1 / 0d));
-		// GuiUtils.debug("(int) (1/0):" + 1 / 0);
+		// scope.getGui().debug("(int) (1.0/0.0):" + (int) (1.0 / 0.0));
+		// scope.getGui().debug("(int) (1.0/0):" + (int) (1.0 / 0));
+		// scope.getGui().debug("(int) (1.0/0d):" + (int) (1 / 0d));
+		// scope.getGui().debug("(int) (1/0):" + 1 / 0);
 	}
 
 	/**

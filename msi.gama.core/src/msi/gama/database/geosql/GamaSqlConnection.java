@@ -14,7 +14,7 @@ import org.opengis.feature.type.*;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.*;
@@ -343,7 +343,7 @@ public class GamaSqlConnection extends GamaGisFile {
 			reader = queryInfo.getRecordSet().features();
 			int i = 0;
 			while (reader.hasNext()) {
-				GuiUtils.updateSubStatusCompletion(index++ / size);
+				scope.getGui().setSubStatusCompletion(index++ / size);
 				Feature feature = reader.next();
 
 				System.out.println("Record " + i++ + ": " + feature.getValue().toString());
@@ -370,7 +370,7 @@ public class GamaSqlConnection extends GamaGisFile {
 					e.printStackTrace();
 				}
 			}
-			GuiUtils.endSubStatus("Reading table " + tableName);
+			scope.getGui().endSubStatus("Reading table " + tableName);
 		}
 	}
 

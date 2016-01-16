@@ -277,7 +277,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		//
 
 		// if ( validator != null ) {
-		// GuiUtils.debug("## Individual validator found for " + c.getSimpleName());
+		// scope.getGui().debug("## Individual validator found for " + c.getSimpleName());
 		// }
 
 		SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, facets, omissible,
@@ -469,10 +469,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		if ( children == null ) {
 			children = new LinkedHashSet();
 			final List<Class> classes = JavaUtils.collectImplementationClasses(base, skills, ADDITIONS.keySet());
-			// GuiUtils.debug("#### Adding implementation classes " + classes);
+			// scope.getGui().debug("#### Adding implementation classes " + classes);
 			for ( final Class c1 : classes ) {
 				List<IDescription> toAdd = getAdditions(c1);
-				// GuiUtils.debug(" #### " + c1.getSimpleName() + ": " + toAdd);
+				// scope.getGui().debug(" #### " + c1.getSimpleName() + ": " + toAdd);
 				if ( toAdd != null && !toAdd.isEmpty() ) {
 					children.addAll(toAdd);
 				}

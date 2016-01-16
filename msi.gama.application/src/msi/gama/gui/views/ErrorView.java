@@ -21,14 +21,14 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.ItemList;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* implements IToolbarDecoratedView.Pausable */ {
 
-	public static String ID = GuiUtils.ERROR_VIEW_ID;
+	public static String ID = IGui.ERROR_VIEW_ID;
 	int numberOfDisplayedErrors = GamaPreferences.CORE_ERRORS_NUMBER.getValue();
 	boolean mostRecentFirst = GamaPreferences.CORE_RECENT.getValue();
 	private final ArrayList<GamaRuntimeException> exceptions = new ArrayList();
@@ -121,11 +121,11 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 
 		final EObject o = exception.getEditorContext();
 		if ( o != null ) {
-			GuiUtils.asyncRun(new Runnable() {
+			GAMA.getGui().asyncRun(new Runnable() {
 
 				@Override
 				public void run() {
-					GuiUtils.editModel(o);
+					GAMA.getGui().editModel(o);
 				}
 			});
 		}

@@ -1,14 +1,14 @@
 /**
  * Created by drogoul, 15 févr. 2015
- * 
+ *
  */
 package msi.gama.gui.swt;
 
-import msi.gama.common.interfaces.IGui;
-import msi.gama.common.util.GuiUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.runtime.GAMA;
 
 public class GamaIcon {
 
@@ -56,7 +56,7 @@ public class GamaIcon {
 			}
 
 			if ( descriptor == null ) {
-				GuiUtils
+				GAMA.getGui()
 					.debug("ERROR: Cannot find icon " + GamaIcons.DEFAULT_PATH + path + ".png in plugin: " + plugin);
 				descriptor = ImageDescriptor.getMissingImageDescriptor();
 			}

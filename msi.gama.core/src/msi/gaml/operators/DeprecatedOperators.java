@@ -388,7 +388,7 @@ public class DeprecatedOperators {
 		// } catch (final Exception e) {
 		// final Throwable ee =
 		// e instanceof InvocationTargetException ? ((InvocationTargetException) e).getTargetException() : e;
-		// GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
+		// scope.getGui().informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
 		// java.lang.System.getProperty("line.separator") + "Reason: " + ee.getMessage());
 		// return null;
 		// }

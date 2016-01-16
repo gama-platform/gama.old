@@ -69,12 +69,12 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			}
 			// /BUGFIX
 			if ( o != null ) {
-				// GuiUtils.debug("Object under hover:" + o.toString());
+				// scope.getGui().debug("Object under hover:" + o.toString());
 				if ( o instanceof ActionRef ) {
 					EObject container = o.eContainer();
-					// GuiUtils.debug("Found " + ((ActionRef) o).getRef().getName());
+					// scope.getGui().debug("Found " + ((ActionRef) o).getRef().getName());
 					if ( container instanceof Function ) {
-						// GuiUtils.debug("---> Is a function");
+						// scope.getGui().debug("---> Is a function");
 						o = container;
 						region = locationInFileProvider.getFullTextRegion(o);
 					}

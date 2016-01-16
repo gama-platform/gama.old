@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -144,7 +144,7 @@ public class ChartDataListStatement extends AbstractStatement {
 /*		Object val=valexp.resolveAgainst(scope).value(scope);
 		if (!(val instanceof GamaList))
 		{
-			GuiUtils.debug("chart list with no list...");
+			scope.getGui().debug("chart list with no list...");
 			return datalist;
 		}
 		
@@ -194,7 +194,7 @@ public class ChartDataListStatement extends AbstractStatement {
 			}
 		}
 		}
-//		GuiUtils.debug("dyncateg:"+defaultnames);
+//		scope.getGui().debug("dyncateg:"+defaultnames);
 		
 //		names = Cast.asList(scope, getFacetValue(scope, IKeyword.LEGEND,getFacetValue(scope, IKeyword.NAME,defaultnames)));
 		colors = Cast.asList(scope, getFacetValue(scope, IKeyword.COLOR,defaultcolors));

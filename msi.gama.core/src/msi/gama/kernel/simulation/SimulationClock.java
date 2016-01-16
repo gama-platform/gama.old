@@ -210,7 +210,7 @@ public class SimulationClock {
 		double delay = getDelayInMilliseconds();
 		if ( delay == 0d ) { return; }
 		try {
-			// GuiUtils.debug("SimulationClock.waitDelay " + delay + "ms");
+			// scope.getGui().debug("SimulationClock.waitDelay " + delay + "ms");
 			if ( duration >= delay ) { return; }
 			Thread.sleep((long) delay - duration);
 		} catch (InterruptedException e) {
@@ -246,7 +246,7 @@ public class SimulationClock {
 		resetDuration();
 		// String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
 		// if ( !GAMA.getExperiment().isBatch() ) {
-		// GuiUtils.informStatus(info);
+		// scope.getGui().informStatus(info);
 		// }
 	}
 
@@ -271,7 +271,7 @@ public class SimulationClock {
 		// resetDuration();
 		// // String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
 		// // if ( !GAMA.getExperiment().isBatch() ) {
-		// // GuiUtils.informStatus(info);
+		// // scope.getGui().informStatus(info);
 		// // }
 		// }
 	}

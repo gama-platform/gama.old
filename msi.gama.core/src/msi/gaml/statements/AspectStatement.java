@@ -17,7 +17,7 @@ import gnu.trove.impl.Constants;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -74,7 +74,7 @@ public class AspectStatement extends AbstractStatementSequence {
 	// agent.acquireLock();
 	// // if ( agent.dead() ) { return null; }
 	// // Normally always highlighted
-	// if ( agent == GuiUtils.getHighlightedAgent() ) {
+	// if ( agent == scope.getGui().getHighlightedAgent() ) {
 	// g.beginHighlight();
 	// }
 	// final Color c = GamaPreferences.CORE_HIGHLIGHT.getValue();
@@ -139,7 +139,7 @@ public class AspectStatement extends AbstractStatementSequence {
 				try {
 					agent.acquireLock();
 					// if ( agent.dead() ) { return null; }
-					if ( agent == GuiUtils.getHighlightedAgent() ) {
+					if ( agent == scope.getGui().getHighlightedAgent() ) {
 						g.beginHighlight();
 					}
 					final Color c = agent.getSpecies().hasVar(IKeyword.COLOR)
@@ -204,7 +204,7 @@ public class AspectStatement extends AbstractStatementSequence {
 	@Override
 	public Rectangle2D executeOn(final IScope scope) {
 		IAgent agent = scope.getAgentScope();
-		boolean shouldHighlight = agent == GuiUtils.getHighlightedAgent() && !isHighlightAspect;
+		boolean shouldHighlight = agent == scope.getGui().getHighlightedAgent() && !isHighlightAspect;
 		if ( agent != null && !agent.dead() ) {
 			IGraphics g = scope.getGraphics();
 			// hqnghi: try to find scope from experiment

@@ -12,7 +12,6 @@
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
@@ -103,7 +102,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String getViewId() {
-		return GuiUtils.MONITOR_VIEW_ID;
+		return IGui.MONITOR_VIEW_ID;
 	}
 
 	@Override

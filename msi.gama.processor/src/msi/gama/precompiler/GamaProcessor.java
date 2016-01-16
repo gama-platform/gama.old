@@ -176,7 +176,11 @@ public class GamaProcessor extends AbstractProcessor {
 		String clazz = sb.toString();
 		for ( int i = 0; i < IMPORTS.length; i++ ) {
 			if ( clazz.startsWith(IMPORTS[i]) ) {
-				clazz = clazz.replace(IMPORTS[i] + ".", "");
+				// AD: false
+				String temp = clazz.replace(IMPORTS[i] + ".", "");
+				if ( !temp.contains(".") ) {
+					clazz = temp;
+				}
 			}
 		}
 		return clazz;

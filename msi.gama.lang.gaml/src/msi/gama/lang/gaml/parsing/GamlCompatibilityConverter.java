@@ -244,7 +244,7 @@ public class GamlCompatibilityConverter {
 		final Set<Diagnostic> errors) {
 		if ( e.hasFacet(key) ) {
 			// if ( key.equals(TYPE) ) {
-			// GuiUtils.debug("GamlCompatibilityConverter.addFacet:");
+			// scope.getGui().debug("GamlCompatibilityConverter.addFacet:");
 			// }
 			addWarning("Double definition of facet " + key + ". Only the last one will be considered", e.getElement(),
 				errors);

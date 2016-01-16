@@ -23,7 +23,7 @@ import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
 
 /**
@@ -112,9 +112,13 @@ public class WorkspaceModelsManager {
 				return;
 			}
 			if ( expName == null ) {
-				GuiUtils.editModel(file);
+				GAMA.getGui().editModel(file);
 			} else {
-				GuiUtils.runModel(file, expName);
+				try {
+					GAMA.getGui().runModel(file, expName);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -124,7 +128,7 @@ public class WorkspaceModelsManager {
 	 * @return
 	 */
 	private IFile findAndLoadIFile(final String filePath) {
-		GuiUtils.debug("WorkspaceModelsManager.findAndLoadIFile " + filePath);
+		GAMA.getGui().debug("WorkspaceModelsManager.findAndLoadIFile " + filePath);
 		// No error in case of an empty argument
 		if ( filePath == null || filePath.isEmpty() || StringUtils.isWhitespace(filePath) ) { return null; }
 		IPath path = new Path(filePath);
@@ -145,7 +149,7 @@ public class WorkspaceModelsManager {
 	 * @return
 	 */
 	private IFile findInWorkspace(final IPath originalPath) {
-		GuiUtils.debug("WorkspaceModelsManager.findInWorkspace  " + originalPath);
+		GAMA.getGui().debug("WorkspaceModelsManager.findInWorkspace  " + originalPath);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IPath workspacePath = new Path(Platform.getInstanceLocation().getURL().getPath());
 		IPath filePath = originalPath.makeRelativeTo(workspacePath);
@@ -160,7 +164,7 @@ public class WorkspaceModelsManager {
 	}
 
 	private IFile findOutsideWorkspace(final IPath originalPath) {
-		GuiUtils.debug("WorkspaceModelsManager.findOutsideWorkspace " + originalPath);
+		GAMA.getGui().debug("WorkspaceModelsManager.findOutsideWorkspace " + originalPath);
 		final File modelFile = new File(originalPath.toOSString());
 		// TODO If the file does not exist we return null (might be a good idea to check other locations)
 		if ( !modelFile.exists() ) { return null; }
@@ -183,7 +187,7 @@ public class WorkspaceModelsManager {
 		}
 
 		if ( dotFile == null || projectFileBean == null ) {
-			GuiUtils.tell("The model '" + modelFile.getAbsolutePath() +
+			GAMA.getGui().tell("The model '" + modelFile.getAbsolutePath() +
 				"' does not seem to belong to an existing GAML project. It will be imported as part of the 'Unclassified models' project.");
 			return createUnclassifiedModelsProjectAndAdd(originalPath);
 		}
@@ -210,7 +214,7 @@ public class WorkspaceModelsManager {
 							String name = description.getName();
 							for ( IProject p : projects ) {
 								if ( p.getName().equals(name) ) {
-									GuiUtils.tell(
+									GAMA.getGui().tell(
 										"A project with the same name already exists in the workspace. The model '" +
 											modelFile.getAbsolutePath() +
 											" will be imported as part of the 'Unclassified models' project.");
@@ -239,7 +243,7 @@ public class WorkspaceModelsManager {
 					// @Override
 					// public void done() {
 					// RefreshHandler.run();
-					// // GuiUtils.tell("Project " + workspace.getRoot().getProject(pathToProject).getName() +
+					// // scope.getGui().tell("Project " + workspace.getRoot().getProject(pathToProject).getName() +
 					// // " has been imported");
 					// }
 
@@ -250,7 +254,7 @@ public class WorkspaceModelsManager {
 		} catch (InvocationTargetException e) {
 			return null;
 		} catch (CoreException e) {
-			GuiUtils.error("Error wien importing project: " + e.getMessage());
+			GAMA.getGui().error("Error wien importing project: " + e.getMessage());
 		}
 		IProject project = workspace.getRoot().getProject(pathToProject);
 		String relativePathToModel =
@@ -296,8 +300,9 @@ public class WorkspaceModelsManager {
 			return iFile;
 		} catch (CoreException e) {
 			e.printStackTrace();
-			GuiUtils.tell("The file " + (iFile == null ? location.lastSegment() : iFile.getFullPath().lastSegment()) +
-				" cannot be created because of the following exception " + e.getMessage());
+			GAMA.getGui()
+				.tell("The file " + (iFile == null ? location.lastSegment() : iFile.getFullPath().lastSegment()) +
+					" cannot be created because of the following exception " + e.getMessage());
 			return null;
 		}
 	}
@@ -308,7 +313,7 @@ public class WorkspaceModelsManager {
 	 * @return
 	 */
 	private IFile createUniqueFileFrom(final IFile originalFile, final IFolder modelFolder) {
-		GuiUtils.debug("WorkspaceModelsManager.createUniqueFileFrom " + originalFile.getLocation() + " in " +
+		GAMA.getGui().debug("WorkspaceModelsManager.createUniqueFileFrom " + originalFile.getLocation() + " in " +
 			modelFolder.getFullPath());
 		IFile file = originalFile;
 		while (file.exists()) {

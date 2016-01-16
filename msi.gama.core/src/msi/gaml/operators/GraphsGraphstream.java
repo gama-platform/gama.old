@@ -14,7 +14,7 @@ package msi.gaml.operators;
 import java.util.*;
 import org.graphstream.algorithm.generator.*;
 import org.graphstream.stream.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -295,7 +295,7 @@ public class GraphsGraphstream {
 		for ( GamlAgent e : listVertex ) {
 			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i),
 				locEnv.getY() + layoutRadius * Math.sin(THETA * i), locEnv.getZ()));
-			GuiUtils.informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA);
+			scope.getGui().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA);
 			i++;
 		}
 		return g;

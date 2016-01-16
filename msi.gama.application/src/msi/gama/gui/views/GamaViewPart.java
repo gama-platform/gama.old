@@ -20,7 +20,6 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
@@ -71,7 +70,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		protected abstract UpdatePriority jobPriority();
 
 		public void runSynchronized() {
-			GuiUtils.run(new Runnable() {
+			GAMA.getGui().run(new Runnable() {
 
 				@Override
 				public void run() {
@@ -136,12 +135,12 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		} else {
 			if ( shouldBeClosedWhenNoExperiments() ) {
 				System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
-				GuiUtils.asyncRun(new Runnable() {
+				GAMA.getGui().asyncRun(new Runnable() {
 
 					@Override
 					public void run() {
-						GuiUtils.closeSimulationViews(false);
-						GuiUtils.openModelingPerspective(false);
+						GAMA.getGui().closeSimulationViews(false);
+						GAMA.getGui().openModelingPerspective(false);
 					}
 				});
 
@@ -262,7 +261,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void close() {
 
-		GuiUtils.asyncRun(new Runnable() {
+		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {

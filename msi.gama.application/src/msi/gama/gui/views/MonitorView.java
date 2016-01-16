@@ -17,7 +17,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
@@ -36,7 +35,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	private static int count = 0;
 
-	public static final String ID = GuiUtils.MONITOR_VIEW_ID;
+	public static final String ID = IGui.MONITOR_VIEW_ID;
 
 	// private final ArrayList<MonitorOutput> outputs = new ArrayList();
 

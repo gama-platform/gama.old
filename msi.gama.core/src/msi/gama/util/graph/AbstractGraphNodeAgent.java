@@ -12,7 +12,7 @@
 package msi.gama.util.graph;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
@@ -72,7 +72,7 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 
 	@action(name = "related_to", virtual = true, args = { @arg(name = "other", optional = false, type = { IType.AGENT }) })
 	public Boolean relatedTo(final IScope scope) {
-		GuiUtils.debug("Should never be called !");
+		scope.getGui().debug("Should never be called !");
 		return false;
 	}
 

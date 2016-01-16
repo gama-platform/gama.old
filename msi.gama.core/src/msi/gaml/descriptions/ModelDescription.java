@@ -236,7 +236,7 @@ public class ModelDescription extends SpeciesDescription {
 			experiments.put(s, (ExperimentDescription) child);
 			s = child.getFacets().getLabel(TITLE);
 			titledExperiments.put(s, (ExperimentDescription) child);
-			// GuiUtils.debug("Adding experiment" + s + " defined in " + child.getOriginName() + " to " + getName() +
+			// scope.getGui().debug("Adding experiment" + s + " defined in " + child.getOriginName() + " to " + getName() +
 			// "...");
 			addSpeciesType((TypeDescription) child);
 		} else if ( child != null && child.getKeyword().equals(OUTPUT) ) {

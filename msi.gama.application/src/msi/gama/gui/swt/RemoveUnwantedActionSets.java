@@ -11,12 +11,12 @@
  **********************************************************************************************/
 package msi.gama.gui.swt;
 
-import msi.gama.common.util.GuiUtils;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import msi.gama.runtime.GAMA;
 
-public class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements IStartup */{
+public class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements IStartup */ {
 
 	String[] TOOLBAR_ACTION_SETS_TO_REMOVE = new String[] { "org.eclipse", "msi.gama.lang.gaml.Gaml" };
 	String[] MENUS_TO_REMOVE = new String[] { "org.eclipse.ui.run", "window", "navigate", "project" };
@@ -37,7 +37,7 @@ public class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements I
 	@Override
 	public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 		final WorkbenchWindow w = (WorkbenchWindow) page.getWorkbenchWindow();
-		GuiUtils.run(new Runnable() {
+		GAMA.getGui().run(new Runnable() {
 
 			@Override
 			public void run() {

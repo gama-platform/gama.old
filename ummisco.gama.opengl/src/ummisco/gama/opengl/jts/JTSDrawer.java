@@ -157,7 +157,6 @@ public class JTSDrawer {
 					for ( int i = 0; i < shp.getInnerGeometry().getNumGeometries(); i++ ) {
 						DrawPolygon((Polygon) shp.getInnerGeometry().getGeometryN(i), c, alpha, fill, border,
 							isTextured, object, drawPolygonContour, rounded, z_fighting_value, norm_dir);
-
 					}
 
 				} else {
@@ -514,10 +513,13 @@ public class JTSDrawer {
 
 		DrawPolygon(p, c, alpha, fill, border, isTextured, object, drawPolygonContour, rounded, z_fighting_value,
 			-p_norm_dir);
-		gl.glTranslated(0, 0, height);
+		//gl.glTranslated(0, 0, height);
+		double[] vectorNormal =  CalculatePolygonNormal(p);
+		gl.glTranslated(vectorNormal[0]*height, vectorNormal[1]*height, vectorNormal[2]*height);
 		DrawPolygon(p, c, alpha, fill, border, isTextured, object/* ,angle */, drawPolygonContour, rounded,
 			z_fighting_value, p_norm_dir);
-		gl.glTranslated(0, 0, -height);
+		//gl.glTranslated(0, 0, -height);
+		gl.glTranslated(-vectorNormal[0]*height, -vectorNormal[1]*height, -vectorNormal[2]*height);
 		// FIXME : Will be wrong if angle =!0
 
 		if ( isTextured ) {
@@ -650,32 +652,59 @@ public class JTSDrawer {
 		texture.disable(gl);
 	}
 
-	public Vertex[] getFaceVertices(final Polygon p, final int j, final int k, final double elevation,
-		final double height) {
-		// Build the 4 vertices of the face.
-		Vertex[] vertices = new Vertex[4];
-		for ( int i = 0; i < 4; i++ ) {
-			vertices[i] = new Vertex();
-		}
-		// FIXME; change double to double in Vertex
-		vertices[0].x = p.getExteriorRing().getPointN(j).getX();
-		vertices[0].y = yFlag * p.getExteriorRing().getPointN(j).getY();
-		vertices[0].z = elevation + height;
 
-		vertices[1].x = p.getExteriorRing().getPointN(k).getX();
-		vertices[1].y = yFlag * p.getExteriorRing().getPointN(k).getY();
-		vertices[1].z = elevation + height;
+	
+	
+	public double[] CalculatePolygonNormal(final Polygon p){
+		// Get 3 vertices of the initial polygon.
+		Vertex[] verticesP = new Vertex[3];
+		for ( int i = 0; i < 3; i++ ) {
+			verticesP[i] = new Vertex();
+		}			
+		verticesP[0].x = p.getExteriorRing().getPointN(0).getX();
+		verticesP[0].y = yFlag * p.getExteriorRing().getPointN(0).getY();
+		verticesP[0].z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 
-		vertices[2].x = p.getExteriorRing().getPointN(k).getX();
-		vertices[2].y = yFlag * p.getExteriorRing().getPointN(k).getY();
-		vertices[2].z = elevation;
+		verticesP[1].x = p.getExteriorRing().getPointN(1).getX();
+		verticesP[1].y = yFlag * p.getExteriorRing().getPointN(1).getY();
+		verticesP[1].z = p.getExteriorRing().getPointN(1).getCoordinate().z;
 
-		vertices[3].x = p.getExteriorRing().getPointN(j).getX();
-		vertices[3].y = yFlag * p.getExteriorRing().getPointN(j).getY();
-		vertices[3].z = elevation;
-
-		return vertices;
+		verticesP[2].x = p.getExteriorRing().getPointN((2) % p.getNumPoints()).getX();
+		verticesP[2].y = yFlag * p.getExteriorRing().getPointN((2) % p.getNumPoints()).getY();
+		verticesP[2].z = p.getExteriorRing().getPointN((2) % p.getNumPoints()).getCoordinate().z;
+		return GLUtilNormal.CalculateNormal(verticesP[0], verticesP[1], verticesP[2]);
 	}
+	
+	public Vertex[] getFaceVertices(final Polygon p, final int j, final int k, final double elevation,
+			final double height) {
+			double[] vectorNormal =  CalculatePolygonNormal(p);
+			// Build the 4 vertices of the face.
+			Vertex[] vertices = new Vertex[4];
+			for ( int i = 0; i < 4; i++ ) {
+				vertices[i] = new Vertex();
+			}
+			
+			vertices[0].x = p.getExteriorRing().getPointN(j).getX() + vectorNormal[0] *height;
+			vertices[0].y = yFlag * p.getExteriorRing().getPointN(j).getY() + vectorNormal[1] *height;
+			vertices[0].z = p.getExteriorRing().getPointN(j).getCoordinate().z + vectorNormal[2] *height;
+
+			vertices[1].x = p.getExteriorRing().getPointN(k).getX() + vectorNormal[0] *height;
+			vertices[1].y = yFlag * p.getExteriorRing().getPointN(k).getY() + vectorNormal[1] *height;
+			vertices[1].z = p.getExteriorRing().getPointN(k).getCoordinate().z + vectorNormal[2] *height;
+
+			vertices[2].x = p.getExteriorRing().getPointN(k).getX();
+			vertices[2].y = yFlag * p.getExteriorRing().getPointN(k).getY();
+			vertices[2].z = p.getExteriorRing().getPointN(k).getCoordinate().z;
+
+			vertices[3].x = p.getExteriorRing().getPointN(j).getX();
+			vertices[3].y = yFlag * p.getExteriorRing().getPointN(j).getY();
+			vertices[3].z = p.getExteriorRing().getPointN(j).getCoordinate().z;
+
+			return vertices;
+		}
+	
+	
+	
 
 	public Vertex[] getTriangleVertices(final Polygon p) {
 		// Build the 3 vertices of the face from the 3 first point (maybe wrong in some case).

@@ -1,64 +1,54 @@
 /*********************************************************************************************
- * 
  *
- * 'HeadlessChart.java', in plugin 'msi.gama.hpc', is part of the source code of the 
+ *
+ * 'HeadlessChart.java', in plugin 'msi.gama.hpc', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.hpc.gui.perspective.chart;
 
-import java.awt.Color;
-import java.awt.Frame;
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.Vector;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
+import org.jfree.chart.*;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-//import msi.gama.headless.executor.BatchExecutor;
-import msi.gama.hpc.gui.common.GUIUtils;
+import org.jfree.data.xy.*;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.hpc.simulation.*;
 
 public class HeadlessChart extends ViewPart {
 
-	public static final String ID = GUIUtils.HEADLESS_CHART_ID;
+	public static final String ID = IGui.HEADLESS_CHART_ID;
 	public ArrayList<Button> lstchkbox;
 	public ArrayList<XYSeries> series;
 	public ArrayList<String> lstvarname_flag;
 	public ArrayList<Integer> lsttimestep;
 	public XYSeriesCollection dataset;
+
 	public HeadlessChart() {
 		super();
 	}
 
-	public static String xmlfilename="";
+	public static String xmlfilename = "";
 	Simulation sim;
 
 	public void readDataset() {
 		if ( xmlfilename != "" ) {
-		ResultReader in = new ResultReader(
-		 "C://Users//Administrator//Desktop//GAMA//eclipse//samples//predatorPrey//simulation-outputs.xml");
-	//	xmlfilename);
-		sim = in.parseXmlFile();
+			ResultReader in = new ResultReader(
+				"C://Users//Administrator//Desktop//GAMA//eclipse//samples//predatorPrey//simulation-outputs.xml");
+			// xmlfilename);
+			sim = in.parseXmlFile();
 		}
 
 	}
@@ -66,9 +56,9 @@ public class HeadlessChart extends ViewPart {
 	private void createDataset() {
 		lstvarname_flag = new ArrayList<String>();
 		lsttimestep = new ArrayList<Integer>();
-		lstchkbox=new  ArrayList<Button>();
+		lstchkbox = new ArrayList<Button>();
 		readDataset();
-		ArrayList<Result> listres =  sim.result;
+		ArrayList<Result> listres = sim.result;
 		int n = 0;
 		series = new ArrayList<XYSeries>();
 		for ( int i = 0; i < listres.size(); i++ ) {
@@ -80,20 +70,20 @@ public class HeadlessChart extends ViewPart {
 			} else {
 				lstvarname_flag.add(varname);
 				Button b1 = new Button(comp.getParent(), SWT.CHECK);
-				b1.setText("Show "+varname);
+				b1.setText("Show " + varname);
 				b1.setSelection(true);
 				b1.addSelectionListener(new SelectionListener() {
-					
+
 					@Override
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(final SelectionEvent e) {
 						// TODO Auto-generated method stub
 						showChart();
 					}
-					
+
 					@Override
-					public void widgetDefaultSelected(SelectionEvent e) {
+					public void widgetDefaultSelected(final SelectionEvent e) {
 						// TODO Auto-generated method stub
-						
+
 					}
 
 				});
@@ -105,7 +95,6 @@ public class HeadlessChart extends ViewPart {
 			// System.out.println(" " + listres.get(i).getName()+" " + listres.get(i).getValue());
 		}
 
-		
 	}
 
 	private JFreeChart createChart(final XYDataset dataset) {
@@ -118,7 +107,7 @@ public class HeadlessChart extends ViewPart {
 			PlotOrientation.VERTICAL, true, // include legend
 			true, // tooltips
 			false // urls
-			);
+		);
 
 		// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
 		chart.setBackgroundPaint(Color.white);
@@ -149,13 +138,12 @@ public class HeadlessChart extends ViewPart {
 
 	public void showChart() {
 
-		dataset  = new XYSeriesCollection();
+		dataset = new XYSeriesCollection();
 		for ( int i = 0; i < series.size(); i++ ) {
-			if(lstchkbox.get(i).getSelection())
-			{
-			dataset.addSeries(series.get(i));
+			if ( lstchkbox.get(i).getSelection() ) {
+				dataset.addSeries(series.get(i));
 			}
-			
+
 		}
 
 		final JFreeChart chart = createChart(dataset);
@@ -164,8 +152,6 @@ public class HeadlessChart extends ViewPart {
 		frame.add(panel);
 		frame.validate();
 
-		
-
 	}
 
 	Composite comp;
@@ -173,8 +159,8 @@ public class HeadlessChart extends ViewPart {
 	Frame frame;
 	ChartPanel panel;
 
+	@Override
 	public void createPartControl(final Composite parent) {
-
 
 		comp = new Composite(parent, SWT.NONE | SWT.EMBEDDED);
 		frame = SWT_AWT.new_Frame(comp);
@@ -182,7 +168,6 @@ public class HeadlessChart extends ViewPart {
 			createDataset();
 			showChart();
 		}
-		
 
 	}
 

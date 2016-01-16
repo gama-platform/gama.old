@@ -15,10 +15,13 @@ import java.io.File;
 import java.util.Calendar;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.core.Simulation;
 import msi.gama.headless.openmole.IMoleExperiment;
 import msi.gama.headless.openmole.MoleSimulationLoader;
+import msi.gama.headless.runtime.LocalSimulationRuntime;
+import msi.gama.headless.runtime.SimulationRuntime;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -38,41 +41,65 @@ import msi.gaml.types.IType;
 		@facet(name = IKeywords.EXPERIMENT, type = IType.STRING, optional = false),
 		@facet(name = IKeywords.END, type = IType.INT, optional = true),
 		@facet(name = IKeywords.CORE, type = IType.INT, optional = true),
-		@facet(name = IKeywords.OUT, type = IType.STRING, optional = true),
+		@facet(name = IKeywords.WITHSEED, type = IType.INT, optional = true),
+		//@facet(name = IKeywords.OUT, type = IType.STRING, optional = true),
 		@facet(name = IKeywords.WITHOUTPUTS, type = IType.MAP, optional = true),
 		@facet(name = IKeywords.WITHPARAMS, type = IType.MAP, optional = true)}, omissible = IKeywords.EXPERIMENT)
-
 public class HeadlessStatement extends AbstractStatement {
+	private int numberOfThread = -1;
+	private SimulationRuntime processorQueue;
+	private int maxSimulationID=0;
 	
+	
+	public String getSimulationId()
+	{
+		return (new Integer(maxSimulationID++)).toString();
+	}
+
 	public HeadlessStatement(IDescription desc) {
 		super(desc);
-		// TODO Auto-generated constructor stub
+		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 	}
 
 	
-	private void initialize(final IScope scope) {
-	
+	private String retrieveModelFileAbsolutePath(IScope scope, String filename)
+	{
+		if(filename.charAt(0)=='/')
+			return filename;
+		return  new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath()+"/"+filename;
 	}
-	
 	
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
 
-		//GamaMap<String, Object> myInput =  Cast.asMap(scope, getFacetValue(scope,IKeywords.WITHPARAMS ));
-		//GamaMap<String, Integer> myOutput =  Cast.asMap(scope, getFacetValue(scope,IKeywords.WITHOUTPUTS ));
+		int seed = 0;
 		String expName =  Cast.asString(scope, getFacetValue(scope,IKeywords.EXPERIMENT ));
 		String modelPath =  Cast.asString(scope, getFacetValue(scope,IKeywords.MODEL ));
+		if(modelPath !=null && !modelPath.isEmpty())
+		{
+			modelPath = retrieveModelFileAbsolutePath(scope, modelPath);
+		}
+		else
+		{
+			//no model specified, this caller model path is used.
+			modelPath = scope.getModel().getFilePath();
+		}
+		
+		GamaMap<String,?> outputs =  Cast.asMap(scope, getFacetValue(scope,IKeywords.WITHOUTPUTS ),false);
 
 		
-		IModel mdl = MoleSimulationLoader.loadModel(new File("/tmp/headless/samples/predatorPrey/predatorPrey.gaml"));
-		IMoleExperiment exp = MoleSimulationLoader.newExperiment(mdl);
+		if(this.hasFacet(IKeywords.WITHSEED))
+			seed =  Cast.asInt(scope, getFacetValue(scope,IKeywords.WITHSEED ));
+		
+		long lseed = seed;
+		
+		System.out.println("chemin du fichier" + new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath());
+		
+		
+		Simulation sim=new Simulation(this.getSimulationId(),modelPath, expName, 1000, lseed);
+		
+		this.processorQueue.pushSimulation(sim);
 
-		exp.setup("preyPred",123);
-		exp.step();
-		exp.step();
-		exp.step();
-		exp.step();
-		System.out.println("coucocy "+ exp.getOutput("number_of_preys"));
 
 		
 		return null;

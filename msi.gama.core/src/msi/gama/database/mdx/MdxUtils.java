@@ -1,18 +1,18 @@
 /*********************************************************************************************
- * 
  *
- * 'MdxUtils.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'MdxUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.database.mdx;
 
 import java.util.Map;
-import msi.gama.common.util.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -31,8 +31,8 @@ public class MdxUtils {
 		String user = (String) params.get("user");
 		String passwd = (String) params.get("passwd");
 		if ( DEBUG ) {
-			GuiUtils.debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + dbtype + " - " + host + " - " +
-				port + " - " + database + " - " + catalog + " - " + user + " - " + passwd);
+			scope.getGui().debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + dbtype + " - " + host +
+				" - " + port + " - " + database + " - " + catalog + " - " + user + " - " + passwd);
 		}
 		MdxConnection mdxConn;
 		// create connection
@@ -44,40 +44,42 @@ public class MdxUtils {
 			// catalog=fullPath.replace('\\', '/');
 			catalog = fullPath;
 			if ( DEBUG ) {
-				GuiUtils.debug("MdxlUtils.createConnectionObject- full path:" + fullPath);
-				GuiUtils.debug("MdxlUtils.createConnectionObject- Catalog path:" + catalog);
+				scope.getGui().debug("MdxlUtils.createConnectionObject- full path:" + fullPath);
+				scope.getGui().debug("MdxlUtils.createConnectionObject- Catalog path:" + catalog);
 			}
 
 			if ( DEBUG ) {
-				GuiUtils.debug("MdxlUtils.createConnectionObject.catalog.Mondrian:" + olaptype + " - " + dbtype +
-					" - " + " - " + host + " - " + port + " - " + database + " - " + catalog + " - " + user + " - " +
-					passwd + " - ");
+				scope.getGui()
+					.debug("MdxlUtils.createConnectionObject.catalog.Mondrian:" + olaptype + " - " + dbtype + " - " +
+						" - " + host + " - " + port + " - " + database + " - " + catalog + " - " + user + " - " +
+						passwd + " - ");
 			}
 
 			mdxConn = new MondrianConnection(olaptype, dbtype, host, port, database, catalog, user, passwd);
 			if ( DEBUG ) {
-				GuiUtils.debug("MdxlUtils.createConnectionObject.connectionObject.Mondrian.Object:" +
-					mdxConn.toString());
+				scope.getGui()
+					.debug("MdxlUtils.createConnectionObject.connectionObject.Mondrian.Object:" + mdxConn.toString());
 			}
 
 		} else if ( olaptype.equalsIgnoreCase(MdxConnection.MONDRIANXMLA) ) {
 			if ( DEBUG ) {
-				GuiUtils.debug("MdxlUtils.createConnectionObject.catalog.MondrianXMLA:" + olaptype + " - " + dbtype +
-					" - " + " - " + host + " - " + port + " - " + database + " - " + catalog + " - " + user + " - " +
-					passwd + " - ");
+				scope.getGui()
+					.debug("MdxlUtils.createConnectionObject.catalog.MondrianXMLA:" + olaptype + " - " + dbtype +
+						" - " + " - " + host + " - " + port + " - " + database + " - " + catalog + " - " + user +
+						" - " + passwd + " - ");
 			}
 
 			mdxConn = new MondrianXmlaConnection(olaptype, dbtype, host, port, database, catalog, user, passwd);
 			if ( DEBUG ) {
-				GuiUtils.debug("MdxlUtils.createConnectionObject.connectionObject.MondrianXMLA.Object:" +
-					mdxConn.toString());
+				scope.getGui().debug(
+					"MdxlUtils.createConnectionObject.connectionObject.MondrianXMLA.Object:" + mdxConn.toString());
 			}
 
 		} else {
 			throw GamaRuntimeException.error("GAMA does not support: " + olaptype);
 		}
 		if ( DEBUG ) {
-			GuiUtils.debug("MdxUtils.createConnection:" + mdxConn.toString());
+			scope.getGui().debug("MdxUtils.createConnection:" + mdxConn.toString());
 		}
 		return mdxConn;
 	}
@@ -91,10 +93,10 @@ public class MdxUtils {
 		String catalog = (String) params.get("catalog");
 		String user = (String) params.get("user");
 		String passwd = (String) params.get("passwd");
-		if ( DEBUG ) {
-			GuiUtils.debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + dbtype + " - " + " - " + host +
-				" - " + port + " - " + database + " - " + catalog + " - " + user + " - " + passwd);
-		}
+		// if ( DEBUG ) {
+		// scope.getGui().debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + dbtype + " - " + " - " + host +
+		// " - " + port + " - " + database + " - " + catalog + " - " + user + " - " + passwd);
+		// }
 		MdxConnection mdxConn;
 		// create connection
 		if ( olaptype.equalsIgnoreCase(MdxConnection.MSAS) ) {
@@ -107,18 +109,18 @@ public class MdxUtils {
 		} else {
 			throw GamaRuntimeException.error("GAMA does not support: " + olaptype);
 		}
-		if ( DEBUG ) {
-			GuiUtils.debug("MdxUtils.createConnection:" + mdxConn.toString());
-		}
+		// if ( DEBUG ) {
+		// scope.getGui().debug("MdxUtils.createConnection:" + mdxConn.toString());
+		// }
 		return mdxConn;
 	}
 
 	public static MdxConnection createConnectionObject(final String olaptype, final String host, final String port,
 		final String database, final String user, final String passwd) throws GamaRuntimeException {
-		if ( DEBUG ) {
-			GuiUtils.debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + host + " - " + port + " - " +
-				database + " - ");
-		}
+		// if ( DEBUG ) {
+		// scope.getGui().debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + host + " - " + port + " - " +
+		// database + " - ");
+		// }
 		MdxConnection mdxConn;
 		// create connection
 		if ( olaptype.equalsIgnoreCase(MdxConnection.MSAS) ) {
@@ -131,19 +133,19 @@ public class MdxUtils {
 		} else {
 			throw GamaRuntimeException.error("GAMA does not support: " + olaptype);
 		}
-		if ( DEBUG ) {
-			GuiUtils.debug("MdxUtils.createConnection:" + mdxConn.toString());
-		}
+		// if ( DEBUG ) {
+		// scope.getGui().debug("MdxUtils.createConnection:" + mdxConn.toString());
+		// }
 		return mdxConn;
 	}
 
 	public static MdxConnection createConnectionObject(final String olaptype, final String host, final String port,
 		final String database, final String catalog, final String user, final String passwd)
-		throws GamaRuntimeException {
-		if ( DEBUG ) {
-			GuiUtils.debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + host + " - " + port + " - " +
-				database + " - " + catalog + " - " + user + " - " + passwd);
-		}
+			throws GamaRuntimeException {
+		// if ( DEBUG ) {
+		// scope.getGui().debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + host + " - " + port + " - " +
+		// database + " - " + catalog + " - " + user + " - " + passwd);
+		// }
 		MdxConnection mdxConn;
 		// create connection
 		if ( olaptype.equalsIgnoreCase(MdxConnection.MSAS) ) {
@@ -156,19 +158,19 @@ public class MdxUtils {
 		} else {
 			throw GamaRuntimeException.error("GAMA does not support: " + olaptype);
 		}
-		if ( DEBUG ) {
-			GuiUtils.debug("MdxUtils.createConnection:" + mdxConn.toString());
-		}
+		// if ( DEBUG ) {
+		// scope.getGui().debug("MdxUtils.createConnection:" + mdxConn.toString());
+		// }
 		return mdxConn;
 	}
 
 	public static MdxConnection createConnectionObject(final String olaptype, final String dbtype, final String host,
 		final String port, final String database, final String catalog, final String user, final String passwd)
-		throws GamaRuntimeException {
-		if ( DEBUG ) {
-			GuiUtils.debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + host + " - " + port + " - " +
-				database + " - " + catalog + " - " + user + " - " + passwd);
-		}
+			throws GamaRuntimeException {
+		// if ( DEBUG ) {
+		// scope.getGui().debug("MdxlUtils.createConnectionObject:" + olaptype + " - " + host + " - " + port + " - " +
+		// database + " - " + catalog + " - " + user + " - " + passwd);
+		// }
 		MdxConnection mdxConn;
 		// create connection
 		if ( olaptype.equalsIgnoreCase(MdxConnection.MSAS) ) {
@@ -181,9 +183,9 @@ public class MdxUtils {
 		} else {
 			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
-		if ( DEBUG ) {
-			GuiUtils.debug("MdxUtils.createConnection:" + mdxConn.toString());
-		}
+		// if ( DEBUG ) {
+		// scope.getGui().debug("MdxUtils.createConnection:" + mdxConn.toString());
+		// }
 		return mdxConn;
 	}
 

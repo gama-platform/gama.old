@@ -179,7 +179,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 			ISpecies currentSpecies;
 			while (!speciesStack.isEmpty()) {
 				currentSpecies = speciesStack.pop();
-				// GuiUtils.debug("GamlModelSpecies: effectively adding " + currentSpecies.getName());
+				// scope.getGui().debug("GamlModelSpecies: effectively adding " + currentSpecies.getName());
 				allSpecies.put(currentSpecies.getName(), currentSpecies);
 				final List<ISpecies> microSpecies = currentSpecies.getMicroSpecies();
 				for ( final ISpecies microSpec : microSpecies ) {

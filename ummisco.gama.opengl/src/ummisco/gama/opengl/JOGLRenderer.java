@@ -25,7 +25,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -133,7 +133,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	protected void initializeCanvasWithListeners() {
 
-		GuiUtils.asyncRun(new Runnable() {
+		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
@@ -371,7 +371,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	}
 
 	public void switchCamera() {
-		GuiUtils.asyncRun(new Runnable() {
+		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
@@ -389,7 +389,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			camera = new CameraArcBall(this);
 		}
 
-		GuiUtils.asyncRun(new Runnable() {
+		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
@@ -550,7 +550,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public Rectangle2D drawGamaShape(final IScope scope, final IShape shape, final Color c, final boolean fill,
 		final Color border, final boolean rounded) {
 		if ( shape == null ) { return null; }
-//		GuiUtils.debug(shape.getClass().getSimpleName() + " " + " .being drawn (in JOGLRenderer)");
+		// scope.getGui().debug(shape.getClass().getSimpleName() + " " + " .being drawn (in JOGLRenderer)");
 		Double depth = 0d;
 		GamaPair<Double, GamaPoint> rot3D = null;
 		java.util.List<BufferedImage> textures = null;
@@ -583,6 +583,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		}
 		
 		if ( shape.hasAttribute(IShape.ASSET3D_ATTRIBUTE) ) {
+			java.lang.System.out.println("asseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeet");
 			java.util.List<String> asset3DNames = Cast.asList(scope, shape.getAttribute(IShape.ASSET3D_ATTRIBUTE));	
 		    asset3Dmodel = ModelLoaderOBJ.LoadModel(asset3DNames.get(0), asset3DNames.get(1), gl);
 		}
