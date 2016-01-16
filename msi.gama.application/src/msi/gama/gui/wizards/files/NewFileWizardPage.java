@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
  *
- * 'NewFileWizardPage.java', in plugin 'msi.gama.application', is part of the source code of the 
+ *
+ * 'NewFileWizardPage.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.wizards.files;
 
@@ -141,16 +141,16 @@ public class NewFileWizardPage extends WizardPage {
 				if ( i > 0 ) {
 					// model title = filename less extension less all non alphanumeric characters
 					titleText.setText(fname.substring(0, i).replaceAll("[^\\p{Alnum}]", ""));
-				}/*
-				 * else if (fname.length()>0) {
-				 * int pos = t.getSelection().x;
-				 * fname = fname.replaceAll("[[^\\p{Alnum}]&&[^_-]&&[^\\x2E]]", "_");
-				 * t.setText(fname+".gaml");
-				 * t.setSelection(pos);
-				 * } else {
-				 * t.setText("new.gaml");
-				 * }
-				 */
+				} /*
+					 * else if (fname.length()>0) {
+					 * int pos = t.getSelection().x;
+					 * fname = fname.replaceAll("[[^\\p{Alnum}]&&[^_-]&&[^\\x2E]]", "_");
+					 * t.setText(fname+".gaml");
+					 * t.setSelection(pos);
+					 * } else {
+					 * t.setText("new.gaml");
+					 * }
+					 */
 				dialogChanged();
 			}
 		});
@@ -260,14 +260,14 @@ public class NewFileWizardPage extends WizardPage {
 	private void radioChanged() {
 		if ( exampleModelButton.getSelection() ) {
 			descriptionText.setText("This model displays an awesome simulation of something ...");
-			titleText.setText("example");
-			fileText.setText("example.gaml");
+			// titleText.setText("example");
+			// fileText.setText("example.gaml");
 			updateStatus(null);
 		}
 		if ( emptyModelButton.getSelection() || skeletonModelButton.getSelection() ) {
-			descriptionText.setText("");
-			titleText.setText("new");
-			fileText.setText("new.gaml");
+			descriptionText.setText("Describe here the model and its experiments");
+			// titleText.setText("new");
+			// fileText.setText("new.gaml");
 			updateStatus(null);
 		}
 		dialogChanged();
@@ -296,9 +296,8 @@ public class NewFileWizardPage extends WizardPage {
 	 * Uses the standard container selection dialog to choose the new value for the container field.
 	 */
 	private void handleBrowse() {
-		ContainerSelectionDialog dialog =
-			new ContainerSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-				"Select a project as a container");
+		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
+			ResourcesPlugin.getWorkspace().getRoot(), false, "Select a project as a container");
 		if ( dialog.open() == Window.OK ) {
 			Object[] result = dialog.getResult();
 			if ( result.length == 1 ) {

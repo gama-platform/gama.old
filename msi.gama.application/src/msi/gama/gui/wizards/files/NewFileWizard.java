@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'NewFileWizard.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.wizards.files;
 
@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
+import msi.gaml.operators.Strings;
 
 /**
  * The role of this wizard is to create a new file resource in the provided container. If
@@ -125,8 +126,9 @@ public class NewFileWizard extends Wizard implements INewWizard {
 
 		final IFile file = container.getFile(new Path("models/" + fileName));
 
-		fileHeader =
-			"/**\n *  " + title + "\n" + " *  Author: " + author + "\n" + " *  Description: " + desc + "\n" + " */\n\n";
+		fileHeader = "/**\n" + "* Name: " + title + "\n" + "* Author: " + author + "\n" + "* Description: " + desc +
+			"\n" + "* Tag : Tag1, Tag2, TagN\n*/";
+		// "/**\n * " + title + "\n" + " * Author: " + author + "\n" + " * Description: " + desc + "\n" + " */\n\n";
 
 		InputStream streamModel = null;
 
@@ -199,7 +201,7 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		}
 		/* Final output in the String */
 		String str = writer.toString();
-		String output = fileHeader + str.replaceAll("\\$TITLE\\$", title);
+		String output = fileHeader + Strings.LN + Strings.LN + str.replaceAll("\\$TITLE\\$", title);
 
 		return new ByteArrayInputStream(output.getBytes());
 	}
