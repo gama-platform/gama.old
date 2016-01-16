@@ -387,7 +387,7 @@
          </property>
          <property
                name="startupMessageRect"
-               value="30,203,541,16">
+               value="200,450,541,16">
          </property>
          <property
                name="startupProgressRect"
