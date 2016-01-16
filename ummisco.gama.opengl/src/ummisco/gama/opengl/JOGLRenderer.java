@@ -584,7 +584,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		
 		if ( shape.hasAttribute(IShape.ASSET3D_ATTRIBUTE) ) {
 			java.util.List<String> asset3DNames = Cast.asList(scope, shape.getAttribute(IShape.ASSET3D_ATTRIBUTE));	
-		    asset3Dmodel = ModelLoaderOBJ.LoadModel(asset3DNames.get(0), asset3DNames.get(1), gl);
+		    //asset3Dmodel = ModelLoaderOBJ.LoadModel(asset3DNames.get(0), asset3DNames.get(1), gl);
 		}
 
 		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
