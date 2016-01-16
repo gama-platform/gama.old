@@ -47,9 +47,9 @@ public class GLModel{
         if(centerit)
             centerit();
         opengldrawtolistInit();
-        //opengldrawtolist(gl);
+        //initial code: opengldrawtolist(gl);
         numpolys = faces.size();
-        //cleanup();
+        //initial code: cleanup();
     }
 
     private void cleanup(){
