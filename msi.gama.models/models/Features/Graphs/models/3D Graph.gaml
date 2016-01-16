@@ -1,25 +1,37 @@
+/**
+* Name: 3D Graph
+* Author: Arnaud Grignard
+* Description: Model using a 3D Graph and updating it at each step according to the location and the degree of each sphere. 
+*	An arc is created between two adjacent spheres. Two different experiments are proposed : one with a dynamic size for
+*	the spheres according to their degree, one simpler with no update of the size.
+* Tag : Graph, 3D Display, Skill
+*/
+  
+
 model graph3D
 
-/**
- *  graph3D
- * 
- *  Author: Arnaud Grignard
- * 
- *  Description: Create and update a 3D Graph. Each node is represented by a sphere 
- *  with a size and a color that evolves according to its degree.
- */
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 200 category: 'Initialization';
 	int width_and_height_of_environment parameter: 'Dimensions' min: 100 <- 500 category: 'Initialization';
+	
+	//Distance to know if a sphere is adjacent or not with an other
 	int distance parameter: 'distance ' min: 1 <- 100;
+	
+	
 	int degreeMax <- 1;
 	geometry shape <- cube(width_and_height_of_environment);
+	
+	
 	graph my_graph;
 	init {
+		
+		//creation of the node agent ie the spheres with a random location in the environment
 		create node_agent number: number_of_agents {
 			location <- { rnd(width_and_height_of_environment), rnd(width_and_height_of_environment), rnd(width_and_height_of_environment) };
 		}
+		
 		do degreeMax_computation;
+		
 		ask node_agent {
 			do compute_degree;
 		}
@@ -40,15 +52,20 @@ global {
 	}
 }
 
+
 species node_agent skills: [moving3D] {
 	int degree;
 	float radius;
 	rgb color ;
 	float speed <- 5.0;
 	reflex move {
+		//make the agent move randomly
 		do wander;
+		//compute the degree of the agent
 		do compute_degree;
 	}
+	
+	
 	action compute_degree {
 		degree <- my_graph = nil ? 0 : (my_graph) degree_of (self);
 		radius <- ((((degree + 1) ^ 1.4) / (degreeMax))) * 5;
@@ -70,6 +87,7 @@ experiment Display type: gui {
 		display WanderingSphere type: opengl ambient_light: 100 { 
 			species node_agent aspect: dynamic;
 			graphics "edges" {
+				//Creation of the edges of adjacence
 				if (my_graph != nil) {
 					loop eg over: my_graph.edges {
 						geometry edge_geom <- geometry(eg);

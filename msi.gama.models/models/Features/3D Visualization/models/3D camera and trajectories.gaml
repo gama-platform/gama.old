@@ -20,9 +20,9 @@ experiment start type: gui {
 	
 	//the type opengl allows the 3D Display instead of only 2D
 	output {
-		display RealBoids  type:opengl ambient_light:255 z_fighting:false trace: 30{
+		display RealBoids  type:opengl ambient_light:255 z_fighting:false {
 			image name:'background' file:'../images/sky.jpg';
-			species boids aspect: image  position:{0,0,0.1};
+			species boids aspect: image  position:{0,0,0.1} trace: 30;
 			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}

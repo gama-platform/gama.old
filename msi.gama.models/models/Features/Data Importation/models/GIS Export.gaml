@@ -1,8 +1,11 @@
 /**
- *  saveGIS
- *  Author: Patrick Taillandier
- *  Description: Shows how to save GIS data
- */
+* Name: Shapefiles Import and Save
+* Author: Patrick Taillandier
+* Description: Model using shapefiles to create buildings, linking their height and type attributes to the height and nature columns of the shapefiles
+* 	to finally save the data in an other shapefile.
+* Tag : GIS, Shapefiles, Save Files, Import Files, 3D Display
+*/
+  
 
 model saveGIS
 

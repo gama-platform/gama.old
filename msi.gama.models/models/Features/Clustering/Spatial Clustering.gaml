@@ -6,14 +6,6 @@
 * Tag : Clustering, Grid
 */
 
-
-
-/**
- *  clustering
- *  Author: Patrick Taillandier
- *  Description: example of use of the spatial clustering operators (simple_clustering_by_distance and hierarchical_clustering).
- */
-
 model clustering
 
 global {

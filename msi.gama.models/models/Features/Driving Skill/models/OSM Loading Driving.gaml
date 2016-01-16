@@ -3,7 +3,7 @@
 * Author: Patrick Taillandier
 * Description: Model to show how to import OSM Files, using them to create agents for a road network, and saving the different agents in shapefiles.
 * 	The first goal of this model is to prepare data for the driving skill models.
-* Tag :  Import Files, GIS, Shapefiles
+* Tag :  Import Files, GIS, Shapefiles, Save Files
 */
 
 

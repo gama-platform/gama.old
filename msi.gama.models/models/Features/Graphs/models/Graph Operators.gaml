@@ -1,8 +1,9 @@
 /**
- *  graphoperators
- *  Author: Patrick Taillandier
- *  Description: 
- */
+* Name: Graph Operators
+* Author: Patrick Taillandier
+* Description: Model to show how to use the different existing operators for the graph species
+* Tag : Graph
+*/
 
 model graphoperators
 

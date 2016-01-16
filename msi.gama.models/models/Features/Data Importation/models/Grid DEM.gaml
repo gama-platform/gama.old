@@ -86,7 +86,7 @@ experiment GridDEMComplete type: gui {
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
 		display gridWithElevationTriangulated type: opengl ambient_light: 100 { 
-			grid cell elevation: true triangulation: true;
+			grid cell elevation: true triangulation: true ;
 		}
 
 		//Display the grid in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255

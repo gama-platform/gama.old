@@ -1,8 +1,10 @@
 /**
- *  multigraph
- *  Author: patricktaillandier
- *  Description: example of use of two graphes: one spatial graph and one social graph
- */
+* Name: Multigraph
+* Author: Patrick Taillandier
+* Description: This model shows how to build a graph on which people agents will move with GIS Shapefile, but also to generate
+* 	an other graph representing the friendship between the people agents, people agents trying to be closer spatially to each other
+* Tag : Graph, Import Files, Skill
+*/
 
 model multigraph
 

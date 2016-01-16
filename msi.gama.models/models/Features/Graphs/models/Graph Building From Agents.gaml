@@ -1,8 +1,10 @@
 /**
- *  graphbuilding
- *  Author: Patrick Taillandier
- *  Description: Show how to create a spatial graph from agents
- */
+* Name: Graph Generation using Agents
+* Author: Patrick Taillandier
+* Description: Model which shows how to create a graph using agents of a species as vertices. Two kinds of generations are presented : one where the distance 
+* 	taken into account to link two vertices by an edge, an other where the intersections of two vertices joins these vertices by an edge. 
+* Tag : Graph
+*/
 
 model graphbuilding
 
