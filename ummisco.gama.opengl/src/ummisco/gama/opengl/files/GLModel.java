@@ -46,9 +46,10 @@ public class GLModel{
         loadobject(ref);
         if(centerit)
             centerit();
-        opengldrawtolist(gl);
+        opengldrawtolistInit();
+        //initial code: opengldrawtolist(gl);
         numpolys = faces.size();
-        cleanup();
+        //initial code: cleanup();
     }
 
     private void cleanup(){
@@ -252,11 +253,12 @@ public class GLModel{
         return numpolys;
     }
 
-    public void opengldrawtolist(GL2 gl){
+    
+    public void opengldrawtolistInit(){
         ////////////////////////////////////////
 		/// With Materials if available ////////
 		////////////////////////////////////////
-		this.objectlist = gl.glGenLists(1);
+	
 		
 		int nextmat = -1;
 		int matcount = 0;
@@ -270,7 +272,70 @@ public class GLModel{
 			nextmat = Integer.parseInt(nextmatnamearray[1]);
 		}
 
-		gl.glNewList(objectlist,GL2.GL_COMPILE);
+		
+		for (int i=0;i<faces.size();i++) {
+			if (i == nextmat) {
+				matcount++;
+				if (matcount < totalmats) {
+					nextmatnamearray = (String[])(mattimings.get(matcount));
+					nextmatname = nextmatnamearray[0];
+					nextmat = Integer.parseInt(nextmatnamearray[1]);
+				}
+			}
+			
+			int[] tempfaces = (int[])(faces.get(i));
+			int[] tempfacesnorms = (int[])(facesnorms.get(i));
+			int[] tempfacestexs = (int[])(facestexs.get(i));
+			
+
+			////////////////////////////
+			
+			for (int w=0;w<tempfaces.length;w++) {
+				if (tempfacesnorms[w] != 0) {
+					float normtempx = ((float[])vertexsetsnorms.get(tempfacesnorms[w] - 1))[0];
+					float normtempy = ((float[])vertexsetsnorms.get(tempfacesnorms[w] - 1))[1];
+					float normtempz = ((float[])vertexsetsnorms.get(tempfacesnorms[w] - 1))[2];
+
+				}
+				
+				if (tempfacestexs[w] != 0) {
+					float textempx = ((float[])vertexsetstexs.get(tempfacestexs[w] - 1))[0];
+					float textempy = ((float[])vertexsetstexs.get(tempfacestexs[w] - 1))[1];
+					float textempz = ((float[])vertexsetstexs.get(tempfacestexs[w] - 1))[2];
+				}
+				
+				float tempx = ((float[])vertexsets.get(tempfaces[w] - 1))[0];
+				float tempy = ((float[])vertexsets.get(tempfaces[w] - 1))[1];
+				float tempz = ((float[])vertexsets.get(tempfaces[w] - 1))[2];
+			}
+			
+			
+			//// Quad End Footer /////
+			///////////////////////////
+			
+			
+		}
+	}
+    
+    public void opengldrawtolist(GL2 gl){
+        ////////////////////////////////////////
+		/// With Materials if available ////////
+		////////////////////////////////////////
+		//this.objectlist = gl.glGenLists(1);
+		
+		int nextmat = -1;
+		int matcount = 0;
+		int totalmats = mattimings.size();
+		String[] nextmatnamearray = null;
+		String nextmatname = null;
+		
+		if (totalmats > 0 && materials != null) {
+			nextmatnamearray = (String[])(mattimings.get(matcount));
+			nextmatname = nextmatnamearray[0];
+			nextmat = Integer.parseInt(nextmatnamearray[1]);
+		}
+
+		//gl.glNewList(objectlist,GL2.GL_COMPILE);
 		for (int i=0;i<faces.size();i++) {
 			if (i == nextmat) {
 					gl.glEnable(GL2.GL_COLOR_MATERIAL);
@@ -327,7 +392,11 @@ public class GLModel{
 			
 			
 		}
-		gl.glEndList();
+		//gl.glEndList();
+	}
+    
+	public void draw(GL2 gl){
+		opengldrawtolist(gl);
 	}
     
     public void opengldraw(GL2 gl){

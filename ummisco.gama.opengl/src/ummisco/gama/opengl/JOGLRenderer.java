@@ -35,6 +35,8 @@ import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
+import ummisco.gama.opengl.files.GLModel;
+import ummisco.gama.opengl.files.ModelLoaderOBJ;
 import ummisco.gama.opengl.scene.*;
 import ummisco.gama.opengl.utils.GLUtilLight;
 
@@ -190,7 +192,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// We mark the renderer as inited
 		inited = true;
 
-		// chairModel = ModelLoaderOBJ.LoadModel("/Users/Arno/Desktop/obj/c.obj", "/Users/Arno/Desktop/obj/c.mtl", gl);
+		
 	}
 
 	public boolean getDrawNormal() {
@@ -552,6 +554,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		Double depth = 0d;
 		GamaPair<Double, GamaPoint> rot3D = null;
 		java.util.List<BufferedImage> textures = null;
+		GLModel asset3Dmodel = null;
 		IShape.Type type = shape.getGeometricalType();
 		java.util.List<Double> ratio = new ArrayList<Double>();
 		java.util.List<GamaColor> colors = new ArrayList<GamaColor>();
@@ -577,7 +580,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 				}
 
 			}
-
+		}
+		
+		if ( shape.hasAttribute(IShape.ASSET3D_ATTRIBUTE) ) {
+			java.util.List<String> asset3DNames = Cast.asList(scope, shape.getAttribute(IShape.ASSET3D_ATTRIBUTE));	
+		    asset3Dmodel = ModelLoaderOBJ.LoadModel(asset3DNames.get(0), asset3DNames.get(1), gl);
 		}
 
 		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
@@ -594,11 +601,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 				Geometry intersect = world.intersection(g);
 				if ( !intersect.isEmpty() ) {
 					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth,
-						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, ratio, colors, rot3D);
+						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, asset3Dmodel, ratio, colors, rot3D);
 				}
 			}
 		} else {
-			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures,
+			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures, asset3Dmodel, 
 				ratio, colors, rot3D);
 		}
 
@@ -608,12 +615,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
-		final java.util.List<BufferedImage> textures, final java.util.List<Double> ratio,
+		final java.util.List<BufferedImage> textures, final GLModel asset3Dmodel,  final java.util.List<Double> ratio,
 		final java.util.List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
 		// System.out.println("Value of 1 pixel: " + 1d / getyRatioBetweenPixelsAndModelUnits());
 		sceneBuffer.getSceneToUpdate().addGeometry(geom, scope.getAgentScope(), color, fill, border,
-			textures == null || textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type,
+			textures == null || textures.isEmpty() ? false : true, textures, asset3Dmodel, angle, depth.doubleValue(), rounded, type,
 			ratio, colors, rotate3D);
 
 	}
@@ -680,7 +687,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 				stepY = (j + 0.5) / image.getHeight() * image.getHeight();
 				final Geometry g = GamaGeometryType
 					.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio)).getInnerGeometry();
-				sceneBuffer.getSceneToUpdate().addGeometry(g, null, lineColor, false, lineColor, false, null, 0, 0,
+				sceneBuffer.getSceneToUpdate().addGeometry(g, null, lineColor, false, lineColor, false, null, null, 0, 0,
 					false, IShape.Type.GRIDLINE, null, null, null);
 			}
 		}
@@ -731,6 +738,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			sizeInModelUnits = heightInModelUnits;
 			size = (int) (getHeight() / data.getEnvHeight() * sizeInModelUnits);
 		}
+		
 		sceneBuffer.getSceneToUpdate().addString(string, location, size, sizeInModelUnits, stringColor, font.getName(),
 			font.getStyle(), angle, bitmap);
 		return null;

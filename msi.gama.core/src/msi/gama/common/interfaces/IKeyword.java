@@ -38,6 +38,7 @@ public interface IKeyword {
 	public static final String AS = "as";
 	public static final String ASK = "ask";
 	public static final String ASPECT = "aspect";
+	public static final String ASSET3D = "asset3D";
 	public static final String AT = "at";
 	public static final String ATTRIBUTES = "attributes";
 	public static final String AUTHOR = "author";

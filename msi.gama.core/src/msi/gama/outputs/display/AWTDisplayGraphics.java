@@ -138,6 +138,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 		return rect.getBounds2D();
 	}
+	
+	
+
 
 	/**
 	 * Method drawChart.Simply creates an image from the chart and displays it.
@@ -156,7 +159,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	 * @param z float (has no effect in 2D)
 	 */
 
-	// AD WARNING Experimental / Not used for now -- see Issue 779
+	// AD WARNING Experimental / Not used for now -- see Issue 780
 	public Rectangle2D drawMultiLineString(final String string, final Color stringColor,
 		final ILocation locationInModelUnits, final java.lang.Double heightInModelUnits, final String fontName,
 		final Integer styleName, final Double angle, final Double z, final Boolean bitmap) {
