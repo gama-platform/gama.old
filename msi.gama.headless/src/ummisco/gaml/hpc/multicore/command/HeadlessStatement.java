@@ -62,35 +62,18 @@ public class HeadlessStatement extends AbstractStatement {
 		//GamaMap<String, Integer> myOutput =  Cast.asMap(scope, getFacetValue(scope,IKeywords.WITHOUTPUTS ));
 		String expName =  Cast.asString(scope, getFacetValue(scope,IKeywords.EXPERIMENT ));
 		String modelPath =  Cast.asString(scope, getFacetValue(scope,IKeywords.MODEL ));
-		//Integer nbCycle =  Cast.asInt(scope, getFacetValue(scope,IKeywords.END ));
-		//int id = (int) (Calendar.getInstance().getTimeInMillis());
+
 		
-//		mm.shutdown();
-		//return id;
-	//	MoleSimulationLoader.loadGAMA();
-		//HeadlessSimulationLoader.preloadGAMAInside();
 		IModel mdl = MoleSimulationLoader.loadModel(new File("/tmp/headless/samples/predatorPrey/predatorPrey.gaml"));
 		IMoleExperiment exp = MoleSimulationLoader.newExperiment(mdl);
-//		exp.setParameter("nb_preys_init", 678);
-//		
+
 		exp.setup("preyPred",123);
 		exp.step();
 		exp.step();
 		exp.step();
 		exp.step();
 		System.out.println("coucocy "+ exp.getOutput("number_of_preys"));
-//		
-//		exp.step();
-//		exp.step();
-//		exp.step();
-//		System.out.println("coucocy "+ exp.getOutput("number_of_preys"));
-//		System.out.println("coucocy "+ exp.getVariableOutput("nb_preys"));
-//
-//		System.out.println("fin loading;");
-//		
-//		System.exit(-1);
-		
-		
+
 		
 		return null;
 	}

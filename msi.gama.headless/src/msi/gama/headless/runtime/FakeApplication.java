@@ -17,18 +17,27 @@ public class FakeApplication extends Thread {// implements Runnable {
 
 	// public Thread myT;
 	private Simulation si = null;
+	private SimulationRuntime runtime = null;
 
-	public FakeApplication(final Simulation sim) {
+	public FakeApplication(final Simulation sim, final SimulationRuntime rn) {
 		si = sim;
+		this.runtime= rn;
 	}
 
+	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		// for (int i = 0; i < 8; i++)
-		// si.nextStepDone();
-
+		try {
+			si.loadAndBuild();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		si.play();
+		this.runtime.closeSimulation(this);
 	}
 
 }

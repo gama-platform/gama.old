@@ -35,24 +35,6 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	// public static synchronized ExperimentPlan newHeadlessSimulation(final IModel model, final String expName,
-	// final ParametersSet params, final Long seed) throws GamaRuntimeException {
-	//
-	// ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
-	//
-	// for ( Map.Entry<String, Object> entry : params.entrySet() ) {
-	// currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
-	// entry.getValue());
-	// }
-	// currentExperiment.createAgent();
-	// if (seed != null)((ExperimentAgent) currentExperiment.getAgent()).setSeed(Double.longBitsToDouble(seed));
-	// if ( currentExperiment == null ) { throw GamaRuntimeException.error("Experiment " + expName +
-	// " cannot be created"); }
-	// currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
-	// GAMA.controller.newHeadlessExperiment(currentExperiment);
-	// return currentExperiment;
-	// }
-
 	private static void configureHeadLessSimulation() {
 		System.setProperty("java.awt.headless", "true");
 		GuiUtils.setHeadLessMode();

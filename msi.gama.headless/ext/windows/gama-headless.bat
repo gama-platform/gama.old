@@ -1,28 +1,61 @@
 echo off
 cls
 setLocal EnableDelayedExpansion
-set inputFile=%1
-set outputFile=%2
+set inputFile=""
+set outputFile="" 
 set memory=2048m
 
 
+:TOP
+
+IF (%1) == () GOTO NEXT_CODE
+	if %1 EQU -m ( 
+		set  comm=%1
+		set  next=%2
+		set memory=!next!
+		SHIFT
+		GOTO DECALE
+	)
+	if %1 EQU -t ( 
+		set commm=%1
+		set next=%2
+		set param=!commm! !next!
+		SHIFT
+		GOTO DECALE
+	)
+	if %1 EQU -c  ( 
+		set param=!param! -c
+		GOTO DECALE
+	)
+	if !inputFile! EQU ""  ( 
+		set inputFile=%1
+		GOTO DECALE
+	)
+	set outputFile=%1
+
+:DECALE
+SHIFT
+GOTO TOP
+
+:NEXT_CODE
 echo ******************************************************************
-echo * GAMA version 1.6.1                                             *
+echo * GAMA version 1.7.0                                             *
 echo * http://gama-platform.googlecode.com                            *
-echo * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC and Partners            *
+echo * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC and Partners            *
 echo ******************************************************************
 
 
-if o%inputFile%k EQU ok  (goto help)
-if o%outputFile%k EQU ok (goto help)
-if %inputFile% EQU -?  (goto help)
-if %inputFile% EQU --help (goto help)
+if %inputFile% EQU ""  (goto help)
+REM ~ if o%outputFile%k EQU ok (goto help)
+REM ~ if %inputFile% EQU -?  (goto help)
+REM ~ if %inputFile% EQU --help (goto help)
 
-if %inputFile% EQU -m (goto memory) else ( set inputFile=%~f1 )
+REM ~ if %inputFile% EQU -m (goto memory) else ( set inputFile=%~f1 )
 
 :continue
-if not exist "%inputFile%" ( goto notExistInputFile  )
-if  exist %outputFile% ( goto existOutputDirectory)
+ if not exist "%inputFile%" ( goto notExistInputFile  )
+ if  exist %outputFile% ( goto existOutputDirectory)
+
 
  set CLASSPATH=
  for /R ..\plugins %%a in (*.jar) do (
@@ -30,7 +63,7 @@ if  exist %outputFile% ( goto existOutputDirectory)
  )
  set CLASSPATH=!CLASSPATH!"
  echo GAMA is starting...
- call java  -Xms512m -Xmx%memory%  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 "%inputFile%" "%outputFile%"
+call java  -Xms512m -Xmx%memory%  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%outputFile%/.work" !param! "%inputFile%" "%outputFile%"
  goto end
  
 :help

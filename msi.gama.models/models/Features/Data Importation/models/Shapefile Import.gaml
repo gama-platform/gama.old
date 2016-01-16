@@ -1,8 +1,12 @@
 /**
- *  HowToImportRaster
- *  Author: Maroussia Vavasseur and Benoit Gaudou
- *  Description: Importation of a shapefile, for more details about GIS data, have a look at the Model Library/Features/GIS data models
- */
+* Name: Shapefiles Import
+* Author: Maroussia Vavasseur and Benoit Gaudou
+* Description: Model to show how to import data from a Shapefile, and create agents from a species from its shapefile, linking the  columns of 
+*       the shapefile with the attributes of the species. The experiment display management units and shows their name coming from the 
+* 	shapefile.
+* Tag :  Import Files, GIS, Shapefiles
+*/
+
 
 model HowToImportVectorial
 
@@ -32,6 +36,7 @@ species managementUnit{
 	
 	aspect basic{
 		draw shape color: #yellow;
+		draw MULabel color:#black;
 	}
 }	
 

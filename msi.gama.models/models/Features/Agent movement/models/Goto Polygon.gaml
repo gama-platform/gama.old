@@ -3,7 +3,7 @@
 * Author:  Patrick Taillandier
 * Description: Model to show how to create a graph using a polygon shapefile by skeletonizing it, and creating roads using the skeleton.
 * 	All of the agents will use this graph to go to the same targeted location.
-* Tag : Graph, Movement of Agents, Shapefiles
+* Tag : Graph, Movement of Agents, Shapefiles, Skill
 */
 
 model polygon

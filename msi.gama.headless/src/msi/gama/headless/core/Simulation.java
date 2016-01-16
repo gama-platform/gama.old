@@ -18,6 +18,7 @@ import msi.gama.headless.xml.Writer;
 
 public class Simulation {
 
+	
 	// Temporary solution for getting the variables
 	public static enum OutputType {
 		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
@@ -62,6 +63,7 @@ public class Simulation {
 	private Writer outputFile;
 	private final String sourcePath;
 	private final String experimentName;
+	private final long seed;
 
 	/**
 	 * simulator to be loaded
@@ -100,13 +102,15 @@ public class Simulation {
 		this.listenedVariables = clone.listenedVariables;
 		this.setStep(clone.getStep());
 		this.outputs = clone.outputs;
+		this.seed = clone.seed;
 	}
 
-	public Simulation(final String expId, final String sourcePath, final String exp, final int max) {
+	public Simulation(final String expId, final String sourcePath, final String exp, final int max, final long s) {
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
 		this.maxStep = max;
 		this.experimentName = exp;
+		this.seed = s;
 		initialize();
 	}
 
@@ -132,7 +136,7 @@ public class Simulation {
 	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		System.setProperty("user.dir", this.sourcePath);
 		this.simulator = new GamaSimulator();
-		this.simulator.load(this.sourcePath, this.experimentID, this.experimentName);
+		this.simulator.load(this.sourcePath, this.experimentID, this.experimentName,this.seed);
 	}
 
 	public void setup() {
