@@ -71,6 +71,7 @@ Export-Package: .,
    javax.naming,
    org.apache.commons.pool",
  org.apache.commons.math3.exception;uses:="org.apache.commons.math3.exception.util,org.apache.commons.math3.util",
+ org.apache.commons.math3.geometry.euclidean.threed,
  org.apache.commons.math3.linear;
   uses:="org.apache.commons.math3,
    new org.apache.commons.math3.linear,

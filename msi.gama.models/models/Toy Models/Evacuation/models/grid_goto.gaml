@@ -14,28 +14,27 @@ global {
 	
 	geometry shape <- envelope(wall_shapefile);
 	
-	graph graph_from_grid;
-	
 	init {
-		geometry free_space <- copy (shape);
-		create exit from: exit_shapefile;
 		create wall from: wall_shapefile {
 			ask cell overlapping self {
 				is_wall <- true;
-				color <- #magenta;
 			}
-			free_space <- free_space - (shape + 1);
+		}
+		create exit from: exit_shapefile {
+			ask (cell overlapping self) where not each.is_wall{
+				is_exit <- true;
+			}
 		}
 		create people number: 50{
-			location <- any_location_in (free_space);
-			target <- any_location_in(one_of(exit));
+			location <- one_of(cell where not each.is_wall).location;
+			target <- one_of(cell where each.is_exit).location;
 		}
-		graph_from_grid <- grid_cells_to_graph(cell where not each.is_wall);
 	}
 }
 
 grid cell width: nb_cols height: nb_rows neighbours: 8 {
 	bool is_wall <- false;
+	bool is_exit <- false;
 	rgb color <- #white;	
 }
 
@@ -55,8 +54,8 @@ species people skills: [moving]{
 	point target;
 	rgb color <- rnd_color(255);
 	reflex move {
-		do goto target: target speed: 1 on: graph_from_grid;
-		if (location = target) {
+		do goto target: target speed: 1 on: (cell where not each.is_wall) recompute_path: false;
+		if (self distance_to target) < 2.0 {
 			do die;
 		}
 	}
