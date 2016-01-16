@@ -1,22 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IKeyword.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
 /**
  * The class IKeyword. Defines most of the keywords used in GAMA and GAML.
- * 
+ *
  * @author drogoul
  * @since 13 dec. 2011
- * 
+ *
  */
 public interface IKeyword {
 
@@ -38,6 +38,7 @@ public interface IKeyword {
 	public static final String AS = "as";
 	public static final String ASK = "ask";
 	public static final String ASPECT = "aspect";
+	public static final String ASSET3D = "asset3D";
 	public static final String AT = "at";
 	public static final String ATTRIBUTES = "attributes";
 	public static final String AUTHOR = "author";
@@ -54,6 +55,7 @@ public interface IKeyword {
 	public static final String BREAK = "break";
 	public static final String BRIGHTER = "brighter";
 	public static final String BROWSE = "browse";
+	public static final String CAMERA = "camera";
 	public static final String CAMERA_POS = "camera_pos";
 	public static final String CAMERA_LOOK_POS = "camera_look_pos";
 	public static final String CAMERA_UP_VECTOR = "camera_up_vector";
@@ -61,7 +63,7 @@ public interface IKeyword {
 	public static final String CATEGORY = "category";
 	public static final String CELL_WIDTH = "cell_width";
 	public static final String CELL_HEIGHT = "cell_height";
-	
+
 	public static final String CELLULAR = "cellular";
 	public static final String CENTER = "center";
 	public static final String CHAIN = "chain";
@@ -222,6 +224,7 @@ public interface IKeyword {
 	public static final String LINES = "lines";
 	public static final String LOCATION = "location";
 	public static final String LOOP = "loop";
+	public static final String LOOK_AT = "look_at";
 	public static final String MAPPING = "mapping";
 	public static final String MATCH = "match";
 	public static final String MATCH_BETWEEN = "match_between";
@@ -375,6 +378,7 @@ public interface IKeyword {
 	public static final String UNIT = "unit";
 	public static final String UNTIL = "until";
 	public static final String UPDATE = "update";
+	public static final String UP_VECTOR = "up_vector";
 	public static final String USER_CONTROLLED = "user_controlled";
 	public static final String USER_LOCATION = "user_location";
 	public static final String USER_COMMAND = "user_command";
