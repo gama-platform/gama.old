@@ -12,6 +12,10 @@
 package msi.gama.metamodel.shape;
 
 import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
+
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
@@ -143,17 +147,24 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 * @param newLocation can be null
 	 */
 
+	
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final GamaPoint vector,
-		final ILocation newLocation) {
-		this(source, geom);
-		if ( !isPoint() && vector != null && rotation != null ) {
-			geometry
-				.apply(AffineTransform3D.createRotationVector(Math.toRadians(rotation), vector.x, vector.y, vector.z));
+			final ILocation newLocation) {
+			this(source, geom);
+			if ( !isPoint() && vector != null && rotation != null ) {
+				Vector3D v3D = new Vector3D(vector.getX(),vector.getY(),vector.getZ());
+				Rotation rot = new Rotation(v3D, Math.toRadians(rotation));
+				for (Coordinate c : this.getInnerGeometry().getCoordinates()) {
+					Vector3D result = rot.applyTo(new Vector3D(c.x,c.y,c.z));
+					c.x = result.getX();
+					c.y = result.getY();
+					c.z = result.getZ();
+				}
+			}
+			if ( newLocation != null ) {
+				setLocation(newLocation);
+			}
 		}
-		if ( newLocation != null ) {
-			setLocation(newLocation);
-		}
-	}
 
 	/**
 	 * Same as above, but applies a (optional) scaling to the geometry by specifying a bounding box or a set of
