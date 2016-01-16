@@ -626,7 +626,9 @@ public class SwtGui implements IGui {
 		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
 		 */
 		@Override
-		public void partVisible(final IWorkbenchPartReference partRef) {}
+		public void partVisible(final IWorkbenchPartReference partRef) {
+
+		}
 
 		/**
 		 * Method partInputChanged()

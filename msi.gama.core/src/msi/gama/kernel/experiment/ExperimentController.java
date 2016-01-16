@@ -99,7 +99,8 @@ public class ExperimentController implements Runnable, IExperimentController {
 					// GuiUtils.debug("Error when opening the experiment: " + e.getMessage());
 					closeExperiment(e);
 				} finally {
-					GAMA.updateSimulationState();
+					// AD : Moved to OutputSynchronizer
+					// GAMA.updateSimulationState();
 				}
 				break;
 			case IExperimentController._START:
@@ -205,7 +206,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 	@Override
 	public void dispose() {
 		if ( experiment != null ) {
-//			System.out.println("Contoller.dipose BEGIN");
+			// System.out.println("Contoller.dipose BEGIN");
 			try {
 				scheduler.pause();
 				GAMA.updateSimulationState(GAMA.NOTREADY);
@@ -218,7 +219,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 				scheduler.wipe();
 				scheduler.dispose();
 				GAMA.updateSimulationState(GAMA.NONE);
-//				System.out.println("Contoller.dipose END");
+				// System.out.println("Contoller.dipose END");
 			}
 		}
 	}
@@ -241,7 +242,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 	public void closeExperiment(final Exception e) {
 		disposing = true;
-//		System.out.println("CloseExperiment : disposing = true");
+		// System.out.println("CloseExperiment : disposing = true");
 		if ( e != null ) {
 			GuiUtils.errorStatus(e.getMessage());
 		}

@@ -148,9 +148,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 					}
 				}
 			}
-			GuiUtils.waitForViewsToBeInitialized();
-		}
 
+		}
+		GuiUtils.waitForViewsToBeInitialized();
 		if ( GamaPreferences.CORE_AUTO_RUN.getValue() ) {
 			GAMA.startFrontmostExperiment();
 		} else {

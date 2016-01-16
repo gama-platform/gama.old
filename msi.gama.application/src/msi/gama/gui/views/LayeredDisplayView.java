@@ -40,6 +40,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected DisplayOverlay overlay;
 	// protected Integer zoomLevel = null;
 	protected volatile boolean disposed;
+	protected volatile boolean realized = false;
 	protected ToolItem overlayItem;
 
 	@Override
@@ -477,6 +478,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	 */
 	public void overlayChanged() {
 		overlayItem.setSelection(overlay.isVisible());
+	}
+
+	public boolean isRealized() {
+		return realized;
+	}
+
+	public void setRealized(final boolean r) {
+		realized = r;
 	}
 
 }

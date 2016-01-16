@@ -102,6 +102,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
+
 		// surfaceComposite.addFocusListener(new FocusAdapter() {
 		//
 		// /**
