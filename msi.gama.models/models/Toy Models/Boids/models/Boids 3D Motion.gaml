@@ -20,7 +20,7 @@ global torus: torus_environment{
 	int goal_duration <- 30 update: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 ,(rnd(z_max - 2) + 1)}; 
 	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
-	geometry shape <- square(width_and_height_of_environment);
+	geometry shape <- cube(width_and_height_of_environment);
 	init {
 		create boids number: number_of_agents { 
 			location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 , (rnd(z_max - 2) + 1)};
@@ -33,12 +33,12 @@ global torus: torus_environment{
 }
 
 
-species boids_goal skills: [moving] {
+species boids_goal skills: [moving3D] {
 	const range type: float init: 20.0;
 	const size type: float init: 10.0;
 	
 	reflex wander { 
-		do  wander_3D amplitude: 45 speed: 20; 
+		do  wander amplitude: 45 speed: 20; 
 		if (location.z) < 0 {
 			location <- {location.x,location.y,0};
 		} else if (location.z) > z_max {

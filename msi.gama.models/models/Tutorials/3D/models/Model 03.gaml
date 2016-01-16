@@ -2,6 +2,7 @@ model Tuto3D
 //Model 3 of the 3D tutorial  
 
 global {
+	geometry shape <- cube(100);
 	init { 
 		create cells number: 1000{ 
 			location <- {rnd(100), rnd(100), rnd(100)};	
@@ -9,13 +10,13 @@ global {
 	}  
 } 
     
-species cells skills: [moving] {  
+species cells skills: [moving3D] {  
 	rgb color;
 	list<cells> neighbours;
 	int offset;
 	
 	reflex move {
-      do wander_3D;	
+      do wander;	
 	}	
 	
 	reflex computeNeighbours {
