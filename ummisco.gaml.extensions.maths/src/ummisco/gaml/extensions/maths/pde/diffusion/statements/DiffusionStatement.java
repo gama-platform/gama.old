@@ -11,34 +11,43 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.pde.diffusion.statements;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import msi.gama.common.interfaces.*;
+import java.util.List;
+
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
-import msi.gama.metamodel.topology.grid.*;
+import msi.gama.metamodel.topology.grid.IGrid;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.IDescriptionValidator;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement.DiffusionValidator;
 
 @facets(value = { 
 	@facet(name = IKeyword.VAR, type = IType.ID, optional = false, doc = @doc("the variable to be diffused")),
-	@facet(name = IKeyword.ON, type = IType.ID, optional = false, doc = @doc("the species (in general a grid), on which the diffusion will occur")),
+	@facet(name = IKeyword.ON, type = IType.CONTAINER ,optional = false, doc = @doc("the list of agents (in general cells of a grid), on which the diffusion will occur")),
 	@facet(name = "mat_diffu", type = IType.MATRIX, optional = true, doc = @doc("the diffusion matrix (can have any size)")),
 	@facet(name = IKeyword.METHOD, type = IType.ID, optional = true, values = { "convolution", "dot_product" }, doc = @doc("the diffusion method")),
 	@facet(name = IKeyword.MASK, type = IType.MATRIX, optional = true, doc = @doc("a matrix masking the diffusion (matrix created from a image for example)")),
@@ -61,18 +70,22 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 	})
 })
 public class DiffusionStatement extends AbstractStatement {
-
-	public static Class VALIDATOR = DiffusionValidator.class;
+ 
+//	public static Class VALIDATOR = DiffusionValidator.class;
 
 	public static class DiffusionValidator implements IDescriptionValidator {
 
 		@Override
 		public void validate(final IDescription desc) {
 			IExpression spec = desc.getFacets().getExpr("on");
-			if ( !desc.getSpeciesDescription(spec.getName()).isGrid() ) {
-				desc.error("Diffusions can only be executed on grid species", IGamlIssue.GENERAL);
+			if (spec.getType().getTitle().split("\\[")[0].equals(Types.SPECIES.toString())) {
+				if ( !desc.getSpeciesDescription(spec.getName()).isGrid() ) {
+					desc.error("Diffusions can only be executed on grid species", IGamlIssue.GENERAL);
+				}
+			} else {
+				if (! spec.getType().getContentType().isAgentType())
+					desc.error("Diffusions can only be executed on list of agents", IGamlIssue.GENERAL);
 			}
-
 			IExpressionDescription mat_diffu = desc.getFacets().get("mat_diffu");
 			IExpressionDescription propor = desc.getFacets().get("proportion");
 			IExpressionDescription radius = desc.getFacets().get("radius");
@@ -89,17 +102,18 @@ public class DiffusionStatement extends AbstractStatement {
 
 	private boolean is_torus = false;
 	private String var_diffu = "";
-	private final String species_diffu;
+	private  String species_diffu;
 	// true for convolution, false for dot_product
 	private boolean method_diffu = true;
 	boolean initialized = false;
 	int cLen = 1;
 	double[][] mask, mat_diffu;
+	List<Integer> agents;
 
 	public DiffusionStatement(final IDescription desc) {
 		super(desc);
 		method_diffu = getLiteral(IKeyword.METHOD, "convolution").equals("convolution");
-		species_diffu = getLiteral(IKeyword.ON);
+		//species_diffu = getLiteral(IKeyword.ON);
 
 	}
 
@@ -167,7 +181,11 @@ public class DiffusionStatement extends AbstractStatement {
 		Arrays.fill(output, 0d);
 
 		for ( int i = 0; i < input.length; i++ ) {
-			input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
+			if (agents == null || agents.contains(i))
+				input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
+			else 
+				input[i] = 0;
+			
 		}
 
 	}
@@ -221,7 +239,8 @@ public class DiffusionStatement extends AbstractStatement {
 
 	public void finishDiffusion(final IScope scope, final IPopulation pop) {
 		for ( int i = 0; i < output.length; i++ ) {
-			pop.get(scope, i).setDirectVarValue(scope, var_diffu, output[i]);
+			if (agents == null || agents.contains(i))
+					pop.get(scope, i).setDirectVarValue(scope, var_diffu, output[i]);
 		}
 	}
 
@@ -241,7 +260,30 @@ public class DiffusionStatement extends AbstractStatement {
 	private void initialize(final IScope scope) {
 		initialized = true;
 		cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
-		GridPopulation pop = (GridPopulation) scope.getAgentScope().getPopulationFor(species_diffu);
+		
+		Object obj = getFacetValue(scope, IKeyword.ON);
+		GridPopulation pop = null;
+		if (obj instanceof ISpecies) {
+			agents = null;
+			if (((ISpecies)obj).isGrid())
+				pop = (GridPopulation) ((ISpecies)obj).getPopulation(scope);
+		} else {
+			IList<IAgent> ags = Cast.asList(scope, obj);
+			if (! ags.isEmpty()) {
+				ISpecies sp = ags.get(0).getSpecies();
+				if (sp.isGrid()) {
+					pop = (GridPopulation) sp.getPopulation(scope);
+					agents = new ArrayList<Integer>();
+					for (IAgent ag : ags) 
+						agents.add(ag.getIndex());
+				} else {
+					throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
+				}
+				
+			}
+		}
+		
+		species_diffu = pop.getName();
 		input = new double[pop.length(scope)];
 		output = new double[pop.length(scope)];
 		nbRows = ((IGrid) pop.getTopology().getPlaces()).getRows(scope);
