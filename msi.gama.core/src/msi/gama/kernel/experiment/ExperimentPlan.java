@@ -121,6 +121,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		return isHeadless;
 	}
 
+	@Override
 	public void setHeadless(final boolean headless) {
 		isHeadless = headless;
 	}
@@ -298,7 +299,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// agent.scheduleAndExecute(null);
 		if ( isBatch() ) {
 			agent.getScope().getGui().informStatus(" Batch ready ");
-			GAMA.updateSimulationState();
+			agent.getScope().getGui().updateSimulationState();
 		}
 	}
 

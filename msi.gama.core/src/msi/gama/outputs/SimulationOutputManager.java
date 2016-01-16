@@ -14,7 +14,7 @@ package msi.gama.outputs;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -45,7 +45,7 @@ public class SimulationOutputManager extends AbstractOutputManager {
 		scope.getGui().waitStatus(" Building outputs ");
 		boolean result = super.init(scope);
 		if ( result ) {
-			GAMA.updateSimulationState();
+			scope.getGui().updateSimulationState();
 		}
 		return result;
 	}

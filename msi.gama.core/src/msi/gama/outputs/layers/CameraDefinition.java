@@ -44,12 +44,12 @@ import msi.gaml.types.IType;
 		"` allows the modeler to define a camera. The display will then be able to choose among the camera defined (either within this statement or globally in GAMA) in a dynamic way. ",
 	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
 		IKeyword.IMAGE, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
-public class CameraStatement extends AbstractLayerStatement {
+public class CameraDefinition extends AbstractLayerStatement {
 
 	final IExpression locationExpr, lookAtExpr, upVectorExpr;
 	ILocation location, lookAt, upVector;
 
-	public CameraStatement(final IDescription desc) throws GamaRuntimeException {
+	public CameraDefinition(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		locationExpr = getFacet(IKeyword.LOCATION);
 		lookAtExpr = getFacet(IKeyword.LOOK_AT);

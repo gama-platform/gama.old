@@ -46,7 +46,7 @@ import msi.gama.gui.swt.perspectives.SimulationPerspective;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.*;
-import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -93,6 +93,9 @@ public class SwtGui extends AbstractGui {
 	// }
 	// });
 	// }
+
+	// Needed by RCP for displaying the simulation state
+	public static ISimulationStateProvider state = null;
 
 	private static Font expandFont;
 	// private static Font bigFont;
@@ -1457,6 +1460,33 @@ public class SwtGui extends AbstractGui {
 			}
 		});
 
+	}
+
+	@Override
+	public String getFrontmostSimulationState() {
+		IExperimentController controller = GAMA.getFrontmostController();
+		if ( controller == null ) {
+			return NONE;
+		} else if ( controller.getScheduler().paused ) { return PAUSED; }
+		return RUNNING;
+	}
+
+	@Override
+	public void updateSimulationState(final String forcedState) {
+		if ( state != null ) {
+			run(new Runnable() {
+
+				@Override
+				public void run() {
+					state.updateStateTo(forcedState);
+				}
+			});
+		}
+	}
+
+	@Override
+	public void updateSimulationState() {
+		updateSimulationState(getFrontmostSimulationState());
 	}
 
 }

@@ -38,13 +38,6 @@ public class GAMA {
 	// hqnghi: add several controllers to have multi-thread experiments
 	private final static List<IExperimentController> controllers = new ArrayList<IExperimentController>();
 
-	// Needed by RCP for displaying the simulation state
-	public static ISimulationStateProvider state = null;
-	public final static String PAUSED = "STOPPED";
-	public final static String RUNNING = "RUNNING";
-	public final static String NOTREADY = "NOTREADY";
-	public final static String NONE = "NONE";
-
 	public static List<IExperimentController> getControllers() {
 		return controllers;
 	}
@@ -341,30 +334,6 @@ public class GAMA {
 	 * Simulation state related utilities for Eclipse GUI
 	 *
 	 */
-
-	public static String getFrontmostSimulationState() {
-		IExperimentController controller = getFrontmostController();
-		if ( controller == null ) {
-			return NONE;
-		} else if ( controller.getScheduler().paused ) { return PAUSED; }
-		return RUNNING;
-	}
-
-	public static void updateSimulationState(final String forcedState) {
-		if ( state != null ) {
-			getGui().run(new Runnable() {
-
-				@Override
-				public void run() {
-					state.updateStateTo(forcedState);
-				}
-			});
-		}
-	}
-
-	public static void updateSimulationState() {
-		updateSimulationState(getFrontmostSimulationState());
-	}
 
 	static IGui regularGui;
 	static IGui headlessGui = new HeadlessListener();

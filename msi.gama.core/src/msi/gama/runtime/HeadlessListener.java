@@ -345,4 +345,27 @@ public class HeadlessListener extends AbstractGui {
 	public DisplayDescription getDisplayDescriptionFor(final String name) {
 		return null;
 	}
+
+	/**
+	 * Method getFrontmostSimulationState()
+	 * @see msi.gama.common.interfaces.IGui#getFrontmostSimulationState()
+	 */
+	@Override
+	public String getFrontmostSimulationState() {
+		return RUNNING; // ???
+	}
+
+	/**
+	 * Method updateSimulationState()
+	 * @see msi.gama.common.interfaces.IGui#updateSimulationState(java.lang.String)
+	 */
+	@Override
+	public void updateSimulationState(final String state) {}
+
+	/**
+	 * Method updateSimulationState()
+	 * @see msi.gama.common.interfaces.IGui#updateSimulationState()
+	 */
+	@Override
+	public void updateSimulationState() {}
 }

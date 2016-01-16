@@ -58,6 +58,11 @@ public interface IGui {
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
 	public static final String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 
+	public final static String PAUSED = "STOPPED";
+	public final static String RUNNING = "RUNNING";
+	public final static String NOTREADY = "NOTREADY";
+	public final static String NONE = "NONE";
+
 	void setSubStatusCompletion(double status);
 
 	void setStatus(String error, int code);
@@ -197,5 +202,20 @@ public interface IGui {
 	 * @param message
 	 */
 	void errorStatus(String message);
+
+	/**
+	 * @return
+	 */
+	String getFrontmostSimulationState();
+
+	/**
+	 * @param notready
+	 */
+	void updateSimulationState(String state);
+
+	/**
+	 *
+	 */
+	void updateSimulationState();
 
 }
