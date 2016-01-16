@@ -1,13 +1,18 @@
 /**
- *  RoadTrafficComplex
- *  Author: patricktaillandier
- *  Description: 
- */
- 
+* Name: Complex Road Network 
+* Author: Patrick Taillandier
+* Description: Model to show how to use the driving skill to represent the traffic on a road network generated thanks to shapefiles, with intersections
+* 	and traffic lights going from red to green to let people move or stop. Two experiments are presented : experiment_2D to display the model in 2D
+* 	and which better display the orientation of roads and experiment_3D to display the model in 3D.
+* Tag : GIS, Shapefiles, Graph, Movement of Agents, Skill, Directed Graph
+*/
+
 model RoadTrafficComplex
  
 global {   
 	bool simple_data <- false;
+	
+	//Check if we use simple data or more complex roads
 	file shape_file_roads  <- simple_data ? file("../includes/RoadCircleLanes.shp"): file("../includes/ManhattanRoads.shp") ;
 	file shape_file_nodes  <- simple_data ? file("../includes/NodeCircleLanes.shp") : file("../includes/ManhattanNodes.shp");
 	file shape_file_bounds <- simple_data ? file("../includes/BoundsLaneRoad.shp") :file("../includes/ManhattanRoads.shp");
@@ -17,7 +22,11 @@ global {
 	int nb_people <- simple_data ? 20 : 500;
 	 
 	init {  
+		//create the intersection and check if there are traffic lights or not by looking the values inside the type column of the shapefile and linking
+		// this column to the attribute is_traffic_signal. 
 		create intersection from: shape_file_nodes with:[is_traffic_signal::(read("type") = "traffic_signals")];
+		
+		//create road agents using the shapefile and using the oneway column to check the orientation of the roads if there are directed
 		create road from: shape_file_roads with:[lanes::int(read("lanes")), oneway::string(read("oneway"))] {
 			geom_display <- shape + (2.5 * lanes);
 			maxspeed <- (lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0)) °km/°h;
@@ -39,7 +48,11 @@ global {
 			}
 		}	
 		map general_speed_map <- road as_map (each::(each.shape.perimeter / each.maxspeed));
+		
+		//creation of the road network using the road and intersection agents
 		road_network <-  (as_driving_graph(road, intersection))  with_weights general_speed_map;
+		
+		
 		create people number: nb_people { 
 			max_speed <- 160 °km/°h;
 			vehicle_length <- 5.0 °m;
@@ -61,6 +74,8 @@ global {
 	}
 	
 } 
+
+//species that will represent the intersection node, it can be traffic lights or not, using the skill_road_node skill
 species intersection skills: [skill_road_node] {
 	bool is_traffic_signal;
 	list<list> stop <- [];
@@ -138,6 +153,8 @@ species intersection skills: [skill_road_node] {
 	}
 }
 
+
+//species that will represent the roads, it can be directed or not and uses the skill skill_road
 species road skills: [skill_road] { 
 	geometry geom_display;
 	string oneway;
@@ -148,7 +165,8 @@ species road skills: [skill_road] {
 		draw geom_display color: #gray ;
 	} 
 }
-	
+
+//People species that will move on the graph of roads to a target and using the skill advanced_driving
 species people skills: [advanced_driving] { 
 	rgb color <- rgb(rnd(255), rnd(255), rnd(255)) ;
 	int counter_stucked <- 0;

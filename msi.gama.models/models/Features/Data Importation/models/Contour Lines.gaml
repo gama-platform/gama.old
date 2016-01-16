@@ -1,8 +1,11 @@
 /**
- *  contour_lines_import
- *  Author: Patrick Taillandier
- *  Description: show how to load a shapefile of contour lines and build triangles from them
- */
+* Name: Contour Lines Import
+* Author: Patrick Taillandier
+* Description: Model which imports a shapefile of contour lines, build triangles from these contour lines, compute their elevation by using
+* 	the elevation attribute of the contour lines which had been linked to the elevation column of the shapefile. 
+* Tag :  Import Files, GIS, Shapefiles
+*/
+
 
 model contour_lines_import
 
@@ -41,7 +44,7 @@ species contour_line {
 }
 species triangle_ag {
 	aspect default {
-		draw shape color: #gray ; 
+		draw shape color: #grey ; 
 	}
 }
 

@@ -15,7 +15,7 @@ model ColorBrewer
 global {
 
 //number of colors
-int nb_classes<-5 min:5 max: 10;
+int nb_classes<-14 min:5 max: 15;
 
 int square_size <- 10;
 
@@ -23,13 +23,13 @@ int square_size <- 10;
 list<string> palettes <- brewer_palettes(nb_classes);
 
 //the current sequential palette from the list of all available sequential Palettes
-string sequentialPalette <- "Blues" among:["YlOrRd","Grays","PuBu","GnRdPu","BuPu","YlOrBr","Greens","BuGn","GnBu","PuRd","Purples","Blues","Oranges","PuBu","OrRd","Reds","YlGn","YlGnBu"];
+string sequentialPalette <- "YlOrRd" among:["YlOrRd","Grays","PuBu","BuPu","YlOrBr","Greens","BuGn","GnBu","PuRd","Purples","Blues","Oranges","OrRd","Reds","YlGn","YlGnBu"];
 
 //the current diverging palette from the list of all available diverging Palettes
-string divergingPalette <- "Spectral" among:["PRGn","PuOr","RdGy","Spectral","RdYlGn","RdBu","RdYlBu","PiYG","BrBG"];
+string divergingPalette <- "BrBG" among:["PRGn","PuOr","RdGy","Spectral","RdYlGn","RdBu","RdYlBu","PiYG","BrBG"];
 
 //the current qualitative palette from the list of all available qualitative Palettes
-string qualitativePalette <- "Paired" among:["Accents","Paired","Set3","Set2","Set1","Dark2","Pastel2","Pastel1"];
+string qualitativePalette <- "Pastel1" among:["Accents","Paired","Set3","Set2","Set1","Dark2","Pastel2","Pastel1"];
 
 //build the lists of colors from the palettes
 list<rgb> SequentialColors<-list<rgb>(brewer_colors(sequentialPalette));

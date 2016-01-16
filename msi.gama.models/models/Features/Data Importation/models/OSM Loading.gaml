@@ -1,9 +1,10 @@
-
 /**
- *  simpleOSMLoading
- *  Author: Patrick Taillandier
- *  Description: Show how to import a OSM file and create agents from it. Concerning the use of OSM file for traffic models, more details are given in the driving skill folder
- */
+* Name: OSM file to Agents
+* Author:  Patrick Taillandier
+* Description: Model which shows how to import a OSM File in GAMA and use it to create Agents. In this model, a filter is done to take only into account the roads
+*        and the buildings contained in the file. 
+* Tag :  Import Files, GIS
+*/
 
 model simpleOSMLoading 
  

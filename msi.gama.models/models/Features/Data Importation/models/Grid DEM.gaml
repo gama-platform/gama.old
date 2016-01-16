@@ -1,27 +1,48 @@
 /**
- *  gridloading
- * 
- *  Author: Arnaud Grignard
- * 
- *  Description: This create a DEM representation from an .asc file
- *  Cells are created with the parameter file:grid_file that will initialize the z value of each cell
- *  
- */
+* Name: ASCII File to DEM Representation
+* Author: Arnaud Grignard
+* Description: Model to show how to import a ASCII File to make a DEM Representation and apply a Texture on it. In this
+* 	model, three experiments are presented : DEM to show the grid elevation using the ASCII File as data for the height of the
+* 	cells, and showing different 3D displays. GridDEMComplete shows more displays with the three of the previous experiment, the grid
+* 	of the cells in a 2D Display, with the Elevation but without triangulation, and the grid with text values to show the content of the
+* 	ASCII used by the cells. GraphicDEMComplete shows the use of the z_factor to amplify or reduces the difference between the z values
+* 	of a Dem geometry.
+* Tag :  Import Files, GIS, 3D Display
+*/
+
 model gridloading
 
 global {
 	file grid_file <- file("../includes/DEM-Vulcano/vulcano_50.asc");
 	file dem parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM.png');
 	file texture parameter: 'Texture' <- file('../includes/DEM-Vulcano/Texture.png');
-	map colors <- map([1::rgb([178, 180, 176]), 2::rgb([246, 111, 0]), 3::rgb([107, 0, 0]), 4::rgb([249, 0, 255]), 5::rgb([144, 96, 22]), 6::rgb([255, 255, 86]), 7::rgb([19, 114, 38]), 8::#black, 9::rgb([107, 94, 255]), 10::rgb([43, 255, 255])]);
 	geometry shape <- envelope(grid_file);
+	init
+	{
+		ask cell
+		{
+			float r;
+			float g;
+			float b;
+			if(grid_value<20)
+			{
+				r<- 76+(26*(grid_value-7)/13);
+				g<- 153-(51*(grid_value-7)/13);
+				b<-0.0;
+			}
+			else
+			{
+				r<- 102+(122*(grid_value-20)/19);
+				g<- 51+(173*(grid_value-20)/19);
+				b<- 224*(grid_value-20)/19;
+			}
+			self.color<-rgb(r,g,b);
+		}
+	}
 }
 
 grid cell file: grid_file {
-	init {
-		color <- colors at int(grid_value);
-	}
-
+	rgb color;
 	reflex decreaseValue {
 		grid_value <- grid_value - 0.01;
 	}
@@ -100,7 +121,7 @@ experiment GraphicDEMComplete type: gui {
 				draw dem(dem, texture, 0.1);
 			}
 		} 
-		display VulcanoDEMSacled type: opengl ambient_light: 255 draw_env: false { 
+		display VulcanoDEMScaled type: opengl ambient_light: 255 draw_env: false { 
 			graphics 'GraphicPrimitive' {
 				draw dem(dem, 0.1);
 			}
