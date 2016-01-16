@@ -379,6 +379,10 @@ public class MovingSkill extends Skill {
 			recomputePath = true;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
+		if (recomputePath && (topo instanceof GridTopology)) {
+			agent.setAttribute("current_path", null);
+			path = null;
+		}
 		if ( path == null || (path.getTopology(scope) != null && !path.getTopology(scope).equals(topo)) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
 			if ( edge != null ) {
@@ -388,6 +392,7 @@ public class MovingSkill extends Skill {
 			} else {
 				if (topo instanceof GridTopology) {
 					path = ((GridTopology) topo).pathBetween(scope, source, goal,on);
+					
 				} else 
 					path = topo.pathBetween(scope, source, goal);
 			}
