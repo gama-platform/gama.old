@@ -89,26 +89,31 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				case BOX:
 				case CYLINDER:
 				case GRIDLINE:
-					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
-							geometry.fill, geometry.height, true, geometry.border, geometry.isTextured, geometry,
-							geometry.rounded, geometry.getZ_fighting_id());
-					} else {
-						if ( jtsDrawer.renderer.getComputeNormal() ) {
-							int norm_dir = 1;
-							Vertex[] vertices = jtsDrawer.getExteriorRingVertices((Polygon) geometry.geometry);
-							if ( !jtsDrawer.IsClockwise(vertices) ) {
-								norm_dir = -1;
-							}
-							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(),
-								geometry.getAlpha(), geometry.fill, geometry.border, geometry.isTextured, geometry,
-								true, geometry.rounded, geometry.getZ_fighting_id(), norm_dir);
+					if(geometry.asset3Dmodel != null){
+						geometry.asset3Dmodel.draw(gl);
+					}
+					else{
+						if ( geometry.height > 0 ) {
+							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+								geometry.fill, geometry.height, true, geometry.border, geometry.isTextured, geometry,
+								geometry.rounded, geometry.getZ_fighting_id());
 						} else {
-							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(),
-								geometry.getAlpha(), geometry.fill, geometry.border, geometry.isTextured, geometry,
-								true, geometry.rounded, geometry.getZ_fighting_id(), -1);
+							if ( jtsDrawer.renderer.getComputeNormal() ) {
+								int norm_dir = 1;
+								Vertex[] vertices = jtsDrawer.getExteriorRingVertices((Polygon) geometry.geometry);
+								if ( !jtsDrawer.IsClockwise(vertices) ) {
+									norm_dir = -1;
+								}
+								jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(),
+									geometry.getAlpha(), geometry.fill, geometry.border, geometry.isTextured, geometry,
+									true, geometry.rounded, geometry.getZ_fighting_id(), norm_dir);
+							} else {
+								jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(),
+									geometry.getAlpha(), geometry.fill, geometry.border, geometry.isTextured, geometry,
+									true, geometry.rounded, geometry.getZ_fighting_id(), -1);
+							}
+	
 						}
-
 					}
 					break;
 				case MULTILINESTRING:

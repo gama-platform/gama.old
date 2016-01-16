@@ -21,6 +21,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.files.GLModel;
 
 /**
  * Class LayerObject.
@@ -131,7 +132,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
-		final Color border, final boolean isTextured, final List<BufferedImage> textures, final Integer angle,
+		final Color border, final boolean isTextured, final List<BufferedImage> textures, final GLModel asset3Dmodel, final Integer angle,
 		final double height, final boolean roundCorner, final IShape.Type type, final List<Double> ratio,
 		final List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
 		final GeometryObject curJTSGeometry;
@@ -141,7 +142,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 				isTextured, textures, angle == null ? 0 : angle, height, roundCorner, type, ratio, colors);
 		} else {
 			curJTSGeometry = new GeometryObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border,
-				isTextured, textures, angle == null ? 0 : angle, height, roundCorner, type, rotate3D);
+				isTextured, textures, asset3Dmodel, angle == null ? 0 : angle, height, roundCorner, type, rotate3D);
 		}
 		geometries.add(curJTSGeometry);
 	}

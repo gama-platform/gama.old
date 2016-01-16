@@ -17,7 +17,7 @@ public class Pie3DObject extends GeometryObject {
 		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
 		final List<BufferedImage> textureImages, final int angle, final double height, final boolean rounded,
 		final Type type, final List<Double> ratio2, final List<GamaColor> colors2) {
-		super(geometry, agent, z_layer, layerId, color, alpha, fill, border, isTextured, textureImages, angle, height,
+		super(geometry, agent, z_layer, layerId, color, alpha, fill, border, isTextured, textureImages, null, angle, height,
 			rounded, type,null);
 		this.ratio = ratio2;
 		this.colors = colors2;

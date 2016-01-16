@@ -60,6 +60,10 @@ import msi.gaml.types.*;
 			type = { IType.STRING, IType.LIST },
 			optional = true,
 			doc = @doc("the texture that should be applied to the geometry") ),
+		@facet(name = ASSET3D,
+		type = { IType.STRING, IType.LIST },
+		optional = true,
+		doc = @doc("the 3D asset that is used to draw the geometry") ),
 		@facet(name = EMPTY,
 			type = IType.BOOL,
 			optional = true,
@@ -325,6 +329,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		IExpression rounded;
 
 		IExpression textures;
+		
+		IExpression asset3D;
 
 		Color constCol;
 		private final Color constBord;
@@ -355,6 +361,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			rot3D = getFacet(ROTATE3D);
 			rounded = getFacet(ROUNDED);
 			textures = getFacet(TEXTURE);
+			asset3D = getFacet(ASSET3D);
 
 			constSize = getSizeExp() == null ? LOC
 				: getSizeExp().isConst() ? Cast.asPoint(scope, getSizeExp().value(scope), false) : null;
@@ -429,6 +436,13 @@ public class DrawStatement extends AbstractStatementSequence {
 			if ( o instanceof GamaList ) { return (GamaList) o; }
 			return GamaListFactory.createWithoutCasting(Types.NO_TYPE, o);
 		}
+		
+		public IList getAsset3D(final IScope scope) throws GamaRuntimeException {
+			if ( asset3D == null ) { return null; }
+			Object o = asset3D.value(scope);
+			if ( o instanceof GamaList ) { return (GamaList) o; }
+			return GamaListFactory.createWithoutCasting(Types.NO_TYPE, o);
+		}
 
 		abstract Rectangle2D executeOn(IScope agent, IGraphics g) throws GamaRuntimeException;
 
@@ -471,6 +485,11 @@ public class DrawStatement extends AbstractStatementSequence {
 			IList textures = getTextures(scope);
 			if ( textures != null ) {
 				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, textures);
+			}
+			
+			IList asset3D = getAsset3D(scope);
+			if ( asset3D != null ) {
+				g2.setAttribute(IShape.ASSET3D_ATTRIBUTE, asset3D);
 			}
 			Color color = getColor(scope);
 			Color border = getBorder(scope);
