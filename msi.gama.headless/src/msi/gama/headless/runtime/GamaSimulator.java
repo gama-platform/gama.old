@@ -48,7 +48,8 @@ public class GamaSimulator implements ISimulator {
 
 	@Override
 	public void free() {
-		experiment.dispose();
+		GAMA.closeExperiment(experiment);
+//		experiment.dispose();
 	}
 
 	@Override

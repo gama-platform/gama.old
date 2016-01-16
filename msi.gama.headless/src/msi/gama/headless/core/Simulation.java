@@ -196,12 +196,10 @@ public class Simulation {
 	public void initialize() {
 		parameters = new Vector<Parameter>();
 		outputs = new Vector<Output>();
-
 		if ( simulator != null ) {
 			simulator.free();
 			simulator = null;
 		}
-
 	}
 
 	public int getStep() {

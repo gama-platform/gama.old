@@ -35,6 +35,8 @@ import msi.gaml.descriptions.IDescription;
 			@example(value = "		}", isExecutable = false), @example(value = "	}", isExecutable = false),
 			@example(value = "}", isExecutable = false) }) })
 public class ExperimentOutputManager extends AbstractOutputManager {
+	
+	private IScope scope;
 
 	public ExperimentOutputManager(final IDescription desc) {
 		super(desc);
@@ -42,7 +44,8 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		scope.getGui().prepareForExperiment(GAMA.getExperiment());
+		this.scope = scope;
+		scope.getGui().prepareForExperiment(scope.getExperiment().getSpecies());
 		return super.init(scope);
 	}
 
@@ -61,7 +64,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public synchronized void dispose() {
-		GAMA.getGui().cleanAfterExperiment(GAMA.getExperiment());
+		scope.getGui().cleanAfterExperiment(scope.getExperiment().getSpecies());
 		super.dispose();
 	}
 

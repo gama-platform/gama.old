@@ -110,7 +110,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected final Map<String, IParameter> parameters = new TOrderedHashMap();
 	protected final Map<String, IParameter.Batch> explorableParameters = new TOrderedHashMap();
 	protected ExperimentAgent agent;
-	protected final Scope scope = new Scope(null);
+	protected final Scope scope = new Scope();
 	protected IModel model;
 	protected IExploration exploration;
 	private FileOutput log;
@@ -147,6 +147,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public void dispose() {
 		// System.out.println("ExperimentPlan.dipose BEGIN");
 		parametersEditors = null;
+		// Dec 2015 Addition
+		controller.dispose();
 		if ( agent != null ) {
 			GAMA.releaseScope(agent.getScope());
 			agent.dispose();
@@ -165,8 +167,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// FIXME Should be put somewhere around here, but probably not here exactly.
 		// ProjectionFactory.reset();
 
-		// Dec 2015 Addition
-		controller.dispose();
+
 		super.dispose();
 		// System.out.println("ExperimentPlan.dipose END");
 	}
@@ -424,8 +425,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		 */
 		private volatile boolean interrupted;
 
-		public Scope(final IMacroAgent root) {
-			super(root);
+		public Scope() {
+			super(null);
 		}
 
 		@Override
@@ -456,7 +457,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		@Override
 		public IExperimentAgent getExperiment() {
-			return (ExperimentAgent) root;
+			return getAgent();
 		}
 
 		@Override
@@ -486,7 +487,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		@Override
 		public IScope copy() {
-			return new Scope(root);
+			return new Scope();
 		}
 
 		/**

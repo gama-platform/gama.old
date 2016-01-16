@@ -27,7 +27,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 	private final FrontEndScheduler scheduler;
 
 	public ExperimentController(final IExperimentPlan experiment) {
-		this.scheduler = new FrontEndScheduler();
+		this.scheduler = new FrontEndScheduler(experiment);
 		commands = new ArrayBlockingQueue(10);
 		this.experiment = experiment;
 	}

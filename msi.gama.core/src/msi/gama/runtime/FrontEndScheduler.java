@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IStepable;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
 
@@ -30,9 +31,11 @@ public class FrontEndScheduler implements Runnable {
 	private volatile Set<IStepable> toStop = new THashSet();
 	private Thread executionThread;
 	volatile Semaphore lock = new Semaphore(1);
+	final IExperimentPlan experiment;
 
-	public FrontEndScheduler() {
-		if ( !GAMA.isInHeadLessMode() ) {
+	public FrontEndScheduler(IExperimentPlan experiment) {
+		this.experiment = experiment;
+		if ( !experiment.isHeadless() ) {
 			executionThread = new Thread(null, this, "Front end scheduler");
 			try {
 				lock.acquire();
@@ -55,7 +58,7 @@ public class FrontEndScheduler implements Runnable {
 				e.printStackTrace();
 				GamaRuntimeException ee = GamaRuntimeException.create(e);
 				ee.addContext("Error in front end scheduler. Reloading thread, but it would be safer to reload GAMA");
-				GAMA.getGui().raise(ee);
+				experiment.getExperimentScope().getGui().raise(ee);
 				executionThread = new Thread(null, this, "Front end scheduler");
 				executionThread.start();
 			}
@@ -66,7 +69,7 @@ public class FrontEndScheduler implements Runnable {
 	private IScope[] scopes = null;
 
 	public void step() {
-		if ( !GAMA.isInHeadLessMode() && paused ) {
+		if ( !experiment.isHeadless() && paused ) {
 			try {
 				lock.acquire();
 			} catch (final InterruptedException e) {

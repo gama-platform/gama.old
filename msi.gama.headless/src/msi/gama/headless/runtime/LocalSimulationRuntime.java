@@ -45,8 +45,6 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	public void pushSimulation(Simulation s) {
 		simulations.put(s.getExperimentID(), s);
 		FakeApplication f = new FakeApplication(s,this);
-		System.out.println("Enqueue Simulation");
-		
 		if(started.size() < allocatedProcessor || allocatedProcessor==UNDEFINED_QUEUE_SIZE)
 			this.startSimulation(f);
 		else
@@ -55,8 +53,6 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 
 	private void startSimulation(FakeApplication s)
 	{
-		System.out.println("Starting dskfjohdpqs fdsqjkgds qgpgj");
-		
 		started.add(s);
 		s.start();
 		this.notifyListener();
