@@ -872,7 +872,7 @@ public class Graphs {
 		examples = { @example(value = "path_between (my_graph, ag1, ag2)",
 			equals = "A path between ag1 and ag2",
 			isExecutable = false) })
-	public static IPath path_between(final IScope scope, final GamaGraph graph, final IShape source,
+	public static IPath path_between(final IScope scope, final IGraph graph, final IShape source,
 		final IShape target) throws GamaRuntimeException {
 		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
 		if ( graph instanceof GamaSpatialGraph ) { return Cast.asTopology(scope, graph).pathBetween(scope, source,

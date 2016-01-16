@@ -11,6 +11,9 @@
  **********************************************************************************************/
 package msi.gama.util.path;
 
+import org.jgrapht.GraphPath;
+import org.jgrapht.Graphs;
+
 import gnu.trove.map.hash.THashMap;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
@@ -18,11 +21,12 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
-import org.jgrapht.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 // Si construit � partir d'une liste de points, cr�e la g�om�trie correspondante
 // Si construit � partir d'un graphe spatial, cr�e la g�om�trie � partir des edges pass�s.
@@ -160,6 +164,9 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	public IList<V> getVertexList() {
+		if (graph == null) {
+			return GamaListFactory.EMPTY_LIST;
+		} 
 		return GamaListFactory.<V> createWithoutCasting(getType().getKeyType(), Graphs.getPathVertexList(this));
 	}
 
@@ -245,7 +252,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "(" + edges.serialize(includingBuiltIn) + ") as path";
+		return "(" + getEdgeList().serialize(includingBuiltIn) + ") as path";
 	}
 
 	@Override

@@ -34,7 +34,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.*;
+import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
+import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -42,6 +44,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
+import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.*;
 import msi.gaml.expressions.IExpression;
@@ -2083,6 +2086,27 @@ public abstract class Spatial {
 			return PathFactory.newInstance(graph, source, target, edges);
 			// new GamaPath(graph, source, target, edges);
 		}
+		
+		@operator(value = "path_between",
+				
+				category = { IOperatorCategory.GRID, IOperatorCategory.PATH })
+			@doc(value = "The shortest path between two objects according to set of cells",
+				masterDoc = true,
+				examples = { @example(value = "path_between (cell_grid where each.is_free, ag1, ag2)",
+					equals = "A path between ag1 and ag2 passing through the given cell_grid agents",
+					isExecutable = false) })
+			public static IPath path_between(final IScope scope, final IList<IAgent> cells, final IShape source,
+				final IShape target) throws GamaRuntimeException {
+				if ( cells ==null || cells.isEmpty()) {
+					return null;
+				}
+				ITopology topo = cells.get(0).getTopology();
+				if (topo instanceof GridTopology) {
+					return ((GridTopology) topo).pathBetween(scope, source, target,cells);
+				}
+					
+				else return scope.getTopology().pathBetween(scope, source, target);
+			}
 
 		@operator(value = "distance_to", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS })
 		@doc(

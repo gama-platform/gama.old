@@ -23,6 +23,9 @@ import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.*;
+
+import org.jgrapht.Graphs;
+
 import com.vividsolutions.jts.geom.*;
 
 
@@ -171,6 +174,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 
 	public GamaSpatialPath(final GamaSpatialGraph g, final IList<? extends IShape> nodes) {
 		// FIXME call super super(param...);
+		java.lang.System.out.println("GamaSpatialPath nodes: " + nodes);
 		if ( nodes.isEmpty() ) {
 			source = new GamaPoint(0, 0);
 			target = source;
@@ -183,7 +187,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		graph = g;
 
 		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
-			segments.add(GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1).getLocation()));
+			IShape geom = GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1).getLocation());
+			segments.add(geom);
+			
+
 			IAgent ag = nodes.get(i).getAgent();
 			if ( ag != null ) {
 				// MODIF: put?
@@ -441,5 +448,26 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			}
 		}
 
+	}
+	
+	@Override
+	public IList<IShape> getEdgeList() {
+		if (edges == null) return segments;
+		return edges;
+	}
+	
+	@Override
+	public IList<IShape> getVertexList() {
+		if (graph == null) {
+			IList<IShape> vertices = GamaListFactory.create();
+			IShape g = null;
+			for(Object ed: getEdgeList()) {
+				g = (IShape) ed;
+				vertices.add(g.getPoints().get(0));
+			}
+			vertices.add(g.getPoints().get(g.getPoints().size()-1));
+			return vertices;
+		} 
+		return GamaListFactory.createWithoutCasting(getType().getKeyType(), Graphs.getPathVertexList(this));
 	}
 }
