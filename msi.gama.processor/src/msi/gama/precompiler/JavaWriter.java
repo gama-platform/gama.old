@@ -760,7 +760,8 @@ public class JavaWriter {
 
 	protected String check(final String clazz) {
 		for ( int i = 0; i < IMPORTS.length; i++ ) {
-			if ( clazz.startsWith(IMPORTS[i]) ) { return clazz.substring(clazz.lastIndexOf('.') + 1); }
+			if ( clazz.startsWith(IMPORTS[i]) && !clazz.replace(IMPORTS[i] + ".", "").contains(".") ) { return clazz
+				.substring(clazz.lastIndexOf('.') + 1); }
 		}
 
 		return clazz;
