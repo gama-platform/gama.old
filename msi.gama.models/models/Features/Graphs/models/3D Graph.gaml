@@ -13,7 +13,7 @@ global {
 	int width_and_height_of_environment parameter: 'Dimensions' min: 100 <- 500 category: 'Initialization';
 	int distance parameter: 'distance ' min: 1 <- 100;
 	int degreeMax <- 1;
-	geometry shape <- square(width_and_height_of_environment);
+	geometry shape <- cube(width_and_height_of_environment);
 	graph my_graph;
 	init {
 		create node_agent number: number_of_agents {
@@ -40,13 +40,13 @@ global {
 	}
 }
 
-species node_agent skills: [moving] {
+species node_agent skills: [moving3D] {
 	int degree;
 	float radius;
 	rgb color ;
 	float speed <- 5.0;
 	reflex move {
-		do wander_3D z_max: width_and_height_of_environment;
+		do wander;
 		do compute_degree;
 	}
 	action compute_degree {
