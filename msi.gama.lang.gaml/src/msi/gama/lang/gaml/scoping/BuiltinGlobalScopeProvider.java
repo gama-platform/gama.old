@@ -26,10 +26,10 @@ import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.EGaml;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaPair;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
@@ -309,7 +309,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		stub.setName(t);
 		Map<String, String> doc;
 		resources.get(eClass).getContents().add(stub);
-		IGamlDescription d = GuiUtils.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
+		IGamlDescription d = GAMA.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
 
 		if ( d != null ) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "operator");
@@ -326,7 +326,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		IGamlDescription d = GuiUtils.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
+		IGamlDescription d = GAMA.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
 		// IGamlDescription d = null;
 		Map<String, String> doc;
 		if ( d != null ) {
@@ -344,7 +344,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		IGamlDescription d = GuiUtils.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
+		IGamlDescription d = GAMA.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
 		Map<String, String> doc;
 		if ( d != null ) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "action");

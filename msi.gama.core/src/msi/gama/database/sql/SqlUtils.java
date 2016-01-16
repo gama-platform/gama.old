@@ -54,7 +54,7 @@ public class SqlUtils {
 		boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
 		if ( DEBUG ) {
-			GuiUtils.debug("SqlUtils.createConnection:" + dbtype + " - " + host + " - " + port + " - " + database +
+			scope.getGui().debug("SqlUtils.createConnection:" + dbtype + " - " + host + " - " + port + " - " + database +
 				" - ");
 		}
 		SqlConnection sqlConn;
@@ -78,7 +78,7 @@ public class SqlUtils {
 			throw GamaRuntimeException.error("GAMA does not support databases of type: " + dbtype);
 		}
 		if ( DEBUG ) {
-			GuiUtils.debug("SqlUtils.createConnection:" + sqlConn.toString());
+			scope.getGui().debug("SqlUtils.createConnection:" + sqlConn.toString());
 		}
 		// AD: Added to be sure to remember the parameters
 		sqlConn.setParams(params);

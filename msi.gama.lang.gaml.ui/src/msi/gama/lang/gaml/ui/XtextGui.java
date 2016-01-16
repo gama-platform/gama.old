@@ -29,7 +29,6 @@ import org.eclipse.xtext.ui.editor.IURIEditorOpener;
 import com.google.inject.Injector;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.*;
@@ -199,7 +198,7 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 					" compilation errors");
 				return;
 			}
-			GuiUtils.openSimulationPerspective(true);
+			GAMA.getGui().openSimulationPerspective(true);
 			GAMA.runGuiExperiment(exp, model);
 		}
 	}

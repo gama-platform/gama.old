@@ -1,18 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AgentEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.IParameter;
@@ -20,9 +22,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GAML;
 import msi.gaml.types.IType;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 
 public class AgentEditor extends ExpressionBasedEditor {
 
@@ -120,7 +119,7 @@ public class AgentEditor extends ExpressionBasedEditor {
 		if ( currentValue instanceof IAgent ) {
 			IAgent a = (IAgent) currentValue;
 			if ( !a.dead() ) {
-				GuiUtils.setSelectedAgent(a);
+				a.getScope().getGui().setSelectedAgent(a);
 			}
 		}
 

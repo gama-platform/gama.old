@@ -272,4 +272,9 @@ public interface IScope {
 
 	public abstract Map peekReadAttributes();
 
+	/**
+	 * @return
+	 */
+	public abstract IGui getGui();
+
 }

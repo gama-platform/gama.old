@@ -275,7 +275,7 @@ public class StatementDescription extends SymbolDescription {
 
 	public boolean verifyArgs(final IDescription caller, final Arguments names) {
 
-		// GuiUtils.debug(this.toString() + " called by " + caller + " with " + names);
+		// scope.getGui().debug(this.toString() + " called by " + caller + " with " + names);
 		// if ( args == null ) { return; }
 		Set<String> allArgs = args == null ? Collections.EMPTY_SET : args.keySet();
 		if ( caller.getKeyword().equals(DO) ) {

@@ -15,7 +15,6 @@ import java.util.*;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
@@ -330,7 +329,7 @@ public abstract class AbstractScope implements IScope {
 			sb.append(Strings.TAB);
 		}
 		sb.append(currentStatement.getTrace(this));
-		GuiUtils.informConsole(sb.toString());
+		this.getGui().informConsole(sb.toString());
 	}
 
 	/**
@@ -480,7 +479,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public boolean step(final IStepable agent) {
-		// GuiUtils.debug("AbstractScope.step" + agent);
+		// scope.getGui().debug("AbstractScope.step" + agent);
 		boolean result = false;
 		final boolean isAgent = agent instanceof IAgent;
 		if ( agent == null || interrupted() || isAgent && ((IAgent) agent).dead() ) { return false; }
@@ -873,8 +872,20 @@ public abstract class AbstractScope implements IScope {
 		return readAttributes.pop();
 	}
 
+	@Override
 	public Map peekReadAttributes() {
 		return readAttributes.peek();
+	}
+
+	@Override
+	public IGui getGui() {
+		IExperimentAgent experiment = getExperiment();
+		if ( experiment == null ) { return GAMA.getGui(); }
+		if ( experiment.getSpecies().isHeadless() ) {
+			return GAMA.getHeadlessGui();
+		} else {
+			return GAMA.getRegularGui();
+		}
 	}
 
 }

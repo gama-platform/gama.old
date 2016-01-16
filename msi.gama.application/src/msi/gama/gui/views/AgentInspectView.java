@@ -17,7 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.SwtGui;
@@ -35,7 +35,7 @@ import msi.gaml.variables.IVariable;
 
 public class AgentInspectView extends AttributesEditorsView<IAgent> implements IToolbarDecoratedView.Pausable /* implements GamaSelectionListener */ {
 
-	public static final String ID = GuiUtils.AGENT_VIEW_ID;
+	public static final String ID = IGui.AGENT_VIEW_ID;
 	public String firstPartName = null;
 
 	@Override
@@ -98,16 +98,16 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 			@Override
 			public void setValue(final IScope scope, final Object value) {
 				if ( (Boolean) value ) {
-					GuiUtils.setHighlightedAgent(agent);
+					scope.getGui().setHighlightedAgent(agent);
 				} else {
-					GuiUtils.setHighlightedAgent(null);
+					scope.getGui().setHighlightedAgent(null);
 				}
 				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 			}
 
 			@Override
 			public Boolean value() {
-				return agent == GuiUtils.getHighlightedAgent();
+				return agent == agent.getScope().getGui().getHighlightedAgent();
 			}
 
 			@Override

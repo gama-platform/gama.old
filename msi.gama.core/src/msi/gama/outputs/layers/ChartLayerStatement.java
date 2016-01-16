@@ -781,7 +781,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 			Object val = datalist.valuelistexp.resolveAgainst(scope).value(scope);
 			if ( !(val instanceof GamaList) ) {
-				// GuiUtils.debug("chart list with no list...");
+				// scope.getGui().debug("chart list with no list...");
 				return;
 			}
 			List<List> values = Cast.asList(scope, val);
@@ -796,7 +796,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						values.add(nl);
 					}
 				} else {
-					// GuiUtils.debug("Reverse series but not list of list..." + tempvalues);
+					// scope.getGui().debug("Reverse series but not list of list..." + tempvalues);
 					return;
 
 				}
@@ -811,14 +811,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 							}
 						} else {
-							// GuiUtils.debug("Reverse series but not list of list..." + tempvalues);
+							// scope.getGui().debug("Reverse series but not list of list..." + tempvalues);
 							return;
 
 						}
 					}
 				}
 
-				// GuiUtils.debug("New Values"+values);
+				// scope.getGui().debug("New Values"+values);
 			}
 
 			List defaultnames = new ArrayList<String>();
@@ -1092,8 +1092,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				chart.addLegend(new LegendTitle(chart.getPlot()));
 			}
 			// LegendTitle legend = chart.getLegend();
-			// GuiUtils.debug("dyncateg:"+defaultnames);
-			// GuiUtils.debug("legend:"+legend);
+			// scope.getGui().debug("dyncateg:"+defaultnames);
+			// scope.getGui().debug("legend:"+legend);
 			for ( int i = 0; i < nbseries; i++ ) {
 				ChartData first = datas.get(i);
 				if ( type == SERIES_CHART ) {
@@ -1188,7 +1188,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 								break;
 							}
 							case HISTOGRAM_CHART: {
-								// GuiUtils.debug("ChartLayerStatement._step row " + ((DefaultCategoryDataset)
+								// scope.getGui().debug("ChartLayerStatement._step row " + ((DefaultCategoryDataset)
 								// dataset).getRowCount() +
 								// " col " + ((DefaultCategoryDataset) dataset).getColumnCount());
 								// ((DefaultCategoryDataset) dataset).setValue(n, new Integer(0), s);
@@ -1270,7 +1270,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						case HISTOGRAM_CHART: {
 							// ((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope,
 							// x.get(j)).doubleValue(),d.getName(),"("+j+")");
-							// GuiUtils.debug("ChartLayerStatement._step row " + ((DefaultCategoryDataset)
+							// scope.getGui().debug("ChartLayerStatement._step row " + ((DefaultCategoryDataset)
 							// dataset).getRowCount() +
 							// " col " + ((DefaultCategoryDataset) dataset).getColumnCount());
 							((DefaultCategoryDataset) dataset).setValue(n, Integer.valueOf(cpt), s/* , s */);

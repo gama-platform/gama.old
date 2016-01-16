@@ -206,7 +206,7 @@ public class DrivingSkill2d extends MovingSkill {
 		}
 		if ( path == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
-			GuiUtils.debug("M: DrivingSKill - can not get the path");
+			scope.getGui().debug("M: DrivingSKill - can not get the path");
 			return -1;
 		}
 
@@ -430,7 +430,7 @@ public class DrivingSkill2d extends MovingSkill {
 		}
 		if ( path == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
-			GuiUtils.debug("M: DrivingSKill - can not get the path");
+			scope.getGui().debug("M: DrivingSKill - can not get the path");
 			return -1;
 		}
 
@@ -634,7 +634,7 @@ public class DrivingSkill2d extends MovingSkill {
 				}
 			}
 		} catch (final Exception e) {
-			GuiUtils.debug("obstacle " + e.getStackTrace());
+			scope.getGui().debug("obstacle " + e.getStackTrace());
 		}
 
 		try {
@@ -664,7 +664,7 @@ public class DrivingSkill2d extends MovingSkill {
 				}
 			}
 		} catch (final Exception e) {
-			GuiUtils.debug(agent.getName() + " background ");
+			scope.getGui().debug(agent.getName() + " background ");
 		}
 		if ( minDistance < 0.5 ) {
 			minDistance = 0.5;
@@ -682,7 +682,7 @@ public class DrivingSkill2d extends MovingSkill {
 
 		if ( fileName == null ) { return null; }
 		fileName = FileUtils.constructAbsoluteFilePath(scope, Cast.asString(scope, fileName), true);
-		GuiUtils.debug("1: " + fileName);
+		scope.getGui().debug("1: " + fileName);
 		try {
 			final File file = new File(fileName);
 			if ( !file.exists() || !file.isFile() ) { return null; }
@@ -727,13 +727,13 @@ public class DrivingSkill2d extends MovingSkill {
 		String fileName = (String) scope.getArg("file_name", IType.NONE);
 		if ( fileName == null ) { return null; }
 		fileName = FileUtils.constructAbsoluteFilePath(scope, Cast.asString(scope, fileName), true);
-		GuiUtils.debug("1: " + fileName);
+		scope.getGui().debug("1: " + fileName);
 		final IList agent_information = (IList) scope.getArg("agent_information", IType.NONE);
 		if ( agent_information == null || agent_information.size() < 3 ) { return null; }
-		GuiUtils.debug("2: " + agent_information.size());
+		scope.getGui().debug("2: " + agent_information.size());
 		final String currentFileName =
 			FileUtils.constructAbsoluteFilePath(scope, Cast.asString(scope, "."), true) + "/log/" + fileName;
-		GuiUtils.debug("3: " + currentFileName);
+		scope.getGui().debug("3: " + currentFileName);
 		try {
 			// File file = new File(fileName);
 			// if (!file.exists() || !file.isFile()) return null;

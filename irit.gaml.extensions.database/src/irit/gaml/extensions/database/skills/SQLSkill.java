@@ -14,7 +14,7 @@ package irit.gaml.extensions.database.skills;
 import java.sql.Connection;
 import java.text.*;
 import java.util.Calendar;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.database.sql.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -77,7 +77,7 @@ public class SQLSkill extends Skill {
 	 */
 	@action(name = "helloWorld")
 	public Object helloWorld(final IScope scope) throws GamaRuntimeException {
-		GuiUtils.informConsole("Hello World");
+		scope.getGui().informConsole("Hello World");
 		return null;
 	}
 
@@ -213,7 +213,7 @@ public class SQLSkill extends Skill {
 			throw GamaRuntimeException.error("SQLSkill.executeUpdateDB: " + e.toString(), scope);
 		}
 		if ( DEBUG ) {
-			GuiUtils.debug(updateComm + " was run");
+			scope.getGui().debug(updateComm + " was run");
 		}
 
 		return row_count;
@@ -261,7 +261,7 @@ public class SQLSkill extends Skill {
 			throw GamaRuntimeException.error("SQLSkill.insert: " + e.toString(), scope);
 		}
 		if ( DEBUG ) {
-			GuiUtils.debug("Insert into " + " was run");
+			scope.getGui().debug("Insert into " + " was run");
 		}
 
 		return rec_no;

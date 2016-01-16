@@ -9,32 +9,32 @@
  *
  *
  **********************************************************************************************/
-package msi.gama.headless.runtime;
+package msi.gama.runtime;
 
 import java.util.Map;
 import java.util.logging.*;
 import org.eclipse.core.runtime.CoreException;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
-import msi.gama.runtime.IScope;
+import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
 
-public class HeadlessListener implements IGui {
+public class HeadlessListener extends AbstractGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
 
 	static {
 
-		if ( GuiUtils.isInHeadLessMode() ) {
+		if ( GAMA.isInHeadLessMode() ) {
 
 			for ( Handler h : LOGGER.getHandlers() ) {
 				h.setLevel(Level.ALL);
@@ -45,8 +45,9 @@ public class HeadlessListener implements IGui {
 			// LOGGER.addHandler(h);
 			// System.out.println("Configuring Headless Mode");
 			// System.out.println("Configuring Headless Mode");
-			GuiUtils.setSwtGui(new HeadlessListener());
+
 		}
+		GAMA.setHeadlessGui(new HeadlessListener());
 	}
 
 	@Override
@@ -293,7 +294,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String, msi.gama.util.GamaColor)
 	 */
 	@Override
-	public void setStatus(final String msg, final GamaColor color) {
+	public void setStatusInternal(final String msg, final GamaColor color) {
 		System.out.println(msg);
 	}
 

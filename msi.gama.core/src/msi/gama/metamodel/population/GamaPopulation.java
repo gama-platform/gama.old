@@ -184,7 +184,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		final IExpression ags = getSpecies().getSchedule();
 		final IList<IAgent> agents = ags == null ? this : Cast.asList(scope, ags.value(scope));
 		// if ( getSpecies().getName().equals("flock") ) {
-		// GuiUtils.debug("GamaPopulation.computeAgentsToSchedule : " + agents);
+		// scope.getGui().debug("GamaPopulation.computeAgentsToSchedule : " + agents);
 		// }
 		return agents;
 	}
@@ -229,7 +229,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public void dispose() {
-		// GuiUtils.debug("GamaPopulation.dispose : " + this);
+		// scope.getGui().debug("GamaPopulation.dispose : " + this);
 		killMembers();
 		/* agents. */clear();
 		firePopulationCleared();
@@ -614,7 +614,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	// @Override
 	// public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
 	// if ( getSpecies().getName().equals("flock") ) {
-	// GuiUtils.debug("GamaPopulation.remove " + value);
+	// scope.getGui().debug("GamaPopulation.remove " + value);
 	// }
 	// if ( all && value instanceof IContainer ) {
 	// for ( final Object o : ((IContainer) value).iterable(scope) ) {

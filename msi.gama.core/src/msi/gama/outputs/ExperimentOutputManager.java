@@ -12,7 +12,6 @@
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
@@ -43,7 +42,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		GuiUtils.prepareForExperiment(GAMA.getExperiment());
+		scope.getGui().prepareForExperiment(GAMA.getExperiment());
 		return super.init(scope);
 	}
 
@@ -62,7 +61,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public synchronized void dispose() {
-		GuiUtils.cleanAfterExperiment(GAMA.getExperiment());
+		GAMA.getGui().cleanAfterExperiment(GAMA.getExperiment());
 		super.dispose();
 	}
 

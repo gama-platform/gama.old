@@ -203,7 +203,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			}
 		}
 
-		// GuiUtils.debug("ReleaseStatement.privateExecuteIn : " + macroAgent + " released " +
+		// scope.getGui().debug("ReleaseStatement.privateExecuteIn : " + macroAgent + " released " +
 		// releasedMicroAgents.size() +
 		// " agents");
 		if ( returnString != null ) {

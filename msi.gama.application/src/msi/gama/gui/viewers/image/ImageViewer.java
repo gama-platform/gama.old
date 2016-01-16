@@ -20,7 +20,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.navigator.images.ImageDataLoader;
 import msi.gama.gui.swt.*;
@@ -28,6 +27,7 @@ import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.runtime.GAMA;
 
 /**
  * A simple image viewer editor.
@@ -263,7 +263,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 				}
 			}
 		};
-		GuiUtils.asyncRun(r);
+		GAMA.getGui().asyncRun(r);
 
 		// load the image in the background to keep the ui fresh
 		Job job = new Job(MessageFormat.format("Load Image {0}", getPartName())) {
@@ -283,7 +283,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 							displayInfoString();
 						}
 					};
-					GuiUtils.asyncRun(r);
+					GAMA.getGui().asyncRun(r);
 
 					return Status.OK_STATUS;
 				} catch (CoreException ex) {
@@ -609,7 +609,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 						showImage(false);
 					}
 				};
-				GuiUtils.run(r);
+				GAMA.getGui().run(r);
 			}
 		}
 	}
@@ -741,7 +741,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 					showImage(false);
 				}
 			};
-			GuiUtils.run(rr);
+			GAMA.getGui().run(rr);
 		}
 
 	}

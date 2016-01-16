@@ -13,7 +13,7 @@ package msi.gama.runtime;
 
 import java.util.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -70,7 +70,7 @@ public class GAMA {
 			IExperimentPlan existingExperiment = controller.getExperiment();
 			if ( existingExperiment != null ) {
 				controller.getScheduler().pause();
-				if ( !GuiUtils.confirmClose(existingExperiment) ) { return; }
+				if ( !getGui().confirmClose(existingExperiment) ) { return; }
 			}
 		}
 		controller = newExperiment.getController();
@@ -78,7 +78,7 @@ public class GAMA {
 			closeAllExperiments(false);
 		}
 
-		GuiUtils.openSimulationPerspective(true);
+		getGui().openSimulationPerspective(true);
 
 		controllers.add(controller);
 
@@ -147,8 +147,8 @@ public class GAMA {
 			controller.close();
 		}
 		controllers.clear();
-		GuiUtils.closeSimulationViews(andOpenModelingPerspective);
-		// GuiUtils.wipeExperiments();
+		getGui().closeSimulationViews(andOpenModelingPerspective);
+		// scope.getGui().wipeExperiments();
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class GAMA {
 			g.printStackTrace();
 			return true;
 		}
-		GuiUtils.runtimeError(g);
+		scope.getGui().runtimeError(g);
 
 		boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
 		boolean shouldStop = isError && shouldStopSimulation && GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
@@ -352,7 +352,7 @@ public class GAMA {
 
 	public static void updateSimulationState(final String forcedState) {
 		if ( state != null ) {
-			GuiUtils.run(new Runnable() {
+			getGui().run(new Runnable() {
 
 				@Override
 				public void run() {
@@ -364,6 +364,56 @@ public class GAMA {
 
 	public static void updateSimulationState() {
 		updateSimulationState(getFrontmostSimulationState());
+	}
+
+	static IGui regularGui;
+	static IGui headlessGui = new HeadlessListener();
+
+	/**
+	 * @return
+	 */
+	public static IGui getGui() {
+		// either a headless listener or a fully configured gui
+		if ( isInHeadlessMode || regularGui == null ) {
+			return headlessGui;
+		} else {
+			return regularGui;
+		}
+	}
+
+	public static IGui getHeadlessGui() {
+		return headlessGui;
+	}
+
+	public static IGui getRegularGui() {
+		return regularGui;
+	}
+
+	/**
+	 * @param IGui gui
+	 */
+	public static void setHeadlessGui(final IGui g) {
+		headlessGui = g;
+	}
+
+	public static void setRegularGui(final IGui g) {
+		regularGui = g;
+	}
+
+	static boolean isInHeadlessMode;
+
+	/**
+	 * @return
+	 */
+	public static boolean isInHeadLessMode() {
+		return isInHeadlessMode;
+	}
+
+	/**
+	 *
+	 */
+	public static void setHeadLessMode() {
+		isInHeadlessMode = true;
 	}
 
 }

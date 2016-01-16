@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.Calendar;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.openmole.IMoleExperiment;
 import msi.gama.headless.openmole.MoleSimulationLoader;

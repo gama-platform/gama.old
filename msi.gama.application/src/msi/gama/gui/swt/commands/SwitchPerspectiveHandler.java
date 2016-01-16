@@ -12,13 +12,13 @@
 package msi.gama.gui.swt.commands;
 
 import org.eclipse.core.commands.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.GAMA;
 
 public class SwitchPerspectiveHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GuiUtils.togglePerspective(true);
+		GAMA.getGui().togglePerspective(true);
 		return null;
 	}
 }

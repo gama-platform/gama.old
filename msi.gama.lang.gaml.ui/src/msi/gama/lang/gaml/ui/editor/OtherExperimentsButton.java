@@ -17,7 +17,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.model.IModel;
@@ -93,7 +92,7 @@ public class OtherExperimentsButton {
 
 				});
 				if ( model == null ) { return; }
-				GuiUtils.openSimulationPerspective(true);
+				GAMA.getGui().openSimulationPerspective(true);
 				GAMA.runGuiExperiment(exp, model);
 			}
 		}

@@ -18,7 +18,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.Envelope3D;
@@ -26,7 +25,7 @@ import msi.gama.outputs.LayeredDisplayOutput.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.compilation.*;
@@ -159,7 +158,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				IExpressionDescription exp = desc.getFacets().get(TYPE);
 				if ( exp.getExpression() != null ) {
 					String type = exp.getExpression().literalValue();
-					DisplayDescription dd = GuiUtils.getDisplayDescriptionFor(type);
+					DisplayDescription dd = GAMA.getGui().getDisplayDescriptionFor(type);
 					if ( dd != null ) {
 						plugins.add(dd.getDefiningPlugin());
 					}
@@ -560,13 +559,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			return;
 		}
 		if ( isOpenGL() && USES_OPENGL_SWT ) { return; }
-		surface = GuiUtils.getDisplaySurfaceFor(this);
+		surface = scope.getGui().getDisplaySurfaceFor(this);
 	}
 
 	@Override
 	public String getViewId() {
 		if ( USES_OPENGL_SWT && isOpenGL() ) { return "msi.gama.application.view.OpenGLDisplayView"; }
-		return GuiUtils.LAYER_VIEW_ID;
+		return IGui.LAYER_VIEW_ID;
 	}
 
 	public IDisplaySurface getSurface() {

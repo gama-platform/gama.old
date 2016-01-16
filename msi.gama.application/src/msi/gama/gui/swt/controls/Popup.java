@@ -115,7 +115,7 @@ public class Popup {
 		final GC gc = new GC(popupText);
 		final int textWidth = gc.textExtent(s).x + 5;
 		gc.dispose();
-		// GuiUtils.debug("Popup.display: textWidth = " + textWidth);
+		// scope.getGui().debug("Popup.display: textWidth = " + textWidth);
 		// We grab the location of the popup on the display
 		final Point point = provider.getAbsoluteOrigin();
 		popup.setLocation(point.x, point.y);
@@ -123,10 +123,10 @@ public class Popup {
 		// We compute the available width on the display given this location (and a border of 5 pixels)
 		final Rectangle screenArea = popup.getDisplay().getClientArea();
 		final int availableWidth = screenArea.x + screenArea.width - point.x - 5;
-		// GuiUtils.debug("Popup.display: availableWidth = " + availableWidth);
+		// scope.getGui().debug("Popup.display: availableWidth = " + availableWidth);
 		// We compute the final width of the popup
 		int popupWidth = Math.min(availableWidth, maxPopupWidth);
-		// GuiUtils.debug("Popup.display: popupWidth = " + popupWidth);
+		// scope.getGui().debug("Popup.display: popupWidth = " + popupWidth);
 
 		// If the width of the text is greater than the computed width, we wrap the text accordingly, otherwise we
 		// shrink the popup to the text width
@@ -137,10 +137,10 @@ public class Popup {
 			for ( final String line : lines ) {
 				final int lineWidth = line.length();
 				maxLineChars = maxLineChars > lineWidth ? maxLineChars : lineWidth;
-				// GuiUtils.debug("Popup.display: maxLineCharts = " + maxLineChars);
+				// scope.getGui().debug("Popup.display: maxLineCharts = " + maxLineChars);
 			}
 			final int wrapLimit = (int) ((double) maxLineChars / (double) textWidth * popupWidth);
-			// GuiUtils.debug("Popup.display: wrapLimit = " + wrapLimit);
+			// scope.getGui().debug("Popup.display: wrapLimit = " + wrapLimit);
 
 			s = WordUtils.wrap(s, wrapLimit);
 		} else {

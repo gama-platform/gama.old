@@ -14,7 +14,7 @@ package msi.gama.kernel.simulation;
 import java.util.Map;
 import java.util.Map.Entry;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.*;
@@ -102,7 +102,7 @@ public class SimulationAgent extends GamlAgent {
 		// super.scheduleAndExecute(sequence);
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
-		GuiUtils.prepareForSimulation(this);
+		scope.getGui().prepareForSimulation(this);
 		// GAMA.controller.getScheduler().schedule(scheduler, scope);
 		// if ( outputs != null ) {
 		// final IScope simulationScope = obtainNewScope();
@@ -110,9 +110,9 @@ public class SimulationAgent extends GamlAgent {
 		// GAMA.controller.getScheduler().schedule(outputs, simulationScope);
 		// } else {
 		// // TODO What does it do here ? Should be elsewhere (but where ?)
-		// GuiUtils.cleanAfterSimulation();
-		// // GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
-		// // GuiUtils.hideMonitorView();
+		// scope.getGui().cleanAfterSimulation();
+		// // scope.getGui().hideView(scope.getGui().PARAMETER_VIEW_ID);
+		// // scope.getGui().hideMonitorView();
 		// }
 		// }
 
@@ -123,9 +123,9 @@ public class SimulationAgent extends GamlAgent {
 				getExperiment().getSpecies().getController().getScheduler().schedule(outputs, simulationScope);
 			} else {
 				// TODO What does it do here ? Should be elsewhere (but where ?)
-				GuiUtils.cleanAfterSimulation();
-				// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
-				// GuiUtils.hideMonitorView();
+				scope.getGui().cleanAfterSimulation();
+				// scope.getGui().hideView(scope.getGui().PARAMETER_VIEW_ID);
+				// scope.getGui().hideMonitorView();
 			}
 		}
 

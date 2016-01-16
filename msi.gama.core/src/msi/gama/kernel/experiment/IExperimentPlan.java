@@ -18,7 +18,7 @@ import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -71,6 +71,11 @@ public interface IExperimentPlan extends ISpecies {
 	public abstract Map<String, Batch> getExplorableParameters();
 
 	public abstract IExperimentController getController();
+
+	/**
+	 * @return
+	 */
+	public abstract boolean isHeadless();
 
 	// public abstract void setController(ExperimentController controller);
 

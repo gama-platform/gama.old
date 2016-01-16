@@ -42,7 +42,6 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import com.google.common.collect.ObjectArrays;
 import com.google.inject.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.*;
@@ -246,11 +245,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	private void gotoEditor(final GamaRuntimeException exception) {
 		final EObject o = exception.getEditorContext();
 		if ( o != null ) {
-			GuiUtils.asyncRun(new Runnable() {
+			GAMA.getGui().asyncRun(new Runnable() {
 
 				@Override
 				public void run() {
-					GuiUtils.editModel(o);
+					GAMA.getGui().editModel(o);
 				}
 			});
 		}
@@ -282,7 +281,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 				});
 			} catch (GamaRuntimeException e) {
 				gotoEditor(e);
-				GuiUtils.error(
+				GAMA.getGui().error(
 					"Experiment " + name + " cannot be instantiated because of the following error: " + e.getMessage());
 			}
 			if ( model == null ) { return; }

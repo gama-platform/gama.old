@@ -22,8 +22,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.gui.parameters.ExpressionControl;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.*;
@@ -51,7 +51,7 @@ import msi.gaml.variables.IVariable;
 public class PopulationInspectView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
 	protected static String exportFolder = "exports";
-	public static final String ID = GuiUtils.TABLE_VIEW_ID;
+	public static final String ID = IGui.TABLE_VIEW_ID;
 	public static final String ID_ATTRIBUTE = "#";
 	// public static final String CUSTOM = "custom";
 
@@ -353,7 +353,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 				final Object o = s.getFirstElement();
 				if ( o instanceof IAgent ) {
-					GuiUtils.setHighlightedAgent((IAgent) o);
+					scope.getGui().setHighlightedAgent((IAgent) o);
 					GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 				}
 			}

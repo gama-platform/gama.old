@@ -14,7 +14,7 @@ package msi.gama.outputs;
 import java.util.*;
 import com.google.common.collect.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.runtime.*;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.*;
@@ -150,11 +150,11 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			}
 
 		}
-		GuiUtils.waitForViewsToBeInitialized();
+		scope.getGui().waitForViewsToBeInitialized();
 		if ( GamaPreferences.CORE_AUTO_RUN.getValue() ) {
 			GAMA.startFrontmostExperiment();
 		} else {
-			GuiUtils.informStatus("Simulation ready");
+			scope.getGui().informStatus("Simulation ready");
 		}
 		return true;
 	}

@@ -429,7 +429,7 @@ public class SpeciesDescription extends TypeDescription {
 					parent.getJavaBase().getSimpleName() + ")", IGamlIssue.GENERAL);
 				// }
 			}
-			// GuiUtils.debug(" **** " + getName() + " inherits from " + parent.getName());
+			// scope.getGui().debug(" **** " + getName() + " inherits from " + parent.getName());
 			inheritMicroSpecies(parent);
 			inheritBehaviors(parent);
 			inheritAspects(parent);

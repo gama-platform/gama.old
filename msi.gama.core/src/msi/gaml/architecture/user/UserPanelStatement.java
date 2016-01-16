@@ -13,7 +13,7 @@ package msi.gaml.architecture.user;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -69,7 +69,7 @@ public class UserPanelStatement extends FsmStateStatement {
 	protected Object bodyExecution(final IScope scope) throws GamaRuntimeException {
 		super.bodyExecution(scope);
 		if ( !userCommands.isEmpty() ) {
-			GuiUtils.openUserControlPanel(scope, this);
+			scope.getGui().openUserControlPanel(scope, this);
 			while (scope.getExperiment().getSpecies().getController().getScheduler().on_user_hold) {
 				try {
 					Thread.sleep(100);

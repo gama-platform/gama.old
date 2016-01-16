@@ -11,20 +11,19 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import gnu.trove.map.hash.THashMap;
 import java.io.File;
 import java.util.*;
+import org.eclipse.core.runtime.*;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IExpression;
-import org.eclipse.core.runtime.*;
 
 /**
  * Written by drogoul
@@ -49,8 +48,8 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 */
 	public static void addFileTypeDefinition(final String string, final IType keyType, final IType contentType,
 		final Class clazz, final GamaHelper<IGamaFile> builder, final String[] extensions) {
-		GuiUtils.debug("GamaFileFactory registering file type " + string + " with extensions " +
-			Arrays.toString(extensions) + " with key type " + keyType + " and content type " + contentType);
+		// scope.getGui().debug("GamaFileFactory registering file type " + string + " with extensions " +
+		// Arrays.toString(extensions) + " with key type " + keyType + " and content type " + contentType);
 		Set<String> exts = new HashSet(Arrays.asList(extensions));
 		typesToExtensions.put(string, exts);
 		classToExtensions.put(clazz, exts);
@@ -72,7 +71,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 * @param type a string representing the type of the file
 	 * @param path an absolute or relative file path
 	 * @return true if the extension of the path belongs to the extensions of the file type, false if the type is
-	 *         unknown or if the extension does not belong to its extensions
+	 * unknown or if the extension does not belong to its extensions
 	 */
 
 	public static boolean verifyExtension(final String type, final String path) {

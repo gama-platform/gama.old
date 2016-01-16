@@ -12,13 +12,13 @@
 package msi.gama.gui.swt.commands;
 
 import org.eclipse.core.commands.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.GAMA;
 
 public class SwitchToSimulation extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GuiUtils.openSimulationPerspective(true);
+		GAMA.getGui().openSimulationPerspective(true);
 		return null;
 	}
 }

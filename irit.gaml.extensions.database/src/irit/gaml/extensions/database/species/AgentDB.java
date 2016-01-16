@@ -12,7 +12,7 @@
 package irit.gaml.extensions.database.species;
 
 import java.sql.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -102,7 +102,7 @@ public class AgentDB extends GamlAgent {
 
 	@action(name = "helloWorld")
 	public Object helloWorld(final IScope scope) throws GamaRuntimeException {
-		GuiUtils.informConsole("Hello World");
+		scope.getGui().informConsole("Hello World");
 		return null;
 	}
 
@@ -278,7 +278,7 @@ public class AgentDB extends GamlAgent {
 			throw GamaRuntimeException.error("AgentDB.executeUpdate: " + e.toString(), scope);
 		}
 		if ( DEBUG ) {
-			GuiUtils.informConsole(updateComm + " was run");
+			scope.getGui().informConsole(updateComm + " was run");
 		}
 
 		return row_count;
@@ -352,7 +352,7 @@ public class AgentDB extends GamlAgent {
 			throw GamaRuntimeException.error("AgentDB.insert: " + e.toString(), scope);
 		}
 		if ( DEBUG ) {
-			GuiUtils.informConsole("Insert into " + " was run");
+			scope.getGui().informConsole("Insert into " + " was run");
 		}
 
 		return rec_no;

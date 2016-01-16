@@ -429,7 +429,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		String str = workspacePathCombo.getText();
-		// GuiUtils.debug("Directory to create " + str);
+		// scope.getGui().debug("Directory to create " + str);
 		if ( str.length() == 0 ) {
 			setMessage(strError, IMessageProvider.ERROR);
 			return;
@@ -440,7 +440,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			setMessage(ret, IMessageProvider.ERROR);
 			return;
 		}
-		// GuiUtils.debug("Directory to create (after check " + str);
+		// scope.getGui().debug("Directory to create (after check " + str);
 		/* Save it so we can show it in combo later */
 		lastUsedWorkspaces.remove(str);
 
@@ -479,7 +479,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		/* Now create it */
 		boolean ok = checkAndCreateWorkspaceRoot(str);
 		if ( !ok ) {
-			// GuiUtils.debug("Problem creating " + str);
+			// scope.getGui().debug("Problem creating " + str);
 			setMessage("No workspace could be created at location " + str + ", please check the error log");
 			return;
 		}
@@ -488,7 +488,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		setSelectedWorkspaceRootLocation(str);
 
 		/* And on our preferences as well */
-		// GuiUtils.debug("Writing " + str + " in the preferences");
+		// scope.getGui().debug("Writing " + str + " in the preferences");
 		if ( cloning ) {
 			String previousLocation = getNode().get(keyWorkspaceRootDir, "");
 			File workspaceDirectory = new File(previousLocation);
@@ -541,7 +541,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 						File dotFile = new File(workspaceLocation + File.separator + MODEL_IDENTIFIER);
 						dotFile.createNewFile();
 					} catch (RuntimeException err) {
-						// GuiUtils
+						// AbstractGui
 						// .debug("Error creating directories, please check folder permissions");
 						err.printStackTrace();
 						return "Error creating directories, please check folder permissions";
@@ -560,12 +560,12 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		}
 
 		if ( !f.canRead() ) {
-			// GuiUtils.debug("The selected directory is not readable");
+			// scope.getGui().debug("The selected directory is not readable");
 			return "The selected directory is not readable";
 		}
 
 		if ( !f.isDirectory() ) {
-			// GuiUtils.debug("The selected path is not a directory");
+			// scope.getGui().debug("The selected path is not a directory");
 			return "The selected path is not a directory";
 		}
 
@@ -582,17 +582,17 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 						File wsDot = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 						wsDot.createNewFile();
 					} catch (Exception err) {
-						// GuiUtils
+						// AbstractGui
 						// .debug("Error creating directories, please check folder permissions");
 						return "Error creating directories, please check folder permissions";
 					}
 				} else {
-					// GuiUtils.debug("Please select a directory for your workspace");
+					// scope.getGui().debug("Please select a directory for your workspace");
 					return "Please select a directory for your workspace";
 				}
 
 				if ( !wsTest.exists() ) {
-					// GuiUtils.debug("The selected directory does not exist");
+					// scope.getGui().debug("The selected directory does not exist");
 					return "The selected directory does not exist";
 				}
 
@@ -642,7 +642,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		try {
 			File fRoot = new File(wsRoot);
 			if ( !fRoot.exists() ) {
-				// GuiUtils.debug("Folder " + wsRoot + " does not exist");
+				// scope.getGui().debug("Folder " + wsRoot + " does not exist");
 				return false;
 			}
 

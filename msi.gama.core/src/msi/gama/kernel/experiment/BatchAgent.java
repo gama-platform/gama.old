@@ -14,7 +14,6 @@ package msi.gama.kernel.experiment;
 import java.util.*;
 import org.jfree.data.statistics.Statistics;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.metamodel.population.IPopulation;
@@ -134,7 +133,8 @@ public class BatchAgent extends ExperimentAgent {
 		// We run the exloration algorithm (but dont start() it, as the thread is not used)
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is killed.
-		GuiUtils.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
+		scope.getGui()
+			.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
 		dispose();
 		return true;
 	}
@@ -160,7 +160,7 @@ public class BatchAgent extends ExperimentAgent {
 			setSeed(getSeeds()[repeatIndex]);
 			createSimulation(currentSolution, false);
 			if ( simulation != null && !simulation.dead() ) {
-				GuiUtils.prepareForSimulation(simulation);
+				getScope().getGui().prepareForSimulation(simulation);
 				simulation.schedule();
 				IScope scope = simulation.getScope();
 				// simulation.getScheduler().insertAgentToInit(scope, simulation, null);
@@ -178,7 +178,7 @@ public class BatchAgent extends ExperimentAgent {
 					if ( mustStop ) {
 						break;
 					}
-					GuiUtils.informStatus("Run " + runNumber + " | Simulation " + (repeatIndex + 1) + "/" +
+					scope.getGui().informStatus("Run " + runNumber + " | Simulation " + (repeatIndex + 1) + "/" +
 						getSeeds().length + " | Cycle " + simulation.getClock().getCycle());
 					// TODO This is where any update of the outputs of simulations should be introduced
 					// We then verify that the front scheduler has not been paused
@@ -205,7 +205,7 @@ public class BatchAgent extends ExperimentAgent {
 			// We reset the experiment agent to erase traces of the current simulation
 			reset();
 			// We update the parameters
-			GuiUtils.showParameterView(getSpecies());
+			getScope().getGui().showParameterView(getSpecies());
 		}
 		// We then return the combination (average, min or max) of the different fitness values computed by the
 		// different simulation.

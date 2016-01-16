@@ -247,7 +247,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	protected void sortVars() {
 		if ( variables == null ) { return; }
-		// GuiUtils.debug("***** Sorting variables of " + getNameFacetValue());
+		// scope.getGui().debug("***** Sorting variables of " + getNameFacetValue());
 
 		final List<VariableDescription> result = new ArrayList();
 		final Collection<VariableDescription> vars = getVariables().values();

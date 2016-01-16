@@ -146,16 +146,16 @@ public class ModelAssembler {
 
 		// Complement recursively the different species (incl. the world). The recursion is hierarchical
 		final TypeTree<SpeciesDescription> hierarchy = model.getTypesManager().getSpeciesHierarchy();
-		// GuiUtils.debug("Hierarchy: " + hierarchy.toStringWithDepth());
+		// scope.getGui().debug("Hierarchy: " + hierarchy.toStringWithDepth());
 		final List<TypeNode<SpeciesDescription>> list = hierarchy.build(TypeTree.Order.PRE_ORDER);
 
 		model.inheritFromParent();
-		// GuiUtils.debug("ModelFactory.assemble building inheritance for " + list);
+		// scope.getGui().debug("ModelFactory.assemble building inheritance for " + list);
 		for ( final TypeNode<SpeciesDescription> node : list ) {
 
 			final SpeciesDescription sd = node.getData();
 			if ( !sd.isBuiltIn() ) {
-				// GuiUtils.debug("Copying Java additions and parent additions to " + sd.getName());
+				// scope.getGui().debug("Copying Java additions and parent additions to " + sd.getName());
 				sd.inheritFromParent();
 				if ( sd.isExperiment() ) {
 					sd.finalizeDescription();
@@ -276,7 +276,7 @@ public class ModelAssembler {
 	void complementSpecies(final SpeciesDescription species, final ISyntacticElement node) {
 		if ( species == null ) { return; }
 		species.copyJavaAdditions();
-		// GuiUtils.debug("++++++ Building variables & behaviors of " + species.getName());
+		// scope.getGui().debug("++++++ Building variables & behaviors of " + species.getName());
 		final List<ISyntacticElement> subspecies = new ArrayList();
 		for ( final ISyntacticElement child : node.getChildren() ) {
 			if ( !child.isExperiment() && !child.isSpecies() ) {

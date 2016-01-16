@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.*;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.ICreateDelegate;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
@@ -105,7 +105,7 @@ public class GamaBundleLoader {
 		}
 
 		//
-		GuiUtils.debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+		GAMA.getGui().debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
 
 	/**
@@ -139,29 +139,30 @@ public class GamaBundleLoader {
 		try {
 			gamlAdditions = (Class<IGamlAdditions>) Platform.getBundle(s).loadClass(ADDITIONS);
 		} catch (ClassNotFoundException e1) {
-			GuiUtils.debug(">> Impossible to load additions from " + s + " because of " + e1);
+			GAMA.getGui().debug(">> Impossible to load additions from " + s + " because of " + e1);
 			return;
 		}
 		IGamlAdditions add = null;
 		try {
 			add = gamlAdditions.newInstance();
 		} catch (InstantiationException e) {
-			GuiUtils.debug(">> Impossible to instantiate additions from " + s);
+			GAMA.getGui().debug(">> Impossible to instantiate additions from " + s);
 			return;
 		} catch (IllegalAccessException e) {
-			GuiUtils.debug(">> Impossible to access additions from " + s);
+			GAMA.getGui().debug(">> Impossible to access additions from " + s);
 			return;
 		}
 		try {
 			add.initialize();
 		} catch (SecurityException e) {
-			GuiUtils.debug(">> Impossible to instantiate additions from " + s);
+			GAMA.getGui().debug(">> Impossible to instantiate additions from " + s);
 			return;
 		} catch (NoSuchMethodException e) {
-			GuiUtils.debug(">> Impossible to instantiate additions from " + s);
+			GAMA.getGui().debug(">> Impossible to instantiate additions from " + s);
 			return;
 		}
-		GuiUtils.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
+		GAMA.getGui()
+			.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
 
 	}
 

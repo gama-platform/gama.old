@@ -131,7 +131,7 @@ public class ParameterExpandItem extends Item {
 	@Override
 	public void dispose() {
 		if ( isDisposed() ) { return; }
-		// GuiUtils.debug("ParameterItem being disposed");
+		// scope.getGui().debug("ParameterItem being disposed");
 		// if (!isValidThread ()) error (SWT.ERROR_THREAD_INVALID_ACCESS);
 		if ( parent != null ) {
 			parent.destroyItem(this);

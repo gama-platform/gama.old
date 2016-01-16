@@ -599,4 +599,13 @@ class TemporaryScope implements IScope {
 		return null;
 	}
 
+	/**
+	 * Method getGui()
+	 * @see msi.gama.runtime.IScope#getGui()
+	 */
+	@Override
+	public IGui getGui() {
+		return GAMA.getGui();
+	}
+
 }

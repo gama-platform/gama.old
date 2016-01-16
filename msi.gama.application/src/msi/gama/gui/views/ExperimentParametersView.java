@@ -18,7 +18,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.kernel.experiment.*;
@@ -28,7 +28,7 @@ import msi.gaml.statements.*;
 
 public class ExperimentParametersView extends AttributesEditorsView<String> {
 
-	public static final String ID = GuiUtils.PARAMETER_VIEW_ID;
+	public static final String ID = IGui.PARAMETER_VIEW_ID;
 	public final static int REVERT = 0;
 	private IExperimentPlan experiment;
 

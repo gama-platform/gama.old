@@ -1704,7 +1704,7 @@ public abstract class SwingControl extends Composite {
 	//
 	// @Override
 	// public void componentResized(final ComponentEvent e) {
-	// // GuiUtils.debug("First resize actions. Frame has been resized to " + frame.getWidth() + " " +
+	// // scope.getGui().debug("First resize actions. Frame has been resized to " + frame.getWidth() + " " +
 	// // frame.getHeight());
 	// // scrollTextFields(frame);
 	// // We care about only the first resize

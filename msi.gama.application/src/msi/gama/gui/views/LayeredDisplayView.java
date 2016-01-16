@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.LayerSideControls;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
@@ -30,6 +29,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.*;
 import msi.gama.outputs.layers.AbstractLayer;
+import msi.gama.runtime.GAMA;
 
 public abstract class LayeredDisplayView extends GamaViewPart implements DisplayDataListener, IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable {
 
@@ -177,7 +177,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public void changed(final Changes changes, final boolean value) {
 		switch (changes) {
 			case ZOOM:
-				GuiUtils.asyncRun(new Runnable() {
+				GAMA.getGui().asyncRun(new Runnable() {
 
 					@Override
 					public void run() {
@@ -201,7 +201,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				break;
 		}
 		// this.zoomLevel = (int) (zoomLevel * 100);
-		// GuiUtils.asyncRun(new Runnable() {
+		// scope.getGui().asyncRun(new Runnable() {
 		//
 		// @Override
 		// public void run() {

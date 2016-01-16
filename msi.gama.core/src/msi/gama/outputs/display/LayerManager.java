@@ -14,7 +14,7 @@ package msi.gama.outputs.display;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.*;
@@ -144,7 +144,7 @@ public class LayerManager implements ILayerManager {
 				dis.drawDisplay(scope, g);
 			}
 		} catch (final Exception e) {
-			GuiUtils.debug(e);
+			scope.getGui().debug(e);
 		} finally {
 			g.endDrawingLayers();
 		}

@@ -105,7 +105,7 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 		if ( getBuffer() != null ) { return; }
 
 		setBuffer(getURLContent(this.URL));
-		// GuiUtils.informConsole(""+getURLContent(this.URL));
+		// scope.getGui().informConsole(""+getURLContent(this.URL));
 
 	}
 

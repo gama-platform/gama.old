@@ -198,7 +198,7 @@ public class TypesManager {
 
 	private void buildHierarchy(final TypeNode<IType> currentNode) {
 		Set<IType> subs = getDirectSubTypes(currentNode.getData());
-		// GuiUtils.debug("Sub types of " + currentNode.getData() + " = " + subs);
+		// scope.getGui().debug("Sub types of " + currentNode.getData() + " = " + subs);
 		if ( !subs.isEmpty() ) {
 			currentNode.addChildren(subs);
 			for ( TypeNode<IType> node : currentNode.getChildren() ) {

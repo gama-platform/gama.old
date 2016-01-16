@@ -82,7 +82,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 		final Map<String, Object> endingCritParams = new Hashtable<String, Object>();
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
-			// GuiUtils.debug("TabuSearch.findBestSolution while stoppingCriterion " + endingCritParams);
+			// scope.getGui().debug("TabuSearch.findBestSolution while stoppingCriterion " + endingCritParams);
 			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, bestSolutionAlgo);
 			neighbors.removeAll(tabuList);
 			if ( neighbors.isEmpty() ) {
@@ -99,7 +99,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 			ParametersSet bestNeighbor = null;
 
 			for ( final ParametersSet neighborSol : neighbors ) {
-				// GuiUtils.debug("TabuSearch.findBestSolution for parametersSet " + neighborSol);
+				// scope.getGui().debug("TabuSearch.findBestSolution for parametersSet " + neighborSol);
 				if ( neighborSol == null ) {
 					continue;
 				}
@@ -112,7 +112,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
-				// GuiUtils.debug("TabuSearch.findBestSolution neighbourFitness = " + neighborFitness +
+				// scope.getGui().debug("TabuSearch.findBestSolution neighbourFitness = " + neighborFitness +
 				// " bestFitnessAlgo = " + bestFitnessAlgo + " bestFitness = " + getBestFitness() +
 				// " current fitness = " + currentFitness);
 				boolean neighFitnessGreaterThanBest = neighborFitness > bestFitnessAlgo;

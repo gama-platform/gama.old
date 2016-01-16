@@ -13,7 +13,7 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.batch.*;
 import msi.gama.kernel.experiment.ExperimentPlan.BatchValidator;
 import msi.gama.kernel.model.IModel;
@@ -77,7 +77,7 @@ import msi.gaml.variables.IVariable;
 		@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc("") , internal = true),
 		@facet(name = IKeyword.TYPE,
 			type = IType.LABEL,
-			values = { IKeyword.BATCH, /* IKeyword.REMOTE, */IKeyword.GUI_ },
+			values = { IKeyword.BATCH, /* IKeyword.REMOTE, */IKeyword.GUI_, IKeyword.HEADLESS_UI },
 			optional = false,
 			doc = @doc("the type of the experiment (either 'gui' or 'batch'") ) },
 	omissible = IKeyword.NAME)
@@ -110,22 +110,20 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected final Map<String, IParameter> parameters = new TOrderedHashMap();
 	protected final Map<String, IParameter.Batch> explorableParameters = new TOrderedHashMap();
 	protected ExperimentAgent agent;
-	protected final Scope stack = new Scope(null);
+	protected final Scope scope = new Scope(null);
 	protected IModel model;
 	protected IExploration exploration;
 	private FileOutput log;
+	private boolean isHeadless;
 
-	// private String controllerName = "";
-	//
-	// public String getControllerName() {
-	// return controllerName;
-	// }
-	//
-	// public void setControllerName(final String controllerName) {
-	// this.controllerName = controllerName;
-	// }
+	@Override
+	public boolean isHeadless() {
+		return isHeadless;
+	}
 
-	// end-hqnghi
+	public void setHeadless(final boolean headless) {
+		isHeadless = headless;
+	}
 
 	@Override
 	public ExperimentAgent getAgent() {
@@ -138,13 +136,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		String type = description.getFacets().getLabel(IKeyword.TYPE);
 		if ( type.equals(IKeyword.BATCH) ) {
 			exploration = new ExhaustiveSearch(null);
+		} else if ( type.equals(IKeyword.HEADLESS_UI) ) {
+			isHeadless = true;
 		}
 		controller = new ExperimentController(this);
 	}
 
 	@Override
 	public void dispose() {
-//		System.out.println("ExperimentPlan.dipose BEGIN");
+		// System.out.println("ExperimentPlan.dipose BEGIN");
 		parametersEditors = null;
 		if ( agent != null ) {
 			GAMA.releaseScope(agent.getScope());
@@ -167,7 +167,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// Dec 2015 Addition
 		controller.dispose();
 		super.dispose();
-//		System.out.println("ExperimentPlan.dipose END");
+		// System.out.println("ExperimentPlan.dipose END");
 	}
 
 	public void createAgent() {
@@ -189,8 +189,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if ( !isBatch() ) {
 			for ( final IVariable v : model.getVars() ) {
 				if ( v.isParameter() ) {
-					// GuiUtils.debug("from ExperimentPlan.setModel:");
-					IParameter p = new ExperimentParameter(stack, v);
+					// scope.getGui().debug("from ExperimentPlan.setModel:");
+					IParameter p = new ExperimentParameter(scope, v);
 					final String name = p.getName();
 					boolean already = parameters.containsKey(name);
 					if ( !already ) {
@@ -293,11 +293,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public void open() {
 		createAgent();
-		// GuiUtils.prepareForExperiment(this);
+		// scope.getGui().prepareForExperiment(this);
 		agent.schedule();
 		// agent.scheduleAndExecute(null);
 		if ( isBatch() ) {
-			GuiUtils.informStatus(" Batch ready ");
+			agent.getScope().getGui().informStatus(" Batch ready ");
+			GAMA.updateSimulationState();
 		}
 	}
 
@@ -310,7 +311,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		} else {
 			agent.reset();
 			agent.init(agent.getScope());
-			GuiUtils.updateParameterView(this);
+			agent.getScope().getGui().updateParameterView(this);
 		}
 	}
 
@@ -338,7 +339,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public IScope getExperimentScope() {
-		return stack;
+		return scope;
 	}
 
 	// @Override
@@ -368,12 +369,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	public void addParameter(final IParameter p) {
-		// GuiUtils.debug("ExperimentPlan.addParameter " + p.getName());
+		// scope.getGui().debug("ExperimentPlan.addParameter " + p.getName());
 		// TODO Verify this
 		final String name = p.getName();
 		IParameter already = parameters.get(name);
 		if ( already != null ) {
-			p.setValue(stack, already.getInitialValue(stack));
+			p.setValue(scope, already.getInitialValue(scope));
 		}
 		parameters.put(name, p);
 	}
@@ -430,7 +431,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
 			if ( hasParameter(name) ) {
 				setParameterValue(this, name, v);
-				GuiUtils.updateParameterView(ExperimentPlan.this);
+				GAMA.getGui().updateParameterView(ExperimentPlan.this);
 				return;
 			}
 			SimulationAgent a = getCurrentSimulation();

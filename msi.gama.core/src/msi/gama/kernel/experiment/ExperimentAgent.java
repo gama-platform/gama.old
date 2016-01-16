@@ -168,7 +168,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 			// TODO Should better be in SimulationOutputManager
 			if ( !getSpecies().isBatch() ) {
-				GuiUtils.cleanAfterSimulation();
+				scope.getGui().cleanAfterSimulation();
 			}
 			// simulation = null;
 		}
@@ -192,7 +192,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	@Override
 	public Object _init_(final IScope scope) {
-		// GuiUtils.debug("ExperimentAgent._init_");
+		// scope.getGui().debug("ExperimentAgent._init_");
 		if ( scope.interrupted() ) { return null; }
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
@@ -353,7 +353,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if ( initialMinimumDuration == null ) {
 			initialMinimumDuration = d;
 		}
-		GuiUtils.updateSpeedDisplay(currentMinimumDuration * 1000, false);
+		scope.getGui().updateSpeedDisplay(currentMinimumDuration * 1000, false);
 	}
 
 	/**
@@ -442,7 +442,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@setter(IKeyword.RNG)
 	public void setRng(final String newRng) {
 		// rng = newRng;
-		// GuiUtils.debug("ExperimentAgent.setRng" + newRng);
+		// scope.getGui().debug("ExperimentAgent.setRng" + newRng);
 		getRandomGenerator().setGenerator(newRng, true);
 	}
 
@@ -561,7 +561,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		@Override
 		public void setGlobalVarValue(final String name, final Object v) {
 			// if ( name.equals(IKeyword.SEED) ) {
-			// GuiUtils.debug("ExperimentAgent.ExperimentAgentScope.setGlobalVarValue");
+			// scope.getGui().debug("ExperimentAgent.ExperimentAgentScope.setGlobalVarValue");
 			// }
 			if ( getSpecies().hasVar(name) ) {
 				super.setGlobalVarValue(name, v);
@@ -570,7 +570,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				getSimulation().getScope().setGlobalVarValue(name, v);
 				// TODO extraParameter does not contains model's variables???
 				// } else if ( getSpecies().hasParameter(name) ) {
-				// getSpecies().getExperimentScope().setGlobalVarValue(name, v);// GuiUtils.updateParameterView(getSpecies());
+				// getSpecies().getExperimentScope().setGlobalVarValue(name, v);// scope.getGui().updateParameterView(getSpecies());
 			} else {
 				extraParametersMap.put(name, v);
 			}

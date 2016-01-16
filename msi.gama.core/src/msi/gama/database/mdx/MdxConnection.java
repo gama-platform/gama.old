@@ -1,24 +1,23 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MdxConnection.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.database.mdx;
 
 import java.sql.SQLException;
 import java.util.List;
-import msi.gama.common.util.GuiUtils;
+import org.olap4j.*;
+import org.olap4j.metadata.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Strings;
-import org.olap4j.*;
-import org.olap4j.metadata.*;
 
 /*
  * @Author
@@ -26,18 +25,18 @@ import org.olap4j.metadata.*;
  * Fredric AMBLARD
  * Benoit GAUDOU
  * Christophe Sibertin-BLANC
- * 
- * 
+ *
+ *
  * SQLConnection: supports the method
  * - connectDB: make a connection to DBMS.
  * - selectDB: connect to DBMS and run executeQuery to select data from DBMS.
  * - executeUpdateDB: connect to DBMS and run executeUpdate to update/insert/delete/drop/create data
  * on DBMS.
- * 
+ *
  * Created date: 18-Jan-2013
  * Modified:
  * 03-05-2013: add selectMDB methods
- * 
+ *
  * Last Modified: 02-07-2013
  */
 public abstract class MdxConnection {
@@ -375,14 +374,14 @@ public abstract class MdxConnection {
 		CellSetAxis columnsAxis = cellSetAxes.get(Axis.COLUMNS.axisOrdinal());
 		CellSetAxis rowsAxis = cellSetAxes.get(Axis.ROWS.axisOrdinal());
 		int cellOrdinal = 0;
-		if ( DEBUG ) {
-			List<Hierarchy> h = rowsAxis.getAxisMetaData().getHierarchies();
-			int n = h.size();
-			for ( int i = 0; i < n; ++i ) {
-				GuiUtils.debug("MdxConnection.getRowsData.getCaption:" + h.get(i).getCaption());
-			}
-
-		}
+		// if ( DEBUG ) {
+		// List<Hierarchy> h = rowsAxis.getAxisMetaData().getHierarchies();
+		// int n = h.size();
+		// for ( int i = 0; i < n; ++i ) {
+		// // scope.getGui().debug("MdxConnection.getRowsData.getCaption:" + h.get(i).getCaption());
+		// }
+		//
+		// }
 
 		for ( Position rowPosition : rowsAxis.getPositions() ) {
 			IList<Object> row = GamaListFactory.create();
@@ -604,9 +603,9 @@ public abstract class MdxConnection {
 			queryStr = queryStr.replaceFirst("\\?", condition_values.get(i).toString());
 		}
 
-		if ( DEBUG ) {
-			GuiUtils.debug("Parsed Mdx:" + queryStr);
-		}
+		// if ( DEBUG ) {
+		// scope.getGui().debug("Parsed Mdx:" + queryStr);
+		// }
 		return queryStr;
 
 	}

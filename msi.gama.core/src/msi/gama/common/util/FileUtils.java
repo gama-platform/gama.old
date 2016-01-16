@@ -14,7 +14,7 @@ package msi.gama.common.util;
 import java.io.*;
 import java.net.URLDecoder;
 import msi.gama.kernel.experiment.IExperimentAgent;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 
@@ -81,7 +81,7 @@ public class FileUtils {
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		// GuiUtils.debug("FileUtils.constructAbsoluteFilePath baseDirectory = " + baseDirectory);
+		// scope.getGui().debug("FileUtils.constructAbsoluteFilePath baseDirectory = " + baseDirectory);
 		final GamaRuntimeException ex;
 		File file = null;
 		if ( isAbsolutePath(filePath) ) {
@@ -113,7 +113,7 @@ public class FileUtils {
 				try {
 					// We have to try if the test is necessary.
 
-					if ( GuiUtils.isInHeadLessMode() ) {
+					if ( GAMA.isInHeadLessMode() ) {
 						return file.getAbsolutePath();
 					} else {
 						return file.getCanonicalPath();

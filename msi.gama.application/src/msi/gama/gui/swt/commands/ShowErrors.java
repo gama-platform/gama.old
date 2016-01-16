@@ -20,8 +20,8 @@ import org.eclipse.ui.commands.*;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.menus.UIElement;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.views.ErrorView;
+import msi.gama.runtime.GAMA;
 
 public class ShowErrors extends AbstractHandler implements IElementUpdater {
 
@@ -31,9 +31,9 @@ public class ShowErrors extends AbstractHandler implements IElementUpdater {
 		ICommandService service = HandlerUtil.getActiveWorkbenchWindowChecked(event).getService(ICommandService.class);
 		service.refreshElements(event.getCommand().getId(), null);
 		if ( GamaPreferences.CORE_SHOW_ERRORS.getValue() ) {
-			GuiUtils.showView(ErrorView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
+			GAMA.getGui().showView(ErrorView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		} else {
-			GuiUtils.hideView(ErrorView.ID);
+			GAMA.getGui().hideView(ErrorView.ID);
 		}
 		return null;
 	}

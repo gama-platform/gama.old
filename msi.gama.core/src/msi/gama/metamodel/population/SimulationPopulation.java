@@ -13,7 +13,7 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -46,14 +46,14 @@ public class SimulationPopulation extends GamaPopulation {
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 		final List<? extends Map> initialValues, final boolean toBeScheduled) throws GamaRuntimeException {
-		GuiUtils.waitStatus("Initializing simulation");
+		scope.getGui().waitStatus("Initializing simulation");
 		final SimulationAgent world = new SimulationAgent(this);
 		world.setIndex(currentAgentIndex++);
 		world.setScheduled(toBeScheduled);
 		add(world);
 		getHost().setSimulation(world);
 		if ( scope.interrupted() ) { return null; }
-		GuiUtils.waitStatus("Instantiating agents");
+		scope.getGui().waitStatus("Instantiating agents");
 		createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
 		if ( toBeScheduled ) {
 			world.schedule();
@@ -65,7 +65,7 @@ public class SimulationPopulation extends GamaPopulation {
 		// world._init_(scope);
 		// end-hqnghi
 		// }
-		// GuiUtils.informStatus("Simulation Ready");
+		// scope.getGui().informStatus("Simulation Ready");
 		return this;
 	}
 

@@ -15,7 +15,6 @@ import java.util.*;
 import org.apache.commons.math3.exception.*;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
@@ -228,7 +227,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 								final IAgent remoteAgent = ia.next();
 								if ( !remoteAgent.dead() && !remoteAgent.equals(scope.getAgentScope()) &&
 									!equaAgents_ext.contains(remoteAgent) ) {
-									// GuiUtils.informConsole(scope.getAgentScope()+" simul "+remoteAgent);
+									// scope.getGui().informConsole(scope.getAgentScope()+" simul "+remoteAgent);
 
 									equaAgents_ext.add(remoteAgent);
 								}
@@ -242,7 +241,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 					}
 				}
 			}
-			// GuiUtils.informConsole("equations_ext "+scope.getAgentScope()+" "+equations_ext);
+			// scope.getGui().informConsole("equations_ext "+scope.getAgentScope()+" "+equations_ext);
 		}
 
 		return super.privateExecuteIn(scope);
@@ -271,7 +270,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 				variables_diff.put(name, v);
 			}
 			// variables_diff.addAll(ses.variables_diff);
-			// GuiUtils.informConsole("Add variables_diff "+remoteAgent+" "+variables_diff);
+			// scope.getGui().informConsole("Add variables_diff "+remoteAgent+" "+variables_diff);
 		}
 
 	}
@@ -283,8 +282,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		// return;
 		// }
 		if ( ses != null ) {
-			// GuiUtils.informConsole("Remove variables_diff "+remoteAgent+" "+ses.variables_diff);
-			// GuiUtils.informConsole("Remove equations "+remoteAgent+" "+ses.equations);
+			// scope.getGui().informConsole("Remove variables_diff "+remoteAgent+" "+ses.variables_diff);
+			// scope.getGui().informConsole("Remove equations "+remoteAgent+" "+ses.equations);
 			for ( String s : ses.equations.keySet() ) {
 
 				equations.remove(remoteAgent.getName() + s);
@@ -369,7 +368,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 					}
 				} catch (final Exception ex1) {
-					GuiUtils.debug(ex1);
+					// scope.getGui().debug(ex1);
 				} finally {
 					if ( pushed ) {
 						currentScope.pop(remoteAgent);
@@ -423,7 +422,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 				// AD: Does equationValues.get(i) return the correct equation ? The loop is bounded by getDimension()...
 				ydot[i] = Cast.asFloat(currentScope, equationValues.get(i).executeOn(currentScope));
 			} catch (final Exception ex1) {
-				GuiUtils.debug(ex1);
+				// scope.getGui().debug(ex1);
 			} finally {
 				if ( equaAgents.size() > 0 ) {
 					if ( pushed ) {

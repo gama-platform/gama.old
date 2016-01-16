@@ -13,7 +13,6 @@ package msi.gama.kernel.experiment;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -34,7 +33,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 	private void launchCommandThread() {
 		if ( commandThread != null ) { return; }
-		if ( GuiUtils.isInHeadLessMode() ) {
+		if ( experiment.isHeadless() ) {
 			commandThread = null;
 		} else {
 			commandThread = new Thread(this, "Front end controller");
@@ -96,7 +95,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 						}).start();;
 					}
 				} catch (final Exception e) {
-					// GuiUtils.debug("Error when opening the experiment: " + e.getMessage());
+					// scope.getGui().debug("Error when opening the experiment: " + e.getMessage());
 					closeExperiment(e);
 				} finally {
 					// AD : Moved to OutputSynchronizer
@@ -126,12 +125,12 @@ public class ExperimentController implements Runnable, IExperimentController {
 				try {
 					final boolean wasRunning = !scheduler.paused && !GamaPreferences.CORE_AUTO_RUN.getValue();
 					scheduler.pause();
-					GuiUtils.waitStatus("Reloading...");
+					GAMA.getGui().waitStatus("Reloading...");
 					experiment.reload();
 					if ( wasRunning ) {
 						processUserCommand(IExperimentController._START);
 					} else {
-						GuiUtils.informStatus("Experiment reloaded");
+						GAMA.getGui().informStatus("Experiment reloaded");
 					}
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
@@ -165,13 +164,13 @@ public class ExperimentController implements Runnable, IExperimentController {
 	// public void userInterrupt() {
 	// if ( experiment != null ) {
 	// IModel m = experiment.getModel();
-	// GuiUtils.neutralStatus("No simulation running");
+	// scope.getGui().neutralStatus("No simulation running");
 	// dispose(/* GamaRuntimeException.warning("Interrupted by user") */);
 	//
 	// if ( m != null ) {
 	// m.dispose();
 	// }
-	// GuiUtils.wipeExperiments();
+	// scope.getGui().wipeExperiments();
 	// }
 	// }
 
@@ -210,7 +209,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 			try {
 				scheduler.pause();
 				GAMA.updateSimulationState(GAMA.NOTREADY);
-				GuiUtils.closeDialogs();
+				GAMA.getGui().closeDialogs();
 				// Dec 2015 This method is normally now called from ExperimentPlan.dispose()
 				// experiment.dispose();
 				// experiment = null;
@@ -244,7 +243,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 		disposing = true;
 		// System.out.println("CloseExperiment : disposing = true");
 		if ( e != null ) {
-			GuiUtils.errorStatus(e.getMessage());
+			GAMA.getGui().errorStatus(e.getMessage());
 		}
 
 		experiment.dispose(); // will call own dispose() later

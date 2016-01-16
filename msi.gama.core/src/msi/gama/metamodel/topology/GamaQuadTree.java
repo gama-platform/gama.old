@@ -169,7 +169,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			if ( size > 0 ) {
 				boolean removed = false;
 				synchronized (objects) {
-					// GuiUtils.debug("GamaQuadTree.QuadNode.remove " + a);
+					// scope.getGui().debug("GamaQuadTree.QuadNode.remove " + a);
 					removed = objects.remove(a);
 				}
 				if ( removed ) {
@@ -192,7 +192,7 @@ public class GamaQuadTree implements ISpatialIndex {
 					return add(p, a);
 				}
 				synchronized (objects) {
-					// GuiUtils.debug("GamaQuadTree.QuadNode.add " + a);
+					// scope.getGui().debug("GamaQuadTree.QuadNode.add " + a);
 					if ( objects.add(a) ) {
 						size = size + 1;
 					}
@@ -206,7 +206,7 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		private boolean removeIfPresent(final Envelope bounds, final IShape a) {
 			synchronized (objects) {
-				// GuiUtils.debug("GamaQuadTree.QuadNode.removeIfPresent + object.contains " + a);
+				// scope.getGui().debug("GamaQuadTree.QuadNode.removeIfPresent + object.contains " + a);
 				return !(isLeaf && size == 0) && (objects.contains(a) || this.bounds.intersects(bounds)) &&
 					remove(bounds, a);
 			}
@@ -216,7 +216,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			if ( size != 0 ) {
 				boolean removed = false;
 				synchronized (objects) {
-					// GuiUtils.debug("GamaQuadTree.QuadNode.remove " + a);
+					// scope.getGui().debug("GamaQuadTree.QuadNode.remove " + a);
 					removed = objects.remove(a);
 				}
 				if ( removed ) {
@@ -278,7 +278,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			if ( isLeaf || env.contains(bounds) ) {
 				boolean added = false;
 				synchronized (objects) {
-					// GuiUtils.debug("GamaQuadTree.QuadNode.add " + o);
+					// scope.getGui().debug("GamaQuadTree.QuadNode.add " + o);
 					added = objects.add(o);
 				}
 				if ( added ) {
@@ -314,7 +314,7 @@ public class GamaQuadTree implements ISpatialIndex {
 				se = new QuadNode(new Envelope(halfx, maxx, halfy, maxy));
 				IAgent[] tempList;
 				synchronized (objects) {
-					// GuiUtils.debug("GamaQuadTree.QuadNode.split ");
+					// scope.getGui().debug("GamaQuadTree.QuadNode.split ");
 					tempList = objects.toArray(new IAgent[size]);
 					objects.clear();
 				}
@@ -366,7 +366,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			final Collection<IAgent> result) {
 			if ( bounds.intersects(r) ) {
 				synchronized (objects) {
-					// GuiUtils.debug("GamaQuadTree.QuadNode.findIntersects ");
+					// scope.getGui().debug("GamaQuadTree.QuadNode.findIntersects ");
 					for ( IShape entry : objects ) {
 						if ( entry.getEnvelope().intersects(r) ) {
 							result.add(entry.getAgent());

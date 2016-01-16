@@ -1,21 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AgentsMenu.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
@@ -26,11 +30,6 @@ import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.statements.*;
 import msi.gaml.types.Types;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
 
 public class AgentsMenu extends ContributionItem {
 
@@ -56,8 +55,8 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
-	private static MenuItem actionAgentMenuItem(final Menu parent, final IAgent agent,
-		final SelectionListener listener, final Image image, final String prefix) {
+	private static MenuItem actionAgentMenuItem(final Menu parent, final IAgent agent, final SelectionListener listener,
+		final Image image, final String prefix) {
 		MenuItem result = new MenuItem(parent, SWT.PUSH);
 		result.setText(prefix /* + " " + agent.getName() */);
 		result.addSelectionListener(listener);
@@ -66,8 +65,8 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
-	private static MenuItem
-		browsePopulationMenuItem(final Menu parent, final Collection<IAgent> pop, final Image image) {
+	private static MenuItem browsePopulationMenuItem(final Menu parent, final Collection<IAgent> pop,
+		final Image image) {
 		MenuItem result = new MenuItem(parent, SWT.PUSH);
 		if ( pop instanceof IPopulation ) {
 			result.setText("Browse " + ((IPopulation) pop).getName() + " population...");
@@ -124,7 +123,7 @@ public class AgentsMenu extends ContributionItem {
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
-				GuiUtils.setSelectedAgent(a);
+				a.getScope().getGui().setSelectedAgent(a);
 			}
 		}
 	};
@@ -136,7 +135,7 @@ public class AgentsMenu extends ContributionItem {
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
-				GuiUtils.setHighlightedAgent(a);
+				a.getScope().getGui().setHighlightedAgent(a);
 				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 			}
 		}
@@ -169,7 +168,7 @@ public class AgentsMenu extends ContributionItem {
 	// final MenuItem mi = (MenuItem) e.widget;
 	// final IAgent a = (IAgent) mi.getData("agent");
 	// if ( a != null && !a.dead() ) {
-	// GuiUtils.getFirstDisplaySurface().focusOn(a);
+	// scope.getGui().getFirstDisplaySurface().focusOn(a);
 	// GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 	// }
 	// }

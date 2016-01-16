@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import msi.gama.common.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.kernel.simulation.*;
@@ -102,7 +101,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public String getPopupText() {
-		if ( !GuiUtils.isSimulationPerspective() ) { return null; }
+		if ( !GAMA.getGui().isSimulationPerspective() ) { return null; }
 		if ( state == IGui.ERROR || state == IGui.WAIT ) { return label.getText(); }
 		StringBuilder sb = new StringBuilder(300);
 		SimulationAgent simulation = GAMA.getSimulation();

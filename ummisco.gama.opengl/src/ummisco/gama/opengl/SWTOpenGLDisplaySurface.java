@@ -468,7 +468,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 			@Override
 			public void run() {
-				GuiUtils.asyncRun(new Runnable() {
+				scope.getGui().asyncRun(new Runnable() {
 
 					@Override
 					public void run() {
@@ -572,7 +572,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void selectSeveralAgents(final Collection<IAgent> agents) {
 
 		// animator.pause();
-		GuiUtils.asyncRun(new Runnable() {
+		scope.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {

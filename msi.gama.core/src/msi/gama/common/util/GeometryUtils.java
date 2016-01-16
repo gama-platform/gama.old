@@ -870,13 +870,13 @@ public class GeometryUtils {
 		final IList gamaList = sqlConn.selectDB(scope, (String) params.get("select"));
 		env = SqlConnection.getBounds(gamaList);
 
-		GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Before Projection:" + env);
+		scope.getGui().debug("GeometryUtils.computeEnvelopeFromSQLData.Before Projection:" + env);
 
 		IProjection gis;
 		gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
 		env = gis.getProjectedEnvelope();
 
-		GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.After Projection:" + env);
+		scope.getGui().debug("GeometryUtils.computeEnvelopeFromSQLData.After Projection:" + env);
 		return env;
 		// ----------------------------------------------------------------------------------------------------
 	}

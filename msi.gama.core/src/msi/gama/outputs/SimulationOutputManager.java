@@ -12,7 +12,6 @@
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
@@ -42,8 +41,8 @@ public class SimulationOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		// GuiUtils.prepareForSimulation((SimulationAgent) scope.getSimulationScope());
-		GuiUtils.waitStatus(" Building outputs ");
+		// scope.getGui().prepareForSimulation((SimulationAgent) scope.getSimulationScope());
+		scope.getGui().waitStatus(" Building outputs ");
 		boolean result = super.init(scope);
 		if ( result ) {
 			GAMA.updateSimulationState();
@@ -54,9 +53,8 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	@Override
 	public boolean step(final IScope scope) {
 		boolean result = super.step(scope);
-		if ( !GuiUtils.isInHeadLessMode() && scope.getExperiment() != null &&
-			!scope.getExperiment().getSpecies().isBatch() ) {
-			GuiUtils.informStatus(scope.getClock().getInfo());
+		if ( scope.getExperiment() != null && !scope.getExperiment().getSpecies().isBatch() ) {
+			scope.getGui().informStatus(scope.getClock().getInfo());
 		}
 		return result;
 	}

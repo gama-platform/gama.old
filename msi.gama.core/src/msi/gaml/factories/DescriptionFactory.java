@@ -151,7 +151,7 @@ public class DescriptionFactory {
 			// SymbolProto.nonTypeStatements.addAll(names);
 			// }
 			for ( final String s : names ) {
-				// GuiUtils.debug("DescriptionFactory.addProto " + s);
+				// scope.getGui().debug("DescriptionFactory.addProto " + s);
 				STATEMENT_KEYWORDS_PROTOS.putIfAbsent(s, md);
 			}
 		}

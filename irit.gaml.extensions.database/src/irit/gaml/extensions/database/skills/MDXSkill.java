@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package irit.gaml.extensions.database.skills;
 
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.database.mdx.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -53,7 +53,7 @@ public class MDXSkill extends Skill {
 	 */
 	@action(name = "helloWorld")
 	public Object helloWorld(final IScope scope) throws GamaRuntimeException {
-		GuiUtils.informConsole("Hello World");
+		scope.getGui().informConsole("Hello World");
 		return null;
 	}
 

@@ -294,7 +294,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			ICompletionProposal cp =
 				createCompletionProposal(bi.name, bi.title, bi.image, 1000, context.getPrefix(), context);
 			if ( cp == null ) {
-				// GuiUtils.debug("GamlProposalProvider.addBuiltInElements null for " + t);
+				// scope.getGui().debug("GamlProposalProvider.addBuiltInElements null for " + t);
 			} else {
 				if ( bi.documentation != null ) {
 					((ConfigurableCompletionProposal) cp).setAdditionalProposalInfo(bi.documentation);

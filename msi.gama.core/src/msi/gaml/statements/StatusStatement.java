@@ -12,7 +12,7 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -72,7 +72,7 @@ public class StatusStatement extends AbstractStatement {
 		if ( agent != null && !agent.dead() ) {
 			Object o = message.value(scope);
 			String msg = o == null ? null : Cast.asString(scope, o);
-			GuiUtils.setStatus(msg, color == null ? null : Cast.asColor(scope, color.value(scope)));
+			scope.getGui().setStatus(msg, color == null ? null : Cast.asColor(scope, color.value(scope)));
 		}
 		return mes;
 	}

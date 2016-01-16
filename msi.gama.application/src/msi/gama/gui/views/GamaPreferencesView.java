@@ -25,10 +25,10 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.*;
 import msi.gama.common.interfaces.IParameterEditor;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
+import msi.gama.runtime.GAMA;
 
 /**
  * Class GamaPreferencesView.
@@ -102,7 +102,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 					id.contains("Content") ) {
 					preferenceManager.remove((IPreferenceNode) elem);
 				}
-				// GuiUtils.debug(((IPreferenceNode) elem).getId());
+				// scope.getGui().debug(((IPreferenceNode) elem).getId());
 				// preferenceManager.remove((IPreferenceNode) elem);
 			}
 		}
@@ -262,7 +262,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	 */
 	protected void showError(final String string) {
 		// TODO make it a proper component of the view
-		GuiUtils.debug("Error in preferences : " + string);
+		GAMA.getGui().debug("Error in preferences : " + string);
 	}
 
 	private void buildButtons() {
@@ -338,7 +338,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 				// pn.disposeResources();
 				// pn.createPage();
 				// }
-				GuiUtils.asyncRun(new Runnable() {
+				GAMA.getGui().asyncRun(new Runnable() {
 
 					@Override
 					public void run() {

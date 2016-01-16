@@ -35,7 +35,7 @@ import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.AbstractGui;
 import msi.gama.gui.navigator.*;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.commands.GamaColorMenu;
@@ -63,14 +63,14 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-public class SwtGui implements IGui {
+public class SwtGui extends AbstractGui {
 
 	private IAgent highlightedAgent;
 	// public static boolean MOUSE_DOWN;
 
 	static {
-		if ( !GuiUtils.isInHeadLessMode() ) {
-			GuiUtils.setSwtGui(new SwtGui());
+		if ( !GAMA.isInHeadLessMode() ) {
+			// GAMA.setGui(new SwtGui());
 			WorkaroundForIssue1358.install();
 		} else {
 			System.out.println("Configuring HEADLESS MODE");
@@ -105,9 +105,7 @@ public class SwtGui implements IGui {
 	private static Font parameterEditorsFont;
 	private static Font navigResourceFont;
 	private static Font navigHeaderFont;
-	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
-	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
-	public static final String PERSPECTIVE_HPC_ID = "msi.gama.hpc.HPCPerspectiveFactory";
+
 	private static Font unitFont;
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	// private static Logger log;
@@ -296,7 +294,7 @@ public class SwtGui implements IGui {
 		if ( GamaPreferences.CORE_SHOW_ERRORS.getValue() ) {
 			final ErrorView v = (ErrorView) showView(ErrorView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 			if ( v != null ) {
-				GuiUtils.asyncRun(new Runnable() {
+				asyncRun(new Runnable() {
 
 					@Override
 					public void run() {
@@ -329,7 +327,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void setStatus(final String msg, final GamaColor color) {
+	public void setStatusInternal(final String msg, final GamaColor color) {
 		status.updateWith(new UserStatusMessage(msg, color));
 	}
 
@@ -1046,7 +1044,7 @@ public class SwtGui implements IGui {
 		} else if ( eObject instanceof IFile ) {
 			IFile file = (IFile) eObject;
 			if ( !file.exists() ) {
-				GuiUtils.debug("File " + file.getFullPath().toString() + " does not exist in the workspace");
+				debug("File " + file.getFullPath().toString() + " does not exist in the workspace");
 				return;
 			}
 			try {
@@ -1196,7 +1194,7 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				if ( getPage() == null ) { return; }
-				// final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
+				// final IViewReference r = getPage().findViewReference(scope.getGui().AGENT_VIEW_ID, "");
 				// if ( r == null ) {
 				if ( a == null ) { return; }
 				try {
@@ -1206,13 +1204,13 @@ public class SwtGui implements IGui {
 					g.addContext("In opening the agent inspector");
 					GAMA.reportError(GAMA.getRuntimeScope(), g, false);
 				}
-				final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
+				final IViewReference r = getPage().findViewReference(IGui.AGENT_VIEW_ID, "");
 				if ( r != null ) {
 					getPage().bringToTop(r.getPart(true));
 				}
 				// }
 				// AgentInspectView v =
-				// (AgentInspectView) showView(GuiUtils.AGENT_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+				// (AgentInspectView) showView(scope.getGui().AGENT_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 				// v.inspectAgent(a);
 			}
 		});
@@ -1261,7 +1259,7 @@ public class SwtGui implements IGui {
 	public void cleanAfterExperiment(final IExperimentPlan exp) {
 		// setSelectedAgent(null);
 		// setHighlightedAgent(null);
-		hideView(GuiUtils.PARAMETER_VIEW_ID);
+		hideView(IGui.PARAMETER_VIEW_ID);
 		hideMonitorView();
 		eraseConsole(true);
 	}

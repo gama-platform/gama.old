@@ -16,12 +16,12 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.runtime.GAMA;
 
 public class DisplaySurfaceMenu {
 
@@ -68,7 +68,7 @@ public class DisplaySurfaceMenu {
 
 	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final ILocation modelCoordinates,
 		final Collection<IAgent> agents) {
-		GuiUtils.asyncRun(new Runnable() {
+		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
@@ -90,7 +90,7 @@ public class DisplaySurfaceMenu {
 	static int MAX_RETRIES = 10;
 
 	private void retryVisible(final Menu menu, final int retriesRemaining) {
-		GuiUtils.asyncRun(new Runnable() {
+		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {

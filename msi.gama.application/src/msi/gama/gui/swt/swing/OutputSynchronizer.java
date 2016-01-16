@@ -15,9 +15,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.ui.IWorkbenchPage;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.interfaces.*;
 import msi.gama.gui.views.LayeredDisplayView;
+import msi.gama.runtime.GAMA;
 
 public class OutputSynchronizer {
 
@@ -39,7 +39,7 @@ public class OutputSynchronizer {
 	}
 
 	public static void incInitializingViews(final String view, final boolean isPermanent) {
-		// GuiUtils.debug("GuiOutputManager.incInitializingViews: " + view);
+		// scope.getGui().debug("GuiOutputManager.incInitializingViews: " + view);
 		viewsScheduledToOpen.add(view);
 		if ( !isPermanent ) {
 			viewsScheduledToClose.add(view);
@@ -51,34 +51,35 @@ public class OutputSynchronizer {
 	}
 
 	public static void decClosingViews(final String view) {
-		// GuiUtils.debug("GuiOutputManager.decClosingViews: " + view);
+		// scope.getGui().debug("GuiOutputManager.decClosingViews: " + view);
 		viewsScheduledToClose.remove(view);
 		NumberClosingViews.decrementAndGet();
 	}
 
 	public static void decInitializingViews(final String view) {
-		GuiUtils.debug("GuiOutputManager.decInitializingViews: " + view);
+		GAMA.getGui().debug("GuiOutputManager.decInitializingViews: " + view);
 		viewsScheduledToOpen.remove(view);
 		NumberOpeningViews.decrementAndGet();
-		// GuiUtils.debug("Showing :" + view);
-		// GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, view, IWorkbenchPage.VIEW_VISIBLE);
+		// scope.getGui().debug("Showing :" + view);
+		// scope.getGui().showView(scope.getGui().LAYER_VIEW_ID, view, IWorkbenchPage.VIEW_VISIBLE);
 	}
 
 	public static void waitForViewsToBeInitialized() {
 		while (getNumberOfViewsWaitingToOpen() > 0) {
 			try {
-				GuiUtils.waitStatus("Initializing " + getNumberOfViewsWaitingToOpen() + " display(s) :" +
+				GAMA.getGui().waitStatus("Initializing " + getNumberOfViewsWaitingToOpen() + " display(s) :" +
 					new HashSet(viewsScheduledToOpen));
 				if ( getNumberOfViewsWaitingToOpen() > 0 ) {
 					// Workaround for OpenGL views. Necessary to "show" the view
 					// even briefly so that OpenGL can call the init() method of the renderer
 					final List<String> names = new ArrayList(viewsScheduledToOpen);
-					// GuiUtils.debug("Briefly showing :" + names.get(0));
-					final LayeredDisplayView view = (LayeredDisplayView) GuiUtils.showView(GuiUtils.LAYER_VIEW_ID,
+					GAMA.getGui();
+					// scope.getGui().debug("Briefly showing :" + names.get(0));
+					final LayeredDisplayView view = (LayeredDisplayView) GAMA.getGui().showView(IGui.LAYER_VIEW_ID,
 						names.get(0), IWorkbenchPage.VIEW_ACTIVATE);
 
 					if ( view != null ) {
-						GuiUtils.run(new Runnable() {
+						GAMA.getGui().run(new Runnable() {
 
 							@Override
 							public void run() {
@@ -99,7 +100,7 @@ public class OutputSynchronizer {
 
 	public static void waitForViewsToBeClosed() {
 		while (getNumberOfViewsWaitingToClose() > 0) {
-			GuiUtils.waitStatus("Closing previous displays");
+			GAMA.getGui().waitStatus("Closing previous displays");
 			try {
 				Thread.sleep(100);
 			} catch (final InterruptedException e) {
@@ -121,14 +122,15 @@ public class OutputSynchronizer {
 
 		final List<String> names = new ArrayList(viewsScheduledToBeActivated);
 		// final List<LayeredDisplayView> views = new ArrayList();
-		// GuiUtils.debug("OutputSynchronizer.cleanResize called on " + names);
+		// scope.getGui().debug("OutputSynchronizer.cleanResize called on " + names);
 		if ( !GamaPreferences.CORE_DISPLAY_ORDER.getValue() ) {
 			Collections.reverse(names);
 		}
 		viewsScheduledToBeActivated.clear();
 		for ( String name : names ) {
-			GuiUtils.debug("Activating :" + name);
-			IGamaView view = GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, name, IWorkbenchPage.VIEW_ACTIVATE);
+			GAMA.getGui().debug("Activating :" + name);
+			GAMA.getGui();
+			IGamaView view = GAMA.getGui().showView(IGui.LAYER_VIEW_ID, name, IWorkbenchPage.VIEW_ACTIVATE);
 			// if ( view instanceof LayeredDisplayView ) {
 			// views.add((LayeredDisplayView) view);
 			// }

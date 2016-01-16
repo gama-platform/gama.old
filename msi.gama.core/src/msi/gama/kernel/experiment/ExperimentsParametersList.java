@@ -14,8 +14,8 @@ package msi.gama.kernel.experiment;
 import java.util.*;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IParameterEditor;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 
 public class ExperimentsParametersList extends EditorsList<String> {
@@ -38,7 +38,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	@Override
 	public void add(final Collection<? extends IParameter> params, final IAgent agent) {
 		for ( final IParameter var : params ) {
-			IParameterEditor gp = GuiUtils.getEditorFactory().create((IAgent) null, var, null);
+			IParameterEditor gp = GAMA.getGui().getEditorFactory().create((IAgent) null, var, null);
 			String cat = var.getCategory();
 			cat = cat == null ? "General" : cat;
 			addItem(cat);

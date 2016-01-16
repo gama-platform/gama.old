@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import msi.gama.application.projects.WorkspaceModelsManager;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.ApplicationWorkbenchAdvisor;
 import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
+import msi.gama.runtime.GAMA;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
@@ -60,7 +60,7 @@ public class Application implements IApplication {
 			String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(), lastUsedWs,
 				false, false, false);
 			if ( ret != null ) {
-				GuiUtils.debug(ret);
+				GAMA.getGui().debug(ret);
 				// remember = false;
 				/* If we dont or cant remember and the location is set, we cant do anything as we need a workspace */
 				MessageDialog.openError(display.getActiveShell(), "Error",
@@ -92,7 +92,7 @@ public class Application implements IApplication {
 							"The workspace contains an old version of the models library. Do you want to create a new workspace ?");
 
 					} else {
-						GuiUtils.debug(ret);
+						GAMA.getGui().debug(ret);
 						remember = false;
 					}
 				}

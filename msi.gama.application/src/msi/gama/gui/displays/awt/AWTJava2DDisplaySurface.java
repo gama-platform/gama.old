@@ -743,14 +743,14 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void setBounds(final int arg0, final int arg1, final int arg2, final int arg3) {
-		// GuiUtils.debug("Set bounds called with " + arg2 + " " + arg3);
+		// scope.getGui().debug("Set bounds called with " + arg2 + " " + arg3);
 		if ( arg2 == 0 && arg3 == 0 ) { return; }
 		super.setBounds(arg0, arg1, arg2, arg3);
 	}
 
 	@Override
 	public void setBounds(final Rectangle r) {
-		// GuiUtils.debug("Set bounds called with " + r);
+		// scope.getGui().debug("Set bounds called with " + r);
 		if ( r.width < 1 && r.height < 1 ) { return; }
 		super.setBounds(r);
 	}
@@ -764,36 +764,36 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 				Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 		} catch (Exception e) {
 			// System.gc();
-			// GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
+			// scope.getGui().debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
 			real_factor = MAX_ZOOM_FACTOR;
 			try {
 				success = resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
 					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 			} catch (Exception e1) {
-				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
+				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
 				real_factor = 1;
 				success = true;
 			} catch (Error e1) {
-				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
+				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
 				real_factor = 1;
 				success = true;
 			}
 		} catch (Error e) {
 			java.lang.System.gc();
-			// GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
+			// scope.getGui().debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
 			real_factor = MAX_ZOOM_FACTOR;
 			try {
 				success = resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
 					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 			} catch (Exception e1) {
-				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
+				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
 				real_factor = 1;
 				success = true;
 			} catch (Error e1) {
-				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
+				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
 				real_factor = 1;
 				success = true;
@@ -849,7 +849,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
 		if ( layers.isEmpty() ) { return; }
 		final ILocation modelCoordinates = layers.get(0).getModelCoordinatesFrom(xc, yc, this);
-		GuiUtils.run(new Runnable() {
+		scope.getGui().run(new Runnable() {
 
 			@Override
 			public void run() {
