@@ -310,11 +310,11 @@ public class MSSQLConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("MSSQLConnection.getInsertString " + e.toString());
+			throw GamaRuntimeException.error("MSSQLConnection.getInsertString " + e.toString(), scope);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("MSSQLConnection.getInsertString " + e.toString());
+			throw GamaRuntimeException.error("MSSQLConnection.getInsertString " + e.toString(), scope);
 		}
 
 		return insertStr;
@@ -415,11 +415,11 @@ public class MSSQLConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("MSSQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("MSSQLConnection.insertBD " + e.toString(), scope);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("MSSQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("MSSQLConnection.insertBD " + e.toString(), scope);
 		}
 
 		return insertStr;

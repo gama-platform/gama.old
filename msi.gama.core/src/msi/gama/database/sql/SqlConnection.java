@@ -255,7 +255,7 @@ public abstract class SqlConnection {
 			result = selectDB(scope, conn, selectComm);
 			conn.close();
 		} catch (Exception e) {
-			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString(), scope);
 		}
 
 		if ( DEBUG ) {
@@ -317,7 +317,7 @@ public abstract class SqlConnection {
 				{
 					Envelope env = scope.getSimulationScope().getEnvelope();
 					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-					result = SqlUtils.transform(gis, result, false);
+					result = SqlUtils.transform(scope, gis, result, false);
 				}
 			}
 			/**
@@ -346,7 +346,7 @@ public abstract class SqlConnection {
 	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
 	 */
 
-	public int executeUpdateDB(final String updateComm) throws GamaRuntimeException {
+	public int executeUpdateDB(final IScope scope, final String updateComm) throws GamaRuntimeException {
 		Connection conn = null;
 		int n = 0;
 		try {
@@ -366,7 +366,7 @@ public abstract class SqlConnection {
 
 			conn.close();
 		} catch (Exception e) {
-			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString(), scope);
 		}
 
 		// if ( DEBUG ) {
@@ -380,7 +380,8 @@ public abstract class SqlConnection {
 	/*
 	 * execute the update statement with current connection(update/insert/delete/create/drop)
 	 */
-	public int executeUpdateDB(final Connection conn, final String updateComm) throws GamaRuntimeException {
+	public int executeUpdateDB(final IScope scope, final Connection conn, final String updateComm)
+		throws GamaRuntimeException {
 		int n = 0;
 		try {
 			// if ( DEBUG ) {
@@ -394,7 +395,7 @@ public abstract class SqlConnection {
 			// scope.getGui().debug("Updated records :" + n);
 			// }
 		} catch (SQLException e) {
-			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString(), scope);
 		}
 
 		return n;
@@ -526,7 +527,7 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}
 
 		return rec_no;
@@ -558,7 +559,7 @@ public abstract class SqlConnection {
 			rec_no = insertDB(scope, conn, table_name, cols, values);
 			conn.close();
 		} catch (Exception e) {
-			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}
 		return rec_no;
 	}
@@ -595,7 +596,7 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}
 		return rec_no;
 	}
@@ -618,7 +619,7 @@ public abstract class SqlConnection {
 			rec_no = insertDB(scope, conn, table_name, values);
 			conn.close();
 		} catch (Exception e) {
-			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}
 		return rec_no;
 	}
@@ -696,7 +697,7 @@ public abstract class SqlConnection {
 				if ( gis != null ) {
 					Envelope env = scope.getSimulationScope().getEnvelope();
 					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-					result = SqlUtils.transform(gis, result, false);
+					result = SqlUtils.transform(scope, gis, result, false);
 				}
 			}
 
@@ -718,7 +719,7 @@ public abstract class SqlConnection {
 
 			rs.close();
 		} catch (SQLException e) {
-			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString(), scope);
 		}
 		// return repRequest;
 		return result;
@@ -752,7 +753,7 @@ public abstract class SqlConnection {
 			conn.close();
 			// set value for each condition
 		} catch (Exception e) {
-			throw GamaRuntimeException.error("SQLConnection.executeQuery: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeQuery: " + e.toString(), scope);
 		}
 		return result;
 
@@ -775,8 +776,8 @@ public abstract class SqlConnection {
 	 *
 	 * @throws GamaRuntimeException
 	 */
-	public int executeUpdateDB(final Connection conn, final String queryStr, final GamaList<Object> condition_values)
-		throws GamaRuntimeException {
+	public int executeUpdateDB(final IScope scope, final Connection conn, final String queryStr,
+		final GamaList<Object> condition_values) throws GamaRuntimeException {
 		PreparedStatement pstmt = null;
 		int row_count = -1;
 		int condition_count = condition_values.size();
@@ -796,7 +797,7 @@ public abstract class SqlConnection {
 			pstmt.close();
 
 		} catch (SQLException e) {
-			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString(), scope);
 		}
 		return row_count;
 	}
@@ -816,17 +817,17 @@ public abstract class SqlConnection {
 	 *
 	 * @throws GamaRuntimeException
 	 */
-	public int executeUpdateDB(final String queryStr, final GamaList<Object> condition_values)
+	public int executeUpdateDB(final IScope scope, final String queryStr, final GamaList<Object> condition_values)
 		throws GamaRuntimeException {
 		int row_count = -1;
 		Connection conn;
 		try {
 			conn = connectDB();
-			row_count = executeUpdateDB(conn, queryStr, condition_values);
+			row_count = executeUpdateDB(scope, conn, queryStr, condition_values);
 			conn.close();
 			// set value for each condition
 		} catch (Exception e) {
-			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString(), scope);
 		}
 		return row_count;
 	}

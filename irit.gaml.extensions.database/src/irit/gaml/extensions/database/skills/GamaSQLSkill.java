@@ -25,7 +25,7 @@ public class GamaSQLSkill extends Skill {
 			return false;
 		}
 		gamaSqlConn.setDataStore(dataStore);
-		gamaSqlConn.close();
+		gamaSqlConn.close(scope);
 		return true;
 	}
 
@@ -54,7 +54,7 @@ public class GamaSQLSkill extends Skill {
 		} catch (Exception e) {
 			throw GamaRuntimeException.error("GamaSqlConnection.fillBuffer; geometry could not be read", scope);
 		}
-		gamaSqlConn.close();
+		gamaSqlConn.close(scope);
 
 	}
 

@@ -222,25 +222,25 @@ public abstract class MdxConnection {
 		this.password = password;
 	}
 
-	public String getDatabase() throws GamaRuntimeException {
-		try {
-			return olapConnection.getDatabase();
-		} catch (OlapException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
-		}
-	}
+	// public String getDatabase() throws GamaRuntimeException {
+	// try {
+	// return olapConnection.getDatabase();
+	// } catch (OlapException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw GamaRuntimeException.error(e.toString());
+	// }
+	// }
 
-	public OlapDatabaseMetaData getMetaData() throws GamaRuntimeException {
-		try {
-			return olapConnection.getMetaData();
-		} catch (OlapException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
-		}
-	}
+	// public OlapDatabaseMetaData getMetaData() throws GamaRuntimeException {
+	// try {
+	// return olapConnection.getMetaData();
+	// } catch (OlapException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw GamaRuntimeException.error(e.toString());
+	// }
+	// }
 
 	/*
 	 * Select data source with connection was established

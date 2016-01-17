@@ -319,11 +319,11 @@ public class MySqlConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString(), scope);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString(), scope);
 		}
 
 		return insertStr;
@@ -435,11 +435,11 @@ public class MySqlConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString(), scope);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString(), scope);
 		}
 
 		return insertStr;
