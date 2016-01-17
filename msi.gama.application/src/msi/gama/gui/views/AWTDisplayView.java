@@ -45,7 +45,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			public void mouseMoved(final java.awt.event.MouseEvent e) {
-				System.out.println("We move inside the AWT component");
+				// System.out.println("We move inside the AWT component");
 				GAMA.getGui().asyncRun(displayOverlay);
 			}
 

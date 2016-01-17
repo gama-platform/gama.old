@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.ui.IWorkbenchPage;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.runtime.GAMA;
 
 public class OutputSynchronizer {
@@ -69,27 +68,28 @@ public class OutputSynchronizer {
 			try {
 				GAMA.getGui().waitStatus("Initializing " + getNumberOfViewsWaitingToOpen() + " display(s) :" +
 					new HashSet(viewsScheduledToOpen));
-				if ( getNumberOfViewsWaitingToOpen() > 0 ) {
-					// Workaround for OpenGL views. Necessary to "show" the view
-					// even briefly so that OpenGL can call the init() method of the renderer
-					final List<String> names = new ArrayList(viewsScheduledToOpen);
-					GAMA.getGui();
-					// scope.getGui().debug("Briefly showing :" + names.get(0));
-					final LayeredDisplayView view = (LayeredDisplayView) GAMA.getGui().showView(IGui.LAYER_VIEW_ID,
-						names.get(0), IWorkbenchPage.VIEW_ACTIVATE);
+				System.out.println("Waiting for views to open");
+				// if ( getNumberOfViewsWaitingToOpen() > 0 ) {
+				// Workaround for OpenGL views. Necessary to "show" the view
+				// even briefly so that OpenGL can call the init() method of the renderer
+				// final List<String> names = new ArrayList(viewsScheduledToOpen);
+				// GAMA.getGui();
+				// scope.getGui().debug("Briefly showing :" + names.get(0));
+				// final LayeredDisplayView view = (LayeredDisplayView) GAMA.getGui().showView(IGui.LAYER_VIEW_ID,
+				// names.get(0), IWorkbenchPage.VIEW_ACTIVATE);
 
-					if ( view != null ) {
-						GAMA.getGui().run(new Runnable() {
+				// if ( view != null ) {
+				// GAMA.getGui().run(new Runnable() {
+				//
+				// @Override
+				// public void run() {
+				// view.getSurfaceComposite().getParent().layout(true, true);
+				// }
+				//
+				// });
 
-							@Override
-							public void run() {
-								view.getSurfaceComposite().getParent().layout(true, true);
-							}
-
-						});
-
-					}
-				}
+				// }
+				// }
 				Thread.sleep(100);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
@@ -129,7 +129,7 @@ public class OutputSynchronizer {
 		viewsScheduledToBeActivated.clear();
 		for ( String name : names ) {
 			GAMA.getGui().debug("Activating :" + name);
-			GAMA.getGui();
+			// GAMA.getGui();
 			IGamaView view = GAMA.getGui().showView(IGui.LAYER_VIEW_ID, name, IWorkbenchPage.VIEW_ACTIVATE);
 			// if ( view instanceof LayeredDisplayView ) {
 			// views.add((LayeredDisplayView) view);
@@ -149,7 +149,8 @@ public class OutputSynchronizer {
 			@Override
 			public void run() {
 				for ( Runnable r : cleanResizers ) {
-					r.run();
+					GAMA.getGui().asyncRun(r);
+					// r.run();
 				}
 				cleanResizers.clear();
 				boolean allRealized = false;
@@ -171,6 +172,7 @@ public class OutputSynchronizer {
 			}
 
 		};
+		job.run();
 
 	}
 

@@ -23,4 +23,10 @@
              keyword="opengl">
        </implementation>
     </extension>
+    <extension
+          point="org.eclipse.ui.startup">
+       <startup
+             class="ummisco.gama.opengl.GamaOpenGLStartup">
+       </startup>
+    </extension>
 </plugin>

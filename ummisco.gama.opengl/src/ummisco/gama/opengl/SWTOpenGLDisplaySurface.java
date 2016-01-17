@@ -16,7 +16,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
@@ -78,10 +78,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		parent.setLayout(new GridLayout(1, false));
 		output.getData().addListener(this);
 		output.setSurface(this);
-		manager = new LayerManager(this, output);
-		temp_focus = output.getFacet(IKeyword.FOCUS);
+		setDisplayScope(output.getScope().copy());
 		renderer = createRenderer();
 		animator = createAnimator();
+		manager = new LayerManager(this, output);
+		temp_focus = output.getFacet(IKeyword.FOCUS);
+
 		animator.start();
 	}
 
