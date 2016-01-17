@@ -688,7 +688,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 			writer.close();
 		} catch (IOException e) {
-			throw GamaRuntimeException.create(e);
+			throw GamaRuntimeException.create(e, getScope());
 		}
 	}
 

@@ -18,7 +18,6 @@ import msi.gama.kernel.batch.*;
 import msi.gama.kernel.experiment.ExperimentPlan.BatchValidator;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.outputs.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
@@ -166,7 +165,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		// FIXME Should be put somewhere around here, but probably not here exactly.
 		// ProjectionFactory.reset();
-
 
 		super.dispose();
 		// System.out.println("ExperimentPlan.dipose END");
@@ -384,7 +382,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected IParameter.Batch checkGetParameter(final String name) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameter(name);
 		if ( v == null ) { throw GamaRuntimeException
-			.error("No parameter named " + name + " in experiment " + getName()); }
+			.error("No parameter named " + name + " in experiment " + getName(), getExperimentScope()); }
 		return v;
 	}
 

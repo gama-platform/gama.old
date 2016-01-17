@@ -76,7 +76,7 @@ public class MdxUtils {
 			}
 
 		} else {
-			throw GamaRuntimeException.error("GAMA does not support: " + olaptype);
+			throw GamaRuntimeException.error("GAMA does not support: " + olaptype, scope);
 		}
 		if ( DEBUG ) {
 			scope.getGui().debug("MdxUtils.createConnection:" + mdxConn.toString());
@@ -107,7 +107,7 @@ public class MdxUtils {
 		} else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIANXMLA) ) {
 			mdxConn = new MondrianXmlaConnection(olaptype, host, port, database, catalog, user, passwd);
 		} else {
-			throw GamaRuntimeException.error("GAMA does not support: " + olaptype);
+			throw GamaRuntimeException.error("GAMA does not support: " + olaptype, null);
 		}
 		// if ( DEBUG ) {
 		// scope.getGui().debug("MdxUtils.createConnection:" + mdxConn.toString());

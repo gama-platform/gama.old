@@ -32,7 +32,7 @@ public class ConvertToPDF {
 		File template = new File(Constants.PANDOC_FOLDER+File.separator+"mytemplate.tex");
 		File pdfFile = new File(Constants.DOCGAMA_PDF);
 		
-		String command = "/usr/local/bin/pandoc --template="+template.getAbsolutePath()+" --latex-engine=/usr/texbin/pdflatex --toc";
+		String command = Constants.CMD_PANDOC+" --template="+template.getAbsolutePath()+" --latex-engine="+Constants.CMD_PDFLATEX+" --toc";
 		command = command + " " + files;
 		for(Object s : prop2.keySet()) {
 			command = command + " " + "--variable " + s + "=" + prop2.getProperty(s.toString());
@@ -48,9 +48,9 @@ public class ConvertToPDF {
 	public static void convert(){
 		String line;
 		try {
-			String[] env = { "PATH=/usr/local/bin/:${PATH}" };
+			String[] env = { Constants.PATH };
 
-			Process p = Runtime.getRuntime().exec(getCommandLine(), env, new File("../../gama.wiki"));
+			Process p = Runtime.getRuntime().exec(getCommandLine(), env, new File(Constants.WIKI_FOLDER));
 
 			BufferedReader bri = new BufferedReader(new InputStreamReader(
 					p.getInputStream()));

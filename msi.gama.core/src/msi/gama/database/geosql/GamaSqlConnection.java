@@ -266,11 +266,11 @@ public class GamaSqlConnection extends GamaGisFile {
 	/*
 	 * Close the current connection of of the GamaSqlConnection object
 	 */
-	public void close() throws GamaRuntimeException {
+	public void close(final IScope scope) throws GamaRuntimeException {
 		if ( dataStore != null ) {
 			dataStore.dispose();
 		} else {
-			throw GamaRuntimeException.error("The connection to " + this.database + " is not opened ");
+			throw GamaRuntimeException.error("The connection to " + this.database + " is not opened ", scope);
 		}
 	}
 

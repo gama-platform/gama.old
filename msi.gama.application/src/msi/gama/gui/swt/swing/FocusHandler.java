@@ -85,6 +85,10 @@ public class FocusHandler {
 
 	}
 
+	private boolean isWin32() {
+		return true; // Platform.isWin32();
+	}
+
 	public void dispose() {
 		// globalHandler.removeEventFilter(swtEventFilter);
 		// frame.removeWindowFocusListener(awtWindowFocusListener);
@@ -295,7 +299,7 @@ public class FocusHandler {
 	 */
 	protected void synthesizeWindowActivation(final boolean activate) {
 		assert Display.getCurrent() != null; // On SWT event thread
-		assert Platform.isWin32(); // Only done on Windows
+		assert isWin32(); // Only done on Windows
 
 		EventQueue.invokeLater(new Runnable() {
 
@@ -330,7 +334,7 @@ public class FocusHandler {
 	}
 
 	private void getSynthesizeMethod(final Class clazz) {
-		if ( Platform.isWin32() && !synthesizeMethodInitialized ) {
+		if ( isWin32() && !synthesizeMethodInitialized ) {
 			synthesizeMethodInitialized = true;
 			try {
 				synthesizeMethod = clazz.getMethod("synthesizeWindowActivation", new Class[] { boolean.class });
@@ -462,12 +466,12 @@ public class FocusHandler {
 		// the deactivation altogether, the subsequent Activate triggered by this event, does
 		// nothing and the embedded frame never gets focus. So we do the deactivate right here,
 		// just before the activation.
-		if ( Platform.isWin32() && pendingDeactivate ) {
+		if ( isWin32() && pendingDeactivate ) {
 			synthesizeWindowActivation(false);
 			pendingDeactivate = false;
 		}
 
-		if ( Platform.isWin32() && synthesizeMethod != null ) {
+		if ( isWin32() && synthesizeMethod != null ) {
 			// Activate the window now
 			synthesizeWindowActivation(true);
 		}
@@ -507,7 +511,7 @@ public class FocusHandler {
 
 						// On windows, the actual activation needs to be deferred until doActivation() to
 						// prevent the problem described above, so veto the activation normally done by SWT_AWT.
-						if ( Platform.isWin32() && synthesizeMethod != null ) {
+						if ( isWin32() && synthesizeMethod != null ) {
 							if ( verboseFocusEvents ) {
 								trace("Consuming SWT.Activate event: " + event);
 							}
@@ -525,7 +529,7 @@ public class FocusHandler {
 						// To work around this problem, we defer the deactivation
 						// of the embedded frame here. See the SWT.Activate case above for processing of the
 						// deferred event.
-						if ( Platform.isWin32() && synthesizeMethod != null ) {
+						if ( isWin32() && synthesizeMethod != null ) {
 							pendingDeactivate = true;
 							// Prevent the SWT_AWT-installed listener from running (and deactivating the frame).
 							if ( verboseFocusEvents ) {
@@ -564,7 +568,7 @@ public class FocusHandler {
 
 		@Override
 		public void windowLostFocus(final WindowEvent e) {
-			if ( Platform.isWin32() ) {
+			if ( isWin32() ) {
 				hideTextSelection();
 				processTypeAheadKeys(pendingTraverseOutSeqNum);
 			}

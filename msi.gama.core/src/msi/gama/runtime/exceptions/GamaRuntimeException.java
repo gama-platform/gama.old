@@ -36,6 +36,7 @@ public class GamaRuntimeException extends RuntimeException {
 	protected int lineNumber;
 	protected int occurences = 0;
 	protected boolean reported = false;
+	protected final IScope scope;
 
 	// Factory methods
 	/**
@@ -43,12 +44,12 @@ public class GamaRuntimeException extends RuntimeException {
 	 * @param s
 	 * @return
 	 */
-	@Deprecated
-	public static GamaRuntimeException create(final Throwable ex) {
-		// Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
-		// another simulation
-		return create(ex, GAMA.getRuntimeScope());
-	}
+	// @Deprecated
+	// public static GamaRuntimeException create(final Throwable ex) {
+	// // Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
+	// // another simulation
+	// return create(ex, GAMA.getRuntimeScope());
+	// }
 
 	public static GamaRuntimeException create(final Throwable ex, final IScope scope) {
 		if ( ex instanceof GamaRuntimeException ) { return (GamaRuntimeException) ex; }
@@ -114,7 +115,7 @@ public class GamaRuntimeException extends RuntimeException {
 
 	}
 
-	public GamaRuntimeException(final IScope scope, final Throwable ex) {
+	protected GamaRuntimeException(final IScope scope, final Throwable ex) {
 		super(ex == null ? "Unknown error" : ex.toString(), ex);
 		if ( scope != null ) {
 			IStatement statement = scope.getStatement();
@@ -129,6 +130,8 @@ public class GamaRuntimeException extends RuntimeException {
 			}
 		}
 		cycle = computeCycle(scope);
+		// AD: 18/01/16 Adding this to address Issue #1411
+		this.scope = scope;
 
 	}
 
@@ -142,6 +145,8 @@ public class GamaRuntimeException extends RuntimeException {
 		}
 		cycle = computeCycle(scope);
 		isWarning = warning;
+		// AD: 18/01/16 Adding this to address Issue #1411
+		this.scope = scope;
 	}
 
 	public void addContext(final String c) {
@@ -251,6 +256,10 @@ public class GamaRuntimeException extends RuntimeException {
 			sb.append(Strings.LN).append(s);
 		}
 		return sb.toString();
+	}
+
+	public boolean isInvalid() {
+		return scope == null || scope.interrupted();
 	}
 
 }

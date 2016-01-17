@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'BinaryOperator.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
@@ -24,12 +24,12 @@ import msi.gaml.operators.Cast;
  */
 public class BinaryOperator extends NAryOperator {
 
-	public static IExpression
-		create(final OperatorProto proto, final IDescription context, final IExpression ... child) {
+	public static IExpression create(final OperatorProto proto, final IDescription context,
+		final IExpression ... child) {
 		BinaryOperator u = new BinaryOperator(proto, context, child);
 		if ( u.isConst() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
-			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
+			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
 		return u;
 	}
@@ -76,7 +76,7 @@ public class BinaryOperator extends NAryOperator {
 			final Object result = prototype.helper.run(scope, leftVal, rightVal);
 			return result;
 		} catch (final RuntimeException ex) {
-			final GamaRuntimeException e1 = GamaRuntimeException.create(ex);
+			final GamaRuntimeException e1 = GamaRuntimeException.create(ex, scope);
 			e1.addContext("when applying the " + literalValue() + " operator on " + Cast.toGaml(leftVal) + " and " +
 				Cast.toGaml(rightVal));
 			throw e1;

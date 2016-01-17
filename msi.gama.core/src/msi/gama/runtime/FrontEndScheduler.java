@@ -33,7 +33,7 @@ public class FrontEndScheduler implements Runnable {
 	volatile Semaphore lock = new Semaphore(1);
 	final IExperimentPlan experiment;
 
-	public FrontEndScheduler(IExperimentPlan experiment) {
+	public FrontEndScheduler(final IExperimentPlan experiment) {
 		this.experiment = experiment;
 		if ( !experiment.isHeadless() ) {
 			executionThread = new Thread(null, this, "Front end scheduler");
@@ -56,7 +56,7 @@ public class FrontEndScheduler implements Runnable {
 				executionThread.start();
 			} catch (final Exception e) {
 				e.printStackTrace();
-				GamaRuntimeException ee = GamaRuntimeException.create(e);
+				GamaRuntimeException ee = GamaRuntimeException.create(e, experiment.getExperimentScope());
 				ee.addContext("Error in front end scheduler. Reloading thread, but it would be safer to reload GAMA");
 				experiment.getExperimentScope().getGui().raise(ee);
 				executionThread = new Thread(null, this, "Front end scheduler");

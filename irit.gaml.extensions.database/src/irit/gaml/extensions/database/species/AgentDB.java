@@ -1,25 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AgentDB.java', in plugin 'irit.gaml.extensions.database', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package irit.gaml.extensions.database.species;
 
 import java.sql.*;
-import msi.gama.common.util.AbstractGui;
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -27,12 +23,12 @@ import msi.gaml.types.IType;
 
 /*
  * @Author TRUONG Minh Thai
- * 
+ *
  * @Supervisors:
  * Christophe Sibertin-BLANC
  * Fredric AMBLARD
  * Benoit GAUDOU
- * 
+ *
  * species: The AgentDB is defined in this class. AgentDB supports the action
  * - isConnected: returns true/false
  * - testConnection: tests the connection
@@ -41,7 +37,7 @@ import msi.gaml.types.IType;
  * - select: executeQuery to select data from DBMS via current connection.
  * - executeUpdate: runs executeUpdate to update/insert/delete/drop/create data on DBMS via current
  * connection.
- * 
+ *
  * created date: 22-Feb-2012
  * Modified:
  * 24-Sep-2012:
@@ -116,7 +112,7 @@ public class AgentDB extends GamlAgent {
 
 	/*
 	 * Make a connection to BDMS
-	 * 
+	 *
 	 * @syntax: do action: connectDB {
 	 * arg params value:[
 	 * "dbtype":"SQLSERVER",
@@ -128,10 +124,8 @@ public class AgentDB extends GamlAgent {
 	 * ];
 	 * }
 	 */
-	@action(name = "connect", args = { @arg(name = "params",
-		type = IType.MAP,
-		optional = false,
-		doc = @doc("Connection parameters")) })
+	@action(name = "connect",
+		args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters") ) })
 	public Object connectDB(final IScope scope) throws GamaRuntimeException {
 
 		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
@@ -139,12 +133,11 @@ public class AgentDB extends GamlAgent {
 		String dbtype = params.get("dbtype");
 
 		// SqlConnection sqlConn;
-		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) { throw GamaRuntimeException
-			.error(
-				"AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info).",
-				scope); }
-		if ( isConnection ) { throw GamaRuntimeException.error(
-			"AgentDB.connection error: a connection is already opened", scope); }
+		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) { throw GamaRuntimeException.error(
+			"AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info).",
+			scope); }
+		if ( isConnection ) { throw GamaRuntimeException
+			.error("AgentDB.connection error: a connection is already opened", scope); }
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			conn = sqlConn.connectDB();
@@ -158,7 +151,7 @@ public class AgentDB extends GamlAgent {
 
 	/*
 	 * Make a connection to BDMS
-	 * 
+	 *
 	 * @syntax: do action: connectDB {
 	 * arg params value:[
 	 * "dbtype":"SQLSERVER",
@@ -170,10 +163,8 @@ public class AgentDB extends GamlAgent {
 	 * ];
 	 * }
 	 */
-	@action(name = "testConnection", args = { @arg(name = "params",
-		type = IType.MAP,
-		optional = false,
-		doc = @doc("Connection parameters")) })
+	@action(name = "testConnection",
+		args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters") ) })
 	public boolean testConnection(final IScope scope) throws GamaRuntimeException {
 		try {
 			SqlConnection sqlConn;
@@ -189,24 +180,24 @@ public class AgentDB extends GamlAgent {
 
 	/*
 	 * Make a connection to BDMS and execute the select statement
-	 * 
+	 *
 	 * @syntax do action:
 	 * select {
 	 * arg select value: "select string with question marks";
 	 * arg values value [List of values that are used to replace question marks]
 	 * }
-	 * 
+	 *
 	 * @return GamaList<GamaList<Object>>
 	 */
-	@action(name = "select", args = {
-		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string")),
-		@arg(name = "values",
-			type = IType.LIST,
-			optional = true,
-			doc = @doc("List of values that are used to replace question marks"))
-	// , @arg(name = "transform", type = IType.BOOL, optional = true, doc =
-	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
-		})
+	@action(name = "select",
+		args = { @arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string") ),
+			@arg(name = "values",
+				type = IType.LIST,
+				optional = true,
+				doc = @doc("List of values that are used to replace question marks") )
+		// , @arg(name = "transform", type = IType.BOOL, optional = true, doc =
+		// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	})
 	public IList select(final IScope scope) throws GamaRuntimeException {
 
 		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established ",
@@ -238,24 +229,25 @@ public class AgentDB extends GamlAgent {
 	 * - Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT,
 	 * UPDATE or DELETE statement; or an SQL statement that returns nothing, such as a DDL
 	 * statement.
-	 * 
+	 *
 	 * @syntax: do action: executeUpdate {
 	 * arg updateComm value: " SQL statement string with question marks"
 	 * arg values value [List of values that are used to replace question marks]
 	 * }
 	 */
-	@action(name = "executeUpdate", args = {
-		@arg(name = "updateComm",
-			type = IType.STRING,
-			optional = false,
-			doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
-		@arg(name = "values",
-			type = IType.LIST,
-			optional = true,
-			doc = @doc("List of values that are used to replace question mark"))
-	// , @arg(name = "transform", type = IType.BOOL, optional = true, doc =
-	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
-		})
+	@action(name = "executeUpdate",
+		args = {
+			@arg(name = "updateComm",
+				type = IType.STRING,
+				optional = false,
+				doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark") ),
+			@arg(name = "values",
+				type = IType.LIST,
+				optional = true,
+				doc = @doc("List of values that are used to replace question mark") )
+		// , @arg(name = "transform", type = IType.BOOL, optional = true, doc =
+		// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	})
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 
 		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established ",
@@ -267,9 +259,9 @@ public class AgentDB extends GamlAgent {
 		// get data
 		try {
 			if ( values.size() > 0 ) {
-				row_count = sqlConn.executeUpdateDB(conn, updateComm, values);
+				row_count = sqlConn.executeUpdateDB(scope, conn, updateComm, values);
 			} else {
-				row_count = sqlConn.executeUpdateDB(conn, updateComm);
+				row_count = sqlConn.executeUpdateDB(scope, conn, updateComm);
 			}
 
 		} catch (Exception e) {
@@ -290,10 +282,8 @@ public class AgentDB extends GamlAgent {
 		return params;
 	}
 
-	@action(name = "setParameter", args = { @arg(name = "params",
-		type = IType.MAP,
-		optional = false,
-		doc = @doc("Connection parameters")) })
+	@action(name = "setParameter",
+		args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters") ) })
 	public Object setParameter(final IScope scope) throws GamaRuntimeException {
 		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
 
@@ -311,21 +301,21 @@ public class AgentDB extends GamlAgent {
 
 	/*
 	 * Make a connection to BDMS and execute the insert statement
-	 * 
+	 *
 	 * @syntax do insert with: [into:: table_name, columns:column_list, values:value_list];
-	 * 
+	 *
 	 * @return an integer
 	 */
-	@action(name = "insert", args = {
-		@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
-		@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
-		@arg(name = "values",
-			type = IType.LIST,
-			optional = false,
-			doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
-	// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc =
-	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
-		})
+	@action(name = "insert",
+		args = { @arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name") ),
+			@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table") ),
+			@arg(name = "values",
+				type = IType.LIST,
+				optional = false,
+				doc = @doc("List of values that are used to insert into table. Columns and values must have same size") )
+		// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc =
+		// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	})
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
 		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established ",

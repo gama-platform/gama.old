@@ -14,86 +14,38 @@ package msi.gaml.operators;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import com.vividsolutions.jts.algorithm.PointLocator;
-import com.vividsolutions.jts.algorithm.distance.DistanceToPoint;
-import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import com.vividsolutions.jts.geom.TopologyException;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.operation.buffer.BufferOp;
-import com.vividsolutions.jts.operation.buffer.BufferParameters;
+import com.vividsolutions.jts.algorithm.distance.*;
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.operation.buffer.*;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
-
 import gnu.trove.set.hash.THashSet;
-import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.common.util.ImageUtils;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.Envelope3D;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.filter.Different;
-import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.metamodel.topology.filter.In;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
-import msi.gama.metamodel.topology.grid.GridTopology;
+import msi.gama.metamodel.topology.filter.*;
+import msi.gama.metamodel.topology.grid.*;
 import msi.gama.metamodel.topology.projection.IProjection;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.IOperatorCategory;
-import msi.gama.precompiler.ITypeProvider;
+import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaMapFactory;
-import msi.gama.util.GamaPair;
-import msi.gama.util.IContainer;
-import msi.gama.util.IList;
-import msi.gama.util.file.GamaFile;
-import msi.gama.util.file.GamaGisFile;
-import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.*;
+import msi.gama.util.file.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gama.util.path.IPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.path.*;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.GamaGeometryType;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 10 dec. 2010
@@ -609,7 +561,6 @@ public abstract class Spatial {
 			if ( side_size <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(side_size, location);
 		}
-
 
 		@operator(value = "pyramid",
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
@@ -2099,27 +2050,25 @@ public abstract class Spatial {
 			return PathFactory.newInstance(graph, source, target, edges);
 			// new GamaPath(graph, source, target, edges);
 		}
-		
+
 		@operator(value = "path_between",
-				
-				category = { IOperatorCategory.GRID, IOperatorCategory.PATH })
-			@doc(value = "The shortest path between two objects according to set of cells",
-				masterDoc = true,
-				examples = { @example(value = "path_between (cell_grid where each.is_free, ag1, ag2)",
-					equals = "A path between ag1 and ag2 passing through the given cell_grid agents",
-					isExecutable = false) })
-			public static IPath path_between(final IScope scope, final IList<IAgent> cells, final IShape source,
-				final IShape target) throws GamaRuntimeException {
-				if ( cells ==null || cells.isEmpty()) {
-					return null;
-				}
-				ITopology topo = cells.get(0).getTopology();
-				if (topo instanceof GridTopology) {
-					return ((GridTopology) topo).pathBetween(scope, source, target,cells);
-				}
-					
-				else return scope.getTopology().pathBetween(scope, source, target);
+
+			category = { IOperatorCategory.GRID, IOperatorCategory.PATH })
+		@doc(value = "The shortest path between two objects according to set of cells",
+			masterDoc = true,
+			examples = { @example(value = "path_between (cell_grid where each.is_free, ag1, ag2)",
+				equals = "A path between ag1 and ag2 passing through the given cell_grid agents",
+				isExecutable = false) })
+		public static IPath path_between(final IScope scope, final IList<IAgent> cells, final IShape source,
+			final IShape target) throws GamaRuntimeException {
+			if ( cells == null || cells.isEmpty() ) { return null; }
+			ITopology topo = cells.get(0).getTopology();
+			if ( topo instanceof GridTopology ) {
+				return ((GridTopology) topo).pathBetween(scope, source, target, cells);
+			} else {
+				return scope.getTopology().pathBetween(scope, source, target);
 			}
+		}
 
 		@operator(value = "distance_to", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS })
 		@doc(
@@ -2416,7 +2365,7 @@ public abstract class Spatial {
 		public static IList<ILocation> points_at(final IScope scope, final Integer nbLoc, final Double distance) {
 			if ( distance == null || nbLoc == null ) {
 				// scope.setStatus(ExecutionStatus.failure);
-				throw GamaRuntimeException.error("Impossible to compute points_at");
+				throw GamaRuntimeException.error("Impossible to compute points_at", scope);
 			}
 			final IList<ILocation> locations = GamaListFactory.create(Types.POINT);
 			final ILocation loc = scope.getAgentScope().getLocation();
@@ -2495,14 +2444,15 @@ public abstract class Spatial {
 		@operator(value = "angle_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
 		@doc(value = "the angle between vectors P0P1 and P0P2 (P0, P1, P2 being the three point operands)",
 			examples = { @example(value = "angle_between({5,5},{10,5},{5,10})", equals = "90") })
-		public static Integer angleInDegreesBetween(final GamaPoint p0, final GamaPoint p1, final GamaPoint p2) {
+		public static Integer angleInDegreesBetween(final IScope scope, final GamaPoint p0, final GamaPoint p1,
+			final GamaPoint p2) {
 			final double Xa = p1.x - p0.x;
 			final double Ya = p1.y - p0.y;
 			final double Xb = p2.x - p0.x;
 			final double Yb = p2.y - p0.y;
 
-			final double Na = Maths.sqrt(Xa * Xa + Ya * Ya);
-			final double Nb = Maths.sqrt(Xb * Xb + Yb * Yb);
+			final double Na = Maths.sqrt(scope, Xa * Xa + Ya * Ya);
+			final double Nb = Maths.sqrt(scope, Xb * Xb + Yb * Yb);
 			final double C = (Xa * Xb + Ya * Yb) / (Na * Nb);
 			final double S = Xa * Yb - Ya * Xb;
 			final double result = S > 0 ? Maths.acos(C) : -1 * Maths.acos(C);
@@ -3087,7 +3037,7 @@ public abstract class Spatial {
 					return null;
 				}
 			} else {
-				throw GamaRuntimeException.error("Impossible to compute the CRS for this type of file");
+				throw GamaRuntimeException.error("Impossible to compute the CRS for this type of file", scope);
 			}
 		}
 

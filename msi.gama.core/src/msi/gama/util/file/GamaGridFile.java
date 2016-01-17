@@ -201,7 +201,7 @@ public class GamaGridFile extends GamaGisFile {
 				}
 			} catch (final Exception e) {
 				final GamaRuntimeException ex = GamaRuntimeException
-					.error("The format of " + getFile().getName() + " is not correct. Error: " + e.getMessage());
+					.error("The format of " + getFile().getName() + " is not correct. Error: " + e.getMessage(), scope);
 				ex.addContext("for file " + getFile().getPath());
 				throw ex;
 			} finally {

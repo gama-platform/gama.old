@@ -1,32 +1,32 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ConnectionManager.java', in plugin 'ummisco.gama.communicator', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.communicator.common;
 
 import java.util.*;
 import javax.jms.*;
 import javax.naming.NamingException;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import com.thoughtworks.xstream.XStream;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.*;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import ummisco.gama.communicator.common.remoteObject.*;
-import com.thoughtworks.xstream.XStream;
 
 public class ConnectionManager extends Skill implements MessageListener {
 
-	protected static String DEFAULT_PORT_NUM = "61616"; 
+	protected static String DEFAULT_PORT_NUM = "61616";
 	protected String serverURL;
 	protected String topicName;
 	private MessageProducer producer = null;
@@ -45,8 +45,6 @@ public class ConnectionManager extends Skill implements MessageListener {
 		return this.session;
 	}
 
-	
-	
 	public void connect(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		readCallParameters(scope);
@@ -69,10 +67,10 @@ public class ConnectionManager extends Skill implements MessageListener {
 				this.connectToTopic(scope);
 
 			} catch (NamingException e) {
-				throw GamaRuntimeException.create(e);
+				throw GamaRuntimeException.create(e, scope);
 
 			} catch (JMSException e) {
-				throw GamaRuntimeException.create(e);
+				throw GamaRuntimeException.create(e, scope);
 			}
 
 		}
@@ -127,7 +125,8 @@ public class ConnectionManager extends Skill implements MessageListener {
 		try {
 			String to = msg.getStringProperty(ICommunicatorSkill.DEST);
 			String from = msg.getStringProperty(ICommunicatorSkill.SENDER);
-			if ( !(msg instanceof MapMessage) || to == null || !(this.messages.containsKey(to) || to.equals("all")) ) { return; }
+			if ( !(msg instanceof MapMessage) || to == null ||
+				!(this.messages.containsKey(to) || to.equals("all")) ) { return; }
 			MapMessage mapMsg = (MapMessage) msg;
 			if ( !to.equals("all") ) {
 				pushMessage(to, to, from, mapMsg);
@@ -167,8 +166,8 @@ public class ConnectionManager extends Skill implements MessageListener {
 	}
 
 	protected GamaMap<String, Object> fetchMyMailBox(final IScope scope, final String myName) {
-		if ( !this.messages.containsKey(myName) ) { throw GamaRuntimeException
-			.error("Agent has not any mailbox", scope); }
+		if ( !this.messages
+			.containsKey(myName) ) { throw GamaRuntimeException.error("Agent has not any mailbox", scope); }
 
 		LinkedList<Map<String, Object>> mList = this.messages.get(myName);
 		if ( mList.isEmpty() ) {
@@ -179,8 +178,8 @@ public class ConnectionManager extends Skill implements MessageListener {
 	}
 
 	protected boolean isEmptyMailBox(final IScope scope, final String myName) {
-		if ( !this.messages.containsKey(myName) ) { throw GamaRuntimeException
-			.error("Agent has not any mailbox", scope); }
+		if ( !this.messages
+			.containsKey(myName) ) { throw GamaRuntimeException.error("Agent has not any mailbox", scope); }
 
 		return this.messages.get(myName).size() == 0;
 	}
