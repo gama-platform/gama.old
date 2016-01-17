@@ -17,7 +17,7 @@ import java.util.Calendar;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.AbstractGui;
 import msi.gama.headless.core.HeadlessSimulationLoader;
-import msi.gama.headless.core.Simulation;
+import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.openmole.IMoleExperiment;
 import msi.gama.headless.openmole.MoleSimulationLoader;
 import msi.gama.headless.runtime.LocalSimulationRuntime;
@@ -46,7 +46,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeywords.WITHOUTPUTS, type = IType.MAP, optional = true),
 		@facet(name = IKeywords.WITHPARAMS, type = IType.MAP, optional = true)}, omissible = IKeywords.EXPERIMENT)
 public class HeadlessStatement extends AbstractStatement {
-	private int numberOfThread = -1;
+	private int numberOfThread = 4;
 	private SimulationRuntime processorQueue;
 	private int maxSimulationID=0;
 	
@@ -96,7 +96,7 @@ public class HeadlessStatement extends AbstractStatement {
 		System.out.println("chemin du fichier" + new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath());
 		
 		
-		Simulation sim=new Simulation(this.getSimulationId(),modelPath, expName, 1000, lseed);
+		ExperimentJob sim=new ExperimentJob(this.getSimulationId(),modelPath, expName, 1000, lseed);
 		
 		this.processorQueue.pushSimulation(sim);
 

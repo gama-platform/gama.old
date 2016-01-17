@@ -9,17 +9,26 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.headless.core;
+package msi.gama.headless.job;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import msi.gama.headless.common.ISimulator;
-import msi.gama.headless.runtime.GamaSimulator;
+
+import javax.imageio.ImageIO;
+
+import msi.gama.headless.common.Display2D;
+import msi.gama.headless.common.Globals;
+import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.core.IRichExperiment;
+import msi.gama.headless.core.RichExperiment;
+import msi.gama.headless.core.RichOutput;
 import msi.gama.headless.xml.Writer;
+import msi.gama.kernel.model.IModel;
 
-public class Simulation {
+public class ExperimentJob {
 
-	
-	// Temporary solution for getting the variables
 	public static enum OutputType {
 		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
 	}
@@ -30,6 +39,7 @@ public class Simulation {
 		int frameRate;
 		OutputType type;
 		Object value;
+		long step;
 
 		public ListenedVariable(final String name, final int frameRate, final OutputType type) {
 			this.name = name;
@@ -41,8 +51,9 @@ public class Simulation {
 			return name;
 		}
 
-		public void setValue(final Object obj) {
+		public void setValue(final Object obj,long st) {
 			value = obj;
+			this.step=st;
 		}
 
 		public Object getValue() {
@@ -68,12 +79,12 @@ public class Simulation {
 	/**
 	 * simulator to be loaded
 	 */
-	public ISimulator simulator;
+	public IRichExperiment simulator;
 
 	/**
 	 * current step
 	 */
-	private int step;
+	private long step;
 
 	/**
 	 * id of current experiment
@@ -93,19 +104,19 @@ public class Simulation {
 		this.outputs.add(p);
 	}
 
-	public Simulation(final Simulation clone) {
+	public ExperimentJob(final ExperimentJob clone) {
 		this.experimentID = clone.experimentID;
 		this.sourcePath = clone.sourcePath;
 		this.maxStep = clone.maxStep;
 		this.experimentName = clone.experimentName;
 		this.parameters = clone.parameters;
 		this.listenedVariables = clone.listenedVariables;
-		this.setStep(clone.getStep());
+		this.step = clone.getStep();
 		this.outputs = clone.outputs;
 		this.seed = clone.seed;
 	}
 
-	public Simulation(final String expId, final String sourcePath, final String exp, final int max, final long s) {
+	public ExperimentJob(final String expId, final String sourcePath, final String exp, final int max, final long s) {
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
 		this.maxStep = max;
@@ -121,10 +132,10 @@ public class Simulation {
 
 		for ( int i = 0; i < parameters.size(); i++ ) {
 			Parameter temp = parameters.get(i);
-			this.simulator.setParameterWithName(temp.getName(), temp.getValue());
+			this.simulator.setParameter(temp.getName(), temp.getValue());
 		}
 		this.setup();
-		simulator.initialize();
+		simulator.setup(experimentName,this.seed);
 		for ( int i = 0; i < outputs.size(); i++ ) {
 			Output temp = outputs.get(i);
 			this.listenedVariables[i] =
@@ -135,8 +146,8 @@ public class Simulation {
 
 	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		System.setProperty("user.dir", this.sourcePath);
-		this.simulator = new GamaSimulator();
-		this.simulator.load(this.sourcePath, this.experimentID, this.experimentName,this.seed);
+		IModel mdl = HeadlessSimulationLoader.loadModel(new File(this.sourcePath));
+		this.simulator = new RichExperiment(mdl);
 	}
 
 	public void setup() {
@@ -154,18 +165,22 @@ public class Simulation {
 			if ( step % affDelay == 0 ) {
 				System.out.print(".");
 			}
-			nextStepDone();
+			//System.out.println(simulator.isInterrupted());
+			if(simulator.isInterrupted())
+				break;
+			doStep();
+			
 		}
 		long endDate = Calendar.getInstance().getTimeInMillis();
-		this.simulator.free();
+		this.simulator.dispose();
 		if ( this.outputFile != null ) {
 			this.outputFile.close();
 		}
 		System.out.println("\nSimulation duration: " + (endDate - startdate) + "ms");
 	}
 
-	public void nextStepDone() {
-		simulator.nextStep(this.step);
+	public void doStep() {
+		this.step=simulator.step();
 		this.exportVariables();
 	}
 
@@ -184,7 +199,21 @@ public class Simulation {
 		for ( int i = 0; i < size; i++ ) {
 			ListenedVariable v = this.listenedVariables[i];
 			if ( this.step % v.frameRate == 0 ) {
-				simulator.retrieveOutputValue(v);
+				RichOutput out = simulator.getRichOutput(v.getName());
+				if(out.getValue() == null)
+				{
+					//LOGGER UNE ERREUR
+					//GAMA.reportError(this.  .getCurrentSimulation().getScope(), g, shouldStopSimulation)
+				}
+				else if(out.getValue() instanceof BufferedImage)
+				{
+					v.setValue(writeImageInFile((BufferedImage)out.getValue(), v.getName()),step);
+				}
+				else
+				{
+					v.setValue(out.getValue(), out.getStep());
+				}
+				
 			}
 		}
 		if ( this.outputFile != null ) {
@@ -197,17 +226,27 @@ public class Simulation {
 		parameters = new Vector<Parameter>();
 		outputs = new Vector<Output>();
 		if ( simulator != null ) {
-			simulator.free();
+			simulator.dispose();
 			simulator = null;
 		}
 	}
 
-	public int getStep() {
+	
+	public long getStep() {
 		return step;
 	}
 
-	public void setStep(final int step) {
-		this.step = step;
+	private Display2D writeImageInFile(final BufferedImage img, final String name) {
+		String fileName = name + this.getExperimentID() + "-" + step + ".png";
+		String fileFullName = Globals.IMAGES_PATH + "/" + fileName;
+		try {
+			ImageIO.write(img, "png", new File(fileFullName));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new Display2D(name + this.getExperimentID() + "-" + step + ".png");
 	}
+
+	
 
 }

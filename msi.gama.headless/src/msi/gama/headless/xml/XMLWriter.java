@@ -13,7 +13,8 @@ package msi.gama.headless.xml;
 
 import java.io.*;
 import msi.gama.headless.core.*;
-import msi.gama.headless.core.Simulation.ListenedVariable;
+import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.ExperimentJob.ListenedVariable;
 
 public class XMLWriter implements Writer {
 
@@ -42,7 +43,7 @@ public class XMLWriter implements Writer {
 	}
 
 	@Override
-	public void writeResultStep(final int step, final ListenedVariable[] vars) {
+	public void writeResultStep(final long step, final ListenedVariable[] vars) {
 		StringBuffer sb = new StringBuffer("\t<Step id='").append(step).append("' >\n");
 		for ( int i = 0; i < vars.length; i++ ) {
 			sb.append("\t\t<Variable name='").append(vars[i].getName()).append("' value='").append(vars[i].getValue())
@@ -58,7 +59,7 @@ public class XMLWriter implements Writer {
 	}
 
 	@Override
-	public void writeSimulationHeader(final Simulation s) {
+	public void writeSimulationHeader(final ExperimentJob s) {
 		String res = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 		res += "<Simulation id=\"" + s.getExperimentID() + "\" >\n";
 		try {

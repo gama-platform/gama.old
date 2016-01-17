@@ -25,9 +25,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import msi.gama.headless.common.DataType;
 import msi.gama.headless.common.DataTypeFactory;
-import msi.gama.headless.core.Output;
-import msi.gama.headless.core.Parameter;
-import msi.gama.headless.core.Simulation;
+import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.Output;
+import msi.gama.headless.job.Parameter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -40,7 +40,7 @@ public class Reader {
 
 	public String fileName;
 	public InputStream myStream;
-	Vector<Simulation> sims;
+	Vector<ExperimentJob> sims;
 	
 	public Reader(String file) throws FileNotFoundException
 	{
@@ -53,7 +53,7 @@ public class Reader {
 		myStream = inp;
 	}
 	
-	public Collection<Simulation> getSimulation()
+	public Collection<ExperimentJob> getSimulation()
 	{
 		return this.sims;
 	}
@@ -75,7 +75,7 @@ public class Reader {
 		return new Output(name, framerate, id);
 	}
 	
-	private void readParameter(Simulation s, Element docEle)
+	private void readParameter(ExperimentJob s, Element docEle)
 	{
 		NodeList nl = docEle.getElementsByTagName("Parameter");
 		if(nl != null && nl.getLength() > 0) {
@@ -92,7 +92,7 @@ public class Reader {
 		}
 	}
 	
-	private void readOutput(Simulation s, Element docEle)
+	private void readOutput(ExperimentJob s, Element docEle)
 	{
 		NodeList nl = docEle.getElementsByTagName("Output");
 		if(nl != null && nl.getLength() > 0) {
@@ -108,7 +108,7 @@ public class Reader {
 			}
 		}
 	}
-	private Simulation readSimulation(Element e)
+	private ExperimentJob readSimulation(Element e)
 	{
 		String expId=e.getAttribute("id");
 		// expId=e.getAttribute("id");
@@ -128,6 +128,7 @@ public class Reader {
 				File ff=( new File(fileName));
 				prt = ff.getPath();
 				pr = prt.substring(0, (int)(prt.length()- ff.getName().length()));
+				pr = pr + "/";
 
 			}
 			else
@@ -135,16 +136,16 @@ public class Reader {
 				pr = pr.substring(0, pr.length()-1);
 			sourcePath = pr+sourcePath; 
 		}
-		Simulation res=new Simulation(expId, sourcePath, experimentName, max,selectedSeed);
+		ExperimentJob res=new ExperimentJob(expId, sourcePath, experimentName, max,selectedSeed);
 		this.readParameter(res, e);
 		this.readOutput(res, e);
 		return res;
 	}
 
 	
-	private Vector<Simulation> readSimulation(Document dom)
+	private Vector<ExperimentJob> readSimulation(Document dom)
 	{
-		Vector<Simulation> res=new Vector<Simulation>();
+		Vector<ExperimentJob> res=new Vector<ExperimentJob>();
 		Element docEle = dom.getDocumentElement();
 		NodeList nl = dom.getElementsByTagName("Simulation");
 		if(nl != null && nl.getLength() > 0) {

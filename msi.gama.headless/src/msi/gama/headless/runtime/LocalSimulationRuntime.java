@@ -6,11 +6,10 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-
-import msi.gama.headless.core.Simulation;
+import msi.gama.headless.job.ExperimentJob;
 
 public class LocalSimulationRuntime extends Observable implements SimulationRuntime {
-	Map<String, Simulation> simulations;
+	Map<String, ExperimentJob> simulations;
 	Vector<FakeApplication> queue ;
 	Vector<FakeApplication> started ;
 	private int allocatedProcessor ;
@@ -24,14 +23,14 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	}
 	
 	public LocalSimulationRuntime(int proc) {
-		simulations = new HashMap<String, Simulation>();
+		simulations = new HashMap<String, ExperimentJob>();
 		queue = new Vector<FakeApplication>();
 		started = new Vector<FakeApplication>();
 		this.allocatedProcessor=proc;
 	}
 	
 	public LocalSimulationRuntime() {
-		simulations = new HashMap<String, Simulation>();
+		simulations = new HashMap<String, ExperimentJob>();
 		queue = new Vector<FakeApplication>();
 		started = new Vector<FakeApplication>();
 		this.allocatedProcessor=UNDEFINED_QUEUE_SIZE;
@@ -42,7 +41,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		this.addObserver(v);
 	}
 
-	public void pushSimulation(Simulation s) {
+	public void pushSimulation(ExperimentJob s) {
 		simulations.put(s.getExperimentID(), s);
 		FakeApplication f = new FakeApplication(s,this);
 		if(started.size() < allocatedProcessor || allocatedProcessor==UNDEFINED_QUEUE_SIZE)
@@ -77,7 +76,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	}
 	
 	public SimulationState getSimulationState(String id) {
-		Simulation tmp = simulations.get(id);
+		ExperimentJob tmp = simulations.get(id);
 		if(tmp ==null)
 			return SimulationState.UNDEFINED;
 		if(started.contains(tmp))
