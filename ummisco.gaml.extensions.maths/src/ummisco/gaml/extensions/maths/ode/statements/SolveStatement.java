@@ -11,8 +11,7 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
-import java.util.*;
-
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -21,17 +20,23 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.precompiler.GamlAnnotations.validator;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.ConstantExpression;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.ListExpression;
+import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
-import ummisco.gaml.extensions.maths.ode.utils.solver.*;
+import ummisco.gaml.extensions.maths.ode.statements.SolveStatement.SolveValidator;
+import ummisco.gaml.extensions.maths.ode.utils.solver.DormandPrince853Solver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.Rk4Solver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.Solver;
 
 @facets(value = {
 	@facet(name = IKeyword.EQUATION,
@@ -87,10 +92,33 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 	omissible = IKeyword.EQUATION)
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@validator(SolveValidator.class)
 @doc(value = "Solves all equations which matched the given name, with all systems of agents that should solved simultaneously.",
 	usages = { @usage(value = "", examples = { @example(value = "solve SIR method: \"rk4\" step:0.001;",
 		isExecutable = false) }) })
 public class SolveStatement extends AbstractStatement {
+
+	public static class SolveValidator implements IDescriptionValidator {
+
+		@Override
+		public void validate(final IDescription desc) {
+			IExpression method = desc.getFacets().getExpr(IKeyword.METHOD);
+			if (method != null) {
+				String methodName = method.literalValue();
+				if (methodName != null) {
+					if ("dp853".equals(methodName)) {
+						if (!desc.getFacets().containsKey("min_step") || !desc.getFacets().containsKey("min_step") || !desc.getFacets().containsKey("max_step")
+								|| !desc.getFacets().containsKey("scalAbsoluteTolerance")|| !desc.getFacets().containsKey("scalRelativeTolerance"))
+						desc.error("For method dp853, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined", IGamlIssue.GENERAL);
+					}else if (!"rk4".equals(methodName)) {
+						desc.error("The method facet must have for value either \"rk4\" or \"dp853\"", IGamlIssue.GENERAL);
+					}
+				} else {
+					desc.error("The method facet must have for value either \"rk4\" or \"dp853\"", IGamlIssue.GENERAL);
+				}		
+			}
+		}
+	}
 
 	Solver solver;
 	final String equationName, solverName;
@@ -143,21 +171,24 @@ public class SolveStatement extends AbstractStatement {
 
 		if ( solverName.equals("rk4") ) {
 			solver = new Rk4Solver(step, discret>0?discret:0, theEquations.integrated_times, theEquations.integrated_values);
-		} else if ( solverName.equals("dp853") && minStepExp != null && maxStepExp != null && absTolerExp != null &&
-			relTolerExp != null ) {
-			double minStep = Cast.asFloat(scope, minStepExp.value(scope));
-			double maxStep = Cast.asFloat(scope, maxStepExp.value(scope));
-			minStep = cycle_length > 1.0 ? minStep / cycle_length : minStep;
-			maxStep = cycle_length > 1.0 ? maxStep / cycle_length : maxStep;
-
-			double scalAbsoluteTolerance = Cast.asFloat(scope, absTolerExp.value(scope));
-			double scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
-
-			solver =
-				new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, discret>0?discret:0,
-						theEquations.integrated_times, theEquations.integrated_values);
+		} else if ( solverName.equals("dp853")) {
+			if (minStepExp != null && maxStepExp != null && absTolerExp != null &&
+				relTolerExp != null ) {
+				double minStep = Cast.asFloat(scope, minStepExp.value(scope));
+				double maxStep = Cast.asFloat(scope, maxStepExp.value(scope));
+				minStep = cycle_length > 1.0 ? minStep / cycle_length : minStep;
+				maxStep = cycle_length > 1.0 ? maxStep / cycle_length : maxStep;
+	
+				double scalAbsoluteTolerance = Cast.asFloat(scope, absTolerExp.value(scope));
+				double scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
+	
+				solver =
+					new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, discret>0?discret:0,
+							theEquations.integrated_times, theEquations.integrated_values);
+			} else {
+				throw GamaRuntimeException.error("For method dp853, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined", scope);
+			}
 		}
-
 		timeInit = timeInitExp == null ? scope.getClock().getCycle() : Cast.asFloat(scope, timeInitExp.value(scope));
 		timeFinal =
 			timeFinalExp == null ? scope.getClock().getCycle() + 1 : Cast.asFloat(scope, timeFinalExp.value(scope));
