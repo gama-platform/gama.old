@@ -23,6 +23,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
+import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
@@ -76,6 +77,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	protected double yRatioBetweenPixelsAndModelUnits;
 	private GLU glu;
 	private GL2 gl;
+    private GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
 	private volatile boolean inited;
@@ -475,6 +477,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		double y1 = -ROIEnvelope.getMinY();
 		double x2 = ROIEnvelope.getMaxX();
 		double y2 = -ROIEnvelope.getMaxY();
+		
+		
+		Double distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+		gl.glRasterPos3d(x2, -y1,0.1);
+		gl.glColor3d(0.0, 0.0, 0.0);
+		glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "  d: " + distance.toString());
 		if ( this.data.isZ_fighting() ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
