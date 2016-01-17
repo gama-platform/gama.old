@@ -104,9 +104,9 @@ public class TextureCache {
 		final Thread loadingThread;
 
 		public TextureAsyncBuilder() {
-			long t0 = System.currentTimeMillis();
+			// long t0 = System.currentTimeMillis();
 			GLProfile profile = GLProfile.getDefault();
-			long t1 = System.currentTimeMillis();
+			// long t1 = System.currentTimeMillis();
 			// System.out.println("GLProfile took: " + (t1 - t0) + "ms");
 			GLCapabilities cap = new GLCapabilities(profile);
 			cap.setStencilBits(8);

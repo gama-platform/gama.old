@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.navigator;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -11,11 +12,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.gui.navigator.images.ImageDataLoader;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.file.*;
 import msi.gama.util.file.GAMLFile.GamlInfo;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
@@ -250,22 +250,34 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			if ( data != null ) {
 				data.setModificationStamp(file.getModificationStamp());
 			}
-			ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(CACHE_KEY, file,
-				data == null ? null : data.toPropertyString().getBytes("UTF-8"));
-			System.out.println("Success: sync info written");
-			// file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
-
-			// Decorate using current UI thread
-			Display.getDefault().asyncExec(new Runnable() {
+			// WorkspaceModifyOperation
+			GAMA.getGui().asyncRun(new Runnable() {
 
 				@Override
 				public void run() {
-					// Fire a LabelProviderChangedEvent to notify eclipse views
-					// that label provider has been changed for the resources
-					System.out.println("Finally: updating the decorator manager");
-					PlatformUI.getWorkbench().getDecoratorManager().update("msi.gama.application.decorator");
+					try {
+						ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(CACHE_KEY, file,
+							data == null ? null : data.toPropertyString().getBytes("UTF-8"));
+					} catch (UnsupportedEncodingException | CoreException e) {
+						e.printStackTrace();
+					}
+					System.out.println("Success: sync info written");
 				}
 			});
+
+			// file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
+
+			// Decorate using current UI thread
+			// Display.getDefault().asyncExec(new Runnable() {
+			//
+			// @Override
+			// public void run() {
+			// // Fire a LabelProviderChangedEvent to notify eclipse views
+			// // that label provider has been changed for the resources
+			// System.out.println("Finally: updating the decorator manager");
+			// PlatformUI.getWorkbench().getDecoratorManager().update("msi.gama.application.decorator");
+			// }
+			// });
 
 		} catch (Exception ignore) {
 			ignore.printStackTrace();
@@ -355,7 +367,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return info;
 
 	}
-	
+
 	private GamaOsmFile.OSMInfo createOSMMetaData(final IFile file) {
 		OSMInfo info = null;
 		try {

@@ -77,8 +77,6 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	public void update() throws GamaRuntimeException {
 		if ( view != null ) {
 			view.update(this);
-			// else
-			// scope.getGui().updateViewOf(this);
 		}
 	}
 

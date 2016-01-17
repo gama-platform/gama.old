@@ -136,7 +136,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		setOpaque(true);
 		setDoubleBuffered(true);
 		// Experimental
-		//setIgnoreRepaint(true);
+		// setIgnoreRepaint(true);
 
 		//
 
@@ -668,7 +668,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 					}
 				}
 				r.run();
-				if ( GAMA.isPaused() ) {
+				if ( output.isPaused() || GAMA.isPaused() ) {
 					updateDisplay(true);
 				}
 			}
