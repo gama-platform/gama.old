@@ -1,36 +1,37 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'WaterLevelUtils.java', in plugin 'cenres.gaml.extensions.hydro', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package cenres.gaml.extensions.hydro.utils;
 
 import java.util.*;
+import com.vividsolutions.jts.geom.Coordinate;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.Types;
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * The class GamaGeometryUtils.
- * 
+ *
  * @author drogoul
- * @since 14 dec. 2011
- * 
+ * @since 14 d�c. 2011
+ *
  */
 public class WaterLevelUtils {
 
 	/**
 	 * This class allows to sort coordinates in increasing order according to the x value.
 	 * @author Philippe Caillou
-	 * 
+	 *
 	 */
 	public static class XCoordinatesComparator implements Comparator<Coordinate> {
 
@@ -44,7 +45,7 @@ public class WaterLevelUtils {
 	/**
 	 * This class allows to sort coordinates in decreasing order according to the y value.
 	 * @author Philippe
-	 * 
+	 *
 	 */
 	public static class YCoordinatesComparator implements Comparator<Coordinate> {
 
@@ -55,7 +56,7 @@ public class WaterLevelUtils {
 
 	}
 
-	public static double heigth(final List<Coordinate> points, final double targetsurface) {
+	public static double heigth(final IScope scope, final List<Coordinate> points, final double targetsurface) {
 		// double totalsurface;
 		double currentheight;
 		double previousheight;
@@ -127,17 +128,15 @@ public class WaterLevelUtils {
 				if ( prevtrapwidth[i] > 0 ) {
 					trapwidth[i] = prevtrapwidth[i];
 					if ( leftheight[i] <= 0 & leftheight[i + 1] > 0 ) {
-						trapwidth[i] =
-							(sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
-								(currentheight - sortedpointsx.get(i + 1).y) /
-								(sortedpointsx.get(i).y - sortedpointsx.get(i + 1).y);
+						trapwidth[i] = (sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
+							(currentheight - sortedpointsx.get(i + 1).y) /
+							(sortedpointsx.get(i).y - sortedpointsx.get(i + 1).y);
 						leftheight[i] = 0;
 					}
 					if ( leftheight[i] > 0 & leftheight[i + 1] <= 0 ) {
-						trapwidth[i] =
-							(sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
-								(currentheight - sortedpointsx.get(i).y) /
-								(sortedpointsx.get(i + 1).y - sortedpointsx.get(i).y);
+						trapwidth[i] = (sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
+							(currentheight - sortedpointsx.get(i).y) /
+							(sortedpointsx.get(i + 1).y - sortedpointsx.get(i).y);
 						leftheight[i + 1] = 0;
 					}
 					if ( leftheight[i] <= 0 & leftheight[i + 1] <= 0 ) {
@@ -189,7 +188,7 @@ public class WaterLevelUtils {
 					trouve = true;
 					res = currentheight + sol1;
 					if ( sol2 > 0 & sol2 < previousheight - currentheight ) { throw GamaRuntimeException
-						.error("2 possible water level, pb...");
+						.error("2 possible water level, pb...", scope);
 
 					}
 
@@ -198,7 +197,7 @@ public class WaterLevelUtils {
 					trouve = true;
 					res = currentheight + sol2;
 					if ( sol1 > 0 & sol1 < previousheight - currentheight ) { throw GamaRuntimeException
-						.error("2 possible water level, pb...");
+						.error("2 possible water level, pb...", scope);
 
 					}
 
@@ -209,7 +208,7 @@ public class WaterLevelUtils {
 				finished = true;
 			}
 		}
-		if ( !trouve ) { throw GamaRuntimeException.error("no possible water level, pb..."); }
+		if ( !trouve ) { throw GamaRuntimeException.error("no possible water level, pb...", scope); }
 		return res;
 	}
 
@@ -232,16 +231,13 @@ public class WaterLevelUtils {
 		for ( int i = 0; i < nbtrap; i++ ) {
 			trapwidth[i] = sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x;
 			if ( leftheight[i] <= 0 & leftheight[i + 1] > 0 ) {
-				trapwidth[i] =
-					(sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
-						(targetheight - sortedpointsx.get(i + 1).y) /
-						(sortedpointsx.get(i).y - sortedpointsx.get(i + 1).y);
+				trapwidth[i] = (sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
+					(targetheight - sortedpointsx.get(i + 1).y) / (sortedpointsx.get(i).y - sortedpointsx.get(i + 1).y);
 				leftheight[i] = 0;
 			}
 			if ( leftheight[i] > 0 & leftheight[i + 1] <= 0 ) {
-				trapwidth[i] =
-					(sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) * (targetheight - sortedpointsx.get(i).y) /
-						(sortedpointsx.get(i + 1).y - sortedpointsx.get(i).y);
+				trapwidth[i] = (sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
+					(targetheight - sortedpointsx.get(i).y) / (sortedpointsx.get(i + 1).y - sortedpointsx.get(i).y);
 				leftheight[i + 1] = 0;
 			}
 			if ( leftheight[i] <= 0 & leftheight[i + 1] <= 0 ) {
@@ -289,10 +285,8 @@ public class WaterLevelUtils {
 				trapwidth[i] = sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x;
 			}
 			if ( leftheight[i] <= 0 & leftheight[i + 1] > 0 ) {
-				trapwidth[i] =
-					(sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
-						(targetheight - sortedpointsx.get(i + 1).y) /
-						(sortedpointsx.get(i).y - sortedpointsx.get(i + 1).y);
+				trapwidth[i] = (sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
+					(targetheight - sortedpointsx.get(i + 1).y) / (sortedpointsx.get(i).y - sortedpointsx.get(i + 1).y);
 				leftheight[i] = 0;
 				if ( !inthewater ) {
 					currentlist = GamaListFactory.create(Types.POINT);
@@ -303,9 +297,8 @@ public class WaterLevelUtils {
 				currentlist.add(new GamaPoint(sortedpointsx.get(i + 1).x + trapwidth[i], sortedpointsx.get(i + 1).y));
 			}
 			if ( leftheight[i] > 0 & leftheight[i + 1] <= 0 ) {
-				trapwidth[i] =
-					(sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) * (targetheight - sortedpointsx.get(i).y) /
-						(sortedpointsx.get(i + 1).y - sortedpointsx.get(i).y);
+				trapwidth[i] = (sortedpointsx.get(i + 1).x - sortedpointsx.get(i).x) *
+					(targetheight - sortedpointsx.get(i).y) / (sortedpointsx.get(i + 1).y - sortedpointsx.get(i).y);
 				leftheight[i + 1] = 0;
 				if ( inthewater ) {
 					currentlist.add(new GamaPoint(sortedpointsx.get(i).x + trapwidth[i], targetheight));
