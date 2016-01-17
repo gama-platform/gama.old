@@ -11,16 +11,17 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.util.Collection;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.*;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.*;
+import msi.gaml.types.Types;
 
 /**
  * Written by marilleau
@@ -35,6 +36,7 @@ public class EventLayer extends AbstractLayer {
 
 	EventListener listener;
 	private final String pointArg, listArg;
+	IScope scope;
 
 	public EventLayer(final ILayerStatement layer) {
 		super(layer);
@@ -60,7 +62,7 @@ public class EventLayer extends AbstractLayer {
 		super.firstLaunchOn(surface);
 		final IExpression eventType = definition.getFacet(IKeyword.NAME);
 		final IExpression actionName = definition.getFacet(IKeyword.ACTION);
-		IScope scope = surface.getDisplayScope();
+		scope = surface.getDisplayScope().copy();
 
 		String currentMouseEvent = Cast.asString(scope, eventType.value(scope));
 		String currentAction = Cast.asString(scope, actionName.value(scope));
@@ -141,28 +143,27 @@ public class EventLayer extends AbstractLayer {
 		private void executeEvent(final int x, final int y) {
 			if ( executer == null ) { return; }
 			final ILocation pp = getModelCoordinatesFrom(x, y, surface);
+			if ( pp == null ) { return; }
 			if ( pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth() ||
 				pp.getY() >= surface.getEnvHeight() ) { return; }
 			final Arguments args = new Arguments();
-			final Collection<IAgent> agentset = surface.selectAgent(x, y);
+			final IContainer<Integer, IAgent> agentset =
+				GamaListFactory.createWithoutCasting(Types.AGENT, surface.selectAgent(x, y));
 			if ( pointArg != null ) {
 				args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.getX(), pp.getY())));
 			}
 			if ( listArg != null ) {
 				args.put(listArg, ConstantExpressionDescription.create(agentset));
 			}
-
-			executer.setRuntimeArgs(args);
-			GAMA.run(new GAMA.InScope.Void() {
+			surface.runAndUpdate(new Runnable() {
 
 				@Override
-				public void process(final IScope scope) {
+				public void run() {
+					executer.setRuntimeArgs(args);
 					executer.executeOn(scope);
 				}
 			});
-			if ( surface.getOutput().isPaused() || GAMA.isPaused() ) {
-				surface.updateDisplay(true);
-			}
+
 		}
 	}
 
