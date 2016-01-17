@@ -19,6 +19,7 @@ import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.*;
+import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.runtime.GAMA;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;

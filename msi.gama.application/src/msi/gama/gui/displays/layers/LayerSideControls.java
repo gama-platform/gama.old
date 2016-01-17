@@ -11,6 +11,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.SWTChartEditor;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.*;
+import msi.gama.outputs.layers.charts.ChartLayerStatement;
 import msi.gama.outputs.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
