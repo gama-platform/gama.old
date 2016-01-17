@@ -187,9 +187,9 @@ public class Graphs {
 		examples = { @example("graph graphFromMap<-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 			@example(value = "graphFromMap contains_vertex {1,5}", equals = "true") },
 		see = { "contains_edge" })
-	public static Boolean containsVertex(final GamaGraph graph, final Object vertex) {
+	public static Boolean containsVertex(final IScope scope, final GamaGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the contains_vertex operator, the graph should not be null!"); }
+			.error("In the contains_vertex operator, the graph should not be null!", scope); }
 		return graph.containsVertex(vertex);
 	}
 

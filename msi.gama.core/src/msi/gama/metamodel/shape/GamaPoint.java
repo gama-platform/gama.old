@@ -1,28 +1,28 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaPoint.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.*;
 
 /**
  * AgentLocation.
- * 
+ *
  * @author drogoul 11 oct. 07
  */
 
@@ -182,7 +182,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.interfaces.IGeometry#setGeometry(msi.gama.util.GamaGeometry)
 	 */
 	@Override
@@ -234,7 +234,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public double euclidianDistanceTo(final ILocation p) {
 		// FIXME: Need to check the cost of checking if z and p.getZ() are equal to Zero so that we can use
 		// return this.distance(p.toCoordinate());
-		return Maths.hypot(x, p.getX(), y, p.getY(), z, p.getZ());
+		return Maths.hypot(GAMA.getRuntimeScope(), x, p.getX(), y, p.getY(), z, p.getZ());
 	}
 
 	/**
@@ -386,7 +386,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void setDepth(final double depth) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void setRotate3D(final GamaPair rot3D) {
 		// TODO Auto-generated method stub

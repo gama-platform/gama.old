@@ -251,8 +251,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	@Override
 	public C getContents(final IScope scope) throws GamaRuntimeException {
 		// if ( getFile() == null ) { return null; }
-		if ( !getFile()
-			.exists() ) { throw GamaRuntimeException.error("File " + getFile().getAbsolutePath() + " does not exist"); }
+		if ( !getFile().exists() ) { throw GamaRuntimeException
+			.error("File " + getFile().getAbsolutePath() + " does not exist", scope); }
 		fillBuffer(scope);
 		return getBuffer();
 	}
