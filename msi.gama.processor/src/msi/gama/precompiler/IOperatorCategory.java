@@ -50,6 +50,7 @@ public interface IOperatorCategory {
 	public static final String SPECIES			= "Species-related operators";
 	public static final String GRID				= "Grid-related operators";
 	public static final String PATH				= "Path-related operators";
+	public static final String DATE				= "Date-related operators";
 	
 	public static final String TYPE				= "Types-related operators";
 	
