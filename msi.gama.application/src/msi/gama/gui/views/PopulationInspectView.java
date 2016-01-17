@@ -61,7 +61,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	public final static int EXPR = 3;
 	public static final List<String> DONT_INSPECT_BY_DEFAULT =
 		Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
-	IScope scope;
+	// IScope scope;
 	volatile boolean locked;
 	// volatile boolean refreshing;
 	ToolItem populationMenu;
@@ -353,8 +353,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 				final Object o = s.getFirstElement();
 				if ( o instanceof IAgent ) {
-					scope.getGui().setHighlightedAgent((IAgent) o);
-					GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+					getScope().getGui().setHighlightedAgent((IAgent) o);
+					getScope().getExperiment().getSpecies().getSimulationOutputs().forceUpdateOutputs();
 				}
 			}
 		});
@@ -538,10 +538,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private IScope getScope() {
-		if ( scope == null ) {
-			scope = getOutput().getScope().copy();
-		}
-		return scope;
+		return getOutput().getScope();
 	}
 
 	public static class NaturalOrderComparator implements Comparator {

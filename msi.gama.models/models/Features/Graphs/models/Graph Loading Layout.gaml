@@ -2,7 +2,7 @@
 * Name: Graph from DGS File and Layout Changed
 * Author: Patrick Taillandier
 * Description: Model which shows how to load a graph from a DGS File, and change is layout. 
-* Tag : Graph, Import Files
+* Tags : : Graph, Import Files
 */
 
 model graphloadinglayout

@@ -248,6 +248,15 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 	@Override
 	public void synchronizeChanged() {}
 
+	/**
+	 * Method handleMenu()
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
+	 */
+	@Override
+	public Map<String, Runnable> handleMenu(final IAgent data, final int x, final int y) {
+		return null;
+	}
+
 	// /**
 	// * Method createToolItem()
 	// * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)

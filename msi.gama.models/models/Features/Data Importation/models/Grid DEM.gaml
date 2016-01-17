@@ -7,7 +7,7 @@
 * 	of the cells in a 2D Display, with the Elevation but without triangulation, and the grid with text values to show the content of the
 * 	ASCII used by the cells. GraphicDEMComplete shows the use of the z_factor to amplify or reduces the difference between the z values
 * 	of a Dem geometry.
-* Tag :  Import Files, GIS, 3D Display
+* Tags : :  Import Files, GIS, 3D Display
 */
 
 model gridloading

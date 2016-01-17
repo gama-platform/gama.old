@@ -76,4 +76,13 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 		}
 	}
 
+	/**
+	 * Method handleMenu()
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
+	 */
+	@Override
+	public Map<String, Runnable> handleMenu(final IAgent data, final int x, final int y) {
+		return null;
+	}
+
 }

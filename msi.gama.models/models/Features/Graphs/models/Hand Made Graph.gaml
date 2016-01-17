@@ -4,7 +4,7 @@
 * Description: Model to show how to build a graph from scratch using three ways : by putting a list of edges as parameter of as_edge_graph, by adding 
 *      a node or an edge manually using facet to or by changing the graph itself after adding a node or an edge. The experiment has two displays : one for
 *      the first graph created from the list of edges, an other for the graph creating by adding the nodes and edges manually using add operator.
-* Tag : Graph
+* Tags : : Graph
 */
 model hameMadeGraph
 

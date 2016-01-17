@@ -331,11 +331,13 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			}
 		} else {
 			if ( aspect >= 1.0 ) {
-				((GL2ES1) gl).glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim, -maxDim);
+				//maxDim = maxDim/10;
+				((GL2ES1) gl).glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim*10, -maxDim*10);
 			} else {
+				//maxDim = maxDim/10;
 				((GL2ES1) gl).glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
 			}
-			gl.glTranslated(0d, 0d, maxDim * 1.5);
+			gl.glTranslated(0d, 0d, maxDim * 0.05);
 		}
 		camera.makeGluLookAt(glu);
 		camera.animate();
@@ -583,7 +585,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		}
 		
 		if ( shape.hasAttribute(IShape.ASSET3D_ATTRIBUTE) ) {
-			java.lang.System.out.println("asseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeet");
 			java.util.List<String> asset3DNames = Cast.asList(scope, shape.getAttribute(IShape.ASSET3D_ATTRIBUTE));	
 		    asset3Dmodel = ModelLoaderOBJ.LoadModel(asset3DNames.get(0), asset3DNames.get(1), gl);
 		}
