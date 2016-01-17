@@ -324,6 +324,8 @@ public abstract class SwingControl extends Composite {
 
 					rootPaneContainer.getRootPane().getContentPane().add(swingComponent);
 					swingComponent.putClientProperty(SWT_PARENT_PROPERTY_KEY, SwingControl.this);
+					swingComponent.setVisible(false);
+					swingComponent.setVisible(true);
 				}
 
 				// Invoke hooks, for use by the application.

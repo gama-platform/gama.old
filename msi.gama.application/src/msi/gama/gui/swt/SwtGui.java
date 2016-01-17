@@ -309,6 +309,7 @@ public class SwtGui extends AbstractGui {
 	}
 
 	private void clearErrors() {
+		debug("Closing Error View");
 		IViewReference ref = getPage().findViewReference(ErrorView.ID);
 		if ( ref == null ) { return; }
 		final ErrorView v = (ErrorView) ref.getPart(false);
@@ -541,7 +542,8 @@ public class SwtGui extends AbstractGui {
 			o = GamaRuntimeException.error("Impossible to open view " + viewId);
 		}
 		if ( o instanceof Exception ) {
-			GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create((Exception) o), false);
+			GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create((Exception) o, GAMA.getRuntimeScope()),
+				false);
 		}
 		return null;
 	}

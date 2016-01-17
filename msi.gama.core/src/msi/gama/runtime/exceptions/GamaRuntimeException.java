@@ -43,12 +43,12 @@ public class GamaRuntimeException extends RuntimeException {
 	 * @param s
 	 * @return
 	 */
-	@Deprecated
-	public static GamaRuntimeException create(final Throwable ex) {
-		// Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
-		// another simulation
-		return create(ex, GAMA.getRuntimeScope());
-	}
+	// @Deprecated
+	// public static GamaRuntimeException create(final Throwable ex) {
+	// // Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
+	// // another simulation
+	// return create(ex, GAMA.getRuntimeScope());
+	// }
 
 	public static GamaRuntimeException create(final Throwable ex, final IScope scope) {
 		if ( ex instanceof GamaRuntimeException ) { return (GamaRuntimeException) ex; }

@@ -13,36 +13,17 @@ package msi.gama.kernel.simulation;
 
 import java.util.Map;
 import java.util.Map.Entry;
-
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.AgentScheduler;
-import msi.gama.kernel.experiment.IExperimentController;
+import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.population.SimulationPopulation;
-import msi.gama.metamodel.shape.Envelope3D;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
-import msi.gama.metamodel.topology.projection.WorldProjection;
-import msi.gama.outputs.IOutput;
-import msi.gama.outputs.IOutputManager;
-import msi.gama.outputs.SimulationOutputManager;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.metamodel.population.*;
+import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.projection.*;
+import msi.gama.outputs.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaDate;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Spatial.Transformations;
@@ -86,9 +67,9 @@ import msi.gaml.types.IType;
 		doc = @doc(value = "Returns the current date in the simulation",
 			comment = "The return value is a date; the starting_date have to be initialized to use this attribute") ),
 	@var(name = SimulationAgent.STARTING_DATE,
-			type = IType.DATE,
-			doc = @doc(value = "Represents the starting date of the simulation",
-				comment = "It is required to intiliaze this value to be able to use the current_date attribute") ),})
+		type = IType.DATE,
+		doc = @doc(value = "Represents the starting date of the simulation",
+			comment = "It is required to intiliaze this value to be able to use the current_date attribute") ), })
 public class SimulationAgent extends GamlAgent {
 
 	public static final String DURATION = "duration";
@@ -106,7 +87,7 @@ public class SimulationAgent extends GamlAgent {
 	IOutputManager outputs;
 	ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
-	
+
 	public Boolean getScheduled() {
 		return scheduled;
 	}
@@ -125,24 +106,10 @@ public class SimulationAgent extends GamlAgent {
 
 	@Override
 	public void schedule() {
-		// public void scheduleAndExecute(final RemoteSequence sequence) {
-		super.schedule();
-		// super.scheduleAndExecute(sequence);
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
 		scope.getGui().prepareForSimulation(this);
-		// GAMA.controller.getScheduler().schedule(scheduler, scope);
-		// if ( outputs != null ) {
-		// final IScope simulationScope = obtainNewScope();
-		// if ( simulationScope != null ) {
-		// GAMA.controller.getScheduler().schedule(outputs, simulationScope);
-		// } else {
-		// // TODO What does it do here ? Should be elsewhere (but where ?)
-		// scope.getGui().cleanAfterSimulation();
-		// // scope.getGui().hideView(scope.getGui().PARAMETER_VIEW_ID);
-		// // scope.getGui().hideMonitorView();
-		// }
-		// }
+		super.schedule();
 
 		getExperiment().getSpecies().getController().getScheduler().schedule(scheduler, scope);
 		if ( outputs != null ) {
@@ -152,8 +119,6 @@ public class SimulationAgent extends GamlAgent {
 			} else {
 				// TODO What does it do here ? Should be elsewhere (but where ?)
 				scope.getGui().cleanAfterSimulation();
-				// scope.getGui().hideView(scope.getGui().PARAMETER_VIEW_ID);
-				// scope.getGui().hideMonitorView();
 			}
 		}
 
@@ -217,7 +182,7 @@ public class SimulationAgent extends GamlAgent {
 
 	@Override
 	public void dispose() {
-//		System.out.println("SimulationAgent.dipose BEGIN");
+		// System.out.println("SimulationAgent.dipose BEGIN");
 		if ( dead ) { return; }
 		super.dispose();
 		// We dispose of any scheduler still running
@@ -235,7 +200,7 @@ public class SimulationAgent extends GamlAgent {
 		}
 		// end-hqnghi
 		projectionFactory = new ProjectionFactory();
-//		System.out.println("SimulationAgent.dipose END");
+		// System.out.println("SimulationAgent.dipose END");
 	}
 
 	@Override
@@ -304,7 +269,7 @@ public class SimulationAgent extends GamlAgent {
 		final SimulationClock clock = getClock();
 		if ( clock != null ) {
 			clock.setStep(t);
-			
+
 		}
 	}
 
@@ -352,17 +317,17 @@ public class SimulationAgent extends GamlAgent {
 	public void setCurrentDate(final GamaDate d) throws GamaRuntimeException {
 		clock.setCurrentDate(d);
 	}
-	
+
 	@getter(CURRENT_DATE)
 	public GamaDate getCurrentDate() {
 		return clock.getCurrentDate();
 	}
-	
+
 	@setter(STARTING_DATE)
 	public void setSTartingDate(final GamaDate d) throws GamaRuntimeException {
 		clock.setStartingDate(d);
 	}
-	
+
 	@getter(STARTING_DATE)
 	public GamaDate getStartingDate() {
 		return clock.getStartingDate();

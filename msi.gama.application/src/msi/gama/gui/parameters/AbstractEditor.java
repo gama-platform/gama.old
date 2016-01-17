@@ -460,7 +460,8 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
 					e.addContext("Value of " + name + " cannot be modified");
-					GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create(e), false);
+					GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create(e, GAMA.getRuntimeScope()),
+						false);
 					return;
 				}
 			}
