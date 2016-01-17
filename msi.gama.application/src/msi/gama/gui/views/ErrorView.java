@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -229,6 +230,26 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 		this.reset();
 		exceptions.clear();
 		displayItems();
+	}
+
+	/**
+	 * Method handleMenu()
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object)
+	 */
+	@Override
+	public Map<String, Runnable> handleMenu(final GamaRuntimeException item, final int x, final int y) {
+		Map<String, Runnable> result = new HashMap();
+		result.put("Copy", new Runnable() {
+
+			@Override
+			public void run() {
+				Clipboard clipboard = new Clipboard(parent.getDisplay());
+				String data = item.getAllText();
+				clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
+				clipboard.dispose();
+			}
+		});
+		return result;
 	}
 
 }

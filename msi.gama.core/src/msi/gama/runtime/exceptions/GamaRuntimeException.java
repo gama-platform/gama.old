@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.emf.ecore.EObject;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.*;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.IStatement;
 
 /**
@@ -233,6 +234,23 @@ public class GamaRuntimeException extends RuntimeException {
 	 */
 	public List<String> getAgentsNames() {
 		return agentsNames;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getAllText() {
+		final StringBuilder sb = new StringBuilder(300);
+		final String a = getAgentSummary();
+		if ( a != null ) {
+			sb.append(a).append(" at ");
+		}
+		sb.append("cycle ").append(getCycle()).append(": ").append(getMessage());
+		List<String> strings = getContextAsList();
+		for ( String s : strings ) {
+			sb.append(Strings.LN).append(s);
+		}
+		return sb.toString();
 	}
 
 }

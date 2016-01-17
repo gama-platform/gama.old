@@ -14,7 +14,6 @@ package msi.gama.outputs.display;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.*;
@@ -236,6 +235,15 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public void makeItemVisible(final ILayer obj, final boolean b) {
 		enableLayer(obj, b);
+	}
+
+	/**
+	 * Method handleMenu()
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
+	 */
+	@Override
+	public Map<String, Runnable> handleMenu(final ILayer data, final int x, final int y) {
+		return null;
 	}
 
 }

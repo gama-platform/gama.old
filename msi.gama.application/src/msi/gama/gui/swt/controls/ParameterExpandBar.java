@@ -11,7 +11,9 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
+import java.util.Map;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -97,8 +99,15 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 					case SWT.Dispose:
 						onDispose(event);
 						break;
+					case SWT.MenuDetect:
+						onContextualMenu(event);
+						break;
 					case SWT.MouseDown:
-						onMouseDown(event);
+						if ( (event.stateMask & SWT.CTRL) != 0 || event.button == 3 ) {
+							onContextualMenu(event);
+						} else {
+							onMouseDown(event);
+						}
 						break;
 					case SWT.MouseUp:
 						onMouseUp(event);
@@ -121,6 +130,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		addListener(SWT.MouseUp, listener);
 		addListener(SWT.Paint, listener);
 		addListener(SWT.Resize, listener);
+		addListener(SWT.MenuDetect, listener);
 		addMouseTrackListener(new MouseTrackListener() {
 
 			@Override
@@ -505,6 +515,47 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		}
 	}
 
+	void onContextualMenu(final Event event) {
+		int x = event.x;
+		int y = event.y;
+		for ( int i = 0; i < itemCount; i++ ) {
+			ParameterExpandItem item = items[i];
+			boolean hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
+			if ( !hover ) {
+				continue;
+			}
+			if ( underlyingObjects != null ) {
+				ignoreMouseUp = true;
+				Point p = toDisplay(x, y);
+				Map<String, Runnable> menuContents = underlyingObjects.handleMenu(item.getData(), p.x, p.y);
+				if ( menuContents == null ) {
+					return;
+				} else {
+					Menu menu = new Menu(getShell(), SWT.POP_UP);
+					MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
+					for ( final Map.Entry<String, Runnable> entry : menuContents.entrySet() ) {
+						menuItem.setText(entry.getKey());
+						menuItem.addListener(SWT.Selection, new Listener() {
+
+							@Override
+							public void handleEvent(final Event e) {
+								entry.getValue().run();
+							}
+						});
+					}
+					menu.setLocation(p.x, p.y);
+					menu.setVisible(true);
+					while (!menu.isDisposed() && menu.isVisible()) {
+						if ( !SwtGui.getDisplay().readAndDispatch() ) {
+							SwtGui.getDisplay().sleep();
+						}
+					}
+					menu.dispose();
+				}
+			}
+		}
+	}
+
 	void onMouseDown(final Event event) {
 		if ( event.button != 1 ) { return; }
 		int x = event.x;
@@ -601,6 +652,10 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			getFocusItem().expanded = !getFocusItem().expanded;
 			notifyListeners(wasExpanded ? SWT.Collapse : SWT.Expand, ev);
 			showItem(getFocusItem());
+			Clipboard clipboard = new Clipboard(SwtGui.getDisplay());
+			String data = getFocusItem().getText();
+			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
+			clipboard.dispose();
 		}
 	}
 
