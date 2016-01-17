@@ -24,11 +24,11 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.ListExpression;
 import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
@@ -205,11 +205,10 @@ public class SolveStatement extends AbstractStatement {
 		}
 
 		if ( getFacet("integrated_values") != null ) {
-			IExpression fv = getFacet("integrated_values").resolveAgainst(scope);
-			IExpression[] exp = ((ListExpression) fv).getElements();
-			for ( int i = 0; i < exp.length; i++ ) {
-				((VariableExpression) exp[i]).setVal(scope, theEquations.integrated_values.get(i), false);
-			}
+			IExpression fv = getFacet("integrated_values");
+			IList fvListe = Cast.asList(scope, fv.value(scope));
+			fvListe.addAll(theEquations.integrated_values);
+			
 		}
 
 		return null;
