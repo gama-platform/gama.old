@@ -269,7 +269,7 @@ public class CameraArcBall extends AbstractCamera {
 		else if ( (shift(e) || alt(e)) && isViewIn2DPlan() ) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
-			getRenderer().defineROI(getMousePosition());
+			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
 		} else {
 			// check the difference between the current x and the last x position
 			int diffx = newPoint.x - lastMousePressedPosition.x;
