@@ -47,6 +47,7 @@ public class Strings {
 	private static PeriodFormatter timeFormat;
 	private static DateTimeFormatter systemDateFormat;
 	private static DateTimeFormatter systemTimeFormat;
+	private static DateTimeFormatter systemDateTimeFormat;
 	private static GamaChronology chronology;
 
 	static PeriodFormatterBuilder getCustomFormat() {
@@ -84,6 +85,13 @@ public class Strings {
 			systemDateFormat = ISODateTimeFormat.yearMonthDay();
 		}
 		return systemDateFormat;
+	}
+	
+	static public DateTimeFormatter getSystemDateTimeFormat() {
+		if ( systemDateTimeFormat == null ) {
+			systemDateTimeFormat = ISODateTimeFormat.dateTimeNoMillis();
+		}
+		return systemDateTimeFormat;
 	}
 
 	static PeriodFormatter getDateFormat() {
@@ -409,6 +417,14 @@ public class Strings {
 		// Pattern should include : "%Y %M %D %h %m %s" for outputting years, months, days, hours,
 		// minutes, seconds
 		if ( pattern == null || pattern.isEmpty() ) { return asDate(time) + " " + asTime(time); }
+		fillCustomFormat(pattern);
+		PeriodFormatter pf = getCustomFormat().toFormatter();
+		PeriodType pt = PeriodType.yearMonthDayTime();
+		return pf.print(new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
+
+	}
+	
+	private static void fillCustomFormat(final String pattern) {
 		getCustomFormat().clear();
 		List<String> dateList = new ArrayList();
 		final Matcher m = model_pattern.matcher(pattern);
@@ -455,10 +471,20 @@ public class Strings {
 			}
 		}
 
+	}
+	
+	public static String asDate(GamaDate d1, GamaDate d2, final String pattern) {
+		Period p = new Period(d1,d2);
+		if (pattern == null) {
+			String date = getDateFormat().print(p);
+			 PeriodType pt = PeriodType.yearMonthDayTime();
+			 String time= getTimeFormat().print(p.normalizedStandard(pt));
+			return date + " " + time; 
+		}
+		fillCustomFormat(pattern);
 		PeriodFormatter pf = getCustomFormat().toFormatter();
 		PeriodType pt = PeriodType.yearMonthDayTime();
-		return pf.print(new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
-
+		return pf.print(p.normalizedStandard(pt));
 	}
 
 	@operator(value = "as_system_date", can_be_const = true, category = { IOperatorCategory.STRING,
@@ -544,6 +570,11 @@ public class Strings {
 		return getDateFormat().print(
 			new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
 	}
+	
+	public static
+	String asDate(final GamaDate date) {
+		return getSystemDateTimeFormat().print(date);
+	}
 
 	@operator(value = "as_time", can_be_const = true, category = { IOperatorCategory.STRING, IOperatorCategory.TIME })
 	@doc(value = "converts  a number of seconds in the model  (for example, the value of the 'time' variable)  into a string that represents the current number of hours, minutes and seconds of the period elapsed since the beginning of the simulation. As GAMA has no conception of time zones, the time is expressed as if the model was at GMT+00",
@@ -556,6 +587,8 @@ public class Strings {
 		return getTimeFormat().print(
 			new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
 	}
+	
+	
 
 	@operator(value = "as_system_time", can_be_const = true, category = { IOperatorCategory.STRING,
 		IOperatorCategory.TIME })

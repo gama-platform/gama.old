@@ -14,7 +14,6 @@ package msi.gama.kernel.simulation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
-import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.Types;
 
@@ -267,7 +266,7 @@ public class SimulationClock {
 	public String getInfo() {
 		int cycle = getCycle();
 		String info =
-			displayCycles ? "" + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed" : Strings.asDate(time, null);
+			displayCycles ? "" + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed" : (starting_date == null ? Strings.asDate(time, null) : current_date.toString());
 		return info;
 	}
 

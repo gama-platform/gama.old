@@ -109,7 +109,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		SimulationClock clock = simulation.getClock();
 
 		sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
-			Strings.asDate(clock.getTime(), null)));
+				clock.getStartingDate() == null ?  Strings.asDate(clock.getTime(), null) : Strings.asDate(clock.getStartingDate(),clock.getCurrentDate(), null)));
 		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Durations (ms)", clock.getDuration(),
 			(int) clock.getAverageDuration(), clock.getTotalDuration()));
 		return sb.toString();
