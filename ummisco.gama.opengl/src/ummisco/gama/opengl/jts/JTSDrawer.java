@@ -72,8 +72,6 @@ public class JTSDrawer {
 	public int nbPtsForDecomp = 2000;
 
 	public JTSDrawer(final JOGLRenderer gLRender) {
-
-		// myGlu = glu;
 		myGlut = new GLUT();
 		renderer = gLRender;
 		tessCallback = new TessellCallBack(renderer.getGlu());
@@ -86,11 +84,6 @@ public class JTSDrawer {
 		visitor = new JTSVisitor();
 
 		yFlag = -1;
-
-		// FIXME: When using erroCallback there is a out of memory problem.
-		// myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);//
-		// errorCallback)
-
 	}
 
 	public void drawMultiPolygon(final MultiPolygon polygons, final Color c, final double alpha, final boolean fill,
@@ -303,13 +296,6 @@ public class JTSDrawer {
 
 	void drawTriangulatedPolygon(Polygon p, final boolean showTriangulation, final Texture texture) {
 		boolean simplifyGeometry = false;
-		if ( simplifyGeometry ) {
-			double sizeTol = Math.sqrt(p.getArea()) / 100.0;
-			Geometry g2 = DouglasPeuckerSimplifier.simplify(p, sizeTol);
-			if ( g2 instanceof Polygon ) {
-				p = (Polygon) g2;
-			}
-		}
 		// Workaround to compute the z value of each triangle as triangulation
 		// create new point during the triangulation that are set with z=NaN
 		if ( p.getNumPoints() > 4 ) {
@@ -357,44 +343,31 @@ public class JTSDrawer {
 		}
 	}
 
-	// FIXME: This function only work for quad (otherwise it draw a gray polygon)
-	void DrawTexturedPolygon(final Polygon p, /* final int angle, */final Texture texture) {
+
+	void DrawTexturedPolygon(final Polygon p, final Texture texture) {
 		GL2 gl = GLContext.getCurrentGL().getGL2();
-		gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
-		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the
+		gl.glColor3d(1.0, 1.0, 1.0);
 		texture.enable(gl);
 		texture.bind(gl);
 
 		if ( p.getNumPoints() > 5 ) {
-			// FIXME AD 05/15 Should we use drawTesselatedPolygon instead ?
 			drawTriangulatedPolygon(p, useJTSForTriangulation, texture);
-			//GAMA.reportError(GAMA.getRuntimeScope(),
-				//GamaRuntimeException.warning("Texture can only be applied on quad or rectangle"), false);
 
 		} else {
 			if ( renderer.getComputeNormal() ) {
 				Vertex[] vertices = this.getExteriorRingVertices(p);
 				GLUtilNormal.HandleNormal(vertices, null, 0, 1, renderer);
 			}
-
 			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
-
 			gl.glBegin(GL2ES3.GL_QUADS);
 			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(),
-				p.getExteriorRing().getCoordinateN(0).z);
-
+			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(),p.getExteriorRing().getCoordinateN(0).z);
 			gl.glTexCoord2f(1.0f, 1.0f);;
-			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(),
-				p.getExteriorRing().getCoordinateN(1).z);
-
+			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(),p.getExteriorRing().getCoordinateN(1).z);
 			gl.glTexCoord2f(1.0f, 0.0f);;
-			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(),
-				p.getExteriorRing().getCoordinateN(2).z);
-
+			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(),p.getExteriorRing().getCoordinateN(2).z);
 			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(),
-				p.getExteriorRing().getCoordinateN(3).z);
+			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(),p.getExteriorRing().getCoordinateN(3).z);
 			gl.glEnd();
 		}
 
@@ -429,9 +402,6 @@ public class JTSDrawer {
 					gl.glEnd();
 				}
 			}
-
-			// myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-			// myGl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
 			gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 			if ( !renderer.data.isTriangulation() ) {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
@@ -544,7 +514,6 @@ public class JTSDrawer {
 				if ( renderer.getComputeNormal() ) {
 					GLUtilNormal.HandleNormal(vertices, c, alpha, norm_dir, renderer);
 				}
-
 				gl.glBegin(GL2ES3.GL_QUADS);
 				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
 				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
