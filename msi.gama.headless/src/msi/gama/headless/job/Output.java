@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.headless.core;
+package msi.gama.headless.job;
 
 public class Output {
 	public String name;

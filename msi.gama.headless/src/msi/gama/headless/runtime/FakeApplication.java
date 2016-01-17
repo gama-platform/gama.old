@@ -11,15 +11,14 @@
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
-import msi.gama.headless.core.Simulation;
+import msi.gama.headless.job.ExperimentJob;
 
 public class FakeApplication extends Thread {// implements Runnable {
 
-	// public Thread myT;
-	private Simulation si = null;
+	private ExperimentJob si = null;
 	private SimulationRuntime runtime = null;
 
-	public FakeApplication(final Simulation sim, final SimulationRuntime rn) {
+	public FakeApplication(final ExperimentJob sim, final SimulationRuntime rn) {
 		si = sim;
 		this.runtime= rn;
 	}

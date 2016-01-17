@@ -19,7 +19,7 @@ import java.util.Vector;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.HeadlessSimulationLoader;
-import msi.gama.headless.core.Simulation;
+import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.openmole.IMoleExperiment;
 import msi.gama.headless.openmole.MoleSimulationLoader;
 import msi.gama.headless.xml.ConsoleReader;
@@ -114,9 +114,9 @@ public class Application implements IApplication {
 		 in = new Reader(args[args.length-2]);
 		in.parseXmlFile();
 
-		Iterator<Simulation> it = in.getSimulation().iterator();
+		Iterator<ExperimentJob> it = in.getSimulation().iterator();
 		while (it.hasNext()) {
-			Simulation sim = it.next();
+			ExperimentJob sim = it.next();
 			try {
 				XMLWriter ou = new XMLWriter(Globals.OUTPUT_PATH + "/"
 						+ Globals.OUTPUT_FILENAME + sim.getExperimentID() + ".xml");

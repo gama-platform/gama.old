@@ -11,8 +11,8 @@
  **********************************************************************************************/
 package msi.gama.headless.common;
 
-import msi.gama.headless.core.Simulation.ListenedVariable;
-import msi.gama.headless.core.Simulation.OutputType;
+import msi.gama.headless.job.ExperimentJob.ListenedVariable;
+import msi.gama.headless.job.ExperimentJob.OutputType;
 
 public interface ISimulator {
 

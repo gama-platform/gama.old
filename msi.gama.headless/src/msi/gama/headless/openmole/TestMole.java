@@ -17,7 +17,7 @@ public class TestMole {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+		MoleSimulationLoader.loadGAMA();
 
 	}
 

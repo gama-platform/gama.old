@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.headless.core;
+package msi.gama.headless.job;
 
 import msi.gama.headless.common.DataType;
 

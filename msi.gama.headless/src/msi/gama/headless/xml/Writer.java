@@ -12,13 +12,14 @@
 package msi.gama.headless.xml;
 
 import msi.gama.headless.core.*;
-import msi.gama.headless.core.Simulation.ListenedVariable;
+import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.ExperimentJob.ListenedVariable;
 
 public interface Writer {
 
-	public void writeSimulationHeader(Simulation s);
+	public void writeSimulationHeader(ExperimentJob s);
 
-	public void writeResultStep(int step, ListenedVariable[] vars);
+	public void writeResultStep(long step, ListenedVariable[] vars);
 
 	public void close();
 }
