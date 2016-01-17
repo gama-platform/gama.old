@@ -63,7 +63,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if ( isInvalid() ) { return; }
 		// GL2 gl = GLContext.getCurrentGL().getGL2();
 		gl.glPushMatrix();
-		//
 		gl.glTranslated(offset.x, -offset.y, offset.z);
 		gl.glScaled(scale.x, scale.y, scale.z);
 		//NOTE: In the same layer if geometries and image are drawn images are drawn first and then the geometries.
