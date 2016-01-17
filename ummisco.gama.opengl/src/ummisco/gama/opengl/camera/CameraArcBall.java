@@ -323,7 +323,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public boolean isViewIn2DPlan() {
-		return phi > 85 && phi < 95 && theta > 355 && theta < 365;
+		return phi > 85 && phi < 95 && theta > -5 && theta < 5;
 	}
 
 	@Override
