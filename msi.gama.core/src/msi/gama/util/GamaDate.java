@@ -34,6 +34,12 @@ import msi.gaml.types.Types;
  * @author Taillandier
  */
 @vars({
+	@var(name = "day_of_week",
+		type = IType.INT,
+		doc = { @doc("Returns the day of the week") }),
+	@var(name = "week_of_year",
+		type = IType.INT,
+		doc = { @doc("Returns the week of the year") }),
 	@var(name = "second",
 		type = IType.INT,
 		doc = { @doc("Returns the second") }),
@@ -173,6 +179,16 @@ public class GamaDate extends MutableDateTime implements IValue {
 	@getter("second")
 	public int getSecond() {
 		return getSecondOfMinute();
+	}
+	
+	@getter("day_of_week")
+	public int getDayWeek() {
+		return getDayOfWeek();
+	}
+	
+	@getter("week_of_year")
+	public int getWeekYear() {
+		return super.getWeekOfWeekyear();
 	}
 
 }
