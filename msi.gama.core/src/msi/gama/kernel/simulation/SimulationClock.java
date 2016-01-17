@@ -13,13 +13,20 @@ package msi.gama.kernel.simulation;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaDate;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
+import msi.gaml.types.Types;
 
 /**
  * The class GamaRuntimeInformation.
  *
  * @author drogoul
  * @since 13 d�c. 2011
+ *
+ */
+/**
+ * @author administrateur
  *
  */
 public class SimulationClock {
@@ -78,6 +85,12 @@ public class SimulationClock {
 	 * Whether to display the number of cycles or a more readable information (in model time)
 	 */
 	private boolean displayCycles = true;
+	
+
+	private GamaDate current_date = null;
+	
+	private GamaDate starting_date = null;
+
 
 	private final SimulationAgent simulation;
 
@@ -202,6 +215,7 @@ public class SimulationClock {
 	public void step(final IScope scope) {
 		setCycle(cycle + 1);
 		setTime(time + step);
+		if (current_date != null) current_date.addSeconds((int)step);
 		computeDuration();
 		waitDelay();
 	}
@@ -282,6 +296,25 @@ public class SimulationClock {
 		// return currentCycleDelay * 1000;
 	}
 
+	public GamaDate getCurrentDate() {
+		return current_date;
+	}
+
+	public void setCurrentDate(GamaDate date) {
+		this.current_date = date;
+	}
+
+	public GamaDate getStartingDate() {
+		return starting_date;
+	}
+
+	public void setStartingDate(GamaDate starting_date) {
+		setCurrentDate((GamaDate) Types.DATE.cast(null, starting_date, null, true)); 
+		this.starting_date = starting_date;
+	}
+	
+	
+
 	// public void setDelayFromUI(final double newDelayInMilliseconds) {
 	// if ( simulation == null ) { return; }
 	// simulation.getExperiment().setMinimumDuration(newDelayInMilliseconds / 1000);
@@ -292,5 +325,7 @@ public class SimulationClock {
 	// currentCycleDelay = newDelayInSeconds;
 	//
 	// }
+	
+	
 
 }
