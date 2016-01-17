@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import org.joda.time.MutableDateTime;
-
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
