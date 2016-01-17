@@ -142,7 +142,7 @@ public class FreeFlyCamera extends AbstractCamera {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
 			// GL2 gl = GLContext.getCurrent().getGL().getGL2();
-			getRenderer().defineROI(getMousePosition());
+			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
 		} else {
 			int horizMovement = e.x - getLastMousePressedPosition().x;
 			int vertMovement = e.y - getLastMousePressedPosition().y;

@@ -24,6 +24,7 @@ import com.jogamp.opengl.fixedfunc.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.gl2.GLUT;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
@@ -109,16 +110,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public ModelScene getCurrentScene() {
 		return currentScene;
 	}
-
-	public void defineROI(final Point extent) {
-		GamaPoint end = getRealWorldPointFromWindowPoint(extent);
-		// end.y = -end.y;
-		if ( ROIEnvelope != null ) {
-			ROIEnvelope.expandToInclude(end);
-		} else {
-			ROIEnvelope = new Envelope3D();
-			ROIEnvelope.init(end);
-		}
+	
+	public void defineROI(final Point start,final Point end) {	
+		GamaPoint startInWorld = getRealWorldPointFromWindowPoint(start);
+		GamaPoint endInWorld = getRealWorldPointFromWindowPoint(end);
+		ROIEnvelope = new Envelope3D(new Envelope(startInWorld.x, endInWorld.x, startInWorld.y,endInWorld.y));
 	}
 
 	public void cancelROI() {

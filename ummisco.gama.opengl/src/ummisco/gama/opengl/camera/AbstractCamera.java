@@ -43,6 +43,8 @@ public abstract class AbstractCamera implements ICamera {
 	// Mouse
 	private Point mousePosition;
 	protected Point lastMousePressedPosition;
+	protected Point firstMousePressedPosition;
+	protected boolean firsttimeMouseDown = true;
 
 	// protected double maxDim;
 
@@ -176,7 +178,10 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
-
+        if(firsttimeMouseDown){
+    		firstMousePressedPosition = new Point(e.x, e.y);
+    		firsttimeMouseDown = false;
+        }
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
 		if ( e.button == 3 ) {
@@ -187,16 +192,13 @@ public abstract class AbstractCamera implements ICamera {
 			if ( shift(e) || alt(e) ) {
 				getMousePosition().x = e.x;
 				getMousePosition().y = e.y;
-				renderer.defineROI(getMousePosition());
+				renderer.defineROI(firstMousePressedPosition,getMousePosition());
 			} else {
 				getRenderer().setPicking(false);
 			}
-
 		}
-
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
-
 	}
 
 	/**
@@ -205,6 +207,7 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
+		firsttimeMouseDown = true;
 		if ( canSelectOnRelease(e) && isViewIn2DPlan() ) {
 			if ( alt(e) ) {
 				final Envelope3D env = renderer.getROIEnvelope();
