@@ -49,12 +49,13 @@ public class TOCManager {
 		NodeList nlPart = doc.getElementsByTagName("part");		
 		for(int i = 0; i<nlPart.getLength(); i++){
 			Element eltPart = (Element)nlPart.item(i);
-			File fPart = new File(Constants.TOC_GEN_FOLDER + File.separator + eltPart.getAttribute("name").replaceAll(" ", "_") + ".md");
+			File fPart = new File(Constants.TOC_GEN_FOLDER + File.separator +eltPart.getAttribute("name").replaceAll(" ", "_") + ".md");
 			lFile.add( fPart.getAbsolutePath() );
 			
 			NodeList chapterList = eltPart.getElementsByTagName("chapter");
 			for(int j = 0; j<chapterList.getLength(); j++){
-				lFile.add( ((Element)chapterList.item(j)).getAttribute("file") + ".md");
+				File f = new File(Constants.WIKI_FOLDER + File.separator + ((Element)chapterList.item(j)).getAttribute("file") + ".md");
+				lFile.add( f.getAbsolutePath());
 			}			
 		}
 

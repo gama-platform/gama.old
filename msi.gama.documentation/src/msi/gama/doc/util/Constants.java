@@ -28,9 +28,14 @@ public class Constants {
 	public static String INPUT_FOLDER = SRC_FOLDER + File.separator + "input";
 	public static String SVN_FOLDER = SRC_FOLDER + File.separator + "svn";
 
-	public static String TEST_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + "msi.gama.models" + File.separator + "models" + File.separator + "Tests";
+	public static String TEST_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + 
+			"msi.gama.models" + File.separator + "models" + File.separator + "Tests";
 	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + "gama.wiki";
-	public static String XML2WIKI_FOLDER = WIKI_FOLDER ;	
+	public static String WIKI_FOLDER_REF = WIKI_FOLDER + File.separator + "References" + File.separator + "GAMLReferences";
+	public static String WIKI_FOLDER_EXT = WIKI_FOLDER + File.separator + "References";
+	public static String WIKI_FOLDER_EXT_PLUGIN = WIKI_FOLDER_EXT + File.separator + "PluginDocumentation";
+	
+	public static String XML2WIKI_FOLDER = WIKI_FOLDER_REF ;	
 	
 	public static String JAVA2XML_FOLDER = GEN_FOLDER + File.separator + "java2xml";
 	public static String WIKI2WIKI_FOLDER = GEN_FOLDER + File.separator + "wiki2wiki";
@@ -58,5 +63,10 @@ public class Constants {
 	
 //	public static String ADR_SVNGAMA = "http://gama-platform.googlecode.com/svn/wiki";
 	
+	// Commandes
+	public static String CMD_PANDOC = "/usr/local/bin/pandoc";
+	public static String CMD_PDFLATEX = "/Library/TeX/Root/bin/universal-darwin/pdflatex";
 	
+	// Path
+	public static String PATH = "PATH=/usr/local/bin/:${PATH}";
 }

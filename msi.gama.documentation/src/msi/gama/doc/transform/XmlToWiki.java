@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 public class XmlToWiki {
 
 	public static String suffix = ""; // "Dev"
-	public static String extFileName = "G__Extension";
+	public static String extFileName = "Extension";
 	
 	public static void createAllWikis() 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
@@ -44,44 +44,44 @@ public class XmlToWiki {
 		System.out.print("Creation of the wiki page for Operators.....");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2md.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__Operators"+suffix+".md");
+				Constants.XML2WIKI_FOLDER + File.separator + "Operators"+suffix+".md");
 		System.out.println("Done");			
 		//
 		System.out.print("Creation of the wiki page for Statements.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Statements-xml2md.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__Statements"+suffix+".md");	
+				Constants.XML2WIKI_FOLDER + File.separator + "Statements"+suffix+".md");	
 		System.out.println("Done");		
 		//
 		System.out.print("Creation of the wiki page for Skills.......");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Skills-xml2md.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSkills"+suffix+".md");	
+				Constants.XML2WIKI_FOLDER + File.separator + "BuiltInSkills"+suffix+".md");	
 		System.out.println("Done");		
 		//
 		System.out.print("Creation of the wiki page for the Index.......");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Index-xml2md.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__Index"+suffix+".md");	
+				Constants.XML2WIKI_FOLDER + File.separator + "Index"+suffix+".md");	
 		System.out.println("Done");	
 		
 		
 		System.out.print("Creation of the wiki page for Architectures.......");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Architectures-xml2md.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInArchitectures"+suffix+".md");	
+				Constants.XML2WIKI_FOLDER + File.separator + "BuiltInArchitectures"+suffix+".md");	
 		System.out.println("Done");		
 		
 		System.out.print("Creation of the wiki page for Built-in Species.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Species-xml2md.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSpecies"+suffix+".md");	
+				Constants.XML2WIKI_FOLDER + File.separator + "BuiltInSpecies"+suffix+".md");	
 		System.out.println("Done");	
 		//
 		System.out.print("Creation of the wiki page for Constants and units.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Constants-xml2md.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "G__UnitsAndConstants"+suffix+".md");	
+				Constants.XML2WIKI_FOLDER + File.separator + "UnitsAndConstants"+suffix+".md");	
 		System.out.println("Done");	
 		//
 		System.out.println("End of the transformation");		
@@ -126,7 +126,7 @@ public class XmlToWiki {
 		HashMap<String, File> hmExt = ws.getExtensionsDocFiles();
 		
 		// Create the G__Extensions.md file as a toc to each G__extensions_plugin.md files
-		String pathExtension = Constants.XML2WIKI_FOLDER + File.separator + extFileName +suffix+".md";
+		String pathExtension = Constants.WIKI_FOLDER_EXT + File.separator + extFileName +suffix+".md";
 		File ext = new File(pathExtension);
 		FileWriter fw=new FileWriter(ext);
 		BufferedWriter extBw= new BufferedWriter(fw);
@@ -157,7 +157,7 @@ public class XmlToWiki {
 			System.out.print("Creation of the wiki pages for extension: " + docPlug.getKey());		
 			createWiki(docPlug.getValue().getAbsolutePath(),
 					Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Extensions-xml2md.xsl",
-					Constants.XML2WIKI_FOLDER + File.separator + extFileName + "_" + docPlug.getKey()+ suffix+".md",
+					Constants.WIKI_FOLDER_EXT_PLUGIN + File.separator + extFileName + "_" + docPlug.getKey()+ suffix+".md",
 					docPlug.getKey());	
 			System.out.println("Done");				
 		}
