@@ -68,12 +68,6 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				case PYRAMID:
 					jtsDrawer.drawPyramid(geometry);
 					break;
-				case RGBCUBE:
-					jtsDrawer.drawRGBCube(geometry);
-					break;
-				case RGBTRIANGLE:
-					jtsDrawer.drawRGBTriangle(geometry);
-					break;
 				case POLYLINECYLINDER:
 					jtsDrawer.DrawMultiLineCylinder(geometry.geometry, geometry.getColor(), geometry.getAlpha(),
 						geometry.height);

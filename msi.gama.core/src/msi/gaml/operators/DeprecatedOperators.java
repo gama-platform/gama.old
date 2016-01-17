@@ -508,29 +508,6 @@ public class DeprecatedOperators {
 		return Random.opRnd(scope, max);
 	}
 
-	@operator(value = { "rgbcube" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
-	@doc(deprecated = "use rgb_cube instead",
-		value = "A cube geometry which side size is equal to the operand.",
-		usages = { @usage(value = "returns nil if the operand is nil.") },
-		comment = "the centre of the cube is by default the location of the current agent in which has been called this operator.",
-		examples = { @example(value = "cube(10)", equals = "a geometry as a square of side size 10.", test = false) },
-		see = { "rgb_cube" })
-	public static IShape rgbcube_deprecated(final IScope scope, final Double side_size) {
-		return Spatial.Creation.rgbcube(scope, side_size);
-	}
-
-	@operator(value = "rgbtriangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
-	@doc(deprecated = "use rgb_triangle instead",
-		value = "A triangle geometry which side size is given by the operand.",
-		usages = { @usage("returns nil if the operand is nil.") },
-		comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.",
-		examples = {
-			@example(value = "triangle(5)", equals = "a geometry as a triangle with side_size = 5.", test = false) },
-		see = { "rgb_triangle" })
-	public static IShape rgbtriangle_deprecated(final IScope scope, final Double side_size) {
-		return Spatial.Creation.rgbtriangle(scope, side_size);
-	}
-
 	@Deprecated
 	@operator(value = { "add_z_pt" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
 	@doc(deprecated = "Use 'set_z' instead",

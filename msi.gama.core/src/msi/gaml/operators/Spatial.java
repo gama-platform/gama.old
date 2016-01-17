@@ -525,22 +525,6 @@ public abstract class Spatial {
 			return GamaGeometryType.buildCube(side_size, location);
 		}
 
-		@operator(value = { "rgb_cube" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
-		@doc(value = "A cube geometry which side size is equal to the operand.",
-			usages = { @usage(value = "returns nil if the operand is nil.") },
-			comment = "the centre of the cube is by default the location of the current agent in which has been called this operator.",
-			examples = {
-				@example(value = "cube(10)", equals = "a geometry as a square of side size 10.", test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
-				"triangle" })
-		public static IShape rgbcube(final IScope scope, final Double side_size) {
-			ILocation location;
-			final IAgent a = scope.getAgentScope();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			if ( side_size <= 0 ) { return new GamaShape(location); }
-			return GamaGeometryType.buildRGBCube(side_size, location);
-		}
-
 		@operator(value = "rectangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
 		@doc(value = "A rectangle geometry which side sizes are given by the operands.",
 			masterDoc = true,
@@ -626,22 +610,6 @@ public abstract class Spatial {
 			return GamaGeometryType.buildTriangle(side_size, location);
 		}
 
-		@operator(value = "rgb_triangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
-		@doc(value = "A triangle geometry which side size is given by the operand.",
-			usages = { @usage("returns nil if the operand is nil.") },
-			comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "triangle(5)",
-				equals = "a geometry as a triangle with side_size = 5.",
-				test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
-				"square" })
-		public static IShape rgbtriangle(final IScope scope, final Double side_size) {
-			ILocation location;
-			final IAgent a = scope.getAgentScope();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			if ( side_size <= 0 ) { return new GamaShape(location); }
-			return GamaGeometryType.buildRGBTriangle(side_size, location);
-		}
 
 		@operator(value = "pyramid",
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
