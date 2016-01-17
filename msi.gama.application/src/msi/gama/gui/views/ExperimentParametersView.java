@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.util.Collection;
+import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -134,6 +134,15 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 	@Override
 	protected GamaUIJob createUpdateJob() {
+		return null;
+	}
+
+	/**
+	 * Method handleMenu()
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
+	 */
+	@Override
+	public Map<String, Runnable> handleMenu(final String data, final int x, final int y) {
 		return null;
 	}
 

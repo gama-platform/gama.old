@@ -40,7 +40,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public Map<String, String> getCurrentState() {
-		String state = IGui.NOTREADY;
+		String state = IGui.NONE;
 		IExperimentPlan exp = GAMA.getExperiment();
 		if ( exp != null ) {
 			state = exp.getExperimentScope().getGui().getFrontmostSimulationState();

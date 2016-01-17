@@ -12,6 +12,7 @@
 package msi.gama.gui.views;
 
 import java.util.List;
+import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
@@ -248,5 +249,14 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	 */
 	@Override
 	public void synchronizeChanged() {}
+
+	/**
+	 * Method handleMenu()
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
+	 */
+	@Override
+	public Map<String, Runnable> handleMenu(final MonitorOutput data, final int x, final int y) {
+		return null;
+	}
 
 }

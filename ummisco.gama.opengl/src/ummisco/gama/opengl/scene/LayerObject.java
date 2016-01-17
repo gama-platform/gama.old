@@ -63,14 +63,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if ( isInvalid() ) { return; }
 		// GL2 gl = GLContext.getCurrentGL().getGL2();
 		gl.glPushMatrix();
-		//
 		gl.glTranslated(offset.x, -offset.y, offset.z);
 		gl.glScaled(scale.x, scale.y, scale.z);
-		//
-		geometries.draw(gl, picking && isPickable());
+		//NOTE: In the same layer if geometries and image are drawn images are drawn first and then the geometries.
+		// To be sure that the line of a grid is well displayed we decide to draw first the image that corresponds to the grid and then the line as geometries. (otherwise the lines are invisible)
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		images.draw(gl, picking && isPickable());
 		gl.glDisable(GL.GL_TEXTURE_2D);
+		geometries.draw(gl, picking && isPickable());
 		//
 		gl.glPopMatrix();
 		// Strings are treated apart for the moment, since they have a very special draw that already applies the scale

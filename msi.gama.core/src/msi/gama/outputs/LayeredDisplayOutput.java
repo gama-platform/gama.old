@@ -214,13 +214,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 					Boolean zFightDefault = GamaPreferences.CORE_Z_FIGHTING.getValue();
 					Boolean zFightWanted =
 						zfight == null ? zFightDefault : zfight.getExpression().literalValue().equals(IKeyword.TRUE);
-					if ( zFightWanted ) {
-						String prefs = zFightDefault ? "(enabled by default in the Preferences)" : "";
-						d.info(
-							"z_fighting " + prefs +
-								" improves the rendering, but disables the selection of a single cell in a grid layer",
-							IGamlIssue.GENERAL, zfight == null ? null : zfight.getTarget(), IKeyword.AUTOSAVE);
-					}
 				}
 			}
 

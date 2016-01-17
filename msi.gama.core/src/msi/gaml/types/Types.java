@@ -30,7 +30,7 @@ public class Types {
 	public final static TypesManager builtInTypes = new TypesManager(null);
 
 	public final static IType NO_TYPE = new GamaNoType();
-	public static IType INT, FLOAT, BOOL, COLOR, STRING, POINT, GEOMETRY, TOPOLOGY, AGENT, PATH, FONT, SKILL;
+	public static IType INT, FLOAT, BOOL, COLOR, STRING, POINT, GEOMETRY, TOPOLOGY, AGENT, PATH, FONT, SKILL, DATE;
 	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
 
 	public static void cache(final int id, final IType instance) {
@@ -46,6 +46,9 @@ public class Types {
 				break;
 			case IType.COLOR:
 				COLOR = instance;
+				break;
+			case IType.DATE:
+				DATE = instance;
 				break;
 			case IType.STRING:
 				STRING = instance;
@@ -110,6 +113,8 @@ public class Types {
 				return BOOL;
 			case IType.COLOR:
 				return COLOR;
+			case IType.DATE:
+				return DATE;
 			case IType.STRING:
 				return STRING;
 			case IType.POINT:

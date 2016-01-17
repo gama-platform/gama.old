@@ -2,7 +2,7 @@
 * Name: ESRI ASCII to grid model
 * Author:  Patrick Taillandier
 * Description: Model which shows how to initialize a grid using a ESRI ASCII file
-* Tag : Grid, Import Files
+* Tags : : Grid, Import Files
 */
 
 model ascimport

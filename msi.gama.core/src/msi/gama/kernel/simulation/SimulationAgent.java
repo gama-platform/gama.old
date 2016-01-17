@@ -13,17 +13,35 @@ package msi.gama.kernel.simulation;
 
 import java.util.Map;
 import java.util.Map.Entry;
+
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.AbstractGui;
-import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.AgentScheduler;
+import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.population.*;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.projection.*;
-import msi.gama.outputs.*;
-import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.runtime.*;
+import msi.gama.metamodel.population.GamaPopulation;
+import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.SimulationPopulation;
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.metamodel.topology.projection.WorldProjection;
+import msi.gama.outputs.IOutput;
+import msi.gama.outputs.IOutputManager;
+import msi.gama.outputs.SimulationOutputManager;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.setter;
+import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaDate;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -62,7 +80,15 @@ import msi.gaml.types.IType;
 	@var(name = SimulationAgent.MACHINE_TIME,
 		type = IType.FLOAT,
 		doc = @doc(value = "Returns the current system time in milliseconds",
-			comment = "The return value is a float number") ), })
+			comment = "The return value is a float number") ),
+	@var(name = SimulationAgent.CURRENT_DATE,
+		type = IType.DATE,
+		doc = @doc(value = "Returns the current date in the simulation",
+			comment = "The return value is a date; the starting_date have to be initialized to use this attribute") ),
+	@var(name = SimulationAgent.STARTING_DATE,
+			type = IType.DATE,
+			doc = @doc(value = "Represents the starting date of the simulation",
+				comment = "It is required to intiliaze this value to be able to use the current_date attribute") ),})
 public class SimulationAgent extends GamlAgent {
 
 	public static final String DURATION = "duration";
@@ -71,6 +97,8 @@ public class SimulationAgent extends GamlAgent {
 	public static final String AVERAGE_DURATION = "average_duration";
 	public static final String CYCLE = "cycle";
 	public static final String TIME = "time";
+	public static final String CURRENT_DATE = "current_date";
+	public static final String STARTING_DATE = "starting_date";
 
 	final SimulationClock clock;
 	AgentScheduler scheduler;
@@ -78,7 +106,7 @@ public class SimulationAgent extends GamlAgent {
 	IOutputManager outputs;
 	ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
-
+	
 	public Boolean getScheduled() {
 		return scheduled;
 	}
@@ -276,6 +304,7 @@ public class SimulationAgent extends GamlAgent {
 		final SimulationClock clock = getClock();
 		if ( clock != null ) {
 			clock.setStep(t);
+			
 		}
 	}
 
@@ -317,6 +346,26 @@ public class SimulationAgent extends GamlAgent {
 	@setter(MACHINE_TIME)
 	public void setMachineTime(final Double t) throws GamaRuntimeException {
 		// NOTHING
+	}
+
+	@setter(CURRENT_DATE)
+	public void setCurrentDate(final GamaDate d) throws GamaRuntimeException {
+		clock.setCurrentDate(d);
+	}
+	
+	@getter(CURRENT_DATE)
+	public GamaDate getCurrentDate() {
+		return clock.getCurrentDate();
+	}
+	
+	@setter(STARTING_DATE)
+	public void setSTartingDate(final GamaDate d) throws GamaRuntimeException {
+		clock.setStartingDate(d);
+	}
+	
+	@getter(STARTING_DATE)
+	public GamaDate getStartingDate() {
+		return clock.getStartingDate();
 	}
 
 	@action(name = "pause",

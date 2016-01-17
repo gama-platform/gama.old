@@ -2,7 +2,7 @@
 * Name: OBJ File to Geometry
 * Author:  Arnaud Grignard
 * Description: Model which shows how to use a OBJ, SVG or 3DS File to create a geometry
-* Tag :  Import Files, 3D Display
+* Tags : :  Import Files, 3D Display
 */
 
 
