@@ -239,7 +239,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 	@Override
 	public Map<String, Runnable> handleMenu(final GamaRuntimeException item, final int x, final int y) {
 		Map<String, Runnable> result = new HashMap();
-		result.put("Copy", new Runnable() {
+		result.put("Copy text", new Runnable() {
 
 			@Override
 			public void run() {
@@ -247,6 +247,13 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 				String data = item.getAllText();
 				clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
 				clipboard.dispose();
+			}
+		});
+		result.put("Show in editor", new Runnable() {
+
+			@Override
+			public void run() {
+				gotoEditor(item);
 			}
 		});
 		return result;

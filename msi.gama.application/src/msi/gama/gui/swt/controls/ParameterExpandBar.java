@@ -532,8 +532,9 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 					return;
 				} else {
 					Menu menu = new Menu(getShell(), SWT.POP_UP);
-					MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
+
 					for ( final Map.Entry<String, Runnable> entry : menuContents.entrySet() ) {
+						MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 						menuItem.setText(entry.getKey());
 						menuItem.addListener(SWT.Selection, new Listener() {
 
