@@ -151,23 +151,7 @@ public class JTSDrawer {
 		final boolean isTextured, final GeometryObject object, /* final Integer angle, */
 		final boolean drawPolygonContour, final boolean rounded, final double z_fighting_value, final int norm_dir) {
 		GL2 gl = GLContext.getCurrentGL().getGL2();
-		if ( bigPolygonDecomposition && p.getNumPoints() > nbPtsForDecomp ) {
-			List<IShape> shapes = GeometryUtils.geometryDecomposition(new GamaShape(p), 2, 2);
-			for ( IShape shp : shapes ) {
-				if ( shp.getInnerGeometry().getNumGeometries() > 1 ) {
-					for ( int i = 0; i < shp.getInnerGeometry().getNumGeometries(); i++ ) {
-						DrawPolygon((Polygon) shp.getInnerGeometry().getGeometryN(i), c, alpha, fill, border,
-							isTextured, object, drawPolygonContour, rounded, z_fighting_value, norm_dir);
-					}
 
-				} else {
-					DrawPolygon((Polygon) shp.getInnerGeometry(), c, alpha, fill, border, isTextured, object,
-						drawPolygonContour, rounded, z_fighting_value, norm_dir);
-				}
-			}
-			return;
-
-		}
 		// calculate the normal vectors for each of the polygonal facets and then average the normal
 		if ( renderer.getComputeNormal() ) {
 			Vertex[] vertices = getExteriorRingVertices(p);
@@ -185,23 +169,10 @@ public class JTSDrawer {
 				if ( rounded == true ) {
 					drawRoundRectangle(p);
 				} else {
-					// if ( renderer.data.isTesselation() ) {
-					// DrawTesselatedPolygon(p, norm_dir, c, alpha);
-					// gl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
-					// if ( drawPolygonContour == true ) {
-					// DrawPolygonContour(p, border, alpha, z_fighting_value);
-					// }
-					// }
-					// use JTS triangulation on simplified geometry (DouglasPeucker)
-					// FIXME: not working with a z_layer value!!!!
-					// else {
-					// AD 21/5 Use of tesselaton everywhere works better than JTS triangulation (see Issue 1130)
 					DrawTesselatedPolygon(p, norm_dir, c, alpha);
-					// drawTriangulatedPolygon(p, useJTSForTriangulation, null);
 					gl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
 					if ( drawPolygonContour == true ) {
 						DrawPolygonContour(p, border, alpha, z_fighting_value);
-						// }
 					}
 				}
 			}
