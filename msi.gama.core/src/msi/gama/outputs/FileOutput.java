@@ -265,6 +265,10 @@ public class FileOutput extends AbstractOutput {
 		}
 	}
 
+	public File getFile() {
+		return file;
+	}
+
 	public void refreshExpression() throws GamaRuntimeException {
 		// in case the file writer persists over different simulations (like in the batch)
 		data = GAML.getExpressionFactory().createExpr(expressionText, GAML.getModelContext());

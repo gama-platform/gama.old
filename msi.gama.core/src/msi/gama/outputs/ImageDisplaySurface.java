@@ -158,8 +158,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private void paint() {
 		if ( buffImage == null ) {
 			createBuffImage();
-			drawAllDisplays();
 		}
+		drawAllDisplays();
+		
 	}
 
 	@Override
