@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.util;
 
+import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
 import org.joda.time.PeriodType;
 import org.joda.time.format.DateTimeFormatter;
@@ -53,8 +54,7 @@ import msi.gaml.types.Types;
 		doc = { @doc("Returns the year") })})
 public class GamaDate extends MutableDateTime implements IValue {
 
-	DateTimeFormatter formatter = ISODateTimeFormat.basicDateTime();
-	PeriodType type = PeriodType.yearMonthDayTime();
+	static DateTimeFormatter formatter = ISODateTimeFormat.basicDateTime();
 	
 	public GamaDate() {
 		super();
@@ -65,8 +65,12 @@ public class GamaDate extends MutableDateTime implements IValue {
 		super(d);
 	}
 	
+	public GamaDate(DateTime d) {
+		super(d);
+	}
+	
 	public GamaDate(String dateStr) {
-		super(dateStr);
+		this(formatter.parseDateTime(dateStr));
 	}
 
 	public GamaDate(int second, int minute, int hour, int day, int month, int year) {
