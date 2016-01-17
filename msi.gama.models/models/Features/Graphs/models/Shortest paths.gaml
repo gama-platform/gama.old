@@ -3,7 +3,7 @@
 * Author: Patrick Taillandier
 * Description: This model shows how get the shortest path from one point to another on a graph. The experiment proposes two displays :
 * 	one to show the shortest path, an other to show the first k shortest paths. 
-* Tag : Graph, Import Files
+* Tags : : Graph, Import Files
 */
 
 model ShortestPath
