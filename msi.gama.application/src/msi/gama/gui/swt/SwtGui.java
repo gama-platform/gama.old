@@ -320,7 +320,7 @@ public class SwtGui extends AbstractGui {
 			@Override
 			public void run() {
 				v.clearErrors();
-				v.close();
+				// v.close();
 			}
 		});
 	}

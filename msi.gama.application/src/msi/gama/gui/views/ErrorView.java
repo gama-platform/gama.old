@@ -228,7 +228,12 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 
 	public void clearErrors() {
 		this.reset();
-		exceptions.clear();
+		for ( GamaRuntimeException exception : new ArrayList<GamaRuntimeException>(exceptions) ) {
+			if ( exception.isInvalid() ) {
+				exceptions.remove(exception);
+			}
+		}
+		// exceptions.clear();
 		displayItems();
 	}
 
