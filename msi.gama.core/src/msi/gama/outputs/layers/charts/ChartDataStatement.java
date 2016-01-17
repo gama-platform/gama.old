@@ -61,7 +61,7 @@ public class ChartDataStatement extends AbstractStatement {
 	public static final String LINE_VISIBLE = "line_visible";
 	public static final String MARKER_EMPTY = "marker_empty";
 	public static final String MARKER_SQUARE = "marker_sqaure";
-	public static final String MARKER_CIRCLE = "marker_square";
+	public static final String MARKER_CIRCLE = "marker_circle";
 	public static final String MARKER_UP_TRIANGLE = "marker_up_triangle";
 	public static final String MARKER_DIAMOND = "marker_diamond";
 	public static final String MARKER_HOR_RECTANGLE = "marker_hor_rectangle";

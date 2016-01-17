@@ -2,11 +2,13 @@ package msi.gama.outputs.layers.charts;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.outputs.layers.charts.ChartJFreeChartOutputScatter.myXYErrorRenderer;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -18,12 +20,15 @@ import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.AbstractRenderer;
+import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
 import org.jfree.ui.RectangleInsets;
 
 public class ChartJFreeChartOutput extends ChartOutput {
 
+	public static final Shape[] defaultmarkers = org.jfree.chart.plot.DefaultDrawingSupplier
+			.createStandardSeriesShapes();
 
 	
 	
@@ -31,6 +36,7 @@ public class ChartJFreeChartOutput extends ChartOutput {
 	 JFreeChart chart = null;
 	 AbstractRenderer defaultrenderer;
 	 HashMap<String,Integer> IdPosition=new HashMap<String,Integer>(); //serie id-nb for arraylists/table requirements
+	 HashMap<String,AbstractRenderer> RendererSet=new HashMap<String,AbstractRenderer>(); //one renderer for each serie
 
 		public ChartJFreeChartOutput(final IScope scope,String name,IExpression typeexp)
 		{
@@ -92,6 +98,10 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		return chart.createBufferedImage(sizex, sizey);
 	}
 	
+	protected void initRenderer(IScope scope) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	public void initChart(IScope scope, String chartname)
 	{
@@ -141,10 +151,26 @@ public class ChartJFreeChartOutput extends ChartOutput {
 
 	}
 	
+	AbstractRenderer getOrCreateRenderer(IScope scope, String serieid)
+	{
+		if (RendererSet.containsKey(serieid))
+		{
+			return RendererSet.get(serieid);
+		}
+		else
+		{
+			AbstractRenderer newrenderer=createRenderer(scope,serieid);
+			RendererSet.put(serieid, newrenderer);
+			return newrenderer;
+		}
+		
+	}
+
 
 	
-	protected void initRenderer(IScope scope) {
+	protected AbstractRenderer createRenderer(IScope scope,String serieid) {
 		// TODO Auto-generated method stub
+		return new XYErrorRenderer();
 		
 	}
 

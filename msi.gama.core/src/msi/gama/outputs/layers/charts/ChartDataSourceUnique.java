@@ -52,6 +52,7 @@ public class ChartDataSourceUnique extends ChartDataSource {
 	public void setMarkerShape(IScope scope, String stval) {
 		// TODO Auto-generated method stub
 		markerName=stval;
+		this.getDataset().getOutput().setSerieMarkerShape(scope,this.getName(),stval);
 	}
 	
 	

@@ -280,4 +280,9 @@ public abstract class ChartOutput {
 		return null;
 	}
 
+	public void setSerieMarkerShape(IScope scope, String serieid, String markershape) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
