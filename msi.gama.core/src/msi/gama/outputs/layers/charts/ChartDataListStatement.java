@@ -9,14 +9,12 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.outputs.layers;
+package msi.gama.outputs.layers.charts;
 
 import java.util.ArrayList;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.common.util.AbstractGui;
-import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -58,10 +56,7 @@ import org.jfree.chart.renderer.xy.*;
 public class ChartDataListStatement extends AbstractStatement {	
 
 	public static final String DATALISTS = "datalist";
-//	public static final String UPDATEDATA = "updatedata";
-//	public static final String REVERSEDATA = "reversedata";
 	public static final String CATEGNAMES = "categoriesnames";
-//	public static final String SERIESNAMES = "seriesnames";
 	public static final String REVERSECATEG= "inverse_series_categories";
 //	protected int dataNumber = 0;
 	
@@ -90,33 +85,11 @@ public class ChartDataListStatement extends AbstractStatement {
 	 * @param scope
 	 */
 	
-	public static ChartData newChartData(final IScope scope, AbstractRenderer style, String name, GamaColor color, Object value)
-	{
-		ChartData data = new ChartData();
-
-		data.renderer = style;
-
-		data.name =
-			Cast.asString(scope,name);
-		data.color = Cast.asColor(scope, color);
-		// in order to "detach" the expression from the current definition scope
-		data.lastvalue=value;
-		data.value=null;
-//		data.lastvalue =(IVariable) value;
-		return data;
-		
-	}
 	
 	public  ChartDataList createData(final IScope scope) throws GamaRuntimeException {
 		ChartDataList datalist=new ChartDataList();
 		
 
-//		scope.addVarWithValue(ChartDataListStatement.UPDATEDATA, new Boolean(true));
-//		scope.addVarWithValue(ChartDataListStatement.REVERSEDATA, new Boolean(reverse));
-//		for (int i=0; i<values.size(); i++)
-//		{
-//			((ArrayList) scope.getVarValue(ChartDataStatement.DATAS)).add(values.get(i));			
-//		}
 		IExpression valexp=getFacet(IKeyword.VALUE);
 		datalist.valuelistexp=valexp;
 		Boolean reverse= Cast.asBool(scope, getFacetValue(scope, "inverse_series_categories",false));
@@ -141,64 +114,6 @@ public class ChartDataListStatement extends AbstractStatement {
 //			scope.addVarWithValue(ChartDataListStatement.SERIESNAMES, serexp);
 		}
 
-/*		Object val=valexp.resolveAgainst(scope).value(scope);
-		if (!(val instanceof GamaList))
-		{
-			scope.getGui().debug("chart list with no list...");
-			return datalist;
-		}
-		
-		IList values = Cast.asList(scope,val);
-		GamaList defaultnames=new GamaList<String>();
-		GamaList defaultcolors=new GamaList<GamaColor>();
-		for (int i=0; i<values.size();i++)
-		{
-			defaultnames.add("data"+i);
-			if (i<10)
-			{
-				if (i==0) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.CYAN));
-				if (i==1) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.RED));
-				if (i==2) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.YELLOW));
-				if (i==3) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.GREEN));
-				if (i==4) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.BLUE));
-				if (i==5) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.PINK));
-				if (i==6) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.MAGENTA));
-				if (i==7) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.ORANGE));
-				if (i==8) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.LIGHT_GRAY));
-				if (i==9) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.DARK_GRAY));
-			}
-			if (i>=10)
-			if (i<GamaColor.colors.size())
-				defaultcolors.add(GamaColor.int_colors.values().toArray()[i]);
-			else
-				defaultcolors.add(GamaColor.getInt(Random.opRnd(scope, 10000)));				
-			
-		}
-		IList colors=defaultcolors;
-
-		boolean dynamicseriesnames=false;
-		GamaList seriesnames=defaultnames;
-		
-		IExpression serievalue=(IExpression) scope.getVarValue(ChartDataListStatement.SERIESNAMES);
-		
-		if (serievalue!=null)
-		{
-		Object valc=serievalue.resolveAgainst(scope).value(scope);
-		if ((valc instanceof GamaList))
-		{
-			dynamicseriesnames=true;
-			seriesnames=(GamaList)valc;
-			for (int i=0; i<Math.min(values.size(),seriesnames.size());i++)
-			{
-				defaultnames.set(i,seriesnames.get(i)+"("+i+")");
-			}
-		}
-		}
-//		scope.getGui().debug("dyncateg:"+defaultnames);
-		
-//		names = Cast.asList(scope, getFacetValue(scope, IKeyword.LEGEND,getFacetValue(scope, IKeyword.NAME,defaultnames)));
-		colors = Cast.asList(scope, getFacetValue(scope, IKeyword.COLOR,defaultcolors));
-*/
 
 		boolean showMarkers = getFacetValue(scope, ChartDataStatement.MARKER, true);
 		boolean showLine = getFacetValue(scope, ChartDataStatement.LINE_VISIBLE, true);
@@ -245,17 +160,7 @@ public class ChartDataListStatement extends AbstractStatement {
 		((ArrayList) scope.getVarValue(DATALISTS)).add(data);
 		return data;
 
-//		ChartDataList values = createData(scope);
-//		IExpression valexp=getFacet(IKeyword.VALUE);
-//		Boolean reverse= Cast.asBool(scope, getFacetValue(scope, "inverse_series_categories",false));
-//		scope.addVarWithValue(ChartDataListStatement.DATALIST, valexp);
-//		scope.addVarWithValue(ChartDataListStatement.UPDATEDATA, new Boolean(true));
-//		scope.addVarWithValue(ChartDataListStatement.REVERSEDATA, new Boolean(reverse));
-//		for (int i=0; i<values.size(); i++)
-//		{
-//			((ArrayList) scope.getVarValue(ChartDataStatement.DATAS)).add(values.get(i));			
-//		}
-//		return valexp;
+
 	}
 
 }

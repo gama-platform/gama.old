@@ -9,11 +9,15 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.outputs.layers;
+package msi.gama.outputs.layers.charts;
 
 import java.awt.image.BufferedImage;
+
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.outputs.layers.AbstractLayer;
+import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
+
 import org.jfree.chart.JFreeChart;
 
 /**
@@ -28,8 +32,12 @@ public class ChartLayer extends AbstractLayer {
 		super(model);
 	}
 
-	private JFreeChart getChart() {
-		return ((ChartLayerStatement) definition).getChart();
+//	private JFreeChart getChart() {
+//		return ((ChartLayerStatement) definition).getChart();
+//	}
+
+	private ChartOutput getChart() {
+	return ((ChartLayerStatement) definition).getOutput();
 	}
 
 	@Override
@@ -39,7 +47,7 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		BufferedImage im = getChart().createBufferedImage(getSizeInPixels().x, getSizeInPixels().y);
+		BufferedImage im = getChart().getImage(getSizeInPixels().x, getSizeInPixels().y);
 		dg.drawChart(scope, im, 0.0);
 	}
 
