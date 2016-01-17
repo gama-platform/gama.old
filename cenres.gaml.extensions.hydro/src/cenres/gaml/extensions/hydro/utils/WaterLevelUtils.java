@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * The class GamaGeometryUtils.
  * 
  * @author drogoul
- * @since 14 d�c. 2011
+ * @since 14 dec. 2011
  * 
  */
 public class WaterLevelUtils {
