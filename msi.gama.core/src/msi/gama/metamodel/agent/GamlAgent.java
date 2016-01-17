@@ -300,13 +300,16 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		final IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
 		final IList<IAgent> immigrants = GamaListFactory.create(Types.AGENT);
-		final Iterator<IAgent> it = oldMicroPop.iterator();
-		while (it.hasNext()) {
-			final IAgent m = it.next();
+		//final Iterator<IAgent> it = oldMicroPop.iterator();
+		while(!oldMicroPop.isEmpty()) {
+		//while (it.hasNext()) {
+			IAgent m = oldMicroPop.get(0);
 			final SavedAgent savedMicro = new SavedAgent(scope, m);
 			m.dispose();
 			immigrants.add(savedMicro.restoreTo(scope, newMicroPop));
+			
 		}
+		
 
 		return immigrants;
 	}
