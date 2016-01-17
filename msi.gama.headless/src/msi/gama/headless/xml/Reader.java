@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Vector;
 
@@ -40,8 +41,22 @@ public class Reader {
 
 	public String fileName;
 	public InputStream myStream;
-	Vector<ExperimentJob> sims;
+	ArrayList<ExperimentJob> sims;
 	
+	public void dispose()
+	{
+		this.fileName = null;
+		try {
+			this.myStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		myStream=null;
+		sims.clear();
+		sims= null;
+		
+	}
 	public Reader(String file) throws FileNotFoundException
 	{
 		fileName = file;
@@ -143,9 +158,9 @@ public class Reader {
 	}
 
 	
-	private Vector<ExperimentJob> readSimulation(Document dom)
+	private ArrayList<ExperimentJob> readSimulation(Document dom)
 	{
-		Vector<ExperimentJob> res=new Vector<ExperimentJob>();
+		ArrayList<ExperimentJob> res=new ArrayList<ExperimentJob>();
 		Element docEle = dom.getDocumentElement();
 		NodeList nl = dom.getElementsByTagName("Simulation");
 		if(nl != null && nl.getLength() > 0) {

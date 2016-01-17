@@ -6,7 +6,9 @@ public interface SimulationRuntime {
 	public int UNDEFINED_QUEUE_SIZE = -1;
 	
 	public void pushSimulation(ExperimentJob s);
-	public void closeSimulation(FakeApplication s);
+	public boolean isTraceKept();
+	public void keepTrace(boolean t);
+	//public void closeSimulation(ExperimentJob s);
 	public SimulationState getSimulationState(String id);
 	public boolean isPerformingSimulation();
 	
