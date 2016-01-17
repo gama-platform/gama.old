@@ -11,11 +11,10 @@
  **********************************************************************************************/
 package msi.gama.util;
 
+import java.util.regex.Pattern;
+
 import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
-import org.joda.time.PeriodType;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -25,6 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -54,11 +54,9 @@ import msi.gaml.types.Types;
 		doc = { @doc("Returns the year") })})
 public class GamaDate extends MutableDateTime implements IValue {
 
-	static DateTimeFormatter formatter = ISODateTimeFormat.basicDateTime();
 	
 	public GamaDate() {
 		super();
-		
 	}
 	
 	public GamaDate(MutableDateTime d) {
@@ -70,7 +68,7 @@ public class GamaDate extends MutableDateTime implements IValue {
 	}
 	
 	public GamaDate(String dateStr) {
-		this(formatter.parseDateTime(dateStr));
+		this(Strings.getSystemDateTimeFormat().parseDateTime(dateStr));
 	}
 
 	public GamaDate(int second, int minute, int hour, int day, int month, int year) {
@@ -119,17 +117,17 @@ public class GamaDate extends MutableDateTime implements IValue {
 	
 	@Override
 	public String toString() {
-		return toString(formatter);
+		return Strings.asDate(this).replace("T", " ").split(Pattern.quote("+"))[0];
 	}
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "date (" + toString(formatter)+ ")";
+		return "date (" +Strings.asDate(this)+ ")";
 	}
 
 	@Override
 	public String stringValue(final IScope scope) {
-		return toString(formatter);
+		return Strings.asDate(this);
 	}
 
 	
