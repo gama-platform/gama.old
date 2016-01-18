@@ -602,6 +602,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// We simply return a multiplication, since the right member (the "unit") will be
 		// translated into its float value
 
+		// Case of dates: #month and #year
+		String name = EGaml.toString(object.getRight());
+		if ( "month".equals(name) || "year".equals(name) ) {
+			if ( getContext().getModelDescription().isStartingDateDefined() ) {
+				getContext().warning(
+					"Your model uses a starting date. In that case, the usage of #month or #year is discouraged as these units will not represent realistic durations",
+					IGamlIssue.DEPRECATED, object);
+			}
+		}
 		// AD: Hack to address Issue 387. If the unit is a pixel, we add +1 to the whole expression.
 		IExpression right = compile(object.getRight());
 		IExpression result = binary("*", object.getLeft(), object.getRight());

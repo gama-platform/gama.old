@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.emf.ecore.EObject;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
 import msi.gaml.factories.ChildrenProvider;
@@ -47,6 +48,7 @@ public class ModelDescription extends SpeciesDescription {
 	// hqnghi new attribute manipulate micro-models
 	private Map<String, ModelDescription> MICRO_MODELS = new TOrderedHashMap<String, ModelDescription>();
 	private String alias = "";
+	boolean isStartingDateDefined = false;
 
 	public void setMicroModels(final Map<String, ModelDescription> mm) {
 		MICRO_MODELS = mm;
@@ -231,6 +233,9 @@ public class ModelDescription extends SpeciesDescription {
 	@Override
 	public IDescription addChild(final IDescription child) {
 
+		if ( !child.isBuiltIn() && child.getName().equals(SimulationAgent.STARTING_DATE) ) {
+			isStartingDateDefined = true;
+		}
 		if ( child instanceof ExperimentDescription ) {
 			String s = child.getName();
 			experiments.put(s, (ExperimentDescription) child);
@@ -251,6 +256,10 @@ public class ModelDescription extends SpeciesDescription {
 		}
 
 		return child;
+	}
+
+	public boolean isStartingDateDefined() {
+		return isStartingDateDefined;
 	}
 
 	public boolean hasExperiment(final String name) {
