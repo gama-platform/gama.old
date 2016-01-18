@@ -151,8 +151,4 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public boolean hasTextures() {
 		return textures != null && textures.length > 1;
 	}
-
-	public boolean isPie3D() {
-		return false;
-	}
 }

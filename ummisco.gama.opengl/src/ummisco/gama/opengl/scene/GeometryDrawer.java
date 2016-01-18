@@ -30,20 +30,14 @@ import com.vividsolutions.jts.geom.*;
 public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	JTSDrawer jtsDrawer;
-	Pie3DDrawer pieDrawer;
 
 	public GeometryDrawer(final JOGLRenderer r) {
 		super(r);
 		jtsDrawer = new JTSDrawer(r);
-		pieDrawer = new Pie3DDrawer(r);
 	}
 
 	@Override
 	protected void _draw(final GL2 gl, final GeometryObject geometry) {
-		if ( geometry.isPie3D() ) {
-			pieDrawer._draw((Pie3DObject) geometry);
-
-		} else {
 			if(geometry.rotate3D != null){
 				gl.glTranslated(geometry.agent.getLocation().getX(), -geometry.agent.getLocation().getY(), geometry.agent.getLocation().getZ());
 				gl.glRotatef(geometry.rotate3D.key.floatValue() , (float) geometry.rotate3D.value.x, (float) geometry.rotate3D.value.y, (float) geometry.rotate3D.value.z);	
@@ -83,8 +77,10 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				case BOX:
 				case CYLINDER:
 				case GRIDLINE:
-					if(geometry.asset3Dmodel != null){
+					if(geometry.asset3Dmodel != null){			
+						gl.glTranslated(geometry.agent.getLocation().getX(), -geometry.agent.getLocation().getY(), geometry.agent.getLocation().getZ());
 						geometry.asset3Dmodel.draw(gl);
+						gl.glTranslated(-geometry.agent.getLocation().getX(), geometry.agent.getLocation().getY(), -geometry.agent.getLocation().getZ());
 					}
 					else{
 						if ( geometry.height > 0 ) {
@@ -138,6 +134,5 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 					}
 
 			}
-		}
 	}
 }
