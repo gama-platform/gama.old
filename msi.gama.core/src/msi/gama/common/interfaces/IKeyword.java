@@ -258,6 +258,7 @@ public interface IKeyword {
 	public static final String MYSELF = "myself";
 	public static final String NAME = "name";
 	public static final String NEIGHBOURS = "neighbours";
+	public static final String NEIGHBORS = "neighbors";
 	public static final String NODE = "node";
 	public static final String NULL = "nil";
 	public static final String NUMBER = "number";

@@ -52,6 +52,10 @@ import msi.gaml.types.*;
 		@facet(name = IKeyword.NEIGHBOURS,
 			type = IType.INT,
 			optional = true,
+			doc = @doc(value = "(grid only), the chosen neighbourhood (4, 6 or 8)" , deprecated="use neighbors instead")),
+		@facet(name = IKeyword.NEIGHBORS,
+			type = IType.INT,
+			optional = true,
 			doc = @doc("(grid only), the chosen neighbourhood (4, 6 or 8)") ),
 		@facet(name = "use_individual_shapes",
 			type = IType.BOOL,
@@ -159,7 +163,14 @@ public class GamlSpecies extends AbstractSpecies {
 					cellWidth == null ? CELL_HEIGHT : CELL_WIDTH);
 				return;
 			}
+			IExpression neighbours = desc.getFacets().getExpr(IKeyword.NEIGHBOURS);
+			IExpression neighbors = desc.getFacets().getExpr(IKeyword.NEIGHBORS);
 
+			if ( neighbours != null && neighbors != null ) {
+				sd.error("'neighbours' and 'neighbors' cannot be defined at the same time", IGamlIssue.CONFLICTING_FACETS,
+						NEIGHBORS);
+				return;
+			}
 			// Issue 1311
 			if ( cellWidth != null && width != null ) {
 				sd.error("'cell_width' and 'width' cannot be defined at the same time", IGamlIssue.CONFLICTING_FACETS,

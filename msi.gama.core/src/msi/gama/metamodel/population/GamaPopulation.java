@@ -458,7 +458,9 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet("use_neighbours_cache");
 		final boolean useNeighboursCache = exp == null || Cast.asBool(scope, exp.value(scope));
-		exp = species.getFacet(IKeyword.NEIGHBOURS);
+		exp = species.getFacet(IKeyword.NEIGHBORS);
+		if (exp == null) 
+			exp = species.getFacet(IKeyword.NEIGHBOURS);
 		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
 		exp = species.getFacet(IKeyword.FILE);

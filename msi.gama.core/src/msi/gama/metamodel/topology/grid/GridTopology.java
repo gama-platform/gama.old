@@ -11,26 +11,29 @@
  **********************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
-import java.util.*;
-
-import org.eclipse.core.runtime.dynamichelpers.IFilter;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.*;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.AbstractTopology;
+import msi.gama.metamodel.topology.ISpatialIndex;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.filter.DifferentList;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.path.GamaSpatialPath;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.Types;
 
 public class GridTopology extends AbstractTopology {
 
