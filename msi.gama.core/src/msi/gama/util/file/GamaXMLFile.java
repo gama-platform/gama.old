@@ -1,30 +1,30 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaXMLFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.file;
 
 import java.io.*;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Class GamaXMLFile.
  * TODO: Everything ! What kind of buffer should be returned from here ?
  * @author drogoul
  * @since 9 janv. 2014
- * 
+ *
  */
 @file(name = "xml", extensions = "xml")
 public class GamaXMLFile extends GamaFile {
@@ -78,7 +78,7 @@ public class GamaXMLFile extends GamaFile {
 			in.close();
 			setBuffer(allLines);
 		} catch (final IOException e) {
-			throw GamaRuntimeException.create(e);
+			throw GamaRuntimeException.create(e, scope);
 		}
 	}
 

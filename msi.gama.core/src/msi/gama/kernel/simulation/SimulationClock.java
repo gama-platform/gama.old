@@ -84,12 +84,10 @@ public class SimulationClock {
 	 * Whether to display the number of cycles or a more readable information (in model time)
 	 */
 	private boolean displayCycles = true;
-	
 
 	private GamaDate current_date = null;
-	
-	private GamaDate starting_date = null;
 
+	private GamaDate starting_date = null;
 
 	private final SimulationAgent simulation;
 
@@ -106,7 +104,8 @@ public class SimulationClock {
 	// FIXME Make setCycle() or incrementCycle() advance the other variables as well, so as to allow writing
 	// "cycle <- cycle + 1" in GAML and have the correct information computed.
 	private void setCycle(final int i) throws GamaRuntimeException {
-		if ( i < 0 ) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative"); }
+		if ( i < 0 ) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative",
+			simulation.getScope()); }
 
 		cycle = i;
 	}
@@ -135,7 +134,8 @@ public class SimulationClock {
 	 * @param i a positive double
 	 */
 	public void setTime(final double i) throws GamaRuntimeException {
-		if ( i < 0 ) { throw GamaRuntimeException.error("The current time of a simulation cannot be negative"); }
+		if ( i < 0 ) { throw GamaRuntimeException.error("The current time of a simulation cannot be negative",
+			simulation.getScope()); }
 		time = i;
 	}
 
@@ -159,7 +159,7 @@ public class SimulationClock {
 
 	public void setStep(final double i) throws GamaRuntimeException {
 		if ( i < 0 ) { throw GamaRuntimeException
-			.error("The interval between two cycles of a simulation cannot be negative"); }
+			.error("The interval between two cycles of a simulation cannot be negative", simulation.getScope()); }
 		step = i <= 0 ? 1 : i;
 	}
 
@@ -214,7 +214,9 @@ public class SimulationClock {
 	public void step(final IScope scope) {
 		setCycle(cycle + 1);
 		setTime(time + step);
-		if (current_date != null) current_date.addSeconds((int)step);
+		if ( current_date != null ) {
+			current_date.addSeconds((int) step);
+		}
 		computeDuration();
 		waitDelay();
 	}
@@ -265,8 +267,8 @@ public class SimulationClock {
 
 	public String getInfo() {
 		int cycle = getCycle();
-		String info =
-			displayCycles ? "" + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed" : (starting_date == null ? Strings.asDate(time, null) : current_date.toString());
+		String info = displayCycles ? "" + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed"
+			: starting_date == null ? Strings.asDate(time, null) : current_date.toString();
 		return info;
 	}
 
@@ -299,7 +301,7 @@ public class SimulationClock {
 		return current_date;
 	}
 
-	public void setCurrentDate(GamaDate date) {
+	public void setCurrentDate(final GamaDate date) {
 		this.current_date = date;
 	}
 
@@ -307,12 +309,10 @@ public class SimulationClock {
 		return starting_date;
 	}
 
-	public void setStartingDate(GamaDate starting_date) {
-		setCurrentDate((GamaDate) Types.DATE.cast(null, starting_date, null, true)); 
+	public void setStartingDate(final GamaDate starting_date) {
+		setCurrentDate((GamaDate) Types.DATE.cast(null, starting_date, null, true));
 		this.starting_date = starting_date;
 	}
-	
-	
 
 	// public void setDelayFromUI(final double newDelayInMilliseconds) {
 	// if ( simulation == null ) { return; }
@@ -324,7 +324,5 @@ public class SimulationClock {
 	// currentCycleDelay = newDelayInSeconds;
 	//
 	// }
-	
-	
 
 }

@@ -187,9 +187,9 @@ public class Graphs {
 		examples = { @example("graph graphFromMap<-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 			@example(value = "graphFromMap contains_vertex {1,5}", equals = "true") },
 		see = { "contains_edge" })
-	public static Boolean containsVertex(final GamaGraph graph, final Object vertex) {
+	public static Boolean containsVertex(final IScope scope, final GamaGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the contains_vertex operator, the graph should not be null!"); }
+			.error("In the contains_vertex operator, the graph should not be null!", scope); }
 		return graph.containsVertex(vertex);
 	}
 
@@ -201,9 +201,9 @@ public class Graphs {
 		examples = { @example("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 			@example(value = "graphFromMap contains_edge link({1,5}::{12,45})", equals = "true") },
 		see = { "contains_vertex" })
-	public static Boolean containsEdge(final IGraph graph, final Object edge) {
+	public static Boolean containsEdge(final IScope scope, final IGraph graph, final Object edge) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the contains_edge operator, the graph should not be null!"); }
+			.error("In the contains_edge operator, the graph should not be null!", scope); }
 		return graph.containsEdge(edge);
 	}
 
@@ -217,9 +217,9 @@ public class Graphs {
 				@example(value = "graphEpidemio contains_edge (node(0)::node(3))",
 					equals = "true",
 					isExecutable = false) }) )
-	public static Boolean containsEdge(final IGraph graph, final GamaPair edge) {
+	public static Boolean containsEdge(final IScope scope, final IGraph graph, final GamaPair edge) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the contains_edge operator, the graph should not be null!"); }
+			.error("In the contains_edge operator, the graph should not be null!", scope); }
 		return graph.containsEdge(edge.first(), edge.last());
 	}
 
@@ -237,9 +237,9 @@ public class Graphs {
 				returnType = IKeyword.POINT,
 				equals = "{1,5}") },
 		see = { "target_of" })
-	public static Object sourceOf(final IGraph graph, final Object edge) {
+	public static Object sourceOf(final IScope scope, final IGraph graph, final Object edge) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the source_of operator, the graph should not be null!"); }
+			.error("In the source_of operator, the graph should not be null!", scope); }
 		if ( graph.containsEdge(edge) ) { return graph.getEdgeSource(edge); }
 		return null;
 	}
@@ -256,9 +256,9 @@ public class Graphs {
 			@example("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 			@example(value = "graphFromMap target_of(link({1,5}::{12,45}))", equals = "{12,45}") },
 		see = "source_of")
-	public static Object targetOf(final IGraph graph, final Object edge) {
+	public static Object targetOf(final IScope scope, final IGraph graph, final Object edge) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the target_of operator, the graph should not be null!"); }
+			.error("In the target_of operator, the graph should not be null!", scope); }
 		if ( graph.containsEdge(edge) ) { return graph.getEdgeTarget(edge); }
 		return null;
 	}
@@ -272,9 +272,9 @@ public class Graphs {
 			@usage("if the right-hand operand is neither a node, nor an edge, returns 1.") },
 		examples = { @example("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 			@example(value = "graphFromMap weight_of(link({1,5}::{12,45}))", equals = "1.0") })
-	public static Double weightOf(final IGraph graph, final Object edge) {
+	public static Double weightOf(final IScope scope, final IGraph graph, final Object edge) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the weight_of operator, the graph should not be null!"); }
+			.error("In the weight_of operator, the graph should not be null!", scope); }
 		if ( graph.containsEdge(edge) ) {
 			return graph.getEdgeWeight(edge);
 		} else if ( graph.containsVertex(edge) ) { return graph.getVertexWeight(edge); }
@@ -305,9 +305,9 @@ public class Graphs {
 		examples = {
 			@example(value = "graphFromMap edge_between node1::node2", equals = "edge1", isExecutable = false) },
 		see = { "out_edges_of", "in_edges_of" })
-	public static Object EdgeBetween(final IGraph graph, final GamaPair verticePair) {
+	public static Object EdgeBetween(final IScope scope, final IGraph graph, final GamaPair verticePair) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the edge_between operator, the graph should not be null!"); }
+			.error("In the edge_between operator, the graph should not be null!", scope); }
 		if ( graph.containsVertex(verticePair.key) &&
 			graph.containsVertex(verticePair.value) ) { return graph.getEdge(verticePair.key, verticePair.value); }
 		return null;
@@ -318,9 +318,9 @@ public class Graphs {
 		examples = { @example(value = "graph graphFromMap <- graph([]);", isTestOnly = true),
 			@example(value = "graphFromMap in_degree_of (node(3))", equals = "2", test = false) },
 		see = { "out_degree_of", "degree_of" })
-	public static int inDregreeOf(final IGraph graph, final Object vertex) {
+	public static int inDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the in_degree_of operator, the graph should not be null!"); }
+			.error("In the in_degree_of operator, the graph should not be null!", scope); }
 		if ( graph.containsVertex(vertex) ) { return graph.inDegreeOf(vertex); }
 		return 0;
 	}
@@ -337,7 +337,7 @@ public class Graphs {
 		see = "in_edges_of")
 	public static IList outEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the out_edges_of operator, the graph should not be null!"); }
+			.error("In the out_edges_of operator, the graph should not be null!", scope); }
 		if ( graph.containsVertex(vertex) ) { return GamaListFactory.create(scope, graph.getType().getContentType(),
 			graph.outgoingEdgesOf(vertex)); }
 		return GamaListFactory.create(graph.getType().getContentType());
@@ -476,7 +476,7 @@ public class Graphs {
 		see = {})
 	public static GamaMap betweennessCentrality(final IScope scope, final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the betweenness_centrality operator, the graph should not be null!"); }
+			.error("In the betweenness_centrality operator, the graph should not be null!", scope); }
 		// java.lang.System.out.println("result.getRaw() : " + result.getRaw());
 
 		GamaMap mapResult = GamaMapFactory.create(graph.getType().getKeyType(), Types.FLOAT);
@@ -580,13 +580,13 @@ public class Graphs {
 				test = false) }) ,
 		see = { "as_intersection_graph", "as_distance_graph" })
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
-		
+
 		IGraph createdGraph = new GamaSpatialGraph(edges, true, false, null, null, scope, Types.GEOMETRY,
-				edges.getType().getContentType());
-		if(Types.AGENT.equals(edges.getType().getContentType())){
-			GraphFromAgentContainerSynchronizer.synchronize(scope,null, edges, createdGraph);			
+			edges.getType().getContentType());
+		if ( Types.AGENT.equals(edges.getType().getContentType()) ) {
+			GraphFromAgentContainerSynchronizer.synchronize(scope, null, edges, createdGraph);
 		}
-		
+
 		return createdGraph;
 	}
 
@@ -625,10 +625,10 @@ public class Graphs {
 		examples = @example(value = "list(ant) as_intersection_graph 0.5", isExecutable = false) ,
 		see = { "as_distance_graph", "as_edge_graph" })
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance) {
-		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance), null, scope,
-				vertices.getType().getContentType(), Types.GEOMETRY);
-		if(Types.AGENT.equals(vertices.getType().getContentType())){
-			GraphFromAgentContainerSynchronizer.synchronize(scope,vertices, null, createdGraph);		
+		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance), null,
+			scope, vertices.getType().getContentType(), Types.GEOMETRY);
+		if ( Types.AGENT.equals(vertices.getType().getContentType()) ) {
+			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, null, createdGraph);
 		}
 		return createdGraph;
 	}
@@ -651,8 +651,8 @@ public class Graphs {
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
 		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null, scope,
 			vertices.getType().getContentType(), Types.GEOMETRY);
-		if(Types.AGENT.equals(vertices.getType().getContentType())){
-			GraphFromAgentContainerSynchronizer.synchronize(scope,vertices, null, createdGraph);		
+		if ( Types.AGENT.equals(vertices.getType().getContentType()) ) {
+			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, null, createdGraph);
 		}
 		return createdGraph;
 	}
@@ -685,11 +685,11 @@ public class Graphs {
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance,
 		final ISpecies edgeSpecies) {
 		IType edgeType = scope.getModelContext().getTypeNamed(edgeSpecies.getName());
-		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope,
-			vertices.getType().getContentType(), edgeType);
-		
-		GraphFromAgentContainerSynchronizer.synchronize(scope,vertices, edgeSpecies, createdGraph);		
-		
+		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies,
+			scope, vertices.getType().getContentType(), edgeType);
+
+		GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
+
 		return createdGraph;
 	}
 
@@ -702,13 +702,13 @@ public class Graphs {
 		ISpecies edgeSpecies = (ISpecies) params.get("species");
 		IType edgeType =
 			edgeSpecies == null ? Types.GEOMETRY : scope.getModelContext().getTypeNamed(edgeSpecies.getName());
-		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope,
-			vertices.getType().getContentType(), edgeType);
-		
-		if(Types.AGENT.equals(vertices.getType().getContentType())){
-			GraphFromAgentContainerSynchronizer.synchronize(scope,vertices, edgeSpecies, createdGraph);		
+		IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies,
+			scope, vertices.getType().getContentType(), edgeType);
+
+		if ( Types.AGENT.equals(vertices.getType().getContentType()) ) {
+			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
 		}
-		return createdGraph;				
+		return createdGraph;
 	}
 
 	@operator(value = "spatial_graph",
@@ -872,8 +872,8 @@ public class Graphs {
 		examples = { @example(value = "path_between (my_graph, ag1, ag2)",
 			equals = "A path between ag1 and ag2",
 			isExecutable = false) })
-	public static IPath path_between(final IScope scope, final IGraph graph, final IShape source,
-		final IShape target) throws GamaRuntimeException {
+	public static IPath path_between(final IScope scope, final IGraph graph, final IShape source, final IShape target)
+		throws GamaRuntimeException {
 		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
 		if ( graph instanceof GamaSpatialGraph ) { return Cast.asTopology(scope, graph).pathBetween(scope, source,
 			target); }
@@ -1081,7 +1081,7 @@ public class Graphs {
 	public static IGraph primLoadGraphFromFile(final IScope scope, final GamaGraph graph, final GamaMatrix matrix)
 		throws GamaRuntimeException {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the load_shortest_paths operator, the graph should not be null!"); }
+			.error("In the load_shortest_paths operator, the graph should not be null!", scope); }
 		int n = graph.vertexSet().size();
 		graph.loadShortestPaths(scope, matrix);
 		return graph;
@@ -1101,7 +1101,7 @@ public class Graphs {
 	public static GamaIntMatrix primAllPairShortestPaths(final IScope scope, final GamaGraph graph)
 		throws GamaRuntimeException {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the all_pairs_shortest_paths operator, the graph should not be null!"); }
+			.error("In the all_pairs_shortest_paths operator, the graph should not be null!", scope); }
 		return graph.saveShortestPaths(scope);
 	}
 

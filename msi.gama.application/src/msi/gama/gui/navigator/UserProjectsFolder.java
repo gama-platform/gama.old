@@ -11,13 +11,14 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.graphics.Image;
 import msi.gama.application.projects.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 
-public class UserProjectsFolder extends TopLevelFolder {
+public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
 	public UserProjectsFolder(final Object root, final String name) {
 		super(root, name);
@@ -62,6 +63,17 @@ public class UserProjectsFolder extends TopLevelFolder {
 	@Override
 	protected Location getModelsLocation() {
 		return Location.Other;
+	}
+
+	/**
+	 * Method getAdapter()
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	@Override
+	public Object getAdapter(final Class adapter) {
+		if ( adapter == getClass() ) { return this; }
+		if ( IContainer.class.isAssignableFrom(adapter) ) { return ResourcesPlugin.getWorkspace(); }
+		return null;
 	}
 
 }

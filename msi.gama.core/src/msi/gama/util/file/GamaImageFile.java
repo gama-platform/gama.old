@@ -1,21 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaImageFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.StringTokenizer;
+import com.vividsolutions.jts.geom.Envelope;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -25,7 +26,6 @@ import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Envelope;
 
 @file(name = "image",
 	extensions = { "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" },
@@ -59,7 +59,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		private final int width;
 		private final int height;
 
-		public ImageInfo(final long modificationStamp,/* final Object thumbnail, */final int origType,
+		public ImageInfo(final long modificationStamp, /* final Object thumbnail, */final int origType,
 			final int origWidth, final int origHeight) {
 			super(modificationStamp);
 			// this.thumbnail = thumbnail;
@@ -158,8 +158,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		if ( getBuffer() != null ) { return; }
 		// Temporary workaround for pgm files, which can be read by ImageIO but produce wrong results. See Issue 880.
 		// TODO change this behavior
-		setBuffer(isPgmFile() || getExtension().equals("pgm") ? matrixValueFromPgm(scope, null) : matrixValueFromImage(
-			scope, null));
+		setBuffer(isPgmFile() || getExtension().equals("pgm") ? matrixValueFromPgm(scope, null)
+			: matrixValueFromImage(scope, null));
 	}
 
 	protected boolean isPgmFile() {
@@ -168,7 +168,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
@@ -190,11 +190,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		if ( image == null ) {
 			try {
 				image = ImageUtils.getInstance().getImageFromFile(scope, path);
-				if ( image == null ) { throw GamaRuntimeException
-					.error(
-						"This image format (." + getExtension() +
-							") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
-						scope); }
+				if ( image == null ) { throw GamaRuntimeException.error(
+					"This image format (." + getExtension() +
+						") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
+					scope); }
 			} catch (final IOException e) {
 				throw GamaRuntimeException.create(e, scope);
 			}
@@ -217,7 +216,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	}
 
-	private IMatrix matrixValueFromImage(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
+	private IMatrix matrixValueFromImage(final IScope scope, final ILocation preferredSize)
+		throws GamaRuntimeException {
 		loadImage(scope);
 		int xSize, ySize;
 		if ( preferredSize == null ) {
@@ -274,13 +274,13 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			}
 			return matrix;
 		} catch (final Exception ex) {
-			throw GamaRuntimeException.create(ex);
+			throw GamaRuntimeException.create(ex, scope);
 		} finally {
 			if ( in != null ) {
 				try {
 					in.close();
 				} catch (IOException e) {
-					throw GamaRuntimeException.create(e);
+					throw GamaRuntimeException.create(e, scope);
 				}
 			}
 		}

@@ -11,22 +11,19 @@
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
-import msi.gama.headless.openmole.IMoleExperiment;
-import msi.gama.headless.openmole.MoleSimulationLoader;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
-import msi.gama.kernel.model.IModel;
-import msi.gaml.operators.Cast;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -127,9 +124,19 @@ public class Application implements IApplication {
 				System.exit(-1);
 			}
 		}
+		in.dispose();
+		
 		while (processorQueue.isPerformingSimulation()) {
 			Thread.sleep(1000);
 		}
+		
+//		System.out.println("simulation terminer Appuyer sur une touche pour quitter");
+//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//		br.readLine();
+//		br.readLine();
+//		br.readLine();
+		
+		
 		return null;
 	}
 

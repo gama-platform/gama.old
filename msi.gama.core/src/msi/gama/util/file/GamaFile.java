@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.file;
 
@@ -22,9 +22,9 @@ import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 7 août 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 
 public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAdd> & IAddressableContainer<K, V, K, V>, ValueToAdd, K, V> implements IGamaFile<C, ValueToAdd, K, V> {
@@ -38,10 +38,10 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	private C buffer;
 
 	public GamaFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		if ( pathName == null ) { throw GamaRuntimeException.error("Attempt to create a null file"); }
+		if ( pathName == null ) { throw GamaRuntimeException.error("Attempt to create a null file", scope); }
 		if ( scope != null ) {
 			path = FileUtils.constructAbsoluteFilePath(scope, pathName, false);
-			checkValidity();
+			checkValidity(scope);
 			// AD 27/04/13 Let the flags of the file remain the same. Can be turned off and on using the "read" and
 			// "write" operators, so no need to decide for a default here
 			// setWritable(false);
@@ -56,9 +56,9 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		setContents(container);
 	}
 
-	protected void checkValidity() throws GamaRuntimeException {
-		if ( getFile().isDirectory() ) { throw GamaRuntimeException.error(getFile().getAbsolutePath() +
-			" is a folder. Files can not overwrite folders"); }
+	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
+		if ( getFile().isDirectory() ) { throw GamaRuntimeException
+			.error(getFile().getAbsolutePath() + " is a folder. Files can not overwrite folders", scope); }
 		// For the moment, the verification is disabled, so as to allow "forcing" the loading of a file in a different
 		// way (for instance, a .asc file into a text file).
 		// if ( !GamaFileType.verifyExtension(this, getPath()) ) { throw GamaRuntimeException.warning("The extension " +
@@ -89,7 +89,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.interfaces.IGamaContainer#add(java.lang.Object, java.lang.Object,
 	 * java.lang.Object)
 	 */
@@ -171,7 +171,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object, boolean)
 	 */
 	@Override
@@ -183,7 +183,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.interfaces.IGamaContainer#contains(java.lang.Object)
 	 */
 	@Override
@@ -230,8 +230,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	// @getter( IKeyword.EXTENSION)
-		public
-		String getExtension() {
+	public String getExtension() {
 		final String path = getFile().getPath().toLowerCase();
 		final int mid = path.lastIndexOf(".");
 		if ( mid == -1 ) { return ""; }
@@ -245,16 +244,15 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	// @getter( IKeyword.PATH)
-		public
-		String getPath() {
+	public String getPath() {
 		return getFile().getPath();
 	}
 
 	@Override
 	public C getContents(final IScope scope) throws GamaRuntimeException {
 		// if ( getFile() == null ) { return null; }
-		if ( !getFile().exists() ) { throw GamaRuntimeException.error("File " + getFile().getAbsolutePath() +
-			" does not exist"); }
+		if ( !getFile().exists() ) { throw GamaRuntimeException
+			.error("File " + getFile().getAbsolutePath() + " does not exist", scope); }
 		fillBuffer(scope);
 		return getBuffer();
 	}

@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaObjFile.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.files;
 
@@ -23,10 +23,10 @@ import msi.gaml.types.*;
 
 /**
  * Class GamaObjFile.
- * 
+ *
  * @author drogoul
  * @since 30 déc. 2013
- * 
+ *
  */
 @file(name = "obj", extensions = "obj", buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
 public class GamaObjFile extends Gama3DGeometryFile {
@@ -108,7 +108,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 				}
 			}
 		} catch (final Exception e) {
-			throw GamaRuntimeException.create(e);
+			throw GamaRuntimeException.create(e, scope);
 		} finally {
 			if ( br != null ) {
 				try {

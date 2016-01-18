@@ -329,11 +329,11 @@ public class SqliteConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString(), scope);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString(), scope);
 		}
 
 		return insertStr;
@@ -434,11 +434,11 @@ public class SqliteConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SqliteConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("SqliteConnection.getInsertString:" + e.toString(), scope);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SqliteConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("SqliteConnection.getInsertString:" + e.toString(), scope);
 		}
 
 		return insertStr;

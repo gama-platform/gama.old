@@ -305,11 +305,11 @@ public class PostgresConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString(), scope);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString(), scope);
 		}
 
 		return insertStr;
@@ -409,11 +409,11 @@ public class PostgresConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString(), scope);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString(), scope);
 		}
 
 		return insertStr;

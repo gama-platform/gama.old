@@ -1,27 +1,27 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SqlUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.database.sql;
 
 import java.io.*;
 import java.util.Map;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.IType;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.*;
 
 /*
  * @Author
@@ -54,8 +54,8 @@ public class SqlUtils {
 		boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
 		if ( DEBUG ) {
-			scope.getGui().debug("SqlUtils.createConnection:" + dbtype + " - " + host + " - " + port + " - " + database +
-				" - ");
+			scope.getGui()
+				.debug("SqlUtils.createConnection:" + dbtype + " - " + host + " - " + port + " - " + database + " - ");
 		}
 		SqlConnection sqlConn;
 		// create connection
@@ -72,10 +72,11 @@ public class SqlUtils {
 			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd, transform);
 		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MYSQL) ) {
 			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd, transform);
-		} else if ( dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) || dbtype.equalsIgnoreCase(SqlConnection.POSTGIS) ) {
+		} else if ( dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) ||
+			dbtype.equalsIgnoreCase(SqlConnection.POSTGIS) ) {
 			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd, transform);
 		} else {
-			throw GamaRuntimeException.error("GAMA does not support databases of type: " + dbtype);
+			throw GamaRuntimeException.error("GAMA does not support databases of type: " + dbtype, scope);
 		}
 		if ( DEBUG ) {
 			scope.getGui().debug("SqlUtils.createConnection:" + sqlConn.toString());
@@ -92,13 +93,13 @@ public class SqlUtils {
 
 	/*
 	 * @Method: read(byte [] b)
-	 * 
+	 *
 	 * @Description: Convert Binary to Geometry (MSSQL,Sqlite, Postgres cases)
-	 * 
+	 *
 	 * @param byte [] b
-	 * 
+	 *
 	 * @return Geometry
-	 * 
+	 *
 	 * @throws IOException, ParseException
 	 */
 	public static Geometry read(final byte[] b) throws IOException, ParseException {
@@ -109,13 +110,13 @@ public class SqlUtils {
 
 	/*
 	 * @Method: Binary2Geometry(byte [] geometryAsBytes )
-	 * 
+	 *
 	 * @description: Convert binary to Geometry
-	 * 
+	 *
 	 * @param byte []
-	 * 
+	 *
 	 * @return Geometry
-	 * 
+	 *
 	 * @throws ParseException
 	 */
 	public static Geometry Binary2Geometry(final byte[] geometryAsBytes) throws ParseException {
@@ -128,13 +129,13 @@ public class SqlUtils {
 
 	/*
 	 * @Method: InputStream2Geometry(InputStream inputStream)
-	 * 
+	 *
 	 * @Description: Convert Binary to Geometry (MySQL case)
-	 * 
+	 *
 	 * @param InputStream inputStream
-	 * 
+	 *
 	 * @return Geometry
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public static Geometry InputStream2Geometry(final InputStream inputStream) throws Exception {
@@ -187,13 +188,13 @@ public class SqlUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 * Gis2Absolute: transform all absolute geometry values in GAMA to geometry
 	 */
 	// public static GamaList<Object> transform(final GisUtils gis, final GamaList<? extends GamaList<Object>> dataset,
 	// final boolean fromAbsoluteToGis) throws GamaRuntimeException {
-	public static IList<Object> transform(final IProjection gis, final IList<? super IList<Object>> dataset,
-		final boolean fromAbsoluteToGis) throws GamaRuntimeException {
+	public static IList<Object> transform(final IScope scope, final IProjection gis,
+		final IList<? super IList<Object>> dataset, final boolean fromAbsoluteToGis) throws GamaRuntimeException {
 
 		try {
 			IList<Object> response = GamaListFactory.create();
@@ -237,7 +238,7 @@ public class SqlUtils {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SQLConnection.Gis2Absolute: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.Gis2Absolute: " + e.toString(), scope);
 		}
 	}
 

@@ -1,24 +1,25 @@
 /*********************************************************************************************
- * 
  *
- * 'AvailableGraphWriters.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'AvailableGraphWriters.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.graph.writer;
 
 import java.util.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * Lists available graphs writers, independently of the underlying library.
- * 
+ *
  * @author Samuel Thiriot
- * 
+ *
  */
 public class AvailableGraphWriters {
 
@@ -90,14 +91,15 @@ public class AvailableGraphWriters {
 		if ( res == null ) {
 			// no singleton created
 			Class<? extends IGraphWriter> classWriter = name2writer.get(name);
-			if ( classWriter == null ) { throw GamaRuntimeException.error("unknown writer name: " + name +
-				"; please choose one of " + getAvailableWriters().toString()); }
+			if ( classWriter == null ) { throw GamaRuntimeException.error(
+				"unknown writer name: " + name + "; please choose one of " + getAvailableWriters().toString(),
+				GAMA.getRuntimeScope()); }
 			try {
 				res = classWriter.newInstance();
 			} catch (InstantiationException e) {
-				throw GamaRuntimeException.create(e);
+				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 			} catch (IllegalAccessException e) {
-				throw GamaRuntimeException.create(e);
+				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 			}
 			name2singleton.put(name, res);
 		}

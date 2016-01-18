@@ -34,6 +34,12 @@ import msi.gaml.types.Types;
  * @author Taillandier
  */
 @vars({
+	@var(name = "day_of_week",
+		type = IType.INT,
+		doc = { @doc("Returns the day of the week") }),
+	@var(name = "week_of_year",
+		type = IType.INT,
+		doc = { @doc("Returns the week of the year") }),
 	@var(name = "second",
 		type = IType.INT,
 		doc = { @doc("Returns the second") }),
@@ -77,7 +83,8 @@ public class GamaDate extends MutableDateTime implements IValue {
 		setMonthOfYear(month);
 		setDayOfMonth(day);
 		setHourOfDay(hour);
-		setSecondOfDay(second);
+		setMinuteOfHour(minute);
+		setSecondOfMinute(second);
 	}
 	
 	public GamaDate(int val) {
@@ -96,7 +103,6 @@ public class GamaDate extends MutableDateTime implements IValue {
 			Integer intVal = Cast.asInt(null, vals.get(1));
 			setMonthOfYear(intVal);
 		}else setMonthOfYear(0);
-		
 		if (vals.size() > 2) {
 			Integer intVal = Cast.asInt(null, vals.get(2));
 			setDayOfMonth(intVal);
@@ -107,12 +113,12 @@ public class GamaDate extends MutableDateTime implements IValue {
 		}else setHourOfDay(0);
 		if (vals.size() > 4) {
 			Integer intVal = Cast.asInt(null, vals.get(4));
-			setSecondOfDay(intVal);
-		} else setSecondOfDay(0);
+			setMinuteOfHour(intVal);
+		} else setMinuteOfHour(0);
 		if (vals.size() > 5) {
 			Integer intVal = Cast.asInt(null, vals.get(5));
-			setSecondOfDay(intVal);
-		} else setSecondOfDay(0);
+			setSecondOfMinute(intVal);
+		} else setSecondOfMinute(0);
 	}
 	
 	@Override
@@ -173,6 +179,16 @@ public class GamaDate extends MutableDateTime implements IValue {
 	@getter("second")
 	public int getSecond() {
 		return getSecondOfMinute();
+	}
+	
+	@getter("day_of_week")
+	public int getDayWeek() {
+		return getDayOfWeek();
+	}
+	
+	@getter("week_of_year")
+	public int getWeekYear() {
+		return super.getWeekOfWeekyear();
 	}
 
 }

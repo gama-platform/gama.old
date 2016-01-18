@@ -1,22 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaFolderFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.file;
 
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Files;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Envelope;
 
 public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, String> {
 
@@ -28,11 +28,11 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 	}
 
 	@Override
-	protected void checkValidity() throws GamaRuntimeException {
-		if ( !getFile().isDirectory() ) { throw GamaRuntimeException.error(getFile().getAbsolutePath() +
-			"is not a folder"); }
-		if ( !getFile().exists() ) { throw GamaRuntimeException.error("The folder " + getFile().getAbsolutePath() +
-			" does not exist. Please use 'new_folder' instead"); }
+	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
+		if ( !getFile().isDirectory() ) { throw GamaRuntimeException
+			.error(getFile().getAbsolutePath() + "is not a folder", scope); }
+		if ( !getFile().exists() ) { throw GamaRuntimeException.error(
+			"The folder " + getFile().getAbsolutePath() + " does not exist. Please use 'new_folder' instead", scope); }
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
@@ -64,7 +64,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override

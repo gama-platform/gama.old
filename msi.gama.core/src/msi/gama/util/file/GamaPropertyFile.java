@@ -1,24 +1,24 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaPropertyFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.file;
 
 import java.io.*;
 import java.util.Properties;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Envelope;
 
 @file(name = "property",
 	extensions = { "properties" },
@@ -33,7 +33,7 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
@@ -45,9 +45,9 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 			f = new FileReader(getFile());
 			p.load(f);
 		} catch (FileNotFoundException e) {
-			throw GamaRuntimeException.create(e);
+			throw GamaRuntimeException.create(e, scope);
 		} catch (IOException e) {
-			throw GamaRuntimeException.create(e);
+			throw GamaRuntimeException.create(e, scope);
 		} finally {
 			if ( f != null ) {
 				try {

@@ -24,7 +24,12 @@ import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.core.IRichExperiment;
 import msi.gama.headless.core.RichExperiment;
 import msi.gama.headless.core.RichOutput;
+import msi.gama.headless.runtime.LocalSimulationRuntime;
+import msi.gama.headless.runtime.RuntimeContext;
+import msi.gama.headless.runtime.SimulationRuntime;
 import msi.gama.headless.xml.Writer;
+import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 
 public class ExperimentJob {
@@ -125,9 +130,9 @@ public class ExperimentJob {
 		initialize();
 	}
 
-	public void loadAndBuild() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public void loadAndBuild(RuntimeContext rtx) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		this.load();
+		this.load(rtx);
 		this.listenedVariables = new ListenedVariable[outputs.size()];
 
 		for ( int i = 0; i < parameters.size(); i++ ) {
@@ -144,9 +149,12 @@ public class ExperimentJob {
 
 	}
 
-	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public void load(RuntimeContext ctx) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		System.setProperty("user.dir", this.sourcePath);
-		IModel mdl = HeadlessSimulationLoader.loadModel(new File(this.sourcePath));
+		IModel mdl  = ctx.loadModel(new File(this.sourcePath));
+		
+		//System.out.println("cdsqfds "+this.sourcePath);
+		//IModel mdl = HeadlessSimulationLoader.loadModel(new File(this.sourcePath));
 		this.simulator = new RichExperiment(mdl);
 	}
 
@@ -246,7 +254,4 @@ public class ExperimentJob {
 		}
 		return new Display2D(name + this.getExperimentID() + "-" + step + ".png");
 	}
-
-	
-
 }

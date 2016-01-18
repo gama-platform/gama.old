@@ -50,7 +50,7 @@ public class HeadlessSimulationLoader {
 			// We initialize XText and Gaml.
 			GamlStandaloneSetup.doSetup();
 		} catch (Exception e1) {
-			throw GamaRuntimeException.create(e1);
+			throw GamaRuntimeException.create(e1, null);
 		}
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA loading complete");
 
