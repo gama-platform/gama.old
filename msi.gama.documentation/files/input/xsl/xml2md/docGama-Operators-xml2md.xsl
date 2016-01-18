@@ -137,10 +137,9 @@ Note that due to the fact that actions are written by modelers, the general func
     	<xsl:sort select="@name" />
     	
 ----
-[//]: # (keyword|operator_<xsl:value-of select="@id"/>)
 <xsl:call-template name="keyword">    
-	<xsl:with-param name="category" select="operator"/>
-	<xsl:with-param name="nameGAMLElement" select="@name"></xsl:with-param>
+	<xsl:with-param name="category" select="'operator'"/>
+	<xsl:with-param name="nameGAMLElement" select="@name"/>
 </xsl:call-template>
 ### <xsl:call-template name="checkName"/> 
   	<xsl:if test="@alternativeNameOf">

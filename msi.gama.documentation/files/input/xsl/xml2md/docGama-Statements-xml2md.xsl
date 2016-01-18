@@ -55,7 +55,10 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
     	<xsl:sort select="@name" />
 
 ----
-
+<xsl:call-template name="keyword">    
+	<xsl:with-param name="category" select="'statement'"/>
+	<xsl:with-param name="nameGAMLElement" select="@name"/>
+</xsl:call-template>
 ### <xsl:value-of select="@name"/>
 		<xsl:call-template name="buildFacets"/>
 		<xsl:call-template name="buildDefinition"/>				

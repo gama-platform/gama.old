@@ -77,7 +77,10 @@ if speed = 5 {
     	<xsl:sort select="@name" />
     	
 ----
-
+<xsl:call-template name="keyword">    
+	<xsl:with-param name="category" select="'skill'"/>
+	<xsl:with-param name="nameGAMLElement" select="@name"/>
+</xsl:call-template>
 ## <xsl:value-of select="@name"/><xsl:text>
 </xsl:text><xsl:value-of select="documentation/result"/> <xsl:text>
 </xsl:text>
