@@ -11,11 +11,15 @@
  **********************************************************************************************/
 package msi.gaml.skills;
 
+import java.util.Set;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
+import msi.gama.util.IList;
 import msi.gaml.types.IType;
 
 /**
@@ -31,6 +35,10 @@ import msi.gaml.types.IType;
 		doc = { @doc("Represents the color of the cell, used by default to represent the grid on displays") }),
 	// @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = @doc(deprecated =
 	// "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
+	@var(name = IKeyword.NEIGHBOURS,
+		type = IType.LIST,
+		of = IType.AGENT,
+		doc = { @doc("Represents the neighbor at distance 1 of the cell") }),
 	@var(name = IKeyword.GRID_VALUE,
 		type = IType.FLOAT,
 		doc = {
@@ -57,6 +65,8 @@ public class GridSkill extends Skill {
 		public int getY();
 
 		public double getValue();
+		
+		public Set<IAgent> getNeighbors(IScope scope);
 
 		public void setValue(final double d);
 	}
@@ -101,6 +111,11 @@ public class GridSkill extends Skill {
 	@setter("color")
 	public void setColor(final IAgent agent, final GamaColor color) {
 		((IGridAgent) agent).setColor(color);
+	}
+	
+	@getter(value = IKeyword.NEIGHBOURS, initializer = true)
+	public Set<IAgent> getNeighbors(final IAgent agent) {
+		return ((IGridAgent) agent).getNeighbors(agent.getScope());
 	}
 
 }

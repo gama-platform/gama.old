@@ -1253,6 +1253,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return GridPopulation.this;
 			}
 
+			@Override
+			public Set<IAgent> getNeighbors(IScope scope) {
+				return getNeighbourhood().getNeighboursIn(scope, getIndex(), 1);
+			}
+
 		}
 
 		public class MinimalGridAgent extends MinimalAgent implements IGridAgent {
@@ -1325,6 +1330,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			public IShape getGeometry() {
 				return geometry;
 			}
+			
+			@Override
+			public Set<IAgent> getNeighbors(IScope scope) {
+				return getNeighbourhood().getNeighboursIn(scope, getIndex(), 1);
+			}
 
 			/**
 			 * Method getPoints()
@@ -1366,6 +1376,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return null;
 			}
 			// end-hqnghi
+
+			
 		}
 
 	}
