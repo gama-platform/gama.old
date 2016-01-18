@@ -30,19 +30,20 @@ public class PrepareEnv {
 		genFolder.mkdir();	
 		new File(Constants.JAVA2XML_FOLDER).mkdirs();	
 		new File(Constants.XML2WIKI_FOLDER).mkdirs();
-		new File(Constants.WIKI2WIKI_FOLDER).mkdirs();
-		new File(Constants.HTML2XML_FOLDER).mkdirs();
+//		new File(Constants.WIKI2WIKI_FOLDER).mkdirs();
+//		new File(Constants.HTML2XML_FOLDER).mkdirs();
 		new File(Constants.PDF_FOLDER).mkdirs();
 		new File(Constants.TEST_FOLDER).mkdirs();
 		new File(Constants.TOC_GEN_FOLDER).mkdir();
+		new File(Constants.XML_KEYWORD_GEN_FOLDER).mkdirs();
 
-		copyPythonTemplate();
+//		copyPythonTemplate();
 	}
 
-	private static void copyPythonTemplate() throws IOException{
-		File pythonTemplate = new File(Constants.PYTHON_TEMPLATE_FOLDER);
-		FileUtils.copyDirectory(pythonTemplate, new File(Constants.WIKI2WIKI_FOLDER));
-	}
+//	private static void copyPythonTemplate() throws IOException{
+//		File pythonTemplate = new File(Constants.PYTHON_TEMPLATE_FOLDER);
+//		FileUtils.copyDirectory(pythonTemplate, new File(Constants.WIKI2WIKI_FOLDER));
+//	}
 	
 	/**
 	 * @param args

@@ -14,15 +14,9 @@ package msi.gaml.skills;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaColor;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.types.IType;
 
 /**
@@ -68,7 +62,7 @@ public class GridSkill extends Skill {
 		public int getY();
 
 		public double getValue();
-		
+
 		public IList<IAgent> getNeighbors(IScope scope);
 
 		public void setValue(final double d);
@@ -115,7 +109,7 @@ public class GridSkill extends Skill {
 	public void setColor(final IAgent agent, final GamaColor color) {
 		((IGridAgent) agent).setColor(color);
 	}
-	
+
 	@getter(value = IKeyword.NEIGHBORS, initializer = true)
 	public IList<IAgent> getNeighbors(final IAgent agent) {
 		return ((IGridAgent) agent).getNeighbors(agent.getScope());

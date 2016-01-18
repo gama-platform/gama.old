@@ -86,6 +86,11 @@ public class IUnits {
 		doc = @doc("This constant is only accessible in a graphical context: display, graphics...") )
 	public final static double display_height = 1;
 
+	@constant(value = "now",
+		category = { IConstantCategory.TIME },
+		doc = @doc("This constant represents the current date") )
+	public final static double now = 1;
+
 	/**
 	 * Mathematical constants
 	 *

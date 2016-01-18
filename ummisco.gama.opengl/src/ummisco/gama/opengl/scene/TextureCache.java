@@ -137,6 +137,7 @@ public class TextureCache {
 					break;
 				} finally {
 					try {
+
 						drawable.getContext().release();
 					} catch (com.jogamp.nativewindow.NativeWindowException e) {
 						drawable.destroy();
@@ -178,13 +179,15 @@ public class TextureCache {
 
 		@Override
 		public void runIn(final GL gl) {
+
 			if ( contains(image) ) { return; }
 			Texture texture = buildTexture(gl, image);
-			System.out.println("Building texture : " + image);
+			// System.out.println("Building texture : " + image);
 			// We use the original image to keep track of the texture
 			if ( texture != null ) {
 				TEXTURES.put(image, texture);
 			}
+			gl.glFinish();
 
 		}
 	}

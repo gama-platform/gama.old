@@ -24,6 +24,7 @@ public class UnitConstantExpression extends ConstantExpression {
 		if ( unit.equals("display_height") ) { return new DisplayHeightUnitExpression(doc); }
 		if ( unit.equals("view_x") || unit.equals("view_y") || unit.equals("view_width") ||
 			unit.equals("view_height") ) { return new ViewUnitExpression(unit, doc); }
+		if ( unit.equals("now") ) { return new NowUnitExpression(unit, doc); }
 		return new UnitConstantExpression(val, t, unit, doc, names);
 	}
 
