@@ -40,7 +40,7 @@ openFile
       </vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/msi.gama.application/icons/launcher_icons/icon16.png" i32="/msi.gama.application/icons/launcher_icons/icon32.png" i48="/msi.gama.application/icons/launcher_icons/icon48.png" i64="/msi.gama.application/icons/launcher_icons/icon64.png" i128="/msi.gama.application/icons/launcher_icons/icon128.png"/>
+   <windowImages i16="/msi.gama.application/icons/launcher_icons/icon16.png" i32="/msi.gama.application/icons/launcher_icons/icon32.png" i48="/msi.gama.application/icons/launcher_icons/icon48.png" i64="/msi.gama.application/icons/launcher_icons/icon64.png" i128="/msi.gama.application/icons/launcher_icons/icon128.png" i256="/msi.gama.application/icons/launcher_icons/icon256.png"/>
 
    <splash
       location="msi.gama.application"
@@ -279,6 +279,10 @@ openFile
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <property name="version" value="1.7" />
    </configurations>
+
+   <repositories>
+      <repository location="http://gama-platform.org/updates" enabled="true" />
+   </repositories>
 
    <preferencesInfo>
       <targetfile overwrite="false"/>
