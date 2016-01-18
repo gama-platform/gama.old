@@ -14,6 +14,10 @@ package msi.gaml.descriptions;
 import static msi.gama.util.GAML.getExpressionFactory;
 import java.util.*;
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -618,6 +622,26 @@ public abstract class SymbolDescription implements IDescription {
 		}
 		return lce;
 
+	}
+	
+	public Iterable<IDescription> getChildrenWithKeyword(final String keyword) {
+		return Iterables.filter(getChildren(), new Predicate<IDescription>() {
+
+			@Override
+			public boolean apply(IDescription input) {
+				return input.getKeyword().equals(keyword);
+			}
+		});
+	}
+	
+	public IDescription getChildWithKeyword(final String keyword) {
+		return Iterables.find(getChildren(), new Predicate<IDescription>() {
+
+			@Override
+			public boolean apply(IDescription input) {
+				return input.getKeyword().equals(keyword);
+			}
+		});
 	}
 
 }
