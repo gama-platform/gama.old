@@ -1,22 +1,15 @@
 /**
- * This model demonstrates a use-case of the multi-level modeling feature.
- * 
- * It 's a three-level (of organisation) model. 
- * 
- * "ball" agents are represented at three levels of organization :
- * 		1. "ball" species when they "stays alone",
- * 		2. "ball_in_group" species when "ball" agents are members of a "group" agent,
- * 		3. "ball_in_cloud" species when "ball" agents are members of a "group" agent which is in turn a members of a "cloud" agent.
- * 
- * "group" agent is formed by a set of nearby balls.
- * "group" agents are represented at two levels of organization :
- * 		1. "group" species when they "stay alone",
- * 		2. "group_delegation" species when they are member of a "cloud" agent.
- * 
- * "cloud" agent is formed by a set of nearby groups.
- * 
- * Agents can change their representation/organization levels (species) thanks to the "capture", "release" and "migrate" statements.
- */
+* Name: Balls, Groups and Clouds Multilevel Architecture
+* Author: 
+* Description: This model shows how to use multi-level architecture to group agents, and regroup groups. The operators capture
+* 	is used to capture an agent by a group and change its species as a species contained by the group and defined in the group species section.
+* 	The operator release is used to release contained agents and change them into an other species. The experiment shows ball moving
+* 	randomly, and following other balls. When they are close to each other, they generate a group of balls with its own behavior. A group of group
+* 	agents generate a cloud in the same way. When the number of balls contained inside the group is too high, the group disappears and releases
+* 	all its balls repulsively. 
+* Tags : Multi-level, Movements of Agents
+*/
+
 model balls_groups_clouds
 
 global { 
@@ -28,13 +21,17 @@ global {
 	point environment_bounds <- {500, 500}; 
 	geometry shape <- rectangle(environment_bounds) ;		
 	
+	//Define a inner environment smaller inside the environment
 	int inner_bounds_x <- (int((environment_bounds.x) / 20))  ;
 	int inner_bounds_y <- (int((environment_bounds.y) / 20))  ;
 	int xmin <- inner_bounds_x ;
 	int ymin <- inner_bounds_y ;       
 	int xmax <- int((environment_bounds.x) - inner_bounds_x) ;
 	int ymax <- int((environment_bounds.y) - inner_bounds_y) ;
+	
 	float MAX_DISTANCE <- environment_bounds.x + environment_bounds.y  ;
+	
+	//Global variables for ball agents
 	rgb ball_color <- #green; 
 	rgb chaos_ball_color <- #red;
 	float ball_size <- float(3);  
@@ -43,6 +40,8 @@ global {
 	int ball_number <- 200 min: 2 max: 1000;  
 	geometry ball_shape <- circle (ball_size) ;
 	float ball_separation <- 6 * ball_size; 
+	
+	//Global variables for group agents
 	int group_creation_distance <- int(ball_separation + 1);
 	int min_group_member <- 3;
 	int group_base_speed <- (int(ball_speed * 1.5));
@@ -52,6 +51,7 @@ global {
 	int merge_frequency <- 3;
 	float merge_possibility <- 0.3;
 	
+	//Global variables for Clouds Agents
 	int cloud_creation_distance <- 30 const: true;
 	int min_cloud_member <- 3 const: true;
 	int cloud_speed <- 3 const: true;
@@ -63,15 +63,20 @@ global {
 		create cloud_agents_viewer;
 	}
 	
+	//The simulation will try to create group at each frequence cycle
 	reflex create_groups when: ( create_group and ((cycle mod creation_frequency) = 0) ) {
+		//create a list from all balls following the nearest ball
 		list<ball> free_balls <- ball where ((each.state) = 'follow_nearest_ball') ;
 
 		if (length (free_balls) > 1) {
+			//Clustering of the balls according to their distance with at least a minimal number of balls in a group
 			list<list> satisfying_ball_groups <- (free_balls simple_clustering_by_distance group_creation_distance) where ( (length (each)) > min_group_member ) ;
+			
 			
 			loop one_group over: satisfying_ball_groups {
 				create group returns: new_groups;
 				
+				//Capture by the new groups created of the different balls present in the list one_group
 				ask (new_groups at 0) as: group {
 					capture one_group as: ball_in_group; 
 				}
@@ -79,10 +84,15 @@ global {
 		}
 	}
 	
+	//The simulation will try to create clouds at each frequence cycle
 	reflex create_clouds when: (create_cloud and ((cycle mod creation_frequency) = 0) ) {
+		//A cloud can be created only using group with a number of balls inside greater than 5% of the total ball number
 		list<group> candidate_groups <- group where (length(each.members) > (0.05 * ball_number) );
+		
+		//A cloud can be created also only using group which aren't too far away 
 		list<list> satisfying_groups <- (candidate_groups simple_clustering_by_distance cloud_creation_distance) where (length(each) >= min_cloud_member);
 		
+		//Creation of the different clouds using the groups satisfying both conditions
 		loop one_group over: satisfying_groups {
 			create cloud returns: rets;			
 			cloud newCloud <- rets at 0; 
@@ -92,7 +102,8 @@ global {
 
 			loop gd over: (newCloud.members) {
 				ask gd as group_delegation {
-					migrate ball_in_group target: ball_in_cloud;
+					migrate 
+					ball_in_group target: ball_in_cloud;
 				}
 			} 
 			
@@ -100,9 +111,10 @@ global {
 		}
 	}
 }
-
+	//Base species with just the skills moving and all built-in variables and operators derivated from it
 	species base skills: [moving] ;
 	
+	//Species with a specified type of control architecture, here the final state machine FSM
 	species ball parent: base control: fsm  { 
 		
 		float speed <- ball_speed; 
@@ -110,6 +122,7 @@ global {
 		int beginning_chaos_time; 
 		int time_in_chaos_state;
 		
+		//create the ball in a certain way to not make balls intersect each other
 		init {
 			bool continue_loop <- true ; 
 			loop while: continue_loop {
@@ -123,6 +136,7 @@ global {
 			}
 		}
 		
+		//Action used to separate the balls and make them repulsive for the other balls of the group
 		action separation (list<ball> nearby_balls) {
 			float repulsive_dx <- 0.0 ;
 			float repulsive_dy <- 0.0 ;
@@ -139,6 +153,7 @@ global {
 			return ( !(a_point.x < xmin) and !(a_point.x > xmax) and !(a_point.y < ymin) and !(a_point.y > ymax) ) ;
 		}
 		 
+		//State that will make the agent follows the closest ball if it is not in the chaos state anymore
 		state follow_nearest_ball initial: true {
 			enter {   
 				color <- ball_color ;
@@ -159,6 +174,7 @@ global {
 			}
 		}
 		
+		//Make the ball move randomly during a certain time
 		state chaos {
 			enter {
 				beginning_chaos_time <- int(time) ;
@@ -181,21 +197,25 @@ global {
 		}
 		
 		aspect default {
-			draw shape color: color size: ball_size ;
+			draw ball_shape color: color size: ball_size at:self.location;
 		}
 	}
 	
+	//Species representing the group of balls
 	species group parent: base { 
+		
 		rgb color <- rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
-		
 		geometry shape <- polygon (ball_in_group) buffer  10 ;
-		
 		float speed update: float(group_base_speed) ;
+		
+		//Parameter to capture the balls contains in the perception range
 		float perception_range update: float(base_perception_range + (rnd(5))) ;
+		
 		ball nearest_free_ball update: ( ball where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
 		group nearest_smaller_group update: ( ( (group as list) - self ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
 		base target update: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
-		
+		 
+		//Function to return the closest ball or small group of balls that the agent could capture
 		base get_nearer_target {
 			if  (nearest_free_ball = nil) and (nearest_smaller_group = nil) {
 				return nil ;
@@ -210,6 +230,7 @@ global {
 			return nearest_smaller_group ;
 		}
 		
+		//Action to use when the group of balls explode
 		action separate_components {
 			loop com over: (list (ball_in_group)) {
 				list<ball_in_group> nearby_balls <-  ((ball_in_group overlapping (com.shape + ball_separation)) - com) where (each in members) ;
@@ -226,6 +247,7 @@ global {
 			}
 		}
 		
+		//Species that will represent the balls captured by the group agent
 		species ball_in_group parent: ball topology: topology((world).shape)  {
 			
 			float my_age <- 1.0 update: my_age + 0.01;
@@ -239,6 +261,7 @@ global {
 			}
 		}
 		
+		//Reflex to capture all the balls close to the group agent
 		reflex capture_nearby_free_balls when: (cycle mod update_frequency) = 0 {
 			list<ball> nearby_free_balls <- (ball overlapping (shape + perception_range)) where (each.state = 'follow_nearest_ball');
 			if !(empty (nearby_free_balls)) {
@@ -246,6 +269,7 @@ global {
 			}
 		}
 		
+		//Action to do when the group is disaggregated
 		action disaggregate {
 			release members as: ball in: world {
 				set state value: 'chaos' ;
@@ -254,6 +278,7 @@ global {
 			do die ;
 		}
 		
+		//Reflex to merge the group close to the agent when the cycle is in the frequency of merging
 		reflex merge_nearby_groups when: (cycle mod merge_frequency) = 0 {
 			if ( (target != nil) and ((species_of (target)) = group) ) {
 				list<group> nearby_groups <- (group overlapping (shape + perception_range)) - self ;
@@ -274,6 +299,7 @@ global {
 			}
 		}
 		
+		//Reflex to chase a target agent 
 		reflex chase_target when: (target != nil) {
 			int direction_to_nearest_ball <- (self towards (target)) ;
 			float step_distance <- speed * step ;
@@ -319,7 +345,7 @@ global {
 			
 			shape <- convex_hull((polygon ((list (ball_in_group)) collect (ball_in_group (each)).location)) + 2.0) ;
 		}
-		
+		//Reflex to disaggregate the group if it is too important ie the number of balls is greater than 80% of the total ball number
 		reflex self_disaggregate {
 			if ( ( length (members) ) > ( 0.8 * (ball_number) ) ) {
 				do disaggregate ;
@@ -331,11 +357,13 @@ global {
 		}
 	}
 	
+	//Species cloud that will be created by an agglomeration of groups.
 	species cloud parent: base {
 		geometry shape <- convex_hull(polygon(members collect (((group_delegation(each)).shape).location))) update: convex_hull(polygon(members collect (((group_delegation(each)).shape).location)));
 
 		rgb color;
-				
+		
+		//Species contained in the cloud to represent the groups captured by the cloud agent
 		species group_delegation parent: group topology: (topology(world.shape)) {
 			geometry shape <- convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer 10 update: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
 
@@ -373,7 +401,8 @@ global {
 		}
 		
 		group target_group;
-
+	
+		//The cloud try to look for small groups to capture them
 		reflex chase_group {
 			if ( (target_group = nil) or (dead(target_group)) ) {
 				target_group <- one_of(group);
@@ -390,6 +419,7 @@ global {
 			}
 		}
 		
+		//Operator to know if a cloud can capture a group overlapping the cloud agent. 
 		bool can_capture (group a_group) {
 			
 			if (shape overlaps a_group.shape) { return true; }
@@ -401,6 +431,7 @@ global {
 			return false;
 		}
 		
+		//Reflex to capture group
 		reflex capture_group {
 			if ( (target_group != nil) and !(dead(target_group)) ) {
 				if (self can_capture [ a_group :: target_group]) {
@@ -414,6 +445,7 @@ global {
 			}
 		}
 		
+		//Reflex to disaggregate the clouds when they are no more group to capture
 		reflex disaggregate when: (empty(list(group))) {
 			loop m over: members {
 				ask group_delegation(m) as: group_delegation {

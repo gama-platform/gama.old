@@ -1,3 +1,9 @@
+/**
+* Name: Spatial Operators
+* Author: Patrick Taillandier
+* Description: A model which shows how to use spatial operators
+* Tags : Topology, Grid
+*/
 model example_spatial_operators
 
 global {

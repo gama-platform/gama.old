@@ -1,27 +1,30 @@
+/**
+* Name: Balls without gravity
+* Author: Arnaud Grignard
+* Description: This is a model that shows how the physics engine work without gravity. Balls can collide each other and can't go further than the wall
+* 	and the ground agents.
+* Tags : Physical Engine, Skill
+*/
 model Perfect_Gas
 
-
-/**
- *  Perfect_Gas
- * 
- *  Author: Arnaud Grignard
- * 
- *  Description: Ball are evolving in a cube and the gravity is null
- *
- */
  
  
 global {
-	
+	//Bounds of the environment
 	int width_of_environment parameter: 'Dimensions' init:200 ; 
 	int height_of_environment parameter: 'Dimensions' init:200  ; 
+	
+	//Range, Speed ans Size of the agents
 	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
 	float speed_of_agents parameter: 'Speed of Agents' min: 0.1  <- 2.0 ; 
 	int size_of_agents <- 10;
+	
+	
 	float size_of_the_wall <- 10.0;
 	int offset<-10;
 	geometry shape <- rectangle(width_of_environment, height_of_environment);
 
+	//Physic engines that will compute the forces
 	physic_world world2;
 	init {
 		create ball number: 1000{
@@ -81,29 +84,34 @@ global {
 			
 		}
 		
-		
+		//Create the physic engine without gravity computed
 		create physic_world {
 			gravity <- false;
 			world2 <- self;
 		}
 		
+		//Add the agents to compute their forces
 		ask world2 {registeredAgents <-  (ball as list) + (ground as list) + (wall as list);}
 		
 	}
+	
+	//Reflex to compute the forces at each step
 	reflex computeForces  {
 		ask world2 {do computeForces timeStep : 1;}
 	} 
 			
 } 
-
+//Species to represent the physic engine, derivated from the Physical3DWorld built-in species
 species physic_world parent: Physical3DWorld ;
  
+//Species to represent the ground using the physical3D skill
 species ground skills: [physical3D]{
 	aspect default {
 		draw shape color: #black empty:true;
 	}
 }
 
+//Species to represent the wall using the physical3D skill
 species wall skills: [physical3D]{
 	rgb color;
 	float height;
@@ -112,6 +120,7 @@ species wall skills: [physical3D]{
 	}
 }
  	
+//Species to represent the ball using the physical3D skill
 species ball skills: [physical3D] {  
 	rgb color;
 	int radius;

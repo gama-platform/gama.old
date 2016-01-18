@@ -1,21 +1,29 @@
+/**
+* Name: Pool using Physic Engine
+* Author: Arnaud Grignard
+* Description: This is a model that shows how the physics engine works using a pool with balls, collided by a white ball.
+* 	The balls use the skill Physical3D.
+* Tags : Physical Engine, Skill
+*/
 model pool3D
 
-/**
- *  pool3D
- * 
- *  Author: Arnaud Grignard
- * 
- *
- */
 global {
+	//Parameters for the environment
 	int width_of_environment <- 200;
 	int height_of_environment <- 300;
+	
+	//Parameters for the balls
 	float speed_of_agents <- 2.0;
 	int size_of_agents <- 10;
+	
 	rgb colorwood <- rgb([178, 112, 62]);
+	
+	//Physical Engine
 	physic_world world2;
 	geometry shape <- rectangle(width_of_environment, height_of_environment);
 	init {
+		
+		//Creation of the white ball
 		create ball {
 			location <- { width_of_environment / 2, 4 * height_of_environment / 5, 5.0 };
 			mass <- 3.0;
@@ -28,7 +36,9 @@ global {
 		int deltaI <- 0;
 		int initX <- 75;
 		int initY <- int(height_of_environment / 8);
-		create ball number: 15 {
+		
+		//Create the other balls for the pool
+		create ball number: 0 {
 			location <- { initX + (i - deltaI) * 10, initY, 5.0 };
 			heading <- 90;
 			speed <- 0.0;
@@ -148,18 +158,21 @@ global {
 			mass <- 0.0;
 			color <- colorwood;
 		}
-
+		
+		//Create the physic engine with gravity
 		create physic_world {
 			gravity <- true;
 			world2 <- self;
 		}
 
+		//Add the agents inside the registered agents in the physic engine
 		ask world2 {
 			registeredAgents <- (ball as list) + (ground as list) + (wall as list);
 		}
 
 	}
 
+	//Reflex to compute the forces at each step
 	reflex computeForces {
 		ask world2 {
 			do computeForces timeStep : 1;
@@ -169,8 +182,10 @@ global {
 
 }
 
+//Species corresponding to the physics engine, derivated from the built-in species Physical3DWorld
 species physic_world parent: Physical3DWorld ;
 
+//Species representing the ground agents used for the computation of the forces, using the skill physical3D
 species ground skills: [physical3D] {
 	aspect default {
 		draw shape color: rgb([10, 114, 63]) border: rgb([10, 114, 63]);
@@ -178,6 +193,7 @@ species ground skills: [physical3D] {
 
 }
 
+//Species representing the wall agents of the pool using the skill physical3D
 species wall skills: [physical3D] {
 	rgb color;
 	aspect default {
@@ -186,8 +202,9 @@ species wall skills: [physical3D] {
 
 }
 
+//Species representing the ball agents of the pool using the skill physical3D
 species ball skills: [physical3D] {
-	rgb color;
+	rgb color<-#white;
 	int size <- size_of_agents;
 	float speed <- speed_of_agents;
 	int heading <- rnd(359);
@@ -203,7 +220,7 @@ species ball skills: [physical3D] {
 
 experiment pool type: gui {
 	output {
-		display Circle type: opengl tesselation: true ambient_light: 100 background: #black draw_env: false { species ground aspect: default;
+		display Circle type: opengl tesselation: true ambient_light: 100 background: #white draw_env: false { species ground aspect: default;
 		species wall aspect: default;
 		species ball aspect: sphere;
 		}

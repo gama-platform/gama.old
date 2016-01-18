@@ -1,14 +1,17 @@
 /**
- *  Savetoshapefile
- *  Author: Patrick Taillandier
- *  Description: Show how to save a species (or a list of agents) into a shapefile
- */
+* Name: Save to Shapefile
+* Author: Patrick Taillandier
+* Description: This is a model that shows how to save agents inside a Shapefile to reuse it later or to keep it.
+* Tags : Save Files, Shapefiles
+*/
 
 model Savetoshapefile
 
 global {
 	init {
 		geometry free_space <- copy(shape);
+		
+		//creation of the building agents that will be saved
 		create building number: 50 {
 			shape <- square(5.0);
 			location <- any_location_in (free_space - 5.0);
@@ -19,6 +22,7 @@ global {
 	}
 }
 
+//species that represent the building agents that will be saved
 species building {
 	string type <- flip(0.8) ? "residential" : "industrial";
 	aspect default {
