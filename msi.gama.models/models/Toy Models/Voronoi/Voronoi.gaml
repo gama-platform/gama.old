@@ -16,7 +16,7 @@ global {
 } 
 
 
-grid cell width: env_width height: env_height neighbours: 8 use_regular_agents: false {
+grid cell width: env_width height: env_height neighbors: 8 use_regular_agents: false {
 	// Note: since GAMA 1.7, the topology needs to be specified for this computation to use continuous distances
 	center closest_center <- nil update: (center closest_to self.location) using topology(world);
 	rgb color <- #white update: (closest_center).color;

@@ -70,7 +70,7 @@ species people {
 	}
 }
 
-grid cell width: 150 height: 150  neighbours: 8 frequency: 0 {
+grid cell width: 150 height: 150  neighbors: 8 frequency: 0 {
 	bool is_obstacle <- false;
 	bool is_free <- true;
 	rgb color <- #white;

@@ -46,8 +46,19 @@ species preSI {
 
 	// must be followed with exact order S, I, t  and N,beta
 	equation eqSI type: SI vars: [S,I,t] params: [N,beta] ;
-	reflex solving {solve eqSI method:rk4 step:h;}
+	/*reflex solving {
+		list i_list;
+		//solve eqSI method: "dp853" step: 0.01 cycle_length: 100 min_step: 1 max_step: 1 scalAbsoluteTolerance: 1 scalRelativeTolerance: 1 integrated_times: i_list ;
+		//solve eqSI method:rk4 step:h;
+	}*/
 	
+	reflex solving {
+		list i_list;
+		list v_list ;
+		solve eqSI method: "rk4" step: h cycle_length: 1/h integrated_times: i_list integrated_values: v_list;
+		write "i_list: " + i_list;
+		write "v_list:" + v_list;
+	}
 }
 
 species userSI {

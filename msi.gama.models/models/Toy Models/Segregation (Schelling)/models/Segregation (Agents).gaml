@@ -17,7 +17,7 @@ global {
 	} 
 }
 
-grid space width: dimensions height: dimensions neighbours: 8 use_regular_agents: false frequency: 0{
+grid space width: dimensions height: dimensions neighbors: 8 use_regular_agents: false frequency: 0{
 	const color type: rgb <- black;
 }
 

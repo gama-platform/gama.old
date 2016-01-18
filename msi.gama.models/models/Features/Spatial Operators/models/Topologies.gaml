@@ -227,7 +227,7 @@ global {
 	}
 }
 
-grid cell width: 10 height: 10 neighbours: 4{
+grid cell width: 10 height: 10 neighbors: 4{
 	rgb color <- #green;
 }
 

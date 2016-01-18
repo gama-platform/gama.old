@@ -88,7 +88,7 @@ species road
 	}
 }
 
-grid plot file: asc_grid use_individual_shapes: false use_regular_agents: false neighbours: 4
+grid plot file: asc_grid use_individual_shapes: false use_regular_agents: false neighbors: 4
 {
 	rgb color <- grid_value = -1 ? #white : plot_colors[int(grid_value)];
 	float dist_route <- 0.0;

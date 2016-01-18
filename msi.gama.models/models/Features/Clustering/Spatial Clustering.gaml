@@ -71,7 +71,7 @@ global {
     }
     //reflex that builds the cell clusters
     reflex forest_clustering {
-    	list<list<vegetation_cell>> clusters <- list<list<vegetation_cell>>(simple_clustering_by_distance(vegetation_cell where (each.color = °green), max_dist_cell));
+    	list<list<vegetation_cell>> clusters <- list<list<vegetation_cell>>(simple_clustering_by_distance(vegetation_cell where (each.color = #green), max_dist_cell));
         loop cluster over: clusters {
         	create forest {
         		cells <- cluster;
@@ -82,20 +82,20 @@ global {
     }
     
 }
-grid vegetation_cell width: 25 height: 25 neighbours: 4{
+grid vegetation_cell width: 25 height: 25 neighbors: 4{
 	rgb color <- flip (proba_vegetation) ? #green : #white;
 }
 
 species forest {
 	list<vegetation_cell> cells;
 	aspect default {
-		draw shape.contour + 0.5 color: °red;
+		draw shape.contour + 0.5 color: #red;
 	}
 }
 
 species people {
-	rgb color_cluster <- °black;
-	rgb color_tree <- °black;
+	rgb color_cluster <- #black;
+	rgb color_tree <- #black;
 	aspect cluster {
 		draw circle(2) color: color_cluster;
 	}
@@ -108,9 +108,9 @@ species group_people {
 	list<group_people> sub_groups;
 	group_people parent;
 	aspect default {
-		draw shape + 0.2 color: °red;
+		draw shape + 0.2 color: #red;
 		if (parent != nil) {
-			draw line ([location, parent.location]) end_arrow: 2 color: °red;
+			draw line ([location, parent.location]) end_arrow: 2 color: #red;
 		}
 	}
 }
@@ -128,7 +128,7 @@ experiment clustering type: gui {
 			species group_people;
 		}
 		display map_forest_clusters {
-			grid vegetation_cell lines: °black;
+			grid vegetation_cell lines: #black;
 			species forest;
 		}
 	}

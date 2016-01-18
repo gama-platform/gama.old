@@ -318,9 +318,9 @@ entities {
 
 experiment start type: gui {
 	output {
-		display RealBoids  type:opengl ambient_light:255 z_fighting:false trace: 30{
+		display RealBoids  type:opengl ambient_light:255 z_fighting:false {
 			image name:'background' file:file_path_to_ocean;
-			species boids aspect: dynamicColor  position:{0,0,0.1};
+			species boids aspect: dynamicColor  position:{0,0,0.1} trace: 30;
 			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}
@@ -338,9 +338,9 @@ experiment trajectory_analysis type: gui {
 			species obstacle position:{0,0,0.1}; 		
 		}
 				
-		display AggregatedBoidsTrajectory  ambient_light:50 diffuse_light:100 type:opengl trace: true {
+		display AggregatedBoidsTrajectory  ambient_light:50 diffuse_light:100 type:opengl  {
 			image name:'background' file:file_path_to_ocean;
-			species aggregatedboids  aspect: base trace:100 fading: true;
+			species aggregatedboids  aspect: base trace:100 fading: true ;
 			species boids_goal aspect:sphere;		
 		}
 	} 

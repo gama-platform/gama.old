@@ -29,7 +29,7 @@ global {
 	}  
 }
 
-grid space width: dimensions height: dimensions neighbours: 8 use_individual_shapes: false use_regular_agents: false frequency: 0 ; 
+grid space width: dimensions height: dimensions neighbors: 8 use_individual_shapes: false use_regular_agents: false frequency: 0 ; 
  
 
 species people parent: base  {

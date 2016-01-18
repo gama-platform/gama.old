@@ -37,7 +37,7 @@ global {
 }
 
 
-	grid sugar_cell width: 50 height: 50 neighbours: 4 use_individual_shapes: false use_regular_agents: false{ 
+	grid sugar_cell width: 50 height: 50 neighbors: 4 use_individual_shapes: false use_regular_agents: false{ 
 		const multiagent type: bool <- false;
 		int maxSugar;
 		int sugar update: sugar + sugarGrowthRate max: maxSugar;

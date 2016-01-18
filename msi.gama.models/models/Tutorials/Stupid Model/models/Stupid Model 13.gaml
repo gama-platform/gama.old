@@ -20,7 +20,7 @@ global torus: true{
 	
 }
 
-grid cell width: 100 height: 100 neighbours: 4 {
+grid cell width: 100 height: 100 neighbors: 4 {
 	list<cell> neighbours4 <- self neighbors_at 4;
 	list<cell> neighbours3 <- self neighbors_at 3;
 	float maxFoodProdRate <- globalMaxFoodProdRate;

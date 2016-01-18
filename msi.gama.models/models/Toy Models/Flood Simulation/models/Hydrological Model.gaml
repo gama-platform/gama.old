@@ -155,7 +155,7 @@ global {
       user_command "Destroy dyke" action: break; 
    }
    
-   grid cell file: dem_file neighbours: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbours_cache: false {
+   grid cell file: dem_file neighbors: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbours_cache: false {
       float altitude;
       float water_height <- 0.0 min: 0.0;
       float height;

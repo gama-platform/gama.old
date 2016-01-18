@@ -32,7 +32,7 @@ global {
 	
 }
 
-grid cell width: width height: height neighbours: 4 {
+grid cell width: width height: height neighbors: 4 {
 	list<cell> neighbours4 <- self neighbors_at 4;
 	list<cell> neighbours3 <- self neighbors_at 3;
 	float maxFoodProdRate <- globalMaxFoodProdRate;

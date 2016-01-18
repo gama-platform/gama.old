@@ -20,7 +20,7 @@ global torus: torus_environment {
 		}
 	} 
 }
-grid life_cell width: environment_width height: environment_height neighbours: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbours_cache: false {
+grid life_cell width: environment_width height: environment_height neighbors: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbours_cache: false {
 	bool new_state;
 	bool state <- (rnd(100)) < density ;
 	rgb color <- state ? black : white ;

@@ -147,7 +147,7 @@ species predator parent: generic_species {
 	}
 }
 	
-grid vegetation_cell width: 50 height: 50 neighbours: 4 {
+grid vegetation_cell width: 50 height: 50 neighbors: 4 {
 	float maxFood <- 1.0 ;
 	float foodProd <- (rnd(1000) / 1000) * 0.01 ;
 	float food <- (rnd(1000) / 1000) max: maxFood update: food + foodProd ;

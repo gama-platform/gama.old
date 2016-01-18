@@ -32,7 +32,7 @@ global {
 	}
 }
 
-grid cell width: nb_cols height: nb_rows neighbours: 8 {
+grid cell width: nb_cols height: nb_rows neighbors: 8 {
 	bool is_wall <- false;
 	bool is_exit <- false;
 	rgb color <- #white;	

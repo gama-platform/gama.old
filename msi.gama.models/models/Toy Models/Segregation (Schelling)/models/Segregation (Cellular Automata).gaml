@@ -31,7 +31,7 @@ global torus: true{
 }
 
 
-grid space parent: base width: dimensions height: dimensions neighbours: 8  {
+grid space parent: base width: dimensions height: dimensions neighbors: 8  {
 	rgb color <- black;
 	list<space> my_neighbours <- self neighbors_at neighbours_distance;
 	action migrate {

@@ -37,7 +37,7 @@ global {
 }
 species scheduler schedules: cell + (bug sort_by ( - each.size)) + shuffle(predator);
 
-grid cell width: width height: height neighbours: 4 schedules:[]{
+grid cell width: width height: height neighbors: 4 schedules:[]{
 	list<cell> neighbours4 <- self neighbors_at 4;
 	list<cell> neighbours3 <- self neighbors_at 3;
 	float maxFoodProdRate <- globalMaxFoodProdRate;

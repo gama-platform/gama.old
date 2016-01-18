@@ -35,7 +35,7 @@ global {
 
 } 
 
-grid ant_grid width: gridsize height: gridsize neighbours: 8 {
+grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 	bool isNestLocation  <- ( self distance_to center ) < 4;
 	bool isFoodLocation <-  types[grid_x , grid_y] = 2;       
 	list<ant_grid> neighbours <- self neighbors_at 1;  

@@ -168,7 +168,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 			if ( neighbours != null && neighbors != null ) {
 				sd.error("'neighbours' and 'neighbors' cannot be defined at the same time", IGamlIssue.CONFLICTING_FACETS,
-						NEIGHBORS);
+						NEIGHBOURS);
 				return;
 			}
 			// Issue 1311

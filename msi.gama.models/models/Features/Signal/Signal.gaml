@@ -22,7 +22,7 @@ global {
 }
 
 
-grid cells height: gridsize width: gridsize neighbours:8 use_regular_agents: false use_individual_shapes: false {
+grid cells height: gridsize width: gridsize neighbors:8 use_regular_agents: false use_individual_shapes: false {
 	const neighbours type: list of: cells <- self neighbors_at 1;
 	
 	reflex updateTime{

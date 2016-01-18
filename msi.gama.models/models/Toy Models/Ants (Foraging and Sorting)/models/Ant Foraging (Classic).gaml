@@ -23,7 +23,7 @@ global {
 }
 
 
-grid ant_grid width: gridsize height: gridsize neighbours: 8 use_regular_agents: false {
+grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: false {
 	list<ant_grid> neighbours <- self neighbors_at 1;
 	bool multiagent <- true ;
 	int type <- int(types at {grid_x,grid_y}) ;
@@ -96,7 +96,7 @@ species ant skills: [moving] control: fsm {
 		}
 	} 
 	aspect default {
-		draw shape: circle(1.0) empty: !hasFood color: #orange ; 
+		draw circle(1.0) empty: !hasFood color: #orange ; 
 	}           
 }
 

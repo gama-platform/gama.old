@@ -9,18 +9,23 @@ global torus: true{
 	}
 }
 
-grid cell width: 100 height: 100 neighbours: 4 {
-	list<cell> neighbours4 <- self neighbors_at 4;
+grid cell width: 100 height: 100 neighbors: 4 {
+	list<cell> neighbors4 <- self neighbors_at 4;
+	
+	list<cell> neighbors (int dist <- 1) {
+		return self neighbors_at dist;
+	}
 }
 
-species bug {
-	cell my_place;
+species bug  {
+	cell my_place  ;
 	reflex basic_move {
-		cell destination <- shuffle(my_place.neighbours4) first_with empty(each.agents);
+
+		cell destination <- shuffle(my_place.neighbors4) first_with empty(each.agents);
 		if (destination != nil) {
 			my_place <- destination;
 			location <- destination.location;
-		}
+		} 
 	}
 	aspect basic {
 		draw circle(0.5) color: #red;

@@ -20,7 +20,7 @@ global {
 	} 
 }
 
-grid cell width: 50 height: 50 neighbours: 4 {
+grid cell width: 50 height: 50 neighbors: 4 {
 	bool is_obstacle <- flip(0.2);
 	rgb color <- is_obstacle ? #black : #white;
 } 

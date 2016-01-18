@@ -36,7 +36,7 @@ global {
 }
 
 
-grid ant_grid width: gridsize height: gridsize neighbours: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
+grid ant_grid width: gridsize height: gridsize neighbors: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
 	const neighbours type: list of: ant_grid <- self neighbors_at 1;
 	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
 	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
