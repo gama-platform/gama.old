@@ -35,6 +35,7 @@ public class Dates {
 		return nd;
 	}
 	
+	
 	@operator(value = { IKeyword.PLUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE })
 	@doc("Add a duration to a date")
 	public static GamaDate plusDuration(final IScope scope, final GamaDate date1, final double duration)
@@ -62,7 +63,7 @@ public class Dates {
 		return nd;
 	}
 	
-	@operator(value = {  IKeyword.MINUS}, content_type = IType.NONE, category = { IOperatorCategory.DATE })
+	@operator(value = {  IKeyword.MINUS,  "substract_seconds"}, content_type = IType.NONE, category = { IOperatorCategory.DATE })
 	@doc(usages = @usage(value = "if one of the operands is a date and the other a number, returns a date corresponding to the date minus the given number as duration (in seconds)",
 			examples = { @example(value = "date1 - 200") }))		
 	public static GamaDate minusDuration(final IScope scope, final GamaDate date1, final int duration)
@@ -142,5 +143,59 @@ public class Dates {
 		nd.addMinutes(nbMinutes);
 		return nd;
 	}
-
+	
+	@operator(value = { "substract_years"  }, content_type = IType.NONE, category = { IOperatorCategory.DATE })
+	@doc(value = "Substract a given number of year from a date", examples = { @example(value = "date1 substract_years 3") })
+	public static GamaDate substractYears(final IScope scope, final GamaDate date1, final int nbYears)
+		throws GamaRuntimeException {
+		GamaDate nd= new GamaDate(date1);
+		nd.addYears(- nbYears);
+		return nd;
+	}
+	
+	@operator(value = { "substract_months"  }, content_type = IType.NONE, category = { IOperatorCategory.DATE })
+	@doc(value = "Substract a given number of months from a date", examples = { @example(value = "date1 substract_months 5") })
+	public static GamaDate substractMonths(final IScope scope, final GamaDate date1, final int nbMonths)
+		throws GamaRuntimeException {
+		GamaDate nd= new GamaDate(date1);
+		nd.addMonths(- nbMonths);
+		return nd;
+	}
+	
+	@operator(value = { "substract_weeks"  }, content_type = IType.NONE, category = { IOperatorCategory.DATE })
+	@doc(value = "Substract a given number of weeks from a date", examples = { @example(value = "date1 substract_weeks 15") })
+	public static GamaDate substractWeeks(final IScope scope, final GamaDate date1, final int nbWeeks)
+		throws GamaRuntimeException {
+		GamaDate nd= new GamaDate(date1);
+		nd.addWeeks(- nbWeeks);
+		return nd;
+	}
+	
+	@operator(value = { "substract_days"  }, content_type = IType.NONE, category = { IOperatorCategory.DATE })
+	@doc(value = "Substract a given number of days from a date", examples = { @example(value = "date1 substract_days 20") })
+	public static GamaDate substractDays(final IScope scope, final GamaDate date1, final int nbDays)
+		throws GamaRuntimeException {
+		GamaDate nd= new GamaDate(date1);
+		nd.addDays(- nbDays);
+		return nd;
+	}
+	
+	@operator(value = { "substract_hours"  }, content_type = IType.NONE, category = { IOperatorCategory.DATE })
+	@doc(value = "Add a given number of hours from a date", examples = { @example(value = "date1 substract_hours 15") })
+	public static GamaDate substractHours(final IScope scope, final GamaDate date1, final int nbHours)
+		throws GamaRuntimeException {
+		GamaDate nd= new GamaDate(date1);
+		nd.addHours( - nbHours);
+		return nd;
+	}
+	
+	@operator(value = { "substract_minutes"  }, content_type = IType.NONE, category = { IOperatorCategory.DATE })
+	@doc(value = "Substract a given number of minutes from a date", examples = { @example(value = "date1 substract_minutes 5") })
+	public static GamaDate substractMinutes(final IScope scope, final GamaDate date1, final int nbMinutes)
+		throws GamaRuntimeException {
+		GamaDate nd= new GamaDate(date1);
+		nd.addMinutes(- nbMinutes);
+		return nd;
+	}
+	
 }
