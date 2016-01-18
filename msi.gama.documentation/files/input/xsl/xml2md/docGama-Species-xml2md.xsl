@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!---->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
+<xsl:import href="docGama-utils-xml2md.xsl"/>
+
 <xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'" />
 <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
 
@@ -44,7 +46,10 @@ create cluster_builder returns: clusterer;
     	<xsl:sort select="@name" />
     	
 ----
-
+<xsl:call-template name="keyword">    
+	<xsl:with-param name="category" select="'species'"/>
+	<xsl:with-param name="nameGAMLElement" select="@name"/>
+</xsl:call-template>
 ## `<xsl:value-of select="@name"/>`	
 
 ### Actions

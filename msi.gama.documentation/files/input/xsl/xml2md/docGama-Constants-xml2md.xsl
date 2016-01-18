@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!---->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
+<xsl:import href="docGama-utils-xml2md.xsl"/>
 <xsl:variable name="colors" select="'Colors'"/>
 
 <xsl:template match="/">
@@ -76,7 +77,13 @@ float one_cubic_inch &lt;- 1 °sqin * 1 °inch;
 
 			<xsl:for-each select="categories/category">
 				<xsl:variable name="catItem" select="@id"/>
-				<xsl:if test="$catItem = $categoryGlobal">
+				<xsl:if test="$catItem = $categoryGlobal"> 
+<xsl:text>
+</xsl:text>
+				<xsl:call-template name="keyword">    
+					<xsl:with-param name="category" select="'constant'"/>
+					<xsl:with-param name="nameGAMLElement" select="$unitName"/>
+				</xsl:call-template>				
 						<xsl:text>
 * **`</xsl:text> <xsl:value-of select="$unitName"/> <xsl:text>`**</xsl:text> <xsl:if test="../../@altNames"> <xsl:text> (</xsl:text> <xsl:value-of select="$unitAltNames"/> <xsl:text>)</xsl:text></xsl:if><xsl:text>, value= </xsl:text> <xsl:value-of select="$unitValue"/> 
   	<xsl:if test="../../documentation/result[text()]"> <xsl:text>, Comment: </xsl:text> <xsl:value-of select="../../documentation/result[text()]"/>  
@@ -105,7 +112,12 @@ rgb my_color &lt;- °teal;
 			<xsl:variable name="unitName" select="@name"/>
 			<xsl:variable name="unitAltNames" select="@altNames"/>
 			<xsl:variable name="unitValue" select="@value"/>
- 
+<xsl:text>
+</xsl:text>
+<xsl:call-template name="keyword">    
+	<xsl:with-param name="category" select="'constant'"/>
+	<xsl:with-param name="nameGAMLElement" select="$unitName"/>
+</xsl:call-template>	
 			<xsl:text>
 * **`</xsl:text> <xsl:value-of select="$unitName"/> <xsl:text>`**</xsl:text> <xsl:if test="@altNames"> <xsl:text> (</xsl:text> <xsl:value-of select="$unitAltNames"/> <xsl:text>)</xsl:text></xsl:if><xsl:text>, value= </xsl:text> <xsl:value-of select="$unitValue"/> 
   	<xsl:if test="documentation/result[text()]"> <xsl:text>, Comment: </xsl:text> <xsl:value-of select="documentation/result[text()]"/>  
