@@ -422,7 +422,17 @@ public class SpeciesDescription extends TypeDescription {
 		final SpeciesDescription parent = getParent();
 		// Takes care of invalid species (see Issue 711)
 		// built-in parents are not considered as their actions/variables are normally already copied as java additions
-		if ( parent != null && parent != this && !parent.isBuiltIn() ) {
+		if ( parent.getJavaBase() == null ) {
+			error("Species " + parent.getName() + " Java base class can not be found. No validation is possible.",
+				IGamlIssue.GENERAL);
+			return;
+		}
+		if ( getJavaBase() == null ) {
+			error("Species " + getName() + " Java base class can not be found. No validation is possible.",
+				IGamlIssue.GENERAL);
+			return;
+		}
+		if ( parent != null && parent != this && !parent.isBuiltIn() && parent.getJavaBase() != null ) {
 			if ( !parent.getJavaBase().isAssignableFrom(getJavaBase()) ) {
 				error("Species " + getName() + " Java base class (" + getJavaBase().getSimpleName() +
 					") is not a subclass of its parent species " + parent.getName() + " base class (" +

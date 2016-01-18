@@ -135,9 +135,12 @@ public abstract class TypeDescription extends SymbolDescription {
 				newVar.warning(msg, IGamlIssue.WRONG_REDEFINITION, NAME);
 			}
 		} else {
-			Resource newResource = newVar.getUnderlyingElement(null).eResource();
-			Resource existingResource = existingVar.getUnderlyingElement(null).eResource();
-			if ( newResource.equals(existingResource) ) {
+			EObject newObject = newVar.getUnderlyingElement(null);
+			Resource newResource = newObject == null ? null : newObject.eResource();
+			EObject existingObject = existingVar.getUnderlyingElement(null);
+			Resource existingResource = existingObject == null ? null : existingObject.eResource();
+			boolean same = newResource == null ? existingResource == null : newResource.equals(existingResource);
+			if ( same ) {
 				if ( error ) {
 					newVar.error(msg, IGamlIssue.WRONG_REDEFINITION, NAME);
 				} else {
