@@ -1,19 +1,14 @@
+/**
+* Name: Falling Balls
+* Author: Arnaud Grignard
+* Description: This is a model that shows how the physics engine work by displaying two species (a floor and balls). Ball agents use the 
+* 	skill physical3D. The ball agents fall on a floor and fall from the floor to the void. 
+* Tags : Physical Engine, Skill
+*/
+
 model FallingHelloWorld
 
-/**
- *  FallingHelloWorld
- * 
- *  Author: Arnaud Grignard
- * 
- *  Description: This is a hello world model that introduces the physics engine.
- *  This model define two species floor and ball with the "physical3D" skills
- *  that simply floor on a floor when starting the simulation. 
- * 
- *  Floor is a simple rectangle with a null mass
- *  Ball is a sphere with a given mass
- * 
- *
- */
+
 
 global {
 	int environment_size <- 500; 
@@ -25,28 +20,37 @@ global {
 	file imageRaster <- file('./../images/wood-floor.jpg') ;
 	geometry shape <- square(environment_size);
 	
+	
+	//Physic World used to simulate gravity and compute forces
 	physic_world world2;
+	
+	
 	init {
 		create ball number: number_of_ball{
 			location <-  {rnd(environment_size),rnd(environment_size),rnd(environment_size)};
             radius <-float(rnd(ball_radius)+1);
+            //Bounds to compute the collision for the ball agents
 			collisionBound <-  ["shape"::"sphere","radius"::radius];
 			mass <-1.0;
 		}
 		
 		create ground {
 			location <- {environment_size/2,environment_size/2,0};
+            //Bounds to compute the collision for the floor agent
 			collisionBound <-  ["shape"::"floor","x"::environment_size/2, "y":: environment_size/2, "z"::0];
 			mass <-0.0;
 		}
 
 		create physic_world{
 		  world2 <- self;
-		  ask world2 {registeredAgents <-  (ball as list) + (ground as list);}	
+		  //Add to the agents that will be used to compute the forces.
+		  ask world2 {registeredAgents <-  (ball as list) + (ground as list);}
+		  //Boolean to set gravity 	
 		  world2.gravity <- true;
 		}
 	}
 	
+	//Reflex to compute the forces at each step
 	reflex computeForces  {
 	  ask world2 {do computeForces timeStep : 1;}
 	} 			

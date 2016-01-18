@@ -1,8 +1,9 @@
 /**
- *  SavetoAsc
- *  Author: Patrick Taillandier
- *  Description: Show how to save a grid into an asc file
- */
+* Name: Save to Ascii
+* Author: Patrick Taillandier
+* Description: This is a model that shows how to save a grid inside a ASCII File to reuse it later or to keep it.
+* Tags : Save Files
+*/
 
 model SavetoAsc
 
@@ -13,6 +14,7 @@ global {
 	}
 }
 
+//Grid that will be saved in the ASC File
 grid cell width: 50 height: 50 {
 	float grid_value <- self distance_to world.location;
 	rgb color <- rgb(255 * (1 - grid_value / 50), 0,0);
