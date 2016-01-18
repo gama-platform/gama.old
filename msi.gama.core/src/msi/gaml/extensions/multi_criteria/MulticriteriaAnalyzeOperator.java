@@ -22,6 +22,7 @@ import java.util.Map;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -216,8 +217,16 @@ public class MulticriteriaAnalyzeOperator {
 
 	}
 
+
+	@operator(value = "evidence_theory_DM", category = { MULTICRITERIA })
+	@doc(usages = { 
+		@usage(value = "if the operator is used with only 2 operands (the candidates and the criteria), the last parameter (use simple method) is set to true") })
+	public static Integer evidenceTheoryDecisionMaking(IScope scope,final List<List> cands, List<Map<String, Object>> criteriaMap) throws GamaRuntimeException {
+		return evidenceTheoryDecisionMaking(scope, cands, criteriaMap, true);
+	}
 	@operator(value = "evidence_theory_DM", category = { MULTICRITERIA })
 	@doc(value = "The index of the best candidate according to a method based on the Evidence theory. This theory, which was proposed by Shafer ([http://www.glennshafer.com/books/amte.html Shafer G (1976) A mathematical theory of evidence, Princeton University Press]), is based on the work of Dempster ([http://projecteuclid.org/DPubS?service=UI&version=1.0&verb=Display&handle=euclid.aoms/1177698950 Dempster A (1967) Upper and lower probabilities induced by multivalued mapping. Annals of Mathematical Statistics, vol.  38, pp. 325--339]) on lower and upper probability distributions. The first operand is the list of candidates (a candidate is a list of criterion values); the second operand the list of criterion: A criterion is a map that contains seven elements: a name, a first threshold s1, a second threshold s2, a value for the assertion \"this candidate is the best\" at threshold s1 (v1p), a value for the assertion \"this candidate is the best\" at threshold s2 (v2p), a value for the assertion \"this candidate is not the best\" at threshold s1 (v1c), a value for the assertion \"this candidate is not the best\" at threshold s2 (v2c). v1p, v2p, v1c and v2c have to been defined in order that: v1p + v1c <= 1.0; v2p + v2c <= 1.0.; the last operand allows to use a simple version of this multi-criteria decision making method (simple if true)",
+	masterDoc = true,
 	special_cases = { "returns -1 is the list of candidates is nil or empty" },
 	examples = { @example(value = "evidence_theory_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [[\"name\"::\"utility\", \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true],[\"name\"::\"price\",  \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true]], true)", equals = "0") },
 	see = { "weighted_means_DM", "electre_DM", "electre_DM" })
