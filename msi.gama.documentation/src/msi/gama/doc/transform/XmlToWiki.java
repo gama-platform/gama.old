@@ -36,6 +36,7 @@ public class XmlToWiki {
 
 	public static String suffix = ""; // "Dev"
 	public static String extFileName = "Extension";
+	public static String extFolder = "PluginDocumentation/";
 	
 	public static void createAllWikis() 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
@@ -147,7 +148,7 @@ public class XmlToWiki {
 		extBw.newLine();
 		
 		for(String pluginName : hmExt.keySet()){
-			extBw.write("* ["+ pluginName +"]("+extFileName+"_"+pluginName+")");	
+			extBw.write("* ["+ pluginName +"]("+extFolder+extFileName+"_"+pluginName+")");	
 			extBw.newLine();
 		}
 		extBw.close();

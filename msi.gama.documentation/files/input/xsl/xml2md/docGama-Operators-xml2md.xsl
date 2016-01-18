@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!---->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
-<xsl:import href="docGaml-template-checkName-xml2md.xsl"/>
-<xsl:import href="docGaml-template-generateExamples-xml2md.xsl"/>
+<xsl:import href="docGama-utils-xml2md.xsl"/>
 
 <xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'" />
 <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
@@ -138,7 +137,11 @@ Note that due to the fact that actions are written by modelers, the general func
     	<xsl:sort select="@name" />
     	
 ----
-
+[//]: # (keyword|operator_<xsl:value-of select="@id"/>)
+<xsl:call-template name="keyword">    
+	<xsl:with-param name="category" select="operator"/>
+	<xsl:with-param name="nameGAMLElement" select="@name"></xsl:with-param>
+</xsl:call-template>
 ### <xsl:call-template name="checkName"/> 
   	<xsl:if test="@alternativeNameOf">
 <xsl:text>
