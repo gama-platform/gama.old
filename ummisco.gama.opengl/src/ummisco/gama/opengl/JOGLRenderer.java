@@ -614,8 +614,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures, asset3Dmodel, 
 				ratio, colors, rot3D);
 		}
-
-		// Add a geometry with a depth and type coming from Attributes
 		return rect;
 	}
 

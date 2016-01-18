@@ -136,14 +136,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 		final double height, final boolean roundCorner, final IShape.Type type, final List<Double> ratio,
 		final List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
 		final GeometryObject curJTSGeometry;
-		if ( type == IShape.Type.PIESPHERE || type == IShape.Type.PIESPHEREWITHDYNAMICALCOLOR ||
-			type == IShape.Type.PACMAN || type == IShape.Type.ANTISLICE || type == IShape.Type.SLICE ) {
-			curJTSGeometry = new Pie3DObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border,
-				isTextured, textures, angle == null ? 0 : angle, height, roundCorner, type, ratio, colors);
-		} else {
-			curJTSGeometry = new GeometryObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border,
+		curJTSGeometry = new GeometryObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border,
 				isTextured, textures, asset3Dmodel, angle == null ? 0 : angle, height, roundCorner, type, rotate3D);
-		}
 		geometries.add(curJTSGeometry);
 	}
 

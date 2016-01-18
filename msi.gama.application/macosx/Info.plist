@@ -26,11 +26,11 @@
 	<key>CFBundleExecutable</key>
 	<string>Gama</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Gama 1.6.1, Copyright UMMISCO IRD/UPMC and partners 2006-2014 https://code.google.com/p/gama-platform/</string>
+	<string>Gama 1.7.0b, Copyright UMMISCO IRD/UPMC and partners 2006-2016 http://gama-platform.org</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>ird.ummisco.gama</string>
+	<string>Gama</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -38,11 +38,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.6.1</string>
+	<string>1.7.0b</string>
 	<key>CFBundleSignature</key>
 	<string>GAMA</string>
 	<key>CFBundleVersion</key>
-	<string>1.6.1</string>
+	<string>1.7.0b</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleLocalizations</key>

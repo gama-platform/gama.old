@@ -447,56 +447,6 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
-	public static IShape buildHemiSphere(final double radius, final ILocation location, final double ratio) {
-		final IShape g = buildCircle(radius, location);
-		g.setDepth(radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, HEMISPHERE);
-		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
-		return g;
-	}
-
-	public static IShape buildPieSphere(final double radius, final ILocation location, final IList<Double> ratio) {
-		final IShape g = buildCircle(radius, location);
-		g.setDepth(radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, PIESPHERE);
-		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
-		return g;
-	}
-
-	public static IShape buildPieSphereWithDynamicColor(final double radius, final ILocation location,
-		final IList<Double> ratio, final IList<GamaColor> colors) {
-		final IShape g = buildCircle(radius, location);
-		g.setDepth(radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, PIESPHEREWITHDYNAMICALCOLOR);
-		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
-		g.setAttribute(IShape.COLOR_LIST_ATTRIBUTE, colors);
-		return g;
-	}
-
-	public static IShape buildPacMan(final double radius, final ILocation location, final double ratio) {
-		final IShape g = buildCircle(radius, location);
-		g.setDepth(radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, PACMAN);
-		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
-		return g;
-	}
-
-	public static IShape buildAntiSlice(final double radius, final ILocation location, final double ratio) {
-		final IShape g = buildCircle(radius, location);
-		g.setDepth(radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, ANTISLICE);
-		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
-		return g;
-	}
-
-	public static IShape buildSlice(final double radius, final ILocation location, final double ratio) {
-		final IShape g = buildCircle(radius, location);
-		g.setDepth(radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, SLICE);
-		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
-		return g;
-	}
-
 	public static IShape buildCone3D(final double radius, final double depth, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
 		g.setDepth(depth);
