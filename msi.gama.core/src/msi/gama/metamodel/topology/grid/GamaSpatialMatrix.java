@@ -12,33 +12,69 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.awt.Graphics2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
+
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.*;
+import gnu.trove.set.hash.THashSet;
+import gnu.trove.set.hash.TIntHashSet;
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
-import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.population.*;
-import msi.gama.metamodel.shape.*;
+import msi.gama.common.util.JavaUtils;
+import msi.gama.common.util.RandomUtils;
+import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.agent.MinimalAgent;
+import msi.gama.metamodel.population.GamaPopulation;
+import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaProxyGeometry;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
+import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaGridFile;
-import msi.gama.util.matrix.*;
-import msi.gama.util.path.*;
+import msi.gama.util.matrix.GamaMatrix;
+import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.path.GamaSpatialPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Cast;
+import msi.gaml.operators.Maths;
+import msi.gaml.operators.Spatial;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.GamaMatrixType;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
 /**
@@ -1254,8 +1290,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 
 			@Override
-			public Set<IAgent> getNeighbors(IScope scope) {
-				return getNeighbourhood().getNeighboursIn(scope, getIndex(), 1);
+			public IList<IAgent> getNeighbors(IScope scope) {
+				return Cast.asList(scope, getNeighbourhood().getNeighboursIn(scope, getIndex(), 1));
 			}
 
 		}
@@ -1332,8 +1368,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 			
 			@Override
-			public Set<IAgent> getNeighbors(IScope scope) {
-				return getNeighbourhood().getNeighboursIn(scope, getIndex(), 1);
+			public IList<IAgent> getNeighbors(IScope scope) {
+				return Cast.asList(scope, getNeighbourhood().getNeighboursIn(scope, getIndex(), 1));
 			}
 
 			/**
