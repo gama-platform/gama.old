@@ -18,6 +18,11 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.common.Display2D;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.HeadlessSimulationLoader;
@@ -28,12 +33,16 @@ import msi.gama.headless.runtime.LocalSimulationRuntime;
 import msi.gama.headless.runtime.RuntimeContext;
 import msi.gama.headless.runtime.SimulationRuntime;
 import msi.gama.headless.xml.Writer;
+import msi.gama.headless.xml.XmlTAG;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
+import msi.gaml.descriptions.ExperimentDescription;
+import msi.gaml.descriptions.IDescription;
 
-public class ExperimentJob {
+public class ExperimentJob implements IExperimentJob{
 
+	
 	public static enum OutputType {
 		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
 	}
@@ -79,7 +88,7 @@ public class ExperimentJob {
 	private Writer outputFile;
 	private final String sourcePath;
 	private final String experimentName;
-	private final long seed;
+	private long seed;
 
 	/**
 	 * simulator to be loaded
@@ -95,7 +104,7 @@ public class ExperimentJob {
 	 * id of current experiment
 	 */
 	private String experimentID;
-	public int maxStep;
+	public long maxStep;
 
 	public void setBufferedWriter(final Writer w) {
 		this.outputFile = w;
@@ -106,6 +115,7 @@ public class ExperimentJob {
 	}
 
 	public void addOutput(final Output p) {
+		p.setId(""+outputs.size());
 		this.outputs.add(p);
 	}
 
@@ -121,7 +131,11 @@ public class ExperimentJob {
 		this.seed = clone.seed;
 	}
 
-	public ExperimentJob(final String expId, final String sourcePath, final String exp, final int max, final long s) {
+	public ExperimentJob(final String sourcePath, final String exp, final long max, final long s){
+				this("",sourcePath,exp,max,s);
+		}
+	
+	public ExperimentJob(final String expId, final String sourcePath, final String exp, final long max, final long s) {
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
 		this.maxStep = max;
@@ -152,9 +166,6 @@ public class ExperimentJob {
 	public void load(RuntimeContext ctx) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		System.setProperty("user.dir", this.sourcePath);
 		IModel mdl  = ctx.loadModel(new File(this.sourcePath));
-		
-		//System.out.println("cdsqfds "+this.sourcePath);
-		//IModel mdl = HeadlessSimulationLoader.loadModel(new File(this.sourcePath));
 		this.simulator = new RichExperiment(mdl);
 	}
 
@@ -168,13 +179,12 @@ public class ExperimentJob {
 		}
 		System.out.println("Simulation is running...");
 		long startdate = Calendar.getInstance().getTimeInMillis();
-		int affDelay = maxStep < 100 ? 1 : maxStep / 100;
+		long affDelay = maxStep < 100 ? 1 : maxStep / 100;
 		for ( ; step < maxStep; step++ ) {
 			if ( step % affDelay == 0 ) {
 				System.out.print(".");
 			}
-			//System.out.println(simulator.isInterrupted());
-			if(simulator.isInterrupted())
+		if(simulator.isInterrupted())
 				break;
 			doStep();
 			
@@ -243,7 +253,7 @@ public class ExperimentJob {
 	public long getStep() {
 		return step;
 	}
-
+	
 	private Display2D writeImageInFile(final BufferedImage img, final String name) {
 		String fileName = name + this.getExperimentID() + "-" + step + ".png";
 		String fileFullName = Globals.IMAGES_PATH + "/" + fileName;
@@ -253,5 +263,81 @@ public class ExperimentJob {
 			e.printStackTrace();
 		}
 		return new Display2D(name + this.getExperimentID() + "-" + step + ".png");
+	}
+
+	@Override
+	public void setSeed(long s) {
+		this.seed = s;
+	}
+
+	@Override
+	public long getSeed() {
+		return this.seed;
+	}
+	
+	public Element asXMLDocument(Document doc)
+	{
+		// staff elements
+		Element simulation = doc.createElement(XmlTAG.SIMULATION_TAG);
+		//parent.appendChild(simulation);
+
+		Attr attr = doc.createAttribute(XmlTAG.ID_TAG);
+		attr.setValue(this.experimentID);
+		simulation.setAttributeNode(attr);
+
+		Attr attr3 = doc.createAttribute(XmlTAG.SOURCE_PATH_TAG);
+		attr3.setValue(this.sourcePath);
+		simulation.setAttributeNode(attr3);
+
+		Attr attr2 = doc.createAttribute(XmlTAG.FINAL_STEP_TAG);
+		attr2.setValue(new Long(this.maxStep).toString());
+		simulation.setAttributeNode(attr2);
+
+		Attr attr4 = doc.createAttribute(XmlTAG.NAME_TAG);
+		attr4.setValue(this.experimentName);
+		simulation.setAttributeNode(attr4);
+
+		Element parameters = doc.createElement(XmlTAG.PARAMETERS_TAG);
+		simulation.appendChild(parameters);
+
+		for(Parameter p:this.parameters)
+		{
+			Element aparameter = doc.createElement(XmlTAG.PARAMETER_TAG);
+			parameters.appendChild(aparameter);
+			
+			Attr ap1 = doc.createAttribute(XmlTAG.NAME_TAG);
+			ap1.setValue(p.getName());
+			aparameter.setAttributeNode(ap1);
+
+			Attr ap2 = doc.createAttribute(XmlTAG.TYPE_TAG);
+			ap2.setValue(p.getType().toString());
+			aparameter.setAttributeNode(ap2);
+
+			Attr ap3 = doc.createAttribute(XmlTAG.VALUE_TAG);
+			ap3.setValue(p.getValue().toString());
+			aparameter.setAttributeNode(ap3);
+		}
+		
+		Element outputs = doc.createElement(XmlTAG.OUTPUTS_TAG);
+		simulation.appendChild(outputs);
+
+		for(Output o:this.outputs)
+		{
+			Element aOutput = doc.createElement(XmlTAG.OUTPUT_TAG);
+			outputs.appendChild(aOutput);
+			
+			Attr o3 = doc.createAttribute(XmlTAG.ID_TAG);
+			o3.setValue(o.getId());
+			aOutput.setAttributeNode(o3);
+			
+			Attr o1 = doc.createAttribute(XmlTAG.NAME_TAG);
+			o1.setValue(o.getName());
+			aOutput.setAttributeNode(o1);
+
+			Attr o2 = doc.createAttribute(XmlTAG.FRAMERATE_TAG);
+			o2.setValue(new Integer(o.getFrameRate()).toString());
+			aOutput.setAttributeNode(o2);
+		}
+		return simulation;
 	}
 }
