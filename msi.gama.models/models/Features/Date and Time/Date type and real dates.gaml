@@ -1,10 +1,8 @@
 
 /**
-* Name: Date definition and use
+* Name: Use of the Date variables
 * Author:  Patrick Taillandier
-* Description: A model to show how to use date variables and more particularly the starting_date and current_date. In this model,
-* 
-* 
+* Description: A model to show how to use date variables and more particularly the starting_date and current_date global variables. In this model,
 * Tags : : Date
 */
 model date_model
