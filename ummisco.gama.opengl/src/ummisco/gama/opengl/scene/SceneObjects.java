@@ -32,12 +32,7 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		@Override
 		public void add(final T object) {
 			super.add(object);
-			openGLListIndex = null; // / ???
-			// if ( openGLListIndex != null ) {
-			// GL2 gl = GLContext.getCurrentGL().getGL2();
-			// gl.glDeleteLists(openGLListIndex, 1);
-			// openGLListIndex = null;
-			// }
+			openGLListIndex = null;
 		}
 
 		@Override
@@ -146,7 +141,6 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		} else if ( drawAsList ) {
 			Integer index = openGLListIndex;
 			if ( index == null ) {
-
 				index = gl.glGenLists(1);
 				gl.glNewList(index, GL2.GL_COMPILE);
 				double alpha = 0d;

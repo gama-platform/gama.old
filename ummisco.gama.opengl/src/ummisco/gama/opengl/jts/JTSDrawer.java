@@ -26,7 +26,11 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.files.GLModel;
+import ummisco.gama.opengl.files.ModelLoaderOBJ;
+import ummisco.gama.opengl.scene.GeometryCache;
 import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.scene.TextureCache;
 import ummisco.gama.opengl.utils.*;
 
 public class JTSDrawer {
@@ -40,6 +44,7 @@ public class JTSDrawer {
 
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLRenderer renderer;
+	GeometryCache cache;
 
 	JTSVisitor visitor;
 
@@ -70,7 +75,10 @@ public class JTSDrawer {
 
 	public boolean bigPolygonDecomposition = true;
 	public int nbPtsForDecomp = 2000;
-
+	
+	
+	Integer openNestedGLListIndex;
+	
 	public JTSDrawer(final JOGLRenderer gLRender) {
 		myGlut = new GLUT();
 		renderer = gLRender;
@@ -90,6 +98,21 @@ public class JTSDrawer {
 		if ( c == null ) { return; }
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
+	}
+	
+	
+    public void drawGeometryCached(final GeometryObject g) {	
+		GL2 gl = GLContext.getCurrentGL().getGL2();
+		setColor(g.getColor(), g.getAlpha());
+		renderer.getCache().initializeStaticGeometry("teapot");
+		if(renderer.getCache().contains("teapot")){	
+			Integer index = renderer.getCache().getListIndex(gl,"teapot");
+			((GL2) gl).glRotated(90, 1.0, 0.0, 0.0);
+			((GL2) gl).glTranslated(0, 0, 0);
+		    gl.glCallList(index);
+		    ((GL2) gl).glTranslated(-0, -0, 0);
+			((GL2) gl).glRotated(-90, 1.0, 0.0, 0.0);	    
+		}
 	}
 	
 	public void drawGeometryCollection(final GeometryCollection geoms, final Color c, final double alpha,
@@ -1007,8 +1030,7 @@ public class JTSDrawer {
 	}
 
 	public void drawTeapot(final GeometryObject g) {
-		// final Polygon p, final double radius, final Color c, final double alpha) {
-		// Add z value (Note: getCentroid does not return a z value)
+		
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		double z = 0.0;
 		Polygon p = (Polygon) g.geometry;
@@ -1026,6 +1048,7 @@ public class JTSDrawer {
 		gl.glRotated(-90, 1.0, 0.0, 0.0);
 		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
 	}
+
 
 	public void drawPyramid(final GeometryObject g) {
 

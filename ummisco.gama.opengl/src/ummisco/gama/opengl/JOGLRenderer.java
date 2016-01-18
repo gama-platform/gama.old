@@ -82,6 +82,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
 	private volatile boolean inited;
+	protected GeometryCache cache;
 
 	// private final GLModel chairModel = null;
 
@@ -147,6 +148,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		});
 
 	}
+	
+	public GeometryCache getCache() {
+		return cache;
+	}
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
@@ -154,6 +159,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// GLU objects are NOT thread safe...
 		glu = new GLU();
 		gl = GLContext.getCurrentGL().getGL2();
+		cache = new GeometryCache(gl);
 		initializeCanvasWithListeners();
 
 		width = drawable.getSurfaceWidth();

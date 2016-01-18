@@ -57,7 +57,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 					jtsDrawer.drawCone3D(geometry);
 					break;
 				case TEAPOT:
-					jtsDrawer.drawTeapot(geometry);
+					jtsDrawer.drawTeapot(geometry);				
 					break;
 				case PYRAMID:
 					jtsDrawer.drawPyramid(geometry);

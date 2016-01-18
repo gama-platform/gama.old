@@ -38,7 +38,7 @@ public class ModelLoaderOBJ {
 			System.out.println("LOADING ERROR" + e);
 		}
 
-		System.out.println("ModelLoaderOBJ init() done"); // ddd
+		//System.out.println("ModelLoaderOBJ init() done"); // ddd
 		return model;
 	}
 }
