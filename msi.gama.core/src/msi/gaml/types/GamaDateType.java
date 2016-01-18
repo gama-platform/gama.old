@@ -51,8 +51,8 @@ public class GamaDateType extends GamaType<GamaDate> {
 		if ( obj instanceof IContainer ) { return staticCast(scope,
 			((IContainer) obj).listValue(scope, Types.NO_TYPE, false), param, copy); }
 		
-		//to do, decode date
 		if ( obj instanceof String ) {
+			if ("now".equals(obj.toString())) return new GamaDate(GamaDate.now());
 			return new GamaDate((String) obj);
 		}
 		if ( obj instanceof Boolean ) { return new GamaDate() ; }
