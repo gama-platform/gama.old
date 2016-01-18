@@ -174,7 +174,13 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 							" is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
 						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
 					return;
-				}
+				} else if (species.isGrid()) {
+					cd.error(
+							"Species " + species.getName() +
+								" is a grid and cannot be instantiated",
+							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+					}
+				
 				SpeciesDescription callerSpecies = cd.getSpeciesContext();
 				SpeciesDescription macro = species.getMacroSpecies();
 				if ( macro == null ) {
