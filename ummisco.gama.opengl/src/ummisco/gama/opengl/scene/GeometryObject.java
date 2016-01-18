@@ -111,8 +111,6 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 
 	@Override
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
-		// GL2 gl = GLContext.getCurrentGL().getGL2();
-//		scope.getGui().debug("OpenGL drawing " + agent);
 		if ( picking ) {
 			JOGLRenderer renderer = drawer.renderer;
 			gl.glPushMatrix();

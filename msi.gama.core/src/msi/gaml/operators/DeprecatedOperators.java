@@ -624,4 +624,208 @@ public class DeprecatedOperators {
 		g.incVersion();
 		return g;
 	}
+	
+	
+	////////////////////////////////////////OLD 3D SHAPE ////////////////////////////////////////
+	
+	
+	
+	@Deprecated
+	 @operator(value = { "rgb_cube" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+	 @doc(value = "A cube geometry which side size is equal to the operand.",
+			 deprecated = "This operator is deprecated and return a cube instead",
+	 		usages = { @usage(value = "returns nil if the operand is nil.") },
+	 		comment = "the centre of the cube is by default the location of the current agent in which has been called this operator.",
+	 		examples = {
+	 			@example(value = "cube(10)", equals = "a geometry as a square of side size 10.", test = false) },
+	 		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+	 			"triangle" })
+	 	public static IShape rgbcube(final IScope scope, final Double side_size) {
+	 		ILocation location;
+	 		final IAgent a = scope.getAgentScope();
+	 		location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+	 		if ( side_size <= 0 ) { return new GamaShape(location); }
+	 	return GamaGeometryType.buildCube(side_size, location);
+	 }
+	 
+	@Deprecated
+	 @operator(value = "rgb_triangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+	 @doc(value = "A triangle geometry which side size is given by the operand.",
+	 		usages = { @usage("returns nil if the operand is nil.") },
+	 		comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.",
+	 		examples = { @example(value = "triangle(5)",
+	 			equals = "a geometry as a triangle with side_size = 5.",
+	 			test = false) },
+	 		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+	 			"square" })
+	 public static IShape rgbtriangle(final IScope scope, final Double side_size) {
+	 		ILocation location;
+	 		final IAgent a = scope.getAgentScope();
+	 		location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+	 		if ( side_size <= 0 ) { return new GamaShape(location); }
+	 		return GamaGeometryType.buildTriangle(side_size, location);
+	 }
+	
+	
+	@Deprecated
+	@operator(value = "hemisphere", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+	@doc(value = "An hemisphere geometry which radius is equal to the operand.",
+		deprecated = "This operator is deprecated and return a sphere instead",
+		special_cases = { "returns a point if the operand is lower or equal to 0." },
+		comment = "the centre of the hemisphere is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "hemisphere(10,0.5)",
+			equals = "a geometry as a circle of radius 10 but displays an hemisphere.",
+			test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+			"triangle", "hemisphere", "pie3D" })
+	public static IShape hemisphere(final IScope scope, final Double radius, final Double ratio) {
+		ILocation location;
+		final IAgent a = scope.getAgentScope();
+		location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+		if ( radius <= 0 ) { return new GamaShape(location); }
+		return GamaGeometryType.buildSphere(radius, location);
+	}
+	
+	
+	@Deprecated
+	@operator(value = "antislice", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+	@doc(value = "A sphere geometry which radius is equal to the operand made of 2 hemispheres.",
+		special_cases = { "returns a point if the operand is lower or equal to 0." },
+	    deprecated = "This operator is deprecated and return a sphere instead",
+		comment = "the centre of the sphere is by default the location of the current agent that is calling this operator.",
+		examples = { @example(value = "antislice(10,0.3)",
+			equals = "a circle geometry of radius 10, displayed as an antislice.",
+			test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+			"triangle", "hemisphere", "pie3D" })
+	public static IShape hemispherePac(final IScope scope, final Double radius, final Double ratio) {
+		ILocation location;
+		final IAgent a = scope.getAgentScope();
+		location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+		if ( radius <= 0 ) { return new GamaShape(location); }
+		return GamaGeometryType.buildSphere(radius, location);
+	}
+	
+	@Deprecated
+	@operator(value = "slice", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+	@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.",
+		deprecated = "This operator is deprecated and return a sphere instead",
+		special_cases = { "returns a point if the operand is lower or equal to 0." },
+		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "slice(10,0.3)",
+			equals = "a circle geometry of radius 10, displayed as a slice.",
+			test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+			"triangle", "hemisphere", "pie3D" })
+	public static IShape hemisphereMan(final IScope scope, final Double radius, final Double ratio) {
+		ILocation location;
+		final IAgent a = scope.getAgentScope();
+		location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+		if ( radius <= 0 ) { return new GamaShape(location); }
+		return GamaGeometryType.buildSphere(radius, location);
+	}
+	
+	@Deprecated
+	@operator(value = "spherical_pie", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+	@doc(value = "An sphere geometry which radius is equal to the operand made of n pie.",
+		deprecated = "This operator is deprecated and return a sphere instead",
+		special_cases = { "returns a point if the operand is lower or equal to 0." },
+		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "spherical_pie(10,[1.0,1.0,1.0])",
+			equals = "a circle geometry of radius 10, displayed as a sphere with 4 slices.",
+			test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+			"triangle", "hemisphere", "pie3D" })
+	public static IShape pieSphere(final IScope scope, final Double radius, final IList<Double> ratio) {
+		ILocation location;
+		final IAgent a = scope.getAgentScope();
+		location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+		if ( radius <= 0 ) { return new GamaShape(location); }
+
+		Double sum = 0.0;
+		for ( Object curR : ratio ) {
+			sum = sum + Cast.asFloat(scope, curR);
+		}
+		for ( int i = 0; i < ratio.size(); i++ ) {
+			ratio.set(i, Cast.asFloat(scope, ratio.get(i)) / sum);
+		}
+
+		return GamaGeometryType.buildSphere(radius, location);
+	}
+	
+	@Deprecated
+	@operator(value = "spherical_pie", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+	@doc(value = "An sphere geometry which radius is equal to the operand made of n pie.",
+		deprecated = "This operator is deprecated and return a sphere instead",
+		special_cases = { "returns a point if the operand is lower or equal to 0." },
+		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "spherical_pie(10/2,[0.1,0.9],[#red,#green])",
+			equals = "a circle geometry of radius 10, displayed as a sphere with 2 slices.",
+			test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+			"triangle", "hemisphere", "pie3D" })
+	public static IShape pieSphere(final IScope scope, final Double radius, final IList<Double> ratio,
+		final IList<GamaColor> colors) {
+		ILocation location;
+		final IAgent a = scope.getAgentScope();
+		location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+		if ( radius <= 0 ) { return new GamaShape(location); }
+
+		Double sum = 0.0;
+		for ( Object curR : ratio ) {
+			sum = sum + Cast.asFloat(scope, curR);
+		}
+		for ( int i = 0; i < ratio.size(); i++ ) {
+			ratio.set(i, Cast.asFloat(scope, ratio.get(i)) / sum);
+		}
+		if ( ratio.size() > colors.size() ) {
+
+		throw GamaRuntimeException
+			.warning("The number of value is greater of the number  of color whereas it should be equal.", scope); }
+
+		if ( ratio.size() < colors.size() ) { throw GamaRuntimeException
+			.warning("The number of color is greater of the number  of value whereas it should be equal.", scope); }
+
+		return GamaGeometryType.buildSphere(radius, location);
+	}
+	
+	@Deprecated
+	@operator(value = "pacman", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+	@doc(value = "An pacman geometry which radius is equal to first argument.",
+		deprecated = "This operator is deprecated and return a sphere instead",
+		special_cases = { "returns a point if the operand is lower or equal to 0." },
+		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "pacman(1)",
+			equals = "a geometry as a circle of radius 10 but displays a sphere.",
+			test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+			"triangle", "hemisphere", "pie3D" })
+	public static IShape pacMan(final IScope scope, final Double radius) {
+		ILocation location;
+		final IAgent a = scope.getAgentScope();
+		location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+		if ( radius <= 0 ) { return new GamaShape(location); }
+		return GamaGeometryType.buildSphere(radius, location);
+	}
+
+	@Deprecated
+	@operator(value = "pacman", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+	@doc(value = "An pacman geometry with a dynamic opening mouth which radius is equal to first argument.",
+		deprecated = "This operator is deprecated and return a sphere instead",
+		special_cases = { "returns a point if the operand is lower or equal to 0." },
+		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "pacman(1,0.2)",
+			equals = "a geometry as a circle of radius 10 but displays a sphere.",
+			test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+			"triangle", "hemisphere", "pie3D" })
+	public static IShape pacMan(final IScope scope, final Double radius, final Double ratio) {
+		ILocation location;
+		final IAgent a = scope.getAgentScope();
+		location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+		if ( radius <= 0 ) { return new GamaShape(location); }
+		return GamaGeometryType.buildSphere(radius, location);
+	}
+	
+	
 }
