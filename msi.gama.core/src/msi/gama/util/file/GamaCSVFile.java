@@ -12,18 +12,31 @@
 package msi.gama.util.file;
 
 import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveAllTokens;
-import java.io.*;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
+
 import org.apache.commons.lang.StringUtils;
+
 import com.vividsolutions.jts.geom.Envelope;
-import msi.gama.metamodel.shape.*;
+
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.util.matrix.*;
-import msi.gaml.operators.*;
-import msi.gaml.types.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
+import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.matrix.GamaObjectMatrix;
+import msi.gama.util.matrix.IMatrix;
+import msi.gaml.operators.Cast;
+import msi.gaml.operators.Strings;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Class GamaCSVFile.
@@ -44,13 +57,13 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 		public final IType type;
 		public String[] headers;
 
-		public CSVInfo(final String fileName, final long modificationStamp) {
+		public CSVInfo(final String fileName, final long modificationStamp, final String CSVsep) {
 			super(modificationStamp);
-			CsvReader.Stats s = CsvReader.getStats(fileName);
+			CsvReader.Stats s = CsvReader.getStats(fileName,CSVsep);
 			cols = s.cols;
 			rows = s.rows;
 			header = s.header;
-			delimiter = s.delimiter;
+			delimiter =  s.delimiter ;
 			type = s.type;
 			headers = s.headers;
 		}
@@ -180,7 +193,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		if ( getBuffer() == null ) {
-			CSVInfo info = getInfo(scope);
+			CSVInfo info = getInfo(scope,null);
 			if ( info != null ) { return info.header ? GamaListFactory.createWithoutCasting(Types.STRING, info.headers)
 				: GamaListFactory.EMPTY_LIST; }
 		}
@@ -189,14 +202,19 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 			: GamaListFactory.createWithoutCasting(Types.STRING, headers);
 	}
 
-	private CSVInfo getInfo(final IScope scope) {
+	private CSVInfo getInfo(final IScope scope, String CSVSep) {
 		if ( info != null ) { return info; }
-		IFileMetaDataProvider p = scope.getGui().getMetaDataProvider();
+		IFileMetaDataProvider p = scope.getGui().getMetaDataProvider(); 
 		if ( p != null ) {
 			info = (CSVInfo) p.getMetaData(getFile(), false);
+			if (CSVSep != null && info != null && !info.delimiter.equals(CSVSep.charAt(0))) {
+				info = null;	
+			}
 		}
 		if ( info == null ) {
-			info = new CSVInfo(getFile().getAbsolutePath(), 0);
+			info = new CSVInfo(getFile().getAbsolutePath(), 0,CSVSep);
+			p.storeMetadata(getFile(), info);
+			
 		}
 		if ( hasHeader != null && hasHeader ) {
 			if ( !info.header ) {
@@ -218,7 +236,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 		if ( getBuffer() != null ) { return; }
 		if ( csvSeparator == null || contentsType == null || userSize == null ) {
 			scope.getGui().beginSubStatus("Opening file " + getName());
-			CSVInfo stats = getInfo(scope);
+			CSVInfo stats = getInfo(scope,csvSeparator);
 			csvSeparator = csvSeparator == null ? "" + stats.delimiter : csvSeparator;
 			contentsType = contentsType == null ? stats.type : contentsType;
 			userSize = userSize == null ? new GamaPoint(stats.cols, stats.rows) : userSize;
@@ -228,6 +246,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 		}
 		CsvReader reader = null;
 		try {
+			
 			reader = new CsvReader(getPath(), csvSeparator.charAt(0));
 			if ( hasHeader ) {
 				reader.readHeaders();

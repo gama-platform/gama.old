@@ -4,24 +4,41 @@
  */
 package msi.gama.gui.navigator;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.gui.navigator.images.ImageDataLoader;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.file.*;
 import msi.gama.util.file.GAMLFile.GamlInfo;
+import msi.gama.util.file.GamaCSVFile;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
+import msi.gama.util.file.GamaFileMetaData;
 import msi.gama.util.file.GamaImageFile.ImageInfo;
+import msi.gama.util.file.GamaOsmFile;
 import msi.gama.util.file.GamaOsmFile.OSMInfo;
+import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import msi.gama.util.file.IFileMetaDataProvider;
+import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.factories.DescriptionFactory;
 
 /**
@@ -216,7 +233,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			if ( data == null ) {
 				data = createGenericFileMetaData(file);
 			}
-			System.out.println("Storing the metadata just created (or recreated) while reading it for " + file);
+			//System.out.println("Storing the metadata just created (or recreated) while reading it for " + file);
 			storeMetadata(file, data);
 		}
 		return data;
@@ -240,11 +257,19 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return (T) result;
 	}
 
+	public void storeMetadata(final File f, final IGamaFileMetaData data) {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();    
+		IPath location= Path.fromOSString(f.getAbsolutePath()); 
+		IFile file= workspace.getRoot().getFileForLocation(location);
+		storeMetadata(file,data);
+
+
+	}
 	public void storeMetadata(final IResource file, final IGamaFileMetaData data) {
 		try {
-			System.out.println("Writing back metadata to " + file);
+		//	System.out.println("Writing back metadata to " + file);
 			if ( ResourcesPlugin.getWorkspace().isTreeLocked() ) {
-				System.out.println("Canceled: Resources are locked");
+				//System.out.println("Canceled: Resources are locked");
 				return;
 			}
 			if ( data != null ) {
@@ -261,7 +286,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 					} catch (UnsupportedEncodingException | CoreException e) {
 						e.printStackTrace();
 					}
-					System.out.println("Success: sync info written");
+					//System.out.println("Success: sync info written");
 				}
 			});
 
@@ -294,7 +319,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	private GamaCSVFile.CSVInfo createCSVFileMetaData(final IFile file) {
-		return new CSVInfo(file.getLocation().toOSString(), file.getModificationStamp());
+		return new CSVInfo(file.getLocation().toOSString(), file.getModificationStamp(),null);
 	}
 
 	/**

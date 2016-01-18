@@ -20,12 +20,23 @@
  */
 package msi.gama.util.file;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import msi.gaml.types.*;
+
 import org.apache.commons.lang.StringUtils;
+
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * A stream based parser for parsing delimited text data from a file or a
@@ -554,13 +565,13 @@ public class CsvReader {
 		private IType firstLineType = Types.NO_TYPE;
 		private boolean atLeastOneNumber;
 
-		Stats(final CsvReader reader) {
+		Stats(final CsvReader reader,  final String CSVsep) {
 			boolean firstLineHasNumber = false;
 			String[] possibleHeaders = null;
 			try {
 				// firstLine
 				String s = reader.skipLine();
-				possibleHeaders = processFirstLine(s);
+				possibleHeaders = processFirstLine(s,CSVsep );
 				firstLineHasNumber = atLeastOneNumber;
 				atLeastOneNumber = false;
 				reader.setDelimiter(delimiter);
@@ -595,28 +606,41 @@ public class CsvReader {
 			log();
 		}
 
-		private String[] processFirstLine(final String line) {
-			String[] s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, ",");
-			if ( s.length == 1 ) {
-				if ( s[0].indexOf(' ') == -1 && s[0].indexOf(';') == -1 && s[0].indexOf(Letters.TAB) == -1 ) {
-					// We are likely dealing with a unicolum file
-					delimiter = Letters.COMMA;
-				} else {
-					// there should be another delimiter
-					s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, ";");
-					if ( s.length == 1 ) {
-						// Try with tab
-						s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, "" + Letters.TAB);
-						delimiter = Letters.TAB;
+		private String[] processFirstLine(final String line, final String CSVsep) {
+			if (CSVsep != null && !CSVsep.isEmpty()) delimiter = CSVsep.charAt(0);
+			else {
+				String[] s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, ",");
+				if ( s.length == 1 ) {
+					if ( s[0].indexOf(' ') == -1 && s[0].indexOf(';') == -1 && s[0].indexOf(Letters.TAB) == -1 ) {
+						// We are likely dealing with a unicolum file
+						delimiter = Letters.COMMA;
 					} else {
-						delimiter = ';';
+						// there should be another delimiter
+						s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, ";");
+						if ( s.length == 1 ) {
+							// Try with tab
+							s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, "" + Letters.TAB);
+							if ( s.length == 1 ) {
+								s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, "" + Letters.SPACE);
+								if ( s.length == 1 ) {
+									delimiter = Letters.PIPE;
+								}
+								else
+									delimiter = Letters.SPACE;
+							} else {
+								delimiter = Letters.TAB;
+							}
+						} else {
+							delimiter = ';';
+						}
 					}
+				} else {
+					delimiter = Letters.COMMA;
 				}
-			} else {
-				delimiter = Letters.COMMA;
 			}
-			firstLineType = processRecord(s);
-			return s;
+			String[] s2 = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, delimiter.toString());
+			firstLineType = processRecord(s2);
+			return s2;
 		}
 
 		// private boolean onlyContainsDigitsAndPunctuation(final String s) {
@@ -697,9 +721,9 @@ public class CsvReader {
 		}
 	}
 
-	public static Stats getStats(final String initial) {
+	public static Stats getStats(final String initial,  final String CSVsep) {
 		try {
-			Stats stats = new Stats(new CsvReader(initial));
+			Stats stats = new Stats(new CsvReader(initial),CSVsep);
 			return stats;
 		} catch (FileNotFoundException e1) {
 			return null;
@@ -710,7 +734,7 @@ public class CsvReader {
 	public static Stats getStats(final String initial, final boolean withHeader) {
 		try {
 			// CsvReader reader = new CsvReader(initial);
-			Stats stats = new Stats(new CsvReader(initial));
+			Stats stats = new Stats(new CsvReader(initial), null);
 			return stats;
 		} catch (FileNotFoundException e1) {
 			return null;
@@ -720,7 +744,7 @@ public class CsvReader {
 
 	public static Stats getStats(final InputStream initial) {
 		if ( initial == null ) { return null; }
-		Stats stats = new Stats(new CsvReader(initial, Charset.forName("ISO-8859-1")));
+		Stats stats = new Stats(new CsvReader(initial, Charset.forName("ISO-8859-1")),null);
 		return stats;
 	}
 
@@ -1796,6 +1820,8 @@ public class CsvReader {
 		public static final char VERTICAL_TAB = '\u000B';
 
 		public static final char ALERT = '\u0007';
+		
+		public static final char PIPE = '|';
 	}
 
 	private class UserSettings {

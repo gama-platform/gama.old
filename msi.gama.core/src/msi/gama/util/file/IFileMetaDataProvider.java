@@ -4,6 +4,8 @@
  */
 package msi.gama.util.file;
 
+import java.io.File;
+
 /**
  * Class IFileMetaDataProvider.
  * 
@@ -22,5 +24,7 @@ public interface IFileMetaDataProvider {
 	 * @return a string describing the element or an empty string
 	 */
 	String getDecoratorSuffix(Object element);
+	
+	public void storeMetadata(final File f, final IGamaFileMetaData data);
 
 }
