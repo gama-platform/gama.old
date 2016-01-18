@@ -22,7 +22,7 @@ experiment start type: gui {
 	output {
 		display RealBoids  type:opengl ambient_light:255 z_fighting:false {
 			image name:'background' file:'../images/sky.jpg';
-			species boids aspect: image  position:{0,0,0.1} trace: 30;
+			species boids aspect: image  position:{0,0,0.1};
 			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}
@@ -36,7 +36,7 @@ experiment trajectory_analysis type: gui {
 		
 		display RealBoids  type:opengl ambient_light:100{
 			image name:'background' file:'../images/sky.jpg';
-			species boids trace:true{
+			species boids trace:100{
 			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:8 ;	
 			}
 			species boids_goal transparency:0.2 position:{0,0,0.1};
@@ -58,10 +58,10 @@ experiment SpaceTimeCube type: gui {
 		
 		display SpaceTimeCubeAll  type:opengl ambient_light:50 diffuse_light:100{
 			image name:'background' file:'../images/sky.jpg';
-			species boids trace:true{
+			species boids trace:100{
 			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:8 at: {location.x ,location.y,location.z+time};	
 			}
-			species boids_goal trace:true{
+			species boids_goal trace:100{
 				draw sphere(10) color: #yellow at: {location.x ,location.y,location.z+time};
 			}	
 		}
@@ -85,10 +85,10 @@ experiment MultipleView type: gui {
 		
 			image name:'background' file:'../images/sky.jpg';
 			species obstacle;
-			species boids trace:true{
+			species boids{
 			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:8 ;	
 			}
-			species boids_goal trace:true{
+			species boids_goal{
 				draw sphere(10) color: #yellow;
 			}	
 		}
@@ -98,10 +98,10 @@ experiment MultipleView type: gui {
 		camera_look_pos:{cos(first(boids).heading)*world.shape.width,-sin(first(boids).heading)*world.shape.height,0} camera_up_vector:{0.0,0.0,1.0} {	
 			image name:'background' file:'../images/sky.jpg';
 			species obstacle ;
-			species boids trace:true{
+			species boids{
 			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:8 ;	
 			}
-			species boids_goal trace:true{
+			species boids_goal{
 				draw sphere(10) color: #yellow;
 			}		
 		}
