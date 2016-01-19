@@ -44,11 +44,11 @@ experiment Displays type: gui {
 	output {
 		display View_change_color  { 
 			species cell aspect: default;
-			event [mouse_down] action: change_color;
+			event mouse_down action: change_color;
 		}
 		display View_change_shape type: opengl{ 
 			species cell;
-			event [mouse_down] action: change_shape;
+			event mouse_down action: change_shape;
 		}
 	}
 }
