@@ -40,6 +40,6 @@ public class RessourceDrawer extends ObjectDrawer<RessourceObject> {
 
 	@Override
 	protected void _draw(GL2 gl, RessourceObject object) {
-		jtsDrawer.drawGeometryCached(object.file);	
+		jtsDrawer.drawGeometryCached(gl,object.file);	
 	}
 }

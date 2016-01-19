@@ -108,14 +108,16 @@ public class JTSDrawer {
 	}
 	
 	
-    public void drawGeometryCached(final GamaFile file) {	
-		GL2 gl = GLContext.getCurrentGL().getGL2();
-		renderer.getCache().initializeStaticGeometry(file);
+    public void drawGeometryCached(final GL2 gl, final GamaFile file) {	
+		//GL2 gl = GLContext.getCurrentGL().getGL2();
 		if(renderer.getCache().contains(file.getFile().getAbsoluteFile().toString())){
 			Integer index = renderer.getCache().getListIndex(gl,file.getFile().getAbsoluteFile().toString());
 			//gl.getContext().makeCurrent();
 		    gl.glCallList(index);    
 		}	
+		else{
+			renderer.getCache().initializeStaticGeometry(gl,file);
+		}
 	}
 	
 	public void drawGeometryCollection(final GeometryCollection geoms, final Color c, final double alpha,

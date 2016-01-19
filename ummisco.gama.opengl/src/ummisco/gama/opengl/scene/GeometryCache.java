@@ -57,13 +57,8 @@ public class GeometryCache {
 		return index;
 	}
 
-	public  void initializeStaticGeometry(final GamaFile file) {
-
-	    if ( contains(file.getFile().getAbsolutePath().toString()) ) { return; }	
-		
-		
-		
-		
+	public  void initializeStaticGeometry(GL2 gl,final GamaFile file) {
+	    if ( contains(file.getFile().getAbsolutePath().toString()) ) { return; }
 		BuildingTask task = new BuildingTask(null, file);
 		BUILDER.tasks.offer(task);
 	}
@@ -77,20 +72,22 @@ public class GeometryCache {
 	}
 
 	public  Integer buildList(final GL gl, final GamaFile string) {
-		Integer index = openNestedGLListIndex; 
-		
-		if ( index == null ) {	
+		//Integer index = openNestedGLListIndex; 
+		Integer index;
+		//if ( index == null ) {	
 			String obj = string.getFile().toString();
 			String fmtl = string.getFile().getAbsolutePath().replaceAll(".obj", ".mtl");
 			GLModel asset3Dmodel = ModelLoaderOBJ.LoadModel(obj, fmtl, (GL2) gl);
+			//GLModel asset3Dmodel = ModelLoaderOBJ.LoadModel("/Users/Arno/Desktop/obj/c.obj", "/Users/Arno/Desktop/obj/c.mtl", (GL2) gl);
 			index = ((GL2) gl).glGenLists(1);
 			((GL2) gl).glNewList(index, GL2.GL_COMPILE);
 			asset3Dmodel.draw((GL2) gl);		
 			((GL2) gl).glEndList();
-		}
+		//}
 		((GL2) gl).glCallList(index);
-		openNestedGLListIndex = index;
-		return openNestedGLListIndex;
+		//openNestedGLListIndex = index;
+		//return openNestedGLListIndex;
+		return index;
 	}
 
 
@@ -118,7 +115,10 @@ public class GeometryCache {
 					}
 
 				} finally {
-						gl.getContext().release();
+					    if(gl.getContext().isCurrent()){
+					    	gl.getContext().release();	
+					    }
+						
 			}}
 		}
 
