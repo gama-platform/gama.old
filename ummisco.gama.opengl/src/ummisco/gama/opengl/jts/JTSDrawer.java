@@ -518,13 +518,13 @@ public class JTSDrawer {
 		}
 
 		DrawPolygon(p, c, alpha, fill, border, isTextured, object, drawPolygonContour, rounded, z_fighting_value,-p_norm_dir);
-		//gl.glTranslated(0, 0, height);
+		gl.glTranslated(0, 0, height);
 		double[] vectorNormal =  CalculatePolygonNormal(p);
 		//System.out.println("vector Normal: " + Arrays.toString(vectorNormal));
-		gl.glTranslated(vectorNormal[0]*height, vectorNormal[1]*height, vectorNormal[2]*height);
+		//gl.glTranslated(vectorNormal[0]*height, vectorNormal[1]*height, vectorNormal[2]*height);
 		DrawPolygon(p, c, alpha, fill, border, isTextured, object/* ,angle */, drawPolygonContour, rounded,z_fighting_value, p_norm_dir);
-		//gl.glTranslated(0, 0, -height);
-	    gl.glTranslated(-vectorNormal[0]*height, -vectorNormal[1]*height, -vectorNormal[2]*height);
+		gl.glTranslated(0, 0, -height);
+	    //gl.glTranslated(-vectorNormal[0]*height, -vectorNormal[1]*height, -vectorNormal[2]*height);
 		// FIXME : Will be wrong if angle =!0
 
 		if ( isTextured ) {
