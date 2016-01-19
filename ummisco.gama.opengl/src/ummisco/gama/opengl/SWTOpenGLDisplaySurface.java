@@ -25,7 +25,7 @@ import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.LayerManager;
-import msi.gama.outputs.layers.ILayerMouseListener;
+import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
@@ -48,7 +48,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	// protected Double zoomLevel = null;
 	protected boolean zoomFit = true;
 	// private IZoomListener zoomListener;
-	Map<ILayerMouseListener, MouseListener> listeners = new HashMap();
+	Map<IEventLayerListener, MouseListener> listeners = new HashMap();
 	final LayeredDisplayOutput output;
 	final LayerManager manager;
 	protected DisplaySurfaceMenu menuManager;
@@ -349,7 +349,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#addMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
-	public void addMouseListener(final ILayerMouseListener listener) {
+	public void addListener(final IEventLayerListener listener) {
 
 		if ( listeners.containsKey(listener) ) { return; }
 		MouseListener l = new MouseAdapter() {
@@ -383,7 +383,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
-	public void removeMouseListener(final ILayerMouseListener listener) {
+	public void removeListener(final IEventLayerListener listener) {
 		MouseListener l = listeners.get(listener);
 		if ( l == null ) { return; }
 		listeners.remove(listener);

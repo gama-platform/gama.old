@@ -23,7 +23,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.*;
-import msi.gama.outputs.layers.ILayerMouseListener;
+import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -300,7 +300,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	// }
 
 	@Override
-	public void addMouseListener(final ILayerMouseListener e) {}
+	public void addListener(final IEventLayerListener e) {}
 
 	@Override
 	public double getEnvWidth() {
@@ -364,7 +364,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
-	public void removeMouseListener(final ILayerMouseListener e) {}
+	public void removeListener(final IEventLayerListener e) {}
 
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,

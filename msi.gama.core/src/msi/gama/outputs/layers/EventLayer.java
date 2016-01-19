@@ -48,13 +48,13 @@ public class EventLayer extends AbstractLayer {
 
 	@Override
 	public void enableOn(final IDisplaySurface surface) {
-		surface.addMouseListener(listener);
+		surface.addListener(listener);
 	}
 
 	@Override
 	public void disableOn(final IDisplaySurface surface) {
 		super.disableOn(surface);
-		surface.removeMouseListener(listener);
+		surface.removeListener(listener);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class EventLayer extends AbstractLayer {
 		String currentAction = Cast.asString(scope, actionName.value(scope));
 
 		listener = new EventListener(surface, currentEvent, currentAction);
-		surface.addMouseListener(listener);
+		surface.addListener(listener);
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class EventLayer extends AbstractLayer {
 		return g.getModelCoordinates();
 	}
 
-	private class EventListener implements ILayerMouseListener {
+	private class EventListener implements IEventLayerListener {
 
 		private final static int MOUSE_PRESS = 0;
 		private final static int MOUSE_RELEASED = 1;
@@ -112,7 +112,7 @@ public class EventLayer extends AbstractLayer {
 		}
 
 		public void dispose() {
-			surface.removeMouseListener(this);
+			surface.removeListener(this);
 		}
 
 		public int getListeningEvent(final String eventTypeName) {
@@ -172,7 +172,7 @@ public class EventLayer extends AbstractLayer {
 
 		/**
 		 * Method keyPressed()
-		 * @see msi.gama.outputs.layers.ILayerMouseListener#keyPressed(java.lang.Character)
+		 * @see msi.gama.outputs.layers.IEventLayerListener#keyPressed(java.lang.Character)
 		 */
 		@Override
 		public void keyPressed(final String c) {

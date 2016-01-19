@@ -5,13 +5,13 @@
 package msi.gama.outputs.layers;
 
 /**
- * Class ILayerMouseListener.
+ * Class IEventLayerListener.
  *
  * @author drogoul
  * @since 28 avr. 2015
  *
  */
-public interface ILayerMouseListener {
+public interface IEventLayerListener {
 
 	// x and y screen coordinates, button = 1 (left button) or 2 (right button)
 
