@@ -1209,7 +1209,6 @@ public class JTSDrawer {
 	public void PyramidSkeleton(final Polygon p, final double size, final Color c, final double alpha) {
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		Vertex[] vertices;
-		double[] normal;
 
 		if ( renderer.getComputeNormal() ) {
 			vertices = getExteriorRingVertices(p);
@@ -1233,7 +1232,7 @@ public class JTSDrawer {
 		double[] norm = CalculatePolygonNormal(p, null);
 		norm[0] = norm[0]*size + p.getCentroid().getX();
 		norm[1] = norm[1]*size + renderer.yFlag * p.getCentroid().getY();
-		norm[2] = -norm[2]*size + p.getCentroid().getCoordinate().z;
+		norm[2] = norm[2]*size + p.getCentroid().getCoordinate().z;
 		
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
