@@ -11,7 +11,10 @@ public class SystemLogger extends PrintStream {
 	static void removeDisplay()
 	{
 	 	if(display==null)
+	 	{
 			display = new SystemLogger(System.out);
+			oldOutStream = System.out;
+	 	}
 		System.setOut(display);
 	}
 	
@@ -43,5 +46,13 @@ public class SystemLogger extends PrintStream {
 	 {//do what ever you like
 	  super.print("");
 	 }
+	
+	@Override
+	public void println(String s)
+	 {//do what ever you like
+	  super.print("");
+	 }
+	
+	
 }
 

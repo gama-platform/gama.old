@@ -1,4 +1,4 @@
-package ummisco.gama.serialize.factory;
+package ummisco.gama.serializer.factory;
 
 import java.util.logging.Logger;
 

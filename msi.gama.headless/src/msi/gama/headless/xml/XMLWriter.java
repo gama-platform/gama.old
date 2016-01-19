@@ -30,6 +30,12 @@ public class XMLWriter implements Writer {
 		}
 	}
 
+	public XMLWriter(final BufferedWriter f) {
+			this.file = f;
+		
+	}
+
+	
 	@Override
 	public void close() {
 		String res = "</Simulation>";
@@ -46,8 +52,8 @@ public class XMLWriter implements Writer {
 	public void writeResultStep(final long step, final ListenedVariable[] vars) {
 		StringBuffer sb = new StringBuffer("\t<Step id='").append(step).append("' >\n");
 		for ( int i = 0; i < vars.length; i++ ) {
-			sb.append("\t\t<Variable name='").append(vars[i].getName()).append("' value='").append(vars[i].getValue())
-				.append("'/>\n");
+			sb.append("\t\t<Variable name='").append(vars[i].getName()).append("'>").append(vars[i].getValue())
+				.append("<Variable>");
 		}
 		sb.append("\t</Step>\n");
 		try {
