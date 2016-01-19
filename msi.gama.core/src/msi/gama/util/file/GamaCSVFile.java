@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -316,11 +317,19 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 				matrix = new GamaObjectMatrix(userSize, Types.STRING);
 				Object[] m = ((GamaObjectMatrix) matrix).getMatrix();
 				int i = 0;
+				System.out.println("userSize.x: " + userSize.x);
+				System.out.println("userSize.y: " + userSize.y);
+				System.out.println("matrix.rows: " + matrix.getRows(scope));
+				System.out.println("matrix.cols: " + matrix.getCols(scope));
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
 					scope.getGui().setSubStatusCompletion(percentage);
 
 					for ( String s : reader.getValues() ) {
+						if (i == m.length) {
+							GAMA.reportError(scope, GamaRuntimeException.warning("Your file " + getFile().getName() + " seems to contain data that have not been processed", scope),false);
+							break;
+						}
 						m[i++] = s;
 					}
 				}
