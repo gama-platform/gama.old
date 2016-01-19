@@ -39,6 +39,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 
 public class ExperimentJob implements IExperimentJob{
 
@@ -339,5 +340,42 @@ public class ExperimentJob implements IExperimentJob{
 			aOutput.setAttributeNode(o2);
 		}
 		return simulation;
+	}
+
+	public static ExperimentJob loadAndBuildJob( final ExperimentDescription expD, final String path, IModel model)
+	{
+		List<Output> outputList = new ArrayList<Output>(); 
+		List<Parameter> parameterList = new ArrayList<Parameter>(); 
+		String expName = expD.getName();
+		IExpressionDescription  seedDescription =  expD.getFacets().get(IKeyword.SEED);
+		long mseed = 0l;
+		if(seedDescription !=null)
+		{
+			mseed = Long.valueOf(seedDescription.getExpression().literalValue()).longValue();
+		}
+		IDescription d = expD.getChildWithKeyword(IKeyword.OUTPUT);
+		ExperimentJob expJob = new ExperimentJob(path,expName,0,mseed );
+		
+		if(d != null)
+		{
+			Iterable<IDescription> monitors = d.getChildrenWithKeyword(IKeyword.MONITOR);
+			for(IDescription moni:monitors) {
+				//outputList.add(Output.loadAndBuildOutput(moni));
+				expJob.addOutput(Output.loadAndBuildOutput(moni));
+			}
+			
+			Iterable<IDescription> displays = d.getChildrenWithKeyword(IKeyword.DISPLAY);
+			for(IDescription disp:displays) {
+				//outputList.add(Output.loadAndBuildOutput(disp));
+				expJob.addOutput(Output.loadAndBuildOutput(disp));
+			}
+		}
+		
+		Iterable<IDescription> parameters = expD.getChildrenWithKeyword(IKeyword.PARAMETER);
+		for(IDescription para:parameters) {
+			expJob.addParameter(Parameter.loadAndBuildParameter(para, model));
+		}
+		
+		return expJob;
 	}
 }

@@ -26,7 +26,6 @@ import msi.gaml.statements.Facets;
 public abstract class ScriptFactory {
 	public static List<IExperimentJob> loadAndBuildJobs(String path)
 	{
-		System.out.println("path " + path+" " );
 		IModel model = HeadlessSimulationLoader.loadModel(new File(path));
 	
 		return loadAndBuildJobs( model);
@@ -63,7 +62,7 @@ public abstract class ScriptFactory {
 		{
 			if(!expD.getFacets().get(IKeyword.TYPE).getExpression().literalValue().equals(IKeyword.BATCH))
 			{
-				IExperimentJob tj = IExperimentJob.loadAndBuildJob(  expD,model.getFilePath(), model);
+				IExperimentJob tj = ExperimentJob.loadAndBuildJob(  expD,model.getFilePath(), model);
 				tj.setSeed(12);
 				res.add(tj);
 			}
