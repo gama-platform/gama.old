@@ -524,7 +524,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @since 22 avr. 2013
 	 *
 	 */
-	private class ExperimentAgentScope extends Scope {
+	public class ExperimentAgentScope extends Scope {
 
 		@Override
 		public IScope copy() {

@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaPair;
 import ummisco.gama.serialize.gamaType.reduced.GamaPairReducer;
 
@@ -13,6 +14,8 @@ public class GamaPairConverter implements Converter {
 
 	@Override
 	public boolean canConvert(Class arg0) {
+		if(GamaPair.class.equals(arg0)){return true;}		
+		
 		Class<?>[] allInterface=arg0.getInterfaces();
 		for( Class<?> c:allInterface)
 		{

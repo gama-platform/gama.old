@@ -14,6 +14,8 @@ public class GamaPointConverter implements Converter {
 	private final static String SEPARATOR=":";
 	@Override
 	public boolean canConvert(Class arg0) {
+		if(GamaPoint.class.equals(arg0)){return true;}
+		
 		Class<?>[] allInterface=arg0.getInterfaces();
 		for( Class<?> c:allInterface)
 		{
