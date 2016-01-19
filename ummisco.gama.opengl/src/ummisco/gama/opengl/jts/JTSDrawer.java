@@ -506,38 +506,41 @@ public class JTSDrawer {
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		int p_norm_dir = 1;
 		int face_norm_dir = -1;
+		boolean polyCW = true;
 		if ( renderer.getComputeNormal() ) {
 			Vertex[] vertices = getExteriorRingVertices(p);
-			if ( IsClockwise(vertices) ) {
-				face_norm_dir = -1;
+			polyCW =  IsClockwise(vertices);
+			if (polyCW ) {
+				face_norm_dir = 1;
 				p_norm_dir = 1;
 			} else {
 				face_norm_dir = 1;
-				p_norm_dir = -1;
+				p_norm_dir = 1;
 			}
+			
 		}
-
+		
 		DrawPolygon(p, c, alpha, fill, border, isTextured, object, drawPolygonContour, rounded, z_fighting_value,-p_norm_dir);
-		gl.glTranslated(0, 0, height);
-		double[] vectorNormal =  CalculatePolygonNormal(p);
-		//System.out.println("vector Normal: " + Arrays.toString(vectorNormal));
-		//gl.glTranslated(vectorNormal[0]*height, vectorNormal[1]*height, vectorNormal[2]*height);
-		DrawPolygon(p, c, alpha, fill, border, isTextured, object/* ,angle */, drawPolygonContour, rounded,z_fighting_value, p_norm_dir);
-		gl.glTranslated(0, 0, -height);
-	    //gl.glTranslated(-vectorNormal[0]*height, -vectorNormal[1]*height, -vectorNormal[2]*height);
+		//gl.glTranslated(0, 0, height);
+		double[] vectorNormal =  CalculatePolygonNormal(p,polyCW);
+		
+		gl.glTranslated(-vectorNormal[0]*height,- vectorNormal[1]*height,- vectorNormal[2]*height);
+		DrawPolygon(p, c, alpha, fill, border, isTextured, object/* ,angle */, drawPolygonContour, rounded,z_fighting_value,  p_norm_dir);
+		//gl.glTranslated(0, 0, -height);
+	   // gl.glTranslated(-vectorNormal[0]*height, -vectorNormal[1]*height, vectorNormal[2]*height);
 		// FIXME : Will be wrong if angle =!0
 
 		if ( isTextured ) {
 			if ( object.hasTextures() ) {
 				DrawTexturedFaces(p, c, alpha, fill, border, isTextured, object.getTexture(gl, renderer, 1), height,
-					drawPolygonContour);
+					drawPolygonContour, polyCW);
 			} else {
 				DrawTexturedFaces(p, c, alpha, fill, border, isTextured, object.getTexture(gl, renderer, 0), height,
-					drawPolygonContour);
+					drawPolygonContour, polyCW);
 			}
 
 		} else {
-			DrawFaces(p, c, alpha, fill, border, isTextured, height, drawPolygonContour, face_norm_dir);
+			DrawFaces(p, c, alpha, fill, border, isTextured, height, drawPolygonContour, face_norm_dir, polyCW);
 		}
 
 	}
@@ -546,7 +549,7 @@ public class JTSDrawer {
 	// //////////////////////////////////////////////////////////////////////////////////
 
 	public void DrawFaces(final Polygon p, final Color c, final double alpha, final boolean fill, final Color b,
-		final boolean isTextured, final double height, final boolean drawPolygonContour, final int norm_dir) {
+		final boolean isTextured, final double height, final boolean drawPolygonContour, final int norm_dir, final boolean clockwise) {
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		if ( !colorpicking ) {
 			setColor(c, alpha);
@@ -562,7 +565,7 @@ public class JTSDrawer {
 
 		for ( int j = 0; j < curPolyGonNumPoints; j++ ) {
 			int k = (j + 1) % curPolyGonNumPoints;
-			Vertex[] vertices = getFaceVerticesOld(p, j, k, elevation, height);
+			Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
 
 			if ( fill ) {
 				if ( renderer.getComputeNormal() ) {
@@ -599,7 +602,7 @@ public class JTSDrawer {
 	}
 
 	public void DrawTexturedFaces(final Polygon p, final Color c, final double alpha, final boolean fill, final Color b,
-		final boolean isTextured, final Texture texture, final double height, final boolean drawPolygonContour) {
+		final boolean isTextured, final Texture texture, final double height, final boolean drawPolygonContour, final boolean clockwise) {
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		texture.enable(gl);
 		texture.bind(gl);
@@ -616,7 +619,7 @@ public class JTSDrawer {
 
 			int k = (j + 1) % curPolyGonNumPoints;
 
-			Vertex[] vertices = getFaceVerticesOld(p, j, k, elevation, height);
+			Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
 			GLUtilNormal.HandleNormal(vertices, null, alpha, 1, renderer);
 
 			gl.glColor3d(0.25, 0.25, 0.25);// Set the color to white to avoid color and texture mixture
@@ -663,12 +666,13 @@ public class JTSDrawer {
 		return vertices;
 	}
 	
-	public double[] CalculatePolygonNormal(final Polygon p){
+	public double[] CalculatePolygonNormal(final Polygon p, Boolean clockwise){
 		// Get 3 vertices of the initial polygon.
 		Vertex[] verticesP = new Vertex[3];
 		for ( int i = 0; i < 3; i++ ) {
 			verticesP[i] = new Vertex();
-		}			
+		}
+		
 		verticesP[0].x = p.getExteriorRing().getPointN(0).getX();
 		verticesP[0].y = yFlag * p.getExteriorRing().getPointN(0).getY();
 		verticesP[0].z = p.getExteriorRing().getPointN(0).getCoordinate().z;
@@ -677,15 +681,22 @@ public class JTSDrawer {
 		verticesP[1].y = yFlag * p.getExteriorRing().getPointN(1).getY();
 		verticesP[1].z = p.getExteriorRing().getPointN(1).getCoordinate().z;
 
-		verticesP[2].x = p.getExteriorRing().getPointN((2) % p.getNumPoints()).getX();
-		verticesP[2].y = yFlag * p.getExteriorRing().getPointN((2) % p.getNumPoints()).getY();
-		verticesP[2].z = p.getExteriorRing().getPointN((2) % p.getNumPoints()).getCoordinate().z;
-		return GLUtilNormal.CalculateNormal(verticesP[0], verticesP[1], verticesP[2]);
+		verticesP[2].x = p.getExteriorRing().getPointN((2)).getX();
+		verticesP[2].y = yFlag * p.getExteriorRing().getPointN((2) ).getY();
+		verticesP[2].z = p.getExteriorRing().getPointN((2) ).getCoordinate().z;
+		double[] normal = GLUtilNormal.CalculateNormal(verticesP[0], verticesP[1], verticesP[2]);
+		if (clockwise == null || (clockwise != IsClockwise(verticesP))) {
+			normal[0] *= -1;
+			normal[1] *= -1;
+			normal[2] *= -1;
+		}
+		return normal;
 	}
 	
 	public Vertex[] getFaceVertices(final Polygon p, final int j, final int k, final double elevation,
-			final double height) {
-			double[] vectorNormal =  CalculatePolygonNormal(p);
+			final double height, final boolean clockwise) {
+			
+			double[] vectorNormal =  CalculatePolygonNormal(p, clockwise);
 			// Build the 4 vertices of the face.
 			Vertex[] vertices = new Vertex[4];
 			for ( int i = 0; i < 4; i++ ) {
@@ -707,8 +718,10 @@ public class JTSDrawer {
 			vertices[3].x = p.getExteriorRing().getPointN(j).getX();
 			vertices[3].y = yFlag * p.getExteriorRing().getPointN(j).getY();
 			vertices[3].z = p.getExteriorRing().getPointN(j).getCoordinate().z;
-
+			
 			return vertices;
+			
+			
 		}
 	
 	public Vertex[] getTriangleVertices(final Polygon p) {
