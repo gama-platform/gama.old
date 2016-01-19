@@ -1961,4 +1961,10 @@
                </run>
             </runtime>
          </extension>
+         <extension
+               point="org.eclipse.ui.startup">
+            <startup
+                  class="msi.gama.application.Startup">
+            </startup>
+         </extension>
 </plugin>
