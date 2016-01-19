@@ -15,7 +15,7 @@ import java.util.*;
 import com.google.common.collect.Iterables;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.population.*;
@@ -300,16 +300,15 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		final IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
 		final IList<IAgent> immigrants = GamaListFactory.create(Types.AGENT);
-		//final Iterator<IAgent> it = oldMicroPop.iterator();
-		while(!oldMicroPop.isEmpty()) {
-		//while (it.hasNext()) {
+		// final Iterator<IAgent> it = oldMicroPop.iterator();
+		while (!oldMicroPop.isEmpty()) {
+			// while (it.hasNext()) {
 			IAgent m = oldMicroPop.get(0);
 			final SavedAgent savedMicro = new SavedAgent(scope, m);
 			m.dispose();
 			immigrants.add(savedMicro.restoreTo(scope, newMicroPop));
-			
+
 		}
-		
 
 		return immigrants;
 	}
@@ -440,7 +439,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public void dispose() {
 		if ( dead() ) { return; }
-//		scope.getGui().debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in GamlAgent)");
+		// scope.getGui().debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in GamlAgent)");
 		try {
 			acquireLock();
 			for ( final Map.Entry<Object, Object> entry : attributes.entrySet() ) {
@@ -781,6 +780,15 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if ( host != null ) { return host.getClock(); }
 		return null;
 		// return new SimulationClock();
+	}
+
+	/**
+	 * Method mustScheduleMembers()
+	 * @see msi.gama.metamodel.agent.IMacroAgent#mustScheduleMembers()
+	 */
+	@Override
+	public boolean mustScheduleMembers() {
+		return false;
 	}
 
 }

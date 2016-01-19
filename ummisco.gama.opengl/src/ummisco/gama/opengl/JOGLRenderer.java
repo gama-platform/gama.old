@@ -34,6 +34,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.*;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
@@ -83,6 +84,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	private ModelScene currentScene;
 	private volatile boolean inited;
 	protected GeometryCache cache;
+	// Use to inverse y composaant
+	public int yFlag;
 
 	// private final GLModel chairModel = null;
 
@@ -91,6 +94,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		data = d.getData();
 		camera = new CameraArcBall(this);
 		sceneBuffer = new SceneBuffer(this);
+		yFlag = -1;
 	}
 
 	public GLAutoDrawable createDrawable(final Composite parent) {
@@ -664,6 +668,18 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		return rect;
 	}
 
+	
+
+	@Override
+	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
+			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3D) {
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
+		GamaPoint location = new GamaPoint(locationInModelUnits);
+		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
+		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D);
+		return rect;
+	}
+	
 	private Envelope3D getWorldEnvelopeWithZ(final double z) {
 		return new Envelope3D(0, data.getEnvWidth(), 0, data.getEnvHeight(), 0, z);
 	}

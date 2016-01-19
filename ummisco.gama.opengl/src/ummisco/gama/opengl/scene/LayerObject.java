@@ -20,6 +20,7 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaFile;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.files.GLModel;
 
@@ -39,6 +40,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	volatile boolean isInvalid;
 
 	protected final ISceneObjects<GeometryObject> geometries;
+	protected final ISceneObjects<RessourceObject> ressources;
 	protected final ISceneObjects<ImageObject> images;
 	protected final ISceneObjects<DEMObject> dems;
 	protected final ISceneObjects<StringObject> strings;
@@ -46,6 +48,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
 		this.layer = layer;
 		geometries = buildSceneObjects(new GeometryDrawer(renderer), true, false);
+		ressources = buildSceneObjects(new RessourceDrawer(renderer), true, false);
 		strings = buildSceneObjects(new StringDrawer(renderer), !StringDrawer.USE_VERTEX_ARRAYS, false);
 		images = buildSceneObjects(new ImageDrawer(renderer), true, false);
 		dems = buildSceneObjects(new DEMDrawer(renderer), true, false);
@@ -70,6 +73,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		images.draw(gl, picking && isPickable());
 		gl.glDisable(GL.GL_TEXTURE_2D);
+		ressources.draw(gl, picking && isPickable());
 		geometries.draw(gl, picking && isPickable());
 		//
 		gl.glPopMatrix();
@@ -115,6 +119,12 @@ public class LayerObject implements Iterable<GeometryObject> {
 		strings.add(new StringObject(string, font, style, offset, scale, color, angle, location, sizeInModelUnits, size,
 			alpha, bitmap));
 	}
+	
+	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha, final GamaPoint location,
+			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D) {
+			ressources.add(new RessourceObject(fileName, agent, color, alpha, location, dimensions, rotate3D));
+
+		}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,
 		final GamaPoint dimensions, final Double angle, final boolean isDynamic, final String name) {
@@ -162,6 +172,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		// int traceSize = trace == 0 ? requestedDisplayTraceSize : trace;
 		boolean fading = getFading();
 		geometries.clear(gl, trace, fading);
+		ressources.clear(gl, trace, fading);
 		images.clear(gl, trace, fading);
 		dems.clear(gl, trace, fading);
 		strings.clear(gl, trace, fading);

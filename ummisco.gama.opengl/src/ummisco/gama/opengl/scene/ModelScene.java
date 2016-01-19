@@ -20,7 +20,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.runtime.IScope;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaFile;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.files.GLModel;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
@@ -130,6 +132,12 @@ public class ModelScene {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		currentLayer.addString(string, location, size, sizeInModelUnits, color, font, style, angle, bitmap);
 	}
+	
+	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha, final GamaPoint location,
+			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D) {
+			if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
+			currentLayer.addFile(fileName, agent, color, alpha, location, dimensions, rotate3D);
+	}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,
 		final GamaPoint dimensions, final Double angle, final boolean isDynamic, final String name) {
@@ -139,6 +147,7 @@ public class ModelScene {
 		}
 		currentLayer.addImage(img, agent, location, dimensions, angle, isDynamic, name);
 	}
+	
 
 	public void addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition,
 		final Envelope3D bounds) {

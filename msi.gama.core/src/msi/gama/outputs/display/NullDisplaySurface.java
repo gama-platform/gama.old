@@ -18,7 +18,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.Changes;
-import msi.gama.outputs.layers.ILayerMouseListener;
+import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 
@@ -147,14 +147,14 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#addMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
-	public void addMouseListener(final ILayerMouseListener e) {}
+	public void addListener(final IEventLayerListener e) {}
 
 	/**
 	 * Method removeMouseListener()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
-	public void removeMouseListener(final ILayerMouseListener e) {}
+	public void removeListener(final IEventLayerListener e) {}
 
 	/**
 	 * Method getEnvWidth()

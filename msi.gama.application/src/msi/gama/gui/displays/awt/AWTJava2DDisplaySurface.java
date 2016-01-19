@@ -30,7 +30,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.*;
-import msi.gama.outputs.layers.ILayerMouseListener;
+import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -691,10 +691,10 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		setDisplayScope(null);
 	}
 
-	Map<ILayerMouseListener, MouseListener> listeners = new HashMap();
+	Map<IEventLayerListener, MouseListener> listeners = new HashMap();
 
 	@Override
-	public void addMouseListener(final ILayerMouseListener listener) {
+	public void addListener(final IEventLayerListener listener) {
 		if ( listeners.containsKey(listener) ) { return; }
 		MouseListener l = new MouseAdapter() {
 
@@ -719,7 +719,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void removeMouseListener(final ILayerMouseListener listener) {
+	public void removeListener(final IEventLayerListener listener) {
 		MouseListener l = listeners.get(listener);
 		if ( l == null ) { return; }
 		listeners.remove(listener);

@@ -28,11 +28,11 @@ import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import msi.gaml.variables.SignalVariable.SignalValidator;
 
-@facets(value = {
-	@facet(name = IKeyword.NAME,
-		type = IType.NEW_VAR_ID,
-		optional = false,
-		doc = @doc("The name of the variable that will be introduced to represent this signal on the specified grid") ),
+@facets(value = { @facet(name = IKeyword.NAME,
+	type = IType.NEW_VAR_ID,
+	optional = false,
+	doc = @doc("Represents the name of the variable that will be introduced to represent this signal on the specified grid") ),
+	// @facet(name = IKeyword.VAR, optional = true, type = IType.NEW_VAR_ID, doc = @doc("The name of the variable that will be introduced to represent this signal on the specified grid") ),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.VALUE,
 		type = IType.NONE,
@@ -132,8 +132,13 @@ public class SignalVariable extends NumberVariable {
 				}
 			}
 
+			String attributeName = d.getName();
+			// if ( d.getFacets().contains(VAR) ) {
+			// attributeName = d.getFacets().getLabel(VAR);
+			// }
+
 			final VariableDescription vd = (VariableDescription) DescriptionFactory.create(
-				SyntacticFactory.create(IKeyword.FLOAT, new Facets(NAME, d.getName(), MIN, "0.0"), false), s, null);
+				SyntacticFactory.create(IKeyword.FLOAT, new Facets(NAME, attributeName, MIN, "0.0"), false), s, null);
 			s.addChild(vd);
 			IExpressionFactory f = GAML.getExpressionFactory();
 			IExpression v = s.getVarExpr(d.getName());
@@ -153,8 +158,7 @@ public class SignalVariable extends NumberVariable {
 
 	public SignalVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
-		this.
-		type = Types.FLOAT;
+		this.type = Types.FLOAT;
 		typeExpr = getFacet(IKeyword.PROPAGATION);
 		propExpr = getFacet(IKeyword.PROPORTION);
 		variationExpr = getFacet(IKeyword.VARIATION);

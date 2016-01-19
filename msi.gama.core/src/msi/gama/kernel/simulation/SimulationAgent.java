@@ -355,19 +355,27 @@ public class SimulationAgent extends GamlAgent {
 	public void setOutputs(final IOutputManager iOutputManager) {
 		// hqnghi push outputManager down to Simulation level
 		// create a copy of outputs from description
-		if ( !scheduled && !getExperiment().getSpecies().isBatch() ) {
+		if ( /* !scheduled && */ !getExperiment().getSpecies().isBatch() ) {
 			IDescription des = ((ISymbol) iOutputManager).getDescription();
 			outputs = (IOutputManager) des.compile();
 			Map<String, IOutput> mm = new TOrderedHashMap<String, IOutput>();
-			for ( IOutput output : outputs.getOutputs().values() ) {
-				String oName =
-					output.getName() + "#" + this.getSpecies().getDescription().getModelDescription().getAlias() + "#" +
-						this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
-				mm.put(oName, output);
+			for ( Map.Entry<String, ? extends IOutput> entry : outputs.getOutputs().entrySet() ) {
+				IOutput output = entry.getValue();
+				String keyName, newOutputName;
+				if ( !scheduled ) {
+					keyName =
+						output.getName() + "#" + this.getSpecies().getDescription().getModelDescription().getAlias() +
+							"#" + this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
+					newOutputName = keyName;
+				} else {
+					keyName = entry.getKey() + " (Simulation " + getIndex() + ")";
+					newOutputName = output.getName() + " (Simulation " + getIndex() + ")";
+				}
+				mm.put(keyName, output);
+				output.setName(newOutputName);
 			}
 			outputs.removeAllOutput();
 			for ( Entry<String, IOutput> output : mm.entrySet() ) {
-				output.getValue().setName(output.getKey());
 				outputs.addOutput(output.getKey(), output.getValue());
 			}
 		} else {
@@ -376,8 +384,15 @@ public class SimulationAgent extends GamlAgent {
 		// end-hqnghi
 	}
 
-	public SimulationOutputManager getOutputManger() {
+	public SimulationOutputManager getOutputManager() {
 		return (SimulationOutputManager) outputs;
+	}
+
+	/**
+	 * @param inspectDisplayOutput
+	 */
+	public void addOutput(final IOutput output) {
+		outputs.addOutput(output);
 	}
 
 	// @Override

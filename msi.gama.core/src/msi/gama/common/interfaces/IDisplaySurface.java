@@ -19,7 +19,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
-import msi.gama.outputs.layers.ILayerMouseListener;
+import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.runtime.IScope;
 
 /**
@@ -105,9 +105,9 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	 */
 	void outputReloaded();
 
-	public void addMouseListener(ILayerMouseListener e);
+	public void addListener(IEventLayerListener e);
 
-	public void removeMouseListener(ILayerMouseListener e);
+	public void removeListener(IEventLayerListener e);
 
 	double getEnvWidth();
 

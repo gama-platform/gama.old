@@ -1030,4 +1030,54 @@ public class GeometryUtils {
 
 		return new GamaShape(JTS.smooth(geom, fit, FACTORY));
 	}
+	
+	public static boolean isClockWise(final Geometry geom) {
+		if (geom instanceof GeometryCollection) {
+			boolean isCW = true;
+			for (int i = 0; i < ((GeometryCollection) geom).getNumGeometries(); i++) {
+				isCW = isCW && isClockWise(((GeometryCollection) geom).getGeometryN(i));
+			}
+			return isCW;
+		} else if (!(geom instanceof Polygon)) {
+			return true;
+		}
+		
+		double sum = 0.0;
+		Coordinate[] coords = ((Polygon) geom).getExteriorRing().getCoordinates();
+		for ( int i = 0; i < coords.length; i++ ) {
+			Coordinate v1 = coords[i];
+			Coordinate v2 = coords[(i + 1) % coords.length];
+			sum += (v2.x - v1.x) * (v2.y + v1.y);
+		}
+		return sum < 0.0;
+	}
+	
+	public static Geometry changeClockWise(final Geometry geom) {
+		if (geom instanceof GeometryCollection) {
+			List<Geometry> geomList = new ArrayList<Geometry>();
+			for (int i = 0; i < ((GeometryCollection) geom).getNumGeometries(); i++) {
+				geomList.add(changeClockWise(((GeometryCollection) geom).getGeometryN(i)));
+			}
+			return FACTORY.buildGeometry(geomList);
+		} else if (!(geom instanceof Polygon)) {
+			return geom;
+		}
+		Polygon p =  ((Polygon) geom);
+		double sum = 0.0;
+		Coordinate[] coords = p.getExteriorRing().getCoordinates();
+		Coordinate[] coordsN = new Coordinate[coords.length];
+		for ( int i = 0; i < coords.length; i++ ) {
+			coordsN[i] = coords[coords.length - i - 1];
+		}
+		LinearRing[] lrN = new LinearRing[p.getNumInteriorRing()];
+		for (int i = 0; i < lrN.length; i++) {
+			Coordinate[] coordLRs = p.getInteriorRingN(i).getCoordinates();
+			Coordinate[] coordsLRN = new Coordinate[coordLRs.length];
+			for ( int j = 0; j < coordLRs.length; j++ ) {
+				coordsLRN[j] = coords[coordLRs.length - j - 1];
+			}
+			lrN[i] = FACTORY.createLinearRing(coordsLRN);
+		}
+		return FACTORY.createPolygon(FACTORY.createLinearRing(coordsN), lrN);
+	}
 }

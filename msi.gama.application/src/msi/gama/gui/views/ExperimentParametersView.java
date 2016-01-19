@@ -86,7 +86,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 						@Override
 						public Object run(final IScope scope) {
 							final Object result = command.executeOn(scope);
-							experiment.getSimulationOutputs().forceUpdateOutputs();
+							GAMA.getExperiment().refreshAllOutputs();
 							return result;
 						}
 

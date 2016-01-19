@@ -587,9 +587,11 @@ public class SwtGui extends AbstractGui {
 			if ( partRef.getPart(false) instanceof IGamaView ) {
 				final IExperimentPlan s = GAMA.getExperiment();
 				if ( s == null ) { return; }
-				final IOutputManager m = s.getSimulationOutputs();
-				if ( m != null ) {
-					m.removeOutput(((IGamaView) partRef.getPart(false)).getOutput());
+				final List<IOutputManager> m = s.getAllSimulationOutputs();
+				if ( !m.isEmpty() ) {
+					for ( IOutputManager manager : m ) {
+						manager.removeOutput(((IGamaView) partRef.getPart(false)).getOutput());
+					}
 				}
 			}
 		}

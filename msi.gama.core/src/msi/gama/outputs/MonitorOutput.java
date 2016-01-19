@@ -83,7 +83,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		// setUserCreated(true);
 		setNewExpressionText(expr);
 		if ( getScope().init(this) ) {
-			GAMA.getExperiment().getSimulationOutputs().addOutput(this);
+			getScope().getSimulationScope().addOutput(this);
 			setPaused(false);
 			open();
 		}
