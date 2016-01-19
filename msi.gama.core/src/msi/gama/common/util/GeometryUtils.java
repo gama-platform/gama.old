@@ -1071,11 +1071,12 @@ public class GeometryUtils {
 		}
 		LinearRing[] lrN = new LinearRing[p.getNumInteriorRing()];
 		for (int i = 0; i < lrN.length; i++) {
-			Coordinate[] coordLRs = lrN[i].getCoordinates();
-			Coordinate[] coordsLRN = new Coordinate[coordLRs.length];
+			Coordinate[] coordLRs = p.getInteriorRingN(i).getCoordinates();
+			Coordinate[] coordsLRN = new Coordinate[coordLRs.length +1];
 			for ( int j = 0; j < coordLRs.length; j++ ) {
 				coordsLRN[j] = coords[coordLRs.length - j - 1];
 			}
+			coordsLRN[coordsLRN.length - 1] = coordsLRN[0];
 			lrN[i] = FACTORY.createLinearRing(coordsLRN);
 		}
 		return FACTORY.createPolygon(FACTORY.createLinearRing(coordsN), lrN);
