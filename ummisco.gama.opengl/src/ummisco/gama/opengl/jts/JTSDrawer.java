@@ -666,6 +666,8 @@ public class JTSDrawer {
 		return vertices;
 	}
 	
+	
+	
 	public double[] CalculatePolygonNormal(final Polygon p, Boolean clockwise){
 		// Get 3 vertices of the initial polygon.
 		Vertex[] verticesP = new Vertex[3];
@@ -1207,24 +1209,30 @@ public class JTSDrawer {
 			vertices = getExteriorRingVertices(p);
 			GLUtilNormal.HandleNormal(vertices, c, alpha, 1, renderer);
 		}
+		Coordinate coords[] = p.getExteriorRing().getCoordinates();
+		
 
 		gl.glBegin(GL2ES3.GL_QUADS);
-		gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
-		gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
-		gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
-		gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
+		gl.glVertex3d(coords[0].x, yFlag * coords[0].y,coords[0].z);
+		gl.glVertex3d(coords[1].x, yFlag * coords[1].y,coords[1].z);
+		gl.glVertex3d(coords[2].x, yFlag * coords[2].y,coords[2].z);
+		gl.glVertex3d(coords[3].x, yFlag * coords[3].y,coords[3].z);
 		gl.glEnd();
 
 		if ( renderer.getComputeNormal() ) {
 			vertices = GetPyramidfaceVertices(p, 0, 1, size, 1, -1);
 			GLUtilNormal.HandleNormal(vertices, c, alpha, -1, renderer);
 		}
-
+		
+		double[] norm = CalculatePolygonNormal(p, null);
+		norm[0] = norm[0]*size + p.getCentroid().getX();
+		norm[1] = norm[1]*size + yFlag * p.getCentroid().getY();
+		norm[2] = -norm[2]*size + p.getCentroid().getCoordinate().z;
+		
 		gl.glBegin(GL.GL_TRIANGLES);
-		gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
-		gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
-		gl.glVertex3d(p.getExteriorRing().getPointN(0).getX() + size / 2,
-			yFlag * (p.getExteriorRing().getPointN(0).getY() - size / 2), size);
+		gl.glVertex3d(coords[0].x, yFlag * coords[0].y, coords[0].z);
+		gl.glVertex3d(coords[1].x, yFlag * coords[1].y, coords[1].z);
+		gl.glVertex3d(norm[0],norm[1], norm[2]);
 		gl.glEnd();
 
 		if ( renderer.getComputeNormal() ) {
@@ -1233,11 +1241,17 @@ public class JTSDrawer {
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
+		gl.glVertex3d(coords[1].x, yFlag * coords[1].y, coords[1].z);
+		gl.glVertex3d(coords[2].x, yFlag * coords[2].y, coords[2].z);
+		gl.glVertex3d(norm[0],norm[1], norm[2]);
+		gl.glEnd();
+		
+		/*gl.glBegin(GL.GL_TRIANGLES);
 		gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(1).getX() - size / 2,
 			yFlag * (p.getExteriorRing().getPointN(1).getY() - size / 2), size);
-		gl.glEnd();
+		gl.glEnd();*/
 
 		if ( renderer.getComputeNormal() ) {
 			vertices = GetPyramidfaceVertices(p, 2, 3, size, -1, 1);
@@ -1245,11 +1259,17 @@ public class JTSDrawer {
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
+		gl.glVertex3d(coords[2].x, yFlag * coords[2].y, coords[2].z);
+		gl.glVertex3d(coords[3].x, yFlag * coords[3].y, coords[3].z);
+		gl.glVertex3d(norm[0],norm[1], norm[2]);
+		gl.glEnd();
+		
+		/*gl.glBegin(GL.GL_TRIANGLES);
 		gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(2).getX() - size / 2,
 			yFlag * (p.getExteriorRing().getPointN(2).getY() + size / 2), size);
-		gl.glEnd();
+		gl.glEnd();*/
 
 		if ( renderer.getComputeNormal() ) {
 			vertices = GetPyramidfaceVertices(p, 3, 0, size, 1, 1);
@@ -1257,11 +1277,17 @@ public class JTSDrawer {
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
+		gl.glVertex3d(coords[3].x, yFlag * coords[3].y, coords[3].z);
+		gl.glVertex3d(coords[0].x, yFlag * coords[0].y, coords[0].z);
+		gl.glVertex3d(norm[0],norm[1], norm[2]);
+		gl.glEnd();
+		
+		/*gl.glBegin(GL.GL_TRIANGLES);
 		gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(3).getX() + size / 2,
 			yFlag * (p.getExteriorRing().getPointN(3).getY() + size / 2), size);
-		gl.glEnd();
+		gl.glEnd();*/
 	}
 
 	public boolean IsClockwise(final Vertex[] vertices) {
