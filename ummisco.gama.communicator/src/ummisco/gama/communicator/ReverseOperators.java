@@ -7,9 +7,9 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import ummisco.gama.communicator.common.remoteObject.GamaAgentConverter;
 import ummisco.gama.communicator.common.remoteObject.GamaScopeConverter;
-import ummisco.gama.serialize.gamaType.converters.GamaMapConverter;
-import ummisco.gama.serialize.gamaType.converters.GamaPairConverter;
-import ummisco.gama.serialize.gamaType.converters.GamaPointConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaMapConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaPairConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaPointConverter;
 
 public class ReverseOperators {
 	@operator(value = "saveScope")
