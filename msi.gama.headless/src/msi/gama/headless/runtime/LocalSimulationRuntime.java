@@ -119,7 +119,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	
 	public synchronized IModel loadModel(File fl)
 	{
-		IModel mdl =  mdl = HeadlessSimulationLoader.loadModel(fl);
+		IModel mdl = HeadlessSimulationLoader.loadModel(fl);
 		
 		
 		//IModel mdl = this.loadedModels.get(fl.getAbsolutePath());

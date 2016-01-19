@@ -1,4 +1,4 @@
-package ummisco.gama.serialize.gamaType.reduced;
+package ummisco.gama.serializer.gamaType.reduced;
 
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMap.GamaPairList;

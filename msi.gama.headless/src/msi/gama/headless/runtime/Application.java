@@ -11,8 +11,10 @@
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,7 +55,7 @@ public class Application implements IApplication {
 	public int numberOfThread = -1;
 	public boolean consoleMode = false;
 	public boolean tunnelingMode = false;
-	public boolean verbose = true;
+	public boolean verbose = false;
 	public SimulationRuntime processorQueue;
 
 	private static boolean containParameter(final String[] args, String param)
@@ -71,6 +73,11 @@ public class Application implements IApplication {
 		return containParameter(args, CONSOLE_PARAMETER);
 	}
 
+	private static boolean containTunnellingParameter(final String[] args)
+	{
+		return containParameter(args, TUNNELING_PARAMETER);
+	}
+
 	private static boolean containVerboseParameter(final String[] args)
 	{
 		return containParameter(args, VERBOSE_PARAMERTER);
@@ -86,9 +93,9 @@ public class Application implements IApplication {
 		}
 		return SimulationRuntime.UNDEFINED_QUEUE_SIZE;
 	}
-	private static boolean checkParameters(final String[] args) {
-		if ( args == null ) { return showError(HeadLessErrors.LAUNCHING_ERROR, null); }
-		if ( args.length < 2 ) { return showError(HeadLessErrors.PARAMETER_ERROR, null); }
+	private  boolean checkParameters(final String[] args) {
+		if ( args == null && !this.tunnelingMode  ) { return showError(HeadLessErrors.LAUNCHING_ERROR, null); }
+		if ( args.length < 2 && !this.tunnelingMode  ) { return showError(HeadLessErrors.PARAMETER_ERROR, null); }
 	
 		int outIndex = args.length -1;
 		int inIndex = args.length -2;
@@ -119,14 +126,15 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
+		SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
-/*		if(!containVerboseParameter(args))
+		verbose = containVerboseParameter(args);
+		if(verbose)
 		{
-			SystemLogger.removeDisplay();    
-			verbose = true;
+			  SystemLogger.activeDisplay();  
 		}
-*/		HeadlessSimulationLoader.preloadGAMA();
+		HeadlessSimulationLoader.preloadGAMA();
 		
 /*		List<IExperimentJob> jb = ScriptFactory.loadAndBuildJobs(args[args.length-2]);
 		Document dd =ScriptFactory.buildXmlDocument(jb);
@@ -137,14 +145,14 @@ public class Application implements IApplication {
 		transformer.transform(source, result);
 
 		System.out.println("File saved!");*/
-
-		if ( !checkParameters(args) ) {
+		this.tunnelingMode = Application.containTunnellingParameter(args);
+		if ( tunnelingMode == false && !checkParameters(args)  ) {
 			System.exit(-1);
 		}
 		this.numberOfThread = Application.getNumberOfThread(args);
 		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 		
-		this.consoleMode = Application.containConsoleParameter(args);
+		this.consoleMode = tunnelingMode || Application.containConsoleParameter(args);
 		Reader in = null;
 		
 		if(this.verbose ||!this.tunnelingMode)
@@ -173,9 +181,18 @@ public class Application implements IApplication {
 		while (it.hasNext()) {
 			ExperimentJob sim = it.next();
 			try {
-				XMLWriter ou = new XMLWriter(Globals.OUTPUT_PATH + "/"
-						+ Globals.OUTPUT_FILENAME + sim.getExperimentID() + ".xml");
-				sim.setBufferedWriter(ou);
+				XMLWriter ou = null;
+				if(tunnelingMode == true)
+				{
+					ou = new XMLWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
+				}
+				else
+				{
+					ou = new XMLWriter(Globals.OUTPUT_PATH + "/" + Globals.OUTPUT_FILENAME + sim.getExperimentID() + ".xml");
+				
+				}
+				sim.setBufferedWriter(ou);	
+				
 				processorQueue.pushSimulation(sim);
 			} catch (Exception e) {
 				e.printStackTrace();

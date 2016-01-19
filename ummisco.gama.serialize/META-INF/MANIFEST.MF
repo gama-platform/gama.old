@@ -29,6 +29,6 @@ Export-Package: com.thoughtworks.xstream,
  com.thoughtworks.xstream.io.xml.xppdom,
  com.thoughtworks.xstream.mapper,
  com.thoughtworks.xstream.persistence,
- ummisco.gama.serialize.factory,
- ummisco.gama.serialize.gamaType.converters,
- ummisco.gama.serialize.gamaType.reduced
+ ummisco.gama.serializer.factory,
+ ummisco.gama.serializer.gamaType.converters,
+ ummisco.gama.serializer.gamaType.reduced

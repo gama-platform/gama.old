@@ -1,4 +1,4 @@
-package ummisco.gama.serialize.gamaType.converters;
+package ummisco.gama.serializer.gamaType.converters;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

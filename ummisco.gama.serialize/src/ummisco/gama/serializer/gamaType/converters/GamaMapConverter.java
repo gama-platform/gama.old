@@ -1,4 +1,4 @@
-package ummisco.gama.serialize.gamaType.converters;
+package ummisco.gama.serializer.gamaType.converters;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaPair;
-import ummisco.gama.serialize.gamaType.reduced.GamaMapReducer;
+import ummisco.gama.serializer.gamaType.reduced.GamaMapReducer;
 
 public class GamaMapConverter implements Converter {
 

@@ -34,7 +34,7 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 	@Override
 	public RichOutput getRichOutput(final String parameterName) {
 		IOutput output =
-			((AbstractOutputManager) this.currentExperiment.getAllSimulationOutputs()).getOutputWithName(parameterName);
+			((AbstractOutputManager) this.currentExperiment.getOriginalSimulationOutputs()).getOutputWithName(parameterName);
 		if ( output == null ) { throw GamaRuntimeException.error("Output unresolved",
 			currentExperiment.getExperimentScope()); }
 		output.update();

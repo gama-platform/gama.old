@@ -1,10 +1,10 @@
-package ummisco.gama.serialize.factory;
+package ummisco.gama.serializer.factory;
 
 import com.thoughtworks.xstream.converters.Converter;
 
-import ummisco.gama.serialize.gamaType.converters.GamaMapConverter;
-import ummisco.gama.serialize.gamaType.converters.GamaPairConverter;
-import ummisco.gama.serialize.gamaType.converters.GamaPointConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaMapConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaPairConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaPointConverter;
 
 public abstract class Converters {
 
