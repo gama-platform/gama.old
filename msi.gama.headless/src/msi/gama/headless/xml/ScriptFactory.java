@@ -24,6 +24,14 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.statements.Facets;
 
 public abstract class ScriptFactory {
+	
+	public static void generateExperimentationFile(File modelFile )
+	{
+		
+	}
+	
+	//private void createHeadlessDirectoryOfModel()
+	
 	public static List<IExperimentJob> loadAndBuildJobs(String path)
 	{
 		IModel model = HeadlessSimulationLoader.loadModel(new File(path));

@@ -12,6 +12,8 @@
 package msi.gama.headless.runtime;
 
 import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,7 +37,9 @@ import msi.gama.headless.xml.XMLWriter;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.w3c.dom.Document;
+
+
+
 
 public class Application implements IApplication {
 
@@ -47,8 +51,7 @@ public class Application implements IApplication {
 	public int numberOfThread = -1;
 	public boolean consoleMode = false;
 	public SimulationRuntime processorQueue;
-	
-	
+
 	private static boolean containConsoleParameter(final String[] args)
 	{
 		for(String p:args)
@@ -101,6 +104,7 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
+		SystemLogger.removeDisplay();    
 		HeadlessSimulationLoader.preloadGAMA();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
@@ -123,6 +127,12 @@ public class Application implements IApplication {
 		
 		this.consoleMode = Application.containConsoleParameter(args);
 		Reader in = null;
+		
+		if(!this.consoleMode)
+		{
+			SystemLogger.activeDisplay();
+		}
+		
 		if(this.consoleMode)
 		{
 			in =new Reader(ConsoleReader.readOnConsole());

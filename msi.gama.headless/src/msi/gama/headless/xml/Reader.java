@@ -127,6 +127,7 @@ public class Reader {
 	{
 		
 		String expId=e.getAttribute(XmlTAG.EXPERIMENT_ID_TAG);
+		String finalStep = e.getAttribute(XmlTAG.FINAL_STEP_TAG);
 		int max=Integer.valueOf(e.getAttribute(XmlTAG.FINAL_STEP_TAG));
 		String sourcePath=e.getAttribute(XmlTAG.SOURCE_PATH_TAG);
 		String experimentName=e.getAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
@@ -161,7 +162,7 @@ public class Reader {
 	{
 		ArrayList<ExperimentJob> res=new ArrayList<ExperimentJob>();
 		Element docEle = dom.getDocumentElement();
-		NodeList nl = dom.getElementsByTagName(XmlTAG.EXPERIMENT_ID_TAG);
+		NodeList nl = dom.getElementsByTagName(XmlTAG.SIMULATION_TAG);
 		if(nl != null && nl.getLength() > 0) {
 			for(int i = 0 ; i < nl.getLength();i++) {
 
