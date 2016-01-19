@@ -1,8 +1,9 @@
 /**
- *  spatialinterpolation
- *  Author: Taillandier
- *  Description: Show an example of the IDW spatial interpolation operator
- */
+* Name: Spatial Interpolation
+* Author: Patrick Taillandier
+* Description: A model which shows how to use spatial interpolation
+* Tags : Topology, Grid
+*/
 
 model spatialinterpolation
 
