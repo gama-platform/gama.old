@@ -19,7 +19,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.util.AbstractGui;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
@@ -98,7 +97,7 @@ public class UserControlView extends GamaViewPart {
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
 						c.executeOn(scope);
-						GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+						GAMA.getExperiment().refreshAllOutputs();;
 					}
 
 				});

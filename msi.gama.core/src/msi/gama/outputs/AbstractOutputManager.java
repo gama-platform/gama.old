@@ -14,7 +14,6 @@ package msi.gama.outputs;
 import java.util.*;
 import com.google.common.collect.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.AbstractGui;
 import msi.gama.runtime.*;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.*;
@@ -110,7 +109,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		}
 	}
 
-	@Override
 	public void forceUpdateOutputs() {
 		for ( final IDisplayOutput o : getDisplayOutputs() ) {
 			o.update();

@@ -32,7 +32,7 @@ public class WorkaroundForIssue1353 {
 	}
 
 	private static void manipulateShell() {
-		System.out.println("Manipulating Shell");
+		// System.out.println("Manipulating Shell");
 		if ( !getShell().isFocusControl() ) {
 			getShell().open();
 		}

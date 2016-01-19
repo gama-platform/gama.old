@@ -354,7 +354,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 				final Object o = s.getFirstElement();
 				if ( o instanceof IAgent ) {
 					getScope().getGui().setHighlightedAgent((IAgent) o);
-					getScope().getExperiment().getSpecies().getSimulationOutputs().forceUpdateOutputs();
+					GAMA.getExperiment().refreshAllOutputs();;
 				}
 			}
 		});

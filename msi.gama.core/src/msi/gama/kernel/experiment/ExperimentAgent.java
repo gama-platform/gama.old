@@ -16,7 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.Platform;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
@@ -104,6 +104,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected String ownModelPath;
 
 	private Boolean scheduled = false;
+	// private int currentSimulationIndex;
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
@@ -176,14 +177,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public void dispose() {
-//		System.out.println("ExperimentAgent.dipose BEGIN");
+		// System.out.println("ExperimentAgent.dipose BEGIN");
 		if ( dead ) { return; }
 		super.dispose();
 		closeSimulation();
 		if ( getSimulation() != null ) {
 			getSimulation().dispose();
 		}
-//		System.out.println("ExperimentAgent.dipose END");
+		// System.out.println("ExperimentAgent.dipose END");
 	}
 
 	/**
@@ -194,9 +195,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public Object _init_(final IScope scope) {
 		// scope.getGui().debug("ExperimentAgent._init_");
 		if ( scope.interrupted() ) { return null; }
+
+		createSimulation(getParameterValues(), scheduled);
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
-		createSimulation(getParameterValues(), scheduled);
+		// createSimulation(getParameterValues(), scheduled);
 		return this;
 	}
 
@@ -463,12 +466,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@setter(IKeyword.SIMULATION)
 	public void setSimulation(final IAgent sim) {
+		// sim.setIndex(currentSimulationIndex++);
 		if ( sim instanceof SimulationAgent ) {
 			if ( simulation != null && simulation.getScope().interrupted() ) {
 				simulation.dispose();
 			}
 			simulation = (SimulationAgent) sim;
-			simulation.setOutputs(getSpecies().getSimulationOutputs());
+			simulation.setOutputs(getSpecies().getOriginalSimulationOutputs());
 			// simulation.getClock().setDelayFromExperiment(currentMinimumDuration);
 			// simulation.getClock().setDelay(this.minimumDuration);
 		}
@@ -591,6 +595,25 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			return super.getAgentVarValue(a, name);
 		}
 
+	}
+
+	/**
+	 * @return
+	 */
+	public List<IOutputManager> getAllSimulationOutputs() {
+		IList list = GamaListFactory.create();
+		for ( IAgent a : getSimulationPopulation() ) {
+			SimulationAgent sim = (SimulationAgent) a;
+			list.add(sim.getOutputManager());
+		}
+		return list;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isScheduled() {
+		return scheduled;
 	}
 
 }

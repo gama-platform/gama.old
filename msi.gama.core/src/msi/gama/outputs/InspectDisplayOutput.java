@@ -192,7 +192,8 @@ public class InspectDisplayOutput extends MonitorOutput {
 			@Override
 			public void process(final IScope scope) {
 				if ( !scope.init(InspectDisplayOutput.this) ) { return; }
-				GAMA.getExperiment().getSimulationOutputs().addOutput(InspectDisplayOutput.this);
+				// What to do in case of multi-simulations ???
+				GAMA.getSimulation().addOutput(InspectDisplayOutput.this);
 				setPaused(false);
 				open();
 				step(scope);
