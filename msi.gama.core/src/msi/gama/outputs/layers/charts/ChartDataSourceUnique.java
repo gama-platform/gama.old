@@ -51,10 +51,16 @@ public class ChartDataSourceUnique extends ChartDataSource {
 
 	public void setMarkerShape(IScope scope, String stval) {
 		// TODO Auto-generated method stub
+		//markerName is useless, for now creates/modifies the output
 		markerName=stval;
 		this.getDataset().getOutput().setSerieMarkerShape(scope,this.getName(),stval);
 	}
 	
+	public void setUseSize(IScope scope, boolean b) {
+		// TODO Auto-generated method stub
+		this.getDataset().getOutput().setUseSize(scope,this.getName(),b);
+		
+	}
 	
 	
 	public void updatevalues(IScope scope, int chartCycle) {
@@ -117,10 +123,16 @@ public class ChartDataSourceUnique extends ChartDataSource {
 						this.getMyserie().addxyvalue(0.0,Cast.asFloat(scope,  lvalue.get(0)),chartCycle);
 
 					}
-					if (lvalue.length(scope)>1)
+					if (lvalue.length(scope)==2)
 					{
 						this.getMyserie().addxyvalue(Cast.asFloat(scope,  lvalue.get(0)),
 								Cast.asFloat(scope,  lvalue.get(1)),chartCycle);
+					}
+					if (lvalue.length(scope)>2)
+					{
+						this.getMyserie().addxysvalue(Cast.asFloat(scope,  lvalue.get(0)),
+								Cast.asFloat(scope,  lvalue.get(1)),
+								Cast.asFloat(scope,  lvalue.get(2)),chartCycle);
 					}
 					}
 				else
@@ -201,8 +213,14 @@ public class ChartDataSourceUnique extends ChartDataSource {
 			o = this.getValue().value(scope);
 		}
 
+		int type_val=get_data_type(scope,o);
 		//by default
 		
+
+		getDataset().getOutput().setDefaultPropertiesFromType(scope,this,o,type_val);
+		
+		//move to output objects:
+/*		
 		switch (getDataset().getOutput().getType()) {
 		case ChartOutput.SERIES_CHART: {
 			this.setCumulative(true);
@@ -234,6 +252,7 @@ public class ChartDataSourceUnique extends ChartDataSource {
 		}
 		}		
 
+		
 		if (this.getValue() != null && o!=null) //infer from initial data structure
 		{
 			switch (getDataset().getOutput().getType()) {
@@ -267,7 +286,7 @@ public class ChartDataSourceUnique extends ChartDataSource {
 			}		
 			
 		}
-		
+	*/	
 		
 	}
 	

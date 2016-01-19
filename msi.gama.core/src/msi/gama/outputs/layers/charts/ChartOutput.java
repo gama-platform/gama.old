@@ -285,4 +285,16 @@ public abstract class ChartOutput {
 		
 	}
 
+	public void setDefaultPropertiesFromType(IScope scope, ChartDataSource source, Object o, int type_val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void setUseSize(IScope scope, String name, boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

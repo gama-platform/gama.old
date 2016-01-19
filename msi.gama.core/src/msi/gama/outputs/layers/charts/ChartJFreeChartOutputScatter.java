@@ -2,6 +2,7 @@ package msi.gama.outputs.layers.charts;
 
 import java.awt.Color;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,9 +39,20 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	public class myXYErrorRenderer extends XYErrorRenderer{
 		
-		ChartJFreeChartOutput myoutput;
+		ChartJFreeChartOutputScatter myoutput;
 		String myid;
+		boolean useSize;
+		AffineTransform transform = new AffineTransform();
 		
+		public boolean isUseSize() {
+			return useSize;
+		}
+
+		public void setUseSize(IScope scope, boolean useSize) {
+			this.useSize = useSize;
+
+		}
+
 		public void setMyid(String myid) {
 			this.myid = myid;
 		}
@@ -49,21 +61,33 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 			public void setOutput(ChartJFreeChartOutput output)
 			{
-				myoutput=output;
+				myoutput=(ChartJFreeChartOutputScatter) output;
 			}
 		
 			@Override
 	        public Shape getItemShape(int row, int col) {
-	            if (row == 0 & col == 0) {
-	                return ShapeUtilities.createDiagonalCross(5, 2);
+	            if (isUseSize()) {
+	            	transform.setToScale(myoutput.getScale(myid, col), myoutput.getScale(myid, col));
+	                return transform.createTransformedShape(super.getItemShape(row, col));
 	            } else {
 	                return super.getItemShape(row, col);
 	            }
 	        }
 	    }
 	
+	double getScale(String serie, int col)
+	{
+		if (MarkerScale.containsKey(serie))
+		{
+			return MarkerScale.get(serie).get(col);
+		}
+		else
+		{
+			return 1;
+		}
+	}
 	
-	HashMap<String,ArrayList<Double>> MarkerScale;
+	HashMap<String,ArrayList<Double>> MarkerScale=new HashMap<String,ArrayList<Double>>();
 	
 	public ChartJFreeChartOutputScatter(IScope scope, String name,
 			IExpression typeexp) {
@@ -104,6 +128,41 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
    		
 	}
 
+	public void setDefaultPropertiesFromType(IScope scope, ChartDataSource source, Object o, int type_val) {
+		// TODO Auto-generated method stub
+
+		switch (type_val)
+		{
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
+			case ChartDataSource.DATA_TYPE_LIST_POINT:
+			case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE:
+			{
+				source.setCumulative(scope,false);
+				source.setUseSize(scope,false);				
+				break;				
+			}
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
+			{
+				source.setCumulative(scope,true);
+				source.setUseSize(scope,true);				
+				break;				
+				
+			}
+			default:
+			{
+				source.setCumulative(scope,true);				
+				source.setUseSize(scope,false);				
+			}
+		}
+			
+		
+
+		
+	}
+	
+	
 	public void initdataset()
 	{
 		super.initdataset();
@@ -182,10 +241,18 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		serie.clear();
 		ArrayList<Double> XValues=dataserie.getXValues(scope);
 		ArrayList<Double> YValues=dataserie.getYValues(scope);
+		ArrayList<Double> SValues=dataserie.getSValues(scope);
 		if (XValues.size()>0)
 		for(int i=0; i<XValues.size(); i++)
 		{
 				serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
+		}
+		if (SValues.size()>0)
+		{
+			MarkerScale.remove(serieid);
+			ArrayList<Double> nscale=(ArrayList<Double>) SValues.clone();
+			MarkerScale.put(serieid, nscale);
+			
 		}
 				
 	}
@@ -225,6 +292,13 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			
 		
 	}	
+	
+	public void setUseSize(IScope scope, String name, boolean b) {
+		// TODO Auto-generated method stub
+		myXYErrorRenderer serierenderer=(myXYErrorRenderer) getOrCreateRenderer(scope,name);
+		serierenderer.setUseSize(scope,b);
+	}
+	
 	
 	protected void initRenderer(IScope scope) {
 		// TODO Auto-generated method stub
