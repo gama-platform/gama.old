@@ -1071,7 +1071,7 @@ public class GeometryUtils {
 		}
 		LinearRing[] lrN = new LinearRing[p.getNumInteriorRing()];
 		for (int i = 0; i < lrN.length; i++) {
-			Coordinate[] coordLRs = p.getInteriorRingN(i).getCoordinates();
+			Coordinate[] coordLRs = lrN[i].getCoordinates();
 			Coordinate[] coordsLRN = new Coordinate[coordLRs.length];
 			for ( int j = 0; j < coordLRs.length; j++ ) {
 				coordsLRN[j] = coords[coordLRs.length - j - 1];
