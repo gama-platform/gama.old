@@ -11,22 +11,31 @@
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
+import msi.gama.headless.xml.ScriptFactory;
 import msi.gama.headless.xml.XMLWriter;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.w3c.dom.Document;
 
 public class Application implements IApplication {
 
@@ -95,6 +104,17 @@ public class Application implements IApplication {
 		HeadlessSimulationLoader.preloadGAMA();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
+		
+	/*	List<IExperimentJob> jb = ScriptFactory.loadAndBuildJobs(args[args.length-2]);
+		Document dd =ScriptFactory.buildXmlDocument(jb);
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(dd);
+		StreamResult result = new StreamResult(new File("/tmp/file.xml"));
+		transformer.transform(source, result);
+
+		System.out.println("File saved!");*/
+
 		if ( !checkParameters(args) ) {
 			System.exit(-1);
 		}
@@ -109,9 +129,18 @@ public class Application implements IApplication {
 		}
 		else
 		 in = new Reader(args[args.length-2]);
-		in.parseXmlFile();
-
-		Iterator<ExperimentJob> it = in.getSimulation().iterator();
+		 in.parseXmlFile();
+		 this.buildAndRunSimulation(in.getSimulation());
+		 in.dispose();
+		while (processorQueue.isPerformingSimulation()) {
+			Thread.sleep(1000);
+		}
+		return null;
+		
+	}
+	public void buildAndRunSimulation(Collection<ExperimentJob> sims)
+	{
+		Iterator<ExperimentJob> it = sims.iterator();
 		while (it.hasNext()) {
 			ExperimentJob sim = it.next();
 			try {
@@ -124,20 +153,6 @@ public class Application implements IApplication {
 				System.exit(-1);
 			}
 		}
-		in.dispose();
-		
-		while (processorQueue.isPerformingSimulation()) {
-			Thread.sleep(1000);
-		}
-		
-//		System.out.println("simulation terminer Appuyer sur une touche pour quitter");
-//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//		br.readLine();
-//		br.readLine();
-//		br.readLine();
-		
-		
-		return null;
 	}
 
 	@Override

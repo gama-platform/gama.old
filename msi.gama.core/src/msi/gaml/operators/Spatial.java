@@ -280,6 +280,23 @@ public abstract class Spatial {
 			if ( p == null ) { return null; }
 			return cone(scope, (int) p.x, (int) p.y);
 		}
+		
+		@operator(value = "cone3D", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+		@doc(value = "A cone geometry which radius is equal to the operand.",
+			special_cases = { "returns a point if the operand is lower or equal to 0." },
+			comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.",
+			examples = { @example(value = "cone3D(10.0,10.0)",
+			equals = "a geometry as a circle of radius 10 but displays a cone.",
+			test = false) },
+			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+			"triangle" })
+		public static IShape cone3D(final IScope scope, final Double radius, final Double height) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildCone3D(radius, height, location);
+		}
 
 		@operator(value = "square", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
 		@doc(value = "A square geometry which side size is equal to the operand.",

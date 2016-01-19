@@ -11,10 +11,30 @@
  **********************************************************************************************/
 package msi.gama.headless.job;
 
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.headless.common.DataType;
+import msi.gaml.descriptions.IDescription;
+
 public class Output {
+	public static final int DEFAULT_FRAME_RATE = 1;
+	
+	private static int OUTPUT_ID=0;
 	public String name;
 	public int frameRate;
 	public String	id;
+	
+	public static int generateID()
+	{
+		return OUTPUT_ID++;
+	}
+
+   public static Output loadAndBuildOutput(IDescription exp)
+    {
+        String name = exp.getFacets().get(IKeyword.NAME).getExpression().literalValue();
+        @SuppressWarnings("rawtypes")
+        Output res = new Output(name,DEFAULT_FRAME_RATE, new Integer(OUTPUT_ID).toString());
+        return res;
+    }
 
 	
 	public Output(String name, int frameRate, String id) {
