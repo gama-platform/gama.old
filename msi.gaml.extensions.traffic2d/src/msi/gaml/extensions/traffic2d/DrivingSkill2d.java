@@ -255,7 +255,7 @@ public class DrivingSkill2d extends MovingSkill {
 		if ( hasBackground ) {
 			for ( final ISpecies currentSpecy : backgroundSpecies ) {
 				final IList<IAgent> overlappingBackgroundWithCurrentPosition =
-					msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
+					(IList<IAgent>) msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
 				for ( final IAgent ia : overlappingBackgroundWithCurrentPosition.iterable(scope) ) {
 					if ( consideringBackgroundAgentForCurrentPosition == null ) {
 						consideringBackgroundAgentForCurrentPosition = ia.getGeometry();
@@ -294,7 +294,7 @@ public class DrivingSkill2d extends MovingSkill {
 					IShape consideringBackgroundAgent = consideringBackgroundAgentForCurrentPosition;
 					for ( final ISpecies currentSpecy : backgroundSpecies ) {
 						final IList<IAgent> overlappingBackgroundWithCandidatePosition =
-							msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, candidateShape);
+							(IList<IAgent>) msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, candidateShape);
 						for ( final IAgent ia : overlappingBackgroundWithCandidatePosition.iterable(scope) ) {
 							if ( consideringBackgroundAgent == null ) {
 								consideringBackgroundAgent = ia.getGeometry();
@@ -479,7 +479,7 @@ public class DrivingSkill2d extends MovingSkill {
 			if ( hasBackground ) {
 				for ( final ISpecies currentSpecy : backgroundSpecies ) {
 					final IList<IAgent> overlappingBackgroundWithCurrentPosition =
-						msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
+						(IList<IAgent>) msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
 					for ( final IAgent ia : overlappingBackgroundWithCurrentPosition.iterable(scope) ) {
 						if ( consideringBackgroundAgentForCurrentPosition == null ) {
 							consideringBackgroundAgentForCurrentPosition = ia.getGeometry();
@@ -518,7 +518,7 @@ public class DrivingSkill2d extends MovingSkill {
 						IShape consideringBackgroundAgent = consideringBackgroundAgentForCurrentPosition;
 						for ( final ISpecies currentSpecy : backgroundSpecies ) {
 							final IList<IAgent> overlappingBackgroundWithCandidatePosition =
-								msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, candidateShape);
+								(IList<IAgent>) msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, candidateShape);
 							for ( final IAgent ia : overlappingBackgroundWithCandidatePosition.iterable(scope) ) {
 								if ( consideringBackgroundAgent == null ) {
 									consideringBackgroundAgent = ia.getGeometry();

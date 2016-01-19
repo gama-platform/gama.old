@@ -558,7 +558,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			if ( onRoad != null ) {
 				source = RoadSkill.getTargetNode(onRoad);
 			} else {
-				source = Queries.closest_to(scope, target.getSpecies(), agent);
+				source = (IAgent) Queries.closest_to(scope, target.getSpecies(), agent);
 			}
 		}
 		if ( source.getLocation().equals(agent.getLocation()) ) {

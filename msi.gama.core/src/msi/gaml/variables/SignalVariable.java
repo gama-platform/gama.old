@@ -153,6 +153,7 @@ public class SignalVariable extends NumberVariable {
 
 	public SignalVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
+		this.
 		type = Types.FLOAT;
 		typeExpr = getFacet(IKeyword.PROPAGATION);
 		propExpr = getFacet(IKeyword.PROPORTION);
