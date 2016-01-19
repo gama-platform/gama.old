@@ -14,8 +14,8 @@ package msi.gama.outputs;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
@@ -160,7 +160,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			createBuffImage();
 		}
 		drawAllDisplays();
-		
+
 	}
 
 	@Override
@@ -365,6 +365,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void removeListener(final IEventLayerListener e) {}
+
+	@Override
+	public Collection<IEventLayerListener> getLayerListeners() {
+		return Collections.EMPTY_LIST;
+	}
 
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,

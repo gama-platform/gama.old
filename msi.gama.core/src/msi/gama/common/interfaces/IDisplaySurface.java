@@ -105,10 +105,6 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	 */
 	void outputReloaded();
 
-	public void addListener(IEventLayerListener e);
-
-	public void removeListener(IEventLayerListener e);
-
 	double getEnvWidth();
 
 	double getEnvHeight();
@@ -156,5 +152,14 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	void acquireLock();
 
 	void releaseLock();
+
+	public void addListener(IEventLayerListener e);
+
+	public void removeListener(IEventLayerListener e);
+
+	/**
+	 * @return
+	 */
+	Collection<IEventLayerListener> getLayerListeners();
 
 }

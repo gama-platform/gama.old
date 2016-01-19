@@ -35,7 +35,6 @@ import msi.gama.lang.gaml.resource.*;
 import msi.gama.lang.gaml.ui.editor.*;
 import msi.gama.lang.gaml.ui.editor.EditToolbar.IToolbarVisitor;
 import msi.gama.lang.gaml.ui.internal.GamlActivator;
-import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaFont;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.types.IType;
@@ -198,8 +197,7 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 					" compilation errors");
 				return;
 			}
-			GAMA.getGui().openSimulationPerspective(true);
-			GAMA.runGuiExperiment(exp, model);
+			runModel(model, exp);
 		}
 	}
 

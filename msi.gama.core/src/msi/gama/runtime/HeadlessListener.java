@@ -18,6 +18,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.util.AbstractGui;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -368,4 +369,11 @@ public class HeadlessListener extends AbstractGui {
 	 */
 	@Override
 	public void updateSimulationState() {}
+
+	/**
+	 * Method runModel()
+	 * @see msi.gama.common.interfaces.IGui#runModel(msi.gama.kernel.model.IModel, java.lang.String)
+	 */
+	@Override
+	public void runModel(final IModel object, final String exp) {}
 }

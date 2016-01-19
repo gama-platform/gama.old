@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -154,6 +155,8 @@ public interface IGui {
 	void editModel(Object eObject);
 
 	public abstract void runModel(final Object object, final String exp) throws CoreException;
+
+	public abstract void runModel(final IModel object, final String exp);
 
 	void updateSpeedDisplay(Double d, boolean notify);
 

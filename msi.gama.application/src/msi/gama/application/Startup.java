@@ -8,6 +8,7 @@ public class Startup implements IStartup {
 
 	@Override
 	public void earlyStartup() {
+		System.err.println("Early startup of the SWT Regular UI plugin so as to ensure all services are setup");
 		GAMA.setRegularGui(new SwtGui());
 	}
 

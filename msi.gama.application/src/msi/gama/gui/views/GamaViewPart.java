@@ -140,12 +140,12 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		} else {
 			if ( shouldBeClosedWhenNoExperiments() ) {
 				System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
-				GAMA.getGui().asyncRun(new Runnable() {
+				org.eclipse.swt.widgets.Display.getDefault().asyncExec(new Runnable() {
 
 					@Override
 					public void run() {
-						GAMA.getGui().closeSimulationViews(false);
-						GAMA.getGui().openModelingPerspective(false);
+						close();
+						// GAMA.getGui().openModelingPerspective(false);
 					}
 				});
 
