@@ -16,6 +16,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaPair;
+import msi.gama.util.file.GamaFile;
 
 /**
  * Written by drogoul Modified on 22 janv. 2011
@@ -36,6 +38,9 @@ public interface IGraphics {
 	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
 		Color gridColor, final double cellSize, String name);
+	
+	public abstract Rectangle2D drawFile(final IScope scope, final GamaFile filecheck, final Color color,
+			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3D);
 
 	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Double angle,

@@ -17,6 +17,8 @@ import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaPair;
+import msi.gama.util.file.GamaFile;
 
 /**
  * Class WebDisplayGraphics.
@@ -223,6 +225,13 @@ public class WebDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Double getZoomLevel() {
+		return null;
+	}
+
+	@Override
+	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
+			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3D) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

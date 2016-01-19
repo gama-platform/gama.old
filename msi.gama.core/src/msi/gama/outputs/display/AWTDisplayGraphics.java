@@ -25,6 +25,8 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaPair;
+import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Maths;
 
 /**
@@ -101,6 +103,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
 		final Color gridColor, final double cellSize, final String name) {
 		return drawImage(scope, img, null, null, gridColor, null, true, "grid");
+	}
+	
+
+	@Override
+	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
+			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3De) {
+		return null;
 	}
 
 	@Override

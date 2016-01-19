@@ -15,6 +15,7 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
@@ -175,6 +176,14 @@ public class DrawStatement extends AbstractStatementSequence {
 				}
 
 			}
+			
+			IExpressionDescription rotate = description.getFacets().get(ROTATE3D);		
+			if(rotate !=null){
+				IExpression exp = 	rotate.getExpression();
+				if(!exp.getType().isTranslatableInto(GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT))){
+					description.error("the type of rotate_3D must be pair<float,point>", IGamlIssue.WRONG_TYPE, ROTATE3D);	
+				}
+			}
 		}
 
 	}
@@ -221,7 +230,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		if ( item.getType().id() == IType.GEOMETRY ) {
 			executer = new ShapeExecuter(desc);
 		} else if ( item.getType().id() == IType.FILE ) {
-			executer = new ImageExecuter(desc);
+			executer = new FileExecuter(desc);
 		} else if ( item.getType().id() == IType.STRING ) {
 			executer = new TextExecuter(desc);
 		} else if ( item.getType().id() == IType.COLOR ) {
@@ -337,7 +346,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		private final boolean hasBord;
 		private final ILocation constSize;
 		private final Double constRot;
-		private final GamaPair<Double, GamaPoint> constRot3D;
+		protected final GamaPair<Double, GamaPoint> constRot3D;
 		private final Boolean constEmpty;
 		private final Boolean constRounded;
 		protected final ILocation constLoc;
@@ -474,6 +483,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
 			final IShape g1 = Cast.asGeometry(scope, item.value(scope), false); // WARNING Verify no side effect
 			if ( g1 == null ) { return null; }
+			
 			IShape g2 = new GamaShape(g1, null, getRotation(scope), getLocation(scope, g1));
 			if ( depth != null ) {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
@@ -524,6 +534,76 @@ public class DrawStatement extends AbstractStatementSequence {
 					new GamaPoint(points.get(0)), width, width + width / 3, fill);
 				gr.drawGamaShape(scope, geometry, color, fill, border, false);
 			}
+		}
+	}
+	
+	
+	private class FileExecuter extends DrawExecuter{
+		
+		private final GamaImageFile constImg;
+		private BufferedImage workImage;
+		Graphics2D g2d = null;
+
+		FileExecuter(IDescription desc) throws GamaRuntimeException {
+			super(desc);
+			constImg = (GamaImageFile) (item.isConst() ? Cast.as(item, IGamaFile.class, false) : null);
+		}
+
+		@Override
+		Rectangle2D executeOn(IScope scope, IGraphics g) throws GamaRuntimeException {
+			final GamaFile filecheck = (GamaFile) item.value(scope);
+			//if(file.getExtension())
+			
+			if(filecheck.getExtension().equals("obj")){	
+				File fmtl = new File(filecheck.getFile().getAbsolutePath().replaceAll(".obj", ".mtl"));
+				if (!fmtl.exists()){
+					GAMA.reportError(scope, GamaRuntimeException.warning("No " + fmtl.toString() + " found",scope), false);
+				}
+            	Color color = null;
+            	GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
+            	return g.drawFile(scope, filecheck, color, getLocation(scope), getSize(scope), rot);		
+            }
+            else{ //Use for Image
+            	final ILocation from = getLocation(scope);
+    			final Double displayWidth = getSize(scope).getX();		
+    			final GamaImageFile file = constImg == null ? (GamaImageFile) item.value(scope) : constImg;
+    			final BufferedImage img = file.getImage(scope);
+    			final int image_width = img.getWidth();
+    			final int image_height = img.getHeight();
+    			final double ratio = image_width / (double) image_height;
+    			final int displayHeight = Maths.round(displayWidth / ratio);
+    			final int x = (int) (from.getX() - displayWidth / 2);
+    			final int y = (int) (from.getY() - displayHeight / 2d);
+
+    			final Color c = getColor(scope);
+    			if ( color != null ) {
+    				if ( workImage == null || workImage.getWidth() != image_width ||
+    					workImage.getHeight() != image_height ) {
+    					if ( workImage != null ) {
+    						workImage.flush();
+    					}
+    					workImage = new BufferedImage(image_width, image_height, BufferedImage.TYPE_INT_ARGB);
+    					if ( g2d != null ) {
+    						g2d.dispose();
+    					}
+    					g2d = workImage.createGraphics();
+    					g2d.drawImage(img, 0, 0, null);
+    				} else if ( constImg == null ) {
+    					g2d.drawImage(img, 0, 0, null);
+    				}
+    				g2d.setPaint(c);
+    				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP));
+    				g2d.fillRect(0, 0, image_width, image_height);
+
+    				final Rectangle2D result = g.drawImage(scope, workImage, new GamaPoint(x, y, from.getZ()),
+    					new GamaPoint(displayWidth, displayHeight), null, getRotation(scope), false, null);
+    				workImage.flush();
+    				return result;
+    			}
+    			return g.drawImage(scope, img, new GamaPoint(x, y, from.getZ()), new GamaPoint(displayWidth, displayHeight),
+    				null, getRotation(scope), false, null); 
+            }
+
 		}
 	}
 

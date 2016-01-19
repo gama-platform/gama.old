@@ -13,6 +13,7 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
 import com.jogamp.opengl.*;
@@ -23,6 +24,9 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.util.ImageUtils;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.GamaFile;
 import ummisco.gama.opengl.files.GLModel;
 import ummisco.gama.opengl.files.ModelLoaderOBJ;
 
@@ -33,18 +37,17 @@ public class GeometryCache {
 	
 	 Integer openNestedGLListIndex;
 	private  GLUT myGlut = new GLUT();
-
-
+	
 	public GeometryCache(GL2 gl){
 		BUILDER = new GeometryAsyncBuilder(gl);
 	}
 	// Assumes the texture has been created. But it may be processed at the time
 	// of the call, so we wait for its availability.
-	public  Integer getListIndex(final GL gl, final String string) {
-		if ( string == null ) { return null; }
-		Integer index = GEOMETRIES.get(string);
+	public  Integer getListIndex(final GL gl, final String file) {
+		if ( file == null ) { return null; }
+		Integer index = GEOMETRIES.get(file);
 		while (index == null) {
-			index = GEOMETRIES.get(string);
+			index = GEOMETRIES.get(file);
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
@@ -54,9 +57,14 @@ public class GeometryCache {
 		return index;
 	}
 
-	public  void initializeStaticGeometry(final String string) {
-		if ( contains(string) ) { return; }
-		BuildingTask task = new BuildingTask(null, string);
+	public  void initializeStaticGeometry(final GamaFile file) {
+
+	    if ( contains(file.getFile().getAbsolutePath().toString()) ) { return; }	
+		
+		
+		
+		
+		BuildingTask task = new BuildingTask(null, file);
 		BUILDER.tasks.offer(task);
 	}
 
@@ -64,22 +72,22 @@ public class GeometryCache {
 	 * @param image
 	 * @return
 	 */
-	public  boolean contains(final String string) {
-		return GEOMETRIES.containsKey(string);
+	public  boolean contains(final String file) {
+		return GEOMETRIES.containsKey(file);
 	}
 
-	public  Integer buildList(final GL gl, final String string) {
+	public  Integer buildList(final GL gl, final GamaFile string) {
 		Integer index = openNestedGLListIndex; 
 		
 		if ( index == null ) {	
-			System.out.println("build list: " + index);
-			GLModel asset3Dmodel = ModelLoaderOBJ.LoadModel("/Users/Arno/Desktop/obj/c.obj", "/Users/Arno/Desktop/obj/c.mtl", (GL2) gl);
+			String obj = string.getFile().toString();
+			String fmtl = string.getFile().getAbsolutePath().replaceAll(".obj", ".mtl");
+			GLModel asset3Dmodel = ModelLoaderOBJ.LoadModel(obj, fmtl, (GL2) gl);
 			index = ((GL2) gl).glGenLists(1);
 			((GL2) gl).glNewList(index, GL2.GL_COMPILE);
 			asset3Dmodel.draw((GL2) gl);		
 			((GL2) gl).glEndList();
 		}
-		System.out.println("call list: " + index);
 		((GL2) gl).glCallList(index);
 		openNestedGLListIndex = index;
 		return openNestedGLListIndex;
@@ -138,26 +146,23 @@ public class GeometryCache {
 
 	protected  class BuildingTask implements GLTask {
 
-		protected final String string;
+		protected final GamaFile string;
 
 
-		BuildingTask(final GL2 gl, final String string) {
-			this.string = string;
+		BuildingTask(final GL2 gl, final GamaFile file) {
+			this.string = file;
 
 		}
 
 		@Override
 		public void runIn(final GL gl) {
-			if ( contains(string) ) { return; }
-			System.out.println("buildList in RunIn: ");
+			if ( contains(string.getFile().getAbsolutePath().toString()) ) { return; }
 			Integer index = buildList(gl, string);
-			System.out.println(index);
 			// We use the original image to keep track of the texture
 			if ( index != null ) {
-				GEOMETRIES.put(string, index);
+				GEOMETRIES.put(string.getFile().getAbsolutePath().toString(), index);
 			}
-			gl.glFinish();
-
+			gl.glFinish();	
 		}
 	}
 }
