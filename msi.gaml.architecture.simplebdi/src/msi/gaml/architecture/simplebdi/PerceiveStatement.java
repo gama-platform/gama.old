@@ -114,7 +114,7 @@ public class PerceiveStatement extends AbstractStatementSequence{
 			if (inArg instanceof Float || inArg instanceof Integer || inArg instanceof Double){
 				IList<IAgent> temp = GamaListFactory.create();
 				if(obj instanceof IContainer){
-					temp=msi.gaml.operators.Spatial.Queries.at_distance(scope, (IContainer)obj, Cast.asFloat(scope, inArg));
+					temp=(IList<IAgent>) msi.gaml.operators.Spatial.Queries.at_distance(scope, (IContainer)obj, Cast.asFloat(scope, inArg));
 				}else if(obj instanceof IAgent){
 					if(msi.gaml.operators.Spatial.Queries.agents_at_distance(scope,Cast.asFloat(scope, inArg)).contains(obj)){
 						temp.add((IAgent) obj);
@@ -129,7 +129,7 @@ public class PerceiveStatement extends AbstractStatementSequence{
 			}else if(inArg instanceof msi.gaml.types.GamaGeometryType || inArg instanceof GamaShape){
 				IList<IAgent> temp = GamaListFactory.create();
 				if(obj instanceof IContainer){
-					temp = msi.gaml.operators.Spatial.Queries.overlapping(scope, (IContainer)obj, Cast.asGeometry(scope, inArg));
+					temp = (IList<IAgent>) msi.gaml.operators.Spatial.Queries.overlapping(scope, (IContainer)obj, Cast.asGeometry(scope, inArg));
 				}else if(obj instanceof IAgent){
 					if(msi.gaml.operators.Spatial.Queries.agents_overlapping(scope, Cast.asGeometry(scope, inArg)).contains(obj)){
 						temp.add((IAgent) obj);

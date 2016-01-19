@@ -263,11 +263,11 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		IShape ptT = new GamaPoint(coord[coord.length - 1]);
 		IAgent v1 = nodes.get(ptS);
 		if ( v1 == null ) {
-			v1 = Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptS);
+			v1 = (IAgent) Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptS);
 		}
 		IAgent v2 = nodes.get(ptT);
 		if ( v2 == null ) {
-			v2 = Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptT);
+			v2 = (IAgent) Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptT);
 		}
 
 		IAgent ag = e.getAgent();

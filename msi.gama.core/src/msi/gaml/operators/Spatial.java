@@ -2355,22 +2355,41 @@ public abstract class Spatial {
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
 		@doc(
-			value = "A list of agents among the left-operand list that are located at a distance <= the right operand from the caller agent (in its topology)",
+			value = "A list of agents or geometries among the left-operand list that are located at a distance <= the right operand from the caller agent (in its topology)",
 			examples = { @example(value = "[ag1, ag2, ag3] at_distance 20",
 				equals = "the agents of the list located at a distance <= 20 from the caller agent (in the same order).",
 				isExecutable = false) },
 			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 				"overlapping" })
-		public static IList<IAgent> at_distance(final IScope scope, final IContainer<?, ? extends IShape> list,
+		public static IList<? extends IShape> at_distance(final IScope scope, final IContainer<?, ? extends IShape> list,
 			final Double distance) {
-			return _neighbours(scope, In.list(scope, list), scope.getAgentScope(), distance);
+			IType contentType = list.getType().getContentType();
+			if(contentType.isAgentType()) {
+				return _neighbours(scope, In.list(scope, list), scope.getAgentScope(), distance);
+			} 
+			else if(contentType == Types.GEOMETRY)
+				return geomAtDistance(scope,list,distance);
+			return GamaListFactory.EMPTY_LIST;
+		}
+		
+		public static IList<? extends IShape> geomAtDistance(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final Double distance) {
+			IShape ag = scope.getAgentScope();
+			IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+			for(Object shape : list.listValue(scope,Types.GEOMETRY , false)) {
+				if (shape == null || !(shape instanceof IShape)) continue;
+				if (scope.getTopology().distanceBetween(scope, ag, (IShape)shape) <= distance) {
+					geoms.add((IShape)shape);
+				}
+			}
+			return geoms;
 		}
 
 		@operator(value = { "inside" },
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
 		@doc(
-			value = "A list of agents among the left-operand list, species or meta-population (addition of species), covered by the operand (casted as a geometry).",
+			value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), covered by the operand (casted as a geometry).",
 			examples = {
 				@example(value = "[ag1, ag2, ag3] inside(self)",
 					equals = "the agents among ag1, ag2 and ag3 that are covered by the shape of the right-hand argument.",
@@ -2380,16 +2399,21 @@ public abstract class Spatial {
 					isExecutable = false) },
 			see = { "neighbours_at", "neighbours_of", "closest_to", "overlapping", "agents_overlapping",
 				"agents_inside", "agent_closest_to" })
-		public static IList<IAgent> inside(final IScope scope, final IContainer<?, ? extends IShape> list,
-			final Object source) {
-			return _gather(scope, In.list(scope, list), source, true);
+		public static IList<? extends IShape> inside(final IScope scope, final IContainer<?, ? extends IShape> list,
+			final IShape source) {
+			IType contentType = list.getType().getContentType();
+			if(contentType.isAgentType())
+				return _gather(scope, In.list(scope, list), source, true);
+			else if(contentType == Types.GEOMETRY)
+				return geomOverlapping(scope,list,source, true );
+			return GamaListFactory.EMPTY_LIST;
 		}
 
 		@operator(value = { "overlapping" },
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
 		@doc(
-			value = "A list of agents among the left-operand list, species or meta-population (addition of species), overlapping the operand (casted as a geometry).",
+			value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), overlapping the operand (casted as a geometry).",
 			examples = {
 				@example(value = "[ag1, ag2, ag3] overlapping(self)",
 					equals = "return the agents among ag1, ag2 and ag3 that overlap the shape of the agent applying the operator.",
@@ -2397,16 +2421,40 @@ public abstract class Spatial {
 				@example(value = "(species1 + species2) overlapping self", isExecutable = false) },
 			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 				"agents_overlapping" })
-		public static IList<IAgent> overlapping(final IScope scope, final IContainer<?, ? extends IShape> list,
-			final Object source) {
-			return _gather(scope, In.list(scope, list), source, false);
+		public static IList<? extends IShape> overlapping(final IScope scope, final IContainer<?, ? extends IShape> list,
+			final IShape source) {
+			IType contentType = list.getType().getContentType();
+			if(contentType.isAgentType())
+				return _gather(scope, In.list(scope, list), source, false);
+			else if(contentType == Types.GEOMETRY)
+				return geomOverlapping(scope,list,source, false);
+			return GamaListFactory.EMPTY_LIST;
+		}
+		
+		public static IList<? extends IShape> geomOverlapping(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source, final boolean cover) {
+			IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+			for(Object shape : list.listValue(scope,Types.GEOMETRY , false)) {
+				if (shape == null || !(shape instanceof IShape)) continue;
+				if (cover) {
+					if (source.covers((IShape) shape)) {
+						geoms.add((IShape)shape);
+					}
+				} else {
+					if (source.intersects((IShape) shape)) {
+						geoms.add((IShape)shape);
+					}
+				}
+				
+			}
+			return geoms;
 		}
 
 		@operator(value = { "closest_to" },
 			type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
 		@doc(
-			value = "An agent among the left-operand list of agents, species or meta-population (addition of species), the closest to the operand (casted as a geometry).",
+			value = "An agent or a geometry among the left-operand list of agents, species or meta-population (addition of species), the closest to the operand (casted as a geometry).",
 			comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
 			examples = {
 				@example(value = "[ag1, ag2, ag3] closest_to(self)",
@@ -2415,9 +2463,29 @@ public abstract class Spatial {
 				@example(value = "(species1 + species2) closest_to self", isExecutable = false) },
 			see = { "neighbours_at", "neighbours_of", "neighbours_at", "neighbours_of", "inside", "overlapping",
 				"agents_overlapping", "agents_inside", "agent_closest_to" })
-		public static IAgent closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
-			final Object source) {
-			return _closest(scope, In.list(scope, list), source);
+		public static IShape closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
+			final IShape source) {
+			IType contentType = list.getType().getContentType();
+			if(contentType.isAgentType())
+				return _closest(scope, In.list(scope, list), source);
+			else if(contentType == Types.GEOMETRY)
+				return geomClostestTo(scope,list,source);
+			return null;
+		}
+		
+		public static IShape geomClostestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source) {
+			IShape shp = null;
+			double distMin = Double.MAX_VALUE;
+			for(Object shape : list.listValue(scope,Types.GEOMETRY , false)) {
+				if (shape == null || !(shape instanceof IShape)) continue;
+				double dist = scope.getTopology().distanceBetween(scope, source, (IShape)shape);
+				if (dist < distMin) {
+					shp = (IShape) shape;
+					distMin = dist;
+				}
+			}
+			return shp;
 		}
 
 		@operator(value = "agent_closest_to",
