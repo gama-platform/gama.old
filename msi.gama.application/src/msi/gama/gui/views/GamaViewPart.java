@@ -94,18 +94,23 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		final String s_id = site.getSecondaryId();
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
+
+		IExperimentPlan experiment = GAMA.getExperiment();
+
 		if ( GAMA.getExperiment() != null ) {
 			// hqnghi in case of multi-controller
 			if ( out == null ) {
 				for ( IExperimentController fec : GAMA.getControllers() ) {
-					IOutputManager manager = fec.getExperiment().getSimulationOutputs();
-					if ( manager != null ) {
-						out = (IDisplayOutput) manager.getOutput(id);
-					}
-					if ( out == null ) {
-						manager = fec.getExperiment().getExperimentOutputs();
+					List<IOutputManager> mm = fec.getExperiment().getAllSimulationOutputs();
+					for ( IOutputManager manager : mm ) {
 						if ( manager != null ) {
 							out = (IDisplayOutput) manager.getOutput(id);
+						}
+						if ( out == null ) {
+							manager = fec.getExperiment().getExperimentOutputs();
+							if ( manager != null ) {
+								out = (IDisplayOutput) manager.getOutput(id);
+							}
 						}
 					}
 				}
@@ -122,7 +127,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 							for ( IAgent expAgent : externPop ) {
 								SimulationAgent spec = (SimulationAgent) ((ExperimentAgent) expAgent).getSimulation();
 								if ( spec != null ) {
-									IOutputManager manager = spec.getOutputManger();
+									IOutputManager manager = spec.getOutputManager();
 									if ( manager != null ) {
 										out = (IDisplayOutput) manager.getOutput(s_id);
 									}

@@ -195,30 +195,30 @@ public final class AwtEnvironment {
 
 		// ADDITION
 
-		Listener listenerHover = new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				System.out.println("HOVER:  " + event.toString());
-			}
-		};
-		Listener listenerEnter = new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				System.out.println("ENTER:  " + event.toString());
-			}
-		};
-		Listener listenerExit = new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				System.out.println("EXIT:  " + event.toString());
-			}
-		};
-		display.addFilter(SWT.MouseHover, listenerHover);
-		display.addFilter(SWT.MouseEnter, listenerEnter);
-		display.addFilter(SWT.MouseExit, listenerExit);
+		// Listener listenerHover = new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event event) {
+		// System.out.println("HOVER: " + event.toString());
+		// }
+		// };
+		// Listener listenerEnter = new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event event) {
+		// System.out.println("ENTER: " + event.toString());
+		// }
+		// };
+		// Listener listenerExit = new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event event) {
+		// System.out.println("EXIT: " + event.toString());
+		// }
+		// };
+		// display.addFilter(SWT.MouseHover, listenerHover);
+		// display.addFilter(SWT.MouseEnter, listenerEnter);
+		// display.addFilter(SWT.MouseExit, listenerExit);
 
 		// ADDITION
 

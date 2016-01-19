@@ -64,10 +64,10 @@ public class EventLayer extends AbstractLayer {
 		final IExpression actionName = definition.getFacet(IKeyword.ACTION);
 		scope = surface.getDisplayScope().copy();
 
-		String currentMouseEvent = Cast.asString(scope, eventType.value(scope));
+		String currentEvent = Cast.asString(scope, eventType.value(scope));
 		String currentAction = Cast.asString(scope, actionName.value(scope));
 
-		listener = new EventListener(surface, currentMouseEvent, currentAction);
+		listener = new EventListener(surface, currentEvent, currentAction);
 		surface.addMouseListener(listener);
 	}
 
@@ -93,12 +93,15 @@ public class EventLayer extends AbstractLayer {
 		private final static int MOUSE_PRESS = 0;
 		private final static int MOUSE_RELEASED = 1;
 		private final static int MOUSE_CLICKED = 2;
+		private final static int KEY_PRESSED = 3;
 
 		private final int listenedEvent;
 		private final IStatement.WithArgs executer;
 		private final IDisplaySurface surface;
+		private final String event;
 
 		public EventListener(final IDisplaySurface display, final String event, final String action) {
+			this.event = event;
 			listenedEvent = getListeningEvent(event);
 			IAgent a = display.getDisplayScope().getSimulationScope();
 			if ( a == null ) {
@@ -116,7 +119,7 @@ public class EventLayer extends AbstractLayer {
 			if ( eventTypeName.equals(IKeyword.MOUSE_DOWN) ) { return MOUSE_PRESS; }
 			if ( eventTypeName.equals(IKeyword.MOUSE_UP) ) { return MOUSE_RELEASED; }
 			if ( eventTypeName.equals(IKeyword.MOUSE_CLICKED) ) { return MOUSE_CLICKED; }
-			return -1;
+			return KEY_PRESSED;
 		}
 
 		@Override
@@ -138,6 +141,7 @@ public class EventLayer extends AbstractLayer {
 			if ( MOUSE_RELEASED == listenedEvent && button == 1 ) {
 				executeEvent(x, y);
 			}
+
 		}
 
 		private void executeEvent(final int x, final int y) {
@@ -164,6 +168,17 @@ public class EventLayer extends AbstractLayer {
 				}
 			});
 
+		}
+
+		/**
+		 * Method keyPressed()
+		 * @see msi.gama.outputs.layers.ILayerMouseListener#keyPressed(java.lang.Character)
+		 */
+		@Override
+		public void keyPressed(final String c) {
+			if ( c.equals(event) ) {
+				executeEvent(0, 0);
+			}
 		}
 	}
 

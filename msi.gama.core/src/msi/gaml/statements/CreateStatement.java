@@ -61,9 +61,9 @@ import msi.gaml.types.*;
 @facets(
 	value = {
 		@facet(name = IKeyword.SPECIES,
-			type = IType.SPECIES,
+			type = { IType.SPECIES, IType.AGENT },
 			optional = true,
-			doc = @doc("an expression that evaluates to a species, the species of created agents") ),
+			doc = @doc("an expression that evaluates to a species, the species of the agents to be created. In the case of simulations, the name 'simulation', which represents the current instance of simulation, can also be used as a proxy to their species") ),
 		@facet(name = IKeyword.RETURNS,
 			type = IType.NEW_TEMP_ID,
 			optional = true,
@@ -158,6 +158,14 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		 */
 		@Override
 		public void validate(final StatementDescription cd) {
+			IExpressionDescription desc = cd.getFacets().get(IKeyword.SPECIES);
+			if ( desc != null ) {
+				IType type = desc.getExpression().getType();
+				if ( type.isAgentType() && !(type.getSpecies() instanceof ModelDescription) ) {
+					cd.warning("Facet " + IKeyword.SPECIES + " expects a species name and not an agent",
+						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+				}
+			}
 			final SpeciesDescription species = cd.computeSpecies();
 			if ( species != null ) {
 				if ( species.isAbstract() ) {
@@ -174,13 +182,16 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 							" is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
 						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
 					return;
-				} else if (species.isGrid()) {
-					cd.error(
-							"Species " + species.getName() +
-								" is a grid and cannot be instantiated",
-							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
-					}
-				
+				} else if ( species.isGrid() ) {
+					cd.error("Species " + species.getName() + " is a grid and cannot be instantiated",
+						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+					return;
+				} else if ( species instanceof ModelDescription &&
+					!(cd.getSpeciesContext() instanceof ExperimentDescription) ) {
+					cd.error("Simulations can only be created within experiments", IGamlIssue.WRONG_CONTEXT,
+						IKeyword.SPECIES);
+				}
+
 				SpeciesDescription callerSpecies = cd.getSpeciesContext();
 				SpeciesDescription macro = species.getMacroSpecies();
 				if ( macro == null ) {
@@ -338,7 +349,15 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation population,
 		final List<Map> inits) {
 		boolean hasSequence = sequence != null && !sequence.isEmpty();
-		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
+		boolean shouldBeScheduled = false;
+		// If we create simulations within a single experiment, we must schedule them
+		if ( population.getHost() instanceof ExperimentAgent ) {
+			ExperimentAgent exp = (ExperimentAgent) population.getHost();
+			if ( exp.isScheduled() ) {
+				shouldBeScheduled = true;
+			}
+		}
+		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, shouldBeScheduled);
 
 		// hqnghi in case of creating experiment of micro-models, we must implicitely initialize it and its simulation output
 		if ( population instanceof ExperimentPopulation ) {
@@ -350,7 +369,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				} else {
 					sim._init_(sim.getScope());
 				}
-				sim.getOutputManger().init(sim.getScope());
+				sim.getOutputManager().init(sim.getScope());
 			}
 		}
 		// end-hqnghi

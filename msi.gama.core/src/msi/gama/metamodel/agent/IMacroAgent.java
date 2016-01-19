@@ -162,4 +162,9 @@ public interface IMacroAgent extends IAgent {
 
 	public SimulationClock getClock();
 
+	/**
+	 * @return
+	 */
+	public abstract boolean mustScheduleMembers();
+
 }

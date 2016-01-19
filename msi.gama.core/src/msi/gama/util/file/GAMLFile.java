@@ -145,7 +145,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 
 	public IExperimentPlan createExperiment(final String expName) {
 		IExperimentPlan exp = mymodel.getExperiment("Experiment " + expName);
-		for ( IOutput o : exp.getSimulationOutputs().getOutputs().values() ) {
+		for ( IOutput o : exp.getOriginalSimulationOutputs().getOutputs().values() ) {
 			o.setName(o.getName() + "#" + aliasName);
 		}
 		for ( IOutput o : exp.getExperimentOutputs().getOutputs().values() ) {

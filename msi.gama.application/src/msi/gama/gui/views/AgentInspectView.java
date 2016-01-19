@@ -102,7 +102,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 				} else {
 					scope.getGui().setHighlightedAgent(null);
 				}
-				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+				GAMA.getExperiment().refreshAllOutputs();
 			}
 
 			@Override

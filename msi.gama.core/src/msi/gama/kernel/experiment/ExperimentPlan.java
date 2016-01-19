@@ -23,7 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -103,7 +103,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	protected final IExperimentController controller;
-	protected IOutputManager simulationOutputs;
+	// An original copy of the simualtion outputs (which will be eventually duplicated in all the simulations)
+	protected IOutputManager originalSimulationOutputs;
 	protected IOutputManager experimentOutputs;
 	private ItemList parametersEditors;
 	protected final Map<String, IParameter> parameters = new TOrderedHashMap();
@@ -153,9 +154,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			agent.dispose();
 			agent = null;
 		}
-		if ( simulationOutputs != null ) {
-			simulationOutputs.dispose();
-			simulationOutputs = null;
+		if ( originalSimulationOutputs != null ) {
+			originalSimulationOutputs.dispose();
+			originalSimulationOutputs = null;
 		}
 		if ( experimentOutputs != null ) {
 			experimentOutputs.dispose();
@@ -210,8 +211,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	@Override
-	public final IOutputManager getSimulationOutputs() {
-		return simulationOutputs;
+	public final List<IOutputManager> getAllSimulationOutputs() {
+		if ( getAgent() == null ) { return GamaListFactory.EMPTY_LIST; }
+		return getAgent().getAllSimulationOutputs();
 	}
 
 	@Override
@@ -238,11 +240,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			if ( s instanceof BatchOutput ) {
 				fileOutputDescription = (BatchOutput) s;
 			} else if ( s instanceof SimulationOutputManager ) {
-				if ( simulationOutputs != null ) {
-					((SimulationOutputManager) simulationOutputs)
+				if ( originalSimulationOutputs != null ) {
+					((SimulationOutputManager) originalSimulationOutputs)
 						.setChildren(new ArrayList(((AbstractOutputManager) s).getOutputs().values()));
 				} else {
-					simulationOutputs = (SimulationOutputManager) s;
+					originalSimulationOutputs = (SimulationOutputManager) s;
 				}
 			} else if ( s instanceof IParameter.Batch ) {
 				IParameter.Batch pb = (IParameter.Batch) s;
@@ -268,8 +270,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				}
 			}
 		}
-		if ( simulationOutputs == null ) {
-			simulationOutputs = new SimulationOutputManager(null);
+		if ( originalSimulationOutputs == null ) {
+			originalSimulationOutputs = new SimulationOutputManager(null);
 		}
 		if ( experimentOutputs == null ) {
 			experimentOutputs = new ExperimentOutputManager(null);
@@ -529,5 +531,25 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public IExperimentController getController() {
 		return controller;
+	}
+
+	/**
+	 * Method refreshAllOutputs()
+	 * @see msi.gama.kernel.experiment.IExperimentPlan#refreshAllOutputs()
+	 */
+	@Override
+	public void refreshAllOutputs() {
+		for ( IOutputManager manager : getAllSimulationOutputs() ) {
+			manager.forceUpdateOutputs();
+		}
+	}
+
+	/**
+	 * Method getOriginalSimulationOutputs()
+	 * @see msi.gama.kernel.experiment.IExperimentPlan#getOriginalSimulationOutputs()
+	 */
+	@Override
+	public IOutputManager getOriginalSimulationOutputs() {
+		return originalSimulationOutputs;
 	}
 }

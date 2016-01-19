@@ -136,7 +136,7 @@ public class AgentsMenu extends ContributionItem {
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
 				a.getScope().getGui().setHighlightedAgent(a);
-				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+				GAMA.getExperiment().refreshAllOutputs();
 			}
 		}
 	};
@@ -156,7 +156,7 @@ public class AgentsMenu extends ContributionItem {
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
 				surface.focusOn(a);
-				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+				GAMA.getExperiment().refreshAllOutputs();
 			}
 		}
 	}
@@ -183,7 +183,7 @@ public class AgentsMenu extends ContributionItem {
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
 				a.dispose();
-				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+				GAMA.getExperiment().refreshAllOutputs();
 			}
 		}
 	};
@@ -210,7 +210,7 @@ public class AgentsMenu extends ContributionItem {
 							args.put(IKeyword.USER_LOCATION, GAML.getExpressionFactory().createConst(p, Types.POINT));
 						}
 						scope.execute(c, a, args, result);
-						GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+						GAMA.getExperiment().refreshAllOutputs();
 						return result[0];
 					}
 
