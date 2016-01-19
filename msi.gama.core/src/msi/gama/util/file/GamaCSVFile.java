@@ -317,10 +317,6 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 				matrix = new GamaObjectMatrix(userSize, Types.STRING);
 				Object[] m = ((GamaObjectMatrix) matrix).getMatrix();
 				int i = 0;
-				System.out.println("userSize.x: " + userSize.x);
-				System.out.println("userSize.y: " + userSize.y);
-				System.out.println("matrix.rows: " + matrix.getRows(scope));
-				System.out.println("matrix.cols: " + matrix.getCols(scope));
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
 					scope.getGui().setSubStatusCompletion(percentage);
