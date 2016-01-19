@@ -25,6 +25,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.Maths;
+import msi.gaml.operators.Spatial;
 import msi.gaml.species.ISpecies;
 
 import com.vividsolutions.jts.geom.*;
@@ -150,7 +151,9 @@ public class GamaGeometryType extends GamaType<IShape> {
 		// if ( p.isValid() ) { return new GamaShape(p.buffer(0.0)); } // Why buffer (0.0) ???
 		// return buildPolyline(points);
 		// / ???
+
 		return new GamaShape(p);
+		//return new GamaShape(GeometryUtils.isClockWise(p) ? p : GeometryUtils.changeClockWise(p));
 	}
 	
 	
@@ -190,9 +193,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final double z = location == null ? 0 : location.getZ();
 		final List<IShape> points = new ArrayList(4);
 		points.add(new GamaPoint(x, y - side_size / sqrt2, z));
-		points.add(new GamaPoint(x - side_size / sqrt2, y + side_size / sqrt2, z));
 		points.add(new GamaPoint(x + side_size / sqrt2, y + side_size / sqrt2, z));
+		points.add(new GamaPoint(x - side_size / sqrt2, y + side_size / sqrt2, z));
 		points.add(new GamaPoint(x, y - side_size / sqrt2, z));
+		
 		return buildPolygon(points);
 	}
 
@@ -202,11 +206,11 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final double x = location == null ? 0 : location.getX();
 		final double y = location == null ? 0 : location.getY();
 		final double z = location == null ? 0 : location.getZ();
-		points[0] = new GamaPoint(x - width / 2.0, y + height / 2.0, z);
-		points[1] = new GamaPoint(x + width / 2.0, y + height / 2.0, z);
-		points[2] = new GamaPoint(x + width / 2.0, y - height / 2.0, z);
-		points[3] = new GamaPoint(x - width / 2.0, y - height / 2.0, z);
 		points[4] = new GamaPoint(x - width / 2.0, y + height / 2.0, z);
+		points[3] = new GamaPoint(x + width / 2.0, y + height / 2.0, z);
+		points[2] = new GamaPoint(x + width / 2.0, y - height / 2.0, z);
+		points[1] = new GamaPoint(x - width / 2.0, y - height / 2.0, z);
+		points[0] = new GamaPoint(x - width / 2.0, y + height / 2.0, z);
 		final CoordinateSequenceFactory fact = GeometryUtils.coordFactory;
 		final CoordinateSequence cs = fact.create(points);
 		final LinearRing geom = GeometryUtils.FACTORY.createLinearRing(cs);
@@ -226,7 +230,9 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 * @return
 	 */
 	public static IShape buildPolyhedron(final List<IShape> points, final Double depth) {
-		final IShape g = buildPolygon(points);
+		IShape g = buildPolygon(points);
+		if (!(Spatial.ThreeD.isClockwise(null, g)))
+			g = Spatial.ThreeD.changeClockwise(null, g);
 		g.setDepth(depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, POLYHEDRON);
 		return g;
@@ -303,7 +309,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, BOX);
 		return g;
 	}
-
+ 
 	public static IShape buildHexagon(final double size, final double x, final double y) {
 		return buildHexagon(size, new GamaPoint(x, y));
 	}
@@ -317,12 +323,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coords[0] = new GamaPoint(x, y + width);
 		coords[1] = new GamaPoint(x + h, y);
 		coords[2] = new GamaPoint(x + 1.5 * size, y);
-		coords[3] = new GamaPoint(x + 2 * size, y + width);
-		coords[4] = new GamaPoint(x + 1.5 * size, y + 2 * width);
-		coords[5] = new GamaPoint(x + h, y + 2 * width);
-		coords[6] = new GamaPoint(coords[0]);
-		return new GamaShape(GeometryUtils.FACTORY.createPolygon(GeometryUtils.FACTORY.createLinearRing(coords), null));
-
+	    coords[3] = new GamaPoint(x + 2 * size, y + width);
+	    coords[4] = new GamaPoint(x + 1.5 * size, y + 2 * width);
+	    coords[5] = new GamaPoint(x + h, y + 2 * width);
+	    coords[6] = new GamaPoint(coords[0]);
+		Geometry g = GeometryUtils.FACTORY.createPolygon(GeometryUtils.FACTORY.createLinearRing(coords), null);
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
 	}
 
 	public static IShape buildHexagon(final double sizeX, final double sizeY, final ILocation location) {
@@ -336,7 +342,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coords[4] = new GamaPoint(x + sizeX / 4, y - sizeY / 2);
 		coords[5] = new GamaPoint(x - sizeX / 4, y - sizeY / 2);
 		coords[6] = new GamaPoint(coords[0]);
-		return new GamaShape(GeometryUtils.FACTORY.createPolygon(GeometryUtils.FACTORY.createLinearRing(coords), null));
+		Geometry g = GeometryUtils.FACTORY.createPolygon(GeometryUtils.FACTORY.createLinearRing(coords), null);
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
 
 	}
 
@@ -350,7 +357,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 				coordinates[i].z = ((GamaPoint) location).z;
 			}
 		}
-		return new GamaShape(g);
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
 	}
 
 	public static IShape buildEllipse(final double xRadius, final double yRadius, final GamaPoint location) {
@@ -369,7 +376,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 				coordinates[i].z = location.z;
 			}
 		}
-		return new GamaShape(g);
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
 	}
 
 	public static IShape buildSquircle(final double xRadius, final double power, final GamaPoint location) {
@@ -385,7 +392,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 				coordinates[i].z = location.z;
 			}
 		}
-		return new GamaShape(g);
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
 
 	}
 

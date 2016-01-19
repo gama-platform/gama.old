@@ -11,7 +11,10 @@
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gaml.operators.Spatial;
+
 import org.opengis.feature.*;
 import org.opengis.feature.type.GeometryType;
 import com.vividsolutions.jts.geom.Geometry;
@@ -28,7 +31,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public class GamaGisGeometry extends GamaShape {
 
 	public GamaGisGeometry(final Geometry g, final Feature feature) {
-		super(g);
+		super(GeometryUtils.isClockWise(g) ? g : GeometryUtils.changeClockWise(g));
 		if ( feature != null ) {
 			// We filter out the geometries (already loaded before)
 			for ( final Property p : feature.getProperties() ) {
