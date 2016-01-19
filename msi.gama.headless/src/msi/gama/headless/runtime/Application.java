@@ -53,7 +53,7 @@ public class Application implements IApplication {
 	public int numberOfThread = -1;
 	public boolean consoleMode = false;
 	public boolean tunnelingMode = false;
-	public boolean verbose = false;
+	public boolean verbose = true;
 	public SimulationRuntime processorQueue;
 
 	private static boolean containParameter(final String[] args, String param)
@@ -121,12 +121,12 @@ public class Application implements IApplication {
 	public Object start(final IApplicationContext context) throws Exception {
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
-		if(!containVerboseParameter(args))
+/*		if(!containVerboseParameter(args))
 		{
 			SystemLogger.removeDisplay();    
 			verbose = true;
 		}
-		HeadlessSimulationLoader.preloadGAMA();
+*/		HeadlessSimulationLoader.preloadGAMA();
 		
 /*		List<IExperimentJob> jb = ScriptFactory.loadAndBuildJobs(args[args.length-2]);
 		Document dd =ScriptFactory.buildXmlDocument(jb);
