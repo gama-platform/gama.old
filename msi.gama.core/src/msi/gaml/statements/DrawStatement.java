@@ -560,8 +560,16 @@ public class DrawStatement extends AbstractStatementSequence {
 					GAMA.reportError(scope, GamaRuntimeException.warning("No " + fmtl.toString() + " found",scope), false);
 				}
             	Color color = null;
-            	GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
-            	return g.drawFile(scope, filecheck, color, getLocation(scope), getSize(scope), rot);		
+            	if ( rot3D != null ) {
+            		GamaPair<Double, GamaPoint> rot = 
+            		  (GamaPair<Double, GamaPoint>) GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
+            		return g.drawFile(scope, filecheck, color, getLocation(scope), getSize(scope), rot);
+            	}
+            	else{
+            		return g.drawFile(scope, filecheck, color, getLocation(scope), getSize(scope), null);
+            	}
+            	
+            			
             }
             else{ //Use for Image
             	final ILocation from = getLocation(scope);

@@ -11,19 +11,16 @@
  **********************************************************************************************/
 package ummisco.gama.communicator.common.remoteObject;
 
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.*;
 
 public class GamaAgentConverter implements Converter {
 
-	public GamaAgentConverter() {
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public boolean canConvert(final Class arg0) {
-		return arg0.equals(GamlAgent.class);
+		return (arg0.equals(GamlAgent.class)) || (ExperimentAgent.class.equals(arg0));
 	}
 
 	@Override

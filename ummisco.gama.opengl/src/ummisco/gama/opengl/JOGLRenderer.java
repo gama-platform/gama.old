@@ -549,7 +549,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	// This method is normally called either when the graphics is created or when the output is changed
 	@Override
 	public void initFor(final IDisplaySurface surface) {
-		System.out.println("Call of initFor on renderer");
 		if ( sceneBuffer != null ) {
 			ModelScene scene = sceneBuffer.getSceneToRender();
 			if ( scene != null ) {

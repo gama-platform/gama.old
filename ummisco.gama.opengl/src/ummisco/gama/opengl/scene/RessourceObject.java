@@ -32,6 +32,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	public double z_layer;
 	public Color color;
 	public Double alpha;
+	public GamaPoint size;
 	public GamaPair<Double, GamaPoint> rotate3D = null;
 	
 
@@ -44,6 +45,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		this.z_layer = z_layer;
 		this.color= color;
 		this.alpha = alpha;
+		this.size = dimensions;
 		this.rotate3D = rotate3D;
 	}
 
@@ -76,45 +78,22 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	@Override
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
 		JOGLRenderer renderer = drawer.renderer;
-		if ( picking ) {
-			gl.glPushMatrix();
-			gl.glLoadName(pickingIndex);
-			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				if ( agent != null /* && !picked */ ) {
-					renderer.setPicking(false);
-					pick();
-					renderer.currentPickedObject = this;
-					renderer.displaySurface.selectAgent(agent);
-				}
-			}
-			
+		    //FIXME: To simplify the process picking is not yet taken in account
 			if(this.rotate3D != null){
-				gl.glTranslated(this.agent.getLocation().getX(), -this.agent.getLocation().getY(), this.agent.getLocation().getZ());
+				gl.glTranslated(this.agent.getLocation().getX(), renderer.yFlag*this.agent.getLocation().getY(), this.agent.getLocation().getZ());
 				gl.glRotatef(this.rotate3D.key.floatValue() , (float) this.rotate3D.value.x, (float) this.rotate3D.value.y, (float) this.rotate3D.value.z);	
-				gl.glTranslated(-this.agent.getLocation().getX(), this.agent.getLocation().getY(), -this.agent.getLocation().getZ());
 			}
-			
-			
-			((GL2) gl).glTranslated(this.agent.getLocation().getX(), renderer.yFlag*this.agent.getLocation().getY(), this.agent.getLocation().getZ());
-			((GL2) gl).glRotated(90, 1.0, 0.0, 0.0);
+			if(this.size!=null){
+				  gl.glScaled(size.x, size.x, size.x);
+			}
 			super.draw(gl, drawer, picking);
-			((GL2) gl).glRotated(-90, 1.0, 0.0, 0.0);
-			((GL2) gl).glTranslated(-this.agent.getLocation().getX(), -renderer.yFlag*this.agent.getLocation().getY(), -this.agent.getLocation().getZ());		
-			gl.glPopMatrix();
-		} else {
-			
+			if(this.size!=null){
+				  gl.glScaled(1/size.x, 1/size.x, 1/size.x);
+			}	
 			if(this.rotate3D != null){
-				gl.glTranslated(this.agent.getLocation().getX(), -this.agent.getLocation().getY(), this.agent.getLocation().getZ());
-				gl.glRotatef(this.rotate3D.key.floatValue() , (float) this.rotate3D.value.x, (float) this.rotate3D.value.y, (float) this.rotate3D.value.z);	
-				gl.glTranslated(-this.agent.getLocation().getX(), this.agent.getLocation().getY(), -this.agent.getLocation().getZ());
+				((GL2) gl).glRotatef(-this.rotate3D.key.floatValue() , (float) this.rotate3D.value.x, (float) this.rotate3D.value.y, (float) this.rotate3D.value.z);				
+				((GL2) gl).glTranslated(-this.agent.getLocation().getX(), -renderer.yFlag*this.agent.getLocation().getY(), -this.agent.getLocation().getZ());
 			}
-			
-			((GL2) gl).glTranslated(this.agent.getLocation().getX(), renderer.yFlag*this.agent.getLocation().getY(), this.agent.getLocation().getZ());
-			((GL2) gl).glRotated(90, 1.0, 0.0, 0.0);
-			super.draw(gl, drawer, picking);
-			((GL2) gl).glRotated(-90, 1.0, 0.0, 0.0);
-			((GL2) gl).glTranslated(-this.agent.getLocation().getX(), -renderer.yFlag*this.agent.getLocation().getY(), -this.agent.getLocation().getZ());
-		}
 	}
 
 	@Override

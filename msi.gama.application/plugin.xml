@@ -379,7 +379,7 @@
          </property>
          <property
                name="windowImages"
-               value="icons/launcher_icons/icon16.png,icons/launcher_icons/icon32.png,icons/launcher_icons/icon48.png,icons/launcher_icons/icon64.png,icons/launcher_icons/icon128.png">
+               value="icons/launcher_icons/icon16.png,icons/launcher_icons/icon32.png,icons/launcher_icons/icon48.png,icons/launcher_icons/icon64.png,icons/launcher_icons/icon128.png,icons/launcher_icons/icon256.png">
          </property>
          <property
                name="startupForegroundColor"

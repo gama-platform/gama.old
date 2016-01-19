@@ -118,7 +118,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public boolean isHeadless() {
-		return isHeadless;
+		return GAMA.isInHeadLessMode()||isHeadless;
 	}
 
 	@Override

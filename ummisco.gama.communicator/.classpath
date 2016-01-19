@@ -19,11 +19,11 @@
 	<classpathentry exported="true" kind="lib" path="ext/xmlpull-1.1.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/xom-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/xpp3_min-1.1.4c.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/xstream-1.4.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/activemq-client-5.9.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/geronimo-jms_1.1_spec-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/geronimo-j2ee-management_1.1_spec-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/slf4j-api-1.7.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/hawtbuf-1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/xstream-1.4.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

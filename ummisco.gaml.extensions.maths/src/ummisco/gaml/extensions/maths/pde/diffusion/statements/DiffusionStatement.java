@@ -147,11 +147,9 @@ public class DiffusionStatement extends AbstractStatement {
 							} else if ( v >= nbCols ) {
 								v = v - nbCols;
 							}
-						} else if ( u < 0 || v < 0 || v >= nbCols || u >= nbRows ) {
-							continue;
+						} else if ( u >= 0 && v >= 0 & v < nbCols & u < nbRows ) {
+							output[u * nbCols + v] += input[i * nbCols + j] * mat_diffu[um][vm] * mask_current;
 						}
-
-						output[u * nbCols + v] += input[i * nbCols + j] * mat_diffu[um][vm] * mask_current;
 
 						vm++;
 					}
@@ -167,6 +165,7 @@ public class DiffusionStatement extends AbstractStatement {
 	int nbRows, nbCols;
 
 	public void initDiffusion(final IScope scope, final IPopulation pop) {
+
 		if ( getFacet("proportion") != null ) {
 			double init_proportion = Cast.asFloat(scope, getFacet("proportion").value(scope));
 			int radius = 1;
@@ -178,8 +177,6 @@ public class DiffusionStatement extends AbstractStatement {
 				Arrays.fill(mat_diffu[i], init_proportion);
 			}
 		}
-		Arrays.fill(output, 0d);
-
 		for ( int i = 0; i < input.length; i++ ) {
 			if (agents == null || agents.contains(i))
 				input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
@@ -187,7 +184,8 @@ public class DiffusionStatement extends AbstractStatement {
 				input[i] = 0;
 			
 		}
-
+		
+		Arrays.fill(output, 0d);
 	}
 
 	public void doDiffusion1(final IScope scope) {
@@ -300,17 +298,18 @@ public class DiffusionStatement extends AbstractStatement {
 			initialize(scope);
 		}
 		IPopulation pop = scope.getAgentScope().getPopulationFor(species_diffu);
-		initDiffusion(scope, pop);
-		if ( !method_diffu ) {
-			for ( int time = 0; time < cLen; time++ ) {
+
+		for ( int time = 0; time < cLen; time++ ) {
+			initDiffusion(scope, pop);
+			
+			if ( !method_diffu ) {
+			
 				doDiffusion2(scope);
-			}
-		} else {
-			for ( int time = 0; time < cLen; time++ ) {
+			} else {
 				doDiffusion1(scope);
 			}
+			finishDiffusion(scope, pop);
 		}
-		finishDiffusion(scope, pop);
 		return null;
 	}
 }

@@ -29,7 +29,7 @@ global {
 			phero <- 1.0;
 		}
 		ask(selected_quick_cells){
-			phero <- 2.0;
+			phero <- 10.0;
 		}		
 	}
 
@@ -37,7 +37,7 @@ global {
 		// Declare a diffusion on the grid "cells" and on "quick_cells". The diffusion declared on "quick_cells" will make 10 computations at each step to accelerate the process. 
 		// The value of the diffusion will be store in the new variable "phero" of the cell.
 		diffusion var: phero on: cells mat_diffu: math_diff;	
-		diffusion var: phero on: quick_cells mat_diffu: math_diff cycle_length: 2;			
+		diffusion var: phero on: quick_cells mat_diffu: math_diff cycle_length: 10;			
 	}
 }
 

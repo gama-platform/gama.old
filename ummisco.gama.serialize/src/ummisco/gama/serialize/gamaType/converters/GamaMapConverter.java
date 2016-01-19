@@ -6,16 +6,15 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaMap;
-import msi.gama.util.GamaMapFactory;
+import msi.gama.util.GamaPair;
 import ummisco.gama.serialize.gamaType.reduced.GamaMapReducer;
 
 public class GamaMapConverter implements Converter {
 
 	@Override
 	public boolean canConvert(Class arg0) {
+		if(GamaMap.class.equals(arg0)){return true;}
 		Class<?>[] allInterface=arg0.getInterfaces();
 		for( Class<?> c:allInterface)
 		{
@@ -26,9 +25,28 @@ public class GamaMapConverter implements Converter {
 	}
 
 	@Override
-	public void marshal(Object arg0, HierarchicalStreamWriter arg1, MarshallingContext arg2) {
+	public void marshal(Object arg0, HierarchicalStreamWriter writer, MarshallingContext arg2) {
 		GamaMap mp = (GamaMap) arg0;
-		arg2.convertAnother(new GamaMapReducer(mp));
+//		GamaMapReducer m = new GamaMapReducer(mp);
+//		writer.startNode("GamaMap");
+//		
+//		writer.startNode("KeysType");
+//		arg2.convertAnother(m.getKeysType());        
+//		writer.endNode();
+//        
+//		writer.startNode("ValueType");
+//		arg2.convertAnother(m.getDataType());        		
+//        writer.endNode();
+//		
+//        for(GamaPair gm : m.getValues()) {
+//        	arg2.convertAnother(gm);        	
+//        }
+//        
+//        writer.endNode();		
+        
+        
+		arg2.convertAnother(new GamaMapReducer(mp));        		
+
 	}
 
 	@Override
