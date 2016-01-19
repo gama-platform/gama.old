@@ -202,12 +202,15 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		// TODO Auto-generated method stub
 		super.clearDataSet(scope);
         XYPlot plot = (XYPlot)this.chart.getPlot();
-        for (int i=plot.getSeriesCount()-1; i>=1; i--)
+        for (int i=plot.getDatasetCount()-1; i>=1; i--)
         {
         	plot.setDataset(i, null);
         	plot.setRenderer(i, null);
         }
 		((XYIntervalSeriesCollection)jfreedataset.get(0)).removeAllSeries();
+		jfreedataset.clear();
+		jfreedataset.add(0,new XYIntervalSeriesCollection());
+		plot.setDataset((XYIntervalSeriesCollection)jfreedataset.get(0));
     	plot.setRenderer(0, null);
 		IdPosition.clear();
 	}
@@ -218,16 +221,26 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		final XYIntervalSeries serie = new XYIntervalSeries(dataserie.getSerieLegend(scope), false, true);		
         XYPlot plot = (XYPlot)this.chart.getPlot();
 		
-        XYIntervalSeriesCollection newdataset=(XYIntervalSeriesCollection)createDataset(scope);
 		XYIntervalSeriesCollection firstdataset=(XYIntervalSeriesCollection)plot.getDataset();
 		
-		firstdataset.addSeries(serie);
-		newdataset.addSeries(serie);
-		jfreedataset.add(newdataset);
-		plot.setDataset(jfreedataset.size()-1, newdataset);
+		if (firstdataset.getSeriesCount()==0)
+		{
+			firstdataset.addSeries(serie);
+			plot.setDataset(0, firstdataset);
+			
+		}
+		else
+		{
+
+			XYIntervalSeriesCollection newdataset=new XYIntervalSeriesCollection();
+			newdataset.addSeries(serie);			
+			jfreedataset.add(newdataset);
+			plot.setDataset(jfreedataset.size()-1, newdataset);
+			
+		}
     	plot.setRenderer(jfreedataset.size()-1, (XYErrorRenderer)getOrCreateRenderer(scope,serieid));
-		IdPosition.put(serieid, plot.getSeriesCount()-1);
-		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" fdsize "+firstdataset.getSeriesCount());
+		IdPosition.put(serieid, plot.getDatasetCount()-1);
+		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" fdsize "+plot.getSeriesCount()+" jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount());
 		// TODO Auto-generated method stub		
 	}
 
