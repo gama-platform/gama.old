@@ -44,22 +44,36 @@ import org.eclipse.equinox.app.IApplicationContext;
 public class Application implements IApplication {
 
 	final public static String CONSOLE_PARAMETER = "-c";
-	final public static String THREAD_PARAMERTER = "-t";
+	final public static String TUNNELING_PARAMETER = "-p";
+	final public static String THREAD_PARAMERTER = "-hpc";
+	final public static String VERBOSE_PARAMERTER = "-v";
 	
 	
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
 	public boolean consoleMode = false;
+	public boolean tunnelingMode = false;
+	public boolean verbose = false;
 	public SimulationRuntime processorQueue;
 
-	private static boolean containConsoleParameter(final String[] args)
+	private static boolean containParameter(final String[] args, String param)
 	{
 		for(String p:args)
 			{
-				if(p.equals(CONSOLE_PARAMETER))
+				if(p.equals(param))
 					return true;
 			}
 		return false;
+	}
+
+	private static boolean containConsoleParameter(final String[] args)
+	{
+		return containParameter(args, CONSOLE_PARAMETER);
+	}
+
+	private static boolean containVerboseParameter(final String[] args)
+	{
+		return containParameter(args, VERBOSE_PARAMERTER);
 	}
 	
 	private static int getNumberOfThread(final String[] args)
@@ -68,6 +82,7 @@ public class Application implements IApplication {
 		{
 			if(args[n].equals(THREAD_PARAMERTER))
 				return Integer.valueOf(args[n+1]).intValue();
+			
 		}
 		return SimulationRuntime.UNDEFINED_QUEUE_SIZE;
 	}
@@ -104,10 +119,14 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		SystemLogger.removeDisplay();    
-		HeadlessSimulationLoader.preloadGAMA();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
+		if(!containVerboseParameter(args))
+		{
+			SystemLogger.removeDisplay();    
+			verbose = true;
+		}
+		HeadlessSimulationLoader.preloadGAMA();
 		
 /*		List<IExperimentJob> jb = ScriptFactory.loadAndBuildJobs(args[args.length-2]);
 		Document dd =ScriptFactory.buildXmlDocument(jb);
@@ -128,7 +147,7 @@ public class Application implements IApplication {
 		this.consoleMode = Application.containConsoleParameter(args);
 		Reader in = null;
 		
-		if(!this.consoleMode)
+		if(this.verbose ||!this.tunnelingMode)
 		{
 			SystemLogger.activeDisplay();
 		}
