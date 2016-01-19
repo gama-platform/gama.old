@@ -15,9 +15,9 @@ global {
   	quick_cells selected_quick_cells;
   	// Declare the anisotropic matrix (diffuse to the left-upper direction)
   	matrix<float> math_diff <- matrix([
-									[2/9,2/9,1/9],
-									[2/9,1/9,0.0],
-									[1/9,0.0,0.0]]);
+									[1/9,1/9,1/9],
+									[1/9,1/9,1/9],
+									[1/9,1/9,1/9]]);
 
 	// Initialize the emiter cell as the cell at the center of the word
 	init {
@@ -29,7 +29,7 @@ global {
 			phero <- 1.0;
 		}
 		ask(selected_quick_cells){
-			phero <- 1.0;
+			phero <- 2.0;
 		}		
 	}
 
@@ -37,7 +37,7 @@ global {
 		// Declare a diffusion on the grid "cells" and on "quick_cells". The diffusion declared on "quick_cells" will make 10 computations at each step to accelerate the process. 
 		// The value of the diffusion will be store in the new variable "phero" of the cell.
 		diffusion var: phero on: cells mat_diffu: math_diff;	
-		diffusion var: phero on: quick_cells mat_diffu: math_diff cycle_length: 10;			
+		diffusion var: phero on: quick_cells mat_diffu: math_diff cycle_length: 2;			
 	}
 }
 
