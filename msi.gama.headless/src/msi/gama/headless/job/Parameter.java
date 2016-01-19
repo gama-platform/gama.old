@@ -29,28 +29,13 @@ public class Parameter {
 
     public static Parameter loadAndBuildParameter(IDescription paramDesc,final IModel model)
     {
-        String name = paramDesc.getFacets().getLabel(IKeyword.NAME);
-        @SuppressWarnings("rawtypes")
-        
-        String varName = paramDesc.getFacets().getLabel(IKeyword.VAR);
-//        Iterable<IDescription> vars = model.getDescription().getChildrenWithKeyword(IKeyword.VAR);
-//        IDescription mvar;
-//        for (IDescription v: vars){
-//        	if (v.getName().equals(varName)) mvar = v;
-//        }
- 
-        IExpression exp = paramDesc.getFacets().get(IKeyword.INIT).getExpression();
-        
-        System.out.println(" " + varName );
-        System.out.println(" " + paramDesc.getType() );
-        System.out.println(" " + exp.serialize(true));
-         
-        //varDes.getVarExpr().literalValue();
+       String name = paramDesc.getFacets().getLabel(IKeyword.NAME);
+       @SuppressWarnings("rawtypes")
+       String varName = paramDesc.getFacets().getLabel(IKeyword.VAR);
+       IExpression exp = paramDesc.getFacets().get(IKeyword.INIT).getExpression();
        Object val = exp.isConst() ? exp.value(null) : exp.serialize(true); 
-       System.out.println(" fsdjkqfhqdsfj sqdjhfqdsg qf "+val.getClass().getName()  );
-       
        Parameter res = new Parameter(name, val, translate(paramDesc.getType().id()));
-        return res;
+       return res;
     }
     
 	public static DataType translate(Integer t)
@@ -60,7 +45,6 @@ public class Parameter {
 		else if(t.equals(IType.INT)){ return DataType.INT;}
 		else if(t.equals(IType.FLOAT)){ return DataType.FLOAT;}
 		else if(t.equals(IType.STRING)){ return DataType.STRING;}
-		
 		return DataType.UNDEFINED;
 	}
     
@@ -69,7 +53,6 @@ public class Parameter {
 		this.name = name;
 		this.value = value;
 		this.type = type;
-		System.out.println(" typ " + type + "  "+ value);
 	}
 
 	public String getName() {
@@ -85,7 +68,6 @@ public class Parameter {
 	}
 
 	public void setValue(final Object value) {
-		// this.type=DataTypeFactory.getObjectMetaData(value);
 		this.value = value;
 	}
 	public DataType getType()

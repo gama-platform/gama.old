@@ -105,7 +105,7 @@ public class Application implements IApplication {
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
 		
-	/*	List<IExperimentJob> jb = ScriptFactory.loadAndBuildJobs(args[args.length-2]);
+/*		List<IExperimentJob> jb = ScriptFactory.loadAndBuildJobs(args[args.length-2]);
 		Document dd =ScriptFactory.buildXmlDocument(jb);
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();

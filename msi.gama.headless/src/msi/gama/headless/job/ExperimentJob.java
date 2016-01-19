@@ -212,7 +212,6 @@ public class ExperimentJob implements IExperimentJob{
 	}
 
 	private void exportVariables() {
-		// TODO: listenedVariable should contain objects that know "what they are" (simulation outputs, experiment outputs, simulation variables, experiment variables, etc.)
 		int size = this.listenedVariables.length;
 		if ( size == 0 ) { return; }
 		for ( int i = 0; i < size; i++ ) {
@@ -278,9 +277,7 @@ public class ExperimentJob implements IExperimentJob{
 	
 	public Element asXMLDocument(Document doc)
 	{
-		// staff elements
 		Element simulation = doc.createElement(XmlTAG.SIMULATION_TAG);
-		//parent.appendChild(simulation);
 
 		Attr attr = doc.createAttribute(XmlTAG.ID_TAG);
 		attr.setValue(this.experimentID);
@@ -344,8 +341,6 @@ public class ExperimentJob implements IExperimentJob{
 
 	public static ExperimentJob loadAndBuildJob( final ExperimentDescription expD, final String path, IModel model)
 	{
-		List<Output> outputList = new ArrayList<Output>(); 
-		List<Parameter> parameterList = new ArrayList<Parameter>(); 
 		String expName = expD.getName();
 		IExpressionDescription  seedDescription =  expD.getFacets().get(IKeyword.SEED);
 		long mseed = 0l;
@@ -360,13 +355,11 @@ public class ExperimentJob implements IExperimentJob{
 		{
 			Iterable<IDescription> monitors = d.getChildrenWithKeyword(IKeyword.MONITOR);
 			for(IDescription moni:monitors) {
-				//outputList.add(Output.loadAndBuildOutput(moni));
 				expJob.addOutput(Output.loadAndBuildOutput(moni));
 			}
 			
 			Iterable<IDescription> displays = d.getChildrenWithKeyword(IKeyword.DISPLAY);
 			for(IDescription disp:displays) {
-				//outputList.add(Output.loadAndBuildOutput(disp));
 				expJob.addOutput(Output.loadAndBuildOutput(disp));
 			}
 		}
