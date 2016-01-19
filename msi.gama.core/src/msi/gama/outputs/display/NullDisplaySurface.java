@@ -13,6 +13,7 @@ package msi.gama.outputs.display;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -318,5 +319,10 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void releaseLock() {}
+
+	@Override
+	public Collection<IEventLayerListener> getLayerListeners() {
+		return Collections.EMPTY_LIST;
+	}
 
 }

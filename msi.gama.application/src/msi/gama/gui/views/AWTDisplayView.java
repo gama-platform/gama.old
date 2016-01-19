@@ -104,30 +104,6 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			}
 		};
 
-		// surfaceComposite.addFocusListener(new FocusAdapter() {
-		//
-		// /**
-		// * Method focusGained()
-		// * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
-		// */
-		// @Override
-		// public void focusGained(final FocusEvent e) {
-		// System.out.println("Focus gained for display");
-		// super.focusGained(e);
-		// }
-		//
-		// /**
-		// * Method focusLost()
-		// * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
-		// */
-		// @Override
-		// public void focusLost(final FocusEvent e) {
-		// System.out.println("Focus lost for display");
-		// super.focusLost(e);
-		// }
-		//
-		// });
-
 		perspectiveListener = new IPerspectiveListener() {
 
 			boolean previousState = false;

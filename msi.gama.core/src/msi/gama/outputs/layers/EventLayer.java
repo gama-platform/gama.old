@@ -151,14 +151,18 @@ public class EventLayer extends AbstractLayer {
 			if ( pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth() ||
 				pp.getY() >= surface.getEnvHeight() ) { return; }
 			final Arguments args = new Arguments();
-			final IContainer<Integer, IAgent> agentset =
-				GamaListFactory.createWithoutCasting(Types.AGENT, surface.selectAgent(x, y));
-			if ( pointArg != null ) {
-				args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.getX(), pp.getY())));
+			if ( x > -1 && y > -1 ) {
+
+				final IContainer<Integer, IAgent> agentset =
+					GamaListFactory.createWithoutCasting(Types.AGENT, surface.selectAgent(x, y));
+				if ( pointArg != null ) {
+					args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.getX(), pp.getY())));
+				}
+				if ( listArg != null ) {
+					args.put(listArg, ConstantExpressionDescription.create(agentset));
+				}
 			}
-			if ( listArg != null ) {
-				args.put(listArg, ConstantExpressionDescription.create(agentset));
-			}
+
 			surface.runAndUpdate(new Runnable() {
 
 				@Override
@@ -177,7 +181,7 @@ public class EventLayer extends AbstractLayer {
 		@Override
 		public void keyPressed(final String c) {
 			if ( c.equals(event) ) {
-				executeEvent(0, 0);
+				executeEvent(-1, -1);
 			}
 		}
 	}

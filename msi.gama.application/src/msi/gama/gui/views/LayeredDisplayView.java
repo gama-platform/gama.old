@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -42,6 +41,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected volatile boolean disposed;
 	protected volatile boolean realized = false;
 	protected ToolItem overlayItem;
+
+	private LayeredDisplayKeyboardListener globalKeyboardListener;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -73,8 +74,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public void ownCreatePartControl(final Composite c) {
 		if ( getOutput() == null ) { return; }
 
-		Cursor cr = new Cursor(SwtGui.getDisplay(), SWT.CURSOR_WAIT);
-		c.setCursor(cr);
+		// Cursor cr = new Cursor(SwtGui.getDisplay(), SWT.CURSOR_WAIT);
+		// c.setCursor(cr);
 		// First create the sashform
 
 		form = new SashForm(c, SWT.HORIZONTAL);
@@ -99,6 +100,34 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		gl.verticalSpacing = 0;
 		parent.setLayout(gl);
 		createSurfaceComposite();
+
+		surfaceComposite.addFocusListener(new FocusAdapter() {
+
+			/**
+			 * Method focusGained()
+			 * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
+			 */
+			@Override
+			public void focusGained(final FocusEvent e) {
+				System.out.println("Focus gained for display. Attaching a listener ");
+				SwtGui.getDisplay().addFilter(SWT.KeyUp, getGlobalKeyboardListener());
+				SwtGui.getDisplay().addFilter(SWT.KeyDown, getGlobalKeyboardListener());
+				super.focusGained(e);
+			}
+
+			/**
+			 * Method focusLost()
+			 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
+			 */
+			@Override
+			public void focusLost(final FocusEvent e) {
+				System.out.println("Focus lost for display");
+				SwtGui.getDisplay().removeFilter(SWT.KeyUp, getGlobalKeyboardListener());
+				SwtGui.getDisplay().removeFilter(SWT.KeyDown, getGlobalKeyboardListener());
+				super.focusLost(e);
+			}
+
+		});
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = 0;
 		gd.verticalIndent = 0;
@@ -118,15 +147,22 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		// form.setWeights(new int[] { 30, 70 });
 		form.setMaximizedControl(parent);
 
-		c.setCursor(null);
-		cr.dispose();
+		// c.setCursor(null);
+		// cr.dispose();
 
+	}
+
+	LayeredDisplayKeyboardListener getGlobalKeyboardListener() {
+		if ( globalKeyboardListener == null && getDisplaySurface() != null ) {
+			globalKeyboardListener = new LayeredDisplayKeyboardListener(getDisplaySurface());
+		}
+		return globalKeyboardListener;
 	}
 
 	@Override
 	public void setFocus() {
 		// if ( surfaceComposite != null ) {
-		// surfaceComposite.setFocus();
+		// surfaceComposite.forceFocus();
 		// }
 	}
 

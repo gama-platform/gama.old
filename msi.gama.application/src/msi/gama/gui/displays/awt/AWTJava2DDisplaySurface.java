@@ -14,7 +14,6 @@ package msi.gama.gui.displays.awt;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-import java.awt.im.InputContext;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -280,11 +279,11 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			}
 		}
 	}
-
-	@Override
-	public InputContext getInputContext() {
-		return null;
-	}
+	//
+	// @Override
+	// public InputContext getInputContext() {
+	// return null;
+	// }
 
 	@Override
 	public void removeNotify() {
@@ -696,6 +695,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void addListener(final IEventLayerListener listener) {
 		if ( listeners.containsKey(listener) ) { return; }
+
 		MouseListener l = new MouseAdapter() {
 
 			@Override
@@ -715,7 +715,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 		};
 		listeners.put(listener, l);
-		super.addMouseListener(l);
+		addMouseListener(l);
 	}
 
 	@Override
@@ -724,6 +724,11 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if ( l == null ) { return; }
 		listeners.remove(listener);
 		super.removeMouseListener(l);
+	}
+
+	@Override
+	public Collection<IEventLayerListener> getLayerListeners() {
+		return listeners.keySet();
 	}
 
 	/**

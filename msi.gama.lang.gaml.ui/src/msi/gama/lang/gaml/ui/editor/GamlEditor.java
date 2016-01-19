@@ -285,8 +285,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 					"Experiment " + name + " cannot be instantiated because of the following error: " + e.getMessage());
 			}
 			if ( model == null ) { return; }
-
-			GAMA.runGuiExperiment(name, model);
+			GAMA.getGui().runModel(model, name);
 		}
 
 	};

@@ -47,6 +47,7 @@ import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -256,6 +257,7 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
+		debug("ASKING THE USER ABOUT CHANGING");
 		if ( !GamaPreferences.CORE_ASK_CLOSING.getValue() ) { return true; }
 		return MessageDialog.openQuestion(getShell(), "Close simulation confirmation",
 			"Do you want to close experiment '" + exp.getName() + "' of model '" + exp.getModel().getName() + "' ?");
@@ -827,6 +829,14 @@ public class SwtGui extends AbstractGui {
 	//
 	// return false; // openPerspective(I);
 	// }
+
+	@Override
+	public void runModel(final IModel model, final String exp) {
+		debug("ASKING TO CHANGE PERSPECTIVE");
+		GAMA.getGui().openSimulationPerspective(true);
+		debug("PERSPECTIVE NORMALLY CHANGED");
+		GAMA.runGuiExperiment(exp, model);
+	}
 
 	@Override
 	public final boolean openSimulationPerspective(final boolean immediately) {
