@@ -24,9 +24,9 @@ global {
 	
 	init {
 		//greenAgent that will display a green signal
-		create greenAgent number:1 with: (location: {5.0,5.0});
-		//blueAgent that will display a blue signal
-		create blueAgent number:1 with: (location: {3.0,3.0});
+		create signalGenerator number:1 with:[color::#green, frequency::20];
+		create signalGenerator number:1 with:[color::#blue, frequency::10
+		];
 	}
 }
 
@@ -46,29 +46,43 @@ grid cells height: gridsize width: gridsize neighbors:8 use_regular_agents: fals
 	
 	//Aspect for the ShowOverlap experiment
 	aspect ShowOverlap{
-		if ((greenSignal>10) and (blueSignal>10)){
-			draw square(1) color:rgb(100,int(greenSignal),int(blueSignal));
+		if ((mySignal>10) and (mySignal>10)){
+			draw square(1) color:rgb(100,int(mySignal),int(mySignal));
 		} 
 		else {
-			draw square(1) color:rgb(0,int(greenSignal),int(blueSignal));
+			draw square(1) color:rgb(0,int(mySignal),int(mySignal));
 		}
 	}
 	
 	//Aspect for the SubstractOverlap experiment
 	aspect SubstractOverlap{
-		if (greenSignal>blueSignal){
-			draw square(1) color:rgb(0,int(greenSignal)-int(blueSignal),0);
+		if (mySignal>mySignal){
+			draw square(1) color:rgb(0,int(mySignal)-int(mySignal),0);
 		} 
 		else {
-			draw square(1) color:rgb(0,0,int(blueSignal)-int(greenSignal));
+			draw square(1) color:rgb(0,0,int(mySignal)-int(mySignal));
 		}
 	}
 	
 	//Aspect for the AddOverlap experiment
 	aspect AddOverlap{
-		draw square(1) color:rgb(0,int(greenSignal),int(blueSignal));
+		draw square(1) color:rgb(0,int(mySignal),int(mySignal));
 	}
 } 
+
+//Species greenAgent that creates a green signal according to the time and moves randomly
+species signalGenerator skills:[moving] {
+	int frequency;
+	rgb color;
+	signal mySignal update:(every(frequency)) ? 5*240 : 0 decay:decayValue environment:cells range:5 propagation:gradient proportion:proportionValue variation:variationValue;
+	reflex movement {
+		do wander;
+	}
+	aspect default{
+		draw circle(0.1) color:color;
+	}
+}
+/* 
 //Species greenAgent that creates a green signal according to the time and moves randomly
 species greenAgent skills:[moving] {
 	signal greenSignal update:(timeVar=0) ? 5*240 : 0 decay:decayValue environment:cells range:5 propagation:gradient proportion:proportionValue variation:variationValue;
@@ -90,6 +104,8 @@ species blueAgent skills:[moving] {
 		draw circle(0.1) color:#blue;
 	}
 }
+* 
+*/
 
 experiment ShowOverlap type: gui {
 	parameter "decayValue : " var:decayValue;
@@ -98,12 +114,11 @@ experiment ShowOverlap type: gui {
 	output {
 		display a type: opengl {
 			species cells aspect:ShowOverlap;
-			species blueAgent aspect:default;
-			species greenAgent aspect:default;
+			species signalGenerator aspect:default;
 		}
 	}
 }
-
+/* 
 experiment SubstractOverlap type: gui {
 	parameter "decayValue : " var:decayValue;
 	parameter "variation (between 0 and 1) : " var:variationValue min:0.0 max:1.0;
@@ -129,3 +144,4 @@ experiment AddOverlap type: gui {
 		}
 	}
 }
+**/

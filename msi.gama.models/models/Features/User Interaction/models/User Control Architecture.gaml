@@ -1,8 +1,10 @@
 /**
- *  usercontrolarchitecture
- *  Author: Patrick Taillandier
- *  Description: show how to use agent architecture
+* Name: User Command
+* Author: Patrick Taillandier
+* Description: Model which shows how to use the advanced user control, to create and kill agents. 
+* Tags : User Interaction
  */
+
 
 model user_control
 
