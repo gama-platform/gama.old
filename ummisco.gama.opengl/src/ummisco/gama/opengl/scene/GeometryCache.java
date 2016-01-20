@@ -20,26 +20,43 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.util.ImageUtils;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaSVGFile;
+import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.files.GLModel;
 import ummisco.gama.opengl.files.ModelLoaderOBJ;
+import ummisco.gama.opengl.jts.JTSDrawer;
 
 public class GeometryCache {
-
-	private  final Map<String, Integer> GEOMETRIES = new ConcurrentHashMap(100, 0.75f, 1);
-	private  final GeometryAsyncBuilder BUILDER ;
+	
+	//FIXME: Need to see why it's not working with sync=true
+	boolean sync = false;
+	private  final Map<String, Integer> GEOMETRIES;
+	private  GeometryAsyncBuilder BUILDER =null ;
 	
 	 Integer openNestedGLListIndex;
 	private  GLUT myGlut = new GLUT();
+	private JOGLRenderer renderer;
+	JTSDrawer drawer;
 	
-	public GeometryCache(GL2 gl){
-		BUILDER = new GeometryAsyncBuilder(gl);
+	public GeometryCache(GL2 gl,JOGLRenderer renderer){
+		  if(sync){
+		    	GEOMETRIES = new HashMap<String, Integer>();//(100, 0.75f, 1)	
+		    }
+		    else{
+		    	GEOMETRIES = new ConcurrentHashMap(100, 0.75f, 1);
+		    	BUILDER = new GeometryAsyncBuilder(gl);
+		    }
+		this.renderer=renderer;
+		drawer = new JTSDrawer(renderer);
 	}
 	// Assumes the texture has been created. But it may be processed at the time
 	// of the call, so we wait for its availability.
@@ -59,8 +76,18 @@ public class GeometryCache {
 
 	public  void initializeStaticGeometry(GL2 gl,final GamaFile file) {
 	    if ( contains(file.getFile().getAbsolutePath().toString()) ) { return; }
-		BuildingTask task = new BuildingTask(null, file);
-		BUILDER.tasks.offer(task);
+	    if(sync){
+	    	gl.getContext().makeCurrent();
+	    	Integer index = buildList(gl, file);
+			if ( index != null ) {
+				GEOMETRIES.put(file.getFile().getAbsolutePath().toString(), index);
+			}
+	    }else{
+	    	BuildingTask task = new BuildingTask(null, file);
+			BUILDER.tasks.offer(task);	
+	    }
+	    
+		
 	}
 
 	/**
@@ -72,21 +99,28 @@ public class GeometryCache {
 	}
 
 	public  Integer buildList(final GL gl, final GamaFile string) {
-		//Integer index = openNestedGLListIndex; 
-		Integer index;
-		//if ( index == null ) {	
+		Integer index = null;
+		if ( string.getExtension().equals("obj")) {	
 			String obj = string.getFile().toString();
 			String fmtl = string.getFile().getAbsolutePath().replaceAll(".obj", ".mtl");
 			GLModel asset3Dmodel = ModelLoaderOBJ.LoadModel(obj, fmtl, (GL2) gl);
-			//GLModel asset3Dmodel = ModelLoaderOBJ.LoadModel("/Users/Arno/Desktop/obj/c.obj", "/Users/Arno/Desktop/obj/c.mtl", (GL2) gl);
 			index = ((GL2) gl).glGenLists(1);
 			((GL2) gl).glNewList(index, GL2.GL_COMPILE);
-			asset3Dmodel.draw((GL2) gl);		
+				asset3Dmodel.draw((GL2) gl);		
 			((GL2) gl).glEndList();
-		//}
-		((GL2) gl).glCallList(index);
-		//openNestedGLListIndex = index;
-		//return openNestedGLListIndex;
+		}
+		if ( string.getExtension().equals("svg")) {	
+			GamaSVGFile svg = (GamaSVGFile) string;
+			GamaShape g = (GamaShape) svg.getGeometry(null);	
+			index = ((GL2) gl).glGenLists(1);
+			((GL2) gl).glNewList(index, GL2.GL_COMPILE);
+			Color c = new Color(0,0,0);
+			drawer.DrawTesselatedPolygon((Polygon) g.getInnerGeometry(), 1, c, 1);	
+			((GL2) gl).glEndList();			
+		}
+		if(index!=null){
+		  ((GL2) gl).glCallList(index);
+		}
 		return index;
 	}
 
@@ -99,7 +133,7 @@ public class GeometryCache {
 
 		public GeometryAsyncBuilder(GL2 gl) {
 			this.gl = gl;
-			loadingThread = new Thread(this, "Geometry building thread");
+			loadingThread = new Thread(this, "Geometry cache building thread");
 			loadingThread.start();
 		}
 
@@ -139,7 +173,7 @@ public class GeometryCache {
 
 		@Override
 		public void runIn(final GL gl) {
-			gl.glDeleteTextures(geometryIds.length, geometryIds, 0);
+			//gl.glDeleteTextures(geometryIds.length, geometryIds, 0);
 		}
 
 	}
@@ -147,22 +181,16 @@ public class GeometryCache {
 	protected  class BuildingTask implements GLTask {
 
 		protected final GamaFile string;
-
-
 		BuildingTask(final GL2 gl, final GamaFile file) {
 			this.string = file;
-
 		}
 
 		@Override
 		public void runIn(final GL gl) {
-			if ( contains(string.getFile().getAbsolutePath().toString()) ) { return; }
 			Integer index = buildList(gl, string);
-			// We use the original image to keep track of the texture
 			if ( index != null ) {
 				GEOMETRIES.put(string.getFile().getAbsolutePath().toString(), index);
 			}
-			gl.glFinish();	
 		}
 	}
 }
