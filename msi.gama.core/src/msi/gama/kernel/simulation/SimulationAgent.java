@@ -427,6 +427,7 @@ public class SimulationAgent extends GamlAgent {
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
+
 		System.out.println("simulation agent set seed: " + s);
 		Double seed;
 		if ( s == null ) {
@@ -446,6 +447,7 @@ public class SimulationAgent extends GamlAgent {
 
 	@setter(IKeyword.RNG)
 	public void setRng(final String newRng) {
+
 		// rng = newRng;
 		// scope.getGui().debug("ExperimentAgent.setRng" + newRng);
 		getRandomGenerator().setGenerator(newRng, true);
