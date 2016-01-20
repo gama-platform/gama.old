@@ -112,11 +112,25 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			if(this.size!=null && env != null){
 				gl.glScaled(size.x / env.getWidth(), size.y / env.getHeight(), size.z/ env.getHeight());
 			}
-			/*if (this.color != null) { does not work for obj files
-				gl.glColor3d(color.getRed()/255.0, color.getGreen()/255.0, color.getBlue()/255.0);
-			}*/
-			super.draw(gl, drawer, picking);
 			
+			if ( picking ) {
+				gl.glPushMatrix();
+				gl.glLoadName(pickingIndex);
+				if ( renderer.pickedObjectIndex == pickingIndex ) {
+					if ( agent != null /* && !picked */ ) {
+						renderer.setPicking(false);
+						pick();
+						renderer.currentPickedObject = this;
+						renderer.displaySurface.selectAgent(agent);
+					}
+				}
+				gl.glColor3d(1.0, 0.0, 0.0);
+				
+				super.draw(gl, drawer, picking);
+				gl.glPopMatrix();
+			} else {
+				super.draw(gl, drawer, picking);
+			}
 			
 			if(this.size!=null  && env != null){
 				gl.glScaled(env.getWidth() /size.x, env.getHeight()/size.y, env.getHeight()/size.z);
