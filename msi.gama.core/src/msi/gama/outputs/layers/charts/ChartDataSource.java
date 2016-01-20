@@ -68,6 +68,11 @@ public class ChartDataSource {
 		this.myDataset = myDataset;
 	}
 
+	public void setValueExp(final IScope scope, IExpression expval)
+	{
+		value=expval;
+	}
+		
 	public IExpression getValue() {
 		return value;
 	}

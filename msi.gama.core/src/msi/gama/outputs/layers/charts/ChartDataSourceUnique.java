@@ -39,11 +39,6 @@ public class ChartDataSourceUnique extends ChartDataSource {
 		
 	}
 	
-	public void setValueExp(final IScope scope, IExpression expval)
-	{
-		value=expval;
-	}
-	
 	public void setLegend(final IScope scope, String stval)
 	{
 		myname=stval;
