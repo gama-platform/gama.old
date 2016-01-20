@@ -124,9 +124,6 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		//SecurityManager 
-		
-		
 		SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
