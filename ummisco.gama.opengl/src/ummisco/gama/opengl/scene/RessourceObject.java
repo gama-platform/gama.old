@@ -51,6 +51,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		this.rotate3D = rotate3D;
 		this.rotate3DInit = rotate3DInit;
 		atLoc = location;
+		System.out.println("atLoc: " + atLoc);
 	}
 
 	@Override
@@ -84,8 +85,10 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		JOGLRenderer renderer = drawer.renderer;
 		    //FIXME: To simplify the process picking is not yet taken in account
 		
-			if (this.rotate3D != null || this.rotate3DInit != null) {
-				gl.glTranslated(this.agent.getLocation().getX(), renderer.yFlag*this.agent.getLocation().getY(), this.agent.getLocation().getZ());
+			if (atLoc != null) {
+				gl.glTranslated(atLoc.getX(), renderer.yFlag*atLoc.getY(), atLoc.getZ());
+			} else {
+				gl.glTranslated(this.agent.getLocation().getX(), renderer.yFlag*this.agent.getLocation().getY(), this.agent.getLocation().getZ());	
 			}
 			if(this.rotate3D != null){
 				gl.glRotatef(this.rotate3D.key.floatValue() , (float) this.rotate3D.value.x, (float) this.rotate3D.value.y, (float) this.rotate3D.value.z);	
@@ -96,7 +99,10 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			if(this.size!=null){
 				  gl.glScaled(size.x, size.x, size.x);
 			}
+			
 			super.draw(gl, drawer, picking);
+			
+			
 			if(this.size!=null){
 				  gl.glScaled(1/size.x, 1/size.x, 1/size.x);
 			}	
@@ -106,9 +112,13 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			if(this.rotate3D != null){
 				((GL2) gl).glRotatef(-this.rotate3D.key.floatValue() , (float) this.rotate3D.value.x, (float) this.rotate3D.value.y, (float) this.rotate3D.value.z);				
 			}
-			if (this.rotate3D != null || this.rotate3DInit != null) {
-				((GL2) gl).glTranslated(-this.agent.getLocation().getX(), -renderer.yFlag*this.agent.getLocation().getY(), -this.agent.getLocation().getZ());
+			
+			if (atLoc != null) {
+				gl.glTranslated(-atLoc.getX(), - renderer.yFlag*atLoc.getY(), - atLoc.getZ());
+			} else {
+				gl.glTranslated(-this.agent.getLocation().getX(), - renderer.yFlag*this.agent.getLocation().getY(), - this.agent.getLocation().getZ());	
 			}
+			
 	}
 
 	@Override
