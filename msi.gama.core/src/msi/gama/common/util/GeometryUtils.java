@@ -1074,7 +1074,7 @@ public class GeometryUtils {
 			Coordinate[] coordLRs = p.getInteriorRingN(i).getCoordinates();
 			Coordinate[] coordsLRN = new Coordinate[coordLRs.length +1];
 			for ( int j = 0; j < coordLRs.length; j++ ) {
-				coordsLRN[j] = coords[coordLRs.length - j - 1];
+				coordsLRN[j] = coordLRs[coordLRs.length - j - 1];
 			}
 			coordsLRN[coordsLRN.length - 1] = coordsLRN[0];
 			lrN[i] = FACTORY.createLinearRing(coordsLRN);

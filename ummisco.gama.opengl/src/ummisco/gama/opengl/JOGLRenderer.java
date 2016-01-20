@@ -163,7 +163,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// GLU objects are NOT thread safe...
 		glu = new GLU();
 		gl = GLContext.getCurrentGL().getGL2();
-		cache = new GeometryCache(gl,this);
+		cache = new GeometryCache(this);
 		initializeCanvasWithListeners();
 
 		width = drawable.getSurfaceWidth();

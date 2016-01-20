@@ -200,6 +200,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
 		// createSimulation(getParameterValues(), scheduled);
+
 		return this;
 	}
 
@@ -494,6 +495,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			result = super.step(this.scope);
 		} finally {
 			clock.step(this.scope);
+			if ( !getSpecies().isBatch() ) {
+				scope.getGui().informStatus(clock.getInfo());
+			}
 		}
 		return result;
 	}

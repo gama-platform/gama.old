@@ -21,7 +21,8 @@ import msi.gama.common.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Strings;
@@ -81,9 +82,9 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 			@Override
 			public void mouseDown(final MouseEvent e) {
-				SimulationAgent simulation = GAMA.getSimulation();
-				if ( simulation == null ) { return; }
-				simulation.getClock().toggleDisplay();
+				ExperimentAgent exp = GAMA.getExperiment().getAgent();
+				if ( exp == null ) { return; }
+				exp.getClock().toggleDisplay();
 			}
 		});
 		popup = new Popup(this, label);
@@ -104,12 +105,13 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		if ( !GAMA.getGui().isSimulationPerspective() ) { return null; }
 		if ( state == IGui.ERROR || state == IGui.WAIT ) { return label.getText(); }
 		StringBuilder sb = new StringBuilder(300);
-		SimulationAgent simulation = GAMA.getSimulation();
+		ExperimentAgent simulation = GAMA.getExperiment().getAgent();
 		if ( simulation == null ) { return "No simulation running"; }
 		SimulationClock clock = simulation.getClock();
 
 		sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
-				clock.getStartingDate() == null ?  Strings.asDate(clock.getTime(), null) : Strings.asDate(clock.getStartingDate(),clock.getCurrentDate(), null)));
+			clock.getStartingDate() == null ? Strings.asDate(clock.getTime(), null)
+				: Strings.asDate(clock.getStartingDate(), clock.getCurrentDate(), null)));
 		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Durations (ms)", clock.getDuration(),
 			(int) clock.getAverageDuration(), clock.getTotalDuration()));
 		return sb.toString();
