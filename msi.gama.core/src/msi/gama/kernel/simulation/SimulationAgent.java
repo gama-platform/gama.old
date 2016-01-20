@@ -47,13 +47,12 @@ import msi.gaml.types.IType;
 			comment = "Each time it is set, the random number generator is reinitialized") ),
 	@var(name = IKeyword.RNG,
 		type = IType.STRING,
-		doc = @doc("The random number generator to use for this simulation. Four different ones are at the disposal of the modeler: " +
+		doc = @doc("The random number generator to use for this simulation. Three different ones are at the disposal of the modeler: " +
 			IKeyword.MERSENNE +
 			" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
 			IKeyword.CELLULAR +
-			" is a cellular automaton based generator that should be a bit faster, but less reliable; " + IKeyword.XOR +
-			" is another choice. Much faster than the previous ones, but with short sequences; and " + IKeyword.JAVA +
-			" invokes the standard Java generator") ),
+			" is a cellular automaton based generator that should be a bit faster, but less reliable; and " +
+			IKeyword.JAVA + " invokes the standard Java generator") ),
 	@var(name = IKeyword.STEP,
 		type = IType.FLOAT,
 		doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles",
