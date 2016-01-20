@@ -149,18 +149,73 @@ public class ChartDataListStatement extends AbstractStatement {
 		return datalist;
 	}
 
-	/**
-	 * DataList statement requires a variable in the scope created by the Scope:
-	 * DataListVars to transfer the data
-	 */
+	public ChartDataSourceList createDataSource(final IScope scope, ChartDataSet graphdataset) throws GamaRuntimeException {
+		
+		
+		ChartDataSourceList data = new ChartDataSourceList();
+
+		IExpression string1 = getFacet(IKeyword.TYPE);
+		
+		String stval = getLiteral(IKeyword.STYLE);
+		if ( stval == null ) {
+			stval = IKeyword.LINE;
+		}
+
+		data.setDataset(graphdataset);
+		
+		
+		
+		IExpression expval = getFacet(IKeyword.LEGEND).resolveAgainst(scope);
+		data.setNameExp(scope,expval);
+		
+		
+		expval = getFacet(IKeyword.VALUE).resolveAgainst(scope);
+		data.setValueExp(scope,expval);
+
+		//TODO		
+		/*		
+		
+		
+		boolean boolval = getFacetValue(scope, MARKER, true);
+		data.setMarkerBool(scope,boolval);
+		
+		stval = getFacetValue(scope, MARKERSHAPE, null);
+		data.setMarkerShape(scope,stval);
+
+		data.setStyle(scope,stval);
+
+		
+		stval = getFacetValue(scope, IKeyword.COLOR, "black");
+		data.sourceParameters.put(IKeyword.COLOR,stval);
+		
+		 boolval = getFacetValue(scope, MARKER, true);
+		data.sourceParameters.put(MARKER,boolval);
+		
+		 boolval = getFacetValue(scope, LINE_VISIBLE, true);
+		data.sourceParameters.put(LINE_VISIBLE,boolval);
+		
+		 boolval = getFacetValue(scope, FILL, true);
+		data.sourceParameters.put(FILL,boolval);
+
+		stval = getFacetValue(scope, MARKERSHAPE, null);
+		data.sourceParameters.put(MARKERSHAPE,stval);
+
+		stval = getFacetValue(scope, MARKERSHAPE, null);
+		data.sourceParameters.put(MARKERSHAPE,stval);
+	*/	
+		data.createInitialSeries(scope);
+		
+		return data;
+	}
+	
+	
 
 	@Override
-	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {		
-		ChartDataList data = createData(scope);
-		((ArrayList) scope.getVarValue(DATALISTS)).add(data);
+	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		ChartDataSet graphdataset=(ChartDataSet) scope.getVarValue(ChartLayerStatement.CHARTDATASET);
+		ChartDataSourceList data = createDataSource(scope,graphdataset);
+		graphdataset.addDataSource(data);
 		return data;
-
-
 	}
 
 }
