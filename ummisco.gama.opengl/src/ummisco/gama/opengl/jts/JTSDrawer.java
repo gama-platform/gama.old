@@ -209,7 +209,7 @@ public class JTSDrawer {
 		}
 	}
 
-	void DrawTesselatedPolygon(final Polygon p, final int norm_dir, final Color c, final double alpha) {
+	public void DrawTesselatedPolygon(final Polygon p, final int norm_dir, final Color c, final double alpha) {
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		GLU.gluTessBeginPolygon(tobj, null);
 
@@ -296,11 +296,14 @@ public class JTSDrawer {
 		GLU.gluTessEndPolygon(tobj);
 	}
 	
-	void DrawTexturedPolygon(final Polygon p, final Texture texture) {
+	public void DrawTexturedPolygon(final Polygon p, final Texture texture) {
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		gl.glColor3d(1.0, 1.0, 1.0);
-		texture.enable(gl);
-		texture.bind(gl);
+		if(texture!=null){
+			texture.enable(gl);
+			texture.bind(gl);	
+		}
+		
 
 		if ( p.getNumPoints() > 5 ) {
 			drawTriangulatedPolygon(p, useJTSForTriangulation, texture);
@@ -322,8 +325,10 @@ public class JTSDrawer {
 			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), renderer.yFlag * p.getExteriorRing().getPointN(3).getY(),p.getExteriorRing().getCoordinateN(3).z);
 			gl.glEnd();
 		}
-
-		texture.disable(gl);
+		if(texture!=null){
+			texture.disable(gl);	
+		}
+		
 	}
 
 	void drawTriangulatedPolygon(Polygon p, final boolean showTriangulation, final Texture texture) {
