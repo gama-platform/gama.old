@@ -1,6 +1,6 @@
 /**
 * Name: 3D Camera and Camera Positionning with Boids model
-* Author: 
+* Author: Arnaud Grignard
 * Description: Model using the Boids model to represent the flight of boids following a goal and avoiding obstacles.
 *     Five experiments are proposed with differents goals : understanding of the model used (Boids_gui), 3D Display (start), 3D Display with trajectories analysis of boids (trajectory_analysis),
 *     one coupling both previous experiments and the time simulated with boids going higher and higher according to the time (SpaceTimeCube) and a model presenting the different views 

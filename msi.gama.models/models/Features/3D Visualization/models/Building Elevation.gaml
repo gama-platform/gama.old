@@ -1,6 +1,6 @@
 /**
 * Name: 3D Display model and Height of Building using shapefiles
-* Author: 
+* Author: Arnaud Grignard
 * Description: Model presenting a 3D display of people and buildings moving on a road network imported thanks to shapefiles. 
 *       Three experiments are proposed : one showing people represented by a yellow sphere moving from a living 3D building to a working 3D building and coming back
 * 	using a road network (road_traffic). The second experiment distinguish the species by using different layers for species (road_traffic_multi_layer). The last one increases
@@ -14,6 +14,9 @@ global {
 	file shape_file_buildings <- shape_file('../includes/building.shp', 0);
 	file shape_file_roads <- shape_file('../includes/road.shp', 0);
 	file shape_file_bounds <- shape_file('../includes/bounds.shp', 0);
+	
+	string texture <- "../images/building_texture/texture1.jpg";
+	string roof_texture <- "../images/building_texture/roof_top.png";	
 	
 	//Definition of the shape of the world as the bounds of the shapefiles to show everything contained
 	// by the area delimited by the bounds
@@ -61,9 +64,8 @@ species building {
 	rgb color <- #gray;
 	int height;
 	aspect base {
-		draw shape color: color depth: height;
+		draw shape color: color depth: 100;
 	}
-
 }
 
 species road {
@@ -126,8 +128,16 @@ experiment road_traffic type: gui {
 	output {
 		display city_display type: opengl ambient_light: 100 {
 			species building aspect: base;
-			species road aspect: base;
-			species people aspect: base;
+			//species road aspect: base;
+			//species people aspect: base;
+		}
+		
+		display gis_displays_graphics type: opengl light: true ambient_light: 50{
+			graphics "buildings" refresh: false {
+				loop bd over: shape_file_buildings {
+					draw bd depth: float(geometry(bd) get "HEIGHT") texture:[roof_texture,texture] ;
+				}
+			}
 		}
 
 	}
