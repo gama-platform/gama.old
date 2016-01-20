@@ -38,6 +38,7 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 	public static abstract class Gama3DGeometryFile extends GamaGeometryFile {
 
 		protected GamaPair initRotation;
+		protected Envelope3D envelope;
 		
 		public Gama3DGeometryFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 			super(scope, pathName);
@@ -62,8 +63,11 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 		public void setInitRotation(GamaPair initRotation) {
 			this.initRotation = initRotation;
 		}
-		
-		
+		@Override
+		public Envelope computeEnvelope(final IScope scope) {
+			if (envelope == null) fillBuffer(scope);
+			return envelope;
+		}
 
 	}
 
