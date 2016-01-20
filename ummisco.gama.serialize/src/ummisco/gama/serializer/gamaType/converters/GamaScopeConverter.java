@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package ummisco.gama.communicator.common.remoteObject;
+package ummisco.gama.serializer.gamaType.converters;
 
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentAgent;
