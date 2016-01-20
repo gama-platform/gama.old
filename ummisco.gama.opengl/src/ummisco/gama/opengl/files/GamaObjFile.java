@@ -56,6 +56,13 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 			br = new BufferedReader(new FileReader(getFile()));
 			IList<IShape> vertices = GamaListFactory.create(Types.GEOMETRY);
+			Double minX = Double.MAX_VALUE;
+			Double minY = Double.MAX_VALUE;
+			Double minZ = Double.MAX_VALUE;
+			Double maxX = Double.MIN_VALUE;
+			Double maxY = Double.MIN_VALUE;
+			Double maxZ = Double.MIN_VALUE;
+			
 			String newline;
 			while ((newline = br.readLine()) != null) {
 				if ( newline.length() > 0 ) {
@@ -78,7 +85,14 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						for ( int i = 0; st.hasMoreTokens(); i++ ) {
 							coords[i] = Float.parseFloat(st.nextToken());
 						}
-						vertices.add(new GamaPoint(coords[0], -coords[1], coords[2])); // w ignored
+						GamaPoint pt = new GamaPoint(coords[0], -coords[1], coords[2]);
+						if (pt.x < minX) minX = pt.x;
+						if (pt.y < minY) minY = pt.y;
+						if (pt.z < minZ) minZ = pt.z;
+						if (pt.x > maxX) maxX = pt.x;
+						if (pt.y > maxY) maxY = pt.y;
+						if (pt.z > maxZ) maxZ = pt.z;
+						vertices.add(pt); // w ignored
 					} else
 
 					// LOADS FACES COORDINATES
@@ -110,6 +124,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					}
 				}
 			}
+			envelope = new Envelope3D(minX, maxX, minY, maxY, minZ, maxZ);
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {

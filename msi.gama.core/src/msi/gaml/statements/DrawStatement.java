@@ -559,8 +559,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				if (!fmtl.exists()){
 					GAMA.reportError(scope, GamaRuntimeException.warning("No " + fmtl.toString() + " found",scope), false);
 				}
-            	Color color = null;
-            	 
+            	Color color = getColor(scope);            	 
             	if ( rot3D != null ) {
             		GamaPair<Double, GamaPoint> rot = 
             		  (GamaPair<Double, GamaPoint>) GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
@@ -571,7 +570,7 @@ public class DrawStatement extends AbstractStatementSequence {
             	}			
             }
 			if(fileName.getExtension().equals("svg")){	
-            	Color color = null;
+				Color color = getColor(scope);
             	if ( rot3D != null ) {
             		GamaPair<Double, GamaPoint> rot = 
             		  (GamaPair<Double, GamaPoint>) GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
