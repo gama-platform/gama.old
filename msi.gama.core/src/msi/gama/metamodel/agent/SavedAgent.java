@@ -92,7 +92,7 @@ public class SavedAgent {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
+	public IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
 		final List<Map> agentAttrs = new ArrayList<Map>();
 		agentAttrs.add(variables);
 		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true);
