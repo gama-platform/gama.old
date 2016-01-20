@@ -51,7 +51,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		this.agent = agent;
 		this.z_layer = z_layer;
 		this.color= color;
-		this.alpha = alpha;
+		this.alpha = alpha; 
 		this.size = dimensions;
 		atLoc = location;
 		if (rotate3D != null) {
@@ -111,7 +111,9 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 					Envelope3D env = (Envelope3D) file.computeEnvelope(null);
 				  gl.glScaled(size.x / env.getWidth(), size.y / env.getHeight(), size.z/ env.getHeight());
 			}
-			
+			/*if (this.color != null) { does not work for obj files
+				gl.glColor3d(color.getRed()/255.0, color.getGreen()/255.0, color.getBlue()/255.0);
+			}*/
 			super.draw(gl, drawer, picking);
 			
 			
