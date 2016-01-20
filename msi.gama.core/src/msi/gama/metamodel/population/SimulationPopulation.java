@@ -31,16 +31,6 @@ public class SimulationPopulation extends GamaPopulation {
 	public SimulationPopulation(final ISpecies species) {
 		super(null, species);
 	}
-	//
-	// @Override
-	// public void killMembers() throws GamaRuntimeException {
-	// // Simulations should be killed in a more precautious way...
-	// // for ( final IAgent a : toArray() ) {
-	// // if ( a.getScope().interrupted() ) {
-	// // a.dispose();
-	// // }
-	// // }
-	// }
 
 	@Override
 	public void initializeFor(final IScope scope) {
@@ -51,7 +41,6 @@ public class SimulationPopulation extends GamaPopulation {
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 		final List<? extends Map> initialValues, final boolean toBeScheduled) throws GamaRuntimeException {
-
 		scope.getGui().waitStatus("Initializing simulation");
 		final SimulationAgent world = new SimulationAgent(this);
 		world.setIndex(currentAgentIndex++);

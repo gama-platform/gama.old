@@ -405,7 +405,8 @@ public class SwtGui extends AbstractGui {
 		e.printStackTrace(pw);
 	}
 
-	private void eraseConsole(final boolean setToNull) {
+	@Override
+	public void eraseConsole(final boolean setToNull) {
 		if ( console != null ) {
 			run(new Runnable() {
 
@@ -568,7 +569,7 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void showConsoleView() {
 		console = (ConsoleView) showView(ConsoleView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
-		eraseConsole(false);
+		// eraseConsole(false);
 		if ( consoleBuffer.length() > 0 ) {
 			console.append(consoleBuffer.toString());
 			consoleBuffer.setLength(0);

@@ -42,7 +42,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected volatile boolean realized = false;
 	protected ToolItem overlayItem;
 
-	private LayeredDisplayKeyboardListener globalKeyboardListener;
+	// private LayeredDisplayKeyboardListener globalKeyboardListener;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -101,33 +101,33 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		parent.setLayout(gl);
 		createSurfaceComposite();
 
-		surfaceComposite.addFocusListener(new FocusAdapter() {
-
-			/**
-			 * Method focusGained()
-			 * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
-			 */
-			@Override
-			public void focusGained(final FocusEvent e) {
-				System.out.println("Focus gained for display. Attaching a listener ");
-				SwtGui.getDisplay().addFilter(SWT.KeyUp, getGlobalKeyboardListener());
-				SwtGui.getDisplay().addFilter(SWT.KeyDown, getGlobalKeyboardListener());
-				super.focusGained(e);
-			}
-
-			/**
-			 * Method focusLost()
-			 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
-			 */
-			@Override
-			public void focusLost(final FocusEvent e) {
-				System.out.println("Focus lost for display");
-				SwtGui.getDisplay().removeFilter(SWT.KeyUp, getGlobalKeyboardListener());
-				SwtGui.getDisplay().removeFilter(SWT.KeyDown, getGlobalKeyboardListener());
-				super.focusLost(e);
-			}
-
-		});
+		// surfaceComposite.addFocusListener(new FocusAdapter() {
+		//
+		// /**
+		// * Method focusGained()
+		// * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
+		// */
+		// @Override
+		// public void focusGained(final FocusEvent e) {
+		// System.out.println("Focus gained for display. Attaching a listener ");
+		// SwtGui.getDisplay().addFilter(SWT.KeyUp, getGlobalKeyboardListener());
+		// SwtGui.getDisplay().addFilter(SWT.KeyDown, getGlobalKeyboardListener());
+		// super.focusGained(e);
+		// }
+		//
+		// /**
+		// * Method focusLost()
+		// * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
+		// */
+		// @Override
+		// public void focusLost(final FocusEvent e) {
+		// System.out.println("Focus lost for display");
+		// SwtGui.getDisplay().removeFilter(SWT.KeyUp, getGlobalKeyboardListener());
+		// SwtGui.getDisplay().removeFilter(SWT.KeyDown, getGlobalKeyboardListener());
+		// super.focusLost(e);
+		// }
+		//
+		// });
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = 0;
 		gd.verticalIndent = 0;
@@ -152,12 +152,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	}
 
-	LayeredDisplayKeyboardListener getGlobalKeyboardListener() {
-		if ( globalKeyboardListener == null && getDisplaySurface() != null ) {
-			globalKeyboardListener = new LayeredDisplayKeyboardListener(getDisplaySurface());
-		}
-		return globalKeyboardListener;
-	}
+	// LayeredDisplayKeyboardListener getGlobalKeyboardListener() {
+	// if ( globalKeyboardListener == null && getDisplaySurface() != null ) {
+	// globalKeyboardListener = new LayeredDisplayKeyboardListener(getDisplaySurface());
+	// }
+	// return globalKeyboardListener;
+	// }
 
 	@Override
 	public void setFocus() {
