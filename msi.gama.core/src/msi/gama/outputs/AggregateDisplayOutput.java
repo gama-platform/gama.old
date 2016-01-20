@@ -270,4 +270,13 @@ public class AggregateDisplayOutput implements IOutput, IDisplayOutput {
 		return scope;
 	}
 
+	/**
+	 * Method getOriginalName()
+	 * @see msi.gama.outputs.IOutput#getOriginalName()
+	 */
+	@Override
+	public String getOriginalName() {
+		return getName();
+	}
+
 }
