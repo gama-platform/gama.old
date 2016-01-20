@@ -231,10 +231,10 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		}, SWT.RIGHT);
 	}
 
-	@Override
-	public void outputReloaded(final IDisplayOutput output) {
-
-	}
+	// @Override
+	// public void outputReloaded(final IDisplayOutput output) {
+	//
+	// }
 
 	/**
 	 * Method pauseChanged()

@@ -459,8 +459,9 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		exp = species.getFacet("use_neighbours_cache");
 		final boolean useNeighboursCache = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.NEIGHBORS);
-		if (exp == null) 
+		if ( exp == null ) {
 			exp = species.getFacet(IKeyword.NEIGHBOURS);
+		}
 		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
 		exp = species.getFacet(IKeyword.FILE);
@@ -531,19 +532,10 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	/**
 	 * @see msi.gama.common.interfaces.IGamlable#toGaml()
 	 */
-	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return "list(" + species.getName() + ")";
-	}
-
-	/**
-	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)
-	 */
+	// AD 19/01/16: Commented to address Issue #1451
 	// @Override
-	// public GamaList<IAgent> listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
-	// // TODO Is the copy necessary ?
-	// return new GamaList(this);
-	// // return this;
+	// public String serialize(final boolean includingBuiltIn) {
+	// return "list(" + species.getName() + ")";
 	// }
 
 	@Override
@@ -587,46 +579,6 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {
 		removeValue(scope, value);
 	}
-
-	//
-	// public void removeAt(IScope scope, Integer index) {
-	//
-	// }
-
-	/**
-	 * @see msi.gama.util.IContainer#add(java.lang.Object, java.lang.Object)
-	 */
-	// @Override
-	// public void add(final IScope scope, final Integer index, final Object value, final Object param, final boolean
-	// all,
-	// final boolean add) {
-	// if ( all && add && value instanceof IContainer ) {
-	// for ( final Object o : ((IContainer) value).iterable(scope) ) {
-	// add(scope, null, o, null, false, true);
-	// }
-	// } else if ( value instanceof IAgent ) {
-	// fireAgentAdded((IAgent) value);
-	// /* agents. */add((IAgent) value);
-	// }
-	// }
-
-	/**
-	 * @see msi.gama.util.IContainer#removeAll(msi.gama.util.IContainer)
-	 */
-	// @Override
-	// public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
-	// if ( getSpecies().getName().equals("flock") ) {
-	// scope.getGui().debug("GamaPopulation.remove " + value);
-	// }
-	// if ( all && value instanceof IContainer ) {
-	// for ( final Object o : ((IContainer) value).iterable(scope) ) {
-	// remove(scope, null, o, false);
-	// }
-	// } else if ( value instanceof IAgent && super.remove(value) ) {
-	// topology.removeAgent((IAgent) value);
-	// fireAgentRemoved((IAgent) value);
-	// }
-	// }
 
 	@Override
 	public boolean remove(final Object a) {

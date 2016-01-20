@@ -365,18 +365,23 @@ public class RandomUtils {
 	}
 
 	public static void main(final String[] args) {
-		drawRandomValues(-0.2, 0.2, 0.1);
-		drawRandomValues(4., 5., 0.2);
-		drawRandomValues(0, 100, 3);
-		drawRandomValues(-5, 5, 3);
-		RandomUtils r = new RandomUtils(100.0, "mersenne");
-		for ( int i = 0; i < 10000000; i++ ) {
-			double d = 0.0;
-			if ( r.between(0.0, 0.1) == 0.0 ) {
-				System.out.println("0.0 !");
-			}
+		RandomUtils r1 = new RandomUtils(100.0, "mersenne");
+		RandomUtils r2 = new RandomUtils(100.0, "m{ersenne");
+		for ( int i = 0; i < 2000; i++ ) {
+			System.out.println("r1 " + r1.next() + " | r2 " + r2.next());
 		}
-		System.out.println("Finished");
+		// drawRandomValues(-0.2, 0.2, 0.1);
+		// drawRandomValues(4., 5., 0.2);
+		// drawRandomValues(0, 100, 3);
+		// drawRandomValues(-5, 5, 3);
+		// RandomUtils r = new RandomUtils(100.0, "mersenne");
+		// for ( int i = 0; i < 10000000; i++ ) {
+		// double d = 0.0;
+		// if ( r.between(0.0, 0.1) == 0.0 ) {
+		// System.out.println("0.0 !");
+		// }
+		// }
+		// System.out.println("Finished");
 	}
 
 	public final class BitString {
@@ -425,7 +430,7 @@ public class RandomUtils {
 			if ( bitsUsed < WORD_LENGTH ) {
 				int unusedBits = WORD_LENGTH - bitsUsed;
 				int mask = 0xFFFFFFFF >>> unusedBits;
-			data[data.length - 1] &= mask;
+				data[data.length - 1] &= mask;
 			}
 		}
 
@@ -439,8 +444,8 @@ public class RandomUtils {
 			for ( int i = 0; i < value.length(); i++ ) {
 				if ( value.charAt(i) == '1' ) {
 					setBit(value.length() - (i + 1), true);
-				} else if ( value.charAt(i) != '0' ) { throw new IllegalArgumentException(
-					"Illegal character at position " + i); }
+				} else if ( value
+					.charAt(i) != '0' ) { throw new IllegalArgumentException("Illegal character at position " + i); }
 			}
 		}
 
@@ -456,7 +461,7 @@ public class RandomUtils {
 		 * @param index The index of the bit to look-up (0 is the least-significant bit).
 		 * @return A boolean indicating whether the bit is set or not.
 		 * @throws IndexOutOfBoundsException If the specified index is not a bit
-		 *             position in this bit string.
+		 * position in this bit string.
 		 */
 		public boolean getBit(final int index) {
 			assertValidIndex(index);
@@ -470,7 +475,7 @@ public class RandomUtils {
 		 * @param index The index of the bit to set (0 is the least-significant bit).
 		 * @param set A boolean indicating whether the bit should be set or not.
 		 * @throws IndexOutOfBoundsException If the specified index is not a bit
-		 *             position in this bit string.
+		 * position in this bit string.
 		 */
 		public void setBit(final int index, final boolean set) {
 			assertValidIndex(index);
@@ -490,8 +495,8 @@ public class RandomUtils {
 		 * @throws IndexOutOfBoundsException If the index is not valid.
 		 */
 		private void assertValidIndex(final int index) {
-			if ( index >= length || index < 0 ) { throw new IndexOutOfBoundsException("Invalid index: " + index +
-				" (length: " + length + ")"); }
+			if ( index >= length || index < 0 ) { throw new IndexOutOfBoundsException(
+				"Invalid index: " + index + " (length: " + length + ")"); }
 		}
 
 		/**

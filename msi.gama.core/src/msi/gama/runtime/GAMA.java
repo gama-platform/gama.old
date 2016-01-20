@@ -101,9 +101,10 @@ public class GAMA {
 		final ParametersSet params, final Long seed) {
 
 		ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
-		currentExperiment.setHeadless(true);
+
 		if ( currentExperiment == null ) { throw GamaRuntimeException
 			.error("Experiment " + expName + " cannot be created"); }
+		currentExperiment.setHeadless(true);
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
 				entry.getValue());

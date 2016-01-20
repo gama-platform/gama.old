@@ -188,7 +188,10 @@ public class GamaColors {
 	}
 
 	public static GamaUIColor get(final int r, final int g, final int b) {
-		RGB rgb = new RGB(r, g, b);
+		int r1 = r < 0 ? 0 : r > 255 ? 255 : r;
+		int g1 = g < 0 ? 0 : g > 255 ? 255 : g;
+		int b1 = b < 0 ? 0 : b > 255 ? 255 : b;
+		RGB rgb = new RGB(r1, g1, b1);
 		return get(rgb);
 	}
 

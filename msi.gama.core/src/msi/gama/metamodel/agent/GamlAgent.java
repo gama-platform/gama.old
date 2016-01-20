@@ -16,8 +16,7 @@ import com.google.common.collect.Iterables;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.kernel.experiment.IExperimentAgent;
-import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -745,7 +744,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		 */
 		@Override
 		public RandomUtils getRandom() {
-			IExperimentAgent a = this.getExperiment();
+			SimulationAgent a = this.getSimulationScope();
 			return a == null ? null : a.getRandomGenerator();
 		}
 

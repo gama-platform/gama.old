@@ -26,7 +26,7 @@ public interface IGamaView {
 
 	public void close();
 
-	public void outputReloaded(IDisplayOutput output);
+	// public void outputReloaded(IDisplayOutput output);
 
 	public void removeOutput(IDisplayOutput putput);
 

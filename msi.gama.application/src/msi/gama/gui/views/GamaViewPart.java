@@ -20,8 +20,8 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.experiment.*;
@@ -221,8 +221,14 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 				toolbar.wipe(SWT.RIGHT, true);
 				GamaToolbarFactory.buildToolbar(this, toolbar);
 			}
-			outputReloaded(out);
+
+			// outputReloaded(out);
 		}
+		int r = (int) Math.random() * 255;
+		int g = (int) Math.random() * 255;
+		int b = (int) Math.random() * 255;
+		this.setTitleImage(GamaIcons
+			.createTempColorIcon(SwtGui.getColorForSimulationNumber(out.getScope().getSimulationScope().getIndex())));
 	}
 
 	@Override
@@ -281,14 +287,14 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		});
 
 	}
-
-	@Override
-	public void outputReloaded(final IDisplayOutput output) {
-		// if ( getOutput() != output ) {
-		// setOutput(output);
-		// }
-
-	}
+	//
+	// @Override
+	// public void outputReloaded(final IDisplayOutput output) {
+	// // if ( getOutput() != output ) {
+	// // setOutput(output);
+	// // }
+	//
+	// }
 
 	@Override
 	public void removeOutput(final IDisplayOutput output) {

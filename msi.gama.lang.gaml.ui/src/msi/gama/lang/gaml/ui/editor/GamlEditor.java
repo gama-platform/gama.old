@@ -42,6 +42,7 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import com.google.common.collect.ObjectArrays;
 import com.google.inject.*;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.*;
@@ -260,6 +261,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 		@Override
 		public void widgetSelected(final SelectionEvent evt) {
+			IGui gui = GAMA.getRegularGui();
+			// We refuse to run if there is no XtextGui available.
+			if ( !(gui instanceof XtextGui) ) { return; }
 			GamlEditor.this.performSave(true, null);
 			if ( XtextGui.EDITOR_SAVE.getValue() ) {
 				SwtGui.getPage().saveAllEditors(XtextGui.EDITOR_SAVE_ASK.getValue());

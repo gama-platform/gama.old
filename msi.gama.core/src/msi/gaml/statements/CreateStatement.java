@@ -369,7 +369,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				} else {
 					sim._init_(sim.getScope());
 				}
-				sim.getOutputManager().init(sim.getScope());
+				if ( sim.getOutputManager() != null ) {
+					sim.getOutputManager().init(sim.getScope());
+				}
 			}
 		}
 		// end-hqnghi

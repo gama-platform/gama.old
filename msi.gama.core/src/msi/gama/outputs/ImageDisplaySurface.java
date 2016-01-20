@@ -35,7 +35,7 @@ import msi.gaml.types.Types;
 public class ImageDisplaySurface implements IDisplaySurface {
 
 	private final LayeredDisplayOutput output;
-	private final boolean needsUpdate = true;
+	// private final boolean needsUpdate = true;
 	private BufferedImage buffImage = null;
 	private Graphics2D g2 = null;
 	private int width = 500, height = 500;
@@ -138,9 +138,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void updateDisplay(final boolean force) {
-		if ( needsUpdate || force ) {
-			drawAllDisplays();
-		}
+		// if ( needsUpdate || force ) {
+		drawAllDisplays();
+		// }
 	}
 
 	private void drawAllDisplays() {

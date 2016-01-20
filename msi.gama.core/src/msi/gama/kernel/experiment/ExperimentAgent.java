@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.Platform;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
@@ -449,7 +449,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		getRandomGenerator().setGenerator(newRng, true);
 	}
 
-	private SimulationPopulation getSimulationPopulation() {
+	public SimulationPopulation getSimulationPopulation() {
 		return (SimulationPopulation) getMicroPopulation(getModel());
 	}
 
@@ -595,6 +595,15 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			return super.getAgentVarValue(a, name);
 		}
 
+		@Override
+		public IGui getGui() {
+			if ( getSpecies().isHeadless() ) {
+				return GAMA.getHeadlessGui();
+			} else {
+				return GAMA.getRegularGui();
+			}
+		}
+
 	}
 
 	/**
@@ -604,7 +613,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		IList list = GamaListFactory.create();
 		for ( IAgent a : getSimulationPopulation() ) {
 			SimulationAgent sim = (SimulationAgent) a;
-			list.add(sim.getOutputManager());
+			IOutputManager man = sim.getOutputManager();
+			if ( man != null ) {
+				list.add(man);
+			}
 		}
 		return list;
 	}
