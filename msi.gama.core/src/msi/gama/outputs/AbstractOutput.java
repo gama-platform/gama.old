@@ -34,6 +34,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	boolean paused, open, permanent = false;
 	private boolean isUserCreated = true;
 	final IExpression refresh;
+	final String originalName;
 
 	private int refreshRate = 1;
 
@@ -46,12 +47,18 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		}
 
 		name = getLiteral(IKeyword.NAME);
+		originalName = name;
 		if ( name != null ) {
 			name = name.replace(':', '_').replace('/', '_').replace('\\', '_');
 			if ( name.length() == 0 ) {
 				name = "output";
 			}
 		}
+	}
+
+	@Override
+	public String getOriginalName() {
+		return originalName;
 	}
 
 	// @Override

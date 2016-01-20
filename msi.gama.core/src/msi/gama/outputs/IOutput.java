@@ -72,4 +72,6 @@ public interface IOutput extends ISymbol, IStepable {
 	 */
 	public IScope getScope();
 
+	public String getOriginalName();
+
 }
