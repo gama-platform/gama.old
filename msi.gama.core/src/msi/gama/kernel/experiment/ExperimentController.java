@@ -24,10 +24,10 @@ public class ExperimentController implements Runnable, IExperimentController {
 	protected volatile ArrayBlockingQueue<Integer> commands;
 	public volatile Thread commandThread;
 	protected volatile boolean running = true;
-	private final FrontEndScheduler scheduler;
+	private final ExperimentScheduler scheduler;
 
 	public ExperimentController(final IExperimentPlan experiment) {
-		this.scheduler = new FrontEndScheduler(experiment);
+		this.scheduler = new ExperimentScheduler(experiment);
 		commands = new ArrayBlockingQueue(10);
 		this.experiment = experiment;
 	}
@@ -280,7 +280,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 	// }
 
 	@Override
-	public FrontEndScheduler getScheduler() {
+	public ExperimentScheduler getScheduler() {
 		return scheduler;
 	}
 
