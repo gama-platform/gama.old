@@ -64,7 +64,7 @@ public class AgentScheduler implements IStepable {
 	@Override
 	public void dispose() {
 		executeActions(scope, DISPOSE);
-		scope.getGui().debug("AgentScheduler.dispose");
+		//scope.getGui().debug("AgentScheduler.dispose");
 		// scope.setInterrupted(true);
 		// We wait for the scheduler to become "idle" (i.e. when all the interruptions have become
 		// effective) if the global scheduler is not paused.
