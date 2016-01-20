@@ -9,10 +9,12 @@
  * 
  * 
  **********************************************************************************************/
-package ummisco.gama.communicator.common.remoteObject;
+package ummisco.gama.serializer.gamaType.converters;
 
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.GamlAgent;
+import ummisco.gama.serializer.gamaType.reduced.RemoteAgent;
+
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.*;
 
