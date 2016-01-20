@@ -149,7 +149,7 @@ public class SimulationAgent extends GamlAgent {
 	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
 	public Object _step_(final IScope scope) {
 
-		// System.out.println("Stepping simulation at cycle " + clock.getCycle());
+		System.out.println("Stepping simulation " + getIndex() + " at cycle " + clock.getCycle());
 
 		clock.beginCycle();
 		// A simulation always runs in its own scope
@@ -380,6 +380,7 @@ public class SimulationAgent extends GamlAgent {
 		// create a copy of outputs from description
 		if ( /* !scheduled && */ !getExperiment().getSpecies().isBatch() ) {
 			IDescription des = ((ISymbol) iOutputManager).getDescription();
+			if ( des == null ) { return; }
 			outputs = (IOutputManager) des.compile();
 			Map<String, IOutput> mm = new TOrderedHashMap<String, IOutput>();
 			for ( Map.Entry<String, ? extends IOutput> entry : outputs.getOutputs().entrySet() ) {
