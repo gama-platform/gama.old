@@ -1,7 +1,7 @@
 /*********************************************************************************************
  *
  *
- * 'FrontEndScheduler.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'ExperimentScheduler.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
@@ -19,7 +19,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
 
-public class FrontEndScheduler implements Runnable {
+public class ExperimentScheduler implements Runnable {
 
 	public volatile boolean alive = true;
 	// Flag indicating that the simulation is set to pause (it should be alive unless the application is shutting down)
@@ -33,7 +33,7 @@ public class FrontEndScheduler implements Runnable {
 	volatile Semaphore lock = new Semaphore(1);
 	final IExperimentPlan experiment;
 
-	public FrontEndScheduler(final IExperimentPlan experiment) {
+	public ExperimentScheduler(final IExperimentPlan experiment) {
 		this.experiment = experiment;
 		if ( !experiment.isHeadless() ) {
 			executionThread = new Thread(null, this, "Front end scheduler");
@@ -78,15 +78,15 @@ public class FrontEndScheduler implements Runnable {
 			}
 		}
 
-		// scope.getGui().debug("FrontEndScheduler.step");
+		GAMA.getGui().debug("ExperimentScheduler.step");
 		stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
 		scopes = toStep.values().toArray(new IScope[toStep.size()]);
 		for ( int i = 0; i < stepables.length; i++ ) {
 			final IScope scope = scopes[i];
 			try {
-				// scope.getGui().debug("FrontEndScheduler.step : stepping " + stepables[i]);
+				GAMA.getGui().debug("ExperimentScheduler.step : stepping " + stepables[i]);
 				if ( !scope.step(stepables[i]) ) {
-					// scope.getGui().debug("FrontEndScheduler.step : removal of " + stepables[i]);
+					GAMA.getGui().debug("ExperimentScheduler.step : removal of " + stepables[i]);
 					toStop.add(stepables[i]);
 				}
 			} catch (final Exception e) {
@@ -107,11 +107,11 @@ public class FrontEndScheduler implements Runnable {
 			for ( final IStepable s : toStop ) {
 				final IScope scope = toStep.get(s);
 				if ( scope != null && !scope.interrupted() ) {
-					// scope.getGui().debug("FrontEndScheduler.clean : Interrupting " + scope);
+					// scope.getGui().debug("ExperimentScheduler.clean : Interrupting " + scope);
 					scope.setInterrupted(true);
 				}
 				toStep.remove(s);
-				// scope.getGui().debug("FrontEndScheduler.clean : Removed " + s);
+				// scope.getGui().debug("ExperimentScheduler.clean : Removed " + s);
 				// s.dispose();
 			}
 			if ( toStep.isEmpty() ) {
@@ -155,7 +155,7 @@ public class FrontEndScheduler implements Runnable {
 		}
 		toStep.put(stepable, scope);
 		// We first init the stepable before it is scheduled
-		// scope.getGui().debug("FrontEndScheduler.schedule " + stepable);
+		GAMA.getGui().debug("ExperimentScheduler.schedule " + stepable);
 		try {
 			if ( !scope.init(stepable) ) {
 				toStop.add(stepable);

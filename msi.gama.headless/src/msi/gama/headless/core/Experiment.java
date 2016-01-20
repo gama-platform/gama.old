@@ -13,6 +13,7 @@ package msi.gama.headless.core;
 
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -22,6 +23,7 @@ public class Experiment implements IExperiment {
 	public static final long DEFAULT_SEED_VALUE = 0;
 
 	protected IExperimentPlan currentExperiment;
+	protected SimulationAgent currentSimulation;
 	protected ParametersSet params;
 	protected IModel model;
 	protected String experimentName;
@@ -63,7 +65,7 @@ public class Experiment implements IExperiment {
 		this.currentStep = 0;
 
 		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, seed);
-
+		this.currentSimulation = ((SimulationAgent) this.currentExperiment.getAgent().getSimulation());
 		// this.currentExperiment.isHeadless()
 		this.currentExperiment.setHeadless(true);
 	}
@@ -86,8 +88,8 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public Object getOutput(final String parameterName) {
-		IOutput output =
-			((AbstractOutputManager) this.currentExperiment.getAllSimulationOutputs()).getOutputWithName(parameterName);
+		IOutput output =((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
+		
 		if ( output == null ||
 			!(output instanceof MonitorOutput) ) { throw GamaRuntimeException.error("Output unresolved"); }
 		// this.currentExperiment.getSimulationOutputs().step(this.getScope());

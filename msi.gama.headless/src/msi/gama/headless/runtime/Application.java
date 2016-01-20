@@ -22,10 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
@@ -109,10 +105,14 @@ public class Application implements IApplication {
 		File images = new File(Globals.IMAGES_PATH);
 		if(!images.exists())
 			images.mkdir();
-			
-		File input = new File(args[inIndex]);
-		if (!input.exists()) {
-			return showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args[inIndex]);
+		
+		if(this.consoleMode == false)
+		{
+			File input = new File(args[inIndex]);
+			if (!input.exists()) {
+				return showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args[inIndex]);
+			}
+
 		}
 		return true;
 	}
@@ -147,6 +147,7 @@ public class Application implements IApplication {
 
 		System.out.println("File saved!");*/
 		this.tunnelingMode = Application.containTunnellingParameter(args);
+		this.consoleMode = tunnelingMode || Application.containConsoleParameter(args);
 		
 		
 		if ( tunnelingMode == false && !checkParameters(args)  ) {
@@ -155,10 +156,9 @@ public class Application implements IApplication {
 		this.numberOfThread = Application.getNumberOfThread(args);
 		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 		
-		this.consoleMode = tunnelingMode || Application.containConsoleParameter(args);
 		Reader in = null;
 		
-		if(true || this.verbose ||!this.tunnelingMode)
+		if(this.verbose ||!this.tunnelingMode)
 		{
 			SystemLogger.activeDisplay();
 		}
@@ -168,8 +168,11 @@ public class Application implements IApplication {
 			in =new Reader(ConsoleReader.readOnConsole());
 		}
 		else
-		 in = new Reader(args[args.length-2]);
-		 in.parseXmlFile();
+		{
+			 in = new Reader(args[args.length-2]);
+			 
+		}
+		in.parseXmlFile();
 		 this.buildAndRunSimulation(in.getSimulation());
 		 in.dispose();
 		while (processorQueue.isPerformingSimulation()) {

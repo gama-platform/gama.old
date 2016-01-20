@@ -52,9 +52,6 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	@Override
 	public boolean step(final IScope scope) {
 		boolean result = super.step(scope);
-		if ( scope.getExperiment() != null && !scope.getExperiment().getSpecies().isBatch() ) {
-			scope.getGui().informStatus(scope.getClock().getInfo());
-		}
 		return result;
 	}
 

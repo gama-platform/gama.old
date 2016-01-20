@@ -168,7 +168,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		final IExpression param_output, final IExpression reset, final IExpression repeat,
 		final IExpression stopCondition, final IExpression share) {
 		// if ( GAMA.getController(aliasName) == null ) {
-		// IExperimentController fec = new ExperimentController(new FrontEndScheduler());
+		// IExperimentController fec = new ExperimentController(new ExperimentScheduler());
 		// GAMA.addController(aliasName, fec);
 		// }
 		// multithread

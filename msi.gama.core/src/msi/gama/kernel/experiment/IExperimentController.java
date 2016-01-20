@@ -4,7 +4,7 @@
  */
 package msi.gama.kernel.experiment;
 
-import msi.gama.runtime.FrontEndScheduler;
+import msi.gama.runtime.ExperimentScheduler;
 
 /**
  * Class IExperimentController.
@@ -32,7 +32,7 @@ public interface IExperimentController {
 	/**
 	 * @return
 	 */
-	FrontEndScheduler getScheduler();
+	ExperimentScheduler getScheduler();
 
 	/**
 	 *
