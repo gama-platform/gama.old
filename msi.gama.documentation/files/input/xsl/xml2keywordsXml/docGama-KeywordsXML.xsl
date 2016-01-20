@@ -20,8 +20,8 @@
 <!-- species -->	
 <!-- attribute -->	
 	<!-- skills -->
-	<!-- XXXXX species -->
-<!-- XXXXX Type -->
+	<!-- species -->
+<!-- Type -->
 
 		
 <!-- ======================== operator ======================== -->
@@ -31,7 +31,6 @@
 <xsl:call-template name="keyword">    
 	<xsl:with-param name="category" select="'operator'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
-	<xsl:with-param name="insideElt" select="''"/>		
 </xsl:call-template>
 </xsl:for-each>
 
@@ -42,10 +41,7 @@
 			<xsl:sort select="@name" />
 <xsl:call-template name="keyword">    
 	<xsl:with-param name="category" select="'statement'"/>
-	<xsl:with-param name="nameGAMLElement" select="@name"/>
-	<xsl:with-param name="insideElt" select="''"/>	
-		<xsl:with-param name="insideElt" select="''"/>	
-	
+	<xsl:with-param name="nameGAMLElement" select="@name"/>	
 </xsl:call-template>
 </xsl:for-each>
 
@@ -76,7 +72,6 @@
 <xsl:call-template name="keyword">    
 	<xsl:with-param name="category" select="'architecture'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
-	<xsl:with-param name="insideElt" select="''"/>	
 </xsl:call-template>
 </xsl:for-each> 
  
@@ -88,7 +83,6 @@
 <xsl:call-template name="keyword">    
 	<xsl:with-param name="category" select="'skill'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
-	<xsl:with-param name="insideElt" select="''"/>	
 </xsl:call-template>
 </xsl:for-each> 
 
@@ -99,7 +93,6 @@
 <xsl:call-template name="keyword">    
 	<xsl:with-param name="category" select="'constant'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
-	<xsl:with-param name="insideElt" select="''"/>	
 </xsl:call-template>
 </xsl:for-each> 
 
@@ -145,8 +138,6 @@
 <xsl:call-template name="keyword">    
 	<xsl:with-param name="category" select="'species'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
-	<xsl:with-param name="insideElt" select="''"/>	
-	<xsl:with-param name="insideEltConcept" select="''"/>				
 </xsl:call-template>
 </xsl:for-each>
 
@@ -170,19 +161,28 @@
 
 <xsl:for-each select="/doc/speciess/species"> 
 		<xsl:sort select="@name" />
-  		<xsl:variable name="skillName" select="@name"/>
+  		<xsl:variable name="speciesName" select="@name"/>
 	<xsl:for-each select="vars/var"> 
 	
 <xsl:call-template name="keyword">    
 	<xsl:with-param name="category" select="'attribute'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
-	<xsl:with-param name="insideElt" select="$skillName"/>	
-	<xsl:with-param name="insideEltConcept" select="'skill'"/>				
+	<xsl:with-param name="insideElt" select="$speciesName"/>	
+	<xsl:with-param name="insideEltConcept" select="'species'"/>				
 </xsl:call-template>
 </xsl:for-each>
 
 	</xsl:for-each>
 
+<!-- ======================== type ======================== -->
+ 
+<xsl:for-each select="/doc/types/type"> 
+			<xsl:sort select="@name" />
+<xsl:call-template name="keyword">    
+	<xsl:with-param name="category" select="'type'"/>
+	<xsl:with-param name="nameGAMLElement" select="@name"/>
+</xsl:call-template>
+</xsl:for-each> 
 
 
 </xsl:template>
@@ -192,7 +192,7 @@
  <xsl:template name="keyword">
    	<xsl:param name="category"/>
    	<xsl:param name="nameGAMLElement"/>
-   	<xsl:param name="insideElt"/>
+   	<xsl:param name="insideElt" select="''"/>
    	<xsl:param name="insideEltConcept" select="''"/>
    	<xsl:text disable-output-escaping="yes">
    	&lt;keyword id="</xsl:text><xsl:value-of select="$category"/><xsl:text>_</xsl:text><xsl:value-of select="$nameGAMLElement"/>
