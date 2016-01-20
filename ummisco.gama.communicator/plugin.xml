@@ -2,7 +2,10 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="gaml.extension">
+         point="gaml.grammar.addition">
+      <path
+            name="gaml">
+      </path>
    </extension>
 
 </plugin>
