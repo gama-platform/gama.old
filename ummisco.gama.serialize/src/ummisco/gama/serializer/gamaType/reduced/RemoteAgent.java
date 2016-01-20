@@ -12,6 +12,7 @@
 package ummisco.gama.serializer.gamaType.reduced;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.GamlAgent;
@@ -36,12 +37,6 @@ public class RemoteAgent {
 		speciesName = agt.getSpecies().getName();
 		this.geometry = agt.getGeometry();
 		this.attributes = agt.getAttributes();
-
-		for ( final String specVar : agt.getSpecies().getVarNames() ) {
-			System.out.println(name + " " + specVar);
-			Object val = agt.getSpecies().getVar(specVar).value(agt.getScope(), agt);	
-			attributes.put(specVar, val);
-		}
 	}
 
 	public Object getAttributes(final Object key) {

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -201,17 +202,72 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private void createMenus(final Composite parent) {
-		attributesMenu = new Composite(parent, SWT.NONE);
-		attributesMenu.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		final GridLayout layout = new GridLayout(1, false);
+		// _sComp = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+
+		// Create the composite to draw widgets onto and put the scroll bars on
+		// it
+		// _composite = new Composite(_sComp, SWT.NONE);
+		// _sComp.setContent(_composite);
+
+		// Set the size and configure the scrollbars
+		// Rectangle rect = _parent.getClientArea();
+		// Point size = _composite.computeSize(rect.width, SWT.DEFAULT);
+		// _composite.setSize(size);
+		// _sComp.setSize(rect.width, rect.height);
+
+		// _parent.addListener(SWT.Resize, new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event e) {
+		// Rectangle rect = _parent.getClientArea();
+		// Point size = _composite.computeSize(rect.width, SWT.DEFAULT);
+		// _composite.setSize(size);
+		// _sComp.setSize(rect.width, rect.height);
+		// End handleEvent inner method
+		// End addListener
+
+		final ScrolledComposite scroll = new ScrolledComposite(parent, SWT.V_SCROLL);
+		scroll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
+		scroll.setExpandHorizontal(true);
+		scroll.setExpandVertical(true);
+		attributesMenu = new Composite(scroll, SWT.NONE);
+		scroll.setContent(attributesMenu);
+		// attributesMenu.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		GridLayout layout = new GridLayout(1, false);
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.verticalSpacing = 1;
 		attributesMenu.setLayout(layout);
 		attributesMenu.setBackground(IGamaColors.WHITE.color());
-		// attributesMenu.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fillAttributeMenu();
+		// attributesMenu.setSize(attributesMenu.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		// attributesMenu.layout();
+
 		attributesMenu.pack(true);
+
+		Point size = attributesMenu.computeSize(100, SWT.DEFAULT);
+		scroll.setMinSize(size);
+
+		// Rectangle rect = parent.getClientArea();
+		// Point size = attributesMenu.computeSize(200, SWT.DEFAULT);
+		// attributesMenu.setSize(size);
+		// scroll.setSize(rect.width, rect.height);
+		//
+		// // scroll.setExpandVertical(true);
+		// // scroll.setExpandHorizontal(true);
+		// // scroll.setMinHeight(attributesMenu.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		// // scroll.setAlwaysShowScrollBars(true);
+		// parent.addControlListener(new ControlAdapter() {
+		//
+		// @Override
+		// public void controlResized(final ControlEvent e) {
+		// Rectangle rect = parent.getClientArea();
+		// Point size = attributesMenu.computeSize(200, SWT.DEFAULT);
+		// attributesMenu.setSize(size);
+		// scroll.setSize(rect.width, rect.height);
+		// }
+		// });
+
 	}
 
 	private void createExpressionComposite() {
@@ -293,7 +349,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		}
 		Label attributesLabel = new Label(attributesMenu, SWT.NONE);
 		attributesLabel.setText("Attributes");
-		attributesLabel.setFont(SwtGui.getNavigFolderFont());
+		attributesLabel.setFont(SwtGui.getNavigHeaderFont());
 		attributesLabel = new Label(attributesMenu, SWT.None);
 		attributesLabel.setText(" ");
 		String tooltipText;
@@ -310,6 +366,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		Collections.sort(names);
 		for ( String name : names ) {
 			SwitchButton b = new SwitchButton(attributesMenu, SWT.NONE, "   ", "   ", name);
+			b.setBackground(GamaColors.system(SWT.COLOR_WHITE));
 			b.setSelection(hasPreviousSelection && selectedColumns.get(speciesName).contains(name));
 			b.addSelectionListener(attributeAdapter);
 		}

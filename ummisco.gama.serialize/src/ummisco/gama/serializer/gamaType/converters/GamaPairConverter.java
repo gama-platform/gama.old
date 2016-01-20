@@ -28,6 +28,7 @@ public class GamaPairConverter implements Converter {
 	@Override
 	public void marshal(Object arg0, HierarchicalStreamWriter arg1, MarshallingContext arg2) {
 		GamaPair mp = (GamaPair) arg0;
+		System.out.println("ConvertAnother : GamaPair " + mp.getClass());			
 		arg2.convertAnother(new GamaPairReducer(mp));
 	}
 

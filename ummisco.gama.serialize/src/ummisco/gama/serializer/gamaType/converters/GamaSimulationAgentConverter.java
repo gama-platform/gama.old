@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
+import ummisco.gama.serializer.gamaType.reduced.GamaSimulationAgentReducer;
 import ummisco.gama.serializer.gamaType.reduced.RemoteAgent;
 
 public class GamaSimulationAgentConverter implements Converter{
@@ -21,11 +21,8 @@ public class GamaSimulationAgentConverter implements Converter{
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		SimulationAgent simAgt = (SimulationAgent) arg0;
 		writer.startNode("oneSimulation");
-		for(IAgent agt : simAgt.getAgents(simAgt.getScope())) {
-    		context.convertAnother(agt);
-		}
+		context.convertAnother(new GamaSimulationAgentReducer(simAgt));
 		writer.endNode();
-//		context.convertAnother(new RemoteAgent(agt));
 	}
 
 	@Override
