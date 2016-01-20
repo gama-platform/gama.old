@@ -291,7 +291,7 @@ public class ExperimentJob implements IExperimentJob{
 		attr2.setValue(new Long(this.maxStep).toString());
 		simulation.setAttributeNode(attr2);
 
-		Attr attr4 = doc.createAttribute(XmlTAG.NAME_TAG);
+		Attr attr4 = doc.createAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
 		attr4.setValue(this.experimentName);
 		simulation.setAttributeNode(attr4);
 

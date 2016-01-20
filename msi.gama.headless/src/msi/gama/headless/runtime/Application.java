@@ -121,11 +121,12 @@ public class Application implements IApplication {
 		System.out.println(HeadLessErrors.getError(errorCode, path));
 		return false;
 	}
-
-
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
+		//SecurityManager 
+		
+		
 		SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
@@ -146,6 +147,8 @@ public class Application implements IApplication {
 
 		System.out.println("File saved!");*/
 		this.tunnelingMode = Application.containTunnellingParameter(args);
+		
+		
 		if ( tunnelingMode == false && !checkParameters(args)  ) {
 			System.exit(-1);
 		}
@@ -155,7 +158,7 @@ public class Application implements IApplication {
 		this.consoleMode = tunnelingMode || Application.containConsoleParameter(args);
 		Reader in = null;
 		
-		if(this.verbose ||!this.tunnelingMode)
+		if(true || this.verbose ||!this.tunnelingMode)
 		{
 			SystemLogger.activeDisplay();
 		}

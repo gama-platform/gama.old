@@ -291,7 +291,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	 */
 	public void displayValue(final Object currentValue2) {
 		IScope scope = GAMA.obtainNewScope();
-		setCurrentValue(evaluateExpression ? expectedType.cast(scope, currentValue2, false, false) : currentValue2);
+		setCurrentValue(evaluateExpression ? expectedType.cast(scope, currentValue2, null, false) : currentValue2);
 		text.setText(StringUtils.toGaml(currentValue2, false));
 		GAMA.releaseScope(scope);
 	}
