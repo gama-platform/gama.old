@@ -22,6 +22,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaSVGFile;
 import msi.gaml.operators.Cast;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.files.GLModel;
@@ -54,6 +55,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		this.color= color;
 		this.alpha = alpha; 
 		this.size = dimensions;
+		if ((file instanceof GamaSVGFile) && (size == null)) size = new GamaPoint(1,1,1);
 		atLoc = location;
 		this.env = env;
 		if (rotate3D != null) {
@@ -96,8 +98,15 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	@Override
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
 		JOGLRenderer renderer = drawer.renderer;
-		    //FIXME: To simplify the process picking is not yet taken in account
-			
+		//FIXME: To simplify the process picking is not yet taken in account
+			if (file instanceof GamaSVGFile ) {
+				if (size != null)
+					gl.glTranslated(-size.x/2, renderer.yFlag*size.y/2,0);	
+				else if (env != null) {
+					gl.glTranslated(-env.getWidth()/2, renderer.yFlag*env.getHeight()/2,0);	
+				}
+			}
+				
 			if (atLoc != null) {
 				gl.glTranslated(atLoc.getX(), renderer.yFlag*atLoc.getY(), atLoc.getZ());
 			} else {
@@ -112,12 +121,14 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			if(this.size!=null && env != null){
 				gl.glScaled(size.x / env.getWidth(), size.y / env.getHeight(), size.z/ env.getHeight());
 			}
-			/*if (this.color != null) { does not work for obj files
+			if (this.color != null) { //does not work for obj files
 				gl.glColor3d(color.getRed()/255.0, color.getGreen()/255.0, color.getBlue()/255.0);
-			}*/
+			}
+			
 			super.draw(gl, drawer, picking);
 			
-			
+
+					
 			if(this.size!=null  && env != null){
 				gl.glScaled(env.getWidth() /size.x, env.getHeight()/size.y, env.getHeight()/size.z);
 				 
@@ -135,6 +146,13 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			} else {
 				gl.glTranslated(-this.agent.getLocation().getX(), - renderer.yFlag*this.agent.getLocation().getY(), - this.agent.getLocation().getZ());	
 			}
+			if (file instanceof GamaSVGFile ) {
+				if (size != null)
+					gl.glTranslated(size.x/2, -renderer.yFlag*size.y/2,0);	
+				else if (env != null) {
+					gl.glTranslated(env.getWidth()/2,- renderer.yFlag*env.getHeight()/2,0);	
+				}
+			}	
 			
 	}
 
