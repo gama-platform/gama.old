@@ -12,9 +12,13 @@
 package ummisco.gama.communicator.common.remoteObject;
 
 import java.util.Map;
+
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.species.ISpecies;
 
 public class RemoteAgent {
 
@@ -32,6 +36,12 @@ public class RemoteAgent {
 		speciesName = agt.getSpecies().getName();
 		this.geometry = agt.getGeometry();
 		this.attributes = agt.getAttributes();
+
+		for ( final String specVar : agt.getSpecies().getVarNames() ) {
+			System.out.println(name + " " + specVar);
+			Object val = agt.getSpecies().getVar(specVar).value(agt.getScope(), agt);	
+			attributes.put(specVar, val);
+		}
 	}
 
 	public Object getAttributes(final Object key) {

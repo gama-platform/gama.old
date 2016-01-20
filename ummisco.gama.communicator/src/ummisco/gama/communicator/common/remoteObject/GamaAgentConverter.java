@@ -24,9 +24,11 @@ public class GamaAgentConverter implements Converter {
 	}
 
 	@Override
-	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
+	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		GamlAgent agt = (GamlAgent) arg0;
-		arg2.convertAnother(new RemoteAgent(agt));
+		writer.startNode("oneAgent");
+		context.convertAnother(new RemoteAgent(agt));
+		writer.endNode();
 	}
 
 	@Override

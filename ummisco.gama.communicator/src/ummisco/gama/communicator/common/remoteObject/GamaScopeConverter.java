@@ -14,7 +14,9 @@ package ummisco.gama.communicator.common.remoteObject;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.SimulationPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
@@ -55,25 +57,33 @@ public class GamaScopeConverter implements Converter {
 //        context.convertAnother(expAgt);
 //        writer.endNode();
 
-		writer.startNode("Global");
+        // The experiment ???
+        
+		writer.startNode("Simulations");
         ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
-        IModel model = expAgt.getModel();
-        Collection<IVariable> vars = model.getVars();		
-		
-		
-        writer.setValue(scope.getName().toString());
-        writer.endNode();
+        // The model / global
+        //         IModel model = expAgt.getModel();
+        // Collection<IVariable> vars = model.getVars();		
+
         
-        for(IAgent agt : scope.getSimulationScope().getAgents(scope)) {
-    		writer.startNode("-------------------Agent");
+		SimulationPopulation simPop = expAgt.getSimulationPopulation();
+		
+		// Each simulation 
+		for(IAgent agt : expAgt.getSimulationPopulation()){
+			SimulationAgent simAgt = (SimulationAgent) agt;
     		context.convertAnother(agt);
-            writer.endNode();
-        }
+		}
+		
+		writer.endNode();
+				
+		
+ //       writer.setValue(scope.getName().toString());
+  //      writer.endNode();
 
 
-        IAgent sim = expAgt.getSimulation();
+    //    IAgent sim = expAgt.getSimulation();
         
-        IDescription desc = scope.getExperimentContext();
+    //    IDescription desc = scope.getExperimentContext();
         
 
 	}

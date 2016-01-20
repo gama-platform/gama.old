@@ -449,7 +449,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		getRandomGenerator().setGenerator(newRng, true);
 	}
 
-	private SimulationPopulation getSimulationPopulation() {
+	public SimulationPopulation getSimulationPopulation() {
 		return (SimulationPopulation) getMicroPopulation(getModel());
 	}
 

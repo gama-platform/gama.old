@@ -7,6 +7,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import ummisco.gama.communicator.common.remoteObject.GamaAgentConverter;
 import ummisco.gama.communicator.common.remoteObject.GamaScopeConverter;
+import ummisco.gama.communicator.common.remoteObject.GamaSimulationAgentConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaMapConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaPairConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaPointConverter;
@@ -21,6 +22,7 @@ public class ReverseOperators {
 		xstream.registerConverter(new GamaPointConverter());
 		xstream.registerConverter(new GamaPairConverter());
 		xstream.registerConverter(new GamaMapConverter());
+		xstream.registerConverter(new GamaSimulationAgentConverter());
 		
 		return (String) xstream.toXML(scope);
 	}
