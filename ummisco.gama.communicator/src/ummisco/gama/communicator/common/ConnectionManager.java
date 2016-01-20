@@ -23,6 +23,8 @@ import msi.gama.util.*;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.*;
 import ummisco.gama.communicator.common.remoteObject.*;
+import ummisco.gama.serializer.gamaType.converters.GamaAgentConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaScopeConverter;
 
 public class ConnectionManager extends Skill implements MessageListener {
 

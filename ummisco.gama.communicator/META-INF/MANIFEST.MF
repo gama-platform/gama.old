@@ -8,7 +8,6 @@ Require-Bundle: msi.gama.core;bundle-version="1.6.0",
  msi.gama.processor;bundle-version="1.4.0",
  ummisco.gama.serialize;bundle-version="1.0.0"
 Export-Package: ummisco.gama.communicator.common,
- ummisco.gama.communicator.common.remoteObject,
  ummisco.gama.communicator.skills
 Bundle-ClassPath: .,
  ext/cglib-nodep-2.2.jar,
