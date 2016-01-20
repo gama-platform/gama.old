@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package ummisco.gama.communicator.common.remoteObject;
+package ummisco.gama.serializer.gamaType.reduced;
 
 import java.util.Map;
 

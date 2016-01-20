@@ -26,7 +26,7 @@ public class UnifyDoc {
 	private static String[] tabEltXML =
 		{ XMLElements.OPERATORS_CATEGORIES, XMLElements.OPERATORS, XMLElements.SKILLS, XMLElements.ARCHITECTURES,
 			XMLElements.SPECIESS, XMLElements.STATEMENTS, XMLElements.CONSTANTS_CATEGORIES, XMLElements.CONSTANTS,
-			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS };
+			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS, XMLElements.TYPES };
 	// among tebEltXML, categories do not need to have an additional projectName attribute
 	private static String[] tabCategoriesEltXML = { XMLElements.OPERATORS_CATEGORIES, XMLElements.CONSTANTS_CATEGORIES,
 		XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS };

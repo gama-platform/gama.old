@@ -233,6 +233,13 @@ public final class GamlAnnotations {
 		boolean internal() default false;
 
 		/**
+		 * @return an array of strings, each representing a category in which this constant can be classified (for
+		 * documentation indexes)
+		 */
+
+		String[] category() default {};		
+		
+		/**
 		 * Doc.
 		 *
 		 * @return the documentation attached to this type
@@ -280,6 +287,13 @@ public final class GamlAnnotations {
 		 */
 		boolean internal() default false;
 
+		/**
+		 * @return an array of strings, each representing a category in which this constant can be classified (for
+		 * documentation indexes)
+		 */
+
+		String[] category() default {};		
+		
 		/**
 		 * Doc.
 		 *
@@ -350,6 +364,13 @@ public final class GamlAnnotations {
 		 */
 		boolean internal() default false;
 
+		/**
+		 * @return an array of strings, each representing a category in which this constant can be classified (for
+		 * documentation indexes)
+		 */
+
+		String[] category() default {};		
+		
 		/**
 		 * Doc.
 		 *
@@ -673,6 +694,12 @@ public final class GamlAnnotations {
 		 * same super context
 		 */
 		boolean unique_name() default false;
+		
+		/**
+		 * @return an array of strings, each representing a category in which this constant can be classified (for
+		 * documentation indexes)
+		 */
+		String[] category() default {};		
 
 	}
 
@@ -1156,6 +1183,13 @@ public final class GamlAnnotations {
 		 */
 		int buffer_type() default ITypeProvider.NONE;
 
+		/**
+		 * @return an array of strings, each representing a category in which this constant can be classified (for
+		 * documentation indexes)
+		 */
+
+		String[] category() default {};		
+		
 		doc[] doc() default {};
 	}
 

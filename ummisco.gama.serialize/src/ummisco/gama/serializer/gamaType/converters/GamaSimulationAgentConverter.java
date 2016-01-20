@@ -1,4 +1,4 @@
-package ummisco.gama.communicator.common.remoteObject;
+package ummisco.gama.serializer.gamaType.converters;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -6,10 +6,9 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
+import ummisco.gama.serializer.gamaType.reduced.RemoteAgent;
 
 public class GamaSimulationAgentConverter implements Converter{
 
