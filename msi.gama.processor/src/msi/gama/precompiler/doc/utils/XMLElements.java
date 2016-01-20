@@ -60,6 +60,11 @@ public class XMLElements {
 	public static final String INSIDE_STAT_SYMBOLS = "insideStatementSymbols";
 	public static final String INSIDE_STAT_SYMBOL = "insideStatementSymbol";	
 	public static final String CONSTANTS_CATEGORIES = "constantsCategories";
+	public static final String SPECIES_SKILLS = "attached_skills";
+	public static final String SPECIES_SKILL = "attached_skill";
+	public static final String TYPES = "types";
+	public static final String TYPE = "type";
+	
 	
 	public static final String ARCHITECTURES = "architectures";
 	public static final String ARCHITECTURE = "architecture";
@@ -151,11 +156,17 @@ public class XMLElements {
 	// Attributes of SPECIES element
 	public static final String ATT_SPECIES_ID = "id";
 	public static final String ATT_SPECIES_NAME = "name";
+	public static final String ATT_SPECIES_SKILL = "name";	
 	
 	// Attributes of STATEMENT element
 	public static final String ATT_STAT_ID = "id";
 	public static final String ATT_STAT_NAME = "name";
 	public static final String ATT_STAT_KIND = "kind";
+	
+	// Attributes of TYPE element
+	public static final String ATT_TYPE_NAME = "name";
+	public static final String ATT_TYPE_ID = "id";
+	public static final String ATT_TYPE_KIND = "kind";
 	
 	// Attributes of INSIDE_STAT element
 	public static final String ATT_INSIDE_STAT_SYMBOL = "symbol";
