@@ -14,7 +14,7 @@ package msi.gama.kernel.experiment;
 import java.util.concurrent.ArrayBlockingQueue;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class ExperimentController implements Runnable, IExperimentController {
@@ -249,35 +249,6 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 		experiment.dispose(); // will call own dispose() later
 	}
-
-	// public void newHeadlessExperiment(final IExperimentPlan newExperiment) {
-	// if ( newExperiment == null ) {
-	// System.out.println("No experiment available.");
-	// return;
-	// }
-	// experiment = newExperiment;
-	// try {
-	// experiment.open();
-	// } catch (final Exception e) {
-	// System.out.println("Error when opening the experiment: " + e.getMessage());
-	// }
-	// }
-	//
-	// public void newExperiment(final IExperimentPlan newExperiment) {
-	// if ( newExperiment == null ) {
-	// System.out.println("No experiment available.");
-	// return;
-	// }
-	//// if ( experiment != null ) {
-	//// closeExperiment();
-	//// }
-	// experiment = newExperiment;
-	// }
-
-	// public void shutdown() {
-	// scheduler.dispose();
-	// running = false;
-	// }
 
 	@Override
 	public ExperimentScheduler getScheduler() {

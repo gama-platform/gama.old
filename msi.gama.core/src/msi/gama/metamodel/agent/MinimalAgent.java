@@ -15,8 +15,7 @@ import java.util.*;
 import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.AbstractGui;
-import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -194,7 +193,7 @@ public abstract class MinimalAgent implements IAgent {
 		if ( dead() ) { return; }
 		acquireLock();
 		try {
-//			scope.getGui().debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in MinimalAgent)");
+			// scope.getGui().debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in MinimalAgent)");
 			dead = true;
 			final IPopulation p = getPopulation();
 			if ( p != null ) {
@@ -443,12 +442,12 @@ public abstract class MinimalAgent implements IAgent {
 	@Override
 	public void hostChangesShape() {}
 
-	@Override
-	public AgentScheduler getScheduler() {
-		final IMacroAgent a = getHost();
-		if ( a == null ) { return null; }
-		return a.getScheduler();
-	}
+	// @Override
+	// public SimulationPopulationScheduler getScheduler() {
+	// final IMacroAgent a = getHost();
+	// if ( a == null ) { return null; }
+	// return a.getScheduler();
+	// }
 
 	@Override
 	public IModel getModel() {

@@ -579,33 +579,33 @@ public class SwtGui extends AbstractGui {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
-			IWorkbenchPart part = partRef.getPart(false);
-			if ( part instanceof IGamaView ) {
-				((IGamaView) part).showToolbar();
-			}
+			// IWorkbenchPart part = partRef.getPart(false);
+			// if ( part instanceof IGamaView ) {
+			// ((IGamaView) part).showToolbar();
+			// }
 		}
 
 		@Override
 		public void partClosed(final IWorkbenchPartReference partRef) {
-			if ( partRef.getPart(false) instanceof IGamaView ) {
-				final IExperimentPlan s = GAMA.getExperiment();
-				if ( s == null ) { return; }
-				final List<IOutputManager> m = s.getAllSimulationOutputs();
-				if ( !m.isEmpty() ) {
-					for ( IOutputManager manager : m ) {
-						manager.removeOutput(((IGamaView) partRef.getPart(false)).getOutput());
-					}
-				}
-			}
+			// if ( partRef.getPart(false) instanceof IGamaView ) {
+			// final IExperimentPlan s = GAMA.getExperiment();
+			// if ( s == null ) { return; }
+			// final List<IOutputManager> m = s.getAllSimulationOutputs();
+			// if ( !m.isEmpty() ) {
+			// for ( IOutputManager manager : m ) {
+			// manager.removeOutput(((IGamaView) partRef.getPart(false)).getOutput());
+			// }
+			// }
+			// }
 		}
 
 		@Override
 		public void partDeactivated(final IWorkbenchPartReference partRef) {
-			IWorkbenchPart part = partRef.getPart(false);
-			if ( part instanceof IGamaView ) {
-				((IGamaView) part).hideToolbar();
-			}
+			// IWorkbenchPart part = partRef.getPart(false);
+			// if ( part instanceof IGamaView ) {
+			// ((IGamaView) part).hideToolbar();
 			// }
+			// // }
 
 		}
 
@@ -1507,10 +1507,10 @@ public class SwtGui extends AbstractGui {
 	static GamaUIColor[] SIMULATION_COLORS = new GamaUIColor[] { IGamaColors.BLUE, IGamaColors.OK, IGamaColors.NEUTRAL,
 		IGamaColors.WARNING, IGamaColors.BROWN };
 
-		/**
-		 * @param index
-		 * @return
-		 */
+	/**
+	 * @param index
+	 * @return
+	 */
 		public static GamaUIColor getColorForSimulationNumber(final int index) {
 		return SIMULATION_COLORS[index % 5];
 	}

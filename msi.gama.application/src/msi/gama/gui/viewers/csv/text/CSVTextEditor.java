@@ -15,7 +15,6 @@
  */
 package msi.gama.gui.viewers.csv.text;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
@@ -79,8 +78,8 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 		}, SWT.RIGHT);
 
 	}
-
-	@Override
-	public void setToogle(final Action toggle) {}
+	//
+	// @Override
+	// public void setToogle(final Action toggle) {}
 
 }

@@ -92,19 +92,16 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private final IScope scope;
 	protected SimulationAgent simulation;
+	SimulationPopulationScheduler scheduler;
 	final Map<String, Object> extraParametersMap = new TOrderedHashMap();
 	protected RandomUtils random;
 	protected Double initialMinimumDuration = null;
 	protected Double currentMinimumDuration = 0d;
-	// protected Double seed = GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue()
-	// : (Double) null;
-	// protected String rng = GamaPreferences.CORE_RNG.getValue();
-	protected ExperimentClock clock = new ExperimentClock();
+	final protected ExperimentClock clock = new ExperimentClock();
 	protected boolean warningsAsErrors = GamaPreferences.CORE_WARNINGS.getValue();
 	protected String ownModelPath;
-
+	protected SimulationPopulation populationOfSimulations;
 	private Boolean scheduled = false;
-	// private int currentSimulationIndex;
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
@@ -119,8 +116,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	public void reset() {
+		clock.reset();
 		// We close any simulation that might be running
-		closeSimulation();
+		closeSimulations();
 		// We initialize the population that will host the simulation
 		createSimulationPopulation();
 		// We initialize a new random number generator
@@ -153,38 +151,25 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public void closeSimulation() {
+	public void closeSimulations() {
 		// We unschedule the simulation if any
-		if ( getSimulation() != null ) {
-			// GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
-
-			// hqnghi: in case experiment have its own controller
-			// if ( !((ExperimentPlan) getSpecies()).getControllerName().equals("") ) {
-			// GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler()
-			// .unschedule(getSimulation().getScheduler());
-			// } else {
-			getSpecies().getController().getScheduler().unschedule(getSimulation().getScheduler());
-			// }
-			// end-hqnghi
-
-			// TODO Should better be in SimulationOutputManager
-			if ( !getSpecies().isBatch() ) {
-				scope.getGui().cleanAfterSimulation();
-			}
-			// simulation = null;
+		getSpecies().getController().getScheduler().unschedule(getSimulationsScheduler());
+		if ( getSimulationPopulation() != null ) {
+			getSimulationPopulation().dispose();
 		}
+		// TODO Should better be in SimulationOutputManager
+		if ( !getSpecies().isBatch() ) {
+			scope.getGui().cleanAfterSimulation();
+		}
+		simulation = null;
+		// populationOfSimulations = null;
 	}
 
 	@Override
 	public void dispose() {
-		// System.out.println("ExperimentAgent.dipose BEGIN");
 		if ( dead ) { return; }
+		closeSimulations();
 		super.dispose();
-		closeSimulation();
-		if ( getSimulation() != null ) {
-			getSimulation().dispose();
-		}
-		// System.out.println("ExperimentAgent.dipose END");
 	}
 
 	/**
@@ -193,19 +178,27 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	@Override
 	public Object _init_(final IScope scope) {
-		// scope.getGui().debug("ExperimentAgent._init_");
 		if ( scope.interrupted() ) { return null; }
 
 		createSimulation(getParameterValues(), scheduled);
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
-		// createSimulation(getParameterValues(), scheduled);
-
 		return this;
 	}
 
+	/**
+	 * Method primDie()
+	 * @see msi.gama.metamodel.agent.MinimalAgent#primDie(msi.gama.runtime.IScope)
+	 */
+	@Override
+	public Object primDie(final IScope scope) throws GamaRuntimeException {
+		GAMA.closeExperiment(getSpecies());
+		GAMA.getGui().closeSimulationViews(true);
+		return null;
+	}
+
 	public void createSimulation(final ParametersSet parameters, final boolean scheduleIt) {
-		final IPopulation pop = getMicroPopulation(getModel());
+		final IPopulation pop = getSimulationPopulation();
 		if ( pop == null ) { return; }
 		// 'simulation' is set by a callback call to setSimulation()
 		ParametersSet ps = getParameterValues();
@@ -225,6 +218,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	protected Object stepSubPopulations(final IScope scope) {
 		// The experiment DOES NOT step its subpopulations unless it has not been already scheduled (i.e. it is an experiment called on a micromodel)
+		// This role is played by the SimulationPopulationsScheduler in normal experiments
 		if ( !scheduled ) { return super.stepSubPopulations(scope); }
 		return this;
 	}
@@ -236,38 +230,15 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public void schedule() {
-		// public void scheduleAndExecute(final RemoteSequence sequence) {
 		scheduled = true;
 		// The experiment agent is scheduled in the global scheduler
+		ExperimentScheduler sche = getSpecies().getController().getScheduler();
+
 		IOutputManager outputs = getSpecies().getExperimentOutputs();
-		// if ( outputs != null ) {
-		// GAMA.controller.getScheduler().schedule(outputs, getScope());
-		// }
-		// GAMA.controller.getScheduler().schedule(this, getScope());
-
-		// hqnghi: in case experiment have its own controller
-
 		if ( outputs != null ) {
-			getSpecies().getController().getScheduler().schedule(outputs, scope);
+			sche.schedule(outputs, scope);
 		}
-		getSpecies().getController().getScheduler().schedule(this, scope);
-
-		// if ( !((ExperimentPlan) getSpecies()).getControllerName().isEmpty() ) {
-		// if ( outputs != null ) {
-		// GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler().schedule(outputs,
-		// getScope());
-		// }
-		// GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler().schedule(this,
-		// getScope());
-		//
-		// } else {
-		// if ( outputs != null ) {
-		// GAMA.controller.getScheduler().schedule(outputs, getScope());
-		// }
-		// GAMA.controller.getScheduler().schedule(this, getScope());
-
-		// }
-		// end-hqnghi
+		sche.schedule(this, scope);
 	}
 
 	/**
@@ -276,13 +247,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	protected void createSimulationPopulation() {
 		SimulationPopulation pop = getSimulationPopulation();
-		if ( pop != null ) {
-			pop.dispose();
-		}
-		pop = new SimulationPopulation(getModel());
 		pop.initializeFor(scope);
 		attributes.put(getModel().getName(), pop);
 		pop.setHost(this);
+		if ( scheduler != null ) {
+			scheduler.dispose();
+		}
+		scheduler = new SimulationPopulationScheduler(scope, pop);
 	}
 
 	@Override
@@ -401,11 +372,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return getModel().getProjectPath() + "/";
 	}
 
-	// @getter(value = GAMA._FATAL, initializer = true)
-	// public Boolean getFatalErrors() {
-	// return revealAndStop;
-	// }
-
 	@Override
 	@getter(value = GAMA._WARNINGS, initializer = true)
 	public Boolean getWarningsAsErrors() {
@@ -420,13 +386,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@getter(value = IKeyword.SEED, initializer = true)
 	public Double getSeed() {
 		Double seed = random.getSeed();
-		System.out.println("experiment agent get seed: " + seed);
+		// System.out.println("experiment agent get seed: " + seed);
 		return seed == null ? Double.valueOf(0d) : seed;
 	}
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
-		System.out.println("experiment agent set seed: " + s);
+		// System.out.println("experiment agent set seed: " + s);
 		Double seed;
 		if ( s == null ) {
 			seed = null;
@@ -445,44 +411,39 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@setter(IKeyword.RNG)
 	public void setRng(final String newRng) {
-		// rng = newRng;
-		// scope.getGui().debug("ExperimentAgent.setRng" + newRng);
 		getRandomGenerator().setGenerator(newRng, true);
 	}
 
 	public SimulationPopulation getSimulationPopulation() {
-		return (SimulationPopulation) getMicroPopulation(getModel());
+		if ( populationOfSimulations == null ) {
+			populationOfSimulations = (SimulationPopulation) getMicroPopulation(getModel());
+			if ( populationOfSimulations == null ) {
+				populationOfSimulations = new SimulationPopulation(getModel());
+			}
+		}
+		return populationOfSimulations;
 	}
 
 	@getter(IKeyword.SIMULATION)
-	public IAgent getSimulation() {
-		// if ( simulation == null || simulation.getScope().interrupted() ) {
-		// SimulationPopulation pop = getSimulationPopulation();
-		// if ( pop != null ) {
-		// setSimulation(pop.last(scope));
-		// }
-		// }
+	public SimulationAgent getSimulation() {
 		return simulation;
 	}
 
 	@setter(IKeyword.SIMULATION)
 	public void setSimulation(final IAgent sim) {
-		// sim.setIndex(currentSimulationIndex++);
 		if ( sim instanceof SimulationAgent ) {
 			if ( simulation != null && simulation.getScope().interrupted() ) {
 				simulation.dispose();
 			}
 			simulation = (SimulationAgent) sim;
 			simulation.setOutputs(getSpecies().getOriginalSimulationOutputs());
-			// simulation.getClock().setDelayFromExperiment(currentMinimumDuration);
-			// simulation.getClock().setDelay(this.minimumDuration);
 		}
 	}
 
 	@Override
 	public IPopulation getPopulationFor(final ISpecies species) {
 		// TODO Auto-generated method stub
-		return ((SimulationAgent) this.getSimulation()).getPopulationFor(species.getName());
+		return this.getSimulation().getPopulationFor(species.getName());
 
 	}
 
@@ -493,6 +454,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// An experiment always runs in its own scope
 		try {
 			result = super.step(this.scope);
+			if ( scheduler != null ) {
+				scheduler.step(scope);
+			}
 		} finally {
 			clock.step(this.scope);
 			if ( !getSpecies().isBatch() ) {
@@ -501,20 +465,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 		return result;
 	}
-
-	// TODO A redefinition of this method in GAML will lose all information regarding the clock and the advance of time,
-	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
-	// @Override
-	// public Object _step_(final IScope scope) {
-	// clock.beginCycle();
-	// // A simulation always runs in its own scope
-	// try {
-	// super._step_(this.scope);
-	// } finally {
-	// clock.step();
-	// }
-	// return this;
-	// }
 
 	/**
 	 *
@@ -537,7 +487,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		@Override
 		public SimulationAgent getSimulationScope() {
-			return (SimulationAgent) getSimulation();
+			return getSimulation();
 		}
 
 		@Override
@@ -608,6 +558,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			}
 		}
 
+		@Override
+		public RandomUtils getRandom() {
+			return ExperimentAgent.this.random;
+		}
+
 	}
 
 	/**
@@ -630,6 +585,23 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	public boolean isScheduled() {
 		return scheduled;
+	}
+
+	/**
+	 * @return
+	 */
+	@Override
+	public SimulationPopulationScheduler getSimulationsScheduler() {
+		return scheduler;
+	}
+
+	/**
+	 * Method closeSimulation()
+	 * @see msi.gama.kernel.experiment.IExperimentAgent#closeSimulation(msi.gama.kernel.simulation.SimulationAgent)
+	 */
+	@Override
+	public void closeSimulation(final SimulationAgent simulationAgent) {
+		simulationAgent.dispose();
 	}
 
 }

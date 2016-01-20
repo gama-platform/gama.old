@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
@@ -96,7 +96,7 @@ public class SimulationAgent extends GamlAgent {
 	public static final String STARTING_DATE = "starting_date";
 
 	final SimulationClock clock;
-	AgentScheduler scheduler;
+
 	IScope scope;
 	IOutputManager outputs;
 	ProjectionFactory projectionFactory;
@@ -119,7 +119,7 @@ public class SimulationAgent extends GamlAgent {
 		super(pop);
 		clock = new SimulationClock(this);
 		scope = obtainNewScope();
-		scheduler = new AgentScheduler(scope, pop);
+		// scheduler = new SimulationPopulationScheduler(scope, pop);
 		projectionFactory = new ProjectionFactory();
 		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
 	}
@@ -131,7 +131,6 @@ public class SimulationAgent extends GamlAgent {
 		scope.getGui().prepareForSimulation(this);
 		super.schedule();
 
-		getExperiment().getSpecies().getController().getScheduler().schedule(scheduler, scope);
 		if ( outputs != null ) {
 			final IScope simulationScope = obtainNewScope();
 			if ( simulationScope != null ) {
@@ -149,7 +148,7 @@ public class SimulationAgent extends GamlAgent {
 	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
 	public Object _step_(final IScope scope) {
 
-		System.out.println("Stepping simulation " + getIndex() + " at cycle " + clock.getCycle());
+		// System.out.println("Stepping simulation " + getIndex() + " at cycle " + clock.getCycle());
 
 		clock.beginCycle();
 		// A simulation always runs in its own scope
@@ -157,9 +156,9 @@ public class SimulationAgent extends GamlAgent {
 			super._step_(this.scope);
 			// hqnghi if simulation is not scheduled, their outputs must do step manually
 			if ( !scheduled ) {
-				// hqnghi temporary added untill elimination of AgentScheduler
-				this.getScheduler().executeActions(scope, 1);
-				this.getScheduler().executeActions(scope, 3);
+				// hqnghi temporary added untill elimination of SimulationPopulationScheduler
+				this.getExperiment().getSimulationsScheduler().executeActions(scope, 1);
+				this.getExperiment().getSimulationsScheduler().executeActions(scope, 3);
 				// end-hqnghi
 				if ( outputs != null ) {
 					outputs.step(this.scope);
@@ -192,10 +191,10 @@ public class SimulationAgent extends GamlAgent {
 		return projectionFactory;
 	}
 
-	@Override
-	public AgentScheduler getScheduler() {
-		return scheduler;
-	}
+	// @Override
+	// public SimulationPopulationScheduler getScheduler() {
+	// return scheduler;
+	// }
 
 	@Override
 	public SimulationClock getClock() {
@@ -207,16 +206,12 @@ public class SimulationAgent extends GamlAgent {
 		// System.out.println("SimulationAgent.dipose BEGIN");
 		if ( dead ) { return; }
 		super.dispose();
-		// We dispose of any scheduler still running
-		if ( scheduler != null ) {
-			scheduler.dispose();
-			scheduler = null;
-		}
+
 		// hqnghi if simulation come from popultion extern, dispose pop first and then their outputs
 		for ( IPopulation pop : this.getExternMicroPopulations().values() ) {
 			pop.dispose();
 		}
-		if ( !scheduled && outputs != null ) {
+		if ( outputs != null ) {
 			outputs.dispose();
 			outputs = null;
 		}
@@ -370,7 +365,7 @@ public class SimulationAgent extends GamlAgent {
 			value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. ") )
 	@args(names = {})
 	public Object halt(final IScope scope) {
-		getExperiment().closeSimulation();
+		getExperiment().closeSimulation(this);
 		return null;
 	}
 

@@ -1,22 +1,16 @@
 package msi.gama.gui.viewers.gis;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.EditorPart;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.Layer;
-import org.geotools.map.MapContent;
+import org.geotools.map.*;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
 import org.geotools.swt.SwtMapPane;
@@ -30,7 +24,7 @@ import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.Strings;
 
-public abstract class GISFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.CSVExportable{
+public abstract class GISFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.CSVExportable {
 
 	public class DragTool extends CursorTool {
 
@@ -92,7 +86,6 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 	Layer layer;
 	String pathStr;
 
-	
 	@Override
 	public void doSave(final IProgressMonitor monitor) {}
 
@@ -172,8 +165,6 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 		this.toolbar = tb;
 	}
 
-
-
 	/**
 	 * Method zoomWhenScrolling()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
@@ -182,60 +173,61 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 	public boolean zoomWhenScrolling() {
 		return false;
 	}
-	
+
 	public DragTool newDragTool() {
 		return new DragTool();
 	}
+	//
+	// @Override
+	// public void setToogle(final Action toggle) {}
 
-	@Override
-	public void setToogle(final Action toggle) {}
-	
-	
-	public void saveAsCSV(List<String> attributes, List<IShape> geoms, String name) {
+	public void saveAsCSV(final List<String> attributes, final List<IShape> geoms, final String name) {
 		String path = "";
-		String[] decomp = pathStr.split("\\."); 
-		for (int i = 0; i < (decomp.length - 1); i++) {
-			path += decomp[i] + (i < (decomp.length -1)? ".":"");
+		String[] decomp = pathStr.split("\\.");
+		for ( int i = 0; i < decomp.length - 1; i++ ) {
+			path += decomp[i] + (i < decomp.length - 1 ? "." : "");
 		}
-		if (name != null)
-			path +=name+".";
-		else path += ".";
+		if ( name != null ) {
+			path += name + ".";
+		} else {
+			path += ".";
+		}
 		path += "csv";
 		File fcsv = new File(path);
 		FileWriter fw;
 		try {
 			fw = new FileWriter(fcsv, false);
 			fw.write("id");
-			for (String att : attributes) {
+			for ( String att : attributes ) {
 				fw.write(";" + att);
 			}
 			fw.write(Strings.LN);
-			if (geoms != null) {
+			if ( geoms != null ) {
 				int cpt = 0;
-				for ( IShape obj : geoms) {
+				for ( IShape obj : geoms ) {
 					fw.write(cpt + "");
-					cpt ++;
-					for ( String v : attributes) {
+					cpt++;
+					for ( String v : attributes ) {
 						String val = obj.hasAttribute(v) ? obj.getAttribute(v).toString().replace(';', ',') : "-";
 						fw.write(";" + val);
 					}
 					fw.write(Strings.LN);
 				}
-			} else  {
-				for ( Object obj : layer.getFeatureSource().getFeatures().toArray()) {
+			} else {
+				for ( Object obj : layer.getFeatureSource().getFeatures().toArray() ) {
 					SimpleFeature feature = (SimpleFeature) obj;
 					fw.write(feature.getID());
-					for ( String v : attributes) {
+					for ( String v : attributes ) {
 						fw.write(";" + feature.getAttribute(v).toString().replace(';', ','));
 					}
 					fw.write(Strings.LN);
 				}
 			}
-			
+
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

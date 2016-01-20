@@ -138,7 +138,7 @@ public class GamaToolbarFactory {
 			IToolBarManager tm = ((IViewSite) site).getActionBars().getToolBarManager();
 			tm.add(toggle);
 			tm.update(true);
-			view.setToogle(toggle);
+			// view.setToogle(toggle);
 		} else if ( site instanceof IEditorSite ) {
 			// WARNING Disabled for the moment.
 			// IActionBars tm = ((IEditorSite) site).getActionBars();
@@ -212,7 +212,7 @@ public class GamaToolbarFactory {
 			CSVExportationController csv = new CSVExportationController((IToolbarDecoratedView.CSVExportable) view);
 			csv.install(tb);
 		}
-		
+
 		view.createToolItems(tb);
 		tb.refresh(true);
 	}

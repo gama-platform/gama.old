@@ -31,20 +31,21 @@ public class SimulationPopulation extends GamaPopulation {
 	public SimulationPopulation(final ISpecies species) {
 		super(null, species);
 	}
-
-	@Override
-	public void killMembers() throws GamaRuntimeException {
-		// Simulations should be killed in a more precautious way...
-		// for ( final IAgent a : toArray() ) {
-		// if ( a.getScope().interrupted() ) {
-		// a.dispose();
-		// }
-		// }
-	}
+	//
+	// @Override
+	// public void killMembers() throws GamaRuntimeException {
+	// // Simulations should be killed in a more precautious way...
+	// // for ( final IAgent a : toArray() ) {
+	// // if ( a.getScope().interrupted() ) {
+	// // a.dispose();
+	// // }
+	// // }
+	// }
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 		final List<? extends Map> initialValues, final boolean toBeScheduled) throws GamaRuntimeException {
+
 		scope.getGui().waitStatus("Initializing simulation");
 		final SimulationAgent world = new SimulationAgent(this);
 		world.setIndex(currentAgentIndex++);
@@ -56,15 +57,7 @@ public class SimulationPopulation extends GamaPopulation {
 		createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
 		if ( toBeScheduled ) {
 			world.schedule();
-			// world.scheduleAndExecute(sequence);
-			// hqnghi if simulation is created manually, it's not scheduled and have to init implicitely
 		}
-		// AD: Removed because of Issue 1051 (double init).
-		// else {
-		// world._init_(scope);
-		// end-hqnghi
-		// }
-		// scope.getGui().informStatus("Simulation Ready");
 		return this;
 	}
 
@@ -93,13 +86,5 @@ public class SimulationPopulation extends GamaPopulation {
 		// Temporary topology set before the world gets a shape
 		topology = new AmorphousTopology();
 	}
-
-	// @Override
-	// public IList<IAgent> computeAgentsToSchedule(final IScope scope) {
-	// final int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
-	// final int step = scope.getClock().getCycle();
-	// if ( frequency == 0 || step % frequency != 0 ) { return GamaListFactory.EMPTY_LIST; }
-	//
-	// }
 
 }

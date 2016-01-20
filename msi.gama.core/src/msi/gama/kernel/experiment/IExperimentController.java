@@ -4,8 +4,6 @@
  */
 package msi.gama.kernel.experiment;
 
-import msi.gama.runtime.ExperimentScheduler;
-
 /**
  * Class IExperimentController.
  *
