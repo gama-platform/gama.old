@@ -332,9 +332,9 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		}
 		return m;
 	}
-
-	@Override
-	public void setToogle(final Action toggle) {}
+	//
+	// @Override
+	// public void setToogle(final Action toggle) {}
 
 	public void safeRefresh(final IResource resource) {
 

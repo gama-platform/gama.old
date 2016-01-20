@@ -4,7 +4,6 @@
  */
 package msi.gama.gui.views;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchSite;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
@@ -48,11 +47,11 @@ public interface IToolbarDecoratedView {
 
 		public void setColor(int index, GamaUIColor c);
 	}
-	
+
 	public static interface CSVExportable extends IToolbarDecoratedView {
 
 		public void saveAsCSV();
-		
+
 	}
 
 	public static interface Zoomable extends IToolbarDecoratedView {
@@ -78,6 +77,6 @@ public interface IToolbarDecoratedView {
 	/**
 	 * @param toggle
 	 */
-	public void setToogle(Action toggle);
+	// public void setToogle(Action toggle);
 
 }

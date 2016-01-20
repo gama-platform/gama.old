@@ -358,7 +358,7 @@ public class GamaPreferences {
 
 	// GENERAL PAGE
 	public static final List<String> GENERATOR_NAMES =
-		Arrays.asList(IKeyword.CELLULAR, IKeyword.XOR, IKeyword.JAVA, IKeyword.MERSENNE);
+		Arrays.asList(IKeyword.CELLULAR, IKeyword.JAVA, IKeyword.MERSENNE);
 		/**
 		 * Random Number Generation
 		 */

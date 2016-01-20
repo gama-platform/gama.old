@@ -25,6 +25,7 @@ import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Cast;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.files.GLModel;
+import ummisco.gama.opengl.files.GamaObjFile;
 
 public class RessourceObject extends AbstractObject implements Cloneable {
 
@@ -40,6 +41,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	Double rotInit = null;
 	GamaPoint ptRotInit = null;
 	
+	
 
 
 	public RessourceObject(final GamaFile fileName, final IAgent agent, final Color color, Double alpha, final GamaPoint location,
@@ -49,7 +51,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		this.agent = agent;
 		this.z_layer = z_layer;
 		this.color= color;
-		this.alpha = alpha;
+		this.alpha = alpha; 
 		this.size = dimensions;
 		atLoc = location;
 		if (rotate3D != null) {
@@ -106,20 +108,26 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 				gl.glRotatef(rotInit.floatValue() , (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);		
 			}
 			if(this.size!=null){
-				  gl.glScaled(size.x, size.x, size.x);
+					Envelope3D env = (Envelope3D) file.computeEnvelope(null);
+				  gl.glScaled(size.x / env.getWidth(), size.y / env.getHeight(), size.z/ env.getHeight());
 			}
-			
+			/*if (this.color != null) { does not work for obj files
+				gl.glColor3d(color.getRed()/255.0, color.getGreen()/255.0, color.getBlue()/255.0);
+			}*/
 			super.draw(gl, drawer, picking);
 			
 			
 			if(this.size!=null){
-				  gl.glScaled(1/size.x, 1/size.x, 1/size.x);
-			}	
-			if(this.rot != null){
-				gl.glRotatef(- rot.floatValue() , (float) ptRot.x, (float) ptRot.y, (float) ptRot.z);	
+				Envelope3D env = (Envelope3D) file.computeEnvelope(null);
+				 gl.glScaled(env.getWidth() /size.x, env.getHeight()/size.y, env.getHeight()/size.z);
+				 
 			}
 			if(this.rotInit != null){
 				gl.glRotatef(- rotInit.floatValue() , (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);		
+			}
+			
+			if(this.rot != null){
+				gl.glRotatef(- rot.floatValue() , (float) ptRot.x, (float) ptRot.y, (float) ptRot.z);	
 			}
 			
 			if (atLoc != null) {

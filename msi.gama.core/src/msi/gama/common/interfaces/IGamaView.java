@@ -30,14 +30,14 @@ public interface IGamaView {
 
 	public void removeOutput(IDisplayOutput putput);
 
-	/**
-	 *
-	 */
-	public void hideToolbar();
-
-	/**
-	 *
-	 */
-	public void showToolbar();
+	// /**
+	// *
+	// */
+	// public void hideToolbar();
+	//
+	// /**
+	// *
+	// */
+	// public void showToolbar();
 
 }

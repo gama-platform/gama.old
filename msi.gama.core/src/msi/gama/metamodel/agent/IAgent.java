@@ -13,7 +13,7 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -168,7 +168,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 */
 	public abstract void hostChangesShape();
 
-	public AgentScheduler getScheduler();
+	// public SimulationPopulationScheduler getScheduler();
 
 	public IModel getModel();
 
