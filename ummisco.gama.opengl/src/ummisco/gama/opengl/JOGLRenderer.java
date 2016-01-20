@@ -57,7 +57,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	GLCanvas canvas;
 	public final LayeredDisplayData data;
 	private int width, height;
-	public ICamera camera;
+	public ICamera camera; 
 	public SWTOpenGLDisplaySurface displaySurface;
 	public final SceneBuffer sceneBuffer;
 	public int frame = 0;
@@ -675,7 +675,17 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		GamaPoint location = new GamaPoint(locationInModelUnits);
 		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
-		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D);
+		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D, null); 
+		return rect;
+	}
+	
+	@Override
+	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
+			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit) {
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
+		GamaPoint location = new GamaPoint(locationInModelUnits);
+		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
+		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D,rotate3DInit);
 		return rect;
 	}
 	
@@ -986,5 +996,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public Double getZoomLevel() {
 		return data.getZoomLevel();
 	}
+
+	
 
 }

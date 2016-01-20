@@ -42,6 +42,9 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		super(scope, pathName);
 	}
 
+	public GamaObjFile(final IScope scope, final String pathName, final GamaPair initRotation) throws GamaRuntimeException {
+		super(scope, pathName,initRotation);
+	}
 	/**
 	 * Method fillBuffer(). Fills the buffer with the polygons built from the .obj vertices + faces
 	 * @see msi.gama.util.file.GamaFile#fillBuffer(msi.gama.runtime.IScope)

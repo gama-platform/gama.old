@@ -16,6 +16,7 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
@@ -33,11 +34,19 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 
 	protected IShape geometry;
 
+
 	public static abstract class Gama3DGeometryFile extends GamaGeometryFile {
 
+		protected GamaPair initRotation;
+		
 		public Gama3DGeometryFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 			super(scope, pathName);
 		}
+		public Gama3DGeometryFile(final IScope scope, final String pathName,final GamaPair initRotation) throws GamaRuntimeException {
+			super(scope, pathName);
+			this.initRotation = initRotation;
+		}
+		
 
 		@Override
 		protected IShape buildGeometry(final IScope scope) {
@@ -47,6 +56,14 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 			}
 			return new GamaShape(GeometryUtils.FACTORY.buildGeometry(faces));
 		}
+		public GamaPair getInitRotation() {
+			return initRotation;
+		}
+		public void setInitRotation(GamaPair initRotation) {
+			this.initRotation = initRotation;
+		}
+		
+		
 
 	}
 

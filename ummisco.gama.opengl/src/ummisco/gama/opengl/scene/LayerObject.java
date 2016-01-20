@@ -121,8 +121,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 	
 	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha, final GamaPoint location,
-			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D) {
-			ressources.add(new RessourceObject(fileName, agent, color, alpha, location, dimensions, rotate3D));
+			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D, final GamaPair<Double, GamaPoint> rotate3DInit) {
+			ressources.add(new RessourceObject(fileName, agent, color, alpha, location, dimensions, rotate3D,rotate3DInit));
 
 		}
 

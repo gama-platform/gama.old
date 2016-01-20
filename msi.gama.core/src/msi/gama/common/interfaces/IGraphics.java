@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaPair;
+import msi.gama.util.IList;
 import msi.gama.util.file.GamaFile;
 
 /**
@@ -41,6 +42,9 @@ public interface IGraphics {
 	
 	public abstract Rectangle2D drawFile(final IScope scope, final GamaFile filecheck, final Color color,
 			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3D);
+
+	public abstract Rectangle2D drawFile(final IScope scope, final GamaFile filecheck, final Color color,
+			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, GamaPair<Double, GamaPoint> rotates3D,GamaPair<Double, GamaPoint> rotates3DInit);
 
 	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Double angle,

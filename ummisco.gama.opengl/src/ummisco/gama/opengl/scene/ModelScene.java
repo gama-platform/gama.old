@@ -134,9 +134,9 @@ public class ModelScene {
 	}
 	
 	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha, final GamaPoint location,
-			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D) {
+			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit) {
 			if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-			currentLayer.addFile(fileName, agent, color, alpha, location, dimensions, rotate3D);
+			currentLayer.addFile(fileName, agent, color, alpha, location, dimensions, rotate3D,rotate3DInit);
 	}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,

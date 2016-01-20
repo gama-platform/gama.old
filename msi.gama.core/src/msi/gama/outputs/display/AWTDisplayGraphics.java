@@ -376,4 +376,12 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public void endDrawingLayers() {}
 
+	@Override
+	public Rectangle2D drawFile(IScope scope, GamaFile filecheck, Color color, ILocation locationInModelUnits,
+			ILocation sizeInModelUnits, GamaPair<Double, GamaPoint> rotates3d,
+			GamaPair<Double, GamaPoint> rotates3dInit) {
+		return drawFile(scope,  filecheck,  color,  locationInModelUnits,
+				 sizeInModelUnits, rotates3d);
+	}
+
 }

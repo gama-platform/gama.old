@@ -26,6 +26,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
+import msi.gama.util.file.GamaGeometryFile.Gama3DGeometryFile;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -559,13 +560,14 @@ public class DrawStatement extends AbstractStatementSequence {
 					GAMA.reportError(scope, GamaRuntimeException.warning("No " + fmtl.toString() + " found",scope), false);
 				}
             	Color color = null;
+            	 
             	if ( rot3D != null ) {
             		GamaPair<Double, GamaPoint> rot = 
             		  (GamaPair<Double, GamaPoint>) GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
-            		return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot);
+            		return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot, ((Gama3DGeometryFile)fileName).getInitRotation());
             	}
             	else{
-            		return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), null);
+            		return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), ((Gama3DGeometryFile)fileName).getInitRotation());
             	}			
             }
 			if(fileName.getExtension().equals("svg")){	
