@@ -43,6 +43,12 @@ public class SimulationPopulation extends GamaPopulation {
 	// }
 
 	@Override
+	public void initializeFor(final IScope scope) {
+		super.initializeFor(scope);
+		this.currentAgentIndex = 0;
+	}
+
+	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 		final List<? extends Map> initialValues, final boolean toBeScheduled) throws GamaRuntimeException {
 
