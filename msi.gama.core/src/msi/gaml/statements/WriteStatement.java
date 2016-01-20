@@ -64,7 +64,7 @@ public class WriteStatement extends AbstractStatement {
 			if ( mes == null ) {
 				mes = "nil";
 			}
-			scope.getGui().informConsole(mes);
+			scope.getGui().informConsole(scope.getRoot().getName() + ": " + mes);
 		}
 		return mes;
 	}

@@ -376,4 +376,11 @@ public class HeadlessListener extends AbstractGui {
 	 */
 	@Override
 	public void runModel(final IModel object, final String exp) {}
+
+	/**
+	 * Method eraseConsole()
+	 * @see msi.gama.common.interfaces.IGui#eraseConsole(boolean)
+	 */
+	@Override
+	public void eraseConsole(final boolean b) {}
 }

@@ -221,4 +221,9 @@ public interface IGui {
 	 */
 	void updateSimulationState();
 
+	/**
+	 * @param b
+	 */
+	void eraseConsole(boolean b);
+
 }

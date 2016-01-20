@@ -312,7 +312,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			open();
 		} else {
 			agent.reset();
+			agent.getScope().getGui().eraseConsole(true);
 			agent.init(agent.getScope());
+
 			agent.getScope().getGui().updateParameterView(this);
 		}
 	}
@@ -398,7 +400,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public SimulationAgent getCurrentSimulation() {
 		if ( agent == null ) { return null; }
-		return (SimulationAgent) agent.getSimulation();
+		return agent.getSimulation();
 	}
 
 	//
