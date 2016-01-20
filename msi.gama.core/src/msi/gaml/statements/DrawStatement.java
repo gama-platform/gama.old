@@ -483,7 +483,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
 			final IShape g1 = Cast.asGeometry(scope, item.value(scope), false); // WARNING Verify no side effect
 			if ( g1 == null ) { return null; }
-			
+			java.lang.System.out.println();
 			IShape g2 = new GamaShape(g1, null, getRotation(scope), getLocation(scope, g1));
 			if ( depth != null ) {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
@@ -551,11 +551,9 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(IScope scope, IGraphics g) throws GamaRuntimeException {
-			final GamaFile filecheck = (GamaFile) item.value(scope);
-			//if(file.getExtension())
-			
-			if(filecheck.getExtension().equals("obj")){	
-				File fmtl = new File(filecheck.getFile().getAbsolutePath().replaceAll(".obj", ".mtl"));
+			final GamaFile fileName = (GamaFile) item.value(scope);
+			if(fileName.getExtension().equals("obj")){	
+				File fmtl = new File(fileName.getFile().getAbsolutePath().replaceAll(".obj", ".mtl"));
 				if (!fmtl.exists()){
 					GAMA.reportError(scope, GamaRuntimeException.warning("No " + fmtl.toString() + " found",scope), false);
 				}
@@ -563,13 +561,22 @@ public class DrawStatement extends AbstractStatementSequence {
             	if ( rot3D != null ) {
             		GamaPair<Double, GamaPoint> rot = 
             		  (GamaPair<Double, GamaPoint>) GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
-            		return g.drawFile(scope, filecheck, color, getLocation(scope), getSize(scope), rot);
+            		return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot);
             	}
             	else{
-            		return g.drawFile(scope, filecheck, color, getLocation(scope), getSize(scope), null);
+            		return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), null);
+            	}			
+            }
+			if(fileName.getExtension().equals("svg")){	
+            	Color color = null;
+            	if ( rot3D != null ) {
+            		GamaPair<Double, GamaPoint> rot = 
+            		  (GamaPair<Double, GamaPoint>) GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
+            		return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot);
             	}
-            	
-            			
+            	else{
+            		return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), null);
+            	}			
             }
             else{ //Use for Image
             	final ILocation from = getLocation(scope);
