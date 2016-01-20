@@ -12,7 +12,9 @@
 package msi.gama.headless.core;
 
 import msi.gama.headless.job.ExperimentJob.OutputType;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -34,7 +36,7 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 	@Override
 	public RichOutput getRichOutput(final String parameterName) {
 		IOutput output =
-			((AbstractOutputManager) this.currentExperiment.getOriginalSimulationOutputs()).getOutputWithName(parameterName);
+			((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
 		if ( output == null ) { throw GamaRuntimeException.error("Output unresolved",
 			currentExperiment.getExperimentScope()); }
 		output.update();
@@ -42,6 +44,7 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 		Object val = null;
 
 		if ( output instanceof MonitorOutput ) {
+//			((SimulationAgent) this.currentExperiment.getAgent().getSimulation()).getOutputManager().getOutputWithName(parameterName)
 			val = ((MonitorOutput) output).getLastValue();
 		} else if ( output instanceof LayeredDisplayOutput ) {
 			val = ((LayeredDisplayOutput) output).getImage();

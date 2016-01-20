@@ -33,9 +33,6 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	{
 		this.isTraceKept=t;
 	}
-	
-	
-	
 	public int getAllocatedProcessor() {
 		return allocatedProcessor;
 	}
@@ -120,16 +117,6 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	public synchronized IModel loadModel(File fl)
 	{
 		IModel mdl = HeadlessSimulationLoader.loadModel(fl);
-		
-		
-		//IModel mdl = this.loadedModels.get(fl.getAbsolutePath());
-//		
-//		System.out.println("pouet  "+fl.getAbsolutePath());
-//		
-//		if(mdl == null)
-//		{
-//			this.loadedModels.put(fl.getAbsolutePath(), mdl);
-//		}
 		return mdl;
 	}
 
