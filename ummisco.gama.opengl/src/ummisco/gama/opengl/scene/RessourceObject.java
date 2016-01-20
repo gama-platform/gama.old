@@ -22,6 +22,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.GamaFile;
+import msi.gaml.operators.Cast;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.files.GLModel;
 
@@ -33,9 +34,11 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	public Color color;
 	public Double alpha;
 	public GamaPoint size;
-	public GamaPair<Double, GamaPoint> rotate3D = null;
-	public GamaPair<Double, GamaPoint> rotate3DInit = null;
 	public GamaPoint atLoc = null;
+	Double rot = null;
+	GamaPoint ptRot = null;
+	Double rotInit = null;
+	GamaPoint ptRotInit = null;
 	
 
 
@@ -48,10 +51,16 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		this.color= color;
 		this.alpha = alpha;
 		this.size = dimensions;
-		this.rotate3D = rotate3D;
-		this.rotate3DInit = rotate3DInit;
 		atLoc = location;
-		System.out.println("atLoc: " + atLoc);
+		if (rotate3D != null) {
+			rot = Cast.asFloat(null, rotate3D.key);
+			ptRot = (GamaPoint) Cast.asPoint(null, rotate3D.value);
+		}
+		if (rotate3DInit != null) {
+			rotInit = Cast.asFloat(null, rotate3DInit.key);
+			ptRotInit = (GamaPoint) Cast.asPoint(null, rotate3DInit.value);
+		}
+		
 	}
 
 	@Override
@@ -84,17 +93,17 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
 		JOGLRenderer renderer = drawer.renderer;
 		    //FIXME: To simplify the process picking is not yet taken in account
-		
+			
 			if (atLoc != null) {
 				gl.glTranslated(atLoc.getX(), renderer.yFlag*atLoc.getY(), atLoc.getZ());
 			} else {
 				gl.glTranslated(this.agent.getLocation().getX(), renderer.yFlag*this.agent.getLocation().getY(), this.agent.getLocation().getZ());	
 			}
-			if(this.rotate3D != null){
-				gl.glRotatef(this.rotate3D.key.floatValue() , (float) this.rotate3D.value.x, (float) this.rotate3D.value.y, (float) this.rotate3D.value.z);	
+			if(this.rot != null){
+				gl.glRotatef(rot.floatValue() , (float) ptRot.x, (float) ptRot.y, (float) ptRot.z);	
 			}
-			if(this.rotate3DInit != null){
-				gl.glRotatef(this.rotate3DInit.key.floatValue() , (float) this.rotate3DInit.value.x, (float) this.rotate3DInit.value.y, (float) this.rotate3DInit.value.z);	
+			if(this.rotInit != null){
+				gl.glRotatef(rotInit.floatValue() , (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);		
 			}
 			if(this.size!=null){
 				  gl.glScaled(size.x, size.x, size.x);
@@ -106,11 +115,11 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			if(this.size!=null){
 				  gl.glScaled(1/size.x, 1/size.x, 1/size.x);
 			}	
-			if(this.rotate3DInit != null){
-				((GL2) gl).glRotatef(-this.rotate3DInit.key.floatValue() , (float) this.rotate3DInit.value.x, (float) this.rotate3DInit.value.y, (float) this.rotate3DInit.value.z);				
+			if(this.rot != null){
+				gl.glRotatef(- rot.floatValue() , (float) ptRot.x, (float) ptRot.y, (float) ptRot.z);	
 			}
-			if(this.rotate3D != null){
-				((GL2) gl).glRotatef(-this.rotate3D.key.floatValue() , (float) this.rotate3D.value.x, (float) this.rotate3D.value.y, (float) this.rotate3D.value.z);				
+			if(this.rotInit != null){
+				gl.glRotatef(- rotInit.floatValue() , (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);		
 			}
 			
 			if (atLoc != null) {
