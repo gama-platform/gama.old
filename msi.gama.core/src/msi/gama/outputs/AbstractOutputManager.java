@@ -44,9 +44,18 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return outputs.get(id);
 	}
 
+	@Override
 	public IOutput getOutputWithName(final String name) {
 		for ( final IOutput output : outputs.values() ) {
 			if ( output.getName().equals(name) ) { return output; }
+		}
+		return null;
+	}
+
+	@Override
+	public IOutput getOutputWithOriginalName(final String name) {
+		for ( final IOutput output : outputs.values() ) {
+			if ( output.getOriginalName().equals(name) ) { return output; }
 		}
 		return null;
 	}
@@ -109,6 +118,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		}
 	}
 
+	@Override
 	public void forceUpdateOutputs() {
 		for ( final IDisplayOutput o : getDisplayOutputs() ) {
 			o.update();

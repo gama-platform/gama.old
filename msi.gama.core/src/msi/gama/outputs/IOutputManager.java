@@ -31,6 +31,10 @@ public interface IOutputManager extends IStepable {
 
 	IOutput getOutput(String id);
 
+	public IOutput getOutputWithName(final String name);
+
+	public IOutput getOutputWithOriginalName(final String name);
+
 	// hqnghi
 	Map<String, ? extends IOutput> getOutputs();
 
