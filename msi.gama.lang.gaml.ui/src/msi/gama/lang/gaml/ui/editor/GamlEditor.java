@@ -14,7 +14,6 @@ package msi.gama.lang.gaml.ui.editor;
 import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Region;
@@ -604,8 +603,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	public void setFocus() {
 		getStyledText().setFocus();
 	}
-
-	@Override
-	public void setToogle(final Action toggle) {}
+	//
+	// @Override
+	// public void setToogle(final Action toggle) {}
 
 }

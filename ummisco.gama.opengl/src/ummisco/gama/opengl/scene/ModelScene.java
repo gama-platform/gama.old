@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
@@ -134,9 +135,9 @@ public class ModelScene {
 	}
 	
 	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha, final GamaPoint location,
-			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit) {
+			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit, Envelope env) {
 			if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-			currentLayer.addFile(fileName, agent, color, alpha, location, dimensions, rotate3D,rotate3DInit);
+			currentLayer.addFile(fileName, agent, color, alpha, location, dimensions, rotate3D,rotate3DInit, env);
 	}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,

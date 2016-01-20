@@ -410,7 +410,7 @@ public interface IKeyword {
 	public static final String WRITE = "write";
 	public static final String X = "x";
 	public static final String XML = "xml";
-	public static final String XOR = "xor";
+	// public static final String XOR = "xor";
 	public static final String XY = "xy";
 	public static final String Y = "y";
 	public static final String Z = "z";

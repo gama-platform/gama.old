@@ -125,7 +125,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 						IPopulation externPop = sim.getExternMicroPopulationFor(stemp[2]);
 						if ( externPop != null ) {
 							for ( IAgent expAgent : externPop ) {
-								SimulationAgent spec = (SimulationAgent) ((ExperimentAgent) expAgent).getSimulation();
+								SimulationAgent spec = ((ExperimentAgent) expAgent).getSimulation();
 								if ( spec != null ) {
 									IOutputManager manager = spec.getOutputManager();
 									if ( manager != null ) {
@@ -227,8 +227,10 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		int r = (int) Math.random() * 255;
 		int g = (int) Math.random() * 255;
 		int b = (int) Math.random() * 255;
-		this.setTitleImage(GamaIcons
-			.createTempColorIcon(SwtGui.getColorForSimulationNumber(out.getScope().getSimulationScope().getIndex())));
+		if ( out.getScope().getSimulationScope() != null ) {
+			this.setTitleImage(GamaIcons.createTempColorIcon(
+				SwtGui.getColorForSimulationNumber(out.getScope().getSimulationScope().getIndex())));
+		}
 	}
 
 	@Override
@@ -277,9 +279,9 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 			@Override
 			public void run() {
 				try {
-					System.out.println("Closing: " + getPartName());
+					// System.out.println("Closing: " + getPartName());
 					getSite().getPage().hideView(GamaViewPart.this);
-					System.out.println("Closed: " + getPartName());
+					// System.out.println("Closed: " + getPartName());
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}
@@ -287,14 +289,6 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		});
 
 	}
-	//
-	// @Override
-	// public void outputReloaded(final IDisplayOutput output) {
-	// // if ( getOutput() != output ) {
-	// // setOutput(output);
-	// // }
-	//
-	// }
 
 	@Override
 	public void removeOutput(final IDisplayOutput output) {
@@ -304,19 +298,19 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		}
 	}
 
-	@Override
-	public void showToolbar() {
-		// toggle.run();
-	}
-
-	@Override
-	public void hideToolbar() {
-		// toggle.run();
-	}
-
-	@Override
-	public void setToogle(final Action toggle) {
-		this.toggle = toggle;
-	}
+	// @Override
+	// public void showToolbar() {
+	// // toggle.run();
+	// }
+	//
+	// @Override
+	// public void hideToolbar() {
+	// // toggle.run();
+	// }
+	//
+	// @Override
+	// public void setToogle(final Action toggle) {
+	// this.toggle = toggle;
+	// }
 
 }

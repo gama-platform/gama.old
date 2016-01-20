@@ -215,7 +215,7 @@ public class AgentsMenu extends ContributionItem {
 					}
 
 				};
-				GAMA.getSimulation().getScheduler().executeOneAction(action);
+				GAMA.getExperiment().getAgent().getSimulationsScheduler().executeOneAction(action);
 			}
 		}
 	};

@@ -1,18 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaSpatialGraph.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import java.util.*;
+import org.jgrapht.Graphs;
+import com.vividsolutions.jts.geom.Coordinate;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -29,8 +31,6 @@ import msi.gaml.compilation.GamaHelper;
 import msi.gaml.operators.Spatial.Queries;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
-import org.jgrapht.Graphs;
-import com.vividsolutions.jts.geom.Coordinate;
 
 public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph, IPopulation.Listener, IAgentFilter {
 
@@ -50,7 +50,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 		/**
 		 * @param scope TODO
-		 *            Determines if two vertex geometries are to be treated as related in any way.
+		 * Determines if two vertex geometries are to be treated as related in any way.
 		 * @param p1 a geometrical object
 		 * @param p2 another geometrical object
 		 */
@@ -81,9 +81,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	public GamaSpatialGraph copy(final IScope scope) {
-		GamaSpatialGraph g =
-			new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies, scope,
-				type.getKeyType(), type.getContentType());
+		GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, true, directed, vertexRelation,
+			edgeSpecies, scope, type.getKeyType(), type.getContentType());
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}
@@ -222,7 +221,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	public void postRefreshManagementAction(final IScope scope) {
-		scope.getSimulationScope().getScheduler().insertEndAction(new GamaHelper() {
+		scope.getExperiment().getSimulationsScheduler().insertEndAction(new GamaHelper() {
 
 			@Override
 			public Object run(final IScope scope) throws GamaRuntimeException {
@@ -310,8 +309,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public ISpecies getSpecies() {
 		return null; // See if we can identify the species of edges / vertices
 	}
-	
-	
 
 	/**
 	 * Method getAgents()

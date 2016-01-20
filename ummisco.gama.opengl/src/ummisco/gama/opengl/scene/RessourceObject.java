@@ -40,12 +40,13 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	GamaPoint ptRot = null;
 	Double rotInit = null;
 	GamaPoint ptRotInit = null;
+	Envelope env;
 	
 	
 
 
 	public RessourceObject(final GamaFile fileName, final IAgent agent, final Color color, Double alpha, final GamaPoint location,
-			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit) {
+			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit, Envelope env) {
 		super(color, alpha);
         this.file = fileName;
 		this.agent = agent;
@@ -54,6 +55,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		this.alpha = alpha; 
 		this.size = dimensions;
 		atLoc = location;
+		this.env = env;
 		if (rotate3D != null) {
 			rot = Cast.asFloat(null, rotate3D.key);
 			ptRot = (GamaPoint) Cast.asPoint(null, rotate3D.value);
@@ -107,9 +109,8 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			if(this.rotInit != null){
 				gl.glRotatef(rotInit.floatValue() , (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);		
 			}
-			if(this.size!=null){
-					Envelope3D env = (Envelope3D) file.computeEnvelope(null);
-				  gl.glScaled(size.x / env.getWidth(), size.y / env.getHeight(), size.z/ env.getHeight());
+			if(this.size!=null && env != null){
+				gl.glScaled(size.x / env.getWidth(), size.y / env.getHeight(), size.z/ env.getHeight());
 			}
 			/*if (this.color != null) { does not work for obj files
 				gl.glColor3d(color.getRed()/255.0, color.getGreen()/255.0, color.getBlue()/255.0);
@@ -117,9 +118,8 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			super.draw(gl, drawer, picking);
 			
 			
-			if(this.size!=null){
-				Envelope3D env = (Envelope3D) file.computeEnvelope(null);
-				 gl.glScaled(env.getWidth() /size.x, env.getHeight()/size.y, env.getHeight()/size.z);
+			if(this.size!=null  && env != null){
+				gl.glScaled(env.getWidth() /size.x, env.getHeight()/size.y, env.getHeight()/size.z);
 				 
 			}
 			if(this.rotInit != null){

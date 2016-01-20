@@ -759,18 +759,13 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		if ( viewer != null && viewer.getTable() != null && !viewer.getTable().isDisposed() ) {
 			viewer.getTable().dispose();
 		}
-		if ( currentFont != null && !currentFont.isDisposed() ) {
-			currentFont.dispose();
-		}
-	}
-
-	@Override
-	public void close() {
 		if ( attributesMenu != null && !attributesMenu.isDisposed() ) {
 			attributesMenu.dispose();
 		}
+		if ( currentFont != null && !currentFont.isDisposed() ) {
+			currentFont.dispose();
+		}
 		provider.dispose();
-		super.close();
 	}
 
 	/**

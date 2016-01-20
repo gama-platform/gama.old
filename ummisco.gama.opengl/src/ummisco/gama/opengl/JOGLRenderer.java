@@ -17,6 +17,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import com.jogamp.opengl.*;
@@ -84,6 +87,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	private ModelScene currentScene;
 	private volatile boolean inited;
 	protected GeometryCache cache;
+	protected Map<String, Envelope> envelopes;
 	// Use to inverse y composaant
 	public int yFlag;
 
@@ -164,6 +168,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		glu = new GLU();
 		gl = GLContext.getCurrentGL().getGL2();
 		cache = new GeometryCache(this);
+		envelopes = new Hashtable<String, Envelope>();
 		initializeCanvasWithListeners();
 
 		width = drawable.getSurfaceWidth();
@@ -673,9 +678,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
 			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
+		Envelope env = envelopes.get(fileName.getPath());
+		if (env == null) {envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));}
 		GamaPoint location = new GamaPoint(locationInModelUnits);
 		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
-		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D, null); 
+		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D, null, env); 
 		return rect;
 	}
 	
@@ -684,8 +691,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		GamaPoint location = new GamaPoint(locationInModelUnits);
+		Envelope env = envelopes.get(fileName.getPath());
+		if (env == null) {envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));}
 		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
-		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D,rotate3DInit);
+		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D,rotate3DInit, env);
 		return rect;
 	}
 	

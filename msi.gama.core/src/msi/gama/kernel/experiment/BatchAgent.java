@@ -69,9 +69,7 @@ public class BatchAgent extends ExperimentAgent {
 
 	@Override
 	public void schedule() {
-		// public void scheduleAndExecute(final RemoteSequence sequence) {
 		super.schedule();
-		// super.scheduleAndExecute(sequence);
 		// Necessary to run it here, as if the seed has been fixed in the experiment, it is now defined and initialized
 		IExpression expr = getSpecies().getFacet(IKeyword.KEEP_SEED);
 		if ( expr != null && expr.isConst() ) {
@@ -165,7 +163,7 @@ public class BatchAgent extends ExperimentAgent {
 				IScope scope = simulation.getScope();
 				// simulation.getScheduler().insertAgentToInit(scope, simulation, null);
 				// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
-				simulation.getScheduler().init(scope);
+				getSimulationsScheduler().init(scope);
 
 				// This inner while loop runs the simulation and controls its execution
 				while (simulation != null) {
@@ -322,7 +320,7 @@ public class BatchAgent extends ExperimentAgent {
 	}
 
 	@Override
-	public void closeSimulation() {
+	public void closeSimulations() {
 		// We interrupt the simulation scope directly (as it cannot be interrupted by the global scheduler)
 		if ( getSimulation() != null ) {
 			getSimulation().getScope().setInterrupted(true);

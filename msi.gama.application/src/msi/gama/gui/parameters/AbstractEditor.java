@@ -108,7 +108,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 		@Override
 		public void mouseExit(final MouseEvent e) {
-			if ( isCombo && combo.getListVisible() ) { return; }
+			if ( isCombo && combo != null && combo.getListVisible() ) { return; }
 			hideToolbar();
 		}
 
