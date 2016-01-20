@@ -64,8 +64,8 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
 	}
-
-	@Override
-	public void setToogle(final Action toggle) {}
+	//
+	// @Override
+	// public void setToogle(final Action toggle) {}
 
 }

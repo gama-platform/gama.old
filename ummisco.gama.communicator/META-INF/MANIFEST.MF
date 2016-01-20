@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Communicator
 Bundle-SymbolicName: ummisco.gama.communicator;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Require-Bundle: msi.gama.core;bundle-version="1.6.0",
  msi.gama.ext;bundle-version="1.0.0",
  msi.gama.processor;bundle-version="1.4.0",
@@ -31,3 +31,4 @@ Bundle-ClassPath: .,
  ext/geronimo-j2ee-management_1.1_spec-1.0.1.jar,
  ext/slf4j-api-1.7.5.jar,
  ext/hawtbuf-1.9.jar
+Bundle-ActivationPolicy: lazy

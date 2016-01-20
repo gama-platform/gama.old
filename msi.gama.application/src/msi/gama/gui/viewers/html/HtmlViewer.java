@@ -7,7 +7,6 @@ package msi.gama.gui.viewers.html;
 import java.io.IOException;
 import java.net.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.events.*;
@@ -191,8 +190,8 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 		}, SWT.RIGHT);
 
 	}
-
-	@Override
-	public void setToogle(final Action toggle) {}
+	//
+	// @Override
+	// public void setToogle(final Action toggle) {}
 
 }

@@ -1,18 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MessageBroker.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
-import msi.gama.kernel.experiment.AgentScheduler;
+import msi.gama.kernel.experiment.SimulationPopulationScheduler;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -22,7 +22,7 @@ import msi.gaml.types.Types;
 
 /**
  * The Class MessageBroker.
- * 
+ *
  * @author drogoul
  */
 public class MessageBroker {
@@ -35,16 +35,16 @@ public class MessageBroker {
 		new HashMap<IAgent, ConversationsMessages>();
 
 	/** The instance. */
-	private static MessageBroker instance;
+		private static MessageBroker instance;
 
 	/**
 	 * @throws GamaRuntimeException Deliver message.
-	 * 
+	 *
 	 * @param m the m
-	 * 
+	 *
 	 * @throws GamlException the gaml exception
 	 */
-	public IList<Message> deliverMessagesFor(final IScope scope, final IAgent a) throws GamaRuntimeException {
+		public IList<Message> deliverMessagesFor(final IScope scope, final IAgent a) throws GamaRuntimeException {
 		final List<Message> messagesForA = messagesToDeliver.get(a);
 		if ( messagesForA == null ) { return GamaListFactory.EMPTY_LIST; }
 
@@ -73,9 +73,9 @@ public class MessageBroker {
 
 	/**
 	 * @throws GamaRuntimeException Deliver failure in reply to.
-	 * 
+	 *
 	 * @param m the m
-	 * 
+	 *
 	 * @throws GamlException the gaml exception
 	 */
 	protected Message failureMessageInReplyTo(final Message m) throws GamaRuntimeException {
@@ -94,12 +94,12 @@ public class MessageBroker {
 
 	/**
 	 * Schedule for delivery.
-	 * 
+	 *
 	 * @param m the m
 	 */
 	public void scheduleForDelivery(final IScope scope, final Message m) {
 		for ( IAgent a : m.getReceivers().iterable(scope) ) {
-			scheduleForDelivery(m.clone(), a); 
+			scheduleForDelivery(m.clone(), a);
 		}
 	}
 
@@ -114,10 +114,10 @@ public class MessageBroker {
 
 	/**
 	 * @throws GamaRuntimeException Schedule for delivery.
-	 * 
+	 *
 	 * @param m the m
 	 * @param protocol the protocol
-	 * 
+	 *
 	 * @throws UnknownProtocolException the unknown protocol exception
 	 * @throws ProtocolErrorException the protocol error exception
 	 * @throws GamlException the gaml exception
@@ -131,15 +131,15 @@ public class MessageBroker {
 
 	/**
 	 * Gets the single instance of MessageBroker.
-	 * 
+	 *
 	 * @param sim the sim
-	 * 
+	 *
 	 * @return single instance of MessageBroker
 	 */
 	public static MessageBroker getInstance() {
 		if ( instance == null ) {
 			instance = new MessageBroker();
-			AgentScheduler s = GAMA.getSimulation().getScheduler();
+			SimulationPopulationScheduler s = GAMA.getExperiment().getAgent().getSimulationsScheduler();
 
 			s.insertEndAction(new GamaHelper() {
 

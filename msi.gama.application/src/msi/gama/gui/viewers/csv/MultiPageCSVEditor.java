@@ -17,7 +17,6 @@ package msi.gama.gui.viewers.csv;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -761,7 +760,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		}, SWT.RIGHT);
 
 	}
-
-	@Override
-	public void setToogle(final Action toggle) {}
+	//
+	// @Override
+	// public void setToogle(final Action toggle) {}
 }

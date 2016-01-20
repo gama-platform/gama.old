@@ -81,7 +81,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					GAMA.getSimulation().getScheduler().executeOneAction(new GamaHelper() {
+					GAMA.getExperiment().getAgent().getSimulationsScheduler().executeOneAction(new GamaHelper() {
 
 						@Override
 						public Object run(final IScope scope) {

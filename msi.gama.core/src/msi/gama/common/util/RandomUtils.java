@@ -46,8 +46,8 @@ public class RandomUtils {
 	private void initGenerator() {
 		if ( generatorName.equals(IKeyword.CELLULAR) ) {
 			generator = new CellularAutomatonRNG(this);
-		} else if ( generatorName.equals(IKeyword.XOR) ) {
-			generator = new XORShiftRNG(this);
+			// } else if ( generatorName.equals(IKeyword.XOR) ) {
+			// generator = new XORShiftRNG(this);
 		} else if ( generatorName.equals(IKeyword.JAVA) ) {
 			generator = new JavaRNG(this);
 		} else {

@@ -9,13 +9,13 @@
  *
  *
  **********************************************************************************************/
-package msi.gama.runtime;
+package msi.gama.kernel.experiment;
 
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IStepable;
-import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
 
@@ -78,15 +78,15 @@ public class ExperimentScheduler implements Runnable {
 			}
 		}
 
-		GAMA.getGui().debug("ExperimentScheduler.step");
+		// GAMA.getGui().debug("ExperimentScheduler.step");
 		stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
 		scopes = toStep.values().toArray(new IScope[toStep.size()]);
 		for ( int i = 0; i < stepables.length; i++ ) {
 			final IScope scope = scopes[i];
 			try {
-				GAMA.getGui().debug("ExperimentScheduler.step : stepping " + stepables[i]);
+				// GAMA.getGui().debug("ExperimentScheduler.step : stepping " + stepables[i]);
 				if ( !scope.step(stepables[i]) ) {
-					GAMA.getGui().debug("ExperimentScheduler.step : removal of " + stepables[i]);
+					// GAMA.getGui().debug("ExperimentScheduler.step : removal of " + stepables[i]);
 					toStop.add(stepables[i]);
 				}
 			} catch (final Exception e) {
@@ -155,7 +155,7 @@ public class ExperimentScheduler implements Runnable {
 		}
 		toStep.put(stepable, scope);
 		// We first init the stepable before it is scheduled
-		GAMA.getGui().debug("ExperimentScheduler.schedule " + stepable);
+		// GAMA.getGui().debug("ExperimentScheduler.schedule " + stepable);
 		try {
 			if ( !scope.init(stepable) ) {
 				toStop.add(stepable);
@@ -212,6 +212,7 @@ public class ExperimentScheduler implements Runnable {
 	}
 
 	public void unschedule(final IStepable scheduler) {
+		// GAMA.getGui().debug("ExperimentScheduler.unschedule " + scheduler);
 		if ( toStep.containsKey(scheduler) ) {
 			toStep.get(scheduler).setInterrupted(true);
 			// toStop.add(scheduler);
