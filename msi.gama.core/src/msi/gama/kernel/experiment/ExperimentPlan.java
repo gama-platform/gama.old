@@ -118,7 +118,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public boolean isHeadless() {
-		return GAMA.isInHeadLessMode()||isHeadless;
+		return GAMA.isInHeadLessMode() || isHeadless;
 	}
 
 	@Override
@@ -496,9 +496,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		 */
 		@Override
 		public RandomUtils getRandom() {
-			SimulationAgent a = getCurrentSimulation();
-			if ( a != null ) { return a.getExperiment().getRandomGenerator(); }
-			return null;
+			if ( getAgent() == null ) { return null; }
+			return getAgent().getRandomGenerator();
 		}
 
 	}

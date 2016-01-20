@@ -14,6 +14,7 @@ package msi.gama.kernel.simulation;
 import java.util.Map;
 import java.util.Map.Entry;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.*;
@@ -40,6 +41,19 @@ import msi.gaml.types.IType;
  */
 @species(name = IKeyword.MODEL)
 @vars({
+	@var(name = IKeyword.SEED,
+		type = IType.FLOAT,
+		doc = @doc(value = "The seed of the random number generator",
+			comment = "Each time it is set, the random number generator is reinitialized") ),
+	@var(name = IKeyword.RNG,
+		type = IType.STRING,
+		doc = @doc("The random number generator to use for this simulation. Four different ones are at the disposal of the modeler: " +
+			IKeyword.MERSENNE +
+			" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
+			IKeyword.CELLULAR +
+			" is a cellular automaton based generator that should be a bit faster, but less reliable; " + IKeyword.XOR +
+			" is another choice. Much faster than the previous ones, but with short sequences; and " + IKeyword.JAVA +
+			" invokes the standard Java generator") ),
 	@var(name = IKeyword.STEP,
 		type = IType.FLOAT,
 		doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles",
@@ -87,6 +101,7 @@ public class SimulationAgent extends GamlAgent {
 	IOutputManager outputs;
 	ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
+	private final RandomUtils random;
 
 	public Boolean getScheduled() {
 		return scheduled;
@@ -96,12 +111,17 @@ public class SimulationAgent extends GamlAgent {
 		this.scheduled = scheduled;
 	}
 
-	public SimulationAgent(final IPopulation pop) throws GamaRuntimeException {
+	public SimulationAgent(final IPopulation pop) {
+		this((SimulationPopulation) pop);
+	}
+
+	public SimulationAgent(final SimulationPopulation pop) throws GamaRuntimeException {
 		super(pop);
 		clock = new SimulationClock(this);
 		scope = obtainNewScope();
 		scheduler = new AgentScheduler(scope, pop);
 		projectionFactory = new ProjectionFactory();
+		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
 	}
 
 	@Override
@@ -141,7 +161,9 @@ public class SimulationAgent extends GamlAgent {
 				this.getScheduler().executeActions(scope, 1);
 				this.getScheduler().executeActions(scope, 3);
 				// end-hqnghi
-				outputs.step(this.scope);
+				if ( outputs != null ) {
+					outputs.step(this.scope);
+				}
 			}
 			// end-hqnghi
 		} finally {
@@ -353,6 +375,7 @@ public class SimulationAgent extends GamlAgent {
 	}
 
 	public void setOutputs(final IOutputManager iOutputManager) {
+		if ( iOutputManager == null ) { return; }
 		// hqnghi push outputManager down to Simulation level
 		// create a copy of outputs from description
 		if ( /* !scheduled && */ !getExperiment().getSpecies().isBatch() ) {
@@ -395,14 +418,42 @@ public class SimulationAgent extends GamlAgent {
 		outputs.addOutput(output);
 	}
 
+	@getter(value = IKeyword.SEED, initializer = true)
+	public Double getSeed() {
+		Double seed = random.getSeed();
+		// System.out.println("simulation agent get seed: " + seed);
+		return seed == null ? Double.valueOf(0d) : seed;
+	}
+
+	@setter(IKeyword.SEED)
+	public void setSeed(final Double s) {
+		System.out.println("simulation agent set seed: " + s);
+		Double seed;
+		if ( s == null ) {
+			seed = null;
+		} else if ( s.doubleValue() == 0d ) {
+			seed = null;
+		} else {
+			seed = s;
+		}
+		getRandomGenerator().setSeed(seed, true);
+	}
+
+	@getter(value = IKeyword.RNG, initializer = true)
+	public String getRng() {
+		return getRandomGenerator().getRngName();
+	}
+
+	@setter(IKeyword.RNG)
+	public void setRng(final String newRng) {
+		// rng = newRng;
+		// scope.getGui().debug("ExperimentAgent.setRng" + newRng);
+		getRandomGenerator().setGenerator(newRng, true);
+	}
+
 	// @Override
-	// public synchronized void acquireLock() {
-	//
-	// }
-	//
-	// @Override
-	// public synchronized void releaseLock() {
-	//
-	// }
+	public RandomUtils getRandomGenerator() {
+		return random;
+	}
 
 }

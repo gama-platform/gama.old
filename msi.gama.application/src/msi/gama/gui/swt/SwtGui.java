@@ -38,6 +38,7 @@ import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.util.AbstractGui;
 import msi.gama.gui.navigator.*;
 import msi.gama.gui.parameters.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import msi.gama.gui.swt.controls.StatusControlContribution;
@@ -1501,6 +1502,17 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void updateSimulationState() {
 		updateSimulationState(getFrontmostSimulationState());
+	}
+
+	static GamaUIColor[] SIMULATION_COLORS = new GamaUIColor[] { IGamaColors.BLUE, IGamaColors.OK, IGamaColors.NEUTRAL,
+		IGamaColors.WARNING, IGamaColors.BROWN };
+
+		/**
+		 * @param index
+		 * @return
+		 */
+		public static GamaUIColor getColorForSimulationNumber(final int index) {
+		return SIMULATION_COLORS[index % 5];
 	}
 
 }
