@@ -14,7 +14,7 @@ public class ReverseOperators {
 	@operator(value = "serializeSimulation")
 	@doc("")
 	public static String serializeSimulation(IScope scope, int i) {
-		XStream xstream = new XStream();
+		XStream xstream = new XStream(new DomDriver());
 	//	xstream.registerConverter(new GamaAgentConverter());
 	//	xstream.registerConverter(new GamaScopeConverter());
 	//	xstream.registerConverter(new GamaPointConverter());
