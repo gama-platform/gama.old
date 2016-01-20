@@ -298,8 +298,14 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
 					scope.getGui().setSubStatusCompletion(percentage);
+					int nbC = 0;
 					for ( String s : reader.getValues() ) {
 						m[i++] = Cast.asInt(scope, s);
+						nbC++;
+					}
+					while (nbC < matrix.getCols(null)) {
+						m[i++] = 0;
+						nbC++;
 					}
 				}
 			} else if ( t == IType.FLOAT ) {
@@ -309,8 +315,14 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
 					scope.getGui().setSubStatusCompletion(percentage);
+					int nbC = 0;
 					for ( String s : reader.getValues() ) {
 						m[i++] = Cast.asFloat(scope, s);
+						nbC++;
+					}
+					while (nbC < matrix.getCols(null)) {
+						m[i++] = 0.0;
+						nbC++;
 					}
 				}
 			} else {
@@ -320,13 +332,19 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
 					scope.getGui().setSubStatusCompletion(percentage);
-
+					int nbC = 0;
+					
 					for ( String s : reader.getValues() ) {
 						if (i == m.length) {
 							GAMA.reportError(scope, GamaRuntimeException.warning("Your file " + getFile().getName() + " seems to contain data that have not been processed", scope),false);
 							break;
 						}
+						nbC++;
 						m[i++] = s;
+					}
+					while (nbC < matrix.getCols(null)) {
+						m[i++] = null;
+						nbC++;
 					}
 				}
 			}
