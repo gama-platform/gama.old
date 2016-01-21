@@ -12,21 +12,19 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.util.List;
-import com.jogamp.opengl.*;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
-import com.vividsolutions.jts.geom.*;
-import msi.gama.common.util.AbstractGui;
+import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaSVGFile;
 import msi.gaml.operators.Cast;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.files.GLModel;
-import ummisco.gama.opengl.files.GamaObjFile;
 
 public class RessourceObject extends AbstractObject implements Cloneable {
 
