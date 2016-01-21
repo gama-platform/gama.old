@@ -12,27 +12,32 @@
 package msi.gama.gui.views;
 
 import java.io.*;
+import java.util.HashMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.console.*;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.runtime.GAMA;
 
 public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
 	public static final String ID = "msi.gama.application.view.ConsoleView";
-	private BufferedWriter bw;
 	private MessageConsole msgConsole;
 	IOConsoleViewer viewer;
 	boolean paused = false;
 	private final StringBuilder pauseBuffer = new StringBuilder(GamaPreferences.CORE_CONSOLE_BUFFER.getValue());
+	private final HashMap<Color, BufferedWriter> writers = new HashMap();
+	// private final HashMap<BufferedWriter, IOConsoleOutputStream> streams = new HashMap();
 
 	public void setCharacterLimit(final int limit) {
 		msgConsole.setWaterMarks(limit, limit * 2);
@@ -56,9 +61,29 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 		});
 		viewer = new IOConsoleViewer(parent, msgConsole);
 
-		IOConsoleOutputStream stream = msgConsole.newOutputStream();
-		stream.setActivateOnWrite(false);
-		bw = new BufferedWriter(new OutputStreamWriter(stream));
+	}
+
+	private BufferedWriter getWriterFor(final IMacroAgent root, final GamaUIColor color) {
+		Color c = color == null ? getColorFor(root) : color.color();
+		BufferedWriter writer = writers.get(c);
+		if ( writer == null ) {
+			IOConsoleOutputStream stream = msgConsole.newOutputStream();
+			stream.setColor(c);
+			stream.setActivateOnWrite(false);
+			writer = new BufferedWriter(new OutputStreamWriter(stream));
+			writers.put(c, writer);
+			// streams.put(writer, stream);
+		}
+		return writer;
+	}
+
+	/**
+	 * @param root
+	 * @return
+	 */
+	private Color getColorFor(final IMacroAgent root) {
+		if ( root instanceof SimulationAgent ) { return GamaColors.get(((SimulationAgent) root).getColor()).color(); };
+		return IGamaColors.BLACK.color();
 	}
 
 	private boolean indicated = false;
@@ -67,63 +92,67 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	 * Append the text to the console.
 	 * @param text to display in the console
 	 */
-	public void append(final String text) {
-		try {
-			if ( !paused ) {
-				bw.append(text);
-				bw.flush();
-			} else {
-				int maxMemorized = GamaPreferences.CORE_CONSOLE_BUFFER.getValue();
-				int maxDisplayed = GamaPreferences.CORE_CONSOLE_SIZE.getValue();
-				if ( maxDisplayed > -1 ) {
-					// we limit the size of the buffer to the size of the displayed characters, as there is no need to buffer more than what can be displayed
-					if ( maxMemorized == -1 ) {
-						maxMemorized = maxDisplayed;
-					} else {
-						maxMemorized = Math.min(maxMemorized, maxDisplayed);
-					}
-				}
-				if ( maxMemorized > 0 ) {
-					pauseBuffer.append(text);
-					if ( pauseBuffer.length() > maxMemorized ) {
-						pauseBuffer.delete(0, pauseBuffer.length() - maxMemorized - 1);
-						pauseBuffer.insert(0, "(...)\n");
-					}
-				} else if ( maxMemorized == -1 ) {
-					pauseBuffer.append(text);
-				}
-				if ( !indicated ) {
-					GAMA.getGui().run(new Runnable() {
+	public void append(final String text, final IMacroAgent root, final GamaUIColor color) {
 
-						@Override
-						public void run() {
-							if ( toolbar != null ) {
-								toolbar.status((Image) null, "New contents available", IGamaColors.BLUE, SWT.LEFT);
-							}
-							indicated = true;
-						}
-					});
+		if ( !paused ) {
+			BufferedWriter writer = getWriterFor(root, color);
+			try {
+				writer.append(text);
+				writer.flush();
+			} catch (IOException e) {}
+		} else {
+			int maxMemorized = GamaPreferences.CORE_CONSOLE_BUFFER.getValue();
+			int maxDisplayed = GamaPreferences.CORE_CONSOLE_SIZE.getValue();
+			if ( maxDisplayed > -1 ) {
+				// we limit the size of the buffer to the size of the displayed characters, as there is no need to buffer more than what can be displayed
+				if ( maxMemorized == -1 ) {
+					maxMemorized = maxDisplayed;
+				} else {
+					maxMemorized = Math.min(maxMemorized, maxDisplayed);
 				}
-
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			if ( maxMemorized > 0 ) {
+				pauseBuffer.append(text);
+				if ( pauseBuffer.length() > maxMemorized ) {
+					pauseBuffer.delete(0, pauseBuffer.length() - maxMemorized - 1);
+					pauseBuffer.insert(0, "(...)\n");
+				}
+			} else if ( maxMemorized == -1 ) {
+				pauseBuffer.append(text);
+			}
+			if ( !indicated ) {
+				GAMA.getGui().run(new Runnable() {
+
+					@Override
+					public void run() {
+						if ( toolbar != null ) {
+							toolbar.status((Image) null, "New contents available", IGamaColors.BLUE, SWT.LEFT);
+						}
+						indicated = true;
+					}
+				});
+			}
+
 		}
 	}
 
-	public void setText(final String string) {
-		msgConsole.clearConsole();
-		try {
-			if ( !paused ) {
-				bw.append(string);
-				bw.flush();
-			} else {
-				pauseBuffer.append(string);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	@Override
+	public void dispose() {
+		clearText();
+		super.dispose();
+	}
 
+	@Override
+	public void close() {
+		clearText();
+		super.close();
+	}
+
+	public void clearText() {
+		writers.clear();
+		// streams.clear();
+		msgConsole.clearConsole();
+		pauseBuffer.setLength(0);
 	}
 
 	@Override
@@ -151,7 +180,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 		if ( paused ) {
 			pauseBuffer.setLength(0);
 		} else {
-			append(pauseBuffer.toString());
+			append(pauseBuffer.toString(), null, null);
 		}
 	}
 
@@ -163,7 +192,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 
 			@Override
 			public void widgetSelected(final SelectionEvent arg0) {
-				setText("");
+				clearText();
 			}
 		}, SWT.RIGHT);
 

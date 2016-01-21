@@ -15,9 +15,14 @@ public class MtlLoader {
 		public float[] Ka = new float[3];
 		public float[] Kd = new float[3];
 		public float[] Ks = new float[3];
+		public String map_Kd;
+		public String map_Ka;
+		public String map_d;
+		
 	}
 	
 	public MtlLoader(BufferedReader ref, String pathtoimages) {
+		
 		loadobject(ref, pathtoimages);
 		cleanup();
 	}
@@ -34,7 +39,8 @@ public class MtlLoader {
 		for (int i=0; i < Materials.size(); i++) {
 			mtl tempmtl = (mtl)Materials.get(i);
 			if (tempmtl.name.matches(namepass)) {
-				returnfloat = tempmtl.d;
+				//returnfloat = tempmtl.d;
+				return tempmtl.d;
 			}
 		}
 		return returnfloat;
@@ -45,7 +51,8 @@ public class MtlLoader {
 		for (int i=0; i < Materials.size(); i++) {
 			mtl tempmtl = (mtl)Materials.get(i);
 			if (tempmtl.name.matches(namepass)) {
-				returnfloat = tempmtl.Ka;
+				//returnfloat = tempmtl.Ka;
+				return tempmtl.Ka;
 			}
 		}
 		return returnfloat;
@@ -56,7 +63,8 @@ public class MtlLoader {
 		for (int i=0; i < Materials.size(); i++) {
 			mtl tempmtl = (mtl)Materials.get(i);
 			if (tempmtl.name.matches(namepass)) {
-				returnfloat = tempmtl.Kd;
+				//returnfloat = tempmtl.Kd;
+				return tempmtl.Kd;
 			}
 		}
 		return returnfloat;
@@ -67,10 +75,50 @@ public class MtlLoader {
 		for (int i=0; i < Materials.size(); i++) {
 			mtl tempmtl = (mtl)Materials.get(i);
 			if (tempmtl.name.matches(namepass)) {
-				returnfloat = tempmtl.Ks;
+				//returnfloat = tempmtl.Ks;
+				return tempmtl.Ks;
 			}
 		}
 		return returnfloat;
+	}
+	
+	public Integer getMtlnum(String namepass) {
+		for (int i=0; i < Materials.size(); i++) {
+			mtl tempmtl = (mtl)Materials.get(i);
+			if (tempmtl.name.matches(namepass)) {
+				return tempmtl.mtlnum;
+			}
+		}
+		return null;
+	}
+	
+	public String getMapKa(String namepass) {
+		for (int i=0; i < Materials.size(); i++) {
+			mtl tempmtl = (mtl)Materials.get(i);
+			if (tempmtl.name.matches(namepass)) {
+				return tempmtl.map_Ka;
+			}
+		}
+		return null;
+	}
+	
+	public String getMapKd(String namepass) {
+		for (int i=0; i < Materials.size(); i++) {
+			mtl tempmtl = (mtl)Materials.get(i);
+			if (tempmtl.name.matches(namepass)) {
+				return tempmtl.map_Kd;
+			}
+		}
+		return null;
+	}
+	public String getMapd(String namepass) {
+		for (int i=0; i < Materials.size(); i++) {
+			mtl tempmtl = (mtl)Materials.get(i);
+			if (tempmtl.name.matches(namepass)) {
+				return tempmtl.map_d;
+			}
+		}
+		return null;
 	}
 	
 
@@ -100,7 +148,7 @@ public class MtlLoader {
 						matset.mtlnum = mtlcounter;
 						mtlcounter++;
 					}
-					if (newline.charAt(0) == 'K' && newline.charAt(1) == 'a') {
+					else if (newline.charAt(0) == 'K' && newline.charAt(1) == 'a') {
 						float[] coords = new float[3];
 						String[] coordstext = new String[4];
 						coordstext = newline.split("\\s+");
@@ -109,7 +157,7 @@ public class MtlLoader {
 						}
 						matset.Ka = coords;
 					}
-					if (newline.charAt(0) == 'K' && newline.charAt(1) == 'd') {
+					else if (newline.charAt(0) == 'K' && newline.charAt(1) == 'd') {
 						float[] coords = new float[3];
 						String[] coordstext = new String[4];
 						coordstext = newline.split("\\s+");
@@ -118,7 +166,7 @@ public class MtlLoader {
 						}
 						matset.Kd = coords;
 					}
-					if (newline.charAt(0) == 'K' && newline.charAt(1) == 's') {
+					else if (newline.charAt(0) == 'K' && newline.charAt(1) == 's') {
 						float[] coords = new float[3];
 						String[] coordstext = new String[4];
 						coordstext = newline.split("\\s+");
@@ -127,9 +175,24 @@ public class MtlLoader {
 						}
 						matset.Ks = coords;
 					}
-					if (newline.charAt(0) == 'd') {
+					else if (newline.charAt(0) == 'd') {
 						String[] coordstext = newline.split("\\s+");
 						matset.d = Float.valueOf(coordstext[1]).floatValue();
+					}
+					else if (newline.contains("map_Ka")) {
+						String texture = newline.replace("map_Ka ", "");
+						while(texture.startsWith(" " )) texture = texture.replaceFirst(" ", "");
+						if (texture != null) matset.map_Ka = texture;
+					}
+					else if (newline.contains("map_Kd")) {
+						String texture = newline.replace("map_Kd ", "");
+						while(texture.startsWith(" " )) texture = texture.replaceFirst(" ", "");
+						if (texture != null) matset.map_Kd = texture;
+					}
+					else if (newline.contains("map_d")) {
+						String texture = newline.replace("map_d ", "");
+						while(texture.startsWith(" " )) texture = texture.replaceFirst(" ", "");
+						if (texture != null) matset.map_d = texture;
 					}
 				}
 			}

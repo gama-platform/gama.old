@@ -86,13 +86,13 @@ species ant skills: [moving] control: fsm {
 		transition to: wandering when: (place.road < 0.05) ;
 	}
 	aspect text {
-		if use_icons {
-			draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: location size: 5 ;
-		} else {
-			draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
-		}
+//		if use_icons {
+//			draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: location size: 5 ;
+//		} else {
+//			draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
+//		}
 		if display_state {
-			draw state at: location + {-3,1.5} color: °white size: 0.8 ;
+			draw state at: location + {-3,1.5} color: °white size: 0.8 bitmap:true;
 		}
 	} 
 	aspect default {

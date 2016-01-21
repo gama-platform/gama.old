@@ -51,11 +51,6 @@ public class GamaScopeConverter implements Converter {
 		writer.startNode("IScope");
         writer.setValue(scope.getName().toString());
         writer.endNode();
-        
-//		writer.startNode("-------------------AgentExperiment");
-//        IExperimentAgent expAgt = scope.getExperiment();
-//        context.convertAnother(expAgt);
-//        writer.endNode();
 
         // The experiment ???
         
@@ -68,24 +63,14 @@ public class GamaScopeConverter implements Converter {
         
 		SimulationPopulation simPop = expAgt.getSimulationPopulation();
 		
-		// Each simulation 
 		for(IAgent agt : expAgt.getSimulationPopulation()){
+			// Each simulation 			
 			SimulationAgent simAgt = (SimulationAgent) agt;
+			System.out.println("ConvertAnother : ScopeConverter " + agt.getClass());
     		context.convertAnother(agt);
 		}
 		
 		writer.endNode();
-				
-		
- //       writer.setValue(scope.getName().toString());
-  //      writer.endNode();
-
-
-    //    IAgent sim = expAgt.getSimulation();
-        
-    //    IDescription desc = scope.getExperimentContext();
-        
-
 	}
 
 	@Override

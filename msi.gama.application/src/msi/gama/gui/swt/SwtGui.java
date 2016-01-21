@@ -50,7 +50,7 @@ import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -136,12 +136,12 @@ public class SwtGui extends AbstractGui {
 	public static final Entry<Color> ERROR_TEXT_COLOR = GamaPreferences
 		.create("error.text.color", "Text color of errors in error view",
 			GamaColors.toAwtColor(IGamaColors.ERROR.inactive()), IType.COLOR)
-		.in(GamaPreferences.SIMULATION).group("Errors");
+		.in(GamaPreferences.EXPERIMENTS).group("Errors");
 
 	public static final Entry<Color> WARNING_TEXT_COLOR = GamaPreferences
 		.create("warning.text.color", "Text color of warnings in error view",
 			GamaColors.toAwtColor(IGamaColors.WARNING.inactive()), IType.COLOR)
-		.in(GamaPreferences.SIMULATION).group("Errors");
+		.in(GamaPreferences.EXPERIMENTS).group("Errors");
 
 	public static final Entry<Color> IMAGE_VIEWER_BACKGROUND = GamaPreferences
 		.create("image.viewer.background", "Default image viewer background color", Color.white, IType.COLOR)
@@ -379,24 +379,34 @@ public class SwtGui extends AbstractGui {
 		dialogReturnCode = i;
 	}
 
-	private void writeToConsole(final String msg) {
+	private void writeToConsole(final String msg, final IMacroAgent root, final GamaUIColor color) {
 		if ( console != null ) {
-			console.append(msg);
+			console.append(msg, root, color);
 		} else {
 			consoleBuffer.append(msg);
 		}
 	}
 
 	@Override
-	public void debugConsole(final int cycle, final String msg) {
-		writeToConsole("(cycle : " + cycle + ") " + msg + sep);
+	public void debugConsole(final int cycle, final String msg, final IMacroAgent root) {
+		this.debugConsole(cycle, msg, root, null);
+	}
+
+	@Override
+	public void debugConsole(final int cycle, final String msg, final IMacroAgent root, final GamaColor color) {
+		writeToConsole("(cycle : " + cycle + ") " + msg + sep, root, GamaColors.get(color));
 	}
 
 	private static String sep = System.getProperty("line.separator");
 
 	@Override
-	public void informConsole(final String msg) {
-		writeToConsole(msg + sep);
+	public void informConsole(final String msg, final IMacroAgent root) {
+		this.informConsole(msg, root, null);
+	}
+
+	@Override
+	public void informConsole(final String msg, final IMacroAgent root, final GamaColor color) {
+		writeToConsole(msg + sep, root, GamaColors.get(color));
 	}
 
 	public void informConsole(final Throwable e) {
@@ -405,14 +415,15 @@ public class SwtGui extends AbstractGui {
 		e.printStackTrace(pw);
 	}
 
-	private void eraseConsole(final boolean setToNull) {
+	@Override
+	public void eraseConsole(final boolean setToNull) {
 		if ( console != null ) {
 			run(new Runnable() {
 
 				@Override
 				public void run() {
 					if ( console != null ) {
-						console.setText("");
+						console.clearText();
 						if ( setToNull ) {
 							console = null;
 						}
@@ -568,9 +579,9 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void showConsoleView() {
 		console = (ConsoleView) showView(ConsoleView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
-		eraseConsole(false);
+		// eraseConsole(false);
 		if ( consoleBuffer.length() > 0 ) {
-			console.append(consoleBuffer.toString());
+			console.append(consoleBuffer.toString(), null, null);
 			consoleBuffer.setLength(0);
 		}
 	}
@@ -1504,14 +1515,16 @@ public class SwtGui extends AbstractGui {
 		updateSimulationState(getFrontmostSimulationState());
 	}
 
-	static GamaUIColor[] SIMULATION_COLORS = new GamaUIColor[] { IGamaColors.BLUE, IGamaColors.OK, IGamaColors.NEUTRAL,
-		IGamaColors.WARNING, IGamaColors.BROWN };
+	static GamaColor[] SIMULATION_COLORS =
+		new GamaColor[] { IGamaColors.BLUE.toGamaColor(), IGamaColors.OK.toGamaColor(),
+			IGamaColors.NEUTRAL.toGamaColor(), IGamaColors.WARNING.toGamaColor(), IGamaColors.BROWN.toGamaColor() };
 
 	/**
 	 * @param index
 	 * @return
 	 */
-		public static GamaUIColor getColorForSimulationNumber(final int index) {
+			@Override
+	public GamaColor getColorForSimulationNumber(final int index) {
 		return SIMULATION_COLORS[index % 5];
 	}
 

@@ -17,7 +17,7 @@ import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -184,6 +184,9 @@ public interface IScope {
 	 * @return the current simulation or null if none is defined (unlikely as the scope is created
 	 * by a simulation)
 	 */
+
+	public IMacroAgent getRoot();
+
 	public abstract SimulationAgent getSimulationScope();
 
 	public abstract IExperimentAgent getExperiment();

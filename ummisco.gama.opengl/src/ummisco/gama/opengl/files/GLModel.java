@@ -1,9 +1,19 @@
 package ummisco.gama.opengl.files;
 
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import com.jogamp.opengl.*;
+
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+
+import msi.gama.common.util.ImageUtils;
 
 public class GLModel{
 
@@ -317,7 +327,7 @@ public class GLModel{
 		}
 	}
     
-    public void opengldrawtolist(GL2 gl){
+    public void opengldrawtolist(GL2 gl) throws IOException{
         ////////////////////////////////////////
 		/// With Materials if available ////////
 		////////////////////////////////////////
@@ -334,12 +344,38 @@ public class GLModel{
 			nextmatname = nextmatnamearray[0];
 			nextmat = Integer.parseInt(nextmatnamearray[1]);
 		}
-
+		System.out.println("nextmatname: " + nextmatname );
+		Texture texture = null;
+		
 		//gl.glNewList(objectlist,GL2.GL_COMPILE);
 		for (int i=0;i<faces.size();i++) {
 			if (i == nextmat) {
-					gl.glEnable(GL2.GL_COLOR_MATERIAL);
-					gl.glColor4f((materials.getKd(nextmatname))[0],(materials.getKd(nextmatname))[1],(materials.getKd(nextmatname))[2],(materials.getd(nextmatname)));
+				if (texture != null) {
+					texture.disable(gl);
+					texture.destroy(gl);
+				}
+				gl.glEnable(GL2.GL_COLOR_MATERIAL);
+				gl.glColor4f((materials.getKd(nextmatname))[0],(materials.getKd(nextmatname))[1],(materials.getKd(nextmatname))[2],(materials.getd(nextmatname)));
+				String mapKa = materials.getMapKa(nextmatname);
+				String mapKd = materials.getMapKd(nextmatname);
+				String mapd = materials.getMapd(nextmatname);
+				if (mapKa != null || mapKd != null || mapd != null) {
+					File f = new File(mtl_path);
+					String path = f.getAbsolutePath().replace(f.getName(), "");
+					if (mapd != null) path += mapd;
+					else if (mapKa != null) path += mapKa;
+					else if (mapKd != null) path += mapKd;
+					f = new File(path);
+					if (f.exists() ) {
+						BufferedImage im = ImageUtils.getInstance().getImageFromFile(f);
+						TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, false);
+						texture = new Texture(gl, data);
+						System.out.println("texture : " + texture);
+						texture.enable(gl);
+						texture.bind(gl);	
+					}
+					
+				}
 				matcount++;
 				if (matcount < totalmats) {
 					nextmatnamearray = (String[])(mattimings.get(matcount));
@@ -352,6 +388,7 @@ public class GLModel{
 			int[] tempfacesnorms = (int[])(facesnorms.get(i));
 			int[] tempfacestexs = (int[])(facestexs.get(i));
 			
+				
 			//// Quad Begin Header ////
 			int polytype;
 			if (tempfaces.length == 3) {
@@ -376,7 +413,10 @@ public class GLModel{
 					float textempx = ((float[])vertexsetstexs.get(tempfacestexs[w] - 1))[0];
 					float textempy = ((float[])vertexsetstexs.get(tempfacestexs[w] - 1))[1];
 					float textempz = ((float[])vertexsetstexs.get(tempfacestexs[w] - 1))[2];
-					gl.glTexCoord3f(textempx,1f-textempy,textempz);
+					float valy = 1f-textempy;
+					if (valy >= 0 && valy <= 1.0)
+						gl.glTexCoord3f(textempx,valy,textempz);
+					else gl.glTexCoord3f(textempx,Math.abs(textempy),textempz);
 				}
 				
 				float tempx = ((float[])vertexsets.get(tempfaces[w] - 1))[0];
@@ -385,10 +425,10 @@ public class GLModel{
 				gl.glVertex3f(tempx,tempy,tempz);
 			}
 			
-			
 			//// Quad End Footer /////
 			gl.glEnd();
 			///////////////////////////
+			//if (texture != null)texture.disable(gl);
 			
 			
 		}
@@ -396,7 +436,12 @@ public class GLModel{
 	}
     
 	public void draw(GL2 gl){
-		opengldrawtolist(gl);
+		try {
+			opengldrawtolist(gl);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
     
     public void opengldraw(GL2 gl){

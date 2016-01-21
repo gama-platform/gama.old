@@ -259,7 +259,7 @@ public abstract class SqlConnection {
 		}
 
 		if ( DEBUG ) {
-			scope.getGui().informConsole(selectComm + " was run");
+			scope.getGui().informConsole(selectComm + " was run", scope.getRoot());
 		}
 		// return repRequest;
 		return result;

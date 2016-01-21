@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.runtime;
 
+import java.awt.Color;
 import java.util.Map;
 import java.util.logging.*;
 import org.eclipse.core.runtime.CoreException;
@@ -20,7 +21,7 @@ import msi.gama.common.util.AbstractGui;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.outputs.*;
 import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -112,13 +113,13 @@ public class HeadlessListener extends AbstractGui {
 	public void showParameterView(final IExperimentPlan exp) {}
 
 	@Override
-	public void debugConsole(final int cycle, final String s) {
+	public void debugConsole(final int cycle, final String s, final IMacroAgent root) {
 		System.out.println("Debug (step " + cycle + "): " + s);
 		// System.out.println("Debug (step " + cycle + "): " + s);
 	}
 
 	@Override
-	public void informConsole(final String s) {
+	public void informConsole(final String s, final IMacroAgent root) {
 		System.out.println("Information: " + s);
 		// System.out.println("Information: " + s);
 	}
@@ -376,4 +377,38 @@ public class HeadlessListener extends AbstractGui {
 	 */
 	@Override
 	public void runModel(final IModel object, final String exp) {}
+
+	/**
+	 * Method eraseConsole()
+	 * @see msi.gama.common.interfaces.IGui#eraseConsole(boolean)
+	 */
+	@Override
+	public void eraseConsole(final boolean b) {}
+
+	/**
+	 * Method debugConsole()
+	 * @see msi.gama.common.interfaces.IGui#debugConsole(int, java.lang.String, msi.gama.metamodel.agent.IMacroAgent, msi.gama.util.GamaColor)
+	 */
+	@Override
+	public void debugConsole(final int cycle, final String s, final IMacroAgent root, final GamaColor color) {
+		this.debugConsole(cycle, s, root);
+	}
+
+	/**
+	 * Method informConsole()
+	 * @see msi.gama.common.interfaces.IGui#informConsole(java.lang.String, msi.gama.metamodel.agent.IMacroAgent, msi.gama.util.GamaColor)
+	 */
+	@Override
+	public void informConsole(final String s, final IMacroAgent root, final GamaColor color) {
+		this.informConsole(s, root);
+	}
+
+	/**
+	 * Method getColorForSimulationNumber()
+	 * @see msi.gama.common.interfaces.IGui#getColorForSimulationNumber(int)
+	 */
+	@Override
+	public GamaColor getColorForSimulationNumber(final int index) {
+		return new GamaColor(Color.BLACK);
+	}
 }

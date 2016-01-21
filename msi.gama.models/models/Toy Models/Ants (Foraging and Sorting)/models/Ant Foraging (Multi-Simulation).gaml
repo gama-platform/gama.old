@@ -32,6 +32,7 @@ global {
 			}
 		}
 		create ant number: ants_number with: (location: center);
+		write "Simulation " + int(self) + " created";
 	}
   
 }
@@ -116,6 +117,17 @@ experiment "4 Simulations" type: gui {
 		create simulation with: [ants_number::200,evaporation_rate::0.7,diffusion_rate::0.2];
 		create simulation with: [ants_number::50,evaporation_rate::0.05,diffusion_rate::0.8];
 		create simulation with: [ants_number::10,evaporation_rate::0.3,diffusion_rate::0.6];
+	}
+	
+	permanent {
+		display Comparison background: #white {
+			chart "Food Gathered" type: series {
+				data "Food 0" value: ants_model[0].food_gathered color: #blue;
+				data "Food 1" value: ants_model[1].food_gathered color: #green;
+				data "Food 2" value: ants_model[2].food_gathered color: #darkgray;
+				data "Food 3" value: ants_model[3].food_gathered color: (#orange).darker;
+			}
+		}
 	}
 
 

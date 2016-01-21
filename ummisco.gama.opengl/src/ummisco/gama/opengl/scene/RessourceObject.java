@@ -12,20 +12,19 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.util.List;
-import com.jogamp.opengl.*;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
-import com.vividsolutions.jts.geom.*;
-import msi.gama.common.util.AbstractGui;
+import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaSVGFile;
 import msi.gaml.operators.Cast;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.files.GLModel;
-import ummisco.gama.opengl.files.GamaObjFile;
 
 public class RessourceObject extends AbstractObject implements Cloneable {
 
@@ -40,12 +39,13 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	GamaPoint ptRot = null;
 	Double rotInit = null;
 	GamaPoint ptRotInit = null;
+	Envelope env;
 	
 	
 
 
 	public RessourceObject(final GamaFile fileName, final IAgent agent, final Color color, Double alpha, final GamaPoint location,
-			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit) {
+			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit, Envelope env) {
 		super(color, alpha);
         this.file = fileName;
 		this.agent = agent;
@@ -53,7 +53,9 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		this.color= color;
 		this.alpha = alpha; 
 		this.size = dimensions;
+		if ((file instanceof GamaSVGFile) && (size == null)) size = new GamaPoint(1,1,1);
 		atLoc = location;
+		this.env = env;
 		if (rotate3D != null) {
 			rot = Cast.asFloat(null, rotate3D.key);
 			ptRot = (GamaPoint) Cast.asPoint(null, rotate3D.value);
@@ -94,8 +96,15 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	@Override
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
 		JOGLRenderer renderer = drawer.renderer;
-		    //FIXME: To simplify the process picking is not yet taken in account
-			
+		//FIXME: To simplify the process picking is not yet taken in account
+			if (file instanceof GamaSVGFile ) {
+				if (size != null)
+					gl.glTranslated(-size.x/2, renderer.yFlag*size.y/2,0);	
+				else if (env != null) {
+					gl.glTranslated(-env.getWidth()/2, renderer.yFlag*env.getHeight()/2,0);	
+				}
+			}
+				
 			if (atLoc != null) {
 				gl.glTranslated(atLoc.getX(), renderer.yFlag*atLoc.getY(), atLoc.getZ());
 			} else {
@@ -107,19 +116,37 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			if(this.rotInit != null){
 				gl.glRotatef(rotInit.floatValue() , (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);		
 			}
-			if(this.size!=null){
-					Envelope3D env = (Envelope3D) file.computeEnvelope(null);
-				  gl.glScaled(size.x / env.getWidth(), size.y / env.getHeight(), size.z/ env.getHeight());
+			if(this.size!=null && env != null){
+				gl.glScaled(size.x / env.getWidth(), size.y / env.getHeight(), size.z/ env.getHeight());
 			}
-			/*if (this.color != null) { does not work for obj files
+
+			if (this.color != null) { //does not work for obj files
 				gl.glColor3d(color.getRed()/255.0, color.getGreen()/255.0, color.getBlue()/255.0);
-			}*/
+			}
+			
 			super.draw(gl, drawer, picking);
+
+			if ( picking ) {
+				gl.glPushMatrix();
+				gl.glLoadName(pickingIndex);
+				if ( renderer.pickedObjectIndex == pickingIndex ) {
+					if ( agent != null /* && !picked */ ) {
+						renderer.setPicking(false);
+						pick();
+						renderer.currentPickedObject = this;
+						renderer.displaySurface.selectAgent(agent);
+					}
+				}
+				gl.glColor3d(1.0, 0.0, 0.0);
+				
+				super.draw(gl, drawer, picking);
+				gl.glPopMatrix();
+			} else {
+				super.draw(gl, drawer, picking);
+			}
 			
-			
-			if(this.size!=null){
-				Envelope3D env = (Envelope3D) file.computeEnvelope(null);
-				 gl.glScaled(env.getWidth() /size.x, env.getHeight()/size.y, env.getHeight()/size.z);
+			if(this.size!=null  && env != null){
+				gl.glScaled(env.getWidth() /size.x, env.getHeight()/size.y, env.getHeight()/size.z);
 				 
 			}
 			if(this.rotInit != null){
@@ -135,6 +162,13 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			} else {
 				gl.glTranslated(-this.agent.getLocation().getX(), - renderer.yFlag*this.agent.getLocation().getY(), - this.agent.getLocation().getZ());	
 			}
+			if (file instanceof GamaSVGFile ) {
+				if (size != null)
+					gl.glTranslated(size.x/2, -renderer.yFlag*size.y/2,0);	
+				else if (env != null) {
+					gl.glTranslated(env.getWidth()/2,- renderer.yFlag*env.getHeight()/2,0);	
+				}
+			}	
 			
 	}
 
