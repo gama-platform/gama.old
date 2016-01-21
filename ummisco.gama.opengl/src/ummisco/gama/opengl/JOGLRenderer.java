@@ -12,14 +12,12 @@
 package ummisco.gama.opengl;
 
 import java.awt.*;
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Map;
-
+import java.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import com.jogamp.opengl.*;
@@ -27,8 +25,7 @@ import com.jogamp.opengl.fixedfunc.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.gl2.GLUT;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -41,8 +38,7 @@ import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
-import ummisco.gama.opengl.files.GLModel;
-import ummisco.gama.opengl.files.ModelLoaderOBJ;
+import ummisco.gama.opengl.files.*;
 import ummisco.gama.opengl.scene.*;
 import ummisco.gama.opengl.utils.GLUtilLight;
 
@@ -60,7 +56,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	GLCanvas canvas;
 	public final LayeredDisplayData data;
 	private int width, height;
-	public ICamera camera; 
+	public ICamera camera;
 	public SWTOpenGLDisplaySurface displaySurface;
 	public final SceneBuffer sceneBuffer;
 	public int frame = 0;
@@ -82,11 +78,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	protected double yRatioBetweenPixelsAndModelUnits;
 	private GLU glu;
 	private GL2 gl;
-    private GLUT glut = new GLUT();
+	private final GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
 	private volatile boolean inited;
-	protected GeometryCache cache;
+	private GeometryCache cache;
 	protected Map<String, Envelope> envelopes;
 	// Use to inverse y composaant
 	public int yFlag;
@@ -119,11 +115,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public ModelScene getCurrentScene() {
 		return currentScene;
 	}
-	
-	public void defineROI(final Point start,final Point end) {	
+
+	public void defineROI(final Point start, final Point end) {
 		GamaPoint startInWorld = getRealWorldPointFromWindowPoint(start);
 		GamaPoint endInWorld = getRealWorldPointFromWindowPoint(end);
-		ROIEnvelope = new Envelope3D(new Envelope(startInWorld.x, endInWorld.x, startInWorld.y,endInWorld.y));
+		ROIEnvelope = new Envelope3D(new Envelope(startInWorld.x, endInWorld.x, startInWorld.y, endInWorld.y));
 	}
 
 	public void cancelROI() {
@@ -156,9 +152,9 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		});
 
 	}
-	
+
 	public GeometryCache getCache() {
-		return cache;
+		return getGeometryCache();
 	}
 
 	@Override
@@ -167,14 +163,14 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// GLU objects are NOT thread safe...
 		glu = new GLU();
 		gl = GLContext.getCurrentGL().getGL2();
-		cache = new GeometryCache(this);
+
 		envelopes = new Hashtable<String, Envelope>();
 		initializeCanvasWithListeners();
 
 		width = drawable.getSurfaceWidth();
 		height = drawable.getSurfaceHeight();
 		updateCameraPosition();
-		System.out.println("Renderer initializing to " + width + " , " + height + " with drawable: " + drawable);
+		// System.out.println("Renderer initializing to " + width + " , " + height + " with drawable: " + drawable);
 
 		// Putting the swap interval to 0 (instead of 1) seems to cure some of the problems of resizing of views.
 		gl.setSwapInterval(0);
@@ -205,7 +201,13 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// We mark the renderer as inited
 		inited = true;
 
-		
+	}
+
+	GeometryCache getGeometryCache() {
+		if ( cache == null ) {
+			cache = new GeometryCache(this);
+		}
+		return cache;
 	}
 
 	public boolean getDrawNormal() {
@@ -344,10 +346,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			}
 		} else {
 			if ( aspect >= 1.0 ) {
-				//maxDim = maxDim/10;
-				((GL2ES1) gl).glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim*10, -maxDim*10);
+				// maxDim = maxDim/10;
+				((GL2ES1) gl).glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
 			} else {
-				//maxDim = maxDim/10;
+				// maxDim = maxDim/10;
 				((GL2ES1) gl).glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
 			}
 			gl.glTranslated(0d, 0d, maxDim * 0.05);
@@ -488,10 +490,9 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		double y1 = -ROIEnvelope.getMinY();
 		double x2 = ROIEnvelope.getMaxX();
 		double y2 = -ROIEnvelope.getMaxY();
-		
-		
-		Double distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
-		gl.glRasterPos3d(x2, -y1,0.1);
+
+		Double distance = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+		gl.glRasterPos3d(x2, -y1, 0.1);
 		gl.glColor3d(0.0, 0.0, 0.0);
 		glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "  d: " + distance.toString());
 		if ( this.data.isZ_fighting() ) {
@@ -601,10 +602,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 			}
 		}
-		
+
 		if ( shape.hasAttribute(IShape.ASSET3D_ATTRIBUTE) ) {
-			java.util.List<String> asset3DNames = Cast.asList(scope, shape.getAttribute(IShape.ASSET3D_ATTRIBUTE));	
-		    asset3Dmodel = ModelLoaderOBJ.LoadModel(asset3DNames.get(0), asset3DNames.get(1), gl);
+			java.util.List<String> asset3DNames = Cast.asList(scope, shape.getAttribute(IShape.ASSET3D_ATTRIBUTE));
+			asset3Dmodel = ModelLoaderOBJ.LoadModel(asset3DNames.get(0), asset3DNames.get(1), gl);
 		}
 
 		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
@@ -621,25 +622,26 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 				Geometry intersect = world.intersection(g);
 				if ( !intersect.isEmpty() ) {
 					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth,
-						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, asset3Dmodel, ratio, colors, rot3D);
+						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, asset3Dmodel, ratio, colors,
+						rot3D);
 				}
 			}
 		} else {
-			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures, asset3Dmodel, 
-				ratio, colors, rot3D);
+			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures,
+				asset3Dmodel, ratio, colors, rot3D);
 		}
 		return rect;
 	}
 
 	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
-		final java.util.List<BufferedImage> textures, final GLModel asset3Dmodel,  final java.util.List<Double> ratio,
+		final java.util.List<BufferedImage> textures, final GLModel asset3Dmodel, final java.util.List<Double> ratio,
 		final java.util.List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
 		// System.out.println("Value of 1 pixel: " + 1d / getyRatioBetweenPixelsAndModelUnits());
 		sceneBuffer.getSceneToUpdate().addGeometry(geom, scope.getAgentScope(), color, fill, border,
-			textures == null || textures.isEmpty() ? false : true, textures, asset3Dmodel, angle, depth.doubleValue(), rounded, type,
-			ratio, colors, rotate3D);
+			textures == null || textures.isEmpty() ? false : true, textures, asset3Dmodel, angle, depth.doubleValue(),
+			rounded, type, ratio, colors, rotate3D);
 
 	}
 
@@ -672,32 +674,38 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		return rect;
 	}
 
-	
+	@Override
+	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
+		final GamaPair<Double, GamaPoint> rotate3D) {
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
+		Envelope env = envelopes.get(fileName.getPath());
+		if ( env == null ) {
+			envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));
+		}
+		GamaPoint location = new GamaPoint(locationInModelUnits);
+		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
+		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0,
+			location, dimensions, rotate3D, null, env);
+		return rect;
+	}
 
 	@Override
 	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
-			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3D) {
-		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
-		Envelope env = envelopes.get(fileName.getPath());
-		if (env == null) {envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));}
-		GamaPoint location = new GamaPoint(locationInModelUnits);
-		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
-		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D, null, env); 
-		return rect;
-	}
-	
-	@Override
-	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
-			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit) {
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
+		final GamaPair<Double, GamaPoint> rotate3D, final GamaPair<Double, GamaPoint> rotate3DInit) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		GamaPoint location = new GamaPoint(locationInModelUnits);
 		Envelope env = envelopes.get(fileName.getPath());
-		if (env == null) {envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));}
+		if ( env == null ) {
+			envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));
+		}
 		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
-		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0, location, dimensions,rotate3D,rotate3DInit, env);
+		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0,
+			location, dimensions, rotate3D, rotate3DInit, env);
 		return rect;
 	}
-	
+
 	private Envelope3D getWorldEnvelopeWithZ(final double z) {
 		return new Envelope3D(0, data.getEnvWidth(), 0, data.getEnvHeight(), 0, z);
 	}
@@ -731,8 +739,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 				stepY = (j + 0.5) / image.getHeight() * image.getHeight();
 				final Geometry g = GamaGeometryType
 					.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio)).getInnerGeometry();
-				sceneBuffer.getSceneToUpdate().addGeometry(g, null, lineColor, false, lineColor, false, null, null, 0, 0,
-					false, IShape.Type.GRIDLINE, null, null, null);
+				sceneBuffer.getSceneToUpdate().addGeometry(g, null, lineColor, false, lineColor, false, null, null, 0,
+					0, false, IShape.Type.GRIDLINE, null, null, null);
 			}
 		}
 	}
@@ -782,7 +790,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			sizeInModelUnits = heightInModelUnits;
 			size = (int) (getHeight() / data.getEnvHeight() * sizeInModelUnits);
 		}
-		
+
 		sceneBuffer.getSceneToUpdate().addString(string, location, size, sizeInModelUnits, stringColor, font.getName(),
 			font.getStyle(), angle, bitmap);
 		return null;
@@ -1005,7 +1013,5 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public Double getZoomLevel() {
 		return data.getZoomLevel();
 	}
-
-	
 
 }

@@ -155,18 +155,18 @@ public class ExperimentJob implements IExperimentJob{
 		
 	}
 	
-	public ExperimentJob(final String sourcePath, final String exp,final String mName, final long max, final long s){
-				this(new Long(ExperimentJob.generateID()).toString(),sourcePath,exp,mName,max,s);
+	public ExperimentJob(final String sourcePath, final String exp, final long max, final long s){
+				this(sourcePath,new Long(ExperimentJob.generateID()).toString(),exp,max,s);
 		}
 	
-	public ExperimentJob(final String expId, final String sourcePath, final String exp,final String mName, final long max, final long s) {
+	public ExperimentJob( final String sourcePath, final String expId,final String exp, final long max, final long s) {
 		this();
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
 		this.finalStep = max;
 		this.experimentName = exp;
 		this.seed = s;
-		this.modelName=mName;
+		this.modelName=null;
 		
 	}
 
@@ -192,6 +192,7 @@ public class ExperimentJob implements IExperimentJob{
 	public void load(RuntimeContext ctx) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		System.setProperty("user.dir", this.sourcePath);
 		IModel mdl  = ctx.loadModel(new File(this.sourcePath));
+		this.modelName = mdl.getName();
 		this.simulator = new RichExperiment(mdl);
 	}
 

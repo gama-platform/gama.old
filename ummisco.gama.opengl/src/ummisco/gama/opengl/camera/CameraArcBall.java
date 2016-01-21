@@ -13,6 +13,7 @@ package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
 import org.eclipse.swt.SWT;
+import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gaml.operators.Maths;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -188,7 +189,13 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void zoom(final boolean in) {
+		
+		//FIXME the old version (before the GAMA1.7 release (not working not so bad)) see issue #1477
 		double step = radius != 0d ? radius / 10d : 0.1d;
+
+		//double step = radius / getRenderer().getMaxEnvDim() * (INIT_Z_FACTOR + GamaPreferences.OPENGL_ZOOM.getValue());
+
+		// double step = radius != 0d ? radius / 10d : 0.1d;
 		radius = radius + (in ? -step : step);
 		getRenderer().data.setZoomLevel(zoomLevel());
 		// .newZoomLevel(zoomLevel());

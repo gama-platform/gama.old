@@ -211,7 +211,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				}
 				if ( gridDisplayed ) {
 					IExpressionDescription zfight = d.getFacets().get(ZFIGHTING);
-					Boolean zFightDefault = GamaPreferences.CORE_Z_FIGHTING.getValue();
+					Boolean zFightDefault = true; // GamaPreferences.CORE_Z_FIGHTING.getValue();
 					Boolean zFightWanted =
 						zfight == null ? zFightDefault : zfight.getExpression().literalValue().equals(IKeyword.TRUE);
 				}
@@ -409,7 +409,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( fromMicroModel ) {
 			ExperimentAgent exp = (ExperimentAgent) scope.getAgentScope()
 				.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
-			sim = (SimulationAgent) exp.getSimulation();
+			sim = exp.getSimulation();
 		}
 		// end-hqnghi
 		Envelope env = null;

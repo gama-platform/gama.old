@@ -344,7 +344,6 @@ public class GLModel{
 			nextmatname = nextmatnamearray[0];
 			nextmat = Integer.parseInt(nextmatnamearray[1]);
 		}
-		System.out.println("nextmatname: " + nextmatname );
 		Texture texture = null;
 		
 		//gl.glNewList(objectlist,GL2.GL_COMPILE);
@@ -370,7 +369,6 @@ public class GLModel{
 						BufferedImage im = ImageUtils.getInstance().getImageFromFile(f);
 						TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, false);
 						texture = new Texture(gl, data);
-						System.out.println("texture : " + texture);
 						texture.enable(gl);
 						texture.bind(gl);	
 					}

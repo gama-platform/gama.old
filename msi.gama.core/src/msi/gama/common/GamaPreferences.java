@@ -481,22 +481,28 @@ public class GamaPreferences {
 			/**
 			 * OpenGL
 			 */
-			public static final Entry<Boolean> CORE_Z_FIGHTING =
-				create("core.z_fighting", "Use improved z positioning", true, IType.BOOL).in(DISPLAY)
-					.group("OpenGL (settings effective after experiment relaunch)");
+	// public static final Entry<Boolean> CORE_Z_FIGHTING =
+	// create("core.z_fighting", "Use improved z positioning", true, IType.BOOL).in(DISPLAY)
+	// .group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env", "Draw 3D referential", true, IType.BOOL)
 		.in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_SHOW_FPS =
-		create("core.show_fps", "Show number of frames per second", false, IType.BOOL).in(DISPLAY)
+	// public static final Entry<Boolean> CORE_SHOW_FPS =
+	// create("core.show_fps", "Show number of frames per second", false, IType.BOOL).in(DISPLAY)
+	// .group("OpenGL (settings effective after experiment relaunch)");
+	// public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Enable lighting", true, IType.BOOL)
+	// .in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
+	public static final Entry<Double> OPENGL_ZOOM =
+		create("opengl.zoom", "Set the zoom factor to use (from 0 for a slow zoom to 1 for a fast one)", 0.2,
+			IType.FLOAT).in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)").between(0, 1);
+	public static final Entry<Integer> OPENGL_FPS =
+		create("opengl.fps", "Set the maximum number of frames per second to display", 20, IType.INT).in(DISPLAY)
 			.group("OpenGL (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Enable lighting", true, IType.BOOL)
-		.in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_DRAW_NORM =
-		create("core.draw_norm", "Draw normals to objects", false, IType.BOOL).in(DISPLAY)
-			.group("OpenGL (settings effective after experiment relaunch)");
-	public static final Entry<Boolean> CORE_CUBEDISPLAY =
-		create("core.cubedisplay", "Display as a cube", false, IType.BOOL).in(DISPLAY)
-			.group("OpenGL (settings effective after experiment relaunch)");
+			// public static final Entry<Boolean> CORE_DRAW_NORM =
+			// create("core.draw_norm", "Draw normals to objects", false, IType.BOOL).in(DISPLAY)
+			// .group("OpenGL (settings effective after experiment relaunch)");
+			// public static final Entry<Boolean> CORE_CUBEDISPLAY =
+			// create("core.cubedisplay", "Display as a cube", false, IType.BOOL).in(DISPLAY)
+			// .group("OpenGL (settings effective after experiment relaunch)");
 
 	// EDITOR PAGE
 	public static final Entry<Boolean> CORE_PERSPECTIVE =
