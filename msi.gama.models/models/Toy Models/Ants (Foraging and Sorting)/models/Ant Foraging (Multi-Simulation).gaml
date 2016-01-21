@@ -32,6 +32,7 @@ global {
 			}
 		}
 		create ant number: ants_number with: (location: center);
+		write "Simulation " + int(self) + " created";
 	}
   
 }

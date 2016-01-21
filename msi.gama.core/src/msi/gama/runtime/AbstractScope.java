@@ -329,7 +329,7 @@ public abstract class AbstractScope implements IScope {
 			sb.append(Strings.TAB);
 		}
 		sb.append(currentStatement.getTrace(this));
-		this.getGui().informConsole(sb.toString());
+		this.getGui().informConsole(sb.toString(), root);
 	}
 
 	/**

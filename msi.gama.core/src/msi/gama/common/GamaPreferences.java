@@ -35,9 +35,10 @@ import msi.gaml.types.*;
  */
 public class GamaPreferences {
 
-	public static final String GENERAL = "General";
+	// public static final String GENERAL = "General";
 	public static final String UI = "UI";
-	public static final String SIMULATION = "Simulations";
+	public static final String EXPERIMENTS = "Experiments";
+	public static final String SIMULATIONS = "Simulations";
 	public static final String DISPLAY = "Display";
 	// public static final String CODE = "Code";
 	public static final String EDITOR = "Editor";
@@ -81,7 +82,7 @@ public class GamaPreferences {
 	// }
 
 	public static <T> Entry<T> create(final String key, final String title, final T value, final int type) {
-		Entry e = new Entry(key, type).named(title).in(GENERAL).init(value);
+		Entry e = new Entry(key, type).named(title).in(UI).init(value);
 		register(e);
 		return e;
 	}
@@ -140,7 +141,7 @@ public class GamaPreferences {
 		Set<IPreferenceChangeListener<T>> listeners = new HashSet();
 
 		private Entry(final String key, final int type) {
-			tab = GENERAL;
+			tab = UI;
 			this.type = type;
 			this.key = key;
 		}
@@ -356,6 +357,21 @@ public class GamaPreferences {
 	 * Definition of the preferences contributed by msi.gama.core
 	 */
 
+	// SIMULATIONS PAGE
+	// Corresponds to IGamaColors.BLUE.toGamaColor(), IGamaColors.OK.toGamaColor(),
+	// IGamaColors.NEUTRAL.toGamaColor(), IGamaColors.WARNING.toGamaColor(), IGamaColors.BROWN.toGamaColor()
+	public static final Color[] BASIC_COLORS = new Color[] { new Color(74, 97, 144), new Color(66, 119, 42),
+		new Color(83, 95, 107), new Color(195, 98, 43), new Color(150, 132, 106) };
+	public static final Entry<Color>[] SIMULATION_COLORS = new Entry[5];
+
+	static {
+		for ( int i = 0; i < 5; i++ ) {
+			SIMULATION_COLORS[i] =
+				create("simulation.ui.color" + i, "Color of Simulation " + i, BASIC_COLORS[i], IType.COLOR)
+					.in(SIMULATIONS).group("Simulation colors in the interface (console, views)");
+		}
+	}
+
 	// GENERAL PAGE
 	public static final List<String> GENERATOR_NAMES =
 		Arrays.asList(IKeyword.CELLULAR, IKeyword.JAVA, IKeyword.MERSENNE);
@@ -364,15 +380,15 @@ public class GamaPreferences {
 		 */
 		public static final Entry<String> CORE_RNG =
 			create("core.rng", "Random number generator", IKeyword.MERSENNE, IType.STRING).among(GENERATOR_NAMES)
-				.in(SIMULATION).group("Random Number Generation");
+				.in(EXPERIMENTS).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_SEED_DEFINED =
-		create("core.seed_defined", "Define a default seed", false, IType.BOOL).activates("core.seed").in(SIMULATION)
+		create("core.seed_defined", "Define a default seed", false, IType.BOOL).activates("core.seed").in(EXPERIMENTS)
 			.group("Random Number Generation");
 	public static final Entry<Double> CORE_SEED =
-		create("core.seed", "Default seed value (0 means undefined)", 1d, IType.FLOAT).in(SIMULATION)
+		create("core.seed", "Default seed value (0 means undefined)", 1d, IType.FLOAT).in(EXPERIMENTS)
 			.group("Random Number Generation");
 	public static final Entry<Boolean> CORE_RND_EDITABLE =
-		create("core.define_rng", "Include in the parameters of models", true, IType.BOOL).in(SIMULATION)
+		create("core.define_rng", "Include in the parameters of models", true, IType.BOOL).in(EXPERIMENTS)
 			.group("Random Number Generation");
 			/**
 			 * User Interface
@@ -391,34 +407,34 @@ public class GamaPreferences {
 			 * Simulation Errors
 			 */
 			public static final Entry<Boolean> CORE_SHOW_ERRORS =
-				create("core.display_errors", "Display errors", true, IType.BOOL).in(SIMULATION)
+				create("core.display_errors", "Display errors", true, IType.BOOL).in(EXPERIMENTS)
 					.activates("core.errors_number", "core.recent").group("Errors");
 	public static final Entry<Integer> CORE_ERRORS_NUMBER =
-		create("core.errors_number", "Number of errors to display", 10, IType.INT).in(SIMULATION).group("Errors")
+		create("core.errors_number", "Number of errors to display", 10, IType.INT).in(EXPERIMENTS).group("Errors")
 			.between(1, null);
 	public static final Entry<Boolean> CORE_RECENT =
-		create("core.recent", "Display most recent first", true, IType.BOOL).in(SIMULATION).group("Errors");
+		create("core.recent", "Display most recent first", true, IType.BOOL).in(EXPERIMENTS).group("Errors");
 	public static final Entry<Boolean> CORE_REVEAL_AND_STOP =
-		create("core.stop", "Stop simulation at first error", true, IType.BOOL).in(SIMULATION).group("Errors");
+		create("core.stop", "Stop simulation at first error", true, IType.BOOL).in(EXPERIMENTS).group("Errors");
 	public static final Entry<Boolean> CORE_WARNINGS =
-		create("core.warnings", "Treat warnings as errors", false, IType.BOOL).in(SIMULATION).group("Errors");
+		create("core.warnings", "Treat warnings as errors", false, IType.BOOL).in(EXPERIMENTS).group("Errors");
 		/**
 		 * Startup
 		 */
 		public static final Entry<Boolean> CORE_SHOW_PAGE =
-			create("core.show_page", "Display Welcome page at startup", true, IType.BOOL).in(GENERAL).group("Startup");
+			create("core.show_page", "Display Welcome page at startup", true, IType.BOOL).in(UI).group("Startup");
 			/**
 			 * Runtime
 			 */
 			public static final Entry<Double> CORE_DELAY_STEP =
-				create("core.delay_step", "Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(SIMULATION)
+				create("core.delay_step", "Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(EXPERIMENTS)
 					.group("Runtime");
 	public static final Entry<Boolean> CORE_AUTO_RUN =
-		create("core.auto_run", "Auto-run experiments when they are launched", false, IType.BOOL).in(SIMULATION)
+		create("core.auto_run", "Auto-run experiments when they are launched", false, IType.BOOL).in(EXPERIMENTS)
 			.group("Runtime");
 	public static final Entry<Boolean> CORE_ASK_CLOSING =
 		create("core.ask_closing", "Ask to close the previous simulation before launching a new one ?", true,
-			IType.BOOL).in(SIMULATION).group("Runtime");
+			IType.BOOL).in(EXPERIMENTS).group("Runtime");
 
 	// DISPLAY PAGE
 	/**

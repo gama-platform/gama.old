@@ -73,7 +73,7 @@ public class SQLSkill extends Skill {
 	 */
 	@action(name = "helloWorld")
 	public Object helloWorld(final IScope scope) throws GamaRuntimeException {
-		scope.getGui().informConsole("Hello World");
+		scope.getGui().informConsole("Hello World", scope.getRoot());
 		return null;
 	}
 
