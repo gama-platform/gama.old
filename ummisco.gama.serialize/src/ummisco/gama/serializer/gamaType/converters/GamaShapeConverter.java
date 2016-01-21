@@ -19,7 +19,7 @@ import ummisco.gama.serializer.gamaType.reduced.RemoteAgent;
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.*;
 
-public class GamaAgentConverter implements Converter {
+public class GamaShapeConverter implements Converter {
 
 	@Override
 	public boolean canConvert(final Class arg0) {
@@ -28,23 +28,16 @@ public class GamaAgentConverter implements Converter {
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		GamaShape agt = (GamaShape) arg0;
-		writer.startNode("shape shape");
-		
+		GamaShape agt = (GamaShape) arg0;		
 		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());		
-	// 	context.convertAnother(new RemoteAgent(agt));
+	// 	context.convertAnother(agt);
 		System.out.println("===========END ConvertAnother : GamaShape");
-		
-		writer.endNode();
 	}
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-
-		reader.moveDown();
-		// RemoteAgent rmt = (RemoteAgent) arg1.convertAnother(null, RemoteAgent.class);
-		reader.moveUp();
-		return new GamaShape();// rmt; // ragt;
+		GamaShape rmt = (GamaShape) arg1.convertAnother(null, GamaShape.class);
+		return rmt; // ragt;
 	}
 
 }

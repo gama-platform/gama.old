@@ -30,6 +30,7 @@ public class GamaPairConverter implements Converter {
 		GamaPair mp = (GamaPair) arg0;
 		System.out.println("ConvertAnother : GamaPair " + mp.getClass());			
 		arg2.convertAnother(new GamaPairReducer(mp));
+		System.out.println("END -- ConvertAnother : GamaPair " + mp.getClass());					
 	}
 
 	@Override

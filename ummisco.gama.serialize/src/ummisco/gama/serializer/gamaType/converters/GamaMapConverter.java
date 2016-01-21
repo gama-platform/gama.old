@@ -46,6 +46,7 @@ public class GamaMapConverter implements Converter {
         
 		System.out.println("ConvertAnother : GamaMap " + mp.getClass());			        
 		arg2.convertAnother(new GamaMapReducer(mp));        		
+		System.out.println("END --- ConvertAnother : GamaMap " + mp.getClass());			        
 
 	}
 
