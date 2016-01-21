@@ -189,19 +189,11 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void zoom(final boolean in) {
-		// double initRadius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;;
-		// // GamaPoint p = new GamaPoint(target.x, target.y, 0);
-		// // double actualDistance = position.distance3D(p);
-		// double step;
-		// if ( radius < getRenderer().getMaxEnvDim() / 1100 ) {
-		// step = 0.1d;
-		// } else if ( radius > 9d * initRadius ) {
-		// step = 0.1d;
-		// } else {
-		// step = 10d * (radius / initRadius);
-		// }
+		
+		//FIXME the old version (before the GAMA1.7 release (not working not so bad)) see issue #1477
+		double step = radius != 0d ? radius / 10d : 0.1d;
 
-		double step = radius / getRenderer().getMaxEnvDim() * (INIT_Z_FACTOR + GamaPreferences.OPENGL_ZOOM.getValue());
+		//double step = radius / getRenderer().getMaxEnvDim() * (INIT_Z_FACTOR + GamaPreferences.OPENGL_ZOOM.getValue());
 
 		// double step = radius != 0d ? radius / 10d : 0.1d;
 		radius = radius + (in ? -step : step);
