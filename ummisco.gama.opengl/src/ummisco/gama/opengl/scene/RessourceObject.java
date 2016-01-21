@@ -19,6 +19,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.GamaFile;
@@ -110,16 +111,25 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			} else {
 				gl.glTranslated(this.agent.getLocation().getX(), renderer.yFlag*this.agent.getLocation().getY(), this.agent.getLocation().getZ());	
 			}
+			
+			
+
 			if(this.rot != null){
 				gl.glRotatef(rot.floatValue() , (float) ptRot.x, (float) ptRot.y, (float) ptRot.z);	
 			}
 			if(this.rotInit != null){
 				gl.glRotatef(rotInit.floatValue() , (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);		
 			}
+			double factor = 0.0;
 			if(this.size!=null && env != null){
-				gl.glScaled(size.x / env.getWidth(), size.y / env.getHeight(), size.z/ env.getHeight());
+				if (file instanceof GamaSVGFile ) {
+					factor = Math.max(size.x / env.getWidth(),size.y / env.getHeight());
+				} else {
+					factor = Math.max(Math.max(size.x / env.getWidth(),size.y / env.getHeight()), size.z/ ((Envelope3D)env).getDepth());
+				}
+				gl.glScaled(factor, factor, factor);
 			}
-
+			
 			if (this.color != null) { //does not work for obj files
 				gl.glColor3d(color.getRed()/255.0, color.getGreen()/255.0, color.getBlue()/255.0);
 			}
@@ -146,9 +156,9 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			}
 			
 			if(this.size!=null  && env != null){
-				gl.glScaled(env.getWidth() /size.x, env.getHeight()/size.y, env.getHeight()/size.z);
-				 
+				gl.glScaled(1/factor, 1/factor, 1/factor); 
 			}
+			
 			if(this.rotInit != null){
 				gl.glRotatef(- rotInit.floatValue() , (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);		
 			}
@@ -156,6 +166,8 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			if(this.rot != null){
 				gl.glRotatef(- rot.floatValue() , (float) ptRot.x, (float) ptRot.y, (float) ptRot.z);	
 			}
+			
+			
 			
 			if (atLoc != null) {
 				gl.glTranslated(-atLoc.getX(), - renderer.yFlag*atLoc.getY(), - atLoc.getZ());
