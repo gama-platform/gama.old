@@ -22,6 +22,8 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.common.Display2D;
 import msi.gama.headless.common.Globals;
@@ -43,7 +45,7 @@ import msi.gaml.descriptions.IExpressionDescription;
 
 public class ExperimentJob implements IExperimentJob{
 
-	
+	private static long GLOBAL_ID_GENERATOR = 0;
 	public static enum OutputType {
 		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
 	}
@@ -87,8 +89,9 @@ public class ExperimentJob implements IExperimentJob{
 	private List<Parameter> parameters;
 	private List<Output> outputs;
 	private Writer outputFile;
-	private final String sourcePath;
-	private final String experimentName;
+	private String sourcePath;
+	private String experimentName;
+	private String modelName;
 	private long seed;
 
 	/**
@@ -105,8 +108,14 @@ public class ExperimentJob implements IExperimentJob{
 	 * id of current experiment
 	 */
 	private String experimentID;
-	public long maxStep;
+	public long finalStep;
 
+	
+	private static long generateID()
+	{
+		return ExperimentJob.GLOBAL_ID_GENERATOR++;
+	}
+	
 	public void setBufferedWriter(final Writer w) {
 		this.outputFile = w;
 	}
@@ -119,30 +128,46 @@ public class ExperimentJob implements IExperimentJob{
 		p.setId(""+outputs.size());
 		this.outputs.add(p);
 	}
-
-	public ExperimentJob(final ExperimentJob clone) {
-		this.experimentID = clone.experimentID;
-		this.sourcePath = clone.sourcePath;
-		this.maxStep = clone.maxStep;
-		this.experimentName = clone.experimentName;
-		this.parameters = clone.parameters;
-		this.listenedVariables = clone.listenedVariables;
-		this.step = clone.getStep();
-		this.outputs = clone.outputs;
-		this.seed = clone.seed;
+	private ExperimentJob()
+	{
+		initialize();
+		
 	}
-
-	public ExperimentJob(final String sourcePath, final String exp, final long max, final long s){
-				this("",sourcePath,exp,max,s);
+	public ExperimentJob(final ExperimentJob clone) {
+		this();
+		this.experimentID=(clone.experimentID!=null)?clone.experimentID:""+ ExperimentJob.generateID();
+		this.sourcePath = clone.sourcePath;
+		this.finalStep = clone.finalStep;
+		this.experimentName = clone.experimentName;
+		this.modelName = clone.modelName;
+		this.parameters = new ArrayList<>();
+		this.outputs = new ArrayList<>();
+		this.listenedVariables = clone.listenedVariables;
+		this.step = clone.step;
+		this.seed = clone.seed;
+		for(Parameter p:clone.parameters) {
+			this.addParameter(new Parameter(p));
+		}
+		for(Output o:clone.outputs)
+		{
+			this.addOutput(new Output(o));
+		}
+		
+	}
+	
+	public ExperimentJob(final String sourcePath, final String exp,final String mName, final long max, final long s){
+				this(new Long(ExperimentJob.generateID()).toString(),sourcePath,exp,mName,max,s);
 		}
 	
-	public ExperimentJob(final String expId, final String sourcePath, final String exp, final long max, final long s) {
+	public ExperimentJob(final String expId, final String sourcePath, final String exp,final String mName, final long max, final long s) {
+		this();
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
-		this.maxStep = max;
+		this.finalStep = max;
 		this.experimentName = exp;
 		this.seed = s;
-		initialize();
+		this.modelName=mName;
+		
 	}
 
 	public void loadAndBuild(RuntimeContext rtx) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -180,8 +205,8 @@ public class ExperimentJob implements IExperimentJob{
 		}
 		System.out.println("Simulation is running...");
 		long startdate = Calendar.getInstance().getTimeInMillis();
-		long affDelay = maxStep < 100 ? 1 : maxStep / 100;
-		for ( ; step < maxStep; step++ ) {
+		long affDelay = finalStep < 100 ? 1 : finalStep / 100;
+		for ( ; step < finalStep; step++ ) {
 			if ( step % affDelay == 0 ) {
 				System.out.print(".");
 			}
@@ -288,8 +313,12 @@ public class ExperimentJob implements IExperimentJob{
 		simulation.setAttributeNode(attr3);
 
 		Attr attr2 = doc.createAttribute(XmlTAG.FINAL_STEP_TAG);
-		attr2.setValue(new Long(this.maxStep).toString());
+		attr2.setValue(new Long(this.finalStep).toString());
 		simulation.setAttributeNode(attr2);
+
+		Attr attr5 = doc.createAttribute(XmlTAG.SEED_TAG);
+		attr5.setValue(new Long(this.seed).toString());
+		simulation.setAttributeNode(attr5);
 
 		Attr attr4 = doc.createAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
 		attr4.setValue(this.experimentName);
@@ -349,7 +378,7 @@ public class ExperimentJob implements IExperimentJob{
 			mseed = Long.valueOf(seedDescription.getExpression().literalValue()).longValue();
 		}
 		IDescription d = expD.getChildWithKeyword(IKeyword.OUTPUT);
-		ExperimentJob expJob = new ExperimentJob(path,expName,0,mseed );
+		ExperimentJob expJob = new ExperimentJob(path,expName,model.getName(),0,mseed );
 		
 		if(d != null)
 		{
@@ -371,4 +400,61 @@ public class ExperimentJob implements IExperimentJob{
 		
 		return expJob;
 	}
+	
+	public String getExperimentName() {
+		
+		return this.experimentName;
+	}
+	
+	private Parameter getParameter(String name) {
+		for(Parameter p:parameters)
+		{
+			if(p.getName().equals(name))
+					return p;
+		}
+		return null;
+	}
+	
+	private Output getOutput(String name) {
+		for(Output p:outputs)
+		{
+			if(p.getName().equals(name))
+					return p;
+		}
+		return null;
+	}
+	
+	public void setParameterValueOf(final String name, final Object val){
+		this.getParameter(name).setValue(val);	
+	}
+	
+	public void removeOutputWithName(final String name){
+		this.outputs.remove(this.getOutput(name));
+	}
+	
+	public void setOutputFrameRate(final String name,final int frameRate){
+		this.getOutput(name).setFrameRate(frameRate);
+	}
+	
+	public List<String> getOutputNames()
+	{
+		List<String> res = new ArrayList<>();
+		for(Output o: outputs)
+			res.add(o.getName());
+		return res;
+	}
+	public long getFinalStep() {
+		return finalStep;
+	}
+
+	public void setFinalStep(long finalStep) {
+		this.finalStep = finalStep;
+	}
+
+	@Override
+	public String getModelName() {
+		return this.modelName;
+	}
+
+	
 }
