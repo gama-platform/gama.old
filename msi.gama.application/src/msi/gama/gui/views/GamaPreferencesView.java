@@ -65,12 +65,14 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		preferenceNames.put("msi.gama.lang.gaml.Gaml.coloring", "Code");
 		preferenceNames.put("org.eclipse.ui.preferencePages.GeneralTextEditor", "Editor");
 		preferenceNames.put("org.eclipse.ui.preferencePages.Workspace", "Workspace");
-		prefs_images.put(GamaPreferences.GENERAL, IGamaIcons.PREFS_GENERAL.image());
 		prefs_images.put(GamaPreferences.UI, GamaIcons.create("prefs.ui2").image());
-		prefs_images.put(GamaPreferences.SIMULATION, GamaIcons.create("prefs.simulations2").image());
+		prefs_images.put(GamaPreferences.EDITOR, IGamaIcons.PREFS_EDITOR.image());
+
+		prefs_images.put(GamaPreferences.EXPERIMENTS, GamaIcons.create("prefs.simulations2").image());
+		prefs_images.put(GamaPreferences.SIMULATIONS, IGamaIcons.PREFS_GENERAL.image());
 		prefs_images.put(GamaPreferences.DISPLAY, IGamaIcons.PREFS_DISPLAY.image());
 		// prefs_images.put(GamaPreferences.CODE, IGamaIcons.PREFS_CODE.image());
-		prefs_images.put(GamaPreferences.EDITOR, IGamaIcons.PREFS_EDITOR.image());
+
 		// prefs_images.put(GamaPreferences.WORKSPACE, IGamaIcons.PREFS_WORKSPACE.image());
 		prefs_images.put(GamaPreferences.LIBRARIES, IGamaIcons.PREFS_LIBS.image());
 

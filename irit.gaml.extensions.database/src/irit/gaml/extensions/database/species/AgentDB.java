@@ -96,11 +96,11 @@ public class AgentDB extends GamlAgent {
 
 	}
 
-	@action(name = "helloWorld")
-	public Object helloWorld(final IScope scope) throws GamaRuntimeException {
-		scope.getGui().informConsole("Hello World");
-		return null;
-	}
+	// @action(name = "helloWorld")
+	// public Object helloWorld(final IScope scope) throws GamaRuntimeException {
+	// scope.getGui().informConsole("Hello World");
+	// return null;
+	// }
 
 	// Get current time of system
 	// added from MaeliaSkill
@@ -270,7 +270,7 @@ public class AgentDB extends GamlAgent {
 			throw GamaRuntimeException.error("AgentDB.executeUpdate: " + e.toString(), scope);
 		}
 		if ( DEBUG ) {
-			scope.getGui().informConsole(updateComm + " was run");
+			scope.getGui().informConsole(updateComm + " was run", scope.getRoot());
 		}
 
 		return row_count;
@@ -342,7 +342,7 @@ public class AgentDB extends GamlAgent {
 			throw GamaRuntimeException.error("AgentDB.insert: " + e.toString(), scope);
 		}
 		if ( DEBUG ) {
-			scope.getGui().informConsole("Insert into " + " was run");
+			scope.getGui().informConsole("Insert into " + " was run", scope.getRoot());
 		}
 
 		return rec_no;

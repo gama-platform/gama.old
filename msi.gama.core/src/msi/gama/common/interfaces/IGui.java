@@ -18,7 +18,7 @@ import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -88,9 +88,13 @@ public interface IGui {
 
 	void showParameterView(IExperimentPlan exp);
 
-	void debugConsole(int cycle, String s);
+	void debugConsole(int cycle, String s, IMacroAgent root, GamaColor color);
 
-	void informConsole(String s);
+	void debugConsole(int cycle, String s, IMacroAgent root);
+
+	void informConsole(String s, IMacroAgent root, GamaColor color);
+
+	void informConsole(String s, IMacroAgent root);
 
 	// void updateViewOf(IDisplayOutput output);
 
@@ -225,5 +229,7 @@ public interface IGui {
 	 * @param b
 	 */
 	void eraseConsole(boolean b);
+
+	public GamaColor getColorForSimulationNumber(final int index);
 
 }

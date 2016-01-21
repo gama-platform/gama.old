@@ -14,6 +14,7 @@ package msi.gama.gui.swt;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import gnu.trove.map.hash.THashMap;
+import msi.gama.util.GamaColor;
 
 /**
  * Class GamaIcons.
@@ -44,6 +45,10 @@ public class GamaColors {
 		@Override
 		public String toString() {
 			return active.getRed() + ", " + active.getGreen() + ", " + active.getBlue();
+		}
+
+		public GamaColor toGamaColor() {
+			return new GamaColor(toAwtColor(active));
 		}
 
 		public int luminance() {
@@ -173,6 +178,7 @@ public class GamaColors {
 	}
 
 	public static GamaUIColor get(final java.awt.Color color) {
+		if ( color == null ) { return null; }
 		return get(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
@@ -196,7 +202,7 @@ public class GamaColors {
 	}
 
 	public static Color system(final int c) {
-		return Display.getCurrent().getSystemColor(c);
+		return SwtGui.getDisplay().getSystemColor(c);
 	}
 
 	public static GamaUIColor get(final int ... c) {

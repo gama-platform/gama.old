@@ -1,46 +1,42 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MDXSkill.java', in plugin 'irit.gaml.extensions.database', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package irit.gaml.extensions.database.skills;
 
-import msi.gama.common.util.AbstractGui;
+import org.olap4j.OlapConnection;
 import msi.gama.database.mdx.*;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
-import org.olap4j.OlapConnection;
 
 /*
  * @Author
  * TRUONG Minh Thai
- * 
+ *
  * @Supervisors:
  * Christophe Sibertin-BLANC
  * Fredric AMBLARD
  * Benoit GAUDOU
- * 
+ *
  * Description: Define MultiDimensional eXpressions features
- * 
+ *
  * created date: 04-Jul-2013
  * Modified:
  * 08-Jul-2013:
  * - correct error on testConnection method
  * - add question mark and values to select method
- * 
+ *
  * Last Modified: 08-Jul-2013
  */
 @skill(name = "MDXSKILL")
@@ -51,11 +47,11 @@ public class MDXSkill extends Skill {
 	/*
 	 * for test only
 	 */
-	@action(name = "helloWorld")
-	public Object helloWorld(final IScope scope) throws GamaRuntimeException {
-		scope.getGui().informConsole("Hello World");
-		return null;
-	}
+	// @action(name = "helloWorld")
+	// public Object helloWorld(final IScope scope) throws GamaRuntimeException {
+	// scope.getGui().informConsole("Hello World");
+	// return null;
+	// }
 
 	// Get current time of system
 	// added from MaeliaSkill
@@ -67,7 +63,7 @@ public class MDXSkill extends Skill {
 
 	/*
 	 * Make a connection to BDMS
-	 * 
+	 *
 	 * @syntax: do action: connectDB {
 	 * arg params value:[
 	 * "olaptype":"SSAS/XMLA" //"MONDRIAN"/"MONDRIAN/XMLA"
@@ -80,10 +76,8 @@ public class MDXSkill extends Skill {
 	 * ];
 	 * }
 	 */
-	@action(name = "testConnection", args = { @arg(name = "params",
-		type = IType.MAP,
-		optional = false,
-		doc = @doc("Connection parameters")) })
+	@action(name = "testConnection",
+		args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters") ) })
 	public boolean testConnection(final IScope scope) {
 		MdxConnection mdxConn;
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
@@ -100,8 +94,7 @@ public class MDXSkill extends Skill {
 	}
 
 	@action(name = "select",
-		args = {
-			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+		args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters") ),
 			// @arg(name = "select", type = IType.STRING, optional = false, doc =
 			// @doc("select string with question marks")),
 			// @arg(name = "values", type = IType.LIST, optional = true, doc =
@@ -113,25 +106,25 @@ public class MDXSkill extends Skill {
 			@arg(name = "onColumns",
 				type = IType.STRING,
 				optional = false,
-				doc = @doc("select string with question marks")),
+				doc = @doc("select string with question marks") ),
 			@arg(name = "onRows",
 				type = IType.LIST,
 				optional = false,
-				doc = @doc("List of values that are used to replace question marks")),
+				doc = @doc("List of values that are used to replace question marks") ),
 			@arg(name = "from",
 				type = IType.LIST,
 				optional = false,
-				doc = @doc("List of values that are used to replace question marks")),
+				doc = @doc("List of values that are used to replace question marks") ),
 			@arg(name = "where",
 				type = IType.LIST,
 				optional = true,
-				doc = @doc("List of values that are used to replace question marks")),
+				doc = @doc("List of values that are used to replace question marks") ),
 			@arg(name = "values",
 				type = IType.LIST,
 				optional = true,
-				doc = @doc("List of values that are used to replace question marks")),
+				doc = @doc("List of values that are used to replace question marks") ),
 
-		})
+	})
 	public IList<Object> select_QM(final IScope scope) throws GamaRuntimeException {
 
 		// ------------------------------------------------------------------------------------------

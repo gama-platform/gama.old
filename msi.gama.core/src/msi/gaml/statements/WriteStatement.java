@@ -17,6 +17,7 @@ import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -32,10 +33,15 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.WRITE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @facets(
-	value = { @facet(name = IKeyword.MESSAGE,
-		type = IType.NONE,
-		optional = false,
-		doc = @doc("the message to display. Modelers can add some formatting characters to the message (carriage returns, tabs, or Unicode characters), which will be used accordingly in the console.") ) },
+	value = {
+		@facet(name = IKeyword.COLOR,
+			type = IType.COLOR,
+			optional = true,
+			doc = @doc("The color with wich the message will be displayed. Note that different simulations will have different (default) colors to use for this purpose if this facet is not specified") ),
+		@facet(name = IKeyword.MESSAGE,
+			type = IType.NONE,
+			optional = false,
+			doc = @doc("the message to display. Modelers can add some formatting characters to the message (carriage returns, tabs, or Unicode characters), which will be used accordingly in the console.") ), },
 	omissible = IKeyword.MESSAGE)
 @doc(value = "The statement makes the agent output an arbitrary message in the console.",
 	usages = {
@@ -49,10 +55,12 @@ public class WriteStatement extends AbstractStatement {
 	}
 
 	final IExpression message;
+	final IExpression color;
 
 	public WriteStatement(final IDescription desc) {
 		super(desc);
 		message = getFacet(IKeyword.MESSAGE);
+		color = getFacet(IKeyword.COLOR);
 	}
 
 	@Override
@@ -64,7 +72,11 @@ public class WriteStatement extends AbstractStatement {
 			if ( mes == null ) {
 				mes = "nil";
 			}
-			scope.getGui().informConsole(scope.getRoot().getName() + ": " + mes);
+			GamaColor rgb = null;
+			if ( color != null ) {
+				rgb = (GamaColor) color.value(scope);
+			}
+			scope.getGui().informConsole(mes, scope.getRoot(), rgb);
 		}
 		return mes;
 	}

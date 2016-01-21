@@ -20,9 +20,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.IContainer;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
@@ -56,21 +54,21 @@ public class GraphsGraphstream {
 		private final IScope scope;
 
 		private final List<Map> initialValues;
-		
+
 		private final List<IAgent> existingNodes;
 
 		private final Map<String, IAgent> nodeId2agent = new HashMap<String, IAgent>();
 		private final Map<String, IAgent> edgeId2agent = new HashMap<String, IAgent>();
 
 		public GraphStreamGamaGraphSink(final IGraph gamaGraph, final IScope scope, final IPopulation populationNodes,
-			final IPopulation populationEdges, final IList<IAgent> existingNodes ) {
+			final IPopulation populationEdges, final IList<IAgent> existingNodes) {
 			this.gamaGraph = gamaGraph;
 			this.scope = scope;
 			this.populationNodes = populationNodes;
 			this.populationEdges = populationEdges;
 
 			this.initialValues = new LinkedList<Map>();
-			this.existingNodes =  existingNodes;
+			this.existingNodes = existingNodes;
 		}
 
 		@Override
@@ -112,14 +110,13 @@ public class GraphsGraphstream {
 
 			IAgent createdAgent = null;
 			// create an agent of the target specy
-			if (existingNodes != null && !existingNodes.isEmpty()) {
-				createdAgent = existingNodes.get(scope.getRandom().between(0, existingNodes.size()-1));
+			if ( existingNodes != null && !existingNodes.isEmpty() ) {
+				createdAgent = existingNodes.get(scope.getRandom().between(0, existingNodes.size() - 1));
 				existingNodes.remove(createdAgent);
 			} else {
 				IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, initialValues, false);
 				createdAgent = createdAgents.get(0);
 			}
-			
 
 			// update internal mapping
 			nodeId2agent.put(nodeId, createdAgent);
@@ -130,7 +127,7 @@ public class GraphsGraphstream {
 		}
 
 		@Override
-		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+		public void edgeRemoved(final String sourceId, final long timeId, final String edgeId) {
 			super.edgeRemoved(sourceId, timeId, edgeId);
 			IAgent edge = edgeId2agent.get(edgeId);
 			gamaGraph.removeEdge(edge);
@@ -138,14 +135,12 @@ public class GraphsGraphstream {
 		}
 
 		@Override
-		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+		public void nodeRemoved(final String sourceId, final long timeId, final String nodeId) {
 			super.nodeRemoved(sourceId, timeId, nodeId);
 			IAgent node = nodeId2agent.get(nodeId);
 			gamaGraph.removeVertex(node);
 			node.dispose();
 		}
-		
-		
 
 	}
 
@@ -167,7 +162,7 @@ public class GraphsGraphstream {
 	 * @param maxLinks if provided, no more events than this int will be processed
 	 * @return
 	 */
-	public static IGraph loadGraphWithGraphstreamFromGeneratorSource(final IScope scope,  final IList<IAgent> nodes,
+	public static IGraph loadGraphWithGraphstreamFromGeneratorSource(final IScope scope, final IList<IAgent> nodes,
 		final ISpecies edgeSpecies, final BaseGenerator generator, final int maxLinks, final Boolean isSynchronized) {
 
 		// init population of edges
@@ -179,7 +174,7 @@ public class GraphsGraphstream {
 		IGraph createdGraph = new GamaGraph(scope, false, populationNodes.getType().getContentType(),
 			populationEdges.getType().getContentType());
 
-		Sink ourSink = new GraphStreamGamaGraphSink(createdGraph, scope, populationNodes, populationEdges,nodes);
+		Sink ourSink = new GraphStreamGamaGraphSink(createdGraph, scope, populationNodes, populationEdges, nodes);
 
 		generator.addSink(ourSink);
 
@@ -207,47 +202,47 @@ public class GraphsGraphstream {
 		return createdGraph;
 
 	}
-	
+
 	public static IGraph loadGraphWithGraphstreamFromGeneratorSource(final IScope scope, final ISpecies nodeSpecies,
-			final ISpecies edgeSpecies, final BaseGenerator generator, final int maxLinks, final Boolean isSynchronized) {
+		final ISpecies edgeSpecies, final BaseGenerator generator, final int maxLinks, final Boolean isSynchronized) {
 
-			// init population of edges
-			final IAgent executor = scope.getAgentScope();
-			IPopulation populationNodes = executor.getPopulationFor(nodeSpecies);
-			IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
+		// init population of edges
+		final IAgent executor = scope.getAgentScope();
+		IPopulation populationNodes = executor.getPopulationFor(nodeSpecies);
+		IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
 
-			// creates the graph to be filled
-			IGraph createdGraph = new GamaGraph(scope, false, populationNodes.getType().getContentType(),
-				populationEdges.getType().getContentType());
+		// creates the graph to be filled
+		IGraph createdGraph = new GamaGraph(scope, false, populationNodes.getType().getContentType(),
+			populationEdges.getType().getContentType());
 
-			Sink ourSink = new GraphStreamGamaGraphSink(createdGraph, scope, populationNodes, populationEdges, null);
+		Sink ourSink = new GraphStreamGamaGraphSink(createdGraph, scope, populationNodes, populationEdges, null);
 
-			generator.addSink(ourSink);
+		generator.addSink(ourSink);
 
-			// load the graph
+		// load the graph
 
-			if ( maxLinks < 0 ) {
-				generator.begin();
-				while (generator.nextEvents()) {
-					// nothing to do
-				}
-				generator.end();
-			} else {
-				generator.begin();
-				for ( int i = 0; i < maxLinks; i++ ) {
-					generator.nextEvents();
-				}
-				generator.end();
+		if ( maxLinks < 0 ) {
+			generator.begin();
+			while (generator.nextEvents()) {
+				// nothing to do
 			}
-
-			// synchronize agents and graph
-			if ( isSynchronized ) {
-				GraphAndPopulationsSynchronizer.synchronize(populationNodes, populationEdges, createdGraph);
+			generator.end();
+		} else {
+			generator.begin();
+			for ( int i = 0; i < maxLinks; i++ ) {
+				generator.nextEvents();
 			}
-
-			return createdGraph;
-
+			generator.end();
 		}
+
+		// synchronize agents and graph
+		if ( isSynchronized ) {
+			GraphAndPopulationsSynchronizer.synchronize(populationNodes, populationEdges, createdGraph);
+		}
+
+		return createdGraph;
+
+	}
 
 	/**
 	 * TODO this version of the barabasi albert generator is too simple. Switch to the implementation
@@ -263,8 +258,7 @@ public class GraphsGraphstream {
 			"A scale-free network is a network whose degree distribution follows a power law, at least asymptotically." +
 			"Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]" +
 			"The map operand should includes following elements:",
-		usages = { 
-			@usage("\"vertices_specy\": the species of vertices"),
+		usages = { @usage("\"vertices_specy\": the species of vertices"),
 			@usage("\"edges_specy\": the species of edges"),
 			@usage("\"size\": the graph will contain (size + 1) nodes"),
 			@usage("\"m\": the number of edges added per novel node"),
@@ -286,16 +280,14 @@ public class GraphsGraphstream {
 			isSychronized);
 
 	}
-	
+
 	@operator(value = "generate_barabasi_albert")
 	@doc(value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
 		comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. " +
 			"A scale-free network is a network whose degree distribution follows a power law, at least asymptotically." +
 			"Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]" +
 			"The map operand should includes following elements:",
-		usages = { 
-			@usage("\"agents\": list of existing node agents"),
-			@usage("\"edges_specy\": the species of edges"),
+		usages = { @usage("\"agents\": list of existing node agents"), @usage("\"edges_specy\": the species of edges"),
 			@usage("\"size\": the graph will contain (size + 1) nodes"),
 			@usage("\"m\": the number of edges added per novel node"),
 			@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?") },
@@ -309,17 +301,16 @@ public class GraphsGraphstream {
 		see = { "generate_watts_strogatz" })
 
 	public static IGraph generateGraphstreamBarabasiAlbert(final IScope scope, final IContainer<?, IAgent> agents,
-			final ISpecies edges_specy, final Integer m, final Boolean isSychronized) {
-			if (agents.isEmpty(scope))
-				return null;
-			IList<IAgent> nodes = GamaListFactory.create(Types.AGENT);
-			nodes.addAll(agents.listValue(scope, Types.AGENT, false));
-			return loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy,
-				new BarabasiAlbertGenerator(m), nodes.size() - 2 // nota: in graphstream, two nodes are already created by default.,
-					,
-				isSychronized);
+		final ISpecies edges_specy, final Integer m, final Boolean isSychronized) {
+		if ( agents.isEmpty(scope) ) { return null; }
+		IList<IAgent> nodes = GamaListFactory.create(Types.AGENT);
+		nodes.addAll(agents.listValue(scope, Types.AGENT, false));
+		return loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy, new BarabasiAlbertGenerator(m),
+			nodes.size() - 2 // nota: in graphstream, two nodes are already created by default.,
+				,
+			isSychronized);
 
-		}
+	}
 
 	@operator(value = "generate_watts_strogatz")
 	@doc(value = "returns a random small-world network (following Watts-Strogatz model).",
@@ -348,19 +339,18 @@ public class GraphsGraphstream {
 		try {
 			gen = new WattsStrogatzGenerator(size, k, p);
 		} catch (Exception e) {
-			throw GamaRuntimeException.error("Error during the WattsStrogatzGenerator generation: " + e.getMessage(), scope);
+			throw GamaRuntimeException.error("Error during the WattsStrogatzGenerator generation: " + e.getMessage(),
+				scope);
 		}
-		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
-			gen, -1, isSychronized);
+		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy, gen, -1, isSychronized);
 	}
-	
+
 	@operator(value = "generate_watts_strogatz")
 	@doc(value = "returns a random small-world network (following Watts-Strogatz model).",
 		comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering." +
 			"A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]" +
 			"The map operand should includes following elements:",
-		usages = {@usage("\"agents\": list of existing node agents"),
-			@usage("\"edges_specy\": the species of edges"),
+		usages = { @usage("\"agents\": list of existing node agents"), @usage("\"edges_specy\": the species of edges"),
 			@usage("\"p\": probability to \"rewire\" an edge. So it must be between 0 and 1. The parameter is often called beta in the literature."),
 			@usage("\"k\": the base degree of each node. k must be greater than 2 and even."),
 			@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?") },
@@ -375,19 +365,18 @@ public class GraphsGraphstream {
 		see = { "generate_barabasi_albert" })
 	public static IGraph generateGraphstreamWattsStrogatz(final IScope scope, final IContainer<?, IAgent> agents,
 		final ISpecies edges_specy, final Double p, final Integer k, final Boolean isSychronized) {
-		if (agents.isEmpty(scope))
-			return null;
+		if ( agents.isEmpty(scope) ) { return null; }
 		IList<IAgent> nodes = GamaListFactory.create(Types.AGENT);
 		nodes.addAll(agents.listValue(scope, Types.AGENT, false));
-	
+
 		WattsStrogatzGenerator gen = null;
 		try {
 			gen = new WattsStrogatzGenerator(nodes.size(), k, p);
 		} catch (Exception e) {
-			throw GamaRuntimeException.error("Error during the WattsStrogatzGenerator generation: " + e.getMessage(), scope);
+			throw GamaRuntimeException.error("Error during the WattsStrogatzGenerator generation: " + e.getMessage(),
+				scope);
 		}
-		return loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy,
-			gen, -1, isSychronized);
+		return loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy, gen, -1, isSychronized);
 	}
 
 	@operator(value = "generate_complete_graph")
@@ -418,17 +407,16 @@ public class GraphsGraphstream {
 		for ( GamlAgent e : listVertex ) {
 			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i),
 				locEnv.getY() + layoutRadius * Math.sin(THETA * i), locEnv.getZ()));
-			scope.getGui().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA);
+			scope.getGui().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA, scope.getRoot());
 			i++;
 		}
 		return g;
 	}
-	
+
 	@operator(value = "generate_complete_graph")
 	@doc(value = "returns a fully connected graph.",
 		comment = "Arguments should include following elements:",
-		usages = { @usage("\"agents\": list of existing node agents"),
-			@usage("\"edges_specy\": the species of edges"), 
+		usages = { @usage("\"agents\": list of existing node agents"), @usage("\"edges_specy\": the species of edges"),
 			@usage("\"layoutRadius\": nodes of the graph will be located on a circle with radius layoutRadius and centered in the environment."),
 			@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?") },
 		examples = {
@@ -439,24 +427,23 @@ public class GraphsGraphstream {
 			@example(value = "			25,", isExecutable = false),
 			@example(value = "		true);", isExecutable = false) },
 		see = { "generate_barabasi_albert", "generate_watts_strogatz" })
-	public static IGraph generateGraphstreamComplete(final IScope scope,final IContainer<?, IAgent> agents,
+	public static IGraph generateGraphstreamComplete(final IScope scope, final IContainer<?, IAgent> agents,
 		final ISpecies edges_specy, final double layoutRadius, final Boolean isSychronized) {
-		if (agents.isEmpty(scope))
-			return null;
+		if ( agents.isEmpty(scope) ) { return null; }
 		IList<IAgent> nodes = GamaListFactory.create(Types.AGENT);
 		nodes.addAll(agents.listValue(scope, Types.AGENT, false));
-	
-		IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy, new FullGenerator(),
-				nodes.size()  - 1, isSychronized);
 
-		double THETA = 2 * Math.PI / nodes.size() ;
+		IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy, new FullGenerator(),
+			nodes.size() - 1, isSychronized);
+
+		double THETA = 2 * Math.PI / nodes.size();
 		int i = 0;
 		IList<GamlAgent> listVertex = g.getVertices();
 		ILocation locEnv = scope.getSimulationScope().getGeometry().getLocation();
 		for ( GamlAgent e : listVertex ) {
 			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i),
 				locEnv.getY() + layoutRadius * Math.sin(THETA * i), locEnv.getZ()));
-			scope.getGui().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA);
+			scope.getGui().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA, scope.getRoot());
 			i++;
 		}
 		return g;
@@ -482,12 +469,11 @@ public class GraphsGraphstream {
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy, new FullGenerator(),
 			size - 1, isSychronized);
 	}
-	
+
 	@operator(value = "generate_complete_graph")
 	@doc(value = "returns a fully connected graph.",
 		comment = "Arguments should include following elements:",
-		usages = { @usage("\"agents\": list of existing node agents"),
-			@usage("\"edges_specy\": the species of edges"),
+		usages = { @usage("\"agents\": list of existing node agents"), @usage("\"edges_specy\": the species of edges"),
 			@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?") },
 		examples = {
 			@example(value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",
@@ -498,11 +484,10 @@ public class GraphsGraphstream {
 		see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamComplete(final IScope scope, final IContainer<?, IAgent> agents,
 		final ISpecies edges_specy, final Boolean isSychronized) {
-		if (agents.isEmpty(scope))
-			return null;
+		if ( agents.isEmpty(scope) ) { return null; }
 		IList<IAgent> nodes = GamaListFactory.create(Types.AGENT);
 		nodes.addAll(agents.listValue(scope, Types.AGENT, false));
-	
+
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy, new FullGenerator(),
 			nodes.size() - 1, isSychronized);
 	}
