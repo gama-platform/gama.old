@@ -151,7 +151,7 @@ public class Reader {
 				pr = pr.substring(0, pr.length()-1);
 			sourcePath = pr+sourcePath; 
 		}
-		ExperimentJob res=new ExperimentJob(expId, sourcePath, experimentName, max,selectedSeed);
+		ExperimentJob res=new ExperimentJob( sourcePath, expId,experimentName, max,selectedSeed);
 		this.readParameter(res, e);
 		this.readOutput(res, e);
 		return res;

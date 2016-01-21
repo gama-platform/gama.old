@@ -33,11 +33,8 @@ import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.job.JobPlan;
-import msi.gama.headless.job.JobPlan.JobPlanExperimentID;
-import msi.gama.headless.util.WorkspaceManager;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
-import msi.gama.headless.xml.ScriptFactory;
 import msi.gama.headless.xml.XMLWriter;
 
 import org.eclipse.equinox.app.IApplication;
@@ -132,7 +129,7 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		SystemLogger.removeDisplay();
+		//SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
 		
@@ -142,6 +139,19 @@ public class Application implements IApplication {
 			  SystemLogger.activeDisplay();  
 		}
 		HeadlessSimulationLoader.preloadGAMA();
+		
+
+		
+		
+/*		List<IExperimentJob> jb = ScriptFactory.loadAndBuildJobs(args[args.length-2]);
+		Document dd =ScriptFactory.buildXmlDocument(jb);
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(dd);
+		StreamResult result = new StreamResult(new File("/tmp/file.xml"));
+		transformer.transform(source, result);
+
+		System.out.println("File saved!");*/
 		this.tunnelingMode = Application.containTunnellingParameter(args);
 		this.consoleMode = tunnelingMode || Application.containConsoleParameter(args);
 		

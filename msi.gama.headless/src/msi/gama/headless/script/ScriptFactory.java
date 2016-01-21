@@ -1,6 +1,7 @@
-package msi.gama.headless.xml;
+package msi.gama.headless.script;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,8 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
+import msi.gama.headless.util.WorkspaceManager;
+import msi.gama.headless.xml.XmlTAG;
 import msi.gama.kernel.model.IModel;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
@@ -25,20 +28,20 @@ import msi.gaml.statements.Facets;
 
 public abstract class ScriptFactory {
 	
-	public static void generateExperimentationFile(File modelFile )
-	{
-		
-	}
-	
-	//private void createHeadlessDirectoryOfModel()
-	
-	public static List<IExperimentJob> loadAndBuildJobs(String path)
+	public static IModel loadAndBuildJobs(String path)
 	{
 		IModel model = HeadlessSimulationLoader.loadModel(new File(path));
-	
-		return loadAndBuildJobs( model);
+		return model;
 	}
-	public static Document buildXmlDocument(List<IExperimentJob> jobs) throws ParserConfigurationException
+	
+	public static ArrayList<String> getModelInsideWorkspace(String path) throws IOException
+	{
+		WorkspaceManager ws = new WorkspaceManager(path);
+		ArrayList<String> allFiles = ws.getModelLibrary();
+		return allFiles;
+	}
+	
+	private static Document buildXmlDocument(List<IExperimentJob> jobs) throws ParserConfigurationException
 	{
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -56,7 +59,7 @@ public abstract class ScriptFactory {
 		return doc;
 	}
 	
-	public static List<IExperimentJob> loadAndBuildJobs(IModel model)
+/*	public static List<IExperimentJob> loadAndBuildJobs(IModel model)
 	{
 		ModelDescription modelDesc = model.getDescription().getModelDescription();
 		Set<String> experimentName = modelDesc.getExperimentNames();
@@ -77,7 +80,7 @@ public abstract class ScriptFactory {
 		}
 		return res;
 	}
-	
+	*/
 
 	
 }
