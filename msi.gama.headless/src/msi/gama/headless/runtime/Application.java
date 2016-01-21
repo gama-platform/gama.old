@@ -34,6 +34,7 @@ import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.job.JobPlan;
 import msi.gama.headless.job.JobPlan.JobPlanExperimentID;
+import msi.gama.headless.util.WorkspaceManager;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.ScriptFactory;
@@ -131,7 +132,7 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		//SystemLogger.removeDisplay();
+		SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
 		
@@ -141,32 +142,6 @@ public class Application implements IApplication {
 			  SystemLogger.activeDisplay();  
 		}
 		HeadlessSimulationLoader.preloadGAMA();
-		
-
-		JobPlan jb = new JobPlan();
-		JobPlanExperimentID[] rs = jb.loadModelAndCompileJob("/tmp/sirTest/sir.gaml");
-		long[] seeds = {1l,2l,3l,4l,5l,6l,7l,8l,9l,10l};
-		System.out.println("fdssq "+ rs[0]);
-		List<IExperimentJob> jobs = jb.constructWithName(rs[0], seeds,100, null, null);
-		
-		Document dd =ScriptFactory.buildXmlDocument(jobs);
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(dd);
-		StreamResult result = new StreamResult(new File("/tmp/file2.xml"));
-		transformer.transform(source, result);
-
-		System.exit(-1);
-		
-/*		List<IExperimentJob> jb = ScriptFactory.loadAndBuildJobs(args[args.length-2]);
-		Document dd =ScriptFactory.buildXmlDocument(jb);
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(dd);
-		StreamResult result = new StreamResult(new File("/tmp/file.xml"));
-		transformer.transform(source, result);
-
-		System.out.println("File saved!");*/
 		this.tunnelingMode = Application.containTunnellingParameter(args);
 		this.consoleMode = tunnelingMode || Application.containConsoleParameter(args);
 		
