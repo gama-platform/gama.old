@@ -1,4 +1,4 @@
-package ummisco.gama.communicator;
+package ummisco.gama.serializer.gaml;
 
 import java.io.File;
 import java.io.FileWriter;
