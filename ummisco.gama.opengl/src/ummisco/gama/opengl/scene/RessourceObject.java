@@ -123,9 +123,9 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			double factor = 0.0;
 			if(this.size!=null && env != null){
 				if (file instanceof GamaSVGFile ) {
-					factor = Math.max(size.x / env.getWidth(),size.y / env.getHeight());
+					factor = Math.min(size.x / env.getWidth(),size.y / env.getHeight());
 				} else {
-					factor = Math.max(Math.max(size.x / env.getWidth(),size.y / env.getHeight()), size.z/ ((Envelope3D)env).getDepth());
+					factor = Math.min(Math.min(size.x / env.getWidth(),size.y / env.getHeight()), size.z/ ((Envelope3D)env).getDepth());
 				}
 				gl.glScaled(factor, factor, factor);
 			}
