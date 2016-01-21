@@ -106,11 +106,12 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 						if ( manager != null ) {
 							out = (IDisplayOutput) manager.getOutput(id);
 						}
-						if ( out == null ) {
-							manager = fec.getExperiment().getExperimentOutputs();
-							if ( manager != null ) {
-								out = (IDisplayOutput) manager.getOutput(id);
-							}
+
+					}
+					if ( out == null ) {
+						IOutputManager manager = fec.getExperiment().getExperimentOutputs();
+						if ( manager != null ) {
+							out = (IDisplayOutput) manager.getOutput(id);
 						}
 					}
 				}

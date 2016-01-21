@@ -888,4 +888,9 @@ public abstract class AbstractScope implements IScope {
 		}
 	}
 
+	@Override
+	public IMacroAgent getRoot() {
+		return root;
+	}
+
 }

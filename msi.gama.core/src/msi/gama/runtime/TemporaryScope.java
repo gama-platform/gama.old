@@ -10,7 +10,7 @@ import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -606,6 +606,15 @@ class TemporaryScope implements IScope {
 	@Override
 	public IGui getGui() {
 		return GAMA.getGui();
+	}
+
+	/**
+	 * Method getRoot()
+	 * @see msi.gama.runtime.IScope#getRoot()
+	 */
+	@Override
+	public IMacroAgent getRoot() {
+		return null;
 	}
 
 }
