@@ -180,15 +180,18 @@ public class MtlLoader {
 						matset.d = Float.valueOf(coordstext[1]).floatValue();
 					}
 					else if (newline.contains("map_Ka")) {
-						String texture = newline.split("\\s+")[1];
+						String texture = newline.replace("map_Ka ", "");
+						while(texture.startsWith(" " )) texture = texture.replaceFirst(" ", "");
 						if (texture != null) matset.map_Ka = texture;
 					}
 					else if (newline.contains("map_Kd")) {
-						String texture = newline.split("\\s+")[1];
+						String texture = newline.replace("map_Kd ", "");
+						while(texture.startsWith(" " )) texture = texture.replaceFirst(" ", "");
 						if (texture != null) matset.map_Kd = texture;
 					}
 					else if (newline.contains("map_d")) {
-						String texture = newline.split("\\s+")[1];
+						String texture = newline.replace("map_d ", "");
+						while(texture.startsWith(" " )) texture = texture.replaceFirst(" ", "");
 						if (texture != null) matset.map_d = texture;
 					}
 				}
