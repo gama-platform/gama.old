@@ -13,6 +13,7 @@ package msi.gama.kernel.simulation;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentController;
@@ -41,6 +42,10 @@ import msi.gaml.types.IType;
  */
 @species(name = IKeyword.MODEL)
 @vars({
+	@var(name = IKeyword.COLOR,
+		type = IType.COLOR,
+		doc = @doc(value = "The color used to identify this simulation in the UI",
+			comment = "Can be set freely by the modeler") ),
 	@var(name = IKeyword.SEED,
 		type = IType.FLOAT,
 		doc = @doc(value = "The seed of the random number generator",
@@ -95,6 +100,7 @@ public class SimulationAgent extends GamlAgent {
 	public static final String STARTING_DATE = "starting_date";
 
 	final SimulationClock clock;
+	GamaColor color;
 
 	IScope scope;
 	IOutputManager outputs;
@@ -121,6 +127,19 @@ public class SimulationAgent extends GamlAgent {
 		// scheduler = new SimulationPopulationScheduler(scope, pop);
 		projectionFactory = new ProjectionFactory();
 		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
+	}
+
+	@getter(value = IKeyword.COLOR, initializer = true)
+	public GamaColor getColor() {
+		if ( color == null ) {
+			color = new GamaColor(GamaPreferences.SIMULATION_COLORS[getIndex() % 5].getValue());
+		}
+		return color;
+	}
+
+	@setter(IKeyword.COLOR)
+	public void setColor(final GamaColor color) {
+		this.color = color;
 	}
 
 	@Override

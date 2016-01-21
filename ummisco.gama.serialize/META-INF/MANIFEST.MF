@@ -3,9 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Serialize
 Bundle-SymbolicName: ummisco.gama.serialize;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: msi.gama.core;bundle-version="1.6.1",
- msi.gama.ext;bundle-version="1.0.0"
+ msi.gama.ext;bundle-version="1.0.0",
+ msi.gama.processor;bundle-version="1.4.0"
 Bundle-ClassPath: .,
  ext/xstream-1.4.8.jar
 Export-Package: com.thoughtworks.xstream,

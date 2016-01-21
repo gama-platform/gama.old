@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
+import java.awt.Color;
 import java.util.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
@@ -26,10 +27,10 @@ import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 
 /**
  * @author drogoul
@@ -225,12 +226,12 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 			// outputReloaded(out);
 		}
-		int r = (int) Math.random() * 255;
-		int g = (int) Math.random() * 255;
-		int b = (int) Math.random() * 255;
-		if ( out.getScope().getSimulationScope() != null ) {
-			this.setTitleImage(GamaIcons.createTempColorIcon(
-				SwtGui.getColorForSimulationNumber(out.getScope().getSimulationScope().getIndex())));
+		IScope scope = out.getScope();
+
+		if ( scope != null && scope.getSimulationScope() != null ) {
+			IMacroAgent root = scope.getRoot();
+			Color color = root instanceof SimulationAgent ? ((SimulationAgent) root).getColor() : Color.BLACK;
+			this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));
 		}
 	}
 
