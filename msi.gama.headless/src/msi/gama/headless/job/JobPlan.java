@@ -88,10 +88,23 @@ public class JobPlan {
 		 }
 		 return res;
 	}
-	
-	public List<IExperimentJob> constructWithName(JobPlanExperimentID name, long[] seeds, long finalStep, List<Parameter> in, List<Output> out)
+	public List<IExperimentJob> constructAllJobs(long[] seeds, long finalStep, List<Parameter> in, List<Output> out)
+	{
+		List<IExperimentJob> jobs = new ArrayList<>();
+		for(IExperimentJob locJob:originalJobs.values())
+		{
+			jobs.addAll(constructJobWithName(locJob,seeds,  finalStep,  in, out));
+		}
+		return jobs;
+	}
+	public List<IExperimentJob> constructJobWithName(JobPlanExperimentID name, long[] seeds, long finalStep, List<Parameter> in, List<Output> out)
 	{
 		IExperimentJob originalExperiment = this.getJobDescriptionWithName(name);
+		return constructJobWithName(originalExperiment, seeds,  finalStep,  in, out);
+		
+	}
+	public List<IExperimentJob> constructJobWithName(IExperimentJob originalExperiment, long[] seeds, long finalStep, List<Parameter> in, List<Output> out)
+	{	
 		List<IExperimentJob> res = new ArrayList<IExperimentJob>();
 		for(long sd:seeds)
 		{

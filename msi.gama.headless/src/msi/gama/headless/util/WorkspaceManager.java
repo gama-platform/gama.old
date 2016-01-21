@@ -23,8 +23,7 @@ public class WorkspaceManager {
 	private File wsFile;
 	
 	public WorkspaceManager(String location) throws IOException{
- 		File mainFile = new File((new File(location)).getCanonicalPath());				
-		wsFile = new File(mainFile.getParent());			
+ 		wsFile = new File((new File(location)).getCanonicalPath());							
 	}
 
 	public File getFile(){return wsFile;}
@@ -204,11 +203,11 @@ public class WorkspaceManager {
  * 
  */
 	public ArrayList<String> getModelLibrary(){
-		ArrayList<String> modelList = litRep(wsFile.getAbsolutePath() + File.separator + "msi.gama.models"+File.separator+"models");
+		ArrayList<String> modelList = readDirectory(wsFile.getAbsolutePath() + File.separator + "msi.gama.models"+File.separator+"models");
 		return modelList;
 	}
 	
-	private static ArrayList<String> litRep(String dir){
+	private static ArrayList<String> readDirectory(String dir){
 		ArrayList<String> listFiles = new ArrayList<String>();
 		File rep = new File(dir);
 		
@@ -217,7 +216,7 @@ public class WorkspaceManager {
 			
 			if(t!=null){
 				for(String fName : t) {
-					ArrayList<String> newList = litRep(rep.getAbsolutePath()+File.separator+fName);
+					ArrayList<String> newList = readDirectory(rep.getAbsolutePath()+File.separator+fName);
 					listFiles.addAll(newList);
 				}
 			}
