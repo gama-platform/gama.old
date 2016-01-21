@@ -27,6 +27,17 @@ public class Parameter {
 	private Object value;
     private DataType type;
 
+    public Parameter(Parameter p)
+    {
+    	this.name = p.name;
+    	this.value = p.value;
+    	this.type = p.type;
+    }
+    
+    public Parameter clone(Parameter p)
+    {
+    	return new Parameter(p); 
+    }
     public static Parameter loadAndBuildParameter(IDescription paramDesc,final IModel model)
     {
        String name = paramDesc.getFacets().getLabel(IKeyword.NAME);

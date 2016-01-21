@@ -23,6 +23,18 @@ public class Output {
 	public int frameRate;
 	public String	id;
 	
+	public Output(Output o)
+	{
+		this.id=new Integer(Output.generateID()).toString();
+		this.frameRate = o.frameRate;
+		this.name = o.name;
+	}
+	
+	public Output clone(Output o)
+	{
+		return new Output(o);
+	}
+	
 	public static int generateID()
 	{
 		return OUTPUT_ID++;

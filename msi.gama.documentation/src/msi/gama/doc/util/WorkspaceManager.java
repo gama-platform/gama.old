@@ -197,7 +197,12 @@ public class WorkspaceManager {
 		}
 		return listPlugins;
 	}
+
 	
+/*****************************************************************************************************
+ * 
+ * 
+ */
 	public ArrayList<String> getModelLibrary(){
 		ArrayList<String> modelList = litRep(wsFile.getAbsolutePath() + File.separator + "msi.gama.models"+File.separator+"models");
 		return modelList;

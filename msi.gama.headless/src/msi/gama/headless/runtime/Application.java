@@ -1,8 +1,8 @@
 /*********************************************************************************************
  * 
  *
- * 'Application.java', in plugin 'msi.gama.headless', is part of the source code of the 
  * GAMA modeling and simulation platform.
+ * 'Application.java', in plugin 'msi.gama.headless', is part of the source code of the 
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
@@ -22,12 +22,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
+import msi.gama.headless.job.JobPlan;
+import msi.gama.headless.job.JobPlan.JobPlanExperimentID;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.ScriptFactory;
@@ -35,6 +41,7 @@ import msi.gama.headless.xml.XMLWriter;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.w3c.dom.Document;
 
 
 
@@ -124,15 +131,32 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		SystemLogger.removeDisplay();
+		//SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
+		
 		verbose = containVerboseParameter(args);
 		if(verbose)
 		{
 			  SystemLogger.activeDisplay();  
 		}
 		HeadlessSimulationLoader.preloadGAMA();
+		
+
+		JobPlan jb = new JobPlan();
+		JobPlanExperimentID[] rs = jb.loadModelAndCompileJob("/tmp/sirTest/sir.gaml");
+		long[] seeds = {1l,2l,3l,4l,5l,6l,7l,8l,9l,10l};
+		System.out.println("fdssq "+ rs[0]);
+		List<IExperimentJob> jobs = jb.constructWithName(rs[0], seeds,100, null, null);
+		
+		Document dd =ScriptFactory.buildXmlDocument(jobs);
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(dd);
+		StreamResult result = new StreamResult(new File("/tmp/file2.xml"));
+		transformer.transform(source, result);
+
+		System.exit(-1);
 		
 /*		List<IExperimentJob> jb = ScriptFactory.loadAndBuildJobs(args[args.length-2]);
 		Document dd =ScriptFactory.buildXmlDocument(jb);
