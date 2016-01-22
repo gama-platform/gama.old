@@ -22,7 +22,7 @@ import msi.gama.util.TOrderedHashMap;
 public class ExperimentScheduler implements Runnable {
 
 	public volatile boolean alive = true;
-	// Flag indicating that the simulation is set to pause (it should be alive unless the application is shutting down)
+	// Flag indicating that the experiment is set to pause (it should be alive unless the application is shutting down)
 	public volatile boolean paused = true;
 	// Flag indicating that the thread is set to be on hold, waiting for a user input
 	public volatile boolean on_user_hold = false;
@@ -33,7 +33,7 @@ public class ExperimentScheduler implements Runnable {
 	volatile Semaphore lock = new Semaphore(1);
 	final IExperimentPlan experiment;
 
-	public ExperimentScheduler(final IExperimentPlan experiment) {
+	ExperimentScheduler(final IExperimentPlan experiment) {
 		this.experiment = experiment;
 		if ( !experiment.isHeadless() ) {
 			executionThread = new Thread(null, this, "Front end scheduler");
@@ -91,12 +91,6 @@ public class ExperimentScheduler implements Runnable {
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();
-				// if ( scope.interrupted() ) {
-				//
-				// // scope.getGui().debug("Exception in experiment interruption: " + e.getMessage());
-				// } else {
-				// // GAMA.reportError(e, true);
-				// }
 			}
 		}
 	}
@@ -160,12 +154,7 @@ public class ExperimentScheduler implements Runnable {
 			if ( !scope.init(stepable) ) {
 				toStop.add(stepable);
 			}
-			// else {
-			// paused = false;
-			// }
 		} catch (final Exception e) {
-			// scope.getGui().debug("WARNING :: Exception in front end scheduler: " + e.getMessage());
-			e.printStackTrace();
 			if ( scope != null && scope.interrupted() ) {
 				toStop.add(stepable);
 			} else {
@@ -207,15 +196,11 @@ public class ExperimentScheduler implements Runnable {
 			toStep.remove(ss);
 			toStop.remove(ss);
 		}
-		// System.out.println(toStep.keySet());
-		// System.out.println(s.toString());
 	}
 
 	public void unschedule(final IStepable scheduler) {
-		// GAMA.getGui().debug("ExperimentScheduler.unschedule " + scheduler);
 		if ( toStep.containsKey(scheduler) ) {
 			toStep.get(scheduler).setInterrupted(true);
-			// toStop.add(scheduler);
 		}
 	}
 

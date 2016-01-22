@@ -129,6 +129,7 @@ public class SimulationAgent extends GamlAgent {
 		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
 	}
 
+	@Override
 	@getter(value = IKeyword.COLOR, initializer = true)
 	public GamaColor getColor() {
 		if ( color == null ) {
@@ -150,15 +151,6 @@ public class SimulationAgent extends GamlAgent {
 			scope.getGui().prepareForSimulation(this);
 			super.schedule();
 
-			if ( outputs != null ) {
-				final IScope simulationScope = obtainNewScope();
-				if ( simulationScope != null ) {
-					getExperiment().getSpecies().getController().getScheduler().schedule(outputs, simulationScope);
-				} else {
-					// TODO What does it do here ? Should be elsewhere (but where ?)
-					scope.getGui().cleanAfterSimulation();
-				}
-			}
 		} finally {
 			scope.getGui().informStatus("Simulation ready");
 			scope.getGui().updateSimulationState();
@@ -168,7 +160,7 @@ public class SimulationAgent extends GamlAgent {
 
 	@Override
 	// TODO A redefinition of this method in GAML will lose all information regarding the clock and the advance of time,
-	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
+	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;). The outputs will not be stepped neither
 	public Object _step_(final IScope scope) {
 
 		// System.out.println("Stepping simulation " + getIndex() + " at cycle " + clock.getCycle());
@@ -177,17 +169,17 @@ public class SimulationAgent extends GamlAgent {
 		// A simulation always runs in its own scope
 		try {
 			super._step_(this.scope);
-			// hqnghi if simulation is not scheduled, their outputs must do step manually
 			if ( !scheduled ) {
 				// hqnghi temporary added untill elimination of SimulationPopulationScheduler
 				this.getExperiment().getSimulationsScheduler().executeActions(scope, 1);
 				this.getExperiment().getSimulationsScheduler().executeActions(scope, 3);
 				// end-hqnghi
-				if ( outputs != null ) {
-					outputs.step(this.scope);
-				}
+
 			}
 			// end-hqnghi
+			if ( outputs != null ) {
+				outputs.step(this.scope);
+			}
 		} finally {
 			clock.step(this.scope);
 		}
@@ -197,7 +189,12 @@ public class SimulationAgent extends GamlAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		// A simulation always runs in its own scope
-		return super._init_(this.scope);
+		super._init_(this.scope);
+
+		if ( outputs != null ) {
+			outputs.init(this.scope);
+		}
+		return this;
 	}
 
 	/**
@@ -392,6 +389,10 @@ public class SimulationAgent extends GamlAgent {
 		return null;
 	}
 
+	public String getUserFriendlyName() {
+		return "Simulation " + getIndex() + " of " + getSpecies().getName().replace("_model", "");
+	}
+
 	public void setOutputs(final IOutputManager iOutputManager) {
 		if ( iOutputManager == null ) { return; }
 		// hqnghi push outputManager down to Simulation level
@@ -410,8 +411,9 @@ public class SimulationAgent extends GamlAgent {
 							"#" + this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
 					newOutputName = keyName;
 				} else {
-					keyName = entry.getKey() + " (Simulation " + getIndex() + ")";
-					newOutputName = output.getName() + " (Simulation " + getIndex() + ")";
+					String postfix = " (" + getUserFriendlyName() + ")";
+					keyName = entry.getKey() + postfix;
+					newOutputName = output.getName() + postfix;
 				}
 				mm.put(keyName, output);
 				output.setName(newOutputName);

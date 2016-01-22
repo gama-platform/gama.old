@@ -146,7 +146,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 			listOfAttributes = Cast.asList(getScope(), attributes.value(getScope()));
 		}
 		if ( rootAgent == null || rootAgent.dead() ) {
-			rootAgent = getScope().getSimulationScope();
+			rootAgent = getScope().getRoot();
 			// scope.getGui().debug("InspectDisplayOutput.init rootAgent = " + rootAgent);
 		}
 		return true;

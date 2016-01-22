@@ -105,7 +105,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
-		scope = obtainNewScope();
+		scope = new ExperimentAgentScope();
 		reset();
 	}
 
@@ -182,6 +182,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		createSimulation(getParameterValues(), scheduled);
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
+		IOutputManager outputs = getSpecies().getExperimentOutputs();
+		if ( outputs != null ) {
+			outputs.init(scope);
+		}
 		return this;
 	}
 
@@ -233,10 +237,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// The experiment agent is scheduled in the global scheduler
 		ExperimentScheduler sche = getSpecies().getController().getScheduler();
 
-		IOutputManager outputs = getSpecies().getExperimentOutputs();
-		if ( outputs != null ) {
-			sche.schedule(outputs, scope);
-		}
+		// IOutputManager outputs = getSpecies().getExperimentOutputs();
+		// if ( outputs != null ) {
+		// sche.schedule(outputs, scope);
+		// }
 		sche.schedule(this, scope);
 	}
 
@@ -454,7 +458,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		try {
 			result = super.step(this.scope);
 			if ( scheduler != null ) {
-				scheduler.step(scope);
+				scheduler.step(this.scope);
+			}
+			IOutputManager outputs = getSpecies().getExperimentOutputs();
+			if ( outputs != null ) {
+				outputs.step(scope);
 			}
 		} finally {
 			clock.step(this.scope);
@@ -601,6 +609,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public void closeSimulation(final SimulationAgent simulationAgent) {
 		simulationAgent.dispose();
+	}
+
+	@Override
+	public GamaColor getColor() {
+		return new GamaColor(0, 0, 0, 0);
 	}
 
 }

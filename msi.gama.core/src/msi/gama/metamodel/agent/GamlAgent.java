@@ -13,7 +13,6 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import com.google.common.collect.Iterables;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.simulation.*;
@@ -674,6 +673,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public boolean mustScheduleMembers() {
 		return false;
+	}
+
+	@Override
+	public GamaColor getColor() {
+		IMacroAgent host = getHost();
+		if ( host != null ) { return host.getColor(); }
+		return null;
 	}
 
 }

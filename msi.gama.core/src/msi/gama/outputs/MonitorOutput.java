@@ -12,6 +12,7 @@
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.*;
+import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
@@ -57,7 +58,12 @@ import msi.gaml.types.IType;
 			isExecutable = false) ) })
 public class MonitorOutput extends AbstractDisplayOutput {
 
-	//
+	protected String expressionText = "";
+	protected IExpression value;
+	protected IExpression colorExpression = null;
+	protected GamaColor color = null;
+	protected GamaColor constantColor = null;
+	protected Object lastValue = "";
 
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
@@ -89,13 +95,6 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		}
 	}
 
-	protected String expressionText = "";
-	protected IExpression value;
-	protected IExpression colorExpression = null;
-	protected GamaColor color = null;
-	protected GamaColor constantColor = null;
-	protected Object lastValue = "";
-
 	public Object getLastValue() {
 		return lastValue;
 	}
@@ -111,6 +110,18 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
+	public boolean init(final IScope scope) {
+		super.init(scope);
+		if ( colorExpression == null ) {
+			IMacroAgent sim = scope.getRoot();
+			if ( sim != null ) {
+				constantColor = sim.getColor();
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public boolean step(final IScope scope) {
 		if ( getScope().interrupted() ) { return false; }
 		if ( getValue() != null ) {
@@ -122,8 +133,10 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		} else {
 			lastValue = null;
 		}
-		if ( constantColor == null && colorExpression != null ) {
-			color = Cast.asColor(scope, colorExpression.value(scope));
+		if ( constantColor == null ) {
+			if ( colorExpression != null ) {
+				color = Cast.asColor(scope, colorExpression.value(scope));
+			}
 		}
 		return true;
 	}

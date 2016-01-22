@@ -73,6 +73,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	@Override
 	protected Composite createItemContentsFor(final MonitorOutput output) {
 		Composite compo = new Composite(getViewer(), SWT.NONE);
+		compo.setBackground(IGamaColors.WHITE.color());
 		GridLayout layout = new GridLayout(2, false);
 		// GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		// firstColData.widthHint = 60;

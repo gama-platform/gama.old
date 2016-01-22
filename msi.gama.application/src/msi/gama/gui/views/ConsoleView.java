@@ -25,7 +25,6 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.runtime.GAMA;
 
@@ -82,8 +81,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	 * @return
 	 */
 	private Color getColorFor(final IMacroAgent root) {
-		if ( root instanceof SimulationAgent ) { return GamaColors.get(((SimulationAgent) root).getColor()).color(); };
-		return IGamaColors.BLACK.color();
+		return GamaColors.get(root.getColor()).color();
 	}
 
 	private boolean indicated = false;

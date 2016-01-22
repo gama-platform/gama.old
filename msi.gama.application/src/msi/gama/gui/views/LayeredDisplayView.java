@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
+import java.awt.Color;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -24,11 +25,12 @@ import msi.gama.gui.displays.layers.LayerSideControls;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.actions.*;
+import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.*;
 import msi.gama.outputs.layers.AbstractLayer;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 
 public abstract class LayeredDisplayView extends GamaViewPart implements DisplayDataListener, IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable {
 
@@ -51,6 +53,20 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			setPartName(getOutput().getName());
 		}
 
+	}
+
+	@Override
+	public void addOutput(final IDisplayOutput out) {
+		super.addOutput(out);
+		if ( out != null ) {
+			IScope scope = out.getScope();
+
+			if ( scope != null && scope.getSimulationScope() != null ) {
+				IMacroAgent root = scope.getRoot();
+				Color color = root.getColor();
+				this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));
+			}
+		}
 	}
 
 	public boolean isOpenGL() {

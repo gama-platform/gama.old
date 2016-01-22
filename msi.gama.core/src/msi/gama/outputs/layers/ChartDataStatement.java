@@ -1,25 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ChartDataStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
 import java.awt.Shape;
 import java.util.ArrayList;
+import org.jfree.chart.renderer.AbstractRenderer;
+import org.jfree.chart.renderer.category.*;
+import org.jfree.chart.renderer.xy.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -28,29 +28,31 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
-import org.jfree.chart.renderer.AbstractRenderer;
-import org.jfree.chart.renderer.category.*;
-import org.jfree.chart.renderer.xy.*;
 
 @symbol(name = IKeyword.DATA, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
-@facets(value = {
-	@facet(name = IKeyword.VALUE, type = { IType.FLOAT, IType.POINT, IType.LIST }, optional = false),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
-	@facet(name = IKeyword.LEGEND, type = IType.STRING, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
-	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
+@facets(
+	value = { @facet(name = IKeyword.VALUE, type = { IType.FLOAT, IType.POINT, IType.LIST }, optional = false),
+		@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
+		@facet(name = IKeyword.LEGEND, type = IType.STRING, optional = true),
+		@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true), @facet(
+			name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
-	@facet(name = ChartDataStatement.MARKERSHAPE, type = IType.ID, values = { ChartDataStatement.MARKER_EMPTY,
-		ChartDataStatement.MARKER_SQUARE, ChartDataStatement.MARKER_CIRCLE, ChartDataStatement.MARKER_UP_TRIANGLE,
-		ChartDataStatement.MARKER_DIAMOND, ChartDataStatement.MARKER_HOR_RECTANGLE,
-		ChartDataStatement.MARKER_DOWN_TRIANGLE, ChartDataStatement.MARKER_HOR_ELLIPSE,
-		ChartDataStatement.MARKER_RIGHT_TRIANGLE, ChartDataStatement.MARKER_VERT_RECTANGLE,
-		ChartDataStatement.MARKER_LEFT_TRIANGLE }, optional = true),
-	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
-		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
-		IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.LEGEND)
+	@facet(name = ChartDataStatement.MARKERSHAPE,
+		type = IType.ID,
+		values = { ChartDataStatement.MARKER_EMPTY, ChartDataStatement.MARKER_SQUARE, ChartDataStatement.MARKER_CIRCLE,
+			ChartDataStatement.MARKER_UP_TRIANGLE, ChartDataStatement.MARKER_DIAMOND,
+			ChartDataStatement.MARKER_HOR_RECTANGLE, ChartDataStatement.MARKER_DOWN_TRIANGLE,
+			ChartDataStatement.MARKER_HOR_ELLIPSE, ChartDataStatement.MARKER_RIGHT_TRIANGLE,
+			ChartDataStatement.MARKER_VERT_RECTANGLE, ChartDataStatement.MARKER_LEFT_TRIANGLE },
+		optional = true),
+		@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
+		@facet(name = IKeyword.STYLE,
+			type = IType.ID,
+			values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT, IKeyword.STEP,
+				IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED },
+			optional = true) },
+	omissible = IKeyword.LEGEND)
 public class ChartDataStatement extends AbstractStatement {
 
 	public static final String MARKER = "marker";
@@ -69,8 +71,8 @@ public class ChartDataStatement extends AbstractStatement {
 	public static final String MARKER_VERT_RECTANGLE = "marker_vert_rectangle";
 	public static final String MARKER_LEFT_TRIANGLE = "marker_left_triangle";
 
-	public static final Shape[] defaultmarkers = org.jfree.chart.plot.DefaultDrawingSupplier
-		.createStandardSeriesShapes();
+	public static final Shape[] defaultmarkers =
+		org.jfree.chart.plot.DefaultDrawingSupplier.createStandardSeriesShapes();
 
 	public static class ChartData {
 
@@ -110,7 +112,7 @@ public class ChartDataStatement extends AbstractStatement {
 
 		public Object getValue(final IScope scope) throws GamaRuntimeException {
 			Object o;
-			if ( value != null ) {
+			if ( value != null && !scope.interrupted() ) {
 				o = value.value(scope);
 			} else {
 				o = lastvalue;
@@ -213,9 +215,8 @@ public class ChartDataStatement extends AbstractStatement {
 		}
 		data.renderer = r;
 
-		data.name =
-			Cast.asString(scope,
-				getFacetValue(scope, IKeyword.LEGEND, getFacetValue(scope, IKeyword.NAME, "data" + dataNumber++)));
+		data.name = Cast.asString(scope,
+			getFacetValue(scope, IKeyword.LEGEND, getFacetValue(scope, IKeyword.NAME, "data" + dataNumber++)));
 		data.color = color;
 		// r.setSeriesPaint(0, data.color);
 		// in order to "detach" the expression from the current definition scope

@@ -162,6 +162,8 @@ public interface IMacroAgent extends IAgent {
 
 	public SimulationClock getClock();
 
+	public GamaColor getColor();
+
 	/**
 	 * @return
 	 */
