@@ -37,6 +37,7 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -99,6 +100,14 @@ public class DiffusionStatement extends AbstractStatement {
 
 		}
 	}
+	
+	private static class DiffusionComputation {
+		static int nbDiffusion = 0;
+		public static void incrementVal() {
+			nbDiffusion++;
+			System.out.println(nbDiffusion);
+		}
+	}
 
 	private boolean is_torus = false;
 	private String var_diffu = "";
@@ -109,60 +118,25 @@ public class DiffusionStatement extends AbstractStatement {
 	int cLen = 1;
 	double[][] mask, mat_diffu;
 	List<Integer> agents;
+	IExpression onExpr = getFacet(IKeyword.ON);
+	String envName = getLiteral(IKeyword.ENVIRONMENT);
 
 	public DiffusionStatement(final IDescription desc) {
 		super(desc);
 		method_diffu = getLiteral(IKeyword.METHOD, "convolution").equals("convolution");
 		//species_diffu = getLiteral(IKeyword.ON);
-
-	}
-
-	public void doDiffusion2(final IScope scope) {
-
-		int kRows = mat_diffu.length;
-		int kCols = mat_diffu[0].length;
-
-		int xcenter = kRows / 2;
-		int ycenter = kCols / 2;
-
-		for ( int i = 0; i < nbRows; i++ ) {
-			for ( int j = 0; j < nbCols; j++ ) {
-
-				int um = 0;
-				for ( int uu = i - xcenter; uu <= i + xcenter; uu++ ) {
-					int vm = 0;
-					for ( int vv = j - ycenter; vv <= j + ycenter; vv++ ) {
-						int u = uu;
-						int v = vv;
-						double mask_current = mask != null ? mask[i][j] < -1 ? 0 : 1 : 1;
-						if ( is_torus ) {
-							if ( u < 0 ) {
-								u = nbRows + u;
-							} else if ( u >= nbRows ) {
-								u = u - nbRows;
-							}
-
-							if ( v < 0 ) {
-								v = nbCols + v;
-							} else if ( v >= nbCols ) {
-								v = v - nbCols;
-							}
-						} else if ( u >= 0 && v >= 0 & v < nbCols & u < nbRows ) {
-							output[u * nbCols + v] += input[i * nbCols + j] * mat_diffu[um][vm] * mask_current;
-						}
-
-						vm++;
-					}
-					um++;
-
-				}
-			}
+		if ( envName == null ) {
+			SpeciesDescription s = onExpr.getType().getContentType().getSpecies();
+			envName = s.getName();
 		}
 
 	}
-
 	double[] input, output;
 	int nbRows, nbCols;
+	
+	private IGrid getEnvironment(final IScope scope) {
+		return (IGrid) scope.getSimulationScope().getPopulationFor(envName).getTopology().getPlaces();
+	}
 
 	public void initDiffusion(final IScope scope, final IPopulation pop) {
 
@@ -235,6 +209,50 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 	}
 
+	public void doDiffusion2(final IScope scope) {
+
+		int kRows = mat_diffu.length;
+		int kCols = mat_diffu[0].length;
+
+		int xcenter = kRows / 2;
+		int ycenter = kCols / 2;
+
+		for ( int i = 0; i < nbRows; i++ ) {
+			for ( int j = 0; j < nbCols; j++ ) {
+
+				int um = 0;
+				for ( int uu = i - xcenter; uu <= i + xcenter; uu++ ) {
+					int vm = 0;
+					for ( int vv = j - ycenter; vv <= j + ycenter; vv++ ) {
+						int u = uu;
+						int v = vv;
+						double mask_current = mask != null ? mask[i][j] < -1 ? 0 : 1 : 1;
+						if ( is_torus ) {
+							if ( u < 0 ) {
+								u = nbRows + u;
+							} else if ( u >= nbRows ) {
+								u = u - nbRows;
+							}
+
+							if ( v < 0 ) {
+								v = nbCols + v;
+							} else if ( v >= nbCols ) {
+								v = v - nbCols;
+							}
+						} else if ( u >= 0 && v >= 0 & v < nbCols & u < nbRows ) {
+							output[u * nbCols + v] += input[i * nbCols + j] * mat_diffu[um][vm] * mask_current;
+						}
+
+						vm++;
+					}
+					um++;
+
+				}
+			}
+		}
+
+	}
+
 	public void finishDiffusion(final IScope scope, final IPopulation pop) {
 		for ( int i = 0; i < output.length; i++ ) {
 			if (agents == null || agents.contains(i))
@@ -256,6 +274,7 @@ public class DiffusionStatement extends AbstractStatement {
 	}
 
 	private void initialize(final IScope scope) {
+		DiffusionComputation.incrementVal();
 		initialized = true;
 		cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
 		
@@ -297,19 +316,28 @@ public class DiffusionStatement extends AbstractStatement {
 		if ( !initialized ) {
 			initialize(scope);
 		}
+		Object obj = getFacetValue(scope, IKeyword.ON);
 		IPopulation pop = scope.getAgentScope().getPopulationFor(species_diffu);
 
-		for ( int time = 0; time < cLen; time++ ) {
-			initDiffusion(scope, pop);
-			
-			if ( !method_diffu ) {
-			
-				doDiffusion2(scope);
-			} else {
-				doDiffusion1(scope);
-			}
-			finishDiffusion(scope, pop);
-		}
+		getEnvironment(scope).diffuseVariableWithMatrix(scope, method_diffu, mat_diffu, mask, 
+				cLen, obj, is_torus, var_diffu, species_diffu, agents, pop, nbRows, nbCols);
+		
+//		if ( !initialized ) {
+//			initialize(scope);
+//		}
+//		IPopulation pop = scope.getAgentScope().getPopulationFor(species_diffu);
+//
+//		for ( int time = 0; time < cLen; time++ ) {
+//			initDiffusion(scope, pop);
+//			
+//			if ( !method_diffu ) {
+//			
+//				doDiffusion2(scope);
+//			} else {
+//				doDiffusion1(scope);
+//			}
+//			finishDiffusion(scope, pop);
+//		}
 		return null;
 	}
 }

@@ -63,6 +63,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	protected Boolean isTorus = null;
 	protected Boolean isHexagon = null;
 	protected GridDiffuser diffuser;
+	protected GridDiffuserWithMatrix diffuser2;
 	public INeighbourhood neighbourhood;
 
 	int actualNumberOfCells;
@@ -390,6 +391,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if ( diffuser != null ) {
 			diffuser.diffuse(scope);
 		}
+	}
+	
+	private void diffuse2(final IScope scope) throws GamaRuntimeException {
+		diffuser2.diffuse2();
 	}
 
 	@Override
@@ -776,12 +781,38 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		});
 		return diffuser;
 	}
+	
+	private GridDiffuserWithMatrix createDiffuser2(final IScope scope, boolean method_diffu, double[][] mat_diffu, 
+			double[][] mask, int cLen, Object obj, boolean is_torus, String var_diffu, String species_diffu, 
+			List<Integer> agents, IPopulation pop, int nbRows, int nbCols) {
+		if ( diffuser2 != null ) { return diffuser2; }
+		diffuser2 = new GridDiffuserWithMatrix(scope, method_diffu, mat_diffu, mask, cLen, obj, 
+				is_torus, var_diffu, species_diffu, agents, pop, nbRows, nbCols);
+		scope.getExperiment().getSimulationsScheduler().insertEndAction(new GamaHelper() {
+
+			@Override
+			public Object run(final IScope scope) throws GamaRuntimeException {
+				diffuse2(scope);
+				return null;
+			}
+
+		});
+		return diffuser2;
+	}
 
 	@Override
 	public void diffuseVariable(final IScope scope, final String name, final double value, final short type,
 		final double prop, final double variation, final ILocation location, final double range,
 		final Object candidates) {
 		getDiffuser(scope).diffuseVariable(scope, name, value, type, prop, variation, location, range, candidates);
+	}
+	
+	@Override
+	public void diffuseVariableWithMatrix(final IScope scope, boolean method_diffu, double[][] mat_diffu, 
+		double[][] mask, int cLen, Object obj, boolean is_torus, String var_diffu, String species_diffu, 
+		List<Integer> agents, IPopulation pop, int nbRows, int nbCols) {
+		createDiffuser2(scope, method_diffu, mat_diffu, mask, cLen, obj, is_torus, var_diffu, species_diffu, 
+				agents, pop, nbRows, nbCols);
 	}
 
 	@Override
