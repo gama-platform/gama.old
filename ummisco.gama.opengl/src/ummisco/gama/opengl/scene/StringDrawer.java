@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.awt.Font;
-import java.util.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -31,32 +29,11 @@ import ummisco.gama.opengl.JOGLRenderer;
 public class StringDrawer extends ObjectDrawer<StringObject> {
 
 	// Setting it to true requires that the ModelScene handles strings outside a list (see ModelScene)
-	static final boolean USE_VERTEX_ARRAYS = false;
-	Map<String, Map<Integer, Map<Integer, TextRenderer>>> cache = new LinkedHashMap();
-
-	TextRenderer get(final String font, final int size, final int style) {
-		Map<Integer, Map<Integer, TextRenderer>> map1 = cache.get(font);
-		if ( map1 == null ) {
-			map1 = new HashMap();
-			cache.put(font, map1);
-		}
-		Map<Integer, TextRenderer> map2 = map1.get(size);
-		if ( map2 == null ) {
-			map2 = new HashMap();
-			map1.put(size, map2);
-		}
-		TextRenderer r = map2.get(style);
-		if ( r == null ) {
-			r = new TextRenderer(new Font(font, style, size), true, true, null, true);
-			r.setSmoothing(true);
-			r.setUseVertexArrays(USE_VERTEX_ARRAYS);
-			map2.put(style, r);
-		}
-		return r;
-	}
+	static final boolean USE_VERTEX_ARRAYS = true;
 
 	public StringDrawer(final JOGLRenderer r) {
 		super(r);
+
 	}
 
 	@Override
@@ -66,18 +43,23 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final StringObject s) {
+		TextRenderer r = renderer.get(s.font, s.size, s.style);
+		if ( r == null ) { return; }
 		float x = (float) ((float) s.location.x * s.getScale().x + s.getOffset().x);
 		float y = (float) ((float) s.location.y * s.getScale().y - s.getOffset().y);
 		float z = (float) ((float) s.location.z * s.getScale().z + s.getOffset().z);
 		// GL2 gl = GLContext.getCurrentGL().getGL2();
 		if ( s.bitmap == true ) {
+
 			gl.glPushMatrix();
-			TextRenderer r = get(s.font, s.size, s.style);
+
 			r.setColor(s.getColor());
 			r.begin3DRendering();
 			r.draw3D(s.string, x, y, z, (float) (1f / renderer.getyRatioBetweenPixelsAndModelUnits()));
+			r.flush();
 			r.end3DRendering();
 			gl.glPopMatrix();
+
 		} else {
 			gl.glPushMatrix();
 			gl.glDisable(GLLightingFunc.GL_LIGHTING);
@@ -101,6 +83,6 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 
 	@Override
 	public void dispose() {
-		cache.clear();
+		// cache.clear();
 	}
 }

@@ -16,12 +16,10 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaFile;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -133,11 +131,12 @@ public class ModelScene {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		currentLayer.addString(string, location, size, sizeInModelUnits, color, font, style, angle, bitmap);
 	}
-	
-	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha, final GamaPoint location,
-			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,final GamaPair<Double, GamaPoint> rotate3DInit, Envelope env) {
-			if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-			currentLayer.addFile(fileName, agent, color, alpha, location, dimensions, rotate3D,rotate3DInit, env);
+
+	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha,
+		final GamaPoint location, final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,
+		final GamaPair<Double, GamaPoint> rotate3DInit, final Envelope env) {
+		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
+		currentLayer.addFile(fileName, agent, color, alpha, location, dimensions, rotate3D, rotate3DInit, env);
 	}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,
@@ -148,7 +147,6 @@ public class ModelScene {
 		}
 		currentLayer.addImage(img, agent, location, dimensions, angle, isDynamic, name);
 	}
-	
 
 	public void addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition,
 		final Envelope3D bounds) {
@@ -172,9 +170,10 @@ public class ModelScene {
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
-		final Color border, final boolean isTextured, final java.util.List<BufferedImage> textures, final GLModel asset3Dmodel, final Integer angle,
-		final double height, final boolean roundCorner, final IShape.Type type, final java.util.List<Double> ratio,
-		final java.util.List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
+		final Color border, final boolean isTextured, final java.util.List<BufferedImage> textures,
+		final GLModel asset3Dmodel, final Integer angle, final double height, final boolean roundCorner,
+		final IShape.Type type, final java.util.List<Double> ratio, final java.util.List<GamaColor> colors,
+		final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( textures != null && !textures.isEmpty() ) {
 			for ( BufferedImage img : textures ) {
@@ -183,8 +182,8 @@ public class ModelScene {
 				}
 			}
 		}
-		currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textures, asset3Dmodel, angle, height, roundCorner,
-			type, ratio, colors, rotate3D);
+		currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textures, asset3Dmodel, angle,
+			height, roundCorner, type, ratio, colors, rotate3D);
 	}
 
 	public void dispose() {
