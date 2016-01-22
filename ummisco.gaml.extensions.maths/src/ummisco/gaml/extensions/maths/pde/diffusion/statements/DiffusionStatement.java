@@ -274,8 +274,6 @@ public class DiffusionStatement extends AbstractStatement {
 	}
 
 	private void initialize(final IScope scope) {
-		DiffusionComputation.incrementVal();
-		initialized = true;
 		cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
 		
 		Object obj = getFacetValue(scope, IKeyword.ON);
@@ -310,34 +308,65 @@ public class DiffusionStatement extends AbstractStatement {
 		mat_diffu = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, "mat_diffu")));
 		var_diffu = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
 	}
+	
+	private double[][] computeMatrix(double[][] basicMatrix, int numberOfIteration) {
+		double[][] input_mat_diffu = basicMatrix;
+		for (int nb = 2; nb<=cLen; nb++) {
+			double[][] output_mat_diffu = new double[(basicMatrix.length-1)*nb+1][(basicMatrix[0].length-1)*nb+1];
+			for (int i = 0; i<output_mat_diffu.length; i++) {
+				Arrays.fill(output_mat_diffu[i], 0);
+			}
+			for (int i=0; i<input_mat_diffu.length; i++) {
+				for (int j=0; j<input_mat_diffu[0].length; j++) {
+					for (int ii=0; ii<basicMatrix.length; ii++) {
+						for (int jj=0; jj<basicMatrix[0].length; jj++) {
+							output_mat_diffu[i+ii][j+jj] += input_mat_diffu[i][j]*basicMatrix[ii][jj];
+						}
+					}
+				}
+			}
+			input_mat_diffu = output_mat_diffu;
+		}
+		return input_mat_diffu;
+	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if ( !initialized ) {
-			initialize(scope);
-		}
-		Object obj = getFacetValue(scope, IKeyword.ON);
-		IPopulation pop = scope.getAgentScope().getPopulationFor(species_diffu);
-
-		getEnvironment(scope).diffuseVariableWithMatrix(scope, method_diffu, mat_diffu, mask, 
-				cLen, obj, is_torus, var_diffu, species_diffu, agents, pop, nbRows, nbCols);
 		
-//		if ( !initialized ) {
-//			initialize(scope);
-//		}
-//		IPopulation pop = scope.getAgentScope().getPopulationFor(species_diffu);
-//
-//		for ( int time = 0; time < cLen; time++ ) {
-//			initDiffusion(scope, pop);
-//			
-//			if ( !method_diffu ) {
-//			
-//				doDiffusion2(scope);
-//			} else {
-//				doDiffusion1(scope);
-//			}
-//			finishDiffusion(scope, pop);
-//		}
+		cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
+		mask = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK)));
+		mat_diffu = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, "mat_diffu")));
+		var_diffu = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
+		
+		if (cLen != 1) {
+			mat_diffu = computeMatrix(mat_diffu,cLen);
+		}
+		
+		Object obj = getFacetValue(scope, IKeyword.ON);
+		GridPopulation pop = null;
+		if (obj instanceof ISpecies) {
+			agents = null;
+			if (((ISpecies)obj).isGrid())
+				pop = (GridPopulation) ((ISpecies)obj).getPopulation(scope);
+		} else {
+			IList<IAgent> ags = Cast.asList(scope, obj);
+			if (! ags.isEmpty()) {
+				ISpecies sp = ags.get(0).getSpecies();
+				if (sp.isGrid()) {
+					pop = (GridPopulation) sp.getPopulation(scope);
+					agents = new ArrayList<Integer>();
+					for (IAgent ag : ags) 
+						agents.add(ag.getIndex());
+				} else {
+					throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
+				}
+			}
+		}
+		
+		species_diffu = pop.getName();
+		getEnvironment(scope).diffuseVariableWithMatrix(scope, method_diffu, mat_diffu, mask, 
+				var_diffu, pop, agents);
+		
 		return null;
 	}
 }

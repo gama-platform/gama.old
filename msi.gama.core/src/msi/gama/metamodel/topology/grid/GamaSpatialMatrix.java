@@ -782,12 +782,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return diffuser;
 	}
 	
-	private GridDiffuserWithMatrix createDiffuser2(final IScope scope, boolean method_diffu, double[][] mat_diffu, 
-			double[][] mask, int cLen, Object obj, boolean is_torus, String var_diffu, String species_diffu, 
-			List<Integer> agents, IPopulation pop, int nbRows, int nbCols) {
+	private GridDiffuserWithMatrix getDiffuser2(final IScope scope) {
 		if ( diffuser2 != null ) { return diffuser2; }
-		diffuser2 = new GridDiffuserWithMatrix(scope, method_diffu, mat_diffu, mask, cLen, obj, 
-				is_torus, var_diffu, species_diffu, agents, pop, nbRows, nbCols);
+		diffuser2 = new GridDiffuserWithMatrix();
 		scope.getExperiment().getSimulationsScheduler().insertEndAction(new GamaHelper() {
 
 			@Override
@@ -809,10 +806,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	
 	@Override
 	public void diffuseVariableWithMatrix(final IScope scope, boolean method_diffu, double[][] mat_diffu, 
-		double[][] mask, int cLen, Object obj, boolean is_torus, String var_diffu, String species_diffu, 
-		List<Integer> agents, IPopulation pop, int nbRows, int nbCols) {
-		createDiffuser2(scope, method_diffu, mat_diffu, mask, cLen, obj, is_torus, var_diffu, species_diffu, 
-				agents, pop, nbRows, nbCols);
+		double[][] mask, String var_diffu, IPopulation pop, 
+		List<Integer> agents) {
+		getDiffuser2(scope).addDiffusion(scope, var_diffu, (GridPopulation)pop, method_diffu, mat_diffu, agents);
 	}
 
 	@Override

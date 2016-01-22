@@ -46,8 +46,8 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	public abstract void diffuseVariable(final IScope scope, final String name, final double value, final short type,
 		final double prop, final double variation, final ILocation location, final double range, Object candidates);
 	public abstract void diffuseVariableWithMatrix(final IScope scope, boolean method_diffu, double[][] mat_diffu, 
-			double[][] mask, int cLen, Object obj, boolean is_torus, String var_diffu, String species_diffu, 
-			List<Integer> agents, IPopulation pop, int nbRows, int nbCols);
+			double[][] mask, String var_diffu, IPopulation pop, 
+			List<Integer> agents);
 
 	public abstract IAgent getAgentAt(final ILocation c);
 
