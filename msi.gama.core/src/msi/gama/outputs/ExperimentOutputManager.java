@@ -14,7 +14,7 @@ package msi.gama.outputs;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -35,7 +35,7 @@ import msi.gaml.descriptions.IDescription;
 			@example(value = "		}", isExecutable = false), @example(value = "	}", isExecutable = false),
 			@example(value = "}", isExecutable = false) }) })
 public class ExperimentOutputManager extends AbstractOutputManager {
-	
+
 	private IScope scope;
 
 	public ExperimentOutputManager(final IDescription desc) {
@@ -64,7 +64,9 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public synchronized void dispose() {
-		scope.getGui().cleanAfterExperiment(scope.getExperiment().getSpecies());
+		if ( scope != null ) {
+			scope.getGui().cleanAfterExperiment(scope.getExperiment().getSpecies());
+		}
 		super.dispose();
 	}
 

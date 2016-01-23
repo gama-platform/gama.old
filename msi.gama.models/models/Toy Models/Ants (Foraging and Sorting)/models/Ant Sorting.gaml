@@ -1,7 +1,6 @@
 model ant_sort
 
 global torus: true {
-	geometry ant_normal <- (geometry(svg_file("../images/ant_normal.svg")) rotated_by -90) scaled_to {10,10};
 	// Parameters
 	int number_of_different_colors <- 4 max: 9 ;
 	int density_percent <- 30 min: 0 max: 99 ;
@@ -9,6 +8,14 @@ global torus: true {
 	int number_of_objects_around  <- 5 min: 0 max: 8;
 	int width_and_height_of_grid <- 100 max: 400 min: 20 ;  
 	int ants <- 100 min: 1 ;
+	
+	action kill_all {
+		ask ant {do die;}
+	}
+	
+	action create_all {
+		create ant number: ants;
+	}
 
 	rgb black <- #black  ;	
 	const colors type: list <- ["yellow","red", "orange", "blue", "green","cyan", "gray","pink","magenta"] ;
@@ -18,7 +25,7 @@ global torus: true {
 	}  
 	init { 
 		do description ;
-		create ant number: ants ;
+		do create_all;
 	} 
 }
 
@@ -48,7 +55,7 @@ species ant skills: [ moving ] control: fsm {
 		}
 	}
 	aspect default {
-		draw ant_normal rotate: heading at: location empty: false color: color;
+		draw file("../images/ant_normal.svg") size:5 color: color rotate3D: 90.0 - heading ::{0,0.0,1} ;
 	}
 }
 
@@ -68,7 +75,7 @@ experiment sort type: gui{
 	parameter "Number of agents:" var: ants category: "Agents" ;
 	
 	output {
-		display grid_display refresh: every(1) type: opengl {
+		display grid_display refresh: every(1) type:opengl {
 			grid ant_grid ;
 			species ant transparency: 0.2 ;
 		}

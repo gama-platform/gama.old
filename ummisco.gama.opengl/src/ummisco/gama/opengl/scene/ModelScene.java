@@ -21,9 +21,8 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
-import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.*;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.files.GLModel;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
 
 /**
@@ -171,7 +170,7 @@ public class ModelScene {
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
 		final Color border, final boolean isTextured, final java.util.List<BufferedImage> textures,
-		final GLModel asset3Dmodel, final Integer angle, final double height, final boolean roundCorner,
+		final Gama3DGeometryFile asset3Dmodel, final Integer angle, final double height, final boolean roundCorner,
 		final IShape.Type type, final java.util.List<Double> ratio, final java.util.List<GamaColor> colors,
 		final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }

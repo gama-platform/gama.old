@@ -35,11 +35,10 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.*;
 import msi.gama.util.*;
-import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
-import ummisco.gama.opengl.files.*;
 import ummisco.gama.opengl.scene.*;
 import ummisco.gama.opengl.utils.GLUtilLight;
 
@@ -182,10 +181,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	}
 
-	public GeometryCache getCache() {
-		return getGeometryCache();
-	}
-
 	@Override
 	public void init(final GLAutoDrawable drawable) {
 		// see https://jogamp.org/deployment/v2.1.1/javadoc/jogl/javadoc/javax/media/opengl/glu/gl2/GLUgl2.html
@@ -232,7 +227,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	}
 
-	GeometryCache getGeometryCache() {
+	public GeometryCache getGeometryCache() {
 		if ( cache == null ) {
 			cache = new GeometryCache(this);
 		}
@@ -604,7 +599,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		Double depth = 0d;
 		GamaPair<Double, GamaPoint> rot3D = null;
 		java.util.List<BufferedImage> textures = null;
-		GLModel asset3Dmodel = null;
+		Gama3DGeometryFile asset3Dmodel = null;
 		IShape.Type type = shape.getGeometricalType();
 		java.util.List<Double> ratio = new ArrayList<Double>();
 		java.util.List<GamaColor> colors = new ArrayList<GamaColor>();
@@ -632,10 +627,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			}
 		}
 
-		if ( shape.hasAttribute(IShape.ASSET3D_ATTRIBUTE) ) {
-			java.util.List<String> asset3DNames = Cast.asList(scope, shape.getAttribute(IShape.ASSET3D_ATTRIBUTE));
-			asset3Dmodel = ModelLoaderOBJ.LoadModel(asset3DNames.get(0), asset3DNames.get(1), gl);
-		}
+		// if ( shape.hasAttribute(IShape.ASSET3D_ATTRIBUTE) ) {
+		// java.util.List<String> asset3DNames = Cast.asList(scope, shape.getAttribute(IShape.ASSET3D_ATTRIBUTE));
+		// asset3Dmodel = GLModel.LoadModel(asset3DNames.get(0), asset3DNames.get(1));
+		// }
 
 		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
 			ratio = Cast.asList(scope, shape.getAttribute(IShape.RATIO_ATTRIBUTE));
@@ -664,8 +659,9 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
-		final java.util.List<BufferedImage> textures, final GLModel asset3Dmodel, final java.util.List<Double> ratio,
-		final java.util.List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
+		final java.util.List<BufferedImage> textures, final Gama3DGeometryFile asset3Dmodel,
+		final java.util.List<Double> ratio, final java.util.List<GamaColor> colors,
+		final GamaPair<Double, GamaPoint> rotate3D) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
 		// System.out.println("Value of 1 pixel: " + 1d / getyRatioBetweenPixelsAndModelUnits());
 		sceneBuffer.getSceneToUpdate().addGeometry(geom, scope.getAgentScope(), color, fill, border,

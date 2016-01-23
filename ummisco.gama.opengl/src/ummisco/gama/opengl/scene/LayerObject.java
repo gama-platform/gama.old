@@ -15,15 +15,13 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import com.jogamp.opengl.*;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
-import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.*;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.files.GLModel;
 
 /**
  * Class LayerObject.
@@ -69,7 +67,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		gl.glPushMatrix();
 		gl.glTranslated(offset.x, -offset.y, offset.z);
 		gl.glScaled(scale.x, scale.y, scale.z);
-		//NOTE: In the same layer if geometries and image are drawn images are drawn first and then the geometries.
+		// NOTE: In the same layer if geometries and image are drawn images are drawn first and then the geometries.
 		// To be sure that the line of a grid is well displayed we decide to draw first the image that corresponds to the grid and then the line as geometries. (otherwise the lines are invisible)
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		images.draw(gl, picking && isPickable());
@@ -120,12 +118,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 		strings.add(new StringObject(string, font, style, offset, scale, color, angle, location, sizeInModelUnits, size,
 			alpha, bitmap));
 	}
-	
-	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha, final GamaPoint location,
-			final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D, final GamaPair<Double, GamaPoint> rotate3DInit, Envelope env) {
-			ressources.add(new RessourceObject(fileName, agent, color, alpha, location, dimensions, rotate3D,rotate3DInit, env));
 
-		}
+	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha,
+		final GamaPoint location, final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,
+		final GamaPair<Double, GamaPoint> rotate3DInit, final Envelope env) {
+		ressources
+			.add(new RessourceObject(fileName, agent, color, alpha, location, dimensions, rotate3D, rotate3DInit, env));
+
+	}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,
 		final GamaPoint dimensions, final Double angle, final boolean isDynamic, final String name) {
@@ -143,12 +143,13 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
-		final Color border, final boolean isTextured, final List<BufferedImage> textures, final GLModel asset3Dmodel, final Integer angle,
-		final double height, final boolean roundCorner, final IShape.Type type, final List<Double> ratio,
-		final List<GamaColor> colors, final GamaPair<Double, GamaPoint> rotate3D) {
+		final Color border, final boolean isTextured, final List<BufferedImage> textures,
+		final Gama3DGeometryFile asset3Dmodel, final Integer angle, final double height, final boolean roundCorner,
+		final IShape.Type type, final List<Double> ratio, final List<GamaColor> colors,
+		final GamaPair<Double, GamaPoint> rotate3D) {
 		final GeometryObject curJTSGeometry;
 		curJTSGeometry = new GeometryObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border,
-				isTextured, textures, asset3Dmodel, angle == null ? 0 : angle, height, roundCorner, type, rotate3D);
+			isTextured, textures, asset3Dmodel, angle == null ? 0 : angle, height, roundCorner, type, rotate3D);
 		geometries.add(curJTSGeometry);
 	}
 

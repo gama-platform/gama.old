@@ -19,7 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.file.GamaGeometryFile.Gama3DGeometryFile;
+import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Geometry;
 

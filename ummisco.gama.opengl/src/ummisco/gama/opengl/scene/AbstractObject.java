@@ -1,20 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractObject.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
-import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
+import ummisco.gama.opengl.JOGLRenderer;
 
 public abstract class AbstractObject implements ISceneObject {
 
@@ -86,6 +86,10 @@ public abstract class AbstractObject implements ISceneObject {
 
 	public void setAlpha(final Double alpha) {
 		this.alpha = alpha;
+	}
+
+	public void preload(final GL2 gl, final JOGLRenderer renderer) {
+
 	}
 
 	// public void dispose(final JOGLRenderer renderer) {
