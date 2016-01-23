@@ -12,10 +12,14 @@ import msi.gaml.types.GamaType;
 
 public class GamaBasicTypeConverter implements Converter {
 
-	private final static String TAG="GamaPoint";
-	private final static String SEPARATOR=":";
+	private final static String TAG="GamaType";
+
 	@Override
 	public boolean canConvert(Class arg0) {
+		if((arg0.equals(GamaType.class)) || (arg0.getSuperclass().equals(GamaType.class)))
+		{return true;}
+		
+		
 		Class<?>[] allInterface=arg0.getInterfaces();
 		for( Class<?> c:allInterface)
 		{
@@ -28,24 +32,26 @@ public class GamaBasicTypeConverter implements Converter {
 
 	@Override
 	public void marshal(Object arg0, HierarchicalStreamWriter writer, MarshallingContext arg2) {
-		GamaPoint pt = (GamaPoint) arg0;
-		String line=pt.getX()+SEPARATOR+pt.getY()+SEPARATOR+pt.getZ();
+		//GamaPoint pt = (GamaPoint) arg0;
+		// String line=pt.getX()+SEPARATOR+pt.getY()+SEPARATOR+pt.getZ();
+		System.out.println("==GamaType  " + arg0);
 		writer.startNode(TAG);
-		writer.setValue(line);
+		writer.setValue(""+arg0.getClass());
 	    writer.endNode();
 	}
 
+	// TODO
 	@Override
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext arg1) {
 		// TODO Auto-generated method stub
 		double x,y,z;
 		reader.moveDown();
-		String[] lines = reader.getValue().split(SEPARATOR);
+		String val = reader.getValue();
 		reader.moveUp();
-		x= Double.valueOf(lines[0]).doubleValue();
-		y= Double.valueOf(lines[0]).doubleValue();
-		z= Double.valueOf(lines[0]).doubleValue();
-		return new GamaPoint(x,y,z);
+	//	x= Double.valueOf(lines[0]).doubleValue();
+	//	y= Double.valueOf(lines[0]).doubleValue();
+	//	z= Double.valueOf(lines[0]).doubleValue();
+		return val;
 	}
 
 }

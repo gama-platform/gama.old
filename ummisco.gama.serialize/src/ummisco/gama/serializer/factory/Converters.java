@@ -19,7 +19,7 @@ public abstract class Converters {
 				new GamaScopeConverter(),
 				new GamaSimulationAgentConverter(),
 				new GamaBasicTypeConverter(),
-				new GamaAgentConverter()
+	//			new GamaAgentConverter()
 		};
 	
 	public static Converter[] converterFactory()

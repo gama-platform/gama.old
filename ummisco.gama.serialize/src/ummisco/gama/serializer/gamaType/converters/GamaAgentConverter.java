@@ -13,27 +13,37 @@ package ummisco.gama.serializer.gamaType.converters;
 
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.shape.GamaShape;
-import ummisco.gama.serializer.gamaType.reduced.RemoteAgent;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
+
+import java.util.List;
 
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.*;
 
 public class GamaAgentConverter implements Converter {
 
+	IScope scope;
+	
+	public GamaAgentConverter(IScope s){
+		scope = s;
+	}
+	
 	@Override
 	public boolean canConvert(final Class arg0) {
-		return (arg0.equals(GamaShape.class));
+		return (arg0.equals(GamlAgent.class));
 	}
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		GamaShape agt = (GamaShape) arg0;
-		writer.startNode("shape shape");
+		GamlAgent agt = (GamlAgent) arg0;
 		
-		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());		
+		writer.startNode("agentReference");
+		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());
+	//	System.out.println("" + agt.getName() + " - " + agt.getSpeciesName());
 	// 	context.convertAnother(new RemoteAgent(agt));
-		System.out.println("===========END ConvertAnother : GamaShape");
+		writer.setValue(agt.getName());
+		System.out.println("===========END ConvertAnother : GamaAgent");
 		
 		writer.endNode();
 	}
@@ -43,8 +53,18 @@ public class GamaAgentConverter implements Converter {
 
 		reader.moveDown();
 		// RemoteAgent rmt = (RemoteAgent) arg1.convertAnother(null, RemoteAgent.class);
+		List<IAgent> lagt = scope.getSimulationScope().getAgents(scope);
+		boolean found = false;
+		int i = 0;
+		IAgent agt = null;
+		while(!found && (i < lagt.size())) {
+			if(lagt.get(i).getName().equals(reader.getValue())) {
+				found = true;
+				agt = lagt.get(i);
+			}
+		}
 		reader.moveUp();
-		return new GamaShape();// rmt; // ragt;
+		return agt;
 	}
 
 }

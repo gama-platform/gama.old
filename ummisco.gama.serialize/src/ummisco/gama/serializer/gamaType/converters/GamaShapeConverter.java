@@ -11,10 +11,7 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
-import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.shape.GamaShape;
-import ummisco.gama.serializer.gamaType.reduced.RemoteAgent;
 
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.*;
@@ -31,7 +28,7 @@ public class GamaShapeConverter implements Converter {
 		GamaShape agt = (GamaShape) arg0;		
 		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());		
 	// 	context.convertAnother(agt);
-		System.out.println("===========END ConvertAnother : GamaShape");
+		System.out.println("===========END ConvertAnother : GamaShape");		
 	}
 
 	@Override

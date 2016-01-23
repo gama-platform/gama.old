@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaShapeFile;
 
 import com.thoughtworks.xstream.converters.*;
@@ -19,7 +19,12 @@ import com.thoughtworks.xstream.io.*;
 
 public class GamaShapeFileConverter implements Converter {
 	private final static String TAG="GamaShapeFile";
-
+	private IScope scope;
+	
+	public GamaShapeFileConverter(IScope s){
+		scope = s;
+	}
+	
 	@Override
 	public boolean canConvert(final Class arg0) {
 		return (arg0.equals(GamaShapeFile.class));
@@ -33,20 +38,17 @@ public class GamaShapeFileConverter implements Converter {
 		writer.startNode(TAG);
 		writer.setValue(shpFile.getFile().getAbsolutePath());	
 		writer.endNode();
-		System.out.println("===========END ConvertAnother : GamaShapeFile");		
+		System.out.println("===========END ConvertAnother : GamaShapeFile");	
 	}
 
 	
-	// TODO : need to improve to unmarshal a file 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 
 		reader.moveDown();
-	//	GamaShapeFile shp = new GamaShapeFile(reader.getValue());
-		
-		GamaShape rmt = (GamaShape) arg1.convertAnother(null, GamaShape.class);
+		GamaShapeFile shp = new GamaShapeFile(scope, reader.getValue());		
 		reader.moveUp();
-		return rmt; // ragt;
+		return shp; 
 	}
 
 }

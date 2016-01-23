@@ -9,6 +9,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaBasicTypeConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaListConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaMapConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaPairConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaPointConverter;
@@ -29,9 +31,11 @@ public class ReverseOperators {
 	public static String serializeSimulation(IScope scope, int i) {
 		XStream xstream = new XStream(new DomDriver());
 		xstream.registerConverter(new LogConverter());
-		xstream.registerConverter(new GamaShapeFileConverter());		
-	//	xstream.registerConverter(new GamaShapeConverter());
-	//	xstream.registerConverter(new GamaAgentConverter());
+		xstream.registerConverter(new GamaBasicTypeConverter());		
+		xstream.registerConverter(new GamaShapeFileConverter(scope));		
+		xstream.registerConverter(new GamaAgentConverter(scope));
+		xstream.registerConverter(new GamaListConverter(scope));	
+		//	xstream.registerConverter(new GamaShapeConverter());		
 	//	xstream.registerConverter(new GamaScopeConverter());
 //		xstream.registerConverter(new GamaPointConverter());
 //		xstream.registerConverter(new GamaPairConverter());
@@ -41,6 +45,9 @@ public class ReverseOperators {
 		ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		SimulationAgent simAgt = expAgt.getSimulation();
 		
+		System.out.println("**** TODO list = Reducer for any kind of file");
+		System.out.println("**** TODO list = Handle the random generator too");
+		
 		return (String) xstream.toXML(new SavedAgent(scope,simAgt));
 	}
 	
@@ -49,9 +56,11 @@ public class ReverseOperators {
 	public static int unSerializeSimulation(IScope scope, String simul) {
 		XStream xstream = new XStream(new DomDriver());
 		xstream.registerConverter(new LogConverter());	
-		xstream.registerConverter(new GamaShapeFileConverter());				
-	//	xstream.registerConverter(new GamaShapeConverter());		
-	//	xstream.registerConverter(new GamaAgentConverter());
+		xstream.registerConverter(new GamaBasicTypeConverter());		
+		xstream.registerConverter(new GamaShapeFileConverter(scope));				
+		xstream.registerConverter(new GamaAgentConverter(scope));		
+		xstream.registerConverter(new GamaListConverter(scope));
+		//	xstream.registerConverter(new GamaShapeConverter());			
 	//	xstream.registerConverter(new GamaScopeConverter());
 //		xstream.registerConverter(new GamaPointConverter());
 //		xstream.registerConverter(new GamaPairConverter());
