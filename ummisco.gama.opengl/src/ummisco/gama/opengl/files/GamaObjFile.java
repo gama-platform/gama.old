@@ -18,6 +18,8 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+
+import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -76,7 +78,10 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	public GamaObjFile(final IScope scope, final String pathName, final String mtlPath, final GamaPair initRotation) {
 		super(scope, pathName, initRotation);
-		this.mtlPath = mtlPath;
+		if (mtlPath != null) 
+			this.mtlPath = FileUtils.constructAbsoluteFilePath(scope, mtlPath, false);
+		else this.mtlPath  = null;
+			
 	}
 
 	private void centerit() {
@@ -403,11 +408,12 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			//// Quad End Footer /////
 			gl.glEnd();
 			///////////////////////////
-			if ( texture != null ) {
-				texture.disable(gl);
-				texture = null;
-			}
+			
 
+		}
+		if ( texture != null ) {
+			texture.disable(gl);
+			texture = null;
 		}
 		// gl.glEndList();
 	}
