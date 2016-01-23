@@ -87,7 +87,7 @@ public class MersenneTwisterRNG extends GamaRNG {
 	/**
 	 * Seed the RNG using the provided seed generation strategy.
 	 * @param seedGenerator The seed generation strategy that will provide the seed value for this
-	 *            RNG.
+	 * RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
 	public MersenneTwisterRNG(final RandomUtils seedGenerator) {
@@ -150,6 +150,7 @@ public class MersenneTwisterRNG extends GamaRNG {
 	 */
 	@Override
 	protected final int next(final int bits) {
+		usage++;
 		int y;
 		// try {
 		// lock.lock();

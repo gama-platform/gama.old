@@ -54,7 +54,7 @@ public class JavaRNG extends GamaRNG {
 	/**
 	 * Seed the RNG using the provided seed generation strategy.
 	 * @param seedGenerator The seed generation strategy that will provide
-	 *            the seed value for this RNG.
+	 * the seed value for this RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
 	public JavaRNG(final RandomUtils seedGenerator) {
@@ -68,6 +68,12 @@ public class JavaRNG extends GamaRNG {
 	public JavaRNG(final byte[] seed) {
 		super(createLongSeed(seed));
 		this.seed = seed.clone();
+	}
+
+	@Override
+	public int next(final int bits) {
+		usage++;
+		return super.next(bits);
 	}
 
 	/**
