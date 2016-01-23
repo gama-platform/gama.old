@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractLayerStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -23,11 +23,11 @@ import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
- * 
+ *
  * GAML statement to define the properties of a layer in a display
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @inside(symbols = IKeyword.DISPLAY)
 public abstract class AbstractLayerStatement extends Symbol implements ILayerStatement {
@@ -80,7 +80,8 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	@Override
 	public final boolean step(final IScope scope) throws GamaRuntimeException {
-		return _step(scope);
+		if ( !scope.interrupted() ) { return _step(scope); }
+		return false;
 	}
 
 	protected abstract boolean _step(IScope scope);

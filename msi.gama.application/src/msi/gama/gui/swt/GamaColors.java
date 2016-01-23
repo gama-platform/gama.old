@@ -27,7 +27,7 @@ public class GamaColors {
 
 	public static class GamaUIColor {
 
-		Color active, inactive, darker, gray, lighter;
+		Color active, inactive, darker, gray, lighter, reverse;
 
 		public GamaUIColor(final Color c) {
 			active = c;
@@ -73,6 +73,13 @@ public class GamaColors {
 				inactive = computeInactive(active);
 			}
 			return inactive;
+		}
+
+		public Color reverse() {
+			if ( reverse == null ) {
+				reverse = computeReverse(active);
+			}
+			return reverse;
 		}
 
 		public Color darker() {
@@ -149,6 +156,11 @@ public class GamaColors {
 		newHsb[2] = Math.max(0.0f, hsb[2] - 0.1f);
 		RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
+	}
+
+	private static Color computeReverse(final Color c) {
+		RGB data = c.getRGB();
+		return getColor(255 - data.red, 255 - data.green, 255 - data.blue);
 	}
 
 	private static Color computeLighter(final Color c) {
@@ -256,6 +268,16 @@ public class GamaColors {
 	 */
 	public static GamaUIColor getTextColorForBackground(final Color background) {
 		return isDark(background) ? IGamaColors.WHITE : IGamaColors.BLACK;
+	}
+
+	public static GamaUIColor getTextColorForBackgroundFrom(final Color background, final Color initial) {
+		boolean darkB = isDark(background);
+		if ( darkB ) {
+			return get(computeLighter(computeLighter(computeLighter(initial))).getRGB());
+		} else {
+			return get(computeDarker(computeDarker(computeDarker(initial))).getRGB());
+		}
+
 	}
 
 	public static GamaUIColor getTextColorForBackground(final GamaUIColor background) {

@@ -22,23 +22,6 @@ import msi.gama.util.GamaColor;
 /**
  * Instances of this class represent a selectable user interface object that represents a expandable
  * item in a expand bar.
- * <p>
- * <dl>
- * <dt><b>Styles:</b></dt>
- * <dd>(none)</dd>
- * <dt><b>Events:</b></dt>
- * <dd>(none)</dd>
- * </dl>
- * </p>
- * <p>
- * IMPORTANT: This class is <em>not</em> intended to be subclassed.
- * </p>
- *
- * @see ExpandBar
- * @see <a href="http://www.eclipse.org/swt/">Sample code and further information</a>
- *
- * @since 3.2
- * @noextend This class is not intended to be subclassed by clients.
  */
 public class ParameterExpandItem extends Item {
 
@@ -61,62 +44,11 @@ public class ParameterExpandItem extends Item {
 	static final int BORDER = 4;
 	static final int CHEVRON_SIZE = 24;
 
-	/**
-	 * Constructs a new instance of this class given its parent and a style value describing its
-	 * behavior and appearance.
-	 * <p>
-	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing together (that
-	 * is, using the <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists the style constants that are applicable to the class. Style bits
-	 * are also inherited from superclasses.
-	 * </p>
-	 *
-	 * @param parent a composite control which will be the parent of the new instance (cannot be
-	 * null)
-	 * @param style the style of control to construct
-	 *
-	 * @exception IllegalArgumentException <ul>
-	 * <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
-	 * <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
-	 * </ul>
-	 *
-	 * @see Widget#checkSubclass
-	 * @see Widget#getStyle
-	 */
 	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style,
 		final GamaUIColor color) {
 		this(parent, data, style, parent.getItemCount(), color);
 	}
 
-	/**
-	 * Constructs a new instance of this class given its parent, a style value describing its
-	 * behavior and appearance, and the index at which to place it in the items maintained by its
-	 * parent.
-	 * <p>
-	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing together (that
-	 * is, using the <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists the style constants that are applicable to the class. Style bits
-	 * are also inherited from superclasses.
-	 * </p>
-	 *
-	 * @param parent a composite control which will be the parent of the new instance (cannot be
-	 * null)
-	 * @param style the style of control to construct
-	 * @param index the zero-relative index to store the receiver in its parent
-	 *
-	 * @exception IllegalArgumentException <ul>
-	 * <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 * <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the parent (inclusive)</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
-	 * <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
-	 * </ul>
-	 *
-	 * @see Widget#checkSubclass
-	 * @see Widget#getStyle
-	 */
 	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style, final int index,
 		final GamaUIColor color) {
 		super(parent, style);
@@ -131,8 +63,6 @@ public class ParameterExpandItem extends Item {
 	@Override
 	public void dispose() {
 		if ( isDisposed() ) { return; }
-		// scope.getGui().debug("ParameterItem being disposed");
-		// if (!isValidThread ()) error (SWT.ERROR_THREAD_INVALID_ACCESS);
 		if ( parent != null ) {
 			parent.destroyItem(this);
 		}
@@ -205,7 +135,8 @@ public class ParameterExpandItem extends Item {
 			gc.setFont(SwtGui.getExpandfont());
 			drawX += 2 * ParameterExpandItem.TEXT_INSET;
 			Point size = gc.stringExtent(title);
-			gc.setForeground(IGamaColors.NEUTRAL.color());
+			gc.setForeground(
+				GamaColors.getTextColorForBackgroundFrom(backgroundColor, IGamaColors.NEUTRAL.color()).color());
 			// gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 			gc.drawString(title, drawX, y + (headerHeight - size.y) / 2, true);
 			// gc.setFont(SwtGui.getUnitFont());

@@ -1412,17 +1412,17 @@
             parentId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </scheme>
       <key
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            contextId="SearchText"
             schemeId="msi.gama.application.scheme"
             sequence="M1+C">
       </key>
       <key
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            contextId="SearchText"
             schemeId="msi.gama.application.scheme"
             sequence="M1+V">
       </key>
       <key
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            contextId="SearchText"
             schemeId="msi.gama.application.scheme"
             sequence="M1+X">
       </key>
@@ -1443,6 +1443,10 @@
             id="msi.gama.application.modeling.gaml.context"
             name="Modeling (GAML)"
             parentId="org.eclipse.xtext.ui.XtextEditorScope">
+      </context>
+      <context
+            id="SearchText"
+            name="In Search Text Field">
       </context>
    </extension>
    <extension

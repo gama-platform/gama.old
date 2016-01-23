@@ -13,7 +13,7 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.IStepable;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaHelper;
 
@@ -88,11 +88,13 @@ public class SimulationPopulationScheduler implements IStepable {
 	}
 
 	public void executeActions(final IScope scope, final int type) {
-		if ( actions != null ) {
+		if ( actions != null && !scope.interrupted() ) {
 			final List<GamaHelper> list = actions[type];
 			if ( list != null ) {
 				for ( final GamaHelper action : list ) {
-					action.run(scope);
+					if ( !scope.interrupted() ) {
+						action.run(scope);
+					}
 				}
 				if ( type == ONE_SHOT ) {
 					actions[ONE_SHOT] = null;

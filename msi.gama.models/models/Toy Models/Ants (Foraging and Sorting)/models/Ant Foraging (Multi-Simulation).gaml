@@ -114,18 +114,17 @@ experiment "4 Simulations" type: gui {
 	// We create three supplementary simulations using the species name 'ants_model' (automatically created from the name of the model + '_model')
 
 	init {
-		create simulation with: [ants_number::200,evaporation_rate::0.7,diffusion_rate::0.2];
-		create simulation with: [ants_number::50,evaporation_rate::0.05,diffusion_rate::0.8];
-		create simulation with: [ants_number::10,evaporation_rate::0.3,diffusion_rate::0.6];
+		create ants_model with: [ants_number::200,evaporation_rate::0.7,diffusion_rate::0.2];
+		create ants_model with: [ants_number::50,evaporation_rate::0.05,diffusion_rate::0.8];
+		create ants_model with: [ants_number::10,evaporation_rate::0.3,diffusion_rate::0.6];
 	}
 	
 	permanent {
 		display Comparison background: #white {
 			chart "Food Gathered" type: series {
-				data "Food 0" value: ants_model[0].food_gathered color: #blue;
-				data "Food 1" value: ants_model[1].food_gathered color: #green;
-				data "Food 2" value: ants_model[2].food_gathered color: #darkgray;
-				data "Food 3" value: ants_model[3].food_gathered color: (#orange).darker;
+				loop s over: ants_model {
+					data "Food " + int(s) value: s.food_gathered color: s.color marker: false;
+				}
 			}
 		}
 	}
@@ -140,7 +139,7 @@ experiment "4 Simulations" type: gui {
 			text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: #black
 			size: { 1, 0.02 };
 		}
-		inspect "Ants" type: table value: ant attributes: ['name', 'location', 'heading','state'];
+		//inspect "Ants" type: table value: ant attributes: ['name', 'location', 'heading','state'];
 
 	}
 }

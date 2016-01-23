@@ -108,7 +108,12 @@ public class BinaryOperator extends NAryOperator {
 
 		@Override
 		public String serialize(final boolean includingBuiltIn) {
-			return exprs[0].serialize(includingBuiltIn) + "." + exprs[1].serialize(includingBuiltIn);
+			StringBuilder sb = new StringBuilder();
+			parenthesize(sb, exprs[0]);
+			sb.append('.');
+			sb.append(exprs[1].serialize(includingBuiltIn));
+			return sb.toString();
+			// return exprs[0].serialize(includingBuiltIn) + "." + exprs[1].serialize(includingBuiltIn);
 		}
 
 		//

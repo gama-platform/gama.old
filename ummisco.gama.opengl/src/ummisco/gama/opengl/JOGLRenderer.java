@@ -24,6 +24,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.*;
@@ -86,6 +87,34 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	protected Map<String, Envelope> envelopes;
 	// Use to inverse y composaant
 	public int yFlag;
+
+	// Global text renderers
+	// Does not allow renderers to be created for text bigger than 200 pixels
+
+	Map<String, Map<Integer, Map<Integer, TextRenderer>>> textRenderersCache = new LinkedHashMap();
+
+	public TextRenderer get(final String font, final int s, final int style) {
+		int size = s > 200 ? 200 : s;
+		if ( size < 6 ) { return null; }
+		Map<Integer, Map<Integer, TextRenderer>> map1 = textRenderersCache.get(font);
+		if ( map1 == null ) {
+			map1 = new HashMap();
+			textRenderersCache.put(font, map1);
+		}
+		Map<Integer, TextRenderer> map2 = map1.get(size);
+		if ( map2 == null ) {
+			map2 = new HashMap();
+			map1.put(size, map2);
+		}
+		TextRenderer r = map2.get(style);
+		if ( r == null ) {
+			r = new TextRenderer(new Font(font, style, size), true, true, null, true);
+			r.setSmoothing(false);
+			r.setUseVertexArrays(true);
+			map2.put(style, r);
+		}
+		return r;
+	}
 
 	// private final GLModel chairModel = null;
 
@@ -812,7 +841,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 				return;
 			}
 		}

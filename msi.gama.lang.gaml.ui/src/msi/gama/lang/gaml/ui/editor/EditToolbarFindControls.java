@@ -14,7 +14,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.swt.IFocusService;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.controls.GamaToolbarSimple;
 
@@ -114,9 +113,72 @@ public class EditToolbarFindControls {
 		});
 
 		find.addModifyListener(modifyListener);
+		// find.addKeyListener(new KeyListener() {
+		//
+		// @Override
+		// public void keyReleased(final KeyEvent e) {}
+		//
+		// @Override
+		// public void keyPressed(final KeyEvent e) {
+		// if ( (e.stateMask & SWT.CTRL) != 0 || (e.stateMask & SWT.COMMAND) != 0 ) {
+		// switch (e.character) {
+		// case 'c':
+		// find.copy();
+		// e.doit = false;
+		// break;
+		// case 'v':
+		// find.paste();
+		// e.doit = false;
+		// break;
+		// case 'x':
+		// find.cut();
+		// e.doit = false;
+		// }
+		// }
+		// }
+		// });
+		// toolbar.addMouseTrackListener(new MouseTrackListener() {
+		//
+		// IContextActivation ca;
+		//
+		// @Override
+		// public void mouseHover(final MouseEvent e) {}
+		//
+		// @Override
+		// public void mouseExit(final MouseEvent e) {
+		// editor.getSite().getService(IContextService.class).deactivateContext(ca);
+		// System.out.println("SearchText context deactivated");
+		// ca = null;
+		// }
+		//
+		// @Override
+		// public void mouseEnter(final MouseEvent e) {
+		// ca = editor.getSite().getService(IContextService.class).activateContext("SearchText");
+		// System.out.println("SearchText context activated");
+		//
+		// }
+		// });
+		// toolbar.addFocusListener(new FocusListener() {
+		//
+		// IContextActivation ca;
+		//
+		// @Override
+		// public void focusLost(final FocusEvent e) {
+		// editor.getSite().getService(IContextService.class).deactivateContext(ca);
+		// System.out.println("SearchText context deactivated via focus");
+		// ca = null;
+		// }
+		//
+		// @Override
+		// public void focusGained(final FocusEvent e) {
+		// ca = editor.getSite().getService(IContextService.class).activateContext("SearchText");
+		// System.out.println("SearchText context activated via focus");
+		//
+		// }
+		// });
 		this.adjustEnablement(false, null);
-		IFocusService focusService = editor.getSite().getService(IFocusService.class);
-		focusService.addFocusTracker(find, "findreplacebar.findCombo"); //$NON-NLS-1$
+		// IFocusService focusService = editor.getSite().getService(IFocusService.class);
+		// focusService.addFocusTracker(find, "msi.gama.editor.search"); //$NON-NLS-1$
 
 	}
 
