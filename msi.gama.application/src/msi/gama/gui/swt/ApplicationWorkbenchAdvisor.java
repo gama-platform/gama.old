@@ -18,6 +18,7 @@ import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.application.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
+import org.eclipse.ui.statushandlers.*;
 import msi.gama.application.projects.WorkspaceModelsManager;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.runtime.GAMA;
@@ -161,4 +162,20 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		return super.preShutdown();
 
 	}
+
+	/**
+	 * Method getWorkbenchErrorHandler()
+	 * @see org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor#getWorkbenchErrorHandler()
+	 */
+	@Override
+	public synchronized AbstractStatusHandler getWorkbenchErrorHandler() {
+		return new AbstractStatusHandler() {
+
+			@Override
+			public void handle(final StatusAdapter statusAdapter, final int style) {
+				System.err.println("GAMA Caught a workbench problem : " + statusAdapter.getStatus().getMessage());
+			}
+		};
+	}
+
 }

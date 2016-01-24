@@ -11,11 +11,12 @@
  **********************************************************************************************/
 package msi.gama.gui.swt;
 
+import org.eclipse.ui.*;
+import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.runtime.GAMA;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 
 @SuppressWarnings("restriction")
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
@@ -43,7 +44,38 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	@Override
 	public void postWindowCreate() {
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setMaximized(true);
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+		IPerspectiveDescriptor model = Workbench.getInstance().getPerspectiveRegistry()
+			.findPerspectiveWithId("msi.gama.application.perspectives.ModelingPerspective");
+		IPerspectiveDescriptor simul = Workbench.getInstance().getPerspectiveRegistry()
+			.findPerspectiveWithId("msi.gama.application.perspectives.SimulationPerspective");
+		if ( page == null ) { return; }
+		System.out.println("Perspective: " + page.getPerspective().getId());
+		// if ( page.isPageZoomed() ) {
+		//
+		// }
+		if ( page.getPerspective().equals(simul) ) {
+			System.out.println("Setting the perspective to modeling");
+			page.setPerspective(model);
+			System.out.println("Closing the simulation perspective and its views");
+			page.closePerspective(simul, false, false);
+			try {
+				// page.setPerspective(model);
+			} catch (Exception e) {
+				System.out.println("Problem when restoring perspective: " + e.getMessage());
+			}
+			// if ( desc != null ) {
+			// page.closePerspective(desc, saveParts, closePage);
+			// // IViewReference[] views = page.getViewReferences();
+			// // for ( IViewReference view : views ) {
+			// // System.out.println("View " + view.getId());
+			// // page.setPartState(view, IWorkbenchPage.STATE_RESTORED);
+			// // }
+			// }
+		}
+
+		window.getShell().setMaximized(true);
 		RemoveUnwantedWizards.run();
 		RemoveUnwantedActionSets.run();
 

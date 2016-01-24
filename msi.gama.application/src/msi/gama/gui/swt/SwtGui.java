@@ -852,7 +852,8 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public final boolean openSimulationPerspective(final boolean immediately) {
-		return openPerspective(PERSPECTIVE_SIMULATION_ID, immediately);
+		boolean b = openPerspective(PERSPECTIVE_SIMULATION_ID, immediately);
+		return b;
 	}
 
 	public final boolean openBatchPerspective(final boolean immediately) {

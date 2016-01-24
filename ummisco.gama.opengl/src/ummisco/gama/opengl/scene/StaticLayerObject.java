@@ -140,33 +140,33 @@ public class StaticLayerObject extends LayerObject {
 			// build the lines
 
 			g = GamaGeometryType.buildLine(origin, new GamaPoint(size, 0, 0)).getInnerGeometry();
-			addGeometry(g, null, Color.red, true, Color.red, false, null, null, 0, 0, false, IShape.Type.LINESTRING, null,
-				null, null);
+			addGeometry(g, null, Color.red, true, Color.red, false, null, null, 0, 0, false, IShape.Type.LINESTRING,
+				null, null, null);
 			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, size, 0)).getInnerGeometry();
-			addGeometry(g, null, Color.green, true, Color.green, false, null, null, 0, 0, false, IShape.Type.LINESTRING, null,
-				null, null);
+			addGeometry(g, null, Color.green, true, Color.green, false, null, null, 0, 0, false, IShape.Type.LINESTRING,
+				null, null, null);
 			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, 0, size)).getInnerGeometry();
-			addGeometry(g, null, Color.blue, true, Color.blue, false, null, null, 0, 0, false, IShape.Type.LINESTRING, null,
-				null, null);
+			addGeometry(g, null, Color.blue, true, Color.blue, false, null, null, 0, 0, false, IShape.Type.LINESTRING,
+				null, null, null);
 			// add the legends
-			addString("X", new GamaPoint(1.2f * size, 0.0d, 0.0d), 12, 12d, Color.black, "Arial", Font.BOLD, 0d, false);
-			addString("Y", new GamaPoint(0.0d, -1.2f * size, 0.0d), 12, 12d, Color.black, "Arial", Font.BOLD, 0d,
+			addString("X", new GamaPoint(1.2f * size, 0.0d, 0.0d), 10, 10d, Color.black, "Arial", Font.BOLD, 0d, false);
+			addString("Y", new GamaPoint(0.0d, -1.2f * size, 0.0d), 10, 10d, Color.black, "Arial", Font.BOLD, 0d,
 				false);
-			addString("Z", new GamaPoint(0.0d, 0.0d, 1.2f * size), 12, 12d, Color.black, "Arial", Font.BOLD, 0d, false);
+			addString("Z", new GamaPoint(0.0d, 0.0d, 1.2f * size), 10, 10d, Color.black, "Arial", Font.BOLD, 0d, false);
 			// add the triangles
-			g = GamaGeometryType.buildArrow(origin, new GamaPoint(size + size / 10, 0, 0), size / 4, size / 4, true)
+			g = GamaGeometryType.buildArrow(origin, new GamaPoint(size + size / 10, 0, 0), size / 6, size / 6, true)
 				.getInnerGeometry();
-			addGeometry(g, null, Color.red, true, Color.red, false, null, null, 0, 0, false, IShape.Type.POLYGON, null, null,
-				null);
-			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, size + size / 10, 0), size / 4, size / 4, true)
-				.getInnerGeometry();
-			addGeometry(g, null, Color.green, true, Color.green, false, null, null,0, 0, false, IShape.Type.POLYGON, null,
+			addGeometry(g, null, Color.red, true, Color.red, false, null, null, 0, 0, false, IShape.Type.POLYGON, null,
 				null, null);
-			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, 0, size + size / 10), size / 4, size / 4, true)
+			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, size + size / 10, 0), size / 6, size / 6, true)
+				.getInnerGeometry();
+			addGeometry(g, null, Color.green, true, Color.green, false, null, null, 0, 0, false, IShape.Type.POLYGON,
+				null, null, null);
+			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, 0, size + size / 10), size / 6, size / 6, true)
 				.getInnerGeometry();
 			// FIXME See Issue 832: depth cannot be applied here.
-			addGeometry(g, null, Color.blue, true, Color.blue, false, null,  null, 0, 0, false, IShape.Type.POLYGON, null,
-				null, null);
+			addGeometry(g, null, Color.blue, true, Color.blue, false, null, null, 0, 0, false, IShape.Type.POLYGON,
+				null, null, null);
 
 		}
 	}
