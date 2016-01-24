@@ -31,15 +31,15 @@ public class ReverseOperators {
 	public static String serializeSimulation(IScope scope, int i) {
 		XStream xstream = new XStream(new DomDriver());
 		xstream.registerConverter(new LogConverter());
-		xstream.registerConverter(new GamaBasicTypeConverter());		
+		xstream.registerConverter(new GamaBasicTypeConverter(scope));		
 		xstream.registerConverter(new GamaShapeFileConverter(scope));		
 		xstream.registerConverter(new GamaAgentConverter(scope));
-		xstream.registerConverter(new GamaListConverter(scope));	
+		xstream.registerConverter(new GamaListConverter(scope));
+		xstream.registerConverter(new GamaMapConverter(scope));				
 		//	xstream.registerConverter(new GamaShapeConverter());		
 	//	xstream.registerConverter(new GamaScopeConverter());
 //		xstream.registerConverter(new GamaPointConverter());
 //		xstream.registerConverter(new GamaPairConverter());
-//		xstream.registerConverter(new GamaMapConverter());
 	//	xstream.registerConverter(new GamaSimulationAgentConverter());
 		
 		ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
@@ -56,15 +56,15 @@ public class ReverseOperators {
 	public static int unSerializeSimulation(IScope scope, String simul) {
 		XStream xstream = new XStream(new DomDriver());
 		xstream.registerConverter(new LogConverter());	
-		xstream.registerConverter(new GamaBasicTypeConverter());		
+		xstream.registerConverter(new GamaBasicTypeConverter(scope));		
 		xstream.registerConverter(new GamaShapeFileConverter(scope));				
 		xstream.registerConverter(new GamaAgentConverter(scope));		
 		xstream.registerConverter(new GamaListConverter(scope));
+		xstream.registerConverter(new GamaMapConverter(scope));				
 		//	xstream.registerConverter(new GamaShapeConverter());			
 	//	xstream.registerConverter(new GamaScopeConverter());
 //		xstream.registerConverter(new GamaPointConverter());
 //		xstream.registerConverter(new GamaPairConverter());
-//		xstream.registerConverter(new GamaMapConverter());
 	//	xstream.registerConverter(new GamaSimulationAgentConverter());
 		
 		SavedAgent agt = (SavedAgent) xstream.fromXML(simul);

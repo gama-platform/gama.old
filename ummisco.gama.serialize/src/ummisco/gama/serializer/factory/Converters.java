@@ -13,12 +13,12 @@ import ummisco.gama.serializer.gamaType.converters.GamaSimulationAgentConverter;
 public abstract class Converters {
 
 	private static Converter[] converters={
-				new GamaMapConverter(),
+	//			new GamaMapConverter(),
 				new GamaPairConverter(),
 				new GamaPointConverter(),
 				new GamaScopeConverter(),
 				new GamaSimulationAgentConverter(),
-				new GamaBasicTypeConverter(),
+	//			new GamaBasicTypeConverter(),
 	//			new GamaAgentConverter()
 		};
 	

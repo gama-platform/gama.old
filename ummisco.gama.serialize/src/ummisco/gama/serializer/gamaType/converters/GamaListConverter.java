@@ -38,7 +38,7 @@ public class GamaListConverter implements Converter {
 		GamaList list = (GamaList) arg0;
         
 		System.out.println("ConvertAnother : GamaList " + list.getClass());			        
-		arg2.convertAnother(new GamaListReducer(scope, list));        		
+		arg2.convertAnother(new GamaListReducer(list));        		
 		System.out.println("END --- ConvertAnother : GamaList ");			        
 
 	}
@@ -48,7 +48,7 @@ public class GamaListConverter implements Converter {
 	//	reader.moveDown();
 		GamaListReducer rmt = (GamaListReducer) arg1.convertAnother(null, GamaListReducer.class);
 	//	reader.moveUp();
-		return rmt.constructObject();
+		return rmt.constructObject(scope);
 	}
 
 }

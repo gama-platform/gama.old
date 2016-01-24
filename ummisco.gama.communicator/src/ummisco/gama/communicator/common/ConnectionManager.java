@@ -39,6 +39,7 @@ public class ConnectionManager extends Skill implements MessageListener {
 		this.messages = new HashMap<String, LinkedList<Map<String, Object>>>();
 		this.xstream = new XStream();
 		// TODO : @Nico : be careful : I needed to add a scope in the GamaAgentConverter in order to reconstruct them...
+		// In addition, be careful that now I am converting SavedAgent and not a scope
 		this.xstream.registerConverter(new GamaAgentConverter(null));
 		this.xstream.registerConverter(new GamaScopeConverter());
 	}

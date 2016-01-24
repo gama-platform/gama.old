@@ -6,12 +6,19 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaPair;
 import ummisco.gama.serializer.gamaType.reduced.GamaMapReducer;
 
 public class GamaMapConverter implements Converter {
 
+	IScope scope;
+	
+	public GamaMapConverter(IScope s){
+		scope = s;
+	}
+	
 	@Override
 	public boolean canConvert(Class arg0) {
 		if(GamaMap.class.equals(arg0)){return true;}
@@ -52,10 +59,10 @@ public class GamaMapConverter implements Converter {
 
 	@Override
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext arg1) {
-		reader.moveDown();
+		//reader.moveDown();
 		GamaMapReducer rmt = (GamaMapReducer) arg1.convertAnother(null, GamaMapReducer.class);
-		reader.moveUp();
-		return rmt.constructObject();
+		//reader.moveUp();
+		return rmt.constructObject(scope);
 	}
 
 }

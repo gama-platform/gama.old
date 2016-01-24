@@ -12,12 +12,10 @@ import msi.gama.util.GamaPair;
 import msi.gaml.types.IType;
 
 public class GamaListReducer {
-//	private IType keysType;
 	private IType contentType;
 	private ArrayList<Object> values = new ArrayList<>();
-	private IScope scope;
 	
-	public GamaListReducer(IScope scope, GamaList l)
+	public GamaListReducer(GamaList l)
 	{		
 		contentType = l .getType().getContentType();
 		
@@ -26,7 +24,7 @@ public class GamaListReducer {
 		}
 	}
 	
-	public GamaList constructObject()
+	public GamaList constructObject(IScope scope)
 	{
 		return (GamaList) GamaListFactory.create(scope, contentType, values);
 

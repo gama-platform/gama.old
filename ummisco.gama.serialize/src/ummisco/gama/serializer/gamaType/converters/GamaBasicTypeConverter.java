@@ -7,12 +7,19 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.IScope;
 import msi.gaml.types.GamaBoolType;
 import msi.gaml.types.GamaType;
+import msi.gaml.types.IType;
 
 public class GamaBasicTypeConverter implements Converter {
 
 	private final static String TAG="GamaType";
+	IScope scope;
+	
+	public GamaBasicTypeConverter(IScope s){
+		scope = s;
+	}
 
 	@Override
 	public boolean canConvert(Class arg0) {
@@ -44,14 +51,14 @@ public class GamaBasicTypeConverter implements Converter {
 	@Override
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext arg1) {
 		// TODO Auto-generated method stub
-		double x,y,z;
 		reader.moveDown();
-		String val = reader.getValue();
+		IType t = scope.getModelContext().getTypeNamed(reader.getValue());
+//		String val = reader.getValue();
 		reader.moveUp();
 	//	x= Double.valueOf(lines[0]).doubleValue();
 	//	y= Double.valueOf(lines[0]).doubleValue();
 	//	z= Double.valueOf(lines[0]).doubleValue();
-		return val;
+		return t;
 	}
 
 }
