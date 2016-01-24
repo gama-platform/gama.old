@@ -26,7 +26,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
-import msi.gama.util.file.GamaGeometryFile.Gama3DGeometryFile;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -556,10 +555,10 @@ public class DrawStatement extends AbstractStatementSequence {
 			final GamaFile fileName = (GamaFile) item.value(scope);
 			if ( fileName.getExtension().equals("obj") ) {
 				File fmtl = new File(fileName.getFile().getAbsolutePath().replaceAll(".obj", ".mtl"));
-				if ( !fmtl.exists() ) {
-					GAMA.reportError(scope, GamaRuntimeException.warning("No " + fmtl.toString() + " found", scope),
-						false);
-				}
+				// if ( !fmtl.exists() ) {
+				// GAMA.reportError(scope, GamaRuntimeException.warning("No " + fmtl.toString() + " found", scope),
+				// false);
+				// }
 				Color color = getColor(scope);
 				if ( rot3D != null ) {
 					GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType

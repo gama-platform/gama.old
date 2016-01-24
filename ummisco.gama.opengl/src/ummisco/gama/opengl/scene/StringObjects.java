@@ -4,8 +4,6 @@
  */
 package ummisco.gama.opengl.scene;
 
-import com.jogamp.opengl.GL2;
-
 /**
  * Class StringObjects.
  *
@@ -44,15 +42,6 @@ public class StringObjects extends SceneObjects<StringObject> {
 	@Override
 	public Iterable<StringObject> getObjects() {
 		return super.getObjects();
-	}
-
-	/**
-	 * Method draw()
-	 * @see ummisco.gama.opengl.scene.SceneObjects#draw(com.jogamp.opengl.GL2, boolean)
-	 */
-	@Override
-	public void draw(final GL2 gl, final boolean picking) {
-		super.draw(gl, picking);
 	}
 
 }

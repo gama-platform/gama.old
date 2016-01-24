@@ -12,39 +12,19 @@
 package ummisco.gama.opengl.jts;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 import javax.vecmath.Vector3d;
-
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL2ES3;
-import com.jogamp.opengl.GL2GL3;
-import com.jogamp.opengl.GLContext;
-import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.glu.GLUquadric;
-import com.jogamp.opengl.glu.GLUtessellator;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.glu.*;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.util.file.GamaFile;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.utils.GLUtilNormal;
-import ummisco.gama.opengl.utils.Vertex;
+import ummisco.gama.opengl.utils.*;
 
 public class JTSDrawer {
 
@@ -72,7 +52,6 @@ public class JTSDrawer {
 	List<IShape> triangles;
 	// Iterator<IShape> it;
 
-
 	/** The earth texture. */
 	// private Texture earthTexture;
 	// public float textureTop, textureBottom, textureLeft, textureRight;
@@ -85,10 +64,9 @@ public class JTSDrawer {
 
 	public boolean bigPolygonDecomposition = true;
 	public int nbPtsForDecomp = 2000;
-	
-	
+
 	Integer openNestedGLListIndex;
-	
+
 	public JTSDrawer(final JOGLRenderer gLRender) {
 		myGlut = new GLUT();
 		renderer = gLRender;
@@ -100,30 +78,24 @@ public class JTSDrawer {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
 		visitor = new JTSVisitor();
 	}
-	
+
 	public void setColor(final Color c, final double alpha) {
 		if ( c == null ) { return; }
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
 	}
-	
-	
-    public void drawGeometryCached(final GL2 gl, final GamaFile file) {	
-		//GL2 gl = GLContext.getCurrentGL().getGL2();
-		if(renderer.getCache().contains(file.getFile().getAbsoluteFile().toString())){
-			Integer index = renderer.getCache().getListIndex(gl,file.getFile().getAbsoluteFile().toString());
-			//gl.getContext().makeCurrent();
-		    gl.glCallList(index);    
-		}	
-		else{
-			renderer.getCache().initializeStaticGeometry(gl,file);
+
+	public void drawGeometryCached(final GL2 gl, final GamaFile file) {
+		int index = renderer.getGeometryCache().get(gl, file);
+		if ( index != -1 ) {
+			gl.glCallList(index);
 		}
 	}
-	
+
 	public void drawGeometryCollection(final GeometryCollection geoms, final Color c, final double alpha,
-	final boolean fill, final Color border, final boolean isTextured,
-	final GeometryObject object, /* final Integer angle, */
-	final double height, final boolean rounded, final double z_fighting_value, final double z) {
+		final boolean fill, final Color border, final boolean isTextured,
+		final GeometryObject object, /* final Integer angle, */
+		final double height, final boolean rounded, final double z_fighting_value, final double z) {
 
 		numGeometries = geoms.getNumGeometries();
 
@@ -132,11 +104,11 @@ public class JTSDrawer {
 			if ( geom instanceof Polygon ) {
 				curPolygon = (Polygon) geom;
 				if ( height > 0 ) {
-					DrawPolyhedre(curPolygon, c, alpha, fill, height, false, border, isTextured, object,
-						rounded, z_fighting_value);
+					DrawPolyhedre(curPolygon, c, alpha, fill, height, false, border, isTextured, object, rounded,
+						z_fighting_value);
 				} else {
-					DrawPolygon(curPolygon, c, alpha, fill, border, isTextured, object, true, rounded,
-						z_fighting_value, 1);
+					DrawPolygon(curPolygon, c, alpha, fill, border, isTextured, object, true, rounded, z_fighting_value,
+						1);
 				}
 			} else if ( geom instanceof LineString ) {
 				LineString l = (LineString) geom;
@@ -200,8 +172,7 @@ public class JTSDrawer {
 					DrawPolygonContour(p, border, alpha, z_fighting_value);
 				}
 			}
-		}
-		else {
+		} else {
 			Texture texture = object.getTexture(gl, renderer, 0);
 			if ( texture != null ) {
 				DrawTexturedPolygon(p, texture);
@@ -232,12 +203,14 @@ public class JTSDrawer {
 				gl.glBegin(GL.GL_LINES);
 				gl.glColor3d(1.0, 0.0, 0.0);
 				gl.glVertex3d(center.x, center.y, center.z);
-				gl.glVertex3d(center.x + normalmean[0] * norm_dir, center.y + normalmean[1] * norm_dir,center.z + normalmean[2] * norm_dir);
+				gl.glVertex3d(center.x + normalmean[0] * norm_dir, center.y + normalmean[1] * norm_dir,
+					center.z + normalmean[2] * norm_dir);
 				gl.glEnd();
 
 				gl.glPointSize(2.0f);
 				gl.glBegin(GL.GL_POINTS);
-				gl.glVertex3d(center.x + normalmean[0] * norm_dir, center.y + normalmean[1] * norm_dir,center.z + normalmean[2] * norm_dir);
+				gl.glVertex3d(center.x + normalmean[0] * norm_dir, center.y + normalmean[1] * norm_dir,
+					center.z + normalmean[2] * norm_dir);
 				gl.glEnd();
 
 				if ( !colorpicking ) {
@@ -295,15 +268,14 @@ public class JTSDrawer {
 
 		GLU.gluTessEndPolygon(tobj);
 	}
-	
+
 	public void DrawTexturedPolygon(final Polygon p, final Texture texture) {
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		gl.glColor3d(1.0, 1.0, 1.0);
-		if(texture!=null){
+		if ( texture != null ) {
 			texture.enable(gl);
-			texture.bind(gl);	
+			texture.bind(gl);
 		}
-		
 
 		if ( p.getNumPoints() > 5 ) {
 			drawTriangulatedPolygon(p, useJTSForTriangulation, texture);
@@ -316,22 +288,26 @@ public class JTSDrawer {
 			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
 			gl.glBegin(GL2ES3.GL_QUADS);
 			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), renderer.yFlag * p.getExteriorRing().getPointN(0).getY(),p.getExteriorRing().getCoordinateN(0).z);
+			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(),
+				renderer.yFlag * p.getExteriorRing().getPointN(0).getY(), p.getExteriorRing().getCoordinateN(0).z);
 			gl.glTexCoord2f(1.0f, 1.0f);;
-			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), renderer.yFlag * p.getExteriorRing().getPointN(1).getY(),p.getExteriorRing().getCoordinateN(1).z);
+			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(),
+				renderer.yFlag * p.getExteriorRing().getPointN(1).getY(), p.getExteriorRing().getCoordinateN(1).z);
 			gl.glTexCoord2f(1.0f, 0.0f);;
-			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), renderer.yFlag * p.getExteriorRing().getPointN(2).getY(),p.getExteriorRing().getCoordinateN(2).z);
+			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(),
+				renderer.yFlag * p.getExteriorRing().getPointN(2).getY(), p.getExteriorRing().getCoordinateN(2).z);
 			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), renderer.yFlag * p.getExteriorRing().getPointN(3).getY(),p.getExteriorRing().getCoordinateN(3).z);
+			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(),
+				renderer.yFlag * p.getExteriorRing().getPointN(3).getY(), p.getExteriorRing().getCoordinateN(3).z);
 			gl.glEnd();
 		}
-		if(texture!=null){
-			texture.disable(gl);	
+		if ( texture != null ) {
+			texture.disable(gl);
 		}
-		
+
 	}
 
-	void drawTriangulatedPolygon(Polygon p, final boolean showTriangulation, final Texture texture) {
+	void drawTriangulatedPolygon(final Polygon p, final boolean showTriangulation, final Texture texture) {
 		boolean simplifyGeometry = false;
 		// Workaround to compute the z value of each triangle as triangulation
 		// create new point during the triangulation that are set with z=NaN
@@ -379,85 +355,121 @@ public class JTSDrawer {
 			DrawTriangulatedPolygonShape(p, tri, showTriangulation, texture);
 		}
 	}
-  
+
 	public void DrawTriangulatedPolygonShape(final Polygon triangulatedPolygon, final IShape shape,
-			final boolean showTriangulation, final Texture texture) {
-			GL2 gl = GLContext.getCurrentGL().getGL2();
-			Polygon polygon = (Polygon) shape.getInnerGeometry();
+		final boolean showTriangulation, final Texture texture) {
+		GL2 gl = GLContext.getCurrentGL().getGL2();
+		Polygon polygon = (Polygon) shape.getInnerGeometry();
 
-			final Envelope env = triangulatedPolygon.getEnvelopeInternal();
-			final double xMin = env.getMinX();
-			final double xMax = env.getMaxX();
-			final double yMin = env.getMinY();
-			final double yMax = env.getMaxY();
+		final Envelope env = triangulatedPolygon.getEnvelopeInternal();
+		final double xMin = env.getMinX();
+		final double xMax = env.getMaxX();
+		final double yMin = env.getMinY();
+		final double yMax = env.getMaxY();
 
-			if ( showTriangulation ) {
-				if ( Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true ) {
-					gl.glBegin(GL.GL_LINES); // draw using triangles
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
-		                gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
-					gl.glEnd();
-				} else {
-					gl.glBegin(GL.GL_LINES); // draw using triangles
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),polygon.getExteriorRing().getPointN(0).getCoordinate().z);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),polygon.getExteriorRing().getPointN(0).getCoordinate().z);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),polygon.getExteriorRing().getPointN(1).getCoordinate().z);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),polygon.getExteriorRing().getPointN(2).getCoordinate().z);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),polygon.getExteriorRing().getPointN(2).getCoordinate().z);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),polygon.getExteriorRing().getPointN(0).getCoordinate().z);
-					gl.glEnd();
-
-				}
+		if ( showTriangulation ) {
+			if ( Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true ) {
+				gl.glBegin(GL.GL_LINES); // draw using triangles
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
+				gl.glEnd();
 			} else {
-				if ( Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true ) {
-					if ( texture != null ) {
-						gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
-						gl.glBegin(GL2ES3.GL_TRIANGLES); // draw using triangles
-						gl.glTexCoord2f(0.0f, 1.0f);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
-						gl.glTexCoord2f(1.0f, 1.0f);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
-						gl.glTexCoord2f(1.0f, 0.0f);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
-						gl.glEnd();
-
-					} else {
-						gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
-						gl.glEnd();
-					}
-
-				} else {
-					if ( texture != null ) {						
-						gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
-						gl.glBegin(GL2ES3.GL_TRIANGLES); // draw using triangles
-						//gl.glTexCoord2d(polygon.getExteriorRing().getPointN(0).getX() / (xMax - xMin),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY() / (yMax - yMin));
-						gl.glTexCoord2f(0.0f, 1.0f);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),polygon.getExteriorRing().getPointN(0).getCoordinate().z);
-						//gl.glTexCoord2d(polygon.getExteriorRing().getPointN(1).getX() / (xMax - xMin),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY() / (yMax - yMin));
-						gl.glTexCoord2f(1.0f, 1.0f);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),polygon.getExteriorRing().getPointN(1).getCoordinate().z);
-						//gl.glTexCoord2d(polygon.getExteriorRing().getPointN(2).getX() / (xMax - xMin),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY() / (yMax - yMin));
-						gl.glTexCoord2f(1.0f, 0.0f);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),polygon.getExteriorRing().getPointN(2).getCoordinate().z);				
-						gl.glEnd();
-					} else {
-						gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),polygon.getExteriorRing().getPointN(0).getCoordinate().z);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),polygon.getExteriorRing().getPointN(1).getCoordinate().z);
-						gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),polygon.getExteriorRing().getPointN(2).getCoordinate().z);
-						gl.glEnd();
-					}
-				}
+				gl.glBegin(GL.GL_LINES); // draw using triangles
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),
+					polygon.getExteriorRing().getPointN(0).getCoordinate().z);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),
+					polygon.getExteriorRing().getPointN(0).getCoordinate().z);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),
+					polygon.getExteriorRing().getPointN(1).getCoordinate().z);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),
+					polygon.getExteriorRing().getPointN(2).getCoordinate().z);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),
+					polygon.getExteriorRing().getPointN(2).getCoordinate().z);
+				gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+					renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),
+					polygon.getExteriorRing().getPointN(0).getCoordinate().z);
+				gl.glEnd();
 
 			}
+		} else {
+			if ( Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true ) {
+				if ( texture != null ) {
+					gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
+					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
+					gl.glTexCoord2f(0.0f, 1.0f);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glTexCoord2f(1.0f, 1.0f);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glTexCoord2f(1.0f, 0.0f);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glEnd();
+
+				} else {
+					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glEnd();
+				}
+
+			} else {
+				if ( texture != null ) {
+					gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
+					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
+					// gl.glTexCoord2d(polygon.getExteriorRing().getPointN(0).getX() / (xMax - xMin),renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY() / (yMax - yMin));
+					gl.glTexCoord2f(0.0f, 1.0f);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),
+						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
+					// gl.glTexCoord2d(polygon.getExteriorRing().getPointN(1).getX() / (xMax - xMin),renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY() / (yMax - yMin));
+					gl.glTexCoord2f(1.0f, 1.0f);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),
+						polygon.getExteriorRing().getPointN(1).getCoordinate().z);
+					// gl.glTexCoord2d(polygon.getExteriorRing().getPointN(2).getX() / (xMax - xMin),renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY() / (yMax - yMin));
+					gl.glTexCoord2f(1.0f, 0.0f);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),
+						polygon.getExteriorRing().getPointN(2).getCoordinate().z);
+					gl.glEnd();
+				} else {
+					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),
+						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),
+						polygon.getExteriorRing().getPointN(1).getCoordinate().z);
+					gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+						renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),
+						polygon.getExteriorRing().getPointN(2).getCoordinate().z);
+					gl.glEnd();
+				}
+			}
+
 		}
+	}
 
 	public void DrawPolygonContour(final Polygon p, final Color border, final double alpha,
 		final double z_fighting_value) {
@@ -511,146 +523,147 @@ public class JTSDrawer {
 	}
 
 	public void DrawPolyhedre(final Polygon p, final Color c, final double alpha, final boolean fill,
-			final double height, /* final Integer angle, */final boolean drawPolygonContour, final Color border,
-			final boolean isTextured, final GeometryObject object, final boolean rounded, final Double z_fighting_value) {
-			GL2 gl = GLContext.getCurrentGL().getGL2();
-			int p_norm_dir = 1;
-			int face_norm_dir = -1;
-			boolean polyCW = true;
-			if ( renderer.getComputeNormal() ) {
-				Vertex[] vertices = getExteriorRingVertices(p);
-				polyCW =  IsClockwise(vertices);
-				if (polyCW ) {
-					face_norm_dir = 1;
-					p_norm_dir = 1;
-				} else {
-					face_norm_dir = 1;
-					p_norm_dir = 1;
-				}
-				
-			}
-			
-			DrawPolygon(p, c, alpha, fill, border, isTextured, object, drawPolygonContour, rounded, z_fighting_value,-p_norm_dir);
-			//gl.glTranslated(0, 0, height);
-			double[] vectorNormal =  CalculatePolygonNormal(p,polyCW);
-			
-			gl.glTranslated(-vectorNormal[0]*height,- vectorNormal[1]*height,- vectorNormal[2]*height);
-			DrawPolygon(p, c, alpha, fill, border, isTextured, object/* ,angle */, drawPolygonContour, rounded,z_fighting_value,  p_norm_dir);
-			//gl.glTranslated(0, 0, -height);
-		   // gl.glTranslated(-vectorNormal[0]*height, -vectorNormal[1]*height, vectorNormal[2]*height);
-			// FIXME : Will be wrong if angle =!0
-
-			if ( isTextured ) {
-				if ( object.hasTextures() ) {
-					DrawTexturedFaces(p, c, alpha, fill, border, isTextured, object.getTexture(gl, renderer, 1), height,
-						drawPolygonContour, polyCW);
-				} else {
-					DrawTexturedFaces(p, c, alpha, fill, border, isTextured, object.getTexture(gl, renderer, 0), height,
-						drawPolygonContour, polyCW);
-				}
-
+		final double height, /* final Integer angle, */final boolean drawPolygonContour, final Color border,
+		final boolean isTextured, final GeometryObject object, final boolean rounded, final Double z_fighting_value) {
+		GL2 gl = GLContext.getCurrentGL().getGL2();
+		int p_norm_dir = 1;
+		int face_norm_dir = -1;
+		boolean polyCW = true;
+		if ( renderer.getComputeNormal() ) {
+			Vertex[] vertices = getExteriorRingVertices(p);
+			polyCW = IsClockwise(vertices);
+			if ( polyCW ) {
+				face_norm_dir = 1;
+				p_norm_dir = 1;
 			} else {
-				DrawFaces(p, c, alpha, fill, border, isTextured, height, drawPolygonContour, face_norm_dir, polyCW);
+				face_norm_dir = 1;
+				p_norm_dir = 1;
 			}
 
 		}
 
+		DrawPolygon(p, c, alpha, fill, border, isTextured, object, drawPolygonContour, rounded, z_fighting_value,
+			-p_norm_dir);
+		// gl.glTranslated(0, 0, height);
+		double[] vectorNormal = CalculatePolygonNormal(p, polyCW);
+
+		gl.glTranslated(-vectorNormal[0] * height, -vectorNormal[1] * height, -vectorNormal[2] * height);
+		DrawPolygon(p, c, alpha, fill, border, isTextured, object/* ,angle */, drawPolygonContour, rounded,
+			z_fighting_value, p_norm_dir);
+		// gl.glTranslated(0, 0, -height);
+		// gl.glTranslated(-vectorNormal[0]*height, -vectorNormal[1]*height, vectorNormal[2]*height);
+		// FIXME : Will be wrong if angle =!0
+
+		if ( isTextured ) {
+			if ( object.hasTextures() ) {
+				DrawTexturedFaces(p, c, alpha, fill, border, isTextured, object.getTexture(gl, renderer, 1), height,
+					drawPolygonContour, polyCW);
+			} else {
+				DrawTexturedFaces(p, c, alpha, fill, border, isTextured, object.getTexture(gl, renderer, 0), height,
+					drawPolygonContour, polyCW);
+			}
+
+		} else {
+			DrawFaces(p, c, alpha, fill, border, isTextured, height, drawPolygonContour, face_norm_dir, polyCW);
+		}
+
+	}
 
 	// //////////////////////////////FACE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
 
 	public void DrawFaces(final Polygon p, final Color c, final double alpha, final boolean fill, final Color b,
-			final boolean isTextured, final double height, final boolean drawPolygonContour, final int norm_dir, final boolean clockwise) {
-			GL2 gl = GLContext.getCurrentGL().getGL2();
-			if ( !colorpicking ) {
-				setColor(c, alpha);
-			}
-
-			double elevation = 0.0d;
-
-			if ( Double.isNaN(p.getExteriorRing().getPointN(0).getCoordinate().z) == false ) {
-				elevation = p.getExteriorRing().getPointN(0).getCoordinate().z;
-			}
-
-			int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
-
-			for ( int j = 0; j < curPolyGonNumPoints; j++ ) {
-				int k = (j + 1) % curPolyGonNumPoints;
-				Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
-
-				if ( fill ) {
-					if ( renderer.getComputeNormal() ) {
-						GLUtilNormal.HandleNormal(vertices, c, alpha, norm_dir, renderer);
-					}
-					gl.glBegin(GL2ES3.GL_QUADS);
-					gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
-					gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-					gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-					gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
-					gl.glEnd();
-				}
-
-				if ( drawPolygonContour == true || fill == false ) {
-
-					if ( !colorpicking ) {
-						setColor(b, alpha);
-					}
-					gl.glBegin(GL.GL_LINES);
-					gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
-					gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-					gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-					gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-					gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-					gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
-					gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
-					gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
-					gl.glEnd();
-					if ( !colorpicking ) {
-						setColor(c, alpha);
-					}
-				}
-			}
+		final boolean isTextured, final double height, final boolean drawPolygonContour, final int norm_dir,
+		final boolean clockwise) {
+		GL2 gl = GLContext.getCurrentGL().getGL2();
+		if ( !colorpicking ) {
+			setColor(c, alpha);
 		}
 
-		public void DrawTexturedFaces(final Polygon p, final Color c, final double alpha, final boolean fill, final Color b,
-			final boolean isTextured, final Texture texture, final double height, final boolean drawPolygonContour, final boolean clockwise) {
-			GL2 gl = GLContext.getCurrentGL().getGL2();
-			texture.enable(gl);
-			texture.bind(gl);
+		double elevation = 0.0d;
 
-			double elevation = 0.0d;
+		if ( Double.isNaN(p.getExteriorRing().getPointN(0).getCoordinate().z) == false ) {
+			elevation = p.getExteriorRing().getPointN(0).getCoordinate().z;
+		}
 
-			if ( Double.isNaN(p.getExteriorRing().getPointN(0).getCoordinate().z) == false ) {
-				elevation = p.getExteriorRing().getPointN(0).getCoordinate().z;
-			}
+		int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
 
-			int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
+		for ( int j = 0; j < curPolyGonNumPoints; j++ ) {
+			int k = (j + 1) % curPolyGonNumPoints;
+			Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
 
-			for ( int j = 0; j < curPolyGonNumPoints; j++ ) {
-
-				int k = (j + 1) % curPolyGonNumPoints;
-
-				Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
-				GLUtilNormal.HandleNormal(vertices, null, alpha, 1, renderer);
-
-				gl.glColor3d(0.25, 0.25, 0.25);// Set the color to white to avoid color and texture mixture
+			if ( fill ) {
+				if ( renderer.getComputeNormal() ) {
+					GLUtilNormal.HandleNormal(vertices, c, alpha, norm_dir, renderer);
+				}
 				gl.glBegin(GL2ES3.GL_QUADS);
-				gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
-				gl.glTexCoord2f(0.0f, 0.0f);
 				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
-				gl.glTexCoord2f(1.0f, 0.0f);
 				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-				gl.glTexCoord2f(1.0f, 1.0f);
 				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-				gl.glTexCoord2f(0.0f, 1.0f);
 				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
 				gl.glEnd();
-
 			}
-			texture.disable(gl);
+
+			if ( drawPolygonContour == true || fill == false ) {
+
+				if ( !colorpicking ) {
+					setColor(b, alpha);
+				}
+				gl.glBegin(GL.GL_LINES);
+				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
+				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
+				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
+				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
+				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
+				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
+				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
+				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
+				gl.glEnd();
+				if ( !colorpicking ) {
+					setColor(c, alpha);
+				}
+			}
+		}
+	}
+
+	public void DrawTexturedFaces(final Polygon p, final Color c, final double alpha, final boolean fill, final Color b,
+		final boolean isTextured, final Texture texture, final double height, final boolean drawPolygonContour,
+		final boolean clockwise) {
+		GL2 gl = GLContext.getCurrentGL().getGL2();
+		texture.enable(gl);
+		texture.bind(gl);
+
+		double elevation = 0.0d;
+
+		if ( Double.isNaN(p.getExteriorRing().getPointN(0).getCoordinate().z) == false ) {
+			elevation = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
+		int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
 
+		for ( int j = 0; j < curPolyGonNumPoints; j++ ) {
+
+			int k = (j + 1) % curPolyGonNumPoints;
+
+			Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
+			GLUtilNormal.HandleNormal(vertices, null, alpha, 1, renderer);
+
+			gl.glColor3d(0.25, 0.25, 0.25);// Set the color to white to avoid color and texture mixture
+			gl.glBegin(GL2ES3.GL_QUADS);
+			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
+			gl.glTexCoord2f(0.0f, 0.0f);
+			gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
+			gl.glTexCoord2f(1.0f, 0.0f);
+			gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
+			gl.glTexCoord2f(1.0f, 1.0f);
+			gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
+			gl.glTexCoord2f(0.0f, 1.0f);
+			gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
+			gl.glEnd();
+
+		}
+		texture.disable(gl);
+	}
 
 	public Vertex[] getFaceVerticesOld(final Polygon p, final int j, final int k, final double elevation,
 		final double height) {
@@ -678,14 +691,14 @@ public class JTSDrawer {
 
 		return vertices;
 	}
-	
-	public double[] CalculatePolygonNormal(final Polygon p, Boolean clockwise){
+
+	public double[] CalculatePolygonNormal(final Polygon p, final Boolean clockwise) {
 		// Get 3 vertices of the initial polygon.
 		Vertex[] verticesP = new Vertex[3];
 		for ( int i = 0; i < 3; i++ ) {
 			verticesP[i] = new Vertex();
 		}
-		
+
 		verticesP[0].x = p.getExteriorRing().getPointN(0).getX();
 		verticesP[0].y = renderer.yFlag * p.getExteriorRing().getPointN(0).getY();
 		verticesP[0].z = p.getExteriorRing().getPointN(0).getCoordinate().z;
@@ -694,49 +707,48 @@ public class JTSDrawer {
 		verticesP[1].y = renderer.yFlag * p.getExteriorRing().getPointN(1).getY();
 		verticesP[1].z = p.getExteriorRing().getPointN(1).getCoordinate().z;
 
-		verticesP[2].x = p.getExteriorRing().getPointN((2)).getX();
-		verticesP[2].y = renderer.yFlag * p.getExteriorRing().getPointN((2) ).getY();
-		verticesP[2].z = p.getExteriorRing().getPointN((2) ).getCoordinate().z;
+		verticesP[2].x = p.getExteriorRing().getPointN(2).getX();
+		verticesP[2].y = renderer.yFlag * p.getExteriorRing().getPointN(2).getY();
+		verticesP[2].z = p.getExteriorRing().getPointN(2).getCoordinate().z;
 		double[] normal = GLUtilNormal.CalculateNormal(verticesP[0], verticesP[1], verticesP[2]);
-		if (clockwise == null || (clockwise != IsClockwise(verticesP))) {
+		if ( clockwise == null || clockwise != IsClockwise(verticesP) ) {
 			normal[0] *= -1;
 			normal[1] *= -1;
 			normal[2] *= -1;
 		}
 		return normal;
 	}
-	
+
 	public Vertex[] getFaceVertices(final Polygon p, final int j, final int k, final double elevation,
-			final double height, final boolean clockwise) {
-			
-			double[] vectorNormal =  CalculatePolygonNormal(p, clockwise);
-			// Build the 4 vertices of the face.
-			Vertex[] vertices = new Vertex[4];
-			for ( int i = 0; i < 4; i++ ) {
-				vertices[i] = new Vertex();
-			}
-			
-			vertices[0].x = p.getExteriorRing().getPointN(j).getX() + vectorNormal[0] *height;
-			vertices[0].y = renderer.yFlag * p.getExteriorRing().getPointN(j).getY() + vectorNormal[1] *height;
-			vertices[0].z = p.getExteriorRing().getPointN(j).getCoordinate().z + vectorNormal[2] *height;
+		final double height, final boolean clockwise) {
 
-			vertices[1].x = p.getExteriorRing().getPointN(k).getX() + vectorNormal[0] *height;
-			vertices[1].y = renderer.yFlag * p.getExteriorRing().getPointN(k).getY() + vectorNormal[1] *height;
-			vertices[1].z = p.getExteriorRing().getPointN(k).getCoordinate().z + vectorNormal[2] *height;
-
-			vertices[2].x = p.getExteriorRing().getPointN(k).getX();
-			vertices[2].y = renderer.yFlag * p.getExteriorRing().getPointN(k).getY();
-			vertices[2].z = p.getExteriorRing().getPointN(k).getCoordinate().z;
-
-			vertices[3].x = p.getExteriorRing().getPointN(j).getX();
-			vertices[3].y = renderer.yFlag * p.getExteriorRing().getPointN(j).getY();
-			vertices[3].z = p.getExteriorRing().getPointN(j).getCoordinate().z;
-			
-			return vertices;
-			
-			
+		double[] vectorNormal = CalculatePolygonNormal(p, clockwise);
+		// Build the 4 vertices of the face.
+		Vertex[] vertices = new Vertex[4];
+		for ( int i = 0; i < 4; i++ ) {
+			vertices[i] = new Vertex();
 		}
-	
+
+		vertices[0].x = p.getExteriorRing().getPointN(j).getX() + vectorNormal[0] * height;
+		vertices[0].y = renderer.yFlag * p.getExteriorRing().getPointN(j).getY() + vectorNormal[1] * height;
+		vertices[0].z = p.getExteriorRing().getPointN(j).getCoordinate().z + vectorNormal[2] * height;
+
+		vertices[1].x = p.getExteriorRing().getPointN(k).getX() + vectorNormal[0] * height;
+		vertices[1].y = renderer.yFlag * p.getExteriorRing().getPointN(k).getY() + vectorNormal[1] * height;
+		vertices[1].z = p.getExteriorRing().getPointN(k).getCoordinate().z + vectorNormal[2] * height;
+
+		vertices[2].x = p.getExteriorRing().getPointN(k).getX();
+		vertices[2].y = renderer.yFlag * p.getExteriorRing().getPointN(k).getY();
+		vertices[2].z = p.getExteriorRing().getPointN(k).getCoordinate().z;
+
+		vertices[3].x = p.getExteriorRing().getPointN(j).getX();
+		vertices[3].y = renderer.yFlag * p.getExteriorRing().getPointN(j).getY();
+		vertices[3].z = p.getExteriorRing().getPointN(j).getCoordinate().z;
+
+		return vertices;
+
+	}
+
 	public Vertex[] getTriangleVertices(final Polygon p) {
 		// Build the 3 vertices of the face from the 3 first point (maybe wrong in some case).
 		Vertex[] vertices = new Vertex[3];
@@ -1056,7 +1068,7 @@ public class JTSDrawer {
 	}
 
 	public void drawTeapot(final GeometryObject g) {
-		
+
 		GL2 gl = GLContext.getCurrentGL().getGL2();
 		double z = 0.0;
 		Polygon p = (Polygon) g.geometry;
@@ -1064,7 +1076,7 @@ public class JTSDrawer {
 			// TODO Normally, the NaN case is not true anymore
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
- 
+
 		gl.glTranslated(p.getCentroid().getX(), renderer.yFlag * p.getCentroid().getY(), z);
 		if ( !colorpicking ) {
 			setColor(g.getColor(), g.getAlpha());
@@ -1074,7 +1086,6 @@ public class JTSDrawer {
 		gl.glRotated(-90, 1.0, 0.0, 0.0);
 		gl.glTranslated(-p.getCentroid().getX(), -renderer.yFlag * p.getCentroid().getY(), -z);
 	}
-
 
 	public void drawPyramid(final GeometryObject g) {
 
@@ -1106,7 +1117,7 @@ public class JTSDrawer {
 		}
 		gl.glTranslated(0, 0, -z);
 	}
-	
+
 	public void DrawMultiLineCylinder(final Geometry g, final Color c, final double alpha, final double height) {
 		// get the number of line in the multiline.
 		MultiLineString lines = (MultiLineString) g;
@@ -1220,29 +1231,28 @@ public class JTSDrawer {
 			GLUtilNormal.HandleNormal(vertices, c, alpha, 1, renderer);
 		}
 		Coordinate coords[] = p.getExteriorRing().getCoordinates();
-		
 
 		gl.glBegin(GL2ES3.GL_QUADS);
-		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y,coords[0].z);
-		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y,coords[1].z);
-		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y,coords[2].z);
-		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y,coords[3].z);
+		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
+		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y, coords[1].z);
+		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y, coords[2].z);
+		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y, coords[3].z);
 		gl.glEnd();
 
 		if ( renderer.getComputeNormal() ) {
 			vertices = GetPyramidfaceVertices(p, 0, 1, size, 1, -1);
 			GLUtilNormal.HandleNormal(vertices, c, alpha, -1, renderer);
 		}
-		
+
 		double[] norm = CalculatePolygonNormal(p, null);
-		norm[0] = norm[0]*size + p.getCentroid().getX();
-		norm[1] = norm[1]*size + renderer.yFlag * p.getCentroid().getY();
-		norm[2] = norm[2]*size + p.getCentroid().getCoordinate().z;
-		
+		norm[0] = norm[0] * size + p.getCentroid().getX();
+		norm[1] = norm[1] * size + renderer.yFlag * p.getCentroid().getY();
+		norm[2] = norm[2] * size + p.getCentroid().getCoordinate().z;
+
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
 		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y, coords[1].z);
-		gl.glVertex3d(norm[0],norm[1], norm[2]);
+		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
 		if ( renderer.getComputeNormal() ) {
@@ -1253,10 +1263,9 @@ public class JTSDrawer {
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y, coords[1].z);
 		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y, coords[2].z);
-		gl.glVertex3d(norm[0],norm[1], norm[2]);
+		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
-		
-		
+
 		if ( renderer.getComputeNormal() ) {
 			vertices = GetPyramidfaceVertices(p, 2, 3, size, -1, 1);
 			GLUtilNormal.HandleNormal(vertices, c, alpha, -1, renderer);
@@ -1265,10 +1274,9 @@ public class JTSDrawer {
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y, coords[2].z);
 		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y, coords[3].z);
-		gl.glVertex3d(norm[0],norm[1], norm[2]);
+		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
-		
-	
+
 		if ( renderer.getComputeNormal() ) {
 			vertices = GetPyramidfaceVertices(p, 3, 0, size, 1, 1);
 			GLUtilNormal.HandleNormal(vertices, c, alpha, -1, renderer);
@@ -1277,10 +1285,9 @@ public class JTSDrawer {
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y, coords[3].z);
 		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
-		gl.glVertex3d(norm[0],norm[1], norm[2]);
+		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
-		
-	
+
 	}
 
 	public boolean IsClockwise(final Vertex[] vertices) {

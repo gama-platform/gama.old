@@ -25,7 +25,25 @@ public class RandomUtils {
 	/** The generator name. */
 	private String generatorName;
 	/** The generator. */
-	private Random generator;
+	private GamaRNG generator;
+
+	public static class State {
+
+		public State(final Double seed, final String generatorName, final long usage) {
+			this.seed = seed;
+			this.generatorName = generatorName;
+			this.usage = usage;
+		}
+
+		Double seed;
+		String generatorName;
+		long usage;
+
+	}
+
+	public RandomUtils(final State state) {
+		setState(state);
+	}
 
 	public RandomUtils(final Double seed, final String rng) {
 		setSeed(seed, false);
@@ -40,21 +58,28 @@ public class RandomUtils {
 		this(GamaPreferences.CORE_RNG.getValue());
 	}
 
+	public State getState() {
+		return new State(seed, generatorName, generator.getUsage());
+	}
+
+	public void setState(final State state) {
+		setSeed(state.seed, false);
+		setGenerator(state.generatorName, true);
+		generator.setUsage(state.usage);
+	}
+
 	/**
 	 * Inits the generator.
 	 */
 	private void initGenerator() {
 		if ( generatorName.equals(IKeyword.CELLULAR) ) {
 			generator = new CellularAutomatonRNG(this);
-			// } else if ( generatorName.equals(IKeyword.XOR) ) {
-			// generator = new XORShiftRNG(this);
 		} else if ( generatorName.equals(IKeyword.JAVA) ) {
 			generator = new JavaRNG(this);
 		} else {
 			/* By default */
 			generator = new MersenneTwisterRNG(this);
 		}
-		// uniform = createUniform(0., 1.);
 	}
 
 	/**
@@ -66,7 +91,7 @@ public class RandomUtils {
 	 * @return the continuous uniform generator
 	 */
 	public double createUniform(final double min, final double max) {
-		return generator.nextDouble() * (max - min) + min;
+		return next() * (max - min) + min;
 	}
 
 	/**
@@ -133,7 +158,7 @@ public class RandomUtils {
 		int x = 0;
 		double t = 0.0;
 		while (true) {
-			t -= Math.log(generator.nextDouble()) / mean;
+			t -= Math.log(next()) / mean;
 			if ( t > 1.0 ) {
 				break;
 			}
@@ -258,12 +283,12 @@ public class RandomUtils {
 	 * @return an uniformly distributed int random number in [from, to]
 	 */
 	public int between(final int min, final int max) {
-		return (int) (min + (long) ((1L + max - min) * generator.nextDouble()));
+		return (int) (min + (long) ((1L + max - min) * next()));
 	}
 
 	public double between(final double min, final double max) {
 		// uniformly distributed double random number in [min, max]
-		return min + (max + Double.MIN_VALUE - min) * generator.nextDouble();
+		return min + (max + Double.MIN_VALUE - min) * next();
 	}
 
 	/**
@@ -384,7 +409,7 @@ public class RandomUtils {
 		// System.out.println("Finished");
 	}
 
-	public final class BitString {
+	private class BitString {
 
 		private static final int WORD_LENGTH = 32;
 

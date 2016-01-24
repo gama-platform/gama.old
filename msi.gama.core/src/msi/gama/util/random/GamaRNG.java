@@ -21,9 +21,12 @@ public abstract class GamaRNG extends Random {
 
 	/**
 	 * @return The seed data used to initialise this pseudo-random
-	 *         number generator.
+	 * number generator.
 	 */
 	abstract byte[] getSeed();
+
+	/** number of times the generator has been asked to draw a random number */
+	long usage = 0;
 
 	/**
 	 * @param createLongSeed
@@ -34,6 +37,16 @@ public abstract class GamaRNG extends Random {
 
 	public GamaRNG() {
 		super();
+	}
+
+	public long getUsage() {
+		return usage;
+	}
+
+	public void setUsage(final long usage) {
+		for ( long i = 0; i < usage; i++ ) {
+			next(32);
+		}
 	}
 
 	/**
@@ -57,8 +70,8 @@ public abstract class GamaRNG extends Random {
 	 * @since 1.1
 	 */
 	public static int[] convertBytesToInts(final byte[] bytes) {
-		if ( bytes.length % 4 != 0 ) { throw new IllegalArgumentException(
-			"Number of input bytes must be a multiple of 4."); }
+		if ( bytes.length %
+			4 != 0 ) { throw new IllegalArgumentException("Number of input bytes must be a multiple of 4."); }
 		int[] ints = new int[bytes.length / 4];
 		for ( int i = 0; i < ints.length; i++ ) {
 			ints[i] = convertBytesToInt(bytes, i * 4);

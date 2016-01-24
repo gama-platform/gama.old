@@ -17,12 +17,11 @@ import java.util.List;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
-import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaPair;
+import msi.gama.util.file.Gama3DGeometryFile;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.files.GLModel;
 
 public class GeometryObject extends AbstractObject implements Cloneable {
 
@@ -36,13 +35,13 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public double height;
 	public boolean rounded;
 	private final Texture[] textures;
-	public GLModel asset3Dmodel = null;
+	public Gama3DGeometryFile asset3Dmodel = null;
 	public GamaPair<Double, GamaPoint> rotate3D = null;
 
 	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
 		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
-		final List<BufferedImage> textures, final GLModel asset3Dmodel, final int angle, final double height, final boolean rounded,
-		final IShape.Type type, final GamaPair<Double, GamaPoint> rotate3D) {
+		final List<BufferedImage> textures, final Gama3DGeometryFile asset3Dmodel, final int angle, final double height,
+		final boolean rounded, final IShape.Type type, final GamaPair<Double, GamaPoint> rotate3D) {
 		super(color, alpha);
 
 		if ( type == IShape.Type.GRIDLINE ) {
@@ -77,7 +76,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 		} else {
 			this.textures = new Texture[textureImages.size()];
 		}
-		this.asset3Dmodel = asset3Dmodel;		
+		this.asset3Dmodel = asset3Dmodel;
 		this.height = height;
 		this.rounded = rounded;
 		this.rotate3D = rotate3D;
