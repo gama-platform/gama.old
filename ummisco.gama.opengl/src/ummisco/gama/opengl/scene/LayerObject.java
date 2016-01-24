@@ -38,19 +38,51 @@ public class LayerObject implements Iterable<GeometryObject> {
 	final ILayer layer;
 	volatile boolean isInvalid;
 
-	protected final ISceneObjects<GeometryObject> geometries;
-	protected final ISceneObjects<RessourceObject> ressources;
-	protected final ISceneObjects<ImageObject> images;
-	protected final ISceneObjects<DEMObject> dems;
-	protected final ISceneObjects<StringObject> strings;
+	protected ISceneObjects<GeometryObject> geometries;
+	protected ISceneObjects<RessourceObject> resources;
+	protected ISceneObjects<ImageObject> images;
+	protected ISceneObjects<DEMObject> dems;
+	protected ISceneObjects<StringObject> strings;
 
 	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
 		this.layer = layer;
 		geometries = buildSceneObjects(new GeometryDrawer(renderer), true, false);
-		ressources = buildSceneObjects(new RessourceDrawer(renderer), true, false);
+		resources = buildSceneObjects(new RessourceDrawer(renderer), true, false);
 		strings = buildSceneObjects(new StringDrawer(renderer), !StringDrawer.USE_VERTEX_ARRAYS, false);
 		images = buildSceneObjects(new ImageDrawer(renderer), true, false);
 		dems = buildSceneObjects(new DEMDrawer(renderer), true, false);
+	}
+
+	protected ISceneObjects<GeometryObject> getGeometries() {
+		return geometries;
+	}
+
+	/**
+	 * @return the images
+	 */
+	protected ISceneObjects<ImageObject> getImages() {
+		return images;
+	}
+
+	/**
+	 * @return the dems
+	 */
+	protected ISceneObjects<DEMObject> getDems() {
+		return dems;
+	}
+
+	/**
+	 * @return the strings
+	 */
+	protected ISceneObjects<StringObject> getStrings() {
+		return strings;
+	}
+
+	/**
+	 * @return the resources
+	 */
+	protected ISceneObjects<RessourceObject> getResources() {
+		return resources;
 	}
 
 	protected ISceneObjects buildSceneObjects(final ObjectDrawer drawer, final boolean asList, final boolean asVBO) {
@@ -72,7 +104,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		images.draw(gl, picking && isPickable());
 		gl.glDisable(GL.GL_TEXTURE_2D);
-		ressources.draw(gl, picking && isPickable());
+		resources.draw(gl, picking && isPickable());
 		geometries.draw(gl, picking && isPickable());
 		//
 		gl.glPopMatrix();
@@ -122,7 +154,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha,
 		final GamaPoint location, final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,
 		final GamaPair<Double, GamaPoint> rotate3DInit, final Envelope env) {
-		ressources
+		resources
 			.add(new RessourceObject(fileName, agent, color, alpha, location, dimensions, rotate3D, rotate3DInit, env));
 
 	}
@@ -174,7 +206,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		// int traceSize = trace == 0 ? requestedDisplayTraceSize : trace;
 		boolean fading = getFading();
 		geometries.clear(gl, trace, fading);
-		ressources.clear(gl, trace, fading);
+		resources.clear(gl, trace, fading);
 		images.clear(gl, trace, fading);
 		dems.clear(gl, trace, fading);
 		strings.clear(gl, trace, fading);
@@ -205,6 +237,13 @@ public class LayerObject implements Iterable<GeometryObject> {
 	 */
 	public boolean hasTrace() {
 		return getTrace() > 0;
+	}
+
+	/**
+	 * @param gl
+	 */
+	public void preload(final GL2 gl) {
+		resources.preload(gl);
 	}
 
 }

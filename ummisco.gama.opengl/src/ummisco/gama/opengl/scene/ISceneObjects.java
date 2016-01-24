@@ -1,13 +1,13 @@
 /**
  * Created by drogoul, 9 mai 2015
- * 
+ *
  */
 package ummisco.gama.opengl.scene;
 
 import com.jogamp.opengl.*;
 
 /**
- * Class ISceneObjects. 
+ * Class ISceneObjects.
  *
  * @author drogoul
  * @since 9 mai 2015
@@ -23,5 +23,10 @@ public interface ISceneObjects<T extends AbstractObject> {
 	public abstract Iterable<T> getObjects();
 
 	public abstract void draw(GL2 gl, boolean picking);
+
+	/**
+	 * @param gl
+	 */
+	public abstract void preload(GL2 gl);
 
 }

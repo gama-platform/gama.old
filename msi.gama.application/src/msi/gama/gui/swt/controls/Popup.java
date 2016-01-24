@@ -11,13 +11,14 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
-import org.apache.commons.lang.WordUtils;
+import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 
 /**
  * The class Popup.
@@ -29,7 +30,7 @@ import msi.gama.gui.swt.*;
 public class Popup {
 
 	private static final Shell popup = new Shell(SwtGui.getDisplay(), SWT.ON_TOP | SWT.NO_TRIM);
-	private static final Label popupText = new Label(popup, SWT.NONE);
+	// private static final Label popupText = new Label(popup, SWT.NONE);
 	private static final Listener hide = new Listener() {
 
 		@Override
@@ -39,8 +40,8 @@ public class Popup {
 	};
 
 	static {
-		popup.setLayout(new FillLayout());
-		popupText.setForeground(IGamaColors.WHITE.color());
+		popup.setLayout(new GridLayout(1, true));
+		// popupText.setForeground(IGamaColors.WHITE.color());
 		// popup.setAlpha(200);
 	}
 
@@ -48,7 +49,7 @@ public class Popup {
 
 		@Override
 		public void mouseEnter(final MouseEvent e) {
-			display();
+			open();
 			isVisible = true;
 		}
 
@@ -91,30 +92,69 @@ public class Popup {
 		}
 	}
 
-	public void display() {
+	public void open() {
 		// We first verify that the popup is still ok
 		final Shell c = provider.getControllingShell();
 		if ( c == null || c.isDisposed() ) {
 			hide();
 			return;
 		}
-		// We then grab the text and hide if it is null or empty
-		String s = provider.getPopupText();
+
+		// We then remove all existing controls if any
+		for ( Control control : popup.getChildren() ) {
+			control.dispose();
+		}
+
+		Map<GamaUIColor, String> s = provider.getPopupText();
 		if ( s == null || s.isEmpty() ) {
 			hide();
 			return;
 		}
 
-		// We set the background of the popup by asking the provider
-		popupText.setBackground(provider.getPopupBackground().color());
+		// We create text controls in accordance to the text
+		for ( Map.Entry<GamaUIColor, String> entry : s.entrySet() ) {
+			Label label = new Label(popup, SWT.None);
+			label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			label.setBackground(entry.getKey().color());
+			label.setForeground(GamaColors.getTextColorForBackground(entry.getKey()).color());
+			label.setText(entry.getValue());
+		}
+	}
+
+	public void display() {
+
+		// We first verify that the popup is still ok
+		final Shell c = provider.getControllingShell();
+		if ( c == null || c.isDisposed() ) {
+			hide();
+			return;
+		}
+
+		// We then grab the text and hide if it is null or empty
+		Map<GamaUIColor, String> s = provider.getPopupText();
+		if ( s == null || s.isEmpty() ) {
+			hide();
+			return;
+		}
+
+		int index = 0;
+		// int maxTextWidth = 0;
+		Control[] labels = popup.getChildren();
+		for ( Map.Entry<GamaUIColor, String> entry : s.entrySet() ) {
+			Label label = (Label) labels[index++];
+			label.setText(entry.getValue());
+			// We compute the width of the text (+ 5 pixels to accomodate for the border)
+			// GC gc = new GC(label);
+			// final int textWidth = gc.textExtent(entry.getValue()).x + 5;
+			// if ( textWidth > maxTextWidth ) {
+			// maxTextWidth = textWidth;
+			// }
+			// gc.dispose();
+		}
 
 		// We fix the max. width to 400
 		final int maxPopupWidth = 800;
 
-		// We compute the width of the text (+ 5 pixels to accomodate for the border)
-		final GC gc = new GC(popupText);
-		final int textWidth = gc.textExtent(s).x + 5;
-		gc.dispose();
 		// scope.getGui().debug("Popup.display: textWidth = " + textWidth);
 		// We grab the location of the popup on the display
 		final Point point = provider.getAbsoluteOrigin();
@@ -130,30 +170,31 @@ public class Popup {
 
 		// If the width of the text is greater than the computed width, we wrap the text accordingly, otherwise we
 		// shrink the popup to the text width
-		if ( textWidth > popupWidth ) {
-			// We grab the longest line
-			final String[] lines = s.split("\\r?\\n");
-			int maxLineChars = 0;
-			for ( final String line : lines ) {
-				final int lineWidth = line.length();
-				maxLineChars = maxLineChars > lineWidth ? maxLineChars : lineWidth;
-				// scope.getGui().debug("Popup.display: maxLineCharts = " + maxLineChars);
-			}
-			final int wrapLimit = (int) ((double) maxLineChars / (double) textWidth * popupWidth);
-			// scope.getGui().debug("Popup.display: wrapLimit = " + wrapLimit);
-
-			s = WordUtils.wrap(s, wrapLimit);
-		} else {
-			popupWidth = textWidth;
-		}
+		// if ( maxTextWidth > popupWidth ) {
+		// // We grab the longest line
+		// final String[] lines = s.split("\\r?\\n");
+		// int maxLineChars = 0;
+		// for ( final String line : lines ) {
+		// final int lineWidth = line.length();
+		// maxLineChars = maxLineChars > lineWidth ? maxLineChars : lineWidth;
+		// // scope.getGui().debug("Popup.display: maxLineCharts = " + maxLineChars);
+		// }
+		// final int wrapLimit = (int) (maxLineChars / (double) textWidth * popupWidth);
+		// // scope.getGui().debug("Popup.display: wrapLimit = " + wrapLimit);
+		//
+		// s = WordUtils.wrap(s, wrapLimit);
+		// } else {
+		// popupWidth = textWidth;
+		// }
 
 		// We set the text of the popup
-		popupText.setText(s);
+		// popupText.setText(s);
 
 		// We ask the popup to compute its actual size given the width and to display itself
-		final Point newPopupSize = popup.computeSize(popupWidth, SWT.DEFAULT);
-		popup.setSize(newPopupSize);
+		// final Point newPopupSize = popup.computeSize(popupWidth, SWT.DEFAULT);
+		// popup.setSize(newPopupSize);
 		popup.layout();
+		popup.pack();
 		popup.setVisible(true);
 	}
 

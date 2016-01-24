@@ -194,7 +194,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		width = drawable.getSurfaceWidth();
 		height = drawable.getSurfaceHeight();
 		updateCameraPosition();
-		// System.out.println("Renderer initializing to " + width + " , " + height + " with drawable: " + drawable);
 
 		// Putting the swap interval to 0 (instead of 1) seems to cure some of the problems of resizing of views.
 		gl.setSwapInterval(0);
@@ -246,6 +245,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public void display(final GLAutoDrawable drawable) {
 		// fail fast
 		if ( GAMA.getSimulation() == null ) { return; }
+		currentScene = sceneBuffer.getSceneToRender();
+		if ( currentScene == null ) { return; }
+
+		// We preload any geometry, textures, etc. that are used in layers
+		currentScene.preload(gl);
 
 		// if () != null && animator.isPaused() ) { return; }
 
@@ -311,7 +315,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			camera.doInertia();
 		}
 
-		// chairModel.opengldraw(gl);
 		drawScene(gl);
 
 		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
@@ -394,21 +397,14 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		if ( currentScene == null ) { return; }
 		// Do some garbage collecting in model scenes
 		sceneBuffer.garbageCollect(gl);
-		if ( isPicking() ) {
-			this.drawPickableObjects(gl, currentScene);
-		} else {
-			if ( data.isCubeDisplay() ) {
-				drawCubeDisplay(gl, currentScene);
-
-			} else {
-				this.drawModel(gl, currentScene);
-			}
+		// if picking, we draw a first pass to pick the color
+		if ( picking && camera.beginPicking(gl) ) {
+			currentScene.draw(gl, true);
+			setPickedObjectIndex(camera.endPicking(gl));
 		}
+		// we draw the scene on screen
+		currentScene.draw(gl, false);
 
-	}
-
-	public void drawModel(final GL2 gl, final ModelScene scene) {
-		scene.draw(gl, isPicking() || currentPickedObject != null);
 	}
 
 	public void switchCamera() {
@@ -442,14 +438,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			}
 		});
 
-	}
-
-	public void drawPickableObjects(final GL2 gl, final ModelScene scene) {
-		if ( camera.beginPicking(gl) ) {
-			drawModel(gl, scene);
-			setPickedObjectIndex(camera.endPicking(gl));
-		}
-		drawModel(gl, scene);
 	}
 
 	public double getWidth() {
@@ -570,10 +558,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			}
 			pickedObjectIndex = -1;
 		}
-	}
-
-	public boolean isPicking() {
-		return picking;
 	}
 
 	// This method is normally called either when the graphics is created or when the output is changed
@@ -823,7 +807,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	@Override
 	public void fillBackground(final Color bgColor, final double opacity) {
-		// setBackground(bgColor);
 		setOpacity(opacity);
 	}
 
@@ -832,12 +815,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	 */
 	@Override
 	public void beginDrawingLayers() {
-		// System.out.println("====> UPDATING BACK SCENE Thread " + Thread.currentThread().getName());
 		while (!inited) {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// e.printStackTrace();
 				return;
 			}
 		}
@@ -983,33 +964,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		GamaPoint worldCoordinates = camera.getPosition().plus(v3.times(distance));
 
 		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
-	}
-
-	public void drawCubeDisplay(final GL2 gl, final ModelScene scene) {
-		final float envMaxDim = (float) data.getEnvWidth();
-		// GL2 gl = GLContext.getCurrentGL().getGL2();
-		drawModel(gl, scene);
-		gl.glTranslatef(envMaxDim, 0, 0);
-		gl.glRotatef(90, 0, 1, 0);
-		drawModel(gl, scene);
-		gl.glTranslatef(envMaxDim, 0, 0);
-		gl.glRotatef(90, 0, 1, 0);
-		drawModel(gl, scene);
-		gl.glTranslatef(envMaxDim, 0, 0);
-		gl.glRotatef(90, 0, 1, 0);
-		drawModel(gl, scene);
-		gl.glTranslatef(envMaxDim, 0, 0);
-		gl.glRotatef(90, 0, 1, 0);
-		gl.glRotatef(-90, 1, 0, 0);
-		gl.glTranslatef(0, envMaxDim, 0);
-		drawModel(gl, scene);
-		gl.glTranslatef(0, -envMaxDim, 0);
-		gl.glRotatef(90, 1, 0, 0);
-		gl.glRotatef(90, 1, 0, 0);
-		gl.glTranslatef(0, 0, envMaxDim);
-		drawModel(gl, scene);
-		gl.glTranslatef(0, 0, -envMaxDim);
-		gl.glRotatef(-90, 1, 0, 0);
 	}
 
 	/**

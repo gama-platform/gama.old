@@ -364,18 +364,26 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupText()
 	 */
 	@Override
-	public String getPopupText() {
+	public Map<GamaUIColor, String> getPopupText() {
 		double value = getCurrentPosition();
-		return toolTipInterperter == null ? String.valueOf(value) : toolTipInterperter.getToolTipText(value);
+		final String text =
+			toolTipInterperter == null ? String.valueOf(value) : toolTipInterperter.getToolTipText(value);
+		GamaUIColor color = popupColor;
+		return new HashMap() {
+
+			{
+				put(popupColor, text);
+			}
+		};
 	}
 
 	/**
 	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
 	 */
-	@Override
-	public GamaUIColor getPopupBackground() {
-		return popupColor;
-	}
+	// @Override
+	// public GamaUIColor getPopupBackground() {
+	// return popupColor;
+	// }
 
 	@Override
 	public Point getAbsoluteOrigin() {

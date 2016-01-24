@@ -252,4 +252,13 @@ public class ModelScene {
 		}
 	}
 
+	/**
+	 * @param gl
+	 */
+	public void preload(final GL2 gl) {
+		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
+			entry.getValue().preload(gl);
+		}
+	}
+
 }

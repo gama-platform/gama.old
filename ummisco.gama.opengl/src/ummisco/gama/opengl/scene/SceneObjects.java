@@ -145,9 +145,9 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 			return;
 		}
 		if ( drawAsList ) {
-			for ( T object : objects.get(0) ) {
-				object.preload(gl, renderer);
-			}
+			// for ( T object : objects.get(0) ) {
+			// object.preload(gl, renderer);
+			// }
 			Integer index = openGLListIndex;
 			if ( index == null ) {
 				index = gl.glGenLists(1);
@@ -176,6 +176,15 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 			for ( final T object : getObjects() ) {
 				object.draw(gl, drawer, picking);
 			}
+		}
+	}
+
+	@Override
+	public void preload(final GL2 gl) {
+		JOGLRenderer renderer = drawer.getRenderer();
+		if ( objects.size() == 0 ) { return; }
+		for ( T object : objects.get(0) ) {
+			object.preload(gl, renderer);
 		}
 	}
 

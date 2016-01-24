@@ -65,7 +65,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				jtsDrawer.drawPyramid(geometry);
 				break;
 			case POLYLINECYLINDER:
-				jtsDrawer.DrawMultiLineCylinder(geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+				jtsDrawer.drawMultiLineCylinder(geometry.geometry, geometry.getColor(), geometry.getAlpha(),
 					geometry.height);
 				break;
 			case LINECYLINDER:
@@ -90,21 +90,21 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 						-geometry.agent.getLocation().getZ());
 				} else {
 					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+						jtsDrawer.drawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
 							geometry.fill, geometry.height, true, geometry.border, geometry.isTextured, geometry,
 							geometry.rounded, geometry.getZ_fighting_id());
 					} else {
 						if ( jtsDrawer.renderer.getComputeNormal() ) {
 							int norm_dir = 1;
 							Vertex[] vertices = jtsDrawer.getExteriorRingVertices((Polygon) geometry.geometry);
-							if ( !jtsDrawer.IsClockwise(vertices) ) {
+							if ( !jtsDrawer.isClockwise(vertices) ) {
 								norm_dir = -1;
 							}
-							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+							jtsDrawer.drawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
 								geometry.fill, geometry.border, geometry.isTextured, geometry, true, geometry.rounded,
 								geometry.getZ_fighting_id(), norm_dir);
 						} else {
-							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+							jtsDrawer.drawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
 								geometry.fill, geometry.border, geometry.isTextured, geometry, true, geometry.rounded,
 								geometry.getZ_fighting_id(), -1);
 						}
@@ -113,7 +113,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				}
 				break;
 			case MULTILINESTRING:
-				jtsDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, 0, geometry.getColor(),
+				jtsDrawer.drawMultiLineString((MultiLineString) geometry.geometry, 0, geometry.getColor(),
 					geometry.getAlpha(), geometry.height);
 				break;
 			case LINESTRING:
@@ -129,7 +129,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				}
 				break;
 			case POINT:
-				jtsDrawer.DrawPoint((Point) geometry.geometry, 0, 10, renderer.getMaxEnvDim() / 1000,
+				jtsDrawer.drawPoint((Point) geometry.geometry, 0, 10, renderer.getMaxEnvDim() / 1000,
 					geometry.getColor(), geometry.getAlpha());
 				break;
 			default:

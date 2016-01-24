@@ -27,8 +27,6 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 	public GamaFile file;
 	public IAgent agent;
 	public double z_layer;
-	// public Color color;
-	// public Double alpha;
 	public GamaPoint size;
 	public GamaPoint atLoc = null;
 	Double rot = null;
@@ -44,8 +42,6 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		this.file = fileName;
 		this.agent = agent;
 		this.z_layer = z_layer;
-		// this.color = color;
-		// this.alpha = alpha;
 		this.size = dimensions;
 		if ( file instanceof GamaSVGFile && size == null ) {
 			size = new GamaPoint(1, 1, 1);
@@ -159,7 +155,6 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			super.draw(gl, drawer, picking);
 			gl.glPopMatrix();
 		} else {
-			System.out.println("Drawing at " + atLoc);
 			super.draw(gl, drawer, picking);
 		}
 

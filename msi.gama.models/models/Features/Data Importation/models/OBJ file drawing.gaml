@@ -9,16 +9,22 @@
 model obj_drawing   
 
 global {
-	geometry shape <- square(10);
+	geometry shape <- square(40);
 
 	init { 
-		create object number: 20;
+		create object number: 30;
 	}  
 } 
 
-species object{
+species object skills: [moving]{
+	rgb color <- rgb(rnd(255),rnd(255),rnd(255));
+	int size <- rnd(10) + 1;
+	int rot <- 1000 + rnd(1000);
+	reflex m when: every(100) {
+		do wander amplitude: 30 speed: 0.001;
+	}
 	aspect obj {
-		draw file("../includes/teapot.obj") color:#red size: 3 ;
+		draw file("../includes/teapot.obj") color: color size: size rotate3D: cycle/rot::{0,1,0};
 	}
 }	
 

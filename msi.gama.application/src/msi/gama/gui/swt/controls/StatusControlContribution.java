@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
+import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
@@ -22,9 +23,10 @@ import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.kernel.simulation.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.GamaColor;
+import msi.gama.util.*;
 import msi.gaml.operators.Strings;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
@@ -101,26 +103,44 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupText()
 	 */
 	@Override
-	public String getPopupText() {
+	public Map<GamaUIColor, String> getPopupText() {
 		if ( !GAMA.getGui().isSimulationPerspective() ) { return null; }
-		if ( state == IGui.ERROR || state == IGui.WAIT ) { return label.getText(); }
-		StringBuilder sb = new StringBuilder(300);
-		ExperimentAgent simulation = GAMA.getExperiment().getAgent();
-		if ( simulation == null ) { return "No simulation running"; }
-		SimulationClock clock = simulation.getClock();
+		Map<GamaUIColor, String> result = GamaMapFactory.create();
 
-		sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
-			clock.getStartingDate() == null ? Strings.asDate(clock.getTime(), null)
-				: Strings.asDate(clock.getStartingDate(), clock.getCurrentDate(), null)));
-		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Durations (ms)", clock.getDuration(),
-			(int) clock.getAverageDuration(), clock.getTotalDuration()));
-		return sb.toString();
+		if ( state == IGui.ERROR || state == IGui.WAIT ) {
+			GamaUIColor color = state == IGui.ERROR ? IGamaColors.ERROR : IGamaColors.WARNING;
+			result.put(color, label.getText());
+			return result;
+		}
+
+		ExperimentAgent agent = GAMA.getExperiment().getAgent();
+		if ( agent == null ) {
+			result.put(IGamaColors.NEUTRAL, "No experiment opened");
+			return result;
+		}
+
+		IAgent[] simulations = agent.getSimulationPopulation().toArray();
+
+		for ( IAgent a : simulations ) {
+			StringBuilder sb = new StringBuilder(300);
+			SimulationAgent sim = (SimulationAgent) a;
+			SimulationClock clock = sim.getClock();
+
+			sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
+				clock.getStartingDate() == null ? Strings.asDate(clock.getTime(), null)
+					: Strings.asDate(clock.getStartingDate(), clock.getCurrentDate(), null)));
+			sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Durations (ms)", clock.getDuration(),
+				(int) clock.getAverageDuration(), clock.getTotalDuration()));
+			result.put(GamaColors.get(sim.getColor()), sb.toString());
+		}
+
+		return result;
 	}
 
 	/**
 	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
 	 */
-	@Override
+	// @Override
 	public GamaUIColor getPopupBackground() {
 		if ( InUserStatus && color != null ) { return color; }
 		return state == IGui.ERROR ? IGamaColors.ERROR
