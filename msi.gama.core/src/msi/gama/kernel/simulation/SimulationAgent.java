@@ -352,7 +352,7 @@ public class SimulationAgent extends GamlAgent {
 
 	@setter(CURRENT_DATE)
 	public void setCurrentDate(final GamaDate d) throws GamaRuntimeException {
-		clock.setCurrentDate(d);
+		// NOTHING
 	}
 
 	@getter(CURRENT_DATE)
