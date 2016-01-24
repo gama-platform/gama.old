@@ -11,19 +11,25 @@
  **********************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.architecture.IArchitecture;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
+import msi.gaml.architecture.simplebdi.SimpleBdiPlanStatement.SimpleBdiPlanValidator;
 
 @symbol(name = { SimpleBdiArchitecture.PLAN}, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
 @inside(kinds = { ISymbolKind.SPECIES })
@@ -33,8 +39,27 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = SimpleBdiPlanStatement.INTENTION, type = IType.NONE, optional = true),
 	@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true)}, omissible = IKeyword.NAME)
+@validator(SimpleBdiPlanValidator.class)
 public class SimpleBdiPlanStatement extends AbstractStatementSequence {
-	
+	 
+	public static class SimpleBdiPlanValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription description) {
+			// Verify that the state is inside a species with fsm control
+			SpeciesDescription species = description.getSpeciesContext();
+			IArchitecture control = species.getControl();
+			if ( !(control instanceof SimpleBdiArchitecture) ) {
+				description.error("A plan can only be defined in a simple_bdi architecture species",
+						IGamlIssue.WRONG_CONTEXT);
+				return; 
+			}
+		}
+	}
 	public static final String INTENTION = "intention";
 
 	 final IExpression _when;
