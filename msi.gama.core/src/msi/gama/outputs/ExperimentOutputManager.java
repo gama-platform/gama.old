@@ -45,7 +45,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	@Override
 	public boolean init(final IScope scope) {
 		this.scope = scope;
-		scope.getGui().prepareForExperiment(scope.getExperiment().getSpecies());
+		// scope.getGui().prepareForExperiment(scope.getExperiment().getSpecies());
 		return super.init(scope);
 	}
 

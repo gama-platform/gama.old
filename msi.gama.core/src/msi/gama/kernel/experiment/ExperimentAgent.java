@@ -22,7 +22,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.kernel.simulation.SimulationClock.ExperimentClock;
 import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.population.*;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -186,6 +186,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if ( outputs != null ) {
 			outputs.init(scope);
 		}
+		scope.getGui().informStatus("Experiment ready");
+		scope.getGui().updateSimulationState();
 		return this;
 	}
 

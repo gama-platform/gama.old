@@ -173,7 +173,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 			@Override
 			public void handle(final StatusAdapter statusAdapter, final int style) {
-				System.err.println("GAMA Caught a workbench problem : " + statusAdapter.getStatus().getMessage());
+				System.err.println("GAMA Caught a workbench message : " + statusAdapter.getStatus().getMessage());
 			}
 		};
 	}

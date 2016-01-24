@@ -152,8 +152,8 @@ public class SimulationAgent extends GamlAgent {
 			super.schedule();
 
 		} finally {
-			scope.getGui().informStatus("Simulation ready");
-			scope.getGui().updateSimulationState();
+			// scope.getGui().informStatus("Simulation ready");
+			// scope.getGui().updateSimulationState();
 		}
 
 	}

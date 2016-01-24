@@ -295,7 +295,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public void open() {
 		createAgent();
-		// scope.getGui().prepareForExperiment(this);
+		scope.getGui().prepareForExperiment(this);
 		agent.schedule();
 		// agent.scheduleAndExecute(null);
 		if ( isBatch() ) {
