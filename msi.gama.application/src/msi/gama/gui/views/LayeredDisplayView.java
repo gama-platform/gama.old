@@ -64,6 +64,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			if ( scope != null && scope.getSimulationScope() != null ) {
 				IMacroAgent root = scope.getRoot();
 				Color color = root.getColor();
+				String name = root.getClass().getSimpleName() + root.getIndex();
 				this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));
 			}
 		}

@@ -9,19 +9,20 @@
  *
  *
  **********************************************************************************************/
-package msi.gama.metamodel.population;
+package msi.gama.kernel.simulation;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.AbstractTopology.RootTopology;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -45,6 +46,8 @@ public class SimulationPopulation extends GamaPopulation {
 		final SimulationAgent world = new SimulationAgent(this);
 		world.setIndex(currentAgentIndex++);
 		world.setScheduled(toBeScheduled);
+		world.setName("Simulation #" + world.getIndex() + " of model " +
+			getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, ""));
 		add(world);
 		getHost().setSimulation(world);
 		if ( scope.interrupted() ) { return null; }

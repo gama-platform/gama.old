@@ -1037,6 +1037,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
+		public String serialize(final boolean includingBuiltIn) {
+			return getName();
+		}
+
+		@Override
 		public boolean step(final IScope scope) throws GamaRuntimeException {
 			final IExpression ags = getSpecies().getSchedule();
 			if ( ags != null ) {

@@ -68,7 +68,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	public abstract IList<IAgent> getPeers() throws GamaRuntimeException;
 
 	@Override
-	@getter(IKeyword.NAME)
+	@getter(value = IKeyword.NAME, initializer = true)
 	public abstract String getName();
 
 	@Override

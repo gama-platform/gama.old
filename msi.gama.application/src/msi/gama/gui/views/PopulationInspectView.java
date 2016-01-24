@@ -336,12 +336,14 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	};
 
 	private String getSpeciesName() {
+		if ( getOutput() == null ) { return ""; }
 		ISpecies species = getOutput().getSpecies();
 		if ( species == null ) { return IKeyword.AGENT; }
 		return species.getName();
 	}
 
 	private void fillAttributeMenu() {
+		if ( getOutput() == null ) { return; }
 		// Not yet declared or already disposed
 		if ( attributesMenu == null || attributesMenu.isDisposed() ) { return; }
 		for ( Control c : attributesMenu.getChildren() ) {
@@ -595,6 +597,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private IScope getScope() {
+		if ( getOutput() == null ) { return null; }
 		return getOutput().getScope();
 	}
 
@@ -757,6 +760,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
+		if ( getOutput() == null ) { return; }
 		super.createToolItems(tb);
 		tb.check("population.lock2", "", "Lock the current population (prevents editing it)", new SelectionAdapter() {
 

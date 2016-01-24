@@ -1,36 +1,36 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaIcons.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.Map;
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gaml.types.IType;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import gnu.trove.map.hash.THashMap;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gaml.types.IType;
 
 /**
  * Class GamaIcons.
- * 
+ *
  * @author drogoul
  * @since 12 sept. 2013
- * 
+ *
  */
-public class GamaIcons /* implements IGamaIcons */{
+public class GamaIcons /* implements IGamaIcons */ {
 
 	static private GamaIcons instance = new GamaIcons();
 
@@ -45,8 +45,8 @@ public class GamaIcons /* implements IGamaIcons */{
 	Map<String, GamaIcon> iconCache = new THashMap<String, GamaIcon>();
 	Map<String, Image> imageCache = new THashMap<String, Image>();
 	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences
-		.create("core.icons_brightness", "Icons and buttons dark mode (restart to see the change)", true, IType.BOOL).in(GamaPreferences.UI)
-		.group("Icons");
+		.create("core.icons_brightness", "Icons and buttons dark mode (restart to see the change)", true, IType.BOOL)
+		.in(GamaPreferences.UI).group("Icons");
 	public static GamaPreferences.Entry<Integer> CORE_ICONS_HEIGHT = GamaPreferences
 		.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
 		.among(16, 24).in(GamaPreferences.UI).group("Icons");
@@ -118,11 +118,12 @@ public class GamaIcons /* implements IGamaIcons */{
 		return result;
 	}
 
-	public static GamaIcon createColorIcon(final String s, final GamaUIColor gcolor, final int width, final int height) {
+	public static GamaIcon createColorIcon(final String s, final GamaUIColor gcolor, final int width,
+		final int height) {
 		String name = COLOR_PREFIX + s;
 		GamaIcon icon = getInstance().getIcon(s);
 		if ( icon == null ) {
-//			Color color = gcolor.color();
+			// Color color = gcolor.color();
 			// RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
 			Image image = new Image(Display.getDefault(), width, height);
 			GC gc = new GC(image);
@@ -148,7 +149,10 @@ public class GamaIcons /* implements IGamaIcons */{
 	 * @return
 	 */
 	public static Image createTempColorIcon(final GamaUIColor gcolor) {
-//		Color color = gcolor.color();
+		String name = "color" + gcolor.getRGB().toString();
+		GamaIcon icon = getInstance().getIcon(name);
+		if ( icon != null ) { return icon.image(); }
+		// Color color = gcolor.color();
 		GamaIcon blank = create("display.color2");
 		Image image = new Image(Display.getDefault(), blank.image().getImageData());
 		GC gc = new GC(image);
@@ -160,6 +164,29 @@ public class GamaIcons /* implements IGamaIcons */{
 			gc.drawRoundRectangle(6, 6, 12, 12, 4, 4);
 		}
 		gc.dispose();
+		getInstance().putImageInCache(name, image);
+		getInstance().putIconInCache(name, new GamaIcon(name));
+		return image;
+	}
+
+	public static Image createTempRoundColorIcon(final GamaUIColor gcolor) {
+		String name = "roundcolor" + gcolor.getRGB().toString();
+		GamaIcon icon = getInstance().getIcon(name);
+		if ( icon != null ) { return icon.image(); }
+		// Color color = gcolor.color();
+		GamaIcon blank = create("display.color3");
+		Image image = new Image(Display.getDefault(), blank.image().getImageData());
+		GC gc = new GC(image);
+		gc.setAntialias(SWT.ON);
+		gc.setBackground(gcolor.color());
+		gc.fillOval(6, 6, 12, 12);
+		if ( !gcolor.isDark() ) {
+			gc.setForeground(IGamaColors.BLACK.color());
+			gc.drawOval(6, 6, 12, 12);
+		}
+		gc.dispose();
+		getInstance().putImageInCache(name, image);
+		getInstance().putIconInCache(name, new GamaIcon(name));
 		return image;
 	}
 

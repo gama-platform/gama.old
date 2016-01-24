@@ -19,9 +19,8 @@ import ummisco.gama.serializer.gamaType.converters.GamaShapeFileConverter;
 import ummisco.gama.serializer.gamaType.converters.LogConverter;
 import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.SavedAgent;
-import msi.gama.metamodel.population.SimulationPopulation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 

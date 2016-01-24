@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.*;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
@@ -48,7 +49,14 @@ public class AgentsMenu extends ContributionItem {
 		final String title, final MenuAction ... actions) {
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText(title);
-		result.setImage(IGamaIcons.MENU_AGENT.image());
+		Image image;
+		if ( agent instanceof SimulationAgent ) {
+			SimulationAgent sim = (SimulationAgent) agent;
+			image = GamaIcons.createTempRoundColorIcon(GamaColors.get(sim.getColor()));
+		} else {
+			image = IGamaIcons.MENU_AGENT.image();
+		}
+		result.setImage(image);
 		Menu agentMenu = new Menu(result);
 		result.setMenu(agentMenu);
 		createMenuForAgent(agentMenu, agent, userLocation, false, actions);
@@ -69,7 +77,12 @@ public class AgentsMenu extends ContributionItem {
 		final Image image) {
 		MenuItem result = new MenuItem(parent, SWT.PUSH);
 		if ( pop instanceof IPopulation ) {
-			result.setText("Browse " + ((IPopulation) pop).getName() + " population...");
+			if ( pop instanceof SimulationPopulation ) {
+				result.setText("Browse simulations...");
+				separate(parent);
+			} else {
+				result.setText("Browse " + ((IPopulation) pop).getName() + " population...");
+			}
 		} else {
 			result.setText("Browse agents...");
 		}
@@ -87,8 +100,16 @@ public class AgentsMenu extends ContributionItem {
 
 	private static MenuItem cascadingPopulationMenuItem(final Menu parent, final IAgent agent,
 		final IPopulation population, final ILocation userLocation, final Image image) {
+		if ( population instanceof SimulationPopulation ) {
+			fillPopulationSubMenu(parent, population, userLocation);
+			return null;
+		}
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
+		// if ( population instanceof SimulationPopulation ) {
+		// result.setText("Simulations");
+		// } else {
 		result.setText("Population of " + population.getName());
+		// }
 		result.setImage(image);
 		Menu agentsMenu = new Menu(result);
 		result.setMenu(agentsMenu);
@@ -245,9 +266,10 @@ public class AgentsMenu extends ContributionItem {
 		if ( agent == null ) { return; }
 		separate(menu, "Actions");
 		if ( topLevel ) {
-			browsePopulationMenuItem(menu, agent.getPopulation(), IGamaIcons.MENU_BROWSE.image());
+			// browsePopulationMenuItem(menu, agent.getPopulation(), IGamaIcons.MENU_BROWSE.image());
 		}
-		actionAgentMenuItem(menu, agent, inspector, IGamaIcons.MENU_INSPECT.image(), "Inspect");
+		actionAgentMenuItem(menu, agent, inspector, IGamaIcons.MENU_INSPECT.image(),
+			"Inspect" + (topLevel ? " experiment" : ""));
 		if ( !topLevel ) {
 			actionAgentMenuItem(menu, agent, highlighter, IGamaIcons.MENU_HIGHLIGHT.image(), "Highlight");
 			if ( SwtGui.getFirstDisplaySurface() != null && actions == null || actions.length == 0 ) {
@@ -276,7 +298,9 @@ public class AgentsMenu extends ContributionItem {
 			final IMacroAgent macro = (IMacroAgent) agent;
 			if ( macro.hasMembers() ) {
 				separate(menu);
-				separate(menu, "Micro-populations");
+				if ( !topLevel ) {
+					separate(menu, "Micro-populations");
+				}
 				for ( final IPopulation pop : macro.getMicroPopulations() ) {
 					if ( !pop.isEmpty() ) {
 						cascadingPopulationMenuItem(menu, agent, pop, userLocation, IGamaIcons.MENU_POPULATION.image());
@@ -289,17 +313,19 @@ public class AgentsMenu extends ContributionItem {
 
 	public static void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species,
 		final ILocation userLocation, final MenuAction ... actions) {
-
+		boolean isSimulations = species instanceof SimulationPopulation;
 		int subMenuSize = GamaPreferences.CORE_MENU_SIZE.getValue();
 		if ( subMenuSize < 2 ) {
 			subMenuSize = 2;
 		}
-		separate(menu, "Actions");
+		if ( !isSimulations ) {
+			separate(menu, "Actions");
+		}
 		browsePopulationMenuItem(menu, species, IGamaIcons.MENU_BROWSE.image());
 
 		final List<IAgent> agents = new ArrayList(species);
 		final int size = agents.size();
-		if ( size != 0 ) {
+		if ( size != 0 && !isSimulations ) {
 			separate(menu);
 			separate(menu, "Agents");
 		}
@@ -344,6 +370,6 @@ public class AgentsMenu extends ContributionItem {
 
 	@Override
 	public void fill(final Menu parent, final int index) {
-		createMenuForAgent(parent, GAMA.getSimulation(), null, true);
+		createMenuForAgent(parent, GAMA.getExperiment().getAgent(), null, true);
 	}
 }
