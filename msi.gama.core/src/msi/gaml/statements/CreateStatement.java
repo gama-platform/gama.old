@@ -67,7 +67,7 @@ import msi.gaml.types.*;
 		@facet(name = IKeyword.RETURNS,
 			type = IType.NEW_TEMP_ID,
 			optional = true,
-			doc = @doc("a new temporary variable name containing the list of created agents (a lsit even if only one agent has been created)") ),
+			doc = @doc("a new temporary variable name containing the list of created agents (a list, even if only one agent has been created)") ),
 		@facet(name = IKeyword.FROM,
 			type = IType.NONE,
 			optional = true,
@@ -84,7 +84,9 @@ import msi.gaml.types.*;
 		@facet(name = IKeyword.HEADER,
 			type = { IType.BOOL },
 			optional = true,
-			doc = @doc("an expression that evaluates to a boolean, when creating agents from csv file, specify whether the file header is loaded") ) },
+			doc = @doc(
+				deprecated = "Use a file constructor that specifies the header instead, e.g. csv_file('...', true)",
+				value = "an expression that evaluates to a boolean, when creating agents from csv file, specify whether the file header is loaded") ) },
 	omissible = IKeyword.SPECIES)
 @doc(
 	value = "Allows an agent to create `number` agents of species `species`, to create agents of species `species` from a shapefile or to create agents of species `species` from one or several localized entities (discretization of the localized entity geometries).",
