@@ -60,19 +60,45 @@ public class GridDiffuserWithMatrix {
 		public IScope m_scope;
 		public IPopulation m_pop;
 		
-		public GridDiffusion(IScope scope, String var_diffu, String species_diffu, boolean method_diffu, double[][] mat_diffu, List<Integer> agents) {
+		public GridDiffusion(IScope scope, String var_diffu, String species_diffu, boolean method_diffu, double[][] mat_diffu, double[][] mask, List<Integer> agents) {
 			m_scope = scope;
 			m_species_diffu = species_diffu;
 			m_method_diffu = method_diffu;
 			m_mat_diffu = mat_diffu;
+			m_mask = mask;
 			m_agents = agents;
 		}
 	}
 	
+	public boolean compareArrays(double[][] array1, double[][] array2) {
+        boolean b = true;
+        if (array1 != null && array2 != null){
+          if (array1.length != array2.length)
+              b = false;
+          else
+              for (int i = 0; i < array2.length; i++) {
+            	  if (array1[i].length != array2[i].length)
+            	  {
+            		  b = false;
+            	  }
+            	  else {
+            		  for (int j = 0; j < array2[i].length; j++) {
+                          if (array2[i][j] != array1[i][j]) {
+                              b = false;    
+                          } 
+            		  }
+            	  }                
+            }
+        }else{
+          b = false;
+        }
+        return b;
+    }
+	
 	protected final Map<PairVarGrid, List<GridDiffusion>> m_diffusions = new HashMap<PairVarGrid,List<GridDiffusion>>();
 	
-	public void addDiffusion(IScope scope, String var_diffu, GridPopulation pop, boolean method_diffu, double[][] mat_diffu, List<Integer> agents) {
-		GridDiffusion newGridDiff = new GridDiffusion(scope, var_diffu, pop.getName(), method_diffu, mat_diffu, agents);
+	public void addDiffusion(IScope scope, String var_diffu, GridPopulation pop, boolean method_diffu, double[][] mat_diffu, double[][] mask, List<Integer> agents) {
+		GridDiffusion newGridDiff = new GridDiffusion(scope, var_diffu, pop.getName(), method_diffu, mat_diffu, mask, agents);
 		PairVarGrid keyValue = new PairVarGrid(scope, var_diffu, pop);
 		if (m_diffusions.containsKey(keyValue))
 		{
@@ -83,8 +109,8 @@ public class GridDiffuserWithMatrix {
 				GridDiffusion gridToAnalyze = listWithSameVar.get(i);
 				if (gridToAnalyze != newGridDiff
 						&& gridToAnalyze.m_method_diffu == newGridDiff.m_method_diffu
-						&& gridToAnalyze.m_agents == newGridDiff.m_agents
-						&& gridToAnalyze.m_mask == newGridDiff.m_mask) {
+						&& gridToAnalyze.m_agents.equals(newGridDiff.m_agents)
+						&& compareArrays(gridToAnalyze.m_mask,newGridDiff.m_mask)) {
 					// we can add the two diffusion matrix
 					listWithSameVar.remove(gridToAnalyze);
 					int iiLength = gridToAnalyze.m_mat_diffu.length;
@@ -147,7 +173,7 @@ public class GridDiffuserWithMatrix {
 	private boolean method_diffu = true;
 	boolean m_initialized = false;
 	double[][] mask, mat_diffu;
-	List<Integer> agents;
+	List<Integer> agents; // list of agents which have a non null value
 //	List<Integer> list_of_agents_who_will_change;
 	IScope scope;
 	
@@ -174,20 +200,21 @@ public class GridDiffuserWithMatrix {
 //				list_of_agents_who_will_change.add(gridDiff.m_agents.get(i));
 //			}
 //		}
+		
 		agents = gridDiff.m_agents;
-		if (agents == null) {
-			agents = new ArrayList<Integer>();
-			for (int i = 0; i < nbRows*nbCols; i++) {
-				agents.add(i);
-			}
-		}
+//		if (agents == null) {
+//			agents = new ArrayList<Integer>();
+//			for (int i = 0; i < nbRows*nbCols; i++) {
+//				agents.add(i);
+//			}
+//		}
 		IPopulation pop = scope.getAgentScope().getPopulationFor(gridDiff.m_species_diffu);
 		
 		for ( int i = 0; i < input.length; i++ ) {
-//			if (agents == null || agents.contains(i))
+			if (agents == null || agents.contains(i))
 				input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
-//			else 
-//				input[i] = 0;
+			else 
+				input[i] = 0;
 			
 		}
 		
@@ -204,8 +231,13 @@ public class GridDiffuserWithMatrix {
 		int mm = 0, nn = 0, ii = 0, jj = 0;
 		
 		for (int agenti = 0; agenti < agents.size(); agenti++) {
-			int i = (int)(agents.get(agenti)/nbCols);
-			int j = agents.get(agenti) - (int)(agents.get(agenti)/nbCols)*nbRows;
+			int i = agents.get(agenti) - (int)(agents.get(agenti)/nbCols)*nbCols; // col number
+			int j = (int)(agents.get(agenti)/nbCols); // row number
+			if (i >= 5 || j >= 5)
+			{
+				System.out.println("i = "+i+" | j = "+j+" with agentId = "+agents.get(agenti));
+			}
+
 
 
 //		for ( int i = 0; i < nbRows; ++i ) // rows
@@ -236,9 +268,9 @@ public class GridDiffuserWithMatrix {
 								jj = jj - nbCols;
 							}
 						}
-						if ( ii >= 0 && ii < nbRows && jj >= 0 && jj < nbCols ) {
+						if ( ii >= 0 && ii < nbCols && jj >= 0 && jj < nbRows) {
 							double mask_current = mask != null ? mask[i][j] < -1 ? 0 : 1 : 1;
-							output[i * nbCols + j] += input[ii * nbCols + jj] * mat_diffu[mm][nn] * mask_current;
+							output[j * nbCols + i] += input[jj * nbCols + ii] * mat_diffu[mm][nn] * mask_current;
 //							if (!list_of_agents_who_will_change.contains(ii*nbRows+jj)) {
 //								list_of_agents_who_will_change.add(ii*nbRows+jj);
 //							}

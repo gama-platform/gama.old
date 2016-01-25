@@ -808,7 +808,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public void diffuseVariableWithMatrix(final IScope scope, boolean method_diffu, double[][] mat_diffu, 
 		double[][] mask, String var_diffu, IPopulation pop, 
 		List<Integer> agents) {
-		getDiffuser2(scope).addDiffusion(scope, var_diffu, (GridPopulation)pop, method_diffu, mat_diffu, agents);
+		getDiffuser2(scope).addDiffusion(scope, var_diffu, (GridPopulation)pop, method_diffu, mat_diffu, mask, agents);
 	}
 
 	@Override

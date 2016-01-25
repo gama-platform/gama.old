@@ -100,14 +100,6 @@ public class DiffusionStatement extends AbstractStatement {
 
 		}
 	}
-	
-	private static class DiffusionComputation {
-		static int nbDiffusion = 0;
-		public static void incrementVal() {
-			nbDiffusion++;
-			System.out.println(nbDiffusion);
-		}
-	}
 
 	private boolean is_torus = false;
 	private String var_diffu = "";
@@ -344,21 +336,74 @@ public class DiffusionStatement extends AbstractStatement {
 		
 		Object obj = getFacetValue(scope, IKeyword.ON);
 		GridPopulation pop = null;
+		
 		if (obj instanceof ISpecies) {
-			agents = null;
+			// the diffusion is applied to the whole grid
 			if (((ISpecies)obj).isGrid())
+			{
 				pop = (GridPopulation) ((ISpecies)obj).getPopulation(scope);
+				if (mask == null) {
+					mask = new double[pop.getNbCols()][pop.getNbRows()];
+					for (int i = 0; i < mask.length; i++) {
+						for (int j = 0; j < mask[0].length; j++) {
+							mask[i][j] = 1;
+						}
+					}
+				}
+			}
 		} else {
+			// the diffusion is applied just to a certain part of the grid. Search the mask.
 			IList<IAgent> ags = Cast.asList(scope, obj);
 			if (! ags.isEmpty()) {
 				ISpecies sp = ags.get(0).getSpecies();
 				if (sp.isGrid()) {
 					pop = (GridPopulation) sp.getPopulation(scope);
-					agents = new ArrayList<Integer>();
+					if (mask == null) {
+						mask = new double[pop.getNbCols()][pop.getNbRows()];
+						for (int i = 0; i < mask.length; i++) {
+							for (int j = 0; j < mask[0].length; j++) {
+								mask[i][j] = 0;
+							}
+						}
+					}
 					for (IAgent ag : ags) 
-						agents.add(ag.getIndex());
+					{
+						mask[ag.getIndex()-ag.getIndex()/pop.getNbCols()*pop.getNbCols()][ag.getIndex()/pop.getNbCols()] = 1;
+					}
 				} else {
 					throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
+				}
+			}
+		}
+		agents = new ArrayList<Integer>();
+		
+		int rowMax = pop.getNbRows();
+		int colMax = pop.getNbCols();
+		for (int colNb = 0; colNb < pop.getNbCols(); colNb++) {
+			for (int rowNb = 0; rowNb < pop.getNbRows(); rowNb++) {
+				if ((Cast.asFloat(scope, pop.getAgent(colNb, rowNb).getDirectVarValue(scope, var_diffu)) != 0)
+						&& (mask[colNb][rowNb] != 0)) {
+					IAgent agent = pop.getAgent(colNb,rowNb);
+					int agentIndex = pop.getAgent(colNb,rowNb).getIndex();
+					for (int i = 0; i < mat_diffu.length; i++) {
+						for (int j = 0; j < mat_diffu[0].length; j++) {
+							int row = (int)(agentIndex/colMax)+i-mat_diffu.length/2;
+							int col = agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2;
+//							int maski = rowNb+i-mat_diffu.length/2;
+//							int maskj = colNb+j-mat_diffu[0].length/2;
+//							int agentI = agentIndex+(i-mat_diffu.length/2)*mat_diffu[0].length+(j-mat_diffu[0].length/2);
+							if (!agents.contains(((int)(agentIndex/colMax)+i-mat_diffu.length/2)*colMax+(agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2))
+									&& ( (((int)(agentIndex/colMax)+i-mat_diffu.length/2 >= 0) 
+											&& ((int)(agentIndex/colMax)+i-mat_diffu.length/2 < rowMax)
+											&& (agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2 >= 0)
+											&& (agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2 < colMax))
+											|| is_torus)
+									/*&& (mask[rowMax+i-mat_diffu.length/2][colNb+j-mat_diffu[0].length/2] == 1)*/) {
+//								agents.add(agentIndex+(i-mat_diffu.length/2)*mat_diffu[0].length+(j-mat_diffu[0].length/2));
+								agents.add(((int)(agentIndex/colMax)+i-mat_diffu.length/2)*colMax+(agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2));
+							}
+						}
+					}
 				}
 			}
 		}
