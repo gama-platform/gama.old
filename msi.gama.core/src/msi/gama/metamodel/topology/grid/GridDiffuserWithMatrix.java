@@ -8,16 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import gnu.trove.map.hash.THashMap;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
-import msi.gaml.species.ISpecies;
 
 public class GridDiffuserWithMatrix {
 	
@@ -36,13 +32,6 @@ public class GridDiffuserWithMatrix {
 			m_is_torus = pop.getTopology().isTorus();
 		}
 		
-		public boolean isEqualTo(PairVarGrid otherGrid) {
-			if ((otherGrid.m_var_name == m_var_name) && (otherGrid.m_grid_name == m_grid_name)) {
-				return true;
-			}
-			return false;
-		}
-		
 	    @Override
 	    public int hashCode() {
 	    	return m_var_name.hashCode()+m_grid_name.hashCode();
@@ -56,7 +45,6 @@ public class GridDiffuserWithMatrix {
 	            return true;
 	        
 	        PairVarGrid otherGrid = (PairVarGrid)obj;
-	        String my_string = otherGrid.m_var_name;
 	        if ((otherGrid.m_var_name.equals(m_var_name)) && (otherGrid.m_grid_name.equals(m_grid_name))) {
 				return true;
 			}
@@ -65,7 +53,6 @@ public class GridDiffuserWithMatrix {
 	}
 	
 	private class GridDiffusion {
-		public String m_var_diffu;
 		public String m_species_diffu;
 		public boolean m_method_diffu = true;
 		public double[][] m_mask, m_mat_diffu;
@@ -75,7 +62,6 @@ public class GridDiffuserWithMatrix {
 		
 		public GridDiffusion(IScope scope, String var_diffu, String species_diffu, boolean method_diffu, double[][] mat_diffu, List<Integer> agents) {
 			m_scope = scope;
-			m_var_diffu = var_diffu;
 			m_species_diffu = species_diffu;
 			m_method_diffu = method_diffu;
 			m_mat_diffu = mat_diffu;
@@ -86,17 +72,8 @@ public class GridDiffuserWithMatrix {
 	protected final Map<PairVarGrid, List<GridDiffusion>> m_diffusions = new HashMap<PairVarGrid,List<GridDiffusion>>();
 	
 	public void addDiffusion(IScope scope, String var_diffu, GridPopulation pop, boolean method_diffu, double[][] mat_diffu, List<Integer> agents) {
-
 		GridDiffusion newGridDiff = new GridDiffusion(scope, var_diffu, pop.getName(), method_diffu, mat_diffu, agents);
 		PairVarGrid keyValue = new PairVarGrid(scope, var_diffu, pop);
-		boolean is_present = false;
-		for (int h = 0; h < m_diffusions.keySet().size(); h++) {
-			System.out.println(m_diffusions.keySet().getClass().getName());
-			if (m_diffusions.keySet().getClass().equals(keyValue)) {
-				is_present=true;
-			};
-		}
-//		if (is_present)
 		if (m_diffusions.containsKey(keyValue))
 		{
 			List<GridDiffusion> listWithSameVar = new ArrayList<GridDiffusion>();
@@ -104,11 +81,12 @@ public class GridDiffuserWithMatrix {
 			// try to mix diffusions if possible
 			for (int i = 0; i<listWithSameVar.size(); i++) {
 				GridDiffusion gridToAnalyze = listWithSameVar.get(i);
-				listWithSameVar.remove(gridToAnalyze);
-				if (gridToAnalyze.m_method_diffu == newGridDiff.m_method_diffu
+				if (gridToAnalyze != newGridDiff
+						&& gridToAnalyze.m_method_diffu == newGridDiff.m_method_diffu
 						&& gridToAnalyze.m_agents == newGridDiff.m_agents
 						&& gridToAnalyze.m_mask == newGridDiff.m_mask) {
 					// we can add the two diffusion matrix
+					listWithSameVar.remove(gridToAnalyze);
 					int iiLength = gridToAnalyze.m_mat_diffu.length;
 					int cellNbiiToAddToGridToAnalyze = 0;
 					int cellNbiiToAddToNewGrid = 0;
@@ -152,8 +130,8 @@ public class GridDiffuserWithMatrix {
 					}
 					newGridDiff.m_mat_diffu = newMat;
 				}
-				listWithSameVar.add(newGridDiff);
 			}
+			listWithSameVar.add(newGridDiff);
 			m_diffusions.put(keyValue, listWithSameVar);
 		}
 		else {
@@ -170,24 +148,13 @@ public class GridDiffuserWithMatrix {
 	boolean m_initialized = false;
 	double[][] mask, mat_diffu;
 	List<Integer> agents;
+//	List<Integer> list_of_agents_who_will_change;
 	IScope scope;
 	
 	double[] input, output;
 	int nbRows, nbCols;
 	
 	public GridDiffuserWithMatrix() {
-	}
-	
-	public void initDiffusion(final IScope scope, final IPopulation pop) {
-
-		for ( int i = 0; i < input.length; i++ ) {
-			if (agents == null || agents.contains(i))
-				input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
-			else 
-				input[i] = 0;
-		}
-		
-		Arrays.fill(output, 0d);
 	}
 	
 	public void loadGridProperties(PairVarGrid pairVarGrid) {
@@ -202,20 +169,29 @@ public class GridDiffuserWithMatrix {
 		mask = gridDiff.m_mask;
 		method_diffu = gridDiff.m_method_diffu;
 		scope = gridDiff.m_scope;
+//		for (int i = 0 ; i<gridDiff.m_agents.size(); i++) {
+//			if (!list_of_agents_who_will_change.contains(gridDiff.m_agents.get(i))) {
+//				list_of_agents_who_will_change.add(gridDiff.m_agents.get(i));
+//			}
+//		}
+		agents = gridDiff.m_agents;
+		if (agents == null) {
+			agents = new ArrayList<Integer>();
+			for (int i = 0; i < nbRows*nbCols; i++) {
+				agents.add(i);
+			}
+		}
 		IPopulation pop = scope.getAgentScope().getPopulationFor(gridDiff.m_species_diffu);
 		
-		input = new double[pop.length(scope)];
-		output = new double[pop.length(scope)];
-		
 		for ( int i = 0; i < input.length; i++ ) {
-			if (agents == null || agents.contains(i))
+//			if (agents == null || agents.contains(i))
 				input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
-			else 
-				input[i] = 0;
+//			else 
+//				input[i] = 0;
 			
 		}
 		
-		Arrays.fill(output, 0d);
+
 	}
 
 	public void doDiffusion1() {
@@ -226,11 +202,16 @@ public class GridDiffuserWithMatrix {
 		int kCenterX = kRows / 2;
 		int kCenterY = kCols / 2;
 		int mm = 0, nn = 0, ii = 0, jj = 0;
+		
+		for (int agenti = 0; agenti < agents.size(); agenti++) {
+			int i = (int)(agents.get(agenti)/nbCols);
+			int j = agents.get(agenti) - (int)(agents.get(agenti)/nbCols)*nbRows;
 
-		for ( int i = 0; i < nbRows; ++i ) // rows
-		{
-			for ( int j = 0; j < nbCols; ++j ) // columns
-			{
+
+//		for ( int i = 0; i < nbRows; ++i ) // rows
+//		{
+//			for ( int j = 0; j < nbCols; ++j ) // columns
+//			{
 				// sum = 0; // init to 0 before sum
 				for ( int m = 0; m < kRows; ++m ) // kernel rows
 				{
@@ -258,10 +239,13 @@ public class GridDiffuserWithMatrix {
 						if ( ii >= 0 && ii < nbRows && jj >= 0 && jj < nbCols ) {
 							double mask_current = mask != null ? mask[i][j] < -1 ? 0 : 1 : 1;
 							output[i * nbCols + j] += input[ii * nbCols + jj] * mat_diffu[mm][nn] * mask_current;
+//							if (!list_of_agents_who_will_change.contains(ii*nbRows+jj)) {
+//								list_of_agents_who_will_change.add(ii*nbRows+jj);
+//							}
 						}
 					}
 				}
-			}
+//			}
 		}
 	}
 
@@ -311,7 +295,7 @@ public class GridDiffuserWithMatrix {
 
 	public void finishDiffusion(final IScope scope, final IPopulation pop) {
 		for ( int i = 0; i < output.length; i++ ) {
-			if (agents == null || agents.contains(i))
+//			if (list_of_agents_who_will_change == null || list_of_agents_who_will_change.contains(i))
 					pop.get(scope, i).setDirectVarValue(scope, var_diffu, output[i]);
 		}
 	}
@@ -332,16 +316,22 @@ public class GridDiffuserWithMatrix {
 	public Object diffuse2(/*final IScope scope*/) throws GamaRuntimeException {
 		
 		System.out.println("EXECUTE DIFFUSE !!!");
+//		list_of_agents_who_will_change = new ArrayList<Integer>();
 		
 		Set<PairVarGrid> keySet = m_diffusions.keySet();
 		Iterator<PairVarGrid> iterator = keySet.iterator();
 		
 		while (iterator.hasNext()) {
+			System.out.println("1");
 			PairVarGrid pairVarGrid = iterator.next();
 			List<GridDiffusion> listGridDiffu = m_diffusions.get(pairVarGrid);
 			loadGridProperties(pairVarGrid);
 			Iterator<GridDiffusion> gridDiffIterator = listGridDiffu.iterator();
+			input = new double[pairVarGrid.m_nbCols*pairVarGrid.m_nbRows];
+			output = new double[pairVarGrid.m_nbCols*pairVarGrid.m_nbRows];
+			Arrays.fill(output, 0d);
 			while (gridDiffIterator.hasNext()) {
+				System.out.println("2");
 				GridDiffusion gridDiffusion = gridDiffIterator.next();
 				loadDiffProperties(gridDiffusion);
 				if (!method_diffu) {
@@ -354,6 +344,7 @@ public class GridDiffuserWithMatrix {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(pairVarGrid.m_grid_name);
 			finishDiffusion(scope, pop);
 		}
+		m_diffusions.clear();
 		return null;
 	}
 
