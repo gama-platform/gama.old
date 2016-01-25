@@ -1,21 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GridLayer.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import gnu.trove.set.hash.THashSet;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 import java.util.*;
+import com.vividsolutions.jts.geom.Envelope;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -23,7 +24,6 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaImageFile;
-import com.vividsolutions.jts.geom.Envelope;
 
 public class GridLayer extends ImageLayer {
 
@@ -40,7 +40,7 @@ public class GridLayer extends ImageLayer {
 	}
 
 	public boolean turnGridOn;
-	private double cellWidth;
+	private Envelope3D cellWidth;
 
 	public GridLayer(final IScope scope, final ILayerStatement layer) {
 		super(scope, layer);
@@ -64,7 +64,7 @@ public class GridLayer extends ImageLayer {
 		final ILocation p = m.getDimensions();
 		// in case the agents have been killed
 		if ( m.getAgents().size() > 0 ) {
-			cellWidth = m.getAgents().get(0).getGeometry().getEnvelope().getWidth();
+			cellWidth = m.getAgents().get(0).getGeometry().getEnvelope();
 		}
 
 		if ( image == null ) {
@@ -92,8 +92,8 @@ public class GridLayer extends ImageLayer {
 			GamaImageFile textureFile = g.textureFile();
 			if ( textureFile != null ) { // display grid dem:texturefile
 				BufferedImage texture = textureFile.getImage(scope);
-				dg.drawGrid(scope, texture, gridValueMatrix, true, g.isTriangulated(), g.isGrayScaled(),
-					g.isShowText(), lineColor, cellWidth, this.getName());
+				dg.drawGrid(scope, texture, gridValueMatrix, true, g.isTriangulated(), g.isGrayScaled(), g.isShowText(),
+					lineColor, cellWidth, this.getName());
 			} else {
 				dg.drawGrid(scope, image, gridValueMatrix, g.isTextured(), g.isTriangulated(), g.isGrayScaled(),
 					g.isShowText(), lineColor, cellWidth, this.getName());

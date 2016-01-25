@@ -1,26 +1,26 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'DEMObject.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.util.awt.ImageUtil;
+import com.jogamp.opengl.util.texture.Texture;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import ummisco.gama.opengl.JOGLRenderer;
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.util.awt.ImageUtil;
-import com.jogamp.opengl.util.texture.Texture;
 
 public class DEMObject extends AbstractObject {
 
@@ -31,16 +31,16 @@ public class DEMObject extends AbstractObject {
 	final public boolean isTextured, isTriangulated, isShowText, fromImage, isDynamic, isGrayScaled;
 	// The height of the envelope represents the z_factor (between 0 and 1).
 	final public Envelope3D envelope;
-	final public double cellSize;
+	final public Envelope3D cellSize;
 	final public String name;
-    final public Color lineColor;
+	final public Color lineColor;
 
 	// final public int layerId;
 
-	public DEMObject(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
-		final IAgent agent, final Envelope3D env, final boolean isTextured, final boolean isTriangulated,
-		final boolean isGrayScaled, final boolean isShowText, final boolean fromImage, final boolean isDynamic,
-		final Color c, final Double a, final double cellSize, final String name, final Color lineColor) {
+	public DEMObject(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg, final IAgent agent,
+		final Envelope3D env, final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled,
+		final boolean isShowText, final boolean fromImage, final boolean isDynamic, final Color c, final Double a,
+		final Envelope3D cellSize, final String name, final Color lineColor) {
 		super(c, a);
 		this.dem = dem;
 		this.textureImage = demTexture;
@@ -92,9 +92,9 @@ public class DEMObject extends AbstractObject {
 					renderer.currentPickedObject = this;
 					// The picked image is the grid
 					if ( this.name != null ) {
-						final GamaPoint pickedPoint =
-							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera
-								.getLastMousePressedPosition().x, renderer.camera.getLastMousePressedPosition().y));
+						final GamaPoint pickedPoint = renderer
+							.getIntWorldPointFromWindowPoint(new Point(renderer.camera.getLastMousePressedPosition().x,
+								renderer.camera.getLastMousePressedPosition().y));
 						IAgent ag = GAMA.run(new InScope<IAgent>() {
 
 							@Override

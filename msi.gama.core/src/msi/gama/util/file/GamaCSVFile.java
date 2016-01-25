@@ -38,7 +38,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 	public static class CSVInfo extends GamaFileMetaData {
 
 		public int cols;
-		public final int rows;
+		public int rows;
 		public boolean header;
 		public Character delimiter;
 		public final IType type;
@@ -321,7 +321,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 					percentage = reader.getCurrentRecord() / userSize.y;
 					scope.getGui().setSubStatusCompletion(percentage);
 					int nbC = 0;
-					
+
 					for ( String s : reader.getValues() ) {
 						if ( i == m.length ) {
 							GAMA.reportError(scope, GamaRuntimeException.warning("Your file " + getFile().getName() +

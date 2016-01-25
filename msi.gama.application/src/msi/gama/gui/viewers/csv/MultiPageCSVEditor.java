@@ -24,7 +24,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
-import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.swt.commands.GamaMenu;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.viewers.csv.model.*;
@@ -392,11 +391,11 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 			updateTableFromTextEditor();
 		}
 		IFile file = getFileFor(getEditorInput());
-		CSVInfo md = model.getCurrentMetaData();
+		CSVInfo md = model.getInfo();
 		isPageModified = false;
 		editor.doSave(monitor);
 		if ( md != null ) {
-			FileMetaDataProvider.getInstance().storeMetadata(file, md);
+			model.saveMetaData(md);
 		}
 
 	}
@@ -680,7 +679,6 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 						model.addRow();
 					}
 					tableModified();
-					model.discardMetaData();
 				}
 			}, SWT.RIGHT);
 		tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", new SelectionAdapter() {
@@ -695,7 +693,6 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 					if ( row != null ) {
 						model.removeRow(row);
 						tableModified();
-						model.discardMetaData();
 					}
 				}
 			}
@@ -720,7 +717,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 						addMenuItemToColumn(column, model.getColumnCount() - 1);
 						defineCellEditing();
 						tableModified();
-						model.discardMetaData();
+
 					}
 				}
 			}, SWT.RIGHT);
@@ -744,7 +741,6 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 								model.removeColumn(column);
 							}
 							tableModified();
-							model.discardMetaData();
 						}
 
 					}

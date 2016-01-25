@@ -12,6 +12,7 @@
 package msi.gama.gui.navigator.commands;
 
 import org.eclipse.core.commands.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.*;
 import msi.gama.gui.navigator.GamaNavigator;
 
@@ -19,11 +20,11 @@ public class RefreshHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		run();
+		run(null);
 		return null;
 	}
 
-	public static void run() {
+	public static void run(final IResource resource) {
 
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
@@ -32,7 +33,7 @@ public class RefreshHandler extends AbstractHandler {
 				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				final IViewPart view = page.findView("msi.gama.gui.view.GamaNavigator");
 				if ( view == null ) { return; }
-				((GamaNavigator) view).safeRefresh(null);
+				((GamaNavigator) view).safeRefresh(resource == null ? null : resource.getParent());
 			}
 		});
 	}

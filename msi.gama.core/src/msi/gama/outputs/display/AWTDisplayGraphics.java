@@ -101,14 +101,14 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
-		final Color gridColor, final double cellSize, final String name) {
+		final Color gridColor, final Envelope3D cellSize, final String name) {
 		return drawImage(scope, img, null, null, gridColor, null, true, "grid");
 	}
-	
 
 	@Override
 	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
-			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final GamaPair<Double, GamaPoint> rotate3De) {
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
+		final GamaPair<Double, GamaPoint> rotate3De) {
 		return null;
 	}
 
@@ -147,9 +147,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 		return rect.getBounds2D();
 	}
-	
-	
-
 
 	/**
 	 * Method drawChart.Simply creates an image from the chart and displays it.
@@ -377,11 +374,10 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void endDrawingLayers() {}
 
 	@Override
-	public Rectangle2D drawFile(IScope scope, GamaFile filecheck, Color color, ILocation locationInModelUnits,
-			ILocation sizeInModelUnits, GamaPair<Double, GamaPoint> rotates3d,
-			GamaPair<Double, GamaPoint> rotates3dInit) {
-		return drawFile(scope,  filecheck,  color,  locationInModelUnits,
-				 sizeInModelUnits, rotates3d);
+	public Rectangle2D drawFile(final IScope scope, final GamaFile filecheck, final Color color,
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
+		final GamaPair<Double, GamaPoint> rotates3d, final GamaPair<Double, GamaPoint> rotates3dInit) {
+		return drawFile(scope, filecheck, color, locationInModelUnits, sizeInModelUnits, rotates3d);
 	}
 
 }

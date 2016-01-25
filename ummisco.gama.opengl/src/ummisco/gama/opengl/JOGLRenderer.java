@@ -722,7 +722,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] valueMatrix,
 		final boolean textured, final boolean triangulated, final boolean isGrayScaled, final boolean showText,
-		final Color gridColor, final double cellSize, final String name) {
+		final Color gridColor, final Envelope3D cellSize, final String name) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		Envelope3D env = getWorldEnvelopeWithZ(1);
 		IAgent a = scope.getAgentScope();

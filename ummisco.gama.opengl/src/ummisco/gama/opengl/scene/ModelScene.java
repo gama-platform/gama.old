@@ -153,13 +153,13 @@ public class ModelScene {
 		if ( demTexture != null ) {
 			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
 		}
-		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds, 1,
-			null, null);
+		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds,
+			new Envelope3D(0, 1, 0, 1, 0, 1), null, null);
 	}
 
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent, final boolean isTextured,
 		final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final Envelope3D env,
-		final double cellSize, final String name, final Color lineColor) {
+		final Envelope3D cellSize, final String name, final Color lineColor) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( demTexture != null ) {
 			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);

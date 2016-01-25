@@ -20,7 +20,6 @@ import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import msi.gama.gui.navigator.FileMetaDataProvider;
-import msi.gama.gui.navigator.commands.ResourceRefreshHandler;
 import msi.gama.util.file.*;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
 
@@ -58,8 +57,10 @@ public class CSVModel implements IRowChangesListener {
 	}
 
 	public void setFirstLineHeader(final boolean header) {
-		getInfo().header = header;
-		ResourceRefreshHandler.discardMetaData(file);
+		CSVInfo info = getInfo();
+		info.header = header;
+		saveMetaData(info);
+		// ResourceRefreshHandler.discardMetaData(file);
 	}
 
 	/**
@@ -71,9 +72,10 @@ public class CSVModel implements IRowChangesListener {
 	}
 
 	public void setCustomDelimiter(final char c) {
-		if ( c == getInfo().delimiter ) { return; }
-		getInfo().delimiter = c;
-		ResourceRefreshHandler.discardMetaData(file);
+		CSVInfo info = getInfo();
+		if ( c == info.delimiter ) { return; }
+		info.delimiter = c;
+		saveMetaData(info);
 	}
 
 	/**
@@ -150,7 +152,8 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	protected void readLines(final Reader reader) {
 		rows.clear();
-		getInfo().cols = 0;
+		CSVInfo info = getInfo();
+		info.cols = 0;
 
 		try {
 			CsvReader csvReader = initializeReader(reader);
@@ -162,12 +165,12 @@ public class CSVModel implements IRowChangesListener {
 			boolean setHeader = false;
 			while (csvReader.readRecord()) {
 				String[] rowValues = csvReader.getValues();
-				if ( rowValues.length > getInfo().cols ) {
-					getInfo().cols = rowValues.length;
+				if ( rowValues.length > info.cols ) {
+					info.cols = rowValues.length;
 				}
 				CSVRow csvRow = new CSVRow(rowValues, this);
 				if ( !rowValues[0].startsWith(String.valueOf(getCommentChar())) ) {
-					if ( getInfo().header && !setHeader ) {
+					if ( info.header && !setHeader ) {
 						setHeader = true;
 						csvRow.setHeader(true);
 						populateHeaders(rowValues);
@@ -179,7 +182,7 @@ public class CSVModel implements IRowChangesListener {
 
 			}
 
-			if ( !getInfo().header ) {
+			if ( !info.header ) {
 				populateHeaders(null);
 			}
 
@@ -188,7 +191,7 @@ public class CSVModel implements IRowChangesListener {
 			System.out.println("exception in readLines " + e);
 			e.printStackTrace();
 		}
-		this.discardMetaData();
+		this.saveMetaData(info);
 	}
 
 	// ----------------------------------
@@ -232,14 +235,15 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public void duplicateRow(final CSVRow row) {
 		CSVRow newRow = new CSVRow(row, this);
+		CSVInfo info = getInfo();
 		int indexRow = findRow(row);
 		if ( indexRow != -1 ) {
 			rows.add(indexRow, newRow);
-			discardMetaData();
-
 		} else {
 			addRow(newRow);
 		}
+		info.rows++;
+		saveMetaData(info);
 	}
 
 	/**
@@ -255,7 +259,9 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public void addRow(final CSVRow row) {
 		rows.add(row);
-		discardMetaData();
+		CSVInfo info = getInfo();
+		info.rows++;
+		saveMetaData(info);
 
 	}
 
@@ -263,16 +269,18 @@ public class CSVModel implements IRowChangesListener {
 	 * @param row
 	 */
 	public void addRowAfterElement(final CSVRow row) {
-		CSVRow newRow = CSVRow.createEmptyLine(getInfo().cols, this);
+		CSVInfo info = getInfo();
+		CSVRow newRow = CSVRow.createEmptyLine(info.cols, this);
 		int indexRow = findRow(row);
 
 		if ( indexRow != -1 ) {
 			rows.add(indexRow, newRow);
-			discardMetaData();
-
 		} else {
 			addRow(newRow);
 		}
+
+		info.rows++;
+		saveMetaData(info);
 
 	}
 
@@ -345,9 +353,12 @@ public class CSVModel implements IRowChangesListener {
 	 *
 	 */
 	public void removeRow(final CSVRow row) {
-		if ( !rows.remove(row) ) {
-			// TODO return error message
+		if ( !rows.remove(row) ) { return;
+		// TODO return error message
 		}
+		CSVInfo info = getInfo();
+		info.rows--;
+		saveMetaData(info);
 	}
 
 	// ----------------------------------
@@ -358,13 +369,14 @@ public class CSVModel implements IRowChangesListener {
 	 * @param colName
 	 */
 	public void addColumn(final String colName) {
-		getInfo().cols++;
-		getInfo().headers = Arrays.copyOf(getInfo().headers, getInfo().headers.length + 1);
-		getInfo().headers[getInfo().headers.length - 1] = colName;
+		CSVInfo info = getInfo();
+		info.cols++;
+		info.headers = Arrays.copyOf(info.headers, info.headers.length + 1);
+		info.headers[info.headers.length - 1] = colName;
 		for ( CSVRow row : rows ) {
 			row.addElement("");
 		}
-		discardMetaData();
+		saveMetaData(info);
 
 	}
 
@@ -381,19 +393,20 @@ public class CSVModel implements IRowChangesListener {
 	 * @param colIndex
 	 */
 	public void removeColumn(final int colIndex) {
-		if ( getInfo().header ) {
-			ArrayList<String> cols = new ArrayList(Arrays.asList(getInfo().headers));
+		CSVInfo info = getInfo();
+		if ( info.header ) {
+			ArrayList<String> cols = new ArrayList(Arrays.asList(info.headers));
 			cols.remove(colIndex);
-			getInfo().headers = cols.toArray(new String[cols.size()]);
+			info.headers = cols.toArray(new String[cols.size()]);
 		}
-		getInfo().cols--;
+		info.cols--;
 		for ( CSVRow row : rows ) {
 			if ( !row.isCommentLine() ) {
 				System.out.println("remove elmt:[" + colIndex + "] in row [" + row + "]");
 				row.removeElementAt(colIndex);
 			}
 		}
-		discardMetaData();
+		saveMetaData(info);
 	}
 
 	/**
@@ -466,21 +479,15 @@ public class CSVModel implements IRowChangesListener {
 	}
 
 	/**
-	 * @return
-	 */
-	public CSVInfo getCurrentMetaData() {
-		return getInfo();
-	}
-
-	/**
 	 *
 	 */
-	public void discardMetaData() {
+	public void saveMetaData(final CSVInfo info) {
 		// reload();
 
-		// System.out.println("Saving the following metadata: " + info.getSuffix());
+		System.out.println("Saving the following metadata: " + info.getSuffix());
 
-		ResourceRefreshHandler.discardMetaData(file);
+		FileMetaDataProvider.getInstance().storeMetadata(file, info, true);
+
 	}
 
 	/**
@@ -497,7 +504,7 @@ public class CSVModel implements IRowChangesListener {
 	/**
 	 * @return the info
 	 */
-	private CSVInfo getInfo() {
+	public CSVInfo getInfo() {
 		return (CSVInfo) FileMetaDataProvider.getInstance().getMetaData(file, false);
 	}
 }
