@@ -198,7 +198,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
 		GAMA.closeExperiment(getSpecies());
-		GAMA.getGui().closeSimulationViews(true);
+		GAMA.getGui().closeSimulationViews(true, false);
 		return null;
 	}
 

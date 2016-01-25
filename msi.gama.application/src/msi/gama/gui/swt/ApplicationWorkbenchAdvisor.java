@@ -153,7 +153,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public boolean preShutdown() {
 		try {
-			GAMA.closeAllExperiments(false);
+			GAMA.closeAllExperiments(true, true);
 			// end-hqnghi
 		} catch (Exception e) {
 			e.printStackTrace();

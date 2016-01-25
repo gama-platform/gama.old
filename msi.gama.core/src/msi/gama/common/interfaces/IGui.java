@@ -191,7 +191,7 @@ public interface IGui {
 	/**
 	 *
 	 */
-	void closeSimulationViews(boolean andOpenModelingPerspective);
+	void closeSimulationViews(boolean andOpenModelingPerspective, boolean immediately);
 
 	public DisplayDescription getDisplayDescriptionFor(final String name);
 

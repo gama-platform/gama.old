@@ -22,7 +22,7 @@ public class CancelRun extends AbstractHandler {
 
 			@Override
 			public void run() {
-				GAMA.closeAllExperiments(true);
+				GAMA.closeAllExperiments(true, false);
 			}
 		}).start();
 

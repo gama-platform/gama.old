@@ -337,7 +337,7 @@ public class HeadlessListener extends AbstractGui {
 	 * @see msi.gama.common.interfaces.IGui#closeSimulationViews(boolean)
 	 */
 	@Override
-	public void closeSimulationViews(final boolean andOpenModelingPerspective) {}
+	public void closeSimulationViews(final boolean andOpenModelingPerspective, final boolean immediately) {}
 
 	/**
 	 * Method getDisplayDescriptionFor()

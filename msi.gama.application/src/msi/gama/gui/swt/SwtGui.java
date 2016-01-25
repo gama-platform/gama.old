@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.part.FileEditorInput;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.*;
@@ -773,10 +773,11 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public final boolean openModelingPerspective(final boolean immediately) {
-		return openPerspective(PERSPECTIVE_MODELING_ID, immediately);
+		return openPerspective(PERSPECTIVE_MODELING_ID, immediately, true);
 	}
 
-	public final boolean openPerspective(final String perspectiveId, final boolean immediately) {
+	public final boolean openPerspective(final String perspectiveId, final boolean immediately,
+		final boolean withAutoSave) {
 		// loadPerspectives();
 		final IWorkbenchPage activePage = getPage(perspectiveId);
 		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
@@ -790,6 +791,7 @@ public class SwtGui extends AbstractGui {
 				@Override
 				public void run() {
 					activePage.setPerspective(descriptor);
+					activateAutoSave(withAutoSave);
 					debug("Perspective " + perspectiveId + " open ");
 
 				}
@@ -844,20 +846,24 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public void runModel(final IModel model, final String exp) {
-		debug("ASKING TO CHANGE PERSPECTIVE");
 		GAMA.getGui().openSimulationPerspective(true);
-		debug("PERSPECTIVE NORMALLY CHANGED");
 		GAMA.runGuiExperiment(exp, model);
 	}
 
 	@Override
 	public final boolean openSimulationPerspective(final boolean immediately) {
-		boolean b = openPerspective(PERSPECTIVE_SIMULATION_ID, immediately);
-		return b;
+		return openPerspective(PERSPECTIVE_SIMULATION_ID, immediately, false);
+
+	}
+
+	public static void activateAutoSave(final boolean activate) {
+		System.out.println("auto-save activated: " + activate);
+		Workbench.getInstance().setEnableAutoSave(activate);
+		// ApplicationWorkbenchAdvisor.CONFIGURER.setSaveAndRestore(activate);
 	}
 
 	public final boolean openBatchPerspective(final boolean immediately) {
-		return openPerspective(PERSPECTIVE_HPC_ID, immediately);
+		return openPerspective(PERSPECTIVE_HPC_ID, immediately, false);
 	}
 
 	public static GamaPreferences.Entry<String> COLOR_MENU_SORT =
@@ -1452,10 +1458,10 @@ public class SwtGui extends AbstractGui {
 		String idCurrentPerspective = window.getActivePage().getPerspective().getId();
 		try {
 			if ( idCurrentPerspective.equals(SimulationPerspective.ID) ) {
-				closeSimulationViews(true);
+				closeSimulationViews(true, true);
 			} else {
 				window.getWorkbench().showPerspective(SimulationPerspective.ID, window);
-				closeSimulationViews(true);
+				closeSimulationViews(true, true);
 			}
 		} catch (WorkbenchException e) {
 			e.printStackTrace();
@@ -1463,7 +1469,7 @@ public class SwtGui extends AbstractGui {
 	}
 
 	@Override
-	public void closeSimulationViews(final boolean openModelingPerspective) {
+	public void closeSimulationViews(final boolean openModelingPerspective, final boolean immediately) {
 		run(new Runnable() {
 
 			@Override
@@ -1480,7 +1486,7 @@ public class SwtGui extends AbstractGui {
 				}
 				if ( openModelingPerspective ) {
 
-					openModelingPerspective(false);
+					openModelingPerspective(immediately);
 
 				}
 				setStatus("No simulation running", IGui.NEUTRAL);

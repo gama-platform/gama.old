@@ -68,7 +68,7 @@ public class GAMA {
 		}
 		controller = newExperiment.getController();
 		if ( controllers.size() > 0 ) {
-			closeAllExperiments(false);
+			closeAllExperiments(false, false);
 		}
 
 		getGui().openSimulationPerspective(true);
@@ -137,12 +137,12 @@ public class GAMA {
 		controllers.remove(controller);
 	}
 
-	public static void closeAllExperiments(final boolean andOpenModelingPerspective) {
+	public static void closeAllExperiments(final boolean andOpenModelingPerspective, final boolean immediately) {
 		for ( IExperimentController controller : controllers ) {
 			controller.close();
 		}
 		controllers.clear();
-		getGui().closeSimulationViews(andOpenModelingPerspective);
+		getGui().closeSimulationViews(andOpenModelingPerspective, immediately);
 		// scope.getGui().wipeExperiments();
 	}
 
@@ -300,7 +300,7 @@ public class GAMA {
 		if ( controller == null || controller.getExperiment() == null ) { return new TemporaryScope(); }
 		final ExperimentAgent a = controller.getExperiment().getAgent();
 		if ( a == null || a.dead() ) { return controller.getExperiment().getExperimentScope(); }
-		final SimulationAgent s = (SimulationAgent) a.getSimulation();
+		final SimulationAgent s = a.getSimulation();
 		if ( s == null || s.dead() ) { return a.getScope(); }
 		return s.getScope();
 	}

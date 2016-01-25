@@ -17,12 +17,12 @@ package msi.gama.gui.viewers.csv.model;
 
 import java.io.*;
 import java.util.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.navigator.commands.ResourceRefreshHandler;
 import msi.gama.util.file.*;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  *
@@ -59,6 +59,7 @@ public class CSVModel implements IRowChangesListener {
 
 	public void setFirstLineHeader(final boolean header) {
 		getInfo().header = header;
+		ResourceRefreshHandler.discardMetaData(file);
 	}
 
 	/**
@@ -72,12 +73,13 @@ public class CSVModel implements IRowChangesListener {
 	public void setCustomDelimiter(final char c) {
 		if ( c == getInfo().delimiter ) { return; }
 		getInfo().delimiter = c;
+		ResourceRefreshHandler.discardMetaData(file);
 	}
 
 	/**
 	 * Get the character that defines comment lines
 	 * @return the comment line starting character. If no comments are allowed in this
-	 *         file, then Character.UNASSIGNED constant must be returned;
+	 * file, then Character.UNASSIGNED constant must be returned;
 	 *
 	 */
 	public char getCommentChar() {
