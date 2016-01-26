@@ -147,14 +147,14 @@ public class SimulationAgent extends GamlAgent {
 	public void schedule() {
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
-		try {
-			scope.getGui().prepareForSimulation(this);
-			super.schedule();
+		// try {
+		scope.getGui().prepareForSimulation(this);
+		super.schedule();
 
-		} finally {
-			// scope.getGui().informStatus("Simulation ready");
-			// scope.getGui().updateSimulationState();
-		}
+		// } finally {
+		// scope.getGui().informStatus("Simulation ready");
+		// scope.getGui().updateSimulationState();
+		// }
 
 	}
 

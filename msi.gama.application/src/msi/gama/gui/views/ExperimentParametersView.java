@@ -15,7 +15,6 @@ import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.IGui;
@@ -52,6 +51,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 			reset();
 			editors = (EditorsList<String>) exp.getParametersEditors();
 			if ( editors == null && exp.getUserCommands().isEmpty() ) { return; }
+			String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / " +
+				StringUtils.capitalize(experiment.getDescription().getTitle());
+			this.setPartName(expInfo);
 			displayItems();
 		} else {
 			experiment = null;
@@ -71,11 +73,11 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 	protected void displayCommands() {
 		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
-
-		String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / " +
-			StringUtils.capitalize(experiment.getDescription().getTitle());
-		toolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL, SWT.LEFT);
-		toolbar.sep(2, SWT.LEFT);
+		//
+		// String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / " +
+		// StringUtils.capitalize(experiment.getDescription().getTitle());
+		// toolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL, SWT.LEFT);
+		// toolbar.sep(2, SWT.LEFT);
 		for ( final IStatement command : userCommands ) {
 			ToolItem f = toolbar.button(IGamaColors.BLUE, command.getName(), new SelectionAdapter() {
 
@@ -115,6 +117,33 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 				}
 
 			}, SWT.RIGHT);
+		tb.button("menu.reload4", "Reload experiment", "Reload experiment with the current parameters",
+			new SelectionListener() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					GAMA.reloadFrontmostExperiment();
+				}
+
+				@Override
+				public void widgetDefaultSelected(final SelectionEvent e) {
+					widgetSelected(e);
+				}
+			}, SWT.RIGHT);
+		tb.button("menu.add2", "Add simulation",
+			"Add a new simulation (with the current parameters) to this experiment", new SelectionListener() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
+				}
+
+				@Override
+				public void widgetDefaultSelected(final SelectionEvent e) {
+					widgetSelected(e);
+				}
+			}, SWT.RIGHT);
+
 	}
 
 	@Override

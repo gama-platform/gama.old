@@ -50,11 +50,14 @@ public interface IGui {
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
 	public static final String TABLE_VIEW_ID = "msi.gama.application.view.TableAgentInspectView";
 	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
+	public static final String GL_LAYER_VIEW_ID = "msi.gama.application.view.OpenGLDisplayView";
 	public static final String WEB_VIEW_ID = "msi.gama.application.view.WebDisplayView";
 	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
 	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
 	public static final String HEADLESSPARAM_ID = "msi.gama.application.view.HeadlessParam";
 	public static final String HEADLESS_CHART_ID = "msi.gama.hpc.gui.HeadlessChart";
+	public static final String NAVIGATOR_VIEW_ID = "msi.gama.gui.view.GamaNavigator";
+	public static final String CONSOLE_VIEW_ID = "msi.gama.application.view.ConsoleView";
 
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
 	public static final String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";

@@ -693,12 +693,6 @@
                   icon="icons/menu.reset.perspective2.png"
                   label="Reset Perspective..."
                   style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="isInModelingPerspective">
-                  </reference>
-               </visibleWhen>
             </command>
             <separator
                   name="msi.gama.application.window.perspectives"
@@ -794,18 +788,6 @@
                   commandId="msi.gama.application.commands.StepByStepSimulation"
                   icon="icons/menu.step4.png"
                   label="Step"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="isSimulationReady">
-                  </reference>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="msi.gama.application.commands.ReloadSimulation"
-                  icon="icons/menu.reload4.png"
-                  label="Reload"
                   style="push">
                <visibleWhen
                      checkEnabled="false">

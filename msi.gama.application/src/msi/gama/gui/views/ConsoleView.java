@@ -30,7 +30,6 @@ import msi.gama.runtime.GAMA;
 
 public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
-	public static final String ID = "msi.gama.application.view.ConsoleView";
 	private MessageConsole msgConsole;
 	IOConsoleViewer viewer;
 	boolean paused = false;
