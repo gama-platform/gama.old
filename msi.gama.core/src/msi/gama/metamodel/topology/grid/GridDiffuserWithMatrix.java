@@ -109,7 +109,7 @@ public class GridDiffuserWithMatrix {
 				GridDiffusion gridToAnalyze = listWithSameVar.get(i);
 				if (gridToAnalyze != newGridDiff
 						&& gridToAnalyze.m_method_diffu == newGridDiff.m_method_diffu
-						&& gridToAnalyze.m_agents.equals(newGridDiff.m_agents)
+//						&& gridToAnalyze.m_agents.equals(newGridDiff.m_agents)
 						&& compareArrays(gridToAnalyze.m_mask,newGridDiff.m_mask)) {
 					// we can add the two diffusion matrix
 					listWithSameVar.remove(gridToAnalyze);
@@ -132,29 +132,41 @@ public class GridDiffuserWithMatrix {
 						cellNbjjToAddToGridToAnalyze = (newGridDiff.m_mat_diffu[0].length-gridToAnalyze.m_mat_diffu[0].length)/2;
 					}
 					else if (gridToAnalyze.m_mat_diffu[0].length > newGridDiff.m_mat_diffu[0].length) {
-						jjLength = newGridDiff.m_mat_diffu[0].length;
+						jjLength = gridToAnalyze.m_mat_diffu[0].length;
 						cellNbjjToAddToNewGrid = (gridToAnalyze.m_mat_diffu[0].length-newGridDiff.m_mat_diffu[0].length)/2;
 					}
 					double[][] newMat = new double[iiLength][jjLength];
 					for (int ii = 0 ; ii < iiLength ; ii++) {
 						for (int jj = 0 ; jj < jjLength ; jj++) {
 							double result = 0;
-							if ((gridToAnalyze.m_mat_diffu.length - iiLength + ii + cellNbiiToAddToGridToAnalyze >= 0) 
-									&& (gridToAnalyze.m_mat_diffu.length - iiLength + ii + cellNbiiToAddToGridToAnalyze < gridToAnalyze.m_mat_diffu.length)
-									&& (gridToAnalyze.m_mat_diffu[0].length - jjLength + jj + cellNbjjToAddToGridToAnalyze >= 0)
-									&& (gridToAnalyze.m_mat_diffu[0].length - jjLength + jj + cellNbjjToAddToGridToAnalyze < gridToAnalyze.m_mat_diffu[0].length)) {
-								result += gridToAnalyze.m_mat_diffu[ii][jj];
+							int indexiForGridToAnalyze = gridToAnalyze.m_mat_diffu.length - iiLength + ii + cellNbiiToAddToGridToAnalyze;
+							int indexjForGridToAnalyze = gridToAnalyze.m_mat_diffu[0].length - jjLength + jj + cellNbjjToAddToGridToAnalyze;
+							if ((indexiForGridToAnalyze >= 0) 
+									&& (indexiForGridToAnalyze < gridToAnalyze.m_mat_diffu.length)
+									&& (indexjForGridToAnalyze >= 0)
+									&& (indexjForGridToAnalyze < gridToAnalyze.m_mat_diffu[0].length)) {
+								result += gridToAnalyze.m_mat_diffu[indexiForGridToAnalyze][indexjForGridToAnalyze];
 							}
-							if ((newGridDiff.m_mat_diffu.length - iiLength + ii + cellNbiiToAddToNewGrid >= 0)
-									&& (newGridDiff.m_mat_diffu.length - iiLength + ii + cellNbiiToAddToNewGrid < newGridDiff.m_mat_diffu.length)
-									&& (newGridDiff.m_mat_diffu[0].length - jjLength + jj + cellNbjjToAddToNewGrid >= 0)
-									&& (newGridDiff.m_mat_diffu[0].length - jjLength + jj + cellNbjjToAddToNewGrid < newGridDiff.m_mat_diffu[0].length)) {
-								result += newGridDiff.m_mat_diffu[ii][jj];
+							int indexiForNewGridDiff = newGridDiff.m_mat_diffu.length - iiLength + ii + cellNbiiToAddToNewGrid;
+							int indexjForNewGridDiff = newGridDiff.m_mat_diffu[0].length - jjLength + jj + cellNbjjToAddToNewGrid;
+							if ((indexiForNewGridDiff >= 0)
+									&& (indexiForNewGridDiff < newGridDiff.m_mat_diffu.length)
+									&& (indexjForNewGridDiff >= 0)
+									&& (indexjForNewGridDiff < newGridDiff.m_mat_diffu[0].length)) {
+								result += newGridDiff.m_mat_diffu[indexiForNewGridDiff][indexjForNewGridDiff];
 							}
 							newMat[ii][jj] = result;
 						}
 					}
 					newGridDiff.m_mat_diffu = newMat;
+					// we add the two "agents" list also
+					List<Integer> newList = gridToAnalyze.m_agents;
+					for(int listidx = 0; listidx < newGridDiff.m_agents.size(); listidx++) {
+						if (!newList.contains(newGridDiff.m_agents.get(listidx))) {
+							newList.add(newGridDiff.m_agents.get(listidx));
+						}
+					}
+					newGridDiff.m_agents = newList;
 				}
 			}
 			listWithSameVar.add(newGridDiff);
@@ -233,10 +245,6 @@ public class GridDiffuserWithMatrix {
 		for (int agenti = 0; agenti < agents.size(); agenti++) {
 			int i = agents.get(agenti) - (int)(agents.get(agenti)/nbCols)*nbCols; // col number
 			int j = (int)(agents.get(agenti)/nbCols); // row number
-			if (i >= 5 || j >= 5)
-			{
-				System.out.println("i = "+i+" | j = "+j+" with agentId = "+agents.get(agenti));
-			}
 
 
 

@@ -46,33 +46,30 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement.DiffusionValidator;
 
-@facets(value = { 
-	@facet(name = IKeyword.VAR, type = IType.ID, optional = false, doc = @doc("the variable to be diffused")),
-	@facet(name = IKeyword.ON, type = IType.CONTAINER ,optional = false, doc = @doc("the list of agents (in general cells of a grid), on which the diffusion will occur")),
-	@facet(name = "mat_diffu", type = IType.MATRIX, optional = true, doc = @doc("the diffusion matrix (can have any size)")),
-	@facet(name = IKeyword.METHOD, type = IType.ID, optional = true, values = { "convolution", "dot_product" }, doc = @doc("the diffusion method")),
-	@facet(name = IKeyword.MASK, type = IType.MATRIX, optional = true, doc = @doc("a matrix masking the diffusion (matrix created from a image for example)")),
-	@facet(name = "proportion", type = IType.FLOAT, optional = true, doc = @doc("a diffusion rate")),
-	@facet(name = "radius", type = IType.INT, optional = true, doc = @doc("a diffusion radius")),
-	@facet(name = IKeyword.CYCLE_LENGTH, type = IType.INT, optional = true, doc = @doc("the number of diffusion operation applied in one simulation step")) }, omissible = IKeyword.VAR)
+@facets(value = {
+		@facet(name = IKeyword.VAR, type = IType.ID, optional = false, doc = @doc("the variable to be diffused") ),
+		@facet(name = IKeyword.ON, type = IType.CONTAINER, optional = false, doc = @doc("the list of agents (in general cells of a grid), on which the diffusion will occur") ),
+		@facet(name = "mat_diffu", type = IType.MATRIX, optional = true, doc = @doc("the diffusion matrix (can have any size)") ),
+		@facet(name = IKeyword.METHOD, type = IType.ID, optional = true, values = { "convolution",
+				"dot_product" }, doc = @doc("the diffusion method") ),
+		@facet(name = IKeyword.MASK, type = IType.MATRIX, optional = true, doc = @doc("a matrix masking the diffusion (matrix created from a image for example)") ),
+		@facet(name = "proportion", type = IType.FLOAT, optional = true, doc = @doc("a diffusion rate") ),
+		@facet(name = "radius", type = IType.INT, optional = true, doc = @doc("a diffusion radius") ),
+		@facet(name = IKeyword.CYCLE_LENGTH, type = IType.INT, optional = true, doc = @doc("the number of diffusion operation applied in one simulation step") ) }, omissible = IKeyword.VAR)
 @symbol(name = { "diffusion" }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(DiffusionValidator.class)
-@doc(value="This statements allows a value to diffuse among a species on agents (generally on a grid) depending on a given diffusion matrix.", usages = {
-	@usage(value="A basic example of diffusion of the variable phero defined in the species cells, given a diffusion matrix math_diff is:", examples = {
-		@example(value="matrix<float> math_diff <- matrix([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]]);",isExecutable=false),
-		@example(value="diffusion var: phero on: cells mat_diffu: math_diff;",isExecutable=false)
-	}),
-	@usage(value="The diffusion can be masked by obstacles, created from a bitmap image:", examples = {
-		@example(value="diffusion var: phero on: cells mat_diffu: math_diff mask: mymask;",isExecutable=false)
-	}),	
-	@usage(value="A convenient way to have an uniform diffusion in a given radius is (which is equivalent to the above diffusion):", examples = {
-		@example(value="diffusion var: phero on: cells proportion: 1/9 radius: 1;",isExecutable=false)
-	})
-})
+@doc(value = "This statements allows a value to diffuse among a species on agents (generally on a grid) depending on a given diffusion matrix.", usages = {
+		@usage(value = "A basic example of diffusion of the variable phero defined in the species cells, given a diffusion matrix math_diff is:", examples = {
+				@example(value = "matrix<float> math_diff <- matrix([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]]);", isExecutable = false),
+				@example(value = "diffusion var: phero on: cells mat_diffu: math_diff;", isExecutable = false) }),
+		@usage(value = "The diffusion can be masked by obstacles, created from a bitmap image:", examples = {
+				@example(value = "diffusion var: phero on: cells mat_diffu: math_diff mask: mymask;", isExecutable = false) }),
+		@usage(value = "A convenient way to have an uniform diffusion in a given radius is (which is equivalent to the above diffusion):", examples = {
+				@example(value = "diffusion var: phero on: cells proportion: 1/9 radius: 1;", isExecutable = false) }) })
 public class DiffusionStatement extends AbstractStatement {
- 
-//	public static Class VALIDATOR = DiffusionValidator.class;
+
+	// public static Class VALIDATOR = DiffusionValidator.class;
 
 	public static class DiffusionValidator implements IDescriptionValidator {
 
@@ -80,21 +77,21 @@ public class DiffusionStatement extends AbstractStatement {
 		public void validate(final IDescription desc) {
 			IExpression spec = desc.getFacets().getExpr("on");
 			if (spec.getType().getTitle().split("\\[")[0].equals(Types.SPECIES.toString())) {
-				if ( !desc.getSpeciesDescription(spec.getName()).isGrid() ) {
+				if (!desc.getSpeciesDescription(spec.getName()).isGrid()) {
 					desc.error("Diffusions can only be executed on grid species", IGamlIssue.GENERAL);
 				}
 			} else {
-				if (! spec.getType().getContentType().isAgentType())
+				if (!spec.getType().getContentType().isAgentType())
 					desc.error("Diffusions can only be executed on list of agents", IGamlIssue.GENERAL);
 			}
 			IExpressionDescription mat_diffu = desc.getFacets().get("mat_diffu");
 			IExpressionDescription propor = desc.getFacets().get("proportion");
 			IExpressionDescription radius = desc.getFacets().get("radius");
-			if ( propor != null && mat_diffu != null ) {
+			if (propor != null && mat_diffu != null) {
 				desc.error("\"mat_diffu:\" and \"proportion:\" can not be used at the same time", IGamlIssue.GENERAL);
 			}
 
-			if ( radius != null && propor == null ) {
+			if (radius != null && propor == null) {
 				desc.error("\"radius:\" can be used only with \"proportion:\"", IGamlIssue.GENERAL);
 			}
 
@@ -103,7 +100,6 @@ public class DiffusionStatement extends AbstractStatement {
 
 	private boolean is_torus = false;
 	private String var_diffu = "";
-	private  String species_diffu;
 	// true for convolution, false for dot_product
 	private boolean method_diffu = true;
 	boolean initialized = false;
@@ -116,203 +112,48 @@ public class DiffusionStatement extends AbstractStatement {
 	public DiffusionStatement(final IDescription desc) {
 		super(desc);
 		method_diffu = getLiteral(IKeyword.METHOD, "convolution").equals("convolution");
-		//species_diffu = getLiteral(IKeyword.ON);
-		if ( envName == null ) {
+		if (envName == null) {
 			SpeciesDescription s = onExpr.getType().getContentType().getSpecies();
 			envName = s.getName();
 		}
 
 	}
+
 	double[] input, output;
 	int nbRows, nbCols;
-	
+
 	private IGrid getEnvironment(final IScope scope) {
 		return (IGrid) scope.getSimulationScope().getPopulationFor(envName).getTopology().getPlaces();
 	}
 
-	public void initDiffusion(final IScope scope, final IPopulation pop) {
-
-		if ( getFacet("proportion") != null ) {
-			double init_proportion = Cast.asFloat(scope, getFacet("proportion").value(scope));
-			int radius = 1;
-			if ( getFacet("radius") != null ) {
-				radius = Cast.asInt(scope, getFacet("radius").value(scope));
-			}
-			mat_diffu = new double[radius * 2 + 1][radius * 2 + 1];
-			for ( int i = 0; i <= radius * 2; i++ ) {
-				Arrays.fill(mat_diffu[i], init_proportion);
-			}
-		}
-		for ( int i = 0; i < input.length; i++ ) {
-			if (agents == null || agents.contains(i))
-				input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
-			else 
-				input[i] = 0;
-			
-		}
-		
-		Arrays.fill(output, 0d);
-	}
-
-	public void doDiffusion1(final IScope scope) {
-
-		int kRows = mat_diffu.length;
-		int kCols = mat_diffu[0].length;
-
-		int kCenterX = kRows / 2;
-		int kCenterY = kCols / 2;
-		int mm = 0, nn = 0, ii = 0, jj = 0;
-
-		for ( int i = 0; i < nbRows; ++i ) // rows
-		{
-			for ( int j = 0; j < nbCols; ++j ) // columns
-			{
-				// sum = 0; // init to 0 before sum
-				for ( int m = 0; m < kRows; ++m ) // kernel rows
-				{
-					mm = kRows - 1 - m; // row index of flipped kernel
-					for ( int n = 0; n < kCols; ++n ) // kernel columns
-					{
-						nn = kCols - 1 - n; // column index of flipped kernel
-						// index of input signal, used for checking boundary
-						ii = i + m - kCenterX;
-						jj = j + n - kCenterY;
-						// ignore input samples which are out of bound
-						if ( is_torus ) {
-							if ( ii < 0 ) {
-								ii = nbRows + ii;
-							} else if ( ii >= nbRows ) {
-								ii = ii - nbRows;
-							}
-
-							if ( jj < 0 ) {
-								jj = nbCols + jj;
-							} else if ( jj >= nbCols ) {
-								jj = jj - nbCols;
-							}
-						}
-						if ( ii >= 0 && ii < nbRows && jj >= 0 && jj < nbCols ) {
-							double mask_current = mask != null ? mask[i][j] < -1 ? 0 : 1 : 1;
-							output[i * nbCols + j] += input[ii * nbCols + jj] * mat_diffu[mm][nn] * mask_current;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public void doDiffusion2(final IScope scope) {
-
-		int kRows = mat_diffu.length;
-		int kCols = mat_diffu[0].length;
-
-		int xcenter = kRows / 2;
-		int ycenter = kCols / 2;
-
-		for ( int i = 0; i < nbRows; i++ ) {
-			for ( int j = 0; j < nbCols; j++ ) {
-
-				int um = 0;
-				for ( int uu = i - xcenter; uu <= i + xcenter; uu++ ) {
-					int vm = 0;
-					for ( int vv = j - ycenter; vv <= j + ycenter; vv++ ) {
-						int u = uu;
-						int v = vv;
-						double mask_current = mask != null ? mask[i][j] < -1 ? 0 : 1 : 1;
-						if ( is_torus ) {
-							if ( u < 0 ) {
-								u = nbRows + u;
-							} else if ( u >= nbRows ) {
-								u = u - nbRows;
-							}
-
-							if ( v < 0 ) {
-								v = nbCols + v;
-							} else if ( v >= nbCols ) {
-								v = v - nbCols;
-							}
-						} else if ( u >= 0 && v >= 0 & v < nbCols & u < nbRows ) {
-							output[u * nbCols + v] += input[i * nbCols + j] * mat_diffu[um][vm] * mask_current;
-						}
-
-						vm++;
-					}
-					um++;
-
-				}
-			}
-		}
-
-	}
-
-	public void finishDiffusion(final IScope scope, final IPopulation pop) {
-		for ( int i = 0; i < output.length; i++ ) {
-			if (agents == null || agents.contains(i))
-					pop.get(scope, i).setDirectVarValue(scope, var_diffu, output[i]);
-		}
-	}
-
 	public double[][] translateMatrix(final IScope scope, final IMatrix mm) {
-		if ( mm == null ) { return null; }
+		if (mm == null) {
+			return null;
+		}
 		int rows = mm.getRows(scope);
 		int cols = mm.getCols(scope);
 		double[][] res = new double[rows][cols];
-		for ( int i = 0; i < rows; i++ ) {
-			for ( int j = 0; j < cols; j++ ) {
-				res[i][j] = Cast.asFloat(scope, mm.get(scope, i, j));
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				res[i][j] = Cast.asFloat(scope, mm.get(scope, j, i));
 			}
 		}
 		return res;
 	}
 
-	private void initialize(final IScope scope) {
-		cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
-		
-		Object obj = getFacetValue(scope, IKeyword.ON);
-		GridPopulation pop = null;
-		if (obj instanceof ISpecies) {
-			agents = null;
-			if (((ISpecies)obj).isGrid())
-				pop = (GridPopulation) ((ISpecies)obj).getPopulation(scope);
-		} else {
-			IList<IAgent> ags = Cast.asList(scope, obj);
-			if (! ags.isEmpty()) {
-				ISpecies sp = ags.get(0).getSpecies();
-				if (sp.isGrid()) {
-					pop = (GridPopulation) sp.getPopulation(scope);
-					agents = new ArrayList<Integer>();
-					for (IAgent ag : ags) 
-						agents.add(ag.getIndex());
-				} else {
-					throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
-				}
-				
-			}
-		}
-		
-		species_diffu = pop.getName();
-		input = new double[pop.length(scope)];
-		output = new double[pop.length(scope)];
-		nbRows = ((IGrid) pop.getTopology().getPlaces()).getRows(scope);
-		nbCols = ((IGrid) pop.getTopology().getPlaces()).getCols(scope);
-		is_torus = pop.getTopology().isTorus();
-		mask = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK)));
-		mat_diffu = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, "mat_diffu")));
-		var_diffu = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
-	}
-	
 	private double[][] computeMatrix(double[][] basicMatrix, int numberOfIteration) {
 		double[][] input_mat_diffu = basicMatrix;
-		for (int nb = 2; nb<=cLen; nb++) {
-			double[][] output_mat_diffu = new double[(basicMatrix.length-1)*nb+1][(basicMatrix[0].length-1)*nb+1];
-			for (int i = 0; i<output_mat_diffu.length; i++) {
+		for (int nb = 2; nb <= cLen; nb++) {
+			double[][] output_mat_diffu = new double[(basicMatrix.length - 1) * nb + 1][(basicMatrix[0].length - 1) * nb
+					+ 1];
+			for (int i = 0; i < output_mat_diffu.length; i++) {
 				Arrays.fill(output_mat_diffu[i], 0);
 			}
-			for (int i=0; i<input_mat_diffu.length; i++) {
-				for (int j=0; j<input_mat_diffu[0].length; j++) {
-					for (int ii=0; ii<basicMatrix.length; ii++) {
-						for (int jj=0; jj<basicMatrix[0].length; jj++) {
-							output_mat_diffu[i+ii][j+jj] += input_mat_diffu[i][j]*basicMatrix[ii][jj];
+			for (int i = 0; i < input_mat_diffu.length; i++) {
+				for (int j = 0; j < input_mat_diffu[0].length; j++) {
+					for (int ii = 0; ii < basicMatrix.length; ii++) {
+						for (int jj = 0; jj < basicMatrix[0].length; jj++) {
+							output_mat_diffu[i + ii][j + jj] += input_mat_diffu[i][j] * basicMatrix[ii][jj];
 						}
 					}
 				}
@@ -324,24 +165,23 @@ public class DiffusionStatement extends AbstractStatement {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		
+
 		cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
 		mask = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK)));
 		mat_diffu = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, "mat_diffu")));
 		var_diffu = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
-		
+
 		if (cLen != 1) {
-			mat_diffu = computeMatrix(mat_diffu,cLen);
+			mat_diffu = computeMatrix(mat_diffu, cLen);
 		}
-		
+
 		Object obj = getFacetValue(scope, IKeyword.ON);
 		GridPopulation pop = null;
-		
+
 		if (obj instanceof ISpecies) {
 			// the diffusion is applied to the whole grid
-			if (((ISpecies)obj).isGrid())
-			{
-				pop = (GridPopulation) ((ISpecies)obj).getPopulation(scope);
+			if (((ISpecies) obj).isGrid()) {
+				pop = (GridPopulation) ((ISpecies) obj).getPopulation(scope);
 				if (mask == null) {
 					mask = new double[pop.getNbCols()][pop.getNbRows()];
 					for (int i = 0; i < mask.length; i++) {
@@ -352,9 +192,10 @@ public class DiffusionStatement extends AbstractStatement {
 				}
 			}
 		} else {
-			// the diffusion is applied just to a certain part of the grid. Search the mask.
+			// the diffusion is applied just to a certain part of the grid.
+			// Search the mask.
 			IList<IAgent> ags = Cast.asList(scope, obj);
-			if (! ags.isEmpty()) {
+			if (!ags.isEmpty()) {
 				ISpecies sp = ags.get(0).getSpecies();
 				if (sp.isGrid()) {
 					pop = (GridPopulation) sp.getPopulation(scope);
@@ -366,9 +207,9 @@ public class DiffusionStatement extends AbstractStatement {
 							}
 						}
 					}
-					for (IAgent ag : ags) 
-					{
-						mask[ag.getIndex()-ag.getIndex()/pop.getNbCols()*pop.getNbCols()][ag.getIndex()/pop.getNbCols()] = 1;
+					for (IAgent ag : ags) {
+						mask[ag.getIndex() - ag.getIndex() / pop.getNbCols() * pop.getNbCols()][ag.getIndex()
+								/ pop.getNbCols()] = 1;
 					}
 				} else {
 					throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
@@ -376,42 +217,43 @@ public class DiffusionStatement extends AbstractStatement {
 			}
 		}
 		agents = new ArrayList<Integer>();
-		
+
 		int rowMax = pop.getNbRows();
 		int colMax = pop.getNbCols();
 		for (int colNb = 0; colNb < pop.getNbCols(); colNb++) {
 			for (int rowNb = 0; rowNb < pop.getNbRows(); rowNb++) {
 				if ((Cast.asFloat(scope, pop.getAgent(colNb, rowNb).getDirectVarValue(scope, var_diffu)) != 0)
 						&& (mask[colNb][rowNb] != 0)) {
-					IAgent agent = pop.getAgent(colNb,rowNb);
-					int agentIndex = pop.getAgent(colNb,rowNb).getIndex();
+					int agentIndex = pop.getAgent(colNb, rowNb).getIndex();
 					for (int i = 0; i < mat_diffu.length; i++) {
 						for (int j = 0; j < mat_diffu[0].length; j++) {
-							int row = (int)(agentIndex/colMax)+i-mat_diffu.length/2;
-							int col = agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2;
-//							int maski = rowNb+i-mat_diffu.length/2;
-//							int maskj = colNb+j-mat_diffu[0].length/2;
-//							int agentI = agentIndex+(i-mat_diffu.length/2)*mat_diffu[0].length+(j-mat_diffu[0].length/2);
-							if (!agents.contains(((int)(agentIndex/colMax)+i-mat_diffu.length/2)*colMax+(agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2))
-									&& ( (((int)(agentIndex/colMax)+i-mat_diffu.length/2 >= 0) 
-											&& ((int)(agentIndex/colMax)+i-mat_diffu.length/2 < rowMax)
-											&& (agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2 >= 0)
-											&& (agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2 < colMax))
-											|| is_torus)
-									/*&& (mask[rowMax+i-mat_diffu.length/2][colNb+j-mat_diffu[0].length/2] == 1)*/) {
-//								agents.add(agentIndex+(i-mat_diffu.length/2)*mat_diffu[0].length+(j-mat_diffu[0].length/2));
-								agents.add(((int)(agentIndex/colMax)+i-mat_diffu.length/2)*colMax+(agentIndex-colMax*(int)(agentIndex/colMax)+j-mat_diffu[0].length/2));
+							int rowIdx = (int) (agentIndex / colMax) + i - mat_diffu.length / 2;
+							int colIdx = agentIndex - colMax * (int) (agentIndex / colMax) + j
+									- mat_diffu[0].length / 2;
+							if (pop.getTopology().isTorus()) {
+								if (rowIdx < 0) {
+									rowIdx = rowIdx + rowMax;
+								} else if (rowIdx >= rowMax) {
+									rowIdx = rowIdx - rowMax;
+								}
+								if (colIdx < 0) {
+									colIdx = colIdx + colMax;
+								} else if (colIdx >= colMax) {
+									colIdx = colIdx - colMax;
+								}
+							}
+							if (!agents.contains(rowIdx * colMax + (colIdx)) && (rowIdx >= 0) && (rowIdx < rowMax)
+									&& (colIdx >= 0) && (colIdx < colMax)) {
+								agents.add(rowIdx * colMax + colIdx);
 							}
 						}
 					}
 				}
 			}
 		}
-		
-		species_diffu = pop.getName();
-		getEnvironment(scope).diffuseVariableWithMatrix(scope, method_diffu, mat_diffu, mask, 
-				var_diffu, pop, agents);
-		
+
+		getEnvironment(scope).diffuseVariableWithMatrix(scope, method_diffu, mat_diffu, mask, var_diffu, pop, agents);
+
 		return null;
 	}
 }
