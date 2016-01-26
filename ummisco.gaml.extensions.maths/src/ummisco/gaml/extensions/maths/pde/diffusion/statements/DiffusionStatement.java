@@ -283,7 +283,7 @@ public class DiffusionStatement extends AbstractStatement {
 
 		int rowMax = pop.getNbRows();
 		int colMax = pop.getNbCols();
-		for (int colNb = 0; colNb < pop.getNbCols(); colNb++) {
+		for (int colNb = 0; colNb < 0/*pop.getNbCols()*/; colNb++) {
 			for (int rowNb = 0; rowNb < pop.getNbRows(); rowNb++) {
 				if ((Cast.asFloat(scope, pop.getAgent(colNb, rowNb).getDirectVarValue(scope, var_diffu)) != 0)
 						&& (mask[colNb][rowNb] != 0)) {

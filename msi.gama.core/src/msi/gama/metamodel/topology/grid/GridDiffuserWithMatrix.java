@@ -160,13 +160,13 @@ public class GridDiffuserWithMatrix {
 					}
 					newGridDiff.m_mat_diffu = newMat;
 					// we add the two "agents" list also
-					List<Integer> newList = gridToAnalyze.m_agents;
-					for(int listidx = 0; listidx < newGridDiff.m_agents.size(); listidx++) {
-						if (!newList.contains(newGridDiff.m_agents.get(listidx))) {
-							newList.add(newGridDiff.m_agents.get(listidx));
-						}
-					}
-					newGridDiff.m_agents = newList;
+//					List<Integer> newList = gridToAnalyze.m_agents;
+//					for(int listidx = 0; listidx < newGridDiff.m_agents.size(); listidx++) {
+//						if (!newList.contains(newGridDiff.m_agents.get(listidx))) {
+//							newList.add(newGridDiff.m_agents.get(listidx));
+//						}
+//					}
+//					newGridDiff.m_agents = newList;
 				}
 			}
 			listWithSameVar.add(newGridDiff);
@@ -213,7 +213,7 @@ public class GridDiffuserWithMatrix {
 //			}
 //		}
 		
-		agents = gridDiff.m_agents;
+//		agents = gridDiff.m_agents;
 //		if (agents == null) {
 //			agents = new ArrayList<Integer>();
 //			for (int i = 0; i < nbRows*nbCols; i++) {
@@ -242,16 +242,16 @@ public class GridDiffuserWithMatrix {
 		int kCenterY = kRows / 2;
 		int mm = 0, nn = 0, ii = 0, jj = 0;
 		
-		for (int agenti = 0; agenti < agents.size(); agenti++) {
-			int i = agents.get(agenti) - (int)(agents.get(agenti)/nbCols)*nbCols; // col number
-			int j = (int)(agents.get(agenti)/nbCols); // row number
+//		for (int agenti = 0; agenti < agents.size(); agenti++) {
+//			int i = agents.get(agenti) - (int)(agents.get(agenti)/nbCols)*nbCols; // col number
+//			int j = (int)(agents.get(agenti)/nbCols); // row number
 
 
 
-//		for ( int i = 0; i < nbRows; ++i ) // rows
-//		{
-//			for ( int j = 0; j < nbCols; ++j ) // columns
-//			{
+		for ( int i = 0; i < nbRows; ++i ) // rows
+		{
+			for ( int j = 0; j < nbCols; ++j ) // columns
+			{
 				// sum = 0; // init to 0 before sum
 				for ( int m = 0; m < kRows; ++m ) // kernel rows
 				{
@@ -276,23 +276,24 @@ public class GridDiffuserWithMatrix {
 								jj = jj - nbCols;
 							}
 						}
-						if ( ii >= 0 && ii < nbCols && jj >= 0 && jj < nbRows) {
+						if ( ii >= 0 && ii < nbCols && jj >= 0 && jj < nbRows && mask[ii][jj] == 1) {
 //							double mask_current = mask != null ? mask[ii][jj] < -1 ? 0 : 1 : 1;
-							double mask_current = mask[ii][jj];
-							output[j * nbCols + i] += input[jj * nbCols + ii] * mat_diffu[mm][nn] * mask_current;
+//							double mask_current = mask[ii][jj];
+							if (output[j * nbCols + i] == -1) {output[j * nbCols + i] = input[jj * nbCols + ii] * mat_diffu[mm][nn];}
+							else {output[j * nbCols + i] += input[jj * nbCols + ii] * mat_diffu[mm][nn];}// * mask_current;
 //							if (!list_of_agents_who_will_change.contains(ii*nbRows+jj)) {
 //								list_of_agents_who_will_change.add(ii*nbRows+jj);
 //							}
 						}
 					}
 				}
-//			}
+			}
 		}
-		float sum = 0;
-		for (int i = 0 ; i < output.length; i++) {
-			sum += output[i];
-		}
-		System.out.println("SUM : "+sum);
+//		float sum = 0;
+//		for (int i = 0 ; i < output.length; i++) {
+//			sum += output[i];
+//		}
+//		System.out.println("SUM : "+sum);
 	}
 
 	public void doDiffusion2() {
@@ -342,7 +343,8 @@ public class GridDiffuserWithMatrix {
 	public void finishDiffusion(final IScope scope, final IPopulation pop) {
 		for ( int i = 0; i < output.length; i++ ) {
 //			if (list_of_agents_who_will_change == null || list_of_agents_who_will_change.contains(i))
-					pop.get(scope, i).setDirectVarValue(scope, var_diffu, output[i]);
+			if (output[i]!=-1)
+				pop.get(scope, i).setDirectVarValue(scope, var_diffu, output[i]);
 		}
 	}
 
@@ -375,7 +377,7 @@ public class GridDiffuserWithMatrix {
 			Iterator<GridDiffusion> gridDiffIterator = listGridDiffu.iterator();
 			input = new double[pairVarGrid.m_nbCols*pairVarGrid.m_nbRows];
 			output = new double[pairVarGrid.m_nbCols*pairVarGrid.m_nbRows];
-			Arrays.fill(output, 0d);
+			Arrays.fill(output, -1d);
 			while (gridDiffIterator.hasNext()) {
 				System.out.println("2");
 				GridDiffusion gridDiffusion = gridDiffIterator.next();
