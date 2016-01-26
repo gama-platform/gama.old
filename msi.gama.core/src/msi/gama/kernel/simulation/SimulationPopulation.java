@@ -85,4 +85,50 @@ public class SimulationPopulation extends GamaPopulation {
 		topology = new AmorphousTopology();
 	}
 
+	// @Override
+	// public SimulationAgent[] toArray() {
+	// return (SimulationAgent[]) super.toArray();
+	// }
+
+	@Override
+	public boolean step(final IScope scope) throws GamaRuntimeException {
+
+		for ( IAgent a : toArray() ) {
+			((SimulationAgent) a)._step_(scope);
+		}
+
+		return true;
+	}
+
+	//
+	// A trial on multi-threaded simulations
+	// @Override
+	// public boolean step(final IScope scope) throws GamaRuntimeException {
+	//
+	// final IAgent[] agents = toArray();
+	// final Semaphore semaphore = new Semaphore(0);
+	// final Thread[] threads = new Thread[agents.length];
+	// for ( int i = 0; i < agents.length; i++ ) {
+	// final IAgent a = agents[i];
+	// threads[i] = new Thread(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	//
+	// a.getScope().step(a);
+	// semaphore.release();
+	// }
+	// });
+	// }
+	// for ( Thread t : threads ) {
+	// t.start();
+	// }
+	// try {
+	// semaphore.acquire(agents.length);
+	// } catch (InterruptedException e) {
+	// e.printStackTrace();
+	// }
+	// return true;
+	// }
+
 }

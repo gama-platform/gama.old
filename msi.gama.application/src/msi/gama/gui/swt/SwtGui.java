@@ -578,7 +578,7 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public void showConsoleView() {
-		console = (ConsoleView) showView(ConsoleView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
+		console = (ConsoleView) showView(CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		// eraseConsole(false);
 		if ( consoleBuffer.length() > 0 ) {
 			console.append(consoleBuffer.toString(), null, null);

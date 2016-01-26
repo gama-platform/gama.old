@@ -12,6 +12,7 @@
 package msi.gama.gui.swt.perspectives;
 
 import org.eclipse.ui.*;
+import msi.gama.common.interfaces.IGui;
 
 public class SimulationPerspective implements IPerspectiveFactory {
 
@@ -19,35 +20,29 @@ public class SimulationPerspective implements IPerspectiveFactory {
 	public static final String ID = "msi.gama.application.perspectives.SimulationPerspective";
 
 	@Override
-	public void createInitialLayout(final IPageLayout layout) {
+	public void createInitialLayout(final IPageLayout lay) {
 
-		layout.setFixed(false);
-		String editorId = layout.getEditorArea();
-		layout.addView("msi.gama.gui.view.GamaNavigator", IPageLayout.LEFT, 0.23f, editorId);
-		// IViewLayout nav = layout.getViewLayout("msi.gama.gui.view.GamaNavigator");
-		// nav.setMoveable(false);
-		//
-		IPlaceholderFolderLayout displays =
-			layout.createPlaceholderFolder("layersFolder", IPageLayout.TOP, 0.7f, editorId);
+		lay.setFixed(false);
+		lay.setEditorAreaVisible(false);
+		String editor = lay.getEditorArea();
 
-		displays.addPlaceholder("msi.gama.application.view.LayeredDisplayView:*");
+		IFolderLayout navigAndParam = lay.createFolder("navigAndParam", IPageLayout.LEFT, 0.3f, editor);
+		navigAndParam.addView(IGui.PARAMETER_VIEW_ID);
+		navigAndParam.addView(IGui.NAVIGATOR_VIEW_ID);
+		navigAndParam.addPlaceholder(IGui.ERROR_VIEW_ID);
 
-		IPlaceholderFolderLayout inspectorsFolder =
-			layout.createPlaceholderFolder("inspectorsFolder", IPageLayout.RIGHT, 0.52f, "layersFolder");
+		lay.addView(IGui.CONSOLE_VIEW_ID, IPageLayout.BOTTOM, 0.70f, "navigAndParam");
 
-		inspectorsFolder.addPlaceholder("msi.gama.application.view.ParameterView");
-		inspectorsFolder.addPlaceholder("msi.gama.application.view.PopulationInspectView:*");
-		inspectorsFolder.addPlaceholder("msi.gama.application.view.AgentInspectView");
+		IPlaceholderFolderLayout displays = lay.createPlaceholderFolder("displays", IPageLayout.TOP, 0.7f, editor);
+		displays.addPlaceholder(IGui.LAYER_VIEW_ID + ":*");
+		displays.addPlaceholder(IGui.GL_LAYER_VIEW_ID + ":*");
 
-		IPlaceholderFolderLayout inspectorsFolder2 =
-			layout.createPlaceholderFolder("inspectorsFolder2", IPageLayout.BOTTOM, 0.50f, "inspectorsFolder");
+		IPlaceholderFolderLayout inspect = lay.createPlaceholderFolder("inspect", IPageLayout.RIGHT, 0.6f, "displays");
+		inspect.addPlaceholder(IGui.AGENT_VIEW_ID);
+		inspect.addPlaceholder(IGui.TABLE_VIEW_ID + ":*");
 
-		inspectorsFolder2.addPlaceholder("msi.gama.application.view.MonitorView");
-		inspectorsFolder.addPlaceholder("msi.gama.application.view.ErrorView");
-		layout.addView("msi.gama.application.view.ConsoleView", IPageLayout.BOTTOM, 0.70f,
-			"msi.gama.gui.view.GamaNavigator");
-
-		layout.setEditorAreaVisible(false);
+		IPlaceholderFolderLayout monitor = lay.createPlaceholderFolder("monitor", IPageLayout.BOTTOM, 0.50f, "inspect");
+		monitor.addPlaceholder(IGui.MONITOR_VIEW_ID);
 
 	}
 

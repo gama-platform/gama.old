@@ -16,7 +16,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.WorkbenchPage;
 import msi.gama.runtime.GAMA;
 
 public class ResetSimulationPerspective extends AbstractHandler {
@@ -30,15 +30,14 @@ public class ResetSimulationPerspective extends AbstractHandler {
 				IPerspectiveDescriptor descriptor = page.getPerspective();
 				if ( descriptor != null ) {
 					String message =
-						"Resetting the simulation perspective will close the current simulation. Do you want to proceed ?";
+						"Resetting the perspective will reload the current experiment. Do you want to proceed ?";
 					boolean result = MessageDialog.open(MessageDialog.QUESTION, activeWorkbenchWindow.getShell(),
-						WorkbenchMessages.ResetPerspective_title, message, SWT.SHEET);
-					if ( result ) {
-						GAMA.closeFrontmostExperiment();
-						page.resetPerspective();
-					}
-
+						"Reset experiment perspective", message, SWT.SHEET);
+					if ( !result ) { return null; }
+					page.resetPerspective();
+					GAMA.reloadFrontmostExperiment();
 				}
+
 			}
 		}
 
