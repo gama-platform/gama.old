@@ -238,8 +238,8 @@ public class GridDiffuserWithMatrix {
 		int kRows = mat_diffu.length;
 		int kCols = mat_diffu[0].length;
 
-		int kCenterX = kRows / 2;
-		int kCenterY = kCols / 2;
+		int kCenterX = kCols/ 2;
+		int kCenterY = kRows / 2;
 		int mm = 0, nn = 0, ii = 0, jj = 0;
 		
 		for (int agenti = 0; agenti < agents.size(); agenti++) {
@@ -260,8 +260,8 @@ public class GridDiffuserWithMatrix {
 					{
 						nn = kCols - 1 - n; // column index of flipped kernel
 						// index of input signal, used for checking boundary
-						ii = i + m - kCenterX;
-						jj = j + n - kCenterY;
+						ii = i + n - kCenterX;
+						jj = j + m - kCenterY;
 						// ignore input samples which are out of bound
 						if ( is_torus ) {
 							if ( ii < 0 ) {
@@ -277,7 +277,8 @@ public class GridDiffuserWithMatrix {
 							}
 						}
 						if ( ii >= 0 && ii < nbCols && jj >= 0 && jj < nbRows) {
-							double mask_current = mask != null ? mask[i][j] < -1 ? 0 : 1 : 1;
+//							double mask_current = mask != null ? mask[ii][jj] < -1 ? 0 : 1 : 1;
+							double mask_current = mask[ii][jj];
 							output[j * nbCols + i] += input[jj * nbCols + ii] * mat_diffu[mm][nn] * mask_current;
 //							if (!list_of_agents_who_will_change.contains(ii*nbRows+jj)) {
 //								list_of_agents_who_will_change.add(ii*nbRows+jj);
@@ -287,6 +288,11 @@ public class GridDiffuserWithMatrix {
 				}
 //			}
 		}
+		float sum = 0;
+		for (int i = 0 ; i < output.length; i++) {
+			sum += output[i];
+		}
+		System.out.println("SUM : "+sum);
 	}
 
 	public void doDiffusion2() {

@@ -55,6 +55,7 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 		@facet(name = IKeyword.MASK, type = IType.MATRIX, optional = true, doc = @doc("a matrix masking the diffusion (matrix created from a image for example)") ),
 		@facet(name = "proportion", type = IType.FLOAT, optional = true, doc = @doc("a diffusion rate") ),
 		@facet(name = "radius", type = IType.INT, optional = true, doc = @doc("a diffusion radius") ),
+		@facet(name = "variation", type = IType.FLOAT, optional = true, doc = @doc("an absolute value to decrease at each neighbors") ),
 		@facet(name = IKeyword.CYCLE_LENGTH, type = IType.INT, optional = true, doc = @doc("the number of diffusion operation applied in one simulation step") ) }, omissible = IKeyword.VAR)
 @symbol(name = { "diffusion" }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
@@ -87,6 +88,7 @@ public class DiffusionStatement extends AbstractStatement {
 			IExpressionDescription mat_diffu = desc.getFacets().get("mat_diffu");
 			IExpressionDescription propor = desc.getFacets().get("proportion");
 			IExpressionDescription radius = desc.getFacets().get("radius");
+			IExpressionDescription variation = desc.getFacets().get("variation");
 			if (propor != null && mat_diffu != null) {
 				desc.error("\"mat_diffu:\" and \"proportion:\" can not be used at the same time", IGamlIssue.GENERAL);
 			}
@@ -94,7 +96,10 @@ public class DiffusionStatement extends AbstractStatement {
 			if (radius != null && propor == null) {
 				desc.error("\"radius:\" can be used only with \"proportion:\"", IGamlIssue.GENERAL);
 			}
-
+			
+			if (variation != null && propor == null) {
+				desc.error("\"radius:\" can be used only with \"proportion:\"", IGamlIssue.GENERAL);
+			}
 		}
 	}
 
@@ -108,6 +113,9 @@ public class DiffusionStatement extends AbstractStatement {
 	List<Integer> agents;
 	IExpression onExpr = getFacet(IKeyword.ON);
 	String envName = getLiteral(IKeyword.ENVIRONMENT);
+	private double proportion;
+	private double variation;
+	private int range;
 
 	public DiffusionStatement(final IDescription desc) {
 		super(desc);
@@ -132,10 +140,28 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 		int rows = mm.getRows(scope);
 		int cols = mm.getCols(scope);
-		double[][] res = new double[rows][cols];
+		double[][] res = new double[cols][rows];
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				res[i][j] = Cast.asFloat(scope, mm.get(scope, j, i));
+				res[j][i] = Cast.asFloat(scope, mm.get(scope, j, i));
+			}
+		}
+		return res;
+	}
+	
+	public double[][] translateAndComputeMask(final IScope scope, final IMatrix mm) {
+		if (mm == null) {
+			return null;
+		}
+		int rows = mm.getRows(scope);
+		int cols = mm.getCols(scope);
+		double[][] res = new double[cols][rows];
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (Cast.asFloat(scope, mm.get(scope, j, i))<-1)
+					res[j][i] = 0;
+				else
+					res[j][i] = 1;
 			}
 		}
 		return res;
@@ -143,7 +169,7 @@ public class DiffusionStatement extends AbstractStatement {
 
 	private double[][] computeMatrix(double[][] basicMatrix, int numberOfIteration) {
 		double[][] input_mat_diffu = basicMatrix;
-		for (int nb = 2; nb <= cLen; nb++) {
+		for (int nb = 2; nb <= numberOfIteration; nb++) {
 			double[][] output_mat_diffu = new double[(basicMatrix.length - 1) * nb + 1][(basicMatrix[0].length - 1) * nb
 					+ 1];
 			for (int i = 0; i < output_mat_diffu.length; i++) {
@@ -167,9 +193,46 @@ public class DiffusionStatement extends AbstractStatement {
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 
 		cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
-		mask = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK)));
+		mask = translateAndComputeMask(scope, Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK)));
 		mat_diffu = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, "mat_diffu")));
 		var_diffu = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
+		
+		if (mat_diffu == null) {
+			// build a diffusion matrix from proportion, variation and range parameters
+			proportion = Cast.asFloat(scope, getFacetValue(scope, "proportion"));
+			variation = Cast.asFloat(scope, getFacetValue(scope, "variation"));
+			range = Cast.asInt(scope, getFacetValue(scope, "radius"));
+			
+			int nb_neighbors = 4;
+			mat_diffu = new double[3][3];
+			if (nb_neighbors == 8) {
+				for (int i = 0 ; i < 3 ; i++) {
+					for (int j = 0 ; j < 3 ; j++) {
+						mat_diffu[i][j] = proportion/9.0;
+					}
+				}
+				mat_diffu[1][1] = 1.0/9.0; // central cell
+			}
+			if (nb_neighbors == 4) {
+				mat_diffu[0][1] = 1.0/5.0;
+				mat_diffu[1][0] = 1.0/5.0;
+				mat_diffu[1][2] = 1.0/5.0;
+				mat_diffu[2][1] = 1.0/5.0;
+				mat_diffu[1][1] = 1.0/5.0;
+			}
+			if (range>1) {
+				mat_diffu = computeMatrix(mat_diffu,range);
+			}
+			int mat_diff_size = range*2+1;
+			for (int i = 0 ; i < mat_diff_size ; i++) {
+				for (int j = 0 ; j < mat_diff_size ; j++) {
+					int distanceFromCenter = Math.max(Math.abs(i - mat_diff_size/2),Math.abs(j - mat_diff_size/2));
+					mat_diffu[i][j] = mat_diffu[i][j] - distanceFromCenter*variation;
+					if (mat_diffu[i][j] < 0) mat_diffu[i][j] = 0;
+				}
+			}
+//			mat_diffu[range][range] = 0;
+		}
 
 		if (cLen != 1) {
 			mat_diffu = computeMatrix(mat_diffu, cLen);
