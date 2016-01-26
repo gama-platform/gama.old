@@ -44,27 +44,10 @@ import msi.gaml.types.*;
 			optional = true,
 			doc = @doc("any type of data (it can be geometry, image, text)") ),
 		// AD 18/01/13: geometry is now accepting any type of data
-		@facet(name = SHAPE,
-			type = IType.NONE,
-			optional = true,
-			doc = @doc(value = "the shape to display", deprecated = "Please  use 'draw the_shape_to_draw' instead") ),
-		@facet(name = TEXT,
-			type = IType.STRING,
-			optional = true,
-			doc = @doc(value = "the text to draw", deprecated = "Please  use 'draw the_text_to_draw' instead") ),
-		@facet(name = IMAGE,
-			type = IType.STRING,
-			optional = true,
-			doc = @doc(value = "path of the icon to draw (JPEG, PNG, GIF)",
-				deprecated = "Please use 'draw the_image_file_to_draw' instead") ),
 		@facet(name = TEXTURE,
 			type = { IType.STRING, IType.LIST },
 			optional = true,
 			doc = @doc("the texture that should be applied to the geometry") ),
-		@facet(name = ASSET3D,
-			type = { IType.STRING, IType.LIST },
-			optional = true,
-			doc = @doc("the 3D asset that is used to draw the geometry") ),
 		@facet(name = EMPTY,
 			type = IType.BOOL,
 			optional = true,
@@ -91,7 +74,6 @@ import msi.gaml.types.*;
 			type = IType.COLOR,
 			optional = true,
 			doc = @doc("the color to use to display the text/icon/geometry") ),
-		@facet(name = SCALE, type = IType.FLOAT, optional = true, doc = @doc("") ),
 		@facet(name = ROTATE,
 			type = { IType.FLOAT, IType.INT },
 			optional = true,
@@ -219,14 +201,12 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		item = getFacet(IKeyword.GEOMETRY, SHAPE, IMAGE, TEXT);
+		item = getFacet(IKeyword.GEOMETRY);
 		color = getFacet(IKeyword.COLOR);
 		if ( item == null ) {
 			executer = null;
 			return;
 		}
-		// Compatibility with the old 'draw + shape' statement
-		item = patchForCompatibility(item, desc);
 		//
 		if ( item.getType().id() == IType.GEOMETRY ) {
 			executer = new ShapeExecuter(desc);
@@ -244,68 +224,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 	}
 
-	/**
-	 * Various patches to keep the compatibility with GAMA 1.5 and previous versions, where symbols
-	 * could be used to draw shapes
-	 * @param exp, the expression representing what is to be drawn
-	 * @param desc, the description of the statement (used as a context for creating new
-	 * expressions)
-	 * @return the new expression, patched for compatibility
-	 */
-	private IExpression patchForCompatibility(final IExpression exp, final IDescription desc) {
-		IExpression newExpr = exp;
-		if ( exp.getType().id() == IType.STRING && exp.isConst() ) {
-			String old = Cast.asString(null, exp.value(null));
-			if ( old.contains("deprecated") ) {
-				old = old.split("__")[0];
-				if ( old.equals("disc") || old.equals("circle") ) {
-					IExpression sizeExp = getFacet(SIZE);
-					if ( sizeExp == null ) {
-						sizeExp = GAML.getExpressionFactory().createConst(1, Types.INT);
-					}
-					newExpr = GAML.getExpressionFactory().createOperator("circle", desc, null, sizeExp);
-				} else if ( old.equals("rectangle") || old.equals("square") ) {
-					IExpression sizeExp = getFacet(SIZE);
-					if ( sizeExp == null ) {
-						sizeExp = GAML.getExpressionFactory().createConst(1, Types.INT);
-					}
-
-					newExpr = GAML.getExpressionFactory().createOperator("square", desc, null, sizeExp);
-				} else if ( old.equals("geometry") ) {
-					newExpr = getShapeExpression(desc);
-				} else if ( old.equals("line") ) {
-					IExpression at = getFacet(AT);
-					final IExpression to = getFacet(TO);
-					if ( at == null ) {
-						at = GAML.getExpressionFactory().createVar("location", Types.POINT, false, IVarExpression.AGENT,
-							desc);
-					}
-					final List<IExpression> elements = new ArrayList();
-					elements.add(at);
-					elements.add(to);
-					final IExpression list = GAML.getExpressionFactory().createList(elements);
-					newExpr = GAML.getExpressionFactory().createOperator("line", desc, null, list);
-				}
-			} else {
-				if ( GamaFileType.verifyExtension("image", old) ) {
-					IExpressionFactory f = GAML.getExpressionFactory();
-					newExpr = f.createOperator(IKeyword.AS, desc, null, exp, f.createTypeExpression(Types.FILE));
-				}
-			}
-			// if ( newExpr == null ) {
-			// newExpr = exp;
-			// }
-			// if ( newExpr != null ) {
-			desc.getFacets().put(IKeyword.GEOMETRY, newExpr);
-			// } else {
-			// If no operator has been found, we throw an exception
-			// desc.error("Impossible to patch the expression for compatibility", IGamlIssue.UNKNOWN_UNARY,
-			// desc.getUnderlyingElement(null), "");
-
-			// }
-		}
-		return newExpr;
-	}
+	
 
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
@@ -341,8 +260,6 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		IExpression textures;
 
-		IExpression asset3D;
-
 		Color constCol;
 		private final Color constBord;
 		private final boolean hasBord;
@@ -372,8 +289,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			rot3D = getFacet(ROTATE3D);
 			rounded = getFacet(ROUNDED);
 			textures = getFacet(TEXTURE);
-			asset3D = getFacet(ASSET3D);
-
+			
 			constSize = getSizeExp() == null ? LOC
 				: getSizeExp().isConst() ? Cast.asPoint(scope, getSizeExp().value(scope), false) : null;
 			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope), false) : null;
@@ -448,13 +364,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			return GamaListFactory.createWithoutCasting(Types.NO_TYPE, o);
 		}
 
-		public IList getAsset3D(final IScope scope) throws GamaRuntimeException {
-			if ( asset3D == null ) { return null; }
-			Object o = asset3D.value(scope);
-			if ( o instanceof GamaList ) { return (GamaList) o; }
-			return GamaListFactory.createWithoutCasting(Types.NO_TYPE, o);
-		}
-
+	
 		abstract Rectangle2D executeOn(IScope agent, IGraphics g) throws GamaRuntimeException;
 
 		IExpression getSizeExp() {
@@ -499,10 +409,6 @@ public class DrawStatement extends AbstractStatementSequence {
 				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, textures);
 			}
 
-			IList asset3D = getAsset3D(scope);
-			if ( asset3D != null ) {
-				g2.setAttribute(IShape.ASSET3D_ATTRIBUTE, asset3D);
-			}
 			Color color = getColor(scope);
 			Color border = getBorder(scope);
 			Boolean fill = !getEmpty(scope);
