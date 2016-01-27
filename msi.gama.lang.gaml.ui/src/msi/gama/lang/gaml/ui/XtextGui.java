@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.IURIEditorOpener;
 import com.google.inject.Injector;
 import msi.gama.common.GamaPreferences;
@@ -188,7 +188,7 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 				return;
 			}
 			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
-			ResourceSet rs = new SynchronizedXtextResourceSet();
+			ResourceSet rs = new /* Synchronized */XtextResourceSet();
 			GamlResource resource = (GamlResource) rs.getResource(uri, true);
 			List<GamlCompilationError> errors = new ArrayList();
 			IModel model = new GamlModelBuilder()./* GamlModelBuilder.getInstance(). */compile(resource, errors);

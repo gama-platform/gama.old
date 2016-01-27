@@ -443,7 +443,7 @@ public abstract class MinimalAgent implements IAgent {
 	public void hostChangesShape() {}
 
 	// @Override
-	// public SimulationPopulationScheduler getScheduler() {
+	// public ActionExecuter getScheduler() {
 	// final IMacroAgent a = getHost();
 	// if ( a == null ) { return null; }
 	// return a.getScheduler();

@@ -12,7 +12,7 @@
 package ummisco.gaml.extensions.sound;
 
 import java.util.*;
-import msi.gama.kernel.experiment.SimulationPopulationScheduler;
+import msi.gama.kernel.experiment.ActionExecuter;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -63,7 +63,7 @@ public class SoundPlayerBroker {
 				soundPlayersOfSimulation = new HashMap<IAgent, GamaSoundPlayer>();
 				soundPlayerOfAgents.put(simulation, soundPlayersOfSimulation);
 
-				SimulationPopulationScheduler scheduler = simulation.getExperiment().getSimulationsScheduler();
+				ActionExecuter scheduler = simulation.getExperiment().getActionExecuter();
 
 				scheduler.insertEndAction(new GamaHelper() {
 

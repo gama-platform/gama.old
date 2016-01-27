@@ -92,7 +92,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 		super.initializeFor(scope, agent);
 	}
 
-	// FIXME Scope is normally null at that point. Should be better called from initializeFor()
+	// FIXME SimulationScope is normally null at that point. Should be better called from initializeFor()
 	public void initParams(final IScope scope) {
 		final IExpression tempend = getFacet(TEMP_END);
 		if ( tempend != null ) {

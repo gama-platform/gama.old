@@ -221,7 +221,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	public void postRefreshManagementAction(final IScope scope) {
-		scope.getExperiment().getSimulationsScheduler().insertEndAction(new GamaHelper() {
+		scope.getExperiment().getActionExecuter().insertEndAction(new GamaHelper() {
 
 			@Override
 			public Object run(final IScope scope) throws GamaRuntimeException {

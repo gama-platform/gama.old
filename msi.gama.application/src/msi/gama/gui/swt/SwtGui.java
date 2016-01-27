@@ -43,14 +43,13 @@ import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
-import msi.gama.gui.swt.perspectives.SimulationPerspective;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -379,7 +378,7 @@ public class SwtGui extends AbstractGui {
 		dialogReturnCode = i;
 	}
 
-	private void writeToConsole(final String msg, final IMacroAgent root, final GamaUIColor color) {
+	private void writeToConsole(final String msg, final ITopLevelAgent root, final GamaUIColor color) {
 		if ( console != null ) {
 			console.append(msg, root, color);
 		} else {
@@ -388,24 +387,24 @@ public class SwtGui extends AbstractGui {
 	}
 
 	@Override
-	public void debugConsole(final int cycle, final String msg, final IMacroAgent root) {
+	public void debugConsole(final int cycle, final String msg, final ITopLevelAgent root) {
 		this.debugConsole(cycle, msg, root, null);
 	}
 
 	@Override
-	public void debugConsole(final int cycle, final String msg, final IMacroAgent root, final GamaColor color) {
+	public void debugConsole(final int cycle, final String msg, final ITopLevelAgent root, final GamaColor color) {
 		writeToConsole("(cycle : " + cycle + ") " + msg + sep, root, GamaColors.get(color));
 	}
 
 	private static String sep = System.getProperty("line.separator");
 
 	@Override
-	public void informConsole(final String msg, final IMacroAgent root) {
+	public void informConsole(final String msg, final ITopLevelAgent root) {
 		this.informConsole(msg, root, null);
 	}
 
 	@Override
-	public void informConsole(final String msg, final IMacroAgent root, final GamaColor color) {
+	public void informConsole(final String msg, final ITopLevelAgent root, final GamaColor color) {
 		writeToConsole(msg + sep, root, GamaColors.get(color));
 	}
 
@@ -1457,10 +1456,10 @@ public class SwtGui extends AbstractGui {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		String idCurrentPerspective = window.getActivePage().getPerspective().getId();
 		try {
-			if ( idCurrentPerspective.equals(SimulationPerspective.ID) ) {
+			if ( idCurrentPerspective.equals(IGui.PERSPECTIVE_SIMULATION_ID) ) {
 				closeSimulationViews(true, true);
 			} else {
-				window.getWorkbench().showPerspective(SimulationPerspective.ID, window);
+				window.getWorkbench().showPerspective(IGui.PERSPECTIVE_SIMULATION_ID, window);
 				closeSimulationViews(true, true);
 			}
 		} catch (WorkbenchException e) {

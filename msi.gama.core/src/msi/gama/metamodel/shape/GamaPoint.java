@@ -387,11 +387,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void setRotate3D(final GamaPair rot3D) {
-		// TODO Auto-generated method stub
-	}
-
+	
 	/**
 	 * Method getType()
 	 * @see msi.gama.common.interfaces.ITyped#getType()

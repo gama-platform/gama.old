@@ -143,7 +143,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
 					if ( agent.dead() ) { return; }
-					GAMA.getExperiment().getAgent().getSimulationsScheduler().executeOneAction(new GamaHelper() {
+					GAMA.getExperiment().getAgent().getActionExecuter().executeOneAction(new GamaHelper() {
 
 						@Override
 						public Object run(final IScope scope) {

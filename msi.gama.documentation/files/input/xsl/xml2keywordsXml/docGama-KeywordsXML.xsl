@@ -202,7 +202,7 @@
    		&lt;category&gt;</xsl:text><xsl:value-of select="$category"/><xsl:text>&lt;/category&gt;</xsl:text>   	
 		<xsl:if test="$insideElt != ''"><xsl:text>
 		&lt;associatedKeywordList&gt;
-			&lt;associatedKeyword&gt;</xsl:text><xsl:value-of select="$insideElt"/><xsl:text>&lt;/associatedKeyword&gt;	
+			&lt;associatedKeyword&gt;</xsl:text><xsl:value-of select="$insideEltConcept"/><xsl:text>_</xsl:text><xsl:value-of select="$insideElt"/><xsl:text>&lt;/associatedKeyword&gt;	
 		&lt;/associatedKeywordList&gt;</xsl:text></xsl:if><xsl:text>		
    	&lt;/keyword&gt; 	
    	</xsl:text>

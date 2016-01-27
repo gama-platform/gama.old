@@ -16,8 +16,8 @@ import java.util.Map.Entry;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.kernel.experiment.IExperimentController;
-import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.kernel.experiment.*;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.*;
@@ -88,7 +88,7 @@ import msi.gaml.types.IType;
 		type = IType.DATE,
 		doc = @doc(value = "Represents the starting date of the simulation",
 			comment = "It is required to intiliaze this value to be able to use the current_date attribute") ), })
-public class SimulationAgent extends GamlAgent {
+public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public static final String DURATION = "duration";
 	public static final String MACHINE_TIME = "machine_time";
@@ -107,6 +107,7 @@ public class SimulationAgent extends GamlAgent {
 	ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
 	private final RandomUtils random;
+	private final ActionExecuter executer;
 
 	public Boolean getScheduled() {
 		return scheduled;
@@ -123,8 +124,8 @@ public class SimulationAgent extends GamlAgent {
 	public SimulationAgent(final SimulationPopulation pop) throws GamaRuntimeException {
 		super(pop);
 		clock = new SimulationClock(this);
-		scope = obtainNewScope();
-		// scheduler = new SimulationPopulationScheduler(scope, pop);
+		scope = new SimulationScope(this);
+		executer = new ActionExecuter(scope);
 		projectionFactory = new ProjectionFactory();
 		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
 	}
@@ -168,15 +169,11 @@ public class SimulationAgent extends GamlAgent {
 		clock.beginCycle();
 		// A simulation always runs in its own scope
 		try {
+			getActionExecuter().executeBeginActions();
 			super._step_(this.scope);
-			if ( !scheduled ) {
-				// hqnghi temporary added untill elimination of SimulationPopulationScheduler
-				this.getExperiment().getSimulationsScheduler().executeActions(scope, 1);
-				this.getExperiment().getSimulationsScheduler().executeActions(scope, 3);
-				// end-hqnghi
+			getActionExecuter().executeEndActions();
+			getActionExecuter().executeOneShotActions();
 
-			}
-			// end-hqnghi
 			if ( outputs != null ) {
 				outputs.step(this.scope);
 			}
@@ -198,7 +195,7 @@ public class SimulationAgent extends GamlAgent {
 	}
 
 	/**
-	 * Scope related utilities
+	 * SimulationScope related utilities
 	 *
 	 */
 
@@ -212,7 +209,7 @@ public class SimulationAgent extends GamlAgent {
 	}
 
 	// @Override
-	// public SimulationPopulationScheduler getScheduler() {
+	// public ActionExecuter getScheduler() {
 	// return scheduler;
 	// }
 
@@ -428,6 +425,7 @@ public class SimulationAgent extends GamlAgent {
 		// end-hqnghi
 	}
 
+	@Override
 	public SimulationOutputManager getOutputManager() {
 		return (SimulationOutputManager) outputs;
 	}
@@ -475,8 +473,18 @@ public class SimulationAgent extends GamlAgent {
 	}
 
 	// @Override
+	@Override
 	public RandomUtils getRandomGenerator() {
 		return random;
+	}
+
+	/**
+	 * Method getActionExecuter()
+	 * @see msi.gama.kernel.experiment.ITopLevelAgent#getActionExecuter()
+	 */
+	@Override
+	public ActionExecuter getActionExecuter() {
+		return executer;
 	}
 
 }

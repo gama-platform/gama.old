@@ -320,7 +320,6 @@ public interface IKeyword {
 	public static final String ROLL = "roll";
 	public static final String ROUNDED = "rounded";
 	public static final String ROTATE = "rotate";
-	public static final String ROTATE3D = "rotate3D";
 	public static final String SAVE = "save";
 	public static final String SAVE_BATCH = "save_batch";
 	public static final String SCALE = "scale";

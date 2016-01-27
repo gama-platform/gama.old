@@ -84,6 +84,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 			@Override
 			public void mouseDown(final MouseEvent e) {
+				if ( GAMA.getExperiment() == null ) { return; }
 				ExperimentAgent exp = GAMA.getExperiment().getAgent();
 				if ( exp == null ) { return; }
 				exp.getClock().toggleDisplay();

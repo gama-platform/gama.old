@@ -43,8 +43,11 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 
 	public abstract void setCellSpecies(final IPopulation pop);
 
-	public abstract void diffuseVariable(final IScope scope, final String name, final double value, final short type,
+	public abstract void diffuseVariable_deprecated(final IScope scope, final String name, final double value, final short type,
 		final double prop, final double variation, final ILocation location, final double range, Object candidates);
+	// this was once used for "Signal" statement (deprecated since GAMA 1.8). It will have to be removed soon.
+	public abstract void diffuseVariable(final IScope scope, boolean method_diffu, boolean is_gradient, double[][] mat_diffu, 
+			double[][] mask, String var_diffu, IPopulation pop);
 
 	public abstract IAgent getAgentAt(final ILocation c);
 

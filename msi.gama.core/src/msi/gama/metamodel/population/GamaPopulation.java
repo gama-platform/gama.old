@@ -129,7 +129,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			updatableVars[i] = species.getVar(s);
 		}
 		if ( species.isMirror() && host != null ) {
-			host.getScope().getExperiment().getSimulationsScheduler()
+			host.getScope().getExperiment().getActionExecuter()
 				.insertEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
 

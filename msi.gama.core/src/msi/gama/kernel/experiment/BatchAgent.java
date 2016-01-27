@@ -163,7 +163,7 @@ public class BatchAgent extends ExperimentAgent {
 				IScope scope = simulation.getScope();
 				// simulation.getScheduler().insertAgentToInit(scope, simulation, null);
 				// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
-				getSimulationsScheduler().init(scope);
+				// getActionExecuter().init(scope);
 
 				// This inner while loop runs the simulation and controls its execution
 				while (simulation != null) {

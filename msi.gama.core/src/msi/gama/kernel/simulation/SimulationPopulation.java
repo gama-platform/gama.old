@@ -29,8 +29,8 @@ import msi.gaml.species.ISpecies;
 
 public class SimulationPopulation extends GamaPopulation {
 
-	public SimulationPopulation(final ISpecies species) {
-		super(null, species);
+	public SimulationPopulation(final ExperimentAgent agent, final ISpecies species) {
+		super(agent, species);
 	}
 
 	@Override

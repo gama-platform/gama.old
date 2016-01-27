@@ -30,7 +30,7 @@ public class Constants {
 	public static String TEST_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + 
 			"msi.gama.models" + File.separator + "models" + File.separator + "Tests";
 
-	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + "gama.wiki";
+	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + "GamaWiki";
 
 
 	// Generation folders

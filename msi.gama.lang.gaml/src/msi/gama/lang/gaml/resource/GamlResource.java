@@ -19,7 +19,6 @@ import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
@@ -51,6 +50,7 @@ public class GamlResource extends LazyLinkingResource {
 	private volatile boolean isValidating;
 	private volatile boolean isEdited;
 	private final Set<String> requires = new LinkedHashSet();
+	// private final Map<ResourceSet, TOrderedHashMap<GamlResource, Import>> imports = new HashMap();
 
 	public ErrorCollector getErrorCollector() {
 		if ( collector == null ) {
@@ -64,8 +64,10 @@ public class GamlResource extends LazyLinkingResource {
 		return "UTF-8";
 	}
 
-	public void resetErrorCollector() {
+	public void resetErrorCollector(final ResourceSet resourceSet) {
 		requires.clear();
+		// resourceSet.getLoadOptions().remove(this);
+		// imports.remove(resourceSet);
 		if ( collector == null ) {
 			getErrorCollector();
 		} else {
@@ -221,7 +223,11 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public TOrderedHashMap<GamlResource, Import> loadImports(final ResourceSet resourceSet) {
-		final TOrderedHashMap<GamlResource, Import> imports = new TOrderedHashMap();
+		//
+		// TOrderedHashMap<GamlResource, Import> localImports =
+		// (TOrderedHashMap<GamlResource, Import>) resourceSet.getLoadOptions().get(this);
+		// if ( localImports != null && !localImports.isEmpty() ) { return localImports; }
+		TOrderedHashMap<GamlResource, Import> localImports = new TOrderedHashMap();
 		final Model model = (Model) getContents().get(0);
 		for ( final Import imp : model.getImports() ) {
 			final String importUri = imp.getImportURI();
@@ -231,12 +237,13 @@ public class GamlResource extends LazyLinkingResource {
 					GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
 					if ( ir != null ) {
 
-						imports.put(ir, imp);
+						localImports.put(ir, imp);
 					}
 				}
 			}
 		}
-		return imports;
+		// resourceSet.getLoadOptions().put(this, localImports);
+		return localImports;
 	}
 
 	public LinkedHashMap<GamlResource, String> loadAllResources(final ResourceSet resourceSet) {
@@ -253,14 +260,14 @@ public class GamlResource extends LazyLinkingResource {
 		return totalResources;
 	}
 
-	public EObject findImport(final URI uri) {
-		Model m = (Model) getContents().get(0);
-		for ( final Import imp : m.getImports() ) {
-			final URI iu = URI.createURI(imp.getImportURI(), false).resolve(getURI());
-			if ( uri.equals(iu) ) { return imp; }
-		}
-		return null;
-	}
+	// public EObject findImport(final URI uri) {
+	// Model m = (Model) getContents().get(0);
+	// for ( final Import imp : m.getImports() ) {
+	// final URI iu = URI.createURI(imp.getImportURI(), false).resolve(getURI());
+	// if ( uri.equals(iu) ) { return imp; }
+	// }
+	// return null;
+	// }
 
 	private void invalidateBecauseOfImportedProblem(final String msg, final GamlResource resource) {
 		getErrorCollector()
@@ -269,7 +276,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	private ModelDescription buildCompleteDescription(final ResourceSet set) {
-		resetErrorCollector();
+		resetErrorCollector(resourceSet);
 		// We make sure the resource is loaded in the ResourceSet passed
 		// TODO Does it validate it ?
 		set.getResource(getURI(), true);

@@ -168,7 +168,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 */
 	public abstract void hostChangesShape();
 
-	// public SimulationPopulationScheduler getScheduler();
+	// public ActionExecuter getScheduler();
 
 	public IModel getModel();
 
