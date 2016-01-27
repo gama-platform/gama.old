@@ -17,7 +17,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.*;
-import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -69,24 +68,18 @@ import msi.gaml.types.*;
 			type = IType.FLOAT,
 			optional = true,
 			doc = @doc("size of the text/icon (not used in the context of the drawing of a geometry)") ),
-		@facet(name = TO, type = IType.POINT, optional = true, doc = @doc("") , internal = true),
 		@facet(name = COLOR,
 			type = IType.COLOR,
 			optional = true,
 			doc = @doc("the color to use to display the text/icon/geometry") ),
 		@facet(name = ROTATE,
-			type = { IType.FLOAT, IType.INT },
+			type = { IType.FLOAT, IType.INT,IType.PAIR },
 			optional = true,
-			doc = @doc("orientation of the shape/text/icon") ),
-		@facet(name = ROTATE3D,
-			type = { IType.PAIR },
-			optional = true,
-			doc = @doc("orientation of the shape/text/icon") ),
+			doc = @doc("orientation of the shape/text/icon; can be either an int/float (angle) or a pair float::point (angle::vector)") ),
 		@facet(name = FONT,
 			type = { IType.FONT, IType.STRING },
 			optional = true,
 			doc = @doc("the font used to draw the text") ),
-		@facet(name = BITMAP, type = IType.BOOL, optional = true, doc = @doc("") ),
 		@facet(name = DEPTH,
 			type = IType.FLOAT,
 			optional = true,
@@ -98,13 +91,7 @@ import msi.gaml.types.*;
 		@facet(name = DrawStatement.END_ARROW,
 			type = { IType.INT, IType.FLOAT },
 			optional = true,
-			doc = @doc("the size of the arrow, located at the end of the drawn geometry") ),
-		@facet(name = STYLE,
-			type = IType.ID,
-			values = { "plain", "bold", "italic" },
-			optional = true,
-			doc = @doc(value = "the style used to display text",
-				deprecated = "Use the font operator with constants #bold, #italic, #plain instead") ) },
+			doc = @doc("the size of the arrow, located at the end of the drawn geometry") ) },
 	omissible = IKeyword.GEOMETRY)
 @inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @doc(
@@ -159,12 +146,12 @@ public class DrawStatement extends AbstractStatementSequence {
 
 			}
 
-			IExpressionDescription rotate = description.getFacets().get(ROTATE3D);
+			IExpressionDescription rotate = description.getFacets().get(ROTATE);
 			if ( rotate != null ) {
 				IExpression exp = rotate.getExpression();
-				if ( !exp.getType().isTranslatableInto(GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT)) ) {
-					description.error("the type of rotate_3D must be pair<float,point>", IGamlIssue.WRONG_TYPE,
-						ROTATE3D);
+				if (!exp.getType().isTranslatableInto(Types.FLOAT) && !exp.getType().isTranslatableInto(GamaType.from(Types.PAIR, Types.FLOAT, Types.POINT))) {
+					description.error("the type of rotate must be either a float/int or a pair<float,point>", IGamlIssue.WRONG_TYPE,
+						ROTATE);
 				}
 			}
 		}
@@ -250,8 +237,6 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		IExpression rot;
 
-		IExpression rot3D;
-
 		IExpression depth;
 
 		IExpression empty;
@@ -286,7 +271,6 @@ public class DrawStatement extends AbstractStatementSequence {
 			loc = getFacet(AT);
 			bord = getFacet(BORDER);
 			rot = getFacet(ROTATE);
-			rot3D = getFacet(ROTATE3D);
 			rounded = getFacet(ROUNDED);
 			textures = getFacet(TEXTURE);
 			
@@ -310,8 +294,18 @@ public class DrawStatement extends AbstractStatementSequence {
 				constBord = null;
 			}
 
-			constRot = rot != null && rot.isConst() ? Cast.asFloat(scope, rot.value(scope)) : null;
-			constRot3D = rot3D != null && rot3D.isConst() ? Cast.asPair(scope, rot3D.value(scope), false) : null;
+			if (rot != null && rot.isConst()) {
+				if (rot.getType().isTranslatableInto(Types.FLOAT)) {
+					constRot = Cast.asFloat(scope, rot.value(scope));
+					constRot3D = null;
+				} else {
+					constRot3D = Cast.asPair(scope, rot.value(scope), false);
+					constRot = null;
+				}
+			} else {
+				constRot = null;
+				constRot3D = null;
+			}
 			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope), false) : null;
 			constRounded =
 				rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope), false) : null;
@@ -400,8 +394,8 @@ public class DrawStatement extends AbstractStatementSequence {
 			if ( depth != null ) {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
 			}
-			if ( rot3D != null ) {
-				g2.setAttribute(IShape.ROTATE_ATTRIBUTE, rot3D.value(scope));
+			if ( rot != null ) {
+				g2.setAttribute(IShape.ROTATE_ATTRIBUTE, rot.value(scope));
 			}
 
 			IList textures = getTextures(scope);
@@ -466,10 +460,10 @@ public class DrawStatement extends AbstractStatementSequence {
 				// false);
 				// }
 				Color color = getColor(scope);
-				if ( rot3D != null ) {
-					GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
-						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
-					return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot,
+				if ( rot != null ) {
+					GamaPair<Double, GamaPoint> rot3D = (GamaPair<Double, GamaPoint>) GamaType
+						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot.value(scope), null, false);
+					return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot3D,
 						((Gama3DGeometryFile) fileName).getInitRotation());
 				} else {
 					return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope),
@@ -478,10 +472,10 @@ public class DrawStatement extends AbstractStatementSequence {
 			}
 			if ( fileName.getExtension().equals("svg") ) {
 				Color color = getColor(scope);
-				if ( rot3D != null ) {
-					GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
-						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot3D.value(scope), null, false);
-					return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot);
+				if ( rot != null ) {
+					GamaPair<Double, GamaPoint> rot3D = (GamaPair<Double, GamaPoint>) GamaType
+						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot.value(scope), null, false);
+					return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot3D);
 				} else {
 					return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), null);
 				}
@@ -592,10 +586,6 @@ public class DrawStatement extends AbstractStatementSequence {
 		private final String constText;
 		private final IExpression font;
 		private final GamaFont constFont;
-		private final IExpression style;
-		private final Integer constStyle;
-		private final IExpression bitmap;
-		private final Boolean constBitmap;
 
 		private TextExecuter(final IDescription desc) throws GamaRuntimeException {
 			super(desc);
@@ -604,11 +594,6 @@ public class DrawStatement extends AbstractStatementSequence {
 			font = getFacet(FONT);
 			constFont = font == null ? (GamaFont) Types.FONT.getDefault()
 				: font.isConst() ? GamaFontType.staticCast(scope, font.value(scope), false) : null;
-			style = getFacet(STYLE);
-			constStyle = style == null ? Font.PLAIN
-				: style.isConst() ? CONSTANTS.get(Cast.asString(scope, style.value(scope))) : null;
-			bitmap = getFacet(BITMAP);
-			constBitmap = bitmap != null && bitmap.isConst() ? Cast.asBool(scope, bitmap.value(scope)) : null;
 			GAMA.releaseScope(scope);
 
 		}
@@ -619,11 +604,6 @@ public class DrawStatement extends AbstractStatementSequence {
 			final String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;
 			if ( info == null || info.length() == 0 ) { return null; }
 			Font fName = constFont == null ? GamaFontType.staticCast(scope, font.value(scope), false) : constFont;
-			final int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
-			if ( fName.getStyle() != fStyle && style != null ) {
-				fName = new GamaFont(fName.deriveFont(fStyle));
-			}
-			final Boolean fBitmap = constBitmap == null ? true : constBitmap;
 			double fSize;
 			// if ( size != null && fName.getSize() != fSize ) {
 			// fName = new GamaFont(fName.deriveFont(fSize));
@@ -639,12 +619,9 @@ public class DrawStatement extends AbstractStatementSequence {
 				GamaPoint p = new GamaPoint(getLocation(scope));
 				double stringLenghtMax = 0;
 				for ( String line : info.split("\n") ) {
-					g.drawString(line, getColor(scope), p, fSize, fName, getRotation(scope), fBitmap);
-					if ( fBitmap ) {
-						p.y = p.y + fSize;
-					} else {
-						p.y = p.y + fSize * 2;
-					}
+					g.drawString(line, getColor(scope), p, fSize, fName, getRotation(scope), true);
+					p.y = p.y + fSize;
+					
 					if ( line.length() > stringLenghtMax ) {
 						stringLenghtMax = line.length();
 					}
@@ -652,7 +629,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				return new Rectangle2D.Double(getLocation(scope).getX(), getLocation(scope).getY(), stringLenghtMax, 3);
 			} else {
 				return g.drawString(info, getColor(scope), getLocation(scope), fSize, fName, getRotation(scope),
-					fBitmap);
+					true);
 			}
 		}
 	}
