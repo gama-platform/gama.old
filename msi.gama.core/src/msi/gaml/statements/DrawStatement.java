@@ -313,7 +313,25 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		Double getRotation(final IScope scope) throws GamaRuntimeException {
-			return constRot == null ? rot == null ? null : Cast.asFloat(scope, rot.value(scope)) : constRot;
+			if (constRot != null)
+				return constRot;
+			if (rot == null) 
+				return null;
+			if (rot.getType().isTranslatableInto(Types.FLOAT))
+				return Cast.asFloat(scope, rot.value(scope)) ;
+			return Cast.asFloat(scope, Cast.asPair(scope, rot.value(scope), false).key);
+		}
+		
+		GamaPair<Double, GamaPoint> getRotation3D(final IScope scope) throws GamaRuntimeException {
+			if (constRot3D != null)
+				return constRot3D;
+			if (rot == null) 
+				return null;
+			if (rot.getType().isTranslatableInto(Types.PAIR))
+				return Cast.asPair(scope, rot.value(scope),false) ;
+			Double angle = Cast.asFloat(scope, rot.value(scope));
+			GamaPoint pt = new GamaPoint(0,0,1);
+			return new GamaPair<Double, GamaPoint>(angle, pt, Types.FLOAT, Types.POINT);
 		}
 
 		ILocation getSize(final IScope scope) {
@@ -395,7 +413,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
 			}
 			if ( rot != null ) {
-				g2.setAttribute(IShape.ROTATE_ATTRIBUTE, rot.value(scope));
+				g2.setAttribute(IShape.ROTATE_ATTRIBUTE, getRotation(scope));
 			}
 
 			IList textures = getTextures(scope);
@@ -462,7 +480,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				Color color = getColor(scope);
 				if ( rot != null ) {
 					GamaPair<Double, GamaPoint> rot3D = (GamaPair<Double, GamaPoint>) GamaType
-						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot.value(scope), null, false);
+						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, getRotation3D(scope), null, false);
 					return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot3D,
 						((Gama3DGeometryFile) fileName).getInitRotation());
 				} else {
@@ -474,7 +492,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				Color color = getColor(scope);
 				if ( rot != null ) {
 					GamaPair<Double, GamaPoint> rot3D = (GamaPair<Double, GamaPoint>) GamaType
-						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rot.value(scope), null, false);
+						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, getRotation3D(scope), null, false);
 					return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), rot3D);
 				} else {
 					return g.drawFile(scope, fileName, color, getLocation(scope), getSize(scope), null);
