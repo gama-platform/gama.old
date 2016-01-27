@@ -416,6 +416,11 @@ public class ExperimentJob implements IExperimentJob{
 		return null;
 	}
 	
+	public List<Parameter> getParameters()
+	{
+		return this.parameters;
+	}
+	
 	private Output getOutput(String name) {
 		for(Output p:outputs)
 		{
@@ -424,6 +429,12 @@ public class ExperimentJob implements IExperimentJob{
 		}
 		return null;
 	}
+	
+	public List<Output> getOutputs()
+	{
+		return this.outputs;
+	}
+	
 	
 	public void setParameterValueOf(final String name, final Object val){
 		this.getParameter(name).setValue(val);	

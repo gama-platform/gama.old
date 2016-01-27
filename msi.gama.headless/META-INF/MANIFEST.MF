@@ -37,5 +37,7 @@ Export-Package:
    msi.gama.metamodel.agent,
    msi.gaml.architecture.user,
    msi.gama.runtime.exceptions",
+ msi.gama.headless.script,
+ msi.gama.headless.util,
  msi.gama.headless.xml;uses:="msi.gama.headless.core"
 Bundle-ClassPath: .

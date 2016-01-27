@@ -12,6 +12,8 @@ public interface IExperimentJob {
 	public String getExperimentID();
 	public String getExperimentName();
 	public String getModelName();
+	public List<Parameter> getParameters();
+	public List<Output> getOutputs();
 	public void addParameter(final Parameter p);
 	public void addOutput(final Output p);
 	public List<String> getOutputNames();

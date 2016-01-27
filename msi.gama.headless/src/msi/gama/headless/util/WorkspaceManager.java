@@ -207,7 +207,7 @@ public class WorkspaceManager {
 		return modelList;
 	}
 	
-	private static ArrayList<String> readDirectory(String dir){
+	public static ArrayList<String> readDirectory(String dir){
 		ArrayList<String> listFiles = new ArrayList<String>();
 		File rep = new File(dir);
 		
@@ -229,7 +229,7 @@ public class WorkspaceManager {
 		return listFiles;
 	}
 	
-	private static String getFileExtension(String fileName) {
+	public static String getFileExtension(String fileName) {
 	    String extension = null;
 		try {
 	        extension =  fileName.substring(fileName.lastIndexOf(".") + 1);

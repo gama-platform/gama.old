@@ -34,31 +34,15 @@ public abstract class ScriptFactory {
 		return model;
 	}
 	
-	public static ArrayList<String> getModelInsideWorkspace(String path) throws IOException
+	public static ArrayList<String> getModelsInDirectory(String path) throws IOException
 	{
 		WorkspaceManager ws = new WorkspaceManager(path);
 		ArrayList<String> allFiles = ws.getModelLibrary();
 		return allFiles;
 	}
 	
-	private static Document buildXmlDocument(List<IExperimentJob> jobs) throws ParserConfigurationException
-	{
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		Document doc = docBuilder.newDocument();
-		Element rootElement = doc.createElement(XmlTAG.EXPERIMENT_PLAN_TAG);
-		doc.appendChild(rootElement);
-
-		
-		for(IExperimentJob job:jobs)
-		{
-			Element jb = job.asXMLDocument(doc);
-			rootElement.appendChild(jb);
-		}
-		
-		return doc;
-	}
 	
+
 /*	public static List<IExperimentJob> loadAndBuildJobs(IModel model)
 	{
 		ModelDescription modelDesc = model.getDescription().getModelDescription();

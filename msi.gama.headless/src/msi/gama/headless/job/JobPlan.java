@@ -53,11 +53,6 @@ public class JobPlan {
 		this.originalJobs = new HashMap<JobPlanExperimentID, IExperimentJob>();
 	}
 	
-	private String createExperimentName(IExperimentJob job)
-	{
-		return job.getExperimentName() + "_"+ this.model.getName();
-	}
-	
 	public List<IExperimentJob> getJobsWithName(String name)
 	{
 		List<IExperimentJob> res = this.availableExperimentations.get(name);
@@ -88,12 +83,12 @@ public class JobPlan {
 		 }
 		 return res;
 	}
-	public List<IExperimentJob> constructAllJobs(long[] seeds, long finalStep, List<Parameter> in, List<Output> out)
+	public List<IExperimentJob> constructAllJobs(long[] seeds, long finalStep)
 	{
 		List<IExperimentJob> jobs = new ArrayList<>();
 		for(IExperimentJob locJob:originalJobs.values())
 		{
-			jobs.addAll(constructJobWithName(locJob,seeds,  finalStep,  in, out));
+			jobs.addAll(constructJobWithName(locJob,seeds,  finalStep,  null,null));
 		}
 		return jobs;
 	}
@@ -123,7 +118,6 @@ public class JobPlan {
 				List<String> availableOutputs = job.getOutputNames();
 				for(Output o:out){
 					job.setOutputFrameRate(o.getName(), o.getFrameRate());
-				//To be checked
 					availableOutputs.remove(o.getName());
 				}
 				for(String s:availableOutputs){
