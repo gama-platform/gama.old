@@ -26,8 +26,8 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaPair;
-import msi.gama.util.file.GamaFile;
-import msi.gaml.operators.Maths;
+import msi.gama.util.file.*;
+import msi.gaml.operators.*;
 
 /**
  *
@@ -106,9 +106,19 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
+	public Rectangle2D drawFile(final IScope scope, final GamaFile file, final Color color,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
 		final GamaPair<Double, GamaPoint> rotate3De) {
+		if ( file instanceof GamaSVGFile ) {
+			IShape shape = ((GamaSVGFile) file).getGeometry(scope);
+			// shape.setLocation(locationInModelUnits);
+			shape = Spatial.Transformations.rotated_by(scope,
+				Spatial.Transformations.at_location(scope,
+					Spatial.Transformations.scaled_to(scope, shape, new GamaPoint(sizeInModelUnits)),
+					new GamaPoint(locationInModelUnits)),
+				rotate3De == null ? 0d : rotate3De.key);
+			return drawGamaShape(scope, shape, color, true, color, false);
+		}
 		return null;
 	}
 
