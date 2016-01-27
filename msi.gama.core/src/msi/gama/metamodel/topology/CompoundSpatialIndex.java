@@ -1,26 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'CompoundSpatialIndex.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.topology;
 
+import java.util.*;
+import com.vividsolutions.jts.geom.Envelope;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.set.hash.THashSet;
-import java.awt.Graphics2D;
-import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
-import com.vividsolutions.jts.geom.Envelope;
 
 public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
 
@@ -192,13 +191,13 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		return all[id].allInEnvelope(scope, source, envelope, f, contained);
 	}
 
-	@Override
-	public void drawOn(final Graphics2D g2, final int width, final int height) {
-		// By default, we draw the quadtree
-		if ( !disposed ) {
-			all[0].drawOn(g2, width, height);
-		}
-	}
+	// @Override
+	// public void drawOn(final Graphics2D g2, final int width, final int height) {
+	// // By default, we draw the quadtree
+	// if ( !disposed ) {
+	// all[0].drawOn(g2, width, height);
+	// }
+	// }
 
 	@Override
 	public void add(final ISpatialIndex index, final ISpecies species) {

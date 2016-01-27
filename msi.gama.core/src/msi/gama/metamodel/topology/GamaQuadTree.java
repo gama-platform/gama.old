@@ -1,49 +1,49 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaQuadTree.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 
 package msi.gama.metamodel.topology;
 
-import gnu.trove.set.hash.TLinkedHashSet;
-import java.awt.*;
 import java.util.*;
+import com.vividsolutions.jts.geom.*;
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.*;
-import com.vividsolutions.jts.geom.*;
 
 /**
  * A QuadTree allows to quickly find an object on a two-dimensional space.
  * <p>
  * QuadTree recursively subdivides a space into four rectangles. Each node of a QuadTree subdivides the space covered by the rectangle of its parent node into four smaller rectangles covering the
  * upper left, upper right, lower left and lower right quadrant of the parent rectangle.
- * 
+ *
  * @author Werner Randelshofer, adapted by Alexis Drogoul for GAMA
  * @version $Id: QuadTree.java 717 2010-11-21 12:30:57Z rawcoder $
  */
 public class GamaQuadTree implements ISpatialIndex {
 
-	static private Color[] colors;
-	{
-		colors = new Color[32];
-		colors[15] = Color.DARK_GRAY;
-		for ( int i = 14; i >= 0; i-- ) {
-			colors[i] = colors[i + 1].brighter();
-		}
-		for ( int i = 16; i < 32; i++ ) {
-			colors[i] = colors[i - 1].darker();
-		}
-	}
+	// static private Color[] colors;
+	//
+	// {
+	// colors = new Color[32];
+	// colors[15] = Color.DARK_GRAY;
+	// for ( int i = 14; i >= 0; i-- ) {
+	// colors[i] = colors[i + 1].brighter();
+	// }
+	// for ( int i = 16; i < 32; i++ ) {
+	// colors[i] = colors[i - 1].darker();
+	// }
+	// }
 
 	private final QuadNode root;
 	private final static int maxCapacity = 20;
@@ -390,46 +390,46 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
-		public void drawOn(final Graphics2D g2, final double xr, final double yr) {
-
-			// Put size, isLeaf and bounds as volatile to allow removing the reentrant lock ?
-			if ( isLeaf ) {
-				g2.setColor(Color.gray);
-				g2.setStroke(new BasicStroke(0.1f));
-				g2.drawRect(Maths.round(bounds.getMinX() * xr), Maths.round(bounds.getMinY() * yr),
-					Maths.round(bounds.getWidth() * xr), Maths.round(bounds.getHeight() * yr));
-				g2.setColor(colors[Math.min(31, (int) ((double) size / (double) maxCapacity * 32))]);
-				g2.fillRect(Maths.round(bounds.getMinX() * xr) + 1, Maths.round(bounds.getMinY() * yr) + 1,
-					Maths.round(bounds.getWidth() * xr) - 1, Maths.round(bounds.getHeight() * yr) - 1);
-			} else {
-				nw.drawOn(g2, xr, yr);
-				ne.drawOn(g2, xr, yr);
-				sw.drawOn(g2, xr, yr);
-				se.drawOn(g2, xr, yr);
-			}
-
-		}
+		// public void drawOn(final Graphics2D g2, final double xr, final double yr) {
+		//
+		// // Put size, isLeaf and bounds as volatile to allow removing the reentrant lock ?
+		// if ( isLeaf ) {
+		// g2.setColor(Color.gray);
+		// g2.setStroke(new BasicStroke(0.1f));
+		// g2.drawRect(Maths.round(bounds.getMinX() * xr), Maths.round(bounds.getMinY() * yr),
+		// Maths.round(bounds.getWidth() * xr), Maths.round(bounds.getHeight() * yr));
+		// g2.setColor(colors[Math.min(31, (int) ((double) size / (double) maxCapacity * 32))]);
+		// g2.fillRect(Maths.round(bounds.getMinX() * xr) + 1, Maths.round(bounds.getMinY() * yr) + 1,
+		// Maths.round(bounds.getWidth() * xr) - 1, Maths.round(bounds.getHeight() * yr) - 1);
+		// } else {
+		// nw.drawOn(g2, xr, yr);
+		// ne.drawOn(g2, xr, yr);
+		// sw.drawOn(g2, xr, yr);
+		// se.drawOn(g2, xr, yr);
+		// }
+		//
+		// }
 	}
 
-	@Override
-	public void drawOn(final Graphics2D g2, final int width, final int height) {
-		if ( isDrawing ) { return; }
-		isDrawing = true;
-		g2.setColor(Color.white);
-		g2.fillRect(0, 0, width, height);
-
-		final double x_ratio = width / root.bounds.getWidth();
-		final double y_ratio = height / root.bounds.getHeight();
-
-		try {
-			root.drawOn(g2, x_ratio, y_ratio);
-			g2.setColor(Color.ORANGE);
-			g2.setFont(new Font("Helvetica", Font.BOLD, height / 75));
-			g2.drawString("Agents: " + totalAgents + "; Nodes: " + totalNodes, 10, 10);
-		} finally {
-			isDrawing = false;
-		}
-	}
+	// @Override
+	// public void drawOn(final Graphics2D g2, final int width, final int height) {
+	// if ( isDrawing ) { return; }
+	// isDrawing = true;
+	// g2.setColor(Color.white);
+	// g2.fillRect(0, 0, width, height);
+	//
+	// final double x_ratio = width / root.bounds.getWidth();
+	// final double y_ratio = height / root.bounds.getHeight();
+	//
+	// try {
+	// root.drawOn(g2, x_ratio, y_ratio);
+	// g2.setColor(Color.ORANGE);
+	// g2.setFont(new Font("Helvetica", Font.BOLD, height / 75));
+	// g2.drawString("Agents: " + totalAgents + "; Nodes: " + totalNodes, 10, 10);
+	// } finally {
+	// isDrawing = false;
+	// }
+	// }
 
 	// FIXME NO DISPOSE METHOD ?
 

@@ -66,11 +66,11 @@ public abstract class AbstractTopology implements ITopology {
 			return this;
 		}
 
-		@Override
-		public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {
-			if ( spatialIndex == null ) { return; }
-			spatialIndex.drawOn(g2, width, height);
-		}
+		// @Override
+		// public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {
+		// if ( spatialIndex == null ) { return; }
+		// spatialIndex.drawOn(g2, width, height);
+		// }
 
 		@Override
 		public void dispose() {

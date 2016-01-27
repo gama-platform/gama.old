@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
-import java.awt.Graphics2D;
 import java.util.*;
 import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
@@ -918,9 +917,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 		return shapes;
 	}
-
-	@Override
-	public void drawOn(final Graphics2D g2, final int width, final int height) {}
+	//
+	// @Override
+	// public void drawOn(final Graphics2D g2, final int width, final int height) {}
 
 	/**
 	 * Method isTorus()
