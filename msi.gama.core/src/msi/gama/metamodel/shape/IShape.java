@@ -54,7 +54,6 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public static final String DEPTH_ATTRIBUTE = "_shape_internal_depth";
 	public static final Map<String, Type> JTS_TYPES = new THashMap();
 	public static final String TEXTURE_ATTRIBUTE = "_shape_internal_texture";
-	public static final String ASSET3D_ATTRIBUTE = "_shape_internal_asset3D";
 	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
 	public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";
 	public static final String COLOR_LIST_ATTRIBUTE = "_shape_internal_color_list";
@@ -107,7 +106,5 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public abstract void setInnerGeometry(Geometry intersection);
 
 	public void setDepth(double depth);
-
-	public void setRotate3D(GamaPair rot3D);
 
 }

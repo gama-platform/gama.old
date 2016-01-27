@@ -970,12 +970,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		}
 
-		@Override
-		public void setRotate3D(final GamaPair rot3D) {
-			// TODO Auto-generated method stub
-
-		}
-
+	
 	}
 
 	/**
@@ -1364,11 +1359,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			}
 
-			@Override
-			public void setRotate3D(final GamaPair depth) {
-				// TODO Auto-generated method stub
-
-			}
 
 			// hqnghi must-implement methods from GamlAgent
 			@Override

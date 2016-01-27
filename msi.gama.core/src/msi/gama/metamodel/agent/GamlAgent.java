@@ -611,11 +611,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	}
 
-	@Override
-	public void setRotate3D(final GamaPair rot3d) {
-		if ( geometry == null ) { return; }
-		geometry.setRotate3D(rot3d);
-	}
 
 	// @Override
 	// public SimulationClock getClock() {
