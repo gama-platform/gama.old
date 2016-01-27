@@ -93,15 +93,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 
 		// gl.glPushMatrix();
 
-		// If the file is SVG, we translate it to its center
-		if ( file instanceof GamaSVGFile ) {
-			if ( size != null ) {
-				gl.glTranslated(-size.x / 2, renderer.yFlag * size.y / 2, 0);
-			} else if ( env != null ) {
-				gl.glTranslated(-env.getWidth() / 2, renderer.yFlag * env.getHeight() / 2, 0);
-			}
-		}
-
+	
 		// If a location is provided we use it otherwise we use that of the agent if it exists
 		if ( atLoc != null ) {
 			gl.glTranslated(atLoc.getX(), renderer.yFlag * atLoc.getY(), atLoc.getZ());
@@ -121,6 +113,16 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		if ( this.rotInit != null ) {
 			gl.glRotatef(rotInit.floatValue(), (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);
 		}
+		
+		// If the file is SVG, we translate it to its center
+		if ( file instanceof GamaSVGFile ) {
+			if ( size != null ) {
+				gl.glTranslated(-size.x / 2, renderer.yFlag * size.y / 2, 0);
+			} else if ( env != null ) {
+				gl.glTranslated(-env.getWidth() / 2, renderer.yFlag * env.getHeight() / 2, 0);
+			}
+		}
+
 
 		// We then compute the scaling factor to apply
 		double factor = 0.0;
@@ -163,6 +165,14 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 		if ( this.size != null && env != null ) {
 			gl.glScaled(1 / factor, 1 / factor, 1 / factor);
 		}
+		
+		if ( file instanceof GamaSVGFile ) {
+			if ( size != null ) {
+				gl.glTranslated(size.x / 2,- renderer.yFlag * size.y / 2, 0);
+			} else if ( env != null ) {
+				gl.glTranslated(env.getWidth() / 2, - renderer.yFlag * env.getHeight() / 2, 0);
+			}
+		}
 
 		if ( this.rotInit != null ) {
 			gl.glRotatef(-rotInit.floatValue(), (float) ptRotInit.x, (float) ptRotInit.y, (float) ptRotInit.z);
@@ -179,13 +189,7 @@ public class RessourceObject extends AbstractObject implements Cloneable {
 			gl.glTranslated(-this.agent.getLocation().getX(), -renderer.yFlag * this.agent.getLocation().getY(),
 				-this.agent.getLocation().getZ());
 		}
-		if ( file instanceof GamaSVGFile ) {
-			if ( size != null ) {
-				gl.glTranslated(size.x / 2, -renderer.yFlag * size.y / 2, 0);
-			} else if ( env != null ) {
-				gl.glTranslated(env.getWidth() / 2, -renderer.yFlag * env.getHeight() / 2, 0);
-			}
-		}
+		
 
 	}
 
