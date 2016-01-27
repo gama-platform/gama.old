@@ -12,7 +12,7 @@
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
-import msi.gama.kernel.experiment.SimulationPopulationScheduler;
+import msi.gama.kernel.experiment.ActionExecuter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -139,7 +139,7 @@ public class MessageBroker {
 	public static MessageBroker getInstance() {
 		if ( instance == null ) {
 			instance = new MessageBroker();
-			SimulationPopulationScheduler s = GAMA.getExperiment().getAgent().getSimulationsScheduler();
+			ActionExecuter s = GAMA.getExperiment().getAgent().getActionExecuter();
 
 			s.insertEndAction(new GamaHelper() {
 

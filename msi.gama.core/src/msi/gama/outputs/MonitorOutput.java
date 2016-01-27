@@ -12,7 +12,7 @@
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.*;
-import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
@@ -113,7 +113,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	public boolean init(final IScope scope) {
 		super.init(scope);
 		if ( colorExpression == null ) {
-			IMacroAgent sim = scope.getRoot();
+			ITopLevelAgent sim = scope.getRoot();
 			if ( sim != null ) {
 				constantColor = sim.getColor();
 			}

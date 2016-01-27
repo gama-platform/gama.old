@@ -91,7 +91,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private final IScope scope;
 	protected SimulationAgent simulation;
-	SimulationPopulationScheduler scheduler;
+	final ActionExecuter executer;
 	final Map<String, Object> extraParametersMap = new TOrderedHashMap();
 	protected RandomUtils random;
 	protected Double initialMinimumDuration = null;
@@ -105,7 +105,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
-		scope = new ExperimentAgentScope();
+		scope = new ExperimentAgentScope(this);
+		executer = new ActionExecuter(scope);
 		reset();
 	}
 
@@ -144,19 +145,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public IScope obtainNewScope() {
-		if ( dead ) { return null; }
-		return new ExperimentAgentScope();
-	}
-
-	@Override
 	public void closeSimulations() {
 		// We unschedule the simulation if any
-		getSpecies().getController().getScheduler().unschedule(getSimulationsScheduler());
+		executer.executeDisposeActions();
 		if ( getSimulationPopulation() != null ) {
 			getSimulationPopulation().dispose();
 		}
-		// TODO Should better be in SimulationOutputManager
 		if ( !getSpecies().isBatch() ) {
 			scope.getGui().cleanAfterSimulation();
 		}
@@ -222,10 +216,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	protected Object stepSubPopulations(final IScope scope) {
-		// The experiment DOES NOT step its subpopulations unless it has not been already scheduled (i.e. it is an experiment called on a micromodel)
-		// This role is played by the SimulationPopulationsScheduler in normal experiments
-		if ( !scheduled ) { return super.stepSubPopulations(scope); }
-		return this;
+		return scope.step(populationOfSimulations);
 	}
 
 	@Override
@@ -254,11 +245,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		SimulationPopulation pop = getSimulationPopulation();
 		pop.initializeFor(scope);
 		attributes.put(getModel().getName(), pop);
-		pop.setHost(this);
-		if ( scheduler != null ) {
-			scheduler.dispose();
-		}
-		scheduler = new SimulationPopulationScheduler(scope, pop);
+		// pop.setHost(this);
+		// if ( scheduler != null ) {
+		// scheduler.dispose();
+		// }
+		// scheduler = new ActionExecuter(scope, pop);
 	}
 
 	@Override
@@ -423,7 +414,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if ( populationOfSimulations == null ) {
 			populationOfSimulations = (SimulationPopulation) getMicroPopulation(getModel());
 			if ( populationOfSimulations == null ) {
-				populationOfSimulations = new SimulationPopulation(getModel());
+				populationOfSimulations = new SimulationPopulation(this, getModel());
 			}
 		}
 		return populationOfSimulations;
@@ -458,10 +449,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		boolean result;
 		// An experiment always runs in its own scope
 		try {
+			getActionExecuter().executeBeginActions();
 			result = super.step(this.scope);
-			if ( scheduler != null ) {
-				scheduler.step(this.scope);
-			}
+			getActionExecuter().executeEndActions();
+			getActionExecuter().executeOneShotActions();
 			IOutputManager outputs = getSpecies().getExperimentOutputs();
 			if ( outputs != null ) {
 				outputs.step(scope);
@@ -487,11 +478,18 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @since 22 avr. 2013
 	 *
 	 */
-	public class ExperimentAgentScope extends Scope {
+	public class ExperimentAgentScope extends SimulationScope {
+
+		/**
+		 * @param agent
+		 */
+		public ExperimentAgentScope(final ITopLevelAgent agent) {
+			super(agent);
+		}
 
 		@Override
 		public IScope copy() {
-			return new ExperimentAgentScope();
+			return new ExperimentAgentScope(ExperimentAgent.this);
 		}
 
 		@Override
@@ -600,8 +598,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return
 	 */
 	@Override
-	public SimulationPopulationScheduler getSimulationsScheduler() {
-		return scheduler;
+	public ActionExecuter getActionExecuter() {
+		return executer;
 	}
 
 	/**
@@ -616,6 +614,15 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public GamaColor getColor() {
 		return new GamaColor(0, 0, 0, 0);
+	}
+
+	/**
+	 * Method getOutputManager()
+	 * @see msi.gama.kernel.experiment.ITopLevelAgent#getOutputManager()
+	 */
+	@Override
+	public IOutputManager getOutputManager() {
+		return getSpecies().getExperimentOutputs();
 	}
 
 }

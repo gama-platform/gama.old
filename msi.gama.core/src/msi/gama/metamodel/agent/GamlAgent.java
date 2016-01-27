@@ -14,8 +14,6 @@ package msi.gama.metamodel.agent;
 import java.util.*;
 import com.google.common.collect.Iterables;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.RandomUtils;
-import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -583,57 +581,18 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		return true;
 	}
 
-	@Override
-	public IScope obtainNewScope() {
-		if ( dead ) { return null; }
-		return new Scope();
-	}
-
-	@Override
-	public void releaseScope(final IScope scope) {
-		if ( scope != null ) {
-			scope.clear();
-		}
-	}
-
-	protected class Scope extends AbstractScope {
-
-		volatile boolean interrupted = false;
-
-		public Scope() {
-			super(GamlAgent.this);
-		}
-
-		@Override
-		protected boolean _root_interrupted() {
-			return interrupted || dead;
-		}
-
-		@Override
-		public void setInterrupted(final boolean interrupted) {
-			this.interrupted = true;
-			// scope.getGui().debug("GamlAgent.Scope.setInterrupted : " + this);
-			// if ( !GamlAgent.this.dead ) {
-			// GamlAgent.this.dispose();
-			// }
-		}
-
-		@Override
-		public IScope copy() {
-			return new Scope();
-		}
-
-		/**
-		 * Method getRandom()
-		 * @see msi.gama.runtime.IScope#getRandom()
-		 */
-		@Override
-		public RandomUtils getRandom() {
-			SimulationAgent a = this.getSimulationScope();
-			return a == null ? null : a.getRandomGenerator();
-		}
-
-	}
+	// @Override
+	// public IScope obtainNewScope() {
+	// if ( dead ) { return null; }
+	// return new SimulationScope();
+	// }
+	//
+	// @Override
+	// public void releaseScope(final IScope scope) {
+	// if ( scope != null ) {
+	// scope.clear();
+	// }
+	// }
 
 	/**
 	 * Method getPoints()
@@ -658,28 +617,28 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		geometry.setRotate3D(rot3d);
 	}
 
-	@Override
-	public SimulationClock getClock() {
-		IMacroAgent host = getHost();
-		if ( host != null ) { return host.getClock(); }
-		return null;
-		// return new SimulationClock();
-	}
-
-	/**
-	 * Method mustScheduleMembers()
-	 * @see msi.gama.metamodel.agent.IMacroAgent#mustScheduleMembers()
-	 */
-	@Override
-	public boolean mustScheduleMembers() {
-		return false;
-	}
-
-	@Override
-	public GamaColor getColor() {
-		IMacroAgent host = getHost();
-		if ( host != null ) { return host.getColor(); }
-		return null;
-	}
-
+	// @Override
+	// public SimulationClock getClock() {
+	// IMacroAgent host = getHost();
+	// if ( host != null ) { return host.getClock(); }
+	// return null;
+	// return new SimulationClock();
 }
+
+/**
+ * Method mustScheduleMembers()
+ * @see msi.gama.metamodel.agent.IMacroAgent#mustScheduleMembers()
+ */
+// @Override
+// public boolean mustScheduleMembers() {
+// return false;
+// }
+//
+// @Override
+// public GamaColor getColor() {
+// IMacroAgent host = getHost();
+// if ( host != null ) { return host.getColor(); }
+// return null;
+// }
+
+// }

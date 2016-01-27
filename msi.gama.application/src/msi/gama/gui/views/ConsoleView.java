@@ -25,7 +25,7 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.GAMA;
 
 public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
@@ -61,7 +61,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 
 	}
 
-	private BufferedWriter getWriterFor(final IMacroAgent root, final GamaUIColor color) {
+	private BufferedWriter getWriterFor(final ITopLevelAgent root, final GamaUIColor color) {
 		Color c = color == null ? getColorFor(root) : color.color();
 		BufferedWriter writer = writers.get(c);
 		if ( writer == null ) {
@@ -79,7 +79,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	 * @param root
 	 * @return
 	 */
-	private Color getColorFor(final IMacroAgent root) {
+	private Color getColorFor(final ITopLevelAgent root) {
 		return GamaColors.get(root.getColor()).color();
 	}
 
@@ -89,7 +89,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	 * Append the text to the console.
 	 * @param text to display in the console
 	 */
-	public void append(final String text, final IMacroAgent root, final GamaUIColor color) {
+	public void append(final String text, final ITopLevelAgent root, final GamaUIColor color) {
 
 		if ( !paused ) {
 			BufferedWriter writer = getWriterFor(root, color);

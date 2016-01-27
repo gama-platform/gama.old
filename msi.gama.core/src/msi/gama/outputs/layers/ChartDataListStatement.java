@@ -235,7 +235,7 @@ public class ChartDataListStatement extends AbstractStatement {
 	}
 
 	/**
-	 * DataList statement requires a variable in the scope created by the Scope:
+	 * DataList statement requires a variable in the scope created by the SimulationScope:
 	 * DataListVars to transfer the data
 	 */
 

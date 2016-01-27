@@ -20,7 +20,6 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.*;
 import msi.gama.runtime.GAMA;
 
@@ -114,7 +113,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-				if ( perspective.getId().equals(ModelingPerspective.ID) ) {
+				if ( perspective.getId().equals(IGui.PERSPECTIVE_MODELING_ID) ) {
 					if ( getOutput() != null && getDisplaySurface() != null ) {
 						if ( !GamaPreferences.CORE_DISPLAY_PERSPECTIVE.getValue() ) {
 							previousState = getOutput().isPaused();

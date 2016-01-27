@@ -1341,6 +1341,10 @@
             </or>
          </activeWhen>
       </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.SavePerspectiveHandler"
+            commandId="org.eclipse.ui.window.savePerspective">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.services">

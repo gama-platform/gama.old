@@ -16,15 +16,14 @@ import msi.gama.common.interfaces.IGui;
 
 public class SimulationPerspective implements IPerspectiveFactory {
 
-	/** The Constant ID of the perspective */
-	public static final String ID = "msi.gama.application.perspectives.SimulationPerspective";
-
 	@Override
 	public void createInitialLayout(final IPageLayout lay) {
 
 		lay.setFixed(false);
 		lay.setEditorAreaVisible(false);
 		String editor = lay.getEditorArea();
+
+		lay.addPerspectiveShortcut(IGui.PERSPECTIVE_MODELING_ID);
 
 		IFolderLayout navigAndParam = lay.createFolder("navigAndParam", IPageLayout.LEFT, 0.3f, editor);
 		navigAndParam.addView(IGui.PARAMETER_VIEW_ID);

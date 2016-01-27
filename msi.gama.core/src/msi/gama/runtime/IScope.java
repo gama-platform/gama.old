@@ -14,10 +14,10 @@ package msi.gama.runtime;
 import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -185,7 +185,7 @@ public interface IScope {
 	 * by a simulation)
 	 */
 
-	public IMacroAgent getRoot();
+	public ITopLevelAgent getRoot();
 
 	public abstract SimulationAgent getSimulationScope();
 

@@ -25,7 +25,7 @@ import msi.gama.gui.displays.layers.LayerSideControls;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.actions.*;
-import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.*;
@@ -62,7 +62,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			IScope scope = out.getScope();
 
 			if ( scope != null && scope.getSimulationScope() != null ) {
-				IMacroAgent root = scope.getRoot();
+				ITopLevelAgent root = scope.getRoot();
 				Color color = root.getColor();
 				String name = root.getClass().getSimpleName() + root.getIndex();
 				this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));

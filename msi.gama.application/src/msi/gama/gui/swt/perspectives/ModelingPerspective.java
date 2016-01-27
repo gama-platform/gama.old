@@ -1,25 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ModelingPerspective.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.perspectives;
 
 import org.eclipse.ui.*;
+import msi.gama.common.interfaces.IGui;
 
 public class ModelingPerspective implements IPerspectiveFactory {
 
-	/** The Constant ID of the perspective */
-	public static final String ID = "msi.gama.application.perspectives.ModelingPerspective";
-
 	@Override
 	public void createInitialLayout(final IPageLayout layout) {
+
+		layout.addPerspectiveShortcut(IGui.PERSPECTIVE_SIMULATION_ID);
 
 		// layout.setFixed(false);
 		// String editorId = layout.getEditorArea();

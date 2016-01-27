@@ -11,18 +11,12 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
 
-public interface IExperimentAgent extends IAgent {
+public interface IExperimentAgent extends ITopLevelAgent {
 
 	@Override
 	public abstract IExperimentPlan getSpecies();
-
-	public abstract RandomUtils getRandomGenerator();
-
-	// public abstract void closeSimulation();
 
 	public String getWorkingPath();
 
@@ -41,16 +35,8 @@ public interface IExperimentAgent extends IAgent {
 	 */
 	public abstract void setMinimumDuration(Double d);
 
-	/**
-	 *
-	 */
 	void closeSimulations();
 
-	/**
-	 * @param simulationAgent
-	 */
 	public abstract void closeSimulation(SimulationAgent simulationAgent);
-
-	public SimulationPopulationScheduler getSimulationsScheduler();
 
 }

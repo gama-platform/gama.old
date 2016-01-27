@@ -766,7 +766,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	private GridDiffuser getDiffuser(final IScope scope) {
 		if ( diffuser != null ) { return diffuser; }
 		diffuser = new GridDiffuser();
-		scope.getExperiment().getSimulationsScheduler().insertEndAction(new GamaHelper() {
+		scope.getExperiment().getActionExecuter().insertEndAction(new GamaHelper() {
 
 			@Override
 			public Object run(final IScope scope) throws GamaRuntimeException {

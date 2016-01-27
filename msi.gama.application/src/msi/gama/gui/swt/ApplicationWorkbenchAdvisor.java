@@ -20,7 +20,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 import org.eclipse.ui.statushandlers.*;
 import msi.gama.application.projects.WorkspaceModelsManager;
-import msi.gama.gui.swt.perspectives.ModelingPerspective;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
 
@@ -143,7 +143,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	@Override
 	public String getInitialWindowPerspectiveId() {
-		return ModelingPerspective.ID;
+		return IGui.PERSPECTIVE_MODELING_ID;
 	}
 
 	/**

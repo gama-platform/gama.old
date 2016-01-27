@@ -21,8 +21,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
-import msi.gama.metamodel.topology.grid.GridTopology;
+import msi.gama.metamodel.topology.grid.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -70,11 +69,13 @@ public class MovingSkill extends Skill {
 
 	@setter(IKeyword.HEADING)
 	public void setHeading(final IAgent agent, final int heading) {
+		if ( agent == null ) { return; }
 		agent.setAttribute(IKeyword.HEADING, heading);
 	}
 
 	@getter(IKeyword.DESTINATION)
 	public ILocation getDestination(final IAgent agent) {
+		if ( agent == null ) { return null; }
 		final ILocation actualLocation = agent.getLocation();
 		final double dist = getSpeed(agent);
 		final ITopology topology = getTopology(agent);
@@ -88,22 +89,26 @@ public class MovingSkill extends Skill {
 
 	@getter(IKeyword.SPEED)
 	public double getSpeed(final IAgent agent) {
+		if ( agent == null ) { return 0.0; }
 		return (Double) agent.getAttribute(IKeyword.SPEED);
 	}
 
 	@setter(IKeyword.SPEED)
 	public void setSpeed(final IAgent agent, final double s) {
+		if ( agent == null ) { return; }
 		agent.setAttribute(IKeyword.SPEED, s);
 	}
 
 	@getter(value = IKeyword.LOCATION, initializer = true)
 	public ILocation getLocation(final IAgent agent) {
+		if ( agent == null ) { return null; }
 		return agent.getLocation();
 	}
 
 	@setter(IKeyword.LOCATION)
 	// Correctly manages the heading
 	public void setLocation(final IAgent agent, final ILocation p) {
+		if ( agent == null ) { return; }
 		final ITopology topology = getTopology(agent);
 		final ILocation oldLocation = agent.getLocation();
 		if ( !topology.isTorus() && p != null && !p.equals(oldLocation) ) {
@@ -170,13 +175,14 @@ public class MovingSkill extends Skill {
 		return topo;
 	}
 
-	protected Object computeTopologyEdge(final IScope scope, final IAgent agent, IList<IAgent> on) throws GamaRuntimeException {
+	protected Object computeTopologyEdge(final IScope scope, final IAgent agent, final IList<IAgent> on)
+		throws GamaRuntimeException {
 		Object onV = scope.getArg("on", IType.NONE);
 		if ( onV instanceof IShape && ((IShape) onV).isLine() ) { return onV; }
-		if (onV instanceof IList) {
+		if ( onV instanceof IList ) {
 			IList ags = (IList) onV;
-			
-			if (ags != null && !ags.isEmpty() && ags.get(0) instanceof IAgent) {
+
+			if ( ags != null && !ags.isEmpty() && ags.get(0) instanceof IAgent ) {
 				on.addAll(ags);
 				onV = ((IAgent) ags.get(0)).getSpecies();
 			}
@@ -235,7 +241,6 @@ public class MovingSkill extends Skill {
 		// return null;
 	}
 
-	
 	@action(name = "move",
 		args = {
 			@arg(name = IKeyword.SPEED,
@@ -351,7 +356,9 @@ public class MovingSkill extends Skill {
 			scope.hasArg("return_path") ? (Boolean) scope.getArg("return_path", IType.NONE) : false;
 		IList<IAgent> on = GamaListFactory.create(Types.AGENT);
 		final Object rt = computeTopologyEdge(scope, agent, on);
-		if (on.isEmpty()) on = null;
+		if ( on.isEmpty() ) {
+			on = null;
+		}
 		final IShape edge = rt instanceof IShape ? (IShape) rt : null;
 		final ITopology topo = rt instanceof ITopology ? (ITopology) rt : scope.getTopology();
 		if ( goal == null ) {
@@ -364,9 +371,9 @@ public class MovingSkill extends Skill {
 				false); }
 			return null;
 		}
-		if (topo instanceof GridTopology) {
-			//source = ((GamaSpatialMatrix)topo.getPlaces()).getAgentAt(source).getLocation();
-			goal = ((GamaSpatialMatrix)topo.getPlaces()).getAgentAt(goal.getLocation()).getLocation();
+		if ( topo instanceof GridTopology ) {
+			// source = ((GamaSpatialMatrix)topo.getPlaces()).getAgentAt(source).getLocation();
+			goal = ((GamaSpatialMatrix) topo.getPlaces()).getAgentAt(goal.getLocation()).getLocation();
 		}
 		if ( source.equals(goal) ) {
 			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST,
@@ -379,22 +386,23 @@ public class MovingSkill extends Skill {
 			recomputePath = true;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if (recomputePath && (topo instanceof GridTopology)) {
+		if ( recomputePath && topo instanceof GridTopology ) {
 			agent.setAttribute("current_path", null);
 			path = null;
 		}
-		if ( path == null || (path.getTopology(scope) != null && !path.getTopology(scope).equals(topo)) ||
+		if ( path == null || path.getTopology(scope) != null && !path.getTopology(scope).equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
 			if ( edge != null ) {
 				IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 				edges.add(edge);
 				path = new GamaSpatialPath(source.getGeometry(), goal, edges, true);
 			} else {
-				if (topo instanceof GridTopology) {
-					path = ((GridTopology) topo).pathBetween(scope, source, goal,on);
-					
-				} else 
+				if ( topo instanceof GridTopology ) {
+					path = ((GridTopology) topo).pathBetween(scope, source, goal, on);
+
+				} else {
 					path = topo.pathBetween(scope, source, goal);
+				}
 			}
 		} else {
 

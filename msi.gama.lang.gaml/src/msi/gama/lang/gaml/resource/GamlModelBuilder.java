@@ -16,7 +16,7 @@ import java.util.*;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.*;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
@@ -152,7 +152,7 @@ public class GamlModelBuilder implements IModelBuilder {
 
 	@Override
 	public GAMLFile.GamlInfo getInfo(final URI uri, final long stamp) {
-		SynchronizedXtextResourceSet infoResourceSet = new SynchronizedXtextResourceSet();
+		/* Synchronized */XtextResourceSet infoResourceSet = new /* Synchronized */XtextResourceSet();
 		try {
 
 			GamlResource r = (GamlResource) infoResourceSet.createResource(uri);

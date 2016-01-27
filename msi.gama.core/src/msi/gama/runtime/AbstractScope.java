@@ -15,7 +15,7 @@ import java.util.*;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.interfaces.*;
-import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
@@ -46,7 +46,7 @@ public abstract class AbstractScope implements IScope {
 	private IGraphics graphics;
 	private ITopology topology;
 	private volatile boolean _action_halted, _loop_halted, _agent_halted;
-	protected final IMacroAgent root;
+	protected final ITopLevelAgent root;
 	protected final SimulationAgent simulation;
 	private Object each = null;
 	private final int number = ScopeNumber++;
@@ -61,7 +61,7 @@ public abstract class AbstractScope implements IScope {
 	// Allows (for debugging purposes) to trace how the agents are popped and pushed to the scope
 	// public boolean traceAgents = false;
 
-	public AbstractScope(final IMacroAgent root) {
+	public AbstractScope(final ITopLevelAgent root) {
 		this.root = root;
 		if ( root != null ) {
 			agents.push(root);
@@ -737,7 +737,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public String getName() {
-		return "Scope #" + number + " of " + root;
+		return "SimulationScope #" + number + " of " + root;
 	}
 
 	@Override
@@ -889,7 +889,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public IMacroAgent getRoot() {
+	public ITopLevelAgent getRoot() {
 		return root;
 	}
 

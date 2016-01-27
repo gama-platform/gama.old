@@ -12,7 +12,6 @@
 package msi.gama.metamodel.agent;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
@@ -156,17 +155,9 @@ public interface IMacroAgent extends IAgent {
 	@getter(IKeyword.AGENTS)
 	public abstract IList<IAgent> getAgents(IScope scope);
 
-	public abstract void releaseScope(IScope scope);
-
-	public abstract IScope obtainNewScope();
-
-	public SimulationClock getClock();
-
-	public GamaColor getColor();
-
 	/**
 	 * @return
 	 */
-	public abstract boolean mustScheduleMembers();
+	// public abstract boolean mustScheduleMembers();
 
 }

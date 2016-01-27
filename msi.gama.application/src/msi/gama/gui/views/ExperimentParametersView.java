@@ -72,6 +72,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	}
 
 	protected void displayCommands() {
+		toolbar.wipe(SWT.LEFT, true);
 		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
 		//
 		// String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / " +
@@ -83,7 +84,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					GAMA.getExperiment().getAgent().getSimulationsScheduler().executeOneAction(new GamaHelper() {
+					GAMA.getExperiment().getAgent().getActionExecuter().executeOneAction(new GamaHelper() {
 
 						@Override
 						public Object run(final IScope scope) {
