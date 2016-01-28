@@ -108,7 +108,8 @@ public class GridDiffuser {
 				GridDiffusion gridToAnalyze = listWithSameVar.get(i);
 				if (gridToAnalyze != newGridDiff
 						&& gridToAnalyze.m_method_diffu == newGridDiff.m_method_diffu
-						&& compareArrays(gridToAnalyze.m_mask,newGridDiff.m_mask)) {
+						&& compareArrays(gridToAnalyze.m_mask,newGridDiff.m_mask)
+						&& gridToAnalyze.m_is_gradient == newGridDiff.m_is_gradient) {
 					// we can add the two diffusion matrix
 					listWithSameVar.remove(gridToAnalyze);
 					int iiLength = gridToAnalyze.m_mat_diffu.length;
@@ -332,7 +333,7 @@ public class GridDiffuser {
 		}
 	}
 
-	public double[][] translateMatrix(final IScope scope, final IMatrix mm) {
+	public double[][] translateMatrix(final IScope scope, final IMatrix<?> mm) {
 		if ( mm == null ) { return null; }
 		int rows = mm.getRows(scope);
 		int cols = mm.getCols(scope);

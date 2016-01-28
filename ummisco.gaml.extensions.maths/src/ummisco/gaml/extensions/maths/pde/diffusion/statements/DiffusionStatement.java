@@ -279,22 +279,51 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 		else {
 			mat_diffu = new double[3][3];
+			int distanceFromCenter=0;
 			if (nb_neighbors == 8) {
 				for (int i = 0 ; i < 3 ; i++) {
 					for (int j = 0 ; j < 3 ; j++) {
-						mat_diffu[i][j] = proportion/9.0;
+						if (nb_neighbors == 8) {
+							distanceFromCenter = Math.max(Math.abs(i - 3/2),Math.abs(j - 3/2));
+						}
+						else {
+							distanceFromCenter = Math.abs(i - 3/2)+Math.abs(j - 3/2);
+						}
+						if (distanceFromCenter == 0) {
+							mat_diffu[i][j] = 1/(nb_neighbors+1);
+						}
+						else if (distanceFromCenter == 1) {
+							mat_diffu[i][j] = proportion/(nb_neighbors+1);
+						}
+						else {
+							mat_diffu[i][j] = 0;
+						}
 					}
 				}
 			}
 			if (nb_neighbors == 4) {
-				mat_diffu[0][1] = 1.0/5.0;
-				mat_diffu[1][0] = 1.0/5.0;
-				mat_diffu[1][2] = 1.0/5.0;
-				mat_diffu[2][1] = 1.0/5.0;
-				mat_diffu[1][1] = 1.0/5.0;
+				mat_diffu[0][1] = proportion/5.0;
+				mat_diffu[1][0] = proportion/5.0;
+				mat_diffu[1][2] = proportion/5.0;
+				mat_diffu[2][1] = proportion/5.0;
+				mat_diffu[1][1] = proportion/5.0;
 			}
 			if (range>1) {
 				mat_diffu = computeMatrix(mat_diffu,range);
+			}
+			if (variation>0) {
+				int mat_diff_size = mat_diffu.length;
+				for (int i = 0; i < mat_diff_size; i++) {
+					for (int j = 0; j < mat_diff_size; j++) {
+						if (nb_neighbors == 8) {
+							distanceFromCenter = Math.max(Math.abs(i - mat_diff_size/2),Math.abs(j - mat_diff_size/2));
+						}
+						else {
+							distanceFromCenter = Math.abs(i - mat_diff_size/2)+Math.abs(j - mat_diff_size/2);
+						}
+						mat_diffu[i][j] = mat_diffu[i][j] - distanceFromCenter*variation;
+					}
+				}
 			}
 		}
 		return mat_diffu;
