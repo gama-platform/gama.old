@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaIntegerType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
@@ -15,7 +15,7 @@ import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaFont;
@@ -23,9 +23,9 @@ import msi.gaml.descriptions.IDescription;
 
 /**
  * Written by drogoul Modified on 1 ao�t 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @type(name = IKeyword.INT,
 	id = IType.INT,
@@ -85,13 +85,12 @@ public class GamaIntegerType extends GamaType<Integer> {
 
 	@Override
 	public boolean isTranslatableInto(final IType type) {
-		return type == this || type.id() == IType.FLOAT || type == Types.NO_TYPE;
+		return type.isNumber() || type == Types.NO_TYPE;
 	}
 
 	@Override
 	public IType coerce(final IType type, final IDescription context) {
 		if ( type == this ) { return null; }
-		// GUI.debug("Float type coercing =" + expr);
 		return this;
 	}
 
@@ -102,6 +101,11 @@ public class GamaIntegerType extends GamaType<Integer> {
 
 	@Override
 	public boolean canCastToConst() {
+		return true;
+	}
+
+	@Override
+	public boolean isNumber() {
 		return true;
 	}
 

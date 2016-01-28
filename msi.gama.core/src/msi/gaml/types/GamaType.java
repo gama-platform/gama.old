@@ -288,6 +288,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
+	public boolean isNumber() {
+		return false;
+	}
+
+	@Override
 	public boolean isFixedLength() {
 		return true;
 	}

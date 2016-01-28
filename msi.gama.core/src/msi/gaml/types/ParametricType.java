@@ -443,4 +443,9 @@ public class ParametricType implements IContainerType {
 		keyType.collectPlugins(plugins);
 	}
 
+	@Override
+	public boolean isNumber() {
+		return false;
+	}
+
 }

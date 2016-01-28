@@ -178,4 +178,6 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	 */
 	public void setDefiningPlugin(String plugin);
 
+	public boolean isNumber();
+
 }
