@@ -14,10 +14,8 @@ package msi.gaml.descriptions;
 import static msi.gama.util.GAML.getExpressionFactory;
 import java.util.*;
 import org.eclipse.emf.ecore.EObject;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-
 import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -482,6 +480,10 @@ public abstract class SymbolDescription implements IDescription {
 			validateChildren();
 		}
 
+		if ( proto.getDeprecated() != null ) {
+			warning("'" + getKeyword() + "' is deprecated. " + proto.getDeprecated(), IGamlIssue.DEPRECATED);
+		}
+
 		// If a custom validator has been defined, run it
 		if ( proto.getValidator() != null ) {
 			proto.getValidator().validate(this);
@@ -623,22 +625,24 @@ public abstract class SymbolDescription implements IDescription {
 		return lce;
 
 	}
-	
+
+	@Override
 	public Iterable<IDescription> getChildrenWithKeyword(final String keyword) {
 		return Iterables.filter(getChildren(), new Predicate<IDescription>() {
 
 			@Override
-			public boolean apply(IDescription input) {
+			public boolean apply(final IDescription input) {
 				return input.getKeyword().equals(keyword);
 			}
 		});
 	}
-	
+
+	@Override
 	public IDescription getChildWithKeyword(final String keyword) {
 		return Iterables.find(getChildren(), new Predicate<IDescription>() {
 
 			@Override
-			public boolean apply(IDescription input) {
+			public boolean apply(final IDescription input) {
 				return input.getKeyword().equals(keyword);
 			}
 		});
