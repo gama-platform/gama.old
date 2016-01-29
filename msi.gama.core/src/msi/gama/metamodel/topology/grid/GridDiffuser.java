@@ -245,7 +245,7 @@ public class GridDiffuser {
 							}
 						}
 						if ( ii >= 0 && ii < nbCols && jj >= 0 && jj < nbRows && mask[ii][jj] == 1) {
-							if (output[j * nbCols + i] == -1) {output[j * nbCols + i] = input[jj * nbCols + ii] * mat_diffu[mm][nn];}
+							if (output[j * nbCols + i] == -Double.MAX_VALUE) {output[j * nbCols + i] = input[jj * nbCols + ii] * mat_diffu[mm][nn];}
 							else {
 								if (is_gradient) {
 									if (output[j * nbCols + i] < input[jj * nbCols + ii] * mat_diffu[mm][nn]) {
@@ -293,7 +293,7 @@ public class GridDiffuser {
 								v = v - nbCols;
 							}
 						} else if ( u >= 0 && v >= 0 && v < nbCols && u < nbRows && mask[i][j]==1) {
-							if (output[u * nbCols + v]==-1) {
+							if (output[u * nbCols + v]==-Double.MAX_VALUE) {
 								output[u * nbCols + v]=input[i * nbCols + j] * mat_diffu[um][vm];
 							}
 							else {
@@ -319,7 +319,7 @@ public class GridDiffuser {
 
 	public void finishDiffusion(final IScope scope, final IPopulation pop) {
 		for ( int i = 0; i < output.length; i++ ) {
-			if (output[i]!=-1)
+			if (output[i]!=-Double.MAX_VALUE)
 			{
 				if (is_gradient) {
 					if (output[i]>input[i]) {
@@ -358,7 +358,7 @@ public class GridDiffuser {
 			Iterator<GridDiffusion> gridDiffIterator = listGridDiffu.iterator();
 			input = new double[pairVarGrid.m_nbCols*pairVarGrid.m_nbRows];
 			output = new double[pairVarGrid.m_nbCols*pairVarGrid.m_nbRows];
-			Arrays.fill(output, -1d);
+			Arrays.fill(output, -Double.MAX_VALUE);
 			while (gridDiffIterator.hasNext()) {
 				GridDiffusion gridDiffusion = gridDiffIterator.next();
 				loadDiffProperties(gridDiffusion);

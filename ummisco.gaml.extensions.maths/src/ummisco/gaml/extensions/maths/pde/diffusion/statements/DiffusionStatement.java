@@ -101,11 +101,6 @@ public class DiffusionStatement extends AbstractStatement {
 			if (mat_diffu != null && variation != null) {
 				desc.error("\"mat_diffu:\" and \"variation:\" can not be used at the same time", IGamlIssue.GENERAL);
 			}
-			
-			// conflict gradient /vs/ cycle_length
-			if (propagation != null && cycleLength != null) {
-				desc.info("If you want a \"gradient\" as propagation type, the facet \"cycle_length\" will not be taken in account. Use \"radius\" instead.", IGamlIssue.GENERAL);
-			}
 		}
 	}
 
@@ -143,7 +138,7 @@ public class DiffusionStatement extends AbstractStatement {
 		return res;
 	}
 
-	private double[][] computeMatrix(double[][] basicMatrix, int numberOfIteration) {
+	private double[][] computeMatrix(double[][] basicMatrix, int numberOfIteration, boolean is_gradient) {
 		double[][] input_mat_diffu = basicMatrix;
 		for (int nb = 2; nb <= numberOfIteration; nb++) {
 			double[][] output_mat_diffu = new double[(basicMatrix.length - 1) * nb + 1][(basicMatrix[0].length - 1) * nb
@@ -155,7 +150,14 @@ public class DiffusionStatement extends AbstractStatement {
 				for (int j = 0; j < input_mat_diffu[0].length; j++) {
 					for (int ii = 0; ii < basicMatrix.length; ii++) {
 						for (int jj = 0; jj < basicMatrix[0].length; jj++) {
-							output_mat_diffu[i + ii][j + jj] += input_mat_diffu[i][j] * basicMatrix[ii][jj];
+							if (is_gradient) {
+								if (output_mat_diffu[i + ii][j + jj] < input_mat_diffu[i][j] * basicMatrix[ii][jj]) {
+									output_mat_diffu[i + ii][j + jj] = input_mat_diffu[i][j] * basicMatrix[ii][jj];
+								}
+							}
+							else {
+								output_mat_diffu[i + ii][j + jj] += input_mat_diffu[i][j] * basicMatrix[ii][jj];
+							}
 						}
 					}
 				}
@@ -309,7 +311,7 @@ public class DiffusionStatement extends AbstractStatement {
 				mat_diffu[1][1] = proportion/5.0;
 			}
 			if (range>1) {
-				mat_diffu = computeMatrix(mat_diffu,range);
+				mat_diffu = computeMatrix(mat_diffu,range,is_gradient);
 			}
 			if (variation>0) {
 				int mat_diff_size = mat_diffu.length;
@@ -355,7 +357,7 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 
 		if (cLen != 1) {
-			mat_diffu = computeMatrix(mat_diffu, cLen);
+			mat_diffu = computeMatrix(mat_diffu, cLen, is_gradient);
 		}
 		
 		if (pop != null) {

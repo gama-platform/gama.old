@@ -790,7 +790,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			@Override
 			public Object run(final IScope scope) throws GamaRuntimeException {
-				diffuse(scope);
+				if (diffuser != null)
+					diffuse(scope);
 				return null;
 			}
 
