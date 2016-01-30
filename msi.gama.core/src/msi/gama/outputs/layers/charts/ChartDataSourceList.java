@@ -1,7 +1,9 @@
 package msi.gama.outputs.layers.charts;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
@@ -42,7 +44,12 @@ public class ChartDataSourceList extends ChartDataSource {
 		super.updatevalues(scope, chartCycle);
 		Object o=null;
 		Object oname=this.getNameExp();
-
+		HashMap<String,Object> barvalues=new HashMap<String,Object>();
+		if (this.isUseYErrValues()) barvalues.put(ChartDataStatement.YERR_VALUES,this.getValueyerr().value(scope));
+		if (this.isUseXErrValues()) barvalues.put(ChartDataStatement.XERR_VALUES,this.getValuexerr().value(scope));
+		if (this.isUseYMinMaxValues()) barvalues.put(ChartDataStatement.XERR_VALUES,this.getValuexerr().value(scope));
+		if (this.isUseSizeExp()) barvalues.put(ChartDataStatement.MARKERSIZE,this.getSizeexp().value(scope));
+		if (this.isUseColorExp()) barvalues.put(IKeyword.COLOR,this.getColorexp().value(scope));
 		
 		//TODO check same length and list
 		
@@ -61,7 +68,7 @@ public class ChartDataSourceList extends ChartDataSource {
 		}
 		else		
 		{
-			
+			// TODO Matrix case
 			if  ( o instanceof GamaList )
 			{
 				IList lval=Cast.asList(scope, o); 
@@ -73,7 +80,7 @@ public class ChartDataSourceList extends ChartDataSource {
 						Object no=lval.get(i);
 						if (no!=null)
 						{
-							updateseriewithvalue(scope,mySeries.get(currentseries.get(i)),no,chartCycle);
+							updateseriewithvalue(scope,mySeries.get(currentseries.get(i)),no,chartCycle,barvalues,i);
 						}
 					}
 				}
@@ -85,131 +92,6 @@ public class ChartDataSourceList extends ChartDataSource {
 		
 	}
 	
-	
-	private void updateseriewithvalue(IScope scope, ChartDataSeries myserie, Object o, int chartCycle) {
-
-		
-		// new cumulative Y value
-		if (this.isCumulative() && !this.isByCategory() &&  this.isCommonXSeries()) 
-		{
-			if ( o instanceof GamaList ) { 
-				IList lvalue=Cast.asList(scope, o); 
-				if (lvalue.length(scope)==0)
-				{
-					
-				}
-				if (lvalue.length(scope)>=1)
-				{
-					myserie.addxyvalue(getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
-							Cast.asFloat(scope,  lvalue.get(0)),chartCycle);
-				}
-				}
-			else
-			if ( o instanceof GamaPoint ) { 
-				ILocation pvalue=Cast.asPoint(scope, o); 
-			}
-			else
-			{
-				Double dvalue=Cast.asFloat(scope, o);
-				myserie.addxyvalue(getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
-						dvalue,chartCycle);
-		}
-			
-		}
-
-		// new cumulative XY value			
-		if (this.isCumulative() && !this.isByCategory() &&  !this.isCommonXSeries())
-		{
-			if ( o instanceof GamaList ) { 
-				IList lvalue=Cast.asList(scope, o); 
-				if (lvalue.length(scope)==0)
-				{
-					
-				}
-				if (lvalue.length(scope)==1)
-				{
-					myserie.addxyvalue(0.0,Cast.asFloat(scope,  lvalue.get(0)),chartCycle);
-
-				}
-				if (lvalue.length(scope)==2)
-				{
-					myserie.addxyvalue(Cast.asFloat(scope,  lvalue.get(0)),
-							Cast.asFloat(scope,  lvalue.get(1)),chartCycle);
-				}
-				if (lvalue.length(scope)>2)
-				{
-					myserie.addxysvalue(Cast.asFloat(scope,  lvalue.get(0)),
-							Cast.asFloat(scope,  lvalue.get(1)),
-							Cast.asFloat(scope,  lvalue.get(2)),chartCycle);
-				}
-				}
-			else
-			if ( o instanceof GamaPoint ) { 
-				ILocation pvalue=Cast.asPoint(scope, o); 
-				myserie.addxyvalue(
-						pvalue.getX(),
-						pvalue.getY(),
-						chartCycle);
-				}
-			else
-			{
-				Double dvalue=Cast.asFloat(scope, o);
-				myserie.addxyvalue(0.0,dvalue,chartCycle);
-		}
-			
-		}
-
-		// new XY value
-		if (!this.isCumulative() && !this.isByCategory() &&  !this.isCommonXSeries())
-		{
-			if ( o instanceof GamaList ) { 
-				IList l1value=Cast.asList(scope, o); 
-				if (l1value.length(scope)==0)
-				{
-					
-				}
-				else
-				{
-					Object o2=l1value.get(0);
-					// list of list
-					if ( o2 instanceof GamaList ) { 
-						
-						
-					}
-
-					
-					
-					
-				}
-				
-				if (l1value.length(scope)==1)
-				{
-					myserie.addxyvalue(0.0,Cast.asFloat(scope,  l1value.get(0)),chartCycle);
-
-				}
-				if (l1value.length(scope)>1)
-				{
-					myserie.addxyvalue(Cast.asFloat(scope,  l1value.get(0)),
-							Cast.asFloat(scope,  l1value.get(1)),chartCycle);
-				}
-				}
-			else
-			if ( o instanceof GamaPoint ) { 
-				ILocation pvalue=Cast.asPoint(scope, o); 
-				myserie.addxyvalue(
-						pvalue.getX(),
-						pvalue.getY(),
-						chartCycle);
-				}
-			else
-			{
-				Double dvalue=Cast.asFloat(scope, o);
-				myserie.addxyvalue(0.0,dvalue,chartCycle);
-			}
-			
-		}
-				
-	}
 
 
 
@@ -244,7 +126,7 @@ public class ChartDataSourceList extends ChartDataSource {
 
 							
 							
-							if (!oldseries.get(i).equals(myname))
+							if (i>=oldseries.size() || (!oldseries.get(i).equals(myname)))
 							{
 								somethingchanged=true;
 								if (oldseries.contains(myname))
@@ -271,6 +153,7 @@ public class ChartDataSourceList extends ChartDataSource {
 						if (!currentseries.contains(oldseries.get(i)))
 						{
 							//series i deleted
+							removeserie(scope,oldseries.get(i));
 						}
 						
 					}
@@ -283,24 +166,31 @@ public class ChartDataSourceList extends ChartDataSource {
 
 
 
+	private void removeserie(IScope scope, String string) {
+		// TODO Auto-generated method stub
+		this.getDataset().removeserie(scope,string);
+		
+	}
+
+	public void setMarkerShape(IScope scope, String stval) {
+		// TODO Auto-generated method stub
+		uniqueMarkerName=stval;
+	}
+
+
 	private void newserie(IScope scope, String myname) {
 		// TODO Auto-generated method stub
 		if (this.getDataset().getDataSeriesIds(scope).contains(myname))
 		{
 	//TODO
-	//DO SOMETHING! create id and store correspondance
-	System.out.println("Serie "+myname+"s already exists... Will replace old one!!");
+	//DO SOMETHING? create id and store correspondance
+	//		System.out.println("Serie "+myname+"s already exists... Will replace old one!!");
 		}
-		ChartDataSeries myserie=new ChartDataSeries();
-		myserie.setMysource(this);
-		myserie.setDataset(getDataset());
-		myserie.setName(myname);
-
+		ChartDataSeries myserie=myDataset.createOrGetSerie(scope,myname,this);
 		mySeries.put(myname,myserie);
+
 		
 	}
-
-
 
 	public void createInitialSeries(final IScope scope)
 	{
@@ -343,6 +233,7 @@ public class ChartDataSourceList extends ChartDataSource {
 		Object o=null;
 		int type_val=ChartDataSource.DATA_TYPE_NULL;
 		if ( this.getValue() != null ) {
+			o=this.getValue().value(scope);
 			if  ( o instanceof GamaList )
 			{
 				Object o2=Cast.asList(scope, o).get(0);
@@ -355,5 +246,12 @@ public class ChartDataSourceList extends ChartDataSource {
 		
 		
 	}
+
+
+
+
+
+
+
 	
 }
