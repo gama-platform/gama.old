@@ -42,11 +42,22 @@ import org.jfree.chart.renderer.xy.*;
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @facets(value = {
 	@facet(name = IKeyword.VALUE, type = IType.LIST, optional = false, doc = @doc("the values to display. Has to be a List of List. Each element can be a number (series/histogram) or a list with two values (XY chart)")),
+	@facet(name = ChartDataStatement.YERR_VALUES, type = IType.LIST, optional = true, doc = @doc("the Y Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
+	@facet(name = ChartDataStatement.XERR_VALUES, type = IType.LIST, optional = true, doc = @doc("the X Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
+	@facet(name = ChartDataStatement.YMINMAX_VALUES, type = IType.LIST, optional = true, doc = @doc("the Y MinMax bar values to display (BW charts). Has to be a List. Each element can be a number or a list with two values (low and high value)")),
+	@facet(name = ChartDataStatement.MARKERSIZE, type = IType.LIST, optional = true, doc = @doc("the Y Error bar values to display. Has to be a List. Each element can be a number or a list with one value for each serie element")),
 //	@facet(name = IKeyword.NAME, type =  IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
 	@facet(name = IKeyword.LEGEND, type =  IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
 	@facet(name = ChartDataListStatement.CATEGNAMES, type =  IType.LIST, optional = true, doc = @doc("the name of categories (can be a variable with dynamic names)")),
 	@facet(name = ChartDataListStatement.REVERSECATEG, type =  IType.BOOL, optional = true, doc = @doc("reverse the order of series/categories ([[1,2],[3,4],[5,6]] --> [[1,3,5],[2,4,6]]. May be useful when it is easier to construct one list over the other.")),
 	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
+	@facet(name = ChartDataStatement.MARKERSHAPE, type = IType.ID, values = { ChartDataStatement.MARKER_EMPTY,
+			ChartDataStatement.MARKER_SQUARE, ChartDataStatement.MARKER_CIRCLE, ChartDataStatement.MARKER_UP_TRIANGLE,
+			ChartDataStatement.MARKER_DIAMOND, ChartDataStatement.MARKER_HOR_RECTANGLE,
+			ChartDataStatement.MARKER_DOWN_TRIANGLE, ChartDataStatement.MARKER_HOR_ELLIPSE,
+			ChartDataStatement.MARKER_RIGHT_TRIANGLE, ChartDataStatement.MARKER_VERT_RECTANGLE,
+			ChartDataStatement.MARKER_LEFT_TRIANGLE }, optional = true),
+	@facet(name = ChartDataStatement.CUMUL_VALUES, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.COLOR, type =  IType.LIST, optional = true, doc = @doc("list of colors")),
@@ -85,7 +96,7 @@ public class ChartDataListStatement extends AbstractStatement {
 	 * @param scope
 	 */
 	
-	
+/*	
 	public  ChartDataList createData(final IScope scope) throws GamaRuntimeException {
 		ChartDataList datalist=new ChartDataList();
 		
@@ -148,7 +159,7 @@ public class ChartDataListStatement extends AbstractStatement {
 			
 		return datalist;
 	}
-
+*/
 	public ChartDataSourceList createDataSource(final IScope scope, ChartDataSet graphdataset) throws GamaRuntimeException {
 		
 		
@@ -172,6 +183,72 @@ public class ChartDataListStatement extends AbstractStatement {
 		expval = getFacet(IKeyword.VALUE).resolveAgainst(scope);
 		data.setValueExp(scope,expval);
 
+		expval = getFacet(ChartDataStatement.YERR_VALUES);
+		if (expval!=null)
+		{
+			expval=expval.resolveAgainst(scope);
+			data.setYErrValueExp(scope, expval);
+			
+		}
+
+		expval = getFacet(ChartDataStatement.XERR_VALUES);
+		if (expval!=null)
+		{
+			expval=expval.resolveAgainst(scope);
+			data.setXErrValueExp(scope, expval);
+			
+		}
+
+		expval = getFacet(ChartDataStatement.YMINMAX_VALUES);
+		if (expval!=null)
+		{
+			expval=expval.resolveAgainst(scope);
+			data.setYMinMaxValueExp(scope, expval);
+			
+		}
+
+		expval = getFacet(IKeyword.COLOR);
+		if (expval!=null)
+		{
+			expval=expval.resolveAgainst(scope);
+			data.setColorExp(scope, expval);
+			
+		}
+
+		stval = getFacetValue(scope, ChartDataStatement.MARKERSHAPE, null);
+		data.setMarkerShape(scope,stval);
+
+		//should allow different marker shapes in a list (with Gama Shapes)
+		/*
+		expval = getFacetValue(scope, ChartDataStatement.MARKERSHAPE, null);
+		if (expval!=null)
+		{
+			expval=expval.resolveAgainst(scope);
+			data.setMarkerShapeExp(scope, expval);
+			
+		}
+	*/
+		
+		Boolean forcecumul= Cast.asBool(scope, getFacetValue(scope, ChartDataStatement.CUMUL_VALUES,null));
+		if (forcecumul!=null)
+		{
+			data.setCumulative(scope,forcecumul);
+			data.setForceCumulative(scope,true);			
+		}
+		
+		data.createInitialSeries(scope);
+
+		expval = getFacet(ChartDataStatement.MARKERSIZE);
+		if (expval!=null)
+		{
+			data.setUseSize(true);
+			expval=expval.resolveAgainst(scope);
+			data.setMarkerSize(scope, expval);
+			
+		}
+
+		
+		
 		//TODO		
 		/*		
 		
@@ -203,7 +280,6 @@ public class ChartDataListStatement extends AbstractStatement {
 		stval = getFacetValue(scope, MARKERSHAPE, null);
 		data.sourceParameters.put(MARKERSHAPE,stval);
 	*/	
-		data.createInitialSeries(scope);
 		
 		return data;
 	}

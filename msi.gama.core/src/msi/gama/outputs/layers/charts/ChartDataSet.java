@@ -18,6 +18,7 @@ public class ChartDataSet {
 
 	ArrayList<ChartDataSource> sources=new ArrayList<ChartDataSource>();
 	LinkedHashMap<String,ChartDataSeries> series=new LinkedHashMap<String,ChartDataSeries>();
+	LinkedHashMap<String,ChartDataSeries> deletedseries=new LinkedHashMap<String,ChartDataSeries>();
 	ArrayList<String> categories=new ArrayList<String>(); //for categories datasets
 	ArrayList<Double> XSeriesValues=new ArrayList<Double>(); //for series
 	LinkedHashMap<String,Integer> serieCreationDate=new LinkedHashMap<String,Integer>();
@@ -27,9 +28,27 @@ public class ChartDataSet {
 	ChartOutput mainoutput;
 	int resetAllBefore=0;
 	
-	boolean commonXSeries=false;
-	boolean byCategory=false;
+
+
+	boolean commonXSeries=false; // series
+	boolean byCategory=false; //histogram/pie
+	boolean keepOldSeries=true; // keep old series or move to deleted (to keep history)
 	
+	public int getResetAllBefore() {
+		return resetAllBefore;
+	}
+
+	public void setResetAllBefore(int resetAllBefore) {
+		this.resetAllBefore = resetAllBefore;
+	}	
+	public boolean isKeepOldSeries() {
+		return keepOldSeries;
+	}
+
+	public void setKeepOldSeries(boolean keepOldSeries) {
+		this.keepOldSeries = keepOldSeries;
+	}
+
 	public ArrayList<String> getCategories() {
 		return categories;
 	}
@@ -88,12 +107,20 @@ public class ChartDataSet {
 	{
 		if (series.keySet().contains(id))
 		{
-			System.out.println("Series name already present, should do something....");
+			// Series name already present, should do something.... Don't change creation date?
+			series.put(id,serie);
+//			serieCreationDate.put(id, date);
+			serieToUpdateBefore.put(id, date);
+			serieRemovalDate.put(id, -1);
 		}
-		series.put(id,serie);
-		serieCreationDate.put(id, date);
-		serieToUpdateBefore.put(id, date);
-		serieRemovalDate.put(id, -1);
+		else
+		{
+			series.put(id,serie);
+			serieCreationDate.put(id, date);
+			serieToUpdateBefore.put(id, date);
+			serieRemovalDate.put(id, -1);
+			
+		}
 		
 	}
 	
@@ -141,6 +168,61 @@ public class ChartDataSet {
 		XSeriesValues.add(new Double(chartCycle));
 		categories.add(""+chartCycle);
 		
+	}
+
+	public int getDate(IScope scope)
+	{
+		return scope.getClock().getCycle();
+	}
+
+	
+	
+	public ChartDataSeries createOrGetSerie(IScope scope, String id, ChartDataSourceList source) {
+		// TODO Auto-generated method stub
+		if (series.keySet().contains(id))
+		{
+			return series.get(id);
+		}
+		else
+		{
+			if (deletedseries.keySet().contains(id))
+			{
+				ChartDataSeries myserie=deletedseries.get(id);
+				deletedseries.remove(id);
+				this.serieRemovalDate.put(id, -1);
+				myserie.setMysource(source);
+				myserie.setDataset(this);
+				myserie.setName(id);
+				addNewSerie(id, myserie, getDate(scope));
+				return myserie;
+			}
+			else
+			{
+			ChartDataSeries myserie=new ChartDataSeries();
+			myserie.setMysource(source);
+			myserie.setDataset(this);
+			myserie.setName(id);
+			addNewSerie(id, myserie, getDate(scope));
+			return myserie;
+			}
+			
+		}
+
+	}
+
+	public void removeserie(IScope scope, String id) {
+		// TODO Auto-generated method stub
+		ChartDataSeries serie=this.getDataSeries(scope, id);
+		if (serie!=null)
+		{
+		    this.deletedseries.put(id, serie);
+		    this.series.remove(id);
+		    this.serieRemovalDate.put(id, this.getDate(scope));
+			serieToUpdateBefore.put(id, this.getDate(scope));
+		    this.deletedseries.put(id, serie);
+		    this.setResetAllBefore(this.getDate(scope));
+			
+		}
 	}
 
 

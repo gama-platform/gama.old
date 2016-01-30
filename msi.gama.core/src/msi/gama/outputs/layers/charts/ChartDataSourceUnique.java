@@ -1,5 +1,7 @@
 package msi.gama.outputs.layers.charts;
 
+import java.util.HashMap;
+
 import org.jfree.chart.renderer.AbstractRenderer;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -16,7 +18,7 @@ public class ChartDataSourceUnique extends ChartDataSource {
 
 	String myname;
 	GamaColor color;
-	String markerName;
+
 	
 	public ChartDataSeries getMyserie() {
 		return mySeries.get(getName());
@@ -47,158 +49,40 @@ public class ChartDataSourceUnique extends ChartDataSource {
 	public void setMarkerShape(IScope scope, String stval) {
 		// TODO Auto-generated method stub
 		//markerName is useless, for now creates/modifies the output
-		markerName=stval;
-		this.getDataset().getOutput().setSerieMarkerShape(scope,this.getName(),stval);
+		uniqueMarkerName=stval;
+//		this.getDataset().getOutput().setSerieMarkerShape(scope,this.getName(),stval);
 	}
-	
-	public void setUseSize(IScope scope, boolean b) {
-		// TODO Auto-generated method stub
-		this.getDataset().getOutput().setUseSize(scope,this.getName(),b);
 		
-	}
-	
 	
 	public void updatevalues(IScope scope, int chartCycle) {
 		super.updatevalues(scope, chartCycle);
-		Object o=null;
-		if ( getValue() != null ) {
-			o = value.value(scope);
-		} 
-//		else {
-//			o = lastvalue; should keep a last value option??
-//		}
 		
-		// TODO instead (?): function to deduce format and then use deduced format to extract values
-				
+		Object o=null;
+		HashMap<String,Object> barvalues=new HashMap<String,Object>();
+		if (this.isUseYErrValues()) barvalues.put(ChartDataStatement.YERR_VALUES,this.getValueyerr().value(scope));
+		if (this.isUseXErrValues()) barvalues.put(ChartDataStatement.XERR_VALUES,this.getValueyerr().value(scope));
+		if (this.isUseYMinMaxValues()) barvalues.put(ChartDataStatement.XERR_VALUES,this.getValuexerr().value(scope));
+		if (this.isUseSizeExp()) barvalues.put(ChartDataStatement.MARKERSIZE,this.getSizeexp().value(scope));
+		if (this.isUseColorExp()) barvalues.put(IKeyword.COLOR,this.getColorexp().value(scope));
+
+		
+		if ( getValue() != null ) {
+			o = getValue().value(scope);
+		} 
+		
 		if (o==null)
 		{
 // lastvalue??			
 		}
 		else		
 		{
-			// new cumulative Y value
-			if (this.isCumulative() && !this.isByCategory() &&  this.isCommonXSeries()) 
-			{
-				if ( o instanceof GamaList ) { 
-					IList lvalue=Cast.asList(scope, o); 
-					if (lvalue.length(scope)==0)
-					{
-						
-					}
-					if (lvalue.length(scope)>=1)
-					{
-						this.getMyserie().addxyvalue(getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
-								Cast.asFloat(scope,  lvalue.get(0)),chartCycle);
-					}
-					}
-				else
-				if ( o instanceof GamaPoint ) { 
-					ILocation pvalue=Cast.asPoint(scope, o); 
-				}
-				else
-				{
-					Double dvalue=Cast.asFloat(scope, o);
-					this.getMyserie().addxyvalue(getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
-							dvalue,chartCycle);
-			}
-				
-			}
-
-			// new cumulative XY value			
-			if (this.isCumulative() && !this.isByCategory() &&  !this.isCommonXSeries())
-			{
-				if ( o instanceof GamaList ) { 
-					IList lvalue=Cast.asList(scope, o); 
-					if (lvalue.length(scope)==0)
-					{
-						
-					}
-					if (lvalue.length(scope)==1)
-					{
-						this.getMyserie().addxyvalue(0.0,Cast.asFloat(scope,  lvalue.get(0)),chartCycle);
-
-					}
-					if (lvalue.length(scope)==2)
-					{
-						this.getMyserie().addxyvalue(Cast.asFloat(scope,  lvalue.get(0)),
-								Cast.asFloat(scope,  lvalue.get(1)),chartCycle);
-					}
-					if (lvalue.length(scope)>2)
-					{
-						this.getMyserie().addxysvalue(Cast.asFloat(scope,  lvalue.get(0)),
-								Cast.asFloat(scope,  lvalue.get(1)),
-								Cast.asFloat(scope,  lvalue.get(2)),chartCycle);
-					}
-					}
-				else
-				if ( o instanceof GamaPoint ) { 
-					ILocation pvalue=Cast.asPoint(scope, o); 
-					this.getMyserie().addxyvalue(
-							pvalue.getX(),
-							pvalue.getY(),
-							chartCycle);
-					}
-				else
-				{
-					Double dvalue=Cast.asFloat(scope, o);
-					this.getMyserie().addxyvalue(0.0,dvalue,chartCycle);
-			}
-				
-			}
-
-			// new XY value
-			if (!this.isCumulative() && !this.isByCategory() &&  !this.isCommonXSeries())
-			{
-				if ( o instanceof GamaList ) { 
-					IList l1value=Cast.asList(scope, o); 
-					if (l1value.length(scope)==0)
-					{
-						
-					}
-					else
-					{
-						Object o2=l1value.get(0);
-						// list of list
-						if ( o2 instanceof GamaList ) { 
-							
-							
-						}
-
-						
-						
-						
-					}
-					
-					if (l1value.length(scope)==1)
-					{
-						this.getMyserie().addxyvalue(0.0,Cast.asFloat(scope,  l1value.get(0)),chartCycle);
-
-					}
-					if (l1value.length(scope)>1)
-					{
-						this.getMyserie().addxyvalue(Cast.asFloat(scope,  l1value.get(0)),
-								Cast.asFloat(scope,  l1value.get(1)),chartCycle);
-					}
-					}
-				else
-				if ( o instanceof GamaPoint ) { 
-					ILocation pvalue=Cast.asPoint(scope, o); 
-					this.getMyserie().addxyvalue(
-							pvalue.getX(),
-							pvalue.getY(),
-							chartCycle);
-					}
-				else
-				{
-					Double dvalue=Cast.asFloat(scope, o);
-					this.getMyserie().addxyvalue(0.0,dvalue,chartCycle);
-			}
-				
-			}
 			
+			updateseriewithvalue(scope,getMyserie(),o,chartCycle,barvalues,-1);
+			
+
 		}
 		
-		
+			
 	}
 
 	public void inferDatasetProperties(final IScope scope,ChartDataSeries myserie)

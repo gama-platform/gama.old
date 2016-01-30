@@ -150,6 +150,13 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				break;				
 				
 			}
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
+			{
+				source.setCumulative(scope,false);
+				source.setUseSize(scope,true);				
+				break;				
+				
+			}
 			default:
 			{
 				source.setCumulative(scope,true);				
@@ -196,6 +203,20 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		return newr;
 	}
 
+	protected void resetRenderer(IScope scope,String serieid)
+	{
+		myXYErrorRenderer newr=(myXYErrorRenderer)this.getOrCreateRenderer(scope, serieid);
+		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
+		if (myserie.getMycolor()!=null)
+			{
+			newr.setSeriesPaint(0,myserie.getMycolor());
+			}
+		if (myserie.isUseYErrValues()) newr.setDrawYError(true);
+		if (myserie.isUseXErrValues()) newr.setDrawXError(true);
+		if (myserie.getMysource().getUniqueMarkerName()!=null) setSerieMarkerShape(scope,myserie.getName(),myserie.getMysource().getUniqueMarkerName());
+		if (myserie.getMysource().isUseSize()) newr.setUseSize(scope, true);
+
+	}
 	
 
 	protected void clearDataSet(IScope scope) {
@@ -239,7 +260,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			
 		}
     	plot.setRenderer(jfreedataset.size()-1, (XYErrorRenderer)getOrCreateRenderer(scope,serieid));
-		IdPosition.put(serieid, plot.getDatasetCount()-1);
+		IdPosition.put(serieid, jfreedataset.size()-1);
 		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" fdsize "+plot.getSeriesCount()+" jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount());
 		// TODO Auto-generated method stub		
 	}
@@ -258,7 +279,30 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		if (XValues.size()>0)
 		for(int i=0; i<XValues.size(); i++)
 		{
+			if (dataserie.isUseYErrValues())
+			{
+				if (dataserie.isUseXErrValues())
+				{
+				serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
+				}
+				else
+				{
+				serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
+				}
+				
+			}
+			else
+			{
+				if (dataserie.isUseXErrValues())
+				{
+				serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
+				}
+				else
+				{
 				serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
+				}
+				
+			}
 		}
 		if (SValues.size()>0)
 		{
@@ -267,6 +311,8 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			MarkerScale.put(serieid, nscale);
 			
 		}
+
+		this.resetRenderer(scope, serieid); 
 				
 	}
 	public void setSerieMarkerShape(IScope scope, String serieid, String markershape) {

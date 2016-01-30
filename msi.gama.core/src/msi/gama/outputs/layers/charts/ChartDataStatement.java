@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -40,7 +41,12 @@ import org.jfree.chart.renderer.xy.*;
 	@facet(name = IKeyword.VALUE, type = { IType.FLOAT, IType.POINT, IType.LIST }, optional = false),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.LEGEND, type = IType.STRING, optional = true),
+	@facet(name = ChartDataStatement.YERR_VALUES, type = IType.LIST, optional = true, doc = @doc("the Y Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
+	@facet(name = ChartDataStatement.XERR_VALUES, type = IType.LIST, optional = true, doc = @doc("the X Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
+	@facet(name = ChartDataStatement.YMINMAX_VALUES, type = IType.LIST, optional = true, doc = @doc("the Y MinMax bar values to display (BW charts). Has to be a List. Each element can be a number or a list with two values (low and high value)")),
+	@facet(name = ChartDataStatement.MARKERSIZE, type = IType.LIST, optional = true, doc = @doc("the Y Error bar values to display. Has to be a List. Each element can be a number or a list with one value for each serie element")),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+	@facet(name = ChartDataStatement.CUMUL_VALUES, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.MARKERSHAPE, type = IType.ID, values = { ChartDataStatement.MARKER_EMPTY,
@@ -57,8 +63,14 @@ public class ChartDataStatement extends AbstractStatement {
 
 	public static final String MARKER = "marker";
 	public static final String MARKERSHAPE = "marker_shape";
+	public static final String MARKERSIZE = "marker_size";
 	public static final String FILL = "fill";
 	public static final String LINE_VISIBLE = "line_visible";
+	public static final String CUMUL_VALUES = "accumulate_values";
+	public static final String XERR_VALUES = "x_err_values";
+	public static final String YERR_VALUES = "y_err_values";
+	public static final String XMINMAX_VALUES = "x_minmax_values";
+	public static final String YMINMAX_VALUES = "y_minmax_values";
 	public static final String MARKER_EMPTY = "marker_empty";
 	public static final String MARKER_SQUARE = "marker_sqaure";
 	public static final String MARKER_CIRCLE = "marker_circle";
@@ -70,7 +82,7 @@ public class ChartDataStatement extends AbstractStatement {
 	public static final String MARKER_RIGHT_TRIANGLE = "marker_right_triangle";
 	public static final String MARKER_VERT_RECTANGLE = "marker_vert_rectangle";
 	public static final String MARKER_LEFT_TRIANGLE = "marker_left_triangle";
-
+	
 	public static final Shape[] defaultmarkers = org.jfree.chart.plot.DefaultDrawingSupplier
 		.createStandardSeriesShapes();
 
@@ -107,6 +119,52 @@ public class ChartDataStatement extends AbstractStatement {
 		
 		IExpression expval = getFacet(IKeyword.VALUE).resolveAgainst(scope);
 		data.setValueExp(scope,expval);
+
+		expval = getFacet(ChartDataStatement.YERR_VALUES);
+		if (expval!=null)
+		{
+			expval=expval.resolveAgainst(scope);
+			data.setYErrValueExp(scope, expval);
+			
+		}
+
+		expval = getFacet(ChartDataStatement.XERR_VALUES);
+		if (expval!=null)
+		{
+			expval=expval.resolveAgainst(scope);
+			data.setXErrValueExp(scope, expval);
+			
+		}
+
+		expval = getFacet(ChartDataStatement.YMINMAX_VALUES);
+		if (expval!=null)
+		{
+			expval=expval.resolveAgainst(scope);
+			data.setYMinMaxValueExp(scope, expval);
+			
+		}
+
+		expval = getFacet(IKeyword.COLOR);
+		if (expval!=null)
+		{
+			expval=expval.resolveAgainst(scope);
+			data.setColorExp(scope, expval);
+			
+		}
+		
+		
+		data.createInitialSeries(scope);		
+
+		
+		expval = getFacet(ChartDataStatement.MARKERSIZE);
+		if (expval!=null)
+		{
+			data.setUseSize(true);
+			expval=expval.resolveAgainst(scope);
+			data.setMarkerSize(scope, expval);
+			
+		}
+
 		
 		boolean boolval = getFacetValue(scope, MARKER, true);
 		data.setMarkerBool(scope,boolval);
@@ -135,7 +193,6 @@ public class ChartDataStatement extends AbstractStatement {
 		stval = getFacetValue(scope, MARKERSHAPE, null);
 		data.sourceParameters.put(MARKERSHAPE,stval);
 	*/	
-		data.createInitialSeries(scope);
 		
 		return data;
 	}
