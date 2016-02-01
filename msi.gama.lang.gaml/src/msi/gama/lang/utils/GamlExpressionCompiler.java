@@ -35,7 +35,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.statements.*;
+import msi.gaml.statements.Arguments;
 import msi.gaml.types.*;
 
 /**
@@ -885,15 +885,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// Short circuiting the use of keyword in "draw ..." to ensure backward
 			// compatibility while providing a useful warning.
 
-			if ( getContext().getKeyword().equals(DRAW) ) {
-				if ( DrawStatement.SHAPES.keySet().contains(varName) ) {
-					getContext().warning(
-						"The symbol " + varName +
-							" is not used anymore in draw. Please use geometries instead, e.g. '" + varName + "(size)'",
-						IGamlIssue.UNKNOWN_KEYWORD, object, varName);
-					return factory.createConst(varName + "__deprecated", Types.STRING);
-				}
-			}
+			// if ( getContext().getKeyword().equals(DRAW) ) {
+			// if ( DrawStatement.SHAPES.keySet().contains(varName) ) {
+			// getContext().warning(
+			// "The symbol " + varName +
+			// " is not used anymore in draw. Please use geometries instead, e.g. '" + varName + "(size)'",
+			// IGamlIssue.UNKNOWN_KEYWORD, object, varName);
+			// return factory.createConst(varName + "__deprecated", Types.STRING);
+			// }
+			// }
 
 			// Finally, a last possibility (enabled in rare occasions, like in the "elevation" facet of grid layers), is
 			// that the variable used belongs to the species denoted by the current statement

@@ -176,6 +176,7 @@ public class ExperimentScheduler implements Runnable {
 	public void dispose() {
 		alive = false;
 		wipe();
+		lock.release();
 	}
 
 	public void removeStepable(final String s) {

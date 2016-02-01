@@ -1,31 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractCamera.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
 import java.nio.IntBuffer;
 import java.util.Collection;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.filter.Different;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
 import org.eclipse.swt.SWT;
-import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.nativewindow.swt.SWTAccessor;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
+import ummisco.gama.opengl.JOGLRenderer;
 
 // import java.awt.event.*;
 
@@ -69,7 +69,7 @@ public abstract class AbstractCamera implements ICamera {
 	// private final boolean ctrlKeyDown = false;
 	private boolean shiftKeyDown = false;
 	private boolean altKeyDown = false;
-	
+
 	public AbstractCamera(final JOGLRenderer renderer) {
 		setRenderer(renderer);
 		// detectMacOS();
@@ -178,10 +178,10 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
-        if(firsttimeMouseDown){
-    		firstMousePressedPosition = new Point(e.x, e.y);
-    		firsttimeMouseDown = false;
-        }
+		if ( firsttimeMouseDown ) {
+			firstMousePressedPosition = new Point(e.x, e.y);
+			firsttimeMouseDown = false;
+		}
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
 		if ( e.button == 3 ) {
@@ -192,7 +192,7 @@ public abstract class AbstractCamera implements ICamera {
 			if ( shift(e) || alt(e) ) {
 				getMousePosition().x = e.x;
 				getMousePosition().y = e.y;
-				renderer.defineROI(firstMousePressedPosition,getMousePosition());
+				renderer.defineROI(firstMousePressedPosition, getMousePosition());
 			} else {
 				getRenderer().setPicking(false);
 			}
@@ -218,8 +218,8 @@ public abstract class AbstractCamera implements ICamera {
 
 						@Override
 						public Collection<IAgent> run(final IScope scope) {
-							return scope.getTopology().getSpatialIndex()
-								.allInEnvelope(scope, env.centre(), env, new Different(), true);
+							return scope.getTopology().getSpatialIndex().allInEnvelope(scope, env.centre(), env,
+								new Different(), true);
 						}
 					});
 					// System.out.println("Envelope : " + env);
@@ -312,7 +312,7 @@ public abstract class AbstractCamera implements ICamera {
 		/*
 		 * Define the viewing volume so that rendering is done only in a small area around
 		 * the cursor. gluPickMatrix method restrict the area where openGL will drawing objects
-		 * 
+		 *
 		 * OpenGL has a different origin for its window coordinates than the operation system.
 		 * The second parameter provides for the conversion between the two systems, i.e. it
 		 * transforms the origin from the upper left corner, into the bottom left corner
@@ -320,7 +320,7 @@ public abstract class AbstractCamera implements ICamera {
 		glu.gluPickMatrix(getMousePosition().x, height - getMousePosition().y, 4, 4, viewport, 0);
 
 		// FIXME Why do we have to call updatePerspective() here ?
-		renderer.updatePerspective();
+		renderer.updatePerspective(gl);
 		// Comment GL_MODELVIEW to debug3D picking (redraw the model when clicking)
 		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		// 4. After this pass you must draw Objects
@@ -457,7 +457,8 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public double getPhi() {
 		return phi;
-	}	
+	}
+
 	/**
 	 * Method keyPressed()
 	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)

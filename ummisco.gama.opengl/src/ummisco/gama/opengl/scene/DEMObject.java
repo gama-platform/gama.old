@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.awt.ImageUtil;
@@ -20,6 +20,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
+import msi.gama.util.GamaColor;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class DEMObject extends AbstractObject {
@@ -27,54 +29,34 @@ public class DEMObject extends AbstractObject {
 	final public double[] dem;
 	final public BufferedImage textureImage;
 	final public BufferedImage demImg;
-	final public IAgent agent;
-	final public boolean isTextured, isTriangulated, isShowText, fromImage, isDynamic, isGrayScaled;
+	// final public IAgent agent;
+	final public boolean isTriangulated, isShowText, fromImage, isGrayScaled;
 	// The height of the envelope represents the z_factor (between 0 and 1).
 	final public Envelope3D envelope;
 	final public Envelope3D cellSize;
-	final public String name;
-	final public Color lineColor;
 
-	// final public int layerId;
+	// FIXME AD: This class has not been reworked correctly to work with the new API of SceneObjects. Basically, it has been made compatible, but not more.
 
 	public DEMObject(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg, final IAgent agent,
-		final Envelope3D env, final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled,
-		final boolean isShowText, final boolean fromImage, final boolean isDynamic, final Color c, final Double a,
-		final Envelope3D cellSize, final String name, final Color lineColor) {
-		super(c, a);
+		final Envelope3D env, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
+		final boolean fromImage, final Envelope3D cellSize, final String name, final GamaColor lineColor,
+		final LayerObject layer) {
+		super(new DrawingAttributes(null, null, lineColor), layer);
+		attributes.agent = agent;
+		attributes.speciesName = name;
+		attributes.empty = demTexture == null;
 		this.dem = dem;
 		this.textureImage = demTexture;
+		this.demImg = demImg;
 		if ( demImg != null ) {
-			this.demImg = FlipRightSideLeftImage(FlipUpSideDownImage(demImg));
-		} else {
-			this.demImg = null;
+			ImageUtil.flipImageVertically(this.demImg);
 		}
-		this.agent = agent;
-		this.isTextured = isTextured;
 		this.isTriangulated = isTriangulated;
 		this.isGrayScaled = isGrayScaled;
 		this.isShowText = isShowText;
 		this.fromImage = fromImage;
-		this.isDynamic = isDynamic;
 		this.envelope = env;
 		this.cellSize = cellSize;
-		this.name = name;
-		this.lineColor = lineColor;
-	}
-
-	@Override
-	public void unpick() {
-		picked = false;
-	}
-
-	public void pick() {
-		picked = true;
-	}
-
-	@Override
-	public Color getColor() {
-		if ( picked ) { return pickedColor; }
-		return super.getColor();
 	}
 
 	@Override
@@ -82,16 +64,14 @@ public class DEMObject extends AbstractObject {
 
 		if ( picking ) {
 			JOGLRenderer renderer = drawer.renderer;
-			// renderer.gl.glPushMatrix();
-			// GL2 gl = GLContext.getCurrentGL().getGL2();
 			gl.glLoadName(pickingIndex);
 			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				if ( agent != null ) {
+				if ( getAgent() != null ) {
 					renderer.setPicking(false);
 					pick();
 					renderer.currentPickedObject = this;
 					// The picked image is the grid
-					if ( this.name != null ) {
+					if ( attributes.speciesName != null ) {
 						final GamaPoint pickedPoint = renderer
 							.getIntWorldPointFromWindowPoint(new Point(renderer.camera.getLastMousePressedPosition().x,
 								renderer.camera.getLastMousePressedPosition().y));
@@ -99,7 +79,7 @@ public class DEMObject extends AbstractObject {
 
 							@Override
 							public IAgent run(final IScope scope) {
-								return agent.getPopulationFor(name).getAgent(scope,
+								return getAgent().getPopulationFor(attributes.speciesName).getAgent(scope,
 									new GamaPoint(pickedPoint.x, -pickedPoint.y));
 							}
 						});
@@ -108,43 +88,18 @@ public class DEMObject extends AbstractObject {
 						}
 
 					} else {
-						renderer.displaySurface.selectAgent(agent);
+						renderer.displaySurface.selectAgent(getAgent());
 					}
 				}
 			}
-			super.draw(gl, drawer, picking);
-			// renderer.gl.glPopMatrix();
-		} else {
-			super.draw(gl, drawer, picking);
 		}
+		super.draw(gl, drawer, picking);
 	}
 
-	private BufferedImage FlipUpSideDownImage(final BufferedImage img) {
-		ImageUtil.flipImageVertically(img);
-		// java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(1, -1);
-		// tx.translate(0, -img.getHeight(null));
-		// AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-		// img = op.filter(img, null);
-		return img;
-
-	}
-
-	private BufferedImage FlipRightSideLeftImage(final BufferedImage img) {
-		// java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
-		// tx.translate(-img.getWidth(null), 0);
-		// AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-		// img = op.filter(img, null);
-		return img;
-
-	}
-
-	/**
-	 * Method computeTexture()
-	 * @see ummisco.gama.opengl.scene.AbstractObject#computeTexture()
-	 */
 	@Override
-	protected Texture computeTexture(final GL gl, final JOGLRenderer renderer) {
+	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
 		if ( textureImage == null ) { return null; }
 		return renderer.getCurrentScene().getTexture(gl, textureImage);
 	}
+
 }

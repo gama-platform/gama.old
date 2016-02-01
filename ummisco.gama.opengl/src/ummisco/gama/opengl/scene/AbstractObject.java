@@ -1,3 +1,4 @@
+
 /*********************************************************************************************
  *
  *
@@ -12,8 +13,12 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public abstract class AbstractObject implements ISceneObject {
@@ -21,39 +26,40 @@ public abstract class AbstractObject implements ISceneObject {
 	static int index = 0;
 	static Color pickedColor = Color.red;
 
-	private Color color;
-	private Double z_fighting_id = 0.0;
-	private Double alpha = 1d;
+	protected final DrawingAttributes attributes;
+	protected LayerObject layer;
+	protected Double alpha;
 	public int pickingIndex = index++;
 	public boolean picked = false;
-	public boolean fill = true;
-	private Texture texture;
+	protected final Texture[] textures;
 
-	public AbstractObject(final Color c, final Double a) {
-		setColor(c);
-		if ( a != null ) {
-			setAlpha(a);
+	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
+		this.attributes = attributes;
+		this.layer = layer;
+		this.alpha = layer.alpha;
+		textures = attributes.textures != null ? new Texture[attributes.textures.size()] : null;
+	}
+
+	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
+		if ( textures == null ) { return null; }
+		if ( order < 0 || order > textures.length - 1 ) { return null; }
+		if ( textures[order] == null ) {
+			textures[order] = computeTexture(gl, renderer, order);
 		}
+		return textures[order];
 	}
 
-	public Texture getTexture(final GL gl, final JOGLRenderer renderer) {
-		if ( texture == null ) {
-			setTexture(computeTexture(gl, renderer));
-		}
-		return texture;
+	protected Texture computeTexture(final GL gl, final JOGLRenderer renderer, final int order) {
+		return renderer.getCurrentScene().getTexture(gl, (BufferedImage) attributes.textures.get(order));
 	}
 
-	/**
-	 * @param computeTexture
-	 */
-	private void setTexture(final Texture computedTexture) {
-		texture = computedTexture;
+	public boolean hasSeveralTextures() {
+		return textures != null && textures.length > 1;
 	}
 
-	/**
-	 * @return
-	 */
-	abstract protected Texture computeTexture(final GL gl, final JOGLRenderer renderer);
+	public boolean isTextured() {
+		return textures != null && textures.length > 0;
+	}
 
 	@Override
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
@@ -61,23 +67,27 @@ public abstract class AbstractObject implements ISceneObject {
 	}
 
 	@Override
-	public void unpick() {}
-
-	public Double getZ_fighting_id() {
-		return z_fighting_id;
+	public void unpick() {
+		picked = false;
 	}
 
-	public void setZ_fighting_id(final Double z_fighting_id) {
-		this.z_fighting_id = z_fighting_id;
+	@Override
+	public void pick() {
+		picked = true;
 	}
 
 	@Override
 	public Color getColor() {
-		return color;
+		if ( picked ) { return pickedColor; }
+		return attributes.color;
 	}
 
-	public void setColor(final Color color) {
-		this.color = color;
+	public double getZ_fighting_id() {
+		return layer.getOrder();
+	}
+
+	public double getLayerZ() {
+		return layer.getOffset().z;
 	}
 
 	public Double getAlpha() {
@@ -88,15 +98,33 @@ public abstract class AbstractObject implements ISceneObject {
 		this.alpha = alpha;
 	}
 
-	public void preload(final GL2 gl, final JOGLRenderer renderer) {
+	public void preload(final GL2 gl, final JOGLRenderer renderer) {}
 
+	public boolean isFilled() {
+		return !attributes.empty;
 	}
 
-	// public void dispose(final JOGLRenderer renderer) {
-	// if ( texture != null ) {
-	// texture.dispose();
-	// texture = null;
-	// }
-	// }
+	public boolean isPicked() {
+		return picked;
+	}
 
+	public GamaPoint getLocation() {
+		return attributes.location;
+	}
+
+	public GamaPoint getDimensions() {
+		return attributes.size;
+	}
+
+	public Color getBorder() {
+		return attributes.border;
+	}
+
+	public double getHeight() {
+		return attributes.depth == null ? 0 : attributes.depth.doubleValue();
+	}
+
+	public IAgent getAgent() {
+		return attributes.agent;
+	}
 }

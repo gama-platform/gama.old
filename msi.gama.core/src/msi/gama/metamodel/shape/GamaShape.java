@@ -12,35 +12,15 @@
 package msi.gama.metamodel.shape;
 
 import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
-
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-
+import org.apache.commons.math3.geometry.euclidean.threed.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateFilter;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.TopologyException;
-
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaMapFactory;
-import msi.gama.util.GamaPair;
-import msi.gama.util.IList;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gama.util.*;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 25 ao�t 2010
@@ -131,10 +111,12 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	public GamaShape(final IShape source, final Geometry geom) {
 		this((Geometry) (geom == null ? source.getInnerGeometry().clone() : geom));
-		GamaMap attr = source.getAttributes();
-		if ( attr != null ) {
-			attributes =
-				GamaMapFactory.createWithoutCasting(attr.getType().getKeyType(), attr.getType().getContentType(), attr);
+		if ( source != null ) {
+			GamaMap attr = source.getAttributes();
+			if ( attr != null ) {
+				attributes = GamaMapFactory.createWithoutCasting(attr.getType().getKeyType(),
+					attr.getType().getContentType(), attr);
+			}
 		}
 	}
 
@@ -146,14 +128,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 * @param newLocation can be null
 	 */
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation) {
-		this(source, geom);
-		if ( !isPoint() && rotation != null ) {
-			Coordinate c = geometry.getCentroid().getCoordinate();
-			geometry.apply(AffineTransform3D.createRotationOz(Math.toRadians(rotation), c.x, c.y));
-		}
-		if ( newLocation != null ) {
-			setLocation(newLocation);
-		}
+		this(source, geom, rotation, null, newLocation);
 	}
 
 	/**
@@ -164,24 +139,34 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 * @param newLocation can be null
 	 */
 
-	
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final GamaPoint vector,
-			final ILocation newLocation) {
-			this(source, geom);
-			if ( !isPoint() && vector != null && rotation != null ) {
-				Vector3D v3D = new Vector3D(vector.getX(),vector.getY(),vector.getZ());
+		final ILocation newLocation) {
+		this(source, geom);
+		if ( !isPoint() && rotation != null ) {
+			if ( vector == null ) {
+				Coordinate c = geometry.getCentroid().getCoordinate();
+				geometry.apply(AffineTransform3D.createRotationOz(Math.toRadians(rotation), c.x, c.y));
+			} else {
+				Vector3D v3D = new Vector3D(vector.getX(), vector.getY(), vector.getZ());
 				Rotation rot = new Rotation(v3D, Math.toRadians(rotation));
-				for (Coordinate c : this.getInnerGeometry().getCoordinates()) {
-					Vector3D result = rot.applyTo(new Vector3D(c.x,c.y,c.z));
+				for ( Coordinate c : this.getInnerGeometry().getCoordinates() ) {
+					Vector3D result = rot.applyTo(new Vector3D(c.x, c.y, c.z));
 					c.x = result.getX();
 					c.y = result.getY();
 					c.z = result.getZ();
 				}
 			}
-			if ( newLocation != null ) {
-				setLocation(newLocation);
-			}
 		}
+
+		if ( newLocation != null ) {
+			setLocation(newLocation);
+		}
+	}
+
+	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation,
+		final GamaPoint bounds, final boolean isBoundingBox) {
+		this(source, geom, rotation, null, newLocation, bounds, isBoundingBox);
+	}
 
 	/**
 	 * Same as above, but applies a (optional) scaling to the geometry by specifying a bounding box or a set of
@@ -193,13 +178,13 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 * @param isBoundingBox indicates whether the previous parameter should be considered as an absolute bounding box
 	 * (width, height, ) or as a set of coefficients.
 	 */
-	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation,
-		final GamaPoint bounds, final boolean isBoundingBox) {
-		this(source, geom, rotation, newLocation);
+	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final GamaPoint vector,
+		final ILocation newLocation, final GamaPoint bounds, final boolean isBoundingBox) {
+		this(source, geom, rotation, vector, newLocation);
 		if ( bounds != null && !isPoint() ) {
 			if ( getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE ) {
 				GamaPoint previous = getLocation();
-				Envelope3D envelope = getEnvelope();
+				getEnvelope();
 				boolean flat = envelope.isFlat();
 				if ( isBoundingBox ) {
 					geometry.apply(AffineTransform3D.createScaling(bounds.x / envelope.getWidth(),
@@ -470,7 +455,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
 		this.envelope = null;
 	}
- 
 
 	@getter("envelope")
 	public GamaShape getGeometricEnvelope() {
@@ -644,7 +628,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		// WARNING Only 2D now
 		if ( g.isPoint() ) { return pl.intersects((Coordinate) g.getLocation(), geometry); }
 		// if ( !USE_PREPARED_OPERATIONS ) {
-		
+
 		try {
 			return geometry.covers(g.getInnerGeometry());
 		} catch (TopologyException e) {
@@ -664,7 +648,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		// if ( g.isPoint() ) { return euclidianDistanceTo(g.getLocation()); }
 		// if ( isPoint ) { return g.euclidianDistanceTo(getLocation()); }
 		// if ( !USE_PREPARED_OPERATIONS ) {
-		//return getInnerGeometry().distance(g.getInnerGeometry());
+		// return getInnerGeometry().distance(g.getInnerGeometry());
 		return getInnerGeometry().distance(g.getInnerGeometry());
 		// }
 		// return operations().getDistance(g);
@@ -674,9 +658,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 	public double euclidianDistanceTo(final ILocation g) {
 		// WARNING Only 2D now
 		if ( isPoint() ) { return g.euclidianDistanceTo(getLocation()); }
-		
+
 		return getInnerGeometry().distance(g.getInnerGeometry());
-		
+
 		// ppd.initialize();
 		// DistanceToPoint.computeDistance(geometry, (Coordinate) g, ppd);
 		// return ppd.getDistance();
@@ -709,7 +693,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		} catch (TopologyException e) {
 			return getInnerGeometry().buffer(0).crosses(g.getInnerGeometry().buffer(0));
 		}
-		
+
 		// }
 		// return operations().crosses(g);
 	}

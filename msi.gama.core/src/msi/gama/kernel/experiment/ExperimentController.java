@@ -216,9 +216,11 @@ public class ExperimentController implements Runnable, IExperimentController {
 				// experiment = null;
 			} finally {
 				running = false;
-				scheduler.wipe();
 				scheduler.dispose();
 				experiment.getExperimentScope().getGui().updateSimulationState(IGui.NONE);
+				if ( commandThread != null && commandThread.isAlive() ) {
+					commands.offer(-1);
+				}
 				// System.out.println("Contoller.dipose END");
 			}
 		}

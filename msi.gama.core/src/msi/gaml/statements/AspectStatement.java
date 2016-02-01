@@ -17,15 +17,16 @@ import gnu.trove.impl.Constants;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import msi.gaml.types.*;
 
 @symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
@@ -142,9 +143,9 @@ public class AspectStatement extends AbstractStatementSequence {
 					if ( agent == scope.getGui().getHighlightedAgent() ) {
 						g.beginHighlight();
 					}
-					final Color c = agent.getSpecies().hasVar(IKeyword.COLOR)
+					final GamaColor c = agent.getSpecies().hasVar(IKeyword.COLOR)
 						? Cast.asColor(scope, agent.getDirectVarValue(scope, IKeyword.COLOR))
-						: GamaPreferences.CORE_COLOR.getValue();
+						: GamaColor.getInt(GamaPreferences.CORE_COLOR.getValue().getRGB());
 					String defaultShape = GamaPreferences.CORE_SHAPE.getValue();
 					int index = SHAPES.get(defaultShape);
 					IShape ag;
@@ -180,7 +181,10 @@ public class AspectStatement extends AbstractStatementSequence {
 					}
 
 					final IShape ag2 = ag.copy(scope);
-					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, false);
+					DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(ag2.getLocation()), c,
+						GamaColor.getInt(Color.black.getRGB()));
+					attributes.setShapeType(ag2.getGeometricalType());
+					final Rectangle2D r = g.drawShape(ag2, attributes);
 					return r;
 				} catch (GamaRuntimeException e) {
 					// cf. Issue 1052: exceptions are not thrown, just displayed

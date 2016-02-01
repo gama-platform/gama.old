@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
+import java.awt.Font;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -28,12 +29,10 @@ import ummisco.gama.opengl.JOGLRenderer;
 
 public class StringDrawer extends ObjectDrawer<StringObject> {
 
-	// Setting it to true requires that the ModelScene handles strings outside a list (see ModelScene)
 	static final boolean USE_VERTEX_ARRAYS = true;
 
 	public StringDrawer(final JOGLRenderer r) {
 		super(r);
-
 	}
 
 	@Override
@@ -43,46 +42,49 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final StringObject s) {
-		TextRenderer r = renderer.get(s.font, s.size, s.style);
-		if ( r == null ) { return; }
-		float x = (float) ((float) s.location.x * s.getScale().x + s.getOffset().x);
-		float y = (float) ((float) s.location.y * s.getScale().y - s.getOffset().y);
-		float z = (float) ((float) s.location.z * s.getScale().z + s.getOffset().z);
-		// GL2 gl = GLContext.getCurrentGL().getGL2();
-		if ( s.bitmap == true ) {
+		float x = (float) s.getLocation().x;
+		float y = (float) s.getLocation().y;
+		float z = (float) s.getLocation().z;
 
-			gl.glPushMatrix();
-
+		if ( s.getFont() != null && s.getBitmap() ) {
+			float scale = 1f / (float) renderer.getGlobalYRatioBetweenPixelsAndModelUnits();
+			// gl.glPushMatrix();
+			Font f = s.getFont();
+			TextRenderer r = renderer.get(f);
+			if ( r == null ) { return; }
 			r.setColor(s.getColor());
 			r.begin3DRendering();
-			r.draw3D(s.string, x, y, z, (float) (1f / renderer.getyRatioBetweenPixelsAndModelUnits()));
+			r.draw3D(s.string, x, y, z, scale);
 			r.flush();
 			r.end3DRendering();
-			gl.glPopMatrix();
-
+			// gl.glPopMatrix();
 		} else {
+			int fontToUse = GLUT.BITMAP_HELVETICA_18;
+			// float scale = 1f;
+			Font f = s.getFont();
+			if ( f != null ) {
+				if ( f.getSize() < 10 ) {
+					fontToUse = GLUT.BITMAP_HELVETICA_10;
+					// scale = f.getSize2D() / 10f;
+				} else if ( f.getSize() < 16 ) {
+					fontToUse = GLUT.BITMAP_HELVETICA_12;
+					// scale = f.getSize2D() / 12f;
+				} else {
+					// scale = f.getSize2D() / 18f;
+				}
+			}
 			gl.glPushMatrix();
 			gl.glDisable(GLLightingFunc.GL_LIGHTING);
-
 			gl.glDisable(GL.GL_BLEND);
-
 			gl.glColor4d(s.getColor().getRed() / 255.0, s.getColor().getGreen() / 255.0, s.getColor().getBlue() / 255.0,
 				s.getColor().getAlpha() / 255.0 * s.getAlpha());
 			gl.glRasterPos3d(x, y, z);
-
-			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, s.string);
-			// FIXME We go back to the white ??
+			glut.glutBitmapString(fontToUse, s.string);
 			gl.glColor4d(1, 1, 1, 1);
-			//
 			gl.glEnable(GL.GL_BLEND);
 			gl.glEnable(GLLightingFunc.GL_LIGHTING);
 			gl.glPopMatrix();
 		}
-
 	}
 
-	@Override
-	public void dispose() {
-		// cache.clear();
-	}
 }

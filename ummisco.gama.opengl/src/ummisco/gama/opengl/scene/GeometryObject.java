@@ -11,101 +11,26 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.util.List;
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.GamaPair;
-import msi.gama.util.file.Gama3DGeometryFile;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.util.GamaColor;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
-public class GeometryObject extends AbstractObject implements Cloneable {
+public class GeometryObject extends AbstractObject {
 
-	public Geometry geometry;
-	public IAgent agent;
-	public double z_layer;
-	public IShape.Type type; // see IShape.Type constants
-	public Color border;
-	public Boolean isTextured;
-	public List<BufferedImage> textureImages;
-	public double height;
-	public boolean rounded;
-	private final Texture[] textures;
-	public Gama3DGeometryFile asset3Dmodel = null;
-	public GamaPair<Double, GamaPoint> rotate3D = null;
+	public final Geometry geometry;
 
-	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
-		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
-		final List<BufferedImage> textures, final Gama3DGeometryFile asset3Dmodel, final int angle, final double height,
-		final boolean rounded, final IShape.Type type, final GamaPair<Double, GamaPoint> rotate3D) {
-		super(color, alpha);
-
-		if ( type == IShape.Type.GRIDLINE ) {
-			this.fill = false;
-			setZ_fighting_id((double) layerId);
-		}
-		// FIXME:Need to check that
-		/*
-		 * if (type.compareTo("env") == 0){
-		 * setZ_fighting_id(0.1);
-		 * }
-		 */
-		/*
-		 * The z_fight value must be a unique value so the solution has been to make the hypothesis that
-		 * a layer has less than 1 000 000 agent to make a unique z-fighting value per agent.
-		 */
-		if ( agent != null && agent.getLocation().getZ() == 0 && height == 0 ) {
-			Double z_fight = Double.parseDouble(layerId + "." + agent.getIndex());
-			setZ_fighting_id(z_fight);
-		}
-
+	public GeometryObject(final Geometry geometry, final DrawingAttributes attributes, final LayerObject layer) {
+		super(attributes, layer);
 		this.geometry = geometry;
-		this.agent = agent;
-		this.z_layer = z_layer;
-		this.type = type;
-		this.fill = fill;
-		this.border = border;
-		this.isTextured = isTextured;
-		this.textureImages = textures;
-		if ( textureImages == null || textureImages.isEmpty() ) {
-			this.textures = null;
-		} else {
-			this.textures = new Texture[textureImages.size()];
-		}
-		this.asset3Dmodel = asset3Dmodel;
-		this.height = height;
-		this.rounded = rounded;
-		this.rotate3D = rotate3D;
 	}
 
-	@Override
-	public Object clone() {
-		Object o = null;
-		try {
-			o = super.clone();
-		} catch (CloneNotSupportedException cnse) {
-			cnse.printStackTrace(System.err);
-		}
-		return o;
-	}
-
-	@Override
-	public void unpick() {
-		picked = false;
-	}
-
-	public void pick() {
-		picked = true;
-	}
-
-	@Override
-	public Color getColor() {
-		if ( picked ) { return pickedColor; }
-		return super.getColor();
+	// Package protected as it is only used by the static layers
+	GeometryObject(final Geometry geometry, final GamaColor color, final IShape.Type type, final LayerObject layer) {
+		this(geometry, new DrawingAttributes(null, color, color), layer);
+		attributes.type = type;
 	}
 
 	@Override
@@ -115,11 +40,11 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 			gl.glPushMatrix();
 			gl.glLoadName(pickingIndex);
 			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				if ( agent != null /* && !picked */ ) {
+				if ( getAgent() != null /* && !picked */ ) {
 					renderer.setPicking(false);
 					pick();
 					renderer.currentPickedObject = this;
-					renderer.displaySurface.selectAgent(agent);
+					renderer.displaySurface.selectAgent(getAgent());
 				}
 			}
 			super.draw(gl, drawer, picking);
@@ -130,24 +55,20 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	}
 
 	@Override
-	protected Texture computeTexture(final GL gl, final JOGLRenderer renderer) {
-		return getTexture(gl, renderer, 0);
+	public double getZ_fighting_id() {
+		if ( getType() == IShape.Type.GRIDLINE ) { return super.getZ_fighting_id(); }
+		if ( getAgent() != null && getAgent().getLocation().getZ() == 0d &&
+			getHeight() == 0d ) { return super.getZ_fighting_id() + 1 / (double) (getAgent().getIndex() + 10); }
+		return super.getZ_fighting_id();
 	}
 
-	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
-		if ( textures == null ) { return null; }
-		if ( order < 0 || order > textures.length - 1 ) { return null; }
-		if ( textures[order] == null ) {
-			textures[order] = computeTexture(gl, renderer, order);
-		}
-		return textures[order];
+	public IShape.Type getType() {
+		return attributes.type;
 	}
 
-	private Texture computeTexture(final GL gl, final JOGLRenderer renderer, final int order) {
-		return renderer.getCurrentScene().getTexture(gl, textureImages.get(order));
+	@Override
+	public boolean isFilled() {
+		return super.isFilled() && attributes.type != IShape.Type.GRIDLINE;
 	}
 
-	public boolean hasTextures() {
-		return textures != null && textures.length > 1;
-	}
 }

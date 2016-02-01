@@ -94,6 +94,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public BufferedImage getImage() {
 		GLAutoDrawable glad = renderer.getDrawable();
+		if ( glad == null || glad.getGL() == null || glad.getGL().getContext() == null ) { return null; }
 		boolean current = glad.getGL().getContext().isCurrent();
 		if ( !current ) {
 			glad.getGL().getContext().makeCurrent();
@@ -119,14 +120,24 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			animator.resume();
 		}
 		// canBeUpdated(false);
-		try {
-			if ( output.getData().isAutosave() ) {
-				snapshot();
+		// try {
+		manager.drawLayersOn(renderer);
+
+		if ( output.getData().isAutosave() ) {
+			while (renderer.getCurrentScene() == null || !renderer.getCurrentScene().rendered()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-			manager.drawLayersOn(renderer);
-		} finally {
-			// releaseLock();
+			snapshot();
 		}
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// } finally {
+		// releaseLock();
+		// }
 
 		// EXPERIMENTAL
 

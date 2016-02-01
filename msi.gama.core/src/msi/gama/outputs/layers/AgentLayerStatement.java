@@ -72,7 +72,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.FOCUS,
 			type = IType.AGENT,
 			optional = true,
-			doc = @doc("the agent on with will be focus the camera (it is dynamically computed)") ),
+			doc = @doc("the agent on which the camera will be focused (it is dynamically computed)") ),
 		@facet(name = IKeyword.ASPECT,
 			type = IType.ID,
 			optional = true,

@@ -18,9 +18,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
-
-import msi.gama.common.util.FileUtils;
-import msi.gama.common.util.ImageUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
@@ -47,8 +45,8 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	private final ArrayList facesNorms = new ArrayList();
 	private final ArrayList matTimings = new ArrayList();
 	private MtlLoader materials;
-	private int objectList;
-	private int numPolys = 0;
+	// private int objectList;
+	// private int numPolys = 0;
 	public float toppoint = 0f;
 	public float bottompoint = 0f;
 	public float leftpoint = 0f;
@@ -78,10 +76,12 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	public GamaObjFile(final IScope scope, final String pathName, final String mtlPath, final GamaPair initRotation) {
 		super(scope, pathName, initRotation);
-		if (mtlPath != null) 
+		if ( mtlPath != null ) {
 			this.mtlPath = FileUtils.constructAbsoluteFilePath(scope, mtlPath, false);
-		else this.mtlPath  = null;
-			
+		} else {
+			this.mtlPath = null;
+		}
+
 	}
 
 	private void centerit() {
@@ -102,8 +102,9 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		if ( loaded ) { return; }
 		int linecounter = 0;
 		int facecounter = 0;
+		BufferedReader br = null;
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(getFile()));
+			br = new BufferedReader(new FileReader(getFile()));
 			boolean firstpass = true;
 			String newline;
 			while ((newline = br.readLine()) != null) {
@@ -244,9 +245,17 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			System.out.println("Failed to read file: " /* + br.toString() */);
 		} catch (NumberFormatException e) {
 			System.out.println("Malformed OBJ file: "/* + br.toString() */ + "\r \r" + e.getMessage());
+		} finally {
+			if ( br != null ) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		centerit();
-		numPolys = faces.size();
+		// numPolys = faces.size();
 		loaded = true;
 	}
 
@@ -408,7 +417,6 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			//// Quad End Footer /////
 			gl.glEnd();
 			///////////////////////////
-			
 
 		}
 		if ( texture != null ) {

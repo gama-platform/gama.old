@@ -15,7 +15,7 @@ import msi.gama.util.GamaColor;
 public class LayeredDisplayData {
 
 	public enum Changes {
-		SPLIT_LAYER, CHANGE_CAMERA, THREED_VIEW, CAMERA_POS, BACKGROUND, HIGHLIGHT, ZOOM; // TODO Add Zoom
+		SPLIT_LAYER, CHANGE_CAMERA, THREED_VIEW, CAMERA_POS, BACKGROUND, HIGHLIGHT, ZOOM;
 	}
 
 	public static final String JAVA2D = "java2D";
@@ -169,20 +169,6 @@ public class LayeredDisplayData {
 	public void setTesselation(final boolean tesselation) {
 		this.isTesselating = tesselation;
 	}
-
-	/**
-	 * @return the traceDisplay
-	 */
-	// public int getTraceDisplay() {
-	// return traceSize;
-	// }
-
-	/**
-	 * @param traceDisplay the traceDisplay to set
-	 */
-	// public void setTraceDisplay(final int traceDisplay) {
-	// this.traceSize = traceDisplay;
-	// }
 
 	/**
 	 * @return the z_fighting

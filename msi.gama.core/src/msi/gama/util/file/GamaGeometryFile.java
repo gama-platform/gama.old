@@ -1,37 +1,35 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaGeometryFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import java.util.*;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.*;
 
 /**
  * Class GamaGeometryFile. An abstract class that supports loading and saving geometries in specific subclasses.
  * The buffer is a GamaList of points (GamaPoint) from which the GamaGeometry can be constructed (using
  * geometry(file("..."));)
- * 
+ *
  * @author drogoul
  * @since 30 déc. 2013
- * 
+ *
  */
 public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, Integer, IShape> {
 
 	protected IShape geometry;
-
 
 	public GamaGeometryFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
@@ -65,6 +63,10 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 	public void invalidateContents() {
 		super.invalidateContents();
 		geometry = null;
+	}
+
+	public GamaPair<Double, GamaPoint> getInitRotation() {
+		return null;
 	}
 
 }

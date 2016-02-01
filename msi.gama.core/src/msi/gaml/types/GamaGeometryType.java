@@ -1,43 +1,39 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaGeometryType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
 import static msi.gama.metamodel.shape.IShape.Type.*;
-
 import java.util.*;
-
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.util.file.GamaGeometryFile;
-import msi.gaml.operators.Maths;
-import msi.gaml.operators.Spatial;
-import msi.gaml.species.ISpecies;
-
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.*;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import com.vividsolutions.jts.util.*;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GeometryUtils;
+import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.*;
+import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.operators.*;
+import msi.gaml.species.ISpecies;
 
 /**
  * Written by drogoul Modified on 1 ao�t 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @type(name = IKeyword.GEOMETRY,
 	id = IType.GEOMETRY,
@@ -76,8 +72,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 				Geometry g = SHAPE_READER.read((String) obj);
 				return new GamaShape(g);
 			} catch (ParseException e) {
-				GAMA.reportError(scope,
-					GamaRuntimeException.warning("WKT Parsing exception: " + e.getMessage(), scope), false);
+				GAMA.reportError(scope, GamaRuntimeException.warning("WKT Parsing exception: " + e.getMessage(), scope),
+					false);
 			}
 		}
 
@@ -127,7 +123,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 * to assure the validity of the input parameter.
 	 * Update: the coordinate sequence is now validated before creating the polygon, and any
 	 * necessary point is added.
-	 * 
+	 *
 	 * @param points
 	 * @return
 	 */
@@ -153,36 +149,34 @@ public class GamaGeometryType extends GamaType<IShape> {
 		// / ???
 
 		return new GamaShape(p);
-		//return new GamaShape(GeometryUtils.isClockWise(p) ? p : GeometryUtils.changeClockWise(p));
+		// return new GamaShape(GeometryUtils.isClockWise(p) ? p : GeometryUtils.changeClockWise(p));
 	}
-	
-	
-	//A.G 28/05/2015 ADDED for gamanalyser
-	public static IShape buildMultiPolygon(final List<List<IShape>> lpoints) {
-		Polygon[] polys=new Polygon[lpoints.size()];
-		for (int z=0;z<lpoints.size();z++)
-		{
-			List<IShape> points=lpoints.get(z);
-			final CoordinateSequenceFactory fact = GeometryUtils.coordFactory;
-		final int size = points.size();
-		// AD 12/05/13 The dimensions of the points to create have been changed to 3, otherwise the z coordinates could
-		// be lost when copying this geometry
-		CoordinateSequence cs = fact.create(size, 3);
-		for ( int i = 0; i < size; i++ ) {
-			final Coordinate p = (GamaPoint) points.get(i).getLocation();
-			cs.setOrdinate(i, 0, p.x);
-			cs.setOrdinate(i, 1, p.y);
-			cs.setOrdinate(i, 2, p.z);
-		}
-		cs = CoordinateSequences.ensureValidRing(fact, cs);
-		final LinearRing geom = GeometryUtils.FACTORY.createLinearRing(cs);
-		final Polygon p = (Polygon)GeometryUtils.FACTORY.createPolygon(geom, null).convexHull();
-		polys[z]=p;
-		}
-		final MultiPolygon m=GeometryUtils.FACTORY.createMultiPolygon(polys); 
 
-//		if ( m.isValid() ) { return new GamaShape(m.buffer(0.0)); } // Why buffer (0.0) ???
-		 return new GamaShape(m.buffer(0.0));	
+	// A.G 28/05/2015 ADDED for gamanalyser
+	public static IShape buildMultiPolygon(final List<List<IShape>> lpoints) {
+		Polygon[] polys = new Polygon[lpoints.size()];
+		for ( int z = 0; z < lpoints.size(); z++ ) {
+			List<IShape> points = lpoints.get(z);
+			final CoordinateSequenceFactory fact = GeometryUtils.coordFactory;
+			final int size = points.size();
+			// AD 12/05/13 The dimensions of the points to create have been changed to 3, otherwise the z coordinates could
+			// be lost when copying this geometry
+			CoordinateSequence cs = fact.create(size, 3);
+			for ( int i = 0; i < size; i++ ) {
+				final Coordinate p = (GamaPoint) points.get(i).getLocation();
+				cs.setOrdinate(i, 0, p.x);
+				cs.setOrdinate(i, 1, p.y);
+				cs.setOrdinate(i, 2, p.z);
+			}
+			cs = CoordinateSequences.ensureValidRing(fact, cs);
+			final LinearRing geom = GeometryUtils.FACTORY.createLinearRing(cs);
+			final Polygon p = (Polygon) GeometryUtils.FACTORY.createPolygon(geom, null).convexHull();
+			polys[z] = p;
+		}
+		final MultiPolygon m = GeometryUtils.FACTORY.createMultiPolygon(polys);
+
+		// if ( m.isValid() ) { return new GamaShape(m.buffer(0.0)); } // Why buffer (0.0) ???
+		return new GamaShape(m.buffer(0.0));
 	}
 
 	// Maybe a bit overkill, but the list of points is created *and* validated by the call to buildPolygon()
@@ -196,10 +190,9 @@ public class GamaGeometryType extends GamaType<IShape> {
 		points.add(new GamaPoint(x + side_size / sqrt2, y + side_size / sqrt2, z));
 		points.add(new GamaPoint(x - side_size / sqrt2, y + side_size / sqrt2, z));
 		points.add(new GamaPoint(x, y - side_size / sqrt2, z));
-		
+
 		return buildPolygon(points);
 	}
-
 
 	public static IShape buildRectangle(final double width, final double height, final ILocation location) {
 		final Coordinate[] points = new Coordinate[5];
@@ -225,14 +218,15 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 * to assure the validity of the input parameter.
 	 * Update: the coordinate sequence is now validated before creating the polygon, and any
 	 * necessary point is added.
-	 * 
+	 *
 	 * @param points
 	 * @return
 	 */
 	public static IShape buildPolyhedron(final List<IShape> points, final Double depth) {
 		IShape g = buildPolygon(points);
-		if (!(Spatial.ThreeD.isClockwise(null, g)))
+		if ( !Spatial.ThreeD.isClockwise(null, g) ) {
 			g = Spatial.ThreeD.changeClockwise(null, g);
+		}
 		g.setDepth(depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, POLYHEDRON);
 		return g;
@@ -285,8 +279,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static GamaShape createPoint(final IShape location) {
-		return new GamaShape(GeometryUtils.FACTORY.createPoint(location == null ? new GamaPoint(0, 0)
-			: (GamaPoint) location.getLocation()));
+		return new GamaShape(GeometryUtils.FACTORY
+			.createPoint(location == null ? new GamaPoint(0, 0) : (GamaPoint) location.getLocation()));
 	}
 
 	public static IShape buildSquare(final double side_size, final ILocation location) {
@@ -302,14 +296,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	}
 
-	public static IShape
-		buildBox(final double width, final double height, final double depth, final ILocation location) {
+	public static IShape buildBox(final double width, final double height, final double depth,
+		final ILocation location) {
 		final IShape g = buildRectangle(width, height, location);
 		g.setDepth(depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, BOX);
 		return g;
 	}
- 
+
 	public static IShape buildHexagon(final double size, final double x, final double y) {
 		return buildHexagon(size, new GamaPoint(x, y));
 	}
@@ -323,12 +317,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coords[0] = new GamaPoint(x, y + width);
 		coords[1] = new GamaPoint(x + h, y);
 		coords[2] = new GamaPoint(x + 1.5 * size, y);
-	    coords[3] = new GamaPoint(x + 2 * size, y + width);
-	    coords[4] = new GamaPoint(x + 1.5 * size, y + 2 * width);
-	    coords[5] = new GamaPoint(x + h, y + 2 * width);
-	    coords[6] = new GamaPoint(coords[0]);
+		coords[3] = new GamaPoint(x + 2 * size, y + width);
+		coords[4] = new GamaPoint(x + 1.5 * size, y + 2 * width);
+		coords[5] = new GamaPoint(x + h, y + 2 * width);
+		coords[6] = new GamaPoint(coords[0]);
 		Geometry g = GeometryUtils.FACTORY.createPolygon(GeometryUtils.FACTORY.createLinearRing(coords), null);
-		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g : GeometryUtils.changeClockWise(g));
 	}
 
 	public static IShape buildHexagon(final double sizeX, final double sizeY, final ILocation location) {
@@ -343,7 +337,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coords[5] = new GamaPoint(x - sizeX / 4, y - sizeY / 2);
 		coords[6] = new GamaPoint(coords[0]);
 		Geometry g = GeometryUtils.FACTORY.createPolygon(GeometryUtils.FACTORY.createLinearRing(coords), null);
-		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g : GeometryUtils.changeClockWise(g));
 
 	}
 
@@ -357,7 +351,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 				coordinates[i].z = ((GamaPoint) location).z;
 			}
 		}
-		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g : GeometryUtils.changeClockWise(g));
 	}
 
 	public static IShape buildEllipse(final double xRadius, final double yRadius, final GamaPoint location) {
@@ -376,7 +370,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 				coordinates[i].z = location.z;
 			}
 		}
-		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g : GeometryUtils.changeClockWise(g));
 	}
 
 	public static IShape buildSquircle(final double xRadius, final double power, final GamaPoint location) {
@@ -392,12 +386,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 				coordinates[i].z = location.z;
 			}
 		}
-		return new GamaShape(GeometryUtils.isClockWise(g) ? g: GeometryUtils.changeClockWise(g));
+		return new GamaShape(GeometryUtils.isClockWise(g) ? g : GeometryUtils.changeClockWise(g));
 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param xRadius
 	 * @param heading in decimal degrees
 	 * @param amplitude in decimal degrees
@@ -446,7 +440,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, SPHERE);
 		return g;
 	}
-	
+
 	public static IShape buildObjFile(final double radius, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
 		g.setDepth(radius);
@@ -566,9 +560,21 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildMultiGeometry(final IList<IShape> shapes) {
+		if ( shapes.size() == 0 ) { return null; }
+		if ( shapes.size() == 1 ) { return shapes.get(0); }
 		Geometry geom = GeometryUtils.buildGeometryCollection(shapes);
 		if ( geom == null ) { return null; }
 		return new GamaShape(geom);
+	}
+
+	public static IShape buildMultiGeometry(final IShape ... shapes) {
+		IList<IShape> list = GamaListFactory.create();
+		for ( IShape shape : shapes ) {
+			if ( shape != null ) {
+				list.add(shape);
+			}
+		}
+		return buildMultiGeometry(list);
 	}
 
 	// /////////////////////// 3D Shape (Not yet implemented in 3D (e.g a Sphere is displayed as a

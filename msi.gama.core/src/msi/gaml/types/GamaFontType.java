@@ -36,7 +36,7 @@ public class GamaFontType extends GamaType<GamaFont> {
 
 	public static GamaPreferences.Entry<GamaFont> DEFAULT_DISPLAY_FONT = GamaPreferences
 		.create("default.display.font", "Default font to use in text layers or draw statements when none is specified",
-			new GamaFont("Default", Font.PLAIN, 12), IType.FONT)
+			new GamaFont("Helvetica", Font.PLAIN, 12), IType.FONT)
 		.in(GamaPreferences.DISPLAY).group("Default aspect (settings effective after experiment relaunch)");
 
 	@Override

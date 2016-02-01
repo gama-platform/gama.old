@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 23 janv. 2016
- * 
+ *
  */
 package msi.gama.util.file;
 
@@ -14,17 +14,18 @@ import msi.gama.util.GamaPair;
 
 public abstract class Gama3DGeometryFile extends GamaGeometryFile {
 
-	protected GamaPair initRotation;
+	protected GamaPair<Double, GamaPoint> initRotation;
 	protected Envelope3D envelope;
-	
+
 	public Gama3DGeometryFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
-	public Gama3DGeometryFile(final IScope scope, final String pathName,final GamaPair initRotation) throws GamaRuntimeException {
+
+	public Gama3DGeometryFile(final IScope scope, final String pathName, final GamaPair<Double, GamaPoint> initRotation)
+		throws GamaRuntimeException {
 		super(scope, pathName);
 		this.initRotation = initRotation;
 	}
-	
 
 	@Override
 	protected IShape buildGeometry(final IScope scope) {
@@ -34,15 +35,20 @@ public abstract class Gama3DGeometryFile extends GamaGeometryFile {
 		}
 		return new GamaShape(GeometryUtils.FACTORY.buildGeometry(faces));
 	}
-	public GamaPair getInitRotation() {
+
+	public GamaPair<Double, GamaPoint> getInitRotation() {
 		return initRotation;
 	}
-	public void setInitRotation(GamaPair initRotation) {
+
+	public void setInitRotation(final GamaPair initRotation) {
 		this.initRotation = initRotation;
 	}
+
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		if (envelope == null) fillBuffer(scope);
+		if ( envelope == null ) {
+			fillBuffer(scope);
+		}
 		return envelope;
 	}
 

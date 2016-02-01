@@ -18,7 +18,6 @@ import com.google.common.collect.Iterables;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.VertexArrayHandler;
 
 public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> {
 
@@ -45,7 +44,7 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	final boolean drawAsList;
 	boolean isFading;
 	boolean drawAsVBO;
-	VertexArrayHandler vah = null;
+	// VertexArrayHandler vah = null;
 
 	SceneObjects(final ObjectDrawer<T> drawer, final boolean asList, final boolean asVBO) {
 		this.drawer = drawer;
@@ -106,8 +105,6 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 			gl.glEnable(GLLightingFunc.GL_LIGHTING);
 			gl.glEnable(GL.GL_TEXTURE);
 
-			// Color index = new Color(pixels.get(0), pixels.get(1), pixels.get(2));
-			// System.out.println("color picked " + index.toString());
 		} else {
 			gl.glPushMatrix();
 			gl.glInitNames();
@@ -145,9 +142,6 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 			return;
 		}
 		if ( drawAsList ) {
-			// for ( T object : objects.get(0) ) {
-			// object.preload(gl, renderer);
-			// }
 			Integer index = openGLListIndex;
 			if ( index == null ) {
 				index = gl.glGenLists(1);

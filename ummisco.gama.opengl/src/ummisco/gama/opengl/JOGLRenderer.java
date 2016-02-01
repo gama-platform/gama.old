@@ -15,7 +15,6 @@ import java.awt.*;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.util.*;
 import org.eclipse.swt.SWT;
@@ -27,16 +26,15 @@ import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.ITopology;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.*;
-import msi.gama.util.*;
-import msi.gama.util.file.*;
-import msi.gaml.operators.Cast;
+import msi.gama.util.GamaColor;
+import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
 import ummisco.gama.opengl.scene.*;
@@ -77,7 +75,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	protected double xRatioBetweenPixelsAndModelUnits;
 	protected double yRatioBetweenPixelsAndModelUnits;
 	private GLU glu;
-	private GL2 gl;
+	// private GL2 gl;
 	private final GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
@@ -92,8 +90,12 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	Map<String, Map<Integer, Map<Integer, TextRenderer>>> textRenderersCache = new LinkedHashMap();
 
+	public TextRenderer get(final Font font) {
+		return get(font.getName(), font.getSize(), font.getStyle());
+	}
+
 	public TextRenderer get(final String font, final int s, final int style) {
-		int size = s > 200 ? 200 : s;
+		int size = s > 150 ? 150 : s;
 		if ( size < 6 ) { return null; }
 		Map<Integer, Map<Integer, TextRenderer>> map1 = textRenderersCache.get(font);
 		if ( map1 == null ) {
@@ -107,8 +109,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		}
 		TextRenderer r = map2.get(style);
 		if ( r == null ) {
-			r = new TextRenderer(new Font(font, style, size), true, true, null, true);
-			r.setSmoothing(false);
+			r = new TextRenderer(new Font(font, style, size), true, false, null, true);
+			r.setSmoothing(true);
 			r.setUseVertexArrays(true);
 			map2.put(style, r);
 		}
@@ -168,6 +170,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 			@Override
 			public void run() {
+				if ( getCanvas() == null || getCanvas().isDisposed() ) { return; }
 				getCanvas().addKeyListener(camera);
 				getCanvas().addMouseListener(camera);
 				// getCanvas().addMouseListener(displaySurface.getEventMouse());
@@ -186,7 +189,8 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// see https://jogamp.org/deployment/v2.1.1/javadoc/jogl/javadoc/javax/media/opengl/glu/gl2/GLUgl2.html
 		// GLU objects are NOT thread safe...
 		glu = new GLU();
-		gl = GLContext.getCurrentGL().getGL2();
+		GL2 gl = drawable.getContext().getGL().getGL2();
+		// GL2 gl = GLContext.getCurrentGL().getGL2();
 
 		envelopes = new Hashtable<String, Envelope>();
 		initializeCanvasWithListeners();
@@ -220,7 +224,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
 		BLENDING_ENABLED = true;
-		updatePerspective();
+		updatePerspective(gl);
 		// We mark the renderer as inited
 		inited = true;
 
@@ -247,7 +251,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		if ( GAMA.getSimulation() == null ) { return; }
 		currentScene = sceneBuffer.getSceneToRender();
 		if ( currentScene == null ) { return; }
-
+		GL2 gl = drawable.getContext().getGL().getGL2();
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
 
@@ -266,7 +270,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 		// TODO Is this line necessary ? The changes are made in init and reshape
 		updateCameraPosition();
-		updatePerspective();
+		updatePerspective(gl);
 		if ( data.isLightOn() ) {
 			gl.glEnable(GLLightingFunc.GL_LIGHTING);
 		} else {
@@ -303,6 +307,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			gl.glEnable(GL.GL_DEPTH_TEST);
 		}
 
+		// Line width ? Disable line smoothing seems to improve rendering time
+		GLUtilLight.setLineWidth(gl, getLineWidth(), false);
+		//
+
 		if ( !data.isTriangulation() ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 		} else {
@@ -333,6 +341,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		if ( width <= 0 || height <= 0 ) { return; }
 		this.width = width;
 		this.height = height;
+		GL2 gl = drawable.getContext().getGL().getGL2();
 		// Set the viewport (display area) to cover the entire window
 		gl.glViewport(0, 0, width, height);
 		// Enable the model view - any new transformations will affect the model-view matrix
@@ -345,11 +354,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		// System.out.println(" Renderer reshaping:" + "projection matrix reset");
 		// FIXME Update camera as well ??
 		// Only if zoomFit... camera.resetCamera(data.getEnvWidth(), data.getEnvHeight(), data.isOutput3D());
-		updatePerspective();
+		updatePerspective(gl);
 		// gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 	}
 
-	public final void updatePerspective() {
+	public final void updatePerspective(final GL2 gl) {
 		double aspect = (double) width / (double) (height == 0 ? 1 : height);
 
 		double maxDim = getMaxEnvDim();
@@ -576,81 +585,16 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	 * existing geometry that will be displayed by openGl.
 	 */
 	@Override
-	public Rectangle2D drawGamaShape(final IScope scope, final IShape shape, final Color c, final boolean fill,
-		final Color border, final boolean rounded) {
+	public Rectangle2D drawShape(final IShape shape, final DrawingAttributes attributes) {
 		if ( shape == null ) { return null; }
-		// scope.getGui().debug(shape.getClass().getSimpleName() + " " + " .being drawn (in JOGLRenderer)");
-		Double depth = 0d;
-		GamaPair<Double, GamaPoint> rot3D = null;
-		java.util.List<BufferedImage> textures = null;
-		Gama3DGeometryFile asset3Dmodel = null;
+		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		IShape.Type type = shape.getGeometricalType();
-		java.util.List<Double> ratio = new ArrayList<Double>();
-		java.util.List<GamaColor> colors = new ArrayList<GamaColor>();
-		final ITopology topo = scope.getTopology();
-		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
-			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
+		if ( highlight ) {
+			attributes.color = GamaColor.getInt(data.getHighlightColor().getRGB());
 		}
+		sceneBuffer.getSceneToUpdate().addGeometry(shape.getInnerGeometry(), attributes);
 
-		if ( shape.hasAttribute(IShape.ROTATE_ATTRIBUTE) ) {
-			rot3D = Cast.asPair(scope, shape.getAttribute(IShape.ROTATE_ATTRIBUTE), false);
-		}
-
-		if ( shape.hasAttribute(IShape.TEXTURE_ATTRIBUTE) ) {
-			java.util.List<String> textureNames = Cast.asList(scope, shape.getAttribute(IShape.TEXTURE_ATTRIBUTE));
-			textures = new ArrayList();
-			for ( String s : textureNames ) {
-				BufferedImage image;
-				try {
-					image = ImageUtils.getInstance().getImageFromFile(scope, s);
-					textures.add(image);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			}
-		}
-
-		// if ( shape.hasAttribute(IShape.ASSET3D_ATTRIBUTE) ) {
-		// java.util.List<String> asset3DNames = Cast.asList(scope, shape.getAttribute(IShape.ASSET3D_ATTRIBUTE));
-		// asset3Dmodel = GLModel.LoadModel(asset3DNames.get(0), asset3DNames.get(1));
-		// }
-
-		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
-			ratio = Cast.asList(scope, shape.getAttribute(IShape.RATIO_ATTRIBUTE));
-		}
-		if ( shape.hasAttribute(IShape.COLOR_LIST_ATTRIBUTE) ) {
-			colors = Cast.asList(scope, shape.getAttribute(IShape.COLOR_LIST_ATTRIBUTE));
-		}
-		final Color color = highlight ? data.getHighlightColor() : c;
-		if ( topo != null && topo.isTorus() ) {
-			java.util.List<Geometry> geoms = topo.listToroidalGeometries(shape.getInnerGeometry());
-			Geometry world = scope.getSimulationScope().getInnerGeometry();
-			for ( Geometry g : geoms ) {
-				Geometry intersect = world.intersection(g);
-				if ( !intersect.isEmpty() ) {
-					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth,
-						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, asset3Dmodel, ratio, colors,
-						rot3D);
-				}
-			}
-		} else {
-			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures,
-				asset3Dmodel, ratio, colors, rot3D);
-		}
 		return rect;
-	}
-
-	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
-		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
-		final java.util.List<BufferedImage> textures, final Gama3DGeometryFile asset3Dmodel,
-		final java.util.List<Double> ratio, final java.util.List<GamaColor> colors,
-		final GamaPair<Double, GamaPoint> rotate3D) {
-		if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
-		// System.out.println("Value of 1 pixel: " + 1d / getyRatioBetweenPixelsAndModelUnits());
-		sceneBuffer.getSceneToUpdate().addGeometry(geom, scope.getAgentScope(), color, fill, border,
-			textures == null || textures.isEmpty() ? false : true, textures, asset3Dmodel, angle, depth.doubleValue(),
-			rounded, type, ratio, colors, rotate3D);
 
 	}
 
@@ -663,57 +607,46 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	 * Integer
 	 */
 	@Override
-	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
-		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final boolean isDynamic,
-		final String name) {
-
+	public Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
-		GamaPoint location = new GamaPoint(locationInModelUnits);
-		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
-		if ( sizeInModelUnits == null ) {
-			dimensions.x = widthOfLayerInPixels / xRatioBetweenPixelsAndModelUnits;
-			dimensions.y = heightOfLayerInPixels / yRatioBetweenPixelsAndModelUnits;
+		if ( attributes.size == null ) {
+			attributes.size = new GamaPoint();
+			attributes.size.x = widthOfLayerInPixels / xRatioBetweenPixelsAndModelUnits;
+			attributes.size.y = heightOfLayerInPixels / yRatioBetweenPixelsAndModelUnits;
 		}
-		sceneBuffer.getSceneToUpdate().addImage(img, scope == null ? null : scope.getAgentScope(), location, dimensions,
-			angle, isDynamic, name);
+		sceneBuffer.getSceneToUpdate().addImage(img, attributes);
 
-		if ( gridColor != null ) {
-			drawGridLine(img, gridColor/* , name */);
+		if ( attributes.border != null ) {
+			drawGridLine(img, attributes.border);
 		}
 		return rect;
 	}
 
 	@Override
-	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
-		final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
-		final GamaPair<Double, GamaPoint> rotate3D) {
+	public Rectangle2D drawFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
-		Envelope env = envelopes.get(fileName.getPath());
-		if ( env == null ) {
-			envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));
+		if ( !envelopes.containsKey(file.getPath()) ) {
+			envelopes.put(file.getPath(), file.computeEnvelope(null));
 		}
-		GamaPoint location = new GamaPoint(locationInModelUnits);
-		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
-		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0,
-			location, dimensions, rotate3D, null, env);
+		sceneBuffer.getSceneToUpdate().addFile(file, attributes);
 		return rect;
 	}
-
-	@Override
-	public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
-		final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
-		final GamaPair<Double, GamaPoint> rotate3D, final GamaPair<Double, GamaPoint> rotate3DInit) {
-		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
-		GamaPoint location = new GamaPoint(locationInModelUnits);
-		Envelope env = envelopes.get(fileName.getPath());
-		if ( env == null ) {
-			envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));
-		}
-		GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
-		sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0,
-			location, dimensions, rotate3D, rotate3DInit, env);
-		return rect;
-	}
+	//
+	// @Override
+	// public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
+	// final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
+	// final GamaPair<Double, GamaPoint> rotate3D, final GamaPair<Double, GamaPoint> rotate3DInit) {
+	// if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
+	// GamaPoint location = new GamaPoint(locationInModelUnits);
+	// Envelope env = envelopes.get(fileName.getPath());
+	// if ( env == null ) {
+	// envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));
+	// }
+	// GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
+	// sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0,
+	// location, dimensions, rotate3D, rotate3DInit, env);
+	// return rect;
+	// }
 
 	private Envelope3D getWorldEnvelopeWithZ(final double z) {
 		return new Envelope3D(0, data.getEnvWidth(), 0, data.getEnvHeight(), 0, z);
@@ -721,13 +654,13 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] valueMatrix,
-		final boolean textured, final boolean triangulated, final boolean isGrayScaled, final boolean showText,
-		final Color gridColor, final Envelope3D cellSize, final String name) {
+		final boolean triangulated, final boolean isGrayScaled, final boolean showText, final GamaColor gridColor,
+		final Envelope3D cellSize, final String name) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		Envelope3D env = getWorldEnvelopeWithZ(1);
 		IAgent a = scope.getAgentScope();
-		sceneBuffer.getSceneToUpdate().addDEM(valueMatrix, img, a, textured, triangulated, isGrayScaled, showText, env,
-			cellSize, name, gridColor);
+		sceneBuffer.getSceneToUpdate().addDEM(valueMatrix, img, a, triangulated, isGrayScaled, showText, env, cellSize,
+			name, gridColor);
 		/*
 		 * This line has been removed to fix the issue 1174
 		 * if ( gridColor != null ) {
@@ -742,14 +675,16 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		double stepX, stepY;
 		double wRatio = this.data.getEnvWidth() / image.getWidth();
 		double hRatio = this.data.getEnvHeight() / image.getHeight();
+		GamaColor color = GamaColor.getInt(lineColor.getRGB());
+		DrawingAttributes attributes = new DrawingAttributes(null, color, color);
+		attributes.setShapeType(IShape.Type.GRIDLINE);
 		for ( int i = 0; i < image.getWidth(); i++ ) {
 			for ( int j = 0; j < image.getHeight(); j++ ) {
 				stepX = (i + 0.5) / image.getWidth() * image.getWidth();
 				stepY = (j + 0.5) / image.getHeight() * image.getHeight();
 				final Geometry g = GamaGeometryType
 					.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio)).getInnerGeometry();
-				sceneBuffer.getSceneToUpdate().addGeometry(g, null, lineColor, false, lineColor, false, null, null, 0,
-					0, false, IShape.Type.GRIDLINE, null, null, null);
+				sceneBuffer.getSceneToUpdate().addGeometry(g, attributes);
 			}
 		}
 	}
@@ -764,44 +699,20 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		return null;
 	}
 
-	/**
-	 * Method drawChart.
-	 *
-	 * @param chart
-	 * JFreeChart
-	 */
 	@Override
-	public Rectangle2D drawChart(final IScope scope, final BufferedImage chart, final Double z) {
-		return drawImage(scope, chart, new GamaPoint(0, 0), null, null, 0d, true, "chart");
-	}
-
-	/**
-	 * Method drawString.
-	 *
-	 * @param string
-	 * String
-	 * @param stringColor
-	 * Color
-	 * @param angle
-	 * Integer
-	 */
-	@Override
-	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
-		final Double heightInModelUnits, final Font font, final Double angle, final Boolean bitmap) {
-		GamaPoint location = new GamaPoint(locationInModelUnits).yNegated();
-		Integer size;
-		Double sizeInModelUnits;
+	public Rectangle2D drawString(final String string, final DrawingAttributes attributes) {
+		// Multiline: Issue #780
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
-		if ( heightInModelUnits == null ) {
-			size = heightOfLayerInPixels;
-			sizeInModelUnits = getHeight() / data.getEnvHeight() * size;
-		} else {
-			sizeInModelUnits = heightInModelUnits;
-			size = (int) (getHeight() / data.getEnvHeight() * sizeInModelUnits);
+		if ( string.contains("\n") ) {
+			for ( String s : string.split("\n") ) {
+				attributes.location.setY(
+					attributes.location.getY() + attributes.font.getSize() * this.yRatioBetweenPixelsAndModelUnits);
+				drawString(s, attributes);
+			}
+			return null;
 		}
-
-		sceneBuffer.getSceneToUpdate().addString(string, location, size, sizeInModelUnits, stringColor, font.getName(),
-			font.getStyle(), angle, bitmap);
+		attributes.location.setY(-attributes.location.getY());
+		sceneBuffer.getSceneToUpdate().addString(string, attributes);
 		return null;
 	}
 
@@ -933,10 +844,10 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public GLU getGlu() {
 		return glu;
 	}
-
-	public GL2 getGL() {
-		return gl;
-	}
+	//
+	// public GL2 getGL() {
+	// return gl;
+	// }
 
 	public GamaPoint getIntWorldPointFromWindowPoint(final Point windowPoint) {
 		GamaPoint p = getRealWorldPointFromWindowPoint(windowPoint);
@@ -991,6 +902,38 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	@Override
 	public Double getZoomLevel() {
 		return data.getZoomLevel();
+	}
+
+	/**
+	 * Useful for drawing fonts
+	 * @return
+	 */
+	public double getGlobalYRatioBetweenPixelsAndModelUnits() {
+		return getHeight() / data.getEnvHeight();
+	}
+
+	/**
+	 * Method is2D()
+	 * @see msi.gama.common.interfaces.IGraphics#is2D()
+	 */
+	@Override
+	public boolean is2D() {
+		return false;
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	public Envelope getEnvelopeFor(final String path) {
+		return envelopes.get(path);
+	}
+
+	/**
+	 * @return
+	 */
+	public float getLineWidth() {
+		return GamaPreferences.CORE_LINE_WIDTH.getValue().floatValue();
 	}
 
 }

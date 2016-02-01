@@ -1,38 +1,37 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaSVGFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.file;
 
 import java.awt.Shape;
 import java.io.*;
 import java.net.URI;
+import com.kitfox.svg.*;
+import com.vividsolutions.jts.awt.ShapeReader;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.operators.Spatial;
 import msi.gaml.types.*;
-import com.kitfox.svg.*;
-import com.vividsolutions.jts.awt.ShapeReader;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Class GamaSVGFile. Only loads vector shapes right now (and none of the associated elements: textures, colors, fonts,
  * etc.)
- * 
+ *
  * @author drogoul
  * @since 30 déc. 2013
- * 
+ *
  */
 @file(name = "svg",
 	extensions = "svg",
@@ -72,14 +71,18 @@ public class GamaSVGFile extends GamaGeometryFile {
 			SVGDiagram diagram = svg.getDiagram(uri);
 			Shape shape = diagram.getRoot().getShape();
 			Geometry geom = ShapeReader.read(shape, 1.0, GeometryUtils.FACTORY); // flatness = ??
-			IShape gs = new GamaShape(geom);
-			if ( size != null ) {
-				gs = Spatial.Transformations.scaled_to(scope, gs, size);
-			}
+			// We center and scale the shape in the same operation
+			Envelope env = geom.getEnvelopeInternal();
+			GamaPoint translation = new GamaPoint(-env.getWidth() / 2, -env.getHeight() / 2);
+			IShape gs = new GamaShape(null, geom, null, null, size, true);
+			gs.setLocation(new GamaPoint(0, 0));
+			// if ( size != null ) {
+			// gs = Spatial.Transformations.scaled_to(scope, gs, size);
+			// }
 			setBuffer(GamaListFactory.createWithoutCasting(Types.GEOMETRY, gs));
 		} catch (FileNotFoundException e) {
 			throw GamaRuntimeException.create(e, scope);
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 

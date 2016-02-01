@@ -19,8 +19,8 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
-import msi.gaml.types.*;
+import msi.gama.util.IList;
+import msi.gaml.types.IType;
 
 /**
  * Interface for objects that can be provided with a geometry (or which can be translated to
@@ -37,10 +37,10 @@ import msi.gaml.types.*;
 public interface IShape extends ILocated, IValue, IAttributed {
 
 	static enum Type {
-		BOX, CIRCLE, CONE, CUBE, CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"),
-		LINESTRING("LineString"), MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"),
-		MULTIPOLYGON("MultiPolygon"), NULL, PLAN, POINT("Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID,
-		SPHERE, TEAPOT, LINECYLINDER, POLYLINECYLINDER;
+		BOX, CIRCLE, CONE, CUBE, CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"), LINESTRING("LineString"),
+		MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"), MULTIPOLYGON("MultiPolygon"), NULL, PLAN,
+		POINT("Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID, SPHERE, TEAPOT, LINECYLINDER,
+		POLYLINECYLINDER;
 
 		Type() {}
 
@@ -53,11 +53,11 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	public static final String DEPTH_ATTRIBUTE = "_shape_internal_depth";
 	public static final Map<String, Type> JTS_TYPES = new THashMap();
-	public static final String TEXTURE_ATTRIBUTE = "_shape_internal_texture";
+	// public static final String TEXTURE_ATTRIBUTE = "_shape_internal_texture";
 	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
-	public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";
-	public static final String COLOR_LIST_ATTRIBUTE = "_shape_internal_color_list";
-	public static final String ROTATE_ATTRIBUTE = "_shape_internal_rotate";
+	// public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";
+	// public static final String COLOR_LIST_ATTRIBUTE = "_shape_internal_color_list";
+	// public static final String ROTATE_ATTRIBUTE = "_shape_internal_rotate";
 
 	@Override
 	public IShape copy(IScope scope);

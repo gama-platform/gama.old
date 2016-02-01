@@ -14,20 +14,17 @@ package msi.gama.outputs.display;
 
 import static java.awt.RenderingHints.*;
 import java.awt.*;
-import java.awt.Point;
-import java.awt.font.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
-import java.text.AttributedString;
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaPair;
+import msi.gama.util.*;
 import msi.gama.util.file.*;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Maths;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
 /**
  *
@@ -48,6 +45,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	private final ShapeWriter sw = new ShapeWriter(this);
 	private boolean highlight;
 	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
+	IDisplaySurface surface;
 
 	static {
 
@@ -73,6 +71,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	public AWTDisplayGraphics(final IDisplaySurface surface, final Graphics2D g2) {
 		super(surface);
+		this.surface = surface;
 		renderer = g2;
 		renderer.setFont(defaultFont);
 
@@ -100,55 +99,57 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
-		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
-		final Color gridColor, final Envelope3D cellSize, final String name) {
-		return drawImage(scope, img, null, null, gridColor, null, true, "grid");
+		final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final GamaColor gridColor,
+		final Envelope3D cellSize, final String name) {
+		DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0), null, gridColor);
+		attributes.setDynamic(true);
+		return drawImage(img, attributes);
 	}
 
 	@Override
-	public Rectangle2D drawFile(final IScope scope, final GamaFile file, final Color color,
-		final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
-		final GamaPair<Double, GamaPoint> rotate3De) {
+	public Rectangle2D drawFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
 		if ( file instanceof GamaSVGFile ) {
-			IShape shape = ((GamaSVGFile) file).getGeometry(scope);
-			// shape.setLocation(locationInModelUnits);
-			shape = Spatial.Transformations.rotated_by(scope,
-				Spatial.Transformations.at_location(scope,
-					Spatial.Transformations.scaled_to(scope, shape, new GamaPoint(sizeInModelUnits)),
-					new GamaPoint(locationInModelUnits)),
-				rotate3De == null ? 0d : rotate3De.key);
-			return drawGamaShape(scope, shape, color, true, color, false);
+			IScope scope = surface.getDisplayScope();
+			GamaShape shape = (GamaShape) ((GamaSVGFile) file).getGeometry(scope);
+			if ( shape == null ) { return null; }
+			GamaPair<Double, GamaPoint> rot = attributes.rotation;
+			Double rotation = rot == null ? null : rot.key;
+			// System.out.println("Old centroid " + shape.getInnerGeometry().getCentroid());
+			// shape = shape.translatedTo(scope, attributes.location);
+			// System.out.println("Centroid after translation" + shape.getInnerGeometry().getCentroid());
+			shape = new GamaShape(shape, null, rotation, attributes.location, attributes.size, true);
+			// System.out.println("New centroid " + shape.getInnerGeometry().getCentroid());
+			GamaColor c = attributes.color;
+			return drawShape(shape, new DrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
 		}
 		return null;
 	}
 
 	@Override
-	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
-		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final boolean isDynamic,
-		final String name) {
+	public Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes) {
 		final AffineTransform saved = renderer.getTransform();
 		double curX, curY;
-		if ( locationInModelUnits == null ) {
+		if ( attributes.location == null ) {
 			curX = xOffsetInPixels;
 			curY = yOffsetInPixels;
 		} else {
-			curX = xFromModelUnitsToPixels(locationInModelUnits.getX());
-			curY = yFromModelUnitsToPixels(locationInModelUnits.getY());
+			curX = xFromModelUnitsToPixels(attributes.location.getX());
+			curY = yFromModelUnitsToPixels(attributes.location.getY());
 		}
 		double curWidth, curHeight;
-		if ( sizeInModelUnits == null ) {
+		if ( attributes.size == null ) {
 			curWidth = widthOfLayerInPixels;
 			curHeight = heightOfLayerInPixels;
 		} else {
-			curWidth = wFromModelUnitsToPixels(sizeInModelUnits.getX());
-			curHeight = hFromModelUnitsToPixels(sizeInModelUnits.getY());
+			curWidth = wFromModelUnitsToPixels(attributes.size.getX());
+			curHeight = hFromModelUnitsToPixels(attributes.size.getY());
 		}
-		if ( angle != null ) {
-			renderer.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
+		if ( attributes.rotation != null && attributes.rotation.key != null ) {
+			renderer.rotate(Maths.toRad * attributes.rotation.key, curX + curWidth / 2, curY + curHeight / 2);
 		}
 		renderer.drawImage(img, (int) Math.round(curX), (int) Math.round(curY), (int) curWidth, (int) curHeight, null);
-		if ( gridColor != null ) {
-			drawGridLine(img, gridColor);
+		if ( attributes.border != null ) {
+			drawGridLine(img, attributes.border);
 		}
 		renderer.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
@@ -159,15 +160,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	/**
-	 * Method drawChart.Simply creates an image from the chart and displays it.
-	 * @param chart JFreeChart
-	 */
-	@Override
-	public Rectangle2D drawChart(final IScope scope, final BufferedImage chart, final Double z) {
-		return drawImage(scope, chart, new GamaPoint(0, 0), null, null, 0d, true, "");
-	}
-
-	/**
 	 * Method drawString.
 	 * @param string String
 	 * @param stringColor Color
@@ -175,86 +167,33 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	 * @param z float (has no effect in 2D)
 	 */
 
-	// AD WARNING Experimental / Not used for now -- see Issue 780
-	public Rectangle2D drawMultiLineString(final String string, final Color stringColor,
-		final ILocation locationInModelUnits, final java.lang.Double heightInModelUnits, final String fontName,
-		final Integer styleName, final Double angle, final Double z, final Boolean bitmap) {
-		renderer.setColor(highlight ? data.getHighlightColor() : stringColor);
-		double curX, curY;
-		if ( locationInModelUnits == null ) {
-			curX = xOffsetInPixels;
-			curY = yOffsetInPixels;
-		} else {
-			curX = xFromModelUnitsToPixels(locationInModelUnits.getX());
-			curY = yFromModelUnitsToPixels(locationInModelUnits.getY());
-		}
-		double curHeight, curWidth;
-
-		if ( heightInModelUnits == null ) {
-			curWidth = widthOfLayerInPixels;
-			curHeight = heightOfLayerInPixels;
-		} else {
-			// FIXME
-			curWidth = wFromModelUnitsToPixels(50);
-			curHeight = hFromModelUnitsToPixels(heightInModelUnits);
-		}
-		final int style = styleName == null ? Font.PLAIN : styleName;
-		final Font f = new Font(fontName, style, (int) curHeight);
-		renderer.setFont(f);
-		final AffineTransform saved = renderer.getTransform();
-		if ( angle != null ) {
-			final Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);
-			renderer.rotate(Maths.toRad * angle, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
-		}
-		Point pen = new Point((int) curX, (int) curY);
-		LineBreakMeasurer measurer =
-			new LineBreakMeasurer(new AttributedString(string).getIterator(), renderer.getFontRenderContext());
-		while (true) {
-			TextLayout layout = measurer.nextLayout((int) curWidth);
-			if ( layout == null ) {
-				break;
-			}
-			pen.y += layout.getAscent();
-			double dx = 0;
-			if ( layout.isLeftToRight() ) {
-				dx = curWidth - layout.getAdvance();
-			}
-			layout.draw(renderer, pen.x + (float) dx, pen.y);
-			pen.y += layout.getDescent() + layout.getLeading();
-		}
-		return new Rectangle2D.Double(curX, curY, curWidth, pen.y - curY);
-	}
-
 	@Override
-	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
-		final java.lang.Double heightInModelUnits, final Font font, final Double angle, final Boolean bitmap) {
-		renderer.setColor(highlight ? data.getHighlightColor() : stringColor);
+	public Rectangle2D drawString(final String string, final DrawingAttributes attributes) {
+		// Multiline: Issue #780
+		if ( string.contains("\n") ) {
+			Rectangle2D result = new Rectangle2D.Double();
+			for ( String s : string.split("\n") ) {
+				Rectangle2D r = drawString(s, attributes);
+				attributes.location.setY(attributes.location.getY() + r.getHeight());
+				result.add(r);
+			}
+			return result;
+		}
+		renderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
 		double curX, curY, curZ;
-		if ( locationInModelUnits == null ) {
+		if ( attributes.location == null ) {
 			curX = xOffsetInPixels;
 			curY = yOffsetInPixels;
 			// curZ = 0;
 		} else {
-			curX = xFromModelUnitsToPixels(locationInModelUnits.getX());
-			curY = yFromModelUnitsToPixels(locationInModelUnits.getY());
-			// curZ = yFromModelUnitsToPixels(locationInModelUnits.getZ());
+			curX = xFromModelUnitsToPixels(attributes.location.getX());
+			curY = yFromModelUnitsToPixels(attributes.location.getY());
 		}
-		double curHeight;
-		if ( heightInModelUnits == null ) {
-			curHeight = heightOfLayerInPixels;
-			// scope.getGui().debug("AWTDisplayGraphics.drawString " + string + " " + curHeight);
-		} else {
-			curHeight = hFromModelUnitsToPixels(heightInModelUnits);
-			// scope.getGui().debug("AWTDisplayGraphics.drawString " + string + " " + curHeight);
-
-		} // FIXME Optimize by keeping the current values
-			// final int style = styleName == null ? Font.PLAIN : styleName;
-			// final Font f = new Font(fontName, style, curHeight);
-		renderer.setFont(font.deriveFont((float) curHeight));
+		renderer.setFont(attributes.font);
 		final AffineTransform saved = renderer.getTransform();
-		if ( angle != null ) {
+		if ( attributes.rotation != null && attributes.rotation.key != null ) {
 			final Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);
-			renderer.rotate(Maths.toRad * angle, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
+			renderer.rotate(Maths.toRad * attributes.rotation.key, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
 		}
 		renderer.drawString(string, (int) curX, (int) curY);
 		renderer.setTransform(saved);
@@ -262,69 +201,30 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	}
 
-	/**
-	 * Method drawGeometry.
-	 * @param geometry GamaShape
-	 * @param color Color
-	 * @param fill boolean
-	 * @param angle Integer
-	 * @param rounded boolean (not yet implemented in JAVA 2D)
-	 */
 	@Override
-	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color, final boolean fill,
-		final Color border, final boolean rounded) {
+	public Rectangle2D drawShape(final IShape geometry, final DrawingAttributes attributes) {
 		if ( geometry == null ) { return null; }
-		Envelope e = geometry.getEnvelope();
-		// System.out.println("Original geometry width:" + e.getWidth() + " height: " + e.getHeight());
-		final ITopology topo = scope.getTopology();
-		Rectangle2D result = null;
-		if ( topo != null && topo.isTorus() ) {
-			java.util.List<Geometry> geoms = topo.listToroidalGeometries(geometry.getInnerGeometry());
-			for ( Geometry g : geoms ) {
-				Rectangle2D r = drawSimpleShape(scope, g, color, fill, border, rounded);
-				if ( result == null ) {
-					result = r;
-				}
-			}
-		} else {
-			result = drawSimpleShape(scope, geometry.getInnerGeometry(), color, fill, border, rounded);
-		}
-		return result;
-		// Geometry geom = geometry.getInnerGeometry();
-		// // Necessary to check in case the scope has been erased (in cases of reload)
-		// if ( topo != null && topo.isTorus() ) {
-		// geom = topo.listToroidalGeometries(geom);
-		// }
-	}
-
-	private Rectangle2D drawSimpleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
-		final Color border, final boolean rounded) {
+		System.out.println("Shape location" + geometry.getLocation());
+		Geometry geom = geometry.getInnerGeometry();
+		System.out.println("Geometry centroid" + geom.getCentroid());
 		final Shape s = sw.toShape(geom);
 		try {
 			final Rectangle2D r = s.getBounds2D();
-			// System.out.println("width : " + r.getWidth() + " height: " + r.getHeight());
-			// System.out.println("Value of 1 pixel: " + 1d / getyRatioBetweenPixelsAndModelUnits());
-			// final AffineTransform saved = renderer.getTransform();
-			// if ( angle != null ) {
-			// renderer.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
-			// }
-			renderer.setColor(highlight ? data.getHighlightColor() : color);
-			if ( geom instanceof Lineal || geom instanceof Puntal ? false : fill ) {
+			renderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
+			if ( geom instanceof Lineal || geom instanceof Puntal ? false : !attributes.empty ) {
 				renderer.fill(s);
-				if ( border != null ) {
-					renderer.setColor(highlight ? data.getHighlightColor() : border);
+				if ( attributes.hasBorder && attributes.border != null ) {
+					renderer.setColor(highlight ? data.getHighlightColor() : attributes.border);
 				}
 			}
-			if ( border != null ) {
+			if ( attributes.hasBorder && attributes.border != null ) {
 				renderer.draw(s);
 			}
-			// renderer.setTransform(saved);
 			return r;
 		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-
 	}
 
 	@Override
@@ -383,11 +283,20 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public void endDrawingLayers() {}
 
+	// @Override
+	// public Rectangle2D drawFile(final IScope scope, final GamaFile filecheck, final Color color,
+	// final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
+	// final GamaPair<Double, GamaPoint> rotates3d, final GamaPair<Double, GamaPoint> rotates3dInit) {
+	// return drawFile(scope, filecheck, color, locationInModelUnits, sizeInModelUnits, rotates3d);
+	// }
+
+	/**
+	 * Method is2D()
+	 * @see msi.gama.common.interfaces.IGraphics#is2D()
+	 */
 	@Override
-	public Rectangle2D drawFile(final IScope scope, final GamaFile filecheck, final Color color,
-		final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
-		final GamaPair<Double, GamaPoint> rotates3d, final GamaPair<Double, GamaPoint> rotates3dInit) {
-		return drawFile(scope, filecheck, color, locationInModelUnits, sizeInModelUnits, rotates3d);
+	public boolean is2D() {
+		return true;
 	}
 
 }

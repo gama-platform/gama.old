@@ -11,10 +11,12 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
+import java.awt.Color;
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.util.GamaPair;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.files.GamaObjFile;
 import ummisco.gama.opengl.jts.JTSDrawer;
 import ummisco.gama.opengl.utils.Vertex;
 
@@ -37,40 +39,42 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final GeometryObject geometry) {
-		if ( geometry.rotate3D != null ) {
-			gl.glTranslated(geometry.agent.getLocation().getX(), -geometry.agent.getLocation().getY(),
-				geometry.agent.getLocation().getZ());
-			gl.glRotatef(geometry.rotate3D.key.floatValue(), (float) geometry.rotate3D.value.x,
-				(float) geometry.rotate3D.value.y, (float) geometry.rotate3D.value.z);
-			gl.glTranslated(-geometry.agent.getLocation().getX(), geometry.agent.getLocation().getY(),
-				-geometry.agent.getLocation().getZ());
-		}
+		GamaPair<Double, GamaPoint> rot = geometry.attributes.rotation;
 
-		switch (geometry.type) {
+		if ( rot != null ) {
+			GamaPoint loc = geometry.getLocation();
+			// AD Change to a negative rotation to fix Issue #1514
+			Double rotation = -rot.key;
+			GamaPoint axis = rot.value;
+			gl.glTranslated(loc.x, -loc.y, loc.z);
+			gl.glRotated(rotation, axis.x, axis.y, axis.z);
+			gl.glTranslated(-loc.x, loc.y, -loc.z);
+		}
+		double height = geometry.getHeight();
+		Color color = geometry.getColor();
+		Color border = geometry.getBorder();
+		switch (geometry.getType()) {
 			case MULTIPOLYGON:
-				jtsDrawer.drawMultiPolygon((MultiPolygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
-					geometry.fill, geometry.border, geometry.isTextured, geometry, geometry.height, geometry.rounded,
-					geometry.getZ_fighting_id());
+				jtsDrawer.drawMultiPolygon(gl, (MultiPolygon) geometry.geometry, color, geometry.getAlpha(),
+					geometry.isFilled(), geometry.getBorder(), geometry, height, geometry.getZ_fighting_id());
 				break;
 			case SPHERE:
-				jtsDrawer.drawSphere(geometry);
+				jtsDrawer.drawSphere(gl, geometry);
 				break;
 			case CONE:
-				jtsDrawer.drawCone3D(geometry);
+				jtsDrawer.drawCone3D(gl, geometry);
 				break;
 			case TEAPOT:
-				jtsDrawer.drawTeapot(geometry);
+				jtsDrawer.drawTeapot(gl, geometry);
 				break;
 			case PYRAMID:
-				jtsDrawer.drawPyramid(geometry);
+				jtsDrawer.drawPyramid(gl, geometry);
 				break;
 			case POLYLINECYLINDER:
-				jtsDrawer.drawMultiLineCylinder(geometry.geometry, geometry.getColor(), geometry.getAlpha(),
-					geometry.height);
+				jtsDrawer.drawMultiLineCylinder(gl, geometry.geometry, color, geometry.getAlpha(), height);
 				break;
 			case LINECYLINDER:
-				jtsDrawer.drawLineCylinder(geometry.geometry, geometry.getColor(), geometry.getAlpha(),
-					geometry.height);
+				jtsDrawer.drawLineCylinder(gl, geometry.geometry, color, geometry.getAlpha(), height);
 				break;
 			case POLYGON:
 			case ENVIRONMENT:
@@ -79,64 +83,52 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			case BOX:
 			case CYLINDER:
 			case GRIDLINE:
-				if ( geometry.asset3Dmodel != null ) {
-					gl.glTranslated(geometry.agent.getLocation().getX(), -geometry.agent.getLocation().getY(),
-						geometry.agent.getLocation().getZ());
-					// FIXME AD Why do we draw the file here????
-					if ( geometry.asset3Dmodel instanceof GamaObjFile ) {
-						((GamaObjFile) geometry.asset3Dmodel).drawToOpenGL(gl);
-					}
-					gl.glTranslated(-geometry.agent.getLocation().getX(), geometry.agent.getLocation().getY(),
-						-geometry.agent.getLocation().getZ());
-				} else {
-					if ( geometry.height > 0 ) {
-						jtsDrawer.drawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
-							geometry.fill, geometry.height, true, geometry.border, geometry.isTextured, geometry,
-							geometry.rounded, geometry.getZ_fighting_id());
-					} else {
-						if ( jtsDrawer.renderer.getComputeNormal() ) {
-							int norm_dir = 1;
-							Vertex[] vertices = jtsDrawer.getExteriorRingVertices((Polygon) geometry.geometry);
-							if ( !jtsDrawer.isClockwise(vertices) ) {
-								norm_dir = -1;
-							}
-							jtsDrawer.drawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
-								geometry.fill, geometry.border, geometry.isTextured, geometry, true, geometry.rounded,
-								geometry.getZ_fighting_id(), norm_dir);
-						} else {
-							jtsDrawer.drawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
-								geometry.fill, geometry.border, geometry.isTextured, geometry, true, geometry.rounded,
-								geometry.getZ_fighting_id(), -1);
-						}
 
+				if ( height > 0 ) {
+					jtsDrawer.drawPolyhedre(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
+						geometry.isFilled(), height, true, geometry.getBorder(), geometry, geometry.getZ_fighting_id());
+				} else {
+					if ( jtsDrawer.renderer.getComputeNormal() ) {
+						int norm_dir = 1;
+						Vertex[] vertices = jtsDrawer.getExteriorRingVertices((Polygon) geometry.geometry);
+						if ( !jtsDrawer.isClockwise(vertices) ) {
+							norm_dir = -1;
+						}
+						jtsDrawer.drawPolygon(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
+							geometry.isFilled(), geometry.getBorder(), geometry, true, geometry.getZ_fighting_id(),
+							norm_dir);
+					} else {
+						jtsDrawer.drawPolygon(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
+							geometry.isFilled(), geometry.getBorder(), geometry, true, geometry.getZ_fighting_id(), -1);
 					}
+
 				}
 				break;
 			case MULTILINESTRING:
-				jtsDrawer.drawMultiLineString((MultiLineString) geometry.geometry, 0, geometry.getColor(),
-					geometry.getAlpha(), geometry.height);
+				jtsDrawer.drawMultiLineString(gl, (MultiLineString) geometry.geometry, 0, color, geometry.getAlpha(),
+					height);
 				break;
 			case LINESTRING:
 			case LINEARRING:
 			case PLAN:
 			case POLYPLAN:
-				if ( geometry.height > 0 ) {
-					jtsDrawer.drawPlan((LineString) geometry.geometry, 0, geometry.getColor(), geometry.getAlpha(),
-						geometry.height, 0, true);
+				if ( height > 0 ) {
+					jtsDrawer.drawPlan(gl, (LineString) geometry.geometry, 0, color, geometry.getAlpha(), height, 0,
+						true);
 				} else {
-					jtsDrawer.drawLineString((LineString) geometry.geometry, 0, 1.2f, geometry.getColor(),
+					jtsDrawer.drawLineString(gl, (LineString) geometry.geometry, 0, renderer.getLineWidth(), color,
 						geometry.getAlpha());
 				}
 				break;
 			case POINT:
-				jtsDrawer.drawPoint((Point) geometry.geometry, 0, 10, renderer.getMaxEnvDim() / 1000,
-					geometry.getColor(), geometry.getAlpha());
+				jtsDrawer.drawPoint(gl, (Point) geometry.geometry, 0, 10, renderer.getMaxEnvDim() / 1000, color,
+					geometry.getAlpha());
 				break;
 			default:
 				if ( geometry.geometry instanceof GeometryCollection ) {
-					jtsDrawer.drawGeometryCollection((GeometryCollection) geometry.geometry, geometry.getColor(),
-						geometry.getAlpha(), geometry.fill, geometry.border, geometry.isTextured, geometry,
-						geometry.height, geometry.rounded, geometry.getZ_fighting_id(), 0);
+					jtsDrawer.drawGeometryCollection(gl, (GeometryCollection) geometry.geometry, color,
+						geometry.getAlpha(), geometry.isFilled(), geometry.getBorder(), geometry, height,
+						geometry.getZ_fighting_id(), 0);
 				}
 
 		}

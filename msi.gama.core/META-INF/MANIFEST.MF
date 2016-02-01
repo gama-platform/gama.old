@@ -247,6 +247,7 @@ Export-Package: msi.gama.common,
    msi.gama.util,
    msi.gaml.types",
  msi.gama.util.path,
+ msi.gama.util.random,
  msi.gaml.architecture;
   uses:="msi.gaml.species,
    msi.gaml.commands,
@@ -377,6 +378,7 @@ Export-Package: msi.gama.common,
    msi.gaml.descriptions,
    msi.gama.metamodel.agent,
    msi.gama.runtime.exceptions",
+ msi.gaml.statements.draw,
  msi.gaml.types;
   uses:="msi.gama.precompiler,
    msi.gaml.expressions,
@@ -399,8 +401,7 @@ Export-Package: msi.gama.common,
    msi.gama.metamodel.agent,
    msi.gaml.skills,
    msi.gaml.compilation,
-   msi.gaml.types",
- msi.gama.util.random
+   msi.gaml.types"
 Import-Package: org.apache.commons.lang;version="2.4.0"
 Bundle-ClassPath: schema/,
  .

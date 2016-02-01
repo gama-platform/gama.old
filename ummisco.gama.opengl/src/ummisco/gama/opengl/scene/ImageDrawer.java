@@ -34,14 +34,14 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final ImageObject img) {
-		Texture curTexture = img.getTexture(gl, renderer);
+		Texture curTexture = img.getTexture(gl, renderer, 0);
 		if ( curTexture == null ) { return; }
-		double width = img.dimensions.x;
-		double height = img.dimensions.y;
+		double width = img.getDimensions().x;
+		double height = img.getDimensions().y;
 
-		double x = img.location.x;
-		double y = img.location.y;
-		double z = img.location.z;
+		double x = img.getLocation().x;
+		double y = img.getLocation().y;
+		double z = img.getLocation().z;
 		// Binds the texture
 		curTexture.bind(gl);
 		gl.glColor4d(1.0d, 1.0d, 1.0d, img.getAlpha());
@@ -50,11 +50,11 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		float textureBottom = textureCoords.bottom();
 		float textureLeft = textureCoords.left();
 		float textureRight = textureCoords.right();
-		if ( img.angle != 0 ) {
+		if ( img.getAngle() != 0 ) {
 			gl.glTranslated(x + width / 2, -(y + height / 2), 0.0d);
 			// FIXME:Check counterwise or not, and do we rotate
 			// around the center or around a point.
-			gl.glRotated(-img.angle, 0.0d, 0.0d, 1.0d);
+			gl.glRotated(img.getAngle(), 0.0d, 0.0d, 1.0d);
 			gl.glTranslated(-(x + width / 2), +(y + height / 2), 0.0d);
 		}
 
@@ -96,9 +96,9 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		gl.glVertex3d(x, -y, z);
 		gl.glEnd();
 
-		if ( img.angle != 0 ) {
+		if ( img.getAngle() != 0 ) {
 			gl.glTranslated(x + width / 2, -(y + height / 2), 0.0d);
-			gl.glRotated(img.angle, 0.0d, 0.0d, 1.0d);
+			gl.glRotated(img.getAngle(), 0.0d, 0.0d, 1.0d);
 			gl.glTranslated(-(x + width / 2), +(y + height / 2), 0.0d);
 		}
 		// curTexture.disable(gl);

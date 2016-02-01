@@ -102,7 +102,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 	}
 
-	protected final IExperimentController controller;
+	protected IExperimentController controller;
 	// An original copy of the simualtion outputs (which will be eventually duplicated in all the simulations)
 	protected IOutputManager originalSimulationOutputs;
 	protected IOutputManager experimentOutputs;
@@ -140,7 +140,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		} else if ( type.equals(IKeyword.HEADLESS_UI) ) {
 			isHeadless = true;
 		}
-		controller = new ExperimentController(this);
+
 	}
 
 	@Override
@@ -148,7 +148,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// System.out.println("ExperimentPlan.dipose BEGIN");
 		parametersEditors = null;
 		// Dec 2015 Addition
-		controller.dispose();
+		if ( controller != null ) {
+			controller.dispose();
+		}
 		if ( agent != null ) {
 			GAMA.releaseScope(agent.getScope());
 			agent.dispose();
@@ -531,6 +533,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 */
 	@Override
 	public IExperimentController getController() {
+		if ( controller == null ) {
+			controller = new ExperimentController(this);
+		}
 		return controller;
 	}
 

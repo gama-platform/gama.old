@@ -11,17 +11,17 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.util.*;
-import msi.gama.util.file.*;
+import msi.gama.util.GamaColor;
+import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
 
@@ -124,65 +124,49 @@ public class ModelScene {
 		rendered = true;
 	}
 
-	public void addString(final String string, final GamaPoint location, final Integer size,
-		final Double sizeInModelUnits, final Color color, final String font, final Integer style, final Double angle,
-		final Boolean bitmap) {
+	public void addString(final String string, final DrawingAttributes attributes) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addString(string, location, size, sizeInModelUnits, color, font, style, angle, bitmap);
+		currentLayer.addString(string, attributes);
 	}
 
-	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha,
-		final GamaPoint location, final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,
-		final GamaPair<Double, GamaPoint> rotate3DInit, final Envelope env) {
+	public void addFile(final GamaGeometryFile fileName, final DrawingAttributes attributes) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addFile(fileName, agent, color, alpha, location, dimensions, rotate3D, rotate3DInit, env);
+		currentLayer.addFile(fileName, attributes);
 	}
 
-	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,
-		final GamaPoint dimensions, final Double angle, final boolean isDynamic, final String name) {
+	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		if ( !isDynamic ) {
+		if ( !attributes.isDynamic ) {
 			TextureCache.initializeStaticTexture(img);
 		}
-		currentLayer.addImage(img, agent, location, dimensions, angle, isDynamic, name);
+		currentLayer.addImage(img, attributes);
 	}
 
 	public void addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition,
 		final Envelope3D bounds) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		if ( demTexture != null ) {
-			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
-		}
-		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds,
+		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, true, bounds,
 			new Envelope3D(0, 1, 0, 1, 0, 1), null, null);
 	}
 
-	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent, final boolean isTextured,
+	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent,
 		final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final Envelope3D env,
-		final Envelope3D cellSize, final String name, final Color lineColor) {
+		final Envelope3D cellSize, final String name, final GamaColor lineColor) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		if ( demTexture != null ) {
-			// TextureCache.getInstance().initializeDynamicTexture(this, demTexture);
-		}
-		currentLayer.addDEM(dem, demTexture, null, agent, isTextured, isTriangulated, isGrayScaled, isShowText, false,
-			true, env, cellSize, name, lineColor);
+		currentLayer.addDEM(dem, demTexture, null, agent, isTriangulated, isGrayScaled, isShowText, false, env,
+			cellSize, name, lineColor);
 	}
 
-	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
-		final Color border, final boolean isTextured, final java.util.List<BufferedImage> textures,
-		final Gama3DGeometryFile asset3Dmodel, final Integer angle, final double height, final boolean roundCorner,
-		final IShape.Type type, final java.util.List<Double> ratio, final java.util.List<GamaColor> colors,
-		final GamaPair<Double, GamaPoint> rotate3D) {
+	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		if ( textures != null && !textures.isEmpty() ) {
-			for ( BufferedImage img : textures ) {
-				if ( img != null ) {
-					TextureCache.initializeStaticTexture(img);
+		if ( attributes.textures != null && !attributes.textures.isEmpty() ) {
+			for ( Object img : attributes.textures ) {
+				if ( img instanceof BufferedImage ) {
+					TextureCache.initializeStaticTexture((BufferedImage) img);
 				}
 			}
 		}
-		currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textures, asset3Dmodel, angle,
-			height, roundCorner, type, ratio, colors, rotate3D);
+		currentLayer.addGeometry(geometry, attributes);
 	}
 
 	public void dispose() {

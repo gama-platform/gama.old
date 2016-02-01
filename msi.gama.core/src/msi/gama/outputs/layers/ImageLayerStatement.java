@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.IShape;
@@ -108,7 +107,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	final IExpression colorExpression;
 	String constantImage = null;
 	String currentImage = null;
-	Color color = null;
+	GamaColor color = null;
 
 	private IList<IShape> shapes = null;
 
@@ -116,7 +115,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		return shapes;
 	}
 
-	public Color getColor() {
+	public GamaColor getColor() {
 		return color;
 	}
 

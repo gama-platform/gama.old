@@ -23,7 +23,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
 public class GridLayer extends ImageLayer {
 
@@ -80,11 +82,11 @@ public class GridLayer extends ImageLayer {
 		buildImage(scope);
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		if ( image == null ) { return; }
-		Color lineColor = null;
+		GamaColor lineColor = null;
 		if ( turnGridOn ) {
 			lineColor = g.getLineColor();
 			if ( lineColor == null ) {
-				lineColor = Color.black;
+				lineColor = GamaColor.getInt(Color.black.getRGB());
 			}
 		}
 		double[] gridValueMatrix = g.getElevationMatrix(scope);
@@ -92,15 +94,18 @@ public class GridLayer extends ImageLayer {
 			GamaImageFile textureFile = g.textureFile();
 			if ( textureFile != null ) { // display grid dem:texturefile
 				BufferedImage texture = textureFile.getImage(scope);
-				dg.drawGrid(scope, texture, gridValueMatrix, true, g.isTriangulated(), g.isGrayScaled(), g.isShowText(),
+				dg.drawGrid(scope, texture, gridValueMatrix, g.isTriangulated(), g.isGrayScaled(), g.isShowText(),
 					lineColor, cellWidth, this.getName());
 			} else {
-				dg.drawGrid(scope, image, gridValueMatrix, g.isTextured(), g.isTriangulated(), g.isGrayScaled(),
-					g.isShowText(), lineColor, cellWidth, this.getName());
+				dg.drawGrid(scope, image, gridValueMatrix, g.isTriangulated(), g.isGrayScaled(), g.isShowText(),
+					lineColor, cellWidth, this.getName());
 			}
 
 		} else {
-			dg.drawImage(scope, image, null, null, lineColor, null, true, this.getName());
+			DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0), null, lineColor);
+			attributes.setDynamic(true);
+			attributes.setSpeciesName(getName());
+			dg.drawImage(image, attributes);
 		}
 	}
 

@@ -64,10 +64,10 @@ public class GeometryCache {
 			Color c = new Color(0, 0, 0);
 			if ( g.getInnerGeometry().getNumGeometries() > 1 ) {
 				for ( int i = 0; i < g.getInnerGeometry().getNumGeometries(); i++ ) {
-					drawer.drawTesselatedPolygon((Polygon) g.getInnerGeometry().getGeometryN(i), 1, c, 1);
+					drawer.drawTesselatedPolygon(gl, (Polygon) g.getInnerGeometry().getGeometryN(i), 1, c, 1);
 				}
 			} else {
-				drawer.drawTesselatedPolygon((Polygon) g.getInnerGeometry(), 1, c, 1);
+				drawer.drawTesselatedPolygon(gl, (Polygon) g.getInnerGeometry(), 1, c, 1);
 			}
 		}
 		// We then pop the matrix

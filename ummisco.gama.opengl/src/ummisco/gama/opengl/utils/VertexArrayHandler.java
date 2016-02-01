@@ -1,29 +1,29 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'VertexArrayHandler.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.utils;
 
 import java.awt.Color;
 import java.nio.*;
 import java.util.*;
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.IList;
-import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.scene.*;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.vividsolutions.jts.geom.*;
+import msi.gama.common.util.GeometryUtils;
+import msi.gama.metamodel.shape.*;
+import msi.gama.util.IList;
+import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.scene.*;
 
 public class VertexArrayHandler {
 
@@ -194,11 +194,10 @@ public class VertexArrayHandler {
 
 	static { // Initialize the data for the icosahedron.
 		float t = (float) ((Math.sqrt(5) - 1) / 2);
-		icoshedronVertices =
-			new float[][] { new float[] { -1, -t, 0 }, new float[] { 0, 1, t }, new float[] { 0, 1, -t },
-				new float[] { 1, t, 0 }, new float[] { 1, -t, 0 }, new float[] { 0, -1, -t }, new float[] { 0, -1, t },
-				new float[] { t, 0, 1 }, new float[] { -t, 0, 1 }, new float[] { t, 0, -1 }, new float[] { -t, 0, -1 },
-				new float[] { -1, t, 0 }, };
+		icoshedronVertices = new float[][] { new float[] { -1, -t, 0 }, new float[] { 0, 1, t },
+			new float[] { 0, 1, -t }, new float[] { 1, t, 0 }, new float[] { 1, -t, 0 }, new float[] { 0, -1, -t },
+			new float[] { 0, -1, t }, new float[] { t, 0, 1 }, new float[] { -t, 0, 1 }, new float[] { t, 0, -1 },
+			new float[] { -t, 0, -1 }, new float[] { -1, t, 0 }, };
 		for ( float[] v : icoshedronVertices ) {
 			// Normalize the vertices to have unit length.
 			float length = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
@@ -206,10 +205,9 @@ public class VertexArrayHandler {
 			v[1] /= length;
 			v[2] /= length;
 		}
-		icoshedronFaces =
-			new int[][] { { 3, 7, 1 }, { 4, 7, 3 }, { 6, 7, 4 }, { 8, 7, 6 }, { 7, 8, 1 }, { 9, 4, 3 }, { 2, 9, 3 },
-				{ 2, 3, 1 }, { 11, 2, 1 }, { 10, 2, 11 }, { 10, 9, 2 }, { 9, 5, 4 }, { 6, 4, 5 }, { 0, 6, 5 },
-				{ 0, 11, 8 }, { 11, 1, 8 }, { 10, 0, 5 }, { 10, 5, 9 }, { 0, 8, 6 }, { 0, 10, 11 }, };
+		icoshedronFaces = new int[][] { { 3, 7, 1 }, { 4, 7, 3 }, { 6, 7, 4 }, { 8, 7, 6 }, { 7, 8, 1 }, { 9, 4, 3 },
+			{ 2, 9, 3 }, { 2, 3, 1 }, { 11, 2, 1 }, { 10, 2, 11 }, { 10, 9, 2 }, { 9, 5, 4 }, { 6, 4, 5 }, { 0, 6, 5 },
+			{ 0, 11, 8 }, { 11, 1, 8 }, { 10, 0, 5 }, { 10, 5, 9 }, { 0, 8, 6 }, { 0, 10, 11 }, };
 	}
 
 	public VertexArrayHandler(final GL2 gl, final GLU glu, final JOGLRenderer gLRender) {
@@ -220,7 +218,7 @@ public class VertexArrayHandler {
 
 	/**
 	 * Create the vertex array for all JTS geometries by using a triangulation
-	 * 
+	 *
 	 * @param myJTSGeometries
 	 * @param size
 	 */
@@ -242,58 +240,58 @@ public class VertexArrayHandler {
 			for ( int i = 0; i < curGeometry.geometry.getNumGeometries(); i++ ) {
 
 				if ( curGeometry.geometry.getGeometryType() == "MultiPolygon" ) {
-					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry, curGeometry.z_layer,
-						curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.fill, curGeometry.border,
-						/* curGeometry.angle, */curGeometry.height, curGeometry.rounded);
+					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry, curGeometry.getLayerZ(),
+						curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.isFilled(), curGeometry.getBorder(),
+						/* curGeometry.angle, */curGeometry.getHeight());
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "Polygon" ) {
-					if ( curGeometry.type != null && curGeometry.type.equals(IShape.Type.SPHERE) ) {
+					if ( curGeometry.getType() != null && curGeometry.getType().equals(IShape.Type.SPHERE) ) {
 						if ( !createIcosphere ) {
 							makeIcosphere(2);
 							createIcosphere = true;
 						}
-						buildSphereVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.height,
-							curGeometry.getColor(), curGeometry.getAlpha());
+						buildSphereVertexArray((Polygon) curGeometry.geometry, curGeometry.getLayerZ(),
+							curGeometry.getHeight(), curGeometry.getColor(), curGeometry.getAlpha());
 					} else {
-						if ( curGeometry.height > 0 ) {
-							buildPolyhedreVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer,
-								curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.fill, curGeometry.height,
-								/* curGeometry.angle, */true, curGeometry.border, curGeometry.rounded);
+						if ( curGeometry.getHeight() > 0 ) {
+							buildPolyhedreVertexArray((Polygon) curGeometry.geometry, curGeometry.getLayerZ(),
+								curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.isFilled(),
+								curGeometry.getHeight(), /* curGeometry.angle, */true, curGeometry.getBorder());
 						} else {
-							buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer,
-								curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.fill,
-								curGeometry.isTextured,
-								/* curGeometry.angle, */true);
-							buildVertexArrayContours(curGeometry.z_layer);
+							buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.getLayerZ(),
+								curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.isFilled(),
+								curGeometry.hasTextures(), /* curGeometry.angle, */true);
+							buildVertexArrayContours(curGeometry.getLayerZ());
 						}
 					}
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "MultiLineString" ) {
-					buildMultiLineStringVertexArray((MultiLineString) curGeometry.geometry, curGeometry.z_layer,
+					buildMultiLineStringVertexArray((MultiLineString) curGeometry.geometry, curGeometry.getLayerZ(),
 						curGeometry.getColor(), curGeometry.getAlpha());
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "LineString" ) {
-					if ( curGeometry.height > 0 ) {
-						buildPlanVertexArray((LineString) curGeometry.geometry, curGeometry.z_layer,
-							curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.height, 0, true);
+					if ( curGeometry.getHeight() > 0 ) {
+						buildPlanVertexArray((LineString) curGeometry.geometry, curGeometry.getLayerZ(),
+							curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.getHeight(), 0, true);
 					} else {
-						buildLineStringVertexArray((LineString) curGeometry.geometry, curGeometry.z_layer,
+						buildLineStringVertexArray((LineString) curGeometry.geometry, curGeometry.getLayerZ(),
 							curGeometry.getColor(), curGeometry.getAlpha());
 					}
 				} else if ( curGeometry.geometry.getGeometryType() == "Point" ) {
 					// FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
-					if ( curGeometry.height > 0 ) {
+					if ( curGeometry.getHeight() > 0 ) {
 						if ( !createIcosphere ) {
 							makeIcosphere(2);
 							createIcosphere = true;
 						}
 						buildSphereVertexArray((Polygon) curGeometry.geometry.getEnvelope().buffer(1),
-							curGeometry.z_layer, curGeometry.height, curGeometry.getColor(), curGeometry.getAlpha());
+							curGeometry.getLayerZ(), curGeometry.getHeight(), curGeometry.getColor(),
+							curGeometry.getAlpha());
 					} else {
-						buildPointVertexArray((Point) curGeometry.geometry, curGeometry.z_layer, 10,
+						buildPointVertexArray((Point) curGeometry.geometry, curGeometry.getLayerZ(), 10,
 							myGLRender.getMaxEnvDim() / 1000, curGeometry.getColor(), curGeometry.getAlpha());
 					}
 				}
@@ -750,8 +748,8 @@ public class VertexArrayHandler {
 		for ( int k = 0; k < numPoints; k++ ) {
 			angle = k * 2 * Math.PI / numPoints;
 
-			pointTriangles.add(new GamaPoint(point.getCoordinate().x + Math.cos(angle) * radius, -1 *
-				point.getCoordinate().y + Math.sin(angle) * radius, z));
+			pointTriangles.add(new GamaPoint(point.getCoordinate().x + Math.cos(angle) * radius,
+				-1 * point.getCoordinate().y + Math.sin(angle) * radius, z));
 
 			pointColor.add(color);
 		}
@@ -779,11 +777,11 @@ public class VertexArrayHandler {
 	// }
 
 	/**
-	 * 
+	 *
 	 * Function that create a temporary ArrayList of MyTriangulated objects to be used later by the
 	 * fillVertexArrayTriangle() that will fill a vertex, color and indexes BufferUtil.
-	 * 
-	 * */
+	 *
+	 */
 	public void buildPolygonVertexArray(final Polygon polygon, final double z_layer, final Color c, final double alpha,
 		final boolean fill, final boolean isTextured, /* final Integer angle, */final boolean drawPolygonContour) {
 		if ( fill == true ) {
@@ -858,10 +856,10 @@ public class VertexArrayHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * functions that build polygons contours using a temporary arrayList of polygons
-	 * 
-	 * */
+	 *
+	 */
 	public void buildVertexArrayContours(final double z_layer) {
 		int totalNbVertPoly = 0;
 
@@ -937,25 +935,25 @@ public class VertexArrayHandler {
 
 	/**
 	 * Function that build a polyhedron using the previously defined functions
-	 * 
+	 *
 	 */
 	private void buildPolyhedreVertexArray(final Polygon geometry, final double z_layer, final Color color,
 		final Double alpha2, final Boolean fill, final double height, /* final int angle, */final boolean b,
-		final Color border, final boolean rounded) {
+		final Color border) {
 
 		buildPolygonVertexArray(geometry, z_layer, color, alpha2, fill, false, /* angle, */true);
 		buildVertexArrayContours(z_layer);
-		buildPolygonVertexArray(geometry, z_layer + height, color, alpha2, fill, false,/* angle, */true);
+		buildPolygonVertexArray(geometry, z_layer + height, color, alpha2, fill, false, /* angle, */true);
 		buildVertexArrayContours(z_layer + height);
 		buildFacesVertexArray(geometry, color, alpha2, fill, border, z_layer, height, true);
 
 	}
 
 	/**
-	 * 
+	 *
 	 * functions that build polyhedron faces
-	 * 
-	 * */
+	 *
+	 */
 	public void buildFacesVertexArray(final Polygon p, final Color c, final double alpha, final boolean fill,
 		final Color b, final double z_layer, final double height, final boolean drawPolygonContour) {
 
@@ -1194,13 +1192,12 @@ public class VertexArrayHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * Function that build a MultiPolygon geometry using the previously defined
 	 * buildPolyhedreVertexArray or buildPolygonVertexArray functions.
 	 */
 	public void buildMultiPolygonVertexArray(final MultiPolygon polygons, final double z_layer, final Color c,
-		final double alpha, final boolean fill, final Color border, /* final Integer angle, */final double height,
-		final boolean rounded) {
+		final double alpha, final boolean fill, final Color border, /* final Integer angle, */final double height) {
 
 		int numGeometries = polygons.getNumGeometries();
 
@@ -1208,8 +1205,7 @@ public class VertexArrayHandler {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if ( height > 0 ) {
-				buildPolyhedreVertexArray(curPolygon, z_layer, c, alpha, fill, height, /* angle, */false, border,
-					rounded);
+				buildPolyhedreVertexArray(curPolygon, z_layer, c, alpha, fill, height, /* angle, */false, border);
 			} else {
 				buildPolygonVertexArray(curPolygon, z_layer, c, alpha, fill, false, /* angle, */true);
 			}
@@ -1217,10 +1213,10 @@ public class VertexArrayHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * Functions that build a plan
-	 * 
-	 * */
+	 *
+	 */
 	private void buildPlanVertexArray(final LineString l, double z, final Color c, final double alpha2,
 		final double height, final int i, final boolean drawPolygonContour) {
 		// TODO Auto-generated method stub
@@ -1318,7 +1314,7 @@ public class VertexArrayHandler {
 
 	/**
 	 * Functions that build a LineString or a MultiLineString geometry and fill it into a vertex buffer
-	 * 
+	 *
 	 * @param line
 	 * @param z
 	 * @param c
@@ -1406,7 +1402,7 @@ public class VertexArrayHandler {
 
 	/**
 	 * Functions that build a sphere using the unit icosphere and by adding the Polygon p caracteristics
-	 * 
+	 *
 	 * @param p
 	 * @param z_layer
 	 * @param radius
@@ -1656,10 +1652,10 @@ public class VertexArrayHandler {
 
 	/**
 	 * Function that load a COLLADA file
-	 * 
-	 * 
-	 * 
-	 * */
+	 *
+	 *
+	 *
+	 */
 	// public void loadCollada(final String filename) {
 	//
 	// //COLLADA handler = new COLLADA();

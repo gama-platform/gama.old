@@ -11,16 +11,16 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.Iterator;
 import com.jogamp.opengl.*;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.util.*;
-import msi.gama.util.file.*;
+import msi.gama.util.GamaColor;
+import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
 /**
@@ -39,7 +39,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	volatile boolean isInvalid;
 
 	protected ISceneObjects<GeometryObject> geometries;
-	protected ISceneObjects<RessourceObject> resources;
+	protected ISceneObjects<ResourceObject> resources;
 	protected ISceneObjects<ImageObject> images;
 	protected ISceneObjects<DEMObject> dems;
 	protected ISceneObjects<StringObject> strings;
@@ -47,8 +47,9 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
 		this.layer = layer;
 		geometries = buildSceneObjects(new GeometryDrawer(renderer), true, false);
-		resources = buildSceneObjects(new RessourceDrawer(renderer), true, false);
-		strings = buildSceneObjects(new StringDrawer(renderer), !StringDrawer.USE_VERTEX_ARRAYS, false);
+		resources = buildSceneObjects(new ResourceDrawer(renderer), true, false);
+		// TODO AD True or False for strings ??
+		strings = buildSceneObjects(new StringDrawer(renderer), true, false);
 		images = buildSceneObjects(new ImageDrawer(renderer), true, false);
 		dems = buildSceneObjects(new DEMDrawer(renderer), true, false);
 	}
@@ -81,7 +82,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	/**
 	 * @return the resources
 	 */
-	protected ISceneObjects<RessourceObject> getResources() {
+	protected ISceneObjects<ResourceObject> getResources() {
 		return resources;
 	}
 
@@ -107,13 +108,15 @@ public class LayerObject implements Iterable<GeometryObject> {
 		resources.draw(gl, picking && isPickable());
 		geometries.draw(gl, picking && isPickable());
 		//
+		strings.draw(gl, picking && isPickable());
 		gl.glPopMatrix();
-		// Strings are treated apart for the moment, since they have a very special draw that already applies the scale
+
+		gl.glPushMatrix();
+		// DEMS are treated apart for the moment, since they have a very special draw that already applies the scale
 		// and offset...
 		// FIXME this needs to be changed
-		gl.glPushMatrix();
 		dems.draw(gl, picking && isPickable());
-		strings.draw(gl, picking && isPickable());
+
 		gl.glPopMatrix();
 		// gl.glFlush();
 	}
@@ -144,48 +147,33 @@ public class LayerObject implements Iterable<GeometryObject> {
 		this.scale = scale;
 	}
 
-	public void addString(final String string, final GamaPoint location, final Integer size,
-		final Double sizeInModelUnits, final Color color, final String font, final Integer style, final Double angle,
-		final Boolean bitmap) {
-		strings.add(new StringObject(string, font, style, offset, scale, color, angle, location, sizeInModelUnits, size,
-			alpha, bitmap));
+	public void addString(final String string, final DrawingAttributes attributes) {
+		strings.add(new StringObject(string, attributes, this));
 	}
 
-	public void addFile(final GamaFile fileName, final IAgent agent, final Color color, final Double alpha,
-		final GamaPoint location, final GamaPoint dimensions, final GamaPair<Double, GamaPoint> rotate3D,
-		final GamaPair<Double, GamaPoint> rotate3DInit, final Envelope env) {
-		resources
-			.add(new RessourceObject(fileName, agent, color, alpha, location, dimensions, rotate3D, rotate3DInit, env));
+	public void addFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
+		resources.add(new ResourceObject(file, attributes, this));
 
 	}
 
-	public void addImage(final BufferedImage img, final IAgent agent, final GamaPoint location,
-		final GamaPoint dimensions, final Double angle, final boolean isDynamic, final String name) {
-		images.add(new ImageObject(img, agent, getOrder(), location, alpha, dimensions, angle == null ? 0d : angle,
-			isDynamic, name));
+	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
+		images.add(new ImageObject(img, attributes, this));
 
 	}
 
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
-		final IAgent agent, final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled,
-		final boolean isShowText, final boolean isFromImage, final boolean isDynamic, final Envelope3D env,
-		final Envelope3D cellSize, final String name, final Color lineColor) {
-		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isGrayScaled,
-			isShowText, isFromImage, isDynamic, null, alpha, cellSize, name, lineColor));
+		final IAgent agent, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
+		final boolean isFromImage, final Envelope3D env, final Envelope3D cellSize, final String name,
+		final GamaColor lineColor) {
+		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTriangulated, isGrayScaled, isShowText,
+			isFromImage, cellSize, name, lineColor, this));
 	}
 
-	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
-		final Color border, final boolean isTextured, final List<BufferedImage> textures,
-		final Gama3DGeometryFile asset3Dmodel, final Integer angle, final double height, final boolean roundCorner,
-		final IShape.Type type, final List<Double> ratio, final List<GamaColor> colors,
-		final GamaPair<Double, GamaPoint> rotate3D) {
-		final GeometryObject curJTSGeometry;
-		curJTSGeometry = new GeometryObject(geometry, agent, offset.z, getOrder(), color, alpha, fill, border,
-			isTextured, textures, asset3Dmodel, angle == null ? 0 : angle, height, roundCorner, type, rotate3D);
-		geometries.add(curJTSGeometry);
+	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
+		geometries.add(new GeometryObject(geometry, attributes, this));
 	}
 
-	private int getOrder() {
+	public int getOrder() {
 		return layer == null ? 0 : layer.getOrder();
 	}
 
