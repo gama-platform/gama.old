@@ -256,9 +256,9 @@ public class DrawingData {
 		} else {
 			if ( textureExp != null ) {
 				if ( textureExp.getType().getType() == Types.LIST ) {
-					constantTextures = GamaListType.staticCast(scope, textureExp.value(scope), Types.STRING, false);
+					currentTextures = GamaListType.staticCast(scope, textureExp.value(scope), Types.STRING, false);
 				} else {
-					constantTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(scope));
+					currentTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(scope));
 				}
 			}
 		}
