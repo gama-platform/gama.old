@@ -78,7 +78,8 @@ public class ResourceObject extends AbstractObject {
 		}
 		// And apply a color
 		if ( getColor() != null ) { // does not work for obj files
-			gl.glColor3d(getColor().getRed() / 255.0, getColor().getGreen() / 255.0, getColor().getBlue() / 255.0);
+			gl.glColor4d(getColor().getRed() / 255.0, getColor().getGreen() / 255.0, getColor().getBlue() / 255.0,
+				getAlpha() * getColor().getAlpha() / 255.0);
 		}
 
 		// Then we draw the geometry itself
@@ -93,7 +94,7 @@ public class ResourceObject extends AbstractObject {
 					renderer.displaySurface.selectAgent(attributes.agent);
 				}
 			}
-			gl.glColor3d(1.0, 0.0, 0.0);
+			gl.glColor4d(1.0, 0.0, 0.0, 1.0);
 
 			super.draw(gl, drawer, picking);
 			gl.glPopMatrix();
