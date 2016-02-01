@@ -14,7 +14,7 @@ package ummisco.gama.opengl.scene;
 import java.awt.Color;
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.*;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaPair;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.jts.JTSDrawer;
@@ -53,10 +53,11 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		double height = geometry.getHeight();
 		Color color = geometry.getColor();
 		Color border = geometry.getBorder();
-		switch (geometry.getType()) {
+		IShape.Type type = geometry.getType();
+		switch (type) {
 			case MULTIPOLYGON:
 				jtsDrawer.drawMultiPolygon(gl, (MultiPolygon) geometry.geometry, color, geometry.getAlpha(),
-					geometry.isFilled(), geometry.getBorder(), geometry, height, geometry.getZ_fighting_id());
+					geometry.isFilled(), border, geometry, height, geometry.getZ_fighting_id());
 				break;
 			case SPHERE:
 				jtsDrawer.drawSphere(gl, geometry);

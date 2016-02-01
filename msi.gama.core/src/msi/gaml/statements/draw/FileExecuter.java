@@ -34,7 +34,7 @@ class FileExecuter extends DrawExecuter {
 		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgentScope().getLocation()));
 		//
 		final GamaFile file = (GamaFile) item.value(scope);
-		if ( file.getExtension().equals("obj") || file.getExtension().equals("svg") ) {
+		if ( file instanceof GamaGeometryFile ) {
 			// File fmtl = new File(file.getFile().getAbsolutePath().replaceAll(".obj", ".mtl"));
 			// if ( !fmtl.exists() ) {
 			// GAMA.reportError(scope, GamaRuntimeException.warning("No " + fmtl.toString() + " found", scope),

@@ -27,7 +27,7 @@ public abstract class AbstractObject implements ISceneObject {
 	static Color pickedColor = Color.red;
 
 	protected final DrawingAttributes attributes;
-	protected LayerObject layer;
+	private final LayerObject layer;
 	protected Double alpha;
 	public int pickingIndex = index++;
 	public boolean picked = false;
@@ -36,7 +36,7 @@ public abstract class AbstractObject implements ISceneObject {
 	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
 		this.attributes = attributes;
 		this.layer = layer;
-		this.alpha = layer.alpha;
+		this.alpha = layer == null ? 1 : layer.alpha;
 		textures = attributes.textures != null ? new Texture[attributes.textures.size()] : null;
 	}
 
@@ -83,11 +83,11 @@ public abstract class AbstractObject implements ISceneObject {
 	}
 
 	public double getZ_fighting_id() {
-		return layer.getOrder();
+		return layer == null ? 0 : layer.getOrder();
 	}
 
 	public double getLayerZ() {
-		return layer.getOffset().z;
+		return layer == null ? 0 : layer.getOffset().z;
 	}
 
 	public Double getAlpha() {

@@ -68,7 +68,7 @@ public class ResourceObject extends AbstractObject {
 		// We then compute the scaling factor to apply
 		double factor = 0.0;
 		if ( size != null && env != null ) {
-			if ( file instanceof GamaSVGFile ) {
+			if ( !(file instanceof Gama3DGeometryFile) ) {
 				factor = Math.min(size.x / env.getWidth(), size.y / env.getHeight());
 			} else {
 				factor = Math.min(Math.min(size.x / env.getWidth(), size.y / env.getHeight()),

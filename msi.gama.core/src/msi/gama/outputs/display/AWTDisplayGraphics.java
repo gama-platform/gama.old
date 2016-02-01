@@ -22,7 +22,7 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
-import msi.gama.util.file.*;
+import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
@@ -108,21 +108,18 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	@Override
 	public Rectangle2D drawFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
-		if ( file instanceof GamaSVGFile ) {
-			IScope scope = surface.getDisplayScope();
-			GamaShape shape = (GamaShape) ((GamaSVGFile) file).getGeometry(scope);
-			if ( shape == null ) { return null; }
-			GamaPair<Double, GamaPoint> rot = attributes.rotation;
-			Double rotation = rot == null ? null : rot.key;
-			// System.out.println("Old centroid " + shape.getInnerGeometry().getCentroid());
-			// shape = shape.translatedTo(scope, attributes.location);
-			// System.out.println("Centroid after translation" + shape.getInnerGeometry().getCentroid());
-			shape = new GamaShape(shape, null, rotation, attributes.location, attributes.size, true);
-			// System.out.println("New centroid " + shape.getInnerGeometry().getCentroid());
-			GamaColor c = attributes.color;
-			return drawShape(shape, new DrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
-		}
-		return null;
+		IScope scope = surface.getDisplayScope();
+		GamaShape shape = (GamaShape) file.getGeometry(scope);
+		if ( shape == null ) { return null; }
+		GamaPair<Double, GamaPoint> rot = attributes.rotation;
+		Double rotation = rot == null ? null : rot.key;
+		// System.out.println("Old centroid " + shape.getInnerGeometry().getCentroid());
+		// shape = shape.translatedTo(scope, attributes.location);
+		// System.out.println("Centroid after translation" + shape.getInnerGeometry().getCentroid());
+		shape = new GamaShape(shape, null, rotation, attributes.location, attributes.size, true);
+		// System.out.println("New centroid " + shape.getInnerGeometry().getCentroid());
+		GamaColor c = attributes.color;
+		return drawShape(shape, new DrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
 	}
 
 	@Override

@@ -153,7 +153,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public void addFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
 		resources.add(new ResourceObject(file, attributes, this));
-
 	}
 
 	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {

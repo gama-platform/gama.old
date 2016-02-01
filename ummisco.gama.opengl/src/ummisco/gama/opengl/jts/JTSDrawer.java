@@ -21,7 +21,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaGeometryFile;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.GeometryObject;
 import ummisco.gama.opengl.utils.*;
@@ -51,7 +51,7 @@ public class JTSDrawer {
 		gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
 	}
 
-	public void drawGeometryCached(final GL2 gl, final GamaFile file) {
+	public void drawGeometryCached(final GL2 gl, final GamaGeometryFile file) {
 		int index = renderer.getGeometryCache().get(gl, file);
 		if ( index != -1 ) {
 			gl.glCallList(index);

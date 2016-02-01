@@ -39,5 +39,13 @@ experiment DXFAgents type: gui {
 		display map type: opengl{
 			species house_element;
 		}
+		
+		display "As_Image" type: opengl{
+			graphics "House" {
+				draw house_file color: #brown size: {100, 100};
+			}
+		}
 	}
+	
+	
 }

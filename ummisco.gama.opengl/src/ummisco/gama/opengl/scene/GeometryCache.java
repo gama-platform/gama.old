@@ -15,27 +15,27 @@ import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.util.*;
 import com.jogamp.opengl.GL2;
-import com.vividsolutions.jts.geom.Polygon;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.util.file.*;
+import msi.gama.metamodel.shape.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaColor;
+import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.files.GamaObjFile;
-import ummisco.gama.opengl.jts.JTSDrawer;
 
 public class GeometryCache {
 
-	boolean sync = false;
 	private final Map<String, Integer> cache;
+	GeometryDrawer drawer;
 
-	Integer openNestedGLListIndex;
-	JTSDrawer drawer;
+	// JTSDrawer drawer;
 
 	public GeometryCache(final JOGLRenderer renderer) {
 		cache = new HashMap<String, Integer>(100, 0.75f);
-		drawer = new JTSDrawer(renderer);
+		drawer = new GeometryDrawer(renderer);
 	}
 
-	public Integer get(final GL2 gl, final GamaFile file) {
+	public Integer get(final GL2 gl, final GamaGeometryFile file) {
 		Integer index = cache.get(file.getPath());
 		if ( index == null ) {
 			try {
@@ -48,7 +48,7 @@ public class GeometryCache {
 		return index;
 	}
 
-	private Integer buildList(final GL2 gl, final GamaFile file) throws FileNotFoundException {
+	private Integer buildList(final GL2 gl, final GamaGeometryFile file) throws FileNotFoundException {
 		String extension = file.getExtension();
 		// We generate the list first
 		Integer index = gl.glGenLists(1);
@@ -58,17 +58,26 @@ public class GeometryCache {
 		// We draw the file in the list
 		if ( extension.equals("obj") ) {
 			((GamaObjFile) file).drawToOpenGL(gl);
-		} else if ( extension.equals("svg") ) {
-			GamaSVGFile svg = (GamaSVGFile) file;
-			GamaShape g = (GamaShape) svg.getGeometry(null);
-			Color c = new Color(0, 0, 0);
-			if ( g.getInnerGeometry().getNumGeometries() > 1 ) {
-				for ( int i = 0; i < g.getInnerGeometry().getNumGeometries(); i++ ) {
-					drawer.drawTesselatedPolygon(gl, (Polygon) g.getInnerGeometry().getGeometryN(i), 1, c, 1);
-				}
-			} else {
-				drawer.drawTesselatedPolygon(gl, (Polygon) g.getInnerGeometry(), 1, c, 1);
-			}
+		} else {
+			GamaShape g = (GamaShape) file.getGeometry(GAMA.getRuntimeScope());
+			GamaColor c = GamaColor.getInt(Color.black.getRGB());
+			DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0, 0), c, c);
+			attributes.type = g.getGeometricalType();
+			attributes.empty = false;
+			GeometryObject object = new GeometryObject(g.getInnerGeometry(), attributes, null);
+			drawer.draw(gl, object);
+
+			//
+			//
+			// object.draw(gl, new GeometryDrawer(), false);
+			//
+			// if ( g.getInnerGeometry().getNumGeometries() > 1 ) {
+			// for ( int i = 0; i < g.getInnerGeometry().getNumGeometries(); i++ ) {
+			// drawer.drawTesselatedPolygon(gl, (Polygon) g.getInnerGeometry().getGeometryN(i), 1, c, 1);
+			// }
+			// } else {
+			// drawer.drawTesselatedPolygon(gl, (Polygon) g.getInnerGeometry(), 1, c, 1);
+			// }
 		}
 		// We then pop the matrix
 		gl.glPopMatrix();
