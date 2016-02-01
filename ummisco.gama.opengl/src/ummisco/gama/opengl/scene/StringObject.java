@@ -27,7 +27,7 @@ public class StringObject extends AbstractObject {
 
 	public StringObject(final String string, final GamaPoint location, final LayerObject layer) {
 		this(string, new DrawingAttributes(location), layer);
-		attributes.bitmap = false;
+		attributes.perspective = false;
 		attributes.color = GamaColor.getInt(Color.black.getRGB());
 	}
 
@@ -36,10 +36,11 @@ public class StringObject extends AbstractObject {
 		return attributes.font;
 	}
 
-	public boolean getBitmap() {
-		return attributes != null && attributes.bitmap;
+	public boolean iisInPerspective() {
+		return attributes != null && attributes.perspective;
 	}
 
+	@Override
 	public GamaPoint getLocation() {
 		return attributes.location;
 	}

@@ -36,7 +36,7 @@ public class DrawingData {
 	final IExpression colorExp;
 	final IExpression fontExp;
 	final IExpression textureExp;
-	final IExpression bitmapExp;
+	final IExpression perspectiveExp;
 
 	ILocation constantSIze;
 	Double constantDepth;
@@ -47,14 +47,14 @@ public class DrawingData {
 	GamaColor constantColor;
 	GamaFont constantFont;
 	IList constantTextures;
-	Boolean constantBitmap;
+	Boolean constantperspective;
 	Boolean hasBorder;
 	Boolean hasColor;
 
 	public DrawingData(final IExpression sizeExp, final IExpression depthExp, final IExpression rotationExp,
 		final IExpression locationExp, final IExpression emptyExp, final IExpression borderExp,
 		final IExpression colorExp, final IExpression fontExp, final IExpression textureExp,
-		final IExpression bitmapExp) {
+		final IExpression perspectiveExp) {
 		this.sizeExp = sizeExp;
 		this.depthExp = depthExp;
 		this.rotationExp = rotationExp;
@@ -64,16 +64,16 @@ public class DrawingData {
 		this.colorExp = colorExp;
 		this.fontExp = fontExp;
 		this.textureExp = textureExp;
-		this.bitmapExp = bitmapExp;
+		this.perspectiveExp = perspectiveExp;
 		initializeConstants();
 	}
 
 	private void initializeConstants() {
-		/* BITMAP */
-		if ( bitmapExp != null && bitmapExp.isConst() ) {
-			constantBitmap = Cast.asBool(null, bitmapExp.value(null));
-		} else if ( bitmapExp == null ) {
-			constantBitmap = true;
+		/* perspective */
+		if ( perspectiveExp != null && perspectiveExp.isConst() ) {
+			constantperspective = Cast.asBool(null, perspectiveExp.value(null));
+		} else if ( perspectiveExp == null ) {
+			constantperspective = true;
 		}
 		/* SIZE */
 		if ( sizeExp != null && sizeExp.isConst() ) {
@@ -158,13 +158,13 @@ public class DrawingData {
 		GamaColor currentColor;
 		GamaFont currentFont;
 		IList currentTextures = null;
-		Boolean currentBitmap;
+		Boolean currentperspective;
 
-		/* BITMAP */
-		if ( constantBitmap != null ) {
-			currentBitmap = constantBitmap;
+		/* perspective */
+		if ( constantperspective != null ) {
+			currentperspective = constantperspective;
 		} else {
-			currentBitmap = Cast.asBool(scope, bitmapExp.value(scope));
+			currentperspective = Cast.asBool(scope, perspectiveExp.value(scope));
 		}
 		/* SIZE */
 		if ( constantSIze != null ) {
@@ -264,7 +264,7 @@ public class DrawingData {
 		}
 
 		return new DrawingAttributes(currentSize, currentDepth, currentRotation, currentLocation, currentEmpty,
-			currentBorder, hasBorder, currentColor, currentFont, currentTextures, currentBitmap, hasColor,
+			currentBorder, hasBorder, currentColor, currentFont, currentTextures, currentperspective, hasColor,
 			scope.getAgentScope());
 	}
 
@@ -281,7 +281,7 @@ public class DrawingData {
 		public GamaColor color;
 		public final GamaFont font;
 		public final List textures;
-		public Boolean bitmap = true;
+		public Boolean perspective = true;
 		public IAgent agent;
 		public IShape.Type type;
 		public String speciesName = null;
@@ -289,7 +289,7 @@ public class DrawingData {
 
 		public DrawingAttributes(final ILocation size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
 			final ILocation location, final Boolean empty, final GamaColor border, final Boolean hasBorder,
-			final GamaColor color, final GamaFont font, final List textures, final Boolean bitmap,
+			final GamaColor color, final GamaFont font, final List textures, final Boolean perspective,
 			final Boolean hasColor, final IAgent agent) {
 			this.size = size == null ? null : new GamaPoint(size);
 			this.depth = depth == null ? 0.0 : depth;
@@ -302,7 +302,7 @@ public class DrawingData {
 			this.color = color;
 			this.font = font;
 			this.textures = textures == null ? null : new ArrayList(textures);
-			this.bitmap = bitmap;
+			this.perspective = perspective;
 			this.hasColor = hasColor;
 			this.agent = agent;
 		}
@@ -327,7 +327,7 @@ public class DrawingData {
 
 		public DrawingAttributes copy() {
 			return new DrawingAttributes(size, depth, rotation, location, empty, border, hasBorder, color, font,
-				textures, bitmap, hasColor, agent);
+				textures, perspective, hasColor, agent);
 		}
 
 		public void setShapeType(final IShape.Type type) {

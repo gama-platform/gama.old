@@ -46,7 +46,7 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 		float y = (float) s.getLocation().y;
 		float z = (float) s.getLocation().z;
 
-		if ( s.getFont() != null && s.getBitmap() ) {
+		if ( s.getFont() != null && s.iisInPerspective() ) {
 			float scale = 1f / (float) renderer.getGlobalYRatioBetweenPixelsAndModelUnits();
 			// gl.glPushMatrix();
 			Font f = s.getFont();

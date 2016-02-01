@@ -83,7 +83,14 @@ import msi.gaml.types.*;
 		type = { IType.INT, IType.FLOAT },
 		optional = true,
 		doc = @doc("the size of the arrow, located at the end of the drawn geometry") ),
-	@facet(name = BITMAP, type = IType.BOOL, optional = true, doc = @doc("Whether to render the text in 3D or not") ) },
+	@facet(name = PERSPECTIVE,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc(value = "Whether to render the text in perspective or facing the user. Default is true.") ),
+	@facet(name = "bitmap",
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc(deprecated = "use 'perspective' instead.", value = "Whether to render the text in 3D or not") ) },
 
 	omissible = IKeyword.GEOMETRY)
 @inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
@@ -169,7 +176,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			data = null;
 		} else {
 			data = new DrawingData(getFacet(SIZE), getFacet(DEPTH), getFacet(ROTATE), getFacet(AT), getFacet(EMPTY),
-				getFacet(BORDER), getFacet(COLOR), getFacet(FONT), getFacet(TEXTURE), getFacet(BITMAP));
+				getFacet(BORDER), getFacet(COLOR), getFacet(FONT), getFacet(TEXTURE), getFacet("bitmap", PERSPECTIVE));
 
 			if ( item.getType().id() == IType.FILE ) {
 				executer = new FileExecuter(item);

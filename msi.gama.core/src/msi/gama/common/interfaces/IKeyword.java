@@ -50,7 +50,7 @@ public interface IKeyword {
 	public final static String BATCH = "batch";
 	public static final String BEHAVIOR = "behavior";
 	public static final String BEHAVIORS = "behaviors";
-	public static final String BITMAP = "bitmap";
+	// public static final String BITMAP = "bitmap";
 	public static final String BOUNDS = "bounds";
 	public static final String BREAK = "break";
 	public static final String BRIGHTER = "brighter";
@@ -287,6 +287,7 @@ public interface IKeyword {
 	public static final String PAUSE_SOUND = "pause_sound";
 	public static final String PEERS = "peers";
 	public static final String PERMANENT = "permanent"; // "show" // "front_end" // "presentation" // "
+	public static final String PERSPECTIVE = "perspective";
 	public static final String PIE = "pie";
 	public static final String PITCH = "pitch";
 	public static final String PLACES = "places";
