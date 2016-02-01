@@ -1,13 +1,14 @@
 model ant_sort
 
-global torus: true {
+global  {
 	// Parameters
 	int number_of_different_colors <- 4 max: 9 ;
 	int density_percent <- 30 min: 0 max: 99 ;
 	int number_of_objects_in_history <- 3 min: 0 ;
 	int number_of_objects_around  <- 5 min: 0 max: 8;
-	int width_and_height_of_grid <- 100 max: 400 min: 20 ;  
-	int ants <- 100 min: 1 ;
+	int width_and_height_of_grid <- 100 max: 400 min: 10 ;  
+	int ants <- 20 min: 1 ;
+	int degrees <- 90;
 	
 	action kill_all {
 		ask ant {do die;}
@@ -55,7 +56,8 @@ species ant skills: [ moving ] control: fsm {
 		}
 	}
 	aspect default {
-		draw file("../images/ant_normal.svg") size:5 color: color rotate3D: 90.0 - heading ::{0,0.0,1} ;
+		draw file("../images/ant_normal.svg") size:5 color: color rotate: degrees + heading;
+		draw circle(5) empty: true color: color;
 	}
 }
 
@@ -73,9 +75,10 @@ experiment sort type: gui{
 	parameter "Number of similar colors in perception necessary to pick up:" var: number_of_objects_around category: "Agents" ;
 	parameter "Width and height of the grid:" var: width_and_height_of_grid category: "Environment" ;
 	parameter "Number of agents:" var: ants category: "Agents" ;
+	parameter "Degrees: " var: degrees category: "Debug";
 	
 	output {
-		display grid_display refresh: every(1) type:opengl {
+		display OpenGL type: opengl  {
 			grid ant_grid ;
 			species ant transparency: 0.2 ;
 		}
