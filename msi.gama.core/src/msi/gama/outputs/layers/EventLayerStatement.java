@@ -34,7 +34,7 @@ import msi.gaml.types.IType;
 	value = {
 		@facet(name = "unused",
 			type = IType.ID,
-			values = { "mouse_up", "mouse_down", "mouse_drag" },
+			values = { "mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit" },
 			optional = true,
 			doc = @doc(value = "an unused facet that serves only for the purpose of declaring the string values") ,
 			internal = true),
@@ -42,25 +42,26 @@ import msi.gaml.types.IType;
 			type = IType.ID,
 			// values = { "mouse_up", "mouse_down", "mouse_drag" },
 			optional = false,
-			doc = @doc("the type of event captured: can be  \"mouse_up\", \"mouse_down\", \"mouse_drag\" or a character") ),
+			doc = @doc("the type of event captured: can be  \"mouse_up\", \"mouse_down\", \"mouse_move\", \"mouse_exit\", \"mouse_enter\" or a character (not yet functional)") ),
 		@facet(name = IKeyword.ACTION,
 			type = IType.STRING,
 			optional = false,
-			doc = @doc("the identifier of the action to be executed. It has to be an action written in the global block. This action have to follow the following specification: `action myAction (point location, list selected_agents)`") ),
+			doc = @doc("the identifier of the action to be executed. It has to be an action written in the global block. This action needs to be defined in 'global' and will receive two possible arguments: the location of the mouse in the environment and the agents under the mouse. For instance:`action myAction (point location, list selected_agents)`") ),
 		@facet(name = EventLayerStatement.defaultPointArg, type = IType.STRING, optional = true, internal = true),
 		@facet(name = EventLayerStatement.defaultListArg, type = IType.STRING, optional = true, internal = true) },
 	omissible = IKeyword.NAME)
 @validator(EventLayerValidator.class)
 @doc(
 	value = "`" + IKeyword.EVENT +
-		"` allows to interact with the simulation by capturing mouse or key events and doing an action. This action could apply a change on environment or on agents, according to the goal.",
+		"` allows to interact with the simulation by capturing mouse or key events and doing an action. This action needs to be defined in 'global' and will receive two possible arguments: the location of the mouse in the environment and the agents under the mouse. The names of these arguments need not to be fixed: instead, the first argument of type 'point' will receive the location of the mouse, while the first argument whose type is compatible with 'container<agent>' will receive the list of agents selected.",
 	usages = {
 		@usage(value = "The general syntax is:",
 			examples = { @example(value = "event [event_type] action: myAction;", isExecutable = false) }),
 		@usage(value = "For instance:",
 			examples = { @example(value = "global {", isExecutable = false),
 				@example(value = "   // ... ", isExecutable = false),
-				@example(value = "   action myAction (point location, list selected_agents) {", isExecutable = false),
+				@example(value = "   action myAction (point location, list<agent> selected_agents) {",
+					isExecutable = false),
 				@example(value = "      // location: contains le location of the click in the environment",
 					isExecutable = false),
 				@example(value = "      // selected_agents: contains agents clicked by the event",
@@ -117,12 +118,13 @@ public class EventLayerStatement extends AbstractLayerStatement {
 				description.info("The location of the mouse will be passed to the parameter '" + pointArg +
 					"' of action '" + actionName + "'", IGamlIssue.GENERAL, ACTION);
 			}
-			if ( listArg == null ) {
+			if ( listArg == null && !description.getName().equals(MOUSE_EXITED) &&
+				!description.getName().equals(MOUSE_ENTERED) && !description.getName().equals(MOUSE_MOVED) ) {
 				description.warning(
 					"Action '" + actionName + "' does not accept '" + defaultListArg +
 						"' or any argument of type list<agent>. The agents selected will not be pased to it.",
 					IGamlIssue.MISSING_ARGUMENT, ACTION);
-			} else if ( !listArg.equals(defaultListArg) ) {
+			} else if ( listArg != null && !listArg.equals(defaultListArg) ) {
 				description.info("The list of selected agents will be passed to the parameter '" + listArg +
 					"' of action '" + actionName + "'", IGamlIssue.GENERAL, ACTION);
 			}

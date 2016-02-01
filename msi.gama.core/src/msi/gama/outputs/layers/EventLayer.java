@@ -99,6 +99,9 @@ public class EventLayer extends AbstractLayer {
 		private final static int MOUSE_PRESS = 0;
 		private final static int MOUSE_RELEASED = 1;
 		private final static int MOUSE_CLICKED = 2;
+		private final static int MOUSE_MOVED = 4;
+		private final static int MOUSE_ENTERED = 5;
+		private final static int MOUSE_EXITED = 6;
 		private final static int KEY_PRESSED = 3;
 
 		private final int listenedEvent;
@@ -125,6 +128,9 @@ public class EventLayer extends AbstractLayer {
 			if ( eventTypeName.equals(IKeyword.MOUSE_DOWN) ) { return MOUSE_PRESS; }
 			if ( eventTypeName.equals(IKeyword.MOUSE_UP) ) { return MOUSE_RELEASED; }
 			if ( eventTypeName.equals(IKeyword.MOUSE_CLICKED) ) { return MOUSE_CLICKED; }
+			if ( eventTypeName.equals(IKeyword.MOUSE_MOVED) ) { return MOUSE_MOVED; }
+			if ( eventTypeName.equals(IKeyword.MOUSE_ENTERED) ) { return MOUSE_ENTERED; }
+			if ( eventTypeName.equals(IKeyword.MOUSE_EXITED) ) { return MOUSE_EXITED; }
 			return KEY_PRESSED;
 		}
 
@@ -147,7 +153,27 @@ public class EventLayer extends AbstractLayer {
 			if ( MOUSE_RELEASED == listenedEvent && button == 1 ) {
 				executeEvent(x, y);
 			}
+		}
 
+		@Override
+		public void mouseMove(final int x, final int y) {
+			if ( MOUSE_MOVED == listenedEvent ) {
+				executeEvent(x, y);
+			}
+		}
+
+		@Override
+		public void mouseEnter(final int x, final int y) {
+			if ( MOUSE_ENTERED == listenedEvent ) {
+				executeEvent(x, y);
+			}
+		}
+
+		@Override
+		public void mouseExit(final int x, final int y) {
+			if ( MOUSE_EXITED == listenedEvent ) {
+				executeEvent(x, y);
+			}
 		}
 
 		private void executeEvent(final int x, final int y) {
@@ -155,16 +181,21 @@ public class EventLayer extends AbstractLayer {
 			final ILocation pp = getModelCoordinatesFrom(x, y, surface);
 			if ( pp == null ) { return; }
 			if ( pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth() ||
-				pp.getY() >= surface.getEnvHeight() ) { return; }
+				pp.getY() >= surface.getEnvHeight() ) {
+				if ( MOUSE_EXITED == listenedEvent ) {
+					executeEvent(x, y);
+				}
+				return;
+			}
 			final Arguments args = new Arguments();
 			if ( x > -1 && y > -1 ) {
-
-				final IContainer<Integer, IAgent> agentset =
-					GamaListFactory.createWithoutCasting(Types.AGENT, surface.selectAgent(x, y));
 				if ( pointArg != null ) {
 					args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.getX(), pp.getY())));
 				}
-				if ( listArg != null ) {
+				if ( listArg != null && listenedEvent != MOUSE_MOVED && listenedEvent != MOUSE_ENTERED &&
+					listenedEvent != MOUSE_EXITED ) {
+					final IContainer<Integer, IAgent> agentset =
+						GamaListFactory.createWithoutCasting(Types.AGENT, surface.selectAgent(x, y));
 					args.put(listArg, ConstantExpressionDescription.create(agentset));
 				}
 			}

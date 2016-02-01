@@ -1,30 +1,30 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ICamera.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
-import msi.gama.metamodel.shape.GamaPoint;
-import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.*;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
+import msi.gama.metamodel.shape.GamaPoint;
 
 /**
  * Class ICamera.
- * 
+ *
  * @author drogoul
  * @since 5 sept. 2013
- * 
+ *
  */
-public interface ICamera extends /* KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, */org.eclipse.swt.events.KeyListener, org.eclipse.swt.events.MouseListener, org.eclipse.swt.events.MouseMoveListener, MouseTrackListener, org.eclipse.swt.events.MouseWheelListener {
+public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListener, MouseMoveListener, MouseTrackListener, MouseWheelListener {
 
 	public final static double INIT_Z_FACTOR = 1.5;
 
@@ -83,12 +83,12 @@ public interface ICamera extends /* KeyListener, MouseListener, MouseMotionListe
 	public abstract boolean isViewIn2DPlan();
 
 	/**
-	 * 
+	 *
 	 */
 	public abstract void animate();
 
 	/**
-	 * 
+	 *
 	 */
 	public abstract void updateSphericalCoordinatesFromLocations();
 

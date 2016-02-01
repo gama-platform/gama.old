@@ -690,13 +690,13 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		setDisplayScope(null);
 	}
 
-	Map<IEventLayerListener, MouseListener> listeners = new HashMap();
+	Map<IEventLayerListener, MouseAdapter> listeners = new HashMap();
 
 	@Override
 	public void addListener(final IEventLayerListener listener) {
 		if ( listeners.containsKey(listener) ) { return; }
 
-		MouseListener l = new MouseAdapter() {
+		MouseAdapter l = new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(final MouseEvent e) {
@@ -713,17 +713,37 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 				listener.mouseUp(e.getX(), e.getY(), e.getButton());
 			}
 
+			@Override
+			public void mouseMoved(final MouseEvent e) {
+				if ( e.getButton() > 0 ) { return; }
+				listener.mouseMove(e.getX(), e.getY());
+			}
+
+			@Override
+			public void mouseEntered(final MouseEvent e) {
+				if ( e.getButton() > 0 ) { return; }
+				listener.mouseEnter(e.getX(), e.getY());
+			}
+
+			@Override
+			public void mouseExited(final MouseEvent e) {
+				if ( e.getButton() > 0 ) { return; }
+				listener.mouseExit(e.getX(), e.getY());
+			}
+
 		};
 		listeners.put(listener, l);
 		addMouseListener(l);
+		addMouseMotionListener(l);
 	}
 
 	@Override
 	public void removeListener(final IEventLayerListener listener) {
-		MouseListener l = listeners.get(listener);
+		MouseAdapter l = listeners.get(listener);
 		if ( l == null ) { return; }
 		listeners.remove(listener);
 		super.removeMouseListener(l);
+		super.removeMouseMotionListener(l);
 	}
 
 	@Override

@@ -204,9 +204,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Rectangle2D drawShape(final IShape geometry, final DrawingAttributes attributes) {
 		if ( geometry == null ) { return null; }
-		System.out.println("Shape location" + geometry.getLocation());
 		Geometry geom = geometry.getInnerGeometry();
-		System.out.println("Geometry centroid" + geom.getCentroid());
 		final Shape s = sw.toShape(geom);
 		try {
 			final Rectangle2D r = s.getBounds2D();

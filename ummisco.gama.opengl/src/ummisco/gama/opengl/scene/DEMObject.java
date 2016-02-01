@@ -92,8 +92,11 @@ public class DEMObject extends AbstractObject {
 					}
 				}
 			}
+			super.draw(gl, drawer, picking);
+			// renderer.gl.glPopMatrix();
+		} else {
+			super.draw(gl, drawer, picking);
 		}
-		super.draw(gl, drawer, picking);
 	}
 
 	@Override

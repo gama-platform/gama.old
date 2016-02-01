@@ -305,18 +305,6 @@ public class CameraArcBall extends AbstractCamera {
 		super.mouseDown(arg0);
 	}
 
-	//
-	// @Override
-	// public void mousePressed(final MouseEvent arg0) {
-	// zeroVelocity();
-	// super.mousePressed(arg0);
-	// }
-
-	// @Override
-	// protected boolean canSelectOnRelease(final MouseEvent arg0) {
-	// return true;
-	// }
-
 	@Override
 	protected boolean canSelectOnRelease(final org.eclipse.swt.events.MouseEvent arg0) {
 		return true;

@@ -1,30 +1,33 @@
 model boids 
 global torus: torus_environment{ 
-	int number_of_agents <- 100 min: 1 max: 1000000;
-	int number_of_obstacles <- 5 min: 0;
+	int number_of_agents <- 50 min: 1 max: 1000000;
+	int number_of_obstacles <- 0 min: 0;
 	float maximal_speed <- 15.0 min: 0.1 max: 15.0;
 	int cohesion_factor <- 200;
 	int alignment_factor <- 100; 
 	float minimal_distance <- 10.0; 
-	int maximal_turn <- 90 min: 0 max: 359; 
-	int width_and_height_of_environment <- 800;  
+	int maximal_turn <- 45 min: 0 max: 359; 
+	int width_and_height_of_environment <- 1000;  
 	bool torus_environment <- false; 
 	bool apply_cohesion <- true ;
 	bool apply_alignment <- true ;
 	bool apply_separation <- true;
-	bool apply_goal <- true;
 	bool apply_avoid <- true;  
 	bool apply_wind <- true;   
 	bool moving_obstacles <- false;   
-	int bounds <- int(width_and_height_of_environment / 20) depends_on: [width_and_height_of_environment]; 
+	int bounds <- int(width_and_height_of_environment / 20); 
 	point wind_vector <- {0,0}; 
-	int goal_duration <- 30 update: (goal_duration - 1); 
-	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
-	int xmin <- bounds depends_on: [bounds];    
-	int ymin <- bounds depends_on: [bounds];  
+	int xmin <- bounds;   
+	int ymin <- bounds;  
 	int xmax <- (width_and_height_of_environment - bounds);     
 	int ymax <- (width_and_height_of_environment - bounds);   
+	
+	action move_goal(point mouse) {
+		ask first(boids_goal) {
+			do goto target: mouse speed: 30;
+		}
+	}
 
 	geometry shape <- square(width_and_height_of_environment);
 	init { 
@@ -36,9 +39,7 @@ global torus: torus_environment{
 			location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 		}
 		
-		create  boids_goal {
-			location <- goal;
-		}	
+		create  boids_goal;	
 	}	
 }
 
@@ -49,7 +50,6 @@ species boids_goal skills: [moving] {
 	
 	reflex wander {  
 		do  wander amplitude: 45 speed: 20;  
-		goal <- location;
 	}
 	
 	aspect default {
@@ -114,8 +114,8 @@ species boids skills: [moving] {
 		}
 	}
 	
-	reflex follow_goal when: apply_goal {
-		velocity <- velocity + ((goal - location) / cohesion_factor);
+	reflex follow_goal {
+		velocity <- velocity + ((first(boids_goal).location - location) / cohesion_factor);
 	}
 	
 	reflex wind when: apply_wind {
@@ -136,14 +136,14 @@ species boids skills: [moving] {
 	}
 	
 	aspect image {
-		draw (images at (rnd(2))) size: 35 rotate: heading color: rgb([0,0,rnd(200) + 55]);      
+		draw (images at (rnd(2))) size: 35 rotate: heading ;      
 	}
 	aspect circle { 
-		draw circle(15) rotate: 90 + heading color: #red;
+		draw circle(15)  color: #red;
 	}
 	
 	aspect default { 
-		draw triangle(15) rotate: 90 + heading color: #yellow;
+		draw circle(20) color: #lightblue empty: true;
 	}
 } 
 
@@ -164,10 +164,6 @@ species obstacle skills: [moving] {
 		draw  triangle(20) color: #yellow ;
 	}
 
-	
-	aspect geom {
-		draw shape color: #yellow;
-	}
 }
 
 
@@ -184,18 +180,21 @@ experiment boids_gui type: gui {
 	parameter 'Apply Cohesion ?' var: apply_cohesion ;
 	parameter 'Apply Alignment ?' var: apply_alignment ;   
 	parameter 'Apply Separation ?' var: apply_separation ;   
-	parameter 'Follow Goal ?' var: apply_goal ; 
 	parameter 'Apply Avoidance ?' var: apply_avoid ;   
 	parameter 'Apply Wind ?' var: apply_wind ;     
 	parameter 'Moving Obstacles ?' var: moving_obstacles  ;    
 	parameter 'Direction of the wind' var: wind_vector ;  
 	
+	float minimum_cycle_duration <- 0.02;
+
 	output {
-		display Sky {
-			image 'background' file:'../images/sky.jpg';
+		display Sky  background: #blue type: opengl { 
+		image 'background' file:'../images/sky.jpg';
 			species boids aspect: image;
 			species boids_goal;
 			species obstacle;
+			event mouse_move action: move_goal;
 		}
+
 	}
 }

@@ -21,6 +21,12 @@ public interface IEventLayerListener {
 
 	public void mouseClicked(int x, int y, int button);
 
+	public void mouseMove(int x, int y);
+
+	public void mouseEnter(int x, int y);
+
+	public void mouseExit(int x, int y);
+
 	/**
 	 * @param c
 	 */

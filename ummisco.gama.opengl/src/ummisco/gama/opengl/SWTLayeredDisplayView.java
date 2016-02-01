@@ -22,7 +22,6 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 
 	SWTOpenGLDisplaySurface surface;
 
-
 	public static String ID = "msi.gama.application.view.OpenGLDisplayView";
 
 	@Override
@@ -38,7 +37,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 	@Override
 	public void setFocus() {
 		if ( surfaceComposite != null ) {
-			surfaceComposite.setFocus();
+			surfaceComposite.forceFocus();
 		}
 	}
 

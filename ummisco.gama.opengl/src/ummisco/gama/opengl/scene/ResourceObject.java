@@ -76,15 +76,10 @@ public class ResourceObject extends AbstractObject {
 			}
 			gl.glScaled(factor, factor, factor);
 		}
-		// And apply a color
-		if ( getColor() != null ) { // does not work for obj files
-			gl.glColor4d(getColor().getRed() / 255.0, getColor().getGreen() / 255.0, getColor().getBlue() / 255.0,
-				getAlpha() * getColor().getAlpha() / 255.0);
-		}
 
 		// Then we draw the geometry itself
 		if ( picking ) {
-			gl.glPushMatrix();
+			// gl.glPushMatrix();
 			gl.glLoadName(pickingIndex);
 			if ( renderer.pickedObjectIndex == pickingIndex ) {
 				if ( attributes.agent != null /* && !picked */ ) {
@@ -97,8 +92,13 @@ public class ResourceObject extends AbstractObject {
 			gl.glColor4d(1.0, 0.0, 0.0, 1.0);
 
 			super.draw(gl, drawer, picking);
-			gl.glPopMatrix();
+			// gl.glPopMatrix();
 		} else {
+			// And apply a color
+			if ( getColor() != null ) { // does not work for obj files
+				gl.glColor4d(getColor().getRed() / 255.0, getColor().getGreen() / 255.0, getColor().getBlue() / 255.0,
+					getAlpha() * getColor().getAlpha() / 255.0);
+			}
 			super.draw(gl, drawer, picking);
 		}
 

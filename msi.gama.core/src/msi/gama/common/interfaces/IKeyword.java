@@ -249,6 +249,9 @@ public interface IKeyword {
 	public static final String MOUSE_DOWN = "mouse_down";
 	public static final String MOUSE_UP = "mouse_up";
 	public static final String MOUSE_CLICKED = "mouse_click";
+	public static final String MOUSE_MOVED = "mouse_move";
+	public static final String MOUSE_ENTERED = "mouse_enter";
+	public static final String MOUSE_EXITED = "mouse_exit";
 	public static final String MOVING_SKILL = "moving";
 	public static final String MOVING_3D_SKILL = "moving3D";
 	public final static String MULTIPLY = "*";

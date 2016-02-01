@@ -48,7 +48,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	// protected Double zoomLevel = null;
 	protected boolean zoomFit = true;
 	// private IZoomListener zoomListener;
-	Map<IEventLayerListener, MouseListener> listeners = new HashMap();
+	Map<IEventLayerListener, OwnMouseListener> mouseListeners = new HashMap();
 	final LayeredDisplayOutput output;
 	final LayerManager manager;
 	protected DisplaySurfaceMenu menuManager;
@@ -355,37 +355,79 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 	}
 
+	private class OwnMouseListener extends MouseAdapter implements MouseTrackListener, MouseMoveListener, FocusListener {
+
+		final IEventLayerListener listener;
+		int down_x, down_y;
+
+		OwnMouseListener(final IEventLayerListener listener) {
+			this.listener = listener;
+		}
+
+		@Override
+		public void mouseMove(final MouseEvent e) {
+			if ( e.button > 0 ) { return; }
+			listener.mouseMove(e.x, e.y);
+		}
+
+		@Override
+		public void mouseExit(final MouseEvent e) {
+			if ( e.button > 0 ) { return; }
+			listener.mouseExit(e.x, e.y);
+		}
+
+		@Override
+		public void mouseEnter(final MouseEvent e) {
+			if ( e.button > 0 ) { return; }
+			listener.mouseEnter(e.x, e.y);
+		}
+
+		@Override
+		public void mouseHover(final MouseEvent e) {
+			if ( e.button > 0 ) { return; }
+			listener.mouseMove(e.x, e.y);
+		}
+
+		@Override
+		public void mouseDown(final MouseEvent e) {
+			down_x = e.x;
+			down_y = e.y;
+			listener.mouseDown(e.x, e.y, e.button);
+		}
+
+		@Override
+		public void mouseUp(final MouseEvent e) {
+			if ( e.x == down_x && e.y == down_y ) {
+				listener.mouseClicked(e.x, e.y, e.button);
+			} else {
+				listener.mouseUp(e.x, e.y, e.button);
+			}
+		}
+
+		@Override
+		public void focusGained(final FocusEvent e) {
+			listener.mouseEnter(0, 0);
+		}
+
+		@Override
+		public void focusLost(final FocusEvent e) {
+			listener.mouseExit(0, 0);
+		}
+
+	}
+
 	/**
 	 * Method addMouseListener()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#addMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
 	public void addListener(final IEventLayerListener listener) {
-
-		if ( listeners.containsKey(listener) ) { return; }
-		MouseListener l = new MouseAdapter() {
-
-			int down_x, down_y;
-
-			@Override
-			public void mouseDown(final MouseEvent e) {
-				down_x = e.x;
-				down_y = e.y;
-				listener.mouseDown(e.x, e.y, e.button);
-			}
-
-			@Override
-			public void mouseUp(final MouseEvent e) {
-				if ( e.x == down_x && e.y == down_y ) {
-					listener.mouseClicked(e.x, e.y, e.button);
-				} else {
-					listener.mouseUp(e.x, e.y, e.button);
-				}
-			}
-
-		};
-		listeners.put(listener, l);
+		if ( mouseListeners.containsKey(listener) ) { return; }
+		OwnMouseListener l = new OwnMouseListener(listener);
+		mouseListeners.put(listener, l);
 		renderer.canvas.addMouseListener(l);
+		renderer.canvas.addMouseMoveListener(l);
+		renderer.canvas.addFocusListener(l);
 
 	}
 
@@ -395,17 +437,19 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void removeListener(final IEventLayerListener listener) {
-		MouseListener l = listeners.get(listener);
+		OwnMouseListener l = mouseListeners.get(listener);
 		if ( l == null ) { return; }
-		listeners.remove(listener);
+		mouseListeners.remove(listener);
 		if ( renderer.canvas != null && !renderer.canvas.isDisposed() ) {
 			renderer.canvas.removeMouseListener(l);
+			renderer.canvas.removeMouseMoveListener(l);
+			renderer.canvas.removeFocusListener(l);
 		}
 	}
 
 	@Override
 	public Collection<IEventLayerListener> getLayerListeners() {
-		return listeners.keySet();
+		return mouseListeners.keySet();
 	}
 
 	/**
@@ -569,19 +613,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agent);
 	}
 
-	// /**
-	// * Method newZoomLevel()
-	// * @see msi.gama.common.interfaces.IDisplaySurface.IZoomListener#newZoomLevel(double)
-	// */
-	// @Override
-	// public void newZoomLevel(final double newZoomLevel) {
-	// output.getData().setZoomLevel(newZoomLevel);
-	// if ( zoomListener != null ) {
-	// zoomListener.newZoomLevel(output.getData().getZoomLevel());
-	// }
-	// // animator.getRenderer().initFor(this);
-	// }
-
 	org.eclipse.swt.widgets.Menu menu;
 
 	/**
@@ -606,18 +637,19 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				menu.setData(IKeyword.USER_LOCATION, getModelCoordinates());
 				menu.setLocation(
 					swtControl.toDisplay(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y));
-				// menu.addMenuListener(new MenuListener() {
-				//
-				// @Override
-				// public void menuHidden(final MenuEvent e) {
-				// // animator.resume();
-				// }
-				//
-				// @Override
-				// public void menuShown(final MenuEvent e) {
-				// // animator.pause();
-				// }
-				// });
+				menu.addMenuListener(new MenuListener() {
+
+					@Override
+					public void menuHidden(final MenuEvent e) {
+						animator.resume();
+						// animator.resume();
+					}
+
+					@Override
+					public void menuShown(final MenuEvent e) {
+						animator.pause();
+					}
+				});
 				menu.setVisible(true);
 
 				// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :

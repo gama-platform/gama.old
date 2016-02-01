@@ -59,7 +59,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected double curZRotation = 0.0;
 
 	private final double _keyboardSensivity = 4.0;
-	private final double _sensivity = 0.4;
+	private final double _sensivity = 1;
 
 	// Mouse and keyboard state
 	private boolean goesForward;
