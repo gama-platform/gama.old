@@ -13,13 +13,11 @@ package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.file.GamaShapeFile;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -109,12 +107,6 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	String currentImage = null;
 	GamaColor color = null;
 
-	private IList<IShape> shapes = null;
-
-	public IList<IShape> getShapes() {
-		return shapes;
-	}
-
 	public GamaColor getColor() {
 		return color;
 	}
@@ -132,9 +124,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	// FIXME Use GamaImageFile
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
-		if ( gisExpression != null ) {
-			buildGisLayer(scope);
-		} else {
+		if ( gisExpression == null ) {
 			if ( constantImage == null ) {
 				// Redefined to allow replacing the "name" attribute by "file"
 				IExpression tag = getFacet(IKeyword.NAME);
@@ -165,40 +155,17 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		return true;
 	}
 
-	private GamaShapeFile getShapeFile(final IScope scope) {
-		if ( gisExpression == null ) { return null; }
-		if ( gisExpression.getType().id() == IType.STRING ) {
-			String fileName = Cast.asString(scope, gisExpression.value(scope));
-			return new GamaShapeFile(scope, fileName);
-		}
-		Object o = gisExpression.value(scope);
-		if ( o instanceof GamaShapeFile ) { return (GamaShapeFile) o; }
-		return null;
-	}
-
-	public void buildGisLayer(final IScope scope) throws GamaRuntimeException {
-		GamaShapeFile file = getShapeFile(scope);
-		if ( colorExpression != null ) {
-			color = Cast.asColor(scope, colorExpression.value(scope));
-		}
-		shapes = file.getContents(scope);
-	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
-		shapes = null;
-	}
+	// @Override
+	// public void dispose() {
+	// super.dispose();
+	// // shapes = null;
+	// }
 
 	@Override
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
 		if ( gisExpression == null ) {
 			currentImage =
 				constantImage != null ? constantImage : Cast.asString(scope, imageFileExpression.value(scope));
-		} else {
-			if ( shapes == null ) {
-				buildGisLayer(scope);
-			}
 		}
 		return true;
 	}
@@ -210,7 +177,6 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	 */
 	public void setGisLayerName(final IScope scope, final String newValue) throws GamaRuntimeException {
 		gisExpression = GAML.getExpressionFactory().createConst(newValue, Types.STRING);
-		buildGisLayer(scope);
 	}
 
 	/**
@@ -221,10 +187,10 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	}
 
 	/**
-	 *
+	 * @return
 	 */
-	public void resetShapes() {
-		shapes = null;
+	public IExpression getGisExpression() {
+		return gisExpression;
 	}
 
 }
