@@ -162,5 +162,92 @@ public class Operators {
 			return 0;
 		}
 	}
+	
+	@operator(value = "new_emotion", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new emotion with the given properties (name)",
+		examples = @example(value = "emotion(\"joy\")", test = false))
+	public static Emotion newEmotion(final String name) throws GamaRuntimeException {
+		return new Emotion(name);
+	}
+	
+	@operator(value = "new_emotion", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new emotion with the given properties (name, intensity)",
+		examples = @example(value = "emotion(\"joy\",12.3)", test = false))
+	public static Emotion newEmotion(final String name, final Double intensity) throws GamaRuntimeException {
+		return new Emotion(name,intensity);
+	}
+	
+	@operator(value = "new_emotion", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new emotion with the given properties (name,about)",
+		examples = @example(value = "emotion(\"joy\",eatFood)", test = false))
+	public static Emotion newEmotion(final String name, final Predicate about) throws GamaRuntimeException {
+		return new Emotion(name,about);
+	}
+	
+	@operator(value = "new_emotion", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new emotion with the given properties (name,intensity,about)",
+		examples = @example(value = "emotion(\"joy\",12.3,eatFood)", test = false))
+	public static Emotion newEmotion(final String name,final Double intensity, final Predicate about) throws GamaRuntimeException {
+		return new Emotion(name,intensity,about);
+	}
+	
+	@operator(value = "new_emotion", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new emotion with the given properties (name,intensity,decay)",
+		examples = @example(value = "emotion(\"joy\",12.3,4)", test = false))
+	public static Emotion newEmotion(final String name, final Double intensity, final Double decay) throws GamaRuntimeException {
+		return new Emotion(name,intensity,decay);
+	}
+	
+	@operator(value = "new_emotion", can_be_const = true, category = { "BDI" })
+	@doc(value = "a new emotion with the given properties (name)",
+		examples = @example(value = "emotion(\"joy\",12.3,eatFood,4)", test = false))
+	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about, final Double decay) throws GamaRuntimeException {
+		return new Emotion(name,intensity,about,decay);
+	}
+	
+	@operator(value = "set_intensity", can_be_const = true, category = { "BDI" })
+	@doc(value = "change the intensity value of the given emotion",
+		examples = @example(value = "emotion set_intensity 12", test = false))
+	public static Emotion setIntensity(final Emotion emotion, final Double intensity) throws GamaRuntimeException {
+		emotion.intensity = intensity;
+		return emotion;
+	}
+	
+	@operator(value = "set_decay", can_be_const = true, category = { "BDI" })
+	@doc(value = "change the decay value of the given emotion",
+		examples = @example(value = "emotion set_decay 12", test = false))
+	public static Emotion setDecay(final Emotion emotion, final Double decay) throws GamaRuntimeException {
+		emotion.decay = decay;
+		return emotion;
+	}
+	
+	@operator(value = "set_about", can_be_const = true, category = { "BDI" })
+	@doc(value = "change the about value of the given emotion",
+		examples = @example(value = "emotion about predicate1", test = false))
+	public static Emotion setAbout(final Emotion emotion, final Predicate about) throws GamaRuntimeException {
+		emotion.about = about;
+		return emotion;
+	}
+	
+	@operator(value = "get_intensity", can_be_const = true, category = { "BDI" })
+	@doc(value = "get the intensity value of the given emotion",
+		examples = @example(value = "emotion set_intensity 12", test = false))
+	public static Double getIntensity(final Emotion emotion){
+		return emotion.intensity;
+	}
+	
+	@operator(value = "get_decay", can_be_const = true, category = { "BDI" })
+	@doc(value = "get the decay value of the given emotion",
+		examples = @example(value = "emotion set_intensity 12", test = false))
+	public static Double getDecay(final Emotion emotion){
+		return emotion.decay;
+	}
+	
+	@operator(value = "get_about", can_be_const = true, category = { "BDI" })
+	@doc(value = "get the about value of the given emotion",
+		examples = @example(value = "emotion set_intensity 12", test = false))
+	public static Predicate getAbout(final Emotion emotion){
+		return emotion.about;
+	}
 
 }

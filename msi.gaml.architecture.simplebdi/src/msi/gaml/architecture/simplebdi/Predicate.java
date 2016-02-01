@@ -313,6 +313,34 @@ public class Predicate implements IValue {
 		return true;
 	}
 	
+	public boolean equalsButNotTruth(final Object obj){
+		//return true if the predicates are equals but one is true and not the other
+		//Doesn't check the lifetime value
+		//Used in emotions
+		if ( obj == null ) { return false; }
+		if ( getClass() != obj.getClass() ) { return false; }
+		Predicate other = (Predicate) obj;
+		if ( name == null ) {
+			if ( other.name != null ) { return false; }
+		} else if ( !name.equals(other.name) ) { return false; }
+		if(subintentions == null){
+			if (other.subintentions!=null && !other.subintentions.isEmpty()){return false;}
+		} else if(!subintentions.equals(other.subintentions)) {return false;}
+		if(superIntention == null){
+			if(other.superIntention != null){return false;}
+		}else if(!superIntention.partialEquality(other.superIntention)){return false;}	
+		if(is_true!=other.is_true){
+			if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
+			if ( values == null ) {
+				if ( other.values != null ) { return false; }
+			} else if ( !values.equals(other.values) ) { return false; }
+			
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	/**
 	 * Method getType()
 	 * @see msi.gama.common.interfaces.ITyped#getType()

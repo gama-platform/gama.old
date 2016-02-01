@@ -34,10 +34,11 @@ import msi.gaml.types.*;
 		init = "1.0",
 		doc = @doc("intention persistence") ),
 	@var(name = SimpleBdiArchitecture.PROBABILISTIC_CHOICE, type = IType.BOOL, init = "false"),
+	@var(name = SimpleBdiArchitecture.USE_EMOTIONS_ARCHITECTURE, type = IType.BOOL, init = "false"),
 	@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.LAST_THOUGHTS, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.INTENTION_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
-	@var(name = SimpleBdiArchitecture.EMOTION_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
+	@var(name = SimpleBdiArchitecture.EMOTION_BASE, type = IType.LIST, of = EmotionType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.PLAN_BASE, type = IType.LIST, of = BDIPlanType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.CURRENT_PLAN, type = IType.NONE) })
@@ -51,15 +52,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String FINISHEDWHEN = "finished_when";
 	public static final String PERSISTENCE_COEFFICIENT_PLANS = "plan_persistence";
 	public static final String PERSISTENCE_COEFFICIENT_INTENTIONS = "intention_persistence";
+	public static final String USE_EMOTIONS_ARCHITECTURE = "use_emotions_architecture";
+	
+	//TODO: Not implemented yet
 
-	// TODO: Not implemented yet
 	public static final String PROBABILISTIC_CHOICE = "probabilistic_choice";
 	public static final String INSTANTANEAOUS = "instantaneous";
 
 	// INFORMATION THAT CAN BE DISPLAYED
 	public static final String LAST_THOUGHTS = "thinking";
 	public static final Integer LAST_THOUGHTS_SIZE = 5;
-
+	
+	public static final String EMOTION = "emotion";
 	public static final String PREDICATE = "predicate";
 	public static final String PREDICATE_NAME = "name";
 	public static final String PREDICATE_VALUE = "value";
@@ -133,6 +137,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if ( agent.dead() ) { return null; }
 			}
 		}
+		computeEmotions(scope);
 		return executePlans(scope);
 	}
 
@@ -276,6 +281,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					for ( Predicate pred : listIntentionsLifeTimeNull(scope) ) {
 						removeIntention(scope, pred);
 					}
+					updateEmotionsIntensity(scope);
 				}
 			}
 		}
@@ -371,25 +377,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		double highestPriority = Double.MIN_VALUE;
 		List<SimpleBdiPlanStatement> temp_plan = new ArrayList<SimpleBdiPlanStatement>();
 		IList priorities = GamaListFactory.create(Types.FLOAT);
-		// System.out.println("intention: " + getBase(scope, SimpleBdiArchitecture.INTENTION_BASE));
 		for ( Object BDIPlanstatement : scope.getExperiment().getRandomGenerator().shuffle(_plans) ) {
 			SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
-			// System.out.println("statement: " + statement);
-			// System.out.println("((SimpleBdiPlan) statement).getContextExpression(): " + ((SimpleBdiPlan) statement).getContextExpression());
 			boolean isContextConditionSatisfied = statement.getContextExpression() == null ||
 				msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
-			// System.out.println("isContextConditionSatisfied: " + isContextConditionSatisfied);
 			boolean isIntentionConditionSatisfied = statement.getIntentionExpression() == null ||
 				((Predicate) statement.getIntentionExpression().value(scope))
 					.equalsIntentionPlan(currentIntention(scope));
 			if ( isContextConditionSatisfied && isIntentionConditionSatisfied ) {
-				// System.out.println("is_probabilistic_choice: " + is_probabilistic_choice);
 				if ( is_probabilistic_choice ) {
-					// System.out.println("(SimpleBdiPlan) statement: " + statement);
-
 					temp_plan.add(statement);
-					// System.out.println("temp_plan: " + temp_plan);
-
 				} else {
 					double currentPriority = 1.0;
 					if ( statement.getFacet(SimpleBdiArchitecture.PRIORITY) != null ) {
@@ -608,32 +605,57 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			: (GamaList<Predicate>) agent.getAttribute(basename));
 	}
 
+	public static GamaList<Emotion> getEmotionBase(final IScope scope, final String basename){
+		final IAgent agent = scope.getAgentScope();
+		return (GamaList<Emotion>) (scope.hasArg(basename) ? scope.getListArg(basename) : (GamaList<Emotion>) agent
+			.getAttribute(basename));
+	}
+	
 	public static boolean removeFromBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
 		GamaList<Predicate> factBase = getBase(scope, factBaseName);
 		return factBase.remove(predicateItem);
 	}
 
+	public static boolean removeFromBase(final IScope scope, final Emotion emotionItem, final String factBaseName) {
+		GamaList<Emotion> factBase = getEmotionBase(scope, factBaseName);
+		return factBase.remove(emotionItem);
+	}
+	
 	public static boolean addToBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
 		return addToBase(scope, predicateItem, getBase(scope, factBaseName));
 	}
 
-	public static boolean addToBase(final IScope scope, final Predicate predicateItem,
-		final GamaList<Predicate> factBase) {
+	public static boolean addToBase(final IScope scope, final Emotion emotionItem, final String factBaseName) {
+		return addToBase(scope, emotionItem, getEmotionBase(scope, factBaseName));
+	}
+	
+	public static boolean addToBase(final IScope scope, final Predicate predicateItem, final GamaList<Predicate> factBase) {
+
 		factBase.remove(predicateItem);
 
 		predicateItem.setDate(scope.getClock().getTime());
 		return factBase.add(predicateItem);
 	}
 
-	// @getter (value = CURRENT_PLAN)
-	// public String getPlan(IScope scope){
-	// return ((SimpleBdiPlan)(getCurrentAgent(scope).getAttribute(CURRENT_PLAN))).getName();
-	// }
-
-	public static Boolean addBelief(final IScope scope, final Predicate predicateDirect) {
-		// System.out.println(getBase(scope, BELIEF_BASE));
+	public static boolean addToBase(final IScope scope, final Emotion predicateItem, final GamaList<Emotion> factBase) {
+		factBase.remove(predicateItem);
+		return factBase.add(predicateItem);
+	}
+	
+	public static Boolean addBelief(final IScope scope, final Predicate predicateDirect){
+		//Rajouter le fait que lorsqu'on retire un désir en ajoutant une croyance, on crée une émotion de joie.
 		GamaList<Predicate> factBase = getBase(scope, BELIEF_BASE);
+		Predicate predTemp = null;
 		if ( predicateDirect != null ) {
+			createJoyFromPredicate(scope,predicateDirect);
+			for(Predicate predTest : getBase(scope,SimpleBdiArchitecture.BELIEF_BASE)){
+				if(predTest.equalsButNotTruth(predicateDirect)){
+					predTemp = predTest;
+				}
+			}
+			if(predTemp!=null){
+				removeFromBase(scope, predTemp, BELIEF_BASE);
+			}
 			if ( getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect) ) {
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
 				removeFromBase(scope, predicateDirect, INTENTION_BASE);
@@ -663,51 +685,49 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 		return false;
 	}
-
-	@action(name = "add_belief",
-		args = { @arg(name = PREDICATE, type = IType.MAP, optional = true, doc = @doc("predicate to check") ) },
-		doc = @doc(value = "check if the predicates is in the desire base.",
-			returns = "true if it is in the base.",
-			examples = { @example("") }) )
-	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-	public Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
+	
+	@action(name = "add_belief", args = { @arg(name = PREDICATE,
+		type = IType.MAP,
+		optional = true,
+		doc = @doc("predicate to add as a belief")) }, doc = @doc(value = "add the predicate in the belief base.",
+		returns = "true if it is added in the base.",
+		examples = { @example("") }))
+		public
+		Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		return addBelief(scope, predicateDirect);
 
 	}
 
-	public static Boolean hasBelief(final IScope scope, final Predicate predicateDirect) {
-		// System.out.println(getBase(scope, BELIEF_BASE));
-		// System.out.println(getBase(scope, BELIEF_BASE).contains(predicateDirect));
+	public static Boolean hasBelief(final IScope scope, Predicate predicateDirect){
 		return getBase(scope, BELIEF_BASE).contains(predicateDirect);
 	}
 
-	public static Boolean hasDesire(final IScope scope, final Predicate predicateDirect) {
-		// System.out.println(getBase(scope, BELIEF_BASE));
-		// System.out.println(getBase(scope, BELIEF_BASE).contains(predicateDirect));
+	public static Boolean hasDesire(final IScope scope, Predicate predicateDirect){
 		return getBase(scope, DESIRE_BASE).contains(predicateDirect);
 	}
-
-	@action(name = "has_belief",
-		args = { @arg(name = PREDICATE, type = PredicateType.id, optional = true, doc = @doc("predicate to check") ) },
-		doc = @doc(value = "check if the predicates is in the belief base.",
-			returns = "true if it is in the base.",
-			examples = { @example("") }) )
-	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-	public Boolean primTestBelief(final IScope scope) throws GamaRuntimeException {
+	
+	@action(name = "has_belief", args = { @arg(name = PREDICATE,
+		type = PredicateType.id,
+		optional = true,
+		doc = @doc("predicate to check")) }, doc = @doc(value = "check if the predicates is in the belief base.",
+		returns = "true if it is in the base.",
+		examples = { @example("") }))
+		public
+		Boolean primTestBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if ( predicateDirect != null ) { return hasBelief(scope, predicateDirect); }
 		return false;
 	}
 
-	@action(name = "get_belief",
-		args = { @arg(name = PREDICATE, type = PredicateType.id, optional = false, doc = @doc("predicate to check") ) },
-		doc = @doc(value = "get the predicates is in the belief base (if several, returns the first one).",
-			returns = "the predicate if it is in the base.",
-			examples = { @example("get_belief(new_predicate(\"has_water\", true))") }) )
-	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
+	@action(name = "get_belief", args = { @arg(name = PREDICATE,
+		type = PredicateType.id,
+		optional = false,
+		doc = @doc("predicate to get")) }, doc = @doc(value = "get the predicate in the belief base (if several, returns the first one).",
+		returns = "the predicate if it is in the base.",
+		examples = { @example("get_belief(new_predicate(\"has_water\", true))") }))
 	public Predicate getBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
@@ -1003,11 +1023,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return getBase(scope, BELIEF_BASE).remove(pred);
 	}
 
-	@action(name = "remove_belief",
-		args = { @arg(name = PREDICATE, type = PredicateType.id, optional = true, doc = @doc("predicate to add") ) },
-		doc = @doc(value = "removes the first predicate from the belief base.",
-			returns = "true if it is in the base.",
-			examples = { @example("") }) )
+	
+	@action(name = "remove_belief", args = { @arg(name = PREDICATE,
+		type = PredicateType.id,
+		optional = true,
+		doc = @doc("predicate to remove")) }, doc = @doc(value = "removes the predicate from the belief base.",
+		returns = "true if it is in the base.",
+		examples = { @example("") }))
 	public Boolean primRemoveBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
@@ -1289,7 +1311,137 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		return false;
 	}
-
+	
+	protected void updateEmotionsIntensity(IScope scope){
+		for(Emotion emo : getEmotionBase(scope, SimpleBdiArchitecture.EMOTION_BASE)){
+			emo.decayIntensity();
+		}
+		for (Emotion emo : listEmotionsNull(scope)){
+			removeFromBase(scope,emo,SimpleBdiArchitecture.EMOTION_BASE);
+		}
+	}
+	
+	protected void computeEmotions(IScope scope){
+//		Etape 0, demander à l'utilisateur s'il veut ou non utiliser cette architecture
+//		Etape 1, créer les émotions par rapport à la cognition (modèle thèse de Carole). Cette étape va être dissociée d'ici.
+		final IAgent agent = getCurrentAgent(scope);
+		Boolean use_emotion_architecture = scope.hasArg(USE_EMOTIONS_ARCHITECTURE) ? scope.getBoolArg(USE_EMOTIONS_ARCHITECTURE)
+				: (Boolean) agent.getAttribute(USE_EMOTIONS_ARCHITECTURE);
+		if(use_emotion_architecture){
+			createJoy(scope);
+			createSadness(scope);
+		}
+	}
+	
+	private void createJoy(IScope scope){
+		//Simplement vérifier si l'agent possède à la fois la même croyance et le même désir.
+		for(Predicate predTest : getBase(scope,SimpleBdiArchitecture.BELIEF_BASE)){
+			if(getBase(scope,SimpleBdiArchitecture.DESIRE_BASE).contains(predTest)){
+				Emotion joy = new Emotion("joy",predTest);
+				addEmotion(scope,joy);
+			}
+		}
+	}
+	
+	private static void createJoyFromPredicate(IScope scope, Predicate predTest){
+		if(getBase(scope,SimpleBdiArchitecture.DESIRE_BASE).contains(predTest)){
+			Emotion joy = new Emotion("joy",predTest);
+			addEmotion(scope,joy);
+		}
+	}
+	
+	private void createSadness(IScope scope){
+		//Lagent possède la croyance A et le désir nonA (et vice versa). L'émotion est créée sur la croyance.
+		//A améliorer en termes de rapidité de calcul
+		for(Predicate predTest : getBase(scope,SimpleBdiArchitecture.BELIEF_BASE)){
+			for(Predicate desireTest : getBase(scope,SimpleBdiArchitecture.DESIRE_BASE)){
+				if(predTest.equalsButNotTruth(desireTest)){
+					Emotion sadness = new Emotion("sadness",predTest);
+					addEmotion(scope,sadness);
+				}
+			}
+		}
+	}
+	
+	private List<Emotion> listEmotionsNull(IScope scope){
+		List<Emotion> tempPred = new ArrayList<Emotion>();
+		for ( Emotion pred : getEmotionBase(scope, SimpleBdiArchitecture.EMOTION_BASE) ) {
+			if(pred.getIntensity()==0){
+				tempPred.add(pred);
+			}
+		}
+		return tempPred;
+	}
+	
+	@action(name = "add_emotion", args = { @arg(name = EMOTION,
+			type = EmotionType.id,
+			optional = true,
+			doc = @doc("emotion to add to the base")) }, doc = @doc(value = "add the emotion to the emotion base.",
+			returns = "true if it is added in the base.",
+			examples = { @example("") }))
+	public	Boolean primAddEmotion(final IScope scope) throws GamaRuntimeException {
+		Emotion emotionDirect =
+			(Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.id) : null);
+		return addEmotion(scope,emotionDirect);
+	}
+	
+	private static boolean addEmotion(IScope scope, Emotion emo){
+		return addToBase(scope, emo, EMOTION_BASE); 
+	}
+	
+	@action(name = "has_emotion", args = { @arg(name = EMOTION,
+			type = EmotionType.id,
+			optional = true,
+			doc = @doc("emotion to check")) }, doc = @doc(value = "check if the emotion is in the belief base.",
+			returns = "true if it is in the base.",
+			examples = { @example("") }))
+	public Boolean primTestEmotion(final IScope scope) throws GamaRuntimeException {
+		Emotion emotionDirect =
+			(Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.id) : null);
+		if ( emotionDirect != null ) { return hasEmotion(scope, emotionDirect);}
+		return false;
+	}
+	
+	public static Boolean hasEmotion(final IScope scope, Emotion emo){
+		return getEmotionBase(scope, EMOTION_BASE).contains(emo);
+	}
+	
+	@action(name = "get_emotion", args = { @arg(name = EMOTION,
+			type = EmotionType.id,
+			optional = false,
+			doc = @doc("emotion to get")) }, doc = @doc(value = "get the emotion in the emotion base (if several, returns the first one).",
+			returns = "the emotion if it is in the base.",
+			examples = { @example("get_belief(new_predicate(\"has_water\", true))") }))
+		public Emotion getEmotion(final IScope scope) throws GamaRuntimeException {
+			Emotion emotionDirect =
+				(Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.id) : null);
+			if ( emotionDirect != null ) {
+				for ( Emotion emo : getEmotionBase(scope, EMOTION_BASE) ) {
+					if ( emotionDirect.equals(emo) ) { return emo; }
+				}
+			}
+			return null;
+		}
+	
+	public static Boolean removeEmotion(final IScope scope, final Emotion emo){
+		return getEmotionBase(scope, EMOTION_BASE).remove(emo);
+	}
+	
+	@action(name = "remove_emotion", args = { @arg(name = EMOTION,
+		type = EmotionType.id,
+		optional = true,
+		doc = @doc("emotion to remove")) }, doc = @doc(value = "removes the emotion from the emotion base.",
+		returns = "true if it is in the base.",
+		examples = { @example("") }))
+	public Boolean primRemoveEmotion(final IScope scope) throws GamaRuntimeException {
+		Emotion emotionDirect =
+			(Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.id) : null);
+		if ( emotionDirect != null ) { return removeEmotion(scope,emotionDirect);}
+		return false;
+	}
+	
+	//Peut-être mettre un replace emotion.
+	
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		super.init(scope);
