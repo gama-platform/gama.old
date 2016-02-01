@@ -88,6 +88,12 @@ public class EventLayer extends AbstractLayer {
 		return g.getModelCoordinates();
 	}
 
+	// AD: Fix for Issue #1511
+	@Override
+	public boolean containsScreenPoint(final int x, final int y) {
+		return false;
+	}
+
 	private class EventListener implements IEventLayerListener {
 
 		private final static int MOUSE_PRESS = 0;

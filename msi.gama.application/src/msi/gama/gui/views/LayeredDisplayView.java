@@ -153,8 +153,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
 		getOutput().getData().addListener(this);
 		// getDisplaySurface().setZoomListener(this);
-		overlay.update();
 		overlay.setVisible(GamaPreferences.CORE_OVERLAY.getValue());
+		if ( overlay.isVisible() ) {
+			overlay.update();
+		}
 		parent.layout();
 
 		// Create after the surface composite
