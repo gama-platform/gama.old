@@ -16,9 +16,8 @@ global {
 	list<geometry> geometries3D <-[sphere(size/2),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size)];
     
     //The textures can be applied on sphere, cylinder, quad and rectangle
-    list<geometry> texturedGeometries <-[sphere(size/2),point([0,0]),point([0,0]),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),point([0,0]),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size)];
+    list<geometry> texturedGeometries <-[sphere(size/2),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),point([0,0]),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size)];
     
-    list<geometry> pie3Ds <-[spherical_pie(size/2,[0.1,0.1,0.1]),spherical_pie(size/2,[0.1,0.9],[°red,°green]),spherical_pie(size/2,[rnd(100),rnd(100),rnd(100),rnd(100),rnd(100),rnd(100)],[rnd_color(255),rnd_color(255),rnd_color(255),rnd_color(255),rnd_color(255),rnd_color(255)])];
    
 	
 	geometry shape <- rectangle(length(geometries3D)*size*2,size*8);
@@ -45,13 +44,6 @@ global {
 			myGeometry <- texturedGeometries[curTextGeom];
 			myTexture <- gamaRaster;
 			curTextGeom <- curTextGeom+1;
-		}
-		
-		int curPie3D <-0;
-		create Pie3D number: length(pie3Ds){ 
-			location <- {size+curPie3D*size*2, size*8, 0};	
-			myGeometry <- pie3Ds[curPie3D];
-			curPie3D <- curPie3D+1;
 		}
 	}  
 } 
@@ -99,7 +91,6 @@ experiment Display  type: gui {
 			species Geometry2D aspect:default;
 			species Geometry3D aspect:default;
 			species TexturedGeometry3D aspect:default;
-			species Pie3D aspect:default;
 		}
 
 	}
