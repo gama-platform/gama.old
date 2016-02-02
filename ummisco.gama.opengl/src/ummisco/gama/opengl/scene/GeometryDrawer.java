@@ -106,7 +106,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				}
 				break;
 			case MULTILINESTRING:
-				jtsDrawer.drawMultiLineString(gl, (MultiLineString) geometry.geometry, 0, color, geometry.getAlpha(),
+				jtsDrawer.drawMultiLineString(gl, (MultiLineString) geometry.geometry, 0, color, geometry.getBorder(), geometry.getAlpha(),
 					height, geometry);
 				break;
 			case LINESTRING:
@@ -114,7 +114,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			case PLAN:
 			case POLYPLAN:
 				if ( height > 0 ) {
-					jtsDrawer.drawPlan(gl, (LineString) geometry.geometry, 0, color, geometry.getAlpha(), height, 0,
+					jtsDrawer.drawPlan(gl, (LineString) geometry.geometry, 0, color, geometry.getBorder(), geometry.getAlpha(), height, 0,
 						true, geometry);
 				} else {
 					jtsDrawer.drawLineString(gl, (LineString) geometry.geometry, 0, renderer.getLineWidth(), color,

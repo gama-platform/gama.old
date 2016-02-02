@@ -76,7 +76,7 @@ public class JTSDrawer {
 			} else if ( geom instanceof LineString ) {
 				LineString l = (LineString) geom;
 				if ( height > 0 ) {
-					drawPlan(gl, l, z, c, alpha, height, 0, true, object);
+					drawPlan(gl, l, z, c, border, alpha, height, 0, true, object);
 				} else {
 					drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha, object);
 				}
@@ -748,7 +748,7 @@ public class JTSDrawer {
 	// ////////////////////////////// LINE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
 
-	public void drawMultiLineString(final GL2 gl, final MultiLineString lines, final double z, final Color c,
+	public void drawMultiLineString(final GL2 gl, final MultiLineString lines, final double z, final Color c, final Color b,
 		final double alpha, final double height, final GeometryObject object) {
 
 		// get the number of line in the multiline.
@@ -764,7 +764,7 @@ public class JTSDrawer {
 
 			LineString l = (LineString) lines.getGeometryN(i);
 			if ( height > 0 ) {
-				drawPlan(gl, l, z, c, alpha, height, 0, true, object);
+				drawPlan(gl, l, z, c, b, alpha, height, 0, true, object);
 			} else {
 				drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha,object);
 			}
@@ -782,12 +782,6 @@ public class JTSDrawer {
 		int numPoints = line.getNumPoints();
 
 		gl.glLineWidth(size);
-
-		// Add z value (if the whole line as a z value (add_z)
-		/*
-		 * if (Double.isNaN (line.getCoordinate().z) == false) {
-		 * z = z + (double) line.getCoordinate().z; }
-		 */
 
 		// FIXME: this will draw a 3d line if the z value of each point has been
 		// set thanks to add_z_pt but if
@@ -813,7 +807,7 @@ public class JTSDrawer {
 
 	}
 
-	public void drawPlan(final GL2 gl, final LineString l, double z, final Color c, final double alpha,
+	public void drawPlan(final GL2 gl, final LineString l, double z, final Color c, final Color b, final double alpha,
 		final double height, final Integer angle, final boolean drawPolygonContour, final GeometryObject object) {
 
 		drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha, object);
@@ -890,7 +884,8 @@ public class JTSDrawer {
 
 		if ( drawPolygonContour == true ) {
 			if ( !colorpicking ) {
-				gl.glColor4d(0.0d, 0.0d, 0.0d, alpha * c.getAlpha() / 255.0);
+				//gl.glColor4d(0.0d, 0.0d, 0.0d, alpha * c.getAlpha() / 255.0);
+				setColor(gl, b, alpha);
 			}
 
 			for ( int j = 0; j < numPoints - 1; j++ ) {
@@ -910,7 +905,7 @@ public class JTSDrawer {
 				gl.glEnd();
 			}
 			if ( !colorpicking ) {
-				setColor(gl, c, alpha);
+				setColor(gl, b, alpha);
 			}
 
 		}
