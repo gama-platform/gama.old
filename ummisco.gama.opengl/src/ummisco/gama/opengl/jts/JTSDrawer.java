@@ -810,11 +810,13 @@ public class JTSDrawer {
 	public void drawPlan(final GL2 gl, final LineString l, double z, final Color c, final Color b, final double alpha,
 		final double height, final Integer angle, final boolean drawPolygonContour, final GeometryObject object) {
 
-		drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha, object);
-		drawLineString(gl, l, z + height, renderer.getLineWidth(), c, alpha,object);
+		if(object.isTextured() == false){
+		  drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha, object);
+		  drawLineString(gl, l, z + height, renderer.getLineWidth(), c, alpha,object);
+		}
 
 		// Draw a quad
-		gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
+	    gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
 		int numPoints = l.getNumPoints();
 
 		// Add z value
@@ -878,7 +880,7 @@ public class JTSDrawer {
 			
 		}
 
-		if ( drawPolygonContour == true ) {
+		if ( drawPolygonContour == true  && object.isTextured() == false) {
 			if ( !colorpicking ) {
 				setColor(gl, b, alpha);
 			}
@@ -902,7 +904,6 @@ public class JTSDrawer {
 			if ( !colorpicking ) {
 				setColor(gl, b, alpha);
 			}
-
 		}
 	}
 
