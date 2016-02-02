@@ -132,6 +132,9 @@ public class JTSDrawer {
 			if ( texture != null ) {
 				drawTexturedPolygon(gl, p, texture);
 			}
+			if ( drawPolygonContour == true ) {
+				drawPolygonContour(gl, p, border, alpha, z_fighting_value);
+			}
 		}
 	}
 
@@ -585,6 +588,9 @@ public class JTSDrawer {
 		}
 	}
 
+	
+
+	
 	public void drawTexturedFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 		final Color b, final Texture texture, final double height, final boolean drawPolygonContour,
 		final boolean clockwise) {
@@ -606,7 +612,6 @@ public class JTSDrawer {
 
 			Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
 			GLUtilNormal.HandleNormal(vertices, null, alpha, 1, renderer);
-
 			gl.glColor3d(0.25, 0.25, 0.25);// Set the color to white to avoid color and texture mixture
 			gl.glBegin(GL2ES3.GL_QUADS);
 			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
@@ -619,6 +624,25 @@ public class JTSDrawer {
 			gl.glTexCoord2f(0.0f, 1.0f);
 			gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
 			gl.glEnd();
+			
+			if ( drawPolygonContour == true || fill == false ) {
+				if ( !colorpicking ) {
+					setColor(gl, b, alpha);
+				}
+				gl.glBegin(GL.GL_LINES);
+				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
+				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
+				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
+				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
+				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
+				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
+				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
+				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
+				gl.glEnd();
+				if ( !colorpicking ) {
+					setColor(gl, c, alpha);
+				}
+			}
 
 		}
 		texture.disable(gl);
@@ -880,7 +904,7 @@ public class JTSDrawer {
 			
 		}
 
-		if ( drawPolygonContour == true  && object.isTextured() == false) {
+		if ( drawPolygonContour == true) {
 			if ( !colorpicking ) {
 				setColor(gl, b, alpha);
 			}
