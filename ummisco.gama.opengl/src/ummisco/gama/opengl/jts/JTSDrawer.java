@@ -845,8 +845,6 @@ public class JTSDrawer {
 
 			if(object.isTextured()){
 				Texture texture = object.getTexture(gl, renderer, 0);
-				
-				
 				gl.glColor3d(1.0, 1.0, 1.0);
 				if ( texture != null ) {
 					texture.enable(gl);
@@ -867,9 +865,7 @@ public class JTSDrawer {
 				
 				if ( texture != null ) {
 					texture.disable(gl);
-				}
-				
-				
+				}	
 			}
 			else{
 				gl.glBegin(GL2ES3.GL_QUADS);
@@ -884,7 +880,6 @@ public class JTSDrawer {
 
 		if ( drawPolygonContour == true ) {
 			if ( !colorpicking ) {
-				//gl.glColor4d(0.0d, 0.0d, 0.0d, alpha * c.getAlpha() / 255.0);
 				setColor(gl, b, alpha);
 			}
 
@@ -1080,7 +1075,7 @@ public class JTSDrawer {
 		if ( !colorpicking ) {
 			setColor(gl, g.getColor(), g.getAlpha());;
 		}
-		pyramidSkeleton(gl, p, g.getHeight(), g.getColor(), g.getAlpha());
+		pyramidSkeleton(gl, p, g.getHeight(), g.getColor(), g.getAlpha(),g);
 		// border
 		if ( g.getBorder() != null ) {
 			if ( !colorpicking ) {
@@ -1089,7 +1084,7 @@ public class JTSDrawer {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 			gl.glPolygonOffset(0.0f, -(float) 1.1);
-			pyramidSkeleton(gl, p, g.getHeight(), g.getBorder(), g.getAlpha());
+			pyramidSkeleton(gl, p, g.getHeight(), g.getBorder(), g.getAlpha(),g);
 			gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 			if ( !renderer.data.isTriangulation() ) {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
@@ -1203,7 +1198,7 @@ public class JTSDrawer {
 		return vertices;
 	}
 
-	public void pyramidSkeleton(final GL2 gl, final Polygon p, final double size, final Color c, final double alpha) {
+	public void pyramidSkeleton(final GL2 gl, final Polygon p, final double size, final Color c, final double alpha, final GeometryObject g) {
 		Vertex[] vertices;
 
 		if ( renderer.getComputeNormal() ) {
@@ -1211,11 +1206,26 @@ public class JTSDrawer {
 			GLUtilNormal.HandleNormal(vertices, c, alpha, 1, renderer);
 		}
 		Coordinate coords[] = p.getExteriorRing().getCoordinates();
+		
+		if(g.isTextured()){
+			Texture texture = g.getTexture(gl, renderer, 0);
+			gl.glColor3d(1.0, 1.0, 1.0);
+			if ( texture != null ) {
+				texture.enable(gl);
+				texture.bind(gl);
+			}
+			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
+		}
+		
 
 		gl.glBegin(GL2ES3.GL_QUADS);
+		gl.glTexCoord2f(0.0f, 1.0f);
 		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
+		gl.glTexCoord2f(1.0f, 1.0f);
 		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y, coords[1].z);
+		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y, coords[2].z);
+		gl.glTexCoord2f(0.0f, 0.0f);
 		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y, coords[3].z);
 		gl.glEnd();
 
@@ -1228,10 +1238,13 @@ public class JTSDrawer {
 		norm[0] = norm[0] * size + p.getCentroid().getX();
 		norm[1] = norm[1] * size + renderer.yFlag * p.getCentroid().getY();
 		norm[2] = norm[2] * size + p.getCentroid().getCoordinate().z;
-
+		
 		gl.glBegin(GL.GL_TRIANGLES);
+		gl.glTexCoord2f(0.0f, 1.0f);
 		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
+		gl.glTexCoord2f(1.0f, 1.0f);
 		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y, coords[1].z);
+		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
@@ -1241,8 +1254,11 @@ public class JTSDrawer {
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
+		gl.glTexCoord2f(0.0f, 1.0f);
 		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y, coords[1].z);
+		gl.glTexCoord2f(1.0f, 1.0f);
 		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y, coords[2].z);
+		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
@@ -1252,8 +1268,11 @@ public class JTSDrawer {
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
+		gl.glTexCoord2f(0.0f, 1.0f);
 		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y, coords[2].z);
+		gl.glTexCoord2f(1.0f, 1.0f);
 		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y, coords[3].z);
+		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
@@ -1263,10 +1282,20 @@ public class JTSDrawer {
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
+		gl.glTexCoord2f(0.0f, 1.0f);
 		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y, coords[3].z);
+		gl.glTexCoord2f(1.0f, 1.0f);
 		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
+		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
+		
+		if(g.isTextured()){	
+			Texture texture = g.getTexture(gl, renderer, 0);
+			if ( texture != null ) {
+				texture.disable(gl);
+			}	
+		}
 
 	}
 
