@@ -18,10 +18,11 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
-public abstract class AbstractObject implements ISceneObject {
+public abstract class AbstractObject {
 
 	static int index = 0;
 	static Color pickedColor = Color.red;
@@ -33,11 +34,15 @@ public abstract class AbstractObject implements ISceneObject {
 	public boolean picked = false;
 	protected final Texture[] textures;
 
-	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
+	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer, final Texture[] textures) {
 		this.attributes = attributes;
 		this.layer = layer;
 		this.alpha = layer == null ? 1 : layer.alpha;
-		textures = attributes.textures != null ? new Texture[attributes.textures.size()] : null;
+		this.textures = textures;
+	}
+
+	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
+		this(attributes, layer, attributes.textures != null ? new Texture[attributes.textures.size()] : null);
 	}
 
 	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
@@ -50,7 +55,12 @@ public abstract class AbstractObject implements ISceneObject {
 	}
 
 	protected Texture computeTexture(final GL gl, final JOGLRenderer renderer, final int order) {
-		return renderer.getCurrentScene().getTexture(gl, (BufferedImage) attributes.textures.get(order));
+		Object obj = attributes.textures.get(order);
+		if ( obj instanceof BufferedImage ) {
+			return renderer.getCurrentScene().getTexture(gl, (BufferedImage) obj);
+		} else if ( obj instanceof GamaImageFile ) { return renderer.getCurrentScene().getTexture(gl,
+			(GamaImageFile) obj); }
+		return null;
 	}
 
 	public boolean hasSeveralTextures() {
@@ -61,22 +71,18 @@ public abstract class AbstractObject implements ISceneObject {
 		return textures != null && textures.length > 0;
 	}
 
-	@Override
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
 		drawer.draw(gl, this);
 	}
 
-	@Override
 	public void unpick() {
 		picked = false;
 	}
 
-	@Override
 	public void pick() {
 		picked = true;
 	}
 
-	@Override
 	public Color getColor() {
 		if ( picked ) { return pickedColor; }
 		return attributes.color;
@@ -126,5 +132,11 @@ public abstract class AbstractObject implements ISceneObject {
 
 	public IAgent getAgent() {
 		return attributes.agent;
+	}
+
+	public double getRotationAngle() {
+		if ( attributes.rotation == null || attributes.rotation.key == null ) { return 0; }
+		// AD Change to a negative rotation to fix Issue #1514
+		return -attributes.rotation.key;
 	}
 }
