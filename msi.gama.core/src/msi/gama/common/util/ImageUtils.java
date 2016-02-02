@@ -14,9 +14,18 @@ package msi.gama.common.util;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
+import java.awt.image.renderable.ParameterBlock;
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import javax.media.jai.JAI;
+import javax.media.jai.RenderedOp;
+
+import com.sun.media.jai.codec.FileSeekableStream;
+import com.sun.media.jai.codec.TIFFDecodeParam;
+
 import gnu.trove.map.hash.THashMap;
 import msi.gama.runtime.*;
 
@@ -98,6 +107,8 @@ public class ImageUtils {
 	private static final int POSITIONS = 360;
 
 	private static final int ANGLE_INCREMENT = 360 / POSITIONS;
+	
+	private static final List<String> tiffExt = Arrays.asList(".tiff",".tif",".TIF", ".TIFF"); 
 
 	// private final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
 
@@ -125,6 +136,18 @@ public class ImageUtils {
 
 	public BufferedImage getImageFromFile(final File file) throws IOException {
 		BufferedImage image = get(file.getAbsolutePath());
+		if (image == null ) {
+			String ext = file.getName().substring(file.getName().lastIndexOf("."));
+			if (tiffExt.contains(ext)) {
+				FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath());
+				TIFFDecodeParam decodeParam = new TIFFDecodeParam();
+				decodeParam.setDecodePaletteAsShorts(true);
+				ParameterBlock params = new ParameterBlock();
+				params.add(stream);
+				RenderedOp image1 = JAI.create("tiff", params); 
+				image = image1.getAsBufferedImage();
+			}
+		}
 		if ( image != null ) { return image; }
 		image = ImageIO.read(file);
 		if ( image != null ) {
