@@ -24,9 +24,6 @@ public interface ISceneObjects<T extends AbstractObject> {
 
 	public abstract void draw(GL2 gl, boolean picking);
 
-	/**
-	 * @param gl
-	 */
 	public abstract void preload(GL2 gl);
 
 }

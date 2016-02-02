@@ -13,7 +13,12 @@ import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
 abstract class DrawExecuter {
 
-	abstract Rectangle2D executeOn(IScope agent, IExpression item, IGraphics g, DrawingAttributes attributes)
-		throws GamaRuntimeException;
+	final IExpression item;
+
+	DrawExecuter(final IExpression item) {
+		this.item = item.isConst() ? null : item;
+	}
+
+	abstract Rectangle2D executeOn(IScope agent, IGraphics g, DrawingAttributes attributes) throws GamaRuntimeException;
 
 }

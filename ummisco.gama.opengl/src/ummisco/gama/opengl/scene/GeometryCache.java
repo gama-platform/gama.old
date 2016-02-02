@@ -11,9 +11,9 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.awt.Color;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import com.jogamp.opengl.GL2;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
@@ -27,11 +27,12 @@ public class GeometryCache {
 
 	private final Map<String, Integer> cache;
 	GeometryDrawer drawer;
+	static GamaColor defautColor = new GamaColor(0, 0, 0, 255);
 
 	// JTSDrawer drawer;
 
 	public GeometryCache(final JOGLRenderer renderer) {
-		cache = new HashMap<String, Integer>(100, 0.75f);
+		cache = new ConcurrentHashMap<String, Integer>(100, 0.75f, 4);
 		drawer = new GeometryDrawer(renderer);
 	}
 
@@ -60,8 +61,7 @@ public class GeometryCache {
 			((GamaObjFile) file).drawToOpenGL(gl);
 		} else {
 			GamaShape g = (GamaShape) file.getGeometry(GAMA.getRuntimeScope());
-			GamaColor c = GamaColor.getInt(Color.black.getRGB());
-			DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0, 0), c, c);
+			DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0, 0), defautColor, defautColor);
 			attributes.type = g.getGeometricalType();
 			attributes.empty = false;
 			GeometryObject object = new GeometryObject(g.getInnerGeometry(), attributes, null);

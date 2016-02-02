@@ -325,6 +325,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(x * d, y * d, z * d);
 	}
 
+	public GamaPoint dividedBy(final double d) {
+		return new GamaPoint(x / d, y / d, z / d);
+	}
+
 	public GamaPoint minus(final GamaPoint other) {
 		return new GamaPoint(x - other.x, y - other.y, z - other.z);
 	}
@@ -387,7 +391,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		// TODO Auto-generated method stub
 	}
 
-	
 	/**
 	 * Method getType()
 	 * @see msi.gama.common.interfaces.ITyped#getType()

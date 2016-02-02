@@ -15,7 +15,6 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import msi.gama.common.interfaces.*;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -162,15 +161,12 @@ public class DrawStatement extends AbstractStatementSequence {
 	public static final String END_ARROW = "end_arrow";
 	public static final String BEGIN_ARROW = "begin_arrow";
 
-	static final GamaPoint LOC = new GamaPoint(1.0, 1.0);
-
 	private final DrawExecuter executer;
 	private final DrawingData data;
-	private final IExpression item;
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		item = getFacet(IKeyword.GEOMETRY);
+		IExpression item = getFacet(IKeyword.GEOMETRY);
 		if ( item == null ) {
 			executer = null;
 			data = null;
@@ -184,22 +180,22 @@ public class DrawStatement extends AbstractStatementSequence {
 				executer = new TextExecuter(item);
 			} else {
 				// item is supposed to be castable into a geometry
-				executer = new ShapeExecuter(getFacet(BEGIN_ARROW), getFacet(END_ARROW));
+				executer = new ShapeExecuter(item, getFacet(BEGIN_ARROW), getFacet(END_ARROW));
 			}
 		}
 	}
 
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if ( executer == null ) { return null; }
 		final IGraphics g = scope.getGraphics();
 		if ( g == null ) { return null; }
 		try {
-			return executer.executeOn(scope, item, g, data.computeAttributes(scope));
+			return executer.executeOn(scope, g, data.computeAttributes(scope));
 		} catch (GamaRuntimeException e) {
 			throw e;
 		} catch (Exception e) {
 			java.lang.System.err.println("Error when drawing in a display : " + e.getMessage());
+			e.printStackTrace();
 		}
 		return null;
 	}

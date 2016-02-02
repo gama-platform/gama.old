@@ -29,6 +29,8 @@ import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
 public class GridLayer extends ImageLayer {
 
+	BufferedImage image;
+
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		final GridLayerStatement g = (GridLayerStatement) definition;

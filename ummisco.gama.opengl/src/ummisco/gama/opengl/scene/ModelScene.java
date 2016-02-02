@@ -20,7 +20,7 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.file.*;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
@@ -97,13 +97,28 @@ public class ModelScene {
 		if ( image == null ) { return null; }
 		Texture texture = textures.get(image);
 		if ( texture == null ) {
-			if ( TextureCache.contains(image) ) {
-				texture = TextureCache.get(gl, image);
-			} else {
-				texture = TextureCache.buildTexture(gl, image);
-				textures.put(image, texture);
-			}
+			texture = TextureCache.buildTexture(gl, image);
+			textures.put(image, texture);
 		}
+		if ( texture != null ) {
+			boolean antiAlias = renderer.data.isAntialias();
+			// Apply antialas to the texture based on the current preferences
+			texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
+			texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
+		}
+		return texture;
+	}
+
+	// Must have been stored before
+	public Texture getTexture(final GL gl, final GamaImageFile file) {
+		if ( file == null ) { return null; }
+
+		// if ( !TextureCache.contains(file) ) {
+		// TextureCache.initializeStaticTexture(file);
+		// }
+
+		Texture texture = TextureCache.get(gl, file);
+
 		if ( texture != null ) {
 			boolean antiAlias = renderer.data.isAntialias();
 			// Apply antialas to the texture based on the current preferences
@@ -129,16 +144,18 @@ public class ModelScene {
 		currentLayer.addString(string, attributes);
 	}
 
-	public void addFile(final GamaGeometryFile fileName, final DrawingAttributes attributes) {
+	public void addFile(final GamaFile file, final DrawingAttributes attributes) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addFile(fileName, attributes);
+		if ( file instanceof GamaImageFile ) {
+			TextureCache.initializeStaticTexture((GamaImageFile) file);
+			currentLayer.addImage((GamaImageFile) file, attributes);
+		} else if ( file instanceof GamaGeometryFile ) {
+			currentLayer.addFile((GamaGeometryFile) file, attributes);
+		}
 	}
 
 	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		if ( !attributes.isDynamic ) {
-			TextureCache.initializeStaticTexture(img);
-		}
 		currentLayer.addImage(img, attributes);
 	}
 
@@ -161,8 +178,8 @@ public class ModelScene {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( attributes.textures != null && !attributes.textures.isEmpty() ) {
 			for ( Object img : attributes.textures ) {
-				if ( img instanceof BufferedImage ) {
-					TextureCache.initializeStaticTexture((BufferedImage) img);
+				if ( img instanceof GamaImageFile ) {
+					TextureCache.initializeStaticTexture((GamaImageFile) img);
 				}
 			}
 		}

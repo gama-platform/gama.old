@@ -437,14 +437,21 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void removeListener(final IEventLayerListener listener) {
-		OwnMouseListener l = mouseListeners.get(listener);
+		final OwnMouseListener l = mouseListeners.get(listener);
 		if ( l == null ) { return; }
 		mouseListeners.remove(listener);
-		if ( renderer.canvas != null && !renderer.canvas.isDisposed() ) {
-			renderer.canvas.removeMouseListener(l);
-			renderer.canvas.removeMouseMoveListener(l);
-			renderer.canvas.removeFocusListener(l);
-		}
+		GAMA.getGui().run(new Runnable() {
+
+			@Override
+			public void run() {
+				if ( renderer.canvas != null && !renderer.canvas.isDisposed() ) {
+					renderer.canvas.removeMouseListener(l);
+					renderer.canvas.removeMouseMoveListener(l);
+					renderer.canvas.removeFocusListener(l);
+				}
+			}
+		});
+
 	}
 
 	@Override

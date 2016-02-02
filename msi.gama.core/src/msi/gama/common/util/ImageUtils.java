@@ -16,81 +16,15 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.*;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import javax.imageio.ImageIO;
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
-
-import com.sun.media.jai.codec.FileSeekableStream;
-import com.sun.media.jai.codec.TIFFDecodeParam;
-
+import javax.media.jai.*;
+import com.sun.media.jai.codec.*;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.runtime.*;
 
 public class ImageUtils {
-
-	// TODO UCdetector: Remove unused code:
-	// /**
-	// * Creates a rotated version of the input image.
-	// *
-	// * @param c The component to get properties useful for painting, e.g. the foreground
-	// * or background color.
-	// * @param icon the image to be rotated.
-	// * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double
-	// * but we will mod it with 360 before using it.
-	// *
-	// * @return the image after rotating.
-	// */
-	// public BufferedImage createRotatedImage(final BufferedImage icon,
-	// final int rotatedAngle) {
-	// // convert rotatedAngle to a value from 0 to 360
-	// int originalAngle = rotatedAngle % 360;
-	// if ( rotatedAngle != 0 && originalAngle == 0 ) {
-	// originalAngle = 360;
-	// }
-	//
-	// // convert originalAngle to a value from 0 to 90
-	// int angle = originalAngle % 90;
-	// if ( originalAngle != 0.0 && angle == 0.0 ) {
-	// angle = 90;
-	// }
-	//
-	// double radian = angle * GamaMath.toRad;
-	//
-	// int iw = icon.getWidth();
-	// int ih = icon.getHeight();
-	// int w;
-	// int h;
-	//
-	// if ( originalAngle >= 0 && originalAngle <= 90 || originalAngle > 180
-	// && originalAngle <= 270 ) {
-	// w = (int) (iw * GamaMath.sin(DEGREE_90 - radian) + ih * GamaMath.sin(radian));
-	// h = (int) (iw * GamaMath.sin(radian) + ih * GamaMath.sin(DEGREE_90 - radian));
-	// } else {
-	// w = (int) (ih * GamaMath.sin(DEGREE_90 - radian) + iw * GamaMath.sin(radian));
-	// h = (int) (ih * GamaMath.sin(radian) + iw * GamaMath.sin(DEGREE_90 - radian));
-	// }
-	// BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-	// Graphics2D g2d = image.createGraphics();
-	//
-	// // calculate the center of the icon.
-	// int cx = iw / 2;
-	// int cy = ih / 2;
-	//
-	// // move the graphics center point to the center of the icon.
-	// g2d.translate(w / 2, h / 2);
-	//
-	// // rotate the graphcis about the center point of the icon
-	// g2d.rotate(Math.toRadians(originalAngle));
-	//
-	// g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-	// RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-	// g2d.drawImage(icon, -cx, -cy, null);
-	// g2d.dispose();
-	// return image;
-	// }
 
 	private final Map<String, BufferedImage[]> cache;
 
@@ -107,8 +41,8 @@ public class ImageUtils {
 	private static final int POSITIONS = 360;
 
 	private static final int ANGLE_INCREMENT = 360 / POSITIONS;
-	
-	private static final List<String> tiffExt = Arrays.asList(".tiff",".tif",".TIF", ".TIFF"); 
+
+	private static final List<String> tiffExt = Arrays.asList(".tiff", ".tif", ".TIF", ".TIFF");
 
 	// private final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
 
@@ -136,20 +70,21 @@ public class ImageUtils {
 
 	public BufferedImage getImageFromFile(final File file) throws IOException {
 		BufferedImage image = get(file.getAbsolutePath());
-		if (image == null ) {
+		if ( image == null ) {
 			String ext = file.getName().substring(file.getName().lastIndexOf("."));
-			if (tiffExt.contains(ext)) {
+			if ( tiffExt.contains(ext) ) {
 				FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath());
 				TIFFDecodeParam decodeParam = new TIFFDecodeParam();
 				decodeParam.setDecodePaletteAsShorts(true);
 				ParameterBlock params = new ParameterBlock();
 				params.add(stream);
-				RenderedOp image1 = JAI.create("tiff", params); 
+				RenderedOp image1 = JAI.create("tiff", params);
 				image = image1.getAsBufferedImage();
 			}
 		}
-		if ( image != null ) { return image; }
-		image = ImageIO.read(file);
+		if ( image == null ) {
+			image = ImageIO.read(file);
+		}
 		if ( image != null ) {
 			add(file.getAbsolutePath(), image);
 		}
@@ -291,52 +226,52 @@ public class ImageUtils {
 	 * the {@code BILINEAR} hint is specified)
 	 * @return a scaled version of the original {@code BufferedImage}
 	 */
-	public static BufferedImage downScale(final BufferedImage img, final int targetWidth, final int targetHeight,
-		final Object hint, final boolean higherQuality) {
-
-		final int type =
-			img.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-		BufferedImage ret = img;
-		int w, h;
-		if ( higherQuality ) {
-			// Use multi-step technique: start with original size, then
-			// scale down in multiple passes with drawImage()
-			// until the target size is reached
-			w = img.getWidth();
-			h = img.getHeight();
-		} else {
-			// Use one-step technique: scale directly from original
-			// size to target size with a single drawImage() call
-			w = targetWidth;
-			h = targetHeight;
-		}
-
-		do {
-			if ( higherQuality && w > targetWidth ) {
-				w /= 2;
-				if ( w < targetWidth ) {
-					w = targetWidth;
-				}
-			}
-
-			if ( higherQuality && h > targetHeight ) {
-				h /= 2;
-				if ( h < targetHeight ) {
-					h = targetHeight;
-				}
-			}
-
-			final BufferedImage tmp = new BufferedImage(w, h, type);
-			final Graphics2D g2 = tmp.createGraphics();
-			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			g2.drawImage(ret, 0, 0, w, h, null);
-			g2.dispose();
-
-			ret = tmp;
-		} while (w != targetWidth || h != targetHeight);
-
-		return ret;
-	}
+	// public static BufferedImage downScale(final BufferedImage img, final int targetWidth, final int targetHeight,
+	// final Object hint, final boolean higherQuality) {
+	//
+	// final int type =
+	// img.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+	// BufferedImage ret = img;
+	// int w, h;
+	// if ( higherQuality ) {
+	// // Use multi-step technique: start with original size, then
+	// // scale down in multiple passes with drawImage()
+	// // until the target size is reached
+	// w = img.getWidth();
+	// h = img.getHeight();
+	// } else {
+	// // Use one-step technique: scale directly from original
+	// // size to target size with a single drawImage() call
+	// w = targetWidth;
+	// h = targetHeight;
+	// }
+	//
+	// do {
+	// if ( higherQuality && w > targetWidth ) {
+	// w /= 2;
+	// if ( w < targetWidth ) {
+	// w = targetWidth;
+	// }
+	// }
+	//
+	// if ( higherQuality && h > targetHeight ) {
+	// h /= 2;
+	// if ( h < targetHeight ) {
+	// h = targetHeight;
+	// }
+	// }
+	//
+	// final BufferedImage tmp = new BufferedImage(w, h, type);
+	// final Graphics2D g2 = tmp.createGraphics();
+	// g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	// g2.drawImage(ret, 0, 0, w, h, null);
+	// g2.dispose();
+	//
+	// ret = tmp;
+	// } while (w != targetWidth || h != targetHeight);
+	//
+	// return ret;
+	// }
 
 	/**
 	 * @param x

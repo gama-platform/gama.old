@@ -17,6 +17,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.BufferOverflowException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import com.jogamp.opengl.*;
@@ -33,7 +34,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.*;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.file.*;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
@@ -60,7 +61,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	public int frame = 0;
 	private boolean picking = false;
 	public int pickedObjectIndex = -1;
-	public ISceneObject currentPickedObject;
+	public AbstractObject currentPickedObject;
 	int[] viewport = new int[4];
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
@@ -81,7 +82,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	private ModelScene currentScene;
 	private volatile boolean inited;
 	private GeometryCache cache;
-	protected Map<String, Envelope> envelopes;
+	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<String, Envelope>();
 	// Use to inverse y composaant
 	public int yFlag;
 
@@ -192,7 +193,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		GL2 gl = drawable.getContext().getGL().getGL2();
 		// GL2 gl = GLContext.getCurrentGL().getGL2();
 
-		envelopes = new Hashtable<String, Envelope>();
 		initializeCanvasWithListeners();
 
 		width = drawable.getSurfaceWidth();
@@ -623,10 +623,11 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile file, final DrawingAttributes attributes) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
-		if ( !envelopes.containsKey(file.getPath()) ) {
-			envelopes.put(file.getPath(), file.computeEnvelope(null));
+
+		if ( file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath()) ) {
+			envelopes.put(file.getPath(), file.computeEnvelope(displaySurface.getDisplayScope()));
 		}
 		sceneBuffer.getSceneToUpdate().addFile(file, attributes);
 		return rect;

@@ -11,11 +11,10 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
+import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
 /**
@@ -26,7 +25,7 @@ import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
  */
 public class ImageLayer extends AbstractLayer {
 
-	BufferedImage image = null;
+	GamaImageFile file = null;
 	private String imageFileName = "";
 
 	public ImageLayer(final IScope scope, final ILayerStatement layer) {
@@ -39,23 +38,18 @@ public class ImageLayer extends AbstractLayer {
 		if ( imageFileName != null && imageFileName.equals(newImage) ) { return; }
 		imageFileName = newImage;
 		if ( imageFileName == null || imageFileName.length() == 0 ) {
-			image = null;
+			file = null;
 		} else {
-			try {
-				image = ImageUtils.getInstance().getImageFromFile(scope, imageFileName);
-			} catch (Exception e) {
-				image = null;
-				e.printStackTrace();
-			}
+			file = new GamaImageFile(scope, imageFileName);
 		}
 	}
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage(scope);
-		if ( image == null ) { return; }
+		if ( file == null ) { return; }
 		DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0), null, null);
-		dg.drawImage(image, attributes);
+		dg.drawFile(file, attributes);
 	}
 
 	@Override

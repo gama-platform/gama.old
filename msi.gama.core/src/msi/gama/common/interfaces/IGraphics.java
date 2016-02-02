@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.file.GamaFile;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
 /**
@@ -40,7 +40,7 @@ public interface IGraphics {
 		final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, GamaColor gridColor,
 		final Envelope3D cellSize, String name);
 
-	public abstract Rectangle2D drawFile(final GamaGeometryFile file, final DrawingAttributes attributes);
+	public abstract Rectangle2D drawFile(GamaFile file, DrawingAttributes attributes);
 	//
 	// public abstract Rectangle2D drawFile(final IScope scope, final GamaFile filecheck, final Color color,
 	// final ILocation locationInModelUnits, final ILocation sizeInModelUnits, GamaPair<Double, GamaPoint> rotates3D,
@@ -88,5 +88,11 @@ public interface IGraphics {
 	public abstract Double getZoomLevel();
 
 	public abstract boolean is2D();
+
+	/**
+	 * @param file
+	 * @param attributes
+	 * @return
+	 */
 
 }

@@ -19,7 +19,7 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.file.*;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
@@ -155,9 +155,12 @@ public class LayerObject implements Iterable<GeometryObject> {
 		resources.add(new ResourceObject(file, attributes, this));
 	}
 
+	public void addImage(final GamaImageFile img, final DrawingAttributes attributes) {
+		images.add(new ImageObject(img, attributes, this));
+	}
+
 	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
 		images.add(new ImageObject(img, attributes, this));
-
 	}
 
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,

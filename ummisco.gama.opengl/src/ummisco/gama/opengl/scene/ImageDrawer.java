@@ -26,8 +26,6 @@ import ummisco.gama.opengl.utils.*;
  */
 public class ImageDrawer extends ObjectDrawer<ImageObject> {
 
-	// public float textureTop, textureBottom, textureLeft, textureRight;
-
 	public ImageDrawer(final JOGLRenderer r) {
 		super(r);
 	}
@@ -50,11 +48,12 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		float textureBottom = textureCoords.bottom();
 		float textureLeft = textureCoords.left();
 		float textureRight = textureCoords.right();
-		if ( img.getAngle() != 0 ) {
+		double angle = img.getRotationAngle();
+		if ( angle != 0 ) {
 			gl.glTranslated(x + width / 2, -(y + height / 2), 0.0d);
 			// FIXME:Check counterwise or not, and do we rotate
 			// around the center or around a point.
-			gl.glRotated(img.getAngle(), 0.0d, 0.0d, 1.0d);
+			gl.glRotated(angle, 0.0d, 0.0d, 1.0d);
 			gl.glTranslated(-(x + width / 2), +(y + height / 2), 0.0d);
 		}
 
@@ -95,10 +94,10 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		gl.glTexCoord2f(textureLeft, textureTop);
 		gl.glVertex3d(x, -y, z);
 		gl.glEnd();
-
-		if ( img.getAngle() != 0 ) {
+		angle = img.getRotationAngle();
+		if ( angle != 0 ) {
 			gl.glTranslated(x + width / 2, -(y + height / 2), 0.0d);
-			gl.glRotated(img.getAngle(), 0.0d, 0.0d, 1.0d);
+			gl.glRotated(angle, 0.0d, 0.0d, 1.0d);
 			gl.glTranslated(-(x + width / 2), +(y + height / 2), 0.0d);
 		}
 		// curTexture.disable(gl);

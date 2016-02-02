@@ -5,17 +5,16 @@
 package msi.gaml.statements.draw;
 
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.List;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
@@ -23,20 +22,47 @@ import msi.gaml.types.*;
 
 class ShapeExecuter extends DrawExecuter {
 
-	/**
-	 *
-	 */
 	final IExpression endArrow, beginArrow;
+	final IShape constantShape;
+	final Double constantEnd, constantBegin;
+	final boolean hasArrows;
 
-	ShapeExecuter(final IExpression beginArrow, final IExpression endArrow) throws GamaRuntimeException {
-		this.endArrow = endArrow;
-		this.beginArrow = beginArrow;
+	ShapeExecuter(final IExpression item, final IExpression beginArrow, final IExpression endArrow)
+		throws GamaRuntimeException {
+		super(item);
+		constantShape = item.isConst() ? Cast.asGeometry(null, item.value(null)) : null;
+		hasArrows = beginArrow != null && endArrow != null;
+		if ( beginArrow != null ) {
+			if ( beginArrow.isConst() ) {
+				constantBegin = Cast.asFloat(null, beginArrow.value(null));
+				this.beginArrow = null;
+			} else {
+				constantBegin = null;
+				this.beginArrow = beginArrow;
+			}
+		} else {
+			this.beginArrow = null;
+			constantBegin = null;
+		}
+		if ( endArrow != null ) {
+			if ( endArrow.isConst() ) {
+				constantEnd = Cast.asFloat(null, endArrow.value(null));
+				this.endArrow = null;
+			} else {
+				constantEnd = null;
+				this.endArrow = beginArrow;
+			}
+		} else {
+			this.endArrow = null;
+			constantEnd = null;
+		}
+
 	}
 
 	@Override
-		Rectangle2D executeOn(final IScope scope, final IExpression item, final IGraphics gr,
-			final DrawingAttributes attributes) throws GamaRuntimeException {
-		IShape shape = Cast.asGeometry(scope, item.value(scope), false);
+		Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingAttributes attributes)
+			throws GamaRuntimeException {
+		IShape shape = constantShape == null ? Cast.asGeometry(scope, item.value(scope), false) : constantShape;
 		if ( shape == null ) { return null; }
 		// We push the type of the geometry to the attributes
 		attributes.setShapeType(shape.getGeometricalType());
@@ -76,14 +102,9 @@ class ShapeExecuter extends DrawExecuter {
 		textureNames.addAll(attributes.textures);
 		attributes.textures.clear();
 		for ( String s : textureNames ) {
-			BufferedImage image;
-			try {
-				image = ImageUtils.getInstance().getImageFromFile(scope, s);
-				attributes.textures.add(image);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
+			GamaImageFile image;
+			image = new GamaImageFile(scope, s);
+			attributes.textures.add(image);
 		}
 	}
 
@@ -106,22 +127,24 @@ class ShapeExecuter extends DrawExecuter {
 	}
 
 	private IShape addArrows(final IScope scope, final IShape g1, final Boolean fill) {
+		if ( !hasArrows ) { return g1; }
+		IList<? extends ILocation> points = g1.getPoints();
+		int size = points.size();
+		if ( size < 2 ) { return g1; }
 		IShape end = null, begin = null;
-		if ( endArrow != null ) {
-			IList<? extends ILocation> points = g1.getPoints();
-			int size = points.size();
-			if ( size < 2 ) { return g1; }
-			double width = Cast.asFloat(scope, endArrow.value(scope));
-			end = GamaGeometryType.buildArrow(new GamaPoint(points.get(size - 2)), new GamaPoint(points.get(size - 1)),
-				width, width + width / 3, fill);
+		if ( endArrow != null || constantEnd != null ) {
+			double width = constantEnd == null ? Cast.asFloat(scope, endArrow.value(scope)) : constantEnd;
+			if ( width > 0 ) {
+				end = GamaGeometryType.buildArrow(new GamaPoint(points.get(size - 2)),
+					new GamaPoint(points.get(size - 1)), width, width + width / 3, fill);
+			}
 		}
-		if ( beginArrow != null ) {
-			IList<? extends ILocation> points = g1.getPoints();
-			int size = points.size();
-			if ( size < 2 ) { return g1; }
-			double width = Cast.asFloat(scope, beginArrow.value(scope));
-			begin = GamaGeometryType.buildArrow(new GamaPoint(points.get(1)), new GamaPoint(points.get(0)), width,
-				width + width / 3, fill);
+		if ( beginArrow != null || constantBegin != null ) {
+			double width = constantBegin == null ? Cast.asFloat(scope, beginArrow.value(scope)) : constantBegin;
+			if ( width > 0 ) {
+				begin = GamaGeometryType.buildArrow(new GamaPoint(points.get(1)), new GamaPoint(points.get(0)), width,
+					width + width / 3, fill);
+			}
 		}
 		return GamaGeometryType.buildMultiGeometry(g1, begin, end);
 	}

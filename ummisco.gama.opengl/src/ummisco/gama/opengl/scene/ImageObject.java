@@ -18,17 +18,26 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
+import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class ImageObject extends AbstractObject {
 
-	final public BufferedImage image;
+	// final public BufferedImage image;
+	final private GamaImageFile file;
+	final private BufferedImage image;
+
+	public ImageObject(final GamaImageFile file, final DrawingAttributes attributes, final LayerObject layer) {
+		super(attributes, layer, new Texture[1]);
+		this.file = file;
+		this.image = null;
+	}
 
 	public ImageObject(final BufferedImage image, final DrawingAttributes attributes, final LayerObject layer) {
-		super(attributes, layer);
+		super(attributes, layer, new Texture[1]);
 		this.image = image;
-
+		this.file = null;
 	}
 
 	@Override
@@ -69,19 +78,21 @@ public class ImageObject extends AbstractObject {
 
 	@Override
 	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
-		if ( image == null ) { return null; }
-		return renderer.getCurrentScene().getTexture(gl, image);
+		Texture texture = null;
+		if ( image == null ) {
+			texture = renderer.getCurrentScene().getTexture(gl, file);
+		} else {
+			texture = renderer.getCurrentScene().getTexture(gl, image);
+		}
+		if ( getDimensions() == null ) {
+			attributes.size = new GamaPoint(renderer.data.getEnvWidth(), renderer.data.getEnvHeight());
+		}
+		return texture;
 	}
 
 	@Override
 	public boolean isTextured() {
 		return true;
-	}
-
-	public int getAngle() {
-		if ( attributes.rotation == null || attributes.rotation.key == null ) { return 0; }
-		// AD Change to a negative rotation to fix Issue #1514
-		return -attributes.rotation.key.intValue();
 	}
 
 	@Override

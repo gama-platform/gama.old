@@ -14,85 +14,39 @@ package msi.gaml.operators;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import com.vividsolutions.jts.algorithm.PointLocator;
-import com.vividsolutions.jts.algorithm.distance.DistanceToPoint;
-import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import com.vividsolutions.jts.geom.TopologyException;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.operation.buffer.BufferOp;
-import com.vividsolutions.jts.operation.buffer.BufferParameters;
+import com.vividsolutions.jts.algorithm.distance.*;
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.operation.buffer.*;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
-
 import gnu.trove.set.hash.THashSet;
-import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.common.util.ImageUtils;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.Envelope3D;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.filter.Different;
-import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.metamodel.topology.filter.In;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
-import msi.gama.metamodel.topology.grid.GridTopology;
+import msi.gama.metamodel.topology.filter.*;
+import msi.gama.metamodel.topology.grid.*;
 import msi.gama.metamodel.topology.projection.IProjection;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.IOperatorCategory;
-import msi.gama.precompiler.ITypeProvider;
+import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaMapFactory;
-import msi.gama.util.GamaPair;
-import msi.gama.util.IContainer;
-import msi.gama.util.IList;
-import msi.gama.util.file.GamaFile;
-import msi.gama.util.file.GamaGisFile;
-import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.*;
+import msi.gama.util.file.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gama.util.path.IPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.path.*;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.GamaGeometryType;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 10 dec. 2010
@@ -327,16 +281,17 @@ public abstract class Spatial {
 			if ( p == null ) { return null; }
 			return cone(scope, (int) p.x, (int) p.y);
 		}
-		
-		@operator(value = "cone3D", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+
+		@operator(value = "cone3D",
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
 		@doc(value = "A cone geometry which radius is equal to the operand.",
 			special_cases = { "returns a point if the operand is lower or equal to 0." },
 			comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.",
 			examples = { @example(value = "cone3D(10.0,10.0)",
-			equals = "a geometry as a circle of radius 10 but displays a cone.",
-			test = false) },
+				equals = "a geometry as a circle of radius 10 but displays a cone.",
+				test = false) },
 			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-			"triangle" })
+				"triangle" })
 		public static IShape cone3D(final IScope scope, final Double radius, final Double height) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -2425,25 +2380,25 @@ public abstract class Spatial {
 				isExecutable = false) },
 			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 				"overlapping" })
-		public static IList<? extends IShape> at_distance(final IScope scope, final IContainer<?, ? extends IShape> list,
-			final Double distance) {
+		public static IList<? extends IShape> at_distance(final IScope scope,
+			final IContainer<?, ? extends IShape> list, final Double distance) {
 			IType contentType = list.getType().getContentType();
-			if(contentType.isAgentType()) {
+			if ( contentType.isAgentType() ) {
 				return _neighbours(scope, In.list(scope, list), scope.getAgentScope(), distance);
-			} 
-			else if(contentType == Types.GEOMETRY)
-				return geomAtDistance(scope,list,distance);
+			} else if ( contentType == Types.GEOMETRY ) { return geomAtDistance(scope, list, distance); }
 			return GamaListFactory.EMPTY_LIST;
 		}
-		
-		public static IList<? extends IShape> geomAtDistance(final IScope scope, final IContainer<?, ? extends IShape> list,
-				final Double distance) {
+
+		public static IList<? extends IShape> geomAtDistance(final IScope scope,
+			final IContainer<?, ? extends IShape> list, final Double distance) {
 			IShape ag = scope.getAgentScope();
 			IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
-			for(Object shape : list.listValue(scope,Types.GEOMETRY , false)) {
-				if (shape == null || !(shape instanceof IShape)) continue;
-				if (scope.getTopology().distanceBetween(scope, ag, (IShape)shape) <= distance) {
-					geoms.add((IShape)shape);
+			for ( Object shape : list.listValue(scope, Types.GEOMETRY, false) ) {
+				if ( shape == null || !(shape instanceof IShape) ) {
+					continue;
+				}
+				if ( scope.getTopology().distanceBetween(scope, ag, (IShape) shape) <= distance ) {
+					geoms.add((IShape) shape);
 				}
 			}
 			return geoms;
@@ -2466,10 +2421,9 @@ public abstract class Spatial {
 		public static IList<? extends IShape> inside(final IScope scope, final IContainer<?, ? extends IShape> list,
 			final IShape source) {
 			IType contentType = list.getType().getContentType();
-			if(contentType.isAgentType())
+			if ( contentType.isAgentType() ) {
 				return _gather(scope, In.list(scope, list), source, true);
-			else if(contentType == Types.GEOMETRY)
-				return geomOverlapping(scope,list,source, true );
+			} else if ( contentType == Types.GEOMETRY ) { return geomOverlapping(scope, list, source, true); }
 			return GamaListFactory.EMPTY_LIST;
 		}
 
@@ -2485,31 +2439,32 @@ public abstract class Spatial {
 				@example(value = "(species1 + species2) overlapping self", isExecutable = false) },
 			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 				"agents_overlapping" })
-		public static IList<? extends IShape> overlapping(final IScope scope, final IContainer<?, ? extends IShape> list,
-			final IShape source) {
+		public static IList<? extends IShape> overlapping(final IScope scope,
+			final IContainer<?, ? extends IShape> list, final IShape source) {
 			IType contentType = list.getType().getContentType();
-			if(contentType.isAgentType())
+			if ( contentType.isAgentType() ) {
 				return _gather(scope, In.list(scope, list), source, false);
-			else if(contentType == Types.GEOMETRY)
-				return geomOverlapping(scope,list,source, false);
+			} else if ( contentType == Types.GEOMETRY ) { return geomOverlapping(scope, list, source, false); }
 			return GamaListFactory.EMPTY_LIST;
 		}
-		
-		public static IList<? extends IShape> geomOverlapping(final IScope scope, final IContainer<?, ? extends IShape> list,
-				final IShape source, final boolean cover) {
+
+		public static IList<? extends IShape> geomOverlapping(final IScope scope,
+			final IContainer<?, ? extends IShape> list, final IShape source, final boolean cover) {
 			IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
-			for(Object shape : list.listValue(scope,Types.GEOMETRY , false)) {
-				if (shape == null || !(shape instanceof IShape)) continue;
-				if (cover) {
-					if (source.covers((IShape) shape)) {
-						geoms.add((IShape)shape);
+			for ( Object shape : list.listValue(scope, Types.GEOMETRY, false) ) {
+				if ( shape == null || !(shape instanceof IShape) ) {
+					continue;
+				}
+				if ( cover ) {
+					if ( source.covers((IShape) shape) ) {
+						geoms.add((IShape) shape);
 					}
 				} else {
-					if (source.intersects((IShape) shape)) {
-						geoms.add((IShape)shape);
+					if ( source.intersects((IShape) shape) ) {
+						geoms.add((IShape) shape);
 					}
 				}
-				
+
 			}
 			return geoms;
 		}
@@ -2530,21 +2485,22 @@ public abstract class Spatial {
 		public static IShape closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 			final IShape source) {
 			IType contentType = list.getType().getContentType();
-			if(contentType.isAgentType())
+			if ( contentType.isAgentType() ) {
 				return _closest(scope, In.list(scope, list), source);
-			else if(contentType == Types.GEOMETRY)
-				return geomClostestTo(scope,list,source);
+			} else if ( contentType == Types.GEOMETRY ) { return geomClostestTo(scope, list, source); }
 			return null;
 		}
-		
+
 		public static IShape geomClostestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
-				final IShape source) {
+			final IShape source) {
 			IShape shp = null;
 			double distMin = Double.MAX_VALUE;
-			for(Object shape : list.listValue(scope,Types.GEOMETRY , false)) {
-				if (shape == null || !(shape instanceof IShape)) continue;
-				double dist = scope.getTopology().distanceBetween(scope, source, (IShape)shape);
-				if (dist < distMin) {
+			for ( Object shape : list.listValue(scope, Types.GEOMETRY, false) ) {
+				if ( shape == null || !(shape instanceof IShape) ) {
+					continue;
+				}
+				double dist = scope.getTopology().distanceBetween(scope, source, (IShape) shape);
+				if ( dist < distMin ) {
 					shp = (IShape) shape;
 					distMin = dist;
 				}
@@ -2942,11 +2898,14 @@ public abstract class Spatial {
 					.error("The 'dem' operator requires image files. Either " + demFile.getPath() + " or " +
 						textureFile.getPath() + " is not an image", scope); }
 			final IGraphics graphics = scope.getGraphics();
-			if ( graphics instanceof IGraphics.OpenGL ) {
+			if ( !graphics.is2D() ) {
 				BufferedImage dem = ((GamaImageFile) demFile).getImage(scope);
 				BufferedImage texture = ((GamaImageFile) textureFile).getImage(scope);
 				texture = ImageUtils.flipRightSideLeftImage(texture);
 				((IGraphics.OpenGL) graphics).drawDEM(scope, dem, texture, z_factor);
+			} else {
+				DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0), null, null);
+				graphics.drawFile(textureFile, attributes);
 			}
 			// ILocation location;
 			// final IAgent a = scope.getAgentScope();
@@ -2985,28 +2944,28 @@ public abstract class Spatial {
 
 			return points;
 		}
-		
+
 		@operator(value = "is_clockwise",
-				type = IType.BOOL,
-				category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
-			@doc(value = "returns true if the geometry is defined clockwise ",
-				examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
-				see = {"change_clockwise"})
+			type = IType.BOOL,
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+		@doc(value = "returns true if the geometry is defined clockwise ",
+			examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
+			see = { "change_clockwise" })
 		public static Boolean isClockwise(final IScope scope, final IShape shape) {
 			IShape sp = Cast.asGeometry(scope, shape);
-			if (sp == null)	return true;
+			if ( sp == null ) { return true; }
 			return GeometryUtils.isClockWise(sp.getInnerGeometry());
 		}
-		
+
 		@operator(value = "change_clockwise",
-				type = IType.GEOMETRY,
-				category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
-			@doc(value = "returns true if the geometry is defined clockwise ",
-				examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
-				see = {"is_clockwise"})
+			type = IType.GEOMETRY,
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+		@doc(value = "returns true if the geometry is defined clockwise ",
+			examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
+			see = { "is_clockwise" })
 		public static IShape changeClockwise(final IScope scope, final IShape shape) {
 			IShape sp = Cast.asGeometry(scope, shape);
-			if (sp == null)	return null;
+			if ( sp == null ) { return null; }
 			return new GamaShape(GeometryUtils.changeClockWise(sp.getInnerGeometry()));
 		}
 

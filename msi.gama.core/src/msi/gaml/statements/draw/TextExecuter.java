@@ -18,12 +18,13 @@ class TextExecuter extends DrawExecuter {
 	private final String constText;
 
 	TextExecuter(final IExpression item) throws GamaRuntimeException {
+		super(item);
 		constText = item.isConst() ? Cast.asString(null, item.value(null)) : null;
 	}
 
 	@Override
-		Rectangle2D executeOn(final IScope scope, final IExpression item, final IGraphics g,
-			final DrawingAttributes attributes) throws GamaRuntimeException {
+		Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingAttributes attributes)
+			throws GamaRuntimeException {
 		// We push the location of the agent if none has been provided
 		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgentScope().getLocation()));
 		final String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;

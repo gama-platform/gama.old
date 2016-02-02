@@ -1,86 +1,46 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GeometryUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.util;
 
-import static msi.gama.metamodel.shape.IShape.Type.LINESTRING;
-import static msi.gama.metamodel.shape.IShape.Type.MULTILINESTRING;
-import static msi.gama.metamodel.shape.IShape.Type.MULTIPOINT;
-import static msi.gama.metamodel.shape.IShape.Type.NULL;
-import static msi.gama.metamodel.shape.IShape.Type.POINT;
-import static msi.gama.metamodel.shape.IShape.Type.POLYGON;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import msi.gama.database.sql.SqlConnection;
-import msi.gama.database.sql.SqlUtils;
-import msi.gama.metamodel.shape.Envelope3D;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import static msi.gama.metamodel.shape.IShape.Type.*;
+import java.util.*;
+import org.geotools.geometry.jts.JTS;
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.io.WKTWriter;
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
+import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
+import com.vividsolutions.jts.triangulate.*;
+import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
+import msi.gama.database.sql.*;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.operators.Files;
-import msi.gaml.operators.Graphs;
-import msi.gaml.operators.Spatial.Operators;
-import msi.gaml.operators.Spatial.ThreeD;
+import msi.gaml.operators.*;
+import msi.gaml.operators.Spatial.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaGeometryType;
-import msi.gaml.types.Types;
-
-import org.geotools.geometry.jts.JTS;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.io.WKTWriter;
-import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
-import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
-import com.vividsolutions.jts.triangulate.ConstraintEnforcementException;
-import com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder;
-import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
-import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
+import msi.gaml.types.*;
 
 /**
  * The class GamaGeometryUtils.
- * 
+ *
  * @author drogoul
  * @since 14 d�c. 2011
- * 
+ *
  */
 public class GeometryUtils {
 
@@ -297,9 +257,8 @@ public class GeometryUtils {
 				line = line.intersection(geom);
 			} catch (final Exception e) {
 				final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-				line =
-					GeometryPrecisionReducer.reducePointwise(line, pm).intersection(
-						GeometryPrecisionReducer.reducePointwise(geom, pm));
+				line = GeometryPrecisionReducer.reducePointwise(line, pm)
+					.intersection(GeometryPrecisionReducer.reducePointwise(geom, pm));
 
 			}
 			return pointInGeom(line, rand);
@@ -330,12 +289,12 @@ public class GeometryUtils {
 		if ( dist3 <= dist1 && dist3 <= dist2 ) { return coordstest2; }
 		return coords;
 	}
-	
-	public static int nbCommonPoints (final Geometry p1, final Geometry p2) {
-		Set<Coordinate> cp = new HashSet<Coordinate>() ;
+
+	public static int nbCommonPoints(final Geometry p1, final Geometry p2) {
+		Set<Coordinate> cp = new HashSet<Coordinate>();
 		List<Coordinate> coords = Arrays.asList(p1.getCoordinates());
-		for (Coordinate pt : p2.getCoordinates()) {
-			if (coords.contains(pt)) {
+		for ( Coordinate pt : p2.getCoordinates() ) {
+			if ( coords.contains(pt) ) {
 				cp.add(pt);
 			}
 		}
@@ -359,19 +318,19 @@ public class GeometryUtils {
 			return minimiseLength(pts);
 		} else if ( degree == 2 ) {
 			int cpt = 0;
-			for (IShape n : connectedNodes) {
-				if (nbCommonPoints(l1,n.getInnerGeometry()) == 2) {
+			for ( IShape n : connectedNodes ) {
+				if ( nbCommonPoints(l1, n.getInnerGeometry()) == 2 ) {
 					pts[cpt] = l1.getCentroid().getCoordinate();
 					cpt++;
-				} else if (nbCommonPoints(l2,n.getInnerGeometry()) == 2) {
+				} else if ( nbCommonPoints(l2, n.getInnerGeometry()) == 2 ) {
 					pts[cpt] = l2.getCentroid().getCoordinate();
 					cpt++;
-				} else if (nbCommonPoints(l3,n.getInnerGeometry()) == 2) {
+				} else if ( nbCommonPoints(l3, n.getInnerGeometry()) == 2 ) {
 					pts[cpt] = l3.getCentroid().getCoordinate();
 					cpt++;
-				} 
+				}
 			}
-	
+
 		} else {
 			return null;
 		}
@@ -390,9 +349,8 @@ public class GeometryUtils {
 		ymin += heightHex / 2.0;
 		for ( int l = 0; l < nbRows; l++ ) {
 			for ( int c = 0; c < nbColumns; c = c + 2 ) {
-				final GamaShape poly =
-					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex *
-						0.75, ymin + l * heightHex, 0));
+				final GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex,
+					new GamaPoint(xmin + c * widthHex * 0.75, ymin + l * heightHex, 0));
 				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
 				// * size, ymin + 2* size*val * l);
 				if ( geom.covers(poly) ) {
@@ -402,9 +360,8 @@ public class GeometryUtils {
 		}
 		for ( int l = 0; l < nbRows; l++ ) {
 			for ( int c = 1; c < nbColumns; c = c + 2 ) {
-				final GamaShape poly =
-					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex *
-						0.75, ymin + (l + 0.5) * heightHex, 0));
+				final GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex,
+					new GamaPoint(xmin + c * widthHex * 0.75, ymin + (l + 0.5) * heightHex, 0));
 				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
 				// * size, ymin + 2* size*val * l);
 				if ( geom.covers(poly) ) {
@@ -424,22 +381,24 @@ public class GeometryUtils {
 		 */
 		return geoms;
 	}
-	public static IList<IShape> discretisation(final Geometry geom, int nb_squares,final boolean overlaps, double coeff_precision) {
-		double size = Math.sqrt(geom.getArea() /nb_squares);
+
+	public static IList<IShape> discretisation(final Geometry geom, final int nb_squares, final boolean overlaps,
+		final double coeff_precision) {
+		double size = Math.sqrt(geom.getArea() / nb_squares);
 		List<IShape> rectToRemove = new ArrayList<IShape>();
-		IList<IShape> squares = discretisation(geom, size, size, overlaps,rectToRemove);
-		if (squares.size() < nb_squares) {
+		IList<IShape> squares = discretisation(geom, size, size, overlaps, rectToRemove);
+		if ( squares.size() < nb_squares ) {
 			while (squares.size() < nb_squares) {
 				size *= coeff_precision;
 				rectToRemove = new ArrayList<IShape>();
-				squares = discretisation(geom, size, size, overlaps,rectToRemove);
+				squares = discretisation(geom, size, size, overlaps, rectToRemove);
 			}
-		} else if (squares.size() > nb_squares) {
+		} else if ( squares.size() > nb_squares ) {
 			while (squares.size() > nb_squares) {
 				size /= coeff_precision;
 				List<IShape> rectToRemove2 = new ArrayList<IShape>();
-				IList<IShape> squares2 = discretisation(geom, size, size, overlaps,rectToRemove2);
-				if (squares2.size() < nb_squares) {
+				IList<IShape> squares2 = discretisation(geom, size, size, overlaps, rectToRemove2);
+				if ( squares2.size() < nb_squares ) {
 					break;
 				}
 				squares = squares2;
@@ -447,26 +406,26 @@ public class GeometryUtils {
 			}
 		}
 		int nb = squares.size();
-		if(nb > nb_squares) {
-			
-			if (nb- nb_squares > rectToRemove.size()) {
+		if ( nb > nb_squares ) {
+
+			if ( nb - nb_squares > rectToRemove.size() ) {
 				squares.removeAll(rectToRemove);
 			} else {
-				for (int i = 0; i < (nb - nb_squares); i++) {
+				for ( int i = 0; i < nb - nb_squares; i++ ) {
 					squares.remove(rectToRemove.get(i));
 				}
 			}
 		}
 		return squares;
 	}
-		
+
 	public static IList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y,
-			final boolean overlaps ) {
-		return discretisation(geom,  size_x, size_y,overlaps, null );
+		final boolean overlaps) {
+		return discretisation(geom, size_x, size_y, overlaps, null);
 	}
-		
+
 	public static IList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y,
-		final boolean overlaps, List<IShape> borders ) {
+		final boolean overlaps, final List<IShape> borders) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		if ( geom instanceof GeometryCollection ) {
 			final GeometryCollection gc = (GeometryCollection) geom;
@@ -495,15 +454,19 @@ public class GeometryUtils {
 						if ( square.coveredBy(geom) ) {
 							IShape sq = new GamaShape(square);
 							geoms.add(sq);
-							if (firstX && borders != null) borders.add(sq);
+							if ( firstX && borders != null ) {
+								borders.add(sq);
+							}
 							firstX = false;
-							
+
 						}
 					} else {
 						if ( square.intersects(geom) ) {
 							IShape sq = new GamaShape(square);
 							geoms.add(sq);
-							if (firstX && borders != null) borders.add(sq);
+							if ( firstX && borders != null ) {
+								borders.add(sq);
+							}
 							firstX = false;
 						}
 					}
@@ -573,7 +536,7 @@ public class GeometryUtils {
 		}
 		return geoms;
 	}
-	
+
 	public static IList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points, final IShape clip) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		final VoronoiDiagramBuilder dtb = new VoronoiDiagramBuilder();
@@ -610,8 +573,8 @@ public class GeometryUtils {
 					scope);
 				return triangulationSimple(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
 			} catch (final ConstraintEnforcementException e) {
-				/* GAMA.reportError(scope, */GamaRuntimeException.warning("Impossible to triangulate Geometry: " +
-					new WKTWriter().write(geom), scope)/* , false) */;
+				/* GAMA.reportError(scope, */GamaRuntimeException
+					.warning("Impossible to triangulate Geometry: " + new WKTWriter().write(geom), scope)/* , false) */;
 				return triangulationSimple(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
 			}
 			final PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
@@ -651,8 +614,8 @@ public class GeometryUtils {
 					scope);
 				return triangulation(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
 			} catch (final ConstraintEnforcementException e) {
-				/* GAMA.reportError(scope, */GamaRuntimeException.warning("Impossible to triangulate Geometry: " +
-					new WKTWriter().write(geom), scope)/* , false) */;
+				/* GAMA.reportError(scope, */GamaRuntimeException
+					.warning("Impossible to triangulate Geometry: " + new WKTWriter().write(geom), scope)/* , false) */;
 				return triangulation(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
 			}
 			final PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
@@ -662,7 +625,8 @@ public class GeometryUtils {
 
 				final Geometry gg = tri.getGeometryN(i);
 
-				if ( env.covers(gg) && pg.covers(gg) && gg.intersects(polygon) && gg.intersection(polygon).getArea() > 0.2 * gg.getArea() ) {
+				if ( env.covers(gg) && pg.covers(gg) && gg.intersects(polygon) &&
+					gg.intersection(polygon).getArea() > 0.2 * gg.getArea() ) {
 					geoms.add(new GamaShape(gg));
 				}
 			}
@@ -676,7 +640,8 @@ public class GeometryUtils {
 		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 		final Collection<GamaShape> nodes = graph.vertexSet();
 		for ( final GamaShape node : nodes ) {
-			final Coordinate[] coordsArr = GeometryUtils.extractPoints(node,new HashSet(Graphs.neighboursOf(scope, graph, node)));
+			final Coordinate[] coordsArr =
+				GeometryUtils.extractPoints(node, new HashSet(Graphs.neighboursOf(scope, graph, node)));
 			if ( coordsArr != null ) {
 				network.add(FACTORY.createLineString(coordsArr));
 			}
@@ -687,6 +652,7 @@ public class GeometryUtils {
 	public static Polygon fromLineToPoylgon(final Geometry line) {
 		return FACTORY.createPolygon(line.getCoordinates());
 	}
+
 	public static Geometry buildGeometryJTS(final List<List<List<ILocation>>> listPoints) {
 		final IShape.Type geometryType = geometryType(listPoints);
 		switch (geometryType) {
@@ -1030,18 +996,16 @@ public class GeometryUtils {
 
 		return new GamaShape(JTS.smooth(geom, fit, FACTORY));
 	}
-	
+
 	public static boolean isClockWise(final Geometry geom) {
-		if (geom instanceof GeometryCollection) {
+		if ( geom instanceof GeometryCollection ) {
 			boolean isCW = true;
-			for (int i = 0; i < ((GeometryCollection) geom).getNumGeometries(); i++) {
+			for ( int i = 0; i < ((GeometryCollection) geom).getNumGeometries(); i++ ) {
 				isCW = isCW && isClockWise(((GeometryCollection) geom).getGeometryN(i));
 			}
 			return isCW;
-		} else if (!(geom instanceof Polygon)) {
-			return true;
-		}
-		
+		} else if ( !(geom instanceof Polygon) ) { return true; }
+
 		double sum = 0.0;
 		Coordinate[] coords = ((Polygon) geom).getExteriorRing().getCoordinates();
 		for ( int i = 0; i < coords.length; i++ ) {
@@ -1051,18 +1015,17 @@ public class GeometryUtils {
 		}
 		return sum < 0.0;
 	}
-	
+
 	public static Geometry changeClockWise(final Geometry geom) {
-		if (geom instanceof GeometryCollection) {
+		geom.reverse();
+		if ( geom instanceof GeometryCollection ) {
 			List<Geometry> geomList = new ArrayList<Geometry>();
-			for (int i = 0; i < ((GeometryCollection) geom).getNumGeometries(); i++) {
+			for ( int i = 0; i < ((GeometryCollection) geom).getNumGeometries(); i++ ) {
 				geomList.add(changeClockWise(((GeometryCollection) geom).getGeometryN(i)));
 			}
 			return FACTORY.buildGeometry(geomList);
-		} else if (!(geom instanceof Polygon)) {
-			return geom;
-		}
-		Polygon p =  ((Polygon) geom);
+		} else if ( !(geom instanceof Polygon) ) { return geom; }
+		Polygon p = (Polygon) geom;
 		double sum = 0.0;
 		Coordinate[] coords = p.getExteriorRing().getCoordinates();
 		Coordinate[] coordsN = new Coordinate[coords.length];
@@ -1070,9 +1033,9 @@ public class GeometryUtils {
 			coordsN[i] = coords[coords.length - i - 1];
 		}
 		LinearRing[] lrN = new LinearRing[p.getNumInteriorRing()];
-		for (int i = 0; i < lrN.length; i++) {
+		for ( int i = 0; i < lrN.length; i++ ) {
 			Coordinate[] coordLRs = p.getInteriorRingN(i).getCoordinates();
-			Coordinate[] coordsLRN = new Coordinate[coordLRs.length +1];
+			Coordinate[] coordsLRN = new Coordinate[coordLRs.length + 1];
 			for ( int j = 0; j < coordLRs.length; j++ ) {
 				coordsLRN[j] = coordLRs[coordLRs.length - j - 1];
 			}

@@ -22,7 +22,7 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
-import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.file.*;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
@@ -107,9 +107,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile file, final DrawingAttributes attributes) {
 		IScope scope = surface.getDisplayScope();
-		GamaShape shape = (GamaShape) file.getGeometry(scope);
+		if ( file instanceof GamaImageFile ) { return drawImage(((GamaImageFile) file).getImage(scope), attributes); }
+		if ( !(file instanceof GamaGeometryFile) ) { return null; }
+		GamaShape shape = (GamaShape) ((GamaGeometryFile) file).getGeometry(scope);
 		if ( shape == null ) { return null; }
 		GamaPair<Double, GamaPoint> rot = attributes.rotation;
 		Double rotation = rot == null ? null : rot.key;
