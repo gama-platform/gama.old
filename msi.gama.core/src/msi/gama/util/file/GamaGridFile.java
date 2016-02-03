@@ -116,7 +116,7 @@ public class GamaGridFile extends GamaGisFile {
 				scope.getGui().beginSubStatus("Reading file " + getName());
 				// Necessary to compute it here, because it needs to be passed to the Hints
 				CoordinateReferenceSystem crs = getExistingCRS(scope);
-				if ( getFile().getName().endsWith("tif") ) {
+				if ( isTiff() ) {
 					if ( crs == null ) {
 						store = new GeoTiffReader(getFile(), new Hints(Hints.USE_JAI_IMAGEREAD, false));
 					} else {
@@ -249,6 +249,17 @@ public class GamaGridFile extends GamaGisFile {
 
 	public int getNbCols(final IScope scope) {
 		return createReader(scope).numCols;
+	}
+	
+	public String getExtension() {
+		final String path = getFile().getPath().toLowerCase();
+		final int mid = path.lastIndexOf(".");
+		if ( mid == -1 ) { return ""; }
+		return path.substring(mid + 1, path.length());
+	}
+	
+	public boolean isTiff() {
+		return getExtension().equals("tif"); 
 	}
 
 	@Override

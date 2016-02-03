@@ -11,9 +11,12 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
+import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
@@ -26,7 +29,9 @@ import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 public class ImageLayer extends AbstractLayer {
 
 	GamaImageFile file = null;
+	GamaGridFile grid = null;
 	private String imageFileName = "";
+	Envelope env = null;
 
 	public ImageLayer(final IScope scope, final ILayerStatement layer) {
 		super(layer);
@@ -39,8 +44,10 @@ public class ImageLayer extends AbstractLayer {
 		imageFileName = newImage;
 		if ( imageFileName == null || imageFileName.length() == 0 ) {
 			file = null;
+			grid = null;
 		} else {
 			file = new GamaImageFile(scope, imageFileName);
+			env = file.getGeoDataFile() == null ? null : file.computeEnvelope(scope);
 		}
 	}
 
@@ -48,7 +55,18 @@ public class ImageLayer extends AbstractLayer {
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage(scope);
 		if ( file == null ) { return; }
-		DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0), null, null);
+		GamaPoint loc = env == null ? new GamaPoint(0,0) : new GamaPoint(env.getMinX(), env.getMinY());
+		DrawingAttributes attributes = new DrawingAttributes(loc, null, null);
+		System.out.println("SIZE:" + attributes.size);
+		if (env != null) {
+			if (attributes.size == null) {
+				Envelope wenv = scope.getSimulationScope().getGeometry().getEnvelope();
+				System.out.println("wenv: " + wenv);
+				System.out.println("env: " + env);
+				attributes.size = new GamaPoint(env.getWidth() ,env.getHeight() );
+				System.out.println("size" + attributes.size);
+			}
+		}
 		dg.drawFile(file, attributes);
 	}
 
