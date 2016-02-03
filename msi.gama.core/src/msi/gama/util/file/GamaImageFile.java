@@ -23,12 +23,18 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
 
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.FactoryException;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -149,6 +155,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	}
 
 	private BufferedImage image;
+	private boolean isGeoreferenced = false;
 
 	public GamaImageFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
@@ -302,26 +309,27 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		}
 	}
 	
+	
 	public String getGeoDataFile(){
 		String extension = getExtension();
+		String val = null;
 		String geodataFile = getPath().replaceAll(extension, "");
 		if ( extension.equals("jpg") ) {
 			geodataFile = geodataFile + "jgw";
 		} else if ( extension.equals("png") ) {
 			geodataFile = geodataFile + "pgw";
-		} else if ( extension.equals("tiff") ) {
+		} else if ( extension.equals("tiff") || extension.equals("tif")) {
 			geodataFile = geodataFile + "tfw";
+			val = "";
 		} else return null;
 		File infodata = new File(geodataFile);
 		if (infodata.exists())
 			return geodataFile;
-		return null;
+		return val;
 	}
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		int nbCols = getWidth(scope);
-		int nbRows = getHeight(scope);
 		String geodataFile = getGeoDataFile();
 		double cellSizeX = 1;
 		double cellSizeY = 1;
@@ -329,8 +337,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		double yllcorner = 0;
 		boolean xNeg = false;
 		boolean yNeg = false;
-		
-		if ( geodataFile != null ) {
+		String extension = getExtension();
+		if ( geodataFile != null && !geodataFile.equals("")) {
 			try {
 				InputStream ips = new FileInputStream(geodataFile);
 				InputStreamReader ipsr = new InputStreamReader(ips);
@@ -347,13 +355,38 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 				xllcorner = Double.valueOf(xllcornerStr[xllcornerStr.length - 1]);
 				String[] yllcornerStr = in.readLine().split(" ");
 				yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
+				isGeoreferenced = true;
+
 				in.close();
-				
-				
 			} catch (Exception e) {
 				throw GamaRuntimeException.create(e, scope);
 			}
+		} else if (extension.equals("tiff") || extension.equals("tif")) {
+			GamaGridFile file = new GamaGridFile(null, this.getPath());
+			
+			Envelope e =  file.computeEnvelopeWithoutBuffer(scope);
+			if (e != null) {
+				GamaPoint minCorner = new GamaPoint(e.getMinX(), e.getMinY());
+				GamaPoint maxCorner = new GamaPoint(e.getMaxX(), e.getMaxY());
+				if (geodataFile != null) {
+					IProjection pr;
+					try {
+						pr = scope.getSimulationScope().getProjectionFactory().forSavingWith(file.gis.getTargetCRS());
+						minCorner = (GamaPoint)  new GamaShape(pr.transform(minCorner.getInnerGeometry())).getLocation();
+						maxCorner = (GamaPoint)  new GamaShape(pr.transform(maxCorner.getInnerGeometry())).getLocation();
+					} catch (FactoryException e1) {
+						e1.printStackTrace();
+					}
+					
+				}
+				isGeoreferenced = true;
+				return new Envelope(minCorner.x, maxCorner.x, minCorner.y,maxCorner.y);
+			}
+		
 		}
+		int nbCols = getWidth(scope);
+		int nbRows = getHeight(scope);
+		
 		double x1 = xllcorner;
 		double x2 = xllcorner + cellSizeX * nbCols;
 		double y1 = yllcorner;
@@ -361,13 +394,19 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		GamaPoint minCorner = new GamaPoint(xNeg ? Math.max(x1, x2) : Math.min(x1, x2), yNeg ? Math.max(y1, y2) : Math.min(y1, y2));
 		GamaPoint maxCorner = new GamaPoint(xNeg ? Math.min(x1, x2) : Math.max(x1, x2),  yNeg ? Math.min(y1, y2) : Math.max(y1, y2));
 		if (geodataFile != null) {
-			minCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, minCorner ).getLocation();
+			minCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, minCorner).getLocation();
 			maxCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, maxCorner ).getLocation();
 		}
 	
 		Envelope boundsEnv = new Envelope(minCorner.x, maxCorner.x, minCorner.y,maxCorner.y);
 		return boundsEnv;
 
+	}
+	
+	
+
+	public boolean isGeoreferenced() {
+		return isGeoreferenced;
 	}
 
 	@Override
