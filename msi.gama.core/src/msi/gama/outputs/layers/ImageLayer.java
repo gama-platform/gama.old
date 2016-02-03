@@ -57,15 +57,8 @@ public class ImageLayer extends AbstractLayer {
 		if ( file == null ) { return; }
 		GamaPoint loc = env == null ? new GamaPoint(0,0) : new GamaPoint(env.getMinX(), env.getMinY());
 		DrawingAttributes attributes = new DrawingAttributes(loc, null, null);
-		System.out.println("SIZE:" + attributes.size);
 		if (env != null) {
-			if (attributes.size == null) {
-				Envelope wenv = scope.getSimulationScope().getGeometry().getEnvelope();
-				System.out.println("wenv: " + wenv);
-				System.out.println("env: " + env);
-				attributes.size = new GamaPoint(env.getWidth() ,env.getHeight() );
-				System.out.println("size" + attributes.size);
-			}
+			attributes.size = new GamaPoint(env.getWidth() ,env.getHeight() );
 		}
 		dg.drawFile(file, attributes);
 	}
