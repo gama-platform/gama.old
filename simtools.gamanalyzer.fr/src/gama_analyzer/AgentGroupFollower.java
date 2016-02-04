@@ -800,7 +800,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 				if(manager.idSimList.length(scope)>1) {
 						for (int j=0; j<multidata.metadatahistory.numRows; j++)
 						{
-							if ((Integer)multidata.metadatahistory.get(scope, 1, j) == this.getClock().getCycle())
+							if ((Integer)multidata.metadatahistory.get(scope, 1, j) == this.getScope().getClock().getCycle())
 								if (!scope.getSimulationScope().toString().equals(multidata.metadatahistory.get(scope, 0, j).toString()))
 								{
 									System.out.println("metadatahistory "+ multidata.metadatahistory.get(scope, 8,j)+" type "+multidata.metadatahistory.get(scope, 8,j).getClass());		
@@ -1482,7 +1482,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 			}
 
 		}
-		while (lastreleasedcycle<this.getClock().getCycle())
+		while (lastreleasedcycle<this.getScope().getClock().getCycle())
 		{
 			try {
 				Thread t=Thread.currentThread();
@@ -1536,7 +1536,7 @@ public class AgentGroupFollower extends ClusterBuilder //implements  MessageList
 		GamaMap<String,Object> message = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		message.put("type","release");
 		message.put("follower",this.getName());
-		message.put("value",this.getClock().getCycle());
+		message.put("value",this.getScope().getClock().getCycle());
 	}
 
 
