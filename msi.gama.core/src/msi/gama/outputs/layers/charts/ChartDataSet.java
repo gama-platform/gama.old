@@ -28,6 +28,7 @@ public class ChartDataSet {
 	ChartOutput mainoutput;
 	int resetAllBefore=0;
 	
+	String defaultstyle;
 
 
 	boolean commonXSeries=false; // series
@@ -225,6 +226,16 @@ public class ChartDataSet {
 		}
 	}
 
+	public void setStyle(IScope scope, String stval) {
+		// TODO Auto-generated method stub
+		defaultstyle=stval;
+	}
+
+
+	public String getStyle(IScope scope) {
+		// TODO Auto-generated method stub
+		return defaultstyle;
+	}
 
 	
 }

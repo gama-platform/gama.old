@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
@@ -47,6 +48,7 @@ public class ChartDataSource {
 	IExpression markershapeexp;
 	
 	String uniqueMarkerName;
+	String style=IKeyword.LINE;
 
 	Object lastvalue;	
 //	HashMap<String,Object> sourceParameters=new HashMap<String,Object>();	
@@ -55,6 +57,8 @@ public class ChartDataSource {
 	boolean isCumulative=false;
 	boolean forceCumulative=false;
 	boolean useMarker=true;
+	boolean fillMarker=true;
+	boolean showLine=true;
 
 	boolean useSize=false;
 	
@@ -146,10 +150,22 @@ public class ChartDataSource {
 		return myDataset;
 	}
 
-	public void setDataset(ChartDataSet myDataset) {
+	public void setDataset(IScope scope, ChartDataSet myDataset) {
 		this.myDataset = myDataset;
+		if (myDataset.getStyle(scope)!=null)
+			this.setStyle(scope, myDataset.getStyle(scope));
 	}
 
+	public void setStyle(IScope scope, String stval) {
+		// TODO Auto-generated method stub
+		style=stval;
+	}
+	public String getStyle(IScope scope) {
+		// TODO Auto-generated method stub
+		return style;
+	}
+	
+	
 	public void setValueExp(final IScope scope, IExpression expval)
 	{
 		value=expval;
@@ -568,6 +584,17 @@ public class ChartDataSource {
 		// TODO Auto-generated method stub
 		useMarker=boolval;
 	}
+
+	public void setFillMarker(IScope scope, boolean boolval) {
+		// TODO Auto-generated method stub
+		fillMarker=boolval;
+	}
+
+	public void setShowLine(IScope scope, boolean boolval) {
+		// TODO Auto-generated method stub
+		showLine=boolval;
+	}
+
 
 	public void updatevalues(IScope scope, int lastUpdateCycle) {
 		// TODO Auto-generated method stub

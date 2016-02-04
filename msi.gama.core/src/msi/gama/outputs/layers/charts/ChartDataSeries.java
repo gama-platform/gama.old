@@ -70,6 +70,11 @@ public class ChartDataSeries {
 		return name;
 	}
 	
+	public String getStyle(IScope scope)
+	{
+		return this.getMysource().getStyle(scope);
+	}
+	
 	public GamaColor getMycolor() {
 		return mycolor;
 	}
