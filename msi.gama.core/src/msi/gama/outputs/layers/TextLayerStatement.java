@@ -36,7 +36,7 @@ import msi.gaml.types.*;
 		@facet(name = IKeyword.SIZE,
 			type = { IType.INT, IType.FLOAT, IType.POINT },
 			optional = true,
-			doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides it by 2") ),
+			doc = @doc("extent of the layer in the screen from its position. Coordinates in [0,1[ are treated as percentages of the total surface, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Like in 'position', an elevation can be provided with the z coordinate, allowing to scale the layer in the 3 directions ") ),
 		@facet(name = IKeyword.TRANSPARENCY,
 			type = IType.FLOAT,
 			optional = true,
