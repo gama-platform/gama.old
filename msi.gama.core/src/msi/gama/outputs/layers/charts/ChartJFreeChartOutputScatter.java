@@ -239,8 +239,8 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	{
 		AbstractXYItemRenderer newr=(AbstractXYItemRenderer)this.getOrCreateRenderer(scope, serieid);
 
-		newr.setSeriesStroke(0, new BasicStroke(0));
-//		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
+//		newr.setSeriesStroke(0, new BasicStroke(0));
+		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
 
 		if (newr instanceof XYLineAndShapeRenderer)
 		{
