@@ -1,19 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ILayer.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.ILayerStatement;
@@ -22,9 +23,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * Written by drogoul Modified on 26 nov. 2009
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface ILayer extends INamed, Comparable<ILayer> {
 
@@ -99,5 +100,12 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	 * @return
 	 */
 	Boolean isSelectable();
+
+	/**
+	 * @param e
+	 */
+	void setVisibleRegion(Envelope e);
+
+	Envelope getVisibleRegion();
 
 }

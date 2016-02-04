@@ -289,4 +289,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		return true;
 	}
 
+	/**
+	 * Method getVisibleRegion()
+	 * @see msi.gama.common.interfaces.IGraphics#getVisibleRegion()
+	 */
+	@Override
+	public Envelope getVisibleRegion() {
+		return surface.getVisibleRegionForLayer(currentLayer);
+	}
+
 }

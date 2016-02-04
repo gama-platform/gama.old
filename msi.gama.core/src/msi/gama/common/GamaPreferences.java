@@ -465,6 +465,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_DISPLAY_ORDER =
 		create("core.display_order", "Stack displays on screen in the order defined by the model", true, IType.BOOL)
 			.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE =
+		create("core.display_visible", "Only process for display the agents that are visible", false, IType.BOOL)
+			.in(DISPLAY).group("*** Experimental ***");
 			/**
 			 * Default Aspect
 			 */

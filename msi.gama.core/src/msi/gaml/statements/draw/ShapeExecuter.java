@@ -6,7 +6,8 @@ package msi.gaml.statements.draw;
 
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
@@ -79,6 +80,15 @@ class ShapeExecuter extends DrawExecuter {
 		shape = addArrows(scope, shape, !attributes.empty);
 		// As well as the parts of the shape that can belong to a toroidal representation
 		shape = addToroidalParts(scope, shape);
+
+		// XXX EXPERIMENTAL See Issue #1521
+		if ( GamaPreferences.DISPLAY_ONLY_VISIBLE.getValue() ) {
+			Envelope e = shape.getEnvelope();
+			Envelope visible = gr.getVisibleRegion();
+			if ( !visible.intersects(e) ) { return null; }
+			// XXX EXPERIMENTAL
+		}
+
 		// The textures are computed as well in advance
 		addTextures(scope, attributes);
 		// And we ask the IGraphics object to draw the shape

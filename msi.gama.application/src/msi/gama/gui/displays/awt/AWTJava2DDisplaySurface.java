@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
@@ -222,6 +223,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 */
 	@Override
 	public void snapshot() {
+		// TODO DEBUG
+		this.getVisibleRegionForLayer(manager.getItems().get(0));
 		LayeredDisplayData data = output.getData();
 		if ( data.getImageDimension().getX() == -1 && data.getImageDimension().getY() == -1 ) {
 			save(getDisplayScope(), getImage());
@@ -629,6 +632,19 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final double xInModel = xInDisplay / xScale;
 		final double yInModel = yInDisplay / yScale;
 		return new GamaPoint(xInModel, yInModel);
+	}
+
+	@Override
+	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
+		Envelope e = new Envelope();
+		Point origin = getOrigin();
+		int xc = -origin.x;
+		int yc = -origin.y;
+		e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+		xc = xc + this.getWidth();
+		yc = yc + this.getHeight();
+		e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+		return e;
 	}
 
 	@Override

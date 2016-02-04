@@ -31,6 +31,8 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	final protected double heightOfEnvironmentInModelUnits;
 	final protected LayeredDisplayData data;
 
+	protected ILayer currentLayer;
+
 	public AbstractDisplayGraphics(final IDisplaySurface surface) {
 		widthOfEnvironmentInModelUnits = surface.getEnvWidth();
 		heightOfEnvironmentInModelUnits = surface.getEnvHeight();
@@ -124,6 +126,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
+		currentLayer = layer;
 		xOffsetInPixels = layer.getPositionInPixels().x;
 		yOffsetInPixels = layer.getPositionInPixels().y;
 		widthOfLayerInPixels = layer.getSizeInPixels().x;

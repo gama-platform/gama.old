@@ -89,6 +89,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	// Does not allow renderers to be created for text bigger than 200 pixels
 
 	Map<String, Map<Integer, Map<Integer, TextRenderer>>> textRenderersCache = new LinkedHashMap();
+	private ILayer currentLayer;
 
 	public TextRenderer get(final Font font) {
 		return get(font.getName(), font.getSize(), font.getStyle());
@@ -718,6 +719,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 			}
 		}
 		sceneBuffer.beginUpdatingScene();
+
 	}
 
 	/**
@@ -727,6 +729,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	 */
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
+		currentLayer = layer;
 		xOffsetInPixels = layer.getPositionInPixels().x;
 		yOffsetInPixels = layer.getPositionInPixels().y;
 		widthOfLayerInPixels = layer.getSizeInPixels().x;
@@ -772,6 +775,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	@Override
 	public void endDrawingLayers() {
 		sceneBuffer.endUpdatingScene();
+		displaySurface.invalidateVisibleRegions();
 	}
 
 	@Override
@@ -846,7 +850,6 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
 
 		realy = viewport[3] - y;
-
 		glu.gluUnProject(x, realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
 		GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
@@ -918,6 +921,15 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	 */
 	public float getLineWidth() {
 		return GamaPreferences.CORE_LINE_WIDTH.getValue().floatValue();
+	}
+
+	/**
+	 * Method getVisibleRegion()
+	 * @see msi.gama.common.interfaces.IGraphics#getVisibleRegion()
+	 */
+	@Override
+	public Envelope getVisibleRegion() {
+		return displaySurface.getVisibleRegionForLayer(currentLayer);
 	}
 
 }

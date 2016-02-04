@@ -14,6 +14,7 @@ package msi.gama.common.interfaces;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.statements.draw.*;
@@ -61,6 +62,9 @@ public interface IGraphics {
 	public abstract double getyRatioBetweenPixelsAndModelUnits();
 
 	public abstract double getxRatioBetweenPixelsAndModelUnits();
+
+	/* Returns the region of the current layer (in model units) that is visible on screen */
+	public abstract Envelope getVisibleRegion();
 
 	public abstract void endDrawingLayer(ILayer layer);
 

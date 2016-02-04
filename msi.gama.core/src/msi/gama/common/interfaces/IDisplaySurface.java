@@ -14,6 +14,7 @@ package msi.gama.common.interfaces;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import com.vividsolutions.jts.geom.Envelope;
 // import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -161,5 +162,11 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	 * @return
 	 */
 	Collection<IEventLayerListener> getLayerListeners();
+
+	/**
+	 * @param currentLayer
+	 * @return
+	 */
+	Envelope getVisibleRegionForLayer(ILayer currentLayer);
 
 }

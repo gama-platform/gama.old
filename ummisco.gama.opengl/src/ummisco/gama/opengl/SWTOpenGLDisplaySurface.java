@@ -188,8 +188,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public double getDisplayWidth() {
-		java.lang.System.out
-			.println("Surface width of the canvas: " + renderer.getCanvas().getSurfaceWidth() * getZoomLevel());
 		return renderer.getCanvas().getSurfaceWidth() * getZoomLevel();
 		// return viewPort.width;
 	}
@@ -499,6 +497,23 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return new GamaPoint(p.x, -p.y);
 	}
 
+	@Override
+	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
+		Envelope e = currentLayer.getVisibleRegion();
+		if ( e == null ) {
+			e = new Envelope();
+			Point origin = new Point(0, 0);
+			int xc = -origin.x;
+			int yc = -origin.y;
+			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			xc = xc + renderer.getDrawable().getSurfaceWidth();
+			yc = yc + renderer.getDrawable().getSurfaceHeight();
+			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			currentLayer.setVisibleRegion(e);
+		}
+		return e;
+	}
+
 	/**
 	 * Method getModelCoordinatesFrom()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesFrom(int, int, java.awt.Point, java.awt.Point)
@@ -796,6 +811,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public synchronized void releaseLock() {
 		lockAcquired = false;
 		notify();
+	}
+
+	public void invalidateVisibleRegions() {
+		for ( ILayer layer : manager.getItems() ) {
+			layer.setVisibleRegion(null);
+		}
 	}
 
 }
