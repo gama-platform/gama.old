@@ -167,13 +167,15 @@ public class ChartDataListStatement extends AbstractStatement {
 
 		IExpression string1 = getFacet(IKeyword.TYPE);
 		
+
+		data.setDataset(scope, graphdataset);
+		
 		String stval = getLiteral(IKeyword.STYLE);
 		if ( stval == null ) {
 			stval = IKeyword.LINE;
 		}
+		data.setStyle(scope,stval);
 
-		data.setDataset(graphdataset);
-		
 		
 		
 		IExpression expval = getFacet(IKeyword.LEGEND).resolveAgainst(scope);
@@ -214,6 +216,14 @@ public class ChartDataListStatement extends AbstractStatement {
 			data.setColorExp(scope, expval);
 			
 		}
+		boolean boolval = getFacetValue(scope, ChartDataStatement.MARKER, true);
+		data.setMarkerBool(scope,boolval);
+
+		boolval = getFacetValue(scope, ChartDataStatement.LINE_VISIBLE, true);
+		data.setShowLine(scope,boolval);
+		boolval = getFacetValue(scope, ChartDataStatement.FILL, true);
+		data.setFillMarker(scope,boolval);
+		
 
 		stval = getFacetValue(scope, ChartDataStatement.MARKERSHAPE, null);
 		data.setMarkerShape(scope,stval);
@@ -229,10 +239,10 @@ public class ChartDataListStatement extends AbstractStatement {
 		}
 	*/
 		
-		Boolean forcecumul= Cast.asBool(scope, getFacetValue(scope, ChartDataStatement.CUMUL_VALUES,null));
+		Object forcecumul= getFacetValue(scope, ChartDataStatement.CUMUL_VALUES,null);
 		if (forcecumul!=null)
 		{
-			data.setCumulative(scope,forcecumul);
+			data.setCumulative(scope,Cast.asBool(scope, forcecumul));
 			data.setForceCumulative(scope,true);			
 		}
 		

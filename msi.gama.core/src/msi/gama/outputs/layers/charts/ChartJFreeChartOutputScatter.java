@@ -1,5 +1,6 @@
 package msi.gama.outputs.layers.charts;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -13,10 +14,12 @@ import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.renderer.xy.AbstractXYItemRenderer;
 import org.jfree.chart.renderer.xy.StackedXYAreaRenderer2;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYShapeRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
@@ -197,24 +200,69 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	protected AbstractRenderer createRenderer(IScope scope,String serieid)
 	{
-		myXYErrorRenderer newr=new myXYErrorRenderer();
-		newr.setMyid(serieid);
-		newr.setOutput(this);
+		String style=this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
+		AbstractRenderer newr=new myXYErrorRenderer();
+		switch (style)
+		{
+		case IKeyword.SPLINE:
+		{
+			newr=new XYSplineRenderer();
+			break;		
+		}
+		case IKeyword.DOT:
+		{
+			newr = new XYShapeRenderer();
+			break;		
+		}
+		case IKeyword.WHISKER:
+		case IKeyword.AREA:
+		case IKeyword.BAR:
+
+		case IKeyword.STEP:
+		case IKeyword.STACK:
+		case IKeyword.RING:
+		case IKeyword.EXPLODED:
+		case IKeyword.THREE_D:
+		default: 
+		{
+			newr=new myXYErrorRenderer();
+			((myXYErrorRenderer)newr).setMyid(serieid);
+			((myXYErrorRenderer)newr).setOutput(this);
+			break;
+		
+		}
+		}
 		return newr;
 	}
 
 	protected void resetRenderer(IScope scope,String serieid)
 	{
-		myXYErrorRenderer newr=(myXYErrorRenderer)this.getOrCreateRenderer(scope, serieid);
-		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
+		AbstractXYItemRenderer newr=(AbstractXYItemRenderer)this.getOrCreateRenderer(scope, serieid);
+
+		newr.setSeriesStroke(0, new BasicStroke(0));
+//		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
+
+		if (newr instanceof XYLineAndShapeRenderer)
+		{
+			((XYLineAndShapeRenderer)newr).setSeriesLinesVisible(0,myserie.getMysource().showLine);
+			((XYLineAndShapeRenderer)newr).setSeriesShapesFilled(0,myserie.getMysource().fillMarker);
+			((XYLineAndShapeRenderer)newr).setSeriesShapesVisible(0,myserie.getMysource().useMarker);
+			
+		}
 		if (myserie.getMycolor()!=null)
 			{
 			newr.setSeriesPaint(0,myserie.getMycolor());
 			}
-		if (myserie.isUseYErrValues()) newr.setDrawYError(true);
-		if (myserie.isUseXErrValues()) newr.setDrawXError(true);
+
+		if (newr instanceof myXYErrorRenderer)
+		{
+			if (myserie.isUseYErrValues()) ((myXYErrorRenderer)newr).setDrawYError(true);
+			if (myserie.isUseXErrValues()) ((myXYErrorRenderer)newr).setDrawXError(true);
+			if (myserie.getMysource().isUseSize()) ((myXYErrorRenderer)newr).setUseSize(scope, true);
+			
+		}
+		
 		if (myserie.getMysource().getUniqueMarkerName()!=null) setSerieMarkerShape(scope,myserie.getName(),myserie.getMysource().getUniqueMarkerName());
-		if (myserie.getMysource().isUseSize()) newr.setUseSize(scope, true);
 
 	}
 	
@@ -259,7 +307,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			plot.setDataset(jfreedataset.size()-1, newdataset);
 			
 		}
-    	plot.setRenderer(jfreedataset.size()-1, (XYErrorRenderer)getOrCreateRenderer(scope,serieid));
+    	plot.setRenderer(jfreedataset.size()-1, (XYItemRenderer)getOrCreateRenderer(scope,serieid));
 		IdPosition.put(serieid, jfreedataset.size()-1);
 		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" fdsize "+plot.getSeriesCount()+" jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount());
 		// TODO Auto-generated method stub		
@@ -316,37 +364,42 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				
 	}
 	public void setSerieMarkerShape(IScope scope, String serieid, String markershape) {
-		XYErrorRenderer serierenderer=(XYErrorRenderer) getOrCreateRenderer(scope,serieid);
-		if ( markershape != null ) {
-		if (markershape.equals(ChartDataStatement.MARKER_EMPTY))
+		AbstractXYItemRenderer newr=(AbstractXYItemRenderer)this.getOrCreateRenderer(scope, serieid);
+		if (newr instanceof XYLineAndShapeRenderer)
 		{
-			serierenderer.setSeriesShapesVisible(0, false);			
-		}
-		else
-		{
-			Shape myshape=defaultmarkers[0];
-			if ( markershape.equals(ChartDataStatement.MARKER_CIRCLE) ) {
-				myshape=defaultmarkers[1];
-			} else if ( markershape.equals(ChartDataStatement.MARKER_UP_TRIANGLE) ) {
-				myshape=defaultmarkers[2];
-			} else if ( markershape.equals(ChartDataStatement.MARKER_DIAMOND) ) {
-				myshape=defaultmarkers[3];
-			} else if ( markershape.equals(ChartDataStatement.MARKER_HOR_RECTANGLE) ) {
-				myshape=defaultmarkers[4];
-			} else if ( markershape.equals(ChartDataStatement.MARKER_DOWN_TRIANGLE) ) {
-				myshape=defaultmarkers[5];
-			} else if ( markershape.equals(ChartDataStatement.MARKER_HOR_ELLIPSE) ) {
-				myshape=defaultmarkers[6];
-			} else if ( markershape.equals(ChartDataStatement.MARKER_RIGHT_TRIANGLE) ) {
-				myshape=defaultmarkers[7];
-			} else if ( markershape.equals(ChartDataStatement.MARKER_VERT_RECTANGLE) ) {
-				myshape=defaultmarkers[8];
-			} else if ( markershape.equals(ChartDataStatement.MARKER_LEFT_TRIANGLE) ) {
-				myshape=defaultmarkers[9];
-			} 
-			serierenderer.setSeriesShape(0, myshape);
+			XYLineAndShapeRenderer serierenderer=(XYLineAndShapeRenderer) getOrCreateRenderer(scope,serieid);
+			if ( markershape != null ) {
+				if (markershape.equals(ChartDataStatement.MARKER_EMPTY))
+				{
+					serierenderer.setSeriesShapesVisible(0, false);			
+				}
+				else
+				{
+					Shape myshape=defaultmarkers[0];
+					if ( markershape.equals(ChartDataStatement.MARKER_CIRCLE) ) {
+						myshape=defaultmarkers[1];
+					} else if ( markershape.equals(ChartDataStatement.MARKER_UP_TRIANGLE) ) {
+						myshape=defaultmarkers[2];
+					} else if ( markershape.equals(ChartDataStatement.MARKER_DIAMOND) ) {
+						myshape=defaultmarkers[3];
+					} else if ( markershape.equals(ChartDataStatement.MARKER_HOR_RECTANGLE) ) {
+						myshape=defaultmarkers[4];
+					} else if ( markershape.equals(ChartDataStatement.MARKER_DOWN_TRIANGLE) ) {
+						myshape=defaultmarkers[5];
+					} else if ( markershape.equals(ChartDataStatement.MARKER_HOR_ELLIPSE) ) {
+						myshape=defaultmarkers[6];
+					} else if ( markershape.equals(ChartDataStatement.MARKER_RIGHT_TRIANGLE) ) {
+						myshape=defaultmarkers[7];
+					} else if ( markershape.equals(ChartDataStatement.MARKER_VERT_RECTANGLE) ) {
+						myshape=defaultmarkers[8];
+					} else if ( markershape.equals(ChartDataStatement.MARKER_LEFT_TRIANGLE) ) {
+						myshape=defaultmarkers[9];
+					} 
+					serierenderer.setSeriesShape(0, myshape);
+					
+				}
+				}
 			
-		}
 		}
 			
 		
@@ -354,8 +407,14 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	
 	public void setUseSize(IScope scope, String name, boolean b) {
 		// TODO Auto-generated method stub
-		myXYErrorRenderer serierenderer=(myXYErrorRenderer) getOrCreateRenderer(scope,name);
-		serierenderer.setUseSize(scope,b);
+		AbstractXYItemRenderer newr=(AbstractXYItemRenderer)this.getOrCreateRenderer(scope, name);
+		if (newr instanceof myXYErrorRenderer)
+		{
+			myXYErrorRenderer serierenderer=(myXYErrorRenderer) getOrCreateRenderer(scope,name);
+			serierenderer.setUseSize(scope,b);
+			
+		}
+
 	}
 	
 	

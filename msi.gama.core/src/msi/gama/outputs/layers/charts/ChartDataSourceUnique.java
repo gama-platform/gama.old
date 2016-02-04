@@ -36,11 +36,7 @@ public class ChartDataSourceUnique extends ChartDataSource {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void setStyle(final IScope scope, String stval)
-	{
-		
-	}
-	
+
 	public void setLegend(final IScope scope, String stval)
 	{
 		myname=stval;
