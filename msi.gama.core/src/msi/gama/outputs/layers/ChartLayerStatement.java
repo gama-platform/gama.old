@@ -22,6 +22,7 @@ import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.*;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.*;
@@ -1332,7 +1333,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						
 					}
 					boolean rangeauto=false;
-					if (domainAxis.isAutoRange())
+					if (rangeAxis.isAutoRange())
 					{
 						rangeauto=true;
 						rangeAxis.setAutoRange(false);
