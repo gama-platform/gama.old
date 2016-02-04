@@ -45,7 +45,7 @@ import msi.gama.util.file.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.*;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.types.*;
 
 /**
@@ -2855,10 +2855,9 @@ public abstract class Spatial {
 		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
 		@doc(value = "A polygon that is equivalent to the surface of the texture",
 			masterDoc = true,
-			usages = { @usage("a point if the operand is lower or equal to 0.") },
 			comment = "",
 			examples = { @example(value = "dem(dem)",
-				equals = "returns a geometry as a rectangle of weight and height equal to the texture.",
+				equals = "returns a geometry as a rectangle of width and height equal to the texture.",
 				isExecutable = false) },
 			see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFileName) {
@@ -2876,7 +2875,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
-		@doc(value = "A polygon that equivalent to the surface of the texture",
+		@doc(value = "A polygon that is equivalent to the surface of the texture",
 			examples = { @example(value = "dem(dem,z_factor)",
 				equals = "a geometry as a rectangle of weight and height equal to the texture.",
 				isExecutable = false) },
@@ -2888,7 +2887,7 @@ public abstract class Spatial {
 		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
 		@doc(value = "A polygon equivalent to the surface of the texture",
 			examples = { @example(value = "dem(dem,texture,z_factor)",
-				equals = "a geometry as a rectangle of weight and height equal to the texture.",
+				equals = "a geometry as a rectangle of width and height equal to the texture.",
 				isExecutable = false) },
 			see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFile, final GamaFile textureFile,
@@ -2898,15 +2897,36 @@ public abstract class Spatial {
 					.error("The 'dem' operator requires image files. Either " + demFile.getPath() + " or " +
 						textureFile.getPath() + " is not an image", scope); }
 			final IGraphics graphics = scope.getGraphics();
+			// if ( !graphics.is2D() ) {
+			// BufferedImage dem = ((GamaImageFile) demFile).getImage(scope);
+			// BufferedImage texture = ((GamaImageFile) textureFile).getImage(scope);
+			// texture = ImageUtils.flipRightSideLeftImage(texture);
+			FieldDrawingAttributes attributes = new FieldDrawingAttributes(null, null);
+			attributes.depth = z_factor;
+
+			// ((IGraphics.OpenGL) graphics).drawDEM(demFile, textureFile, z_factor);
+			// } else {
+			// DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0), null, null);
+
 			if ( !graphics.is2D() ) {
+				// If we are in the OpenGL world
 				BufferedImage dem = ((GamaImageFile) demFile).getImage(scope);
-				BufferedImage texture = ((GamaImageFile) textureFile).getImage(scope);
-				texture = ImageUtils.flipRightSideLeftImage(texture);
-				((IGraphics.OpenGL) graphics).drawDEM(scope, dem, texture, z_factor);
+				// int width = dem.getWidth();
+				// int height = dem.getHeight();
+				// double[] values = new double[width * height];
+				// int[] pixels = new int[width * height];
+				// dem.getRGB(0, 0, width, height, pixels, 0, width);
+				// for ( int i = 0; i < pixels.length; i++ ) {
+				// values[i] = pixels[i];
+				// }
+				// dem.getRaster().getPixels(0, 0, width - 1, height - 1, values);
+				attributes.cellSize = new GamaPoint(1, 1);
+				attributes.textures = Arrays.asList(textureFile, dem);
+				graphics.drawField(null, attributes);
 			} else {
-				DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0), null, null);
-				graphics.drawFile(textureFile, attributes);
+				graphics.drawFile(demFile, attributes);
 			}
+			// }
 			// ILocation location;
 			// final IAgent a = scope.getAgentScope();
 			// location = a != null ? a.getLocation() : new GamaPoint(0, 0);

@@ -24,7 +24,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gaml.operators.Maths;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.*;
 
 /**
  *
@@ -98,16 +98,16 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
-		final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final GamaColor gridColor,
-		final Envelope3D cellSize, final String name) {
-		DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0), null, gridColor);
-		attributes.setDynamic(true);
-		return drawImage(img, attributes);
+	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {// Construire l'image a partir du tableau de doubles et l'afficher
+		if ( attributes.textures == null ) { return null; }
+		Object image = attributes.textures.get(0);
+		if ( image instanceof GamaFile ) { return drawFile((GamaFile) image, attributes); }
+		if ( image instanceof BufferedImage ) { return drawImage((BufferedImage) image, attributes); }
+		return null;
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile file, final DrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
 		IScope scope = surface.getDisplayScope();
 		if ( file instanceof GamaImageFile ) { return drawImage(((GamaImageFile) file).getImage(scope), attributes); }
 		if ( !(file instanceof GamaGeometryFile) ) { return null; }
@@ -121,11 +121,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		shape = new GamaShape(shape, null, rotation, attributes.location, attributes.size, true);
 		// System.out.println("New centroid " + shape.getInnerGeometry().getCentroid());
 		GamaColor c = attributes.color;
-		return drawShape(shape, new DrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
+		return drawShape(shape, new ShapeDrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
 	}
 
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes) {
+	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
 		final AffineTransform saved = renderer.getTransform();
 		double curX, curY;
 		if ( attributes.location == null ) {
@@ -167,7 +167,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	 */
 
 	@Override
-	public Rectangle2D drawString(final String string, final DrawingAttributes attributes) {
+	public Rectangle2D drawString(final String string, final TextDrawingAttributes attributes) {
 		// Multiline: Issue #780
 		if ( string.contains("\n") ) {
 			Rectangle2D result = new Rectangle2D.Double();
@@ -201,7 +201,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawShape(final IShape geometry, final DrawingAttributes attributes) {
+	public Rectangle2D drawShape(final IShape geometry, final ShapeDrawingAttributes attributes) {
 		if ( geometry == null ) { return null; }
 		Geometry geom = geometry.getInnerGeometry();
 		final Shape s = sw.toShape(geom);
@@ -210,11 +210,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			renderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
 			if ( geom instanceof Lineal || geom instanceof Puntal ? false : !attributes.empty ) {
 				renderer.fill(s);
-				if ( attributes.hasBorder && attributes.border != null ) {
+				if ( attributes.border != null ) {
 					renderer.setColor(highlight ? data.getHighlightColor() : attributes.border);
 				}
 			}
-			if ( attributes.hasBorder && attributes.border != null ) {
+			if ( attributes.border != null ) {
 				renderer.draw(s);
 			}
 			return r;
@@ -279,13 +279,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	@Override
 	public void endDrawingLayers() {}
-
-	// @Override
-	// public Rectangle2D drawFile(final IScope scope, final GamaFile filecheck, final Color color,
-	// final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
-	// final GamaPair<Double, GamaPoint> rotates3d, final GamaPair<Double, GamaPoint> rotates3dInit) {
-	// return drawFile(scope, filecheck, color, locationInModelUnits, sizeInModelUnits, rotates3d);
-	// }
 
 	/**
 	 * Method is2D()

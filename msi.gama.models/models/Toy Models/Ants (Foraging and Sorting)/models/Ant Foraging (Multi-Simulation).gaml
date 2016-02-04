@@ -5,7 +5,7 @@ global {
 	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
 	int gridsize <- 100 min: 30 parameter: 'Width and Height of the grid:' category: 'Environment and Population';
 	int ants_number <- 50 min: 1 parameter: 'Number of ants:' category: 'Environment and Population';
-	int grid_frequency <- 1 min: 1 max: 100 parameter: 'Grid updates itself every:' category: 'Environment and Population';
+	//int grid_frequency <- 1 min: 1 max: 100 parameter: 'Grid updates itself every:' category: 'Environment and Population';
 	int number_of_food_places <- 5 min: 1 parameter: 'Number of food depots:' category: 'Environment and Population';
 	float grid_transparency <- 1.0;
 	const ant_shape_empty type: file <- file('../icons/ant.png');
@@ -35,10 +35,10 @@ global {
 		write "Simulation " + int(self) + " created";
 	}
   
-}
+} 
 
 
-grid ant_grid width: gridsize height: gridsize neighbors: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
+grid ant_grid width: gridsize height: gridsize neighbors: 8 /*frequency: grid_frequency*/ use_regular_agents: false use_individual_shapes: false{
 	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
 	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
 	food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
@@ -100,10 +100,13 @@ species ant skills: [moving] control: fsm {
 	}
 
 	aspect icon {
-		draw ant_shape_empty size: 10 rotate: my heading + 1;
+		draw ant_shape_empty size: {8,6} rotate: my heading + 1;
 	}
 
 }	
+
+
+
 
 
 experiment "4 Simulations" type: gui {
@@ -123,7 +126,7 @@ experiment "4 Simulations" type: gui {
 		display Comparison background: #white {
 			chart "Food Gathered" type: series {
 				loop s over: ants_model {
-					data "Food " + int(s) value: s.food_gathered color: s.color marker: false;
+					data "Food " + int(s) value: s.food_gathered color: s.color marker: false style: line line_visible: false;
 				}
 			}
 		}
@@ -135,9 +138,9 @@ experiment "4 Simulations" type: gui {
 			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
-			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: #black size: { 1, 0.02 };
-			text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: #black
-			size: { 1, 0.02 };
+			//text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: #black size: { 1, 0.02 };
+			//text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: #black
+			//size: { 1, 0.02 };
 		}
 		//inspect "Ants" type: table value: ant attributes: ['name', 'location', 'heading','state'];
 

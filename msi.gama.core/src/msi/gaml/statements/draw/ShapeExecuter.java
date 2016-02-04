@@ -17,7 +17,6 @@ import msi.gama.util.*;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 import msi.gaml.types.*;
 
 class ShapeExecuter extends DrawExecuter {
@@ -60,17 +59,11 @@ class ShapeExecuter extends DrawExecuter {
 	}
 
 	@Override
-		Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingAttributes attributes)
+		Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingData data)
 			throws GamaRuntimeException {
 		IShape shape = constantShape == null ? Cast.asGeometry(scope, item.value(scope), false) : constantShape;
 		if ( shape == null ) { return null; }
-		// We push the type of the geometry to the attributes
-		attributes.setShapeType(shape.getGeometricalType());
-		// We push the depth of the geometry if none have been specified already
-		attributes.setDepthIfAbsent((Double) shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
-		// We push the (perhaps new) location of the shape to the attributes. Can be necessary as
-		// the attributes can have a wrong location
-		attributes.setLocationIfAbsent(new GamaPoint(shape.getLocation()));
+		ShapeDrawingAttributes attributes = computeAttributes(scope, data, shape);
 		// If the graphics is 2D, we pre-translate and pre-rotate the geometry
 		// otherwise we just pre-translate it (the rotation in 3D will be handled separately
 		// once the complete shapes are built)
@@ -92,11 +85,23 @@ class ShapeExecuter extends DrawExecuter {
 		return gr.drawShape(shape, attributes);
 	}
 
+	ShapeDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
+		ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(data.currentSize, data.currentDepth,
+			data.currentRotation, data.currentLocation, data.currentEmpty, data.currentColor, data.currentBorder,
+			data.currentTextures, scope.getAgentScope(), shape.getGeometricalType());
+		// We push the depth of the geometry if none have been specified already
+		attributes.setDepthIfAbsent((Double) shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
+		// We push the (perhaps new) location of the shape to the attributes. Can be necessary as
+		// the attributes can have a wrong location
+		attributes.setLocationIfAbsent(new GamaPoint(shape.getLocation()));
+		return attributes;
+	}
+
 	/**
 	 * @param scope
 	 * @param attributes
 	 */
-	private void addTextures(final IScope scope, final DrawingAttributes attributes) {
+	private void addTextures(final IScope scope, final ShapeDrawingAttributes attributes) {
 		if ( attributes.textures == null ) { return; }
 		IList<String> textureNames = GamaListFactory.create(Types.STRING);
 		textureNames.addAll(attributes.textures);

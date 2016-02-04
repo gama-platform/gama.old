@@ -5,9 +5,7 @@
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
-import java.util.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
@@ -50,6 +48,17 @@ public class DrawingData {
 	Boolean constantperspective;
 	Boolean hasBorder;
 	Boolean hasColor;
+
+	ILocation currentSize = null;
+	Double currentDepth = null;
+	GamaPair<Double, GamaPoint> currentRotation = null;
+	ILocation currentLocation = null;
+	Boolean currentEmpty;
+	GamaColor currentBorder = null;
+	GamaColor currentColor;
+	GamaFont currentFont;
+	IList currentTextures = null;
+	Boolean currentperspective;
 
 	public DrawingData(final IExpression sizeExp, final IExpression depthExp, final IExpression rotationExp,
 		final IExpression locationExp, final IExpression emptyExp, final IExpression borderExp,
@@ -148,17 +157,7 @@ public class DrawingData {
 		}
 	}
 
-	public DrawingAttributes computeAttributes(final IScope scope) {
-		ILocation currentSize = null;
-		Double currentDepth = null;
-		GamaPair<Double, GamaPoint> currentRotation = null;
-		ILocation currentLocation = null;
-		Boolean currentEmpty;
-		GamaColor currentBorder = null;
-		GamaColor currentColor;
-		GamaFont currentFont;
-		IList currentTextures = null;
-		Boolean currentperspective;
+	public void computeAttributes(final IScope scope) {
 
 		/* perspective */
 		if ( constantperspective != null ) {
@@ -260,102 +259,6 @@ public class DrawingData {
 				} else {
 					currentTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(scope));
 				}
-			}
-		}
-
-		return new DrawingAttributes(currentSize, currentDepth, currentRotation, currentLocation, currentEmpty,
-			currentBorder, hasBorder, currentColor, currentFont, currentTextures, currentperspective, hasColor,
-			scope.getAgentScope());
-	}
-
-	public static class DrawingAttributes {
-
-		public GamaPoint size;
-		public Double depth = 0.0;
-		public final GamaPair<Double, GamaPoint> rotation;
-		public GamaPoint location;
-		public Boolean empty;
-		public GamaColor border;
-		public final Boolean hasBorder;
-		public final Boolean hasColor;
-		public GamaColor color;
-		public final GamaFont font;
-		public final List textures;
-		public Boolean perspective = true;
-		public IAgent agent;
-		public IShape.Type type;
-		public String speciesName = null;
-		public Boolean isDynamic = false;
-
-		public DrawingAttributes(final ILocation size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
-			final ILocation location, final Boolean empty, final GamaColor border, final Boolean hasBorder,
-			final GamaColor color, final GamaFont font, final List textures, final Boolean perspective,
-			final Boolean hasColor, final IAgent agent) {
-			this.size = size == null ? null : new GamaPoint(size);
-			this.depth = depth == null ? 0.0 : depth;
-			this.rotation = rotation;
-			// To make sure no side effect can happen
-			this.location = location == null ? null : new GamaPoint(location);
-			this.empty = empty;
-			this.border = border == null && empty ? color : border;
-			this.hasBorder = hasBorder || empty;
-			this.color = color;
-			this.font = font;
-			this.textures = textures == null ? null : new ArrayList(textures);
-			this.perspective = perspective;
-			this.hasColor = hasColor;
-			this.agent = agent;
-		}
-
-		public DrawingAttributes(final GamaPoint location) {
-			this(location, null, null);
-		}
-
-		public DrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border) {
-			this.location = location;
-			this.size = null;
-			this.rotation = null;
-			this.empty = color == null;
-			this.border = border;
-			this.hasBorder = border != null;
-			this.color = color;
-			this.font = null;
-			this.textures = null;
-			this.hasColor = color != null;
-			this.agent = null;
-		}
-
-		public DrawingAttributes copy() {
-			return new DrawingAttributes(size, depth, rotation, location, empty, border, hasBorder, color, font,
-				textures, perspective, hasColor, agent);
-		}
-
-		public void setShapeType(final IShape.Type type) {
-			this.type = type;
-		}
-
-		public void setSpeciesName(final String name) {
-			speciesName = name;
-		}
-
-		public void setDynamic(final Boolean b) {
-			isDynamic = b;
-		}
-
-		/**
-		 * @param attribute
-		 */
-		public void setDepthIfAbsent(final Double d) {
-			if ( depth != 0.0 ) { return; }
-			depth = d == null ? 0.0 : d;
-		}
-
-		/**
-		 * @param gamaPoint
-		 */
-		public void setLocationIfAbsent(final GamaPoint point) {
-			if ( location == null ) {
-				location = point;
 			}
 		}
 

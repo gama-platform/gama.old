@@ -12,13 +12,11 @@
 package msi.gama.outputs.layers;
 
 import com.vividsolutions.jts.geom.Envelope;
-
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
-import msi.gama.util.file.GamaGridFile;
-import msi.gama.util.file.GamaImageFile;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gama.util.file.*;
+import msi.gaml.statements.draw.FileDrawingAttributes;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -48,7 +46,9 @@ public class ImageLayer extends AbstractLayer {
 		} else {
 			file = new GamaImageFile(scope, imageFileName);
 			env = file.getGeoDataFile() == null ? null : file.computeEnvelope(scope);
-			if (!file.isGeoreferenced()) env = null;
+			if ( !file.isGeoreferenced() ) {
+				env = null;
+			}
 		}
 	}
 
@@ -56,10 +56,10 @@ public class ImageLayer extends AbstractLayer {
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage(scope);
 		if ( file == null ) { return; }
-		GamaPoint loc = env == null ? new GamaPoint(0,0) : new GamaPoint(env.getMinX(), env.getMinY());
-		DrawingAttributes attributes = new DrawingAttributes(loc, null, null);
-		if (env != null) {
-			attributes.size = new GamaPoint(env.getWidth() ,env.getHeight() );
+		GamaPoint loc = env == null ? new GamaPoint(0, 0) : new GamaPoint(env.getMinX(), env.getMinY());
+		FileDrawingAttributes attributes = new FileDrawingAttributes(loc);
+		if ( env != null ) {
+			attributes.size = new GamaPoint(env.getWidth(), env.getHeight());
 		}
 		dg.drawFile(file, attributes);
 	}

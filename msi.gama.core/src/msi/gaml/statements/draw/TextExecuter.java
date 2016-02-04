@@ -11,7 +11,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
 
 class TextExecuter extends DrawExecuter {
 
@@ -23,12 +22,19 @@ class TextExecuter extends DrawExecuter {
 	}
 
 	@Override
-		Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingAttributes attributes)
+		Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingData data)
 			throws GamaRuntimeException {
-		// We push the location of the agent if none has been provided
-		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgentScope().getLocation()));
 		final String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;
 		if ( info == null || info.length() == 0 ) { return null; }
+		TextDrawingAttributes attributes = computeAttributes(scope, data);
 		return g.drawString(info, attributes);
+	}
+
+	TextDrawingAttributes computeAttributes(final IScope scope, final DrawingData data) {
+		TextDrawingAttributes attributes = new TextDrawingAttributes(data.currentSize, data.currentRotation,
+			data.currentLocation, data.currentColor, data.currentFont, data.currentperspective);
+		// We push the location of the agent if none has been provided
+		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgentScope().getLocation()));
+		return attributes;
 	}
 }

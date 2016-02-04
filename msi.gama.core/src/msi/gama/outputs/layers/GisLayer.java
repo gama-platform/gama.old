@@ -16,14 +16,14 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.IType;
 
 public class GisLayer extends AbstractLayer {
@@ -50,9 +50,8 @@ public class GisLayer extends AbstractLayer {
 		if ( shapes != null ) {
 			for ( IShape geom : shapes ) {
 				if ( geom != null ) {
-					DrawingAttributes attributes =
-						new DrawingAttributes(new GamaPoint(geom.getLocation()), color, new GamaColor(Color.black));
-					attributes.setShapeType(geom.getGeometricalType());
+					ShapeDrawingAttributes attributes =
+						new ShapeDrawingAttributes(geom, color, new GamaColor(Color.black));
 					Rectangle2D r = g.drawShape(geom, attributes);
 				}
 			}

@@ -17,11 +17,9 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.GamaColor;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.*;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.*;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
 
@@ -98,6 +96,7 @@ public class ModelScene {
 		Texture texture = textures.get(image);
 		if ( texture == null ) {
 			texture = TextureCache.buildTexture(gl, image);
+			image.flush();
 			textures.put(image, texture);
 		}
 		if ( texture != null ) {
@@ -144,11 +143,24 @@ public class ModelScene {
 		currentLayer.addString(string, attributes);
 	}
 
-	public void addFile(final GamaFile file, final DrawingAttributes attributes) {
+	public void addFile(final GamaFile file, final FileDrawingAttributes attributes) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( file instanceof GamaImageFile ) {
 			TextureCache.initializeStaticTexture((GamaImageFile) file);
+			// if ( attributes.depth != null && attributes.textures != null ) {
+			// // We deal here with an image representing a DEM (with a depth = z_factor) and a texture.
+			// for ( Object img : attributes.textures ) {
+			// if ( img instanceof GamaImageFile ) {
+			// TextureCache.initializeStaticTexture((GamaImageFile) img);
+			// }
+			// }
+			// currentLayer.addDEM(null, (GamaImageFile) attributes.textures.get(0), (GamaImageFile) file, null,
+			// false, false, false, true, new Envelope3D(0, renderer.data.getEnvWidth(), 0,
+			// renderer.data.getEnvHeight(), 0, attributes.depth),
+			// new Envelope3D(0, 1, 0, 1, 0, 1), null, null);
+			// } else {
 			currentLayer.addImage((GamaImageFile) file, attributes);
+			// }
 		} else if ( file instanceof GamaGeometryFile ) {
 			currentLayer.addFile((GamaGeometryFile) file, attributes);
 		}
@@ -158,23 +170,16 @@ public class ModelScene {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		currentLayer.addImage(img, attributes);
 	}
+	//
+	// public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent,
+	// final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final Envelope3D env,
+	// final Envelope3D cellSize, final String name, final GamaColor lineColor) {
+	// if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
+	// currentLayer.addDEM(dem, demTexture, null, agent, isTriangulated, isGrayScaled, isShowText, false, env,
+	// cellSize, name, lineColor);
+	// }
 
-	public void addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition,
-		final Envelope3D bounds) {
-		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, true, bounds,
-			new Envelope3D(0, 1, 0, 1, 0, 1), null, null);
-	}
-
-	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent,
-		final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final Envelope3D env,
-		final Envelope3D cellSize, final String name, final GamaColor lineColor) {
-		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addDEM(dem, demTexture, null, agent, isTriangulated, isGrayScaled, isShowText, false, env,
-			cellSize, name, lineColor);
-	}
-
-	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
+	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( attributes.textures != null && !attributes.textures.isEmpty() ) {
 			for ( Object img : attributes.textures ) {
@@ -184,6 +189,18 @@ public class ModelScene {
 			}
 		}
 		currentLayer.addGeometry(geometry, attributes);
+	}
+
+	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
+		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
+		if ( attributes.textures != null && !attributes.textures.isEmpty() ) {
+			for ( Object img : attributes.textures ) {
+				if ( img instanceof GamaImageFile ) {
+					TextureCache.initializeStaticTexture((GamaImageFile) img);
+				}
+			}
+		}
+		currentLayer.addField(fieldValues, attributes);
 	}
 
 	public void dispose() {

@@ -11,12 +11,10 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
-import ummisco.gama.opengl.JOGLRenderer;
+import msi.gaml.statements.draw.*;
 
 public class GeometryObject extends AbstractObject {
 
@@ -28,30 +26,8 @@ public class GeometryObject extends AbstractObject {
 	}
 
 	// Package protected as it is only used by the static layers
-	GeometryObject(final Geometry geometry, final GamaColor color, final IShape.Type type, final LayerObject layer) {
-		this(geometry, new DrawingAttributes(null, color, color), layer);
-		attributes.type = type;
-	}
-
-	@Override
-	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
-		if ( picking ) {
-			JOGLRenderer renderer = drawer.renderer;
-			gl.glPushMatrix();
-			gl.glLoadName(pickingIndex);
-			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				if ( getAgent() != null /* && !picked */ ) {
-					renderer.setPicking(false);
-					pick();
-					renderer.currentPickedObject = this;
-					renderer.displaySurface.selectAgent(getAgent());
-				}
-			}
-			super.draw(gl, drawer, picking);
-			gl.glPopMatrix();
-		} else {
-			super.draw(gl, drawer, picking);
-		}
+	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final LayerObject layer) {
+		this(geometry.getInnerGeometry(), new ShapeDrawingAttributes(geometry, color, color), layer);
 	}
 
 	@Override
@@ -63,12 +39,13 @@ public class GeometryObject extends AbstractObject {
 	}
 
 	public IShape.Type getType() {
-		return attributes.type;
+		if ( !(attributes instanceof ShapeDrawingAttributes) ) { return null; }
+		return ((ShapeDrawingAttributes) attributes).type;
 	}
 
 	@Override
 	public boolean isFilled() {
-		return super.isFilled() && attributes.type != IShape.Type.GRIDLINE;
+		return super.isFilled() && getType() != IShape.Type.GRIDLINE;
 	}
 
 }

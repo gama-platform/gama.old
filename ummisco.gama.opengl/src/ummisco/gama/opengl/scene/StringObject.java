@@ -14,10 +14,11 @@ package ummisco.gama.opengl.scene;
 import java.awt.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.*;
 
 public class StringObject extends AbstractObject {
 
+	public static GamaColor defaultTextColor = GamaColor.getInt(Color.black.getRGB());
 	public final String string;
 
 	public StringObject(final String string, final DrawingAttributes attributes, final LayerObject layer) {
@@ -26,23 +27,17 @@ public class StringObject extends AbstractObject {
 	}
 
 	public StringObject(final String string, final GamaPoint location, final LayerObject layer) {
-		this(string, new DrawingAttributes(location), layer);
-		attributes.perspective = false;
-		attributes.color = GamaColor.getInt(Color.black.getRGB());
+		this(string, new TextDrawingAttributes(null, null, location, defaultTextColor, null, false), layer);
 	}
 
 	public Font getFont() {
-		if ( attributes == null ) { return null; }
-		return attributes.font;
+		if ( !(attributes instanceof TextDrawingAttributes) ) { return null; }
+		return ((TextDrawingAttributes) attributes).font;
 	}
 
 	public boolean iisInPerspective() {
-		return attributes != null && attributes.perspective;
-	}
-
-	@Override
-	public GamaPoint getLocation() {
-		return attributes.location;
+		if ( !(attributes instanceof TextDrawingAttributes) ) { return false; }
+		return ((TextDrawingAttributes) attributes).perspective;
 	}
 
 }

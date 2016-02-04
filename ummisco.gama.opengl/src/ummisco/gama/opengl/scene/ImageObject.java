@@ -12,14 +12,11 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
-import com.jogamp.opengl.*;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.util.texture.Texture;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
 import msi.gama.util.file.GamaImageFile;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class ImageObject extends AbstractObject {
@@ -38,42 +35,6 @@ public class ImageObject extends AbstractObject {
 		super(attributes, layer, new Texture[1]);
 		this.image = image;
 		this.file = null;
-	}
-
-	@Override
-	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
-		if ( picking ) {
-			JOGLRenderer renderer = drawer.renderer;
-			gl.glPushMatrix();
-			gl.glLoadName(pickingIndex);
-			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				if ( attributes.agent != null ) {
-					renderer.setPicking(false);
-					pick();
-					renderer.currentPickedObject = this;
-					// The picked image is the grid
-					if ( attributes.speciesName != null ) {
-						final GamaPoint pickedPoint =
-							renderer.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
-						IAgent ag = GAMA.run(new InScope<IAgent>() {
-
-							@Override
-							public IAgent run(final IScope scope) {
-								return attributes.agent.getPopulationFor(attributes.speciesName).getAgent(scope,
-									new GamaPoint(pickedPoint.x, -pickedPoint.y));
-							}
-						});
-						renderer.displaySurface.selectAgent(ag);
-					} else {
-						renderer.displaySurface.selectAgent(attributes.agent);
-					}
-				}
-			}
-			super.draw(gl, drawer, picking);
-			gl.glPopMatrix();
-		} else {
-			super.draw(gl, drawer, picking);
-		}
 	}
 
 	@Override

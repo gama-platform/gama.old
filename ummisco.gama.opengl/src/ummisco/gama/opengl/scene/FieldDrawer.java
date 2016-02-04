@@ -28,49 +28,47 @@ import ummisco.gama.opengl.utils.*;
  * @since 15 mai 2013
  *
  */
-public class DEMDrawer extends ObjectDrawer<DEMObject> {
+public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 	// private boolean initialized;
 	final GLUT glut = new GLUT();
 
-	public DEMDrawer(final JOGLRenderer r) {
+	public FieldDrawer(final JOGLRenderer r) {
 		super(r);
 	}
 
 	@Override
-	protected void _draw(final GL2 gl, final DEMObject demObj) {
-		// GL2 gl = GLContext.getCurrentGL().getGL2();
-		if ( demObj.fromImage ) {
+	protected void _draw(final GL2 gl, final FieldObject demObj) {
+		if ( demObj.values == null ) {
 			drawFromImage(demObj, gl);
 			return;
 		}
-		double cellWidth = demObj.cellSize.getWidth();
-		double cellHeight = demObj.cellSize.getHeight();
+		double cellWidth = demObj.getCellSize().x;
+		double cellHeight = demObj.getCellSize().y;
 		// Get Environment Properties
-		double envWidth = demObj.envelope.getWidth() / cellWidth;
-		double envHeight = demObj.envelope.getHeight() / cellHeight;
-		double envWidthStep = 1 / envWidth;
-		double envHeightStep = 1 / envHeight;
+		double columns = renderer.data.getEnvWidth() / cellWidth;
+		double rows = renderer.data.getEnvHeight() / cellHeight;
+		double envWidthStep = 1 / columns;
+		double envHeightStep = 1 / rows;
 
 		// Get Texture Properties
-		double textureWidth = demObj.textureImage.getWidth();
-		double textureHeight = demObj.textureImage.getHeight();
-		double textureWidthInEnvironment = envWidth / textureWidth;
-		double textureHeightInEnvironment = envHeight / textureHeight;
+		Texture curTexture = demObj.getTexture(gl, renderer, 0);
+		if ( curTexture == null ) { return; }
+		double textureWidth = curTexture.getWidth();
+		double textureHeight = curTexture.getHeight();
+		double textureWidthInEnvironment = columns / textureWidth;
+		double textureHeightInEnvironment = rows / textureHeight;
 
 		// FIXME: Need to set it dynamicly
-		double altFactor = demObj.envelope.getDepth();
-		double maxZ = GetMaxValue(demObj.dem);
+		double altFactor = demObj.getZFactor();
+		double maxZ = GetMaxValue(demObj.values);
 
 		double x1, x2, y1, y2;
 		double zValue = 0d;
 		double zValScaled = 0d;
 		double stepX, stepY;
 
-		Texture curTexture = demObj.getTexture(gl, renderer, 0);
-		if ( curTexture == null ) { return; }
-
-		if ( !demObj.isGrayScaled ) {
+		if ( !demObj.isGrayScaled() ) {
 			curTexture.enable(gl);
 			curTexture.bind(gl);
 		}
@@ -83,15 +81,15 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 		// if ( !isInitialized() && demObj.isTextured ) {
 		// setInitialized(true);
 		// }
-		if ( !demObj.isTriangulated ) {
-			for ( int i = 0; i < envWidth; i++ ) {
-				x1 = i / envWidth * envWidth;
-				x2 = (i + 1) / envWidth * envWidth;
-				for ( int j = 0; j < envHeight; j++ ) {
-					y1 = j / envHeight * envHeight;
-					y2 = (j + 1) / envHeight * envHeight;
-					if ( demObj.dem != null ) {
-						zValue = demObj.dem[(int) (j * envWidth + i)];
+		if ( !demObj.isTriangulated() ) {
+			for ( int i = 0; i < columns; i++ ) {
+				x1 = i / columns * columns;
+				x2 = (i + 1) / columns * columns;
+				for ( int j = 0; j < rows; j++ ) {
+					y1 = j / rows * rows;
+					y2 = (j + 1) / rows * rows;
+					if ( demObj.values != null ) {
+						zValue = demObj.values[(int) (j * columns + i)];
 						zValScaled = zValue * altFactor;
 					}
 					Color lineColor = demObj.getBorder();
@@ -106,7 +104,7 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 						gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, zValScaled);
 						gl.glEnd();
 					} else {
-						if ( demObj.isGrayScaled ) {
+						if ( demObj.isGrayScaled() ) {
 							gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
 							gl.glBegin(GL2ES3.GL_QUADS);
 							gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, zValScaled);
@@ -130,47 +128,45 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 					}
 				}
 			}
-		}
-
-		if ( demObj.isTriangulated ) {
+		} else {
 			double z1 = 0d;
 			double z2 = 0d;
 			double z3 = 0d;
 			double z4 = 0d;
-			for ( int i = 0; i < envWidth; i++ ) {
-				x1 = i / envWidth * envWidth;
-				x2 = (i + 1) / envWidth * envWidth;
-				for ( int j = 0; j < envHeight; j++ ) {
-					y1 = j / envHeight * envHeight;
-					y2 = (j + 1) / envHeight * envHeight;
-					if ( demObj.dem != null ) {
-						zValue = demObj.dem[(int) (j * envWidth + i)];
+			for ( int i = 0; i < columns; i++ ) {
+				x1 = i / columns * columns;
+				x2 = (i + 1) / columns * columns;
+				for ( int j = 0; j < rows; j++ ) {
+					y1 = j / rows * rows;
+					y2 = (j + 1) / rows * rows;
+					if ( demObj.values != null ) {
+						zValue = demObj.values[(int) (j * columns + i)];
 
-						if ( i < envWidth - 1 && j < envHeight - 1 ) {
-							z1 = demObj.dem[(int) (j * envWidth + i)];
-							z2 = demObj.dem[(int) ((j + 1) * envWidth + i)];
-							z3 = demObj.dem[(int) ((j + 1) * envWidth + (i + 1))];
-							z4 = demObj.dem[(int) (j * envWidth + (i + 1))];
+						if ( i < columns - 1 && j < rows - 1 ) {
+							z1 = demObj.values[(int) (j * columns + i)];
+							z2 = demObj.values[(int) ((j + 1) * columns + i)];
+							z3 = demObj.values[(int) ((j + 1) * columns + (i + 1))];
+							z4 = demObj.values[(int) (j * columns + (i + 1))];
 						}
 
 						// Last rows
-						if ( j == envHeight - 1 && i < envWidth - 1 ) {
-							z1 = demObj.dem[(int) (j * envWidth + i)];
-							z4 = demObj.dem[(int) (j * envWidth + (i + 1))];
+						if ( j == rows - 1 && i < columns - 1 ) {
+							z1 = demObj.values[(int) (j * columns + i)];
+							z4 = demObj.values[(int) (j * columns + (i + 1))];
 							z2 = z1;
 							z3 = z4;
 						}
 						// Last cols
-						if ( i == envWidth - 1 && j < envHeight - 1 ) {
-							z1 = demObj.dem[(int) (j * envWidth + i)];
-							z2 = demObj.dem[(int) ((j + 1) * envWidth + i)];
+						if ( i == columns - 1 && j < rows - 1 ) {
+							z1 = demObj.values[(int) (j * columns + i)];
+							z2 = demObj.values[(int) ((j + 1) * columns + i)];
 							z3 = z2;
 							z4 = z1;
 						}
 
 						// last cell
-						if ( i == envWidth - 1 && j == envHeight - 1 ) {
-							z1 = demObj.dem[(int) (j * envWidth + i)];
+						if ( i == columns - 1 && j == rows - 1 ) {
+							z1 = demObj.values[(int) (j * columns + i)];
 							z2 = z1;
 							z3 = z1;
 							z4 = z1;
@@ -215,7 +211,7 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 						gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, z1 * altFactor);
 						gl.glEnd();
 					} else {
-						if ( demObj.isGrayScaled ) {
+						if ( demObj.isGrayScaled() ) {
 							gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
 							gl.glBegin(GL.GL_TRIANGLE_STRIP);
 							gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, z1 * altFactor);
@@ -241,28 +237,25 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 			}
 		}
 
-		if ( demObj.isShowText ) {
+		if ( demObj.isShowText() && demObj.values != null ) {
 			// Draw gridvalue as text inside each cell
-			Double gridValue = 0.0;
 			gl.glDisable(GL.GL_BLEND);
 			gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
-			for ( int i = 0; i < textureWidth; i++ ) {
-				stepX = i / textureWidth * envWidth;
-				for ( int j = 0; j < textureHeight; j++ ) {
-					stepY = j / textureHeight * envHeight;
-					if ( demObj.dem != null ) {
-						gridValue = demObj.dem[(int) (j * textureWidth + i)];
-					}
-					gl.glRasterPos3d(stepX + textureWidthInEnvironment / 2, -(stepY + textureHeightInEnvironment / 2),
-						gridValue * altFactor);
+			for ( int i = 0; i < columns; i++ ) {
+				stepX = i * cellWidth;/// textureWidth * columns;
+				for ( int j = 0; j < rows; j++ ) {
+					stepY = j * cellHeight;/// textureHeight * rows;
+					double gridValue = demObj.values[(int) (j * columns + i)];
+					gl.glRasterPos3d(stepX + cellWidth / 2, -(stepY + cellHeight / 2), gridValue * altFactor);
+					gl.glPushMatrix();
 					gl.glScaled(8.0d, 8.0d, 8.0d);
 					glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, String.format(Locale.US, "%.2f", gridValue));
-					gl.glScaled(0.125d, 0.125d, 0.125d);
+					gl.glPopMatrix();
 				}
 			}
 			gl.glEnable(GL.GL_BLEND);
 		}
-		if ( !demObj.isGrayScaled ) {
+		if ( !demObj.isGrayScaled() ) {
 			curTexture.disable(gl);
 		}
 
@@ -270,23 +263,24 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 
 	private double GetMaxValue(final double[] gridValue) {
 		double maxValue = 0.0;
-		if ( gridValue == null ) { return maxValue; }
-		for ( int i = 0; i < gridValue.length; i++ ) {
-			if ( gridValue[i] > maxValue ) {
-				maxValue = gridValue[i];
+		if ( gridValue != null ) {
+			for ( int i = 0; i < gridValue.length; i++ ) {
+				if ( gridValue[i] > maxValue ) {
+					maxValue = gridValue[i];
+				}
 			}
 		}
 		return maxValue;
 	}
 
-	protected void drawFromImage(final DEMObject demObj, final GL2 gl) {
+	protected void drawFromImage(final FieldObject demObj, final GL2 gl) {
 
 		int rows, cols;
 		int x, y;
 		float vx, vy, s, t;
 		float ts, tt, tw, th;
 
-		BufferedImage dem = demObj.demImg;
+		BufferedImage dem = demObj.getDirectImage(1);
 		Texture curTexture = demObj.getTexture(gl, renderer, 0);
 		if ( curTexture == null ) { return; }
 		// Enable the texture
@@ -299,9 +293,9 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 		tt = 1.0f / rows;
 
 		// FIXME/ need to set w and h dynamicly
-		float w = (float) demObj.envelope.getWidth();
-		float h = (float) demObj.envelope.getHeight();
-		float altFactor = (float) demObj.envelope.getDepth();
+		float w = (float) renderer.data.getEnvWidth();
+		float h = (float) renderer.data.getEnvHeight();
+		float altFactor = (float) demObj.getZFactor();
 
 		tw = w / cols;
 		th = h / rows;

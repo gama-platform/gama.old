@@ -21,15 +21,18 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.grid.IGrid;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.FieldDrawingAttributes;
+
+// FIXME This class nees to be entirely rewritten ...
 
 public class GridLayer extends ImageLayer {
 
-	BufferedImage image;
+	static GamaColor defaultLineColor = GamaColor.getInt(Color.black.getRGB());
+	// BufferedImage image;
 
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
@@ -44,70 +47,78 @@ public class GridLayer extends ImageLayer {
 	}
 
 	public boolean turnGridOn;
-	private Envelope3D cellWidth;
+	private final GamaPoint cellSize;
+	BufferedImage image;
 
 	public GridLayer(final IScope scope, final ILayerStatement layer) {
 		super(scope, layer);
 		turnGridOn = ((GridLayerStatement) layer).drawLines();
+		GamaSpatialMatrix m = (GamaSpatialMatrix) ((GridLayerStatement) layer).getEnvironment();
+		final ILocation p = m.getDimensions();
+		Envelope env = scope.getRoot().getGeometry().getEnvelope();
+		cellSize = new GamaPoint(env.getWidth() / m.numCols, env.getHeight() / m.numRows);
+		image = ImageUtils.createCompatibleImage(p.getX(), p.getY());
 	}
 
 	@Override
 	public void reloadOn(final IDisplaySurface surface) {
 		super.reloadOn(surface);
-		if ( image != null ) {
-			image.flush();
-			image = null;
-		}
+		image.flush();
 	}
 
 	@Override
 	protected void buildImage(final IScope scope) {
-		if ( scope == null ) { return; }
-		final GridLayerStatement g = (GridLayerStatement) definition;
-		final IGrid m = g.getEnvironment();
-		final ILocation p = m.getDimensions();
-		// in case the agents have been killed
-		if ( m.getAgents().size() > 0 ) {
-			cellWidth = m.getAgents().get(0).getGeometry().getEnvelope();
-		}
+		// if ( scope == null ) { return; }
+		// final GridLayerStatement g = (GridLayerStatement) definition;
+		// final IGrid m = g.getEnvironment();
 
-		if ( image == null ) {
-			image = ImageUtils.createCompatibleImage(p.getX(), p.getY());
-		}
-		int[] data = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		System.arraycopy(m.getDisplayData(), 0, data, 0, data.length);
-		image.setRGB(0, 0, (int) p.getX(), (int) p.getY(), m.getDisplayData(), 0, (int) p.getX());
 	}
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage(scope);
 		final GridLayerStatement g = (GridLayerStatement) definition;
-		if ( image == null ) { return; }
+		// if ( image == null ) { return; }
 		GamaColor lineColor = null;
 		if ( turnGridOn ) {
 			lineColor = g.getLineColor();
 			if ( lineColor == null ) {
-				lineColor = GamaColor.getInt(Color.black.getRGB());
+				lineColor = defaultLineColor;
 			}
 		}
 		double[] gridValueMatrix = g.getElevationMatrix(scope);
-		if ( gridValueMatrix != null ) {
-			GamaImageFile textureFile = g.textureFile();
-			if ( textureFile != null ) { // display grid dem:texturefile
-				BufferedImage texture = textureFile.getImage(scope);
-				dg.drawGrid(scope, texture, gridValueMatrix, g.isTriangulated(), g.isGrayScaled(), g.isShowText(),
-					lineColor, cellWidth, this.getName());
-			} else {
-				dg.drawGrid(scope, image, gridValueMatrix, g.isTriangulated(), g.isGrayScaled(), g.isShowText(),
-					lineColor, cellWidth, this.getName());
-			}
+		GamaImageFile textureFile = g.textureFile();
+		// if ( textureFile != null ) { // display grid dem:texturefile
+		// // BufferedImage texture = textureFile.getImage(scope);
+		// dg.drawGrid(scope, texture, gridValueMatrix, g.isTriangulated(), g.isGrayScaled(), g.isShowText(),
+		// lineColor, cellWidth, this.getName());
+		// } else {
+		// dg.drawGrid(scope, image, gridValueMatrix, g.isTriangulated(), g.isGrayScaled(), g.isShowText(), lineColor,
+		// cellWidth, this.getName());
+		// }
 
+		FieldDrawingAttributes attributes = new FieldDrawingAttributes(getName(), lineColor);
+		attributes.grayScaled = g.isGrayScaled;
+		GamaPoint p = attributes.fieldSize = g.getEnvironment().getDimensions();
+		attributes.depth = 1.0;
+		if ( textureFile != null ) {
+			attributes.textures = Arrays.asList(textureFile);
 		} else {
-			DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(0, 0), null, lineColor);
-			attributes.setDynamic(true);
-			attributes.setSpeciesName(getName());
+
+			int[] data = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+			System.arraycopy(g.getEnvironment().getDisplayData(), 0, data, 0, data.length);
+			// image.setRGB(0, 0, (int) p.x, (int) p.y, g.getEnvironment().getDisplayData(), 0, (int) p.x);
+			attributes.textures = Arrays.asList(image);
+		}
+		attributes.triangulated = g.isTriangulated;
+		attributes.withText = g.showText;
+		attributes.cellSize = cellSize;
+		attributes.border = lineColor;
+
+		if ( gridValueMatrix == null ) {
 			dg.drawImage(image, attributes);
+		} else {
+			dg.drawField(gridValueMatrix, attributes);
 		}
 	}
 

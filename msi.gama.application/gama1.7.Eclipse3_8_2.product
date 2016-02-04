@@ -44,9 +44,9 @@ openFile
 
    <splash
       location="msi.gama.application"
-      startupProgressRect="30,468,541,10"
+      startupProgressRect="23,468,527,12"
       startupMessageRect="200,450,541,16"
-      startupForegroundColor="5376A1" />
+      startupForegroundColor="165E93" />
    <launcher name="Gama">
       <linux icon="/msi.gama.application/icons/launcher_icons/icon.xpm"/>
       <macosx icon="/msi.gama.application/icons/launcher_icons/icon.icns"/>
@@ -62,7 +62,6 @@ openFile
             winLargeLow="/msi.gama.application/icons/launcher_icons/icon-48x48x8b.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
       <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>

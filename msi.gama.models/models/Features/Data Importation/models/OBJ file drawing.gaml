@@ -1,7 +1,7 @@
 /**
 * Name: OBJ File to Geometry
 * Author:  Arnaud Grignard
-* Description: Model which shows how to use a OBJ, SVG or 3DS File to draw a complex geometry. The geometry is simply used, in this case, to draw the agents.
+* Description: Model which shows how to use a OBJ File to draw a complex geometry. The geometry is simply used, in this case, to draw the agents.
 * Tags :  Import Files, 3D Display
 */
 
@@ -24,13 +24,13 @@ species object skills: [moving]{
 		do wander amplitude: 30 speed: 0.001;
 	}
 	aspect obj {
-		draw file("../includes/teapot.obj") color: color size: size rotate3D: cycle/rot::{0,1,0};
+		draw file("../includes/teapot.obj") color: color size: size rotate: cycle/rot::{0,1,0};
 	}
 }	
 
 experiment Display  type: gui {
 	output {
-		display ComplexObject type:opengl background:°orange{
+		display ComplexObject type: opengl background:°orange{
 			species object aspect:obj;				
 		}
 	}

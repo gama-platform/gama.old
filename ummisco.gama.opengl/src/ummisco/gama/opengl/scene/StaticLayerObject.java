@@ -127,24 +127,24 @@ public class StaticLayerObject extends LayerObject {
 			// add the world
 			GamaColor c = new GamaColor(150, 150, 150, 255);
 			GamaPoint origin = new GamaPoint();
-			Geometry g = GamaGeometryType.buildLine(origin, new GamaPoint(w, 0)).getInnerGeometry();
+			IShape g = GamaGeometryType.buildLine(origin, new GamaPoint(w, 0));
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
-			g = GamaGeometryType.buildLine(new GamaPoint(w, 0), new GamaPoint(w, h)).getInnerGeometry();
+			g = GamaGeometryType.buildLine(new GamaPoint(w, 0), new GamaPoint(w, h));
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
-			g = GamaGeometryType.buildLine(new GamaPoint(w, h), new GamaPoint(0, h)).getInnerGeometry();
+			g = GamaGeometryType.buildLine(new GamaPoint(w, h), new GamaPoint(0, h));
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
-			g = GamaGeometryType.buildLine(new GamaPoint(0, h), origin).getInnerGeometry();
+			g = GamaGeometryType.buildLine(new GamaPoint(0, h), origin);
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 
 			// build the lines
 			c = GamaColor.getInt(Color.red.getRGB());
-			g = GamaGeometryType.buildLine(origin, new GamaPoint(size, 0, 0)).getInnerGeometry();
+			g = GamaGeometryType.buildLine(origin, new GamaPoint(size, 0, 0));
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 			c = GamaColor.getInt(Color.green.getRGB());
-			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, size, 0)).getInnerGeometry();
+			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, size, 0));
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 			c = GamaColor.getInt(Color.blue.getRGB());
-			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, 0, size)).getInnerGeometry();
+			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, 0, size));
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 			// add the legends
 			strings.add(new StringObject("X", new GamaPoint(1.2f * size, 0.0d, 0.0d), this));
@@ -152,16 +152,13 @@ public class StaticLayerObject extends LayerObject {
 			strings.add(new StringObject("Z", new GamaPoint(0.0d, 0.0d, 1.2f * size), this));
 			// add the triangles
 			c = GamaColor.getInt(Color.red.getRGB());
-			g = GamaGeometryType.buildArrow(origin, new GamaPoint(size + size / 10, 0, 0), size / 6, size / 6, true)
-				.getInnerGeometry();
+			g = GamaGeometryType.buildArrow(origin, new GamaPoint(size + size / 10, 0, 0), size / 6, size / 6, true);
 			geometries.add(new GeometryObject(g, c, IShape.Type.POLYGON, this));
 			c = GamaColor.getInt(Color.green.getRGB());
-			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, size + size / 10, 0), size / 6, size / 6, true)
-				.getInnerGeometry();
+			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, size + size / 10, 0), size / 6, size / 6, true);
 			geometries.add(new GeometryObject(g, c, IShape.Type.POLYGON, this));
 			c = GamaColor.getInt(Color.blue.getRGB());
-			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, 0, size + size / 10), size / 6, size / 6, true)
-				.getInnerGeometry();
+			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, 0, size + size / 10), size / 6, size / 6, true);
 			// FIXME See Issue 832: depth cannot be applied here.
 			geometries.add(new GeometryObject(g, c, IShape.Type.POLYGON, this));
 

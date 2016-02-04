@@ -190,7 +190,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		final IGraphics g = scope.getGraphics();
 		if ( g == null ) { return null; }
 		try {
-			return executer.executeOn(scope, g, data.computeAttributes(scope));
+			data.computeAttributes(scope);
+			return executer.executeOn(scope, g, data);
 		} catch (GamaRuntimeException e) {
 			throw e;
 		} catch (Exception e) {

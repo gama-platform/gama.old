@@ -293,7 +293,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public ILocation getDimensions() {
+	public GamaPoint getDimensions() {
 		return new GamaPoint(numCols, numRows);
 	}
 
