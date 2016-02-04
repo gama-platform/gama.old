@@ -5,9 +5,11 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.AbstractRenderer;
@@ -324,7 +326,16 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		ArrayList<Double> XValues=dataserie.getXValues(scope);
 		ArrayList<Double> YValues=dataserie.getYValues(scope);
 		ArrayList<Double> SValues=dataserie.getSValues(scope);
+		
 		if (XValues.size()>0)
+		{
+			// TODO Hack to speed up, change!!!
+			final NumberAxis domainAxis = (NumberAxis) ((XYPlot)this.chart.getPlot()).getDomainAxis();
+			final NumberAxis rangeAxis = (NumberAxis) ((XYPlot)this.chart.getPlot()).getRangeAxis();
+			domainAxis.setAutoRange(false);
+			rangeAxis.setAutoRange(false);
+//			domainAxis.setRange(Math.min((double)(Collections.min(XValues)),0), Math.max(Collections.max(XValues),Collections.min(XValues)+1));
+//			rangeAxis.setRange(Math.min((double)(Collections.min(YValues)),0), Math.max(Collections.max(YValues),Collections.min(YValues)+1));
 		for(int i=0; i<XValues.size(); i++)
 		{
 			if (dataserie.isUseYErrValues())
@@ -351,6 +362,9 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				}
 				
 			}
+		}
+		domainAxis.setAutoRange(true);
+		rangeAxis.setAutoRange(true);
 		}
 		if (SValues.size()>0)
 		{
