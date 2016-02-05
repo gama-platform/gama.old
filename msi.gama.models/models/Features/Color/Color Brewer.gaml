@@ -66,18 +66,18 @@ experiment BrewerPalette type: gui {
 		display View1 type:opengl draw_env:false{
 			graphics "brewer"{
 				//Sequential
-				draw "Sequential" at:{-world.shape.width*0.2,0} color:°black bitmap:false;
+				draw "Sequential" at:{-world.shape.width*0.2,0} color:°black perspective:true;
 				loop i from:0 to:length(SequentialColors)-1{
 					draw square(square_size) color:SequentialColors[i] at: {square_size*(0.5 + i), 0, 0};
 				}
 				//Diverging
 				loop i from:0 to:length(DivergingColors)-1{
-					draw "Diverging" at:{-world.shape.width*0.2,1*square_size} color:°black bitmap:false;
+					draw "Diverging" at:{-world.shape.width*0.2,1*square_size} color:°black perspective:false;
 					draw square(square_size) color:DivergingColors[i] at: {square_size*(0.5 + i), 1*square_size, 0};
 				}
 				//Qualitative		
 				loop i from:0 to:length(QualitativeColors)-1{
-					draw "Qualitative" at:{-world.shape.width*0.2,2*square_size} color:°black bitmap:false;
+					draw "Qualitative" at:{-world.shape.width*0.2,2*square_size} color:°black perspective:false;
 					draw square(square_size) color:QualitativeColors[i] at: {square_size*(0.5 + i), 2*square_size, 0};
 				}
 		    }

@@ -2,8 +2,8 @@ model ants
 // A simple model with one food depot. 
 global {
 	int t <- 1;
-	float evaporation_rate <- 0.1 min: 0.01 max: float(1) ;
-	const diffusion_rate type: float <- 0.7 min: 0.0 max: float(1) ;
+	float evaporation_rate <- 1.0 min: 0.01 max: 240.0 ;
+	const diffusion_rate type: float <- 1.0 min: 0.0 max: 1.0 ;
 	const gridsize type: int <- 75; 
 	int ants_number  <- 50 min: 1 max: 200 parameter: 'Number of Ants:';
 	int food_remaining update: list ( ant_grid ) count ( each . food > 0) <- 10;
@@ -32,6 +32,10 @@ global {
 	{
 		write("click2");
 	}
+	
+	reflex diffuse {
+      diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
+   }
 
 } 
 
@@ -39,6 +43,7 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 	bool isNestLocation  <- ( self distance_to center ) < 4;
 	bool isFoodLocation <-  types[grid_x , grid_y] = 2;       
 	list<ant_grid> neighbours <- self neighbors_at 1;  
+	float road <- 0.0 max:240.0 update: (road<=evaporation_rate) ? 0.0 : road-evaporation_rate;
 	rgb color <- rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) , self.road * 30 , self.road > 15 ? 255 : food * 50 ]) update: rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,self.road * 30 , self.road > 15 ? 255 : food * 50 ]); 
 	int food <- isFoodLocation ? 5 : 0; 
 	const nest type: int <- int(300 - ( self distance_to center ));
@@ -46,9 +51,11 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 species ant skills: [ moving ] {     
 	rgb color <- #red;
 	ant_grid place function: {ant_grid ( location )};
-	bool hasFood <- false;
-	signal road update: hasFood ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid; 
+	bool hasFood <- false; 
 	bool hasRoad <- false update: place . road > 0.05;
+	reflex diffuse_road when:hasFood=true{
+      ant_grid(location).road <- ant_grid(location).road + 100.0;
+   }
 	reflex wandering when: ( ! hasFood ) and ( ! hasRoad ) and ( place . food = 0) {
 		do wander amplitude: 120 speed: 1.0;
 	}
@@ -88,13 +95,17 @@ experiment Simple type:gui {
 		display Ants refresh: every(2) { 
 			grid ant_grid;
 			species ant aspect: default;
-			text string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
+			graphics 'displayText' {
+				draw string ( food_remaining ) size: 24.0 at: { 20 , 20 } color: rgb ( 'white' );
+			}
 			event mouse_down action:press;
 			event mouse_up action:release;
 		}  
 		display Ants_2 refresh: every(2) { 
 			grid ant_grid;
-			text string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
+			graphics 'displayText' {
+				draw string ( food_remaining ) size: 24.0 at: { 20 , 20 } color: rgb ( 'white' );
+			}
 			event mouse_down action:press;
 			event mouse_up action:click2;
 		}  
