@@ -32,9 +32,9 @@ experiment comodelExp_Ants_Boids type: gui {
 	output {
 		display "comodel_disp" {			
 			image 'background' file:'../images/soil.jpg';
-			species first(myBoids.boids_gui).simulation.boids aspect: image;
-			agents "agents_ant_grid" transparency: 0.5 position:(first(myBoids.boids_gui).simulation.boids_goal) value: (first(myAnt.Complete).simulation.ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
-			agents "agents_ant" aspect:icon value:first(myAnt.Complete).simulation.ant  position:(first(myBoids.boids_gui).simulation.boids_goal);
+			species species((first(myBoids.boids_gui).simulation.boids)[0]) aspect: image;
+			agents "agents_ant_grid" transparency: 0.5 position:point((first(myBoids.boids_gui).simulation.boids_goal)) value: (first(myAnt.Complete).simulation.ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
+			agents "agents_ant" aspect:icon value:first(myAnt.Complete).simulation.ant  position:point((first(myBoids.boids_gui).simulation.boids_goal));
 			
 			agents "agents_bois" aspect:image value:first(myBoids.boids_gui).simulation.boids;//  position:(first(myBoids.Boids2).simulation.boids_goal); 
 

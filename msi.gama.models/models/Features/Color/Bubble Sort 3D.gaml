@@ -112,14 +112,14 @@ experiment Display type: gui {
 		display View1 type:opengl draw_env:false{
 			species cells transparency:0.1;
 			graphics "di"{
-			 draw "black(0,0,0)" at:{0,0,0} color:°black bitmap:false;
-			 draw "red(1,0,0)" at:{world.shape.width,0,0} color:°red bitmap:false;
-			 draw "green(0,1,0)" at:{0,world.shape.height,0} color:°green bitmap:false;
-			 draw "blue(0,0,1)" at:{0,0,world.shape.width} color:°blue bitmap:false;
-			 draw "yellow(1,1,0)" at:{world.shape.width,world.shape.height,0} color:°yellow bitmap:false;
-			 draw "magenta(1,0,1)" at:{world.shape.width,0,world.shape.depth} color:°magenta bitmap:false;
-			 draw "cyan(0,1,1)" at:{0,world.shape.height,world.shape.depth} color:°cyan bitmap:false;
-			 draw "white(1,1,1)" at:{world.shape.width,world.shape.height,world.shape.depth} color:°white bitmap:false;	
+			 draw "black(0,0,0)" at:{0,0,0} color:°black perspective:false;
+			 draw "red(1,0,0)" at:{world.shape.width,0,0} color:°red perspective:false;
+			 draw "green(0,1,0)" at:{0,world.shape.height,0} color:°green perspective:false;
+			 draw "blue(0,0,1)" at:{0,0,world.shape.width} color:°blue perspective:false;
+			 draw "yellow(1,1,0)" at:{world.shape.width,world.shape.height,0} color:°yellow perspective:false;
+			 draw "magenta(1,0,1)" at:{world.shape.width,0,world.shape.depth} color:°magenta perspective:false;
+			 draw "cyan(0,1,1)" at:{0,world.shape.height,world.shape.depth} color:°cyan perspective:false;
+			 draw "white(1,1,1)" at:{world.shape.width,world.shape.height,world.shape.depth} color:°white perspective:false;	
 			}
 		}
 	}

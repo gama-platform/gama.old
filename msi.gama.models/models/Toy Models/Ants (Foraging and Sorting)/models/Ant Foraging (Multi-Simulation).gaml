@@ -1,8 +1,8 @@
 model ants
 
 global {
-	float evaporation_rate <- 0.10 min: 0.0 max: 1.0 parameter: 'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
-	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
+	float evaporation_rate <- 5.0 min: 0.0 max: 240.0 parameter: 'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
+	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
 	int gridsize <- 100 min: 30 parameter: 'Width and Height of the grid:' category: 'Environment and Population';
 	int ants_number <- 50 min: 1 parameter: 'Number of ants:' category: 'Environment and Population';
 	//int grid_frequency <- 1 min: 1 max: 100 parameter: 'Grid updates itself every:' category: 'Environment and Population';
@@ -34,12 +34,17 @@ global {
 		create ant number: ants_number with: (location: center);
 		write "Simulation " + int(self) + " created";
 	}
+	
+	reflex diffuse {
+      diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
+   }
   
 } 
 
 
 grid ant_grid width: gridsize height: gridsize neighbors: 8 /*frequency: grid_frequency*/ use_regular_agents: false use_individual_shapes: false{
 	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
+	float road <- 0.0 max:240.0 update: (road<=evaporation_rate) ? 0.0 : road-evaporation_rate;
 	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
 	food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
 	int food <- 0;
@@ -47,7 +52,10 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 /*frequency: grid_fr
 species ant skills: [moving] control: fsm {
 	float speed <- 1.0;
 	bool has_food <- false;
-	signal road update: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
+	
+	reflex diffuse_road when:has_food=true{
+      ant_grid(location).road <- ant_grid(location).road + 100.0;
+   }
 	
 	action pick (int amount) {
 		has_food <- true;
