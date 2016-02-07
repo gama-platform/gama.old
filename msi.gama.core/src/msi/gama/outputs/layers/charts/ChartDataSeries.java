@@ -15,6 +15,7 @@ import msi.gaml.operators.Cast;
 
 public class ChartDataSeries {
 	
+	ArrayList<String> cvalues=new ArrayList<String>(); //for categories
 	ArrayList<Double> xvalues=new ArrayList<Double>(); //for xy charts
 	ArrayList<Double> yvalues=new ArrayList<Double>();
 	ArrayList<Double> svalues=new ArrayList<Double>(); //for marker sizes or 3d charts
@@ -107,6 +108,11 @@ public class ChartDataSeries {
 	}
 
 	
+	public ArrayList<String> getCValues(IScope scope) {
+		// TODO Auto-generated method stub
+		return cvalues;
+	}
+
 	public ArrayList<Double> getXValues(IScope scope) {
 		// TODO Auto-generated method stub
 		return xvalues;
@@ -122,12 +128,6 @@ public class ChartDataSeries {
 		return svalues;
 	}
 
-	public void addxysvalue(IScope scope, double dx, double dy, double ds, int date, HashMap barvalues, int listvalue) {
-
-		svalues.add(ds);
-		addxyvalue(scope,dx,dy,date,barvalues,listvalue);
-		
-	}
 /*
 	public void addxysvalue(double dx, double dy, double dz, int date) {
 		// TODO Auto-generated method stub
@@ -140,6 +140,7 @@ public class ChartDataSeries {
 */
 	public void clearValues(IScope scope) {
 		// TODO Auto-generated method stub
+		cvalues=new ArrayList<String>(); //for xy charts
 		xvalues=new ArrayList<Double>(); //for xy charts
 		yvalues=new ArrayList<Double>();
 		svalues=new ArrayList<Double>(); //for marker sizes or 3d charts
@@ -180,7 +181,13 @@ public class ChartDataSeries {
 		return null;
 	}
 		
-	
+	public void addxysvalue(IScope scope, double dx, double dy, double ds, int date, HashMap barvalues, int listvalue) {
+
+		svalues.add(ds);
+		addxyvalue(scope,dx,dy,date,barvalues,listvalue);
+		
+	}
+
 	public void addxyvalue(IScope scope, double dx, double dy, int date, HashMap barvalues, int listvalue) {
 		// TODO Auto-generated method stub
 		xvalues.add(dx);
@@ -259,6 +266,71 @@ public class ChartDataSeries {
 				{
 					this.xerrvaluesmin.add(dx-Cast.asFloat(scope, o));
 					this.xerrvaluesmax.add(dx+Cast.asFloat(scope, o));
+					
+				}
+			}
+			
+		}
+
+		this.getDataset().serieToUpdateBefore.put(this.getName(), date);
+		
+	}
+
+	public void addcysvalue(IScope scope, String dx, double dy, double ds, int date, HashMap barvalues, int listvalue) {
+
+		svalues.add(ds);
+		addcyvalue(scope,dx,dy,date,barvalues,listvalue);
+		
+	}
+
+	public void addcyvalue(IScope scope, String dx, double dy, int date, HashMap barvalues, int listvalue) {
+		cvalues.add(dx);
+		yvalues.add(dy);
+		if (barvalues.containsKey(IKeyword.COLOR))
+		{
+			Object o=getlistvalue(scope,barvalues,IKeyword.COLOR,listvalue);
+			if (o!=null)
+			{
+				GamaColor col=Cast.asColor(scope, o);
+				this.setMycolor(col);
+			}
+			
+		}
+		if (barvalues.containsKey(ChartDataStatement.MARKERSIZE))
+		{
+			Object o=getlistvalue(scope,barvalues,ChartDataStatement.MARKERSIZE,listvalue);
+			if (o!=null)
+			{
+				if (svalues.size()>xvalues.size())
+					svalues.remove(svalues.get(svalues.size()-1));
+				svalues.add(Cast.asFloat(scope, o));
+			}
+			
+		}
+		if (this.isUseYErrValues())
+		{
+			Object o=getlistvalue(scope,barvalues,ChartDataStatement.YERR_VALUES,listvalue);
+			if (o!=null)
+			{
+				if (o instanceof GamaList)
+				{
+					IList ol=Cast.asList(scope, o);
+					if (ol.size()>1)
+					{
+						this.yerrvaluesmin.add(Cast.asFloat(scope, ol.get(0)));
+						this.yerrvaluesmax.add(Cast.asFloat(scope, ol.get(1)));
+						
+					}
+					else
+					{
+						this.yerrvaluesmin.add(dy-Cast.asFloat(scope, ol.get(0)));
+						this.yerrvaluesmax.add(dy+Cast.asFloat(scope, ol.get(0)));					
+					}
+				}
+				else
+				{
+					this.yerrvaluesmin.add(dy-Cast.asFloat(scope, o));
+					this.yerrvaluesmax.add(dy+Cast.asFloat(scope, o));
 					
 				}
 			}

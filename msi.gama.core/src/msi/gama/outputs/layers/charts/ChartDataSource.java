@@ -314,7 +314,91 @@ public class ChartDataSource {
 				
 				
 			}
-
+			if (!this.isCumulative()) 
+			{
+				// new non cumulative y value
+				// serie in the order of the dataset
+				switch (type_val)
+				{
+				case ChartDataSource.DATA_TYPE_POINT:
+				{
+					ILocation pvalue=Cast.asPoint(scope, o); 
+					myserie.addxysvalue(scope,
+							getDataset().getXSeriesValues().get(0),
+							pvalue.getX(),
+							pvalue.getY(),
+							chartCycle,barvalues,listvalue);
+					
+					break;
+				}
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_12:
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+				{
+					IList l1value=Cast.asList(scope, o); 
+					for (int n1=0; n1<l1value.size(); n1++)
+					{
+						Object o2=l1value.get(n1);
+						myserie.addxyvalue(scope,
+								getDataset().getXSeriesValues().get(n1),
+								Cast.asFloat(scope,  o2),
+								chartCycle,barvalues,listvalue);
+					}
+					break;
+					
+				}
+				case ChartDataSource.DATA_TYPE_LIST_LIST_POINT:
+				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
+				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
+				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
+				{
+					IList l1value=Cast.asList(scope, o); 
+					for (int n1=0; n1<l1value.size(); n1++)
+					{
+						Object o2=l1value.get(n1);
+						IList lvalue=Cast.asList(scope, o2); 
+						if (lvalue.length(scope)==1)
+						{
+							myserie.addxyvalue(scope,
+									getDataset().getXSeriesValues().get(n1),
+									Cast.asFloat(scope,  lvalue.get(0)),
+									chartCycle,barvalues,listvalue);
+							
+						}
+						if (lvalue.length(scope)>1)
+						{
+							myserie.addxysvalue(scope,
+									getDataset().getXSeriesValues().get(n1),
+									Cast.asFloat(scope,  lvalue.get(0)),
+									Cast.asFloat(scope,  lvalue.get(1)),
+									chartCycle,barvalues,listvalue);
+						}
+						
+					}
+					break;
+					
+				}
+				case ChartDataSource.DATA_TYPE_NULL:
+				{
+					//last value?
+					break;
+				}
+				case ChartDataSource.DATA_TYPE_DOUBLE:
+				default:
+				{
+					Double dvalue=Cast.asFloat(scope, o);
+					myserie.addxyvalue(scope,
+							getDataset().getXSeriesValues().get(0),
+							dvalue,
+							chartCycle,barvalues,listvalue);
+					break;
+					
+				}
+				
+				}
+				
+				
+			}
 			
 		}
 
@@ -486,7 +570,162 @@ public class ChartDataSource {
 			
 		}
 		
-		
+		//category charts
+		if (this.isByCategory()) 
+		{
+
+			if (this.isCumulative()) 
+			{
+				// new cumulative category value
+				// category is the last of the dataset
+
+				switch (type_val)
+				{
+				case ChartDataSource.DATA_TYPE_POINT:
+				{
+					ILocation pvalue=Cast.asPoint(scope, o); 
+					myserie.addcysvalue(scope,
+							getDataset().getLastCategories(scope),
+							pvalue.getX(),
+							pvalue.getY(),
+							chartCycle,barvalues,listvalue);
+					break;
+				}
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_12:
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+				{
+					IList lvalue=Cast.asList(scope, o); 
+					if (lvalue.length(scope)==0)
+					{
+						
+					}
+					if (lvalue.length(scope)==1)
+					{
+						myserie.addcyvalue(scope,
+								getDataset().getLastCategories(scope),
+								Cast.asFloat(scope,  lvalue.get(0)),
+								chartCycle,barvalues,listvalue);
+					}
+					if (lvalue.length(scope)>1)
+					{
+						myserie.addcysvalue(scope,
+								getDataset().getLastCategories(scope),
+								Cast.asFloat(scope,  lvalue.get(0)),Cast.asFloat(scope,  lvalue.get(1)),
+								chartCycle,barvalues,listvalue);
+					}
+					break;
+					
+				}
+				case ChartDataSource.DATA_TYPE_NULL:
+				{
+					//last value?
+					break;
+				}
+				case ChartDataSource.DATA_TYPE_DOUBLE:
+				default:
+				{
+					Double dvalue=Cast.asFloat(scope, o);
+					myserie.addcyvalue(scope,
+							getDataset().getLastCategories(scope),
+							dvalue,chartCycle,barvalues,listvalue);
+					
+					break;
+				}
+				
+				}
+				
+				
+			}
+
+					
+			if (!this.isCumulative()) 
+			{
+				// new non cumulative category value
+				// category in the order of the dataset
+				switch (type_val)
+				{
+				case ChartDataSource.DATA_TYPE_POINT:
+				{
+					ILocation pvalue=Cast.asPoint(scope, o); 
+					myserie.addcysvalue(scope,
+							getDataset().getCategories(scope,0),
+							pvalue.getX(),
+							pvalue.getY(),
+							chartCycle,barvalues,listvalue);
+					
+					break;
+				}
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_12:
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+				{
+					IList l1value=Cast.asList(scope, o); 
+					for (int n1=0; n1<l1value.size(); n1++)
+					{
+						Object o2=l1value.get(n1);
+						myserie.addcyvalue(scope,
+								getDataset().getCategories(scope,n1),
+								Cast.asFloat(scope,  o2),
+								chartCycle,barvalues,listvalue);
+					}
+					break;
+					
+				}
+				case ChartDataSource.DATA_TYPE_LIST_LIST_POINT:
+				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
+				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
+				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
+				{
+					IList l1value=Cast.asList(scope, o); 
+					for (int n1=0; n1<l1value.size(); n1++)
+					{
+						Object o2=l1value.get(n1);
+						IList lvalue=Cast.asList(scope, o2); 
+						if (lvalue.length(scope)==1)
+						{
+							myserie.addcyvalue(scope,
+									getDataset().getCategories(scope,n1),
+									Cast.asFloat(scope,  lvalue.get(0)),
+									chartCycle,barvalues,listvalue);
+							
+						}
+						if (lvalue.length(scope)>1)
+						{
+							myserie.addcysvalue(scope,
+									getDataset().getCategories(scope,n1),
+									Cast.asFloat(scope,  lvalue.get(0)),
+									Cast.asFloat(scope,  lvalue.get(1)),
+									chartCycle,barvalues,listvalue);
+						}
+						
+					}
+					break;
+					
+				}
+				case ChartDataSource.DATA_TYPE_NULL:
+				{
+					//last value?
+					break;
+				}
+				case ChartDataSource.DATA_TYPE_DOUBLE:
+				default:
+				{
+					Double dvalue=Cast.asFloat(scope, o);
+					myserie.addcyvalue(scope,
+							getDataset().getCategories(scope,0),
+							dvalue,
+							chartCycle,barvalues,listvalue);
+					break;
+					
+				}
+				
+				}
+				
+				
+			}
+			
+		}		
 			
 		
 

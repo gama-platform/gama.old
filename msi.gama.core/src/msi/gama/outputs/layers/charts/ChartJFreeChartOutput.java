@@ -37,7 +37,8 @@ public class ChartJFreeChartOutput extends ChartOutput {
 	 AbstractRenderer defaultrenderer;
 	 HashMap<String,Integer> IdPosition=new HashMap<String,Integer>(); //serie id-nb for arraylists/table requirements
 	 HashMap<String,AbstractRenderer> RendererSet=new HashMap<String,AbstractRenderer>(); //one renderer for each serie
-
+	 int nbseries=0; // because there is always one dataset, so it is difficult to count...
+	 
 		public ChartJFreeChartOutput(final IScope scope,String name,IExpression typeexp)
 		{
 			super(scope, name,typeexp);
