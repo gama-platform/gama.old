@@ -82,14 +82,14 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
 			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
 			{
-				source.setCumulative(scope,false);
-				source.setUseSize(scope,true);				
+				source.setCumulative(scope,false);				
+				source.setUseSize(scope,false);				
 				break;				
 				
 			}
 			default:
 			{
-				source.setCumulative(scope,true);				
+				source.setCumulative(scope,false); // never cumulative by default				
 				source.setUseSize(scope,false);				
 			}
 		}
@@ -142,11 +142,17 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	protected void resetRenderer(IScope scope,String serieid)
 	{
-		AbstractCategoryItemRenderer newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope, serieid);
-
-//		newr.setSeriesStroke(0, new BasicStroke(0));
+//		AbstractCategoryItemRenderer newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope, serieid);
+        CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
+		AbstractCategoryItemRenderer newr=(AbstractCategoryItemRenderer)plot.getRenderer();
+                
 		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
-
+		int myrow=IdPosition.get(serieid);
+		if (myserie.getMycolor()!=null)
+		{
+			newr.setSeriesPaint(myrow,myserie.getMycolor());
+		}
+		
 	}
 	
 
@@ -179,19 +185,21 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		if (nbseries==0 )
 		{
 			plot.setDataset(0, firstdataset);
+	    	plot.setRenderer(nbseries, (CategoryItemRenderer)getOrCreateRenderer(scope,serieid));
 			
 		}
 		else
 		{
 
-			DefaultCategoryDataset newdataset=new DefaultCategoryDataset();
-			jfreedataset.add(newdataset);
-			plot.setDataset(jfreedataset.size()-1, newdataset);
+//			DefaultCategoryDataset newdataset=new DefaultCategoryDataset();
+//			jfreedataset.add(newdataset);
+//			plot.setDataset(jfreedataset.size()-1, newdataset);
+//			plot.setDataset(nbseries, firstdataset);
 			
 		}
 		nbseries++;
-    	plot.setRenderer(jfreedataset.size()-1, (CategoryItemRenderer)getOrCreateRenderer(scope,serieid));
-		IdPosition.put(serieid, jfreedataset.size()-1);
+//    	plot.setRenderer(nbseries-1, (CategoryItemRenderer)getOrCreateRenderer(scope,serieid));
+		IdPosition.put(serieid, nbseries-1);
 		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" fdsize "+plot.getCategories().size()+" jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount()+" nbse "+nbseries);
 		// TODO Auto-generated method stub		
 	}
@@ -202,8 +210,10 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// TODO Auto-generated method stub
 		
 		ChartDataSeries dataserie=chartdataset.getDataSeries(scope,serieid);
-		DefaultCategoryDataset serie=((DefaultCategoryDataset) jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope))));
-		serie.clear();
+//		DefaultCategoryDataset serie=((DefaultCategoryDataset) jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope))));
+		DefaultCategoryDataset serie=((DefaultCategoryDataset) jfreedataset.get(0));
+		if (serie.getRowKeys().contains(serieid))
+			serie.removeRow(serieid);
 		ArrayList<String> CValues=dataserie.getCValues(scope);
 		ArrayList<Double> YValues=dataserie.getYValues(scope);
 		ArrayList<Double> SValues=dataserie.getSValues(scope);
