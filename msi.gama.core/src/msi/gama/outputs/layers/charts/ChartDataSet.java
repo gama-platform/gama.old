@@ -50,8 +50,37 @@ public class ChartDataSet {
 		this.keepOldSeries = keepOldSeries;
 	}
 
-	public ArrayList<String> getCategories() {
+	private ArrayList<String> getCategories() {
 		return categories;
+	}
+
+	public String getCategories(IScope scope, int i) {
+		if (categories.size()>i)
+		{
+			return categories.get(i);
+			
+		}
+		else
+		{
+			for (int c=categories.size(); c<=i; c++)
+			{
+				this.categories.add("c"+c);
+			}
+			return categories.get(i);
+		}
+	}
+
+	public String getLastCategories(IScope scope) {
+		if (categories.size()>0)
+		{
+			return categories.get(categories.size()-1);
+			
+		}
+		else
+		{
+				this.categories.add("c"+0);
+				return categories.get(categories.size()-1);
+		}
 	}
 
 	public void setCategories(ArrayList<String> categories) {
