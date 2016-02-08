@@ -2331,8 +2331,7 @@ public abstract class Spatial {
 			see = { "neighbors_at", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 				"agent_closest_to" })
 		public static IList neighbours_of(final IScope scope, final ITopology t, final IAgent agent) {
-			return _neighbours(scope,
-				agent instanceof IAgent ? In.list(scope, agent.getPopulation()) : Different.with(), agent, 1.0, t);
+			return _neighbours(scope, In.list(scope, agent.getPopulation()), agent, 1.0, t);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 

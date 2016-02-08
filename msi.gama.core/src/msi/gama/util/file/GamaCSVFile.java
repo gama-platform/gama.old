@@ -165,7 +165,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 	public GamaCSVFile(final IScope scope, final String pathName, final IMatrix<Object> matrix) {
 		super(scope, pathName, matrix);
 		if ( matrix != null ) {
-			userSize = (GamaPoint) matrix.getDimensions();
+			userSize = matrix.getDimensions();
 			contentsType = matrix.getType().getContentType();
 		}
 	}
