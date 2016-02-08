@@ -280,4 +280,15 @@ public interface IScope {
 	 */
 	public abstract IGui getGui();
 
+	/**
+	 * @param iAgent
+	 */
+	public abstract void pop(IAgent iAgent);
+
+	/**
+	 * @param iAgent
+	 * @return
+	 */
+	public abstract boolean push(IAgent iAgent);
+
 }

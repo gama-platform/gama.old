@@ -291,7 +291,8 @@ public abstract class AbstractScope implements IScope {
 	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent)
 	 */
 	// @Override
-	protected boolean push(final IAgent agent) {
+	@Override
+	public boolean push(final IAgent agent) {
 		final IAgent a = agents.peek();
 		if ( a != null && a.equals(agent) ) { return false; }
 		if ( traceAgents ) {
@@ -309,7 +310,8 @@ public abstract class AbstractScope implements IScope {
 	 * @see msi.gama.runtime.IScope#pop(msi.gama.metamodel.agent.IAgent)
 	 */
 	// @Override
-	protected void pop(final IAgent agent) {
+	@Override
+	public void pop(final IAgent agent) {
 		try {
 			IAgent a = agents.pop();
 			if ( !a.equals(agent) ) {

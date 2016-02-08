@@ -50,10 +50,10 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent)
 	 *      No agents
 	 */
-	// @Override
-	// public boolean push(final IAgent agent) {
-	// return false;
-	// }
+	@Override
+	public boolean push(final IAgent agent) {
+		return false;
+	}
 
 	/**
 	 * Method push()
@@ -68,8 +68,8 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#pop(msi.gama.metamodel.agent.IAgent)
 	 *      No agents
 	 */
-	// @Override
-	// public void pop(final IAgent agent) {}
+	@Override
+	public void pop(final IAgent agent) {}
 
 	/**
 	 * Method pop()
