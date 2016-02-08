@@ -49,7 +49,7 @@ public class LayeredDisplayData {
 	 */
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
 	private Color ambientColor = new GamaColor(100, 100, 100, 255);
-	private Color diffuseColor = new GamaColor(10, 10, 10, 255);
+	private Color diffuseColor = new GamaColor(100, 100, 100, 255);
 	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	/**
 	 * Properties
