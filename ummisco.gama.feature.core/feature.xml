@@ -66,7 +66,8 @@
          id="msi.gama.headless"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="msi.gama.lang.gaml"
@@ -93,18 +94,10 @@
          id="msi.gaml.extensions.fipa"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="simtools.gaml.extensions.traffic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ummisco.gaml.extensions.maths"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -123,5 +116,17 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="msi.gaml.architecture.simplebdi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ummisco.gaml.extensions.maths"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
