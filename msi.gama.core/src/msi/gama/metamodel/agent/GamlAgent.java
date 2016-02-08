@@ -18,7 +18,7 @@ import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
@@ -126,7 +126,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 * @see GamlAgent#_init_()
 	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
 	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
-	 * override _init_(IScope) instead.
+	 *          override _init_(IScope) instead.
 	 */
 	@Override
 	public boolean init(final IScope scope) {
@@ -144,7 +144,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 * @see GamlAgent#_step_()
 	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
 	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
-	 * override _step_(IScope) instead.
+	 *          override _step_(IScope) instead.
 	 */
 	@Override
 	public boolean step(final IScope scope) {
@@ -454,6 +454,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public/* synchronized */ILocation getLocation() {
 		if ( geometry == null || geometry.getInnerGeometry() == null ) {
 			IScope scope = this.getScope();
+			if ( scope == null ) {
+				scope = this.getScope();
+			}
 			final ILocation randomLocation = population.getTopology().getRandomLocation(scope);
 			if ( randomLocation == null ) { return null; }
 			setGeometry(GamaGeometryType.createPoint(randomLocation));
@@ -566,11 +569,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 * Verifies if this agent can capture other agent as newSpecies.
 	 *
 	 * @return true if the following conditions are correct:
-	 * 1. newSpecies is one micro-species of this agent's species;
-	 * 2. newSpecies is a sub-species of this agent's species or other species is a
-	 * sub-species of this agent's species;
-	 * 3. the "other" agent is not macro-agent of this agent;
-	 * 4. the "other" agent is not a micro-agent of this agent.
+	 *         1. newSpecies is one micro-species of this agent's species;
+	 *         2. newSpecies is a sub-species of this agent's species or other species is a
+	 *         sub-species of this agent's species;
+	 *         3. the "other" agent is not macro-agent of this agent;
+	 *         4. the "other" agent is not a micro-agent of this agent.
 	 */
 	@Override
 	public boolean canCapture(final IAgent other, final ISpecies newSpecies) {
@@ -610,7 +613,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		geometry.setDepth(depth);
 
 	}
-
 
 	// @Override
 	// public SimulationClock getClock() {

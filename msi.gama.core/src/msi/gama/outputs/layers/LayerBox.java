@@ -1,18 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'LayerBox.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
@@ -20,9 +20,9 @@ import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 16 nov. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class LayerBox implements IDisplayLayerBox {
 
@@ -54,7 +54,7 @@ public class LayerBox implements IDisplayLayerBox {
 
 	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression refr,
 		final IExpression tr, final IExpression fd, final IExpression sl) throws GamaRuntimeException {
-		IScope scope = GAMA.obtainNewScope();
+		IScope scope = null; // GAMA.obtainNewScope();
 		setTransparency(scope, transp == null ? transparency : transp);
 		setPosition(scope, pos == null ? loc : pos);
 		setSize(scope, ext == null ? size : ext);
@@ -67,9 +67,9 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void compute(final IScope scope) throws GamaRuntimeException {
 		try {
-			currentTransparency =
-				constantTransparency == null ? 1d - Math.min(
-					Math.max(Cast.asFloat(scope, transparency.value(scope)), 0d), 1d) : constantTransparency;
+			currentTransparency = constantTransparency == null
+				? 1d - Math.min(Math.max(Cast.asFloat(scope, transparency.value(scope)), 0d), 1d)
+				: constantTransparency;
 			currentSelectable =
 				constantSelectable == null ? Cast.asBool(scope, selectable.value(scope)) : constantSelectable;
 			if ( !constantBoundingBox ) {

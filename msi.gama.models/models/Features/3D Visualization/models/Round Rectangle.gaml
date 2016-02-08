@@ -55,7 +55,7 @@ species mySquare{
 	}
 
 	aspect RoundCorner {
-		//the smooth facet allows to have a high fit (near 1.0)  or low fit (near 0.0)
+		//the smooth operator allows to have a high fit (near 1.0)  or low fit (near 0.0)
 		draw rectangle(self.width, self.height) smooth 0.5 color: color border:color  depth:elevation; 
 	}
 }	
@@ -65,7 +65,6 @@ species mySquare{
 experiment Display  type: gui {
 	output {
 		display Poincare type:opengl ambient_light:50 {
-			
 			image imageRaster.path ;
 			species mySquare aspect:RoundCorner transparency: 0.5 position: {0,0,0.1} ;	
 												

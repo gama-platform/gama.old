@@ -95,7 +95,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
 		final boolean isTorus, final boolean usesVN, final boolean indiv, final boolean useNeighboursCache)
-			throws GamaRuntimeException {
+		throws GamaRuntimeException {
 		super(cols, rows, Types.GEOMETRY);
 		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		environmentFrame = environment.getGeometry();
@@ -390,7 +390,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	private void diffuse_deprecated(final IScope scope) throws GamaRuntimeException {
 		// this was once used for "Signal" statement (deprecated since GAMA 1.8). It will have to be removed soon.
-		diffuser_deprecated.diffuse_deprecated(scope);
+		// AD Fixes a NPE when relaunching a simulation
+		if ( diffuser_deprecated == null ) { return; }
+		getDiffuser_deprecated(scope).diffuse_deprecated(scope);
 	}
 
 	private void diffuse(final IScope scope) throws GamaRuntimeException {
@@ -1051,7 +1053,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			for ( int i = 0; i < actualNumberOfCells; i++ ) {
 				final IAgent a = (IAgent) matrix[i];
 				if ( a != null ) {
-					a.schedule();
+					a.schedule(scope);
 				}
 			}
 			// WARNING FOR THE MOMENT NO EVENT IS FIRED
@@ -1677,7 +1679,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		private final int neighboursSize;
 
 		public GridDiffuser_deprecated() {
-			neighboursSize = neighbourhood.isVN() ? 4 : 8;
+			neighboursSize = getNeighbourhood().isVN() ? 4 : 8;
 		}
 
 		protected final Map<String, GridDiffusion_deprecated> diffusions_deprecated = new THashMap();

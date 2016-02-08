@@ -161,7 +161,7 @@ species obstacle skills: [moving] {
 		}
 	}
 	aspect default {
-		draw  triangle(20) color: #yellow ;
+		draw  triangle(20) color: #black ;
 	}
 
 }
@@ -189,7 +189,7 @@ experiment boids_gui type: gui {
 
 	output {
 		display Sky  background: #blue type: opengl { 
-		image 'background' file:'../images/sky.jpg';
+		image '../images/sky.jpg';
 			species boids aspect: image;
 			species boids_goal;
 			species obstacle;

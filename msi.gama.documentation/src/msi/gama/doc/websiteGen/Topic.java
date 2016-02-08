@@ -11,10 +11,11 @@ class Topic {
 	public float m_xPosBigHallow;
 	public float m_yPosBigHallow;
 	public float m_sizeBigHallow;
+	public String m_color;
 	
 	public Topic(String id, String name, float xPos, float yPos, 
 			float xPosBigHallow, float yPosBigHallow, float sizeBigHallow,
-			List<String> associatedLearningConceptList) {
+			List<String> associatedLearningConceptList, String color) {
 		m_id = id;
 		m_name = name;
 		m_xPos = xPos;
@@ -23,5 +24,6 @@ class Topic {
 		m_yPosBigHallow = yPosBigHallow;
 		m_sizeBigHallow = sizeBigHallow;
 		m_associatedLearningConceptList = associatedLearningConceptList;
+		m_color = color;
 	}
 }

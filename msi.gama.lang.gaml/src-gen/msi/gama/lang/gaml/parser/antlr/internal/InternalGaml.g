@@ -142,7 +142,7 @@ ruleStringEvaluator returns [EObject current=null]
        			$current, 
        			"toto",
         		lv_toto_0_0, 
-        		"ID");
+        		"msi.gama.lang.gaml.Gaml.ID");
 	    }
 
 )
@@ -163,7 +163,7 @@ ruleStringEvaluator returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_2_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -206,7 +206,7 @@ ruleActionEditor returns [EObject current=null]
        			$current, 
        			"action",
         		lv_action_1_0, 
-        		"S_Definition");
+        		"msi.gama.lang.gaml.Gaml.S_Definition");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -250,7 +250,7 @@ ruleModel returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"ID");
+        		"msi.gama.lang.gaml.Gaml.ID");
 	    }
 
 )
@@ -267,7 +267,7 @@ ruleModel returns [EObject current=null]
        			$current, 
        			"imports",
         		lv_imports_2_0, 
-        		"Import");
+        		"msi.gama.lang.gaml.Gaml.Import");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -285,7 +285,7 @@ ruleModel returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_3_0, 
-        		"ModelBlock");
+        		"msi.gama.lang.gaml.Gaml.ModelBlock");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -330,7 +330,7 @@ ruleModelBlock returns [EObject current=null]
        			$current, 
        			"statements",
         		lv_statements_1_0, 
-        		"S_Section");
+        		"msi.gama.lang.gaml.Gaml.S_Section");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -374,7 +374,7 @@ ruleImport returns [EObject current=null]
        			$current, 
        			"importURI",
         		lv_importURI_1_0, 
-        		"STRING");
+        		"msi.gama.lang.gaml.Gaml.STRING");
 	    }
 
 )
@@ -395,7 +395,7 @@ ruleImport returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_3_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -519,7 +519,7 @@ ruleS_Global returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_1_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -537,7 +537,7 @@ ruleS_Global returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_2_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -596,7 +596,7 @@ ruleS_Entities returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_1_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -650,7 +650,7 @@ ruleS_Environment returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_1_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -668,7 +668,7 @@ ruleS_Environment returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_2_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -712,7 +712,7 @@ ruleS_Species returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"_SpeciesKey");
+        		"msi.gama.lang.gaml.Gaml._SpeciesKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -746,7 +746,7 @@ ruleS_Species returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_2_0, 
-        		"ID");
+        		"msi.gama.lang.gaml.Gaml.ID");
 	    }
 
 )
@@ -763,7 +763,7 @@ ruleS_Species returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_3_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -781,7 +781,7 @@ ruleS_Species returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_4_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -856,7 +856,7 @@ ruleS_Experiment returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_2_1, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -872,7 +872,7 @@ ruleS_Experiment returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_2_2, 
-        		"STRING");
+        		"msi.gama.lang.gaml.Gaml.STRING");
 	    }
 
 )
@@ -891,7 +891,7 @@ ruleS_Experiment returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_3_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -909,7 +909,7 @@ ruleS_Experiment returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_4_0, 
-        		"ExperimentBlock");
+        		"msi.gama.lang.gaml.Gaml.ExperimentBlock");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1063,7 +1063,7 @@ ruleS_1Expr_Facets_BlockOrEnd returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"_1Expr_Facets_BlockOrEnd_Key");
+        		"msi.gama.lang.gaml.Gaml._1Expr_Facets_BlockOrEnd_Key");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1081,7 +1081,7 @@ ruleS_1Expr_Facets_BlockOrEnd returns [EObject current=null]
        			$current, 
        			"firstFacet",
         		lv_firstFacet_1_0, 
-        		"FirstFacetKey");
+        		"msi.gama.lang.gaml.Gaml.FirstFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1099,7 +1099,7 @@ ruleS_1Expr_Facets_BlockOrEnd returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_2_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1117,7 +1117,7 @@ ruleS_1Expr_Facets_BlockOrEnd returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_3_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1135,7 +1135,7 @@ ruleS_1Expr_Facets_BlockOrEnd returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_4_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1179,7 +1179,7 @@ ruleS_Do returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"_DoKey");
+        		"msi.gama.lang.gaml.Gaml._DoKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1212,7 +1212,7 @@ ruleS_Do returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_2_0, 
-        		"AbstractRef");
+        		"msi.gama.lang.gaml.Gaml.AbstractRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1230,7 +1230,7 @@ ruleS_Do returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_3_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1248,7 +1248,7 @@ ruleS_Do returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_4_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1308,7 +1308,7 @@ ruleS_Loop returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"ID");
+        		"msi.gama.lang.gaml.Gaml.ID");
 	    }
 
 )
@@ -1325,7 +1325,7 @@ ruleS_Loop returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_2_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1343,7 +1343,7 @@ ruleS_Loop returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_3_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1412,7 +1412,7 @@ ruleS_If returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_2_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1430,7 +1430,7 @@ ruleS_If returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_3_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1454,7 +1454,7 @@ ruleS_If returns [EObject current=null]
        			$current, 
        			"else",
         		lv_else_5_1, 
-        		"S_If");
+        		"msi.gama.lang.gaml.Gaml.S_If");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1469,7 +1469,7 @@ ruleS_If returns [EObject current=null]
        			$current, 
        			"else",
         		lv_else_5_2, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1511,7 +1511,7 @@ ruleS_Other returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"ID");
+        		"msi.gama.lang.gaml.Gaml.ID");
 	    }
 
 )
@@ -1528,7 +1528,7 @@ ruleS_Other returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_1_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1546,7 +1546,7 @@ ruleS_Other returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_2_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1620,7 +1620,7 @@ ruleS_Return returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_2_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1743,7 +1743,7 @@ ruleS_Reflex returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"_ReflexKey");
+        		"msi.gama.lang.gaml.Gaml._ReflexKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1776,7 +1776,7 @@ ruleS_Reflex returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_2_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1802,7 +1802,7 @@ ruleS_Reflex returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_5_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1820,7 +1820,7 @@ ruleS_Reflex returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_6_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1859,7 +1859,7 @@ ruleS_Definition returns [EObject current=null]
        			$current, 
        			"tkey",
         		lv_tkey_0_0, 
-        		"TypeRef");
+        		"msi.gama.lang.gaml.Gaml.TypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1893,7 +1893,7 @@ ruleS_Definition returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_2_1, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1909,7 +1909,7 @@ ruleS_Definition returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_2_2, 
-        		"STRING");
+        		"msi.gama.lang.gaml.Gaml.STRING");
 	    }
 
 )
@@ -1932,7 +1932,7 @@ ruleS_Definition returns [EObject current=null]
        			$current, 
        			"args",
         		lv_args_4_0, 
-        		"ActionArguments");
+        		"msi.gama.lang.gaml.Gaml.ActionArguments");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1954,7 +1954,7 @@ ruleS_Definition returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_6_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -1972,7 +1972,7 @@ ruleS_Definition returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_7_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2052,7 +2052,7 @@ ruleS_Action returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_3_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2074,7 +2074,7 @@ ruleS_Action returns [EObject current=null]
        			$current, 
        			"args",
         		lv_args_5_0, 
-        		"ActionArguments");
+        		"msi.gama.lang.gaml.Gaml.ActionArguments");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2096,7 +2096,7 @@ ruleS_Action returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_7_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2114,7 +2114,7 @@ ruleS_Action returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_8_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2164,7 +2164,7 @@ ruleS_Var returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_1_0, 
-        		"_VarOrConstKey");
+        		"msi.gama.lang.gaml.Gaml._VarOrConstKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2197,7 +2197,7 @@ ruleS_Var returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_3_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2215,7 +2215,7 @@ ruleS_Var returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_4_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2298,7 +2298,7 @@ ruleS_DirectAssignment returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_0_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2316,7 +2316,7 @@ ruleS_DirectAssignment returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_1_0, 
-        		"_AssignmentKey");
+        		"msi.gama.lang.gaml.Gaml._AssignmentKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2334,7 +2334,7 @@ ruleS_DirectAssignment returns [EObject current=null]
        			$current, 
        			"value",
         		lv_value_2_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2352,7 +2352,7 @@ ruleS_DirectAssignment returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_3_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2410,7 +2410,7 @@ ruleS_Set returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_1_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2437,7 +2437,7 @@ ruleS_Set returns [EObject current=null]
        			$current, 
        			"value",
         		lv_value_4_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2480,7 +2480,7 @@ ruleS_Equations returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"_EquationsKey");
+        		"msi.gama.lang.gaml.Gaml._EquationsKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2498,7 +2498,7 @@ ruleS_Equations returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2516,7 +2516,7 @@ ruleS_Equations returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_2_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2538,7 +2538,7 @@ ruleS_Equations returns [EObject current=null]
        			$current, 
        			"equations",
         		lv_equations_4_0, 
-        		"S_Equation");
+        		"msi.gama.lang.gaml.Gaml.S_Equation");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2591,7 +2591,7 @@ ruleS_Equation returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_0_1, 
-        		"Function");
+        		"msi.gama.lang.gaml.Gaml.Function");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2606,7 +2606,7 @@ ruleS_Equation returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_0_2, 
-        		"VariableRef");
+        		"msi.gama.lang.gaml.Gaml.VariableRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2641,7 +2641,7 @@ ruleS_Equation returns [EObject current=null]
        			$current, 
        			"value",
         		lv_value_2_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2680,7 +2680,7 @@ ruleS_Solve returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"_SolveKey");
+        		"msi.gama.lang.gaml.Gaml._SolveKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2713,7 +2713,7 @@ ruleS_Solve returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_2_0, 
-        		"EquationRef");
+        		"msi.gama.lang.gaml.Gaml.EquationRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2731,7 +2731,7 @@ ruleS_Solve returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_3_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2749,7 +2749,7 @@ ruleS_Solve returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_4_0, 
-        		"Block");
+        		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2826,7 +2826,7 @@ ruleS_Display returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_2_1, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2842,7 +2842,7 @@ ruleS_Display returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_2_2, 
-        		"STRING");
+        		"msi.gama.lang.gaml.Gaml.STRING");
 	    }
 
 )
@@ -2861,7 +2861,7 @@ ruleS_Display returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_3_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2879,7 +2879,7 @@ ruleS_Display returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_4_0, 
-        		"displayBlock");
+        		"msi.gama.lang.gaml.Gaml.displayBlock");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2928,7 +2928,7 @@ ruledisplayBlock returns [EObject current=null]
        			$current, 
        			"statements",
         		lv_statements_2_0, 
-        		"displayStatement");
+        		"msi.gama.lang.gaml.Gaml.displayStatement");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2981,7 +2981,7 @@ ruleExperimentBlock returns [EObject current=null]
        			$current, 
        			"statements",
         		lv_statements_2_0, 
-        		"experimentStatement");
+        		"msi.gama.lang.gaml.Gaml.experimentStatement");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -3094,7 +3094,7 @@ ruleS_Output returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_1_0, 
-        		"outputBlock");
+        		"msi.gama.lang.gaml.Gaml.outputBlock");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -3143,7 +3143,7 @@ ruleoutputBlock returns [EObject current=null]
        			$current, 
        			"statements",
         		lv_statements_2_0, 
-        		"outputStatement");
+        		"msi.gama.lang.gaml.Gaml.outputStatement");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -3266,7 +3266,7 @@ rulespeciesOrGridDisplayStatement returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"_SpeciesKey");
+        		"msi.gama.lang.gaml.Gaml._SpeciesKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -3284,7 +3284,7 @@ rulespeciesOrGridDisplayStatement returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_1_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -3302,7 +3302,7 @@ rulespeciesOrGridDisplayStatement returns [EObject current=null]
        			$current, 
        			"facets",
         		lv_facets_2_0, 
-        		"Facet");
+        		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -3320,7 +3320,7 @@ rulespeciesOrGridDisplayStatement returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_3_0, 
-        		"displayBlock");
+        		"msi.gama.lang.gaml.Gaml.displayBlock");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -3966,7 +3966,7 @@ ruleParameters returns [EObject current=null]
        			$current, 
        			"params",
         		lv_params_1_0, 
-        		"ParameterList");
+        		"msi.gama.lang.gaml.Gaml.ParameterList");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4005,7 +4005,7 @@ ruleActionArguments returns [EObject current=null]
        			$current, 
        			"args",
         		lv_args_0_0, 
-        		"ArgumentDefinition");
+        		"msi.gama.lang.gaml.Gaml.ArgumentDefinition");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4027,7 +4027,7 @@ ruleActionArguments returns [EObject current=null]
        			$current, 
        			"args",
         		lv_args_2_0, 
-        		"ArgumentDefinition");
+        		"msi.gama.lang.gaml.Gaml.ArgumentDefinition");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4066,7 +4066,7 @@ ruleArgumentDefinition returns [EObject current=null]
        			$current, 
        			"type",
         		lv_type_0_0, 
-        		"TypeRef");
+        		"msi.gama.lang.gaml.Gaml.TypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4084,7 +4084,7 @@ ruleArgumentDefinition returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4106,7 +4106,7 @@ ruleArgumentDefinition returns [EObject current=null]
        			$current, 
        			"default",
         		lv_default_3_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4629,7 +4629,7 @@ ruleClassicFacet returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"ClassicFacetKey");
+        		"msi.gama.lang.gaml.Gaml.ClassicFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4664,7 +4664,7 @@ ruleClassicFacet returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_2_0, 
-        		"SpecialFacetKey");
+        		"msi.gama.lang.gaml.Gaml.SpecialFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4682,7 +4682,7 @@ ruleClassicFacet returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_3_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4725,7 +4725,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"DefinitionFacetKey");
+        		"msi.gama.lang.gaml.Gaml.DefinitionFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4744,7 +4744,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"name",
         		lv_name_1_1, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4760,7 +4760,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"name",
         		lv_name_1_2, 
-        		"STRING");
+        		"msi.gama.lang.gaml.Gaml.STRING");
 	    }
 
 )
@@ -4835,7 +4835,7 @@ ruleFunctionFacet returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_3_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4878,7 +4878,7 @@ ruleTypeFacet returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"TypeFacetKey");
+        		"msi.gama.lang.gaml.Gaml.TypeFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4900,7 +4900,7 @@ ruleTypeRef
        			$current, 
        			"expr",
         		lv_expr_1_0, 
-        		"TypeRef");
+        		"msi.gama.lang.gaml.Gaml.TypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4919,7 +4919,7 @@ ruleTypeRef
        			$current, 
        			"expr",
         		lv_expr_2_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4958,7 +4958,7 @@ ruleActionFacet returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"ActionFacetKey");
+        		"msi.gama.lang.gaml.Gaml.ActionFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -4976,7 +4976,7 @@ ruleActionFacet returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_1_0, 
-        		"ActionRef");
+        		"msi.gama.lang.gaml.Gaml.ActionRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5015,7 +5015,7 @@ ruleVarFacet returns [EObject current=null]
        			$current, 
        			"key",
         		lv_key_0_0, 
-        		"VarFacetKey");
+        		"msi.gama.lang.gaml.Gaml.VarFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5033,7 +5033,7 @@ ruleVarFacet returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_1_0, 
-        		"VariableRef");
+        		"msi.gama.lang.gaml.Gaml.VariableRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5087,7 +5087,7 @@ ruleExpression
        			$current, 
        			"function",
         		lv_function_2_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5110,7 +5110,7 @@ ruleExpression
        			$current, 
        			"statements",
         		lv_statements_4_0, 
-        		"Statement");
+        		"msi.gama.lang.gaml.Gaml.Statement");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5229,7 +5229,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"op",
         		lv_op_0_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5253,7 +5253,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"op",
         		lv_op_2_1, 
-        		"DefinitionFacetKey");
+        		"msi.gama.lang.gaml.Gaml.DefinitionFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5268,7 +5268,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"op",
         		lv_op_2_2, 
-        		"TypeFacetKey");
+        		"msi.gama.lang.gaml.Gaml.TypeFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5283,7 +5283,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"op",
         		lv_op_2_3, 
-        		"SpecialFacetKey");
+        		"msi.gama.lang.gaml.Gaml.SpecialFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5298,7 +5298,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"op",
         		lv_op_2_4, 
-        		"ActionFacetKey");
+        		"msi.gama.lang.gaml.Gaml.ActionFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5313,7 +5313,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"op",
         		lv_op_2_5, 
-        		"VarFacetKey");
+        		"msi.gama.lang.gaml.Gaml.VarFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5337,7 +5337,7 @@ ruleDefinitionFacetKey
        			$current, 
        			"right",
         		lv_right_4_0, 
-        		"If");
+        		"msi.gama.lang.gaml.Gaml.If");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5406,7 +5406,7 @@ rulePair returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"If");
+        		"msi.gama.lang.gaml.Gaml.If");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5475,7 +5475,7 @@ ruleIf returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"Or");
+        		"msi.gama.lang.gaml.Gaml.Or");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5497,7 +5497,7 @@ ruleIf returns [EObject current=null]
        			$current, 
        			"ifFalse",
         		lv_ifFalse_5_0, 
-        		"Or");
+        		"msi.gama.lang.gaml.Gaml.Or");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5566,7 +5566,7 @@ ruleOr returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"And");
+        		"msi.gama.lang.gaml.Gaml.And");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5635,7 +5635,7 @@ ruleAnd returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"Cast");
+        		"msi.gama.lang.gaml.Gaml.Cast");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5704,7 +5704,7 @@ ruleCast returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"TypeRef");
+        		"msi.gama.lang.gaml.Gaml.TypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5727,7 +5727,7 @@ ruleCast returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_5_0, 
-        		"TypeRef");
+        		"msi.gama.lang.gaml.Gaml.TypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5863,7 +5863,7 @@ ruleComparison returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"Addition");
+        		"msi.gama.lang.gaml.Gaml.Addition");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5947,7 +5947,7 @@ ruleAddition returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"Multiplication");
+        		"msi.gama.lang.gaml.Gaml.Multiplication");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6031,7 +6031,7 @@ ruleMultiplication returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"Exponentiation");
+        		"msi.gama.lang.gaml.Gaml.Exponentiation");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6100,7 +6100,7 @@ ruleExponentiation returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"Binary");
+        		"msi.gama.lang.gaml.Gaml.Binary");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6154,7 +6154,7 @@ ruleBinary returns [EObject current=null]
        			$current, 
        			"op",
         		lv_op_2_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6172,7 +6172,7 @@ ruleBinary returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"Unit");
+        		"msi.gama.lang.gaml.Gaml.Unit");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6256,7 +6256,7 @@ ruleUnit returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"UnitRef");
+        		"msi.gama.lang.gaml.Gaml.UnitRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6341,7 +6341,7 @@ ruleUnary returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"UnitRef");
+        		"msi.gama.lang.gaml.Gaml.UnitRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6426,7 +6426,7 @@ ruleUnary returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_5_0, 
-        		"Unary");
+        		"msi.gama.lang.gaml.Gaml.Unary");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6495,7 +6495,7 @@ ruleAccess returns [EObject current=null]
        			$current, 
        			"args",
         		lv_args_3_0, 
-        		"ExpressionList");
+        		"msi.gama.lang.gaml.Gaml.ExpressionList");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6533,7 +6533,7 @@ ruleAccess returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_6_0, 
-        		"AbstractRef");
+        		"msi.gama.lang.gaml.Gaml.AbstractRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6620,7 +6620,7 @@ rulePrimary returns [EObject current=null]
        			$current, 
        			"params",
         		lv_params_7_0, 
-        		"ParameterList");
+        		"msi.gama.lang.gaml.Gaml.ParameterList");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6653,7 +6653,7 @@ rulePrimary returns [EObject current=null]
        			$current, 
        			"exprs",
         		lv_exprs_11_0, 
-        		"ExpressionList");
+        		"msi.gama.lang.gaml.Gaml.ExpressionList");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6686,7 +6686,7 @@ rulePrimary returns [EObject current=null]
        			$current, 
        			"left",
         		lv_left_15_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6719,7 +6719,7 @@ rulePrimary returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_17_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6741,7 +6741,7 @@ rulePrimary returns [EObject current=null]
        			$current, 
        			"z",
         		lv_z_19_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6840,7 +6840,7 @@ ruleFunction returns [EObject current=null]
        			$current, 
        			"action",
         		lv_action_1_0, 
-        		"ActionRef");
+        		"msi.gama.lang.gaml.Gaml.ActionRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6862,7 +6862,7 @@ ruleFunction returns [EObject current=null]
        			$current, 
        			"parameters",
         		lv_parameters_3_0, 
-        		"Parameters");
+        		"msi.gama.lang.gaml.Gaml.Parameters");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6881,7 +6881,7 @@ ruleFunction returns [EObject current=null]
        			$current, 
        			"args",
         		lv_args_4_0, 
-        		"ExpressionList");
+        		"msi.gama.lang.gaml.Gaml.ExpressionList");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6924,7 +6924,7 @@ ruleCastingFunction returns [EObject current=null]
        			$current, 
        			"action",
         		lv_action_0_0, 
-        		"ActionRef");
+        		"msi.gama.lang.gaml.Gaml.ActionRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6942,7 +6942,7 @@ ruleCastingFunction returns [EObject current=null]
        			$current, 
        			"type",
         		lv_type_1_0, 
-        		"TypeInfo");
+        		"msi.gama.lang.gaml.Gaml.TypeInfo");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -6964,7 +6964,7 @@ ruleCastingFunction returns [EObject current=null]
        			$current, 
        			"args",
         		lv_args_3_0, 
-        		"ExpressionList");
+        		"msi.gama.lang.gaml.Gaml.ExpressionList");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7014,7 +7014,7 @@ ruleParameter returns [EObject current=null]
        			$current, 
        			"builtInFacetKey",
         		lv_builtInFacetKey_1_1, 
-        		"DefinitionFacetKey");
+        		"msi.gama.lang.gaml.Gaml.DefinitionFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7029,7 +7029,7 @@ ruleParameter returns [EObject current=null]
        			$current, 
        			"builtInFacetKey",
         		lv_builtInFacetKey_1_2, 
-        		"TypeFacetKey");
+        		"msi.gama.lang.gaml.Gaml.TypeFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7044,7 +7044,7 @@ ruleParameter returns [EObject current=null]
        			$current, 
        			"builtInFacetKey",
         		lv_builtInFacetKey_1_3, 
-        		"SpecialFacetKey");
+        		"msi.gama.lang.gaml.Gaml.SpecialFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7059,7 +7059,7 @@ ruleParameter returns [EObject current=null]
        			$current, 
        			"builtInFacetKey",
         		lv_builtInFacetKey_1_4, 
-        		"ActionFacetKey");
+        		"msi.gama.lang.gaml.Gaml.ActionFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7074,7 +7074,7 @@ ruleParameter returns [EObject current=null]
        			$current, 
        			"builtInFacetKey",
         		lv_builtInFacetKey_1_5, 
-        		"VarFacetKey");
+        		"msi.gama.lang.gaml.Gaml.VarFacetKey");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7095,7 +7095,7 @@ ruleParameter returns [EObject current=null]
        			$current, 
        			"left",
         		lv_left_2_0, 
-        		"VariableRef");
+        		"msi.gama.lang.gaml.Gaml.VariableRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7117,7 +7117,7 @@ ruleParameter returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_4_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7156,7 +7156,7 @@ ruleExpressionList returns [EObject current=null]
        			$current, 
        			"exprs",
         		lv_exprs_0_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7178,7 +7178,7 @@ ruleExpressionList returns [EObject current=null]
        			$current, 
        			"exprs",
         		lv_exprs_2_0, 
-        		"Expression");
+        		"msi.gama.lang.gaml.Gaml.Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7217,7 +7217,7 @@ ruleParameterList returns [EObject current=null]
        			$current, 
        			"exprs",
         		lv_exprs_0_0, 
-        		"Parameter");
+        		"msi.gama.lang.gaml.Gaml.Parameter");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7239,7 +7239,7 @@ ruleParameterList returns [EObject current=null]
        			$current, 
        			"exprs",
         		lv_exprs_2_0, 
-        		"Parameter");
+        		"msi.gama.lang.gaml.Gaml.Parameter");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7379,7 +7379,7 @@ ruleTypeRef returns [EObject current=null]
        			$current, 
        			"parameter",
         		lv_parameter_2_0, 
-        		"TypeInfo");
+        		"msi.gama.lang.gaml.Gaml.TypeInfo");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7408,7 +7408,7 @@ ruleTypeRef returns [EObject current=null]
        			$current, 
        			"parameter",
         		lv_parameter_5_0, 
-        		"TypeInfo");
+        		"msi.gama.lang.gaml.Gaml.TypeInfo");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7451,7 +7451,7 @@ ruleTypeInfo returns [EObject current=null]
        			$current, 
        			"first",
         		lv_first_1_0, 
-        		"TypeRef");
+        		"msi.gama.lang.gaml.Gaml.TypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7473,7 +7473,7 @@ ruleTypeInfo returns [EObject current=null]
        			$current, 
        			"second",
         		lv_second_3_0, 
-        		"TypeRef");
+        		"msi.gama.lang.gaml.Gaml.TypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7844,7 +7844,7 @@ ruleUnitFakeDefinition returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"ID");
+        		"msi.gama.lang.gaml.Gaml.ID");
 	    }
 
 )
@@ -7887,7 +7887,7 @@ ruleTypeFakeDefinition returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"ID");
+        		"msi.gama.lang.gaml.Gaml.ID");
 	    }
 
 )
@@ -7929,7 +7929,7 @@ ruleActionFakeDefinition returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -7973,7 +7973,7 @@ ruleSkillFakeDefinition returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"ID");
+        		"msi.gama.lang.gaml.Gaml.ID");
 	    }
 
 )
@@ -8015,7 +8015,7 @@ ruleVarFakeDefinition returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -8058,7 +8058,7 @@ ruleEquationFakeDefinition returns [EObject current=null]
        			$current, 
        			"name",
         		lv_name_1_0, 
-        		"Valid_ID");
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -8204,7 +8204,7 @@ ruleTerminalExpression returns [EObject current=null]
        			$current, 
        			"op",
         		lv_op_1_0, 
-        		"INTEGER");
+        		"msi.gama.lang.gaml.Gaml.INTEGER");
 	    }
 
 )
@@ -8229,7 +8229,7 @@ ruleTerminalExpression returns [EObject current=null]
        			$current, 
        			"op",
         		lv_op_3_0, 
-        		"DOUBLE");
+        		"msi.gama.lang.gaml.Gaml.DOUBLE");
 	    }
 
 )
@@ -8254,7 +8254,7 @@ ruleTerminalExpression returns [EObject current=null]
        			$current, 
        			"op",
         		lv_op_5_0, 
-        		"COLOR");
+        		"msi.gama.lang.gaml.Gaml.COLOR");
 	    }
 
 )
@@ -8279,7 +8279,7 @@ ruleTerminalExpression returns [EObject current=null]
        			$current, 
        			"op",
         		lv_op_7_0, 
-        		"STRING");
+        		"msi.gama.lang.gaml.Gaml.STRING");
 	    }
 
 )
@@ -8304,7 +8304,7 @@ ruleTerminalExpression returns [EObject current=null]
        			$current, 
        			"op",
         		lv_op_9_0, 
-        		"BOOLEAN");
+        		"msi.gama.lang.gaml.Gaml.BOOLEAN");
 	    }
 
 )
@@ -8329,7 +8329,7 @@ ruleTerminalExpression returns [EObject current=null]
        			$current, 
        			"op",
         		lv_op_11_0, 
-        		"KEYWORD");
+        		"msi.gama.lang.gaml.Gaml.KEYWORD");
 	    }
 
 )

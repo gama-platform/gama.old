@@ -104,7 +104,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	@setter(IKeyword.HOST)
 	public abstract void setHost(final IMacroAgent macroAgent);
 
-	public abstract void schedule();
+	public abstract void schedule(IScope scope);
 
 	// public abstract void scheduleAndExecute(RemoteSequence sequence);
 
@@ -180,13 +180,13 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 
 	/**
 	 * @throws GamaRuntimeException
-	 * Finds the corresponding population of a species from the "viewpoint" of this
-	 * agent.
+	 *             Finds the corresponding population of a species from the "viewpoint" of this
+	 *             agent.
 	 *
-	 * An agent can "see" the following populations:
-	 * 1. populations of its species' direct micro-species;
-	 * 2. population of its species; populations of its peer species;
-	 * 3. populations of its direct&in-direct macro-species and of their peers.
+	 *             An agent can "see" the following populations:
+	 *             1. populations of its species' direct micro-species;
+	 *             2. population of its species; populations of its peer species;
+	 *             3. populations of its direct&in-direct macro-species and of their peers.
 	 *
 	 * @param microSpecies
 	 * @return
@@ -195,13 +195,13 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 
 	/**
 	 * @throws GamaRuntimeException
-	 * Finds the corresponding population of a species from the "viewpoint" of this
-	 * agent.
+	 *             Finds the corresponding population of a species from the "viewpoint" of this
+	 *             agent.
 	 *
-	 * An agent can "see" the following populations:
-	 * 1. populations of its species' direct micro-species;
-	 * 2. population of its species; populations of its peer species;
-	 * 3. populations of its direct&in-direct macro-species and of their peers.
+	 *             An agent can "see" the following populations:
+	 *             1. populations of its species' direct micro-species;
+	 *             2. population of its species; populations of its peer species;
+	 *             3. populations of its direct&in-direct macro-species and of their peers.
 	 *
 	 * @param speciesName the name of the species
 	 * @return

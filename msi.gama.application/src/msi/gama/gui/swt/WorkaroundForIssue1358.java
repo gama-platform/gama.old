@@ -17,6 +17,7 @@ import msi.gama.gui.swt.swing.Platform;
 public class WorkaroundForIssue1358 {
 
 	public static void install() {
+		if ( true ) { return; }
 		if ( Platform.isCocoa() ) {
 			Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 

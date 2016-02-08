@@ -34,6 +34,10 @@ global {
 		create ant number: ants_number with: (location: center);
 		write "Simulation " + int(self) + " created";
 	}
+	
+	reflex diffuse {
+      diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
+   }
   
 	reflex diffuse {
       diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;

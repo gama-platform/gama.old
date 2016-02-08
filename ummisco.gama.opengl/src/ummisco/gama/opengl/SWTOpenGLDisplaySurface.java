@@ -27,6 +27,7 @@ import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
@@ -533,15 +534,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public Collection<IAgent> selectAgent(final int x, final int y) {
 		final ILocation pp = getModelCoordinatesFrom(x, y, null, null);
-		Set<IAgent> agents = null;
-		IScope s = GAMA.obtainNewScope();
-		try {
-			agents = (Set<IAgent>) GAMA.getSimulation().getPopulation().getTopology().getNeighboursOf(s,
-				new GamaPoint(pp.getX(), pp.getY()), renderer.getMaxEnvDim() / 100, Different.with());
-		} finally {
-			GAMA.releaseScope(s);
-		}
-		return agents;
+		return GAMA.run(new InScope<Collection<IAgent>>() {
+
+			@Override
+			public Collection<IAgent> run(final IScope scope) {
+				return scope.getRoot().getPopulation().getTopology().getNeighboursOf(scope,
+					new GamaPoint(pp.getX(), pp.getY()), renderer.getMaxEnvDim() / 100, Different.with());
+			}
+		});
+
 	}
 
 	/**

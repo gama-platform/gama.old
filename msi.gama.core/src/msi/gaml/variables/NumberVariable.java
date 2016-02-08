@@ -1,25 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'NumberVariable.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.variables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -39,8 +35,10 @@ import msi.gaml.types.IType;
 		type = { IType.INT, IType.FLOAT },
 		optional = true,
 		doc = @doc("The initial value of the attribute")),
-	@facet(name = IKeyword.VALUE, type = { IType.INT, IType.FLOAT }, optional = true, doc = @doc(value = "",
-		deprecated = "Use 'update' instead")),
+	@facet(name = IKeyword.VALUE,
+		type = { IType.INT, IType.FLOAT },
+		optional = true,
+		doc = @doc(value = "", deprecated = "Use 'update' instead")),
 	@facet(name = IKeyword.UPDATE,
 		type = { IType.INT, IType.FLOAT },
 		optional = true,
@@ -86,7 +84,8 @@ public class NumberVariable extends Variable {
 
 	public NumberVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
-		IScope scope = GAMA.obtainNewScope();
+		IScope scope = null;
+		// IScope scope = GAMA.obtainNewScope();
 		min = getFacet(IKeyword.MIN);
 		max = getFacet(IKeyword.MAX);
 		step = getFacet(IKeyword.STEP);
@@ -117,7 +116,7 @@ public class NumberVariable extends Variable {
 		} else {
 			stepVal = null;
 		}
-		GAMA.releaseScope(scope);
+		// GAMA.releaseScope(scope);
 	}
 
 	@Override

@@ -23,6 +23,7 @@ public class learningGraphDatabaseGenerator {
 		
 		String inputFilePath = "F:/gama_doc_17.wiki/learningGraph.xml";
 		String outputFilePath = "F:/gama_doc_17.wiki/nodesDatabase.js";
+		String imageFolder = "resources/images/miniaturesLearningGraph/";
 		
 		///////// read the xml ///////////
 		float coeff = 700;
@@ -48,11 +49,12 @@ public class learningGraphDatabaseGenerator {
 	    			float x = Float.valueOf(eElement.getAttribute("x"))*coeff;
 	    			float y = Float.valueOf(eElement.getAttribute("y"))*coeff;
 	    			String name = eElement.getElementsByTagName("name").item(0).getTextContent();
+	    			String description = eElement.getElementsByTagName("description").item(0).getTextContent();
 	    			List<String> listPrerequisite = new ArrayList<String>();
 	    			for (int i=0; i < eElement.getElementsByTagName("prerequisite").getLength(); i++) {
 		    			listPrerequisite.add(eElement.getElementsByTagName("prerequisite").item(i).getTextContent());
 	    			}
-	    			LearningConcept newLearningConcept = new LearningConcept(id,name,x,y,listPrerequisite);
+	    			LearningConcept newLearningConcept = new LearningConcept(id,name,description,x,y,listPrerequisite);
 	    			learningConceptList.add(newLearningConcept);
 	    		}
 	    	}
@@ -77,7 +79,8 @@ public class learningGraphDatabaseGenerator {
 	    			for (int i=0; i < eElement.getElementsByTagName("learningConceptAssociated").getLength(); i++) {
 	    				associatedLearningConceptList.add(eElement.getElementsByTagName("learningConceptAssociated").item(i).getTextContent());
 	    			}
-	    			Topic newTopic = new Topic(id,name,x,y,xBigHallow,yBigHallow,sizeBigHallow,associatedLearningConceptList);
+	    			String color = eElement.getAttribute("color");
+	    			Topic newTopic = new Topic(id,name,x,y,xBigHallow,yBigHallow,sizeBigHallow,associatedLearningConceptList,color);
 	    			topicList.add(newTopic);
 	    		}
 	    	}
@@ -138,7 +141,7 @@ public class learningGraphDatabaseGenerator {
 	    			+", category:'highlightLearningConcept'},\n";
 	    	input += "{id:"+idNodeWithLabel+", label:'"+lc.m_name
 	    			+"', x:"+lc.m_xPos+", y:"+lc.m_yPos
-	    			+", category:'learningConceptWithLabel'},\n";
+	    			+", category:'learningConceptWithLabel', imagePath:'"+imageFolder+lc.m_id+"', description:'"+lc.m_description+"'},\n";
 	    	idNb++;
 	    }
 	    // write the topics
@@ -150,15 +153,20 @@ public class learningGraphDatabaseGenerator {
 	    	Topic tp = topicList.get(i);
 	    	input += "{id:"+idNode+", label:'"+tp.m_name
 	    			+"', x:"+tp.m_xPos+", y:"+tp.m_yPos
-	    			+", category:'topic'},\n";
+	    			+", category:'topic', color:'"+tp.m_color+"'},\n";
+	    	String colorWithSmoothAlpha = tp.m_color.split(",")[0]+","+tp.m_color.split(",")[1]+","+tp.m_color.split(",")[2]+",0.5)";
 	    	input += "{id:"+idHallow+", label:''"
 	    			+", x:"+tp.m_xPos+", y:"+tp.m_yPos
-	    			+", category:'highlightTopic'},\n";
+	    			+", category:'highlightTopic', color:'"+colorWithSmoothAlpha+"'},\n";
 	    	input += "{id:"+idBigHallow+", label:''"
 	    			+", x:"+tp.m_xPosBigHallow+", y:"+tp.m_yPosBigHallow+", size:"+tp.m_sizeBigHallow
-	    			+", category:'topicBigHallow'},\n";
+	    			+", category:'topicBigHallow', color:'"+colorWithSmoothAlpha+"'},\n";
 	    	idNb++;
 	    }
+	    // write fake nodes to affect the zoom
+	    input += "{id:2000, label:'', x:0, y:0, category:'', size:0.1},\n";
+	    input += "{id:2001, label:'', x:"+coeff+", y:"+coeff+", category:'', size:0.1},\n";
+
 	    input += "];\n";
 	    input += "var edges = [\n";
 	    

@@ -141,4 +141,4 @@ sepallength,sepalwidth,petallength,petalwidth,type
 6.3,2.5,5.0,1.9,Iris-virginica
 6.5,3.0,5.2,2.0,Iris-virginica
 6.2,3.4,5.4,2.3,Iris-virginica
-6.3,3.4,5.3,2.3,Toto
+6.3,3.4,5.3,2.3,Iris-virginica

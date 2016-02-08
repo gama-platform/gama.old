@@ -82,6 +82,7 @@ public class WorkaroundForIssue1353 {
 	}
 
 	public static void installOn(final Composite control, final LayeredDisplayView view) {
+		if ( true ) { return; }
 		if ( !Platform.isCocoa() ) { return; }
 		control.addMouseTrackListener(getDisplayListener());
 		control.addDisposeListener(new DisposeListener() {
@@ -95,6 +96,7 @@ public class WorkaroundForIssue1353 {
 	}
 
 	public static void installOn(final Composite control) {
+		if ( true ) { return; }
 		if ( !Platform.isCocoa() ) { return; }
 		control.addMouseTrackListener(getEditorListener());
 		control.addDisposeListener(new DisposeListener() {

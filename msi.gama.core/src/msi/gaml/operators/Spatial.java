@@ -814,7 +814,7 @@ public abstract class Spatial {
 			value = "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries",
 			examples = @example(value = "geom1 + geom2",
 				equals = "a geometry corresponding to union between geom1 and geom2",
-				isExecutable = false) ) )
+				isExecutable = false)))
 		public static IShape union(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null ) {
 				if ( g2 == null ) { return null; }
@@ -864,7 +864,7 @@ public abstract class Spatial {
 			value = "if both operands are a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries",
 			examples = @example(value = "geom1 - geom2",
 				equals = "a geometry corresponding to difference between geom1 and geom2",
-				isExecutable = false) ) )
+				isExecutable = false)))
 		public static IShape minus(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null || g1.getInnerGeometry() == null ||
 				g2.getInnerGeometry() == null ) { return g1; }
@@ -877,7 +877,7 @@ public abstract class Spatial {
 		@doc(usages = @usage(
 			value = "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries",
 			examples = @example(value = "rectangle(10,10) - [circle(2), square(2)]",
-				equals = "rectangle(10,10) - (circle(2) + square(2))") ) )
+				equals = "rectangle(10,10) - (circle(2) + square(2))")))
 		public static IShape minus(final IScope scope, final IShape g1, final IContainer<?, IShape> agents) {
 			if ( g1 == null || agents == null || g1.getInnerGeometry() == null || agents.isEmpty(scope) ) { return g1; }
 			Geometry geom1 = GeometryUtils.FACTORY.createGeometry(g1.getInnerGeometry());
@@ -1321,7 +1321,7 @@ public abstract class Spatial {
 				value = "if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters",
 				examples = @example(value = "shape + [\"distance\"::5.0, \"quadrantSegments\"::4, \"endCapStyle\":: 2]",
 					equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment",
-					test = false) ) )
+					test = false)))
 		public static IShape enlarged_by(final IScope scope, final IShape g, final GamaMap parameters) {
 			final Double distance = (Double) parameters.get("distance");
 			final Integer quadrantSegments = (Integer) parameters.get("quadrantSegments");
@@ -1359,7 +1359,7 @@ public abstract class Spatial {
 
 		/**
 		 * @throws GamaRuntimeException
-		 * Apply a rotation (of a given angle) to the agent geometry
+		 *             Apply a rotation (of a given angle) to the agent geometry
 		 *
 		 * @param args : angle --: double, degree
 		 *
@@ -1408,9 +1408,9 @@ public abstract class Spatial {
 
 		/**
 		 * @throws GamaRuntimeException
-		 * Apply a affinite operation (of a given coefficient and angle)to the agent
-		 * geometry. Angle
-		 * is given by the point.x ; Coefficient by the point.y
+		 *             Apply a affinite operation (of a given coefficient and angle)to the agent
+		 *             geometry. Angle
+		 *             is given by the point.x ; Coefficient by the point.y
 		 *
 		 * @param args : coefficient --: double; angle --: double, rad
 		 *
@@ -1430,7 +1430,7 @@ public abstract class Spatial {
 
 		/**
 		 * @throws GamaRuntimeException
-		 * Apply a translation operation (vector (dx, dy)) to the agent geometry
+		 *             Apply a translation operation (vector (dx, dy)) to the agent geometry
 		 *
 		 * @param args : dx --: double; dy --: double
 		 *
@@ -2277,7 +2277,7 @@ public abstract class Spatial {
 
 		/**
 		 * @throws GamaRuntimeException
-		 * determine the closest point of a geometry to another given point.
+		 *             determine the closest point of a geometry to another given point.
 		 *
 		 * @param pt a point
 		 * @param poly a polygon
@@ -2307,8 +2307,8 @@ public abstract class Spatial {
 			final double Xb = p2.x - p0.x;
 			final double Yb = p2.y - p0.y;
 
-			final double Na = Maths.sqrt(scope, Xa * Xa + Ya * Ya);
-			final double Nb = Maths.sqrt(scope, Xb * Xb + Yb * Yb);
+			final double Na = Maths.sqrt(Xa * Xa + Ya * Ya);
+			final double Nb = Maths.sqrt(Xb * Xb + Yb * Yb);
 			final double C = (Xa * Xb + Ya * Yb) / (Na * Nb);
 			final double S = Xa * Yb - Ya * Xb;
 			final double result = S > 0 ? Maths.acos(C) : -1 * Maths.acos(C);
@@ -2344,7 +2344,7 @@ public abstract class Spatial {
 			value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the third argument to the second argument (agent, geometry or point) considering the first operand topology.",
 			examples = { @example(value = "neighbors_of (topology(self), self,10)",
 				equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
-				test = false) }) )
+				test = false) }))
 		public static IList neighbours_of(final IScope scope, final ITopology t, final IShape agent,
 			final Double distance) {
 			return _neighbours(scope,

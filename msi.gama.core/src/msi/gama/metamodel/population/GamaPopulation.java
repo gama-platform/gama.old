@@ -270,7 +270,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		/* agents. */addAll(list);
 
 		for ( final IAgent a : list ) {
-			a.schedule();
+			a.schedule(scope);
 			// a.scheduleAndExecute(null);
 		}
 		createVariablesFor(scope, list, Collections.EMPTY_LIST);
@@ -313,7 +313,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			for ( final IAgent a : list ) {
 				// if agent is restored (on the capture or release); then don't need to run the "init"
 				// reflex
-				a.schedule();
+				a.schedule(scope);
 				// a.scheduleAndExecute(sequence);
 			}
 		}
