@@ -2,8 +2,8 @@ model ants
 
 global {
 	int ants_number <- 100 min: 1 max: 2000 ;
-	float evaporation_rate <- 0.1 min: 0.0 max: 1.0 ;
-	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 ;
+	float evaporation_rate <- 5.0 min: 0.0 max: 240.0 ;
+	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 ;
 	bool use_icons <- true ;
 	bool display_state <- true;
 	int gridsize <- 75 ;
@@ -19,13 +19,18 @@ global {
 	init{  
 		create ant number: ants_number with: [location::any_location_in (ant_grid(center))] ;
 	}
+	
+	reflex diffuse {
+      diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
+   }
 
 }
 
 
-grid ant_grid width: gridsize height: gridsize neighbours: 8 use_regular_agents: false {
+grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: false {
 	list<ant_grid> neighbours <- self neighbors_at 1;
 	bool multiagent <- true ;
+	float road <- 0.0 max:240.0 update: (road<=evaporation_rate) ? 0.0 : road-evaporation_rate;
 	int type <- int(types at {grid_x,grid_y}) ;
 	bool isNestLocation <- (self distance_to center) < 4 ; 
 	bool isFoodLocation <- type = 2 ; 
@@ -39,7 +44,9 @@ species ant skills: [moving] control: fsm {
 	ant_grid place update: ant_grid (location ); 
 	string im <- 'ant_shape_empty' ;
 	bool hasFood <- false ;
-	signal road update: hasFood ? 240.0 : 0.0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid ;
+	reflex diffuse_road when:hasFood=true{
+      ant_grid(location).road <- ant_grid(location).road + 100.0;
+   }
 	action pick {
 		im <- ant_shape_full ;
 		hasFood <- true ;

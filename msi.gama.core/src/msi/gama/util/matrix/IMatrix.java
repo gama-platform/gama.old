@@ -13,7 +13,7 @@ package msi.gama.util.matrix;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
@@ -55,7 +55,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	public abstract int getCols(IScope scope);
 
 	@getter(DIMENSION)
-	public abstract ILocation getDimensions();
+	public abstract GamaPoint getDimensions();
 
 	@operator(value = "rows_list",
 		can_be_const = true,

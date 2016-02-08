@@ -24,7 +24,7 @@ species cells skills: [moving3D] {
     }
 		
 	aspect default {
-		draw sphere(1) color:#orange;
+		draw sphere(10) color:#orange;
 		loop pp over: neighbours {
 			draw line([self.location,pp.location]);
 		}	
@@ -34,7 +34,7 @@ species cells skills: [moving3D] {
 experiment Display  type: gui {
 	output {
 		display View1 type:opengl background:rgb(10,40,55) {
-			species cells;
+			species cells aspect: default;
 		}
 	}
 }

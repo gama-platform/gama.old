@@ -49,7 +49,7 @@ public class GamaGridFile extends GamaGisFile {
 		return GamaListFactory.EMPTY_LIST;
 	}
 
-	private GamaGridReader createReader(final IScope scope) {
+	private GamaGridReader createReader(final IScope scope, boolean fillBuffer) {
 		if ( reader == null ) {
 			final File gridFile = getFile();
 			gridFile.setReadable(true);
@@ -60,8 +60,9 @@ public class GamaGridFile extends GamaGisFile {
 				// Should not happen;
 			}
 			try {
-				reader = new GamaGridReader(scope, fis);
+				reader = new GamaGridReader(scope, fis, fillBuffer);
 			} catch (GamaRuntimeException e) {
+				if (isTiff()) return null;
 				// A problem appeared, likely related to the wrong format of the file (see Issue 412)
 				GAMA.reportError(scope,
 					GamaRuntimeException.warning(
@@ -98,7 +99,7 @@ public class GamaGridFile extends GamaGisFile {
 
 				text.append(NL);
 				// fis = new StringBufferInputStream(text.toString());
-				reader = new GamaGridReader(scope, new StringBufferInputStream(text.toString()));
+				reader = new GamaGridReader(scope, new StringBufferInputStream(text.toString()), fillBuffer);
 			}
 		}
 		return reader;
@@ -108,15 +109,16 @@ public class GamaGridFile extends GamaGisFile {
 
 		int numRows, numCols;
 		IShape geom;
+		
 
-		GamaGridReader(final IScope scope, final InputStream fis) throws GamaRuntimeException {
+		GamaGridReader(final IScope scope, final InputStream fis, final boolean fillBuffer) throws GamaRuntimeException {
 			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 			AbstractGridCoverage2DReader store = null;
 			try {
-				scope.getGui().beginSubStatus("Reading file " + getName());
+				if (fillBuffer)scope.getGui().beginSubStatus("Reading file " + getName());
 				// Necessary to compute it here, because it needs to be passed to the Hints
 				CoordinateReferenceSystem crs = getExistingCRS(scope);
-				if ( getFile().getName().endsWith("tif") ) {
+				if ( isTiff() ) {
 					if ( crs == null ) {
 						store = new GeoTiffReader(getFile(), new Hints(Hints.USE_JAI_IMAGEREAD, false));
 					} else {
@@ -131,13 +133,11 @@ public class GamaGridFile extends GamaGisFile {
 							new Hints(Hints.USE_JAI_IMAGEREAD, true, Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 					}
 				}
-
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
-				Envelope env =
-					new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1));
-				computeProjection(scope, env);
 				numRows = store.getOriginalGridRange().getHigh(1) + 1;
 				numCols = store.getOriginalGridRange().getHigh(0) + 1;
+				Envelope env = new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1));
+				computeProjection(scope, env);
 				final double cellHeight = genv.getSpan(1) / numRows;
 				final double cellWidth = genv.getSpan(0) / numCols;
 				final IList<IShape> shapes = GamaListFactory.create(Types.GEOMETRY);
@@ -149,9 +149,11 @@ public class GamaGridFile extends GamaGisFile {
 				shapes.add(new GamaPoint(originX, maxY));
 				shapes.add(shapes.get(0));
 				geom = GamaGeometryType.buildPolygon(shapes);
+				if (!fillBuffer) return;
+				
 				final GamaPoint p = new GamaPoint(0, 0);
 				coverage = store.read(null);
-
+				
 				final double cmx = cellWidth / 2;
 				final double cmy = cellHeight / 2;
 				boolean doubleValues = false;
@@ -211,6 +213,9 @@ public class GamaGridFile extends GamaGisFile {
 				scope.getGui().endSubStatus("Opening file " + getName());
 			}
 		}
+
+		
+		
 	}
 
 	public GamaGridFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -231,10 +236,19 @@ public class GamaGridFile extends GamaGisFile {
 		return gis.getProjectedEnvelope();
 	}
 
+	public Envelope computeEnvelopeWithoutBuffer(final IScope scope) {
+		if (gis == null) {
+			GamaGridReader rd = createReader(scope, false);
+			if (rd == null) return null;
+		}
+		return gis.getProjectedEnvelope();
+	}
+
+	
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( getBuffer() != null ) { return; }
-		createReader(scope);
+		createReader(scope, true);
 	}
 
 	@Override
@@ -244,16 +258,27 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	public int getNbRows(final IScope scope) {
-		return createReader(scope).numRows;
+		return createReader(scope, true).numRows;
 	}
 
 	public int getNbCols(final IScope scope) {
-		return createReader(scope).numCols;
+		return createReader(scope, true).numCols;
+	}
+	
+	public String getExtension() {
+		final String path = getFile().getPath().toLowerCase();
+		final int mid = path.lastIndexOf(".");
+		if ( mid == -1 ) { return ""; }
+		return path.substring(mid + 1, path.length());
+	}
+	
+	public boolean isTiff() {
+		return getExtension().equals("tif"); 
 	}
 
 	@Override
 	public IShape getGeometry(final IScope scope) {
-		return createReader(scope).geom;
+		return createReader(scope, true).geom;
 	}
 
 	@Override
@@ -323,7 +348,7 @@ public class GamaGridFile extends GamaGisFile {
 			@Override
 			public RenderedImage run(final IScope scope) {
 				GamaGridFile file = new GamaGridFile(scope, pathName);
-				file.createReader(scope);
+				file.createReader(scope, true);
 				return file.coverage.getRenderedImage();
 			}
 		});

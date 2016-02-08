@@ -21,7 +21,8 @@ import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.*;
-import org.jfree.chart.renderer.xy.*;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.*;
@@ -74,7 +75,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.SIZE,
 		type = IType.POINT,
 		optional = true,
-		doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)") ),
+		doc = @doc("extent of the layer in the screen from its position. Coordinates in [0,1[ are treated as percentages of the total surface, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Like in 'position', an elevation can be provided with the z coordinate, allowing to scale the layer in the 3 directions ") ),
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("the background color") ),
 	@facet(name = IKeyword.TIMEXSERIES,
 		type = IType.LIST,
@@ -1321,6 +1322,25 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						i++;
 					}
 					XYPlot plot = (XYPlot) chart.getPlot();
+					
+					final NumberAxis domainAxis = (NumberAxis) ((XYPlot)this.chart.getPlot()).getDomainAxis();
+					final NumberAxis rangeAxis = (NumberAxis) ((XYPlot)this.chart.getPlot()).getRangeAxis();
+					boolean domainauto=false;
+					if (domainAxis.isAutoRange())
+					{
+						domainauto=true;
+						domainAxis.setAutoRange(false);
+						
+					}
+					boolean rangeauto=false;
+					if (rangeAxis.isAutoRange())
+					{
+						rangeauto=true;
+						rangeAxis.setAutoRange(false);
+						
+					}
+					
+					
 					// DefaultTableXYDataset data = (DefaultTableXYDataset) plot.getDataset(i);
 					XYDataset data = plot.getDataset(i);
 					XYSeries serie = new XYSeries(0, false, false);
@@ -1390,7 +1410,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						history.append(n.get(j));
 						history.append(',');
 					}
+
+					if (domainauto==true)
+					{
+						domainAxis.setAutoRange(true);
+						
+					}
+					if (rangeauto==true)
+					{
+						rangeAxis.setAutoRange(true);
+						
+					}
 				}
+				
 			}
 		}
 		history.deleteCharAt(history.length() - 1);

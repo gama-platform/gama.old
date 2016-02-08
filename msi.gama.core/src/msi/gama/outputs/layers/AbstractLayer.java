@@ -1,19 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'AbstractLayer.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -22,9 +23,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public abstract class AbstractLayer implements ILayer {
 
@@ -41,6 +42,7 @@ public abstract class AbstractLayer implements ILayer {
 	protected ILayerStatement definition;
 	private String name;
 	private final Point positionInPixels, sizeInPixels;
+	private Envelope visibleModelRegion;
 
 	protected AbstractLayer(final ILayerStatement layer) {
 		definition = layer;
@@ -282,6 +284,15 @@ public abstract class AbstractLayer implements ILayer {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return definition.serialize(includingBuiltIn);
+	}
+
+	@Override
+	public void setVisibleRegion(final Envelope e) {
+		visibleModelRegion = e;
+	}
+
+	public Envelope getVisibleRegion() {
+		return visibleModelRegion;
 	}
 
 }

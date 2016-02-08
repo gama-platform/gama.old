@@ -16,11 +16,9 @@ import java.util.Iterator;
 import com.jogamp.opengl.*;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.GamaColor;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.*;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.*;
 import ummisco.gama.opengl.JOGLRenderer;
 
 /**
@@ -41,7 +39,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	protected ISceneObjects<GeometryObject> geometries;
 	protected ISceneObjects<ResourceObject> resources;
 	protected ISceneObjects<ImageObject> images;
-	protected ISceneObjects<DEMObject> dems;
+	protected ISceneObjects<FieldObject> dems;
 	protected ISceneObjects<StringObject> strings;
 
 	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
@@ -51,7 +49,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		// TODO AD True or False for strings ??
 		strings = buildSceneObjects(new StringDrawer(renderer), true, false);
 		images = buildSceneObjects(new ImageDrawer(renderer), true, false);
-		dems = buildSceneObjects(new DEMDrawer(renderer), true, false);
+		dems = buildSceneObjects(new FieldDrawer(renderer), true, false);
 	}
 
 	protected ISceneObjects<GeometryObject> getGeometries() {
@@ -68,7 +66,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	/**
 	 * @return the dems
 	 */
-	protected ISceneObjects<DEMObject> getDems() {
+	protected ISceneObjects<FieldObject> getDems() {
 		return dems;
 	}
 
@@ -163,12 +161,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 		images.add(new ImageObject(img, attributes, this));
 	}
 
-	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
-		final IAgent agent, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
-		final boolean isFromImage, final Envelope3D env, final Envelope3D cellSize, final String name,
-		final GamaColor lineColor) {
-		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTriangulated, isGrayScaled, isShowText,
-			isFromImage, cellSize, name, lineColor, this));
+	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
+		dems.add(new FieldObject(fieldValues, attributes, this));
 	}
 
 	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {

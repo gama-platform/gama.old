@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 import org.jfree.chart.JFreeChart;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.FileDrawingAttributes;
 
 /**
  * Written by drogoul Modified on 1 avr. 2010
@@ -40,9 +40,10 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
+		getChart().setAntiAlias(false);
+		getChart().setTextAntiAlias(false);
 		BufferedImage im = getChart().createBufferedImage(getSizeInPixels().x, getSizeInPixels().y);
-		DrawingAttributes attributes = new DrawingAttributes(null, null, null);
-		attributes.setDynamic(true);
+		FileDrawingAttributes attributes = new FileDrawingAttributes(null);
 		dg.drawImage(im, attributes);
 	}
 

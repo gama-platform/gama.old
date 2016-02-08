@@ -17,6 +17,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import javax.imageio.ImageIO;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -459,5 +460,14 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void releaseLock() {}
+
+	/**
+	 * Method getVisibleRegionForLayer()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getVisibleRegionForLayer(msi.gama.common.interfaces.ILayer)
+	 */
+	@Override
+	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
+		return null;
+	}
 
 }

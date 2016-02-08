@@ -29,13 +29,12 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayData;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.*;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.*;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
 import ummisco.gama.opengl.scene.*;
@@ -49,7 +48,7 @@ import ummisco.gama.opengl.utils.GLUtilLight;
  * @since 27 avr. 2015
  *
  */
-public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
+public class JOGLRenderer implements IGraphics, GLEventListener {
 
 	private static boolean BLENDING_ENABLED; // blending on/off
 	GLCanvas canvas;
@@ -90,6 +89,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	// Does not allow renderers to be created for text bigger than 200 pixels
 
 	Map<String, Map<Integer, Map<Integer, TextRenderer>>> textRenderersCache = new LinkedHashMap();
+	private ILayer currentLayer;
 
 	public TextRenderer get(final Font font) {
 		return get(font.getName(), font.getSize(), font.getStyle());
@@ -585,7 +585,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	 * existing geometry that will be displayed by openGl.
 	 */
 	@Override
-	public Rectangle2D drawShape(final IShape shape, final DrawingAttributes attributes) {
+	public Rectangle2D drawShape(final IShape shape, final ShapeDrawingAttributes attributes) {
 		if ( shape == null ) { return null; }
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		IShape.Type type = shape.getGeometricalType();
@@ -607,23 +607,21 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	 * Integer
 	 */
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes) {
+	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		if ( attributes.size == null ) {
-			attributes.size = new GamaPoint();
-			attributes.size.x = widthOfLayerInPixels / xRatioBetweenPixelsAndModelUnits;
-			attributes.size.y = heightOfLayerInPixels / yRatioBetweenPixelsAndModelUnits;
+			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
 		}
 		sceneBuffer.getSceneToUpdate().addImage(img, attributes);
 
 		if ( attributes.border != null ) {
-			drawGridLine(img, attributes.border);
+			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.border);
 		}
 		return rect;
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile file, final DrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 
 		if ( file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath()) ) {
@@ -648,20 +646,16 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	// location, dimensions, rotate3D, rotate3DInit, env);
 	// return rect;
 	// }
-
-	private Envelope3D getWorldEnvelopeWithZ(final double z) {
-		return new Envelope3D(0, data.getEnvWidth(), 0, data.getEnvHeight(), 0, z);
-	}
+	//
+	// private Envelope3D getWorldEnvelopeWithZ(final double z) {
+	// return new Envelope3D(0, data.getEnvWidth(), 0, data.getEnvHeight(), 0, z);
+	// }
 
 	@Override
-	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] valueMatrix,
-		final boolean triangulated, final boolean isGrayScaled, final boolean showText, final GamaColor gridColor,
-		final Envelope3D cellSize, final String name) {
+	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
-		Envelope3D env = getWorldEnvelopeWithZ(1);
-		IAgent a = scope.getAgentScope();
-		sceneBuffer.getSceneToUpdate().addDEM(valueMatrix, img, a, triangulated, isGrayScaled, showText, env, cellSize,
-			name, gridColor);
+
+		sceneBuffer.getSceneToUpdate().addField(fieldValues, attributes);
 		/*
 		 * This line has been removed to fix the issue 1174
 		 * if ( gridColor != null ) {
@@ -671,37 +665,27 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		return rect;
 	}
 
-	public void drawGridLine(final BufferedImage image, final Color lineColor) {
+	public void drawGridLine(final GamaPoint dimensions, final Color lineColor) {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return; }
 		double stepX, stepY;
-		double wRatio = this.data.getEnvWidth() / image.getWidth();
-		double hRatio = this.data.getEnvHeight() / image.getHeight();
+		double cellWidth = this.data.getEnvWidth() / dimensions.x;
+		double cellHeight = this.data.getEnvHeight() / dimensions.y;
 		GamaColor color = GamaColor.getInt(lineColor.getRGB());
-		DrawingAttributes attributes = new DrawingAttributes(null, color, color);
-		attributes.setShapeType(IShape.Type.GRIDLINE);
-		for ( int i = 0; i < image.getWidth(); i++ ) {
-			for ( int j = 0; j < image.getHeight(); j++ ) {
-				stepX = (i + 0.5) / image.getWidth() * image.getWidth();
-				stepY = (j + 0.5) / image.getHeight() * image.getHeight();
+		ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
+		for ( int i = 0; i < dimensions.x; i++ ) {
+			for ( int j = 0; j < dimensions.y; j++ ) {
+				stepX = i + 0.5;
+				stepY = j + 0.5;
 				final Geometry g = GamaGeometryType
-					.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio)).getInnerGeometry();
+					.buildRectangle(cellWidth, cellHeight, new GamaPoint(stepX * cellWidth, stepY * cellHeight))
+					.getInnerGeometry();
 				sceneBuffer.getSceneToUpdate().addGeometry(g, attributes);
 			}
 		}
 	}
 
-	// Build a dem from a dem.png and a texture.png (used when using the operator dem)
 	@Override
-	public Rectangle2D drawDEM(final IScope scope, final BufferedImage dem, final BufferedImage texture,
-		final Double z_factor) {
-		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
-
-		sceneBuffer.getSceneToUpdate().addDEMFromPNG(texture, dem, getWorldEnvelopeWithZ(z_factor));
-		return null;
-	}
-
-	@Override
-	public Rectangle2D drawString(final String string, final DrawingAttributes attributes) {
+	public Rectangle2D drawString(final String string, final TextDrawingAttributes attributes) {
 		// Multiline: Issue #780
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		if ( string.contains("\n") ) {
@@ -735,6 +719,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 			}
 		}
 		sceneBuffer.beginUpdatingScene();
+
 	}
 
 	/**
@@ -744,6 +729,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	 */
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
+		currentLayer = layer;
 		xOffsetInPixels = layer.getPositionInPixels().x;
 		yOffsetInPixels = layer.getPositionInPixels().y;
 		widthOfLayerInPixels = layer.getSizeInPixels().x;
@@ -789,6 +775,7 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	@Override
 	public void endDrawingLayers() {
 		sceneBuffer.endUpdatingScene();
+		displaySurface.invalidateVisibleRegions();
 	}
 
 	@Override
@@ -863,7 +850,6 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
 
 		realy = viewport[3] - y;
-
 		glu.gluUnProject(x, realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
 		GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
@@ -935,6 +921,15 @@ public class JOGLRenderer implements IGraphics.OpenGL, GLEventListener {
 	 */
 	public float getLineWidth() {
 		return GamaPreferences.CORE_LINE_WIDTH.getValue().floatValue();
+	}
+
+	/**
+	 * Method getVisibleRegion()
+	 * @see msi.gama.common.interfaces.IGraphics#getVisibleRegion()
+	 */
+	@Override
+	public Envelope getVisibleRegion() {
+		return displaySurface.getVisibleRegionForLayer(currentLayer);
 	}
 
 }

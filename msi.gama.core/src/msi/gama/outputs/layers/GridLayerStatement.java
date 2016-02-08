@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
 	value = { @facet(name = IKeyword.POSITION,
 		type = IType.POINT,
 		optional = true,
-		doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.") ),
+		doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greater than 1. The position can also be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.") ),
 		@facet(name = IKeyword.SELECTABLE,
 			type = { IType.BOOL },
 			optional = true,
@@ -49,7 +49,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.SIZE,
 			type = IType.POINT,
 			optional = true,
-			doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)") ),
+			doc = @doc("extent of the layer in the screen from its position. Coordinates in [0,1[ are treated as percentages of the total surface, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Like in 'position', an elevation can be provided with the z coordinate, allowing to scale the layer in the 3 directions ") ),
 		@facet(name = IKeyword.TRANSPARENCY,
 			type = IType.FLOAT,
 			optional = true,
@@ -69,7 +69,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.TEXTURE,
 			type = { IType.BOOL, IType.FILE },
 			optional = true,
-			doc = @doc("the file object containing the texture image to be applied on the grid") ),
+			doc = @doc("Either file  containing the texture image to be applied on the grid or, if true, the use of the image composed by the colors of the cells. If false, no texture is applied") ),
 		@facet(name = IKeyword.GRAYSCALE,
 			type = IType.BOOL,
 			optional = true,
@@ -133,7 +133,6 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	Boolean isGrayScaled = false;
 	Boolean showText = false;
 	GamaColor currentColor, constantColor;
-	int cellSize;
 	private IExpression setOfAgents;
 
 	@Override
@@ -259,7 +258,11 @@ public class GridLayerStatement extends AbstractLayerStatement {
 				case IType.INT:
 					return grid.getGridValueOf(scope, elevation);
 				case IType.BOOL:
-					if ( (Boolean) elevation.value(scope) ) { return grid.getGridValue(); }
+					if ( (Boolean) elevation.value(scope) ) {
+						return grid.getGridValue();
+					} else {
+						return null;
+					}
 			}
 		}
 		return null;

@@ -65,7 +65,7 @@ public class Experiment implements IExperiment {
 		this.currentStep = 0;
 
 		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, seed);
-		this.currentSimulation = ((SimulationAgent) this.currentExperiment.getAgent().getSimulation());
+		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
 		// this.currentExperiment.isHeadless()
 		this.currentExperiment.setHeadless(true);
 	}
@@ -88,8 +88,9 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public Object getOutput(final String parameterName) {
-		IOutput output =((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
-		
+		IOutput output =
+			((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
+
 		if ( output == null ||
 			!(output instanceof MonitorOutput) ) { throw GamaRuntimeException.error("Output unresolved"); }
 		// this.currentExperiment.getSimulationOutputs().step(this.getScope());

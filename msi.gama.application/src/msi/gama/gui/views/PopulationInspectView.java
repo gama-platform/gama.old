@@ -115,7 +115,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				TableViewer v = viewer;
-				if ( v == null || v.getTable() == null || v.getTable().isDisposed() ) { return Status.CANCEL_STATUS; }
+				if ( v == null || v.getTable() == null || v.getTable().isDisposed() ||
+					getOutput() == null ) { return Status.CANCEL_STATUS; }
 				if ( !locked ) {
 					IAgent[] agents = getOutput().getLastValue();
 					if ( Arrays.equals(elements, agents) ) {

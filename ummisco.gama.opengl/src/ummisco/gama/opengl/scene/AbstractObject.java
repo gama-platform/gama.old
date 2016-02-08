@@ -18,8 +18,10 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.util.file.GamaImageFile;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public abstract class AbstractObject {
@@ -42,7 +44,7 @@ public abstract class AbstractObject {
 	}
 
 	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
-		this(attributes, layer, attributes.textures != null ? new Texture[attributes.textures.size()] : null);
+		this(attributes, layer, attributes.getTextures() != null ? new Texture[attributes.getTextures().size()] : null);
 	}
 
 	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
@@ -54,8 +56,8 @@ public abstract class AbstractObject {
 		return textures[order];
 	}
 
-	protected Texture computeTexture(final GL gl, final JOGLRenderer renderer, final int order) {
-		Object obj = attributes.textures.get(order);
+	private Texture computeTexture(final GL gl, final JOGLRenderer renderer, final int order) {
+		Object obj = attributes.getTextures().get(order);
 		if ( obj instanceof BufferedImage ) {
 			return renderer.getCurrentScene().getTexture(gl, (BufferedImage) obj);
 		} else if ( obj instanceof GamaImageFile ) { return renderer.getCurrentScene().getTexture(gl,
@@ -72,7 +74,37 @@ public abstract class AbstractObject {
 	}
 
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
-		drawer.draw(gl, this);
+		if ( picking ) {
+			JOGLRenderer renderer = drawer.renderer;
+			gl.glPushMatrix();
+			gl.glLoadName(pickingIndex);
+			if ( renderer.pickedObjectIndex == pickingIndex ) {
+				renderer.setPicking(false);
+				pick();
+				renderer.currentPickedObject = this;
+				if ( attributes.getSpeciesName() != null ) {
+					// The picked image is a grid or an image of a grid
+					final GamaPoint pickedPoint =
+						renderer.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
+					IAgent ag = GAMA.run(new InScope<IAgent>() {
+
+						@Override
+						public IAgent run(final IScope scope) {
+							return scope.getRoot().getPopulationFor(attributes.getSpeciesName()).getAgent(scope,
+								new GamaPoint(pickedPoint.x, -pickedPoint.y));
+						}
+					});
+					renderer.displaySurface.selectAgent(ag);
+				} else {
+					renderer.displaySurface.selectAgent(attributes.getAgent());
+				}
+
+			}
+			drawer.draw(gl, this);
+			gl.glPopMatrix();
+		} else {
+			drawer.draw(gl, this);
+		}
 	}
 
 	public void unpick() {
@@ -107,7 +139,7 @@ public abstract class AbstractObject {
 	public void preload(final GL2 gl, final JOGLRenderer renderer) {}
 
 	public boolean isFilled() {
-		return !attributes.empty;
+		return !attributes.isEmpty();
 	}
 
 	public boolean isPicked() {
@@ -123,15 +155,15 @@ public abstract class AbstractObject {
 	}
 
 	public Color getBorder() {
-		return attributes.border;
+		return attributes.getBorder();
 	}
 
 	public double getHeight() {
-		return attributes.depth == null ? 0 : attributes.depth.doubleValue();
+		return attributes.getDepth();
 	}
 
 	public IAgent getAgent() {
-		return attributes.agent;
+		return attributes.getAgent();
 	}
 
 	public double getRotationAngle() {

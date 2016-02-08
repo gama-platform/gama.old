@@ -146,7 +146,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				} else {
 					newVar.info(msg, IGamlIssue.WRONG_REDEFINITION, NAME);
 				}
-			} else {
+			} else if ( existingResource != null ) {
 				if ( error ) {
 					newVar.error(msg + " in  imported file " + existingResource.getURI().lastSegment(),
 						IGamlIssue.WRONG_REDEFINITION, NAME);
@@ -304,7 +304,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				li.next();
 				li.add(var);
 				added = true;
-			};
+			} ;
 		}
 		if ( !added ) {
 			vl.add(0, var);

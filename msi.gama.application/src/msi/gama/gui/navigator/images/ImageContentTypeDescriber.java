@@ -1,11 +1,11 @@
 package msi.gama.gui.navigator.images;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import java.io.*;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.ImageData;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 /**
  * Content type matcher for image files.

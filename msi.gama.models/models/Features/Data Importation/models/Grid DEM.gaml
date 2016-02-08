@@ -16,7 +16,7 @@ global {
 	file grid_file <- file("../includes/DEM-Vulcano/vulcano_50.asc");
 	file dem parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM.png');
 	file texture parameter: 'Texture' <- file('../includes/DEM-Vulcano/Texture.png');
-	geometry shape <- envelope(grid_file);
+	geometry shape <- envelope(200);
 	init
 	{
 		ask cell
@@ -44,17 +44,16 @@ global {
 grid cell file: grid_file {
 	rgb color;
 	reflex decreaseValue {
-		grid_value <- grid_value - 0.01;
+		grid_value <- grid_value  + rnd (0.2) - 0.1;
 	}
 }
 
 experiment DEM type: gui {
-	geometry shape <- envelope(grid_file);
 	output {
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
-		display gridWithElevationTriangulated type: opengl ambient_light: 100 { 
-			grid cell elevation: true triangulation: true;
+		display gridWithElevationTriangulated type: opengl ambient_light: 100 autosave: true{ 
+			grid cell elevation: true triangulation: true ;
 		}
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255
@@ -71,7 +70,6 @@ experiment DEM type: gui {
 }
 
 experiment GridDEMComplete type: gui {
-	geometry shape <- envelope(grid_file);
 	output {
 
 	//Display the grid on a plan with cell color (if defined otherwise in black)

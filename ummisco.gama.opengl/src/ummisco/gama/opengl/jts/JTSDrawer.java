@@ -78,7 +78,7 @@ public class JTSDrawer {
 				if ( height > 0 ) {
 					drawPlan(gl, l, z, c, border, alpha, height, 0, true, object);
 				} else {
-					drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha, object);
+					drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha);
 				}
 			}
 		}
@@ -588,9 +588,6 @@ public class JTSDrawer {
 		}
 	}
 
-	
-
-	
 	public void drawTexturedFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 		final Color b, final Texture texture, final double height, final boolean drawPolygonContour,
 		final boolean clockwise) {
@@ -624,7 +621,7 @@ public class JTSDrawer {
 			gl.glTexCoord2f(0.0f, 1.0f);
 			gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
 			gl.glEnd();
-			
+
 			if ( drawPolygonContour == true || fill == false ) {
 				if ( !colorpicking ) {
 					setColor(gl, b, alpha);
@@ -772,8 +769,8 @@ public class JTSDrawer {
 	// ////////////////////////////// LINE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
 
-	public void drawMultiLineString(final GL2 gl, final MultiLineString lines, final double z, final Color c, final Color b,
-		final double alpha, final double height, final GeometryObject object) {
+	public void drawMultiLineString(final GL2 gl, final MultiLineString lines, final double z, final Color c,
+		final Color b, final double alpha, final double height, final GeometryObject object) {
 
 		// get the number of line in the multiline.
 		int numGeometries = lines.getNumGeometries();
@@ -790,14 +787,14 @@ public class JTSDrawer {
 			if ( height > 0 ) {
 				drawPlan(gl, l, z, c, b, alpha, height, 0, true, object);
 			} else {
-				drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha,object);
+				drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha);
 			}
 
 		}
 	}
 
 	public void drawLineString(final GL2 gl, final LineString line, final double z, final float size, final Color c,
-		final double alpha,final GeometryObject object) {
+		final double alpha) {
 
 		if ( !colorpicking ) {
 			setColor(gl, c, alpha);
@@ -834,13 +831,13 @@ public class JTSDrawer {
 	public void drawPlan(final GL2 gl, final LineString l, double z, final Color c, final Color b, final double alpha,
 		final double height, final Integer angle, final boolean drawPolygonContour, final GeometryObject object) {
 
-		if(object.isTextured() == false){
-		  drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha, object);
-		  drawLineString(gl, l, z + height, renderer.getLineWidth(), c, alpha,object);
+		if ( object.isTextured() == false ) {
+			drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha);
+			drawLineString(gl, l, z + height, renderer.getLineWidth(), c, alpha);
 		}
 
 		// Draw a quad
-	    gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
+		gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
 		int numPoints = l.getNumPoints();
 
 		// Add z value
@@ -869,14 +866,14 @@ public class JTSDrawer {
 				GLUtilNormal.HandleNormal(vertices, c, alpha, 1, renderer);
 			}
 
-			if(object.isTextured()){
+			if ( object.isTextured() ) {
 				Texture texture = object.getTexture(gl, renderer, 0);
 				gl.glColor3d(1.0, 1.0, 1.0);
 				if ( texture != null ) {
 					texture.enable(gl);
 					texture.bind(gl);
 				}
-			
+
 				gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
 				gl.glBegin(GL2ES3.GL_QUADS);
 				gl.glTexCoord2f(0.0f, 1.0f);
@@ -888,23 +885,22 @@ public class JTSDrawer {
 				gl.glTexCoord2f(0.0f, 0.0f);
 				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z + height);
 				gl.glEnd();
-				
+
 				if ( texture != null ) {
 					texture.disable(gl);
-				}	
-			}
-			else{
+				}
+			} else {
 				gl.glBegin(GL2ES3.GL_QUADS);
 				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z);
 				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z);
 				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z + height);
 				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z + height);
-				gl.glEnd();	
+				gl.glEnd();
 			}
-			
+
 		}
 
-		if ( drawPolygonContour == true) {
+		if ( drawPolygonContour == true ) {
 			if ( !colorpicking ) {
 				setColor(gl, b, alpha);
 			}
@@ -1100,7 +1096,7 @@ public class JTSDrawer {
 		if ( !colorpicking ) {
 			setColor(gl, g.getColor(), g.getAlpha());;
 		}
-		pyramidSkeleton(gl, p, g.getHeight(), g.getColor(), g.getAlpha(),g);
+		pyramidSkeleton(gl, p, g.getHeight(), g.getColor(), g.getAlpha(), g);
 		// border
 		if ( g.getBorder() != null ) {
 			if ( !colorpicking ) {
@@ -1109,7 +1105,7 @@ public class JTSDrawer {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 			gl.glPolygonOffset(0.0f, -(float) 1.1);
-			pyramidSkeleton(gl, p, g.getHeight(), g.getBorder(), g.getAlpha(),g);
+			pyramidSkeleton(gl, p, g.getHeight(), g.getBorder(), g.getAlpha(), g);
 			gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 			if ( !renderer.data.isTriangulation() ) {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
@@ -1223,7 +1219,8 @@ public class JTSDrawer {
 		return vertices;
 	}
 
-	public void pyramidSkeleton(final GL2 gl, final Polygon p, final double size, final Color c, final double alpha, final GeometryObject g) {
+	public void pyramidSkeleton(final GL2 gl, final Polygon p, final double size, final Color c, final double alpha,
+		final GeometryObject g) {
 		Vertex[] vertices;
 
 		if ( renderer.getComputeNormal() ) {
@@ -1231,8 +1228,8 @@ public class JTSDrawer {
 			GLUtilNormal.HandleNormal(vertices, c, alpha, 1, renderer);
 		}
 		Coordinate coords[] = p.getExteriorRing().getCoordinates();
-		
-		if(g.isTextured()){
+
+		if ( g.isTextured() ) {
 			Texture texture = g.getTexture(gl, renderer, 0);
 			gl.glColor3d(1.0, 1.0, 1.0);
 			if ( texture != null ) {
@@ -1241,7 +1238,6 @@ public class JTSDrawer {
 			}
 			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
 		}
-		
 
 		gl.glBegin(GL2ES3.GL_QUADS);
 		gl.glTexCoord2f(0.0f, 1.0f);
@@ -1263,7 +1259,7 @@ public class JTSDrawer {
 		norm[0] = norm[0] * size + p.getCentroid().getX();
 		norm[1] = norm[1] * size + renderer.yFlag * p.getCentroid().getY();
 		norm[2] = norm[2] * size + p.getCentroid().getCoordinate().z;
-		
+
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);
 		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
@@ -1314,12 +1310,12 @@ public class JTSDrawer {
 		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
-		
-		if(g.isTextured()){	
+
+		if ( g.isTextured() ) {
 			Texture texture = g.getTexture(gl, renderer, 0);
 			if ( texture != null ) {
 				texture.disable(gl);
-			}	
+			}
 		}
 
 	}

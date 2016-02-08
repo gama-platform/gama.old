@@ -17,10 +17,6 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="org.eclipse.xtext.runtime"
-         version="0.0.0"/>
-
    <plugin
          id="org.eclipse.core.commands"
          download-size="0"
@@ -907,13 +903,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.xtext.generator"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.xtext.logging"
          download-size="0"
          install-size="0"
@@ -971,41 +960,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.xpand"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.xtend"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.xtend.lib"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.xtend.lib.macro"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.xtend.typesystem.emf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.xtext.ide"
          download-size="0"
          install-size="0"
@@ -1055,6 +1009,20 @@
 
    <plugin
          id="org.apache.commons.codec"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtend.lib"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtend.lib.macro"
          download-size="0"
          install-size="0"
          version="0.0.0"

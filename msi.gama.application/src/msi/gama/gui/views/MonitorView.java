@@ -171,6 +171,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	}
 
 	public static void createNewMonitor() {
+		// TODO ADD the possibility to do it in several simulations
 		new MonitorOutput("monitor" + count++, "");
 	}
 
@@ -226,6 +227,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
+
 				createNewMonitor();
 			}
 

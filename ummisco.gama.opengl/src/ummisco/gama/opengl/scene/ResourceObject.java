@@ -16,7 +16,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.*;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class ResourceObject extends AbstractObject {
@@ -40,11 +40,14 @@ public class ResourceObject extends AbstractObject {
 		if ( attributes.location != null ) {
 			gl.glTranslated(attributes.location.x, renderer.yFlag * attributes.location.y, attributes.location.z);
 		} else {
-			if ( attributes.agent != null ) {
-				ILocation loc = attributes.agent.getLocation();
+			if ( attributes.getAgent() != null ) {
+				ILocation loc = attributes.getAgent().getLocation();
 				gl.glTranslated(loc.getX(), renderer.yFlag * loc.getY(), loc.getZ());
 			}
 		}
+
+		Envelope env = renderer.getEnvelopeFor(file.getPath());
+		GamaPoint size = getDimensions();
 
 		// If there is a rotation we apply it
 		if ( attributes.rotation != null ) {
@@ -62,8 +65,15 @@ public class ResourceObject extends AbstractObject {
 			GamaPoint axis = initRotation.value;
 			gl.glRotated(rot, axis.x, axis.y, axis.z);
 		}
-		Envelope env = renderer.getEnvelopeFor(file.getPath());
-		GamaPoint size = getDimensions();
+
+		// We translate it to its center
+		// FIXME Necessary for all file types ?
+		//
+		// if ( size != null ) {
+		// gl.glTranslated(-size.x / 2, renderer.yFlag * size.y / 2, 0);
+		// } else if ( env != null ) {
+		// gl.glTranslated(-env.getWidth() / 2, renderer.yFlag * env.getHeight() / 2, 0);
+		// }
 
 		// We then compute the scaling factor to apply
 		double factor = 0.0;
@@ -76,31 +86,13 @@ public class ResourceObject extends AbstractObject {
 			}
 			gl.glScaled(factor, factor, factor);
 		}
-
-		// Then we draw the geometry itself
-		if ( picking ) {
-			// gl.glPushMatrix();
-			gl.glLoadName(pickingIndex);
-			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				if ( attributes.agent != null /* && !picked */ ) {
-					renderer.setPicking(false);
-					pick();
-					renderer.currentPickedObject = this;
-					renderer.displaySurface.selectAgent(attributes.agent);
-				}
-			}
-			gl.glColor4d(1.0, 0.0, 0.0, 1.0);
-
-			super.draw(gl, drawer, picking);
-			// gl.glPopMatrix();
-		} else {
-			// And apply a color
-			if ( getColor() != null ) { // does not work for obj files
-				gl.glColor4d(getColor().getRed() / 255.0, getColor().getGreen() / 255.0, getColor().getBlue() / 255.0,
-					getAlpha() * getColor().getAlpha() / 255.0);
-			}
-			super.draw(gl, drawer, picking);
+		// And apply its color if any
+		if ( getColor() != null ) { // does not work for obj files
+			gl.glColor4d(getColor().getRed() / 255.0, getColor().getGreen() / 255.0, getColor().getBlue() / 255.0,
+				getAlpha() * getColor().getAlpha() / 255.0);
 		}
+		// Then we draw the geometry itself
+		super.draw(gl, drawer, picking);
 
 		// and we pop the matrix
 		gl.glPopMatrix();

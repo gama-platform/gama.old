@@ -95,7 +95,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
 		final boolean isTorus, final boolean usesVN, final boolean indiv, final boolean useNeighboursCache)
-			throws GamaRuntimeException {
+		throws GamaRuntimeException {
 		super(cols, rows, Types.GEOMETRY);
 		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		environmentFrame = environment.getGeometry();
@@ -390,9 +390,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	private void diffuse_deprecated(final IScope scope) throws GamaRuntimeException {
 		// this was once used for "Signal" statement (deprecated since GAMA 1.8). It will have to be removed soon.
-		diffuser_deprecated.diffuse_deprecated(scope);
+		// AD Fixes a NPE when relaunching a simulation
+		if ( diffuser_deprecated == null ) { return; }
+		getDiffuser_deprecated(scope).diffuse_deprecated(scope);
 	}
-	
+
 	private void diffuse(final IScope scope) throws GamaRuntimeException {
 		diffuser.diffuse();
 	}
@@ -782,7 +784,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		});
 		return diffuser_deprecated;
 	}
-	
+
 	private GridDiffuser getDiffuser(final IScope scope) {
 		if ( diffuser != null ) { return diffuser; }
 		diffuser = new GridDiffuser();
@@ -790,8 +792,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			@Override
 			public Object run(final IScope scope) throws GamaRuntimeException {
-				if (diffuser != null)
+				if ( diffuser != null ) {
 					diffuse(scope);
+				}
 				return null;
 			}
 
@@ -804,13 +807,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final double prop, final double variation, final ILocation location, final double range,
 		final Object candidates) {
 		// this was once used for "Signal" statement (deprecated since GAMA 1.8). It will have to be removed soon.
-		getDiffuser_deprecated(scope).diffuseVariable(scope, name, value, type, prop, variation, location, range, candidates);
+		getDiffuser_deprecated(scope).diffuseVariable(scope, name, value, type, prop, variation, location, range,
+			candidates);
 	}
-	
+
 	@Override
-	public void diffuseVariable(final IScope scope, boolean method_diffu, boolean is_gradient, double[][] mat_diffu, 
-		double[][] mask, String var_diffu, IPopulation pop) {
-		getDiffuser(scope).addDiffusion(scope, var_diffu, (GridPopulation)pop, method_diffu, is_gradient, mat_diffu, mask);
+	public void diffuseVariable(final IScope scope, final boolean method_diffu, final boolean is_gradient,
+		final double[][] mat_diffu, final double[][] mask, final String var_diffu, final IPopulation pop) {
+		getDiffuser(scope).addDiffusion(scope, var_diffu, (GridPopulation) pop, method_diffu, is_gradient, mat_diffu,
+			mask);
 	}
 
 	@Override
@@ -999,7 +1004,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		}
 
-	
 	}
 
 	/**
@@ -1049,7 +1053,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			for ( int i = 0; i < actualNumberOfCells; i++ ) {
 				final IAgent a = (IAgent) matrix[i];
 				if ( a != null ) {
-					a.schedule();
+					a.schedule(scope);
 				}
 			}
 			// WARNING FOR THE MOMENT NO EVENT IS FIRED
@@ -1388,7 +1392,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			}
 
-
 			// hqnghi must-implement methods from GamlAgent
 			@Override
 			public void addExternMicroPopulation(final String expName, final IPopulation pop) {
@@ -1645,8 +1648,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final short type;
 			final IContainer<?, IAgent> candidates;
 
-			private GridDiffusion_deprecated(final short type, final double proportion, final double variation, final double range,
-				final IContainer<?, IAgent> cand) {
+			private GridDiffusion_deprecated(final short type, final double proportion, final double variation,
+				final double range, final IContainer<?, IAgent> cand) {
 				this.type = type;
 				this.proportion = proportion;
 				this.variation = variation;
@@ -1676,7 +1679,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		private final int neighboursSize;
 
 		public GridDiffuser_deprecated() {
-			neighboursSize = neighbourhood.isVN() ? 4 : 8;
+			neighboursSize = getNeighbourhood().isVN() ? 4 : 8;
 		}
 
 		protected final Map<String, GridDiffusion_deprecated> diffusions_deprecated = new THashMap();
@@ -1688,7 +1691,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final double value, final double proportion, final double variation, final double range,
 			final IContainer<?, IAgent> candidates) {
 			if ( !diffusions_deprecated.containsKey(var) ) {
-				diffusions_deprecated.put(var, new GridDiffusion_deprecated(type, proportion, variation, range, candidates));
+				diffusions_deprecated.put(var,
+					new GridDiffusion_deprecated(type, proportion, variation, range, candidates));
 			}
 			diffusions_deprecated.get(var).add(scope, agent, value);
 		}
@@ -2054,6 +2058,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if ( index == null ) { return null; }
 		if ( index > lastCell ) { return null; }
 		return matrix[index];
+	}
+
+	/**
+	 * Method getGridValueOfColorAttribute()
+	 * @see msi.gama.metamodel.topology.grid.IGrid#getGridValueOfColorAttribute()
+	 */
+	@Override
+	public double[] getGridValueOfColorAttribute() {
+		return null;
 	}
 
 }

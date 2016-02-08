@@ -111,8 +111,8 @@ public class GridSkill extends Skill {
 	}
 
 	@getter(value = IKeyword.NEIGHBORS, initializer = true)
-	public IList<IAgent> getNeighbors(final IAgent agent) {
-		return ((IGridAgent) agent).getNeighbors(agent.getScope());
+	public IList<IAgent> getNeighbors(final IScope scope, final IAgent agent) {
+		return ((IGridAgent) agent).getNeighbors(scope);
 	}
 
 }

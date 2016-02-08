@@ -73,9 +73,10 @@ public class GamaSVGFile extends GamaGeometryFile {
 			Geometry geom = ShapeReader.read(shape, 1.0, GeometryUtils.FACTORY); // flatness = ??
 			// We center and scale the shape in the same operation
 			Envelope env = geom.getEnvelopeInternal();
-			GamaPoint translation = new GamaPoint(-env.getWidth() / 2, -env.getHeight() / 2);
-			IShape gs = new GamaShape(null, geom, null, null, size, true);
-			gs.setLocation(new GamaPoint(0, 0));
+			// GamaPoint translation = new GamaPoint(-env.getWidth() / 2, -env.getHeight() / 2);
+			IShape gs = new GamaShape(null, geom, null, new GamaPoint(0, 0), size, true);
+			// gs.setLocation(new GamaPoint(0, 0));
+			// gs.setLocation(translation);
 			// if ( size != null ) {
 			// gs = Spatial.Transformations.scaled_to(scope, gs, size);
 			// }

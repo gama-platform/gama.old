@@ -59,7 +59,7 @@ public abstract class AbstractScope implements IScope {
 	private boolean reportErrors = true;
 
 	// Allows (for debugging purposes) to trace how the agents are popped and pushed to the scope
-	// public boolean traceAgents = false;
+	public boolean traceAgents = false;
 
 	public AbstractScope(final ITopLevelAgent root) {
 		this.root = root;
@@ -290,15 +290,45 @@ public abstract class AbstractScope implements IScope {
 	 * Method push()
 	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent)
 	 */
+	// @Override
 	@Override
 	public boolean push(final IAgent agent) {
 		final IAgent a = agents.peek();
 		if ( a != null && a.equals(agent) ) { return false; }
-		// if ( traceAgents ) {
-		// System.out.println("" + a + " pushed to " + agents);
-		// }
+		if ( traceAgents ) {
+			for ( int i = 0; i < agents.size(); i++ ) {
+				System.out.print("\t");
+			}
+			System.out.println("" + agent + " pushed to " + this);
+		}
 		agents.push(agent);
 		return true;
+	}
+
+	/**
+	 * Method pop()
+	 * @see msi.gama.runtime.IScope#pop(msi.gama.metamodel.agent.IAgent)
+	 */
+	// @Override
+	@Override
+	public void pop(final IAgent agent) {
+		try {
+			IAgent a = agents.pop();
+			if ( !a.equals(agent) ) {
+				System.out
+					.println("Problem with the scope. Trying to pop  " + agent + " but " + a + " was in the stack...");
+			}
+			if ( traceAgents ) {
+				for ( int i = 0; i < agents.size(); i++ ) {
+					System.out.print("\t");
+				}
+				System.out.println("" + a + " popped from " + this);
+			}
+		} catch (NoSuchElementException e) {
+			return;
+		}
+
+		_agent_halted = false;
 	}
 
 	/**
@@ -330,24 +360,6 @@ public abstract class AbstractScope implements IScope {
 		}
 		sb.append(currentStatement.getTrace(this));
 		this.getGui().informConsole(sb.toString(), root);
-	}
-
-	/**
-	 * Method pop()
-	 * @see msi.gama.runtime.IScope#pop(msi.gama.metamodel.agent.IAgent)
-	 */
-	@Override
-	public void pop(final IAgent agent) {
-		try {
-			IAgent a = agents.pop();
-			// if ( traceAgents ) {
-			// System.out.println("" + a + " popped from " + agents);
-			// }
-		} catch (NoSuchElementException e) {
-			return;
-		}
-
-		_agent_halted = false;
 	}
 
 	@Override
@@ -442,13 +454,6 @@ public abstract class AbstractScope implements IScope {
 				}
 			});
 
-			// for ( final Map.Entry<String, IExpressionDescription> entry : actualArgs.entrySet() ) {
-			// final IExpressionDescription o = entry.getValue();
-			// final IExpression e = o.getExpression();
-			// if ( e != null ) {
-			// addVarWithValue(entry.getKey(), e.value(this));
-			// }
-			// }
 		} finally {
 			if ( callerPushed ) {
 				pop(caller);
@@ -479,7 +484,6 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public boolean step(final IStepable agent) {
-		// scope.getGui().debug("AbstractScope.step" + agent);
 		boolean result = false;
 		final boolean isAgent = agent instanceof IAgent;
 		if ( agent == null || interrupted() || isAgent && ((IAgent) agent).dead() ) { return false; }
@@ -488,9 +492,6 @@ public abstract class AbstractScope implements IScope {
 			result = agent.step(this);
 		} catch (final Exception ex) {
 			GamaRuntimeException g = GamaRuntimeException.create(ex, this);
-			// if ( isAgent ) {
-			// g.addAgent(agent.toString());
-			// }
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
 			if ( pushed ) {
@@ -509,9 +510,6 @@ public abstract class AbstractScope implements IScope {
 		try {
 			result = agent.init(this);
 		} catch (final GamaRuntimeException g) {
-			// if ( isAgent ) {
-			// g.addAgent(agent.toString());
-			// }
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
 			if ( pushed ) {

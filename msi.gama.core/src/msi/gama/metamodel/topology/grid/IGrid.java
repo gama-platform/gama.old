@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IGrid.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
@@ -27,10 +27,10 @@ import msi.gaml.species.ISpecies;
 
 /**
  * Interface IGrid.
- * 
+ *
  * @author Alexis Drogoul
  * @since 13 mai 2013
- * 
+ *
  */
 public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 
@@ -43,11 +43,13 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 
 	public abstract void setCellSpecies(final IPopulation pop);
 
-	public abstract void diffuseVariable_deprecated(final IScope scope, final String name, final double value, final short type,
-		final double prop, final double variation, final ILocation location, final double range, Object candidates);
+	public abstract void diffuseVariable_deprecated(final IScope scope, final String name, final double value,
+		final short type, final double prop, final double variation, final ILocation location, final double range,
+		Object candidates);
+
 	// this was once used for "Signal" statement (deprecated since GAMA 1.8). It will have to be removed soon.
-	public abstract void diffuseVariable(final IScope scope, boolean method_diffu, boolean is_gradient, double[][] mat_diffu, 
-			double[][] mask, String var_diffu, IPopulation pop);
+	public abstract void diffuseVariable(final IScope scope, boolean method_diffu, boolean is_gradient,
+		double[][] mat_diffu, double[][] mask, String var_diffu, IPopulation pop);
 
 	public abstract IAgent getAgentAt(final ILocation c);
 
@@ -100,5 +102,10 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	 * @return
 	 */
 	public abstract ISpecies getCellSpecies();
+
+	/**
+	 * @return
+	 */
+	public abstract double[] getGridValueOfColorAttribute();
 
 }

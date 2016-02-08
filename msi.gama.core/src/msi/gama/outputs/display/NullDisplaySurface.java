@@ -14,6 +14,7 @@ package msi.gama.outputs.display;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -323,6 +324,15 @@ public class NullDisplaySurface implements IDisplaySurface {
 	@Override
 	public Collection<IEventLayerListener> getLayerListeners() {
 		return Collections.EMPTY_LIST;
+	}
+
+	/**
+	 * Method getVisibleRegionForLayer()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getVisibleRegionForLayer(msi.gama.common.interfaces.ILayer)
+	 */
+	@Override
+	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
+		return null;
 	}
 
 }

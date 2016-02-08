@@ -43,7 +43,7 @@ public interface IScope {
 	 * @param agent
 	 * @see getAgentScope()
 	 */
-	public abstract boolean push(IAgent agent);
+	// public abstract boolean push(IAgent agent);
 
 	/**
 	 * Makes the statement the current statement in the scope
@@ -56,7 +56,7 @@ public interface IScope {
 	 * Removes the current agent
 	 * @param agent
 	 */
-	public abstract void pop(IAgent agent);
+	// public abstract void pop(IAgent agent);
 
 	/**
 	 * Removes the current statement
@@ -182,7 +182,7 @@ public interface IScope {
 	/**
 	 * Returns the current simulation in which this scope is defined.
 	 * @return the current simulation or null if none is defined (unlikely as the scope is created
-	 * by a simulation)
+	 *         by a simulation)
 	 */
 
 	public ITopLevelAgent getRoot();
@@ -279,5 +279,16 @@ public interface IScope {
 	 * @return
 	 */
 	public abstract IGui getGui();
+
+	/**
+	 * @param iAgent
+	 */
+	public abstract void pop(IAgent iAgent);
+
+	/**
+	 * @param iAgent
+	 * @return
+	 */
+	public abstract boolean push(IAgent iAgent);
 
 }

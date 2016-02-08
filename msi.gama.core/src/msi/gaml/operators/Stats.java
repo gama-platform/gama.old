@@ -61,7 +61,7 @@ public class Stats {
 		/**
 		 * Creates an empty data set with the specified initial capacity.
 		 * @param capacity The initial capacity for the data set (this number of values will be able to
-		 * be added without needing to resize the internal data storage).
+		 *            be added without needing to resize the internal data storage).
 		 */
 		public DataSet(final int capacity) {
 			this.dataSet = new double[capacity];
@@ -136,7 +136,7 @@ public class Stats {
 		/**
 		 * Determines the median value of the data set.
 		 * @return If the number of elements is odd, returns the middle element. If the number of
-		 * elements is even, returns the midpoint of the two middle elements.
+		 *         elements is even, returns the midpoint of the two middle elements.
 		 * @since 1.0.1
 		 */
 		public final double getMedian() {
@@ -278,9 +278,9 @@ public class Stats {
 		 * @return The sample variance of the data set.
 		 * @throws EmptyDataSetException If the data set is empty.
 		 */
-		public final double getSampleVariance() {
-			return sumSquaredDiffs() / (getSize() - 1);
-		}
+		// public final double getSampleVariance() {
+		// return sumSquaredDiffs() / (getSize() - 1);
+		// }
 
 		/**
 		 * The sample standard deviation is the square root of the sample variance. For large data sets
@@ -292,9 +292,9 @@ public class Stats {
 		 * @return The sample standard deviation of the data set.
 		 * @throws EmptyDataSetException If the data set is empty.
 		 */
-		public final double getSampleStandardDeviation() {
-			return Math.sqrt(getSampleVariance());
-		}
+		// public final double getSampleStandardDeviation() {
+		// return Math.sqrt(getSampleVariance());
+		// }
 	}
 
 	private static DataSet from(final IScope scope, final IContainer values) {

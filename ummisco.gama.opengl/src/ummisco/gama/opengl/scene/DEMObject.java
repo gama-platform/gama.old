@@ -21,12 +21,15 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.util.GamaColor;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.FileDrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class DEMObject extends AbstractObject {
 
 	final public double[] dem;
+
+	// IDEE CONSTRUIRE (TOT) LA MATRICE A PARTIR DE L'IMAGE. COMME CA, UNE SEULE METHODE POUR LES DEUX. agent, depth, border et d'autres dans attributes
+
 	final public BufferedImage textureImage;
 	final public BufferedImage demImg;
 	// final public IAgent agent;
@@ -41,7 +44,7 @@ public class DEMObject extends AbstractObject {
 		final Envelope3D env, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
 		final boolean fromImage, final Envelope3D cellSize, final String name, final GamaColor lineColor,
 		final LayerObject layer) {
-		super(new DrawingAttributes(null, null, lineColor), layer);
+		super(new FileDrawingAttributes(null, null, lineColor), layer);
 		attributes.agent = agent;
 		attributes.speciesName = name;
 		attributes.empty = demTexture == null;

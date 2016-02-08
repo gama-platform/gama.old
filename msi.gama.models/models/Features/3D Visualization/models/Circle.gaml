@@ -62,7 +62,7 @@ species cells skills: [moving] {
 		draw pyramid(size) color:color;
 	}
 	aspect cone {
-		draw cone3D(size,size) color:color border:color;
+		draw cone3D(size,z) color:color border:color;
 	}
 	aspect cylinder {
 		draw cylinder(size,z) color:color border:color;

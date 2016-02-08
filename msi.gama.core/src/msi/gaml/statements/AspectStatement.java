@@ -26,7 +26,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.*;
 
 @symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
@@ -129,6 +129,8 @@ public class AspectStatement extends AbstractStatementSequence {
 	//
 	// };
 	//
+
+	public static GamaColor borderColor = GamaColor.getInt(Color.black.getRGB());
 	public static IExecutable DEFAULT_ASPECT = new IExecutable() {
 
 		@Override
@@ -181,9 +183,7 @@ public class AspectStatement extends AbstractStatementSequence {
 					}
 
 					final IShape ag2 = ag.copy(scope);
-					DrawingAttributes attributes = new DrawingAttributes(new GamaPoint(ag2.getLocation()), c,
-						GamaColor.getInt(Color.black.getRGB()));
-					attributes.setShapeType(ag2.getGeometricalType());
+					ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, c, borderColor);
 					final Rectangle2D r = g.drawShape(ag2, attributes);
 					return r;
 				} catch (GamaRuntimeException e) {

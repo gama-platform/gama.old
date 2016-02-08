@@ -140,21 +140,28 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 	public void modifyValue() {
 		final Object oldValue = getCurrentValue();
-		Object value = computeValue();
+		final Object value = computeValue();
 		if ( currentException != null ) {
 			setCurrentValue(oldValue);
 			return;
 		}
 		if ( editor != null ) {
 			try {
-				IScope scope = GAMA.obtainNewScope();
-				if ( editor.acceptNull && value == null ) {
-					editor.modifyValue(null);
-				} else {
-					editor.modifyValue(evaluateExpression ? expectedType.cast(scope, value, false, false) : value);
-				}
-				GAMA.releaseScope(scope);
-				editor.checkButtons();
+				GAMA.run(new InScope() {
+
+					@Override
+					public Object run(final IScope scope) {
+						if ( editor.acceptNull && value == null ) {
+							editor.modifyValue(null);
+						} else {
+							editor.modifyValue(
+								evaluateExpression ? expectedType.cast(scope, value, false, false) : value);
+						}
+						editor.checkButtons();
+						return null;
+					}
+				});
+
 			} catch (final GamaRuntimeException e) {
 				setCurrentValue(oldValue);
 				currentException = e;
@@ -290,10 +297,16 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	 * @param currentValue2
 	 */
 	public void displayValue(final Object currentValue2) {
-		IScope scope = GAMA.obtainNewScope();
-		setCurrentValue(evaluateExpression ? expectedType.cast(scope, currentValue2, null, false) : currentValue2);
-		text.setText(StringUtils.toGaml(currentValue2, false));
-		GAMA.releaseScope(scope);
+		GAMA.run(new InScope() {
+
+			@Override
+			public Object run(final IScope scope) {
+				setCurrentValue(
+					evaluateExpression ? expectedType.cast(scope, currentValue2, null, false) : currentValue2);
+				text.setText(StringUtils.toGaml(currentValue2, false));
+				return null;
+			}
+		});
 	}
 
 }

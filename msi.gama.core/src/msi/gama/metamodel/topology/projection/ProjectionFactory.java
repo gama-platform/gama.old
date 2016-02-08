@@ -180,6 +180,13 @@ public class ProjectionFactory {
 	public IProjection forSavingWith(final String code) throws FactoryException {
 		return forSavingWith(code, true);
 	}
+	
+	public IProjection forSavingWith(final CoordinateReferenceSystem crs) throws FactoryException {
+		Projection gis = new Projection(world, this);
+		gis.initialCRS = crs;
+		gis.createTransformation(gis.computeProjection());
+		return gis;
+	}
 
 	public IProjection forSavingWith(final String code, final boolean lonFirst) throws FactoryException {
 		CoordinateReferenceSystem crs = null;

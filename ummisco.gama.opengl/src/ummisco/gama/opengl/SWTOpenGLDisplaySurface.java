@@ -27,6 +27,7 @@ import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
@@ -188,8 +189,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public double getDisplayWidth() {
-		java.lang.System.out
-			.println("Surface width of the canvas: " + renderer.getCanvas().getSurfaceWidth() * getZoomLevel());
 		return renderer.getCanvas().getSurfaceWidth() * getZoomLevel();
 		// return viewPort.width;
 	}
@@ -499,6 +498,23 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return new GamaPoint(p.x, -p.y);
 	}
 
+	@Override
+	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
+		Envelope e = currentLayer.getVisibleRegion();
+		if ( e == null ) {
+			e = new Envelope();
+			Point origin = new Point(0, 0);
+			int xc = -origin.x;
+			int yc = -origin.y;
+			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			xc = xc + renderer.getDrawable().getSurfaceWidth();
+			yc = yc + renderer.getDrawable().getSurfaceHeight();
+			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			currentLayer.setVisibleRegion(e);
+		}
+		return e;
+	}
+
 	/**
 	 * Method getModelCoordinatesFrom()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesFrom(int, int, java.awt.Point, java.awt.Point)
@@ -518,15 +534,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public Collection<IAgent> selectAgent(final int x, final int y) {
 		final ILocation pp = getModelCoordinatesFrom(x, y, null, null);
-		Set<IAgent> agents = null;
-		IScope s = GAMA.obtainNewScope();
-		try {
-			agents = (Set<IAgent>) GAMA.getSimulation().getPopulation().getTopology().getNeighboursOf(s,
-				new GamaPoint(pp.getX(), pp.getY()), renderer.getMaxEnvDim() / 100, Different.with());
-		} finally {
-			GAMA.releaseScope(s);
-		}
-		return agents;
+		return GAMA.run(new InScope<Collection<IAgent>>() {
+
+			@Override
+			public Collection<IAgent> run(final IScope scope) {
+				return scope.getRoot().getPopulation().getTopology().getNeighboursOf(scope,
+					new GamaPoint(pp.getX(), pp.getY()), renderer.getMaxEnvDim() / 100, Different.with());
+			}
+		});
+
 	}
 
 	/**
@@ -796,6 +812,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public synchronized void releaseLock() {
 		lockAcquired = false;
 		notify();
+	}
+
+	public void invalidateVisibleRegions() {
+		for ( ILayer layer : manager.getItems() ) {
+			layer.setVisibleRegion(null);
+		}
 	}
 
 }

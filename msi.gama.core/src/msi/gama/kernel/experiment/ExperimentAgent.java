@@ -47,18 +47,18 @@ import msi.gaml.types.*;
 	@var(name = IKeyword.SIMULATION,
 		type = IType.AGENT,
 		doc = @doc(value = "contains a reference to the current simulation being run by this experiment",
-			comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one") ),
+			comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
 	// @var(name = GAMA._FATAL, type = IType.BOOL),
 	@var(name = GAMA._WARNINGS, type = IType.BOOL),
 	@var(name = ExperimentAgent.MODEL_PATH,
 		type = IType.STRING,
 		constant = true,
 		doc = @doc(value = "Contains the absolute path to the folder in which the current model is located",
-			comment = "Always terminated with a trailing separator") ),
+			comment = "Always terminated with a trailing separator")),
 	@var(name = IKeyword.SEED,
 		type = IType.FLOAT,
 		doc = @doc(value = "The seed of the random number generator",
-			comment = "Each time it is set, the random number generator is reinitialized") ),
+			comment = "Each time it is set, the random number generator is reinitialized")),
 	@var(name = IKeyword.RNG,
 		type = IType.STRING,
 		doc = @doc("The random number generator to use for this simulation. Three different ones are at the disposal of the modeler: " +
@@ -66,22 +66,22 @@ import msi.gaml.types.*;
 			" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
 			IKeyword.CELLULAR +
 			" is a cellular automaton based generator that should be a bit faster, but less reliable; and " +
-			IKeyword.JAVA + " invokes the standard Java generator") ),
+			IKeyword.JAVA + " invokes the standard Java generator")),
 	@var(name = ExperimentAgent.MINIMUM_CYCLE_DURATION,
 		type = IType.FLOAT,
 		doc = @doc(
 			value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')",
-			comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process") ),
+			comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
 	@var(name = ExperimentAgent.WORKSPACE_PATH,
 		type = IType.STRING,
 		constant = true,
 		doc = @doc(value = "Contains the absolute path to the workspace of GAMA",
-			comment = "Always terminated with a trailing separator") ),
+			comment = "Always terminated with a trailing separator")),
 	@var(name = ExperimentAgent.PROJECT_PATH,
 		type = IType.STRING,
 		constant = true,
 		doc = @doc(value = "Contains the absolute path to the project in which the current model is located",
-			comment = "Always terminated with a trailing separator") ) })
+			comment = "Always terminated with a trailing separator")) })
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public static final String MODEL_PATH = "model_path";
@@ -225,7 +225,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public void schedule() {
+	public void schedule(final IScope scope) {
 		scheduled = true;
 		// The experiment agent is scheduled in the global scheduler
 		ExperimentScheduler sche = getSpecies().getController().getScheduler();
@@ -234,7 +234,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// if ( outputs != null ) {
 		// sche.schedule(outputs, scope);
 		// }
-		sche.schedule(this, scope);
+		sche.schedule(this, this.scope);
 	}
 
 	/**
@@ -295,7 +295,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			"(current seed)", null, true) {
 
 			@Override
-				Object getValue(final IScope scope) {
+			Object getValue(final IScope scope) {
 				// tryToInit(scope);
 				return getSeed();
 			}
@@ -460,7 +460,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		} finally {
 			clock.step(this.scope);
 			if ( !getSpecies().isBatch() ) {
-				scope.getGui().informStatus(clock.getInfo());
+				scope.getGui().informStatus(
+					clock.getInfo() + " (" + this.getSimulationPopulation().getNumberOfActiveThreads() + " threads)");
 			}
 		}
 		return result;

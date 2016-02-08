@@ -118,7 +118,7 @@ global {
       aspect geometry {
          int val <- int( 255 * water_pressure);
          color <- rgb(val,255-val,0);
-         draw shape color: color depth: height border: color;
+         draw shape color: color depth: height*5 border: color;
       }
    }
    species building parent: obstacle {

@@ -289,7 +289,7 @@ public class GAMA {
 		}
 	}
 
-	public static IScope obtainNewScope() {
+	private static IScope obtainNewScope() {
 		final IScope scope = getRuntimeScope();
 		if ( scope != null ) { return scope.copy(); }
 		return null;

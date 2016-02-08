@@ -15,7 +15,7 @@ import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.*;
@@ -234,7 +234,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public double euclidianDistanceTo(final ILocation p) {
 		// FIXME: Need to check the cost of checking if z and p.getZ() are equal to Zero so that we can use
 		// return this.distance(p.toCoordinate());
-		return Maths.hypot(GAMA.getRuntimeScope(), x, p.getX(), y, p.getY(), z, p.getZ());
+		return Maths.hypot(x, p.getX(), y, p.getY(), z, p.getZ());
 	}
 
 	/**

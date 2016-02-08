@@ -14,11 +14,10 @@ package msi.gama.common.interfaces;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.IScope;
-import msi.gama.util.GamaColor;
+import com.vividsolutions.jts.geom.Envelope;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.file.GamaFile;
-import msi.gaml.statements.draw.DrawingData.DrawingAttributes;
+import msi.gaml.statements.draw.*;
 
 /**
  * Written by drogoul Modified on 22 janv. 2011
@@ -36,21 +35,19 @@ public interface IGraphics {
 
 	public abstract int getDisplayHeightInPixels();
 
-	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
-		final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, GamaColor gridColor,
-		final Envelope3D cellSize, String name);
+	// public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
+	// final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, GamaColor gridColor,
+	// final Envelope3D cellSize, String name);
 
-	public abstract Rectangle2D drawFile(GamaFile file, DrawingAttributes attributes);
-	//
-	// public abstract Rectangle2D drawFile(final IScope scope, final GamaFile filecheck, final Color color,
-	// final ILocation locationInModelUnits, final ILocation sizeInModelUnits, GamaPair<Double, GamaPoint> rotates3D,
-	// GamaPair<Double, GamaPoint> rotates3DInit);
+	public abstract Rectangle2D drawFile(GamaFile file, FileDrawingAttributes attributes);
 
-	public abstract Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes);
+	public abstract Rectangle2D drawField(final double[] values, final FieldDrawingAttributes attributes);
 
-	public abstract Rectangle2D drawString(final String string, final DrawingAttributes attributes);
+	public abstract Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes);
 
-	public abstract Rectangle2D drawShape(final IShape shape, final DrawingAttributes attributes);
+	public abstract Rectangle2D drawString(final String string, final TextDrawingAttributes attributes);
+
+	public abstract Rectangle2D drawShape(final IShape shape, final ShapeDrawingAttributes attributes);
 
 	public abstract void initFor(IDisplaySurface surface);
 
@@ -66,6 +63,9 @@ public interface IGraphics {
 
 	public abstract double getxRatioBetweenPixelsAndModelUnits();
 
+	/* Returns the region of the current layer (in model units) that is visible on screen */
+	public abstract Envelope getVisibleRegion();
+
 	public abstract void endDrawingLayer(ILayer layer);
 
 	public abstract void endDrawingLayers();
@@ -78,21 +78,8 @@ public interface IGraphics {
 
 	public double getYOffsetInPixels();
 
-	public interface OpenGL extends IGraphics {
-
-		public abstract Rectangle2D drawDEM(IScope scope, final BufferedImage dem, final BufferedImage texture,
-			final Double z_factor);
-
-	}
-
 	public abstract Double getZoomLevel();
 
 	public abstract boolean is2D();
-
-	/**
-	 * @param file
-	 * @param attributes
-	 * @return
-	 */
 
 }
