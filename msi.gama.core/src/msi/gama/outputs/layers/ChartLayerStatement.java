@@ -22,6 +22,7 @@ import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.*;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.*;
@@ -1321,6 +1322,25 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						i++;
 					}
 					XYPlot plot = (XYPlot) chart.getPlot();
+					
+					final NumberAxis domainAxis = (NumberAxis) ((XYPlot)this.chart.getPlot()).getDomainAxis();
+					final NumberAxis rangeAxis = (NumberAxis) ((XYPlot)this.chart.getPlot()).getRangeAxis();
+					boolean domainauto=false;
+					if (domainAxis.isAutoRange())
+					{
+						domainauto=true;
+						domainAxis.setAutoRange(false);
+						
+					}
+					boolean rangeauto=false;
+					if (rangeAxis.isAutoRange())
+					{
+						rangeauto=true;
+						rangeAxis.setAutoRange(false);
+						
+					}
+					
+					
 					// DefaultTableXYDataset data = (DefaultTableXYDataset) plot.getDataset(i);
 					XYDataset data = plot.getDataset(i);
 					XYSeries serie = new XYSeries(0, false, false);
@@ -1390,7 +1410,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						history.append(n.get(j));
 						history.append(',');
 					}
+
+					if (domainauto==true)
+					{
+						domainAxis.setAutoRange(true);
+						
+					}
+					if (rangeauto==true)
+					{
+						rangeAxis.setAutoRange(true);
+						
+					}
 				}
+				
 			}
 		}
 		history.deleteCharAt(history.length() - 1);
