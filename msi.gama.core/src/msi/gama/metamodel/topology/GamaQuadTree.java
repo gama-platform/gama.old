@@ -48,9 +48,9 @@ public class GamaQuadTree implements ISpatialIndex {
 	private final QuadNode root;
 	private final static int maxCapacity = 20;
 	private double minSize = 10;
-	private int totalAgents = 0;
-	private int totalNodes = 0;
-	private volatile boolean isDrawing;
+	// private int totalAgents = 0;
+	// private int totalNodes = 0;
+	// private volatile boolean isDrawing;
 
 	// TODO check why we really need it?
 	// private final ReentrantLock lock = new ReentrantLock();
@@ -70,7 +70,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		} else {
 			root.add(agent.getEnvelope(), agent);
 		}
-		totalAgents++;
+		// totalAgents++;
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		} else {
 			root.remove(current.getEnvelope(), agent);
 		}
-		totalAgents--;
+		// totalAgents--;
 	}
 
 	protected Collection<IAgent> findIntersects(final IScope scope, final IShape source, final Envelope r,
@@ -161,7 +161,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			halfx = minx + hw / 2;
 			halfy = miny + hh / 2;
 			canSplit = hw > minSize && hh > minSize;
-			totalNodes++;
+			// totalNodes++;
 		}
 
 		public IShape remove(final Coordinate p, final IShape a) {
