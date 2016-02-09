@@ -30,11 +30,22 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.PRIMITIVE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, with_args = true, internal = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL }, symbols = IKeyword.CHART)
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.VIRTUAL, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)
+@facets(
+	value = {
+		@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = { @doc("The name of this primitive") }),
+		@facet(name = IKeyword.VIRTUAL,
+			type = IType.BOOL,
+			optional = true,
+			doc = {
+				@doc("Indicates if this primitive is virtual or not. A virtual primitive does not contain code and must be redefined in the species that implement the skill or extend the species that contain it") }),
+		@facet(name = IKeyword.TYPE,
+			type = IType.TYPE_ID,
+			optional = true,
+			doc = { @doc("The type of the value returned by this primitive") }) },
+	omissible = IKeyword.NAME)
 // Necessary to avoid running the validator from ActionStatement
 @validator(NullValidator.class)
+@doc("A primitve is an action written in Java (as opposed to GAML for regular actions")
 public class PrimitiveStatement extends ActionStatement {
 
 	// Declaring a null validator because primites dont need to be checked
