@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.Collection;
 import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.*;
@@ -59,12 +58,18 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public abstract IDescription getDescriptionDeclaringVar(final String name);
 
 	public abstract IDescription getDescriptionDeclaringAction(final String name);
-	
+
 	public abstract Iterable<IDescription> getChildrenWithKeyword(String keyword);
-	
+
 	public abstract IDescription getChildWithKeyword(String keyword);
 
-	public abstract IExpression getVarExpr(final String name);
+	/**
+	 * If hasField is true, then should not return a GlobalVarExpression, but a normal var expression
+	 * @param name
+	 * @param asField
+	 * @return
+	 */
+	public abstract IExpression getVarExpr(final String name, boolean asField);
 
 	public abstract SpeciesDescription getSpeciesContext();
 

@@ -219,8 +219,8 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	public IExpression getVarExpr(final String n) {
-		IExpression result = super.getVarExpr(n);
+	public IExpression getVarExpr(final String n, final boolean asField) {
+		IExpression result = super.getVarExpr(n, asField);
 		if ( result == null ) {
 			IDescription desc = getBehavior(n);
 			if ( desc != null ) {
@@ -660,7 +660,7 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 * @param parentName the name of the potential parent
 	 * @throws GamlException if the species with the specified name can not be a parent of this
-	 * species.
+	 *             species.
 	 */
 	protected void verifyParent() {
 		if ( parent == null ) { return; }

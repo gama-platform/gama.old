@@ -14,6 +14,7 @@ package msi.gaml.descriptions;
 import java.util.*;
 import org.eclipse.emf.ecore.EObject;
 import gnu.trove.set.hash.*;
+import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.descriptions.SymbolSerializer.VarSerializer;
 import msi.gaml.expressions.*;
@@ -35,7 +36,7 @@ public class VariableDescription extends SymbolDescription {
 	private Set<String> extraDependencies;
 	private String plugin;
 	private int definitionOrder = -1;
-	private IExpression varExpr = null;
+	// private IExpression varExpr = null;
 	private IType type = null;
 	private final boolean _isGlobal, /* _isFunction, */_isNotModifiable, _isParameter;
 	private boolean _isUpdatable;
@@ -75,7 +76,7 @@ public class VariableDescription extends SymbolDescription {
 		if ( dependencies != null ) {
 			dependencies.clear();
 		}
-		varExpr = null;
+		// varExpr = null;
 		super.dispose();
 		// isDisposed = true;
 	}
@@ -196,10 +197,20 @@ public class VariableDescription extends SymbolDescription {
 		return _isParameter;
 	}
 
-	public IExpression getVarExpr() {
-		if ( varExpr != null ) { return varExpr; }
-		varExpr = msi.gama.util.GAML.getExpressionFactory().createVar(getName(), getType(), isNotModifiable(),
-			_isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
+	// If hasField is true, should not try to build a GlobalVarExpr
+	public IExpression getVarExpr(final boolean asField) {
+		boolean asGlobal = _isGlobal && !asField;
+
+		// if ( varExpr != null ) {
+		// if (asGlobal && ((IVarExpression)varExpr).)
+		//
+		//
+		// return varExpr;
+		//
+		//
+		// }
+		IExpression varExpr = GAML.getExpressionFactory().createVar(getName(), getType(), isNotModifiable(),
+			asGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
 		return varExpr;
 	}
 
