@@ -126,10 +126,10 @@ experiment road_traffic type: gui {
 	parameter 'minimal speed' var: min_speed category: 'People';
 	parameter 'maximal speed' var: max_speed category: 'People';
 	output {
-		display city_display type: opengl ambient_light: 100 background: #violet {
+		display city_display type: opengl ambient_light: 100{
 			species building aspect: base;
-			//species road aspect: base;
-			//species people aspect: base;
+			species road aspect: base;
+			species people aspect: base;
 		}
 		
 		display gis_displays_graphics type: opengl light: true ambient_light: 50{
