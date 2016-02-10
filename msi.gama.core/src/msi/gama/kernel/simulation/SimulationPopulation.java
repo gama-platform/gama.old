@@ -14,6 +14,7 @@ package msi.gama.kernel.simulation;
 import java.util.*;
 import java.util.concurrent.*;
 import com.google.common.util.concurrent.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -31,16 +32,30 @@ import msi.gaml.species.ISpecies;
 
 public class SimulationPopulation extends GamaPopulation {
 
-	boolean isMultiThreaded = true;
-	ThreadFactory factory = new ThreadFactoryBuilder().setThreadFactory(Executors.defaultThreadFactory())
+	final ThreadFactory factory = new ThreadFactoryBuilder().setThreadFactory(Executors.defaultThreadFactory())
 		.setNameFormat("Simulation thread #%d of experiment " + getSpecies().getName()).build();
-	ExecutorService executor =
-		isMultiThreaded ? Executors.newCachedThreadPool(factory) : MoreExecutors.sameThreadExecutor();
+	ExecutorService executor;
 	Map<SimulationAgent, Callable> runnables = new LinkedHashMap();
 
 	public SimulationPopulation(final ExperimentAgent agent, final ISpecies species) {
 		super(agent, species);
 
+	}
+
+	protected ExecutorService getExecutorService() {
+		if ( executor == null ) {
+			boolean isMultiThreaded = getHost().getSpecies().isMulticore();
+			int numberOfThreads = GamaPreferences.NUMBERS_OF_THREADS.getValue();
+			executor = isMultiThreaded ? Executors.newFixedThreadPool(numberOfThreads, factory)
+				: MoreExecutors.sameThreadExecutor();
+			if ( executor instanceof ThreadPoolExecutor ) {
+				ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
+				tpe.setKeepAliveTime(10, TimeUnit.SECONDS);
+				tpe.allowCoreThreadTimeOut(true);
+
+			}
+		}
+		return executor;
 	}
 
 	/**
@@ -57,6 +72,20 @@ public class SimulationPopulation extends GamaPopulation {
 	public void initializeFor(final IScope scope) {
 		super.initializeFor(scope);
 		this.currentAgentIndex = 0;
+	}
+
+	@Override
+	public void dispose() {
+		if ( executor != null ) {
+			executor.shutdown();
+			try {
+				executor.awaitTermination(1, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			executor = null;
+		}
+		super.dispose();
 	}
 
 	@Override
@@ -115,7 +144,7 @@ public class SimulationPopulation extends GamaPopulation {
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		try {
-			executor.invokeAll((Collection<? extends Callable<Object>>) runnables.values());
+			getExecutorService().invokeAll((Collection<? extends Callable<Object>>) runnables.values());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -123,12 +152,27 @@ public class SimulationPopulation extends GamaPopulation {
 		return true;
 	}
 
+	/**
+	 * This method can be called by the batch experiments to temporarily stop (unschedule) a simulation
+	 * @param sim
+	 */
+	public void unscheduleSimulation(final SimulationAgent sim) {
+		runnables.remove(sim);
+	}
+
 	public int getNumberOfActiveThreads() {
-		if ( executor instanceof ThreadPoolExecutor ) {
+		if ( getExecutorService() instanceof ThreadPoolExecutor ) {
 			ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
-			return e.getLargestPoolSize();
+			return e.getPoolSize();
 		}
 		return 0;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean hasScheduledSimulations() {
+		return runnables.size() > 0;
 	}
 
 }

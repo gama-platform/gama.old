@@ -371,6 +371,12 @@ public class GamaPreferences {
 					.in(SIMULATIONS).group("Simulation colors in the interface (console, views)");
 		}
 	}
+	public static final Entry<Boolean> MULTITHREADED_SIMULATIONS =
+		create("core.multithreaded_simulations", "Run multiple simulations in multiple threads", true, IType.BOOL)
+			.activates("core.threads_number").in(SIMULATIONS).group("*** Experimental ***");
+	public static final Entry<Integer> NUMBERS_OF_THREADS =
+		create("core.threads_number", "Max. number of threads to use", 4, IType.INT).between(1, null).in(SIMULATIONS)
+			.group("*** Experimental ***");
 
 	// GENERAL PAGE
 	public static final List<String> GENERATOR_NAMES =
@@ -433,7 +439,7 @@ public class GamaPreferences {
 		create("core.auto_run", "Auto-run experiments when they are launched", false, IType.BOOL).in(EXPERIMENTS)
 			.group("Runtime");
 	public static final Entry<Boolean> CORE_ASK_CLOSING =
-		create("core.ask_closing", "Ask to close the previous simulation before launching a new one ?", true,
+		create("core.ask_closing", "Ask to close the previous experiment before launching a new one ?", true,
 			IType.BOOL).in(EXPERIMENTS).group("Runtime");
 
 	// DISPLAY PAGE

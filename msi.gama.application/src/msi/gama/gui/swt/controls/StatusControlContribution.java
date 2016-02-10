@@ -120,12 +120,18 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			return result;
 		}
 
+		StringBuilder sb = new StringBuilder(300);
+		SimulationClock clock = agent.getClock();
+		sb.append(String.format("%-20s %-10d\n", "Cycles elapsed: ", clock.getCycle()));
+		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Durations (ms)", clock.getDuration(),
+			(int) clock.getAverageDuration(), clock.getTotalDuration()));
+		result.put(GamaColors.get(agent.getColor()), sb.toString());
 		IAgent[] simulations = agent.getSimulationPopulation().toArray();
 
 		for ( IAgent a : simulations ) {
-			StringBuilder sb = new StringBuilder(300);
+			sb.setLength(0);
 			SimulationAgent sim = (SimulationAgent) a;
-			SimulationClock clock = sim.getClock();
+			clock = sim.getClock();
 
 			sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
 				clock.getStartingDate() == null ? Strings.asDate(clock.getTime(), null)
@@ -133,6 +139,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Durations (ms)", clock.getDuration(),
 				(int) clock.getAverageDuration(), clock.getTotalDuration()));
 			result.put(GamaColors.get(sim.getColor()), sb.toString());
+
 		}
 
 		return result;

@@ -97,7 +97,7 @@ public class SimulationClock {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * Sets a new value to the cycle.
+	 *             Sets a new value to the cycle.
 	 * @param i the new value
 	 */
 
@@ -149,9 +149,9 @@ public class SimulationClock {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * Sets the value of the current step duration (in model time) of the simulation.
-	 * Cannot be
-	 * negative.
+	 *             Sets the value of the current step duration (in model time) of the simulation.
+	 *             Cannot be
+	 *             negative.
 	 *
 	 * @throws GamaRuntimeException
 	 * @param i a positive double
@@ -225,7 +225,6 @@ public class SimulationClock {
 		double delay = getDelayInMilliseconds();
 		if ( delay == 0d ) { return; }
 		try {
-			// scope.getGui().debug("SimulationClock.waitDelay " + delay + "ms");
 			if ( duration >= delay ) { return; }
 			Thread.sleep((long) delay - duration);
 		} catch (InterruptedException e) {
@@ -236,22 +235,9 @@ public class SimulationClock {
 	public void reset() throws GamaRuntimeException {
 		setCycle(0);
 		setTime(0d);
-		// setDelay(1d);
 		total_duration = 0;
 		step = 1;
 	}
-
-	/**
-	 * The delay should be expressed in milliseconds
-	 */
-	// public void setDelay(final double milliseconds) {
-	// // From 0 (slowest) to 1 (fastest)
-	// delay = milliseconds <= 0 ? 0d : milliseconds;
-	// }
-
-	// public double getDelay() {
-	// return delay;
-	// }
 
 	public void toggleDisplay() {
 		displayCycles = !displayCycles;
@@ -259,10 +245,6 @@ public class SimulationClock {
 
 	public void beginCycle() {
 		resetDuration();
-		// String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
-		// if ( !GAMA.getExperiment().isBatch() ) {
-		// scope.getGui().informStatus(info);
-		// }
 	}
 
 	public String getInfo() {
@@ -280,15 +262,7 @@ public class SimulationClock {
 
 		@Override
 		public void waitDelay() {}
-		//
-		// @Override
-		// public void beginCycle() {
-		// resetDuration();
-		// // String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
-		// // if ( !GAMA.getExperiment().isBatch() ) {
-		// // scope.getGui().informStatus(info);
-		// // }
-		// }
+
 	}
 
 	public double getDelayInMilliseconds() {
@@ -313,16 +287,5 @@ public class SimulationClock {
 		setCurrentDate((GamaDate) Types.DATE.cast(null, starting_date, null, true));
 		this.starting_date = starting_date;
 	}
-
-	// public void setDelayFromUI(final double newDelayInMilliseconds) {
-	// if ( simulation == null ) { return; }
-	// simulation.getExperiment().setMinimumDuration(newDelayInMilliseconds / 1000);
-	// // currentCycleDelay = newDelayInMilliseconds / 1000;
-	// }
-
-	// public void setDelayFromExperiment(final double newDelayInSeconds) {
-	// currentCycleDelay = newDelayInSeconds;
-	//
-	// }
 
 }

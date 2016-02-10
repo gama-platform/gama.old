@@ -12,6 +12,7 @@
 package msi.gama.kernel.experiment;
 
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.batch.*;
@@ -72,7 +73,10 @@ import msi.gaml.variables.IVariable;
 		type = IType.BOOL,
 		optional = true,
 		doc = @doc("In case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
-	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc(""), internal = true),
+	@facet(name = IKeyword.MULTICORE,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("Allows the experiment, when set to true, to use multiple threads to run its simulations")),
 	@facet(name = IKeyword.TYPE,
 		type = IType.LABEL,
 		values = { IKeyword.BATCH, /* IKeyword.REMOTE, */IKeyword.GUI_, IKeyword.HEADLESS_UI },
@@ -114,6 +118,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected IExploration exploration;
 	private FileOutput log;
 	private boolean isHeadless;
+	private final boolean isMulticore;
 
 	@Override
 	public boolean isHeadless() {
@@ -139,7 +144,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		} else if ( type.equals(IKeyword.HEADLESS_UI) ) {
 			isHeadless = true;
 		}
+		IExpression coreExpr = description.getFacets().getExpr(IKeyword.MULTICORE);
+		isMulticore = coreExpr == null ? GamaPreferences.MULTITHREADED_SIMULATIONS.getValue()
+			: coreExpr.literalValue().equals(IKeyword.TRUE);
 
+	}
+
+	@Override
+	public boolean isMulticore() {
+		return isMulticore;
 	}
 
 	@Override
