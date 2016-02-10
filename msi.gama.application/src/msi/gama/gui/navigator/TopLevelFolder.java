@@ -6,6 +6,7 @@ package msi.gama.gui.navigator;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.file.Paths;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -82,8 +83,11 @@ public abstract class TopLevelFolder extends VirtualContent {
 	protected Location getLocation(final IPath location) {
 		URL urlRep = null;
 		try {
-			urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/"));
-			urlRep = urlRep.toURI().normalize().toURL();
+			URL new_url  = FileLocator.resolve(new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/"));
+			java.nio.file.Path normalizedPath = Paths.get(new_url.getPath()).normalize();
+			urlRep = normalizedPath.toUri().toURL(); 
+			//urlRep = FileLocator.resolve(new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/"));
+			
 			// System.out.println("Model path:" + location.toOSString() + " ||| Plugin path: " + urlRep.getPath());
 			if ( location.toOSString().startsWith(urlRep.getPath()) ) { return Location.CoreModels; }
 			if ( location.toOSString().startsWith(
@@ -92,10 +96,10 @@ public abstract class TopLevelFolder extends VirtualContent {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return Location.Unknown;
-		} catch (URISyntaxException e) {
+		} /*catch (URISyntaxException e) {
 			e.printStackTrace();
 			return Location.Unknown;
-		}
+		}*/
 
 	}
 
