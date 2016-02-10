@@ -48,7 +48,7 @@ public class RearrangeMenus {
 	public static void run() {
 
 		final IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
-		ActionFactory.REFRESH.create(window).setImageDescriptor(GamaIcons.create("navigator/refresh2").descriptor());
+		ActionFactory.REFRESH.create(window).setImageDescriptor(GamaIcons.create("navigator/navigator.refresh2").descriptor());
 		if ( window instanceof WorkbenchWindow ) {
 			final IMenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
 			for ( IContributionItem item : menuManager.getItems() ) {
