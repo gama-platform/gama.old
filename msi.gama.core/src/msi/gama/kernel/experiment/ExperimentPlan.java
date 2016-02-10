@@ -142,11 +142,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if ( type.equals(IKeyword.BATCH) ) {
 			exploration = new ExhaustiveSearch(null);
 		} else if ( type.equals(IKeyword.HEADLESS_UI) ) {
-			isHeadless = true;
+			setHeadless(true);
 		}
 		IExpression coreExpr = description.getFacets().getExpr(IKeyword.MULTICORE);
-		isMulticore = coreExpr == null ? GamaPreferences.MULTITHREADED_SIMULATIONS.getValue()
-			: coreExpr.literalValue().equals(IKeyword.TRUE);
+		isMulticore = (coreExpr == null ? GamaPreferences.MULTITHREADED_SIMULATIONS.getValue()
+			: coreExpr.literalValue().equals(IKeyword.TRUE)) && !isHeadless();
 
 	}
 
