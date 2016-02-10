@@ -79,7 +79,7 @@ public abstract class MinimalAgent implements IAgent {
 	 *
 	 * @return the population of the agent if it not null, otherwise throws a runtime exeception.
 	 * @note If checking for a null value of population imposes too much overhead in cases where the population is sure
-	 * not to be nil, this method can be safely overriden with a direct call to getPopulation()
+	 *       not to be nil, this method can be safely overriden with a direct call to getPopulation()
 	 */
 	protected IPopulation checkedPopulation() {
 		return getPopulation();
@@ -90,7 +90,7 @@ public abstract class MinimalAgent implements IAgent {
 	 *
 	 * @return the geometry of the agent if it not null, otherwise throws a runtime exeception.
 	 * @note If checking for a null value in geometry imposes too much overhead in cases where the geometry is sure not
-	 * to be nil, this method can be safely overriden with a direct call to getGeometry()
+	 *       to be nil, this method can be safely overriden with a direct call to getGeometry()
 	 */
 	protected IShape checkedGeometry() {
 		return getGeometry();
@@ -345,10 +345,10 @@ public abstract class MinimalAgent implements IAgent {
 	public void setHost(final IMacroAgent macroAgent) {}
 
 	@Override
-	public void schedule() {
+	public void schedule(final IScope scope) {
 		// public void scheduleAndExecute(final RemoteSequence sequence) {
 		if ( !dead() ) {
-			getScope().init(this);
+			scope.init(this);
 			// getScheduler().insertAgentToInit(getScope(), this, sequence);
 		}
 	}
@@ -464,7 +464,8 @@ public abstract class MinimalAgent implements IAgent {
 	@Override
 	public IScope getScope() {
 		final IMacroAgent a = getHost();
-		if ( a == null ) { return GAMA.obtainNewScope(); }
+		if ( a == null ) { return null; }
+		// if ( a == null ) { return GAMA.obtainNewScope(); }
 		return a.getScope();
 	}
 

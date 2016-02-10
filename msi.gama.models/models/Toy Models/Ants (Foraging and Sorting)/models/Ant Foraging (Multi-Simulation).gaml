@@ -39,6 +39,10 @@ global {
       diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
   
+	reflex diffuse {
+      diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
+   }
+  
 } 
 
 
@@ -141,18 +145,18 @@ experiment "4 Simulations" type: gui {
 	}
 
 
-	output {
-		display Ants background: #white type: opengl{
-			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
-			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
-			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
-			//text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: #black size: { 1, 0.02 };
-			//text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: #black
-			//size: { 1, 0.02 };
-		}
-		//inspect "Ants" type: table value: ant attributes: ['name', 'location', 'heading','state'];
-
+output {
+	display Ants background: #white type: opengl{
+		image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
+		agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
+		species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
+		//text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: #black size: { 1, 0.02 };
+		//text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: #black
+		//size: { 1, 0.02 };
 	}
+	//inspect "Ants" type: table value: ant attributes: ['name', 'location', 'heading','state'];
+
+}
 }
 
 

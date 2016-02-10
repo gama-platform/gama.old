@@ -273,9 +273,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 			@Override
 			public void run() {
 				try {
-					// System.out.println("Closing: " + getPartName());
 					getSite().getPage().hideView(GamaViewPart.this);
-					// System.out.println("Closed: " + getPartName());
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}
@@ -291,20 +289,5 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 			close();
 		}
 	}
-
-	// @Override
-	// public void showToolbar() {
-	// // toggle.run();
-	// }
-	//
-	// @Override
-	// public void hideToolbar() {
-	// // toggle.run();
-	// }
-	//
-	// @Override
-	// public void setToogle(final Action toggle) {
-	// this.toggle = toggle;
-	// }
 
 }

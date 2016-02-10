@@ -91,7 +91,7 @@ species flock skills: [moving] {
 	}
 
 	reflex chase_goal {
-		int direction_to_nearest_ball <- (self towards (goal));
+		int direction_to_nearest_ball <- (self towards (first(boids_goal)));
 		float step_distance <- speed * step;
 		float dx <- step_distance * (cos(direction_to_nearest_ball));
 		float dy <- step_distance * (sin(direction_to_nearest_ball));
@@ -132,7 +132,7 @@ species flock skills: [moving] {
 		reflex avoid when: apply_avoid {
 		}
 
-		reflex follow_goal when: apply_goal {
+		reflex follow_goal  {
 		}
 
 		reflex wind when: apply_wind {
@@ -187,7 +187,7 @@ experiment boids_flocks type: gui {
 		display default_display {
 			species boids_goal;
 			species boids aspect: image;
-			species obstacle aspect: geom;
+			species obstacle;
 			species flock aspect: default transparency: 0.5 {
 				species boids_in_flock aspect: default;
 			}

@@ -45,11 +45,11 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.COLOR,
 		type = IType.COLOR,
 		doc = @doc(value = "The color used to identify this simulation in the UI",
-			comment = "Can be set freely by the modeler") ),
+			comment = "Can be set freely by the modeler")),
 	@var(name = IKeyword.SEED,
 		type = IType.FLOAT,
 		doc = @doc(value = "The seed of the random number generator",
-			comment = "Each time it is set, the random number generator is reinitialized") ),
+			comment = "Each time it is set, the random number generator is reinitialized")),
 	@var(name = IKeyword.RNG,
 		type = IType.STRING,
 		doc = @doc("The random number generator to use for this simulation. Three different ones are at the disposal of the modeler: " +
@@ -57,37 +57,37 @@ import msi.gaml.types.IType;
 			" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
 			IKeyword.CELLULAR +
 			" is a cellular automaton based generator that should be a bit faster, but less reliable; and " +
-			IKeyword.JAVA + " invokes the standard Java generator") ),
+			IKeyword.JAVA + " invokes the standard Java generator")),
 	@var(name = IKeyword.STEP,
 		type = IType.FLOAT,
 		doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles",
-			comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second") ),
+			comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
 	@var(name = SimulationAgent.TIME,
 		type = IType.FLOAT,
 		doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation",
-			comment = "Equal to cycle * step if the user does not arbitrarily initialize it.") ),
-	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation") ),
+			comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
+	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
 	@var(name = SimulationAgent.DURATION,
 		type = IType.STRING,
-		doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle") ),
+		doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
 	@var(name = SimulationAgent.TOTAL_DURATION,
 		type = IType.STRING,
-		doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ") ),
+		doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
 	@var(name = SimulationAgent.AVERAGE_DURATION,
 		type = IType.STRING,
-		doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.") ),
+		doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
 	@var(name = SimulationAgent.MACHINE_TIME,
 		type = IType.FLOAT,
 		doc = @doc(value = "Returns the current system time in milliseconds",
-			comment = "The return value is a float number") ),
+			comment = "The return value is a float number")),
 	@var(name = SimulationAgent.CURRENT_DATE,
 		type = IType.DATE,
 		doc = @doc(value = "Returns the current date in the simulation",
-			comment = "The return value is a date; the starting_date have to be initialized to use this attribute") ),
+			comment = "The return value is a date; the starting_date have to be initialized to use this attribute")),
 	@var(name = SimulationAgent.STARTING_DATE,
 		type = IType.DATE,
 		doc = @doc(value = "Represents the starting date of the simulation",
-			comment = "It is required to intiliaze this value to be able to use the current_date attribute") ), })
+			comment = "It is required to intiliaze this value to be able to use the current_date attribute")), })
 public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public static final String DURATION = "duration";
@@ -145,12 +145,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
-	public void schedule() {
+	public void schedule(final IScope scope) {
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
 		// try {
 		scope.getGui().prepareForSimulation(this);
-		super.schedule();
+		super.schedule(this.scope);
 
 		// } finally {
 		// scope.getGui().informStatus("Simulation ready");
@@ -368,7 +368,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@action(name = "pause",
-		doc = @doc("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user.") )
+		doc = @doc("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
 	@args(names = {})
 	public Object pause(final IScope scope) {
 		IExperimentController controller = scope.getExperiment().getSpecies().getController();
@@ -379,7 +379,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@action(name = "halt",
 		doc = @doc(
 			deprecated = "It is preferable to use 'die' instead to kill a simulation, or 'pause' to stop it temporarily",
-			value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. ") )
+			value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. "))
 	@args(names = {})
 	public Object halt(final IScope scope) {
 		getExperiment().closeSimulation(this);

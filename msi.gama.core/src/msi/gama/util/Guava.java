@@ -56,7 +56,7 @@ public class Guava {
 	public static abstract class GamlGuavaHelper<T> {
 
 		// private static final boolean ENABLE_STATS = false;
-		private static final boolean USE_CACHE = true;
+		private static final boolean USE_CACHE = false;
 
 		IScope scope;
 		IExpression filter;

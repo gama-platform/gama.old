@@ -44,9 +44,9 @@ public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSe
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if(match_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__.equals(syntax))
+			if (match_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__.equals(syntax))
 				emit_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if(match_S_Set_LessThanSignHyphenMinusKeyword_2_1_or_ValueKeyword_2_0.equals(syntax))
+			else if (match_S_Set_LessThanSignHyphenMinusKeyword_2_1_or_ValueKeyword_2_0.equals(syntax))
 				emit_S_Set_LessThanSignHyphenMinusKeyword_2_1_or_ValueKeyword_2_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}

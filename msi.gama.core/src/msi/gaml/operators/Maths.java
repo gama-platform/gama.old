@@ -20,7 +20,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 
@@ -190,13 +190,13 @@ public class Maths {
 
 			s1 = java.lang.System.currentTimeMillis();
 			if ( z1 == 0d && c2.getZ() == 0d ) {
-				a1 = hypot(GAMA.getRuntimeScope(), x1, x2, y1, y2);
+				a1 = hypot(x1, x2, y1, y2);
 			} else {
-				a1 = hypot(GAMA.getRuntimeScope(), x1, x2, y1, y2, z1, z2);
+				a1 = hypot(x1, x2, y1, y2, z1, z2);
 			}
 			t7 += java.lang.System.currentTimeMillis() - s1;
 			s1 = java.lang.System.currentTimeMillis();
-			a2 = hypot(GAMA.getRuntimeScope(), x1, x2, y1, y2, z1, c2.getZ());
+			a2 = hypot(x1, x2, y1, y2, z1, c2.getZ());
 			t8 += java.lang.System.currentTimeMillis() - s1;
 			distDiff1 += Math.abs(a1 - a2);
 		}
@@ -282,7 +282,7 @@ public class Maths {
 		value = "Returns the value (in the interval [0,180], in decimal degrees) of the arccos of the operand (which should be in [-1,1]).",
 		masterDoc = true,
 		usages = { @usage(value = "if the right-hand operand is outside of the [-1,1] interval, returns NaN") },
-		examples = @example(value = "acos (0)", equals = "90.0") ,
+		examples = @example(value = "acos (0)", equals = "90.0"),
 		see = { "asin", "atan", "cos" })
 	public static Double acos(final Double rv) {
 		return Math.acos(rv) * toDeg;
@@ -298,7 +298,7 @@ public class Maths {
 	@doc(
 		value = "Returns the value (in the interval [-90,90], in decimal degrees) of the arcsin of the operand (which should be in [-1,1]).",
 		usages = { @usage(value = "if the right-hand operand is outside of the [-1,1] interval, returns NaN") },
-		examples = @example(value = "asin (0)", equals = "0.0") ,
+		examples = @example(value = "asin (0)", equals = "0.0"),
 		see = { "acos", "atan", "sin" })
 	public static Double asin(final Double rv) {
 		return Math.asin(rv) * toDeg;
@@ -307,7 +307,7 @@ public class Maths {
 	@operator(value = "asin", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "the arcsin of the operand",
 		masterDoc = true,
-		examples = @example(value = "asin (90)", equals = "#nan") ,
+		examples = @example(value = "asin (90)", equals = "#nan"),
 		see = { "acos", "atan" })
 	public static Double asin(final Integer rv) {
 		return Math.asin(rv) * toDeg;
@@ -317,7 +317,7 @@ public class Maths {
 	@doc(
 		value = "Returns the value (in the interval [-90,90], in decimal degrees) of the arctan of the operand (which can be any real number).",
 		masterDoc = true,
-		examples = @example(value = "atan (1)", equals = "45.0") ,
+		examples = @example(value = "atan (1)", equals = "45.0"),
 		see = { "acos", "asin", "tan" })
 	public static Double atan(final Double rv) {
 		return Math.atan(rv) * toDeg;
@@ -359,7 +359,7 @@ public class Maths {
 	@doc(
 		value = "Returns the value (in [-1,1]) of the sinus of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
 		masterDoc = true,
-		usages = @usage("Operand values out of the range [0-359] are normalized.") ,
+		usages = @usage("Operand values out of the range [0-359] are normalized."),
 		examples = { @example(value = "sin(360)", equals = "0.0") },
 		see = { "cos", "tan" })
 	public static Double sin_rad(final Double rv) {
@@ -409,7 +409,7 @@ public class Maths {
 	@doc(
 		value = "Returns the value (in [-1,1]) of the sinus of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
 		masterDoc = true,
-		usages = @usage("Operand values out of the range [0-359] are normalized.") ,
+		usages = @usage("Operand values out of the range [0-359] are normalized."),
 		examples = { @example(value = "sin(360)", equals = "0.0") },
 		see = { "cos", "tan" })
 	public static Double sin(final Double rv) {
@@ -466,8 +466,8 @@ public class Maths {
 	@operator(value = "exp", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns Euler's number e raised to the power of the operand.",
 		masterDoc = true,
-		usages = @usage(value = "the operand is casted to a float before being evaluated.") ,
-		examples = @example(value = "exp (0)", equals = "1.0") ,
+		usages = @usage(value = "the operand is casted to a float before being evaluated."),
+		examples = @example(value = "exp (0)", equals = "1.0"),
 		see = "ln")
 	public static Double exp(final Double rv) {
 		return Math.exp(rv);
@@ -482,8 +482,8 @@ public class Maths {
 
 	@operator(value = "fact", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns the factorial of the operand.",
-		usages = @usage("if the operand is less than 0, fact returns 0.") ,
-		examples = @example(value = "fact(4)", equals = "24") )
+		usages = @usage("if the operand is less than 0, fact returns 0."),
+		examples = @example(value = "fact(4)", equals = "24"))
 	public static Double fact(final Integer n) {
 		if ( n < 0 ) { return 0.0; }
 		double product = 1;
@@ -496,8 +496,8 @@ public class Maths {
 	@operator(value = "ln", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns the natural logarithm (base e) of the operand.",
 		masterDoc = true,
-		usages = @usage(value = "an exception is raised if the operand is less than zero.") ,
-		examples = @example(value = "ln(exp(1))", equals = "1.0") ,
+		usages = @usage(value = "an exception is raised if the operand is less than zero."),
+		examples = @example(value = "ln(exp(1))", equals = "1.0"),
 		see = "exp")
 	public static Double ln(final IScope scope, final Double x) {
 		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs");
@@ -508,7 +508,7 @@ public class Maths {
 
 	@operator(value = "ln", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "returns the natural logarithm (base e) of the operand.",
-		examples = @example(value = "ln(1)", equals = "0.0") )
+		examples = @example(value = "ln(1)", equals = "0.0"))
 	public static Double ln(final IScope scope, final Integer x) {
 		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs",
 			scope);
@@ -520,8 +520,8 @@ public class Maths {
 	@operator(value = "log", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns the logarithm (base 10) of the operand.",
 		masterDoc = true,
-		usages = @usage("an exception is raised if the operand is equals or less than zero.") ,
-		examples = @example(value = "log(10)", equals = "1.0") ,
+		usages = @usage("an exception is raised if the operand is equals or less than zero."),
+		examples = @example(value = "log(10)", equals = "1.0"),
 		see = "ln")
 	public static Double log(final IScope scope, final Double x) {
 		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs",
@@ -533,7 +533,7 @@ public class Maths {
 
 	@operator(value = "log", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "returns the logarithm (base 10) of the operand.",
-		examples = @example(value = "log(1)", equals = "0.0") )
+		examples = @example(value = "log(1)", equals = "0.0"))
 	public static Double log(final IScope scope, final Integer x) {
 		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs",
 			scope);
@@ -549,7 +549,7 @@ public class Maths {
 	}
 
 	@operator(value = "-", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "Returns the opposite of the operand.", examples = @example(value = "- (-56)", equals = "56") )
+	@doc(value = "Returns the opposite of the operand.", examples = @example(value = "- (-56)", equals = "56"))
 	public static Integer negate(final Integer x) {
 		return -x;
 	}
@@ -579,17 +579,17 @@ public class Maths {
 	@operator(value = "sqrt", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns the square root of the operand.",
 		masterDoc = true,
-		usages = @usage(value = "if the operand is negative, an exception is raised") ,
-		examples = @example(value = "sqrt(4)", equals = "2.0") )
+		usages = @usage(value = "if the operand is negative, an exception is raised"),
+		examples = @example(value = "sqrt(4)", equals = "2.0"))
 	public static Double sqrt(final IScope scope, final Integer v) throws GamaRuntimeException {
 		if ( v < 0 ) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs", scope); }
 		return Math.sqrt(v);
 	}
 
 	@operator(value = "sqrt", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "Returns the square root of the operand.", examples = @example(value = "sqrt(4)", equals = "2.0") )
-	public static Double sqrt(final IScope scope, final Double v) throws GamaRuntimeException {
-		if ( v < 0 ) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs", scope); }
+	@doc(value = "Returns the square root of the operand.", examples = @example(value = "sqrt(4)", equals = "2.0"))
+	public static Double sqrt(final Double v) throws GamaRuntimeException {
+		if ( v < 0 ) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs"); }
 		return Math.sqrt(v);
 	}
 
@@ -635,7 +635,7 @@ public class Maths {
 		masterDoc = true,
 		usages = @usage(
 			value = "if both operands are numbers (float or int), performs a normal arithmetic product and returns a float if one of them is a float.",
-			examples = @example(value = "1 * 1", equals = "1") ) ,
+			examples = @example(value = "1 * 1", equals = "1")),
 		see = { IKeyword.PLUS, IKeyword.MINUS, IKeyword.DIVIDE })
 	public static Integer opTimes(final Integer a, final Integer b) {
 		return a * b;
@@ -851,8 +851,8 @@ public class Maths {
 	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns the truncation of the division of the left-hand operand by the right-hand operand.",
 		masterDoc = true,
-		usages = @usage(value = "if the right-hand operand is equal to zero, raises an exception.") ,
-		examples = @example(value = "40 div 3", equals = "13") ,
+		usages = @usage(value = "if the right-hand operand is equal to zero, raises an exception."),
+		examples = @example(value = "40 div 3", equals = "13"),
 		see = "mod")
 	public static Integer div(final IScope scope, final Integer a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero", scope); }
@@ -861,8 +861,8 @@ public class Maths {
 
 	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.",
-		usages = @usage(value = "if the right-hand operand is equal to zero, raises an exception.") ,
-		examples = @example(value = "40.5 div 3", equals = "13") ,
+		usages = @usage(value = "if the right-hand operand is equal to zero, raises an exception."),
+		examples = @example(value = "40.5 div 3", equals = "13"),
 		see = "mod")
 	public static Integer div(final IScope scope, final Double a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero", scope); }
@@ -871,8 +871,8 @@ public class Maths {
 
 	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.",
-		usages = @usage(value = "if the right-hand operand is equal to zero, raises an exception.") ,
-		examples = @example(value = "40 div 4.1", equals = "9") )
+		usages = @usage(value = "if the right-hand operand is equal to zero, raises an exception."),
+		examples = @example(value = "40 div 4.1", equals = "9"))
 	public static Integer div(final IScope scope, final Integer a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return (int) (a / b);
@@ -880,7 +880,7 @@ public class Maths {
 
 	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.",
-		examples = @example(value = "40.1 div 4.5", equals = "8") )
+		examples = @example(value = "40.1 div 4.5", equals = "8"))
 	public static Integer div(final IScope scope, final Double a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return (int) (a / b);
@@ -920,7 +920,7 @@ public class Maths {
 	@doc(value = "the atan2 value of the two operands.",
 		comment = "The function atan2 is the arctangent function with two arguments. The purpose of using two arguments instead of one is to gather information on the signs of the inputs in order to return the appropriate quadrant of the computed angle, which is not possible for the single-argument arctangent function.",
 		masterDoc = true,
-		examples = @example(value = "atan2 (0,0)", equals = "0.0") ,
+		examples = @example(value = "atan2 (0,0)", equals = "0.0"),
 		see = { "atan", "acos", "asin" })
 	public static double atan2(final double y, final double x) {
 		return Math.atan2(y, x) * toDeg;
@@ -962,12 +962,12 @@ public class Maths {
 	@operator(value = "hypot", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns sqrt(x2 +y2) without intermediate overflow or underflow.",
 		special_cases = "If either argument is infinite, then the result is positive infinity. If either argument is NaN and neither argument is infinite, then the result is NaN.",
-		examples = @example(value = "hypot(0,1,0,1)", equals = "sqrt(2)") )
-	public static double hypot(final IScope scope, final double x1, final double x2, final double y1, final double y2) {
+		examples = @example(value = "hypot(0,1,0,1)", equals = "sqrt(2)"))
+	public static double hypot(final double x1, final double x2, final double y1, final double y2) {
 		// return Math.hypot(x2 - x1, y2 - y1); VERY SLOW !
 		final double dx = x2 - x1;
 		final double dy = y2 - y1;
-		return sqrt(scope, dx * dx + dy * dy);
+		return sqrt(dx * dx + dy * dy);
 	}
 
 	@operator(value = "is_number", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
@@ -998,12 +998,12 @@ public class Maths {
 		return 1;
 	}
 
-	public static double hypot(final IScope scope, final double x1, final double x2, final double y1, final double y2,
-		final double z1, final double z2) {
+	public static double hypot(final double x1, final double x2, final double y1, final double y2, final double z1,
+		final double z2) {
 		final double dx = x2 - x1;
 		final double dy = y2 - y1;
 		final double dz = z2 - z1;
-		return sqrt(scope, dx * dx + dy * dy + dz * dz);
+		return sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
 }

@@ -1,24 +1,24 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MatrixEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.widgets.*;
 
 public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
 
@@ -43,11 +43,10 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
 
 	@Override
 	public void applyEdit() {
-		if ( currentValue instanceof IMatrix ) {
-			MatrixEditorDialog d = new MatrixEditorDialog(SwtGui.getShell(), currentValue);
-			if ( d.open() == IDialogConstants.OK_ID ) {
-				modifyValue(d.getMatrix());
-			}
+
+		MatrixEditorDialog d = new MatrixEditorDialog(SwtGui.getShell(), currentValue);
+		if ( d.open() == IDialogConstants.OK_ID ) {
+			modifyValue(d.getMatrix());
 		}
 
 	}
@@ -56,7 +55,7 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
 	protected void checkButtons() {
 		ToolItem edit = items[EDIT];
 		if ( edit != null && !edit.isDisposed() ) {
-			edit.setEnabled(currentValue instanceof IMatrix);
+			edit.setEnabled(true);
 		}
 	}
 

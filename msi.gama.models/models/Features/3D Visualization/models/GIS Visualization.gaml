@@ -17,16 +17,16 @@ experiment GIS_visualization type: gui {
 	output {
 		// display of buildings in 3D with texture and with reading their HEIGHT attribute from the shapefile
 		display gis_displays_graphics type: opengl light: true ambient_light: 50{
-			graphics "buildings" refresh: false {
+			graphics "Buildings as shapes" refresh: false {
 				loop bd over: shape_file_buildings {
-					draw bd depth: 100 texture:[roof_texture,texture] ;
+					draw bd depth: rnd(50) + 50 texture:[roof_texture,texture] ;
 				}
 			}
 		}
 		
 		//display of the building as an image
 		display gis_displays_image type: opengl {
-			image "shape buildings" gis: shape_file_buildings.path color: rgb("gray") refresh: false;
+			image "Buildings as images" gis: shape_file_buildings.path color: rgb("gray") refresh: false;
 		}
 	}
 }

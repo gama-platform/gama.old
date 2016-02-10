@@ -97,14 +97,14 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IExpression getVarExpr(final String n) {
+	public IExpression getVarExpr(final String n, final boolean asField) {
 		final VariableDescription vd = getVariable(n);
 		if ( vd == null ) {
 			IDescription desc = getAction(n);
 			if ( desc != null ) { return new DenotedActionExpression(desc); }
 			return null;
 		}
-		return vd.getVarExpr();
+		return vd.getVarExpr(asField);
 	}
 
 	protected void addVariableNoCheck(final VariableDescription vd) {
@@ -146,7 +146,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				} else {
 					newVar.info(msg, IGamlIssue.WRONG_REDEFINITION, NAME);
 				}
-			} else {
+			} else if ( existingResource != null ) {
 				if ( error ) {
 					newVar.error(msg + " in  imported file " + existingResource.getURI().lastSegment(),
 						IGamlIssue.WRONG_REDEFINITION, NAME);
@@ -304,7 +304,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				li.next();
 				li.add(var);
 				added = true;
-			};
+			} ;
 		}
 		if ( !added ) {
 			vl.add(0, var);

@@ -322,7 +322,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IExpression getVarExpr(final String name) {
+	public IExpression getVarExpr(final String name, final boolean asField) {
 		return null;
 	}
 

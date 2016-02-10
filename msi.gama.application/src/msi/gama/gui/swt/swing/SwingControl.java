@@ -79,12 +79,14 @@ public abstract class SwingControl extends Composite {
 	 * @param parent a widget which will be the parent of the new instance (cannot be null)
 	 * @param style the style of widget to construct
 	 *
-	 * @exception IllegalArgumentException <ul>
-	 * <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
-	 * </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
+	 *                </ul>
 	 *
 	 * @see Widget#getStyle
 	 */
@@ -223,9 +225,11 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * The steps above happen only on the first call to this method; subsequent calls have no effect.
 	 *
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
-	 * </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
+	 *                </ul>
 	 */
 	protected void populate() {
 		if ( isDisposed() ) { return; }
@@ -491,7 +495,7 @@ public abstract class SwingControl extends Composite {
 	 * Returns the Swing component contained in this control. This method may be
 	 * called from any thread.
 	 * @return The embedded Swing component, or <code>null</code> if it has not
-	 * yet been initialized.
+	 *         yet been initialized.
 	 */
 	public/* final */JComponent getSwingComponent() {
 		return swingComponent;
@@ -502,7 +506,7 @@ public abstract class SwingControl extends Composite {
 	 * parent of the embedded Swing component. This method may be called from
 	 * any thread.
 	 * @return An AWT container, usually a Window, or <code>null</code> if the
-	 * initialization is not yet complete.
+	 *         initialization is not yet complete.
 	 */
 	public/* final */Container getAWTHierarchyRoot() {
 		// Intentionally leaving out checkWidget() call. This method may be called from the
@@ -653,7 +657,7 @@ public abstract class SwingControl extends Composite {
 	 * component, this method stores them in the cache and updates
 	 * this control accordingly.
 	 */
-		protected void updateCachedAWTSizes(final Dimension min, final Dimension pref, final Dimension max) {
+	protected void updateCachedAWTSizes(final Dimension min, final Dimension pref, final Dimension max) {
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 		if ( verboseSizeLayout ) {
 			System.err.println("AWT thread: updated component sizes: " + min + " <= " + pref + " <= " + max);
@@ -729,7 +733,7 @@ public abstract class SwingControl extends Composite {
 	 * @param pref Output parameter for the Swing component's preferred size.
 	 * @param max Output parameter for the Swing component's maximum size.
 	 * @return true if the sizes were available and the output parameters are
-	 * filled
+	 *         filled
 	 */
 	protected boolean getCachedAWTSizes(final Dimension min, final Dimension pref, final Dimension max) {
 		synchronized (this) {
@@ -784,7 +788,7 @@ public abstract class SwingControl extends Composite {
 		/**
 		 * Enqueues a request to this queue.
 		 * @param onBehalfAWTTime The AWT time of the notification that
-		 * triggered this request, or null.
+		 *            triggered this request, or null.
 		 * @param width The size to which the frame shall be resized.
 		 * @param height The size to which the frame shall be resized.
 		 * @return true if this queue needs to be started as a Runnable
@@ -830,7 +834,7 @@ public abstract class SwingControl extends Composite {
 		/**
 		 * Returns the enqueued request and removes it from the queue.
 		 * @return The size to which the frame shall be resized, or null if
-		 * if does not need to be resized after all.
+		 *         if does not need to be resized after all.
 		 */
 		private synchronized Dimension dequeue() {
 			assert EventQueue.isDispatchThread(); // On AWT event thread
@@ -989,11 +993,11 @@ public abstract class SwingControl extends Composite {
 	 */
 	public abstract Composite getLayoutAncestor();
 
-	/**
-	 * Called when the preferred sizes of this control, as computed by
-	 * AWT, have changed.
-	 */
-	/* private */void notePreferredSizeChanged(final Point minSize, final Point prefSize, final Point maxSize) {
+		/**
+		 * Called when the preferred sizes of this control, as computed by
+		 * AWT, have changed.
+		 */
+		/* private */void notePreferredSizeChanged(final Point minSize, final Point prefSize, final Point maxSize) {
 		preferredSizeChanged(minSize, prefSize, maxSize);
 		firePreferredSizeChangedEvent(minSize, prefSize, maxSize);
 	}
@@ -1014,11 +1018,11 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * The parameters <var>minPoint</var>, <var>prefPoint</var>, <var>maxPoint</var> can usually be ignored: It is often enough to rely on the {@link #layout()} method.
 	 * @param minSize The new minimum size for this control, as reported by
-	 * AWT, plus the border width on each side.
+	 *            AWT, plus the border width on each side.
 	 * @param prefSize The new preferred size for this control, as reported by
-	 * AWT, plus the border width on each side.
+	 *            AWT, plus the border width on each side.
 	 * @param maxSize The new maximum size for this control, as reported by
-	 * AWT, plus the border width on each side.
+	 *            AWT, plus the border width on each side.
 	 */
 	protected void preferredSizeChanged(final Point minSize, final Point prefSize, final Point maxSize) {
 		Composite ancestor = getLayoutAncestor();
@@ -1356,7 +1360,7 @@ public abstract class SwingControl extends Composite {
 	 * of the type of problem solved by keeping this property <code>true</code>, see <a href="http://bugs.eclipse.org/60967">bug 60967</a>.
 	 *
 	 * @param isAWTPermanentFocusLossForced - <code>true</code> to enable the forcing of permanent
-	 * focus loss. <code>false</code> to disable it.
+	 *            focus loss. <code>false</code> to disable it.
 	 */
 	public void setAWTPermanentFocusLossForced(final boolean isAWTPermanentFocusLossForced) {
 		this.isAWTPermanentFocusLossForced = isAWTPermanentFocusLossForced;
@@ -1457,10 +1461,10 @@ public abstract class SwingControl extends Composite {
 	private boolean superSetFocus() {
 		return super.setFocus();
 	}
-
-	private boolean superForceFocus() {
-		return super.forceFocus();
-	}
+	//
+	// private boolean superForceFocus() {
+	// return super.forceFocus();
+	// }
 
 	// ============================= Events and Listeners =============================
 
@@ -1473,13 +1477,15 @@ public abstract class SwingControl extends Composite {
 	 *
 	 * @param listener the listener which should be notified
 	 *
-	 * @exception IllegalArgumentException <ul>
-	 * <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 *
 	 * @see SizeListener
 	 * @see #removeSizeListener(SizeListener)
@@ -1499,13 +1505,15 @@ public abstract class SwingControl extends Composite {
 	 *
 	 * @param listener the listener which should no longer be notified
 	 *
-	 * @exception IllegalArgumentException <ul>
-	 * <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 *
 	 * @see SizeListener
 	 * @see #addSizeListener(SizeListener)
@@ -1574,13 +1582,13 @@ public abstract class SwingControl extends Composite {
 	 * This method can be overridden, to achieve dynamic popup menus.
 	 * @param component The component on which a popup event was received.
 	 * @param x The x coordinate, relative to the component's top left corner,
-	 * of the mouse cursor when the event occurred.
+	 *            of the mouse cursor when the event occurred.
 	 * @param y The y coordinate, relative to the component's top left corner,
-	 * of the mouse cursor when the event occurred.
+	 *            of the mouse cursor when the event occurred.
 	 * @param xAbsolute The x coordinate, relative to this control's top left
-	 * corner, of the mouse cursor when the event occurred.
+	 *            corner, of the mouse cursor when the event occurred.
 	 * @param yAbsolute The y coordinate, relative to this control's top left
-	 * corner, of the mouse cursor when the event occurred.
+	 *            corner, of the mouse cursor when the event occurred.
 	 */
 	public Menu getMenu(final java.awt.Component component, final int x, final int y, final int xAbsolute,
 		final int yAbsolute) {

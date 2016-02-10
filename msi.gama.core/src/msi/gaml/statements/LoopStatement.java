@@ -14,7 +14,7 @@ package msi.gaml.statements;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.compilation.IDescriptionValidator;
@@ -28,17 +28,16 @@ import msi.gaml.types.IType;
 // A group of commands that can be executed repeatedly.
 
 @symbol(name = IKeyword.LOOP, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-@facets(
-	value = { @facet(name = IKeyword.FROM, type = IType.INT, optional = true, doc = @doc("an int expression") ),
-		@facet(name = IKeyword.TO, type = IType.INT, optional = true, doc = @doc("an int expression") ), @facet(
-			name = IKeyword.STEP, type = IType.INT, optional = true, doc = @doc("an int expression") ),
-	@facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = true, doc = @doc("a temporary variable name") ),
+@facets(value = { @facet(name = IKeyword.FROM, type = IType.INT, optional = true, doc = @doc("an int expression")),
+	@facet(name = IKeyword.TO, type = IType.INT, optional = true, doc = @doc("an int expression")),
+	@facet(name = IKeyword.STEP, type = IType.INT, optional = true, doc = @doc("an int expression")),
+	@facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = true, doc = @doc("a temporary variable name")),
 	@facet(name = IKeyword.OVER,
 		type = { IType.CONTAINER, IType.POINT },
 		optional = true,
-		doc = @doc("a list, point, matrix or map expression") ),
-		@facet(name = IKeyword.WHILE, type = IType.BOOL, optional = true, doc = @doc("a boolean expression") ),
-		@facet(name = IKeyword.TIMES, type = IType.INT, optional = true, doc = @doc("an int expression") ) },
+		doc = @doc("a list, point, matrix or map expression")),
+	@facet(name = IKeyword.WHILE, type = IType.BOOL, optional = true, doc = @doc("a boolean expression")),
+	@facet(name = IKeyword.TIMES, type = IType.INT, optional = true, doc = @doc("an int expression")) },
 	omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @doc(
@@ -259,7 +258,8 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		private final boolean stepDefined;
 
 		Bounded() throws GamaRuntimeException {
-			final IScope scope = GAMA.obtainNewScope();
+			IScope scope = null;
+			// final IScope scope = GAMA.obtainNewScope();
 			if ( from.isConst() ) {
 				constantFrom = Cast.asInt(scope, from.value(scope));
 			}
@@ -275,7 +275,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			} else {
 				stepDefined = true;
 			}
-			GAMA.releaseScope(scope);
+			// GAMA.releaseScope(scope);
 		}
 
 		@Override

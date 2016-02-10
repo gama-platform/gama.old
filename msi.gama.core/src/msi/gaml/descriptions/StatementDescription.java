@@ -11,8 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
+import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.interfaces.*;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -21,7 +22,6 @@ import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
 import msi.gaml.types.*;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 10 févr. 2010
@@ -77,9 +77,8 @@ public class StatementDescription extends SymbolDescription {
 					children.add(child.copy(into));
 				}
 			}
-			StatementDescription desc =
-				new StatementWithChildrenDescription(getKeyword(), into, new ChildrenProvider(children), temps != null,
-					args != null, element, facets.cleanCopy());
+			StatementDescription desc = new StatementWithChildrenDescription(getKeyword(), into,
+				new ChildrenProvider(children), temps != null, args != null, element, facets.cleanCopy());
 			desc.originName = originName;
 			return desc;
 		}
@@ -221,9 +220,8 @@ public class StatementDescription extends SymbolDescription {
 				children.add(child.copy(into));
 			}
 		}
-		StatementDescription desc =
-			new StatementDescription(getKeyword(), into, new ChildrenProvider(children), temps != null, args != null,
-				element, facets.cleanCopy());
+		StatementDescription desc = new StatementDescription(getKeyword(), into, new ChildrenProvider(children),
+			temps != null, args != null, element, facets.cleanCopy());
 		desc.originName = originName;
 		return desc;
 	}
@@ -268,7 +266,7 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IExpression getVarExpr(final String name) {
+	public IExpression getVarExpr(final String name, final boolean asField) {
 		if ( temps != null ) { return temps.get(name); }
 		return null;
 	}
@@ -317,8 +315,9 @@ public class StatementDescription extends SymbolDescription {
 		// optional.
 		for ( String arg : mandatoryArgs ) {
 			if ( !names.containsKey(arg) ) {
-				caller.error("Missing argument " + arg + " in call to " + getName() + ". Arguments passed are : " +
-					names, IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new String[] { arg });
+				caller.error(
+					"Missing argument " + arg + " in call to " + getName() + ". Arguments passed are : " + names,
+					IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new String[] { arg });
 				return false;
 			}
 		}
@@ -335,8 +334,9 @@ public class StatementDescription extends SymbolDescription {
 					IType formalType = args.get(name).getType();
 					IType callerType = arg.getValue().getExpression().getType();
 					if ( Types.intFloatCase(formalType, callerType) ) {
-						caller.warning("The argument " + name + " (of type " + callerType + ") will be casted to " +
-							formalType, IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());
+						caller.warning(
+							"The argument " + name + " (of type " + callerType + ") will be casted to " + formalType,
+							IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());
 					} else {
 						boolean accepted = formalType == Types.NO_TYPE || callerType.isTranslatableInto(formalType);
 						accepted = accepted || callerType == Types.NO_TYPE && formalType.getDefault() == null;
@@ -440,7 +440,7 @@ public class StatementDescription extends SymbolDescription {
 	public void collectChildren(final String keyword, final Set<StatementDescription> returns) {
 		if ( getKeyword().equals(keyword) ) {
 			returns.add(this);
-		} else/* if ( children != null ) */{
+		} else/* if ( children != null ) */ {
 			for ( IDescription child : getChildren() ) {
 				if ( child instanceof StatementDescription ) {
 					((StatementDescription) child).collectChildren(keyword, returns);
@@ -613,8 +613,8 @@ public class StatementDescription extends SymbolDescription {
 					}
 				}
 				if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
-					warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST, arg
-						.getFacets().get(VALUE).getTarget(), varType.toString());
+					warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST,
+						arg.getFacets().get(VALUE).getTarget(), varType.toString());
 				}
 				// else {
 				// varType = sd.getVariable(name).getContentType();

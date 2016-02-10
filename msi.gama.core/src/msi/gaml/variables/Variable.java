@@ -39,42 +39,54 @@ import msi.gaml.types.*;
 		@facet(name = IKeyword.NAME,
 			type = IType.NEW_VAR_ID,
 			optional = false,
-			doc = @doc("The name of the attribute") ),
-		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-		@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
-		@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
+			doc = @doc("The name of the attribute")),
+		@facet(name = IKeyword.TYPE,
+			type = IType.TYPE_ID,
+			optional = true,
+			doc = {
+				@doc("The type of this attribute. Can be combined with facets 'of' and 'index' to describe container types") }),
+		@facet(name = IKeyword.OF,
+			type = IType.TYPE_ID,
+			optional = true,
+			doc = {
+				@doc("The type of the elements contained in the type of this attribute if it is a container type") }),
+		@facet(name = IKeyword.INDEX,
+			type = IType.TYPE_ID,
+			optional = true,
+			doc = {
+				@doc("The type of the index used to retrieve elements if the type of the attribute is a container type") }),
 		@facet(name = IKeyword.INIT,
 			type = IType.NONE,
 			optional = true,
-			doc = @doc("The initial value of the attribute") ),
+			doc = @doc("The initial value of the attribute")),
 		@facet(name = IKeyword.VALUE,
 			type = IType.NONE,
 			optional = true,
-			doc = @doc(value = "", deprecated = "Use 'update' instead") ),
+			doc = @doc(value = "", deprecated = "Use 'update' instead")),
 		@facet(name = IKeyword.UPDATE,
 			type = IType.NONE,
 			optional = true,
-			doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute") ),
+			doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
 		@facet(name = IKeyword.FUNCTION,
 			type = IType.NONE,
 			optional = true,
-			doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'") ),
+			doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
 		@facet(name = IKeyword.CONST,
 			type = IType.BOOL,
 			optional = true,
-			doc = @doc("Indicates whether this attribute can be subsequently modified or not") ),
+			doc = @doc("Indicates whether this attribute can be subsequently modified or not")),
 		@facet(name = IKeyword.CATEGORY,
 			type = IType.LABEL,
 			optional = true,
-			doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead") ),
+			doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
 		@facet(name = IKeyword.PARAMETER,
 			type = IType.LABEL,
 			optional = true,
-			doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead") ),
+			doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
 		@facet(name = IKeyword.AMONG,
 			type = IType.LIST,
 			optional = true,
-			doc = @doc("A list of constant values among which the attribute can take its value") ) },
+			doc = @doc("A list of constant values among which the attribute can take its value")) },
 	omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.REGULAR, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
@@ -393,7 +405,6 @@ public class Variable extends Symbol implements IVariable {
 
 		val = coerce(agent, scope, v);
 		val = checkAmong(agent, scope, val);
-		// TODO Verify that the agent is in the scope
 		if ( setter != null ) {
 			setter.run(scope, agent, sSkill == null ? agent : sSkill, val);
 		} else {

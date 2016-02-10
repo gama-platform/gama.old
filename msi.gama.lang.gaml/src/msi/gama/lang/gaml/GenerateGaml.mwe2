@@ -19,7 +19,7 @@ Workflow {
 		directory = "${runtimeProject}/src-gen"
 	}
 
-	component = DirectoryCleaner {
+	component = DirectoryCleaner { 
 		directory = "${runtimeProject}.ui/src-gen"
 	}
 
@@ -59,7 +59,7 @@ Workflow {
 					backtrack = false
 					memoize = true
 					classSplitting = true
-					fieldsPerClass = "200"
+					fieldsPerClass = "200" 
 					methodsPerClass = "200"
 				}
 			}

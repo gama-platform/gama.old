@@ -1,16 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlOutlineTreeProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.outline;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
+import org.eclipse.xtext.ui.editor.outline.impl.*;
+import com.google.inject.Inject;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
@@ -18,20 +22,15 @@ import msi.gama.lang.utils.EGaml;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.ui.IImageHelper;
-import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
-import org.eclipse.xtext.ui.editor.outline.impl.*;
-import com.google.inject.Inject;
 
 /**
  * customization of the default outline structure
- * 
+ *
  */
 public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	@Inject
-	private IImageHelper imageHelper;
+	// @Inject
+	// private IImageHelper imageHelper;
 
 	@Inject
 	private GamlLabelProvider provider;
@@ -89,23 +88,20 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 			for ( Statement s : EGaml.getStatementsOf(block) ) {
 				if ( isAttribute(s) ) {
 					if ( attributesNode == null ) {
-						attributesNode =
-							new AbstractOutlineNode(parentNode, provider.convertToImage("_attributes.png"),
-								"Attributes", false) {};
+						attributesNode = new AbstractOutlineNode(parentNode, provider.convertToImage("_attributes.png"),
+							"Attributes", false) {};
 					}
 					createNode(attributesNode, s);
 				} else if ( IKeyword.PARAMETER.equals(s.getKey()) ) {
 					if ( parametersNode == null ) {
-						parametersNode =
-							new AbstractOutlineNode(parentNode, provider.convertToImage("_parameter.png"),
-								"Parameters", false) {};
+						parametersNode = new AbstractOutlineNode(parentNode, provider.convertToImage("_parameter.png"),
+							"Parameters", false) {};
 					}
 					createNode(parametersNode, s);
 				} else if ( isAction(s) ) {
 					if ( actionsNode == null ) {
-						actionsNode =
-							new AbstractOutlineNode(parentNode, provider.convertToImage("_action.png"), "Actions",
-								false) {};
+						actionsNode = new AbstractOutlineNode(parentNode, provider.convertToImage("_action.png"),
+							"Actions", false) {};
 					}
 					createNode(actionsNode, s);
 

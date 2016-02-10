@@ -136,9 +136,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			IDescription desc = getContext().getDescriptionDeclaringVar(MYSELF);
 			if ( desc != null ) {
 				// We are in a remote context, so 'my' refers to the calling agent
-				IExpression myself = desc.getVarExpr(MYSELF);
+				IExpression myself = desc.getVarExpr(MYSELF, false);
 				IDescription species = myself.getType().getSpecies();
-				IExpression var = species.getVarExpr(EGaml.getKeyOf(e));
+				IExpression var = species.getVarExpr(EGaml.getKeyOf(e), true);
 				return factory.createOperator(_DOT, desc, e, myself, var);
 			}
 			// Otherwise, we ignore 'my' since it refers to 'self'
@@ -381,7 +381,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// action call
 		if ( fieldExpr instanceof VariableRef ) {
 			String var = EGaml.getKeyOf(fieldExpr);
-			IVarExpression expr = (IVarExpression) species.getVarExpr(var);
+			IVarExpression expr = (IVarExpression) species.getVarExpr(var, true);
 			if ( expr == null ) {
 				if ( species instanceof ModelDescription && ((ModelDescription) species).hasExperiment(var) ) {
 					IType t = Types.get(IKeyword.SPECIES);
@@ -873,7 +873,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				}
 			}
 
-			return temp_sd.getVarExpr(varName);
+			return temp_sd.getVarExpr(varName, false);
 		}
 
 		if ( isTypeName(varName) ) { return factory.createTypeExpression(getContext().getTypeNamed(varName)); }
@@ -900,7 +900,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if ( getContext() instanceof StatementDescription ) {
 				SpeciesDescription denotedSpecies = ((StatementDescription) getContext()).computeSpecies();
 				if ( denotedSpecies != null ) {
-					if ( denotedSpecies.hasVar(varName) ) { return denotedSpecies.getVarExpr(varName); }
+					if ( denotedSpecies.hasVar(varName) ) { return denotedSpecies.getVarExpr(varName, false); }
 				}
 			}
 

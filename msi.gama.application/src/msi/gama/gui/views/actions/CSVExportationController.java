@@ -5,8 +5,7 @@
 package msi.gama.gui.views.actions;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView.CSVExportable;
@@ -21,7 +20,7 @@ import msi.gama.gui.views.IToolbarDecoratedView.CSVExportable;
 public class CSVExportationController {
 
 	private final CSVExportable view;
-	
+
 	/**
 	 * @param view
 	 */
@@ -37,10 +36,10 @@ public class CSVExportationController {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				((CSVExportable) view).saveAsCSV();
+				view.saveAsCSV();
 			}
 		}, SWT.RIGHT);
-		
+
 	}
 
 }

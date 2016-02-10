@@ -282,7 +282,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 
 		float[] light0Position = new float[4];
 		ILocation p1 = data.getDiffuseLightPosition();
-		if ( p1.getX() == -1 && p1.getY() == -1 && p1.getZ() == 1 ) {
+		if ( p1.equals(LayeredDisplayData.noChange) ) {
 			p1 = new GamaPoint(data.getEnvWidth() / 2, data.getEnvHeight() / 2, data.getEnvWidth() * 2);
 		}
 		ILocation p = p1;
@@ -602,9 +602,9 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	 * Method drawImage.
 	 *
 	 * @param img
-	 * Image
+	 *            Image
 	 * @param angle
-	 * Integer
+	 *            Integer
 	 */
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {

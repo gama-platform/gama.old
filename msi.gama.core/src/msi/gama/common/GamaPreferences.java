@@ -20,7 +20,7 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
@@ -375,12 +375,12 @@ public class GamaPreferences {
 	// GENERAL PAGE
 	public static final List<String> GENERATOR_NAMES =
 		Arrays.asList(IKeyword.CELLULAR, IKeyword.JAVA, IKeyword.MERSENNE);
-		/**
-		 * Random Number Generation
-		 */
-		public static final Entry<String> CORE_RNG =
-			create("core.rng", "Random number generator", IKeyword.MERSENNE, IType.STRING).among(GENERATOR_NAMES)
-				.in(EXPERIMENTS).group("Random Number Generation");
+	/**
+	 * Random Number Generation
+	 */
+	public static final Entry<String> CORE_RNG =
+		create("core.rng", "Random number generator", IKeyword.MERSENNE, IType.STRING).among(GENERATOR_NAMES)
+			.in(EXPERIMENTS).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_SEED_DEFINED =
 		create("core.seed_defined", "Define a default seed", false, IType.BOOL).activates("core.seed").in(EXPERIMENTS)
 			.group("Random Number Generation");
@@ -390,12 +390,12 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_RND_EDITABLE =
 		create("core.define_rng", "Include in the parameters of models", true, IType.BOOL).in(EXPERIMENTS)
 			.group("Random Number Generation");
-			/**
-			 * User Interface
-			 */
-			public static final Entry<Integer> CORE_MENU_SIZE =
-				create("core.menu_size", "Break down agents in menus every", 50, IType.INT).between(10, 100).in(UI)
-					.group("Menus");
+	/**
+	 * User Interface
+	 */
+	public static final Entry<Integer> CORE_MENU_SIZE =
+		create("core.menu_size", "Break down agents in menus every", 50, IType.INT).between(10, 100).in(UI)
+			.group("Menus");
 
 	public static final Entry<Integer> CORE_CONSOLE_SIZE =
 		create("core.console_size", "Max. number of characters to display in the console (-1 means no limit) ", 20000,
@@ -403,12 +403,12 @@ public class GamaPreferences {
 	public static final Entry<Integer> CORE_CONSOLE_BUFFER = create("core.console_buffer",
 		"Max. number of characters to keep in memory when console is paused (-1 means no limit)", 20000, IType.INT)
 			.in(UI).group("Console");
-			/**
-			 * Simulation Errors
-			 */
-			public static final Entry<Boolean> CORE_SHOW_ERRORS =
-				create("core.display_errors", "Display errors", true, IType.BOOL).in(EXPERIMENTS)
-					.activates("core.errors_number", "core.recent").group("Errors");
+	/**
+	 * Simulation Errors
+	 */
+	public static final Entry<Boolean> CORE_SHOW_ERRORS =
+		create("core.display_errors", "Display errors", true, IType.BOOL).in(EXPERIMENTS)
+			.activates("core.errors_number", "core.recent").group("Errors");
 	public static final Entry<Integer> CORE_ERRORS_NUMBER =
 		create("core.errors_number", "Number of errors to display", 10, IType.INT).in(EXPERIMENTS).group("Errors")
 			.between(1, null);
@@ -418,17 +418,17 @@ public class GamaPreferences {
 		create("core.stop", "Stop simulation at first error", true, IType.BOOL).in(EXPERIMENTS).group("Errors");
 	public static final Entry<Boolean> CORE_WARNINGS =
 		create("core.warnings", "Treat warnings as errors", false, IType.BOOL).in(EXPERIMENTS).group("Errors");
-		/**
-		 * Startup
-		 */
-		public static final Entry<Boolean> CORE_SHOW_PAGE =
-			create("core.show_page", "Display Welcome page at startup", true, IType.BOOL).in(UI).group("Startup");
-			/**
-			 * Runtime
-			 */
-			public static final Entry<Double> CORE_DELAY_STEP =
-				create("core.delay_step", "Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(EXPERIMENTS)
-					.group("Runtime");
+	/**
+	 * Startup
+	 */
+	public static final Entry<Boolean> CORE_SHOW_PAGE =
+		create("core.show_page", "Display Welcome page at startup", true, IType.BOOL).in(UI).group("Startup");
+	/**
+	 * Runtime
+	 */
+	public static final Entry<Double> CORE_DELAY_STEP =
+		create("core.delay_step", "Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(EXPERIMENTS)
+			.group("Runtime");
 	public static final Entry<Boolean> CORE_AUTO_RUN =
 		create("core.auto_run", "Auto-run experiments when they are launched", false, IType.BOOL).in(EXPERIMENTS)
 			.group("Runtime");
@@ -468,22 +468,22 @@ public class GamaPreferences {
 	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE =
 		create("core.display_visible", "Only process for display the agents that are visible", false, IType.BOOL)
 			.in(DISPLAY).group("*** Experimental ***");
-			/**
-			 * Default Aspect
-			 */
-			public static final Entry<String> CORE_SHAPE =
-				create("core.shape", "Defaut shape to use for agents", "shape", IType.STRING)
-					.among("shape", "circle", "square", "triangle", "point", "cube", "sphere").in(DISPLAY)
-					.group("Default aspect (settings effective after experiment relaunch)");
+	/**
+	 * Default Aspect
+	 */
+	public static final Entry<String> CORE_SHAPE =
+		create("core.shape", "Defaut shape to use for agents", "shape", IType.STRING)
+			.among("shape", "circle", "square", "triangle", "point", "cube", "sphere").in(DISPLAY)
+			.group("Default aspect (settings effective after experiment relaunch)");
 	public static final Entry<Double> CORE_SIZE =
 		create("core.size", "Default size to use for agents", 1.0, IType.FLOAT).between(0.01, null).in(DISPLAY)
 			.group("Default aspect (settings effective after experiment relaunch)");
 	public static final Entry<Color> CORE_COLOR =
 		create("core.color", "Default color to use for agents", Color.yellow, IType.COLOR).in(DISPLAY)
 			.group("Default aspect (settings effective after experiment relaunch)");
-			/**
-			 * OpenGL
-			 */
+	/**
+	 * OpenGL
+	 */
 	// public static final Entry<Boolean> CORE_Z_FIGHTING =
 	// create("core.z_fighting", "Use improved z positioning", true, IType.BOOL).in(DISPLAY)
 	// .group("OpenGL (settings effective after experiment relaunch)");
@@ -503,12 +503,12 @@ public class GamaPreferences {
 	public static final Entry<Double> CORE_LINE_WIDTH =
 		create("opengl.line.width", "Set the width of lines drawn on displays", 1.2d, IType.FLOAT).in(DISPLAY)
 			.group("OpenGL (settings effective immediately)");
-			// public static final Entry<Boolean> CORE_DRAW_NORM =
-			// create("core.draw_norm", "Draw normals to objects", false, IType.BOOL).in(DISPLAY)
-			// .group("OpenGL (settings effective after experiment relaunch)");
-			// public static final Entry<Boolean> CORE_CUBEDISPLAY =
-			// create("core.cubedisplay", "Display as a cube", false, IType.BOOL).in(DISPLAY)
-			// .group("OpenGL (settings effective after experiment relaunch)");
+	// public static final Entry<Boolean> CORE_DRAW_NORM =
+	// create("core.draw_norm", "Draw normals to objects", false, IType.BOOL).in(DISPLAY)
+	// .group("OpenGL (settings effective after experiment relaunch)");
+	// public static final Entry<Boolean> CORE_CUBEDISPLAY =
+	// create("core.cubedisplay", "Display as a cube", false, IType.BOOL).in(DISPLAY)
+	// .group("OpenGL (settings effective after experiment relaunch)");
 
 	// EDITOR PAGE
 	public static final Entry<Boolean> CORE_PERSPECTIVE =
@@ -518,9 +518,9 @@ public class GamaPreferences {
 	/**
 	 * Validation
 	 */
-			public static final GamaPreferences.Entry<Boolean> WARNINGS_ENABLED = GamaPreferences
-				.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL)
-				.in(GamaPreferences.EDITOR).group("Validation");
+	public static final GamaPreferences.Entry<Boolean> WARNINGS_ENABLED =
+		GamaPreferences.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL)
+			.in(GamaPreferences.EDITOR).group("Validation");
 
 	public static final GamaPreferences.Entry<Boolean> INFO_ENABLED =
 		GamaPreferences.create("editor.info.enabled", "Show information markers when editing a model", true, IType.BOOL)
@@ -533,19 +533,19 @@ public class GamaPreferences {
 	public static final Entry<IGamaFile> LIB_SPATIALITE =
 		create("core.lib_spatialite", "Path to the Spatialite (see http://www.gaia-gis.it/gaia-sins/) library",
 			new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group("Paths");
-			/**
-			 * R
-			 */
-			public static final Entry<IGamaFile> LIB_R =
-				create("core.lib_r", "Path to the RScript (see http://www.r-project.org) library",
-					new GenericFile(getDefaultRPath()), IType.FILE).in(LIBRARIES).group("Paths");
-					/**
-					 * GeoTools
-					 */
-					public static final Entry<Boolean> LIB_TARGETED = create("core.lib_targeted",
-						"Let GAMA decide which CRS to use to project GIS data", true,
-						IType.BOOL).deactivates("core.lib_target_crs").in(LIBRARIES).group(
-							"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+	/**
+	 * R
+	 */
+	public static final Entry<IGamaFile> LIB_R =
+		create("core.lib_r", "Path to the RScript (see http://www.r-project.org) library",
+			new GenericFile(getDefaultRPath()), IType.FILE).in(LIBRARIES).group("Paths");
+	/**
+	 * GeoTools
+	 */
+	public static final Entry<Boolean> LIB_TARGETED =
+		create("core.lib_targeted", "Let GAMA decide which CRS to use to project GIS data", true, IType.BOOL)
+			.deactivates("core.lib_target_crs").in(LIBRARIES)
+			.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
 	public static final Entry<Integer> LIB_TARGET_CRS =
 		create("core.lib_target_crs", "...or use the following CRS (EPSG code)", 32648, IType.INT).in(LIBRARIES)
 			.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
@@ -617,7 +617,7 @@ public class GamaPreferences {
 
 	private static void register(final Entry gp) {
 		System.out.println("+++ Registering preference " + gp.key + " in store");
-		IScope scope = GAMA.obtainNewScope();
+		IScope scope = null;
 		String key = gp.key;
 		if ( key == null ) { return; }
 		prefs.put(key, gp);
@@ -683,9 +683,9 @@ public class GamaPreferences {
 					store.put(key, GamaStringType.staticCast(scope, value, false));
 				}
 		}
-		if ( scope != null ) {
-			GAMA.releaseScope(scope);
-		}
+		// if ( scope != null ) {
+		// GAMA.releaseScope(scope);
+		// }
 		try {
 			store.flush();
 		} catch (BackingStoreException e) {

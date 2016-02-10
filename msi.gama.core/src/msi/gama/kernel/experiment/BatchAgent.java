@@ -68,8 +68,8 @@ public class BatchAgent extends ExperimentAgent {
 	}
 
 	@Override
-	public void schedule() {
-		super.schedule();
+	public void schedule(final IScope scope) {
+		super.schedule(scope);
 		// Necessary to run it here, as if the seed has been fixed in the experiment, it is now defined and initialized
 		IExpression expr = getSpecies().getFacet(IKeyword.KEEP_SEED);
 		if ( expr != null && expr.isConst() ) {
@@ -123,8 +123,8 @@ public class BatchAgent extends ExperimentAgent {
 	 *
 	 * Method step()
 	 * @see msi.gama.metamodel.agent.GamlAgent#step(msi.gama.runtime.IScope)
-	 * This method, called once by the front controller, actually serves as "launching" the batch process (entirely
-	 * piloted by the exploration algorithm)
+	 *      This method, called once by the front controller, actually serves as "launching" the batch process (entirely
+	 *      piloted by the exploration algorithm)
 	 */
 	@Override
 	public boolean step(final IScope scope) {
@@ -159,7 +159,7 @@ public class BatchAgent extends ExperimentAgent {
 			createSimulation(currentSolution, false);
 			if ( simulation != null && !simulation.dead() ) {
 				getScope().getGui().prepareForSimulation(simulation);
-				simulation.schedule();
+				simulation.schedule(getScope());
 				IScope scope = simulation.getScope();
 				// simulation.getScheduler().insertAgentToInit(scope, simulation, null);
 				// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)

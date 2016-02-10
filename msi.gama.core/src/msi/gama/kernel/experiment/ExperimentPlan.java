@@ -44,41 +44,40 @@ import msi.gaml.variables.IVariable;
  *
  */
 @symbol(name = { IKeyword.EXPERIMENT }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
-@facets(
-	value = {
-		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the experiment") ),
-		@facet(name = IKeyword.TITLE, type = IType.LABEL, optional = false, doc = @doc("") , internal = true),
-		@facet(name = IKeyword.PARENT,
-			type = IType.ID,
-			optional = true,
-			doc = @doc("the parent experiment (in case of inheritance between experiments)") ),
-		@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true, doc = @doc("") , internal = true),
-		@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true, doc = @doc("") , internal = true),
-		@facet(name = IKeyword.FREQUENCY,
-			type = IType.INT,
-			optional = true,
-			internal = true,
-			doc = @doc("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.") ),
-		@facet(name = IKeyword.SCHEDULES,
-			type = IType.CONTAINER,
-			optional = true,
-			internal = true,
-			doc = @doc("an ordered list of agents giving the order of their execution") ),
-		@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true, doc = @doc("") ),
-		@facet(name = IKeyword.REPEAT,
-			type = IType.INT,
-			optional = true,
-			doc = @doc("In case of a batch experiment, expresses hom many times the simulations must be repeated") ),
-		@facet(name = IKeyword.UNTIL,
-			type = IType.BOOL,
-			optional = true,
-			doc = @doc("In case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated") ),
-		@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc("") , internal = true),
-		@facet(name = IKeyword.TYPE,
-			type = IType.LABEL,
-			values = { IKeyword.BATCH, /* IKeyword.REMOTE, */IKeyword.GUI_, IKeyword.HEADLESS_UI },
-			optional = false,
-			doc = @doc("the type of the experiment (either 'gui' or 'batch'") ) },
+@facets(value = {
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the experiment")),
+	@facet(name = IKeyword.TITLE, type = IType.LABEL, optional = false, doc = @doc(""), internal = true),
+	@facet(name = IKeyword.PARENT,
+		type = IType.ID,
+		optional = true,
+		doc = @doc("the parent experiment (in case of inheritance between experiments)")),
+	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true, doc = @doc(""), internal = true),
+	@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true, doc = @doc(""), internal = true),
+	@facet(name = IKeyword.FREQUENCY,
+		type = IType.INT,
+		optional = true,
+		internal = true,
+		doc = @doc("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
+	@facet(name = IKeyword.SCHEDULES,
+		type = IType.CONTAINER,
+		optional = true,
+		internal = true,
+		doc = @doc("an ordered list of agents giving the order of their execution")),
+	@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.REPEAT,
+		type = IType.INT,
+		optional = true,
+		doc = @doc("In case of a batch experiment, expresses hom many times the simulations must be repeated")),
+	@facet(name = IKeyword.UNTIL,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("In case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
+	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc(""), internal = true),
+	@facet(name = IKeyword.TYPE,
+		type = IType.LABEL,
+		values = { IKeyword.BATCH, /* IKeyword.REMOTE, */IKeyword.GUI_, IKeyword.HEADLESS_UI },
+		optional = false,
+		doc = @doc("the type of the experiment (either 'gui' or 'batch'")) },
 	omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.MODEL })
 @validator(BatchValidator.class)
@@ -298,7 +297,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public void open() {
 		createAgent();
 		scope.getGui().prepareForExperiment(this);
-		agent.schedule();
+		agent.schedule(agent.getScope());
 		// agent.scheduleAndExecute(null);
 		if ( isBatch() ) {
 			agent.getScope().getGui().informStatus(" Batch ready ");

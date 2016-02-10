@@ -36,6 +36,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
+@doc("The root declaration of all models")
 public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	protected final Map<String, IExperimentPlan> experiments = new TOrderedHashMap();

@@ -14,6 +14,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
@@ -60,8 +61,7 @@ class ShapeExecuter extends DrawExecuter {
 	}
 
 	@Override
-		Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingData data)
-			throws GamaRuntimeException {
+	Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingData data) throws GamaRuntimeException {
 		IShape shape = constantShape == null ? Cast.asGeometry(scope, item.value(scope), false) : constantShape;
 		if ( shape == null ) { return null; }
 		ShapeDrawingAttributes attributes = computeAttributes(scope, data, shape);
@@ -119,7 +119,11 @@ class ShapeExecuter extends DrawExecuter {
 		for ( String s : textureNames ) {
 			GamaImageFile image;
 			image = new GamaImageFile(scope, s);
-			attributes.textures.add(image);
+			if ( !image.exists() ) {
+				throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);
+			} else {
+				attributes.textures.add(image);
+			}
 		}
 	}
 

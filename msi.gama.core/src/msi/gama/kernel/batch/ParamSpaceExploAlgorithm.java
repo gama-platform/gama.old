@@ -17,6 +17,7 @@ import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
@@ -67,9 +68,14 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	}
 
 	void initParams() {
-		IScope scope = GAMA.obtainNewScope();
-		initParams(scope);
-		GAMA.releaseScope(scope);
+		GAMA.run(new InScope() {
+
+			@Override
+			public Object run(final IScope scope) {
+				initParams(scope);
+				return null;
+			}
+		});
 	}
 
 	void initParams(final IScope scope) {}

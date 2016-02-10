@@ -1,24 +1,20 @@
 package msi.gaml.extensions.humanmoving;
 
 import java.util.*;
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.prep.PreparedPolygon;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.Different;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.MovingSkill;
-import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.prep.PreparedPolygon;
+import msi.gaml.types.IType;
 
 // @vars( {} )
 /*
@@ -34,7 +30,7 @@ public class HumanMovingSkill extends MovingSkill {
 	/**
 	 * LvMinh 1 Prim: move randomly. Has to be redefined for every class that implements this
 	 * interface.
-	 * 
+	 *
 	 * @param args the args speed (meter/sec) : the speed with which the agent wants to move
 	 *            distance (meter) : the distance the agent want to cover in one step amplitude (in
 	 *            degrees) : 360 or 0 means completely random move, while other values, combined
@@ -44,10 +40,17 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @return the prim CommandStatus
 	 */
 
-	@action(name = "wanderAndAvoid", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background"), @arg(name = "ignore_type") })
+	@action(name = "wanderAndAvoid",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background"), @arg(name = "ignore_type") })
 	public GamaPoint primMoveRandomlyAndAvidOthers(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
@@ -58,9 +61,9 @@ public class HumanMovingSkill extends MovingSkill {
 		double dist = computeDistance(scope, agent);
 		Double agentSize =
 			scope.hasArg("agent_size") ? Cast.asFloat(scope, scope.getArg("agent_size", IType.FLOAT)) : 0;
-		if ( agentSize != null ) {} else {
-			agentSize = new Double(2);
-		}
+		// if ( agentSize != null ) {} else {
+		// agentSize = new Double(2);
+		// }
 		// final Double s = args.floatValue("speed");
 		// if ( s != null ) {
 		// setSpeed(s);
@@ -155,7 +158,7 @@ public class HumanMovingSkill extends MovingSkill {
 	 * nmhung 1 Prim: move randomly event above other agents. Has to be redefined for every class
 	 * that implements this
 	 * interface.
-	 * 
+	 *
 	 * @param args the args speed (meter/sec) : the speed with which the agent wants to move
 	 *            distance (meter) : the distance the agent want to cover in one step amplitude (in
 	 *            degrees) : 360 or 0 means completely random move, while other values, combined
@@ -164,9 +167,16 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            agent with a geometry) has to be specified
 	 * @return the prim CommandStatus
 	 */
-	@action(name = "wanderAbove", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")) })
+	@action(name = "wanderAbove",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")) })
 	// @action("wanderAbove")
 	// @args( { "speed", "agent_size"})
 	public GamaPoint primMoveRandomlyAbove(final IScope scope) throws GamaRuntimeException {
@@ -232,7 +242,7 @@ public class HumanMovingSkill extends MovingSkill {
 	 * nmhung 1 Prim: move randomly in smokes or blackness. Has to be redefined for every class that
 	 * implements this
 	 * interface.
-	 * 
+	 *
 	 * @param args the args speed (meter/sec) : the speed with which the agent wants to move
 	 *            distance (meter) : the distance the agent want to cover in one step amplitude (in
 	 *            degrees) : 360 or 0 means completely random move, while other values, combined
@@ -241,11 +251,18 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            agent with a geometry) has to be specified
 	 * @return the prim CommandStatus
 	 */
-	@action(name = "blindWander", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT, optional = true),
-		@arg(name = "target", type = IType.AGENT, optional = true) })
+	@action(name = "blindWander",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background", type = IType.AGENT, optional = true),
+			@arg(name = "target", type = IType.AGENT, optional = true) })
 	// @action("blindWander")
 	// @args( { "speed", "agent_size", "background", "target"})
 	public GamaPoint primMoveRandomlyBlind(final IScope scope) throws GamaRuntimeException {
@@ -286,9 +303,8 @@ public class HumanMovingSkill extends MovingSkill {
 		final GamaPoint startingPoint = (GamaPoint) getCurrentAgent(scope).getLocation();
 
 		final double detectingRange = agentSize + maxDist;
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, getCurrentAgent(scope),
-				detectingRange, Different.with());
+		final GamaList<IAgent> neighbours = (GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope,
+			getCurrentAgent(scope), detectingRange, Different.with());
 		if ( backgroundAgent != null ) {
 			neighbours.remove(backgroundAgent);
 		}
@@ -335,9 +351,8 @@ public class HumanMovingSkill extends MovingSkill {
 		final int index = new Random().nextInt(8);
 
 		for ( int i = 0; i < 9; i++ ) {
-			final Geometry point =
-				GeometryUtils.FACTORY.createPoint(candidatePoint[(i + index) % 8].getLocation().toCoordinate()).buffer(
-					agentSize);
+			final Geometry point = GeometryUtils.FACTORY
+				.createPoint(candidatePoint[(i + index) % 8].getLocation().toCoordinate()).buffer(agentSize);
 			// Geometry point =
 			// ModelFactory.getGeometryFactory().createPoint(candidatePoint[(i+index)%8].toCoordinate()).buffer(agentSize);
 			if ( backgroundAgent != null ) {
@@ -348,7 +363,7 @@ public class HumanMovingSkill extends MovingSkill {
 						// body.getAgent().setVal("heading", GamaMath.checkHeading((i+index)%8));
 						break;
 					}
-				}// else if ( !isExteriorOfAgents(neighbours, point) ) {
+				} // else if ( !isExteriorOfAgents(neighbours, point) ) {
 					// isFreeZone = false;
 					// break;
 					// }
@@ -379,7 +394,7 @@ public class HumanMovingSkill extends MovingSkill {
 	 * nmhung 1 Prim: move randomly in smokes or blackness. Has to be redefined for every class that
 	 * implements this
 	 * interface.
-	 * 
+	 *
 	 * @param args the args speed (meter/sec) : the speed with which the agent wants to move
 	 *            distance (meter) : the distance the agent want to cover in one step amplitude (in
 	 *            degrees) : 360 or 0 means completely random move, while other values, combined
@@ -388,11 +403,18 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            agent with a geometry) has to be specified
 	 * @return the prim CommandStatus
 	 */
-	@action(name = "blindWander2", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT, optional = true),
-		@arg(name = "target", type = IType.AGENT, optional = true) })
+	@action(name = "blindWander2",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background", type = IType.AGENT, optional = true),
+			@arg(name = "target", type = IType.AGENT, optional = true) })
 	public GamaPoint primMoveRandomlyBlindSimple(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
@@ -504,7 +526,7 @@ public class HumanMovingSkill extends MovingSkill {
 	 * nmhung 1 Prim: move randomly in smokes or blackness. Has to be redefined for every class that
 	 * implements this
 	 * interface.
-	 * 
+	 *
 	 * @param args the args speed (meter/sec) : the speed with which the agent wants to move
 	 *            distance (meter) : the distance the agent want to cover in one step amplitude (in
 	 *            degrees) : 360 or 0 means completely random move, while other values, combined
@@ -514,12 +536,19 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @return the prim CommandStatus
 	 */
 
-	@action(name = "blindStraightWander", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT, optional = true),
-		@arg(name = "direction", type = IType.INT, optional = true),
-		@arg(name = "target", type = IType.AGENT, optional = true) })
+	@action(name = "blindStraightWander",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background", type = IType.AGENT, optional = true),
+			@arg(name = "direction", type = IType.INT, optional = true),
+			@arg(name = "target", type = IType.AGENT, optional = true) })
 	// @action("blindStraightWander")
 	// @args( { "speed", "agent_size", "background", "direction", "target"})
 	public GamaPoint primMoveStraightBlind(final IScope scope) throws GamaRuntimeException {
@@ -665,12 +694,19 @@ public class HumanMovingSkill extends MovingSkill {
 		return (GamaPoint) targetAgent.getLocation();
 	}
 
-	@action(name = "blindStraightWander2", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT, optional = true),
-		@arg(name = "direction", type = IType.INT, optional = true),
-		@arg(name = "target", type = IType.AGENT, optional = true) })
+	@action(name = "blindStraightWander2",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background", type = IType.AGENT, optional = true),
+			@arg(name = "direction", type = IType.INT, optional = true),
+			@arg(name = "target", type = IType.AGENT, optional = true) })
 	public GamaPoint primMoveStraightBlindSimple(final IScope scope) throws GamaRuntimeException {
 		// *****************************************************
 		final IAgent agent = getCurrentAgent(scope);
@@ -807,7 +843,7 @@ public class HumanMovingSkill extends MovingSkill {
 	 * nmhung 1 Prim: move randomly in smokes or blackness. Has to be redefined for every class that
 	 * implements this
 	 * interface.
-	 * 
+	 *
 	 * @param args the args speed (meter/sec) : the speed with which the agent wants to move
 	 *            distance (meter) : the distance the agent want to cover in one step amplitude (in
 	 *            degrees) : 360 or 0 means completely random move, while other values, combined
@@ -816,12 +852,19 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            agent with a geometry) has to be specified
 	 * @return the prim CommandStatus
 	 */
-	@action(name = "blindWallTracking", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT, optional = true),
-		@arg(name = "passedList", type = IType.LIST, optional = true),
-		@arg(name = "target", type = IType.AGENT, optional = true) })
+	@action(name = "blindWallTracking",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background", type = IType.AGENT, optional = true),
+			@arg(name = "passedList", type = IType.LIST, optional = true),
+			@arg(name = "target", type = IType.AGENT, optional = true) })
 	// @action("blindWallTracking")
 	// @args( { "target", "speed", "agent_size", "background", "passedList"})
 	// @setter("passedList")
@@ -1108,12 +1151,19 @@ public class HumanMovingSkill extends MovingSkill {
 	}
 
 	// ************
-	@action(name = "blindWallTracking2", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT, optional = true),
-		@arg(name = "passedList", type = IType.LIST, optional = true),
-		@arg(name = "target", type = IType.AGENT, optional = true) })
+	@action(name = "blindWallTracking2",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background", type = IType.AGENT, optional = true),
+			@arg(name = "passedList", type = IType.LIST, optional = true),
+			@arg(name = "target", type = IType.AGENT, optional = true) })
 	public GamaPoint primMoveWallTrackingBlindSimple(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
@@ -1303,7 +1353,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 * tmpy = startingPoint.y + maxDist*(pp0.y - pp2.y)/ds;
 		 * }
 		 * }*
-		 * 
+		 *
 		 * if(tmpx > startingPoint.x){
 		 * if(tmpy > startingPoint.y)
 		 * direction = 3;
@@ -1324,19 +1374,19 @@ public class HumanMovingSkill extends MovingSkill {
 		 * else
 		 * direction = 0;
 		 * }
-		 * 
+		 *
 		 * for(int i=0; i<8; i++){
 		 * ok[i] = false;
 		 * GamaPoint point = candidatePoint[i];
 		 * Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
 		 * //System.out.println("point : " + point+" candidat numero "+i);
-		 * 
+		 *
 		 * if (backgdGeom != null && ! backgdGeom.contains(geomCand)) {
 		 * System.out.println("le point n'est pas dans le background");
 		 * continue;
 		 * }
 		 * System.out.println("le point est dans le background !");
-		 * 
+		 *
 		 * PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal)geomCand);
 		 * freeSpace = true;
 		 * for (IAgent ag : neighbours) {
@@ -1345,13 +1395,13 @@ public class HumanMovingSkill extends MovingSkill {
 		 * break;
 		 * }
 		 * }
-		 * 
+		 *
 		 * if (freeSpace) {
 		 * count++;
 		 * ok[i] = true;
 		 * }
 		 * }
-		 * 
+		 *
 		 * if((count == 8)||(ok[(direction)%8] && ok[(1+direction)%8] && ok[(7+direction)%8] &&
 		 * (ok[(2+direction)%8] || ok[(6+direction)%8]))){
 		 * int tmp = (new Random()).nextInt(15);
@@ -1361,9 +1411,9 @@ public class HumanMovingSkill extends MovingSkill {
 		 * default: nextPoint = candidatePoint[(direction)%8]; break;
 		 * }
 		 * isFoundNextPoint = true;
-		 * 
+		 *
 		 * }else{
-		 * 
+		 *
 		 * for(int i=0; i<5; i++){
 		 * if ( (ok[(i+direction)%8]) && (!ok[(i+1+direction)%8])) {
 		 * isFoundNextPoint = true;
@@ -1420,7 +1470,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 	/**
 	 * LvMinh 2 Prim: move to the nearest named object (can be an agent or a GIS object) of a type .
-	 * 
+	 *
 	 * @param args the args, contain at least a parameter called "target". Another parameter can be
 	 *            "speed". if the agent displace inside a specific geometry, several other
 	 *            parameters have to be added: either the name of a precomputed graph "graph_name",
@@ -1428,14 +1478,21 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            discretisation method can be made between a triangulation and a square
 	 *            discretisation through the boolean "triangulation". At least for the square
 	 *            discretisation, a square size has to be chosen "square_size".
-	 * 
+	 *
 	 * @return the success, failure, running state of the action
 	 */
-	@action(name = "approach", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT, optional = true),
-		@arg(name = "target", type = IType.AGENT, optional = true) })
+	@action(name = "approach",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background", type = IType.AGENT, optional = true),
+			@arg(name = "target", type = IType.AGENT, optional = true) })
 	// @action("approach")
 	// @args( { "target", "speed", "agent_size", "background" })
 	public GamaPoint primMoveToTargetAndAvoidOthers(final IScope scope) throws GamaRuntimeException {
@@ -1588,7 +1645,7 @@ public class HumanMovingSkill extends MovingSkill {
 	/**
 	 * nmhung 2 Prim: move to the nearest named object (can be an agent or a GIS object) of a type
 	 * and avoid the passed postions .
-	 * 
+	 *
 	 * @param args the args, contain at least a parameter called "target". Another parameter can be
 	 *            "speed". if the agent displace inside a specific geometry, several other
 	 *            parameters have to be added: either the name of a precomputed graph "graph_name",
@@ -1596,15 +1653,22 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            discretisation method can be made between a triangulation and a square
 	 *            discretisation through the boolean "triangulation". At least for the square
 	 *            discretisation, a square size has to be chosen "square_size".
-	 * 
+	 *
 	 * @return the success, failure, running state of the action
 	 */
-	@action(name = "approachAvoidPassedPosition", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT, optional = true),
-		@arg(name = "target", type = IType.AGENT, optional = true),
-		@arg(name = "passedList", type = IType.LIST, optional = true), })
+	@action(name = "approachAvoidPassedPosition",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background", type = IType.AGENT, optional = true),
+			@arg(name = "target", type = IType.AGENT, optional = true),
+			@arg(name = "passedList", type = IType.LIST, optional = true), })
 	public GamaPoint primMoveToTargetAndAvoidPassedPosition(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent test = scope.getAgentScope();
@@ -1627,11 +1691,11 @@ public class HumanMovingSkill extends MovingSkill {
 		 * Object vitesse = scope.getVarValue("speed");
 		 * Object agent_size = scope.getVarValue("agent_size");
 		 * Object backg = scope.getVarValue("goal");
-		 * 
+		 *
 		 * Object age1 = scope.getArg("background",IType.SPECIES);
 		 * GamlAgent age3 = (GamlAgent)scope.getArg("background",IType.AGENT);
 		 * Object age4 = scope.getArg("vitesse",IType.FLOAT);
-		 * 
+		 *
 		 * Double fl = scope.getFloatArg("speed");
 		 * // IAgent ia = scope.getAgentVarValue(agent, "background");
 		 * // float flo = (Float)age4;
@@ -1698,12 +1762,12 @@ public class HumanMovingSkill extends MovingSkill {
 		 * if ( entity.getSpeciesName().equals(targetAgent.getSpeciesName()) ) {
 		 * neighbours.remove(i);
 		 * }
-		 * 
+		 *
 		 * if (entity.getSpeciesName().equals("metro")) {
 		 * metro = neighbours.get(i);
 		 * neighbours.remove(i);
 		 * }
-		 * 
+		 *
 		 * }
 		 */
 		neighbours.remove(backgroundAgent);
@@ -1726,7 +1790,7 @@ public class HumanMovingSkill extends MovingSkill {
 		// double mininalDoubleDistance = Double.MAX_VALUE;
 		/*
 		 * boolean isLooped = false;
-		 * 
+		 *
 		 * if(passedList != null){
 		 * for(int index=0; index < passedList.size(); index++){
 		 * GamaPoint pp = passedList.get(index);
@@ -1773,7 +1837,7 @@ public class HumanMovingSkill extends MovingSkill {
 					isFreeZone = false;
 					break;
 				}
-			}// else if ( !isExteriorOfAgents(neighbours, point) ) {
+			} // else if ( !isExteriorOfAgents(neighbours, point) ) {
 				// isFreeZone = false;
 				// break;
 				// }
@@ -1874,7 +1938,7 @@ public class HumanMovingSkill extends MovingSkill {
 																 * &&
 																 * backgroundAgent.getInnerGeometry()
 																 * .contains(point)
-																 */) {
+																 */ ) {
 						isFoundNextPoint = true;
 						nextPoint = candidatePoint[i];
 						break;
@@ -1896,7 +1960,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 * double y2 =
 		 * startingPoint.y +
 		 * Math.sqrt(maxDist * maxDist - (x - startingPoint.x) * (x - startingPoint.x));
-		 * 
+		 *
 		 * GamaPoint px = new GamaPoint(x, y1);
 		 * boolean isPassedPoint = false;
 		 * if(passedList != null){
@@ -1910,7 +1974,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 * }
 		 * }
 		 * }
-		 * 
+		 *
 		 * if(!isPassedPoint){
 		 * Geometry point =
 		 * ModelFactory.getGeometryFactory().createPoint(px.toCoordinate()).buffer(agentSize);
@@ -1933,9 +1997,9 @@ public class HumanMovingSkill extends MovingSkill {
 		 * }
 		 * }
 		 * }
-		 * 
-		 * 
-		 * 
+		 *
+		 *
+		 *
 		 * px = new GamaPoint(x, y2);
 		 * isPassedPoint = false;
 		 * if(passedList != null){
@@ -1948,7 +2012,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 * }
 		 * }
 		 * }
-		 * 
+		 *
 		 * if(!isPassedPoint){
 		 * Geometry point =
 		 * ModelFactory.getGeometryFactory().createPoint(px.toCoordinate()).buffer(agentSize);
@@ -1971,8 +2035,8 @@ public class HumanMovingSkill extends MovingSkill {
 		 * }
 		 * }
 		 * }
-		 * 
-		 * 
+		 *
+		 *
 		 * }
 		 */
 
@@ -2002,7 +2066,7 @@ public class HumanMovingSkill extends MovingSkill {
 	/**
 	 * nmhung 2 Prim: move to the nearest named object (can be an agent or a GIS object) of a type
 	 * and avoid the passed postions .
-	 * 
+	 *
 	 * @param args the args, contain at least a parameter called "target". Another parameter can be
 	 *            "speed". if the agent displace inside a specific geometry, several other
 	 *            parameters have to be added: either the name of a precomputed graph "graph_name",
@@ -2010,15 +2074,22 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            discretisation method can be made between a triangulation and a square
 	 *            discretisation through the boolean "triangulation". At least for the square
 	 *            discretisation, a square size has to be chosen "square_size".
-	 * 
+	 *
 	 * @return the success, failure, running state of the action
 	 */
-	@action(name = "approachAvoidPassedPosition2", args = {
-		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT, optional = true),
-		@arg(name = "target", type = IType.AGENT, optional = true),
-		@arg(name = "passedList", type = IType.LIST, optional = true), })
+	@action(name = "approachAvoidPassedPosition2",
+		args = {
+			@arg(name = "speed",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "agent_size",
+				type = IType.INT,
+				optional = true,
+				doc = @doc("specifiaction of size of the agent")),
+			@arg(name = "background", type = IType.AGENT, optional = true),
+			@arg(name = "target", type = IType.AGENT, optional = true),
+			@arg(name = "passedList", type = IType.LIST, optional = true), })
 	public GamaPoint primMoveToTargetAndAvoidPassedPositionSimple(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
@@ -2095,7 +2166,7 @@ public class HumanMovingSkill extends MovingSkill {
 		}
 		GamaPoint newLocation = null;
 		// System.out.println("**************************************\nlocation : " + startingPoint
-		// + "  target : " + target);
+		// + " target : " + target);
 		// ******
 		ArrayList<GamaPoint> passedList = (ArrayList<GamaPoint>) agent.getAttribute("passedList");// agent.getAttribute("passedList"));
 
@@ -2154,15 +2225,15 @@ public class HumanMovingSkill extends MovingSkill {
 					 * (targetPoint.x - startingPoint.x) * (targetPoint.x -
 					 * startingPoint.x));//Math.sqrt(Math.pow((targetPoint.y - startingPoint.y), 2)
 					 * + Math.pow((targetPoint.x - startingPoint.x), 2));
-					 * 
+					 *
 					 * tmpx = startingPoint.x + maxDist*(targetPoint.x -
 					 * startingPoint.x)/distanceToTarget;
 					 * tmpy = startingPoint.y + maxDist*(targetPoint.y -
 					 * startingPoint.y)/distanceToTarget;
 					 * candidatePoint[0] = new GamaPoint(tmpx,tmpy);
-					 * 
+					 *
 					 * sqrt2 = Math.sqrt(2);
-					 * 
+					 *
 					 * candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2,
 					 * startingPoint.y + maxDist/sqrt2);
 					 * candidatePoint[8] = new GamaPoint(startingPoint.x - maxDist/sqrt2,
@@ -2207,7 +2278,7 @@ public class HumanMovingSkill extends MovingSkill {
 					 * startingPoint.y - maxDist/sqrt2);
 					 * candidatePoint[5] = new GamaPoint(startingPoint.x - maxDist/sqrt2,
 					 * startingPoint.y + maxDist/sqrt2);
-					 * 
+					 *
 					 * ///////
 					 * i =0;
 					 */
@@ -2263,27 +2334,27 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @param r radius of the circle
 	 * @return a point that is both on the circle and the line OX
 	 */
-	private GamaPoint getNextDestinationInDirection(final GamaPoint O, final GamaPoint X, final double r,
-		final double epsilon) {
-		final GamaPoint D = new GamaPoint(O.x, O.y);
-		final GamaPoint inside = new GamaPoint(O.x, O.y);
-		final GamaPoint outside = new GamaPoint(X.x, X.y);
-		boolean isContinue = false;
-		do {
-			D.x = (inside.x + outside.x) / 2;
-			D.y = (inside.y + outside.y) / 2;
-			final double dd = (D.x - O.x) * (D.x - O.x) + (D.y - O.y) * (D.y - O.y);
-			if ( dd < r * r ) {
-				inside.x = D.x;
-				inside.y = D.y;
-			} else {
-				outside.x = D.x;
-				outside.y = D.y;
-			}
-			isContinue = Math.abs(dd - r * r) > epsilon * epsilon;
-		} while (isContinue);
-		return D;
-	}
+	// private GamaPoint getNextDestinationInDirection(final GamaPoint O, final GamaPoint X, final double r,
+	// final double epsilon) {
+	// final GamaPoint D = new GamaPoint(O.x, O.y);
+	// final GamaPoint inside = new GamaPoint(O.x, O.y);
+	// final GamaPoint outside = new GamaPoint(X.x, X.y);
+	// boolean isContinue = false;
+	// do {
+	// D.x = (inside.x + outside.x) / 2;
+	// D.y = (inside.y + outside.y) / 2;
+	// final double dd = (D.x - O.x) * (D.x - O.x) + (D.y - O.y) * (D.y - O.y);
+	// if ( dd < r * r ) {
+	// inside.x = D.x;
+	// inside.y = D.y;
+	// } else {
+	// outside.x = D.x;
+	// outside.y = D.y;
+	// }
+	// isContinue = Math.abs(dd - r * r) > epsilon * epsilon;
+	// } while (isContinue);
+	// return D;
+	// }
 
 	/**
 	 * LvMinh 4 return the square of distance between 2 point
@@ -2310,7 +2381,7 @@ public class HumanMovingSkill extends MovingSkill {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 
 }

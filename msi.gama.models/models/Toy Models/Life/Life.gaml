@@ -72,7 +72,7 @@ experiment "Game of Life" type: gui {
 	parameter 'Color of emerging cells:' var: emergingcolor category: 'Colors';
 	parameter 'Color of dead cells:' var: deadcolor category: 'Colors';
 	output {
-		display Life{
+		display Life type: opengl{
 			grid life_cell;
 		}
 

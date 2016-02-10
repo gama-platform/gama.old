@@ -19,6 +19,7 @@ import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.*;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.util.file.GamaGeometryFile;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.files.GamaObjFile;
@@ -62,9 +63,14 @@ public class GeometryCache {
 		if ( extension.equals("obj") ) {
 			((GamaObjFile) file).drawToOpenGL(gl);
 		} else {
-			IScope scope = GAMA.obtainNewScope();
-			GamaShape g = (GamaShape) file.getGeometry(scope);
-			GAMA.releaseScope(scope);
+			GamaShape g = GAMA.run(new InScope<GamaShape>() {
+
+				@Override
+				public GamaShape run(final IScope scope) {
+					return (GamaShape) file.getGeometry(scope);
+				}
+
+			});
 			// DrawingAttributes attributes =
 			// new ShapeDrawingAttributes(new GamaPoint(0, 0, 0), defautColor, defautColor, g.getGeometricalType());
 			// GeometryObject object = new GeometryObject(g.getInnerGeometry(), attributes, null);

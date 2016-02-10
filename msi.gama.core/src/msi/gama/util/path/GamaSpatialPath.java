@@ -194,7 +194,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				realObjects.put(nodes.get(i).getGeometry(), ag);
 			}
 		}
-		IAgent ag = nodes.get(nodes.size() - 1).getAgent();
+		IAgent ag = nodes.isEmpty() ? null : nodes.get(nodes.size() - 1).getAgent();
 		if ( ag != null ) {
 			// MODIF: put?
 			realObjects.put(nodes.get(nodes.size() - 1).getGeometry(), ag);

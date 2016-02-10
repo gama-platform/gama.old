@@ -2,8 +2,8 @@ model ants
 
 global {
 	int ants_number <- 100 min: 1 max: 2000 ;
-	float evaporation_rate <- 5.0 min: 0.0 max: 240.0 ;
-	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 ;
+	float evaporation_rate <- 0.1 min: 0.0 max: 1.0 ;
+	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 ;
 	bool use_icons <- true ;
 	bool display_state <- true;
 	int gridsize <- 75 ;
@@ -19,7 +19,7 @@ global {
 	init{  
 		create ant number: ants_number with: [location::any_location_in (ant_grid(center))] ;
 	}
-	
+
 	reflex diffuse {
       diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
@@ -29,12 +29,11 @@ global {
 
 grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: false {
 	list<ant_grid> neighbours <- self neighbors_at 1;
-	bool multiagent <- true ;
 	float road <- 0.0 max:240.0 update: (road<=evaporation_rate) ? 0.0 : road-evaporation_rate;
 	int type <- int(types at {grid_x,grid_y}) ;
 	bool isNestLocation <- (self distance_to center) < 4 ;
 	bool isFoodLocation <- type = 2 ; 
-	rgb color <- isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) update: isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) ;
+	rgb color <- isNestLocation ? °sienna:((food > 0)? °brown : ((road < 0.001)? #darkgoldenrod: ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) update: isNestLocation ? °sienna:((food > 0)? °brown : ((road < 0.001)?#darkgoldenrod : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) ;
 	int food <- isFoodLocation ? 5 : 0 ;
 	const nest type: int <- 300 - int(self distance_to center) ;
 	
@@ -90,13 +89,13 @@ species ant skills: [moving] control: fsm {
 		transition to: wandering when: (place.road < 0.05) ;
 	}
 	aspect text {
-//		if use_icons {
-//			draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: location size: 5 ;
-//		} else {
-//			draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
-//		}
+		if use_icons {
+			draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: location size: {8,5} ;
+		} else {
+			draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
+		}
 		if display_state {
-			draw state at: location + {-3,1.5} color: °white size: 0.8 perspective:true;
+			draw state at: location + {-3,1.5} color: °white font: font("Helvetica", 14 * #zoom, #plain) perspective:true;
 		}
 	} 
 	aspect default {
@@ -111,7 +110,7 @@ experiment Ant type: gui {
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display' ;
 	parameter 'Display state of agents:' var: display_state category: 'Display' ;
 	output {
-		display Ants type: opengl {
+		display Ants type: opengl  {
 			grid ant_grid ;
 			species ant aspect: text ;
 		}

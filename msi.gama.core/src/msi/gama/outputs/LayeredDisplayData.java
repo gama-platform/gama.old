@@ -49,7 +49,7 @@ public class LayeredDisplayData {
 	 */
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
 	private Color ambientColor = new GamaColor(100, 100, 100, 255);
-	private Color diffuseColor = new GamaColor(10, 10, 10, 255);
+	private Color diffuseColor = new GamaColor(125, 125, 125, 255);
 	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	/**
 	 * Properties
@@ -67,7 +67,7 @@ public class LayeredDisplayData {
 	 * OpenGL
 	 */
 
-	private static ILocation noChange = new GamaPoint(-1, -1, -1);
+	public static ILocation noChange = new GamaPoint(-1, -1, -1);
 	//
 	private boolean isOutputtingIn3D = false;
 	private boolean isTesselating = false;
