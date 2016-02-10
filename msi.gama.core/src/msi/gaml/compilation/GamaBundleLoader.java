@@ -13,6 +13,7 @@ package msi.gaml.compilation;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Paths;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import gnu.trove.map.hash.THashMap;
@@ -59,6 +60,7 @@ public class GamaBundleLoader {
 		for ( IExtension e : extensions ) {
 			IContributor plugin = e.getContributor();
 			GAMA_PLUGINS.add(plugin.getName());
+			System.out.println("plugin " + plugin.getName());
 			if ( hasModels(plugin) ) {
 				MODEL_PLUGINS.put(plugin.getName(), "models");
 			}
@@ -120,16 +122,16 @@ public class GamaBundleLoader {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
+		System.out.println(" erreur " + url);
 		if ( url == null ) { return false; }
 		File file = null;
 		try {
-			URI uri = FileLocator.resolve(url).toURI().normalize();
-			file = new File(uri);
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
+			URL new_url = FileLocator.resolve(url);
+			java.nio.file.Path normalizedPath = Paths.get(new_url.getPath()).normalize();
+			file = normalizedPath.toFile(); 
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
 		return file != null && file.exists() && file.isDirectory();
 	}
 
