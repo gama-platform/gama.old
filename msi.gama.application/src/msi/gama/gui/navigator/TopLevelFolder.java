@@ -84,7 +84,9 @@ public abstract class TopLevelFolder extends VirtualContent {
 		URL urlRep = null;
 		try {
 			URL new_url  = FileLocator.resolve(new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/"));
-			java.nio.file.Path normalizedPath = Paths.get(new_url.getPath()).normalize();
+			//windows URL formating
+			String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
+			java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
 			urlRep = normalizedPath.toUri().toURL(); 
 			//urlRep = FileLocator.resolve(new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/"));
 			

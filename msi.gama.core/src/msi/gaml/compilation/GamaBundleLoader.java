@@ -42,25 +42,25 @@ public class GamaBundleLoader {
 	public static String CREATE_EXTENSION = "gama.create";
 	public static String MODELS_EXTENSION = "gama.models";
 	public static String CONTENT_EXTENSION = "org.eclipse.core.contenttype.contentTypes";
-	private static Set<String> GAMA_PLUGINS = new THashSet();
-	private static Map<String, String> MODEL_PLUGINS = new THashMap();
-	public static Set<String> HANDLED_FILE_EXTENSIONS = new THashSet();
+	private static Set<String> GAMA_PLUGINS = new THashSet<String>();
+	private static Map<String, String> MODEL_PLUGINS = new THashMap<String,String>();
+	public static Set<String> HANDLED_FILE_EXTENSIONS = new THashSet<String>();
 
 	public static void preBuildContributions() {
 		final long start = System.currentTimeMillis();
-
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		// We retrieve the elements declared as extensions to the GAML language, either with the new or the deprecated extension
-		Set<IExtension> extensions = new HashSet();
+		Set<IExtension> extensions = new HashSet<IExtension>();
 		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
 		extensions.addAll(Arrays.asList(p.getExtensions()));
+
 		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
+		
 		extensions.addAll(Arrays.asList(p.getExtensions()));
+		
 		// We retrieve their contributor plugin and add them to the GAMA_PLUGINS. In addition, we verify if they declare a folder called `models`
 		for ( IExtension e : extensions ) {
 			IContributor plugin = e.getContributor();
 			GAMA_PLUGINS.add(plugin.getName());
-			System.out.println("plugin " + plugin.getName());
 			if ( hasModels(plugin) ) {
 				MODEL_PLUGINS.put(plugin.getName(), "models");
 			}
@@ -94,7 +94,7 @@ public class GamaBundleLoader {
 
 		// We gather all the content types extensions defined in GAMA plugins (not in the other ones)
 		IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
-		Set<IExtension> contentExtensions = new HashSet();
+		Set<IExtension> contentExtensions = new HashSet<IExtension>();
 		contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
 		for ( IExtension ext : contentExtensions ) {
 			if ( GAMA_PLUGINS.contains(ext.getContributor().getName()) ) {
@@ -109,7 +109,8 @@ public class GamaBundleLoader {
 		//
 		GAMA.getGui().debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
-
+	
+	
 	/**
 	 * @param contributor
 	 * @return
@@ -122,12 +123,14 @@ public class GamaBundleLoader {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		System.out.println(" erreur " + url);
 		if ( url == null ) { return false; }
 		File file = null;
 		try {
+			
 			URL new_url = FileLocator.resolve(url);
-			java.nio.file.Path normalizedPath = Paths.get(new_url.getPath()).normalize();
+			//windows URL formating
+			String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
+			java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
 			file = normalizedPath.toFile(); 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -135,6 +138,7 @@ public class GamaBundleLoader {
 		return file != null && file.exists() && file.isDirectory();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void preBuild(final String s) {
 		final long start = System.currentTimeMillis();
 		Class<IGamlAdditions> gamlAdditions = null;
