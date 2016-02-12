@@ -7,11 +7,13 @@ package msi.gama.gui.navigator;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.util.*;
+import java.util.concurrent.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.ui.PlatformUI;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.gui.navigator.images.ImageDataLoader;
 import msi.gama.gui.swt.SwtGui;
@@ -149,13 +151,15 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return instance;
 	}
 
+	ExecutorService executor = Executors.newCachedThreadPool();
+
 	private FileMetaDataProvider() {
 		ResourcesPlugin.getWorkspace().getSynchronizer().add(CACHE_KEY);
 	};
 
 	@Override
 	public String getDecoratorSuffix(final Object element) {
-		IGamaFileMetaData data = getMetaData(element, false);
+		IGamaFileMetaData data = getMetaData(element, false, true);
 		if ( data == null ) { return ""; }
 		return data.getSuffix();
 	}
@@ -168,8 +172,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		IGamaFileMetaData data = readMetadata(project, infoClass, includeOutdated);
 		if ( data == null ) {
 			try {
-				data = new ProjectInfo(project);
-				storeMetadata(project, data);
+				storeMetadata(project, new ProjectInfo(project), false);
 			} catch (CoreException e) {
 				e.printStackTrace();
 				return null;
@@ -183,7 +186,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @see msi.gama.gui.navigator.IFileMetaDataProvider#getMetaData(org.eclipse.core.resources.IFile)
 	 */
 	@Override
-	public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated) {
+	public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated,
+		final boolean immediately) {
 		if ( element instanceof IProject ) { return getMetaData((IProject) element, includeOutdated); }
 		IFile file = SwtGui.adaptTo(element, IFile.class, IFile.class);
 
@@ -194,30 +198,62 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				if ( file == null || !file.exists() ) { return null; }
 			}
 		} else if ( !file.isAccessible() ) { return null; }
-		String ct = getContentTypeId(file);
+		final String ct = getContentTypeId(file);
 		Class infoClass = CLASSES.get(ct);
 		if ( infoClass == null ) { return null; }
 		IGamaFileMetaData data = readMetadata(file, infoClass, includeOutdated);
 		if ( data == null ) {
-			if ( SHAPEFILE_CT_ID.equals(ct) ) {
-				data = createShapeFileMetaData(file);
-			} else if ( OSM_CT_ID.equals(ct) ) {
-				data = createOSMMetaData(file);
-			} else if ( IMAGE_CT_ID.equals(ct) ) {
-				data = createImageFileMetaData(file);
-			} else if ( CSV_CT_ID.equals(ct) ) {
-				data = createCSVFileMetaData(file);
-			} else if ( GAML_CT_ID.equals(ct) ) {
-				data = createGamlFileMetaData(file);
-			} else if ( SHAPEFILE_SUPPORT_CT_ID.equals(ct) ) {
-				data = createShapeFileSupportMetaData(file);
+			final IFile theFile = file;
+			Runnable create = new Runnable() {
+
+				@Override
+				public void run() {
+					IGamaFileMetaData data = null;
+					if ( SHAPEFILE_CT_ID.equals(ct) ) {
+						data = createShapeFileMetaData(theFile);
+					} else if ( OSM_CT_ID.equals(ct) ) {
+						data = createOSMMetaData(theFile);
+					} else if ( IMAGE_CT_ID.equals(ct) ) {
+						data = createImageFileMetaData(theFile);
+					} else if ( CSV_CT_ID.equals(ct) ) {
+						data = createCSVFileMetaData(theFile);
+					} else if ( GAML_CT_ID.equals(ct) ) {
+						data = createGamlFileMetaData(theFile);
+					} else if ( SHAPEFILE_SUPPORT_CT_ID.equals(ct) ) {
+						data = createShapeFileSupportMetaData(theFile);
+					}
+					// Last chance: we generate a generic info
+					if ( data == null ) {
+						data = createGenericFileMetaData(theFile);
+					}
+					// System.out
+					// .println("Storing the metadata just created (or recreated) while reading it for " + theFile);
+					storeMetadata(theFile, data, false);
+					try {
+						theFile.refreshLocal(IResource.DEPTH_ZERO, null);
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
+					GAMA.getGui().asyncRun(new Runnable() {
+
+						@Override
+						public void run() {
+							// Fire a LabelProviderChangedEvent to notify eclipse views
+							// that label provider has been changed for the resources
+							// System.out.println("Finally: updating the decorator manager");
+							PlatformUI.getWorkbench().getDecoratorManager().update("msi.gama.application.decorator");
+						}
+					});
+
+				}
+
+			};
+			if ( immediately ) {
+				create.run();
+			} else {
+				executor.submit(create);
 			}
-			// Last chance: we generate a generic info
-			if ( data == null ) {
-				data = createGenericFileMetaData(file);
-			}
-			// System.out.println("Storing the metadata just created (or recreated) while reading it for " + file);
-			storeMetadata(file, data);
+
 		}
 		return data;
 	}
@@ -245,7 +281,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IPath location = Path.fromOSString(f.getAbsolutePath());
 		IFile file = workspace.getRoot().getFileForLocation(location);
-		storeMetadata(file, data);
+		storeMetadata(file, data, false);
 
 	}
 
@@ -299,10 +335,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		}
 	}
 
-	public void storeMetadata(final IResource file, final IGamaFileMetaData data) {
-		storeMetadata(file, data, false);
-	}
-
 	/**
 	 * @param file
 	 */
@@ -322,51 +354,21 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @return
 	 */
 	private ImageInfo createImageFileMetaData(final IFile file) {
-		// ImageDescriptor descriptor = null;
 		ImageInfo imageInfo = null;
-		// try {
-		// Object o = file.getSessionProperty(CACHE_KEY);
-		// if ( o instanceof ImageDescriptor ) {
-		// descriptor = (ImageDescriptor) o;
-		// }
-		// } catch (CoreException e) {}
-
-		// if ( descriptor == null ) {
 		ImageData imageData = null;
-		// Image image = null;
 
 		int type = -1, width = -1, height = -1;
 		try {
 			imageData = ImageDataLoader.getImageData(file);
-			// Display display = SwtGui.getDisplay();
-			// image = new Image(display, imageData);
 		} catch (Exception ex) {
 			System.out.println("Error in loading " + file.getLocation().toString());
 		}
 		if ( imageData != null ) {
-			// try {
 			width = imageData.width;
 			height = imageData.height;
 			type = imageData.type;
-			// if ( image != null ) {
-			// image = GamaIcons.scaleImage(image.getDevice(), image, 16, 16);
-			// descriptor = ImageDescriptor.createFromImageData(image.getImageData());
-			// }
-			// } catch (Exception ex) {
-			// System.out.println("Error in loading " + file.getLocation().toString());
-			// } finally {
-			// if ( image != null ) {
-			// image.dispose();
-			// }
-			// }
-			// }
-
-			imageInfo = new ImageInfo(file.getModificationStamp(), /* descriptor, */type, width, height);
-			// try {
-			// file.setSessionProperty(CACHE_KEY, descriptor);
-			// } catch (CoreException e) {}
-
 		}
+		imageInfo = new ImageInfo(file.getModificationStamp(), type, width, height);
 		return imageInfo;
 
 	}
@@ -418,7 +420,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return p != null && "gaml".equals(p.getFileExtension())/* GAML_CT_ID.equals(getContentTypeId(p)) */;
 	}
 
-	public static String getContentTypeId(final IFile p) {
+	public static String getContentTypeIdOld(final IFile p) {
 		IContentDescription desc;
 		try {
 			desc = p.getContentDescription();
@@ -433,6 +435,22 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if ( OSMExt.contains(ext) ) { return OSM_CT_ID; }
 		if ( longNames.contains(ext) ) { return SHAPEFILE_SUPPORT_CT_ID; }
 		return "";
+	}
+
+	public static String getContentTypeId(final IFile p) {
+		IContentType ct = Platform.getContentTypeManager().findContentTypeFor(p.getFullPath().toOSString());
+		if ( ct != null ) { return ct.getId(); }
+		String ext = p.getFileExtension();
+		if ( "gaml".equals(ext) ) { return GAML_CT_ID; }
+		if ( "shp".equals(ext) ) { return SHAPEFILE_CT_ID; }
+		if ( OSMExt.contains(ext) ) { return OSM_CT_ID; }
+		if ( longNames.contains(ext) ) { return SHAPEFILE_SUPPORT_CT_ID; }
+		return "";
+	}
+
+	public static boolean isShapeFileSupport(final IFile p) {
+		String ext = p.getFileExtension();
+		return longNames.contains(ext);
 	}
 
 	public static IResource shapeFileSupportedBy(final IFile r) {

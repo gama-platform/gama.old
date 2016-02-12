@@ -61,7 +61,7 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 			IFile f = (IFile) element;
 			String s = f.getFileExtension();
 			if ( isHandled(s) ) {
-				if ( FileMetaDataProvider.getContentTypeId(f) == FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID ) {
+				if ( FileMetaDataProvider.isShapeFileSupport(f) ) {
 					return GamaIcons.create("file.shapesupport2").image();
 				} else {
 					return null;

@@ -36,7 +36,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			URI iu = detector.getURI((StringLiteral) o);
 			if ( iu != null ) {
 				IFile file = detector.getFile(iu);
-				IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false);
+				IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 				if ( data != null ) {
 					String s = data.getDocumentation();
 					if ( s != null ) {

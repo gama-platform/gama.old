@@ -193,7 +193,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 		if ( info != null ) { return info; }
 		IFileMetaDataProvider p = scope.getGui().getMetaDataProvider();
 		if ( p != null ) {
-			info = (CSVInfo) p.getMetaData(getFile(), false);
+			info = (CSVInfo) p.getMetaData(getFile(), false, true);
 			if ( CSVSep != null && info != null && !info.delimiter.equals(CSVSep.charAt(0)) ) {
 				info = null;
 			}

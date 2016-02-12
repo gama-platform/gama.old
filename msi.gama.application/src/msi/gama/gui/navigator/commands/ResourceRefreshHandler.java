@@ -27,7 +27,7 @@ public class ResourceRefreshHandler extends AbstractHandler {
 
 			@Override
 			public void run() {
-				FileMetaDataProvider.getInstance().storeMetadata(file, null);
+				FileMetaDataProvider.getInstance().storeMetadata(file, null, false);
 			}
 		});
 	}

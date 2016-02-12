@@ -22,8 +22,11 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 		if ( SwtGui.NAVIGATOR_METADATA.getValue() ) {
-			IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element, false);
-			if ( data == null ) { return; }
+			IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element, false, false);
+			if ( data == null ) {
+				decoration.addSuffix(" ");
+				return;
+			}
 			String suffix = data.getSuffix();
 			if ( suffix != null && !suffix.isEmpty() ) {
 				decoration.addSuffix(" (" + suffix + ")");

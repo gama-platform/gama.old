@@ -81,7 +81,7 @@ public class CSVModel implements IRowChangesListener {
 	/**
 	 * Get the character that defines comment lines
 	 * @return the comment line starting character. If no comments are allowed in this
-	 * file, then Character.UNASSIGNED constant must be returned;
+	 *         file, then Character.UNASSIGNED constant must be returned;
 	 *
 	 */
 	public char getCommentChar() {
@@ -505,6 +505,6 @@ public class CSVModel implements IRowChangesListener {
 	 * @return the info
 	 */
 	public CSVInfo getInfo() {
-		return (CSVInfo) FileMetaDataProvider.getInstance().getMetaData(file, false);
+		return (CSVInfo) FileMetaDataProvider.getInstance().getMetaData(file, false, true);
 	}
 }

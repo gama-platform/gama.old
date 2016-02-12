@@ -1,20 +1,20 @@
 /*********************************************************************************************
- * 
  *
- * 'SwitchWorkspaceHandler.java', in plugin 'msi.gama.application', is part of the source code of the 
+ *
+ * 'SwitchWorkspaceHandler.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
-import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
 import org.eclipse.core.commands.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
+import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
 
 public class SwitchWorkspaceHandler extends AbstractHandler {
 
