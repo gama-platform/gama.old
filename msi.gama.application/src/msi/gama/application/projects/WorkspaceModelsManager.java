@@ -14,6 +14,7 @@ package msi.gama.application.projects;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.*;
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +26,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.compilation.SystemLogger;
 
 /**
  * Class InitialModelOpener.
@@ -132,6 +134,8 @@ public class WorkspaceModelsManager {
 		// No error in case of an empty argument
 		if ( filePath == null || filePath.isEmpty() || StringUtils.isWhitespace(filePath) ) { return null; }
 		IPath path = new Path(filePath);
+		
+		System.out.println("padfdsqfsq dfsqf fsdqqs " + filePath);
 		// 1st case: the path can be identified as a file residing in the workspace
 		IFile result = findInWorkspace(path);
 		if ( result != null ) { return result; }
@@ -349,18 +353,29 @@ public class WorkspaceModelsManager {
 	private static void linkModelsToWorkspace(final String plugin, final String path, final boolean core) {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		URL urlRep = null;
+		File modelsRep = null;
 		try {
 			String ext = path == "." ? "/" : "/" + path + "/";
-			urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + plugin + ext));
-			urlRep = urlRep.toURI().normalize().toURL();
+			//urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + plugin + ext));
+			//urlRep = urlRep.toURI().normalize().toURL();
+			
+			//urlRep = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
+			
+			URL new_url = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
+			String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
+			java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
+			//urlRep = normalizedPath.toUri().toURL();
+			modelsRep = normalizedPath.toFile();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
-		} catch (URISyntaxException e) {
+		} /*catch (URISyntaxException e) {
 			e.printStackTrace();
-		}
+		}*/
 
-		File modelsRep = new File(urlRep.getPath());
+		//File modelsRep = new File(urlRep.getPath());
+		System.out.println("chargemen" + modelsRep.getAbsolutePath() );
 		Map<File, IPath> foundProjects = new HashMap();
 		findProjects(modelsRep, foundProjects);
 		importBuiltInProjects(plugin, core, workspace, foundProjects);
@@ -534,10 +549,18 @@ public class WorkspaceModelsManager {
 	public static String getCurrentGamaStampString() {
 		String gamaStamp = null;
 		try {
-			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"));
-			File modelsRep = new File(urlRep.getPath());
+			URL tmpURL = new URL("platform:/plugin/msi.gama.models/models/");
+			URL new_url = FileLocator.resolve(tmpURL);
+			String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
+			java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
+			File modelsRep = normalizedPath.toFile();
+			
+			//loading file from URL Path is not a good idea. There are some bugs
+			//File modelsRep = new File(urlRep.getPath());
+
 			long time = modelsRep.lastModified();
 			gamaStamp = ".built_in_models_" + time;
+			
 			System.out.println("Version of the models in GAMA = " + gamaStamp);
 		} catch (IOException e) {
 			e.printStackTrace();
