@@ -439,6 +439,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public IPopulation getPopulationFor(final ISpecies species) {
 		// TODO Auto-generated method stub
+		if ( species == getModel() ) { return getSimulationPopulation(); }
 		return this.getSimulation().getPopulationFor(species.getName());
 
 	}

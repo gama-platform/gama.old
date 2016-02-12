@@ -1344,6 +1344,16 @@
       <handler
             class="msi.gama.gui.swt.commands.SavePerspectiveHandler"
             commandId="org.eclipse.ui.window.savePerspective">
+         <activeWhen>
+            <or>
+               <reference
+                     definitionId="isInModelingPerspective">
+               </reference>
+               <reference
+                     definitionId="isInSimulationPerspective">
+               </reference>
+            </or>
+         </activeWhen>
       </handler>
    </extension>
    <extension

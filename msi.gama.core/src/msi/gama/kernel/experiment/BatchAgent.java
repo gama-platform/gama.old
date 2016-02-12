@@ -16,8 +16,10 @@ import org.jfree.data.statistics.Statistics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.IParameter.Batch;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.outputs.IOutputManager;
+import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
@@ -35,7 +37,7 @@ import msi.gaml.variables.IVariable;
 public class BatchAgent extends ExperimentAgent {
 
 	private final IExpression stopCondition;
-	private int runNumber, repeatIndex;
+	private int runNumber;
 	private ParametersSet currentSolution;
 	private Double[] seeds;
 	private final List<Double> fitnessValues = new ArrayList();
@@ -85,39 +87,37 @@ public class BatchAgent extends ExperimentAgent {
 
 	@Override
 	public Object _init_(final IScope scope) {
-
 		getSpecies().getExplorationAlgorithm().initializeFor(scope, this);
+		IOutputManager outputs = getSpecies().getExperimentOutputs();
+		if ( outputs != null ) {
+			outputs.init(scope);
+		}
 		return this;
-	}
-
-	public ParametersSet getCurrentSolution() {
-		return currentSolution;
 	}
 
 	@Override
 	public void reset() {
-		if ( getSimulation() != null ) {
-			try { // while the simulation is still "alive"
+		// We first save the results of the various simulations
+		IExpression fitness = getSpecies().getExplorationAlgorithm().getFitnessExpression();
+		FileOutput output = getSpecies().getLog();
+		try {
+			for ( IAgent sim : getSimulationPopulation().toArray() ) {
 				double lastFitnessValue = 0;
-				IExpression fitness = getSpecies().getExplorationAlgorithm().getFitnessExpression();
 				if ( fitness != null ) {
-					lastFitnessValue = Cast.asFloat(getScope(), fitness.value(getScope()));
+					lastFitnessValue = Cast.asFloat(sim.getScope(), fitness.value(sim.getScope()));
 					fitnessValues.add(lastFitnessValue);
 				}
-				if ( getSpecies().getLog() != null ) {
+				if ( output != null ) {
 					getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
 				}
-			} catch (GamaRuntimeException e) {
-				e.addContext("in saving the results of the batch");
-				GAMA.reportError(getScope(), e, true);
 			}
+
+		} catch (GamaRuntimeException e) {
+			e.addContext("in saving the results of the batch");
+			GAMA.reportError(getScope(), e, true);
 		}
 		super.reset();
 	}
-
-	// void initRandom() {
-	//
-	// }
 
 	/**
 	 *
@@ -153,58 +153,50 @@ public class BatchAgent extends ExperimentAgent {
 				p.setValue(getScope(), entry.getValue());
 			}
 		}
-		// We then run a number of simulations with the same solution
-		for ( repeatIndex = 0; repeatIndex < getSeeds().length; repeatIndex++ ) {
+		// We then create a number of simulations with the same solution
+		for ( int repeatIndex = 0; repeatIndex < getSeeds().length; repeatIndex++ ) {
 			setSeed(getSeeds()[repeatIndex]);
-			createSimulation(currentSolution, false);
-			if ( simulation != null && !simulation.dead() ) {
-				getScope().getGui().prepareForSimulation(simulation);
-				simulation.schedule(getScope());
-				IScope scope = simulation.getScope();
-				// simulation.getScheduler().insertAgentToInit(scope, simulation, null);
-				// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
-				// getActionExecuter().init(scope);
-
-				// This inner while loop runs the simulation and controls its execution
-				while (simulation != null) {
-					// AD: replaced 'simulation.step(scope)' by the following to fix Issue #1264
-					boolean stepOk = scope.step(simulation.getPopulation());
-					if ( !stepOk ) {
-						break;
-					}
-					boolean mustStop = Cast.asBool(scope, scope.evaluate(stopCondition, simulation));
-					if ( mustStop ) {
-						break;
-					}
-					scope.getGui().informStatus("Run " + runNumber + " | Simulation " + (repeatIndex + 1) + "/" +
-						getSeeds().length + " | Cycle " + simulation.getClock().getCycle());
-					// TODO This is where any update of the outputs of simulations should be introduced
-					// We then verify that the front scheduler has not been paused
-					while (getSpecies().getController().getScheduler().paused && !dead) {
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
+			createSimulation(currentSolution, true);
+		}
+		while (getSimulationPopulation().hasScheduledSimulations()) {
+			// We step all the simulations
+			getSimulationPopulation().step(getScope());
+			String cycles = "";
+			// We evaluate their stopCondition and unschedule the ones who return true
+			for ( IAgent sim : getSimulationPopulation().toArray() ) {
+				SimulationAgent agent = (SimulationAgent) sim;
+				cycles += " " + simulation.getClock().getCycle();
+				boolean mustStop = Cast.asBool(sim.getScope(), sim.getScope().evaluate(stopCondition, sim));
+				if ( mustStop ) {
+					getSimulationPopulation().unscheduleSimulation(agent);
 				}
 			}
-			// When a simulation is finished, we give a chance to the outputs of the experiment and the experiment
-			// agent itself to "step" once, effectively emulating what the front scheduler should do. The simulation is
-			// still "alive" at this stage, which allows to retrieve information from it
-			super.step(getScope());
-			IOutputManager manager = getSpecies().getExperimentOutputs();
-			if ( manager != null ) {
-				manager.step(getScope());
-			}
+			// We inform the status line
+			getScope().getGui()
+				.informStatus("Run " + runNumber + " | " + seeds.length + " simulations | Cycles " + cycles);
 
-			// If the agent is dead, we return immediately
-			if ( dead ) { return 0.0; }
-			// We reset the experiment agent to erase traces of the current simulation
-			reset();
-			// We update the parameters
-			getScope().getGui().showParameterView(getSpecies());
+			// We then verify that the front scheduler has not been paused
+			while (getSpecies().getController().getScheduler().paused && !dead) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
+
+		// When the simulations are finished, we give a chance to the outputs of the experiment and the experiment
+		// agent itself to "step" once, effectively emulating what the front scheduler should do. The simulations are
+		// still "alive" at this stage (even if they are not scheduled anymore), which allows to retrieve information from them
+		super.step(getScope());
+
+		// If the agent is dead, we return immediately
+		if ( dead ) { return 0.0; }
+		// We reset the experiment agent to erase traces of the current simulations
+		reset();
+		// We update the parameters
+		getScope().getGui().showParameterView(getSpecies());
+
 		// We then return the combination (average, min or max) of the different fitness values computed by the
 		// different simulation.
 		short fitnessCombination = getSpecies().getExplorationAlgorithm().getCombination();

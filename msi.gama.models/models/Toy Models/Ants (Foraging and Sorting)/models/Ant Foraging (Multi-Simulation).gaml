@@ -1,7 +1,7 @@
 model ants
 
 global {
-	float evaporation_rate <- 5.0 min: 0.0 max: 240.0 parameter: 'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
+	float evaporation_rate <- 0.05 min: 0.0 max: 1.0 parameter: 'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
 	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
 	int gridsize <- 100 min: 30 parameter: 'Width and Height of the grid:' category: 'Environment and Population';
 	int ants_number <- 50 min: 1 parameter: 'Number of ants:' category: 'Environment and Population';
@@ -39,9 +39,7 @@ global {
       diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
   
-	reflex diffuse {
-      diffusion var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
-   }
+
   
 } 
 
@@ -138,7 +136,7 @@ experiment "4 Simulations" type: gui {
 		display Comparison background: #white {
 			chart "Food Gathered" type: series {
 				loop s over: ants_model {
-					data "Food " + int(s) value: s.food_gathered color: s.color marker: false style: line line_visible: false;
+					data "Food " + int(s) value: s.food_gathered color: s.color marker: false style: line ;
 				}
 			}
 		}
