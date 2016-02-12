@@ -61,7 +61,7 @@ public abstract class ChartOutput {
 	
 //	HashMap<String,Object> chartParameters=new HashMap<String,Object>();
 	
-	public abstract BufferedImage getImage(int sizex, int sizey);
+	public abstract BufferedImage getImage(IScope scope, int sizex, int sizey);
 
 	public ChartOutput(final IScope scope, String name,IExpression typeexp)
 	{
@@ -168,7 +168,6 @@ public abstract class ChartOutput {
 	public void step(IScope scope)
 	{
 		chartdataset.updatedataset(scope,getChartCycle(scope));
-		updateOutput(scope);
 	}
 
 	public void initdataset()
@@ -225,6 +224,7 @@ public abstract class ChartOutput {
 
 	protected void updateImage(IScope scope) {
 		// TODO Auto-generated method stub
+		
 		
 	}
 

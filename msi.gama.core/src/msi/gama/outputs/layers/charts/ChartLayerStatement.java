@@ -216,7 +216,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	private ChartOutput chartoutput=null;
 	
-	private HashMap<String,Object> chartParameters=new HashMap<String,Object>();
+//	private HashMap<String,Object> chartParameters=new HashMap<String,Object>();
 	
 	static String xAxisName = "'time'";
 	final Map<String, Double> lastValues;
@@ -229,11 +229,6 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		return chartoutput;
 	}
 
-	public Map<String,Object> getChartParameters()
-	{
-		return chartParameters;
-	}
-	
 	public ChartLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		lastValues = new LinkedHashMap();
@@ -264,16 +259,16 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		lastValues.clear();;
 
-		chartParameters.clear();
+//		chartParameters.clear();
 		
 		IExpression string1 = getFacet(IKeyword.TYPE);
-		chartParameters.put(IKeyword.TYPE, string1);
+//		chartParameters.put(IKeyword.TYPE, string1);
 
 		chartoutput = ChartJFreeChartOutput.createChartOutput(scope,getName(),string1);
 		
 		GamaColor colorvalue=new GamaColor(Color.black);
 		IExpression color = getFacet(IKeyword.AXES);
-		chartParameters.put(IKeyword.AXES, color);
+//		chartParameters.put(IKeyword.AXES, color);
 		if ( color != null ) {
 			colorvalue = Cast.asColor(scope, color.value(scope));
 		}

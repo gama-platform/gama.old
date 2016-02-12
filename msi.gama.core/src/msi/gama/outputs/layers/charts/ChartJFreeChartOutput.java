@@ -94,8 +94,9 @@ public class ChartJFreeChartOutput extends ChartOutput {
 
 	
 
-	public BufferedImage getImage(int sizex, int sizey)
+	public BufferedImage getImage(IScope scope, int sizex, int sizey)
 	{
+		updateOutput(scope);
 		return chart.createBufferedImage(sizex, sizey);
 	}
 	

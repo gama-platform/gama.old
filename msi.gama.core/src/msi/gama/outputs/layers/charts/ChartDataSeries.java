@@ -29,14 +29,30 @@ public class ChartDataSeries {
 	GamaColor mycolor;
 
 
-
 	//	HashMap<String,Object> serieParameters=new HashMap<String,Object>();	
 	ChartDataSource mysource;
 	ChartDataSet mydataset;
 
 	
 	String name;
+
+	boolean ongoing_update=false;
+
+	ArrayList<String> oldcvalues=new ArrayList<String>(); //for categories
+	ArrayList<Double> oldxvalues=new ArrayList<Double>(); //for xy charts
+	ArrayList<Double> oldyvalues=new ArrayList<Double>();
+	ArrayList<Double> oldsvalues=new ArrayList<Double>(); //for marker sizes or 3d charts
+	ArrayList<Double> oldxerrvaluesmax=new ArrayList<Double>();
+	ArrayList<Double> oldyerrvaluesmax=new ArrayList<Double>();	
+	ArrayList<Double> oldxerrvaluesmin=new ArrayList<Double>();
+	ArrayList<Double> oldyerrvaluesmin=new ArrayList<Double>();	
+	ArrayList<Double> oldyvaluemax=new ArrayList<Double>(); //for box and whisker
+	ArrayList<Double> oldyvaluemin=new ArrayList<Double>(); //for box and whisker	
 	
+	public boolean isOngoing_update() {
+		return ongoing_update;
+	}
+
 	public ChartDataSet getDataset() {
 		return mydataset;
 	}
@@ -110,21 +126,25 @@ public class ChartDataSeries {
 	
 	public ArrayList<String> getCValues(IScope scope) {
 		// TODO Auto-generated method stub
+		if (isOngoing_update()) return oldcvalues;
 		return cvalues;
 	}
 
 	public ArrayList<Double> getXValues(IScope scope) {
 		// TODO Auto-generated method stub
+		if (isOngoing_update()) return oldxvalues;
 		return xvalues;
 	}
 
 	public ArrayList<Double> getYValues(IScope scope) {
 		// TODO Auto-generated method stub
+		if (isOngoing_update()) return oldyvalues;
 		return yvalues;
 	}
 
 	public ArrayList<Double> getSValues(IScope scope) {
 		// TODO Auto-generated method stub
+		if (isOngoing_update()) return oldsvalues;
 		return svalues;
 	}
 
@@ -140,6 +160,18 @@ public class ChartDataSeries {
 */
 	public void clearValues(IScope scope) {
 		// TODO Auto-generated method stub
+
+		oldcvalues=cvalues;
+		oldxvalues=xvalues;
+		oldyvalues=yvalues;
+		oldsvalues=svalues;
+		 oldxerrvaluesmax=xerrvaluesmax;
+		 oldyerrvaluesmax=yerrvaluesmax;
+		 oldxerrvaluesmin=xerrvaluesmin;
+		 oldyerrvaluesmin=yerrvaluesmin;
+		 oldyvaluemax=yvaluemax;
+		 oldyvaluemin=yvaluemin;
+				
 		cvalues=new ArrayList<String>(); //for xy charts
 		xvalues=new ArrayList<Double>(); //for xy charts
 		yvalues=new ArrayList<Double>();
@@ -341,6 +373,15 @@ public class ChartDataSeries {
 		
 	}
 
+	public void endupdate(IScope scope) {
+		// TODO Auto-generated method stub
+		this.ongoing_update=false;
+	}
+
+	public void startupdate(IScope scope) {
+		// TODO Auto-generated method stub
+		this.ongoing_update=true;
+	}
 
 
 }
