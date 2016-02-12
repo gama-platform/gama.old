@@ -49,7 +49,7 @@ public abstract class TopLevelFolder extends VirtualContent {
 	@Override
 	public Object[] getNavigatorChildren() {
 		List<IProject> totalList = Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
-		List<IProject> resultList = new ArrayList();
+		List<IProject> resultList = new ArrayList<IProject>();
 		for ( IProject project : totalList ) {
 			if ( accepts(project) ) {
 				resultList.add(project);
@@ -83,12 +83,14 @@ public abstract class TopLevelFolder extends VirtualContent {
 	protected Location getLocation(final IPath location) {
 		URL urlRep = null;
 		try {
-			URL new_url  = FileLocator.resolve(new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/"));
+			
+			URL old_url = new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/");
+			URL new_url  = FileLocator.resolve(old_url);
 			//windows URL formating
 			String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
 			java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
 			urlRep = normalizedPath.toUri().toURL(); 
-			//urlRep = FileLocator.resolve(new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/"));
+						//urlRep = FileLocator.resolve(new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/"));
 			
 			// System.out.println("Model path:" + location.toOSString() + " ||| Plugin path: " + urlRep.getPath());
 			if ( location.toOSString().startsWith(urlRep.getPath()) ) { return Location.CoreModels; }
