@@ -35,7 +35,6 @@ global torus: torus_environment{
 
 species boids_goal skills: [moving3D] {
 	const range type: float init: 20.0;
-	const size type: float init: 10.0;
 	
 	reflex wander { 
 		do  wander amplitude: 45 speed: 20; 
@@ -48,7 +47,7 @@ species boids_goal skills: [moving3D] {
 	}
 	
 	aspect default { 
-		draw sphere(size) color: #red ;
+		draw sphere(10) color: #red ;
 	}
 } 
 
@@ -57,7 +56,6 @@ species boids skills: [moving] {
 	float speed max: maximal_speed <- maximal_speed;
 	float range <- minimal_distance * 2;
 	point velocity <- {0,0, 0} ;
-	int size <- 5;
 	
 	list others update: ((boids at_distance range)  - self);
 	point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) )  : location;

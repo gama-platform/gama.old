@@ -99,13 +99,7 @@ global torus: torus_environment{
 entities {
 	species name: boids_goal skills: [moving] {
 		const range type: float init: 20.0;
-		const size type: float init: 10.0;
 		int radius <-3;
-		
-		/*reflex wander { 
-			do wander amplitude: 45 speed: 20;  
-			goal <- location;
-		}*/
 		
 		reflex wander_in_circle{
 
@@ -219,7 +213,6 @@ entities {
 		float speed max: maximal_speed <- maximal_speed;
 		float range <- minimal_distance * 2;
 		point velocity <- {0,0};
-		int size <- 5;
 		float hue <- rnd(360) / 360;
 		
 		list<boids> others update: ((boids overlapping (circle (range)))  - self);
