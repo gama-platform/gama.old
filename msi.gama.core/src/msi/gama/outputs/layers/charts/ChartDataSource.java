@@ -247,11 +247,12 @@ public class ChartDataSource {
 		if (!this.isCumulative()) 
 		{
 			myserie.clearValues(scope);
+			myserie.startupdate(scope);
 			
 		}
 		
 		//series charts (series/bw/...)
-		if (this.isCommonXSeries()) 
+		if (this.isCommonXSeries() & !this.isByCategory()) 
 		{
 			if (this.isCumulative()) 
 			{
@@ -727,7 +728,12 @@ public class ChartDataSource {
 			
 		}		
 			
-		
+		if (!this.isCumulative()) 
+		{
+			myserie.endupdate(scope);
+			
+		}
+
 
 		
 	}

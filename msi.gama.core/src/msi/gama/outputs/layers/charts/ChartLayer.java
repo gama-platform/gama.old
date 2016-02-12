@@ -47,7 +47,7 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		BufferedImage im = getChart().getImage(getSizeInPixels().x, getSizeInPixels().y);
+		BufferedImage im = getChart().getImage(scope,getSizeInPixels().x, getSizeInPixels().y);
 		dg.drawChart(scope, im, 0.0);
 	}
 

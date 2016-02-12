@@ -28,6 +28,7 @@ import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
+import org.jfree.data.xy.XYIntervalDataItem;
 import org.jfree.data.xy.XYIntervalSeries;
 import org.jfree.data.xy.XYIntervalSeriesCollection;
 import org.jfree.data.xy.XYSeries;
@@ -336,17 +337,20 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			rangeAxis.setAutoRange(false);
 //			domainAxis.setRange(Math.min((double)(Collections.min(XValues)),0), Math.max(Collections.max(XValues),Collections.min(XValues)+1));
 //			rangeAxis.setRange(Math.min((double)(Collections.min(YValues)),0), Math.max(Collections.max(YValues),Collections.min(YValues)+1));
-		for(int i=0; i<XValues.size(); i++)
+			XYIntervalDataItem newval;
+			for(int i=0; i<XValues.size(); i++)
 		{
 			if (dataserie.isUseYErrValues())
 			{
 				if (dataserie.isUseXErrValues())
 				{
-				serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
+					newval=new XYIntervalDataItem(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
+//				serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
 				}
 				else
 				{
-				serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
+					newval=new XYIntervalDataItem(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
+	//			serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
 				}
 				
 			}
@@ -354,14 +358,17 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			{
 				if (dataserie.isUseXErrValues())
 				{
-				serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
+					newval=new XYIntervalDataItem(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
+//				serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
 				}
 				else
 				{
-				serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
+					newval=new XYIntervalDataItem(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
+//				serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
 				}
 				
 			}
+			serie.add(newval, false);
 		}
 		domainAxis.setAutoRange(true);
 		rangeAxis.setAutoRange(true);
