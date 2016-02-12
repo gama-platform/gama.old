@@ -26,7 +26,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
-import msi.gaml.compilation.SystemLogger;
 
 /**
  * Class InitialModelOpener.
