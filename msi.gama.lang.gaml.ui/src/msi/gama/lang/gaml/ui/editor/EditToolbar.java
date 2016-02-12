@@ -1,6 +1,5 @@
 package msi.gama.lang.gaml.ui.editor;
 
-import java.util.ArrayList;
 import org.eclipse.core.commands.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.*;
@@ -14,16 +13,11 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.*;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.GamaToolbarSimple;
 import msi.gama.lang.gaml.ui.XtextGui;
-import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.factories.DescriptionFactory;
 
 /**
  * This class implements the GAML editors' toolbar
@@ -290,37 +284,41 @@ public class EditToolbar {
 				editor.getAction("Format").run();
 			}
 		});
-		toolbar.button("editor.serialize2", null, "Re-serialize the model (warning: removes all comments)",
-			new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					editor.getInternalSourceViewer().setSelectedRange(0,
-						editor.getInternalSourceViewer().getTextWidget().getCharCount());
-					String result = editor.getDocument().modify(new IUnitOfWork<String, XtextResource>() {
-
-						@Override
-						public String exec(final XtextResource state) throws Exception {
-							if ( state.getErrors().isEmpty() ) {
-								java.util.List<GamlCompilationError> list = new ArrayList();
-								ModelDescription md =
-									DescriptionFactory.getModelFactory().buildModelDescription(state.getURI(), list);
-								if ( md != null ) {
-									md = (ModelDescription) md.validate();
-									if ( !state.getErrors().isEmpty() ) { return null; }
-								}
-								if ( md != null && list.isEmpty() ) { return md.serialize(false); }
-							}
-							return null;
-						}
-					});
-					if ( result != null ) {
-						editor.getInternalSourceViewer().setSelectedRange(0,
-							editor.getInternalSourceViewer().getTextWidget().getCharCount());
-						editor.insertText(result);
-					}
-				}
-			});
+		/**
+		 * Serialization : commented because a bit too experimental for the moment
+		 */
+		// toolbar.button("editor.serialize2", null, "Re-serialize the model (warning: removes all comments)",
+		// new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		// editor.getInternalSourceViewer().setSelectedRange(0,
+		// editor.getInternalSourceViewer().getTextWidget().getCharCount());
+		// String result = editor.getDocument().modify(new IUnitOfWork<String, XtextResource>() {
+		//
+		// @Override
+		// public String exec(final XtextResource state) throws Exception {
+		// if ( state.getErrors().isEmpty() ) {
+		// java.util.List<GamlCompilationError> list = new ArrayList();
+		// ModelDescription md =
+		// DescriptionFactory.getModelFactory().buildModelDescription(state.getURI(), list);
+		// if ( md != null ) {
+		// md = (ModelDescription) md.validate();
+		// if ( !state.getErrors().isEmpty() ) { return null; }
+		// }
+		// if ( md != null && list.isEmpty() ) { return md.serialize(false); }
+		// }
+		// return null;
+		// }
+		// });
+		// if ( result != null ) {
+		// editor.getInternalSourceViewer().setSelectedRange(0,
+		// editor.getInternalSourceViewer().getTextWidget().getCharCount());
+		// editor.insertText(result);
+		// }
+		// }
+		// });
 		toolbar.button("editor.comment2", null, "Toggle comment", new SelectionAdapter() {
 
 			@Override

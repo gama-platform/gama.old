@@ -1,24 +1,24 @@
 /**
  * Created by drogoul, 5 févr. 2015
- * 
+ *
  */
 package msi.gama.lang.gaml.ui;
 
 import java.util.Map;
-import msi.gama.gui.swt.GamaIcons;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.xtext.ui.*;
+import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.IImageHelper.IImageDescriptorHelper;
 import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
+import msi.gama.gui.swt.GamaIcons;
 
 /**
  * The class GamlImageHelper.
- * 
+ *
  * @author drogoul
  * @since 5 févr. 2015
- * 
+ *
  */
 @Singleton
 public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
@@ -35,7 +35,12 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 		if ( s.endsWith(".png") ) {
 			s = s.replace(".png", "");
 		}
-		return GamaIcons.create(path + "/" + s).descriptor();
+		if ( GamaIcons.getInstance().exist(path + "/" + s) ) {
+			return GamaIcons.create(path + "/" + s).descriptor();
+		} else {
+			return GamaIcons.create(path + "/_agent").descriptor();
+		}
+
 	}
 
 	/**
@@ -61,7 +66,11 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 		if ( s.endsWith(".png") ) {
 			s = s.replace(".png", "");
 		}
-		return GamaIcons.create(path + "/" + s).image();
+		if ( GamaIcons.getInstance().exist(path + "/" + s) ) {
+			return GamaIcons.create(path + "/" + s).image();
+		} else {
+			return GamaIcons.create(path + "/_agent").image();
+		}
 	}
 
 	/**

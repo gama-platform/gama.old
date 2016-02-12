@@ -1,31 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlLabelProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.labeling;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
-import msi.gama.lang.utils.EGaml;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.naming.*;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import com.google.inject.Inject;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
+import msi.gama.lang.utils.EGaml;
 
 /**
  * Provides labels for a EObjects.
- * 
+ *
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
 public class GamlLabelProvider extends DefaultEObjectLabelProvider {

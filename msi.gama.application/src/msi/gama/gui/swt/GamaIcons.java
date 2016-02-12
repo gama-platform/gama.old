@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
@@ -53,6 +54,11 @@ public class GamaIcons /* implements IGamaIcons */ {
 
 	GamaIcon getIcon(final String name) {
 		return iconCache.get(name);
+	}
+
+	public boolean exist(final String name) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID,
+			GamaIcons.DEFAULT_PATH + name + ".png") != null;
 	}
 
 	Image putImageInCache(final String name, final Image image) {
