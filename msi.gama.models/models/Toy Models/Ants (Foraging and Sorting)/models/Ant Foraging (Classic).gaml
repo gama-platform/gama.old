@@ -2,7 +2,7 @@ model ants
 
 global {
 	int ants_number <- 100 min: 1 max: 2000 ;
-	float evaporation_rate <- 0.1 min: 0.0 max: 1.0 ;
+	float evaporation_per_cycle <- 5.0 min: 0.0 max: 240.0 ;
 	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 ;
 	bool use_icons <- true ;
 	bool display_state <- true;
@@ -29,7 +29,7 @@ global {
 
 grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: false {
 	list<ant_grid> neighbours <- self neighbors_at 1;
-	float road <- 0.0 max:240.0 update: (road<=evaporation_rate) ? 0.0 : road-evaporation_rate;
+	float road <- 0.0 max:240.0 update: (road<=evaporation_per_cycle) ? 0.0 : road-evaporation_per_cycle;
 	int type <- int(types at {grid_x,grid_y}) ;
 	bool isNestLocation <- (self distance_to center) < 4 ;
 	bool isFoodLocation <- type = 2 ; 
@@ -105,7 +105,7 @@ species ant skills: [moving] control: fsm {
 
 experiment Ant type: gui {
 	parameter 'Number of ants:' var: ants_number category: 'Model' ;
-	parameter 'Rate of evaporation of the signal (%/cycle):' var: evaporation_rate category: 'Model' ;
+	parameter 'Evaporation of the signal (unit/cycle):' var: evaporation_per_cycle category: 'Model' ;
 	parameter 'Rate of diffusion of the signal (%/cycle):' var: diffusion_rate category: 'Model' ;
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display' ;
 	parameter 'Display state of agents:' var: display_state category: 'Display' ;

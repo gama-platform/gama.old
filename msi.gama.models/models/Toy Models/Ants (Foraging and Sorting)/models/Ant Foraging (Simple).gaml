@@ -2,7 +2,7 @@ model ants
 // A simple model with one food depot. 
 global {
 	int t <- 1;
-	float evaporation_rate <- 1.0 min: 0.01 max: 240.0 ;
+	float evaporation_per_cycle <- 5.0 min: 0.01 max: 240.0 ;
 	const diffusion_rate type: float <- 1.0 min: 0.0 max: 1.0 ;
 	const gridsize type: int <- 75; 
 	int ants_number  <- 50 min: 1 max: 200 parameter: 'Number of Ants:';
@@ -43,7 +43,7 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 	bool isNestLocation  <- ( self distance_to center ) < 4;
 	bool isFoodLocation <-  types[grid_x , grid_y] = 2;       
 	list<ant_grid> neighbours <- self neighbors_at 1;  
-	float road <- 0.0 max:240.0 update: (road<=evaporation_rate) ? 0.0 : road-evaporation_rate;
+	float road <- 0.0 max:240.0 update: (road<=evaporation_per_cycle) ? 0.0 : road-evaporation_per_cycle;
 	rgb color <- rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) , self.road * 30 , self.road > 15 ? 255 : food * 50 ]) update: rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,self.road * 30 , self.road > 15 ? 255 : food * 50 ]); 
 	int food <- isFoodLocation ? 5 : 0; 
 	const nest type: int <- int(300 - ( self distance_to center ));
@@ -89,7 +89,7 @@ species ant skills: [ moving ] {
 }
 
 experiment Simple type:gui {
-	parameter 'Evaporation Rate:' var: evaporation_rate;
+	parameter 'Evaporation:' var: evaporation_per_cycle;
 	parameter 'Diffusion Rate:' var: diffusion_rate;
 	output { 
 		display Ants refresh: every(2) { 
@@ -116,8 +116,7 @@ experiment Simple type:gui {
 // repeating each simulation two times, in order to find the best combination 
 // of parameters to minimize the time taken by ants to gather all the food
 experiment 'Exhaustive optimization' type: batch repeat: 2 keep_seed: true until: ( food_remaining = 0 ) or ( time > 400 ) {
-	parameter 'Evaporation rate' var: evaporation_rate among: [ 0.1 , 0.2 ,
-	0.5 , 0.8 , 1.0 ];
+	parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.1 , 1.0 , 2.0 , 5.0 ,  10.0 ];
 	parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:
 	0.3;
 	method exhaustive minimize: time;
@@ -127,7 +126,7 @@ experiment 'Exhaustive optimization' type: batch repeat: 2 keep_seed: true until
 // repeating each simulation two times
 experiment Repeated type: batch repeat: 2 keep_seed: true until: (
 food_remaining = 0 ) or ( time > 400 ) {
-	parameter 'Evaporation rate' var: evaporation_rate among: [ 0.1 , 0.2 ,0.5 , 0.8 , 1.0 ];
+	parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.1 , 1.0 , 2.0 , 5.0 ,  10.0 ];
 	parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
 }
 
@@ -136,8 +135,8 @@ food_remaining = 0 ) or ( time > 400 ) {
 // of parameters to minimize the time taken by ants to gather all the food 
 experiment Genetic type: batch keep_seed: true repeat: 3 until: ( food_remaining
 = 0 ) or ( time > 400 ) {
-	parameter 'Evaporation rate' var: evaporation_rate min: 0.05 max: 0.7
-	step: 0.01;
+	parameter 'Evaporation' var: evaporation_per_cycle min: 0.05 max: 10.0
+	step: 0.1;
 	parameter 'Diffusion rate' var: diffusion_rate min: 0.0 max: 1.0 step:
 	0.01;
 	method genetic pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1

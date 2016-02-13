@@ -1,7 +1,7 @@
 model ants
 
 global {
-	float evaporation_rate <- 5.0 min: 0.0 max: 240.0 parameter: 'Evaporation of the signal (unit/cycle):' category: 'Signals';
+	float evaporation_per_cycle <- 5.0 min: 0.0 max: 240.0 parameter: 'Evaporation of the signal (unit/cycle):' category: 'Signals';
 	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
 	int gridsize <- 100 min: 30 parameter: 'Width and Height of the grid:' category: 'Environment and Population';
 	int ants_number <- 50 min: 1 parameter: 'Number of ants:' category: 'Environment and Population';
@@ -43,7 +43,7 @@ global {
 grid ant_grid width: gridsize height: gridsize neighbors: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
 	const neighbours type: list of: ant_grid <- self neighbors_at 1;
 	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
-	float road <- 0.0 max: 240.0 update: (road <= evaporation_rate) ? 0.0 : road - evaporation_rate;
+	float road <- 0.0 max: 240.0 update: (road <= evaporation_per_cycle) ? 0.0 : road - evaporation_per_cycle;
 	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
 	food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
 	int food <- 0;
@@ -181,7 +181,7 @@ experiment Complete type: gui {
 experiment Batch type: batch repeat: 4 keep_seed: true until: (food_gathered = food_placed) or (time > 1000) {
 	parameter 'Size of the grid:' var: gridsize init: 75 unit: 'width and height';
 	parameter name: 'Number:' var: ants_number among:[10,20,50] unit: 'ants';
-	parameter  'Evaporation:' var: evaporation_rate among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
+	parameter  'Evaporation:' var: evaporation_per_cycle among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
 	parameter  'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.2;
 	method exhaustive maximize: food_gathered;
 
@@ -199,7 +199,7 @@ experiment Batch type: batch repeat: 4 keep_seed: true until: (food_gathered = f
 experiment Genetic type: batch repeat: 2 keep_seed: true until: (food_gathered = food_placed) or (time > 1000) {
 	parameter name: 'Size of the grid:' var: gridsize init: 75 unit: '(width and height)';
 	parameter name: 'Number:' var: ants_number among:[10,20,50] unit: 'ants';
-	parameter  'Evaporation:' var: evaporation_rate among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
+	parameter  'Evaporation:' var: evaporation_per_cycle among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
 	parameter name: 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.2;
 	method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20;
 	

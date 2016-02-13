@@ -1,11 +1,10 @@
 model ants
 
 global {
-	float evaporation_rate <- 0.05 min: 0.0 max: 1.0 parameter: 'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
+	float evaporation_per_cycle <- 5.0 min: 0.0 max: 240.0 parameter: 'Evaporation of the signal (unit/cycle):' category: 'Signals';
 	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
 	int gridsize <- 100 min: 30 parameter: 'Width and Height of the grid:' category: 'Environment and Population';
 	int ants_number <- 50 min: 1 parameter: 'Number of ants:' category: 'Environment and Population';
-	//int grid_frequency <- 1 min: 1 max: 100 parameter: 'Grid updates itself every:' category: 'Environment and Population';
 	int number_of_food_places <- 5 min: 1 parameter: 'Number of food depots:' category: 'Environment and Population';
 	float grid_transparency <- 1.0;
 	const ant_shape_empty type: file <- file('../icons/ant.png');
@@ -46,7 +45,7 @@ global {
 
 grid ant_grid width: gridsize height: gridsize neighbors: 8 /*frequency: grid_frequency*/ use_regular_agents: false use_individual_shapes: false{
 	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
-	float road <- 0.0 max:240.0 update: (road<=evaporation_rate) ? 0.0 : road-evaporation_rate;
+	float road <- 0.0 max:240.0 update: (road<=evaporation_per_cycle) ? 0.0 : road-evaporation_per_cycle;
 	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
 	food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
 	int food <- 0;
@@ -148,11 +147,7 @@ output {
 		image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 		agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 		species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
-		//text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: #black size: { 1, 0.02 };
-		//text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: #black
-		//size: { 1, 0.02 };
 	}
-	//inspect "Ants" type: table value: ant attributes: ['name', 'location', 'heading','state'];
 
 }
 }
