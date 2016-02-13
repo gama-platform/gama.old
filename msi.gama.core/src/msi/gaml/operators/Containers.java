@@ -184,7 +184,7 @@ public class Containers {
 
 	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.SPECIES })
 	@doc(value = "the index of the first occurence of the right operand in the left operand container",
-		usages = @usage("if the left operator is a species, returns the index of an agent in a species. If the argument is not an agent of this species, returns -1. Use int(agent) instead") ,
+		usages = @usage("if the left operator is a species, returns the index of an agent in a species. If the argument is not an agent of this species, returns -1. Use int(agent) instead"),
 		masterDoc = true)
 	public static Integer index_of(final IScope scope, final ISpecies s, final Object o) {
 		if ( !(o instanceof IAgent) ) { return -1; }
@@ -198,7 +198,7 @@ public class Containers {
 		comment = "The definition of index_of and the type of the index depend on the container",
 		usages = @usage(value = "if the left operand is a list, index_of returns the index as an integer",
 			examples = { @example(value = "[1,2,3,4,5,6] index_of 4", equals = "3"),
-				@example(value = "[4,2,3,4,5,4] index_of 4", equals = "0") }) ,
+				@example(value = "[4,2,3,4,5,4] index_of 4", equals = "0") }),
 		see = { "at", "last_index_of" })
 	public static Integer index_of(final IScope scope, final IList l1, final Object o) {
 		return nullCheck(scope, l1).indexOf(o);
@@ -206,7 +206,7 @@ public class Containers {
 
 	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.MAP })
 	@doc(value = "the index of the first occurence of the right operand in the left operand container",
-		usages = @usage("if the left operand is a map, index_of returns the index of a value or nil if the value is not mapped") ,
+		usages = @usage("if the left operand is a map, index_of returns the index of a value or nil if the value is not mapped"),
 		examples = { @example(value = "[1::2, 3::4, 5::6] index_of 4", equals = "3") })
 	public static Object index_of(final IScope scope, final GamaMap<?, ?> m, final Object o) {
 		for ( final Map.Entry<?, ?> k : nullCheck(scope, m).entrySet() ) {
@@ -218,7 +218,7 @@ public class Containers {
 	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.MATRIX })
 	@doc(value = "the index of the first occurence of the right operand in the left operand container",
 		usages = @usage(value = "if the left operand is a matrix, index_of returns the index as a point",
-			examples = { @example(value = "matrix([[1,2,3],[4,5,6]]) index_of 4", equals = "{1.0,0.0}") }) )
+			examples = { @example(value = "matrix([[1,2,3],[4,5,6]]) index_of 4", equals = "{1.0,0.0}") }))
 	public static ILocation index_of(final IScope scope, final IMatrix m, final Object o) {
 		for ( int i = 0; i < nullCheck(scope, m).getCols(scope); i++ ) {
 			for ( int j = 0; j < m.getRows(scope); j++ ) {
@@ -230,7 +230,7 @@ public class Containers {
 
 	@operator(value = "last_index_of", can_be_const = true, category = { IOperatorCategory.SPECIES })
 	@doc(value = "the index of the last occurence of the right operand in the left operand container",
-		usages = @usage("if the left operand is a species, the last index of an agent is the same as its index") ,
+		usages = @usage("if the left operand is a species, the last index of an agent is the same as its index"),
 		see = { "at", "index_of" })
 	public static Integer last_index_of(final IScope scope, final ISpecies l1, final Object o) {
 		return index_of(scope, nullCheck(scope, l1), o);
@@ -251,7 +251,7 @@ public class Containers {
 	@operator(value = "last_index_of", can_be_const = true, category = { IOperatorCategory.MATRIX })
 	@doc(value = "the index of the last occurence of the right operand in the left operand container",
 		usages = @usage(value = "if the left operand is a matrix, last_index_of returns the index as a point",
-			examples = { @example(value = "matrix([[1,2,3],[4,5,4]]) last_index_of 4", equals = "{1.0,2.0}") }) )
+			examples = { @example(value = "matrix([[1,2,3],[4,5,4]]) last_index_of 4", equals = "{1.0,2.0}") }))
 	public static ILocation last_index_of(final IScope scope, final IMatrix m, final Object o) {
 		for ( int i = nullCheck(scope, m).getCols(scope) - 1; i > -1; i-- ) {
 			for ( int j = m.getRows(scope) - 1; j > -1; j-- ) {
@@ -268,7 +268,7 @@ public class Containers {
 	@doc(value = "the index of the last occurence of the right operand in the left operand container",
 		usages = @usage(
 			value = "if the left operand is a map, last_index_of returns the index as an int (the key of the pair)",
-			examples = { @example(value = "[1::2, 3::4, 5::4] last_index_of 4", equals = "5") }) )
+			examples = { @example(value = "[1::2, 3::4, 5::4] last_index_of 4", equals = "5") }))
 	public static Object last_index_of(final IScope scope, final GamaMap<?, ?> m, final Object o) {
 		for ( final Map.Entry<?, ?> k : Lists.reverse(ImmutableList.copyOf(nullCheck(scope, m).entrySet())) ) {
 			if ( k.getValue().equals(o) ) { return k.getKey(); }
@@ -288,7 +288,7 @@ public class Containers {
 				examples = { @example(value = "[1::2, 3::4, 5::6] inter [2,4]", equals = "[2,4]"),
 					@example(value = "[1::2, 3::4, 5::6] inter [1,3]", equals = "[]") }),
 			@usage(value = "if an operand is a matrix, it will be transformed into the set of the lines",
-				examples = @example(value = "matrix([[1,2,3],[4,5,4]]) inter [3,4]", equals = "[3,4]") ) },
+				examples = @example(value = "matrix([[1,2,3],[4,5,4]]) inter [3,4]", equals = "[3,4]")) },
 		examples = { @example(value = "[1,2,3,4,5,6] inter [2,4]", equals = "[2,4]"),
 			@example(value = "[1,2,3,4,5,6] inter [0,8]", equals = "[]") },
 		see = { "remove_duplicates" })
@@ -386,7 +386,7 @@ public class Containers {
 			"however, the advantage of using the first syntax is that the resulting list is correctly typed with the right species, " +
 			"whereas, in the second syntax, the parser cannot determine the species of the agents within the list " +
 			"(resulting in the need to cast it explicitely if it is to be used in an ask statement, for instance).",
-		usages = @usage("if the right operand is nil, of_species returns the right operand") ,
+		usages = @usage("if the right operand is nil, of_species returns the right operand"),
 		examples = {
 			@example(value = "(self neighbours_at 10) of_species (species (self))",
 				equals = "all the neighbouring agents of the same species.",
@@ -461,7 +461,7 @@ public class Containers {
 		value = "if the right operand is an object of any type (except a container), " + IKeyword.PLUS +
 			" returns a list of the elements of the left operand, to which this object has been added",
 		examples = { @example(value = "[1,2,3,4,5,6] + 2", returnType = "list<int>", equals = "[1,2,3,4,5,6,2]"),
-			@example(value = "[1,2,3,4,5,6] + 0", returnType = "list<int>", equals = "[1,2,3,4,5,6,0]") }) )
+			@example(value = "[1,2,3,4,5,6] + 0", returnType = "list<int>", equals = "[1,2,3,4,5,6,0]") }))
 	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
 		final IList result = (IList) nullCheck(scope, l1).listValue(scope, Types.NO_TYPE, false).copy(scope);
 		result.add(l);
@@ -677,10 +677,20 @@ public class Containers {
 			@example(value = "1 among [1::2,3::4]", returnType = "list<int>", equals = "2 or 4", test = false) })
 	public static IList among(final IScope scope, final Integer number, final IContainer c)
 		throws GamaRuntimeException {
+		IList result = GamaListFactory.create(scope, c.getType().getContentType());
+		if ( number <= 0 ) { return result; }
 		final IList l = nullCheck(scope, c).listValue(scope, c.getType().getContentType(), false);
-		return GamaListFactory.create(scope, c.getType().getContentType(),
-			Iterables.limit(scope.getRandom().shuffle(l), number < 0 ? 0 : number));
-		// TODO: reorder with .toSortedList(Ordering.explicit(l)));
+		int size = l.size();
+		if ( number >= size ) { return l; }
+		int[] indexes = new int[size];
+		for ( int i = 0; i < indexes.length; i++ ) {
+			indexes[i] = i;
+		}
+		scope.getRandom().shuffle(indexes);
+		for ( int i = 0; i < number; i++ ) {
+			result.add(l.get(indexes[i]));
+		}
+		return result;
 	}
 
 	@operator(value = { "sort_by", "sort" },
