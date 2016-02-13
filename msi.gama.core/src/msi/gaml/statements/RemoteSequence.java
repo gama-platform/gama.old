@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 11 mai 2014
- * 
+ *
  */
 package msi.gaml.statements;
 
@@ -12,29 +12,30 @@ import msi.gaml.descriptions.IDescription;
 
 public class RemoteSequence extends AbstractStatementSequence {
 
-	IAgent myself;
+	// AD: adding ThreadLocal for multi-threaded simulations
+	final ThreadLocal<IAgent> myself = new ThreadLocal();
 
 	public RemoteSequence(final IDescription desc) {
 		super(desc);
 	}
 
-	public IAgent getMyself(){
-		return myself;
+	public IAgent getMyself() {
+		return myself.get();
 	}
-	
+
 	public void setMyself(final IAgent agent) {
-		myself = agent;
+		myself.set(agent);
 	}
 
 	@Override
 	public void leaveScope(final IScope scope) {
-		myself = null;
+		myself.set(null);
 		super.leaveScope(scope);
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		scope.addVarWithValue(IKeyword.MYSELF, myself);
+		scope.addVarWithValue(IKeyword.MYSELF, myself.get());
 		final Object result = super.privateExecuteIn(scope);
 		return result;
 	}
