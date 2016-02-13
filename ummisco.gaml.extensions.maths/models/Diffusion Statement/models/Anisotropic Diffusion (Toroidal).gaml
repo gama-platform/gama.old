@@ -23,7 +23,7 @@ global torus: true {
 	}
 
 	reflex diff {
-		diffusion var: phero on: cells mat_diffu: math_diff;	
+		diffuse var: phero on: cells matrix: math_diff;	
 	}
 }
 

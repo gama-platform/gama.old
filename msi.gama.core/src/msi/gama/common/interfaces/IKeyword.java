@@ -95,6 +95,7 @@ public interface IKeyword {
 	public static final String DEPTH = "depth";
 	public static final String DESTINATION = "destination";
 	public static final String DIFFUSION = "diffusion";
+	public static final String DIFFUSE = "diffuse";
 	public static final String DIFFUSE_LIGHT = "diffuse_light";
 	public static final String DIFFUSE_LIGHT_POS = "diffuse_light_pos";
 	public static final String DISABLE = "disable";

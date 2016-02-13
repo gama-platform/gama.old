@@ -77,8 +77,8 @@ import msi.gaml.variables.SignalVariable.SignalValidator;
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.Variable.SIGNAL, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES })
-@doc(
-	deprecated = "A special attribute that holds signals that can be propagated in the environment. Signals have a fixed name, a variable float intensity (represented by their facet 'value'), propagate in only one grid environment (facet 'environment'), can be limited to a specific range (facet 'range', in meter), and can see their intensity decrease over time (facet 'decay'). Signals can be propagated using different combinations of the 'variation', 'proportion' and 'propagation' facets. \nThis statement is deprecated. Use diffusion instead.")
+@doc(deprecated = "Use the statement 'diffuse' instead",
+	value = "A special attribute that holds signals that can be propagated in the environment. Signals have a fixed name, a variable float intensity (represented by their facet 'value'), propagate in only one grid environment (facet 'environment'), can be limited to a specific range (facet 'range', in meter), and can see their intensity decrease over time (facet 'decay'). Signals can be propagated using different combinations of the 'variation', 'proportion' and 'propagation' facets. ")
 @validator(SignalValidator.class)
 public class SignalVariable extends NumberVariable {
 

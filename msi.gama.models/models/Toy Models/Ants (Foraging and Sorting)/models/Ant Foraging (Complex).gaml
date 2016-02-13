@@ -34,7 +34,7 @@ global {
 	}
 	
 	reflex diffuse {
-      diffusion var:road on:ant_grid proportion: diffusion_rate radius:3 propagation: gradient;
+      diffuse var:road on:ant_grid proportion: diffusion_rate radius:3 propagation: gradient;
    }
   
 }

@@ -32,7 +32,7 @@ global {
 	
 	reflex diff {
 		// Declare a diffusion on the grid "cells". The value of the diffusion will be store in the new variable "phero" of the cell.
-		diffusion var: phero on: cells mat_diffu: math_diff;	
+		diffuse var: phero on: cells matrix: math_diff;	
 	}
 }
 

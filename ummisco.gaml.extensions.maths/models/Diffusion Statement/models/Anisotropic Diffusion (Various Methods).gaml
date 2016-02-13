@@ -36,8 +36,8 @@ global{
 	reflex diff {
 		// Declare a diffusion on the grid "cells_dot" (with a dot product computation) and on "cells_convol" (with a convol computation). 
 		// The value of the diffusion will be store in the new variable "phero" of the cell.
-		diffusion var: phero on: cells_dot mat_diffu: math_diff method: "dot_product";	
-		diffusion var: phero on: cells_convol mat_diffu: math_diff method: "convolution";			
+		diffuse var: phero on: cells_dot matrix: math_diff method: "dot_product";	
+		diffuse var: phero on: cells_convol matrix: math_diff method: "convolution";			
 	}
 }
 

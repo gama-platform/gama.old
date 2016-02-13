@@ -187,7 +187,7 @@ experiment boids_gui type: gui {
 	output {
 		display Sky  background: #blue type: opengl { 
 			image '../images/sky.jpg' refresh: false;
-			species boids aspect: image ;
+			species boids aspect: image trace: 10 fading: true ;
 			species boids_goal;
 			species obstacle;
 			event mouse_move action: move_goal;
