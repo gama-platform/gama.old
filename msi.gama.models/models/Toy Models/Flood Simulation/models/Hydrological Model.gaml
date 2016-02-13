@@ -21,7 +21,7 @@ global {
    list<cell> river_cells;
     
    float dyke_width <- 15.0;
- 
+  
    float step <- 1°h;
    
    init {
@@ -218,7 +218,7 @@ experiment main_gui type: gui {
       display map type: opengl ambient_light: 100{
          grid cell triangulation: true;
          species building aspect: geometry;
-         species dyke aspect: geometry;
+         species dyke aspect: geometry ;
       }
       display chart_display refresh: every(24) { 
          chart "Pressure on Dykes" type: series {

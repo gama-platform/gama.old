@@ -170,7 +170,13 @@ public class DrawingData {
 			currentSize = constantSIze;
 		} else {
 			if ( sizeExp != null ) {
-				currentSize = Cast.asPoint(scope, sizeExp.value(scope));
+				if ( sizeExp.getType().isNumber() ) {
+					double val = Cast.asFloat(scope, sizeExp.value(scope));
+					// We do not consider the z ordinate -- see Issue #1539
+					currentSize = new GamaPoint(val, val, 0);
+				} else {
+					currentSize = Cast.asPoint(scope, sizeExp.value(scope));
+				}
 			}
 		}
 		/* DEPTH */

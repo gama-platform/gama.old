@@ -412,7 +412,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 			setPickedObjectIndex(camera.endPicking(gl));
 		}
 		// we draw the scene on screen
-		currentScene.draw(gl, false);
+		currentScene.draw(gl, currentPickedObject != null);
 
 	}
 

@@ -133,7 +133,7 @@ species boids skills: [moving] {
 	}
 	
 	aspect image {
-		draw (images at (rnd(2))) size: 50 rotate: heading ;      
+		draw (images at (rnd(2))) size: {50,50} rotate: heading ;      
 	}
 	aspect circle { 
 		draw circle(15)  color: #red;
@@ -187,7 +187,7 @@ experiment boids_gui type: gui {
 	output {
 		display Sky  background: #blue type: opengl { 
 			image '../images/sky.jpg' refresh: false;
-			species boids aspect: image position: {0,0,0.1};
+			species boids aspect: image ;
 			species boids_goal;
 			species obstacle;
 			event mouse_move action: move_goal;

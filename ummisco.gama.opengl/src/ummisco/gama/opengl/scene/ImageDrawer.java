@@ -40,6 +40,7 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		double x = img.getLocation().x;
 		double y = img.getLocation().y;
 		double z = img.getLocation().z;
+		System.out.println("Drawing at " + x + " " + y + " " + z);
 		// Binds the texture
 		curTexture.bind(gl);
 		gl.glColor4d(1.0d, 1.0d, 1.0d, img.getAlpha());

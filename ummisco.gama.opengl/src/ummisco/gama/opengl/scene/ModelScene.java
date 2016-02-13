@@ -64,7 +64,7 @@ public class ModelScene {
 
 	/**
 	 * @param context
-	 * Called every new iteration when updateDisplay() is called on the surface
+	 *            Called every new iteration when updateDisplay() is called on the surface
 	 */
 	public void wipe(final GL gl) {
 		// The display is cleared every iteration if not in a trace display mode or when reloading a simulation
@@ -243,7 +243,7 @@ public class ModelScene {
 			// System.out.println("Adding layer " + key + " to scene " + this.id);
 			layers.put(key, currentLayer);
 		}
-		currentLayer.setOffset(offset);
+		currentLayer.setOffset(offset.plus(new GamaPoint(0, 0, id * 0.1f)));
 		currentLayer.setScale(scale);
 		currentLayer.setAlpha(alpha);
 	}
