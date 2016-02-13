@@ -36,9 +36,9 @@ species  clock {
 			timeElapsed <- cycle * rate ;// in seconds
 			
 			draw string("#cycles: " + cycle + " cycles")  size:zoom/2 font:"times" color:°black at:{-world.shape.width/3,0};
-			draw clock_normal size: 10*zoom;
-			draw clock_big_hand rotate:   (timeElapsed/10000 + 90) size:7 * zoom;
-			draw clock_small_hand rotate: (timeElapsed/120000 + 90) size:5*zoom ;			
+
+			draw clock_big_hand rotate:   (timeElapsed/10000 + 90) size: {7 * zoom, 2};
+			draw clock_small_hand rotate: (timeElapsed/120000 + 90) size:{5*zoom, 2} ;			
 			draw clock_alarm rotate:      (alarmCycle/12000)  size: zoom/3 ; // Alarm time
 			
 		}
@@ -64,6 +64,7 @@ experiment Display type: gui {
 	parameter 'alarm Seconds' var: alarm_seconds;
 	output {
 		display ClockView type: opengl ambient_light:50 diffuse_light:100 { 
+			graphics "c" refresh: false {draw clock_normal size: 10*zoom at:{-world.shape.width/5,world.shape.height/5} ;}
 			species clock ;
 		}
 	}
