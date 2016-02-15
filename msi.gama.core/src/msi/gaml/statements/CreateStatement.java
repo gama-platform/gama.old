@@ -359,7 +359,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				shouldBeScheduled = true;
 			}
 		}
-		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, shouldBeScheduled);
+		// As we are in the create statement, the agents are not restored
+		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false, shouldBeScheduled);
 
 		// hqnghi in case of creating experiment of micro-models, we must implicitely initialize it and its simulation output
 		if ( population instanceof ExperimentPopulation ) {

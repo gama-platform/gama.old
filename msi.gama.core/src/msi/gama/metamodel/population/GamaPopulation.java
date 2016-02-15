@@ -108,7 +108,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 				att.put("target", target);
 				attributes.add(att);
 			}
-			return pop.createAgents(scope, targets.size(), attributes, false);
+			return pop.createAgents(scope, targets.size(), attributes, false, true );
 		}
 
 	}
@@ -281,7 +281,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<? extends Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
+		final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled) throws GamaRuntimeException {
 		if ( number == 0 ) { return GamaListFactory.EMPTY_LIST; }
 		final IList<IAgent> list = GamaListFactory.create(getType().getContentType(), number);
 		final IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();

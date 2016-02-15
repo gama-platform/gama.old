@@ -95,7 +95,7 @@ public class SavedAgent {
 	public IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
 		final List<Map> agentAttrs = new ArrayList<Map>();
 		agentAttrs.add(variables);
-		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true);
+		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true, true);
 		restoreMicroAgents(scope, restoredAgents.get(0));
 
 		return restoredAgents.get(0);
@@ -120,7 +120,7 @@ public class SavedAgent {
 				}
 
 				final List<? extends IAgent> microAgents =
-					microPop.createAgents(scope, savedMicros.size(), microAttrs, true);
+					microPop.createAgents(scope, savedMicros.size(), microAttrs, true, true);
 
 				for ( int i = 0; i < microAgents.size(); i++ ) {
 					savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));

@@ -92,7 +92,7 @@ public class GraphsGraphstream {
 			}
 
 			// create the agent of the target specy
-			IList<? extends IAgent> createdAgents = populationEdges.createAgents(scope, 1, initialValues, false);
+			IList<? extends IAgent> createdAgents = populationEdges.createAgents(scope, 1, initialValues, false, true);
 			IAgent createdAgent = createdAgents.get(0);
 
 			// create the shape for this agent
@@ -114,7 +114,7 @@ public class GraphsGraphstream {
 				createdAgent = existingNodes.get(scope.getRandom().between(0, existingNodes.size() - 1));
 				existingNodes.remove(createdAgent);
 			} else {
-				IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, initialValues, false);
+				IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, initialValues, false, true);
 				createdAgent = createdAgents.get(0);
 			}
 

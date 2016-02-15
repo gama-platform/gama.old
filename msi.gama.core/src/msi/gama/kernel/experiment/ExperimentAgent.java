@@ -204,7 +204,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ps.putAll(parameters);
 		IList<Map> list = GamaListFactory.create(Types.MAP);
 		list.add(ps);
-		pop.createAgents(scope, 1, list, scheduleIt);
+		pop.createAgents(scope, 1, list, false, scheduleIt);
 	}
 
 	public ParametersSet getParameterValues() {

@@ -80,7 +80,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	 * @throws GamaRuntimeException
 	 */
 	public abstract IList<? extends IAgent> createAgents(IScope scope, int number, List<? extends Map> initialValues,
-		boolean isRestored) throws GamaRuntimeException;
+		boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
 
 	public abstract IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries)
 		throws GamaRuntimeException;
