@@ -345,6 +345,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public IType getType() {
+		// Adapter ca pour prendre ne ocmpte les ITypeProvider
 		IType tt = facets.getTypeDenotedBy(TYPE, this);
 		IType kt = facets.getTypeDenotedBy(INDEX, this, tt.getKeyType());
 		IType ct = facets.getTypeDenotedBy(OF, this, tt.getContentType());

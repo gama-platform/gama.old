@@ -30,6 +30,7 @@ public class BinaryOperator extends NAryOperator {
 		if ( u.isConst() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
+			return e;
 		}
 		return u;
 	}

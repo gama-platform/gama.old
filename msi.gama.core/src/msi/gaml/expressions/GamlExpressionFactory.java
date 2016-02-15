@@ -207,7 +207,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 					}
 				}
 			}
-
 			final OperatorProto proto = ops.get(signature);
 			// We finally make an instance of the operator and init it with the arguments
 			IExpression copy = proto.create(context, args);

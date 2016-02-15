@@ -1,21 +1,21 @@
 /*********************************************************************************************
- * 
  *
- * 'ITypeProvider.java', in plugin 'msi.gama.processor', is part of the source code of the 
+ *
+ * 'ITypeProvider.java', in plugin 'msi.gama.processor', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.precompiler;
 
 /**
  * Written by drogoul Modified on 2 ao�t 2010. See IType
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface ITypeProvider {
 
@@ -23,7 +23,9 @@ public interface ITypeProvider {
 	 * The content type is provided by the content type of the first child of the expression
 	 */
 	static final int FIRST_CONTENT_TYPE = -20;
+	static final int OWNER_CONTENT_TYPE = FIRST_CONTENT_TYPE;
 	static final int FIRST_KEY_TYPE = -23;
+	static final int OWNER_KEY_TYPE = FIRST_KEY_TYPE;
 	/*
 	 * The content type is provided by the content type of the second child of the expression
 	 */
@@ -33,7 +35,7 @@ public interface ITypeProvider {
 	 * The content type is provided by the type of the first child of the expression
 	 */
 	static final int FIRST_TYPE = -18;
-	static final int DELEGATE_TYPE = -10;
+	static final int OWNER_TYPE = FIRST_TYPE;
 	/*
 	 * The content type is provided by the type of the second child of the expression
 	 */
@@ -52,6 +54,7 @@ public interface ITypeProvider {
 	 * The type or content type are provided by both operands (which must match).
 	 */
 	static final int BOTH = -21;
+	static final int ALL = BOTH;
 	/*
 	 * The content type is provided by the content type of the first element of the child (if the
 	 * child is a container) -- EXPERIMENTAL RIGHT NOW (and probably limited to the matrix and

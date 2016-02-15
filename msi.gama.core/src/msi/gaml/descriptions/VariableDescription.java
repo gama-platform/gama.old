@@ -47,12 +47,11 @@ public class VariableDescription extends SymbolDescription {
 	public VariableDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 		final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
-		boolean isExperimentParameter = facets.equals(KEYWORD, PARAMETER);
-		if ( !facets.containsKey(TYPE) && !isExperimentParameter ) {
+		if ( !facets.containsKey(TYPE) && !isExperimentParameter() ) {
 			facets.putAsLabel(TYPE, keyword);
 		}
 		_isGlobal = superDesc instanceof ModelDescription;
-		_isParameter = isExperimentParameter || facets.containsKey(PARAMETER);
+		_isParameter = isExperimentParameter() || facets.containsKey(PARAMETER);
 		_isNotModifiable = facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE) && !_isParameter;
 		_isUpdatable = !_isNotModifiable && (facets.containsKey(VALUE) || facets.containsKey(UPDATE));
 
@@ -129,7 +128,9 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getType() {
-
+		if ( getName().equals("neighbors") ) {
+			System.out.println("...");
+		}
 		if ( type == null ) {
 			type = super.getType();
 		}

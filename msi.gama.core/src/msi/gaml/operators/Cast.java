@@ -394,7 +394,7 @@ public class Cast {
 		category = { IOperatorCategory.CASTING })
 	@doc(value = "creates a matrix with a size provided by the first operand, and filled with the second operand",
 		comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.",
-		see = { "matrix", "as_matrix" })
+		see = { IKeyword.MATRIX, "as_matrix" })
 	public static IMatrix matrix_with(final IScope scope, final ILocation size, final IExpression init) {
 		if ( size == null ) { throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope); }
 		IType type = init.getType();
@@ -425,7 +425,7 @@ public class Cast {
 			"The operator as_matrix creates a matrix of preferred size. It fills in it with elements of the left operand until the matrix is full " +
 			"If the size is to short, some elements will be omitted. Matrix remaining elements will be filled in by nil.",
 		usages = { @usage("if the right operand is nil, as_matrix is equivalent to the matrix operator") },
-		see = { "matrix" })
+		see = { IKeyword.MATRIX })
 	public static IMatrix asMatrix(final IScope scope, final Object val, final ILocation size)
 		throws GamaRuntimeException {
 		return GamaMatrixType.staticCast(scope, val, size, Types.NO_TYPE, false);

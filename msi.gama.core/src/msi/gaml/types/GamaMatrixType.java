@@ -1,20 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaMatrixType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -22,8 +22,10 @@ import msi.gama.util.matrix.*;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 
-@type(name = IKeyword.MATRIX, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class, GamaFloatMatrix.class,
-	GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.MATRIX,
+	id = IType.MATRIX,
+	wraps = { IMatrix.class, GamaIntMatrix.class, GamaFloatMatrix.class, GamaObjectMatrix.class },
+	kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	public static IMatrix staticCast(final IScope scope, final Object obj, final Object param, final IType contentType,
@@ -34,8 +36,8 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		if ( size == null ) {
 			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, contentType, copy); }
 			return with(scope, obj, new GamaPoint(1, 1), contentType);
-		} else if ( size.x <= 0 || size.y < 0 ) { throw GamaRuntimeException.error(
-			"Dimensions of a matrix should be positive.", scope); }
+		} else if ( size.x <= 0 ||
+			size.y < 0 ) { throw GamaRuntimeException.error("Dimensions of a matrix should be positive.", scope); }
 
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, contentType, size, copy); }
 		return with(scope, obj, size, contentType);
@@ -175,6 +177,8 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				final IExpression[] array = ((MapExpression) exp).valuesArray();
 				if ( array.length == 0 ) { return Types.NO_TYPE; }
 				return array[0].getType().getContentType();
+			} else {
+				return cType.getContentType();
 			}
 		}
 		if ( Types.CONTAINER.isAssignableFrom(itemType) ) { return itemType.getContentType(); }

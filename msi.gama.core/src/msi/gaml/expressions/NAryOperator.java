@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'NAryOperator.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
@@ -25,7 +25,8 @@ public class NAryOperator extends AbstractNAryOperator {
 		NAryOperator u = new NAryOperator(proto, child);
 		if ( u.isConst() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
-			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
+			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
+			return e;
 		}
 		return u;
 	}
