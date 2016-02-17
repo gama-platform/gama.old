@@ -62,6 +62,7 @@ public class GamaAgentConverter implements Converter {
 				found = true;
 				agt = lagt.get(i);
 			}
+			i++;
 		}
 		reader.moveUp();
 		return agt;
