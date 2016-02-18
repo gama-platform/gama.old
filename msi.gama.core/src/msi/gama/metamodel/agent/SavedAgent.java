@@ -34,7 +34,24 @@ public class SavedAgent {
 			saveMicroAgents(scope, (IMacroAgent) agent);
 		}
 	}
-
+	
+	public SavedAgent(Map<String, Object> v, Map<String, List<SavedAgent>> inPop){
+		variables = v;
+		innerPopulations = inPop;
+	}
+	
+	public Object getAttributeValue(String attrName){
+		return variables.get(attrName);
+	}
+	
+	public Map<String, Object> getVariables(){
+		return variables;
+	}
+	
+	public Map<String, List<SavedAgent>> getInnerPopulations() {
+		return innerPopulations;
+	}
+	
 	/**
 	 * Saves agent's attributes to a map.
 	 *

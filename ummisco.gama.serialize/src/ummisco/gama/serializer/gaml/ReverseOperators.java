@@ -13,27 +13,34 @@ import ummisco.gama.serializer.gamaType.converters.*;
 
 public class ReverseOperators {
 
-	@operator(value = "serializeSimulation")
-	@doc("")
-	public static String serializeSimulation(final IScope scope, final int i) {
+	public static XStream newXStream(ConverterScope cs) {
 		XStream xstream = new XStream(new DomDriver());
 		xstream.registerConverter(new LogConverter());
-		xstream.registerConverter(new GamaBasicTypeConverter(scope));
-		xstream.registerConverter(new GamaShapeFileConverter(scope));
-		xstream.registerConverter(new GamaAgentConverter(scope));
-		xstream.registerConverter(new GamaListConverter(scope));
-		xstream.registerConverter(new GamaMapConverter(scope));
+		xstream.registerConverter(new GamaBasicTypeConverter(cs));
+		xstream.registerConverter(new GamaShapeFileConverter(cs));
+		xstream.registerConverter(new GamaAgentConverter(cs));
+		xstream.registerConverter(new GamaListConverter(cs));
+		xstream.registerConverter(new GamaMapConverter(cs));
+		xstream.registerConverter(new SavedAgentConverter(cs));
 		// xstream.registerConverter(new GamaShapeConverter());
 		// xstream.registerConverter(new GamaScopeConverter());
 		// xstream.registerConverter(new GamaPointConverter());
 		// xstream.registerConverter(new GamaPairConverter());
 		// xstream.registerConverter(new GamaSimulationAgentConverter());
+		return xstream;
+	}
+	
+	@operator(value = "serializeSimulation")
+	@doc("")
+	public static String serializeSimulation(final IScope scope, final int i) {
+		XStream xstream = newXStream(new ConverterScope(scope));
 
 		ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		SimulationAgent simAgt = expAgt.getSimulation();
 
 		System.out.println("**** TODO list = Reducer for any kind of file");
 		System.out.println("**** TODO list = Handle the random generator too");
+		System.out.println("**** TODO list = Case of multi-simulation ?");
 
 		return xstream.toXML(new SavedAgent(scope, simAgt));
 	}
@@ -41,18 +48,8 @@ public class ReverseOperators {
 	@operator(value = "unSerializeSimulation")
 	@doc("")
 	public static int unSerializeSimulation(final IScope scope, final String simul) {
-		XStream xstream = new XStream(new DomDriver());
-		xstream.registerConverter(new LogConverter());
-		xstream.registerConverter(new GamaBasicTypeConverter(scope));
-		xstream.registerConverter(new GamaShapeFileConverter(scope));
-		xstream.registerConverter(new GamaAgentConverter(scope));
-		xstream.registerConverter(new GamaListConverter(scope));
-		xstream.registerConverter(new GamaMapConverter(scope));
-		// xstream.registerConverter(new GamaShapeConverter());
-		// xstream.registerConverter(new GamaScopeConverter());
-		// xstream.registerConverter(new GamaPointConverter());
-		// xstream.registerConverter(new GamaPairConverter());
-		// xstream.registerConverter(new GamaSimulationAgentConverter());
+		ConverterScope cScope = new ConverterScope(scope);
+		XStream xstream = newXStream(cScope);
 
 		SavedAgent agt = (SavedAgent) xstream.fromXML(simul);
 
@@ -61,6 +58,11 @@ public class ReverseOperators {
 
 		SimulationPopulation simPop = exp.getSimulationPopulation();
 		agt.restoreTo(scope, simPop);
+		
+		SimulationAgent simAgt = exp.getSimulation();
+		cScope.setSimulationAgent(simAgt);
+		
+		agt = (SavedAgent) xstream.fromXML(simul);
 
 		return 1;
 	}

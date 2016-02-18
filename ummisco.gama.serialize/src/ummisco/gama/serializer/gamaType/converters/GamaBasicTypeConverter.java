@@ -15,9 +15,9 @@ import msi.gaml.types.IType;
 public class GamaBasicTypeConverter implements Converter {
 
 	private final static String TAG="GamaType";
-	IScope scope;
+	ConverterScope scope;
 	
-	public GamaBasicTypeConverter(IScope s){
+	public GamaBasicTypeConverter(ConverterScope s){
 		scope = s;
 	}
 
@@ -52,7 +52,7 @@ public class GamaBasicTypeConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext arg1) {
 		// TODO Auto-generated method stub
 		reader.moveDown();
-		IType t = scope.getModelContext().getTypeNamed(reader.getValue());
+		IType t = scope.getScope().getModelContext().getTypeNamed(reader.getValue());
 //		String val = reader.getValue();
 		reader.moveUp();
 	//	x= Double.valueOf(lines[0]).doubleValue();
