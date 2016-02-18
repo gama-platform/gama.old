@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.kabeja.dxf.DXFArc;
+import org.kabeja.dxf.DXFBlock;
 import org.kabeja.dxf.DXFCircle;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFEntity;
@@ -232,6 +233,16 @@ public class GamaDXFFile extends GamaGeometryFile {
 						if (g != null) geoms.add(g);
 					}
 		    		
+		    	}
+		    }
+			
+			Iterator itbl =  doc.getDXFBlockIterator();
+		    while (itbl.hasNext()) {
+		    	DXFBlock block = (DXFBlock) itbl.next();
+		    	Iterator itent =  block.getDXFEntitiesIterator();
+			    while (itent.hasNext()) {
+			    	IShape g = defineGeom(scope,(DXFEntity)itent.next());
+					if (g != null) geoms.add(g);
 		    	}
 		    }
 		    
