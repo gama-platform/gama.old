@@ -134,7 +134,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	    	shape.setAttribute("id", obj.getID());
 	    	shape.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 	    	shape.setAttribute("thickness", obj.getThickness());
-	    	shape.setAttribute("is_visibile", obj.isVisibile());
+	    	shape.setAttribute("is_visible", obj.isVisibile());
 	    	shape.setAttribute("is_omit", obj.isOmitLineType());
 	    	return shape;
 		}
@@ -149,7 +149,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 			line.setAttribute("id", obj.getID());
 			line.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 			line.setAttribute("thickness", obj.getThickness());
-			line.setAttribute("is_visibile", obj.isVisibile());
+			line.setAttribute("is_visible", obj.isVisibile());
 			line.setAttribute("is_omit", obj.isOmitLineType());
 			return line;
 		}
@@ -166,7 +166,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 			line.setAttribute("id", obj.getID());
 			line.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 			line.setAttribute("thickness", obj.getThickness());
-			line.setAttribute("is_visibile", obj.isVisibile());
+			line.setAttribute("is_visible", obj.isVisibile());
 			line.setAttribute("is_omit", obj.isOmitLineType());
 			return line;
 		}
@@ -186,7 +186,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	    	shape.setAttribute("id", obj.getID());
 	    	shape.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 	    	shape.setAttribute("thickness", obj.getThickness());
-	    	shape.setAttribute("is_visibile", obj.isVisibile());
+	    	shape.setAttribute("is_visible", obj.isVisibile());
 	    	shape.setAttribute("is_omit", obj.isOmitLineType());
 	    	return shape;
 		}
