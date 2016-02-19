@@ -108,7 +108,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 				att.put("target", target);
 				attributes.add(att);
 			}
-			return pop.createAgents(scope, targets.size(), attributes, false, true );
+			return pop.createAgents(scope, targets.size(), attributes, false, true);
 		}
 
 	}
@@ -329,7 +329,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		for ( int i = 0, n = agents.size(); i < n; i++ ) {
 			final IAgent a = agents.get(i);
 			try {
-				a.acquireLock();
+				// a.acquireLock();
 				if ( empty ) {
 					inits = Collections.EMPTY_MAP;
 				} else {
@@ -340,7 +340,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 					var.initializeWith(scope, a, empty ? null : inits.get(s));
 				}
 			} finally {
-				a.releaseLock();
+				// a.releaseLock();
 			}
 		}
 	}
@@ -514,10 +514,10 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		// }
 	}
 
-	@Override
-	public void hostChangesShape() {
-		topology.shapeChanged(this);
-	}
+	// @Override
+	// public void hostChangesShape() {
+	// topology.shapeChanged(this);
+	// }
 
 	@Override
 	public String toString() {

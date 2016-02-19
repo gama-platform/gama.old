@@ -13,6 +13,7 @@ package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
 import java.util.Arrays;
+import msi.gama.common.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -23,7 +24,7 @@ public class NAryOperator extends AbstractNAryOperator {
 
 	public static IExpression create(final OperatorProto proto, final IExpression ... child) {
 		NAryOperator u = new NAryOperator(proto, child);
-		if ( u.isConst() ) {
+		if ( u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 			return e;

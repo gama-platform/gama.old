@@ -223,6 +223,12 @@ public class ModelDescription extends SpeciesDescription {
 	 * Create types from the species descriptions
 	 */
 	public void buildTypes() {
+		for ( SpeciesDescription sd : this.getAllMicroSpecies() ) {
+			types.addSpeciesType(sd);
+		}
+		for ( IDescription ed : this.getExperiments() ) {
+			types.addSpeciesType((ExperimentDescription) ed);
+		}
 		types.init();
 	}
 
@@ -243,7 +249,7 @@ public class ModelDescription extends SpeciesDescription {
 			titledExperiments.put(s, (ExperimentDescription) child);
 			// scope.getGui().debug("Adding experiment" + s + " defined in " + child.getOriginName() + " to " + getName() +
 			// "...");
-			addSpeciesType((TypeDescription) child);
+			// addSpeciesType((TypeDescription) child);
 		} else if ( child != null && child.getKeyword().equals(OUTPUT) ) {
 			if ( output == null ) {
 				output = child;

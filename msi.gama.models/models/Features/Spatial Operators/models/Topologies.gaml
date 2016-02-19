@@ -3,7 +3,7 @@
 * Author: Patrick Taillandier
 * Description: A model which shows how to use spatial operator, allowing the user to change the parameter operator in the
 * 	experiment to test the different operators and see the results
-* Tags : Topology, Grid
+* Tags: Topology, Grid
 */
 
 model gridfilter

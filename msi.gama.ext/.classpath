@@ -84,7 +84,7 @@
 	<classpathentry exported="true" kind="lib" path="kabeja 0.4/jars/kabeja-0.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 0.9.1/jars/jgrapht-core-0.9.1.jar" sourcepath="jgrapht 0.9.1/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="vecmath 1.5.2/jars/vecmath-1.5.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="trove 3.0.3/jars/trove-3.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="trove 3.0.3/jars/trove-3.0.3.jar" sourcepath="trove 3.0.3/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="svgsalamander 1.0/jars/svg-salamander-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="rcaller 2.5/jars/RCaller-2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/aopalliance-1.0.jar"/>

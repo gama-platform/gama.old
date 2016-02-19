@@ -482,16 +482,16 @@ public abstract class AbstractTopology implements ITopology {
 	public double getHeight() {
 		return environmentHeight;
 	}
-
-	@Override
-	public void shapeChanged(final IPopulation pop) {
-		setEnvironmentBounds();
-		// TODO CHANGE THIS
-		final Iterator<IAgent> it = pop.iterator();
-		while (it.hasNext()) {
-			it.next().hostChangesShape();
-		}
-	}
+	//
+	// @Override
+	// public void shapeChanged(final IPopulation pop) {
+	// setEnvironmentBounds();
+	// // TODO CHANGE THIS
+	// final Iterator<IAgent> it = pop.iterator();
+	// while (it.hasNext()) {
+	// it.next().hostChangesShape();
+	// }
+	// }
 
 	@Override
 	public void dispose() {

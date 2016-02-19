@@ -244,7 +244,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected void createSimulationPopulation() {
 		SimulationPopulation pop = getSimulationPopulation();
 		pop.initializeFor(scope);
-		attributes.put(getModel().getName(), pop);
+		setAttribute(getModel().getName(), pop);
 		// pop.setHost(this);
 		// if ( scheduler != null ) {
 		// scheduler.dispose();

@@ -72,9 +72,9 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	 * @param number The number of agent to create.
 	 * @param initialValues The initial values of agents' variables.
 	 * @param isRestored Indicates that the agents are newly created or they are restored (on a
-	 * capture or release).
-	 * If agents are restored on a capture or release then don't run their "init" reflex
-	 * again.
+	 *            capture or release).
+	 *            If agents are restored on a capture or release then don't run their "init" reflex
+	 *            again.
 	 *
 	 * @return
 	 * @throws GamaRuntimeException
@@ -124,9 +124,9 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	/**
 	 * @throws GamaRuntimeException
-	 * When the "shape" of host changes, this method is invoked to update the topology.
+	 *             When the "shape" of host changes, this method is invoked to update the topology.
 	 */
-	public abstract void hostChangesShape();
+	// public abstract void hostChangesShape();
 
 	/**
 	 * Kills all the agents managed by this population.
@@ -155,6 +155,6 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	IAgent getAgent(IScope scope, ILocation coord);
 
 	@Override
-		IAgent[] toArray();
+	IAgent[] toArray();
 
 }

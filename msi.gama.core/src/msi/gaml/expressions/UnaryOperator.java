@@ -13,6 +13,7 @@ package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
 import java.util.Set;
+import msi.gama.common.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -30,7 +31,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public static IExpression create(final OperatorProto proto, final IDescription context,
 		final IExpression ... child) {
 		UnaryOperator u = new UnaryOperator(proto, context, child);
-		if ( u.isConst() ) {
+		if ( u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 			return e;

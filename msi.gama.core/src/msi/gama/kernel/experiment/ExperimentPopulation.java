@@ -47,7 +47,7 @@ public class ExperimentPopulation extends GamaPopulation {
 		// IAgent a = get(0);
 		Set<String> names = inits.keySet();
 		try {
-			a.acquireLock();
+			// a.acquireLock();
 			for ( final String s : orderedVarNames ) {
 				final IVariable var = species.getVar(s);
 				var.initializeWith(scope, a, inits.get(s));
@@ -57,7 +57,7 @@ public class ExperimentPopulation extends GamaPopulation {
 				a.getScope().setAgentVarValue(a, s, inits.get(s));
 			}
 		} finally {
-			a.releaseLock();
+			// a.releaseLock();
 		}
 
 	}

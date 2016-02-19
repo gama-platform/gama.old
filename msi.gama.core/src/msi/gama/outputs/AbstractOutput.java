@@ -158,7 +158,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		ModelDescription main = (ModelDescription) scope.getModel().getDescription();
 		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 		if ( fromMicroModel ) {
-			ExperimentAgent exp = (ExperimentAgent) scope.getAgentScope()
+			ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
 				.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
 			this.scope = exp.getSimulation().getScope();
 		} else {

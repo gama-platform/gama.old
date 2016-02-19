@@ -5,7 +5,7 @@
 * 	depending on the hour. The traffic jam is also taken into account to slow the people agents when they are too much on the same
 * 	road. The experiment shows a display of the city, with people agents, buildings and roads, a display of the traffic jam occuring on the
 * 	roads, and a chart display showing two charts : one for the traffic jam coefficients, and an other for the objectives of the people agents.
-* Tags : : GIS, Shapefiles, Graph, Movement of Agents, Skill
+* Tags: GIS, Shapefiles, Graph, Movement of Agents, Skill
 */
   
 model RoadTrafficCity

@@ -3,7 +3,7 @@
 * Author: Arnaud Grignard
 * Description: This is a model that shows how the physics engine works using a pool with balls, collided by a white ball.
 * 	The balls use the skill Physical3D.
-* Tags : Physical Engine, Skill
+* Tags: Physical Engine, Skill
 */
 model pool3D
 

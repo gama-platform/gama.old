@@ -35,7 +35,7 @@ import msi.gaml.types.*;
 	value = { @facet(name = IKeyword.NAME,
 		type = IType.ID,
 		optional = true,
-		doc = @doc("identifier of the aspect (it can be used in a display to identify which aspect should be used for the given species). Two special names can also be used: 'default' will allow this aspect to be used as a replacement for the default aspect defined in preferences; 'highlighted' will allow the aspect to be used when the agent is highlighted as a replacement for the default (application of a color)") ) },
+		doc = @doc("identifier of the aspect (it can be used in a display to identify which aspect should be used for the given species). Two special names can also be used: 'default' will allow this aspect to be used as a replacement for the default aspect defined in preferences; 'highlighted' will allow the aspect to be used when the agent is highlighted as a replacement for the default (application of a color)")) },
 	omissible = IKeyword.NAME)
 @doc(
 	value = "Aspect statement is used to define a way to draw the current agent. Several aspects can be defined in one species. It can use attributes to customize each agent's aspect. The aspect is evaluate for each agent each time it has to be displayed.",
@@ -140,7 +140,7 @@ public class AspectStatement extends AbstractStatementSequence {
 				final IGraphics g = scope.getGraphics();
 				if ( g == null ) { return null; }
 				try {
-					agent.acquireLock();
+					// agent.acquireLock();
 					// if ( agent.dead() ) { return null; }
 					if ( agent == scope.getGui().getHighlightedAgent() ) {
 						g.beginHighlight();
@@ -191,7 +191,7 @@ public class AspectStatement extends AbstractStatementSequence {
 					e.printStackTrace();
 				} finally {
 					g.endHighlight();
-					agent.releaseLock();
+					// agent.releaseLock();
 				}
 			}
 			return null;
@@ -218,7 +218,7 @@ public class AspectStatement extends AbstractStatementSequence {
 			// end-hqnghi
 			if ( g == null ) { return null; }
 			try {
-				agent.acquireLock();
+				// agent.acquireLock();
 				if ( scope.interrupted() ) { return null; }
 				if ( shouldHighlight ) {
 					g.beginHighlight();
@@ -235,7 +235,7 @@ public class AspectStatement extends AbstractStatementSequence {
 				if ( shouldHighlight ) {
 					g.endHighlight();
 				}
-				agent.releaseLock();
+				// agent.releaseLock();
 			}
 
 		}

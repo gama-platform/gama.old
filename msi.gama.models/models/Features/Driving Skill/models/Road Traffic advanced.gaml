@@ -4,7 +4,7 @@
 * Description: Model to show how to use the driving skill to represent the traffic on a road network generated thanks to shapefiles, with intersections
 * 	and traffic lights going from red to green to let people move or stop. Two experiments are presented : experiment_2D to display the model in 2D
 * 	and which better display the orientation of roads and experiment_3D to display the model in 3D.
-* Tags : : GIS, Shapefiles, Graph, Movement of Agents, Skill, Directed Graph
+* Tags: GIS, Shapefiles, Graph, Movement of Agents, Skill, Directed Graph
 */
 
 model RoadTrafficComplex

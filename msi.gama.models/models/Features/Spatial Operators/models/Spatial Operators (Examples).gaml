@@ -2,7 +2,7 @@
 * Name: Spatial Operators
 * Author: Patrick Taillandier
 * Description: A model which shows how to use spatial operators like rotated_by, scaled_by and convex_hull
-* Tags : Topology, Shapefiles
+* Tags: Topology, Shapefiles
 */
 model example_spatial_operators
 

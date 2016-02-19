@@ -7,7 +7,7 @@
 * 	randomly, and following other balls. When they are close to each other, they generate a group of balls with its own behavior. A group of group
 * 	agents generate a cloud in the same way. When the number of balls contained inside the group is too high, the group disappears and releases
 * 	all its balls repulsively. 
-* Tags : Multi-level, Movements of Agents
+* Tags: Multi-level, Movements of Agents
 */
 
 model balls_groups_clouds

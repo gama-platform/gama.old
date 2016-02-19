@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
+import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -43,8 +44,8 @@ public interface IMacroAgent extends IAgent {
 	 *
 	 * @param other
 	 * @return
-	 * true if this agent can capture other agent
-	 * false otherwise
+	 * 		true if this agent can capture other agent
+	 *         false otherwise
 	 */
 	public abstract boolean canCapture(IAgent other, ISpecies newSpecies);
 
@@ -55,20 +56,20 @@ public interface IMacroAgent extends IAgent {
 	 * Captures some agents as micro-agents with the specified micro-species as their new species.
 	 *
 	 * @param microSpecies the species that the captured agents will become, this must be a
-	 * micro-species of this agent's species.
+	 *            micro-species of this agent's species.
 	 * @param microAgents
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-		public abstract IList<IAgent> captureMicroAgents(IScope scope, final ISpecies microSpecies,
-			final IList<IAgent> microAgents) throws GamaRuntimeException;
+	public abstract IList<IAgent> captureMicroAgents(IScope scope, final ISpecies microSpecies,
+		final IList<IAgent> microAgents) throws GamaRuntimeException;
 
 	/**
 	 * Returns all the agents which consider this agent as direct host.
 	 *
 	 * @return
 	 */
-			@getter(IKeyword.MEMBERS)
+	@getter(IKeyword.MEMBERS)
 	public abstract IContainer<?, IAgent> getMembers(IScope scope);
 
 	/**
@@ -98,7 +99,7 @@ public interface IMacroAgent extends IAgent {
 	 * Verifies if this agent contains micro-agents or not.
 	 *
 	 * @return true if this agent contains micro-agent(s)
-	 * false otherwise
+	 *         false otherwise
 	 */
 	public abstract boolean hasMembers();
 
@@ -128,8 +129,8 @@ public interface IMacroAgent extends IAgent {
 	 * @param newMicroSpecies
 	 * @return
 	 */
-		public abstract IList<IAgent> migrateMicroAgents(IScope scope, final ISpecies oldMicroSpecies,
-			final ISpecies newMicroSpecies);
+	public abstract IList<IAgent> migrateMicroAgents(IScope scope, final ISpecies oldMicroSpecies,
+		final ISpecies newMicroSpecies);
 
 	/**
 	 * Releases some micro-agents of this agent.
@@ -138,8 +139,8 @@ public interface IMacroAgent extends IAgent {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-			public abstract IList<IAgent> releaseMicroAgents(IScope scope, final IList<IAgent> microAgents)
-				throws GamaRuntimeException;
+	public abstract IList<IAgent> releaseMicroAgents(IScope scope, final IList<IAgent> microAgents)
+		throws GamaRuntimeException;
 
 	@setter(IKeyword.MEMBERS)
 	public abstract void setMembers(IList<IAgent> members);
@@ -159,5 +160,13 @@ public interface IMacroAgent extends IAgent {
 	 * @return
 	 */
 	// public abstract boolean mustScheduleMembers();
+
+	// hqnghi manipulate micro-models
+	public abstract void addExternMicroPopulation(final String expName, final IPopulation pop);
+
+	public abstract IPopulation getExternMicroPopulationFor(final String expName);
+
+	public abstract Map<String, IPopulation> getExternMicroPopulations();
+	// end-hqnghi
 
 }

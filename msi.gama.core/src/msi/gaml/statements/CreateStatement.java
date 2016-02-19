@@ -15,7 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -59,34 +59,34 @@ import msi.gaml.types.*;
 	remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(
-	value = {
-		@facet(name = IKeyword.SPECIES,
-			type = { IType.SPECIES, IType.AGENT },
-			optional = true,
-			doc = @doc("an expression that evaluates to a species, the species of the agents to be created. In the case of simulations, the name 'simulation', which represents the current instance of simulation, can also be used as a proxy to their species") ),
+	value = { @facet(
+		name = IKeyword.SPECIES,
+		type = { IType.SPECIES, IType.AGENT },
+		optional = true,
+		doc = @doc("an expression that evaluates to a species, the species of the agents to be created. In the case of simulations, the name 'simulation', which represents the current instance of simulation, can also be used as a proxy to their species")),
 		@facet(name = IKeyword.RETURNS,
 			type = IType.NEW_TEMP_ID,
 			optional = true,
-			doc = @doc("a new temporary variable name containing the list of created agents (a list, even if only one agent has been created)") ),
+			doc = @doc("a new temporary variable name containing the list of created agents (a list, even if only one agent has been created)")),
 		@facet(name = IKeyword.FROM,
 			type = IType.NONE,
 			optional = true,
-			doc = @doc("an expression that evaluates to a localized entity, a list of localized entities, a string (the path of a shapefile, a .csv, a .asc or a OSM file) or a container returned by a request to a database") ),
+			doc = @doc("an expression that evaluates to a localized entity, a list of localized entities, a string (the path of a shapefile, a .csv, a .asc or a OSM file) or a container returned by a request to a database")),
 		@facet(name = IKeyword.NUMBER,
 			type = IType.INT,
 			optional = true,
-			doc = @doc("an expression that evaluates to an int, the number of created agents") ),
-		@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc = @doc("") ),
+			doc = @doc("an expression that evaluates to an int, the number of created agents")),
+		@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc = @doc("")),
 		@facet(name = IKeyword.WITH,
 			type = { IType.MAP },
 			optional = true,
-			doc = @doc("an expression that evaluates to a map, for each pair the key is a species attribute and the value the assigned value") ),
+			doc = @doc("an expression that evaluates to a map, for each pair the key is a species attribute and the value the assigned value")),
 		@facet(name = IKeyword.HEADER,
 			type = { IType.BOOL },
 			optional = true,
 			doc = @doc(
 				deprecated = "Use a file constructor that specifies the header instead, e.g. csv_file('...', true)",
-				value = "an expression that evaluates to a boolean, when creating agents from csv file, specify whether the file header is loaded") ) },
+				value = "an expression that evaluates to a boolean, when creating agents from csv file, specify whether the file header is loaded")) },
 	omissible = IKeyword.SPECIES)
 @doc(
 	value = "Allows an agent to create `number` agents of species `species`, to create agents of species `species` from a shapefile or to create agents of species `species` from one or several localized entities (discretization of the localized entity geometries).",
@@ -100,7 +100,7 @@ import msi.gaml.types.*;
 			value = "In GAML modelers can create agents of species `a_species  (with two attributes `type` and `nature` with types corresponding to the types of the shapefile attributes) from a shapefile `the_shapefile` while reading attributes 'TYPE_OCC' and 'NATURE' of the shapefile. One agent will be created by object contained in the shapefile:",
 			examples = @example(
 				value = "create a_species from: the_shapefile with: [type:: 'TYPE_OCC', nature::'NATURE'];",
-				isExecutable = false) ),
+				isExecutable = false)),
 		@usage(
 			value = "In order to create agents from a .csv file, facet `header` can be used to specified whether we can use columns header:",
 			examples = {
@@ -313,11 +313,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				scope); }
 			pop = executor.getPopulationFor(s);
 			// hqnghi population of micro-model's experiment is not exist, we must create the new one
-			if ( pop == null && s instanceof ExperimentPlan ) {
+			if ( pop == null && s instanceof ExperimentPlan && executor instanceof IMacroAgent ) {
 				pop = new ExperimentPopulation(s);
 				final IScope sc = ((ExperimentPlan) s).getExperimentScope();
 				pop.initializeFor(sc);
-				executor.addExternMicroPopulation(s.getName(), pop);
+				((IMacroAgent) executor).addExternMicroPopulation(s.getName(), pop);
 			}
 			// end-hqnghi
 		}

@@ -2,7 +2,7 @@
 * Name: Save to Ascii
 * Author: Patrick Taillandier
 * Description: This is a model that shows how to save a grid inside a ASCII File to reuse it later or to keep it.
-* Tags : Save Files
+* Tags: Save Files
 */
 
 model SavetoAsc
