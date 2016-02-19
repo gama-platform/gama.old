@@ -3,7 +3,7 @@
 * Author: Patrick Taillandier
 * Description: Model using shapefiles to create roads using shapefiles with people driving on these roads. The model take into account 
 * 	the number of lanes of the roads.
-* Tags : : Shapefiles, Graph, Movement of Agents, Skill
+* Tags: Shapefiles, Graph, Movement of Agents, Skill
 */
   
  

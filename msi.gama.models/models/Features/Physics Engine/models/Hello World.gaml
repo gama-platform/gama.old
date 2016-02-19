@@ -3,7 +3,7 @@
 * Author: Arnaud Grignard
 * Description: This is a model that shows how the physics engine work by displaying two species (a floor and balls). Ball agents use the 
 * 	skill physical3D. The ball agents fall on a floor and fall from the floor to the void. 
-* Tags : Physical Engine, Skill
+* Tags: Physical Engine, Skill
 */
 
 model FallingHelloWorld

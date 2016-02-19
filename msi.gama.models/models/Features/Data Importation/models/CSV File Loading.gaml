@@ -2,7 +2,7 @@
 * Name: Convertion of CSV data to Matrix
 * Author:  Patrick Taillandier
 * Description: Model which shows how to initialize a matrix by using the content of a CSV File. The model load a CSV File, and write its content in the console. 
-* Tags : : CSV, Import Files
+* Tags: CSV, Import Files
 */
 
 

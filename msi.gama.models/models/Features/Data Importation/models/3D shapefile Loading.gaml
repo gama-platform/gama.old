@@ -2,7 +2,7 @@
 * Name: 3D shapefile loading
 * Author:  
 * Description: Model which shows how to create a shape using a 3D Shapefile after this one has been loaded. 
-* Tags : : 3D Display, Shapefiles, Import Files
+* Tags: 3D Display, Shapefiles, Import Files
 */
 model shapefile_loading
 

@@ -4,7 +4,7 @@ global {
 	float evaporation_per_cycle <- 5.0 min: 0.0 max: 240.0 parameter: 'Evaporation of the signal (unit/cycle):' category: 'Signals';
 	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
 	int gridsize <- 100 min: 30 parameter: 'Width and Height of the grid:' category: 'Environment and Population';
-	int ants_number <- 50 min: 1 parameter: 'Number of ants:' category: 'Environment and Population';
+	int ants_number <- 200 min: 1 parameter: 'Number of ants:' category: 'Environment and Population';
 	int grid_frequency <- 1 min: 1 max: 100 parameter: 'Grid updates itself every:' category: 'Environment and Population';
 	int number_of_food_places <- 5 min: 1 parameter: 'Number of food depots:' category: 'Environment and Population';
 	float grid_transparency <- 1.0;
@@ -34,7 +34,7 @@ global {
 	}
 	
 	reflex diffuse {
-      diffuse var:road on:ant_grid proportion: diffusion_rate radius:3 propagation: gradient;
+      diffuse var:road on:ant_grid proportion: diffusion_rate radius:3 propagation: gradient method:convolution min_value:100;
    }
   
 }
