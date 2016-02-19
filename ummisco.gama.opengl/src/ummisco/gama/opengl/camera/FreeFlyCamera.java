@@ -17,6 +17,7 @@ import com.jogamp.opengl.glu.GLU;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gaml.operators.Maths;
+import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class FreeFlyCamera extends AbstractCamera {
@@ -41,8 +42,8 @@ public class FreeFlyCamera extends AbstractCamera {
 		}
 		double factorP = phi * Maths.toRad;
 		double factorT = theta * Maths.toRad;
-		double r_temp = Math.cos(factorP);
-		forward.setLocation(r_temp * Math.cos(factorT), r_temp * Math.sin(factorT), Math.sin(factorP));
+		double r_temp = FastMath.cos(factorP);
+		forward.setLocation(r_temp * FastMath.cos(factorT), r_temp * FastMath.sin(factorT), FastMath.sin(factorP));
 		left.setLocation(GamaPoint.crossProduct(up, forward).normalized());
 		target.setLocation(forward.plus(position));
 	}
@@ -112,7 +113,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void zoom(final boolean in) {
-		float step = Math.abs(getPosition().getZ() != 0 ? (float) position.getZ() / 10 : 0.1f);
+		float step = FastMath.abs(getPosition().getZ() != 0 ? (float) position.getZ() / 10 : 0.1f);
 		GamaPoint vector = forward.times(speed * 800 + step);
 		position.setLocation(getPosition().plus(in ? vector : vector.negated()));
 		target.setLocation(forward.plus(getPosition()));

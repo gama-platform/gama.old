@@ -28,6 +28,7 @@ import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 import msi.gaml.operators.Spatial.Projections;
 import msi.gaml.operators.Strings;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 @file(name = "image",
@@ -372,10 +373,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		double x2 = xllcorner + cellSizeX * nbCols;
 		double y1 = yllcorner;
 		double y2 = yllcorner + cellSizeY * nbRows;
-		GamaPoint minCorner =
-			new GamaPoint(xNeg ? Math.max(x1, x2) : Math.min(x1, x2), yNeg ? Math.max(y1, y2) : Math.min(y1, y2));
-		GamaPoint maxCorner =
-			new GamaPoint(xNeg ? Math.min(x1, x2) : Math.max(x1, x2), yNeg ? Math.min(y1, y2) : Math.max(y1, y2));
+		GamaPoint minCorner = new GamaPoint(xNeg ? FastMath.max(x1, x2) : FastMath.min(x1, x2),
+			yNeg ? FastMath.max(y1, y2) : FastMath.min(y1, y2));
+		GamaPoint maxCorner = new GamaPoint(xNeg ? FastMath.min(x1, x2) : FastMath.max(x1, x2),
+			yNeg ? FastMath.min(y1, y2) : FastMath.max(y1, y2));
 		if ( geodataFile != null ) {
 			minCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, minCorner).getLocation();
 			maxCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, maxCorner).getLocation();

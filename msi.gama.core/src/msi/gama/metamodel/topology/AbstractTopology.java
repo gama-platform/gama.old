@@ -216,7 +216,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public void removeAgent(final IAgent agent) {
-		getSpatialIndex().remove(agent.getGeometry(), agent);
+		getSpatialIndex().remove(agent.getEnvelope(), agent);
 	}
 
 	/**
@@ -261,15 +261,11 @@ public abstract class AbstractTopology implements ITopology {
 		if ( environmentEnvelope == null ) { return; }
 		environmentWidth = environmentEnvelope.getWidth();
 		environmentHeight = environmentEnvelope.getHeight();
-		// environmentMinX = environmentEnvelope.getMinX();
-		// environmentMinY = environmentEnvelope.getMinY();
-		// environmentMaxX = environmentEnvelope.getMaxX();
-		// environmentMaxY = environmentEnvelope.getMaxY();
 	}
 
 	@Override
-	public void updateAgent(final IShape previous, final IAgent agent) {
-		if ( previous != null ) {
+	public void updateAgent(final Envelope previous, final IAgent agent) {
+		if ( previous != null && !previous.isNull() ) {
 			getSpatialIndex().remove(previous, agent);
 		}
 		getSpatialIndex().insert(agent);

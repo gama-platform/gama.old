@@ -5,6 +5,7 @@
 package msi.gaml.statements;
 
 import java.util.*;
+import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.database.sql.SqlConnection;
 import msi.gama.metamodel.shape.GamaShape;
@@ -13,8 +14,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Class CreateFromDatabaseDelegate.
@@ -52,7 +53,7 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 		// Get ResultSet
 		final GamaList<GamaList<Object>> initValue = (GamaList) input.get(2);
 		// set initialValues to generate species
-		final int num = max == null ? initValue.length(scope) : Math.min(max, initValue.length(scope));
+		final int num = max == null ? initValue.length(scope) : CmnFastMath.min(max, initValue.length(scope));
 		for ( int i = 0; i < num; i++ ) {
 			final GamaList<Object> rowList = initValue.get(i);
 			final Map map = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);

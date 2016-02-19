@@ -173,15 +173,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		// } else {
 		// double widthHeightConstraint = getEnvHeight() / getEnvWidth();
 		// if ( widthHeightConstraint < 1 ) {
-		// point[1] = Math.min(y, (int) Math.round(x * widthHeightConstraint));
-		// point[0] = Math.min(x, (int) Math.round(point[1] / widthHeightConstraint));
+		// point[1] = FastMath.min(y, (int) FastMath.round(x * widthHeightConstraint));
+		// point[0] = FastMath.min(x, (int) FastMath.round(point[1] / widthHeightConstraint));
 		// } else {
-		// point[0] = Math.min(x, (int) Math.round(y / widthHeightConstraint));
-		// point[1] = Math.min(y, (int) Math.round(point[0] * widthHeightConstraint));
+		// point[0] = FastMath.min(x, (int) FastMath.round(y / widthHeightConstraint));
+		// point[1] = FastMath.min(y, (int) FastMath.round(point[0] * widthHeightConstraint));
 		// }
 		// }
-		// viewPort.height = Math.max(1, point[1]);;
-		// viewPort.width = Math.max(1, point[0]);;
+		// viewPort.height = FastMath.max(1, point[1]);;
+		// viewPort.width = FastMath.max(1, point[0]);;
 		// canBeUpdated(true);
 		// setSize(x, y);
 		return true;

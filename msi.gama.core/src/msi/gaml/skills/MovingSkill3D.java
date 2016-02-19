@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MovingSkill3D.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.skills;
 
@@ -15,26 +15,19 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.path.IPath;
 import msi.gaml.operators.Maths;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 
 /**
  * MovingSkill3D : This class is intended to define the minimal set of behaviours required from an
  * agent that is able to move. Each member that has a meaning in GAML is annotated with the
  * respective tags (vars, getter, setter, init, action & args)
- * 
+ *
  * @author Arnaud Grignard
  */
 
@@ -142,8 +135,7 @@ public class MovingSkill3D extends MovingSkill {
 				doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) },
 		doc = @doc(examples = { @example("do move speed: speed - 10 heading: heading + rnd (30) bounds: agentA;") },
 			value = "moves the agent forward, the distance being computed with respect to its speed and heading. The value of the corresponding variables are used unless arguments are passed."))
-	public
-		IPath primMoveForward(final IScope scope) throws GamaRuntimeException {
+	public IPath primMoveForward(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
 		final double dist = computeDistance(scope, agent);
@@ -214,7 +206,7 @@ public class MovingSkill3D extends MovingSkill {
 		if ( signumX == 0 ) {
 			setHeading(agent, signumY == 0 ? 0 : signumY > 0 ? 90 : 270);
 		} else {
-			setHeading(agent, (int) (Math.atan(diff.y / diff.x) * Maths.toDeg) + (signumX > 0 ? 0 : 180));
+			setHeading(agent, (int) (FastMath.atan(diff.y / diff.x) * Maths.toDeg) + (signumX > 0 ? 0 : 180));
 		}
 
 		// Pitch
@@ -222,7 +214,7 @@ public class MovingSkill3D extends MovingSkill {
 			int signumZ = Maths.signum(diff.z);
 			setPitch(agent, signumZ == 0 ? 0 : signumZ > 0 ? 90 : 270);
 		} else {
-			setPitch(agent, (int) (Math.atan(diff.z / Math.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg));
+			setPitch(agent, (int) (FastMath.atan(diff.z / FastMath.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg));
 		}
 
 		return null;

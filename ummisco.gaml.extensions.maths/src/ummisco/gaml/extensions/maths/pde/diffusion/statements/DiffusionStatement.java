@@ -26,6 +26,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.fastmaths.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.*;
@@ -301,12 +302,14 @@ public class DiffusionStatement extends AbstractStatement {
 			for ( int i = 0; i < mat_diff_size; i++ ) {
 				for ( int j = 0; j < mat_diff_size; j++ ) {
 					if ( nb_neighbors == 8 ) {
-						distanceFromCenter = Math.max(Math.abs(i - mat_diff_size / 2), Math.abs(j - mat_diff_size / 2));
+						distanceFromCenter =
+							CmnFastMath.max(FastMath.abs(i - mat_diff_size / 2), CmnFastMath.abs(j - mat_diff_size / 2));
 					} else {
-						distanceFromCenter = Math.abs(i - mat_diff_size / 2) + Math.abs(j - mat_diff_size / 2);
+						distanceFromCenter =
+							CmnFastMath.abs(i - mat_diff_size / 2) + CmnFastMath.abs(j - mat_diff_size / 2);
 					}
 					mat_diffu[i][j] =
-						proportion / Math.pow(nb_neighbors, distanceFromCenter) - distanceFromCenter * variation;
+						proportion / FastMath.pow(nb_neighbors, distanceFromCenter) - distanceFromCenter * variation;
 					if ( mat_diffu[i][j] < 0 ) {
 						mat_diffu[i][j] = 0;
 					}
@@ -319,9 +322,9 @@ public class DiffusionStatement extends AbstractStatement {
 				for ( int i = 0; i < 3; i++ ) {
 					for ( int j = 0; j < 3; j++ ) {
 						if ( nb_neighbors == 8 ) {
-							distanceFromCenter = Math.max(Math.abs(i - 3 / 2), Math.abs(j - 3 / 2));
+							distanceFromCenter = CmnFastMath.max(FastMath.abs(i - 3 / 2), CmnFastMath.abs(j - 3 / 2));
 						} else {
-							distanceFromCenter = Math.abs(i - 3 / 2) + Math.abs(j - 3 / 2);
+							distanceFromCenter = CmnFastMath.abs(i - 3 / 2) + CmnFastMath.abs(j - 3 / 2);
 						}
 						if ( distanceFromCenter == 0 ) {
 							mat_diffu[i][j] = 1 / (nb_neighbors + 1);
@@ -349,9 +352,10 @@ public class DiffusionStatement extends AbstractStatement {
 					for ( int j = 0; j < mat_diff_size; j++ ) {
 						if ( nb_neighbors == 8 ) {
 							distanceFromCenter =
-								Math.max(Math.abs(i - mat_diff_size / 2), Math.abs(j - mat_diff_size / 2));
+								Math.max(FastMath.abs(i - mat_diff_size / 2), CmnFastMath.abs(j - mat_diff_size / 2));
 						} else {
-							distanceFromCenter = Math.abs(i - mat_diff_size / 2) + Math.abs(j - mat_diff_size / 2);
+							distanceFromCenter =
+								CmnFastMath.abs(i - mat_diff_size / 2) + CmnFastMath.abs(j - mat_diff_size / 2);
 						}
 						mat_diffu[i][j] = mat_diffu[i][j] - distanceFromCenter * variation;
 					}

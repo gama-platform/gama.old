@@ -23,6 +23,7 @@ import javax.media.jai.*;
 import com.sun.media.jai.codec.*;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.runtime.*;
+import msi.gaml.operators.fastmaths.FastMath;
 
 public class ImageUtils {
 
@@ -44,7 +45,7 @@ public class ImageUtils {
 
 	private static final List<String> tiffExt = Arrays.asList(".tiff", ".tif", ".TIF", ".TIFF");
 
-	// private final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
+	// private final static double DEGREE_90 = 90.0 * FastMath.PI / 180.0;
 
 	private static ImageUtils instance = new ImageUtils();
 
@@ -156,7 +157,7 @@ public class ImageUtils {
 	private BufferedImage get(final String s, final int angle) {
 		final BufferedImage[] map = cache.get(s);
 		if ( map == null ) { return null; }
-		final int position = (int) Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
+		final int position = (int) FastMath.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
 		return map[position];
 	}
 
@@ -214,16 +215,16 @@ public class ImageUtils {
 	 *
 	 * @param img the original image to be scaled
 	 * @param targetWidth the desired width of the scaled instance,
-	 * in pixels
+	 *            in pixels
 	 * @param targetHeight the desired height of the scaled instance,
-	 * in pixels
+	 *            in pixels
 	 * @param hint one of the rendering hints that corresponds to {@code RenderingHints.KEY_INTERPOLATION} (e.g. {@code RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
-	 * {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR}, {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
+	 *            {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR}, {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
 	 * @param higherQuality if true, this method will use a multi-step
-	 * scaling technique that provides higher quality than the usual
-	 * one-step technique (only useful in downscaling cases, where {@code targetWidth} or {@code targetHeight} is
-	 * smaller than the original dimensions, and generally only when
-	 * the {@code BILINEAR} hint is specified)
+	 *            scaling technique that provides higher quality than the usual
+	 *            one-step technique (only useful in downscaling cases, where {@code targetWidth} or {@code targetHeight} is
+	 *            smaller than the original dimensions, and generally only when
+	 *            the {@code BILINEAR} hint is specified)
 	 * @return a scaled version of the original {@code BufferedImage}
 	 */
 	// public static BufferedImage downScale(final BufferedImage img, final int targetWidth, final int targetHeight,

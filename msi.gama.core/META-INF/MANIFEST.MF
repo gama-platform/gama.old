@@ -346,6 +346,7 @@ Export-Package: msi.gama.common,
    com.vividsolutions.jts.geom,
    com.vividsolutions.jts.algorithm,
    msi.gama.metamodel.agent",
+ msi.gaml.operators.fastmaths,
  msi.gaml.skills;
   uses:="org.graphstream.stream.file,
    org.graphstream.stream,

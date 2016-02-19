@@ -623,11 +623,14 @@ public class GamaPreferences {
 		create("core.threads_number", "Max. number of threads to use", 4, IType.INT).between(1, null).in(EXPERIMENTAL)
 			.group(SIMULATIONS);
 	public static final Entry<Boolean> CONSTANT_OPTIMIZATION =
-		create("core.constant_optimization", "Automatically optimize constant expressions", true, IType.BOOL)
+		create("core.constant_optimization", "Automatically optimize constant expressions", false, IType.BOOL)
 			.in(EXPERIMENTAL).group("Compilation");
 	public static final Entry<Boolean> AGENT_OPTIMIZATION =
-		create("core.agent_optimization", "Automatically optimize the memory used by agents", true, IType.BOOL)
+		create("core.agent_optimization", "Automatically optimize the memory used by agents", false, IType.BOOL)
 			.in(EXPERIMENTAL).group("Compilation");
+	public static final Entry<Boolean> MATH_OPTIMIZATION =
+		create("core.math_optimization", "Use optimized (but less accurate) arithmetic and trigonometric functions",
+			false, IType.BOOL).in(EXPERIMENTAL).group("Compilation");
 
 	private static void register(final Entry gp) {
 		System.out.println("+++ Registering preference " + gp.key + " in store");

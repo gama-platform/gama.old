@@ -45,6 +45,7 @@ import msi.gama.util.file.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.fastmaths.*;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.types.*;
 
@@ -255,7 +256,7 @@ public abstract class Spatial {
 			final double originy = origin.getY();
 			final double worldWidth = scope.getTopology().getWidth();// - originx;
 			final double worldHeight = scope.getTopology().getHeight();// - originy;
-			final double max = Math.max(worldWidth, worldHeight);
+			final double max = FastMath.max(worldWidth, worldHeight);
 			final double min_point_x = originx + Maths.cos(min_angle) * max;
 			final double min_point_y = originy + Maths.sin(min_angle) * max;
 			final ILocation minPoint = new GamaPoint(min_point_x, min_point_y);
@@ -624,7 +625,7 @@ public abstract class Spatial {
 
 		private static double cubicBezier(final double v0, final double v1, final double v2, final double v3,
 			final double t) {
-			return Math.pow(1 - t, 3) * v0 + 3 * (1 - t) * (1 - t) * t * v1 + 3 * (1 - t) * t * t * v2 +
+			return FastMath.pow(1 - t, 3) * v0 + 3 * (1 - t) * (1 - t) * t * v1 + 3 * (1 - t) * t * t * v2 +
 				Math.pow(t, 3) * v3;
 		}
 
@@ -1376,8 +1377,8 @@ public abstract class Spatial {
 			if ( g1 == null ) { return null; }
 			return new GamaShape(g1, null, angle, null);
 			// final GamaShape s = g1.asShapeWithGeometry(scope, null);
-			// return s.rotatedBy(scope, Math.toRadians(angle));
-			// return new GamaShape(s.getInnerGeometry()).rotatedBy(scope, Math.toRadians(angle));
+			// return s.rotatedBy(scope, FastMath.toRadians(angle));
+			// return new GamaShape(s.getInnerGeometry()).rotatedBy(scope, FastMath.toRadians(angle));
 		}
 
 		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
@@ -2225,12 +2226,12 @@ public abstract class Spatial {
 			}
 			final IList<ILocation> locations = GamaListFactory.create(Types.POINT);
 			final ILocation loc = scope.getAgentScope().getLocation();
-			final double angle1 = scope.getRandom().between(0, 2 * Math.PI);
+			final double angle1 = scope.getRandom().between(0, 2 * CmnFastMath.PI);
 
 			for ( int i = 0; i < nbLoc; i++ ) {
-				final GamaPoint p =
-					new GamaPoint(loc.getX() + distance * Math.cos(angle1 + (double) i / nbLoc * 2 * Math.PI),
-						loc.getY() + distance * Math.sin(angle1 + (double) i / nbLoc * 2 * Math.PI));
+				final GamaPoint p = new GamaPoint(
+					loc.getX() + distance * FastMath.cos(angle1 + (double) i / nbLoc * 2 * CmnFastMath.PI),
+					loc.getY() + distance * FastMath.sin(angle1 + (double) i / nbLoc * 2 * CmnFastMath.PI));
 				locations.add(p);
 			}
 			return locations;
@@ -2708,7 +2709,7 @@ public abstract class Spatial {
 					if ( distances.containsKey(newDistGp) ) {
 						dist2 = distances.remove(newDistGp).doubleValue();
 					}
-					final double dist = Math.min(dist1, dist2);
+					final double dist = FastMath.min(dist1, dist2);
 					if ( dist <= distance ) {
 						newDistGp.remove(g2);
 						newDistGp.add(groupeF);
@@ -2758,7 +2759,7 @@ public abstract class Spatial {
 						sumNull += points.get(pt);
 					}
 					if ( nbNull == 0 ) {
-						double w = 1 / Math.pow(dist, power);
+						double w = 1 / FastMath.pow(dist, power);
 						weight += w;
 						sum += w * points.get(pt);
 					}

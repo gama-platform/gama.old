@@ -34,6 +34,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Strings;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 /**
@@ -137,8 +138,8 @@ public class GamaShapeFile extends GamaGisFile {
 		@Override
 		public String getSuffix() {
 			String CRS = crs == null ? "No CRS" : crs.getName().getCode();
-			return "" + itemNumber + " objects | " + CRS + " | " + Math.round(width) + "m x " + Math.round(height) +
-				"m";
+			return "" + itemNumber + " objects | " + CRS + " | " + FastMath.round(width) + "m x " +
+				FastMath.round(height) + "m";
 		}
 
 		@Override
@@ -146,7 +147,8 @@ public class GamaShapeFile extends GamaGisFile {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Shapefile").append(Strings.LN);
 			sb.append(itemNumber).append(" objects").append(Strings.LN);
-			sb.append("Dimensions: ").append(Math.round(width) + "m x " + Math.round(height) + "m").append(Strings.LN);
+			sb.append("Dimensions: ").append(FastMath.round(width) + "m x " + FastMath.round(height) + "m")
+				.append(Strings.LN);
 			sb.append("Coordinate Reference System: ").append(crs == null ? "No CRS" : crs.getName().getCode())
 				.append(Strings.LN);
 			if ( !attributes.isEmpty() ) {

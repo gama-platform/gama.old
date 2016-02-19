@@ -273,10 +273,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public synchronized void setLocation(final ILocation newGlobalLoc) {}
+	public void setLocation(final ILocation newGlobalLoc) {}
 
 	@Override
-	public synchronized void setGeometry(final IShape newGlobalGeometry) {}
+	public void setGeometry(final IShape newGlobalGeometry) {}
 
 	/**
 	 * GAML global variables

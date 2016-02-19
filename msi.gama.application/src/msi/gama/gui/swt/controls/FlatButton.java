@@ -10,6 +10,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 
 public class FlatButton extends Canvas implements PaintListener, Listener {
 
@@ -157,7 +158,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		gc.setFont(getFont());
 		int width = getSize().x;
 		int v_inset = (getBounds().height - height) / 2;
-		// width = Math.min(width, getParent().getBounds().width);
+		// width = FastMath.min(width, getParent().getBounds().width);
 		Rectangle rect = new Rectangle(0, v_inset, width, height);
 		drawBackground(gc, rect);
 
@@ -235,7 +236,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			}
 			float r = (float) (parentWidth - imageWidth) / (float) width;
 			int nbChars = text.length();
-			int newNbChars = Math.max(0, (int) (nbChars * r));
+			int newNbChars = CmnFastMath.max(0, (int) (nbChars * r));
 			String newText =
 				text.substring(0, newNbChars / 2) + "..." + text.substring(nbChars - newNbChars / 2, nbChars);
 			// System.out.println("Parent width =" + parentWidth + "; new nb chars = " + newNbChars + "; new text = " +

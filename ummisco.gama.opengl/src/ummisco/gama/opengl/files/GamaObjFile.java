@@ -25,6 +25,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.Gama3DGeometryFile;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 /**
@@ -267,13 +268,13 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		loadObject();
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
-		IList<IShape> vertices = GamaListFactory.create(Types.GEOMETRY);
+		IList<IShape> vertices = GamaListFactory.create(Types.POINT);
 		for ( float[] coords : vertexSets ) {
 			GamaPoint pt = new GamaPoint(coords[0], -coords[1], coords[2]);
 			vertices.add(pt);
 		}
 		for ( int[] vertexRefs : faces ) {
-			IList<IShape> face = GamaListFactory.<IShape> create(Types.GEOMETRY);
+			IList<IShape> face = GamaListFactory.<IShape> create(Types.POINT);
 			for ( int vertex : vertexRefs ) {
 				face.add(vertices.get(vertex - 1));
 				((IList) getBuffer()).add(GamaGeometryType.buildPolygon(face));
@@ -404,7 +405,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					if ( valy >= 0 && valy <= 1.0 ) {
 						gl.glTexCoord3f(textempx, valy, textempz);
 					} else {
-						gl.glTexCoord3f(textempx, Math.abs(textempy), textempz);
+						gl.glTexCoord3f(textempx, FastMath.abs(textempy), textempz);
 					}
 				}
 

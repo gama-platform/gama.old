@@ -20,6 +20,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -148,20 +149,20 @@ public abstract class AbstractLayer implements ILayer {
 		ILocation point = box.getPosition();
 		// Computation of x
 		final double x = point.getX();
-		double relative_x = Math.abs(x) <= 1 ? pixelWidth * x : g.getxRatioBetweenPixelsAndModelUnits() * x;
-		final double absolute_x = Math.signum(x) < 0 ? pixelWidth + relative_x : relative_x;
+		double relative_x = FastMath.abs(x) <= 1 ? pixelWidth * x : g.getxRatioBetweenPixelsAndModelUnits() * x;
+		final double absolute_x = FastMath.signum(x) < 0 ? pixelWidth + relative_x : relative_x;
 		// Computation of y
 		final double y = point.getY();
-		double relative_y = Math.abs(y) <= 1 ? pixelHeight * y : g.getyRatioBetweenPixelsAndModelUnits() * y;
-		final double absolute_y = Math.signum(y) < 0 ? pixelHeight + relative_y : relative_y;
+		double relative_y = FastMath.abs(y) <= 1 ? pixelHeight * y : g.getyRatioBetweenPixelsAndModelUnits() * y;
+		final double absolute_y = FastMath.signum(y) < 0 ? pixelHeight + relative_y : relative_y;
 
 		point = box.getSize();
 		// Computation of width
 		final double w = point.getX();
-		double absolute_width = Math.abs(w) <= 1 ? pixelWidth * w : g.getxRatioBetweenPixelsAndModelUnits() * w;
+		double absolute_width = FastMath.abs(w) <= 1 ? pixelWidth * w : g.getxRatioBetweenPixelsAndModelUnits() * w;
 		// Computation of height
 		final double h = point.getY();
-		double absolute_height = Math.abs(h) <= 1 ? pixelHeight * h : g.getyRatioBetweenPixelsAndModelUnits() * h;
+		double absolute_height = FastMath.abs(h) <= 1 ? pixelHeight * h : g.getyRatioBetweenPixelsAndModelUnits() * h;
 		sizeInPixels.setLocation(absolute_width, absolute_height);
 		positionInPixels.setLocation(absolute_x, absolute_y);
 	}
@@ -291,6 +292,7 @@ public abstract class AbstractLayer implements ILayer {
 		visibleModelRegion = e;
 	}
 
+	@Override
 	public Envelope getVisibleRegion() {
 		return visibleModelRegion;
 	}

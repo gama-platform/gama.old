@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gaml.operators.Maths;
+import msi.gaml.operators.fastmaths.*;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class CameraArcBall extends AbstractCamera {
@@ -43,11 +44,11 @@ public class CameraArcBall extends AbstractCamera {
 
 	// Use when the alt+right/left is pressed (rotate the camera upvector around z axis).
 	public void rotateCameraUpVectorOnZ(final boolean clock) {
-		upPosition(Math.cos(Math.PI / 2 + curZRotation), Math.sin(Math.PI / 2 + curZRotation), upVector.z);
+		upPosition(FastMath.cos(FastMath.PI / 2 + curZRotation), FastMath.sin(FastMath.PI / 2 + curZRotation), upVector.z);
 		if ( clock ) {
-			curZRotation = curZRotation - Math.PI / 64;
+			curZRotation = curZRotation - CmnFastMath.PI / 64;
 		} else {
-			curZRotation = curZRotation + Math.PI / 64;
+			curZRotation = curZRotation + CmnFastMath.PI / 64;
 		}
 	}
 
@@ -56,10 +57,10 @@ public class CameraArcBall extends AbstractCamera {
 		phi = phi % 360;
 		double factorT = theta * factor;
 		double factorP = phi * factor;
-		double cosT = Math.cos(factorT);
-		double sinT = Math.sin(factorT);
-		double cosP = Math.cos(factorP);
-		double sinP = Math.sin(factorP);
+		double cosT = FastMath.cos(factorT);
+		double sinT = FastMath.sin(factorT);
+		double cosP = FastMath.cos(factorP);
+		double sinP = FastMath.sin(factorP);
 		position.setLocation(radius * sinT * sinP + target.x, radius * cosP + target.y,
 			radius * cosT * sinP + target.z);
 	}
@@ -69,9 +70,9 @@ public class CameraArcBall extends AbstractCamera {
 		double x = position.x - target.x;
 		double y = position.y - target.y;
 		double z = position.z - target.z;
-		radius = Math.sqrt(x * x + y * y + z * z);
-		theta = Maths.toDeg * Math.atan2(x, z);
-		phi = Maths.toDeg * Math.acos(y / radius);
+		radius = FastMath.sqrt(x * x + y * y + z * z);
+		theta = Maths.toDeg * FastMath.atan2(x, z);
+		phi = Maths.toDeg * FastMath.acos(y / radius);
 		if ( upVector.getY() == -1 ) {
 			phi = 360.0 - phi;
 			theta = 180 + theta;
@@ -108,7 +109,7 @@ public class CameraArcBall extends AbstractCamera {
 
 		double translationValue = 0;
 
-		translationValue = Math.abs(diffx) * ((z + 1) / w);
+		translationValue = FastMath.abs(diffx) * ((z + 1) / w);
 
 		if ( diffx > 0 ) {// move right
 			updatePosition(position.x - translationValue, position.y, position.z);
@@ -118,7 +119,7 @@ public class CameraArcBall extends AbstractCamera {
 			lookPosition(target.x + translationValue, target.y, target.z);
 		}
 
-		translationValue = Math.abs(diffy) * Math.abs((z + 1) / h);
+		translationValue = FastMath.abs(diffy) * FastMath.abs((z + 1) / h);
 
 		if ( diffy > 0 ) {// move down
 			updatePosition(position.x, position.y + translationValue, position.z);
@@ -133,7 +134,7 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void animate() {
 
-		double translation = 2 * (Math.abs(position.z) + 1) / getRenderer().getHeight();
+		double translation = 2 * (FastMath.abs(position.z) + 1) / getRenderer().getHeight();
 		if ( isForward() ) {
 			if ( isShiftKeyDown() ) {
 				phi = phi - -get_keyboardSensivity() * get_sensivity();
@@ -288,7 +289,7 @@ public class CameraArcBall extends AbstractCamera {
 
 			// Decrease the speed of the translation if z is negative.
 			// if ( position.z < 0 ) {
-			// speed = speed / Math.abs(position.z) * 2;
+			// speed = speed / FastMath.abs(position.z) * 2;
 			// } else {
 			// speed = speed * position.z / 4;
 			// }
@@ -330,7 +331,7 @@ public class CameraArcBall extends AbstractCamera {
 				theta = theta - velocityHoriz * amplitude;
 				phi = phi - velocityVert * amplitude;
 				updateCartesianCoordinatesFromAngles();
-				if ( Math.abs(velocityHoriz) < 0.01 || Math.abs(velocityVert) < 0.01 ) {
+				if ( FastMath.abs(velocityHoriz) < 0.01 || FastMath.abs(velocityVert) < 0.01 ) {
 					velocityHoriz = 0;
 					velocityVert = 0;
 					enableInertia = false;
@@ -344,7 +345,7 @@ public class CameraArcBall extends AbstractCamera {
 				moveXYPlan2(velocityHoriz, velocityVert, position.z, getRenderer().getWidth(),
 					getRenderer().getHeight());
 
-				if ( Math.abs(velocityHoriz) < 0.01 || Math.abs(velocityVert) < 0.01 ) {
+				if ( FastMath.abs(velocityHoriz) < 0.01 || FastMath.abs(velocityVert) < 0.01 ) {
 					velocityHoriz = 0;
 					velocityVert = 0;
 					enableInertia = false;

@@ -18,6 +18,7 @@ import msi.gama.common.interfaces.ItemList;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.util.GamaColor;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 
 /**
  * Instances of this class represent a selectable user interface object that represents a expandable
@@ -171,15 +172,16 @@ public class ParameterExpandItem extends Item {
 	 *
 	 * @return the height of the header
 	 *
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 */
 	public int getHeaderHeight() {
 		// checkWidget();
 		if ( parent == null ) { return imageHeight; }
-		return Math.max(parent.bandHeight, imageHeight);
+		return CmnFastMath.max(parent.bandHeight, imageHeight);
 	}
 
 	int getPreferredWidth(final GC gc) {
@@ -232,7 +234,7 @@ public class ParameterExpandItem extends Item {
 			if ( size ) {
 				control.setSize(control.computeSize(width - 2 * BORDER, height + BORDER /*- BORDER*/));
 				((Composite) control).layout(true);
-				// control.setSize(Math.max(0, width - 2 * BORDER), Math.max(0, height - BORDER));
+				// control.setSize(FastMath.max(0, width - 2 * BORDER), FastMath.max(0, height - BORDER));
 			}
 		}
 	}
@@ -242,14 +244,16 @@ public class ParameterExpandItem extends Item {
 	 *
 	 * @param control the new control (or null)
 	 *
-	 * @exception IllegalArgumentException <ul>
-	 * <li>ERROR_INVALID_ARGUMENT - if the control has been disposed</li>
-	 * <li>ERROR_INVALID_PARENT - if the control is not in the same widget tree</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the control has been disposed</li>
+	 *                <li>ERROR_INVALID_PARENT - if the control is not in the same widget tree</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 */
 	public void setControl(final Control control) {
 		// checkWidget();
@@ -265,7 +269,7 @@ public class ParameterExpandItem extends Item {
 		if ( control != null ) {
 			control.setVisible(expanded);
 			int headerHeight = parent.bandHeight;
-			control.setBounds(x + BORDER, y + headerHeight, Math.max(0, width - 2 * BORDER),
+			control.setBounds(x + BORDER, y + headerHeight, CmnFastMath.max(0, width - 2 * BORDER),
 				Math.max(0, height + BORDER));
 			control.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		}
@@ -276,10 +280,11 @@ public class ParameterExpandItem extends Item {
 	 *
 	 * @param expanded the new expanded state
 	 *
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 */
 	public void setExpanded(final boolean expanded) {
 		if ( parent == null ) { return; }
@@ -312,10 +317,11 @@ public class ParameterExpandItem extends Item {
 	 *
 	 * @param height the new height
 	 *
-	 * @exception SWTException <ul>
-	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 */
 	public void setHeight(final int height) {
 		// checkWidget();

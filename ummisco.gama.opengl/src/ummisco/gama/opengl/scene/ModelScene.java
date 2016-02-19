@@ -68,7 +68,7 @@ public class ModelScene {
 	 */
 	public void wipe(final GL gl) {
 		// The display is cleared every iteration if not in a trace display mode or when reloading a simulation
-		// int traceSize = Math.max(requestedTraceSize, 0);
+		// int traceSize = FastMath.max(requestedTraceSize, 0);
 
 		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
 			LayerObject obj = entry.getValue();

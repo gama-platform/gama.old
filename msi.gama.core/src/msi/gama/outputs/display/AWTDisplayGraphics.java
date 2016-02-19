@@ -24,6 +24,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gaml.operators.Maths;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.*;
 
 /**
@@ -146,7 +147,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		if ( attributes.rotation != null && attributes.rotation.key != null ) {
 			renderer.rotate(Maths.toRad * attributes.rotation.key, curX + curWidth / 2, curY + curHeight / 2);
 		}
-		renderer.drawImage(img, (int) Math.round(curX), (int) Math.round(curY), (int) curWidth, (int) curHeight, null);
+		renderer.drawImage(img, (int) FastMath.round(curX), (int) FastMath.round(curY), (int) curWidth, (int) curHeight,
+			null);
 		if ( attributes.border != null ) {
 			drawGridLine(img, attributes.border);
 		}

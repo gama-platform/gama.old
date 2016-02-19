@@ -27,6 +27,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -181,7 +182,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	// Maybe a bit overkill, but the list of points is created *and* validated by the call to buildPolygon()
 	public static IShape buildTriangle(final double side_size, final ILocation location) {
-		final double sqrt2 = Math.sqrt(2.0);
+		final double sqrt2 = FastMath.sqrt(2.0);
 		final double x = location == null ? 0 : location.getX();
 		final double y = location == null ? 0 : location.getY();
 		final double z = location == null ? 0 : location.getZ();
@@ -312,7 +313,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final double x = location.getX();
 		final double y = location.getY();
 		final double h = size / 2;
-		final double width = size * (Math.sqrt(3) / 2.0);
+		final double width = size * (FastMath.sqrt(3) / 2.0);
 		final Coordinate[] coords = new Coordinate[7];
 		coords[0] = new GamaPoint(x, y + width);
 		coords[1] = new GamaPoint(x + h, y);
@@ -469,7 +470,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
-	private static double theta = Math.tan(0.423d);
+	private static double theta = FastMath.tan(0.423d);
 
 	public static IShape buildArrow(final GamaPoint tail, final GamaPoint head, final double arrowWidth,
 		final double arrowLength, final boolean closed) {

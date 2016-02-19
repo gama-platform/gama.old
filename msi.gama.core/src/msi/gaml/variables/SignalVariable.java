@@ -24,6 +24,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import msi.gaml.variables.SignalVariable.SignalValidator;
@@ -194,16 +195,16 @@ public class SignalVariable extends NumberVariable {
 			// IGrid.GRADIENT : IGrid.DIFFUSION
 			// : this.signalType;
 			final double prop = propExpr == null ? 1.0
-				: Math.min(1.0, Math.max(0.0, Cast.asFloat(scope, scope.evaluate(propExpr, agent))));
-			// ? Math.min(1.0, Math.max(0.0, Cast.asFloat(scope,
+				: FastMath.min(1.0, FastMath.max(0.0, Cast.asFloat(scope, scope.evaluate(propExpr, agent))));
+			// ? FastMath.min(1.0, FastMath.max(0.0, Cast.asFloat(scope,
 			// scope.evaluate(propExpr, agent)))) : this.prop;
 			final double variation =
 				variationExpr == null ? 0d : Cast.asFloat(scope, scope.evaluate(variationExpr, agent));
 			// this.variation == null ? Cast.asFloat(scope,
 			// scope.evaluate(variationExpr, agent)) : this.variation;
 			final double range =
-				rangeExpr == null ? -1000.0 : Math.max(0.0, Cast.asFloat(scope, scope.evaluate(rangeExpr, agent)));
-			// this.range == null ? Math.max(0.0, Cast.asFloat(scope,
+				rangeExpr == null ? -1000.0 : FastMath.max(0.0, Cast.asFloat(scope, scope.evaluate(rangeExpr, agent)));
+			// this.range == null ? FastMath.max(0.0, Cast.asFloat(scope,
 			// scope.evaluate(rangeExpr, agent))) : this.range;
 			getEnvironment(scope).diffuseVariable_deprecated(scope, getName(), result, signalType, prop, variation,
 				agent.getLocation(), range, onExpr == null ? null : scope.evaluate(onExpr, agent));

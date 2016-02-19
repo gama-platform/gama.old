@@ -1,18 +1,19 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'DrivingSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.*;
+import com.vividsolutions.jts.geom.*;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -20,23 +21,15 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.*;
 import msi.gama.metamodel.topology.graph.*;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.*;
 
 @vars({
 	@var(name = "living_space",
@@ -152,11 +145,11 @@ public class DrivingSkill extends MovingSkill {
 				type = IType.STRING,
 				optional = true,
 				doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) },
-		doc = @doc(value = "moves the agent along a given path passed in the arguments while considering the other agents in the network.",
+		doc = @doc(
+			value = "moves the agent along a given path passed in the arguments while considering the other agents in the network.",
 			returns = "optional: the path followed by the agent.",
 			examples = { @example("do follow speed: speed * 2 path: road_path;") }))
-	public
-		IPath primFollow(final IScope scope) throws GamaRuntimeException {
+	public IPath primFollow(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final double maxDist = computeDistance(scope, agent);
 		final double tolerance = computeTolerance(scope, agent);
@@ -182,9 +175,8 @@ public class DrivingSkill extends MovingSkill {
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
 		if ( path != null && !path.getEdgeList().isEmpty() ) {
 			if ( returnPath != null && returnPath ) {
-				final IPath pathFollowed =
-					moveToNextLocAlongPathTraffic(scope, agent, path, maxDist, weigths, livingSpace, tolerance,
-						laneAttributes, obsSpecies);
+				final IPath pathFollowed = moveToNextLocAlongPathTraffic(scope, agent, path, maxDist, weigths,
+					livingSpace, tolerance, laneAttributes, obsSpecies);
 				if ( pathFollowed == null ) {
 					// scope.setStatus(ExecutionStatus.failure);
 					return null;
@@ -232,11 +224,12 @@ public class DrivingSkill extends MovingSkill {
 				type = IType.STRING,
 				optional = true,
 				doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) },
-		doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)",
+		doc = @doc(
+			value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)",
 			returns = "optional: the path followed by the agent.",
-			examples = { @example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
-	public
-		IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
+			examples = {
+				@example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
+	public IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);
 		final double maxDist = computeDistance(scope, agent);
@@ -279,9 +272,8 @@ public class DrivingSkill extends MovingSkill {
 		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
 		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
 		if ( returnPath != null && returnPath ) {
-			final IPath pathFollowed =
-				moveToNextLocAlongPathTraffic(scope, agent, path, maxDist, weigths, livingSpace, tolerance,
-					laneAttributes, obsSpecies);
+			final IPath pathFollowed = moveToNextLocAlongPathTraffic(scope, agent, path, maxDist, weigths, livingSpace,
+				tolerance, laneAttributes, obsSpecies);
 			if ( pathFollowed == null ) {
 				// scope.setStatus(ExecutionStatus.failure);
 				return null;
@@ -298,7 +290,7 @@ public class DrivingSkill extends MovingSkill {
 	/**
 	 * @throws GamaRuntimeException
 	 *             Return the next location toward a target on a line
-	 * 
+	 *
 	 * @param coords coordinates of the line
 	 * @param source current location
 	 * @param target location to reach
@@ -341,9 +333,8 @@ public class DrivingSkill extends MovingSkill {
 				currentDistance -= livingSpace;
 				// currentDistance = currentLocation.euclidianDistanceTo(ia) - livingSpace;
 				IAgentFilter filter = In.list(scope, result);
-				final Collection<IAgent> ns =
-					filter == null ? Collections.EMPTY_LIST : scope.getTopology().getNeighboursOf(scope, ia,
-						livingSpace / 2.0, filter);
+				final Collection<IAgent> ns = filter == null ? Collections.EMPTY_LIST
+					: scope.getTopology().getNeighboursOf(scope, ia, livingSpace / 2.0, filter);
 				int nbAg = 1;
 				for ( IAgent ag : ns ) {
 					if ( ag != agent ) {
@@ -351,7 +342,7 @@ public class DrivingSkill extends MovingSkill {
 					}
 				}
 				if ( nbAg >= nbLanes && currentDistance < minDist ) {
-					minDist = Math.max(0, currentDistance);
+					minDist = FastMath.max(0, currentDistance);
 				}
 
 			}
@@ -363,8 +354,8 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	private int computeNbLanes(final IShape lineAg, final String laneAttributes) {
-		return lineAg == null || !(lineAg instanceof IAgent) ? 1 : (Integer) ((IAgent) lineAg)
-			.getAttribute(laneAttributes);
+		return lineAg == null || !(lineAg instanceof IAgent) ? 1
+			: (Integer) ((IAgent) lineAg).getAttribute(laneAttributes);
 
 	}
 
@@ -417,9 +408,8 @@ public class DrivingSkill extends MovingSkill {
 				double dist = pt.euclidianDistanceTo(currentLocation);
 				// For the while, for a high weight, the vehicle moves slowly
 				dist = weight * dist;
-				distance =
-					avoidCollision(scope, agent, distance, livingSpace, tolerance, currentLocation, pt, nbLanes,
-						obsSpecies);
+				distance = avoidCollision(scope, agent, distance, livingSpace, tolerance, currentLocation, pt, nbLanes,
+					obsSpecies);
 
 				// that's the real distance to move
 				// Agent moves
@@ -511,9 +501,8 @@ public class DrivingSkill extends MovingSkill {
 				}
 				double dist = scope.getTopology().distanceBetween(scope, pt, currentLocation);
 				dist = weight * dist;
-				distance =
-					avoidCollision(scope, agent, distance, livingSpace, tolerance, currentLocation, pt, nbLanes,
-						obsSpecies);
+				distance = avoidCollision(scope, agent, distance, livingSpace, tolerance, currentLocation, pt, nbLanes,
+					obsSpecies);
 
 				if ( distance < dist ) {
 					final GamaPoint pto = currentLocation.copy(scope);

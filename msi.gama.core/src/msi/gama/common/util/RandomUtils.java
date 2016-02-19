@@ -16,6 +16,7 @@ import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.random.*;
+import msi.gaml.operators.fastmaths.FastMath;
 
 public class RandomUtils {
 
@@ -158,7 +159,7 @@ public class RandomUtils {
 		int x = 0;
 		double t = 0.0;
 		while (true) {
-			t -= Math.log(next()) / mean;
+			t -= FastMath.log(next()) / mean;
 			if ( t > 1.0 ) {
 				break;
 			}
@@ -303,7 +304,7 @@ public class RandomUtils {
 		// uniformly distributed double random number in [min, max] respecting the step
 		double val = between(min, max);
 		final int nbStep = (int) ((val - min) / step);
-		final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
+		final double high = (int) (FastMath.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
 		final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
 		return val - low < high - val ? low : high;
 	}
@@ -369,7 +370,7 @@ public class RandomUtils {
 		for ( int i = 0; i < 100; i++ ) {
 			final double val = r.between(min, max);
 			final int nbStep = (int) ((val - min) / step);
-			final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
+			final double high = (int) (FastMath.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
 			final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
 			System.out.print(val - low < high - val ? low : high);
 			System.out.print(" | ");
@@ -486,7 +487,7 @@ public class RandomUtils {
 		 * @param index The index of the bit to look-up (0 is the least-significant bit).
 		 * @return A boolean indicating whether the bit is set or not.
 		 * @throws IndexOutOfBoundsException If the specified index is not a bit
-		 * position in this bit string.
+		 *             position in this bit string.
 		 */
 		public boolean getBit(final int index) {
 			assertValidIndex(index);
@@ -500,7 +501,7 @@ public class RandomUtils {
 		 * @param index The index of the bit to set (0 is the least-significant bit).
 		 * @param set A boolean indicating whether the bit should be set or not.
 		 * @throws IndexOutOfBoundsException If the specified index is not a bit
-		 * position in this bit string.
+		 *             position in this bit string.
 		 */
 		public void setBit(final int index, final boolean set) {
 			assertValidIndex(index);

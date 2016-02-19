@@ -62,44 +62,23 @@ public abstract class AbstractAgent implements IAgent {
 	private volatile int index;
 	protected volatile boolean dead = false;
 	// private volatile boolean lockAcquired = false;
-	private GamaMap<Object, Object> attributes;
+	// AD now in the geometry (see Issue #1558)
+	// private GamaMap<Object, Object> attributes;
 
 	@Override
 	public abstract IPopulation getPopulation();
 
 	@Override
 	public abstract IShape getGeometry();
-	//
-	// @Override
-	// public void setDuplicator(final ISkillConstructor duplicator) {
-	// // Nothing to do here
-	// }
 
 	/**
-	 *
-	 * @return the population of the agent if it not null, otherwise throws a runtime exeception.
-	 * @note If checking for a null value of population imposes too much overhead in cases where the population is sure
-	 *       not to be nil, this method can be safely overriden with a direct call to getPopulation()
-	 */
-	protected IPopulation checkedPopulation() {
-		return getPopulation();
-		// return nullCheck(getPopulation(), "The agent's population is nil");
-	}
-
-	/**
-	 *
+	 * AD 02/16: The geometry is now never null
 	 * @return the geometry of the agent if it not null, otherwise throws a runtime exeception.
 	 * @note If checking for a null value in geometry imposes too much overhead in cases where the geometry is sure not
 	 *       to be nil, this method can be safely overriden with a direct call to getGeometry()
 	 */
-	protected IShape checkedGeometry() {
-		return getGeometry();
-		// return nullCheck(getGeometry(), "The agent's shape is nil");
-	}
-
-	// @Override
-	// public ISkill duplicate() {
-	// return this;
+	// protected IShape checkedGeometry() {
+	// return getGeometry();
 	// }
 
 	@Override
@@ -112,12 +91,12 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public boolean isPoint() {
-		return checkedGeometry().isPoint();
+		return getGeometry().isPoint();
 	}
 
 	@Override
 	public boolean isLine() {
-		return checkedGeometry().isLine();
+		return getGeometry().isLine();
 	}
 
 	/**
@@ -125,7 +104,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
-		return checkedGeometry().getInnerGeometry();
+		return getGeometry().getInnerGeometry();
 	}
 
 	/**
@@ -143,7 +122,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public boolean covers(final IShape g) {
-		return checkedGeometry().covers(g);
+		return getGeometry().covers(g);
 	}
 
 	/**
@@ -151,12 +130,12 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
-		return checkedGeometry().euclidianDistanceTo(g);
+		return getGeometry().euclidianDistanceTo(g);
 	}
 
 	@Override
 	public double euclidianDistanceTo(final ILocation g) {
-		return checkedGeometry().euclidianDistanceTo(g);
+		return getGeometry().euclidianDistanceTo(g);
 	}
 
 	/**
@@ -164,12 +143,12 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public boolean intersects(final IShape g) {
-		return checkedGeometry().intersects(g);
+		return getGeometry().intersects(g);
 	}
 
 	@Override
 	public boolean crosses(final IShape g) {
-		return checkedGeometry().crosses(g);
+		return getGeometry().crosses(g);
 	}
 
 	/**
@@ -177,7 +156,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public double getPerimeter() {
-		return checkedGeometry().getPerimeter();
+		return getGeometry().getPerimeter();
 	}
 
 	/**
@@ -185,7 +164,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public void setInnerGeometry(final Geometry geom) {
-		checkedGeometry().setInnerGeometry(geom);
+		getGeometry().setInnerGeometry(geom);
 	}
 
 	@Override
@@ -204,10 +183,10 @@ public abstract class AbstractAgent implements IAgent {
 			if ( s != null ) {
 				s.dispose();
 			}
-			if ( attributes != null ) {
-				attributes.clear();
-				attributes = null;
-			}
+			// if ( attributes != null ) {
+			// attributes.clear();
+			// attributes = null;
+			// }
 		} finally {
 			// releaseLock();
 		}
@@ -246,25 +225,29 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public GamaMap<Object, Object> getAttributes() {
-		return attributes;
+		return getGeometry().getAttributes();
+		// return attributes;
 	}
 
 	@Override
 	public GamaMap getOrCreateAttributes() {
-		if ( attributes == null ) {
-			attributes = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE, 2);
-		}
-		return attributes;
+		return getGeometry().getOrCreateAttributes();
+		// if ( attributes == null ) {
+		// attributes = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE, 2);
+		// }
+		// return attributes;
 	}
 
 	@Override
 	public boolean hasAttribute(final Object key) {
-		return attributes == null ? false : attributes.containsKey(key);
+		return getGeometry().hasAttribute(key);
+		// return attributes == null ? false : attributes.containsKey(key);
 	}
 
 	@Override
-	public/* synchronized */Object getAttribute(final Object index) {
-		return attributes == null ? null : attributes.get(index);
+	public/* synchronized */Object getAttribute(final Object key) {
+		return getGeometry().getAttribute(key);
+		// return attributes == null ? null : attributes.get(key);
 	}
 
 	@Override
@@ -293,7 +276,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public ITopology getTopology() {
-		return checkedPopulation().getTopology();
+		return getPopulation().getTopology();
 	}
 
 	@Override
@@ -324,17 +307,17 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public ILocation getLocation() {
-		return checkedGeometry().getLocation();
+		return getGeometry().getLocation();
 	}
 
 	@Override
 	public void setLocation(final ILocation l) {
-		checkedGeometry().setLocation(l);
+		getGeometry().setLocation(l);
 	}
 
 	@Override
 	public void setGeometry(final IShape newGeometry) {
-		checkedGeometry().setGeometry(newGeometry);
+		getGeometry().setGeometry(newGeometry);
 	}
 
 	@Override
@@ -344,7 +327,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public IMacroAgent getHost() {
-		return checkedPopulation().getHost();
+		return getPopulation().getHost();
 	}
 
 	@Override
@@ -376,7 +359,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public ISpecies getSpecies() {
-		return checkedPopulation().getSpecies();
+		return getPopulation().getSpecies();
 	}
 
 	@Override
@@ -389,7 +372,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
-		final IVariable var = checkedPopulation().getVar(this, n);
+		final IVariable var = getPopulation().getVar(this, n);
 		if ( var != null ) { return var.value(scope, this); }
 		final IMacroAgent host = this.getHost();
 		if ( host != null ) {
@@ -427,46 +410,6 @@ public abstract class AbstractAgent implements IAgent {
 		return retVal;
 	}
 
-	/**
-	 * Solve the synchronization problem between Execution Thread and Event Dispatch Thread.
-	 *
-	 * The synchronization problem may happen when 1. The Event Dispatch Thread is drawing an agent
-	 * while the Execution Thread tries to it; 2. The Execution Thread is disposing the agent while
-	 * the Event Dispatch Thread tries to draw it.
-	 *
-	 * To avoid this, the corresponding thread has to invoke "acquireLock" to lock the agent before
-	 * drawing or disposing the agent. After finish the task, the thread invokes "releaseLock" to
-	 * release the agent's lock.
-	 *
-	 */
-	// @Override
-	// public synchronized void acquireLock() {
-	// while (lockAcquired) {
-	// try {
-	// wait();
-	// } catch (final InterruptedException e) {
-	// // e.printStackTrace();
-	// }
-	// }
-	// lockAcquired = true;
-	// }
-
-	// @Override
-	// public synchronized void releaseLock() {
-	// lockAcquired = false;
-	// notify();
-	// }
-	//
-	// @Override
-	// public void hostChangesShape() {}
-
-	// @Override
-	// public ActionExecuter getScheduler() {
-	// final IMacroAgent a = getHost();
-	// if ( a == null ) { return null; }
-	// return a.getScheduler();
-	// }
-
 	@Override
 	public IModel getModel() {
 		final IMacroAgent a = getHost();
@@ -483,7 +426,6 @@ public abstract class AbstractAgent implements IAgent {
 	public IScope getScope() {
 		final IMacroAgent a = getHost();
 		if ( a == null ) { return null; }
-		// if ( a == null ) { return GAMA.obtainNewScope(); }
 		return a.getScope();
 	}
 
@@ -491,13 +433,6 @@ public abstract class AbstractAgent implements IAgent {
 	public boolean isInstanceOf(final String skill, final boolean direct) {
 		return getSpecies().implementsSkill(skill);
 	}
-
-	// @Override
-	// public SimulationClock getClock() {
-	// final IMacroAgent a = getHost();
-	// if ( a == null ) { return GAMA.getClock(); }
-	// return a.getClock();
-	// }
 
 	/**
 	 * Method getPopulationFor()
@@ -583,7 +518,7 @@ public abstract class AbstractAgent implements IAgent {
 		if ( getPopulation().hasVar(index) ) {
 			return scope.getAgentVarValue(this, index);
 		} else {
-			return attributes.get(scope, index);
+			return getAttribute(index);
 			// return attributes.get(scope, index);
 		}
 	}
@@ -598,23 +533,7 @@ public abstract class AbstractAgent implements IAgent {
 		return get(scope, indices.firstValue(scope));
 	}
 
-	/**
-	 * Method asShapeWithGeometry()
-	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope, com.vividsolutions.jts.geom.Geometry)
-	 */
-	// @Override
-	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {
-	// return getGeometry().asShapeWithGeometry(scope, g);
-	// }
-
-	// @Override
-	// public String getDefiningPlugin() {
-	// return null;
-	// }
-
-	public void setDefiningPlugin(final String plugin) {
-
-	}
+	public void setDefiningPlugin(final String plugin) {}
 
 	/**
 	 * Method getPoints()

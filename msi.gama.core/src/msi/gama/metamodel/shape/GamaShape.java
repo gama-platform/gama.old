@@ -12,6 +12,7 @@
 package msi.gama.metamodel.shape;
 
 import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
+import java.lang.reflect.Field;
 import org.apache.commons.math3.geometry.euclidean.threed.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.*;
@@ -20,6 +21,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 /**
@@ -66,15 +68,25 @@ import msi.gaml.types.*;
 		doc = { @doc("Returns the polyline representing the contour of this geometry") }) })
 public class GamaShape implements IShape /* , IContainer */ {
 
+	static Field envelopeField = null;
+	static {
+
+		try {
+			envelopeField = Geometry.class.getDeclaredField("envelope");
+		} catch (NoSuchFieldException | SecurityException e) {}
+
+		if ( envelopeField != null ) {
+			envelopeField.setAccessible(true);
+		}
+	}
+
 	// private static final boolean USE_PREPARED_OPERATIONS = false;
 
 	protected Geometry geometry;
-	// protected volatile ILocation location;
-	// private boolean isPoint;
 	private IAgent agent;
 	// This represents a waste of memory but it is necessary to maintain it, as the Geometry does not give access
 	// to a custom envelope builder
-	private Envelope3D envelope;
+	// private Envelope3D envelope;
 
 	// Property map to add all kinds of information (e.g to specify if the geometry is a sphere, a
 	// cube, etc...). Can be reused by subclasses (for example to store GIS information)
@@ -87,10 +99,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 	@Override
 	public IType getType() {
 		return Types.GEOMETRY;
-	}
-
-	public GamaShape(final Geometry geom, final boolean computeLocation) {
-		setGeometry(geom, computeLocation);
 	}
 
 	public GamaShape(final Envelope3D env) {
@@ -114,8 +122,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if ( source != null ) {
 			GamaMap attr = source.getAttributes();
 			if ( attr != null ) {
-				attributes = GamaMapFactory.createWithoutCasting(attr.getType().getKeyType(),
-					attr.getType().getContentType(), attr);
+				getOrCreateAttributes().putAll(attr);
 			}
 		}
 	}
@@ -145,10 +152,10 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if ( !isPoint() && rotation != null ) {
 			if ( vector == null ) {
 				Coordinate c = geometry.getCentroid().getCoordinate();
-				geometry.apply(AffineTransform3D.createRotationOz(Math.toRadians(rotation), c.x, c.y));
+				geometry.apply(AffineTransform3D.createRotationOz(FastMath.toRadians(rotation), c.x, c.y));
 			} else {
 				Vector3D v3D = new Vector3D(vector.getX(), vector.getY(), vector.getZ());
-				Rotation rot = new Rotation(v3D, Math.toRadians(rotation));
+				Rotation rot = new Rotation(v3D, FastMath.toRadians(rotation));
 				for ( Coordinate c : this.getInnerGeometry().getCoordinates() ) {
 					Vector3D result = rot.applyTo(new Vector3D(c.x, c.y, c.z));
 					c.x = result.getX();
@@ -176,7 +183,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 * @param rotation can be null, expressed in degrees
 	 * @param newLocation can be null
 	 * @param isBoundingBox indicates whether the previous parameter should be considered as an absolute bounding box
-	 * (width, height, ) or as a set of coefficients.
+	 *            (width, height, ) or as a set of coefficients.
 	 */
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final GamaPoint vector,
 		final ILocation newLocation, final GamaPoint bounds, final boolean isBoundingBox) {
@@ -185,18 +192,18 @@ public class GamaShape implements IShape /* , IContainer */ {
 			if ( getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE ) {
 				GamaPoint previous = getLocation();
 				getEnvelope();
-				boolean flat = envelope.isFlat();
+				boolean flat = getEnvelope().isFlat();
 				if ( isBoundingBox ) {
-					geometry.apply(AffineTransform3D.createScaling(bounds.x / envelope.getWidth(),
-						bounds.y / envelope.getHeight(), flat ? 1.0 : bounds.z / envelope.getDepth()));
+					geometry.apply(AffineTransform3D.createScaling(bounds.x / getEnvelope().getWidth(),
+						bounds.y / getEnvelope().getHeight(), flat ? 1.0 : bounds.z / getEnvelope().getDepth()));
 				} else {
 					geometry.apply(AffineTransform3D.createScaling(bounds.x, bounds.y, bounds.z));
 				}
-				envelope = null;
+				setEnvelope(null);
 				setLocation(previous);
 			} else {
-				Double scaling = Math.min(Math.min(bounds.x, bounds.y), bounds.z);
-				Double box = Math.max(Math.max(bounds.x, bounds.y), bounds.z);
+				Double scaling = FastMath.min(FastMath.min(bounds.x, bounds.y), bounds.z);
+				Double box = FastMath.max(FastMath.max(bounds.x, bounds.y), bounds.z);
 				setAttribute(IShape.DEPTH_ATTRIBUTE,
 					isBoundingBox ? box : (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
 			}
@@ -217,7 +224,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 			if ( getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE ) {
 				GamaPoint previous = getLocation();
 				geometry.apply(AffineTransform3D.createScaling(scaling, scaling, scaling));
-				envelope = null;
+				setEnvelope(null);
 				setLocation(previous);
 			} else {
 				setAttribute(IShape.DEPTH_ATTRIBUTE, (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
@@ -301,7 +308,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if ( previous != null ) {
 			if ( isPoint() ) {
 				geometry = GeometryUtils.FACTORY.createPoint(location);
-				envelope = Envelope3D.of(location);
+				setEnvelope(Envelope3D.of(location));
 			} else {
 				// if ( isPoint ) {
 				final double dx = location.x - previous.getX();
@@ -310,7 +317,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 				geometry.apply(new Translation(dx, dy, dz));
 				// We move the envelope as well if it has been computed
 				// if ( envelope != null ) {
-				envelope.translate(dx, dy, dz);
+				getEnvelope().translate(dx, dy, dz);
 				// }
 				// Changed to avoid side effects when computing displacements & display at a given location at the same
 				// time.
@@ -351,22 +358,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 		}
 
 	}
-
-	// private static class Modification implements CoordinateFilter {
-	//
-	// Coordinate modif;
-	//
-	// @Override
-	// public void filter(final Coordinate c) {
-	// c.setCoordinate(modif);
-	// }
-	//
-	// public Modification with(final Coordinate c) {
-	// modif = c;
-	// return this;
-	// }
-	//
-	// }
 
 	final static PointLocator pl = new PointLocator();
 
@@ -447,13 +438,12 @@ public class GamaShape implements IShape /* , IContainer */ {
 	@getter("depth")
 	public Double getDepth() {
 		return (Double) this.getAttribute(IShape.DEPTH_ATTRIBUTE);
-		// return getEnvelope().getDepth();
 	}
 
 	@Override
 	public void setDepth(final double depth) {
 		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
-		this.envelope = null;
+		this.setEnvelope(null);
 	}
 
 	@getter("envelope")
@@ -475,10 +465,20 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public Envelope3D getEnvelope() {
-		if ( envelope == null ) {
-			envelope = Envelope3D.of(this);
-		}
-		return envelope;
+		if ( geometry == null ) { return null; }
+		try {
+			Envelope e = (Envelope) envelopeField.get(geometry);
+			if ( e == null || !(e instanceof Envelope3D) ) {
+				e = Envelope3D.of(this);
+				envelopeField.set(geometry, e);
+			}
+			return (Envelope3D) e;
+		} catch (IllegalArgumentException | IllegalAccessException e) {}
+		return null;
+		// if ( envelope == null ) {
+		// envelope = Envelope3D.of(this);
+		// }
+		// return envelope;
 	}
 
 	@Override
@@ -493,23 +493,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public void setInnerGeometry(final Geometry geom) {
-		setGeometry(geom, true);
-	}
-
-	@Override
-	public void setGeometry(final IShape geom) {
-		if ( geom == null || geom == this ) { return; }
-		// location = geom.getLocation();
-		// if ( Double.isNaN(location.getX()) ) {
-		// scope.getGui().debug("GamaShape.setGeometry");
-		// }
-		setGeometry(geom.getInnerGeometry(), false);
-	}
-
-	protected void setGeometry(final Geometry geom, final boolean computeLoc) {
 		if ( geom == null ) {
 			geometry = null;
-			envelope = null;
+			setEnvelope(null);
 			return;
 		}
 		if ( geom.isEmpty() ) {
@@ -521,46 +507,28 @@ public class GamaShape implements IShape /* , IContainer */ {
 		} else {
 			geometry = geom;
 		}
-		// isPoint = geom.getNumPoints() == 1;
-		envelope = null;
-		// if ( computeLoc ) {
-		// computeLocation();
-		// }
+		setEnvelope(null);
 	}
 
-	//
-	// private void computeLocation() {
-	// Geometry g = getInnerGeometry();
-	// final Point p = getInnerGeometry().getCentroid();
-	//
-	// final Coordinate c = p.getCoordinate();
-	// if ( isPoint() ) {
-	// c.z = g.getCoordinate().z;
-	// } else {
-	// c.z = computeAverageZOrdinate(g);
-	// }
-	// if ( location == null ) {
-	// location = new GamaPoint(c);
-	// } else {
-	// location.setLocation(c.x, c.y, c.z);
-	// }
-	// }
+	public void setEnvelope(final Envelope3D envelope) {
+		if ( geometry == null ) { return; }
+		try {
+			envelopeField.set(geometry, envelope);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		// this.envelope = envelope;
+	}
 
-	// public static GamaPoint computeCentroidOf(final Geometry g) {
-	// if ( g.isEmpty() ) { return null; }
-	// Coordinate[] coords = g.getCoordinates();
-	// int n = coords.length;
-	// double x = 0;
-	// double y = 0;
-	// double z = 0;
-	// for ( Coordinate c : coords ) {
-	// x = x + c.x;
-	// y = y + c.y;
-	// z = z + c.z;
-	// }
-	// return new GamaPoint(x / n, y / n, z / n);
-	// }
-	//
+	@Override
+	public void setGeometry(final IShape geom) {
+		if ( geom == null || geom == this ) { return; }
+		setInnerGeometry(geom.getInnerGeometry());
+		if ( geom.getAttributes() != null ) {
+			getOrCreateAttributes().putAll(geom.getAttributes());
+		}
+	}
+
 	private double computeAverageZOrdinate() {
 		double z = 0d;
 		Coordinate[] coords = geometry.getCoordinates();
@@ -575,12 +543,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public void dispose() {
-		// if ( getInnerGeometry() != null ) {
-		// setInnerGeometry((Geometry) null);
-		// }
-		// IMPORTANT We now leave the geometry of the agent intact in case it is used elsewhere
-		// in topologies, etc.
-		// optimizedOperations = null;
 		agent = null;
 	}
 
@@ -687,30 +649,20 @@ public class GamaShape implements IShape /* , IContainer */ {
 	public boolean crosses(final IShape g) {
 		// WARNING Only 2D now
 		if ( g.isPoint() ) { return pl.intersects((Coordinate) g.getLocation(), getInnerGeometry()); }
-		// if ( !USE_PREPARED_OPERATIONS ) {
 		try {
 			return geometry.crosses(g.getInnerGeometry());
 		} catch (TopologyException e) {
 			return getInnerGeometry().buffer(0).crosses(g.getInnerGeometry().buffer(0));
 		}
 
-		// }
-		// return operations().crosses(g);
 	}
-
-	// private GamaShape.Operations operations() {
-	// if ( optimizedOperations == null ) {
-	// optimizedOperations = new Operations();
-	// }
-	// return optimizedOperations;
-	// }
 
 	/**
 	 * Used when the geometry is not affected to an agent and directly accessed by 'read' or 'get'
 	 * operators. Can be used in Java too, of course, to retrieve any value stored in the shape
 	 * @param s
 	 * @return the corresponding value of the attribute named 's' in the feature, or null if it is
-	 * not present
+	 *         not present
 	 */
 	@Override
 	public Object getAttribute(final Object s) {
@@ -752,17 +704,5 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if ( JTS_TYPES.containsKey(type) ) { return JTS_TYPES.get(type); }
 		return Type.NULL;
 	}
-
-	// /**
-	// * Method asShapeWithGeometry()
-	// * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(com.vividsolutions.jts.geom.Geometry)
-	// */
-	// @Override
-	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {
-	// if ( g == null ) { return this; }
-	// GamaShape result = copy(scope);
-	// result.setGeometry(g, true);
-	// return result;
-	// }
 
 }

@@ -1,23 +1,24 @@
 /**
  * Created by drogoul, 9 févr. 2015
- * 
+ *
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.IToolbarDecoratedView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Control;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * Class FontSizer.
- * 
+ *
  * @author drogoul
  * @since 9 févr. 2015
- * 
+ *
  */
 public class FontSizer {
 
@@ -29,7 +30,7 @@ public class FontSizer {
 		@Override
 		public void gesture(final GestureEvent ge) {
 			if ( ge.detail == SWT.GESTURE_MAGNIFY ) {
-				changeFontSize((int) (2 * Math.signum(ge.magnification - 1.0)));
+				changeFontSize((int) (2 * FastMath.signum(ge.magnification - 1.0)));
 			}
 		}
 	};

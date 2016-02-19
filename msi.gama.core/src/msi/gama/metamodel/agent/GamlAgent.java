@@ -14,6 +14,7 @@ package msi.gama.metamodel.agent;
 import java.util.*;
 import com.google.common.collect.Iterables;
 import msi.gama.metamodel.population.*;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -39,6 +40,14 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 */
 	public GamlAgent(final IPopulation s) {
 		super(s);
+	}
+
+	/**
+	 * @param gridPopulation
+	 * @param geometry
+	 */
+	public GamlAgent(final IPopulation pop, final IShape geometry) {
+		super(pop, geometry);
 	}
 
 	@Override

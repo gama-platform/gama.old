@@ -16,6 +16,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 
 /**
@@ -68,7 +69,7 @@ public class LayerBox implements IDisplayLayerBox {
 	public void compute(final IScope scope) throws GamaRuntimeException {
 		try {
 			currentTransparency = constantTransparency == null
-				? 1d - Math.min(Math.max(Cast.asFloat(scope, transparency.value(scope)), 0d), 1d)
+				? 1d - FastMath.min(FastMath.max(Cast.asFloat(scope, transparency.value(scope)), 0d), 1d)
 				: constantTransparency;
 			currentSelectable =
 				constantSelectable == null ? Cast.asBool(scope, selectable.value(scope)) : constantSelectable;
@@ -136,7 +137,7 @@ public class LayerBox implements IDisplayLayerBox {
 
 	@Override
 	public void setTransparency(final double f) {
-		currentTransparency = constantTransparency = 1d - Math.min(Math.max(f, 0d), 1d);
+		currentTransparency = constantTransparency = 1d - FastMath.min(FastMath.max(f, 0d), 1d);
 	}
 
 	@Override

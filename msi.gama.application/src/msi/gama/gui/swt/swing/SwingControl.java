@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 
 public abstract class SwingControl extends Composite {
 
@@ -706,15 +707,15 @@ public abstract class SwingControl extends Composite {
 							onBehalfAWTTimes.put(Thread.currentThread(), onBehalfAWTTime);
 							// Augment the three sizes by 2*borderWidth, avoiding
 							// integer overflow.
-							Point minSize =
-								new Point(Math.min(min.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
-									Math.min(min.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
-							Point prefSize =
-								new Point(Math.min(pref.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
-									Math.min(pref.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
-							Point maxSize =
-								new Point(Math.min(max.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
-									Math.min(max.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
+							Point minSize = new Point(
+								CmnFastMath.min(min.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
+								Math.min(min.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
+							Point prefSize = new Point(
+								CmnFastMath.min(pref.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
+								Math.min(pref.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
+							Point maxSize = new Point(
+								CmnFastMath.min(max.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
+								Math.min(max.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
 							// Augment the three sizes, avoiding integer overflow.
 							notePreferredSizeChanged(minSize, prefSize, maxSize);
 						} finally {
@@ -866,7 +867,7 @@ public abstract class SwingControl extends Composite {
 						swingComponent);
 				}
 				if ( frame != null && size.width > 0 && size.height > 0 ) {
-					frame.setBounds(0, 0, Math.max(size.width, 0), Math.max(size.height, 0));
+					frame.setBounds(0, 0, CmnFastMath.max(size.width, 0), CmnFastMath.max(size.height, 0));
 					frame.validate();
 				}
 				// Test if another request was enqueued (from the SWT thread)
@@ -933,7 +934,8 @@ public abstract class SwingControl extends Composite {
 			synchronized (this) {
 				if ( cachedSizesInitialized >= 2 ||
 					Platform.isGtk() && Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) || Platform.isWin32() ) {
-					setAWTSize(Math.max(width - 2 * borderWidth, 0), Math.max(height - 2 * borderWidth, 0));
+					setAWTSize(CmnFastMath.max(width - 2 * borderWidth, 0),
+						CmnFastMath.max(height - 2 * borderWidth, 0));
 				}
 			}
 		}
@@ -970,11 +972,11 @@ public abstract class SwingControl extends Composite {
 			int width = widthHint == SWT.DEFAULT ? pref.width
 				: widthHint < min.width ? min.width : widthHint > max.width ? max.width : widthHint;
 			// Augment by 2*borderWidth, avoiding integer overflow.
-			width = Math.min(width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth;
+			width = CmnFastMath.min(width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth;
 			int height = heightHint == SWT.DEFAULT ? pref.height
 				: heightHint < min.width ? min.height : heightHint > max.width ? max.height : heightHint;
 			// Augment by 2*borderWidth, avoiding integer overflow.
-			height = Math.min(height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth;
+			height = CmnFastMath.min(height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth;
 			if ( verboseSizeLayout ) {
 				System.err.println("SWT thread: Computed size: " + width + " x " + height + " for " + swingComponent);
 			}

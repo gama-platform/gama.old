@@ -34,6 +34,7 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.*;
+import msi.gaml.operators.fastmaths.*;
 import msi.gaml.statements.draw.*;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
@@ -370,10 +371,10 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 				double fW, fH;
 				double fovY = 45.0d;
 				if ( aspect > 1.0 ) {
-					fH = Math.tan(fovY / 360 * Math.PI) * zNear;
+					fH = FastMath.tan(fovY / 360 * CmnFastMath.PI) * zNear;
 					fW = fH * aspect;
 				} else {
-					fW = Math.tan(fovY / 360 * Math.PI) * zNear;
+					fW = FastMath.tan(fovY / 360 * CmnFastMath.PI) * zNear;
 					fH = fW / aspect;
 				}
 				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 10);
@@ -512,7 +513,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 		double x2 = ROIEnvelope.getMaxX();
 		double y2 = -ROIEnvelope.getMaxY();
 
-		Double distance = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+		Double distance = FastMath.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 		gl.glRasterPos3d(x2, -y1, 0.1);
 		gl.glColor3d(0.0, 0.0, 0.0);
 		glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "  d: " + distance.toString());
@@ -808,7 +809,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	 */
 	@Override
 	public int getDisplayWidthInPixels() {
-		return (int) Math.round(getWidth());
+		return (int) FastMath.round(getWidth());
 	}
 
 	/**
@@ -817,7 +818,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	 */
 	@Override
 	public int getDisplayHeightInPixels() {
-		return (int) Math.round(getHeight());
+		return (int) FastMath.round(getHeight());
 	}
 
 	/**

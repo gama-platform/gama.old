@@ -73,14 +73,18 @@ public class GamaQuadTree implements ISpatialIndex {
 		// totalAgents++;
 	}
 
+	private boolean isPoint(final Envelope env) {
+		return env.getArea() == 0.0;
+	}
+
 	@Override
-	public void remove(final IShape previous, final IAgent agent) {
-		final IShape current = previous == null ? agent : previous;
+	public void remove(final Envelope previous, final IAgent agent) {
+		final Envelope current = previous == null ? agent.getEnvelope() : previous;
 		if ( current == null ) { return; }
-		if ( current.isPoint() ) {
-			root.remove((Coordinate) current.getLocation(), agent);
+		if ( isPoint(current) ) {
+			root.remove(current.centre(), agent);
 		} else {
-			root.remove(current.getEnvelope(), agent);
+			root.remove(current, agent);
 		}
 		// totalAgents--;
 	}
@@ -143,7 +147,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		private final Envelope bounds;
 		private final double hw, hh, minx, miny, halfx, halfy;
 		// ** Addresses part of Issue 722 -- Need to keep the objects ordered (by insertion order) **
-		private final Set<IAgent> objects = /* new TLinkedHashSet(); */new LinkedHashSet(maxCapacity + 5);
+		private final Set<IAgent> objects = /* new TLinkedHashSet(); */new TLinkedHashSet(maxCapacity + 5);
 		private volatile int size = 0;
 		private volatile boolean isLeaf = true;
 		private QuadNode ne;

@@ -26,6 +26,7 @@
 package msi.gama.util.random;
 
 import msi.gama.common.util.RandomUtils;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 
 /**
  * <p>
@@ -87,7 +88,7 @@ public class MersenneTwisterRNG extends GamaRNG {
 	/**
 	 * Seed the RNG using the provided seed generation strategy.
 	 * @param seedGenerator The seed generation strategy that will provide the seed value for this
-	 * RNG.
+	 *            RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
 	public MersenneTwisterRNG(final RandomUtils seedGenerator) {
@@ -114,7 +115,7 @@ public class MersenneTwisterRNG extends GamaRNG {
 		// This section is translated from the init_by_array code in the C version.
 		int i = 1;
 		int j = 0;
-		for ( int k = Math.max(N, seedInts.length); k > 0; k-- ) {
+		for ( int k = CmnFastMath.max(N, seedInts.length); k > 0; k-- ) {
 			mt[i] = (mt[i] ^ (mt[i - 1] ^ mt[i - 1] >>> 30) * SEED_FACTOR1) + seedInts[j] + j;
 			i++;
 			j++;

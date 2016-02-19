@@ -22,6 +22,7 @@ import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.operators.fastmaths.*;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.GeometryObject;
 import ummisco.gama.opengl.utils.*;
@@ -944,10 +945,10 @@ public class JTSDrawer {
 		double angle;
 		double tempPolygon[][] = new double[100][3];
 		for ( int k = 0; k < numPoints; k++ ) {
-			angle = k * 2 * Math.PI / numPoints;
+			angle = k * 2 * CmnFastMath.PI / numPoints;
 
-			tempPolygon[k][0] = point.getCoordinate().x + Math.cos(angle) * radius;
-			tempPolygon[k][1] = renderer.yFlag * (point.getCoordinate().y + Math.sin(angle) * radius);
+			tempPolygon[k][0] = point.getCoordinate().x + FastMath.cos(angle) * radius;
+			tempPolygon[k][1] = renderer.yFlag * (point.getCoordinate().y + FastMath.sin(angle) * radius);
 			tempPolygon[k][2] = z;
 		}
 
@@ -967,12 +968,12 @@ public class JTSDrawer {
 		gl.glBegin(GL.GL_LINES);
 		double xBegin, xEnd, yBegin, yEnd;
 		for ( int k = 0; k < numPoints; k++ ) {
-			angle = k * 2 * Math.PI / numPoints;
-			xBegin = point.getCoordinate().x + Math.cos(angle) * radius;
-			yBegin = renderer.yFlag * (point.getCoordinate().y + Math.sin(angle) * radius);
-			angle = (k + 1) * 2 * Math.PI / numPoints;
-			xEnd = point.getCoordinate().x + Math.cos(angle) * radius;
-			yEnd = renderer.yFlag * (point.getCoordinate().y + Math.sin(angle) * radius);
+			angle = k * 2 * CmnFastMath.PI / numPoints;
+			xBegin = point.getCoordinate().x + FastMath.cos(angle) * radius;
+			yBegin = renderer.yFlag * (point.getCoordinate().y + FastMath.sin(angle) * radius);
+			angle = (k + 1) * 2 * CmnFastMath.PI / numPoints;
+			xEnd = point.getCoordinate().x + FastMath.cos(angle) * radius;
+			yEnd = renderer.yFlag * (point.getCoordinate().y + FastMath.sin(angle) * radius);
 			gl.glVertex3d(xBegin, yBegin, z);
 			gl.glVertex3d(xEnd, yEnd, z);
 		}
@@ -1153,7 +1154,7 @@ public class JTSDrawer {
 			double y_length = l.getPointN(i + 1).getY() - l.getPointN(i).getY();
 			double z_length = l.getPointN(i + 1).getCoordinate().z - l.getPointN(i).getCoordinate().z;
 
-			double distance = Math.sqrt(x_length * x_length + y_length * y_length + z_length * z_length);
+			double distance = FastMath.sqrt(x_length * x_length + y_length * y_length + z_length * z_length);
 
 			gl.glTranslated(l.getPointN(i).getX(), renderer.yFlag * l.getPointN(i).getY(), z);
 			Vector3d d;
@@ -1171,8 +1172,8 @@ public class JTSDrawer {
 			Vector3d a = new Vector3d();
 			a.cross(z_up, d);
 
-			double omega = Math.acos(z_up.dot(d));
-			omega = omega * 180 / Math.PI;
+			double omega = FastMath.acos(z_up.dot(d));
+			omega = omega * 180 / CmnFastMath.PI;
 			gl.glRotated(omega, a.x, a.y, a.z);
 
 			if ( !colorpicking ) {
@@ -1359,9 +1360,9 @@ public class JTSDrawer {
 		gl.glBegin(GL.GL_TRIANGLE_FAN); // upper right
 		gl.glVertex3d(or_x * x, or_y * y, 0.0d);
 		for ( int i = 0; i <= timestep; i++ ) {
-			double anglerad = Math.PI / 2 * i / timestep;
-			double xi = Math.cos(anglerad) * radius;
-			double yi = Math.sin(anglerad) * radius;
+			double anglerad = CmnFastMath.PI / 2 * i / timestep;
+			double xi = FastMath.cos(anglerad) * radius;
+			double yi = FastMath.sin(anglerad) * radius;
 			gl.glVertex3d(or_x * (x + xi), y + yi, 0.0d);
 		}
 		gl.glEnd();
@@ -1377,9 +1378,9 @@ public class JTSDrawer {
 		gl.glBegin(GL.GL_TRIANGLE_FAN); // upper right
 		gl.glVertex3d(xc, yc, 0.0d);
 		for ( int i = 0; i <= nbPoints; i++ ) {
-			double anglerad = Math.PI / 2 * i / nbPoints;
-			double xi = Math.cos(anglerad) * x_radius;
-			double yi = Math.sin(anglerad) * y_radius;
+			double anglerad = CmnFastMath.PI / 2 * i / nbPoints;
+			double xi = FastMath.cos(anglerad) * x_radius;
+			double yi = FastMath.sin(anglerad) * y_radius;
 			gl.glVertex3d(xc + xi, yc + yi, 0.0d);
 		}
 		gl.glEnd();
@@ -1388,9 +1389,9 @@ public class JTSDrawer {
 
 		gl.glVertex3d(xc, -yc, 0.0d);
 		for ( int i = 0; i <= nbPoints; i++ ) {
-			double anglerad = Math.PI / 2 * i / nbPoints;
-			double xi = Math.cos(anglerad) * x_radius;
-			double yi = Math.sin(anglerad) * y_radius;
+			double anglerad = CmnFastMath.PI / 2 * i / nbPoints;
+			double xi = FastMath.cos(anglerad) * x_radius;
+			double yi = FastMath.sin(anglerad) * y_radius;
 			gl.glVertex3d(xc + xi, -(yc + yi), 0.0d);
 		}
 		gl.glEnd();
@@ -1399,9 +1400,9 @@ public class JTSDrawer {
 
 		gl.glVertex3d(-xc, yc, 0.0d);
 		for ( int i = 0; i <= nbPoints; i++ ) {
-			double anglerad = Math.PI / 2 * i / nbPoints;
-			double xi = Math.cos(anglerad) * x_radius;
-			double yi = Math.sin(anglerad) * y_radius;
+			double anglerad = CmnFastMath.PI / 2 * i / nbPoints;
+			double xi = FastMath.cos(anglerad) * x_radius;
+			double yi = FastMath.sin(anglerad) * y_radius;
 			gl.glVertex3d(-(xc + xi), yc + yi, 0.0d);
 		}
 		gl.glEnd();
@@ -1409,9 +1410,9 @@ public class JTSDrawer {
 		gl.glBegin(GL.GL_TRIANGLE_FAN);
 		gl.glVertex3d(-xc, -yc, 0.0d); // down left
 		for ( int i = 0; i <= nbPoints; i++ ) {
-			double anglerad = Math.PI / 2 * i / nbPoints;
-			double xi = Math.cos(anglerad) * x_radius;
-			double yi = Math.sin(anglerad) * y_radius;
+			double anglerad = CmnFastMath.PI / 2 * i / nbPoints;
+			double xi = FastMath.cos(anglerad) * x_radius;
+			double yi = FastMath.sin(anglerad) * y_radius;
 			gl.glVertex3d(-(xc + xi), -(yc + yi), 0.0d);
 		}
 		gl.glEnd();

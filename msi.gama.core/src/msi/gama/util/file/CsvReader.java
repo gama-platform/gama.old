@@ -1323,7 +1323,7 @@ public class CsvReader {
 		// if ( rawBuffer.Buffer.length - rawBuffer.Position < dataBuffer.Count - dataBuffer.LineStart ) {
 		// int newLength =
 		// rawBuffer.Buffer.length +
-		// Math.max(dataBuffer.Count - dataBuffer.LineStart, rawBuffer.Buffer.length);
+		// FastMath.max(dataBuffer.Count - dataBuffer.LineStart, rawBuffer.Buffer.length);
 		//
 		// char[] holder = new char[newLength];
 		//

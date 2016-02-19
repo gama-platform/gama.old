@@ -37,6 +37,7 @@ import org.jfree.chart.editor.ChartEditor;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.title.*;
 import msi.gama.gui.swt.GamaColors;
+import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * An editor for chart properties.
@@ -585,7 +586,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * @param device The swt device to draw on (display or gc device).
 		 * @param font The awt font from which to get the data.
 		 * @param ensureSameSize A boolean used to enforce the same size
-		 * (in pixels) between the awt font and the newly created swt font.
+		 *            (in pixels) between the awt font and the newly created swt font.
 		 * @return a <code>FontData</code> object.
 		 */
 		public static FontData toSwtFontData(final Device device, final java.awt.Font font,
@@ -609,7 +610,7 @@ public class SWTChartEditor implements ChartEditor {
 			}
 			fontData.setStyle(style);
 			// convert the font size (in pt for awt) to height in pixels for swt
-			int height = (int) Math.round(font.getSize() * 72.0 / device.getDPI().y);
+			int height = (int) FastMath.round(font.getSize() * 72.0 / device.getDPI().y);
 			fontData.setHeight(height);
 			// hack to ensure the newly created swt fonts will be rendered with the
 			// same height as the awt one
@@ -650,7 +651,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * @param device The swt device being drawn on (display or gc device).
 		 * @param fontData The swt font to convert.
 		 * @param ensureSameSize A boolean used to enforce the same size
-		 * (in pixels) between the swt font and the newly created awt font.
+		 *            (in pixels) between the swt font and the newly created awt font.
 		 * @return An awt font converted from the provided swt font.
 		 */
 		public static java.awt.Font toAwtFont(final Device device, final FontData fontData,
@@ -670,7 +671,7 @@ public class SWTChartEditor implements ChartEditor {
 					style = java.awt.Font.PLAIN;
 					break;
 			}
-			int height = (int) Math.round(fontData.getHeight() * device.getDPI().y / 72.0);
+			int height = (int) FastMath.round(fontData.getHeight() * device.getDPI().y / 72.0);
 			// hack to ensure the newly created awt fonts will be rendered with the
 			// same height as the swt one
 			if ( ensureSameSize ) {
@@ -756,15 +757,15 @@ public class SWTChartEditor implements ChartEditor {
 		 * @return an swt <code>Rectangle</code> object.
 		 */
 		public static Rectangle toSwtRectangle(final Rectangle2D rect2d) {
-			return new Rectangle((int) Math.round(rect2d.getMinX()), (int) Math.round(rect2d.getMinY()),
-				(int) Math.round(rect2d.getWidth()), (int) Math.round(rect2d.getHeight()));
+			return new Rectangle((int) FastMath.round(rect2d.getMinX()), (int) FastMath.round(rect2d.getMinY()),
+				(int) FastMath.round(rect2d.getWidth()), (int) FastMath.round(rect2d.getHeight()));
 		}
 
 		/**
 		 * Transform a swt Rectangle instance into an awt one.
 		 * @param rect the swt <code>Rectangle</code>
 		 * @return a Rectangle2D.Double instance with
-		 * the eappropriate location and size.
+		 *         the eappropriate location and size.
 		 */
 		public static Rectangle2D toAwtRectangle(final Rectangle rect) {
 			Rectangle2D rect2d = new Rectangle2D.Double();
@@ -811,7 +812,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * @see #toAwtPoint(Point)
 		 */
 		public static Point toSwtPoint(final java.awt.geom.Point2D p) {
-			return new Point((int) Math.round(p.getX()), (int) Math.round(p.getY()));
+			return new Point((int) FastMath.round(p.getX()), (int) FastMath.round(p.getY()));
 		}
 
 		/**
@@ -899,7 +900,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * @param parent The parent composite.
 		 * @param style The SWT style of the SwtAxisEditor.
 		 * @param axis the axis whose properties are to be displayed/edited
-		 * in the composite.
+		 *            in the composite.
 		 */
 		public SWTAxisEditor(final Composite parent, final int style, final Axis axis) {
 			super(parent, style);
@@ -1037,7 +1038,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * @param parent the parent.
 		 * @param style the style.
 		 * @param axis the axis whose properties are to be displayed/edited
-		 * in the composite.
+		 *            in the composite.
 		 * @return A composite or <code>null</code< if axis is <code>null</code>.
 		 */
 		public static SWTAxisEditor getInstance(final Composite parent, final int style, final Axis axis) {

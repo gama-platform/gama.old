@@ -25,6 +25,7 @@ import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 import rcaller.*;
 import rcaller.exception.*;
@@ -103,8 +104,8 @@ public class Stats {
 			total += value;
 			product *= value;
 			reciprocalSum += 1 / value;
-			minimum = Math.min(minimum, value);
-			maximum = Math.max(maximum, value);
+			minimum = FastMath.min(minimum, value);
+			maximum = FastMath.max(maximum, value);
 		}
 
 		/**
@@ -188,7 +189,7 @@ public class Stats {
 		 * @throws EmptyDataSetException If the data set is empty.
 		 */
 		public final double getGeometricMean() {
-			return Math.pow(product, 1.0d / dataSetSize);
+			return FastMath.pow(product, 1.0d / dataSetSize);
 		}
 
 		/**
@@ -218,7 +219,7 @@ public class Stats {
 			double mean = getArithmeticMean();
 			double diffs = 0;
 			for ( int i = 0; i < dataSetSize; i++ ) {
-				diffs += Math.abs(mean - dataSet[i]);
+				diffs += FastMath.abs(mean - dataSet[i]);
 			}
 			return diffs / dataSetSize;
 		}
@@ -264,7 +265,7 @@ public class Stats {
 		 * @throws EmptyDataSetException If the data set is empty.
 		 */
 		public final double getStandardDeviation() {
-			return Math.sqrt(getVariance());
+			return FastMath.sqrt(getVariance());
 		}
 
 		/**
@@ -293,7 +294,7 @@ public class Stats {
 		 * @throws EmptyDataSetException If the data set is empty.
 		 */
 		// public final double getSampleStandardDeviation() {
-		// return Math.sqrt(getSampleVariance());
+		// return FastMath.sqrt(getSampleVariance());
 		// }
 	}
 

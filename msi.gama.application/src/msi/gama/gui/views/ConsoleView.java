@@ -27,6 +27,7 @@ import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.GAMA;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 
 public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
@@ -105,7 +106,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 				if ( maxMemorized == -1 ) {
 					maxMemorized = maxDisplayed;
 				} else {
-					maxMemorized = Math.min(maxMemorized, maxDisplayed);
+					maxMemorized = CmnFastMath.min(maxMemorized, maxDisplayed);
 				}
 			}
 			if ( maxMemorized > 0 ) {

@@ -367,9 +367,9 @@ public class ChartDataStatement extends AbstractStatement {
 // double minX = dataset.getXValue(series, 0);
 // double maxX = dataset.getXValue(series, numX - 1);
 // if ( this.getGapThresholdType() == UnitType.ABSOLUTE ) {
-// drawLine = Math.abs(x1 - x0) <= this.getGapThreshold();
+// drawLine = FastMath.abs(x1 - x0) <= this.getGapThreshold();
 // } else {
-// drawLine = Math.abs(x1 - x0) <= (maxX - minX) / numX * getGapThreshold();
+// drawLine = FastMath.abs(x1 - x0) <= (maxX - minX) / numX * getGapThreshold();
 // }
 // }
 // if ( drawLine ) {
