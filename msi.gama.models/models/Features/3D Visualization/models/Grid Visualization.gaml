@@ -2,7 +2,7 @@
 * Name: 3D Display model of differents shapes and a special Object
 * Author: Arnaud Grignard
 * Description: Model presenting a 3D display of different aspects of the same grid cells in the same experiment but different displays
-* Tag: 3D Display, Grid
+* Tags: 3D Display, Grid
 */
 
 model GridVisualization

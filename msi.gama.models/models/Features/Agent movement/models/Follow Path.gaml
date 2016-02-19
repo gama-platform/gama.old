@@ -3,7 +3,7 @@
 * Author: 
 * Description: Model showing the movement of an agent following three different paths : one defined by its vertices, an other defined thanks to all the roads species, and finally
 *       a path defined by a graph with weights (graph created thanks to an other species)
-* Tag: Graph, Movement of Agents, Skill
+* Tags: Graph, Movement of Agents, Skill
 */
 model path_and_follow
 

@@ -2,7 +2,7 @@
 * Name: 3D Display model of Rounded Rectangle
 * Author: Arnaud Grignard
 * Description: Model presenting a 3D display of rounded rectangle
-* Tag: 3D Display, Shapes
+* Tags: 3D Display, Shapes
 */
 
 

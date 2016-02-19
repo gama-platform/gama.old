@@ -3,7 +3,7 @@
 * Author:  Patrick Taillandier
 * Description: Model to represent how the agents move from one point to a target agent on a grid of cells with obstacles, following the shortest path and coloring
 * 	in magenta the cells intersecting the path of an agent
-* Tags : : Grid, Movement of Agents, Skill
+* Tags: Grid, Movement of Agents, Skill
 */
 
 model Grid

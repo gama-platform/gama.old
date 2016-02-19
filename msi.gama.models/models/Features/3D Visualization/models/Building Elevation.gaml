@@ -5,7 +5,7 @@
 *       Three experiments are proposed : one showing people represented by a yellow sphere moving from a living 3D building to a working 3D building and coming back
 * 	using a road network (road_traffic). The second experiment distinguish the species by using different layers for species (road_traffic_multi_layer). The last one increases
 * 	the Z location of the buildings and the people according to the time simulated (road_traffic_flying_off).
-* Tag: 3D Display, Shapefiles, GIS
+* Tags: 3D Display, Shapefiles, GIS
 */
 model tutorial_gis_city_traffic
 
