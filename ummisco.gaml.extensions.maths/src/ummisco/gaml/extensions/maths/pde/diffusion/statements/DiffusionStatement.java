@@ -48,9 +48,13 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 		@facet(name = IKeyword.METHOD,
 			type = IType.ID,
 			optional = true,
-			values = { "convolution", "dot_product" },
+			values = { IKeyword.CONVOLUTION, "dot_product" },
 			doc = @doc("the diffusion method")),
-		@facet(name = IKeyword.MASK,
+		@facet(name = IKeyword.MINVALUE,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("if a value is smaller than this value, it will not be diffused. By default, this value is equal to 0.0. This value cannot be smaller than 0.")),
+	@facet(name = IKeyword.MASK,
 			type = IType.MATRIX,
 			optional = true,
 			doc = @doc("a matrix masking the diffusion (matrix created from a image for example). The cells corresponding to the values smaller than \"-1\" in the mask matrix will not diffuse, and the other will diffuse.")),
@@ -60,7 +64,7 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 			values = { IKeyword.DIFFUSION, IKeyword.GRADIENT },
 			optional = true,
 			doc = @doc("represents both the way the signal is propagated and the way to treat multiple propagations of the same signal occuring at once from different places. If propagation equals 'diffusion', the intensity of a signal is shared between its neighbours with respect to 'proportion', 'variation' and the number of neighbours of the environment places (4, 6 or 8). I.e., for a given signal S propagated from place P, the value transmitted to its N neighbours is : S' = (S / N / proportion) - variation. The intensity of S is then diminished by S `*` proportion on P. In a diffusion, the different signals of the same name see their intensities added to each other on each place. If propagation equals 'gradient', the original intensity is not modified, and each neighbours receives the intensity : S / proportion - variation. If multiple propagations occur at once, only the maximum intensity is kept on each place. If 'propagation' is not defined, it is assumed that it is equal to 'diffusion'.")),
-		@facet(name = "radius",
+		@facet(name = IKeyword.RADIUS,
 			type = IType.INT,
 			optional = true,
 			doc = @doc("a diffusion radius (in number of cells from the center)")),
@@ -94,8 +98,6 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 				@example(value = "diffuse var: phero on: cells proportion: 1/9 radius: 1;", isExecutable = false) }) })
 public class DiffusionStatement extends AbstractStatement {
 
-	// public static Class VALIDATOR = DiffusionValidator.class;
-
 	public static class DiffusionValidator implements IDescriptionValidator {
 
 		@Override
@@ -105,7 +107,7 @@ public class DiffusionStatement extends AbstractStatement {
 				desc.warning("The keyword 'diffusion' is deprecated. Please use the keyword 'diffuse' instead",
 					IGamlIssue.DEPRECATED);
 			}
-			IExpression spec = desc.getFacets().getExpr("on");
+			IExpression spec = desc.getFacets().getExpr(IKeyword.ON);
 			if ( spec.getType().getTitle().split("\\[")[0].equals(Types.SPECIES.toString()) ) {
 				if ( !desc.getSpeciesDescription(spec.getName()).isGrid() ) {
 					desc.error("Diffusions can only be executed on grid species", IGamlIssue.GENERAL);
@@ -115,19 +117,29 @@ public class DiffusionStatement extends AbstractStatement {
 					desc.error("Diffusions can only be executed on list of agents", IGamlIssue.GENERAL);
 				}
 			}
+			spec = desc.getFacets().getExpr(IKeyword.MINVALUE);
+			if (spec.isConst()) {
+				float my_float = Float.parseFloat(spec.getName());
+				if (my_float < 0) {
+					desc.error("'min_value' facet cannot accept negative values ("+spec.getName()+")", IGamlIssue.GENERAL);
+				}
+			}
+			
 			IExpressionDescription mat_diffu = desc.getFacets().get("mat_diffu");
 			if ( mat_diffu == null ) {
 				mat_diffu = desc.getFacets().get(MATRIX);
 			}
-			IExpressionDescription propor = desc.getFacets().get("proportion");
-			IExpressionDescription propagation = desc.getFacets().get("propagation");
-			IExpressionDescription radius = desc.getFacets().get("radius");
-			IExpressionDescription variation = desc.getFacets().get("variation");
-			IExpressionDescription cycleLength = desc.getFacets().get(IKeyword.CYCLE_LENGTH);
+			IExpressionDescription propor = desc.getFacets().get(IKeyword.PROPORTION);
+			IExpressionDescription propagation = desc.getFacets().get(IKeyword.PROPAGATION);
+			IExpressionDescription radius = desc.getFacets().get(IKeyword.RADIUS);
+			IExpressionDescription variation = desc.getFacets().get(IKeyword.VARIATION);
 
 			// conflict diffusion matrix /vs/ parameters
 			if ( propor != null && mat_diffu != null ) {
 				desc.error("\"matrix:\" and \"proportion:\" can not be used at the same time", IGamlIssue.GENERAL);
+			}
+			if ( propagation != null && mat_diffu != null ) {
+				desc.error("\"matrix:\" and \"propagation:\" can not be used at the same time", IGamlIssue.GENERAL);
 			}
 			if ( mat_diffu != null && radius != null ) {
 				desc.error("\"matrix:\" and \"radius:\" can not be used at the same time", IGamlIssue.GENERAL);
@@ -243,17 +255,8 @@ public class DiffusionStatement extends AbstractStatement {
 		Object obj = getFacetValue(scope, IKeyword.ON);
 		if ( obj instanceof ISpecies ) {
 			// the diffusion is applied to the whole grid
-			if ( ((ISpecies) obj).isGrid() ) {
-				pop = (GridPopulation) ((ISpecies) obj).getPopulation(scope);
-				if ( mask == null ) {
-					// the mask is null. Let's build a "fake" mask equal to 1 everywhere.
-					mask = new double[pop.getNbCols()][pop.getNbRows()];
-					for ( int i = 0; i < mask.length; i++ ) {
-						for ( int j = 0; j < mask[0].length; j++ ) {
-							mask[i][j] = 1;
-						}
-					}
-				}
+			if ( !((ISpecies) obj).isGrid() ) {
+				throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
 			}
 		} else {
 			// the diffusion is applied just to a certain part of the grid.
@@ -287,7 +290,8 @@ public class DiffusionStatement extends AbstractStatement {
 		double[][] mat_diffu;
 		double proportion = Cast.asFloat(scope, getFacetValue(scope, IKeyword.PROPORTION));
 		double variation = Cast.asFloat(scope, getFacetValue(scope, IKeyword.VARIATION));
-		int range = Cast.asInt(scope, getFacetValue(scope, "radius"));
+		int range = Cast.asInt(scope, getFacetValue(scope, IKeyword.RADIUS));
+		
 		if ( range == 0 ) {
 			range = 1;
 		}
@@ -365,17 +369,18 @@ public class DiffusionStatement extends AbstractStatement {
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 
 		int cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
-		IMatrix<?> row_mask = Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK));
+		IMatrix<?> raw_mask = Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK));
 		double[][] mat_diffu = translateMatrix(scope,
 			Cast.asMatrix(scope, getFacetValue(scope, "mat_diffu", getFacetValue(scope, IKeyword.MATRIX))));
 		String var_diffu = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
 		// true for convolution, false for dot_product
-		boolean method_diffu = getLiteral(IKeyword.METHOD, "convolution").equals("convolution");
-		boolean is_gradient = getLiteral(IKeyword.PROPAGATION, "diffusion").equals("gradient");;
+		boolean use_convolution = getLiteral(IKeyword.METHOD, IKeyword.CONVOLUTION).equals(IKeyword.CONVOLUTION);
+		boolean is_gradient = getLiteral(IKeyword.PROPAGATION, IKeyword.DIFFUSION).equals(IKeyword.GRADIENT);
+		double minValue = Cast.asFloat(scope, getFacetValue(scope, IKeyword.MINVALUE, 0.0));
 
 		GridPopulation pop = computePopulation(scope);
 
-		double[][] mask = computeMask(scope, row_mask, pop);
+		double[][] mask = computeMask(scope, raw_mask, pop);
 
 		if ( mat_diffu == null ) {
 			// build a diffusion matrix from proportion, variation and range parameters
@@ -386,13 +391,17 @@ public class DiffusionStatement extends AbstractStatement {
 			}
 			mat_diffu = computeDiffusionMatrix(scope, nb_neighbors, is_gradient);
 		}
-
-		if ( cLen != 1 ) {
+		else if ( cLen != 1 ) {
+			// the cycle length is already computed in "computeDiffusionMatrix" if no diffusion matrix is defined
 			mat_diffu = computeMatrix(mat_diffu, cLen, is_gradient);
+		}
+		
+		if (minValue < 0) {
+			throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope);
 		}
 
 		if ( pop != null ) {
-			getEnvironment(scope).diffuseVariable(scope, method_diffu, is_gradient, mat_diffu, mask, var_diffu, pop);
+			getEnvironment(scope).diffuseVariable(scope, use_convolution, is_gradient, mat_diffu, mask, var_diffu, pop, minValue);
 		}
 
 		return null;
