@@ -52,10 +52,10 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 			values = { IKeyword.CONVOLUTION, "dot_product" },
 			doc = @doc("the diffusion method")),
 		@facet(name = IKeyword.MINVALUE,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("if a value is smaller than this value, it will not be diffused. By default, this value is equal to 0.0. This value cannot be smaller than 0.")),
-	@facet(name = IKeyword.MASK,
+			type = IType.FLOAT,
+			optional = true,
+			doc = @doc("if a value is smaller than this value, it will not be diffused. By default, this value is equal to 0.0. This value cannot be smaller than 0.")),
+		@facet(name = IKeyword.MASK,
 			type = IType.MATRIX,
 			optional = true,
 			doc = @doc("a matrix masking the diffusion (matrix created from a image for example). The cells corresponding to the values smaller than \"-1\" in the mask matrix will not diffuse, and the other will diffuse.")),
@@ -119,13 +119,14 @@ public class DiffusionStatement extends AbstractStatement {
 				}
 			}
 			spec = desc.getFacets().getExpr(IKeyword.MINVALUE);
-			if (spec.isConst()) {
-				float my_float = Float.parseFloat(spec.getName());
-				if (my_float < 0) {
-					desc.error("'min_value' facet cannot accept negative values ("+spec.getName()+")", IGamlIssue.GENERAL);
+			if ( spec != null && spec.isConst() ) {
+				double min = Cast.asFloat(null, spec.literalValue());
+				if ( min < 0 ) {
+					desc.error("'min_value' facet cannot accept negative values (" + spec.serialize(false) + ")",
+						IGamlIssue.GENERAL);
 				}
 			}
-			
+
 			IExpressionDescription mat_diffu = desc.getFacets().get("mat_diffu");
 			if ( mat_diffu == null ) {
 				mat_diffu = desc.getFacets().get(MATRIX);
@@ -256,9 +257,8 @@ public class DiffusionStatement extends AbstractStatement {
 		Object obj = getFacetValue(scope, IKeyword.ON);
 		if ( obj instanceof ISpecies ) {
 			// the diffusion is applied to the whole grid
-			if ( !((ISpecies) obj).isGrid() ) {
-				throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
-			}
+			if ( !((ISpecies) obj).isGrid() ) { throw GamaRuntimeException
+				.error("Diffusion statement works only on grid agents", scope); }
 		} else {
 			// the diffusion is applied just to a certain part of the grid.
 			// Search the mask.
@@ -292,7 +292,7 @@ public class DiffusionStatement extends AbstractStatement {
 		double proportion = Cast.asFloat(scope, getFacetValue(scope, IKeyword.PROPORTION));
 		double variation = Cast.asFloat(scope, getFacetValue(scope, IKeyword.VARIATION));
 		int range = Cast.asInt(scope, getFacetValue(scope, IKeyword.RADIUS));
-		
+
 		if ( range == 0 ) {
 			range = 1;
 		}
@@ -306,8 +306,8 @@ public class DiffusionStatement extends AbstractStatement {
 			for ( int i = 0; i < mat_diff_size; i++ ) {
 				for ( int j = 0; j < mat_diff_size; j++ ) {
 					if ( nb_neighbors == 8 ) {
-						distanceFromCenter =
-							CmnFastMath.max(FastMath.abs(i - mat_diff_size / 2), CmnFastMath.abs(j - mat_diff_size / 2));
+						distanceFromCenter = CmnFastMath.max(CmnFastMath.abs(i - mat_diff_size / 2),
+							CmnFastMath.abs(j - mat_diff_size / 2));
 					} else {
 						distanceFromCenter =
 							CmnFastMath.abs(i - mat_diff_size / 2) + CmnFastMath.abs(j - mat_diff_size / 2);
@@ -326,7 +326,8 @@ public class DiffusionStatement extends AbstractStatement {
 				for ( int i = 0; i < 3; i++ ) {
 					for ( int j = 0; j < 3; j++ ) {
 						if ( nb_neighbors == 8 ) {
-							distanceFromCenter = CmnFastMath.max(FastMath.abs(i - 3 / 2), CmnFastMath.abs(j - 3 / 2));
+							distanceFromCenter =
+								CmnFastMath.max(CmnFastMath.abs(i - 3 / 2), CmnFastMath.abs(j - 3 / 2));
 						} else {
 							distanceFromCenter = CmnFastMath.abs(i - 3 / 2) + CmnFastMath.abs(j - 3 / 2);
 						}
@@ -355,8 +356,8 @@ public class DiffusionStatement extends AbstractStatement {
 				for ( int i = 0; i < mat_diff_size; i++ ) {
 					for ( int j = 0; j < mat_diff_size; j++ ) {
 						if ( nb_neighbors == 8 ) {
-							distanceFromCenter =
-								Math.max(FastMath.abs(i - mat_diff_size / 2), CmnFastMath.abs(j - mat_diff_size / 2));
+							distanceFromCenter = Math.max(CmnFastMath.abs(i - mat_diff_size / 2),
+								CmnFastMath.abs(j - mat_diff_size / 2));
 						} else {
 							distanceFromCenter =
 								CmnFastMath.abs(i - mat_diff_size / 2) + CmnFastMath.abs(j - mat_diff_size / 2);
@@ -394,18 +395,17 @@ public class DiffusionStatement extends AbstractStatement {
 				nb_neighbors = Cast.asInt(scope, nb.value(scope));
 			}
 			mat_diffu = computeDiffusionMatrix(scope, nb_neighbors, is_gradient);
-		}
-		else if ( cLen != 1 ) {
+		} else if ( cLen != 1 ) {
 			// the cycle length is already computed in "computeDiffusionMatrix" if no diffusion matrix is defined
 			mat_diffu = computeMatrix(mat_diffu, cLen, is_gradient);
 		}
-		
-		if (minValue < 0) {
-			throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope);
-		}
+
+		if ( minValue < 0 ) { throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !",
+			scope); }
 
 		if ( pop != null ) {
-			getEnvironment(scope).diffuseVariable(scope, use_convolution, is_gradient, mat_diffu, mask, var_diffu, pop, minValue);
+			getEnvironment(scope).diffuseVariable(scope, use_convolution, is_gradient, mat_diffu, mask, var_diffu, pop,
+				minValue);
 		}
 
 		return null;
