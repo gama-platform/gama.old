@@ -180,8 +180,9 @@ public class GamaDXFFile extends GamaGeometryFile {
 	    	GamaPoint pt = (GamaPoint) list.get(list.size()-1);
 	    	if(pt.getX() == 0 && pt.getY() == 0 && pt.getZ() == 0)  {
 	    		list.remove(pt);
-	    		if (list.size() < 2) return null;
+	    		
 	    	}
+	    	if (list.size() < 2) return null;
 	    	return createPolyline(scope,list);
 		}
 
