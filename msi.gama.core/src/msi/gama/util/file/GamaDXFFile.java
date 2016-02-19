@@ -39,6 +39,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.operators.Containers;
 import msi.gaml.operators.Spatial;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
@@ -59,10 +60,25 @@ import msi.gaml.types.Types;
 public class GamaDXFFile extends GamaGeometryFile {
 
 		GamaPoint size;
+		Double unit;
+		double x_t ;
+		double y_t ;
 		
 		public GamaDXFFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 			super(scope, pathName);
 		}
+		
+		public GamaDXFFile(final IScope scope, final String pathName, final Double unit) throws GamaRuntimeException {
+			super(scope, pathName);
+			this.unit = unit;
+		}
+		
+		public GamaDXFFile(final IScope scope, final String pathName, final Double unit,final GamaPoint size) throws GamaRuntimeException {
+			super(scope, pathName);
+			this.unit = unit;
+			this.size = size;
+		}
+
 
 		public GamaDXFFile(final IScope scope, final String pathName, final GamaPoint size) throws GamaRuntimeException {
 			super(scope, pathName);
@@ -121,90 +137,53 @@ public class GamaDXFFile extends GamaGeometryFile {
 		
 		public IShape manageObj(IScope scope, DXFSolid obj) {
 			if (obj == null) return null;
-			double x_t = obj.getDXFDocument().getBounds().getMinimumX();
-			double y_t = obj.getDXFDocument().getBounds().getMinimumY();
 			IList list = GamaListFactory.create(Types.POINT);
-			list.add(new GamaPoint(obj.getPoint1().getX() - x_t,obj.getPoint1().getY() - y_t,obj.getPoint1().getZ()));
-			list.add(new GamaPoint(obj.getPoint2().getX() - x_t,obj.getPoint2().getY() - y_t,obj.getPoint2().getZ()));
-			list.add(new GamaPoint(obj.getPoint3().getX() - x_t,obj.getPoint3().getY() - y_t,obj.getPoint3().getZ()));
-			list.add(new GamaPoint(obj.getPoint4().getX() - x_t,obj.getPoint4().getY() - y_t,obj.getPoint4().getZ()));
+			list.add(new GamaPoint(obj.getPoint1().getX() * (unit == null ? 1 : unit)- x_t,obj.getPoint1().getY() * (unit == null ? 1 : unit) - y_t,obj.getPoint1().getZ()* (unit == null ? 1 : unit)));
+			list.add(new GamaPoint(obj.getPoint2().getX() * (unit == null ? 1 : unit)- x_t,obj.getPoint2().getY() * (unit == null ? 1 : unit) - y_t,obj.getPoint2().getZ()* (unit == null ? 1 : unit)));
+			list.add(new GamaPoint(obj.getPoint3().getX() * (unit == null ? 1 : unit)- x_t,obj.getPoint3().getY() * (unit == null ? 1 : unit) - y_t,obj.getPoint3().getZ()* (unit == null ? 1 : unit)));
+			list.add(new GamaPoint(obj.getPoint4().getX() * (unit == null ? 1 : unit)- x_t,obj.getPoint4().getY() * (unit == null ? 1 : unit) - y_t,obj.getPoint4().getZ()* (unit == null ? 1 : unit)));
 			
 	    	IShape shape = createPolygone(scope,list);
-	    	shape.setAttribute("layer", obj.getLayerName());
-	    	shape.setAttribute("id", obj.getID());
-	    	shape.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
-	    	shape.setAttribute("thickness", obj.getThickness());
-	    	shape.setAttribute("is_visible", obj.isVisibile());
-	    	shape.setAttribute("is_omit", obj.isOmitLineType());
+	    	
 	    	return shape;
 		}
 		
 		public IShape manageObj(IScope scope, DXFCircle obj) {
 			if (obj == null) return null;
-			double x_t = obj.getDXFDocument().getBounds().getMinimumX();
-			double y_t = obj.getDXFDocument().getBounds().getMinimumY();
-			GamaPoint pt = new GamaPoint(obj.getCenterPoint().getX() - x_t, obj.getCenterPoint().getY() - y_t, obj.getCenterPoint().getZ());
-			IShape line = createCircle(scope,pt, obj.getRadius());
-			line.setAttribute("layer", obj.getLayerName());
-			line.setAttribute("id", obj.getID());
-			line.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
-			line.setAttribute("thickness", obj.getThickness());
-			line.setAttribute("is_visible", obj.isVisibile());
-			line.setAttribute("is_omit", obj.isOmitLineType());
-			return line;
+			GamaPoint pt = new GamaPoint(obj.getCenterPoint().getX() * (unit == null ? 1 : unit) - x_t, obj.getCenterPoint().getY() * (unit == null ? 1 : unit) - y_t, obj.getCenterPoint().getZ()* (unit == null ? 1 : unit));
+			return createCircle(scope,pt, obj.getRadius()* (unit == null ? 1 : unit));
 		}
 		
 		public IShape manageObj(IScope scope, DXFLine obj) {
 			if (obj == null) return null;
 			IList list = GamaListFactory.create(Types.POINT);
-			double x_t = obj.getDXFDocument().getBounds().getMinimumX();
-			double y_t = obj.getDXFDocument().getBounds().getMinimumY();
-			list.add(new GamaPoint(obj.getStartPoint().getX() - x_t,obj.getStartPoint().getY() - y_t,obj.getStartPoint().getZ()));
-			list.add(new GamaPoint(obj.getEndPoint().getX() - x_t,obj.getEndPoint().getY() - y_t,obj.getEndPoint().getZ()));
-			IShape line = createPolyline(scope,list);
-			line.setAttribute("layer", obj.getLayerName());
-			line.setAttribute("id", obj.getID());
-			line.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
-			line.setAttribute("thickness", obj.getThickness());
-			line.setAttribute("is_visible", obj.isVisibile());
-			line.setAttribute("is_omit", obj.isOmitLineType());
-			return line;
+			list.add(new GamaPoint(obj.getStartPoint().getX()* (unit == null ? 1 : unit) - x_t,obj.getStartPoint().getY() * (unit == null ? 1 : unit)- y_t,obj.getStartPoint().getZ()* (unit == null ? 1 : unit)));
+			list.add(new GamaPoint(obj.getEndPoint().getX() * (unit == null ? 1 : unit)- x_t,obj.getEndPoint().getY() * (unit == null ? 1 : unit)- y_t,obj.getEndPoint().getZ()* (unit == null ? 1 : unit)));
+			return createPolyline(scope,list);
 		}
 		public IShape manageObj(IScope scope, DXFArc obj) {
 			if (obj == null) return null;
 			IList list = GamaListFactory.create(Types.POINT);
-			double x_t = obj.getDXFDocument().getBounds().getMinimumX();
-			double y_t = obj.getDXFDocument().getBounds().getMinimumY();
-			list.add(new GamaPoint(obj.getStartPoint().getX() - x_t,obj.getStartPoint().getY() - y_t,obj.getStartPoint().getZ()));
-			list.add(new GamaPoint(obj.getEndPoint().getX() - x_t,obj.getEndPoint().getY() - y_t,obj.getEndPoint().getZ()));
-			IShape line = createPolyline(scope,list);
-			line.setAttribute("layer", obj.getLayerName());
-			line.setAttribute("id", obj.getID());
-			line.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
-			line.setAttribute("thickness", obj.getThickness());
-			line.setAttribute("is_visible", obj.isVisibile());
-			line.setAttribute("is_omit", obj.isOmitLineType());
-			return line;
+			list.add(new GamaPoint(obj.getStartPoint().getX() * (unit == null ? 1 : unit)- x_t,obj.getStartPoint().getY()* (unit == null ? 1 : unit)- y_t,obj.getStartPoint().getZ()* (unit == null ? 1 : unit)));
+			list.add(new GamaPoint(obj.getEndPoint().getX()* (unit == null ? 1 : unit) - x_t,obj.getEndPoint().getY() * (unit == null ? 1 : unit)- y_t,obj.getEndPoint().getZ()* (unit == null ? 1 : unit)));
+			return createPolyline(scope,list);
 		}
 		public IShape manageObj(IScope scope, DXFPolyline obj) {
 			if (obj == null) return null;
-			double x_t = obj.getDXFDocument().getBounds().getMinimumX();
-			double y_t = obj.getDXFDocument().getBounds().getMinimumY();
-			
 			IList list = GamaListFactory.create(Types.POINT);
 			Iterator it = obj.getVertexIterator();
 	    	while(it.hasNext()) {
 	    		DXFVertex vertex = (DXFVertex)it.next();
-	    		list.add(new GamaPoint(vertex.getX() - x_t, vertex.getY() - y_t, vertex.getZ()));
+	    		list.add(new GamaPoint(vertex.getX() * (unit == null ? 1 : unit)- x_t, vertex.getY() * (unit == null ? 1 : unit)- y_t, vertex.getZ()* (unit == null ? 1 : unit)));
 	    	}
-	    	IShape shape = createPolyline(scope,list);
-	    	shape.setAttribute("layer", obj.getLayerName());
-	    	shape.setAttribute("id", obj.getID());
-	    	shape.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
-	    	shape.setAttribute("thickness", obj.getThickness());
-	    	shape.setAttribute("is_visible", obj.isVisibile());
-	    	shape.setAttribute("is_omit", obj.isOmitLineType());
-	    	return shape;
+	    	list = Containers.remove_duplicates(scope, list);
+	    	GamaPoint pt = (GamaPoint) list.get(list.size()-1);
+	    	if(pt.getX() == 0 && pt.getY() == 0 && pt.getZ() == 0)  {
+	    		list.remove(pt);
+	    		
+	    	}
+	    	if (list.size() < 2) return null;
+	    	return createPolyline(scope,list);
 		}
 
 		public IShape defineGeom(IScope scope, Object obj){
@@ -228,9 +207,17 @@ public class GamaDXFFile extends GamaGeometryFile {
 		    	while (ittype.hasNext()) {
 		    		String entityType = (String)ittype.next();
 					List<DXFEntity> entity_list = (List<DXFEntity>)layer.getDXFEntities(entityType);
-					for (DXFEntity ent : entity_list) {
-						IShape g = defineGeom(scope,ent);
-						if (g != null) geoms.add(g);
+					for (DXFEntity obj : entity_list) {
+						IShape g = defineGeom(scope,obj);
+						if (g != null) {
+							g.setAttribute("layer", obj.getLayerName());
+					    	g.setAttribute("id", obj.getID());
+					    	g.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
+					    	g.setAttribute("thickness", obj.getThickness());
+					    	g.setAttribute("is_visible", obj.isVisibile());
+					    	g.setAttribute("is_omit", obj.isOmitLineType());
+							geoms.add(g);
+						}
 					}
 		    		
 		    	}
@@ -241,8 +228,17 @@ public class GamaDXFFile extends GamaGeometryFile {
 		    	DXFBlock block = (DXFBlock) itbl.next();
 		    	Iterator itent =  block.getDXFEntitiesIterator();
 			    while (itent.hasNext()) {
-			    	IShape g = defineGeom(scope,(DXFEntity)itent.next());
-					if (g != null) geoms.add(g);
+			    	DXFEntity obj = (DXFEntity)itent.next();
+			    	IShape g = defineGeom(scope,obj);
+					if (g != null) {
+						g.setAttribute("layer", obj.getLayerName());
+				    	g.setAttribute("id", obj.getID());
+				    	g.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
+				    	g.setAttribute("thickness", obj.getThickness());
+				    	g.setAttribute("is_visible", obj.isVisibile());
+				    	g.setAttribute("is_omit", obj.isOmitLineType());
+						geoms.add(g);
+					}
 		    	}
 		    }
 		    
@@ -256,8 +252,11 @@ public class GamaDXFFile extends GamaGeometryFile {
 				   final InputStream in = new FileInputStream(getFile());
 				   parser.parse(in, DXFParser.DEFAULT_ENCODING);
 						
-			       //get the documnet and the layer
+			       //get the document and the layer
 			       DXFDocument doc = parser.getDocument();
+			       x_t = doc.getBounds().getMinimumX() * (unit == null ? 1 : unit);
+			       y_t = doc.getBounds().getMinimumY() * (unit == null ? 1 : unit);
+				
 			       fillBuffer(scope, doc);
 			 } catch (Exception e) {
 		    	  e.printStackTrace();
@@ -279,7 +278,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 						
 			       //get the documnet and the layer
 			       DXFDocument doc = parser.getDocument();
-			       Envelope env = new Envelope(0, doc.getBounds().getMaximumX() - doc.getBounds().getMinimumX(), 0, doc.getBounds().getMaximumY() - doc.getBounds().getMinimumY());
+			       Envelope env = new Envelope(0, (doc.getBounds().getMaximumX() - doc.getBounds().getMinimumX()) * (unit == null ? 1 : unit), 0, (doc.getBounds().getMaximumY() - doc.getBounds().getMinimumY()) * (unit == null ? 1 : unit));
 			      
 			     return env;
 			   } catch (Exception e) {

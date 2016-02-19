@@ -82,6 +82,7 @@ public interface IKeyword {
 	public static final String CONTENTS = "contents";
 	public static final String CONTRIBUTE = "contribute";
 	public static final String CONTROL = "control";
+	public static final String CONVOLUTION = "convolution";
 	public static final String CREATE = "create";
 	public static final String CSV = "csv";
 	public static final String CURRENT_STATE = "currentState";
@@ -243,6 +244,7 @@ public interface IKeyword {
 	public static final String MIN = "min";
 	public static final String MINIMIZE = "minimize";
 	public final static String MINUS = "-";
+	public final static String MINVALUE = "min_value";
 	public final static String MIRRORS = "mirrors";
 	public final static String MODE = "mode";
 	public static final String MODEL = "model";
@@ -302,6 +304,7 @@ public interface IKeyword {
 	public static final String PROPORTION = "proportion";
 	public static final String PUT = "put";
 	public static final String QUADTREE = "quadtree";
+	public static final String RADIUS = "radius";
 	public static final String RAISES = "raises";
 	public static final String RANDOM_SPECIES_NAME = "random_builder";
 	public static final String RANGE = "range";
