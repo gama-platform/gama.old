@@ -87,12 +87,12 @@ public interface ITopology extends IValue {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * Distance between two geometries in this topology.
+	 *             Distance between two geometries in this topology.
 	 *
 	 * @param source the source geometry (cannot be null)
 	 * @param target the target (cannot be null)
 	 * @return a double representing the distance between the two geometries, or Double.MAX_VALUE if
-	 * either one of them is not reachable from this topology
+	 *         either one of them is not reachable from this topology
 	 */
 	public abstract Double distanceBetween(IScope scope, final IShape source, final IShape target);
 
@@ -113,11 +113,11 @@ public interface ITopology extends IValue {
 	 * @param direction an angle in degrees (between 0 and 360 -- other values will be normalized
 	 * @param distance the distance that should separate the actual location and the destination
 	 * @param nullIfOutside tells wether to return the destination point or null if
-	 * the destination is outside the topology
+	 *            the destination is outside the topology
 	 * @return a point or null if no random locations are available
 	 */
-		public abstract ILocation getDestination(final ILocation source, final int direction, final double distance,
-			boolean nullIfOutside);
+	public abstract ILocation getDestination(final ILocation source, final int direction, final double distance,
+		boolean nullIfOutside);
 
 	/**
 	 * Return the location corresponding to a displacement from source, with an angle (in degrees)
@@ -128,11 +128,11 @@ public interface ITopology extends IValue {
 	 * @param direction an angle in degrees (between 0 and 360 -- other values will be normalized
 	 * @param distance the distance that should separate the actual location and the destination
 	 * @param nullIfOutside tells wether to return the destination point or null if
-	 * the destination is outside the topology
+	 *            the destination is outside the topology
 	 * @return a point or null if no random locations are available
 	 */
-			public abstract ILocation getDestination3D(final ILocation source, final int heading, final int pitch,
-				final double distance, boolean nullIfOutside);
+	public abstract ILocation getDestination3D(final ILocation source, final int heading, final int pitch,
+		final double distance, boolean nullIfOutside);
 
 	/**
 	 * Return a random location inside the bounds of the environment's shape.
@@ -140,7 +140,7 @@ public interface ITopology extends IValue {
 	 *
 	 * @return a point, or null if no random locations are available
 	 */
-				public abstract ILocation getRandomLocation(IScope scope);
+	public abstract ILocation getRandomLocation(IScope scope);
 
 	/**
 	 * Return the collection of places (IGeometry) defined by this topology.
@@ -150,7 +150,7 @@ public interface ITopology extends IValue {
 	 *
 	 * @return an instance of IGamaContainer, which geometries can be iterated.
 	 */
-				@getter(IKeyword.PLACES)
+	@getter(IKeyword.PLACES)
 	public abstract IContainer<?, IShape> getPlaces();
 
 	/**
@@ -167,22 +167,22 @@ public interface ITopology extends IValue {
 	 *
 	 * @param p the location to normalize
 	 * @param nullIfOutside tells whether to return
-	 * null or to coerce p if p is outside the bounds of the topology
+	 *            null or to coerce p if p is outside the bounds of the topology
 	 * @return a valid point or null if nullIfOutside is true and the point is outside
 	 */
 	public abstract ILocation normalizeLocation(final ILocation p, boolean nullIfOutside);
 
 	/**
 	 * @throws GamaRuntimeException
-	 * Called by a population to tell this topology that the shape of its host has
-	 * changed. If the
-	 * environment of the topology depends on the shape of the host, the topology can
-	 * choose to
-	 * adapt in consequence.
+	 *             Called by a population to tell this topology that the shape of its host has
+	 *             changed. If the
+	 *             environment of the topology depends on the shape of the host, the topology can
+	 *             choose to
+	 *             adapt in consequence.
 	 *
 	 * @param pop the population to which this topology is attached.
 	 */
-	public abstract void shapeChanged(IPopulation pop);
+	// public abstract void shapeChanged(IPopulation pop);
 
 	public abstract double getWidth();
 

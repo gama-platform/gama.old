@@ -216,8 +216,8 @@ public class AmorphousTopology implements ITopology {
 	/**
 	 * @see msi.gama.environment.ITopology#shapeChanged(msi.gama.interfaces.IPopulation)
 	 */
-	@Override
-	public void shapeChanged(final IPopulation pop) {}
+	// @Override
+	// public void shapeChanged(final IPopulation pop) {}
 
 	/**
 	 * @see msi.gama.environment.ITopology#getWidth()

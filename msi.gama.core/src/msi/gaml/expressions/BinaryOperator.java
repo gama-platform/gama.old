@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -27,7 +28,7 @@ public class BinaryOperator extends NAryOperator {
 	public static IExpression create(final OperatorProto proto, final IDescription context,
 		final IExpression ... child) {
 		BinaryOperator u = new BinaryOperator(proto, context, child);
-		if ( u.isConst() ) {
+		if ( u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 			return e;

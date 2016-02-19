@@ -16,9 +16,10 @@ import java.util.*;
 import org.eclipse.emf.ecore.EObject;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TLinkedHashSet;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -251,10 +252,10 @@ public class SpeciesDescription extends TypeDescription {
 		} else if ( desc instanceof VariableDescription ) {
 			addOwnVariable((VariableDescription) desc);
 		} else if ( desc instanceof SpeciesDescription ) {
-			final ModelDescription md = getModelDescription();
-			if ( md != null ) {
-				md.addSpeciesType((TypeDescription) desc);
-			}
+			// final ModelDescription md = getModelDescription();
+			// if ( md != null ) {
+			// md.addSpeciesType((TypeDescription) desc);
+			// }
 			getMicroSpecies().put(desc.getName(), (SpeciesDescription) desc);
 		}
 		return desc;
@@ -386,7 +387,12 @@ public class SpeciesDescription extends TypeDescription {
 
 	public IAgentConstructor getAgentConstructor() {
 		if ( agentConstructor == null && parent != null ) {
-			agentConstructor = ((SpeciesDescription) parent).getAgentConstructor();
+			if ( parent.getJavaBase() == getJavaBase() ) {
+				agentConstructor = ((SpeciesDescription) parent).getAgentConstructor();
+			} else {
+				agentConstructor = IAgentConstructor.CONSTRUCTORS.get(getJavaBase());
+			}
+			System.out.println("Agent constructor for " + this + " based on :" + getJavaBase());
 		}
 		return agentConstructor;
 	}
@@ -861,29 +867,80 @@ public class SpeciesDescription extends TypeDescription {
 		return skills;
 	}
 
-	@Override
-	public Class getJavaBase() {
-		// FIXME HACK Remove at some point in the future
-		if ( isGrid() ) {
-			if ( !facets.containsKey("use_regular_agents") || TRUE.equals(facets.getLabel("use_regular_agents")) ) {
-				javaBase = GamlAgent.class;
-			} else {
-				javaBase = MinimalGridAgent.class;
-			}
-			return javaBase;
-		}
-		if ( getName().equals(AGENT) ) {
-			javaBase = MinimalAgent.class;
-			return javaBase;
-		}
+	public Class getJavaBaseOld() {
+		// if ( getName().equals(AGENT) ) {
+		// javaBase = MinimalAgent.class;
+		// return javaBase;
+		// }
 		// Takes care of invalid species (see Issue 711)
-		if ( javaBase == null && parent != null && parent != this ) {
+		if ( javaBase == null && parent != null && parent != this && !parent.getName().equals(AGENT) ) {
 			javaBase = getParent().getJavaBase();
 		}
-		if ( javaBase == MinimalAgent.class ) {
-			javaBase = GamlAgent.class;
+		if ( javaBase == null ) {
+			boolean useMinimalAgents =
+				GamaPreferences.AGENT_OPTIMIZATION.getValue() || FALSE.equals(facets.getLabel("use_regular_agents"));
+			if ( useMinimalAgents && TRUE.equals(facets.getLabel("use_regular_agents")) ) {
+				useMinimalAgents = false;
+			}
+			if ( useMinimalAgents ) {
+				for ( SpeciesDescription subSpecies : getSelfWithAllSubSpecies() ) {
+					if ( subSpecies.hasMicroSpecies() ) {
+						useMinimalAgents = false;
+						break;
+					}
+				}
+
+			}
+			if ( useMinimalAgents ) {
+				javaBase = isGrid() ? MinimalGridAgent.class : MinimalAgent.class;
+			} else {
+				javaBase = isGrid() ? GamlGridAgent.class : GamlAgent.class;
+			}
 		}
+		System.out.println("GetJavaBase() for " + this + " : " + javaBase);
 		return javaBase;
+	}
+
+	@Override
+	public Class<? extends IAgent> getJavaBase() {
+		if ( javaBase == null ) {
+			if ( parent != null && !parent.getName().equals(AGENT) ) {
+				javaBase = getParent().getJavaBase();
+			} else {
+				boolean useMinimalAgents = GamaPreferences.AGENT_OPTIMIZATION.getValue() ||
+					FALSE.equals(facets.getLabel("use_regular_agents"));
+				if ( useMinimalAgents && TRUE.equals(facets.getLabel("use_regular_agents")) ) {
+					useMinimalAgents = false;
+				}
+				if ( useMinimalAgents ) {
+					for ( SpeciesDescription subSpecies : getSelfWithAllSubSpecies() ) {
+						if ( subSpecies.hasMicroSpecies() ) {
+							useMinimalAgents = false;
+							break;
+						}
+					}
+
+				}
+				if ( useMinimalAgents ) {
+					javaBase = isGrid() ? MinimalGridAgent.class : MinimalAgent.class;
+				} else {
+					javaBase = isGrid() ? GamlGridAgent.class : GamlAgent.class;
+				}
+			}
+		}
+		// System.out.println("GetJavaBase() for " + this + " : " + javaBase);
+		return javaBase;
+	}
+
+	public List<SpeciesDescription> getSelfWithAllSubSpecies() {
+		List<SpeciesDescription> result = new ArrayList();
+		result.add(this);
+		for ( SpeciesDescription sd : getModelDescription().getAllMicroSpecies() ) {
+			if ( sd.hasParent(this) ) {
+				result.add(sd);
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -906,7 +963,7 @@ public class SpeciesDescription extends TypeDescription {
 		// Takes care of invalid species (see Issue 711)
 		if ( sd == null || sd == this ) { return false; }
 		if ( sd.equals(p) ) { return true; }
-		return sd.hasMacroSpecies(p);
+		return sd.hasParent(p);
 	}
 
 	@Override

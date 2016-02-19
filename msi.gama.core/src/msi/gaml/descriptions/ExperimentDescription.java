@@ -14,7 +14,7 @@ package msi.gaml.descriptions;
 import java.util.*;
 import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.*;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
@@ -107,6 +107,11 @@ public class ExperimentDescription extends SpeciesDescription {
 	 */
 	public Boolean isBatch() {
 		return IKeyword.BATCH.equals(getFacets().getLabel(IKeyword.TYPE));
+	}
+
+	@Override
+	public Class<? extends ExperimentAgent> getJavaBase() {
+		return isBatch() ? BatchAgent.class : ExperimentAgent.class;
 	}
 
 }

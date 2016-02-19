@@ -15,7 +15,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 import com.google.common.collect.ImmutableSet;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
@@ -96,7 +95,7 @@ public class SpeciesLayer extends AgentLayer {
 			final List<GridLayerStatement> gridLayers = layer.getGridLayers();
 			for ( final GridLayerStatement gl : gridLayers ) {
 				try {
-					a.acquireLock();
+					// a.acquireLock();
 					if ( a.dead() /* || scope.interrupted() */ ) {
 						continue;
 					}
@@ -106,7 +105,7 @@ public class SpeciesLayer extends AgentLayer {
 						// drawGridPopulation(a, gl, microPop, scope, g);
 					}
 				} finally {
-					a.releaseLock();
+					// a.releaseLock();
 				}
 			}
 
@@ -114,7 +113,7 @@ public class SpeciesLayer extends AgentLayer {
 			final List<SpeciesLayerStatement> microLayers = layer.getMicroSpeciesLayers();
 			for ( final SpeciesLayerStatement ml : microLayers ) {
 				try {
-					a.acquireLock();
+					// a.acquireLock();
 					if ( a.dead() ) {
 						continue;
 					}
@@ -124,7 +123,7 @@ public class SpeciesLayer extends AgentLayer {
 						drawPopulation(scope, g, ml, microPop);
 					}
 				} finally {
-					a.releaseLock();
+					// a.releaseLock();
 				}
 			}
 		}

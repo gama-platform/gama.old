@@ -19,9 +19,9 @@ import com.thoughtworks.xstream.io.*;
 
 public class GamaShapeFileConverter implements Converter {
 	private final static String TAG="GamaShapeFile";
-	private IScope scope;
+	private ConverterScope scope;
 	
-	public GamaShapeFileConverter(IScope s){
+	public GamaShapeFileConverter(ConverterScope s){
 		scope = s;
 	}
 	
@@ -46,7 +46,7 @@ public class GamaShapeFileConverter implements Converter {
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 
 		reader.moveDown();
-		GamaShapeFile shp = new GamaShapeFile(scope, reader.getValue());		
+		GamaShapeFile shp = new GamaShapeFile(scope.getScope(), reader.getValue());		
 		reader.moveUp();
 		return shp; 
 	}

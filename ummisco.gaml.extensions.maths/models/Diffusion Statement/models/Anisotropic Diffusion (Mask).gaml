@@ -3,7 +3,7 @@
 * Author: Benoit Gaudou
 * Description: This model is used to show how an anisotropic diffusion can be used with a mask. The cell at the center of the grid emit a pheromon at each step, which is spread
 *     through the grid thanks to the diffusion mechanism. A mask is used to restrict the diffusion to a "corridor" (the white part of the bmp image)
-* Tag: Diffusion, Matrix, Elevation, Mask
+* Tags: Diffusion, Matrix, Elevation, Mask
 */
 
 model diffusion

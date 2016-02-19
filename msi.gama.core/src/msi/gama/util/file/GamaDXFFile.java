@@ -16,8 +16,23 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import org.kabeja.dxf.DXFArc;
+import org.kabeja.dxf.DXFBlock;
+import org.kabeja.dxf.DXFCircle;
+import org.kabeja.dxf.DXFDocument;
+import org.kabeja.dxf.DXFEntity;
+import org.kabeja.dxf.DXFLayer;
+import org.kabeja.dxf.DXFLine;
+import org.kabeja.dxf.DXFPolyline;
+import org.kabeja.dxf.DXFSolid;
+import org.kabeja.dxf.DXFVertex;
+import org.kabeja.parser.DXFParser;
+import org.kabeja.parser.Parser;
+import org.kabeja.parser.ParserBuilder;
+
+import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
@@ -28,21 +43,6 @@ import msi.gaml.operators.Spatial;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-
-import org.kabeja.dxf.DXFCircle;
-import org.kabeja.dxf.DXFConstants;
-import org.kabeja.dxf.DXFDocument;
-import org.kabeja.dxf.DXFLayer;
-import org.kabeja.dxf.DXFLine;
-import org.kabeja.dxf.DXFPolyline;
-import org.kabeja.dxf.DXFShape;
-import org.kabeja.dxf.DXFSolid;
-import org.kabeja.dxf.DXFVertex;
-import org.kabeja.parser.DXFParser;
-import org.kabeja.parser.Parser;
-import org.kabeja.parser.ParserBuilder;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Written by drogoul
@@ -134,7 +134,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	    	shape.setAttribute("id", obj.getID());
 	    	shape.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 	    	shape.setAttribute("thickness", obj.getThickness());
-	    	shape.setAttribute("is_visibile", obj.isVisibile());
+	    	shape.setAttribute("is_visible", obj.isVisibile());
 	    	shape.setAttribute("is_omit", obj.isOmitLineType());
 	    	return shape;
 		}
@@ -149,7 +149,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 			line.setAttribute("id", obj.getID());
 			line.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 			line.setAttribute("thickness", obj.getThickness());
-			line.setAttribute("is_visibile", obj.isVisibile());
+			line.setAttribute("is_visible", obj.isVisibile());
 			line.setAttribute("is_omit", obj.isOmitLineType());
 			return line;
 		}
@@ -166,7 +166,23 @@ public class GamaDXFFile extends GamaGeometryFile {
 			line.setAttribute("id", obj.getID());
 			line.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 			line.setAttribute("thickness", obj.getThickness());
-			line.setAttribute("is_visibile", obj.isVisibile());
+			line.setAttribute("is_visible", obj.isVisibile());
+			line.setAttribute("is_omit", obj.isOmitLineType());
+			return line;
+		}
+		public IShape manageObj(IScope scope, DXFArc obj) {
+			if (obj == null) return null;
+			IList list = GamaListFactory.create(Types.POINT);
+			double x_t = obj.getDXFDocument().getBounds().getMinimumX();
+			double y_t = obj.getDXFDocument().getBounds().getMinimumY();
+			list.add(new GamaPoint(obj.getStartPoint().getX() - x_t,obj.getStartPoint().getY() - y_t,obj.getStartPoint().getZ()));
+			list.add(new GamaPoint(obj.getEndPoint().getX() - x_t,obj.getEndPoint().getY() - y_t,obj.getEndPoint().getZ()));
+			IShape line = createPolyline(scope,list);
+			line.setAttribute("layer", obj.getLayerName());
+			line.setAttribute("id", obj.getID());
+			line.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
+			line.setAttribute("thickness", obj.getThickness());
+			line.setAttribute("is_visible", obj.isVisibile());
 			line.setAttribute("is_omit", obj.isOmitLineType());
 			return line;
 		}
@@ -186,56 +202,50 @@ public class GamaDXFFile extends GamaGeometryFile {
 	    	shape.setAttribute("id", obj.getID());
 	    	shape.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 	    	shape.setAttribute("thickness", obj.getThickness());
-	    	shape.setAttribute("is_visibile", obj.isVisibile());
+	    	shape.setAttribute("is_visible", obj.isVisibile());
 	    	shape.setAttribute("is_omit", obj.isOmitLineType());
 	    	return shape;
 		}
 
-		public IList<IShape> defineGeoms(IScope scope, List objs){
-			if (objs != null) {
-				IList<IShape> geoms = GamaListFactory.create();
-				for (Object obj : objs) {
-					if (obj instanceof DXFLine) {IShape g = manageObj(scope, (DXFLine) obj); if (g != null) geoms.add(g);}
-					else if (obj instanceof DXFPolyline) {IShape g = manageObj(scope, (DXFPolyline) obj); if (g != null) geoms.add(g);}
-					else if (obj instanceof DXFSolid) {IShape g = manageObj(scope, (DXFSolid) obj); if (g != null) geoms.add(g);}
-					else if (obj instanceof DXFCircle) {IShape g = manageObj(scope, (DXFCircle) obj); if (g != null) geoms.add(g);}
-				}
-				return geoms;
+		public IShape defineGeom(IScope scope, Object obj){
+			if (obj != null) {
+				if (obj instanceof DXFArc) {return manageObj(scope, (DXFArc) obj); }
+				if (obj instanceof DXFLine) {return manageObj(scope, (DXFLine) obj); }
+				if (obj instanceof DXFPolyline) {return manageObj(scope, (DXFPolyline) obj); }
+				if (obj instanceof DXFSolid) {return manageObj(scope, (DXFSolid) obj);}
+				if (obj instanceof DXFCircle) {return manageObj(scope, (DXFCircle) obj); }
 			}
-			return GamaListFactory.EMPTY_LIST;
+			return null;
 		}
+		
 		protected void fillBuffer(IScope scope, DXFDocument doc ) {
 			IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			
 			Iterator it =    doc.getDXFLayerIterator();
 			while (it.hasNext()) {
 		    	DXFLayer layer = (DXFLayer) it.next();
-		    	geoms.addAll(defineGeoms(scope,layer.getDXFEntities(DXFConstants.ENTITY_TYPE_3DFACE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_3DSOLID)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_ARC)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_BODY)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_CIRCLE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_ELLIPSE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_HATCH)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_IMAGE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_INSERT)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LEADER)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LINE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_MLINE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_POINT)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_POLYLINE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_RAY)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_SHAPE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_SOLID)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_SPLINE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_TRACE)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_VERTEX)));
-		    	geoms.addAll(defineGeoms(scope, layer.getDXFEntities(DXFConstants.ENTITY_TYPE_XLINE)));
+		    	Iterator ittype =  layer.getDXFEntityTypeIterator();
+		    	while (ittype.hasNext()) {
+		    		String entityType = (String)ittype.next();
+					List<DXFEntity> entity_list = (List<DXFEntity>)layer.getDXFEntities(entityType);
+					for (DXFEntity ent : entity_list) {
+						IShape g = defineGeom(scope,ent);
+						if (g != null) geoms.add(g);
+					}
+		    		
+		    	}
 		    }
-		    	
-		      
+			
+			Iterator itbl =  doc.getDXFBlockIterator();
+		    while (itbl.hasNext()) {
+		    	DXFBlock block = (DXFBlock) itbl.next();
+		    	Iterator itent =  block.getDXFEntitiesIterator();
+			    while (itent.hasNext()) {
+			    	IShape g = defineGeom(scope,(DXFEntity)itent.next());
+					if (g != null) geoms.add(g);
+		    	}
+		    }
+		    
 		 setBuffer(geoms);
 		}
 		@Override

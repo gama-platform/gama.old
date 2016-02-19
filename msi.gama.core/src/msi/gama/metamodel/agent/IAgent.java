@@ -155,18 +155,18 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 * true if the agent instance is available for use
 	 * false otherwise
 	 */
-	public abstract void acquireLock();
+	// public abstract void acquireLock();
 
 	/**
 	 * Releases the object's intrinsic lock.
 	 */
-	public abstract void releaseLock();
+	// public abstract void releaseLock();
 
 	/**
 	 * Tells this agent that the host has changed its shape.
 	 * This agent will then ask the topology to add its shape to the new ISpatialIndex.
 	 */
-	public abstract void hostChangesShape();
+	// public abstract void hostChangesShape();
 
 	// public ActionExecuter getScheduler();
 
@@ -208,11 +208,4 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 */
 	public abstract IPopulation getPopulationFor(final String speciesName);
 
-	// hqnghi manipulate micro-models
-	public abstract void addExternMicroPopulation(final String expName, final IPopulation pop);
-
-	public abstract IPopulation getExternMicroPopulationFor(final String expName);
-
-	public abstract Map<String, IPopulation> getExternMicroPopulations();
-	// end-hqnghi
 }

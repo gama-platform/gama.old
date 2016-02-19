@@ -31,7 +31,7 @@ public class GamaSimulationAgentConverter implements Converter{
 		reader.moveDown();
 		RemoteAgent rmt = (RemoteAgent) arg1.convertAnother(null, RemoteAgent.class);
 		reader.moveUp();
-		return rmt; // ragt;
+		return rmt; 
 	}
 
 }

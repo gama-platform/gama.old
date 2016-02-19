@@ -39,6 +39,7 @@ public class GamaPreferences {
 	public static final String UI = "UI";
 	public static final String EXPERIMENTS = "Experiments";
 	public static final String SIMULATIONS = "Simulations";
+	public static final String EXPERIMENTAL = "Experimental";
 	public static final String DISPLAY = "Display";
 	// public static final String CODE = "Code";
 	public static final String EDITOR = "Editor";
@@ -357,27 +358,6 @@ public class GamaPreferences {
 	 * Definition of the preferences contributed by msi.gama.core
 	 */
 
-	// SIMULATIONS PAGE
-	// Corresponds to IGamaColors.BLUE.toGamaColor(), IGamaColors.OK.toGamaColor(),
-	// IGamaColors.NEUTRAL.toGamaColor(), IGamaColors.WARNING.toGamaColor(), IGamaColors.BROWN.toGamaColor()
-	public static final Color[] BASIC_COLORS = new Color[] { new Color(74, 97, 144), new Color(66, 119, 42),
-		new Color(83, 95, 107), new Color(195, 98, 43), new Color(150, 132, 106) };
-	public static final Entry<Color>[] SIMULATION_COLORS = new Entry[5];
-
-	static {
-		for ( int i = 0; i < 5; i++ ) {
-			SIMULATION_COLORS[i] =
-				create("simulation.ui.color" + i, "Color of Simulation " + i, BASIC_COLORS[i], IType.COLOR)
-					.in(SIMULATIONS).group("Simulation colors in the interface (console, views)");
-		}
-	}
-	public static final Entry<Boolean> MULTITHREADED_SIMULATIONS =
-		create("core.multithreaded_simulations", "Run multiple simulations in multiple threads", true, IType.BOOL)
-			.activates("core.threads_number").in(SIMULATIONS).group("*** Experimental ***");
-	public static final Entry<Integer> NUMBERS_OF_THREADS =
-		create("core.threads_number", "Max. number of threads to use", 4, IType.INT).between(1, null).in(SIMULATIONS)
-			.group("*** Experimental ***");
-
 	// GENERAL PAGE
 	public static final List<String> GENERATOR_NAMES =
 		Arrays.asList(IKeyword.CELLULAR, IKeyword.JAVA, IKeyword.MERSENNE);
@@ -473,7 +453,7 @@ public class GamaPreferences {
 			.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE =
 		create("core.display_visible", "Only process for display the agents that are visible", false, IType.BOOL)
-			.in(DISPLAY).group("*** Experimental ***");
+			.in(EXPERIMENTAL).group(DISPLAY);
 	/**
 	 * Default Aspect
 	 */
@@ -620,6 +600,34 @@ public class GamaPreferences {
 		}
 		return "";
 	}
+
+	// SIMULATIONS PAGE
+	// Corresponds to IGamaColors.BLUE.toGamaColor(), IGamaColors.OK.toGamaColor(),
+	// IGamaColors.NEUTRAL.toGamaColor(), IGamaColors.WARNING.toGamaColor(), IGamaColors.BROWN.toGamaColor()
+	public static final Color[] BASIC_COLORS = new Color[] { new Color(74, 97, 144), new Color(66, 119, 42),
+		new Color(83, 95, 107), new Color(195, 98, 43), new Color(150, 132, 106) };
+	public static final Entry<Color>[] SIMULATION_COLORS = new Entry[5];
+
+	static {
+		for ( int i = 0; i < 5; i++ ) {
+			SIMULATION_COLORS[i] =
+				create("simulation.ui.color" + i, "Color of Simulation " + i, BASIC_COLORS[i], IType.COLOR)
+					.in(SIMULATIONS).group("Simulation colors in the interface (console, views)");
+		}
+	}
+
+	public static final Entry<Boolean> MULTITHREADED_SIMULATIONS =
+		create("core.multithreaded_simulations", "Run multiple simulations in multiple threads", true, IType.BOOL)
+			.activates("core.threads_number").in(EXPERIMENTAL).group(SIMULATIONS);
+	public static final Entry<Integer> NUMBERS_OF_THREADS =
+		create("core.threads_number", "Max. number of threads to use", 4, IType.INT).between(1, null).in(EXPERIMENTAL)
+			.group(SIMULATIONS);
+	public static final Entry<Boolean> CONSTANT_OPTIMIZATION =
+		create("core.constant_optimization", "Automatically optimize constant expressions", true, IType.BOOL)
+			.in(EXPERIMENTAL).group("Compilation");
+	public static final Entry<Boolean> AGENT_OPTIMIZATION =
+		create("core.agent_optimization", "Automatically optimize the memory used by agents", true, IType.BOOL)
+			.in(EXPERIMENTAL).group("Compilation");
 
 	private static void register(final Entry gp) {
 		System.out.println("+++ Registering preference " + gp.key + " in store");

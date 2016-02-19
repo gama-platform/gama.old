@@ -1,11 +1,6 @@
 package msi.gama.metamodel.agent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
@@ -19,12 +14,10 @@ import msi.gaml.species.ISpecies;
  */
 public class SavedAgent {
 
-
 	/** Variables which are not saved during the capture and release process. */
-	static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS,
-		IKeyword.HOST, IKeyword.TOPOLOGY, IKeyword.MEMBERS, "populations");
-		
-		
+	static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS, IKeyword.HOST,
+		IKeyword.TOPOLOGY, IKeyword.MEMBERS, "populations");
+
 	Map<String, Object> variables;
 	Map<String, List<SavedAgent>> innerPopulations;
 
@@ -35,6 +28,23 @@ public class SavedAgent {
 		}
 	}
 
+	public SavedAgent(Map<String, Object> v, Map<String, List<SavedAgent>> inPop){
+		variables = v;
+		innerPopulations = inPop;
+	}
+	
+	public Object getAttributeValue(String attrName){
+		return variables.get(attrName);
+	}
+	
+	public Map<String, Object> getVariables(){
+		return variables;
+	}
+	
+	public Map<String, List<SavedAgent>> getInnerPopulations() {
+		return innerPopulations;
+	}
+	
 	/**
 	 * Saves agent's attributes to a map.
 	 *
@@ -86,7 +96,7 @@ public class SavedAgent {
 
 	/**
 	 * @param scope
-	 * Restores the saved agent as a member of the target population.
+	 *            Restores the saved agent as a member of the target population.
 	 *
 	 * @param targetPopulation The population that the saved agent will be restored to.
 	 * @return
@@ -95,7 +105,7 @@ public class SavedAgent {
 	public IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
 		final List<Map> agentAttrs = new ArrayList<Map>();
 		agentAttrs.add(variables);
-		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true);
+		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true, true);
 		restoreMicroAgents(scope, restoredAgents.get(0));
 
 		return restoredAgents.get(0);
@@ -108,22 +118,23 @@ public class SavedAgent {
 	 * @throws GamaRuntimeException
 	 */
 	void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
+		if ( innerPopulations != null ) {
+			for ( final String microPopName : innerPopulations.keySet() ) {
+				final IPopulation microPop = ((IMacroAgent) host).getMicroPopulation(microPopName);
 
-		for ( final String microPopName : innerPopulations.keySet() ) {
-			final IPopulation microPop = ((IMacroAgent) host).getMicroPopulation(microPopName);
+				if ( microPop != null ) {
+					final List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
+					final List<Map> microAttrs = new ArrayList<Map>();
+					for ( final SavedAgent sa : savedMicros ) {
+						microAttrs.add(sa.variables);
+					}
 
-			if ( microPop != null ) {
-				final List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
-				final List<Map> microAttrs = new ArrayList<Map>();
-				for ( final SavedAgent sa : savedMicros ) {
-					microAttrs.add(sa.variables);
-				}
+					final List<? extends IAgent> microAgents =
+					microPop.createAgents(scope, savedMicros.size(), microAttrs, true, true);
 
-				final List<? extends IAgent> microAgents =
-					microPop.createAgents(scope, savedMicros.size(), microAttrs, true);
-
-				for ( int i = 0; i < microAgents.size(); i++ ) {
-					savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));
+					for ( int i = 0; i < microAgents.size(); i++ ) {
+						savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));
+					}
 				}
 			}
 		}

@@ -395,6 +395,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	protected void setJavaBase(final Class javaBase) {
 		this.javaBase = javaBase;
+		// System.out.println("" + this + " javaBase: " + javaBase);
 	}
 
 	public boolean isAbstract() {

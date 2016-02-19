@@ -12,6 +12,7 @@
 package msi.gaml.expressions;
 
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -26,7 +27,7 @@ public class ListExpression extends AbstractExpression {
 
 	public static IExpression create(final List<? extends IExpression> elements) {
 		ListExpression u = new ListExpression(elements);
-		if ( u.isConst() ) {
+		if ( u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 			return e;

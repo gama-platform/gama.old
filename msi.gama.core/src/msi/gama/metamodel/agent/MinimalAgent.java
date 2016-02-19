@@ -1,600 +1,228 @@
-/*********************************************************************************************
- *
- *
- * 'MinimalAgent.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
- **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
-import java.util.*;
-import com.google.common.primitives.Ints;
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.Set;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.IExperimentAgent;
-import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.operators.Cast;
+import msi.gama.runtime.IScope;
+import msi.gama.util.graph.GamaGraph;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
-import msi.gaml.variables.IVariable;
+import msi.gaml.statements.IStatement;
+import msi.gaml.types.GamaGeometryType;
 
-/**
- *
- * Class MinimalAgent. An abstract class that tries to minimize the number of attributes manipulated by agents. In
- * particular, it declares no Geometry (leaving the programmer the possibility to redeclare getGeometry(), for example
- * in a dynamic fashion), no Population (leaving the programmer the possibility to redeclare getPopulation(), for
- * example in a dynamic fashion, etc.)
- *
- * These agents have no sub-population by default (but subclasses can be declared by implementing IMacroAgent, and the
- * appropriate methods can be redefined). Their name is fixed by construction (but subclasses can always implement a
- * name).
- *
- * From a functional point of view, this class delegates most of its methods to either the geometry (by calling
- * getGeometry()) or the population (by calling getPopulation()).
- *
- * Furthermore, and contrary to GamlAgent, this class does not delegate its step() and init() behaviors to GAML actions
- * (_init_ and _step_).
- *
- * Most of the methods observe a "fail-fast" pattern. That is, if either the population or the geometry of the agent is
- * null, it throws an exception and does not attempt to return guessed values.
- *
- * Abstract methods to override:
- * - getGeometry()
- * - getPopulation()
- *
- * @author drogoul
- * @since 18 mai 2013
- *
- */
-public abstract class MinimalAgent implements IAgent {
+@species(name = IKeyword.AGENT)
+public class MinimalAgent extends AbstractAgent {
 
-	private volatile int index;
-	protected volatile boolean dead = false;
-	private volatile boolean lockAcquired = false;
-	protected final GamaMap<Object, Object> attributes = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
-
-	@Override
-	public abstract IPopulation getPopulation();
-
-	@Override
-	public abstract IShape getGeometry();
-	//
-	// @Override
-	// public void setDuplicator(final ISkillConstructor duplicator) {
-	// // Nothing to do here
-	// }
+	/** The population that this agent belongs to. */
+	protected final IPopulation population;
+	protected String name;
+	protected IShape geometry;
 
 	/**
-	 *
-	 * @return the population of the agent if it not null, otherwise throws a runtime exeception.
-	 * @note If checking for a null value of population imposes too much overhead in cases where the population is sure
-	 *       not to be nil, this method can be safely overriden with a direct call to getPopulation()
+	 * @param s the population used to prototype the agent.
 	 */
-	protected IPopulation checkedPopulation() {
-		return getPopulation();
-		// return nullCheck(getPopulation(), "The agent's population is nil");
-	}
-
-	/**
-	 *
-	 * @return the geometry of the agent if it not null, otherwise throws a runtime exeception.
-	 * @note If checking for a null value in geometry imposes too much overhead in cases where the geometry is sure not
-	 *       to be nil, this method can be safely overriden with a direct call to getGeometry()
-	 */
-	protected IShape checkedGeometry() {
-		return getGeometry();
-		// return nullCheck(getGeometry(), "The agent's shape is nil");
-	}
-
-	// @Override
-	// public ISkill duplicate() {
-	// return this;
-	// }
-
-	@Override
-	public IAgent getAgent() {
-		return this;
+	public MinimalAgent(final IPopulation s) {
+		population = s;
 	}
 
 	@Override
-	public void setAgent(final IAgent agent) {}
-
-	@Override
-	public boolean isPoint() {
-		return checkedGeometry().isPoint();
+	public IPopulation getPopulation() {
+		return population;
 	}
 
 	@Override
-	public boolean isLine() {
-		return checkedGeometry().isLine();
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#getInnerGeometry()
-	 */
-	@Override
-	public Geometry getInnerGeometry() {
-		return checkedGeometry().getInnerGeometry();
-	}
-
-	/**
-	 * Returns the envelope of the geometry of the agent, or null if the geometry has not yet been defined
-	 * @see msi.gama.interfaces.IGeometry#getEnvelope()
-	 */
-	@Override
-	public Envelope3D getEnvelope() {
-		final IShape g = getGeometry();
-		return g == null ? null : g.getEnvelope();
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#covers(msi.gama.interfaces.IGeometry)
-	 */
-	@Override
-	public boolean covers(final IShape g) {
-		return checkedGeometry().covers(g);
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#euclidianDistanceTo(msi.gama.interfaces.IGeometry)
-	 */
-	@Override
-	public double euclidianDistanceTo(final IShape g) {
-		return checkedGeometry().euclidianDistanceTo(g);
+	public IShape getGeometry() {
+		return geometry;
 	}
 
 	@Override
-	public double euclidianDistanceTo(final ILocation g) {
-		return checkedGeometry().euclidianDistanceTo(g);
-	}
+	public/* synchronized */void setGeometry(final IShape newGeometry) {
+		// Addition to address Issue 817: if the new geometry is exactly the one possessed by the agent, no need to
+		// change anything.
+		if ( newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ||
+			this.getSpecies().isGrid() ) { return; }
 
-	/**
-	 * @see msi.gama.interfaces.IGeometry#intersects(msi.gama.interfaces.IGeometry)
-	 */
-	@Override
-	public boolean intersects(final IShape g) {
-		return checkedGeometry().intersects(g);
-	}
+		final ITopology topology = population.getTopology();
+		final ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
 
-	@Override
-	public boolean crosses(final IShape g) {
-		return checkedGeometry().crosses(g);
-	}
+		// if the old geometry is "shared" with another agent, we create a new one.
+		// otherwise, we copy it directly.
+		final IAgent other = newGeometry.getAgent();
+		final IShape newLocalGeom = other == null ? newGeometry : newGeometry.copy(getScope());
+		topology.normalizeLocation(newGeomLocation, false);
 
-	/**
-	 * @see msi.gama.interfaces.IGeometry#getPerimeter()
-	 */
-	@Override
-	public double getPerimeter() {
-		return checkedGeometry().getPerimeter();
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
-	 */
-	@Override
-	public void setInnerGeometry(final Geometry geom) {
-		checkedGeometry().setInnerGeometry(geom);
-	}
-
-	@Override
-	public void dispose() {
-		if ( dead() ) { return; }
-		acquireLock();
-		try {
-			// scope.getGui().debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in MinimalAgent)");
-			dead = true;
-			final IPopulation p = getPopulation();
-			if ( p != null ) {
-				p.removeValue(null, this);
-			}
-
-			final IShape s = getGeometry();
-			if ( s != null ) {
-				s.dispose();
-			}
-			attributes.clear();
-		} finally {
-			releaseLock();
+		if ( !newGeomLocation.equals(newLocalGeom.getLocation()) ) {
+			newLocalGeom.setLocation(newGeomLocation);
 		}
-	}
 
-	@Override
-	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return getName();
-	}
+		newLocalGeom.setAgent(this);
+		final IShape previous = geometry;
+		geometry = newLocalGeom;
 
-	@Override
-	public IShape copy(final IScope scope) throws GamaRuntimeException {
-		return this;
-	}
+		topology.updateAgent(previous, this);
 
-	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		if ( dead() ) { return "nil"; }
-		final StringBuilder sb = new StringBuilder(30);
-		sb.append(getIndex());
-		sb.append(" as ");
-		sb.append(getSpeciesName());
-		return sb.toString();
-	}
+		// update micro-agents' locations accordingly
 
-	@Override
-	public String toString() {
-		return getName();
-	}
-
-	@Override
-	public void setExtraAttributes(final Map<Object, Object> map) {
-		if ( map == null ) { return; }
-		attributes.putAll(map);
-	}
-
-	@Override
-	public GamaMap getAttributes() {
-		return attributes;
-	}
-
-	@Override
-	public GamaMap getOrCreateAttributes() {
-		return attributes;
-	}
-
-	@Override
-	public boolean hasAttribute(final Object key) {
-		return attributes.containsKey(key);
-	}
-
-	@Override
-	public/* synchronized */Object getAttribute(final Object index) {
-		return attributes.get(index);
-	}
-
-	@Override
-	public/* synchronized */void setAttribute(final Object name, final Object val) {
-		attributes.put(name, val);
-	}
-
-	@Override
-	public int compareTo(final IAgent o) {
-		return Ints.compare(getIndex(), o.getIndex());
-	}
-
-	@Override
-	public boolean init(final IScope scope) throws GamaRuntimeException {
-		return getSpecies().getArchitecture().init(scope);
-	}
-
-	@Override
-	public boolean step(final IScope scope) throws GamaRuntimeException {
-		if ( scope.update(this) ) {
-			Object[] result = new Object[1];
-			return scope.execute(getSpecies().getArchitecture(), this, null, result);
-		}
-		return false;
-	}
-
-	@Override
-	public ITopology getTopology() {
-		return checkedPopulation().getTopology();
-	}
-
-	@Override
-	public void setPeers(final IList<IAgent> peers) {
-		// "peers" is read-only attribute
-	}
-
-	@Override
-	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		final IPopulation pop = getHost().getPopulationFor(this.getSpecies());
-		if ( pop != null ) {
-			IScope scope = getScope();
-			final IList<IAgent> retVal = GamaListFactory
-				.<IAgent> createWithoutCasting(scope.getModelContext().getTypeNamed(getSpeciesName()), pop.toArray());
-			retVal.remove(this);
-			return retVal;
-		}
-		return GamaListFactory.EMPTY_LIST;
+		// TODO DOES NOT WORK FOR THE MOMENT
+		// for ( final IPopulation pop : getMicroPopulations() ) {
+		// pop.hostChangesShape();
+		// }
 	}
 
 	@Override
 	public String getName() {
-		return getSpeciesName() + getIndex() + (dead() ? " (dead)" : "");
-	}
-
-	@Override
-	public void setName(final String name) {}
-
-	@Override
-	public ILocation getLocation() {
-		return checkedGeometry().getLocation();
-	}
-
-	@Override
-	public void setLocation(final ILocation l) {
-		checkedGeometry().setLocation(l);
-	}
-
-	@Override
-	public void setGeometry(final IShape newGeometry) {
-		checkedGeometry().setGeometry(newGeometry);
-	}
-
-	@Override
-	public boolean dead() {
-		return dead;
-	}
-
-	@Override
-	public IMacroAgent getHost() {
-		return checkedPopulation().getHost();
-	}
-
-	@Override
-	public void setHost(final IMacroAgent macroAgent) {}
-
-	@Override
-	public void schedule(final IScope scope) {
-		// public void scheduleAndExecute(final RemoteSequence sequence) {
-		if ( !dead() ) {
-			scope.init(this);
-			// getScheduler().insertAgentToInit(getScope(), this, sequence);
+		if ( name == null ) {
+			name = super.getName();
+		}
+		if ( dead() ) {
+			return name + " (dead)";
+		} else {
+			return name;
 		}
 	}
 
 	@Override
-	public final int getIndex() {
-		return index;
+	public void setName(final String name) {
+		this.name = name;
 	}
 
 	@Override
-	public final void setIndex(final int index) {
-		this.index = index;
+	public/* synchronized */void setLocation(final ILocation point) {
+		if ( point == null || dead() || this.getSpecies().isGrid() ) { return; }
+		final ILocation newLocation = point.copy(getScope());
+		final ITopology topology = population.getTopology();
+		if ( topology == null ) { return; }
+		topology.normalizeLocation(newLocation, false);
+
+		if ( geometry == null || geometry.getInnerGeometry() == null ) {
+			setGeometry(GamaGeometryType.createPoint(newLocation));
+		} else {
+			final ILocation previousPoint = geometry.getLocation();
+			if ( newLocation.equals(previousPoint) ) { return; }
+			final IShape previous =
+				geometry.isPoint() ? previousPoint : new GamaShape(geometry.getInnerGeometry().getEnvelope());
+			// Envelope previousEnvelope = geometry.getEnvelope();
+			geometry.setLocation(newLocation);
+			// final Integer newHeading = topology.directionInDegreesTo(getScope(), previousPoint, newLocation);
+			// if ( newHeading != null && !getTopology().isTorus() ) {
+			// setHeading(newHeading);
+			// }
+			topology.updateAgent(previous, this);
+
+			// update micro-agents' locations accordingly
+			// for ( final IPopulation pop : getMicroPopulations() ) {
+			// // FIXME DOES NOT WORK FOR THE MOMENT
+			// pop.hostChangesShape();
+			// }
+		}
+		final GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
+		if ( graph != null ) {
+			final Set edgesToModify = graph.edgesOf(this);
+			for ( final Object obj : edgesToModify ) {
+				if ( obj instanceof IAgent ) {
+					final IShape ext1 = (IShape) graph.getEdgeSource(obj);
+					final IShape ext2 = (IShape) graph.getEdgeTarget(obj);
+					((IAgent) obj).setGeometry(GamaGeometryType.buildLine(ext1.getLocation(), ext2.getLocation()));
+				}
+			}
+
+		}
 	}
 
 	@Override
-	public String getSpeciesName() {
-		return getSpecies().getName();
-	}
-
-	@Override
-	public ISpecies getSpecies() {
-		return checkedPopulation().getSpecies();
+	public/* synchronized */ILocation getLocation() {
+		if ( geometry == null || geometry.getInnerGeometry() == null ) {
+			IScope scope = this.getScope();
+			if ( scope == null ) {
+				scope = this.getScope();
+			}
+			final ILocation randomLocation = population.getTopology().getRandomLocation(scope);
+			if ( randomLocation == null ) { return null; }
+			setGeometry(GamaGeometryType.createPoint(randomLocation));
+			return randomLocation;
+		}
+		return geometry.getLocation();
 	}
 
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
-		ISpecies species = getSpecies();
-		if ( species == s ) { return true; }
-		if ( !direct ) { return species.extendsSpecies(s); }
-		return false;
-	}
-
-	@Override
-	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
-		final IVariable var = checkedPopulation().getVar(this, n);
-		if ( var != null ) { return var.value(scope, this); }
-		final IMacroAgent host = this.getHost();
-		if ( host != null ) {
-			final IVariable varOfHost = host.getPopulation().getVar(host, n);
-			if ( varOfHost != null ) { return varOfHost.value(scope, host); }
-		}
-		return null;
-	}
-
-	@Override
-	public void setDirectVarValue(final IScope scope, final String s, final Object v) throws GamaRuntimeException {
-		checkedPopulation().getVar(this, s).setVal(scope, this, v);
-	}
-
-	@Override
-	public List<IAgent> getMacroAgents() {
-		final List<IAgent> retVal = GamaListFactory.create(Types.AGENT);
-		IAgent currentMacro = this.getHost();
-		while (currentMacro != null) {
-			retVal.add(currentMacro);
-			currentMacro = currentMacro.getHost();
-		}
-		return retVal;
+		if ( s.getName().equals(IKeyword.AGENT) ) { return true; }
+		return super.isInstanceOf(s, direct);
 	}
 
 	/**
-	 * Solve the synchronization problem between Execution Thread and Event Dispatch Thread.
-	 *
-	 * The synchronization problem may happen when 1. The Event Dispatch Thread is drawing an agent
-	 * while the Execution Thread tries to it; 2. The Execution Thread is disposing the agent while
-	 * the Event Dispatch Thread tries to draw it.
-	 *
-	 * To avoid this, the corresponding thread has to invoke "acquireLock" to lock the agent before
-	 * drawing or disposing the agent. After finish the task, the thread invokes "releaseLock" to
-	 * release the agent's lock.
-	 *
+	 * During the call to init, the agent will search for the action named _init_ and execute it. Its default
+	 * implementation is provided in this class as well.
+	 * @see GamlAgent#_init_()
+	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
+	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
+	 *          override _init_(IScope) instead.
 	 */
 	@Override
-	public synchronized void acquireLock() {
-		while (lockAcquired) {
-			try {
-				wait();
-			} catch (final InterruptedException e) {
-				// e.printStackTrace();
-			}
-		}
-		lockAcquired = true;
-	}
-
-	@Override
-	public synchronized void releaseLock() {
-		lockAcquired = false;
-		notify();
-	}
-
-	@Override
-	public void hostChangesShape() {}
-
-	// @Override
-	// public ActionExecuter getScheduler() {
-	// final IMacroAgent a = getHost();
-	// if ( a == null ) { return null; }
-	// return a.getScheduler();
-	// }
-
-	@Override
-	public IModel getModel() {
-		final IMacroAgent a = getHost();
-		if ( a == null ) { return GAMA.getModel(); }
-		return a.getModel();
-	}
-
-	@Override
-	public IExperimentAgent getExperiment() {
-		return getHost().getExperiment();
-	}
-
-	@Override
-	public IScope getScope() {
-		final IMacroAgent a = getHost();
-		if ( a == null ) { return null; }
-		// if ( a == null ) { return GAMA.obtainNewScope(); }
-		return a.getScope();
-	}
-
-	@Override
-	public boolean isInstanceOf(final String skill, final boolean direct) {
-		return getSpecies().implementsSkill(skill);
-	}
-
-	// @Override
-	// public SimulationClock getClock() {
-	// final IMacroAgent a = getHost();
-	// if ( a == null ) { return GAMA.getClock(); }
-	// return a.getClock();
-	// }
-
-	/**
-	 * Method getPopulationFor()
-	 * @see msi.gama.metamodel.agent.IAgent#getPopulationFor(msi.gaml.species.ISpecies)
-	 */
-	@Override
-	public IPopulation getPopulationFor(final ISpecies microSpecies) {
-		return getPopulationFor(microSpecies.getName());
-	}
-
-	/**
-	 * Method getPopulationFor()
-	 * @see msi.gama.metamodel.agent.IAgent#getPopulationFor(java.lang.String)
-	 */
-	@Override
-	public IPopulation getPopulationFor(final String speciesName) {
-		final IMacroAgent a = getHost();
-		if ( a == null ) { return null; }
-		return getHost().getPopulationFor(speciesName);
-	}
-
-	/**
-	 * GAML actions
-	 */
-
-	@action(name = "debug")
-	@args(names = { "message" })
-	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
-		final String m = (String) scope.getArg("message", IType.STRING);
-		scope.getGui().debugConsole(scope.getClock().getCycle(), m + "\nsender: " + Cast.asMap(scope, this, false),
-			scope.getRoot());
-		return m;
-	}
-
-	@action(name = "write", doc = { @doc(value = "", deprecated = "Use the 'write' statement instead") })
-	@args(names = { "message" })
-	@Deprecated
-	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
-		final String s = (String) scope.getArg("message", IType.STRING);
-		scope.getGui().informConsole(s, scope.getRoot());
-		return s;
-	}
-
-	@action(name = IKeyword.ERROR)
-	@args(names = { "message" })
-	public final Object primError(final IScope scope) throws GamaRuntimeException {
-		final String error = (String) scope.getArg("message", IType.STRING);
-		scope.getGui().error(error);
-		return error;
-	}
-
-	@action(name = "tell")
-	@args(names = { "message" })
-	public final Object primTell(final IScope scope) throws GamaRuntimeException {
-		final String s = getName() + " says : " + scope.getArg("message", IType.STRING);
-		scope.getGui().tell(s);
-		return s;
-	}
-
-	@action(name = "die")
-	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		scope.interruptAgent();
-		dispose();
-		return null;
-	}
-
-	@Override
-	public Type getGeometricalType() {
-		return getGeometry().getGeometricalType();
-	}
-
-	@Override
-	public IType getType() {
-		return getScope().getModelContext().getTypeNamed(getSpeciesName());
-	}
-
-	/**
-	 * Method get()
-	 * @see msi.gama.util.IContainer.Addressable#get(msi.gama.runtime.IScope, java.lang.Object)
-	 */
-	@Override
-	public Object get(final IScope scope, final String index) throws GamaRuntimeException {
-		if ( getPopulation().hasVar(index) ) {
-			return scope.getAgentVarValue(this, index);
+	public boolean init(final IScope scope) {
+		if ( !getSpecies().isInitOverriden() ) {
+			_init_(scope);
 		} else {
-			return attributes.get(scope, index);
-			// return attributes.get(scope, index);
+			executeCallbackAction(scope, getSpecies().getAction(ISpecies.initActionName));
 		}
+		return !scope.interrupted();
 	}
 
 	/**
-	 * Method getFromIndicesList()
-	 * @see msi.gama.util.IContainer.Addressable#getFromIndicesList(msi.gama.runtime.IScope, msi.gama.util.IList)
+	 * During the call to step, the agent will search for the action named _step_ and execute it. Its default
+	 * implementation is provided in this class as well.
+	 * @see GamlAgent#_step_()
+	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
+	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
+	 *          override _step_(IScope) instead.
 	 */
 	@Override
-	public Object getFromIndicesList(final IScope scope, final IList<String> indices) throws GamaRuntimeException {
-		if ( indices == null || indices.isEmpty() ) { return null; }
-		return get(scope, indices.firstValue(scope));
+	public boolean step(final IScope scope) {
+		if ( !getSpecies().isStepOverriden() ) {
+			_step_(scope);
+		} else {
+			executeCallbackAction(scope, getSpecies().getAction(ISpecies.stepActionName));
+		}
+		return !scope.interrupted();
 	}
 
 	/**
-	 * Method asShapeWithGeometry()
-	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope, com.vividsolutions.jts.geom.Geometry)
+	 * Callback Actions
+	 *
 	 */
-	// @Override
-	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {
-	// return getGeometry().asShapeWithGeometry(scope, g);
-	// }
 
-	// @Override
-	// public String getDefiningPlugin() {
-	// return null;
-	// }
-
-	public void setDefiningPlugin(final String plugin) {
-
+	protected Object executeCallbackAction(final IScope scope, final IStatement action) {
+		Object[] callbackResult = new Object[1];
+		scope.execute(action, this, null, callbackResult);
+		return callbackResult[0];
 	}
+
+	@action(name = ISpecies.initActionName)
+	public Object _init_(final IScope scope) {
+		getSpecies().getArchitecture().init(scope);
+		return this;
+	}
+
+	@action(name = ISpecies.stepActionName)
+	public Object _step_(final IScope scope) {
+		scope.update(this);
+		// we ask the architecture to execute on this
+		Object[] result = new Object[1];
+		if ( scope.execute(getSpecies().getArchitecture(), this, null, result) ) {
+			// we ask the sub-populations to step their agents if any
+			return stepSubPopulations(scope);
+		}
+		return result[0];
+	}
+
+	/**
+	 * @param scope
+	 * @return
+	 */
+	protected Object stepSubPopulations(final IScope scope) {
+		return this;
+	}
+
 }

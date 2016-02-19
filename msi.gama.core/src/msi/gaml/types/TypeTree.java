@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'TypeTree.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.types;
 
@@ -135,12 +135,44 @@ public class TypeTree<T> {
 		return traversalResult;
 	}
 
+	public List<T> getAllElements(final T data, final Order traversalOrder) {
+		List<T> traversalResult = new ArrayList<T>();
+		TypeNode<T> node = find(data);
+		if ( node == null ) { return Collections.EMPTY_LIST; }
+		if ( traversalOrder == Order.PRE_ORDER ) {
+			getAllPreOrder(node, traversalResult);
+		}
+
+		else if ( traversalOrder == Order.POST_ORDER ) {
+			getAllPostOrder(node, traversalResult);
+		}
+
+		return traversalResult;
+
+	}
+
 	private void buildPreOrder(final TypeNode<T> node, final List<TypeNode<T>> traversalResult) {
 		traversalResult.add(node);
 
 		for ( TypeNode<T> child : node.getChildren() ) {
 			buildPreOrder(child, traversalResult);
 		}
+	}
+
+	private void getAllPreOrder(final TypeNode<T> node, final List<T> traversalResult) {
+		traversalResult.add(node.getData());
+
+		for ( TypeNode<T> child : node.getChildren() ) {
+			getAllPreOrder(child, traversalResult);
+		}
+	}
+
+	private void getAllPostOrder(final TypeNode<T> node, final List<T> traversalResult) {
+		for ( TypeNode<T> child : node.getChildren() ) {
+			getAllPostOrder(child, traversalResult);
+		}
+
+		traversalResult.add(node.getData());
 	}
 
 	private void buildPostOrder(final TypeNode<T> node, final List<TypeNode<T>> traversalResult) {

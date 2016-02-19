@@ -127,7 +127,7 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		final IFile file = container.getFile(new Path("models/" + fileName));
 
 		fileHeader = "/**\n" + "* Name: " + title + "\n" + "* Author: " + author + "\n" + "* Description: " + desc +
-			"\n" + "* Tag : Tag1, Tag2, TagN\n*/";
+			"\n" + "* Tags: Tag1, Tag2, TagN\n*/";
 		// "/**\n * " + title + "\n" + " * Author: " + author + "\n" + " * Description: " + desc + "\n" + " */\n\n";
 
 		InputStream streamModel = null;

@@ -3,7 +3,7 @@
 * Author: Benoit Gaudou
 * Description: This model is used to show how a diffusion works with a uniform matrix of diffusion in a grid. The cell at the center of the grid emit a pheromon at each step, which is spread
 *     through the grid thanks to the diffusion mechanism.
-* Tag: Diffusion, Matrix, Elevation
+* Tags: Diffusion, Matrix, Elevation
 */
 
 model diffusion

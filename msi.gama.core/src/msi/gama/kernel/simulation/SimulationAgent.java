@@ -149,7 +149,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
 		// try {
-		scope.getGui().prepareForSimulation(this);
+		this.prepareGuiForSimulation(scope);	
+		// scope.getGui().prepareForSimulation(this);
 		super.schedule(this.scope);
 
 		// } finally {
@@ -279,7 +280,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		final ISpecies microSpec = getSpecies().getMicroSpecies(speciesName);
 		if ( microSpec == null ) { return null; }
 		pop = GamaPopulation.createPopulation(getScope(), this, microSpec);
-		attributes.put(microSpec, pop);
+		setAttribute(microSpec, pop);
 		pop.initializeFor(getScope());
 		return pop;
 	}
@@ -487,4 +488,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return executer;
 	}
 
+	public void prepareGuiForSimulation(IScope s) {
+		s.getGui().prepareForSimulation(this);				
+	}
+
+	public void initOutputs(){
+		if ( outputs != null ) {
+			outputs.init(this.scope);
+		}
+	}
+	
 }

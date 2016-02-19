@@ -1301,7 +1301,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		}
 
-		public class MinimalGridAgent extends MinimalAgent implements IGridAgent {
+		public class MinimalGridAgent extends AbstractAgent implements IGridAgent {
 
 			private final IShape geometry;
 
@@ -1392,25 +1392,25 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			}
 
-			// hqnghi must-implement methods from GamlAgent
-			@Override
-			public void addExternMicroPopulation(final String expName, final IPopulation pop) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public IPopulation getExternMicroPopulationFor(final String expName) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Map<String, IPopulation> getExternMicroPopulations() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			// end-hqnghi
+			// // hqnghi must-implement methods from GamlAgent
+			// @Override
+			// public void addExternMicroPopulation(final String expName, final IPopulation pop) {
+			// // TODO Auto-generated method stub
+			//
+			// }
+			//
+			// @Override
+			// public IPopulation getExternMicroPopulationFor(final String expName) {
+			// // TODO Auto-generated method stub
+			// return null;
+			// }
+			//
+			// @Override
+			// public Map<String, IPopulation> getExternMicroPopulations() {
+			// // TODO Auto-generated method stub
+			// return null;
+			// }
+			// // end-hqnghi
 
 		}
 

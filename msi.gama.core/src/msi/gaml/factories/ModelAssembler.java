@@ -1,12 +1,15 @@
 /**
  * Created by drogoul, 15 avr. 2014
- * 
+ *
  */
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import java.util.Map.Entry;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.*;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
@@ -14,15 +17,13 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * Class ModelAssembler.
- * 
+ *
  * @author drogoul
  * @since 15 avr. 2014
- * 
+ *
  */
 public class ModelAssembler {
 
@@ -40,6 +41,8 @@ public class ModelAssembler {
 		final ISyntacticElement source = models.get(0);
 		final Facets globalFacets = new Facets();
 		final List<ISyntacticElement> otherNodes = new ArrayList();
+
+		final Map<String, SpeciesDescription> tempSpeciesCache = new THashMap();
 
 		ISyntacticElement lastGlobalNode = source;
 		for ( int n = models.size(), i = n - 1; i >= 0; i-- ) {
@@ -66,9 +69,10 @@ public class ModelAssembler {
 						addExperimentNode(se, currentModel.getName(), experimentNodes, collector);
 					} else {
 						if ( !ENVIRONMENT.equals(se.getKeyword()) ) {
-							collector.add(new GamlCompilationError("This " + se.getKeyword() +
-								" should be declared either in a species or in the global section", null, se
-								.getElement(), true, false));
+							collector.add(new GamlCompilationError(
+								"This " + se.getKeyword() +
+									" should be declared either in a species or in the global section",
+								null, se.getElement(), true, false));
 						}
 						otherNodes.add(se);
 					}
@@ -93,8 +97,9 @@ public class ModelAssembler {
 				importStrings.add(uri.toFileString());
 			}
 		}
-		final ModelDescription model = new ModelDescription(modelName, null, projectPath, modelPath, /* lastGlobalNode.getElement() */
-		source.getElement(), null, ModelDescription.ROOT, globalFacets, collector, importStrings);
+		final ModelDescription model =
+			new ModelDescription(modelName, null, projectPath, modelPath, /* lastGlobalNode.getElement() */
+				source.getElement(), null, ModelDescription.ROOT, globalFacets, collector, importStrings);
 
 		// model.setGlobal(true);
 		model.addSpeciesType(model);
@@ -108,21 +113,21 @@ public class ModelAssembler {
 		// end-hqnghi
 		// recursively add user-defined species to world and down on to the hierarchy
 		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
-			addMicroSpecies(model, speciesNode);
+			addMicroSpecies(model, speciesNode, tempSpeciesCache);
 		}
 		for ( String s : experimentNodes.keySet() ) {
 			for ( final ISyntacticElement experimentNode : experimentNodes.get(s).values() ) {
-				addExperiment(s, model, experimentNode);
+				addExperiment(s, model, experimentNode, tempSpeciesCache);
 			}
 		}
 
 		// Parent the species and the experiments of the model (all are now known).
 		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
-			parentSpecies(model, speciesNode, model);
+			parentSpecies(model, speciesNode, model, tempSpeciesCache);
 		}
 		for ( String s : experimentNodes.keySet() ) {
 			for ( final ISyntacticElement experimentNode : experimentNodes.get(s).values() ) {
-				parentExperiment(model, experimentNode, model);
+				parentExperiment(model, experimentNode, model, tempSpeciesCache);
 			}
 		}
 		// Initialize the hierarchy of types
@@ -203,10 +208,12 @@ public class ModelAssembler {
 
 	}
 
-	void addExperiment(final String origin, final ModelDescription model, final ISyntacticElement experiment) {
+	void addExperiment(final String origin, final ModelDescription model, final ISyntacticElement experiment,
+		final Map<String, SpeciesDescription> cache) {
 		// Create the experiment description
 		IDescription desc = DescriptionFactory.create(experiment, model, ChildrenProvider.NONE);
-		// final ExperimentDescription eDesc = (ExperimentDescription) desc;
+		final ExperimentDescription eDesc = (ExperimentDescription) desc;
+		cache.put(eDesc.getName(), eDesc);
 		((SymbolDescription) desc).resetOriginName();
 		desc.setOriginName(buildModelName(origin));
 		model.addChild(desc);
@@ -220,9 +227,9 @@ public class ModelAssembler {
 			if ( !otherModel.equals(modelName) ) {
 				Map<String, ISyntacticElement> otherExperiments = experimentNodes.get(otherModel);
 				if ( otherExperiments.containsKey(experimentName) ) {
-					collector.add(new GamlCompilationError("Experiment " + experimentName +
-						" supersedes the one declared in " + otherModel, IGamlIssue.DUPLICATE_DEFINITION, element
-						.getElement(), false, true));
+					collector.add(new GamlCompilationError(
+						"Experiment " + experimentName + " supersedes the one declared in " + otherModel,
+						IGamlIssue.DUPLICATE_DEFINITION, element.getElement(), false, true));
 					// We remove the old one
 					otherExperiments.remove(experimentName);
 				}
@@ -240,16 +247,24 @@ public class ModelAssembler {
 		nodes.put(experimentName, element);
 	}
 
-	void addMicroSpecies(final SpeciesDescription macro, final ISyntacticElement micro) {
+	void addMicroSpecies(final SpeciesDescription macro, final ISyntacticElement micro,
+		final Map<String, SpeciesDescription> cache) {
 		// Create the species description without any children
 		final SpeciesDescription mDesc =
 			(SpeciesDescription) DescriptionFactory.create(micro, macro, ChildrenProvider.NONE);
+		cache.put(mDesc.getName(), mDesc);
+		for ( final ISyntacticElement speciesNode : micro.getChildren() ) {
+			if ( speciesNode.isSpecies() || speciesNode.isExperiment() ) {
+				// forces the micro-species to be created
+				macro.getMicroSpecies();
+			}
+		}
 		// Add it to its macro-species
 		macro.addChild(mDesc);
 		// Recursively create each micro-species of the newly added micro-species
 		for ( final ISyntacticElement speciesNode : micro.getChildren() ) {
 			if ( speciesNode.isSpecies() || speciesNode.isExperiment() ) {
-				addMicroSpecies(mDesc, speciesNode);
+				addMicroSpecies(mDesc, speciesNode, cache);
 			}
 		}
 	}
@@ -269,7 +284,7 @@ public class ModelAssembler {
 	/**
 	 * Recursively complements a species and its micro-species.
 	 * Add variables, behaviors (actions, reflex, task, states, ...), aspects to species.
-	 * 
+	 *
 	 * @param macro the macro-species
 	 * @param micro the structure of micro-species
 	 */
@@ -298,12 +313,14 @@ public class ModelAssembler {
 
 	}
 
-	void parentExperiment(final ModelDescription macro, final ISyntacticElement micro, final ModelDescription model) {
+	void parentExperiment(final ModelDescription macro, final ISyntacticElement micro, final ModelDescription model,
+		final Map<String, SpeciesDescription> cache) {
 		// Gather the previously created species
 		final SpeciesDescription mDesc = macro.getExperiment(micro.getName());
 		if ( mDesc == null ) { return; }
 		final String p = mDesc.getFacets().getLabel(IKeyword.PARENT);
 		// If no parent is defined, we assume it is "experiment"
+		// No cache needed for experiments ??
 		SpeciesDescription parent = model.getExperiment(p);
 		if ( parent == null ) {
 			parent = (SpeciesDescription) ModelDescription.ROOT.getTypesManager().getSpecies(IKeyword.EXPERIMENT);
@@ -314,22 +331,48 @@ public class ModelAssembler {
 		// }
 	}
 
-	void parentSpecies(final SpeciesDescription macro, final ISyntacticElement micro, final ModelDescription model) {
+	void parentSpecies(final SpeciesDescription macro, final ISyntacticElement micro, final ModelDescription model,
+		final Map<String, SpeciesDescription> cache) {
 		// Gather the previously created species
-		final SpeciesDescription mDesc = macro.getMicroSpecies(micro.getName());
+		final SpeciesDescription mDesc = cache.get(micro.getName());
+		// final SpeciesDescription mDesc = macro.getMicroSpecies(micro.getName());
 		if ( mDesc == null || mDesc.isExperiment() ) { return; }
 		String p = mDesc.getFacets().getLabel(IKeyword.PARENT);
 		// If no parent is defined, we assume it is "agent"
 		if ( p == null ) {
 			p = IKeyword.AGENT;
 		}
-		final SpeciesDescription parent = model.getSpeciesDescription(p);
+		SpeciesDescription parent = lookupSpecies(p, cache);
+		// DEBUG
+		if ( parent == null ) {
+			System.out.println("Null parent for species " + micro.getName());
+			parent = model.getSpeciesDescription(p);
+		}
 		mDesc.setParent(parent);
 		for ( final ISyntacticElement speciesNode : micro.getChildren() ) {
 			if ( speciesNode.isSpecies() || speciesNode.isExperiment() ) {
-				parentSpecies(mDesc, speciesNode, model);
+				parentSpecies(mDesc, speciesNode, model, cache);
 			}
 		}
+	}
+
+	/**
+	 * Lookup first in the cache passed in argument, then in the built-in species
+	 * @param cache
+	 * @return
+	 */
+	SpeciesDescription lookupSpecies(final String name, final Map<String, SpeciesDescription> cache) {
+		SpeciesDescription result = cache.get(name);
+		if ( result == null ) {
+			Collection<TypeDescription> builtIn = Types.getBuiltInSpecies();
+			for ( TypeDescription td : builtIn ) {
+				if ( td.getName().equals(name) ) {
+					result = (SpeciesDescription) td;
+					break;
+				}
+			}
+		}
+		return result;
 	}
 
 	boolean translateEnvironment(final SpeciesDescription world, final ISyntacticElement e) {

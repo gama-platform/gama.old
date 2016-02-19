@@ -23,10 +23,10 @@ import com.thoughtworks.xstream.io.*;
 
 public class GamaAgentConverter implements Converter {
 
-	IScope scope;
+	ConverterScope convertScope;
 	
-	public GamaAgentConverter(IScope s){
-		scope = s;
+	public GamaAgentConverter(ConverterScope s){
+		convertScope = s;
 	}
 	
 	@Override
@@ -40,8 +40,6 @@ public class GamaAgentConverter implements Converter {
 		
 		writer.startNode("agentReference");
 		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());
-	//	System.out.println("" + agt.getName() + " - " + agt.getSpeciesName());
-	// 	context.convertAnother(new RemoteAgent(agt));
 		writer.setValue(agt.getName());
 		System.out.println("===========END ConvertAnother : GamaAgent");
 		
@@ -52,8 +50,7 @@ public class GamaAgentConverter implements Converter {
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 
 		reader.moveDown();
-		// RemoteAgent rmt = (RemoteAgent) arg1.convertAnother(null, RemoteAgent.class);
-		List<IAgent> lagt = scope.getSimulationScope().getAgents(scope);
+		List<IAgent> lagt = (convertScope.getScope()).getSimulationScope().getAgents(convertScope.getScope());
 		boolean found = false;
 		int i = 0;
 		IAgent agt = null;
@@ -62,6 +59,7 @@ public class GamaAgentConverter implements Converter {
 				found = true;
 				agt = lagt.get(i);
 			}
+			i++;
 		}
 		reader.moveUp();
 		return agt;

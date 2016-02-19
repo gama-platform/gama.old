@@ -15,6 +15,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.types.IType;
@@ -34,7 +35,7 @@ import msi.gaml.types.IType;
 	// "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
 	@var(name = IKeyword.NEIGHBORS,
 		type = IType.LIST,
-		of = IType.AGENT,
+		of = ITypeProvider.OWNER_TYPE,
 		doc = { @doc("Represents the neighbor at distance 1 of the cell") }),
 	@var(name = IKeyword.GRID_VALUE,
 		type = IType.FLOAT,
