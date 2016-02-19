@@ -39,6 +39,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.operators.Containers;
 import msi.gaml.operators.Spatial;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
@@ -196,6 +197,12 @@ public class GamaDXFFile extends GamaGeometryFile {
 	    	while(it.hasNext()) {
 	    		DXFVertex vertex = (DXFVertex)it.next();
 	    		list.add(new GamaPoint(vertex.getX() - x_t, vertex.getY() - y_t, vertex.getZ()));
+	    	}
+	    	list = Containers.remove_duplicates(scope, list);
+	    	GamaPoint pt = (GamaPoint) list.get(list.size()-1);
+	    	if(pt.getX() == 0 && pt.getY() == 0 && pt.getZ() == 0)  {
+	    		list.remove(pt);
+	    		if (list.size() < 2) return null;
 	    	}
 	    	IShape shape = createPolyline(scope,list);
 	    	shape.setAttribute("layer", obj.getLayerName());
