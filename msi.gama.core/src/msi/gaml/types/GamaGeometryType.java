@@ -523,7 +523,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 				if ( geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
 			} else {
 				Geometry geom = GeometryUtils.FACTORY.createGeometryCollection(geoms.toArray(new Geometry[0]));
-				geom.union();
+				geom = geom.union();
 				if ( !geom.isEmpty() ) { return new GamaShape(geom); }
 			}
 		} catch (AssertionFailedException e) {
