@@ -54,7 +54,7 @@ species S_agt {
 	
 	float beta ;
 	
-	equation evol simultaneously: [ first ( I_agt ) , first ( R_agt ) ] {
+	equation evol simultaneously: [  ( I_agt ) ,  ( R_agt ) ] {
 		diff ( first ( S_agt ) . Ssize , t ) = 
 			( - beta * first ( S_agt ) . Ssize * first (	I_agt ) . Isize / N ) ;
 	}
@@ -69,7 +69,7 @@ species I_agt {
 	float beta ;
 	float delta ;
 
-	equation evol simultaneously : [ first ( S_agt ) , first ( R_agt ) ] {
+	equation evol simultaneously : [  ( S_agt ) ,  ( R_agt ) ] {
 		diff ( first ( I_agt ) . Isize , t ) = 
 			( beta * first ( S_agt ) . Ssize * first ( I_agt ) . Isize / N ) 
 			- ( delta * first ( I_agt ) . Isize ) ;
@@ -82,7 +82,7 @@ species R_agt {
 	
 	float delta ;
 
-	equation evol simultaneously : [ first ( S_agt ) , first ( I_agt ) ] {
+	equation evol simultaneously : [ ( S_agt ) + ( I_agt ) ] {
 		diff ( first ( R_agt ) . Rsize , t ) = 
 			( delta * first ( I_agt ) . Isize ) ;
 	}
