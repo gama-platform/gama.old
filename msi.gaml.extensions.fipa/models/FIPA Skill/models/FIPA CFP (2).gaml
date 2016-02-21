@@ -50,7 +50,7 @@ global {
 	}
 }
 
-species initiator skills: [communicating] {
+species initiator skills: [fipa] {
 	
 	reflex send_cfp_to_participants when: (time = 1) {
 		
@@ -96,7 +96,7 @@ species initiator skills: [communicating] {
 	}
 }
 
-species participant skills: [communicating] {
+species participant skills: [fipa] {
 	
 	reflex receive_cfp_from_initiator when: !empty(cfps) {
 		
