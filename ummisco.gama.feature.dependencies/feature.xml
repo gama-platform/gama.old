@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.dependencies"
       label="Dependencies"
-      version="1.6.1.qualifier"
+      version="1.7.0.qualifier"
       provider-name="UMMISCO">
 
    <description url="http://www.example.com/description">

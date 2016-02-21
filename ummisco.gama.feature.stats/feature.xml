@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.stats"
       label="Stats"
-      version="1.6.1.qualifier">
+      version="1.7.0.qualifier">
 
    <description url="http://www.example.com/description">
       This plug-in contains additional statistical operators.

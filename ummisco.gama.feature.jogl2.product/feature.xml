@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.jogl2.product"
       label="The feature used to build the product with updatable features. Includes JOGL2"
-      version="1.6.1.qualifier"
+      version="1.7.0.qualifier"
       provider-name="UMMISCO">
 
    <description url="http://www.example.com/description">

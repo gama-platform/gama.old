@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenGL display for GAMA
 Bundle-SymbolicName: ummisco.gama.opengl;singleton:=true
-Bundle-Version: 2.3.1
+Bundle-Version: 1.7.0.qualifier
 Require-Bundle: msi.gama.ext,
  msi.gama.core;bundle-version="1.4.0",
  msi.gama.application;bundle-version="1.4.0",
