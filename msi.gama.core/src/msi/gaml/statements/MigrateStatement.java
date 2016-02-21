@@ -42,7 +42,7 @@ import msi.gaml.types.*;
 @facets(
 	value = {
 		@facet(name = IKeyword.SOURCE,
-			type = { IType.AGENT, IType.SPECIES, IType.CONTAINER },
+			type = { IType.AGENT, IType.SPECIES, IType.CONTAINER, IType.ID },
 			of = IType.AGENT,
 			optional = false,
 			doc = @doc("can be an agent, a list of agents, a agent's population to be migrated")), // workaround

@@ -35,9 +35,9 @@ import msi.gaml.types.IType;
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @facets(value = { @facet(name = IKeyword.VALUE,
 	type = IType.LIST,
-	of = IType.LIST,
+	// TODO AD 02/16 Support the definition of complex type with a @type annotation // of = IType.LIST,
 	optional = false,
-	doc = @doc("the values to display. Has to be a List of List. Each element can be a number (series/histogram) or a list with two values (XY chart)")),
+	doc = @doc("the values to display.Each element can be a number (series/histogram) or a point/list with two values (XY chart)")),
 	// @facet(name = IKeyword.NAME, type = IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
 	@facet(name = IKeyword.LEGEND,
 		type = IType.LIST,
@@ -150,7 +150,7 @@ public class ChartDataListStatement extends AbstractStatement {
 		 * scope.getGui().debug("chart list with no list...");
 		 * return datalist;
 		 * }
-		 * 
+		 *
 		 * IList values = Cast.asList(scope,val);
 		 * GamaList defaultnames=new GamaList<String>();
 		 * GamaList defaultcolors=new GamaList<GamaColor>();
@@ -175,15 +175,15 @@ public class ChartDataListStatement extends AbstractStatement {
 		 * defaultcolors.add(GamaColor.int_colors.values().toArray()[i]);
 		 * else
 		 * defaultcolors.add(GamaColor.getInt(Random.opRnd(scope, 10000)));
-		 * 
+		 *
 		 * }
 		 * IList colors=defaultcolors;
-		 * 
+		 *
 		 * boolean dynamicseriesnames=false;
 		 * GamaList seriesnames=defaultnames;
-		 * 
+		 *
 		 * IExpression serievalue=(IExpression) scope.getVarValue(ChartDataListStatement.SERIESNAMES);
-		 * 
+		 *
 		 * if (serievalue!=null)
 		 * {
 		 * Object valc=serievalue.resolveAgainst(scope).value(scope);
@@ -198,7 +198,7 @@ public class ChartDataListStatement extends AbstractStatement {
 		 * }
 		 * }
 		 * // scope.getGui().debug("dyncateg:"+defaultnames);
-		 * 
+		 *
 		 * // names = Cast.asList(scope, getFacetValue(scope, IKeyword.LEGEND,getFacetValue(scope, IKeyword.NAME,defaultnames)));
 		 * colors = Cast.asList(scope, getFacetValue(scope, IKeyword.COLOR,defaultcolors));
 		 */

@@ -58,9 +58,9 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
 		doc = @doc("the list of parameters used in predefined equation systems")),
 	@facet(name = IKeyword.SIMULTANEOUSLY,
 		type = IType.LIST,
-		of = IType.AGENT,
+		of = IType.SPECIES,
 		optional = true,
-		doc = @doc("a list of agents containing a system of equations (all systems will be solved simultaneously)")) },
+		doc = @doc("a list of species containing a system of equations (all systems will be solved simultaneously)")) },
 	omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @doc(value = "The equation statement is used to create an equation system from several single equations.",
