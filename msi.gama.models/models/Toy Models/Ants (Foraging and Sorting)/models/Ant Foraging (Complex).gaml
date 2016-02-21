@@ -34,14 +34,13 @@ global {
 	}
 	
 	reflex diffuse {
-      diffuse var:road on:ant_grid proportion: diffusion_rate radius:3 propagation: gradient method:convolution min_value:100;
+      diffuse var:road on:ant_grid proportion: diffusion_rate radius:3 propagation: gradient method:convolution;
    }
   
 }
 
 
 grid ant_grid width: gridsize height: gridsize neighbors: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
-	const neighbours type: list of: ant_grid <- self neighbors_at 1;
 	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
 	float road <- 0.0 max: 240.0 update: (road <= evaporation_per_cycle) ? 0.0 : road - evaporation_per_cycle;
 	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
@@ -69,7 +68,7 @@ species ant skills: [moving] control: fsm {
 	}
 
 	point choose_best_place {
-		container list_places <- (ant_grid(location)).neighbours;
+		container list_places <- ant_grid(location).neighbors;
 		if (list_places count (each.food > 0)) > 0 {
 			return point(list_places first_with (each.food > 0));
 		} else {

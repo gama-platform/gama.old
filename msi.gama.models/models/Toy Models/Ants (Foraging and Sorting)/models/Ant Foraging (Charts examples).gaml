@@ -28,7 +28,6 @@ global {
 
 
 grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: false {
-	list<ant_grid> neighbours <- self neighbors_at 1;
 	bool multiagent <- true ;
 	float road <- 0.0 max:240.0 update: (road<=evaporation_per_cycle) ? 0.0 : road-evaporation_per_cycle;
 	int type <- int(types at {grid_x,grid_y}) ;
@@ -58,7 +57,7 @@ species ant skills: [moving] control: fsm {
 		heading <- heading - 180 ;
 	}
 	action choose_best_place type: ant_grid {
-		list<ant_grid> list_places <- place.neighbours ;
+		list<ant_grid> list_places <- place.neighbors ;
 		if (list_places count (each.food > 0)) > 0  {
 			return (list_places first_with (each.food > 0)) ;
 		} else {
