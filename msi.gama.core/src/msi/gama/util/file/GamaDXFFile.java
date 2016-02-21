@@ -13,6 +13,7 @@ package msi.gama.util.file;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Containers;
@@ -186,12 +188,15 @@ public class GamaDXFFile extends GamaGeometryFile {
 		}
 
 		public IShape defineGeom(IScope scope, Object obj){
+			
 			if (obj != null) {
+			
 				if (obj instanceof DXFArc) {return manageObj(scope, (DXFArc) obj); }
 				if (obj instanceof DXFLine) {return manageObj(scope, (DXFLine) obj); }
 				if (obj instanceof DXFPolyline) {return manageObj(scope, (DXFPolyline) obj); }
 				if (obj instanceof DXFSolid) {return manageObj(scope, (DXFSolid) obj);}
 				if (obj instanceof DXFCircle) {return manageObj(scope, (DXFCircle) obj); }
+				
 			}
 			return null;
 		}
@@ -200,6 +205,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 			IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			
 			Iterator it =    doc.getDXFLayerIterator();
+			List<IShape> entities = new ArrayList<IShape>();
 			while (it.hasNext()) {
 		    	DXFLayer layer = (DXFLayer) it.next();
 		    	Iterator ittype =  layer.getDXFEntityTypeIterator();
@@ -209,12 +215,20 @@ public class GamaDXFFile extends GamaGeometryFile {
 					for (DXFEntity obj : entity_list) {
 						IShape g = defineGeom(scope,obj);
 						if (g != null) {
+							if (entities.contains(g)) continue;
+							entities.add(g);
+						
 							g.setAttribute("layer", obj.getLayerName());
 					    	g.setAttribute("id", obj.getID());
 					    	g.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 					    	g.setAttribute("thickness", obj.getThickness());
 					    	g.setAttribute("is_visible", obj.isVisibile());
 					    	g.setAttribute("is_omit", obj.isOmitLineType());
+					    	g.setAttribute("color_index",obj.getColor());
+					    	
+					    	if (obj.getColorRGB() != null) g.setAttribute("color", new GamaColor(obj.getColorRGB()[0], obj.getColorRGB()[1], obj.getColorRGB()[2],255));
+					    	if (obj.getLineType() != null) g.setAttribute("line_type", obj.getLineType());
+					    	
 							geoms.add(g);
 						}
 					}
@@ -230,12 +244,22 @@ public class GamaDXFFile extends GamaGeometryFile {
 			    	DXFEntity obj = (DXFEntity)itent.next();
 			    	IShape g = defineGeom(scope,obj);
 					if (g != null) {
+						if (entities.contains(g)) continue;
+						entities.add(g);
+					
 						g.setAttribute("layer", obj.getLayerName());
 				    	g.setAttribute("id", obj.getID());
 				    	g.setAttribute("scale_factor", obj.getLinetypeScaleFactor());
 				    	g.setAttribute("thickness", obj.getThickness());
 				    	g.setAttribute("is_visible", obj.isVisibile());
 				    	g.setAttribute("is_omit", obj.isOmitLineType());
+ 
+				    	g.setAttribute("color_index",obj.getColor());
+				    	
+				    	if (obj.getColorRGB() != null) g.setAttribute("color", new GamaColor(obj.getColorRGB()[0], obj.getColorRGB()[1], obj.getColorRGB()[2],255));
+				    	if (obj.getLineType() != null) g.setAttribute("line_type", obj.getLineType());
+				    	
+				    	
 						geoms.add(g);
 					}
 		    	}
