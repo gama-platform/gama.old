@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'PrefuseStaticLayoutAbstract.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.graph.layout;
 
@@ -15,10 +15,12 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.logging.Logger;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.*;
+import msi.gaml.operators.fastmaths.*;
 import prefuse.*;
 import prefuse.action.ActionList;
 import prefuse.action.layout.Layout;
@@ -26,7 +28,6 @@ import prefuse.activity.Activity;
 import prefuse.data.Graph;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.visual.*;
-import com.vividsolutions.jts.geom.Envelope;
 
 public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
@@ -41,10 +42,10 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 	private void resetThermometer(final int nbtuples) {
 		lastNode2measures = null;
-		count_measures = Math.min(Math.max(nbtuples / 20, // ideal: measure 5% of nodes
+		count_measures = CmnFastMath.min(FastMath.max(nbtuples / 20, // ideal: measure 5% of nodes
 			10 // measure at least 10, even if the network is small !
-			), nbtuples - 1 // but don't try to measure more than existing..;
-			);
+		), nbtuples - 1 // but don't try to measure more than existing..;
+		);
 	}
 
 	private Double insertThermometer(final Visualization viz) {
@@ -77,7 +78,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 					double prev = lastNode2measures.get(i);
 					double novel = i.getX() + i.getY();
 					newMeasures.put(i, novel);
-					temperature += Math.pow(prev - novel, 2);
+					temperature += FastMath.pow(prev - novel, 2);
 				}
 
 				lastNode2measures = newMeasures;
@@ -124,7 +125,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 		viz.setRendererFactory(new DefaultRendererFactory());
 
 		Display display = new Display(viz);
-		display.setSize((int) Math.ceil(bounds.getWidth()), (int) Math.ceil(bounds.getHeight())); // set display size
+		display.setSize((int) FastMath.ceil(bounds.getWidth()), (int) FastMath.ceil(bounds.getHeight())); // set display size
 
 		// init positions
 		Iterator itPrefuseNodes = viz.getVisualGroup(PREFUSE_GRAPH + ".nodes").tuples();
@@ -201,8 +202,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 		Envelope envelope = scope.getSimulationScope().getEnvelope();
 
 		Rectangle bounds =
-			new Rectangle((int) Math.floor(envelope.getMinX()), (int) Math.floor(envelope.getMinY()),
-				(int) Math.ceil(envelope.getWidth()), (int) Math.ceil(envelope.getHeight()));
+			new Rectangle((int) FastMath.floor(envelope.getMinX()), (int) FastMath.floor(envelope.getMinY()),
+				(int) FastMath.ceil(envelope.getWidth()), (int) FastMath.ceil(envelope.getHeight()));
 
 		renderLayout(prefuseGraph, prefuseLayout, bounds, maxtime);
 

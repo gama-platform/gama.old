@@ -23,33 +23,33 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 import msi.gaml.variables.*;
 
-@facets(
-	value = {
-		@facet(name = IKeyword.NAME,
-			type = IType.LABEL,
-			optional = true,
-			doc = @doc("The message displayed in the interface") ),
-		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the variable type") ),
-		@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("the init value") ),
-		@facet(name = IKeyword.MIN, type = IType.NONE, optional = true, doc = @doc("the minimum value") ),
-		@facet(name = IKeyword.MAX, type = IType.NONE, optional = true, doc = @doc("the maximum value") ),
-		@facet(name = IKeyword.CATEGORY,
-			type = IType.LABEL,
-			optional = true,
-			doc = @doc("a category label, used to group parameters in the interface") ),
-		@facet(name = IKeyword.VAR,
-			type = IType.ID,
-			optional = false,
-			doc = @doc("the name of the variable (that should be declared in the global)") ),
-		@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true, doc = @doc("the variable unit") ),
-		@facet(name = IKeyword.STEP,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)") ),
-		@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values") ) },
+@facets(value = {
+	@facet(name = IKeyword.NAME,
+		type = IType.LABEL,
+		optional = true,
+		doc = @doc("The message displayed in the interface")),
+	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the variable type")),
+	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("the init value")),
+	@facet(name = IKeyword.MIN, type = IType.NONE, optional = true, doc = @doc("the minimum value")),
+	@facet(name = IKeyword.MAX, type = IType.NONE, optional = true, doc = @doc("the maximum value")),
+	@facet(name = IKeyword.CATEGORY,
+		type = IType.LABEL,
+		optional = true,
+		doc = @doc("a category label, used to group parameters in the interface")),
+	@facet(name = IKeyword.VAR,
+		type = IType.ID,
+		optional = false,
+		doc = @doc("the name of the variable (that should be declared in the global)")),
+	@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true, doc = @doc("the variable unit")),
+	@facet(name = IKeyword.STEP,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
+	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values")) },
 	omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
@@ -288,14 +288,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		} else if ( type.id() == IType.FLOAT ) {
 			double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 			double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-			double removeZ = Math.max(100000.0, 1.0 / step);
+			double removeZ = FastMath.max(100000.0, 1.0 / step);
 			double val = Cast.asFloat(null, value());
 			if ( val >= min + step ) {
-				final double valLow = Math.round((val - step) * removeZ) / removeZ;
+				final double valLow = FastMath.round((val - step) * removeZ) / removeZ;
 				neighbourValues.add(valLow);
 			}
 			if ( val <= max - step ) {
-				final double valHigh = Math.round((val + step) * removeZ) / removeZ;
+				final double valHigh = FastMath.round((val + step) * removeZ) / removeZ;
 				neighbourValues.add(valHigh);
 			}
 		}

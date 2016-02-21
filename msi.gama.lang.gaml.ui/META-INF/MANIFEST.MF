@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Gama Modelling Language UI
 Bundle-Vendor: MSI
-Bundle-Version: 1.4.2
+Bundle-Version: 1.7.0.qualifier
 Bundle-SymbolicName: msi.gama.lang.gaml.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,

@@ -8,6 +8,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.*;
 
 /**
@@ -42,8 +43,8 @@ public class CreateFromGenstarDelegate implements ICreateDelegate {
 	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object source,
 		final Arguments init, final CreateStatement statement) {
 		final IList<Map> syntheticPopulation = (IList<Map>) source;
-		final int num =
-			max == null ? syntheticPopulation.length(scope) - 1 : Math.min(syntheticPopulation.length(scope) - 1, max);
+		final int num = max == null ? syntheticPopulation.length(scope) - 1
+			: CmnFastMath.min(syntheticPopulation.length(scope) - 1, max);
 		// the first element of syntheticPopulation a string (i.e.,
 		// "genstar_population")
 		for ( int i = 1; i < num; i++ ) {

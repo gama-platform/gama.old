@@ -18,6 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.IConstantCategory;
 import msi.gama.util.*;
 import msi.gaml.expressions.UnitConstantExpression;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 public class IUnits {
@@ -96,19 +97,19 @@ public class IUnits {
 	 *
 	 */
 	@constant(value = "pi", category = { IConstantCategory.CONSTANT }, doc = @doc("The PI constant"))
-	public final static double pi = Math.PI;
+	public final static double pi = FastMath.PI;
 
 	@constant(value = "e", category = { IConstantCategory.CONSTANT }, doc = @doc("The e constant"))
-	public final static double e = Math.E;
+	public final static double e = FastMath.E;
 
 	@constant(value = "to_deg",
 		category = { IConstantCategory.CONSTANT },
 		doc = @doc("A constant holding the value to convert radians into degrees"))
-	public final static double to_deg = 180d / Math.PI;
+	public final static double to_deg = 180d / FastMath.PI;
 	@constant(value = "to_rad",
 		category = { IConstantCategory.CONSTANT },
 		doc = @doc("A constant holding the value to convert degrees into radians"))
-	public final static double to_rad = Math.PI / 180d;
+	public final static double to_rad = FastMath.PI / 180d;
 
 	@constant(value = "nan",
 		category = { IConstantCategory.CONSTANT },

@@ -24,6 +24,7 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 
 public class FocusHandler {
 
@@ -193,7 +194,7 @@ public class FocusHandler {
 				trace("Processing typeahead traversals, count=" + extraTabCount);
 			}
 			int direction = extraTabCount > 0 ? SWT.TRAVERSE_TAB_NEXT : SWT.TRAVERSE_TAB_PREVIOUS;
-			swtTraverse(direction, Math.abs(extraTabCount), true);
+			swtTraverse(direction, CmnFastMath.abs(extraTabCount), true);
 		}
 		pendingTraverseOut = false;
 		currentTraverseOutSeqNum++;

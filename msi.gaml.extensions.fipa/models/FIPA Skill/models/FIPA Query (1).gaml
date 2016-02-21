@@ -27,7 +27,7 @@ global {
 	}
 }
 
-species Initiator skills: [communicating] {
+species Initiator skills: [fipa] {
 	reflex send_query_message when: (time = 1) {
 		write name + ' sends query message';
 		do start_conversation with: [ receivers :: [p], protocol :: 'fipa-query', performative :: 'query', content :: ['your name?'] ];
@@ -41,7 +41,7 @@ species Initiator skills: [communicating] {
 	}
 }
 
-species Participant skills: [communicating] {
+species Participant skills: [fipa] {
 
 	reflex reply_query_messages when: !(empty(queries)) {
 		message queryFromInitiator <- queries at 0;

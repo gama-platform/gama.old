@@ -1,25 +1,26 @@
 /**
  * Created by drogoul, 5 déc. 2014
- * 
+ *
  */
 package msi.gama.gui.swt.commands;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.gui.swt.*;
-import msi.gama.util.GamaColor;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import msi.gama.gui.swt.*;
+import msi.gama.util.GamaColor;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 
 /**
  * The class EditToolbarColorMenu.
- * 
+ *
  * @author drogoul
  * @since 5 déc. 2014
- * 
+ *
  */
 public class GamaColorMenu extends GamaMenu {
 
@@ -191,13 +192,13 @@ public class GamaColorMenu extends GamaMenu {
 		for ( int i = 0; i < names.size(); i++ ) {
 			String current = names.get(i);
 			if ( breakdown && i % 10 == 0 ) {
-				String following = names.get(Math.min(i + 9, names.size() - 1)).replace("#", "");
+				String following = names.get(CmnFastMath.min(i + 9, names.size() - 1)).replace("#", "");
 				subMenu = sub(current.replace("#", "") + " to " + following);
 			}
 			MenuItem item = action(subMenu, "#" + current, defaultListener);
 			GamaColor color = GamaColor.colors.get(current);
-			item.setImage(GamaIcons.createColorIcon(current, GamaColors.get(color.red(), color.green(), color.blue()),
-				16, 16).image());
+			item.setImage(GamaIcons
+				.createColorIcon(current, GamaColors.get(color.red(), color.green(), color.blue()), 16, 16).image());
 		}
 
 	}

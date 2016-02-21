@@ -1,31 +1,30 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaFloatMatrix.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.util.matrix;
 
 import java.util.*;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.linear.*;
+import com.google.common.primitives.Doubles;
+import com.vividsolutions.jts.index.quadtree.IntervalSize;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.*;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.linear.*;
-
-import com.google.common.primitives.Doubles;
-import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 public class GamaFloatMatrix extends GamaMatrix<Double> {
 
@@ -70,20 +69,20 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	public GamaFloatMatrix(final int cols, final int rows, final double[] objects) {
 		this(cols, rows);
-		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
+		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, CmnFastMath.min(objects.length, rows * cols));
 	}
 
 	public GamaFloatMatrix(final int cols, final int rows, final int[] objects) {
 		this(cols, rows);
-		for ( int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++ ) {
+		for ( int i = 0, n = CmnFastMath.min(objects.length, rows * cols); i < n; i++ ) {
 			matrix[i] = objects[i];
 		}
-		// java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
+		// java.lang.System.arraycopy(objects, 0, getMatrix(), 0, FastMath.min(objects.length, rows * cols));
 	}
 
 	public GamaFloatMatrix(final IScope scope, final int cols, final int rows, final Object[] objects) {
 		this(cols, rows);
-		for ( int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++ ) {
+		for ( int i = 0, n = CmnFastMath.min(objects.length, rows * cols); i < n; i++ ) {
 			matrix[i] = Cast.asFloat(scope, objects[i]);
 		}
 	}
@@ -93,7 +92,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		super(scope, objects, preferredSize, Types.FLOAT);
 		setMatrix(new double[numRows * numCols]);
 		if ( preferredSize != null ) {
-			for ( int i = 0, stop = Math.min(getMatrix().length, objects.size()); i < stop; i++ ) {
+			for ( int i = 0, stop = CmnFastMath.min(getMatrix().length, objects.size()); i < stop; i++ ) {
 				getMatrix()[i] = Cast.asFloat(scope, objects.get(i));
 			}
 		} else if ( GamaMatrix.isFlat(objects) ) {
@@ -118,8 +117,8 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	@Override
 	protected IList _listValue(final IScope scope, final IType contentsType, final boolean cast) {
-		return cast ? GamaListFactory.create(scope, contentsType, matrix) : GamaListFactory.createWithoutCasting(
-			contentsType, matrix);
+		return cast ? GamaListFactory.create(scope, contentsType, matrix)
+			: GamaListFactory.createWithoutCasting(contentsType, matrix);
 	}
 
 	@Override
@@ -158,7 +157,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	/**
 	 * Take two matrices (with the same number of columns) and create a big matrix putting the second matrix on the
 	 * right side of the first matrix
-	 * 
+	 *
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
@@ -179,7 +178,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	/**
 	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right
 	 * side of the first matrix
-	 * 
+	 *
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
@@ -570,8 +569,8 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		if ( index > getMatrix().length ) { return 0d; }
 		return getMatrix()[index];
 	}
-	
-	public RealMatrix toApacheMatrix(IScope scope){
+
+	public RealMatrix toApacheMatrix(final IScope scope) {
 		RealMatrix rm = new Array2DRowRealMatrix(numRows, numCols);
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
@@ -581,9 +580,9 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		}
 		return rm;
 	}
-	
-	public IMatrix fromApacheMatrix(IScope scope, RealMatrix rm ){
-		if (rm == null) return null;
+
+	public IMatrix fromApacheMatrix(final IScope scope, final RealMatrix rm) {
+		if ( rm == null ) { return null; }
 		GamaFloatMatrix matrix = new GamaFloatMatrix(rm.getColumnDimension(), rm.getRowDimension());
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
@@ -591,36 +590,37 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 			}
 		}
 		return matrix;
-		
+
 	}
+
 	@Override
-	public Double getDeterminant(IScope scope) throws GamaRuntimeException {
+	public Double getDeterminant(final IScope scope) throws GamaRuntimeException {
 		RealMatrix rm = toApacheMatrix(scope);
 		LUDecomposition ld = new LUDecomposition(rm);
 		return ld.getDeterminant();
 	}
-	
+
 	@Override
-	public Double getTrace(IScope scope) throws GamaRuntimeException {
+	public Double getTrace(final IScope scope) throws GamaRuntimeException {
 		RealMatrix rm = toApacheMatrix(scope);
 		return rm.getTrace();
 	}
-	
+
 	@Override
-	public IList<Double> getEigen(IScope scope) throws GamaRuntimeException {
+	public IList<Double> getEigen(final IScope scope) throws GamaRuntimeException {
 		RealMatrix rm = toApacheMatrix(scope);
 		EigenDecomposition ed = new EigenDecomposition(rm);
 		return fromApacheMatrixtoDiagList(scope, ed.getD());
 	}
-	
-	IList<Double> fromApacheMatrixtoDiagList(IScope scope, RealMatrix rm ){
+
+	IList<Double> fromApacheMatrixtoDiagList(final IScope scope, final RealMatrix rm) {
 		IList<Double> vals = GamaListFactory.create(Types.FLOAT);
-		for (int i = 0; i < rm.getColumnDimension(); i++) {
+		for ( int i = 0; i < rm.getColumnDimension(); i++ ) {
 			vals.add(rm.getEntry(i, i));
 		}
 		return vals;
 	}
-	
+
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return "matrix<float>(" + getRowsList(null).serialize(includingBuiltIn) + ")";
@@ -630,9 +630,9 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	public IContainerType getType() {
 		return Types.MATRIX.of(Types.FLOAT);
 	}
-	
+
 	@Override
-	public IMatrix<Double> inverse(IScope scope) throws GamaRuntimeException {
+	public IMatrix<Double> inverse(final IScope scope) throws GamaRuntimeException {
 		RealMatrix rm = toApacheMatrix(scope);
 		LUDecomposition ld = new LUDecomposition(rm);
 		return fromApacheMatrix(scope, ld.getSolver().getInverse());

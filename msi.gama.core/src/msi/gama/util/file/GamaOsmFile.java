@@ -40,6 +40,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Strings;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 @file(name = "osm",
@@ -56,8 +57,6 @@ public class GamaOsmFile extends GamaGisFile {
 		final double width;
 		final double height;
 		final Map<String, String> attributes = new LinkedHashMap();
-		
-				
 
 		public OSMInfo(final URL url, final long modificationStamp) {
 			super(modificationStamp);
@@ -77,7 +76,7 @@ public class GamaOsmFile extends GamaGisFile {
 				}
 				SimpleFeatureCollection collection = new ListFeatureCollection(TYPE, list);
 				SimpleFeatureSource featureSource = DataUtilities.source(collection);
-				
+
 				env2 = featureSource.getBounds();
 				number = osmfile.nbObjects;
 				crs = osmfile.getOwnCRS();
@@ -85,10 +84,10 @@ public class GamaOsmFile extends GamaGisFile {
 				System.out.println("Error in reading metadata of " + url);
 
 			} finally {
-				
-				//approximation of the width and height in meters.
-				width = env2 != null ? env2.getWidth() * (Math.PI / 180) * 6378137 : 0;
-				height = env2 != null ? env2.getHeight() * (Math.PI / 180) * 6378137 : 0;
+
+				// approximation of the width and height in meters.
+				width = env2 != null ? env2.getWidth() * (FastMath.PI / 180) * 6378137 : 0;
+				height = env2 != null ? env2.getHeight() * (FastMath.PI / 180) * 6378137 : 0;
 				itemNumber = number;
 				this.crs = crs;
 			}
@@ -126,7 +125,7 @@ public class GamaOsmFile extends GamaGisFile {
 		 */
 		@Override
 		public String getSuffix() {
-			return "" + itemNumber + " objects | " + Math.round(width) + "m x " + Math.round(height) + "m";
+			return "" + itemNumber + " objects | " + FastMath.round(width) + "m x " + FastMath.round(height) + "m";
 		}
 
 		@Override
@@ -134,7 +133,8 @@ public class GamaOsmFile extends GamaGisFile {
 			StringBuilder sb = new StringBuilder();
 			sb.append("OSM file").append(Strings.LN);
 			sb.append(itemNumber).append(" objects").append(Strings.LN);
-			sb.append("Dimensions: ").append(Math.round(width) + "m x " + Math.round(height) + "m").append(Strings.LN);
+			sb.append("Dimensions: ").append(FastMath.round(width) + "m x " + FastMath.round(height) + "m")
+				.append(Strings.LN);
 			sb.append("Coordinate Reference System: ").append(crs == null ? "No CRS" : crs.getName().getCode())
 				.append(Strings.LN);
 			if ( !attributes.isEmpty() ) {
@@ -163,8 +163,9 @@ public class GamaOsmFile extends GamaGisFile {
 	GamaMap<String, GamaList> filteringOptions;
 	Map<String, String> attributes = new Hashtable<String, String>();
 
-	final Map<String,List<IShape>> layers = GamaMapFactory.create(Types.STRING, Types.LIST);
+	final Map<String, List<IShape>> layers = GamaMapFactory.create(Types.STRING, Types.LIST);
 	final static List<String> featureTypes = new ArrayList<String>() {
+
 		{
 			add("aerialway");
 			add("aeroway");
@@ -193,7 +194,7 @@ public class GamaOsmFile extends GamaGisFile {
 			add("tourism");
 			add("waterway");
 		}
-};
+	};
 	int nbObjects;
 
 	/**
@@ -324,7 +325,7 @@ public class GamaOsmFile extends GamaGisFile {
 		for ( Node node : nodes ) {
 			GamaShape pt = nodesPt.get(node.getId());
 			boolean hasAttributes = !node.getTags().isEmpty();
-			Map<String,String> atts = new Hashtable<String,String>();
+			Map<String, String> atts = new Hashtable<String, String>();
 			if ( pt != null ) {
 				for ( Tag tg : node.getTags() ) {
 					String key = tg.getKey().split(":")[0];
@@ -339,17 +340,17 @@ public class GamaOsmFile extends GamaGisFile {
 				}
 				if ( hasAttributes ) {
 					geometries.add(pt);
-					for (Object att : pt.getAttributes().keySet()) {
-						if (featureTypes.contains(att)) {
-							String idType = att+" (point)";
+					for ( Object att : pt.getAttributes().keySet() ) {
+						if ( featureTypes.contains(att) ) {
+							String idType = att + " (point)";
 							List objs = layers.get(idType);
-							if (objs == null) {
+							if ( objs == null ) {
 								objs = GamaListFactory.create(Types.GEOMETRY);
 								layers.put(idType, objs);
 							}
 							objs.add(pt);
-							for (String v : atts.keySet())  {
-								String id = idType + ";" +v;
+							for ( String v : atts.keySet() ) {
+								String id = idType + ";" + v;
 								attributes.put(id, atts.get(v));
 							}
 							break;
@@ -361,43 +362,42 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 		for ( Way way : ways ) {
 			Map<String, Object> values = new TOrderedHashMap<String, Object>();
-			Map<String,String> atts = new Hashtable<String,String>();
-			
+			Map<String, String> atts = new Hashtable<String, String>();
+
 			for ( Tag tg : way.getTags() ) {
 
 				String key = tg.getKey().split(":")[0];
 				Object val = tg.getValue();
 				if ( val != null ) {
 					addAttribute(atts, key, val);
-				} 
+				}
 				values.put(key, tg.getValue());
 			}
-			//boolean isPolyline = values.containsKey("highway") ||
-			//	!way.getWayNodes().get(0).equals(way.getWayNodes().get(way.getWayNodes().size() - 1));
-			boolean isPolyline = values.containsKey("highway")  || !(way.getWayNodes().get(0).getNodeId() == way.getWayNodes().get(way.getWayNodes().size() - 1).getNodeId());
+			// boolean isPolyline = values.containsKey("highway") ||
+			// !way.getWayNodes().get(0).equals(way.getWayNodes().get(way.getWayNodes().size() - 1));
+			boolean isPolyline = values.containsKey("highway") || !(way.getWayNodes().get(0).getNodeId() == way
+				.getWayNodes().get(way.getWayNodes().size() - 1).getNodeId());
 			if ( isPolyline ) {
 				List<IShape> geoms = createSplitRoad(way, values, intersectionNodes, nodesPt);
 				((List) geometries).addAll(geoms);
-				if (!geoms.isEmpty()) {
-					for (Object att : values.keySet()) {
-						String idType = att+" (line)";
-						if (featureTypes.contains(att)) {
+				if ( !geoms.isEmpty() ) {
+					for ( Object att : values.keySet() ) {
+						String idType = att + " (line)";
+						if ( featureTypes.contains(att) ) {
 							List objs = layers.get(idType);
-							if (objs == null) {
+							if ( objs == null ) {
 								objs = GamaListFactory.create(Types.GEOMETRY);
 								layers.put(idType, objs);
 							}
 							objs.addAll(geoms);
-							for (String v : atts.keySet())  {
-								String id = idType + ";" +v;
+							for ( String v : atts.keySet() ) {
+								String id = idType + ";" + v;
 								attributes.put(id, atts.get(v));
 							}
 							break;
 						}
 					}
 				}
-					
-				
 
 			} else {
 				List<IShape> points = GamaListFactory.create(Types.GEOMETRY);
@@ -419,25 +419,25 @@ public class GamaOsmFile extends GamaGisFile {
 						geom.setAttribute(key, val);
 					}
 					geometries.add(geom);
-					if (geom.getAttributes() != null) {
-						for (Object att : geom.getAttributes().keySet()) {
-							String idType = att+" (polygon)";
-							if (featureTypes.contains(att)) {
+					if ( geom.getAttributes() != null ) {
+						for ( Object att : geom.getAttributes().keySet() ) {
+							String idType = att + " (polygon)";
+							if ( featureTypes.contains(att) ) {
 								List objs = layers.get(idType);
-								if (objs == null) {
+								if ( objs == null ) {
 									objs = GamaListFactory.create(Types.GEOMETRY);
 									layers.put(idType, objs);
 								}
 								objs.add(geom);
-								for (String v : atts.keySet())  {
-									String id = idType + ";" +v;
+								for ( String v : atts.keySet() ) {
+									String id = idType + ";" + v;
 									attributes.put(id, atts.get(v));
 								}
 								break;
 							}
 						}
 					}
-					
+
 				}
 			}
 
@@ -595,7 +595,5 @@ public class GamaOsmFile extends GamaGisFile {
 	public List<String> getFeatureTypes() {
 		return featureTypes;
 	}
-	
-	
 
 }

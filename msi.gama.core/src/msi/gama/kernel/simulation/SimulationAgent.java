@@ -23,7 +23,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.*;
 import msi.gama.outputs.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -149,7 +149,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
 		// try {
-		this.prepareGuiForSimulation(scope);	
+		this.prepareGuiForSimulation(scope);
 		// scope.getGui().prepareForSimulation(this);
 		super.schedule(this.scope);
 
@@ -239,22 +239,22 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
-	public synchronized void setLocation(final ILocation newGlobalLoc) {}
+	public void setLocation(final ILocation newGlobalLoc) {}
 
 	@Override
-	public synchronized ILocation getLocation() {
+	public ILocation getLocation() {
 		if ( geometry == null ) { return new GamaPoint(0, 0); }
 		return super.getLocation();
 	}
 
 	@Override
-	public synchronized void setGeometry(final IShape geom) {
-		if ( geometry != null ) {
-			GAMA.reportError(scope,
-				GamaRuntimeException.warning(
-					"Changing the shape of the world after its creation can have unexpected consequences", scope),
-				false);
-		}
+	public void setGeometry(final IShape geom) {
+		// if ( geometry != null ) {
+		// GAMA.reportError(scope,
+		// GamaRuntimeException.warning(
+		// "Changing the shape of the world after its creation can have unexpected consequences", scope),
+		// false);
+		// }
 		// FIXME : AD 5/15 Revert the commit by PT: getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
 		final Envelope3D env = geom.getEnvelope();
@@ -262,7 +262,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
 		}
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
-		geometry = Transformations.translated_by(getScope(), geom, p);
+		geometry.setGeometry(Transformations.translated_by(getScope(), geom, p));
 		// projectionFactory.setWorldProjectionEnv(env);
 		getPopulation().setTopology(getScope(), geometry);
 
@@ -488,14 +488,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return executer;
 	}
 
-	public void prepareGuiForSimulation(IScope s) {
-		s.getGui().prepareForSimulation(this);				
+	public void prepareGuiForSimulation(final IScope s) {
+		s.getGui().prepareForSimulation(this);
 	}
 
-	public void initOutputs(){
+	public void initOutputs() {
 		if ( outputs != null ) {
 			outputs.init(this.scope);
 		}
 	}
-	
+
 }

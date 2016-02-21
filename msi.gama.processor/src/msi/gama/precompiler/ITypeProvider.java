@@ -35,6 +35,9 @@ public interface ITypeProvider {
 	 * The content type is provided by the type of the first child of the expression
 	 */
 	static final int FIRST_TYPE = -18;
+	/**
+	 * For variables, represents the type of the owner (i.e. the species) holding this attribute
+	 */
 	static final int OWNER_TYPE = FIRST_TYPE;
 	/*
 	 * The content type is provided by the type of the second child of the expression
@@ -42,6 +45,19 @@ public interface ITypeProvider {
 	static final int SECOND_TYPE = -17;
 	static final int SECOND_CONTENT_TYPE_OR_TYPE = -25;
 	static final int FIRST_CONTENT_TYPE_OR_TYPE = -26;
+
+	/**
+	 * The type of the model itself
+	 */
+	static final int MODEL_TYPE = -27;
+	/**
+	 * The type of the agents mirrored by a species
+	 */
+	static final int MIRROR_TYPE = -28;
+	/**
+	 * The type of the macro-agent
+	 */
+	static final int MACRO_TYPE = -29;
 	/*
 	 * The content type is provided by the type of the expression itself (i.e. species)
 	 */

@@ -1,49 +1,55 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamaProxyGeometry.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import com.vividsolutions.jts.geom.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.*;
 
 /**
  * Class GamaProxyGeometry. A geometry that represents a wrapper to a reference geometry and a translation. All the
  * operations are transmitted to the reference geometry, taking this translation into account. The inner geometry of
  * each instance is computed dynamically every time.
- * 
+ *
  * This class does not allow any other transformation to its geometry than translation (no scaling, no rotation, etc.).
  * TODO This might come later when rotatedBy() and scaledBy() are redefined outside GamaShape.
- * 
+ *
  * Abstract methods to override:
  * getReferenceGeometry()
- * 
+ *
  * Caching of the resulting innner geometry can be achieved by redefining getInnerGeometry() and implementing
  * the policy there. However, the purpose of this class is principally to save memory (see. GamaSpatialMatrix).
- * 
+ *
+ *
+ * AD: Changed in 2016 to create attributes due to the abandon of attributes in agents. These geometries have attributes now.
+ *
  * The geometries dont have individual attributes. Instead, they read from / write to the attributes of the reference
  * geometry. This can be a simple way to implement properties common to a set of geometries. Subclasses that wish to
  * implement individual attributes can do so by overriding the corresponding methods.
- * 
- * 
+ *
+ *
  * @author drogoul
  * @since 18 mai 2013
- * 
+ *
  */
 public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	ILocation absoluteLocation;
+	// Property map to add all kinds of information (e.g to specify if the geometry is a sphere, a
+	// cube, etc...). Can be reused by subclasses (for example to store GIS information)
+	protected GamaMap attributes;
 
 	public GamaProxyGeometry(final ILocation loc) {
 		setLocation(loc);
@@ -114,7 +120,8 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public GamaMap getAttributes() {
-		return getReferenceGeometry().getAttributes();
+		return attributes;
+		// return getReferenceGeometry().getAttributes();
 	}
 
 	/**
@@ -123,7 +130,11 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public GamaMap getOrCreateAttributes() {
-		return getReferenceGeometry().getOrCreateAttributes();
+		if ( attributes == null ) {
+			attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		}
+		return attributes;
+		// return getReferenceGeometry().getOrCreateAttributes();
 	}
 
 	/**
@@ -132,7 +143,9 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public Object getAttribute(final Object key) {
-		return getReferenceGeometry().getAttribute(key);
+		if ( attributes == null ) { return null; }
+		return attributes.get(key);
+		// return getReferenceGeometry().getAttribute(key);
 	}
 
 	/**
@@ -141,7 +154,8 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public void setAttribute(final Object key, final Object value) {
-		getReferenceGeometry().setAttribute(key, value);
+		getOrCreateAttributes().put(key, value);
+		// getReferenceGeometry().setAttribute(key, value);
 	}
 
 	/**
@@ -150,7 +164,8 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public boolean hasAttribute(final Object key) {
-		return getReferenceGeometry().hasAttribute(key);
+		return attributes != null && attributes.containsKey(key);
+		// return getReferenceGeometry().hasAttribute(key);
 	}
 
 	/**
@@ -326,15 +341,5 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 		}
 		return result;
 	}
-
-	/**
-	 * Method asShapeWithGeometry()
-	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope, com.vividsolutions.jts.geom.Geometry)
-	 */
-	// @Override
-	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {
-	// if ( g == null ) { return new GamaShape(this); }
-	// return new GamaShape(g);
-	// }
 
 }

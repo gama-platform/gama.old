@@ -36,6 +36,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
+import msi.gaml.operators.fastmaths.*;
 
 @display("java2D")
 public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
@@ -98,8 +99,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			Point p = new Point(mousePosition.x, mousePosition.y);
 			double zoomFactor = applyZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement);
 			Point origin = getOrigin();
-			double newx = Math.round(zoomFactor * (p.x - origin.x) - p.x + getWidth() / 2d);
-			double newy = Math.round(zoomFactor * (p.y - origin.y) - p.y + getHeight() / 2d);
+			double newx = FastMath.round(zoomFactor * (p.x - origin.x) - p.x + getWidth() / 2d);
+			double newy = FastMath.round(zoomFactor * (p.y - origin.y) - p.y + getHeight() / 2d);
 			centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
 			updateDisplay(true);
 		}
@@ -162,7 +163,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 					}
 					updateDisplay(true);
 				}
-				final double newZoom = Math.min(getWidth() / getDisplayWidth(), getHeight() / getDisplayHeight());
+				final double newZoom = FastMath.min(getWidth() / getDisplayWidth(), getHeight() / getDisplayHeight());
 				newZoomLevel(1 / newZoom);
 				previousPanelSize = getSize();
 			}
@@ -302,8 +303,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	protected void centerImage() {
-		setOrigin((int) Math.round((getWidth() - getDisplayWidth()) / 2),
-			(int) Math.round((getHeight() - getDisplayHeight()) / 2));
+		setOrigin((int) FastMath.round((getWidth() - getDisplayWidth()) / 2),
+			(int) FastMath.round((getHeight() - getDisplayHeight()) / 2));
 	}
 
 	protected int getOriginX() {
@@ -423,8 +424,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 				if ( r == null ) { return; }
 				double xScale = getWidth() / r.getWidth();
 				double yScale = getHeight() / r.getHeight();
-				double zoomFactor = Math.min(xScale, yScale);
-				Point center = new Point((int) Math.round(r.getCenterX()), (int) Math.round(r.getCenterY()));
+				double zoomFactor = FastMath.min(xScale, yScale);
+				Point center = new Point((int) FastMath.round(r.getCenterX()), (int) FastMath.round(r.getCenterY()));
 
 				zoomFactor = applyZoom(zoomFactor);
 				center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
@@ -449,8 +450,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		Point origin = getOrigin();
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		double zoomFactor = applyZoom(1.0 + zoomIncrement);
-		double newx = Math.round(zoomFactor * (getWidth() / 2 - origin.x));
-		double newy = Math.round(zoomFactor * (getHeight() / 2 - origin.y));
+		double newx = FastMath.round(zoomFactor * (getWidth() / 2 - origin.x));
+		double newy = FastMath.round(zoomFactor * (getHeight() / 2 - origin.y));
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
 		updateDisplay(true);
 		alreadyZooming = false;
@@ -463,8 +464,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		Point origin = getOrigin();
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		double zoomFactor = applyZoom(1.0 - zoomIncrement);
-		double newx = Math.round(zoomFactor * (getWidth() / 2 - origin.x));
-		double newy = Math.round(zoomFactor * (getHeight() / 2 - origin.y));
+		double newx = FastMath.round(zoomFactor * (getWidth() / 2 - origin.x));
+		double newy = FastMath.round(zoomFactor * (getHeight() / 2 - origin.y));
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
 		updateDisplay(true);
 		alreadyZooming = false;
@@ -492,8 +493,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		try {
 			canBeUpdated = false;
 			int[] point = computeBoundsFrom(x, y);
-			int imageWidth = Math.max(1, point[0]);
-			int imageHeight = Math.max(1, point[1]);
+			int imageWidth = CmnFastMath.max(1, point[0]);
+			int imageHeight = CmnFastMath.max(1, point[1]);
 			final BufferedImage newImage = ImageUtils.createCompatibleImage(imageWidth, imageHeight);
 			if ( buffImage != null ) {
 				newImage.getGraphics().drawImage(buffImage, 0, 0, imageWidth, imageHeight, null);
@@ -613,11 +614,11 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int[] dim = new int[2];
 		double widthHeightConstraint = getEnvHeight() / getEnvWidth();
 		if ( widthHeightConstraint < 1 ) {
-			dim[1] = Math.min(vheight, (int) Math.round(vwidth * widthHeightConstraint));
-			dim[0] = Math.min(vwidth, (int) Math.round(dim[1] / widthHeightConstraint));
+			dim[1] = CmnFastMath.min(vheight, (int) FastMath.round(vwidth * widthHeightConstraint));
+			dim[0] = CmnFastMath.min(vwidth, (int) FastMath.round(dim[1] / widthHeightConstraint));
 		} else {
-			dim[0] = Math.min(vwidth, (int) Math.round(vheight / widthHeightConstraint));
-			dim[1] = Math.min(vheight, (int) Math.round(dim[0] * widthHeightConstraint));
+			dim[0] = CmnFastMath.min(vwidth, (int) FastMath.round(vheight / widthHeightConstraint));
+			dim[1] = CmnFastMath.min(vheight, (int) FastMath.round(dim[0] * widthHeightConstraint));
 		}
 		return dim;
 	}
@@ -797,19 +798,19 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	public double applyZoom(final double factor) {
-		double real_factor = Math.min(factor, 10 / getZoomLevel());
+		double real_factor = FastMath.min(factor, 10 / getZoomLevel());
 		boolean success = false;
 
 		try {
-			success = resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
-				Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
+			success = resizeImage(FastMath.max(1, (int) FastMath.round(getDisplayWidth() * real_factor)),
+				Math.max(1, (int) FastMath.round(getDisplayHeight() * real_factor)), false);
 		} catch (Exception e) {
 			// System.gc();
 			// scope.getGui().debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
 			real_factor = MAX_ZOOM_FACTOR;
 			try {
-				success = resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
-					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
+				success = resizeImage(FastMath.max(1, (int) FastMath.round(getDisplayWidth() * real_factor)),
+					Math.max(1, (int) FastMath.round(getDisplayHeight() * real_factor)), false);
 			} catch (Exception e1) {
 				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
@@ -826,8 +827,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			// scope.getGui().debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
 			real_factor = MAX_ZOOM_FACTOR;
 			try {
-				success = resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
-					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
+				success = resizeImage(FastMath.max(1, (int) FastMath.round(getDisplayWidth() * real_factor)),
+					Math.max(1, (int) FastMath.round(getDisplayHeight() * real_factor)), false);
 			} catch (Exception e1) {
 				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
@@ -860,8 +861,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if ( r == null ) { return; }
 		double xScale = getWidth() / r.getWidth();
 		double yScale = getHeight() / r.getHeight();
-		double zoomFactor = Math.min(xScale, yScale);
-		Point center = new Point((int) Math.round(r.getCenterX()), (int) Math.round(r.getCenterY()));
+		double zoomFactor = FastMath.min(xScale, yScale);
+		Point center = new Point((int) FastMath.round(r.getCenterX()), (int) FastMath.round(r.getCenterY()));
 
 		zoomFactor = applyZoom(zoomFactor);
 		center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
@@ -872,8 +873,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	public void centerOnViewCoordinates(final Point p) {
 		Point origin = getOrigin();
-		int translationX = p.x - Math.round(getWidth() / (float) 2);
-		int translationY = p.y - Math.round(getHeight() / (float) 2);
+		int translationX = p.x - FastMath.round(getWidth() / (float) 2);
+		int translationY = p.y - FastMath.round(getHeight() / (float) 2);
 		setOrigin(origin.x - translationX, origin.y - translationY);
 
 	}

@@ -2,8 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Traffic2d
 Bundle-SymbolicName: msi.gaml.extensions.traffic2d;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Version: 1.7.0.qualifier
 Require-Bundle: msi.gama.core;bundle-version="1.4.0",
  msi.gama.ext;bundle-version="1.0.0",
  msi.gama.processor;bundle-version="1.4.0"

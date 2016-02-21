@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'CaptureStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.statements;
 
@@ -15,15 +15,8 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -39,34 +32,38 @@ import msi.gaml.types.*;
 	with_sequence = false,
 	remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@facets(value = {
-	@facet(doc = @doc("an expression that is evaluated as an agent or a list of the agent to be captured"),
-		name = IKeyword.TARGET,
-		type = { IType.AGENT, IType.CONTAINER },
-		optional = false),
-	@facet(name = IKeyword.AS,
-		type = IType.SPECIES,
-		optional = true,
-		doc = @doc("the species that the captured agent(s) will become, this is a micro-species of the calling agent's species")),
-	@facet(name = IKeyword.RETURNS,
-		type = IType.NEW_TEMP_ID,
-		optional = true,
-		doc = @doc("a list of the newly captured agent(s)")) },
+@facets(
+	value = {
+		@facet(doc = @doc("an expression that is evaluated as an agent or a list of the agent to be captured"),
+			name = IKeyword.TARGET,
+			type = { IType.AGENT, IType.CONTAINER },
+			of = IType.AGENT,
+			optional = false),
+		@facet(name = IKeyword.AS,
+			type = IType.SPECIES,
+			optional = true,
+			doc = @doc("the species that the captured agent(s) will become, this is a micro-species of the calling agent's species")),
+		@facet(name = IKeyword.RETURNS,
+			type = IType.NEW_TEMP_ID,
+			optional = true,
+			doc = @doc("a list of the newly captured agent(s)")) },
 	omissible = IKeyword.TARGET)
 @doc(value = "Allows an agent to capture other agent(s) as its micro-agent(s).",
 	usages = {
 
-		@usage(value = "The preliminary for an agent A to capture an agent B as its micro-agent is that the A's species must defined a micro-species which is a sub-species of B's species (cf. [Species161#Nesting_species Nesting species]).",
+		@usage(
+			value = "The preliminary for an agent A to capture an agent B as its micro-agent is that the A's species must defined a micro-species which is a sub-species of B's species (cf. [Species161#Nesting_species Nesting species]).",
 			examples = { @example(value = "species A {", isExecutable = false),
 				@example(value = "...", isExecutable = false), @example(value = "}", isExecutable = false),
 				@example(value = "species B {", isExecutable = false), @example(value = "...", isExecutable = false),
 				@example(value = "   species C parent: A {", isExecutable = false),
 				@example(value = "   ...", isExecutable = false), @example(value = "   }", isExecutable = false),
 				@example(value = "...", isExecutable = false), @example(value = "}", isExecutable = false) }),
-		@usage(value = "To capture all \"A\" agents as \"C\" agents, we can ask an \"B\" agent to execute the following statement:",
+		@usage(
+			value = "To capture all \"A\" agents as \"C\" agents, we can ask an \"B\" agent to execute the following statement:",
 			examples = { @example(value = "capture list(B) as: C;", isExecutable = false) }),
-		@usage(value = "Deprecated writing:", examples = { @example(value = "capture target: list (B) as: C;",
-			isExecutable = false) }) },
+		@usage(value = "Deprecated writing:",
+			examples = { @example(value = "capture target: list (B) as: C;", isExecutable = false) }) },
 	see = { "release" })
 @validator(CaptureValidator.class)
 public class CaptureStatement extends AbstractStatementSequence {
@@ -84,8 +81,9 @@ public class CaptureStatement extends AbstractStatementSequence {
 				final SpeciesDescription macroSpecies = cd.getSpeciesContext();
 				final TypeDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 				if ( microSpecies == null ) {
-					cd.error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName +
-						" as micro-species", IGamlIssue.UNKNOWN_SUBSPECIES, AS, microSpeciesName);
+					cd.error(
+						macroSpecies.getName() + " species doesn't contain " + microSpeciesName + " as micro-species",
+						IGamlIssue.UNKNOWN_SUBSPECIES, AS, microSpeciesName);
 				}
 			}
 
@@ -152,14 +150,16 @@ public class CaptureStatement extends AbstractStatementSequence {
 			if ( microSpeciesName != null ) { // micro-species name is specified in the "as" facet.
 				final ISpecies microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 
-				if ( microSpecies == null ) { throw GamaRuntimeException.error(this.name +
-					" can't capture other agents as members of " + microSpeciesName + " population because the " +
-					microSpeciesName + " population is not visible or doesn't exist.", scope); }
+				if ( microSpecies == null ) { throw GamaRuntimeException.error(
+					this.name + " can't capture other agents as members of " + microSpeciesName +
+						" population because the " + microSpeciesName + " population is not visible or doesn't exist.",
+					scope); }
 
 				final IPopulation microPopulation = macroAgent.getPopulationFor(microSpecies);
-				if ( microPopulation == null ) { throw GamaRuntimeException.error(this.name +
-					" can't capture other agents as members of " + microSpeciesName + " population because the " +
-					microSpeciesName + " population is not visible or doesn't exist.", scope); }
+				if ( microPopulation == null ) { throw GamaRuntimeException.error(
+					this.name + " can't capture other agents as members of " + microSpeciesName +
+						" population because the " + microSpeciesName + " population is not visible or doesn't exist.",
+					scope); }
 
 				for ( final IAgent c : microAgents ) {
 					if ( !macroAgent.canCapture(c, microSpecies) ) {
@@ -228,10 +228,13 @@ public class CaptureStatement extends AbstractStatementSequence {
 				raB.append(s);
 			}
 
-			if ( microSpeciesName != null ) { throw GamaRuntimeException.error(macroAgent.getName() +
-				" can't capture " + raStr.toString() + " as " + microSpeciesName + " agent", scope); }
-			throw GamaRuntimeException.error(macroAgent.getName() + " can't capture " + raStr.toString() +
-				" as micro-agents because no appropriate micro-population is found to welcome these agents.", scope);
+			if ( microSpeciesName != null ) { throw GamaRuntimeException.error(
+				macroAgent.getName() + " can't capture " + raStr.toString() + " as " + microSpeciesName + " agent",
+				scope); }
+			throw GamaRuntimeException.error(
+				macroAgent.getName() + " can't capture " + raStr.toString() +
+					" as micro-agents because no appropriate micro-population is found to welcome these agents.",
+				scope);
 		}
 
 		return capturedAgents;

@@ -10,6 +10,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.*;
 
 /**
@@ -50,7 +51,7 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 		final Arguments init, final CreateStatement statement) {
 		IAddressableContainer<Integer, GamaShape, Integer, GamaShape> container =
 			(IAddressableContainer<Integer, GamaShape, Integer, GamaShape>) input;
-		final int num = max == null ? container.length(scope) : Math.min(container.length(scope), max);
+		final int num = max == null ? container.length(scope) : CmnFastMath.min(container.length(scope), max);
 		for ( int i = 0; i < num; i++ ) {
 			final GamaShape g = container.get(scope, i);
 			final Map map = g.getOrCreateAttributes();

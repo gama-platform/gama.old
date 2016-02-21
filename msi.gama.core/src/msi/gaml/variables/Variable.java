@@ -56,18 +56,22 @@ import msi.gaml.types.*;
 			doc = {
 				@doc("The type of the index used to retrieve elements if the type of the attribute is a container type") }),
 		@facet(name = IKeyword.INIT,
+			// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 			type = IType.NONE,
 			optional = true,
 			doc = @doc("The initial value of the attribute")),
 		@facet(name = IKeyword.VALUE,
+			// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 			type = IType.NONE,
 			optional = true,
 			doc = @doc(value = "", deprecated = "Use 'update' instead")),
 		@facet(name = IKeyword.UPDATE,
+			// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 			type = IType.NONE,
 			optional = true,
 			doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
 		@facet(name = IKeyword.FUNCTION,
+			// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 			type = IType.NONE,
 			optional = true,
 			doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
@@ -116,7 +120,7 @@ public class Variable extends Symbol implements IVariable {
 
 			if ( !isParameter ) {
 				// Verifying that the name is not a type
-				IType t = cd.getTypeNamed(name);
+				IType t = cd.getEnclosingDescription().getTypeNamed(name);
 				if ( t != Types.NO_TYPE && !t.isAgentType() ) {
 					cd.error(name + " is a type name. It cannot be used as a variable name", IGamlIssue.IS_A_TYPE, NAME,
 						name);

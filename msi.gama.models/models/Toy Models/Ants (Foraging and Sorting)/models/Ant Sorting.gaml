@@ -37,7 +37,7 @@ species ant skills: [ moving ] control: fsm {
 		do wander amplitude: 120;
 	}
 	state empty initial: true {
-		transition to: full when: (place.color != black) and ( (place.neighbours count (each.color = place.color)) < (rnd(number_of_objects_around))) {
+		transition to: full when: (place.color != black) and ( (place.neighbors count (each.color = place.color)) < (rnd(number_of_objects_around))) {
 			color <- place.color ;
 			place.color <- black ; 
 		}
@@ -62,7 +62,6 @@ species ant skills: [ moving ] control: fsm {
 
 grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbors: 8 use_regular_agents: false frequency: 0{
 	rgb color <- (rnd(100)) < density_percent ? (colors at rnd(number_of_different_colors - 1)) : #black ;
-	list<ant_grid> neighbours <- self neighbors_at 1;    
 }
 
 

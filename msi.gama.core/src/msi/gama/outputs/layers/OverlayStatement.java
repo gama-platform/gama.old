@@ -1,27 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'OverlayStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -32,28 +26,32 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.OVERLAY, kind = ISymbolKind.LAYER, with_sequence = false, unique_in_context = true)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = {
-	@facet(name = IKeyword.LEFT,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("an expression that will be evaluated and displayed in the left section of the overlay")),
-	@facet(name = IKeyword.RIGHT,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("an expression that will be evaluated and displayed in the right section of the overlay")),
-	@facet(name = IKeyword.CENTER,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("an expression that will be evaluated and displayed in the center section of the overlay")),
-	@facet(name = IKeyword.COLOR,
-		type = { IType.LIST, IType.COLOR },
-		optional = true,
-		doc = @doc("the color(s) used to display the expressions given in other facets")) }, omissible = IKeyword.LEFT)
-@doc(value = "`" +
-	IKeyword.OVERLAY +
-	"` allows the modeler to display a line to the already existing overlay, where the results of 'left', 'center' and 'right' facets, when they are defined, are displayed with the corresponding color if defined.",
+@facets(
+	value = {
+		@facet(name = IKeyword.LEFT,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("an expression that will be evaluated and displayed in the left section of the overlay")),
+		@facet(name = IKeyword.RIGHT,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("an expression that will be evaluated and displayed in the right section of the overlay")),
+		@facet(name = IKeyword.CENTER,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("an expression that will be evaluated and displayed in the center section of the overlay")),
+		@facet(name = IKeyword.COLOR,
+			type = { IType.LIST, IType.COLOR },
+			of = IType.COLOR,
+			optional = true,
+			doc = @doc("the color(s) used to display the expressions given in other facets")) },
+	omissible = IKeyword.LEFT)
+@doc(
+	value = "`" + IKeyword.OVERLAY +
+		"` allows the modeler to display a line to the already existing overlay, where the results of 'left', 'center' and 'right' facets, when they are defined, are displayed with the corresponding color if defined.",
 	usages = { @usage(value = "The general syntax is:",
-		examples = { @example(value = "overlay \"Cycle: \" + (cycle) center: \"Duration: \" + total_duration + \"ms\" right: \"Model time: \" + as_date(time,\"\") color: [#yellow, #orange, #yellow];",
+		examples = { @example(
+			value = "overlay \"Cycle: \" + (cycle) center: \"Duration: \" + total_duration + \"ms\" right: \"Model time: \" + as_date(time,\"\") color: [#yellow, #orange, #yellow];",
 			isExecutable = false) }) },
 	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
 		IKeyword.IMAGE, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })

@@ -1,6 +1,7 @@
 package msi.gama.metamodel.agent;
 
 import java.util.Set;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -18,13 +19,18 @@ public class MinimalAgent extends AbstractAgent {
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
 	protected String name;
-	protected IShape geometry;
+	protected final IShape geometry;
 
 	/**
 	 * @param s the population used to prototype the agent.
 	 */
 	public MinimalAgent(final IPopulation s) {
-		population = s;
+		this(s, new GamaShape((Geometry) null));
+	}
+
+	protected MinimalAgent(final IPopulation population, final IShape geometry) {
+		this.population = population;
+		this.geometry = geometry;
 	}
 
 	@Override
@@ -58,8 +64,8 @@ public class MinimalAgent extends AbstractAgent {
 		}
 
 		newLocalGeom.setAgent(this);
-		final IShape previous = geometry;
-		geometry = newLocalGeom;
+		final Envelope previous = geometry.getEnvelope();
+		geometry.setGeometry(newLocalGeom);
 
 		topology.updateAgent(previous, this);
 
@@ -101,8 +107,7 @@ public class MinimalAgent extends AbstractAgent {
 		} else {
 			final ILocation previousPoint = geometry.getLocation();
 			if ( newLocation.equals(previousPoint) ) { return; }
-			final IShape previous =
-				geometry.isPoint() ? previousPoint : new GamaShape(geometry.getInnerGeometry().getEnvelope());
+			final Envelope previous = geometry.getEnvelope();
 			// Envelope previousEnvelope = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
 			// final Integer newHeading = topology.directionInDegreesTo(getScope(), previousPoint, newLocation);
@@ -135,9 +140,6 @@ public class MinimalAgent extends AbstractAgent {
 	public/* synchronized */ILocation getLocation() {
 		if ( geometry == null || geometry.getInnerGeometry() == null ) {
 			IScope scope = this.getScope();
-			if ( scope == null ) {
-				scope = this.getScope();
-			}
 			final ILocation randomLocation = population.getTopology().getRandomLocation(scope);
 			if ( randomLocation == null ) { return null; }
 			setGeometry(GamaGeometryType.createPoint(randomLocation));

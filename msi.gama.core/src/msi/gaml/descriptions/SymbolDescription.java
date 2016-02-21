@@ -551,8 +551,14 @@ public abstract class SymbolDescription implements IDescription {
 						boolean compatible = false;
 						final IType actualType = exp.getType();
 						TypesManager tm = getModelDescription().getTypesManager();
+						IType contentType = tm.get(fp.contentType);
+						IType keyType = tm.get(fp.keyType);
 						for ( final int type : fp.types ) {
-							compatible = compatible || actualType.isTranslatableInto(tm.get(type));
+							IType requestedType = tm.get(type);
+							if ( requestedType.isContainer() ) {
+								requestedType = GamaType.from(requestedType, keyType, contentType);
+							}
+							compatible = compatible || actualType.isTranslatableInto(requestedType);
 							if ( compatible ) {
 								break;
 							}
@@ -560,7 +566,11 @@ public abstract class SymbolDescription implements IDescription {
 						if ( !compatible ) {
 							final String[] strings = new String[fp.types.length];
 							for ( int i = 0; i < fp.types.length; i++ ) {
-								strings[i] = tm.get(fp.types[i]).toString();
+								IType requestedType = tm.get(fp.types[i]);
+								if ( requestedType.isContainer() ) {
+									requestedType = GamaType.from(requestedType, keyType, contentType);
+								}
+								strings[i] = requestedType.toString();
 							}
 
 							warning("Facet '" + facet + "' is expecting " + Arrays.toString(strings) + " instead of " +

@@ -29,6 +29,7 @@ import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.*;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaHelper;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.*;
 import msi.gaml.types.Types;
 
@@ -337,7 +338,7 @@ public class AgentsMenu extends ContributionItem {
 			final int nb = size / subMenuSize + 1;
 			for ( int i = 0; i < nb; i++ ) {
 				final int begin = i * subMenuSize;
-				final int end = Math.min((i + 1) * subMenuSize, size);
+				final int end = CmnFastMath.min((i + 1) * subMenuSize, size);
 				if ( begin >= end ) {
 					break;
 				}

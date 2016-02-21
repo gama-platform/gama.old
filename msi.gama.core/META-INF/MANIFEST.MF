@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Core
+Bundle-Name: Core plugin of GAMA
 Bundle-SymbolicName: msi.gama.core;singleton:=true
-Bundle-Version: 1.6.1.qualifier
+Bundle-Version: 1.7.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  msi.gama.processor;bundle-version="1.4.0",
  org.eclipse.emf.ecore;visibility:=reexport,
@@ -346,6 +346,7 @@ Export-Package: msi.gama.common,
    com.vividsolutions.jts.geom,
    com.vividsolutions.jts.algorithm,
    msi.gama.metamodel.agent",
+ msi.gaml.operators.fastmaths,
  msi.gaml.skills;
   uses:="org.graphstream.stream.file,
    org.graphstream.stream,

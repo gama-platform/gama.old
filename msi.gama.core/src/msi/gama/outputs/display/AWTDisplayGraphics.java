@@ -23,7 +23,8 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
-import msi.gaml.operators.Maths;
+import msi.gaml.operators.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.*;
 
 /**
@@ -111,7 +112,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		IScope scope = surface.getDisplayScope();
 		if ( file instanceof GamaImageFile ) { return drawImage(((GamaImageFile) file).getImage(scope), attributes); }
 		if ( !(file instanceof GamaGeometryFile) ) { return null; }
-		GamaShape shape = (GamaShape) ((GamaGeometryFile) file).getGeometry(scope);
+		IShape shape = Cast.asGeometry(scope, file);
 		if ( shape == null ) { return null; }
 		GamaPair<Double, GamaPoint> rot = attributes.rotation;
 		Double rotation = rot == null ? null : rot.key;
@@ -119,6 +120,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		// shape = shape.translatedTo(scope, attributes.location);
 		// System.out.println("Centroid after translation" + shape.getInnerGeometry().getCentroid());
 		shape = new GamaShape(shape, null, rotation, attributes.location, attributes.size, true);
+		// shape = new GamaShape(shape, null, rotation, attributes.location);
 		// System.out.println("New centroid " + shape.getInnerGeometry().getCentroid());
 		GamaColor c = attributes.color;
 		return drawShape(shape, new ShapeDrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
@@ -146,7 +148,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		if ( attributes.rotation != null && attributes.rotation.key != null ) {
 			renderer.rotate(Maths.toRad * attributes.rotation.key, curX + curWidth / 2, curY + curHeight / 2);
 		}
-		renderer.drawImage(img, (int) Math.round(curX), (int) Math.round(curY), (int) curWidth, (int) curHeight, null);
+		renderer.drawImage(img, (int) FastMath.round(curX), (int) FastMath.round(curY), (int) curWidth, (int) curHeight,
+			null);
 		if ( attributes.border != null ) {
 			drawGridLine(img, attributes.border);
 		}

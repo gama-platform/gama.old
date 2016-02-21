@@ -13,6 +13,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.types.IType;
 
@@ -124,10 +125,10 @@ public class HumanMovingSkill extends MovingSkill {
 		final double x = startingPoint.getX() + slot * epsilon;
 		// OutputManager.debug("x: " + x);
 		double y;
-		y = startingPoint.y + Math.sqrt(dist * dist - (x - startingPoint.x) * (x - startingPoint.x));
+		y = startingPoint.y + FastMath.sqrt(dist * dist - (x - startingPoint.x) * (x - startingPoint.x));
 		if ( sign % 2 == 0 ) {
 			// OutputManager.debug("sign is even ");
-			y = startingPoint.y - Math.sqrt(dist * dist - (x - startingPoint.x) * (x - startingPoint.x));
+			y = startingPoint.y - FastMath.sqrt(dist * dist - (x - startingPoint.x) * (x - startingPoint.x));
 		}
 		// OutputManager.debug("y: " + y);
 		final GamaPoint px = new GamaPoint(x, y);
@@ -198,7 +199,7 @@ public class HumanMovingSkill extends MovingSkill {
 		// double detectingRange = dist;
 		final Vector<GamaPoint> candidatePoint = new Vector<GamaPoint>();
 		final GamaPoint startingPoint = (GamaPoint) agent.getLocation();
-		final double sqrt2 = Math.sqrt(2);
+		final double sqrt2 = FastMath.sqrt(2);
 
 		candidatePoint.add((GamaPoint) agent.getLocation());
 		candidatePoint.add(new GamaPoint(startingPoint.x + dist / sqrt2, startingPoint.y + dist / sqrt2));
@@ -337,7 +338,7 @@ public class HumanMovingSkill extends MovingSkill {
 		GamaPoint nextPoint = null;
 
 		final GamaPoint candidatePoint[] = new GamaPoint[8];
-		final double sqrt2 = Math.sqrt(2);
+		final double sqrt2 = FastMath.sqrt(2);
 
 		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist / sqrt2, startingPoint.y + maxDist / sqrt2);
 		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist / sqrt2, startingPoint.y - maxDist / sqrt2);
@@ -461,7 +462,7 @@ public class HumanMovingSkill extends MovingSkill {
 		GamaPoint nextPoint = null;
 
 		final GamaPoint candidatePoint[] = new GamaPoint[8];
-		final double sqrt2 = Math.sqrt(2);
+		final double sqrt2 = FastMath.sqrt(2);
 
 		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist / sqrt2, startingPoint.y + maxDist / sqrt2);
 		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist / sqrt2, startingPoint.y - maxDist / sqrt2);
@@ -613,7 +614,7 @@ public class HumanMovingSkill extends MovingSkill {
 		GamaPoint nextPoint = null;
 
 		final GamaPoint candidatePoint[] = new GamaPoint[8];
-		final double sqrt2 = Math.sqrt(2);
+		final double sqrt2 = FastMath.sqrt(2);
 
 		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist / sqrt2, startingPoint.y + maxDist / sqrt2);
 		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist / sqrt2, startingPoint.y - maxDist / sqrt2);
@@ -746,7 +747,7 @@ public class HumanMovingSkill extends MovingSkill {
 		GamaPoint nextPoint = null;
 
 		final GamaPoint candidatePoint[] = new GamaPoint[8];
-		final double sqrt2 = Math.sqrt(2);
+		final double sqrt2 = FastMath.sqrt(2);
 
 		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist / sqrt2, startingPoint.y + maxDist / sqrt2);
 		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist / sqrt2, startingPoint.y - maxDist / sqrt2);
@@ -928,7 +929,7 @@ public class HumanMovingSkill extends MovingSkill {
 			if ( passedList.size() > 2 ) {
 				final GamaPoint pp0 = passedList.get(0);
 				final GamaPoint pp2 = passedList.get(1);
-				final double ds = Math.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x - pp2.x));
+				final double ds = FastMath.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x - pp2.x));
 				tmpx = startingPoint.x + maxDist * (pp0.x - pp2.x) / ds;
 				tmpy = startingPoint.y + maxDist * (pp0.y - pp2.y) / ds;
 			}
@@ -977,7 +978,7 @@ public class HumanMovingSkill extends MovingSkill {
 		GamaPoint nextPoint = null;
 
 		final GamaPoint candidatePoint[] = new GamaPoint[8];
-		final double sqrt2 = Math.sqrt(2);
+		final double sqrt2 = FastMath.sqrt(2);
 
 		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist / sqrt2, startingPoint.y + maxDist / sqrt2);
 		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist / sqrt2, startingPoint.y - maxDist / sqrt2);
@@ -1048,7 +1049,7 @@ public class HumanMovingSkill extends MovingSkill {
 			 * if(passedList.size()>4){
 			 * GamaPoint pp0 = passedList.get(0);
 			 * GamaPoint pp2 = passedList.get(3);
-			 * double ds = Math.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x -
+			 * double ds = FastMath.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x -
 			 * pp2.x));
 			 * tmpx = startingPoint.x + maxDist*(pp0.x - pp2.x)/ds;
 			 * tmpy = startingPoint.y + maxDist*(pp0.y - pp2.y)/ds;
@@ -1253,7 +1254,7 @@ public class HumanMovingSkill extends MovingSkill {
 		GamaPoint nextPoint = null;
 
 		final GamaPoint candidatePoint[] = new GamaPoint[8];
-		final double sqrt2 = Math.sqrt(2);
+		final double sqrt2 = FastMath.sqrt(2);
 
 		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist / sqrt2, startingPoint.y + maxDist / sqrt2);
 		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist / sqrt2, startingPoint.y - maxDist / sqrt2);
@@ -1347,7 +1348,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 * if(passedList.size()>4){
 		 * GamaPoint pp0 = passedList.get(0);
 		 * GamaPoint pp2 = passedList.get(3);
-		 * double ds = Math.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x -
+		 * double ds = FastMath.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x -
 		 * pp2.x));
 		 * tmpx = startingPoint.x + maxDist*(pp0.x - pp2.x)/ds;
 		 * tmpy = startingPoint.y + maxDist*(pp0.y - pp2.y)/ds;
@@ -1583,9 +1584,9 @@ public class HumanMovingSkill extends MovingSkill {
 
 		for ( double x = startingPoint.x - maxDist; x <= startingPoint.x + maxDist; x = x + epsilon ) {
 			final double y1 =
-				startingPoint.y - Math.sqrt(maxDist * maxDist - (x - startingPoint.x) * (x - startingPoint.x));
+				startingPoint.y - FastMath.sqrt(maxDist * maxDist - (x - startingPoint.x) * (x - startingPoint.x));
 			final double y2 =
-				startingPoint.y + Math.sqrt(maxDist * maxDist - (x - startingPoint.x) * (x - startingPoint.x));
+				startingPoint.y + FastMath.sqrt(maxDist * maxDist - (x - startingPoint.x) * (x - startingPoint.x));
 
 			GamaPoint px = new GamaPoint(x, y1);
 			Geometry point = GeometryUtils.FACTORY.createPoint(px.toCoordinate()).buffer(agentSize);
@@ -1813,7 +1814,7 @@ public class HumanMovingSkill extends MovingSkill {
 		double tmpy = startingPoint.y + maxDist * (targetPoint.y - startingPoint.y) / distanceToTarget; // sin(alpha)
 		candidatePoint[0] = new GamaPoint(tmpx, tmpy);
 
-		final double sqrt2 = Math.sqrt(2);
+		final double sqrt2 = FastMath.sqrt(2);
 
 		candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist / sqrt2, startingPoint.y + maxDist / sqrt2);
 		candidatePoint[8] = new GamaPoint(startingPoint.x - maxDist / sqrt2, startingPoint.y - maxDist / sqrt2);
@@ -1848,7 +1849,7 @@ public class HumanMovingSkill extends MovingSkill {
 			if ( passedList.size() > 3 ) {
 				final GamaPoint pp0 = passedList.get(0);
 				final GamaPoint pp2 = passedList.get(3);
-				final double ds = Math.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x - pp2.x));
+				final double ds = FastMath.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x - pp2.x));
 				tmpx = startingPoint.x + maxDist * (pp0.x - pp2.x) / ds;
 				tmpy = startingPoint.y + maxDist * (pp0.y - pp2.y) / ds;
 				candidatePoint[0] = new GamaPoint(tmpx, tmpy);
@@ -1956,10 +1957,10 @@ public class HumanMovingSkill extends MovingSkill {
 		 * epsilon ) {
 		 * double y1 =
 		 * startingPoint.y -
-		 * Math.sqrt(maxDist * maxDist - (x - startingPoint.x) * (x - startingPoint.x));
+		 * FastMath.sqrt(maxDist * maxDist - (x - startingPoint.x) * (x - startingPoint.x));
 		 * double y2 =
 		 * startingPoint.y +
-		 * Math.sqrt(maxDist * maxDist - (x - startingPoint.x) * (x - startingPoint.x));
+		 * FastMath.sqrt(maxDist * maxDist - (x - startingPoint.x) * (x - startingPoint.x));
 		 *
 		 * GamaPoint px = new GamaPoint(x, y1);
 		 * boolean isPassedPoint = false;
@@ -2133,11 +2134,11 @@ public class HumanMovingSkill extends MovingSkill {
 		final GamaPoint candidatePoint[] = new GamaPoint[9];
 		final double distanceToTarget =
 			Math.sqrt((targetPoint.y - startingPoint.y) * (targetPoint.y - startingPoint.y) +
-				(targetPoint.x - startingPoint.x) * (targetPoint.x - startingPoint.x));// Math.sqrt(Math.pow((targetPoint.y
+				(targetPoint.x - startingPoint.x) * (targetPoint.x - startingPoint.x));// FastMath.sqrt(FastMath.pow((targetPoint.y
 																						// -
 																						// startingPoint.y),
 																						// 2) +
-																						// Math.pow((targetPoint.x
+																						// FastMath.pow((targetPoint.x
 																						// -
 																						// startingPoint.x),
 																						// 2));
@@ -2146,7 +2147,7 @@ public class HumanMovingSkill extends MovingSkill {
 		final double tmpy = startingPoint.y + maxDist * (targetPoint.y - startingPoint.y) / distanceToTarget;
 		candidatePoint[0] = new GamaPoint(tmpx, tmpy);
 
-		final double sqrt2 = Math.sqrt(2);
+		final double sqrt2 = FastMath.sqrt(2);
 
 		candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist / sqrt2, startingPoint.y + maxDist / sqrt2);
 		candidatePoint[8] = new GamaPoint(startingPoint.x - maxDist / sqrt2, startingPoint.y - maxDist / sqrt2);
@@ -2220,11 +2221,11 @@ public class HumanMovingSkill extends MovingSkill {
 					 * detectingRange, Different.with());
 					 * neighbours.remove(backgroundAgent);
 					 * candidatePoint = new GamaPoint[9];
-					 * distanceToTarget = Math.sqrt((targetPoint.y - startingPoint.y) *
+					 * distanceToTarget = FastMath.sqrt((targetPoint.y - startingPoint.y) *
 					 * (targetPoint.y - startingPoint.y) +
 					 * (targetPoint.x - startingPoint.x) * (targetPoint.x -
-					 * startingPoint.x));//Math.sqrt(Math.pow((targetPoint.y - startingPoint.y), 2)
-					 * + Math.pow((targetPoint.x - startingPoint.x), 2));
+					 * startingPoint.x));//Math.sqrt(FastMath.pow((targetPoint.y - startingPoint.y), 2)
+					 * + FastMath.pow((targetPoint.x - startingPoint.x), 2));
 					 *
 					 * tmpx = startingPoint.x + maxDist*(targetPoint.x -
 					 * startingPoint.x)/distanceToTarget;
@@ -2232,7 +2233,7 @@ public class HumanMovingSkill extends MovingSkill {
 					 * startingPoint.y)/distanceToTarget;
 					 * candidatePoint[0] = new GamaPoint(tmpx,tmpy);
 					 *
-					 * sqrt2 = Math.sqrt(2);
+					 * sqrt2 = FastMath.sqrt(2);
 					 *
 					 * candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2,
 					 * startingPoint.y + maxDist/sqrt2);
@@ -2254,7 +2255,7 @@ public class HumanMovingSkill extends MovingSkill {
 					/*
 					 * GamaPoint pp0 = passedList.get(0);
 					 * GamaPoint pp2 = passedList.get(3);
-					 * double ds = Math.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) *
+					 * double ds = FastMath.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) *
 					 * (pp0.x - pp2.x));
 					 * tmpx = startingPoint.x + maxDist*(targetPoint.x -
 					 * startingPoint.x)/distanceToTarget;
@@ -2351,7 +2352,7 @@ public class HumanMovingSkill extends MovingSkill {
 	// outside.x = D.x;
 	// outside.y = D.y;
 	// }
-	// isContinue = Math.abs(dd - r * r) > epsilon * epsilon;
+	// isContinue = FastMath.abs(dd - r * r) > epsilon * epsilon;
 	// } while (isContinue);
 	// return D;
 	// }

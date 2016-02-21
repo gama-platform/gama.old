@@ -1,21 +1,22 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GLUtilLight.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.utils;
 
 import java.awt.Color;
-import msi.gama.metamodel.shape.GamaPoint;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gaml.operators.fastmaths.*;
 
 public class GLUtilLight {
 
@@ -25,7 +26,7 @@ public class GLUtilLight {
 	public static final int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL2.GL_LINEAR };
 
 	/**
-	 * 
+	 *
 	 * @param gl
 	 * @param r red
 	 * @param g green
@@ -39,7 +40,7 @@ public class GLUtilLight {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param gl
 	 * @param colors
 	 * @param position
@@ -168,7 +169,7 @@ public class GLUtilLight {
 	}// end of create Diffuse Light
 
 	/**
-	 * 
+	 *
 	 * @param gl
 	 * @param isSoft if is false then surfaces wont flash
 	 * @param alfa - determines black-white-shade color of light R=G=B=alfa
@@ -190,7 +191,7 @@ public class GLUtilLight {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param gl
 	 * @param disp_color dispersion color
 	 * @param flash_color
@@ -484,25 +485,23 @@ public class GLUtilLight {
 	}
 
 	public static void setAmbiantLight(final GL2 gl, final Color ambientLightValue) {
-		float[] lightAmbientValue =
-			{ ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
-				ambientLightValue.getBlue() / 255.0f, 1.0f };
+		float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
+			ambientLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
 	public static void setDiffuseLight(final GL2 gl, final Color ambientLightValue, final GamaPoint pos) {
 		// Diffuse light 0
-		float[] light1DiffuseValue =
-			{ ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
-				ambientLightValue.getBlue() / 255.0f, 1.0f };
+		float[] light1DiffuseValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
+			ambientLightValue.getBlue() / 255.0f, 1.0f };
 		// Diffuse light location xyz (directed light)
 		float light1Position[] = { (float) pos.getX(), (float) pos.getY(), (float) pos.getZ() };
 		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_DIFFUSE, light1DiffuseValue, 0);
 		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_POSITION, light1Position, 0);
 	}
 
-	public static void DrawDiffuseLight0(final float[] light0Position, final GL2 gl, final GLU glu,
-		final double radius, final Color diffuseLightValue) {
+	public static void DrawDiffuseLight0(final float[] light0Position, final GL2 gl, final GLU glu, final double radius,
+		final Color diffuseLightValue) {
 		gl.glTranslatef(light0Position[0], light0Position[1], light0Position[2]);
 		gl.glColor3d(diffuseLightValue.getRed() / 255.0, diffuseLightValue.getGreen() / 255.0,
 			diffuseLightValue.getBlue() / 255.0);
@@ -545,16 +544,14 @@ public class GLUtilLight {
 		final Color ambientLightValue, final Color diffuseLightValue) {
 
 		// ambient
-		float[] lightAmbientValue =
-			{ ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
-				ambientLightValue.getBlue() / 255.0f, 1.0f };
+		float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
+			ambientLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 
 		// Diffuse
-		float[] lightDiffuseValue =
-			{ diffuseLightValue.getRed() / 255.0f, diffuseLightValue.getGreen() / 255.0f,
-				diffuseLightValue.getBlue() / 255.0f, 1.0f };
+		float[] lightDiffuseValue = { diffuseLightValue.getRed() / 255.0f, diffuseLightValue.getGreen() / 255.0f,
+			diffuseLightValue.getBlue() / 255.0f, 1.0f };
 
 		boolean use2light = false;
 		// use Two lights
@@ -607,17 +604,15 @@ public class GLUtilLight {
 
 	public static void UpdateAmbiantLightValue(final GL2 gl, final GLU glu, final Color ambiantLightValue) {
 
-		float[] lightAmbientValue =
-			{ ambiantLightValue.getRed() / 255.0f, ambiantLightValue.getGreen() / 255.0f,
-				ambiantLightValue.getBlue() / 255.0f, 1.0f };
+		float[] lightAmbientValue = { ambiantLightValue.getRed() / 255.0f, ambiantLightValue.getGreen() / 255.0f,
+			ambiantLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
 	public static void UpdateDiffuseLightValue(final GL2 gl, final GLU glu, final Color diffuseLightValue) {
-		float[] lightDiffuseValue =
-			{ diffuseLightValue.getRed() / 255.0f, diffuseLightValue.getGreen() / 255.0f,
-				diffuseLightValue.getBlue() / 255.0f, 1.0f };
+		float[] lightDiffuseValue = { diffuseLightValue.getRed() / 255.0f, diffuseLightValue.getGreen() / 255.0f,
+			diffuseLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_DIFFUSE, lightDiffuseValue, 0);
 		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_DIFFUSE, lightDiffuseValue, 0);
 
@@ -689,9 +684,9 @@ public class GLUtilLight {
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_TRIANGLE_FAN);
 		gl.glVertex3d(0, 0, 0);
-		double angle = 2 * Math.PI / n_vertexs;
+		double angle = 2 * CmnFastMath.PI / n_vertexs;
 		for ( int i = 0; i < n_vertexs; i++ ) {
-			gl.glVertex3d(size * Math.cos(i * angle), size * Math.sin(angle * i), 0);
+			gl.glVertex3d(size * FastMath.cos(i * angle), size * FastMath.sin(angle * i), 0);
 		}
 		gl.glVertex3d(size, 0, 0);
 		gl.glEnd();
@@ -706,9 +701,9 @@ public class GLUtilLight {
 		gl.glBegin(GL.GL_LINE_LOOP);
 		gl.glNormal3d(0, 0, 1);
 
-		double angle = 2 * Math.PI / n_vertexs;
+		double angle = 2 * CmnFastMath.PI / n_vertexs;
 		for ( int i = 0; i < n_vertexs; i++ ) {
-			gl.glVertex3d(size * Math.cos(i * angle), size * Math.sin(angle * i), 0);
+			gl.glVertex3d(size * FastMath.cos(i * angle), size * FastMath.sin(angle * i), 0);
 		}
 
 		gl.glEnd();

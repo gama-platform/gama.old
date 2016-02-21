@@ -12,8 +12,9 @@
 package msi.gama.metamodel.shape;
 
 import java.util.*;
-import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
+import msi.gaml.operators.fastmaths.FastMath;
+import msi.gaml.types.GamaGeometryType;
 
 // import org.opengis.geometry.MismatchedDimensionException;
 
@@ -219,7 +220,7 @@ public class Envelope3D extends Envelope {
 	@Override
 	public double minExtent() {
 		if ( isNull() ) { return 0.0; }
-		return Math.min(getWidth(), Math.min(getHeight(), getDepth()));
+		return FastMath.min(getWidth(), FastMath.min(getHeight(), getDepth()));
 	}
 
 	/**
@@ -230,7 +231,7 @@ public class Envelope3D extends Envelope {
 	@Override
 	public double maxExtent() {
 		if ( isNull() ) { return 0.0; }
-		return Math.max(getWidth(), Math.max(getHeight(), getDepth()));
+		return FastMath.max(getWidth(), FastMath.max(getHeight(), getDepth()));
 	}
 
 	/**
@@ -466,7 +467,7 @@ public class Envelope3D extends Envelope {
 		if ( dx == 0.0 && dz == 0.0 ) { return dy; }
 		if ( dy == 0.0 && dz == 0.0 ) { return dx; }
 		if ( dx == 0.0 && dy == 0.0 ) { return dz; }
-		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+		return FastMath.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
 	// ---------------------------------------------------------------------------------------------------------------
@@ -636,7 +637,8 @@ public class Envelope3D extends Envelope {
 		if ( !(other instanceof Envelope3D) ) { return false; }
 		Envelope3D otherEnvelope = (Envelope3D) other;
 		if ( isNull() ) { return otherEnvelope.isNull(); }
-		if ( super.equals(other) && minz == otherEnvelope.getMinZ() && maxz == otherEnvelope.getMaxZ() ) { return true; }
+		if ( super.equals(other) && minz == otherEnvelope.getMinZ() &&
+			maxz == otherEnvelope.getMaxZ() ) { return true; }
 		return false;
 	}
 
@@ -645,7 +647,8 @@ public class Envelope3D extends Envelope {
 	}
 
 	public Geometry toGeometry() {
-		if ( isFlat() ) { return GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre()).getInnerGeometry(); }
+		if ( isFlat() ) { return GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre())
+			.getInnerGeometry(); }
 		return GamaGeometryType.buildBox(getWidth(), getHeight(), getDepth(), centre()).getInnerGeometry();
 
 		// return GeometryUtils.FACTORY.createPolygon(

@@ -20,6 +20,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -723,7 +724,8 @@ public class SpeciesDescription extends TypeDescription {
 	 */
 	public void finalizeDescription() {
 		if ( isMirror() ) {
-			addChild(DescriptionFactory.create(AGENT, this, NAME, TARGET));
+			addChild(
+				DescriptionFactory.create(AGENT, this, NAME, TARGET, TYPE, String.valueOf(ITypeProvider.MIRROR_TYPE)));
 			// The type of the expression is provided later, in validateChildren();
 		}
 
@@ -810,24 +812,6 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	protected void validateChildren() {
-		IExpression mirrors = getFacets().getExpr(MIRRORS);
-		if ( mirrors != null ) {
-			// We try to change the type of the 'target' variable if the expression contains only agents from the
-			// same species
-			IType t = mirrors.getType().getContentType();
-			if ( t.isAgentType() && t.id() != IType.AGENT ) {
-				VariableDescription v = getVariable(TARGET);
-				if ( v != null ) {
-					// In case, but should not be null
-					v.setType(t);
-					info("The 'target' variable will be of type " + t.getSpeciesName(), IGamlIssue.GENERAL, MIRRORS);
-				}
-			} else {
-				info("No common species detected in 'mirrors'. The 'target' variable will be of generic type 'agent'",
-					IGamlIssue.WRONG_TYPE, MIRRORS);
-			}
-		}
-
 		// We try to issue information about the state of the species: at first, abstract.
 
 		for ( final StatementDescription a : getActions() ) {

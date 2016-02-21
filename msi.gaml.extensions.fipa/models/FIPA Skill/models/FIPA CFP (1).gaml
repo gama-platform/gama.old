@@ -18,7 +18,7 @@ global {
 	}
 }
 
-species initiator skills: [communicating] {
+species initiator skills: [fipa] { 
 	
 	reflex send_cfp_to_participants when: (time = 1) {
 		//list<participant> participants <- list(participant);
@@ -36,18 +36,18 @@ species initiator skills: [communicating] {
 	}
 }
 
-species participant skills: [communicating] {
+species participant skills: [fipa] {
 	
 	reflex receive_cfp_from_initiator when: !empty(cfps) {
 		
 		message proposalFromInitiator <- cfps[0];
 		write '(Time ' + time + '): ' + name + ' receives a cfp message from ' + proposalFromInitiator.sender.name + ' and replies with a refuse message';
-		do refuse with: [ message :: proposalFromInitiator, content :: ['I am busy today'] ];
+		do refuse (message :: proposalFromInitiator, content :: ['I am busy today'] );
 		
 	}
 }
 
-experiment test type: gui {
+experiment test type: gui { 
 	output {
 		
 	}

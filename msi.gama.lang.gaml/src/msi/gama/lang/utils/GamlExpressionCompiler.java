@@ -324,6 +324,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	private boolean isSpeciesName(final String s) {
 		ModelDescription m = getContext().getModelDescription();
+		if ( m == null ) {
+			// can occur when building the kernel
+			return false;
+		}
 		SpeciesDescription sd = m.getSpeciesDescription(s);
 		return sd != null && !(sd instanceof ExperimentDescription);
 	}

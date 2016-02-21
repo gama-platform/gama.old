@@ -1,19 +1,20 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GLUtilNormal.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gama.opengl.utils;
 
 import java.awt.Color;
-import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.*;
+import msi.gaml.operators.fastmaths.FastMath;
+import ummisco.gama.opengl.JOGLRenderer;
 
 public class GLUtilNormal {
 
@@ -50,7 +51,7 @@ public class GLUtilNormal {
 		for ( int i = 0; i < 3; i++ ) {
 			total += normal[i] * normal[i];
 		}
-		double length = Math.sqrt(total);
+		double length = FastMath.sqrt(total);
 
 		for ( int i = 0; i < 3; i++ ) {
 			normal[i] /= length;
@@ -117,14 +118,12 @@ public class GLUtilNormal {
 			gl.glEnd();
 
 			if ( c != null ) {
-				gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() /
-					255.0);
+				gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0,
+					alpha * c.getAlpha() / 255.0);
 			}
 
 		}
 
 	}
-	
-	
-	
+
 }

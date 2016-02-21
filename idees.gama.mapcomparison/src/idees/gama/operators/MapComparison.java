@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MapComparison.java', in plugin 'idees.gama.mapcomparison', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package idees.gama.operators;
 
@@ -15,14 +15,13 @@ import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.filter.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.operators.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 //
@@ -33,26 +32,28 @@ import msi.gaml.types.*;
 public class MapComparison {
 
 	@operator(value = { "kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
-	@doc(value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20.",
+	@doc(
+		value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20.",
 		examples = {
 			@example(value = "kappa([cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2],[cat1,cat2,cat3])",
 				isExecutable = false),
 			@example(value = "kappa([1,3,5,1,5],[1,1,1,1,5],[1,3,5])",
 				equals = "the similarity between 0 and 1",
-				test = false), @example(value = "kappa([1,1,1,1,5],[1,1,1,1,5],[1,3,5])", equals = "1.0") })
-	public static
-		double kappa(final IScope scope, final IList<Object> vals1, final IList<Object> vals2,
-			final List<Object> categories) {
+				test = false),
+			@example(value = "kappa([1,1,1,1,5],[1,1,1,1,5],[1,3,5])", equals = "1.0") })
+	public static double kappa(final IScope scope, final IList<Object> vals1, final IList<Object> vals2,
+		final List<Object> categories) {
 		return kappa(scope, vals1, vals2, categories, null);
 	}
 
 	@operator(value = { "kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
-	@doc(value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories, weights). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20. ",
-		examples = { @example(value = "kappa([cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2],[cat1,cat2,cat3], [1.0, 2.0, 3.0, 1.0, 5.0])",
+	@doc(
+		value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories, weights). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20. ",
+		examples = { @example(
+			value = "kappa([cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2],[cat1,cat2,cat3], [1.0, 2.0, 3.0, 1.0, 5.0])",
 			isExecutable = false) })
-	public static
-		double kappa(final IScope scope, final IList<Object> vals1, final IList<Object> vals2,
-			final List<Object> categories, final IList<Object> weights) {
+	public static double kappa(final IScope scope, final IList<Object> vals1, final IList<Object> vals2,
+		final List<Object> categories, final IList<Object> weights) {
 		if ( vals1 == null || vals2 == null ) { return 1; }
 		int nb = vals1.size();
 		if ( nb != vals2.size() ) { return 0; }
@@ -102,22 +103,24 @@ public class MapComparison {
 	}
 
 	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
-	@doc(value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8).",
-		examples = { @example(value = "kappa([cat1,cat1,cat2,cat2,cat2],[cat2,cat1,cat2,cat1,cat3],[cat2,cat1,cat2,cat3,cat3], [cat1,cat2,cat3])",
+	@doc(
+		value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8).",
+		examples = { @example(
+			value = "kappa([cat1,cat1,cat2,cat2,cat2],[cat2,cat1,cat2,cat1,cat3],[cat2,cat1,cat2,cat3,cat3], [cat1,cat2,cat3])",
 			isExecutable = false) })
-	public static
-		double kappaSimulation(final IScope scope, final IList<Object> valsInit, final IList<Object> valsObs,
-			final IList<Object> valsSim, final List<Object> categories) {
+	public static double kappaSimulation(final IScope scope, final IList<Object> valsInit, final IList<Object> valsObs,
+		final IList<Object> valsSim, final List<Object> categories) {
 		return kappaSimulation(scope, valsInit, valsObs, valsSim, categories, null);
 	}
 
 	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
-	@doc(value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories, weights). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8)",
-		examples = { @example(value = "kappa([cat1,cat1,cat2,cat2,cat2],[cat2,cat1,cat2,cat1,cat3],[cat2,cat1,cat2,cat3,cat3], [cat1,cat2,cat3],[1.0, 2.0, 3.0, 1.0, 5.0])",
+	@doc(
+		value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories, weights). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8)",
+		examples = { @example(
+			value = "kappa([cat1,cat1,cat2,cat2,cat2],[cat2,cat1,cat2,cat1,cat3],[cat2,cat1,cat2,cat3,cat3], [cat1,cat2,cat3],[1.0, 2.0, 3.0, 1.0, 5.0])",
 			isExecutable = false) })
-	public static
-		double kappaSimulation(final IScope scope, final IList<Object> valsInit, final IList<Object> valsObs,
-			final IList<Object> valsSim, final List<Object> categories, final IList<Object> weights) {
+	public static double kappaSimulation(final IScope scope, final IList<Object> valsInit, final IList<Object> valsObs,
+		final IList<Object> valsSim, final List<Object> categories, final IList<Object> weights) {
 		if ( valsInit == null || valsObs == null || valsSim == null ) { return 1; }
 		int nb = valsInit.size();
 		if ( nb != valsObs.size() || nb != valsSim.size() ) { return 0; }
@@ -178,25 +181,28 @@ public class MapComparison {
 	}
 
 	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
-	@doc(value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21",
-		examples = { @example(value = "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2)",
+	@doc(
+		value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21",
+		examples = { @example(
+			value = "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2)",
 			isExecutable = false) })
-	public static
-		double fuzzyKappa(final IScope scope, final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents,
-			final IList<Object> vals1, final IList<Object> vals2, final IList<Double> similarities,
-			final List<Object> categories, final GamaMatrix<Double> fuzzycategories, final Double distance) {
+	public static double fuzzyKappa(final IScope scope,
+		final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> vals1,
+		final IList<Object> vals2, final IList<Double> similarities, final List<Object> categories,
+		final GamaMatrix<Double> fuzzycategories, final Double distance) {
 		return fuzzyKappa(scope, agents, vals1, vals2, similarities, categories, fuzzycategories, distance, null);
 	}
 
 	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
-	@doc(value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance, weights). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21",
-		examples = { @example(value = "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2, [1.0,3.0,2.0,2.0,4.0])",
+	@doc(
+		value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance, weights). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21",
+		examples = { @example(
+			value = "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2, [1.0,3.0,2.0,2.0,4.0])",
 			isExecutable = false) })
-	public static
-		double fuzzyKappa(final IScope scope, final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents,
-			final IList<Object> vals1, final IList<Object> vals2, final IList<Double> similarities,
-			final List<Object> categories, final GamaMatrix<Double> fuzzycategories, final Double distance,
-			final IList<Object> weights) {
+	public static double fuzzyKappa(final IScope scope,
+		final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> vals1,
+		final IList<Object> vals2, final IList<Double> similarities, final List<Object> categories,
+		final GamaMatrix<Double> fuzzycategories, final Double distance, final IList<Object> weights) {
 		if ( agents == null ) { return 1; }
 		int nb = agents.length(scope);
 		if ( nb < 1 ) { return 1; }
@@ -217,9 +223,8 @@ public class MapComparison {
 
 		computeXYCrispVector(scope, categoriesId, categories, vals1, vals2, fuzzycategories, nbCat, nb, crispVector1,
 			crispVector2, X, Y, sim, weights);
-		double meanSimilarity =
-			computeSimilarity(scope, filter, distance, vals1, vals2, agents, nbCat, nb, crispVector1, crispVector2,
-				sim, fuzzyVector1, fuzzyVector2, similarities, weights);
+		double meanSimilarity = computeSimilarity(scope, filter, distance, vals1, vals2, agents, nbCat, nb,
+			crispVector1, crispVector2, sim, fuzzyVector1, fuzzyVector2, similarities, weights);
 
 		List<Double> rings = new ArrayList<Double>();
 		Map<Double, Integer> ringsPn = new TOrderedHashMap<Double, Integer>();
@@ -232,14 +237,15 @@ public class MapComparison {
 	@operator(value = { "fuzzy_kappa_sim" },
 		content_type = IType.FLOAT,
 		category = { IOperatorCategory.MAP_COMPARAISON })
-	@doc(value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ",
-		examples = { @example(value = "fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2)",
+	@doc(
+		value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ",
+		examples = { @example(
+			value = "fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2)",
 			isExecutable = false) })
-	public static
-		double fuzzyKappaSimulation(final IScope scope,
-			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> valsInit,
-			final IList<Object> valsObs, final IList<Object> valsSim, final IList<Double> similarities,
-			final List<Object> categories, final GamaMatrix<Double> fuzzytransitions, final Double distance) {
+	public static double fuzzyKappaSimulation(final IScope scope,
+		final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> valsInit,
+		final IList<Object> valsObs, final IList<Object> valsSim, final IList<Double> similarities,
+		final List<Object> categories, final GamaMatrix<Double> fuzzytransitions, final Double distance) {
 		return fuzzyKappaSimulation(scope, agents, valsInit, valsObs, valsSim, similarities, categories,
 			fuzzytransitions, distance, null);
 
@@ -248,15 +254,16 @@ public class MapComparison {
 	@operator(value = { "fuzzy_kappa_sim" },
 		content_type = IType.FLOAT,
 		category = { IOperatorCategory.MAP_COMPARAISON })
-	@doc(value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance, weights). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ",
-		examples = { @example(value = "fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2,[1.0,3.0,2.0,2.0,4.0])",
+	@doc(
+		value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance, weights). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ",
+		examples = { @example(
+			value = "fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2,[1.0,3.0,2.0,2.0,4.0])",
 			isExecutable = false) })
-	public static
-		double fuzzyKappaSimulation(final IScope scope,
-			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> valsInit,
-			final IList<Object> valsObs, final IList<Object> valsSim, final IList<Double> similarities,
-			final List<Object> categories, final GamaMatrix<Double> fuzzytransitions, final Double distance,
-			final IList<Object> weights) {
+	public static double fuzzyKappaSimulation(final IScope scope,
+		final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> valsInit,
+		final IList<Object> valsObs, final IList<Object> valsSim, final IList<Double> similarities,
+		final List<Object> categories, final GamaMatrix<Double> fuzzytransitions, final Double distance,
+		final IList<Object> weights) {
 		if ( agents == null ) { return 1; }
 		int nb = agents.length(scope);
 		if ( nb < 1 ) { return 1; }
@@ -302,9 +309,8 @@ public class MapComparison {
 			nbInitObs[idCatInit][idCatObs] += weight;
 			nbInitSim[idCatInit][idCatSim] += weight;
 		}
-		double po =
-			computePo(scope, filter, categoriesId, fuzzytransitions, distance, valsInit, valsObs, valsSim, agents,
-				nbCat, nb, similarities, weights);
+		double po = computePo(scope, filter, categoriesId, fuzzytransitions, distance, valsInit, valsObs, valsSim,
+			agents, nbCat, nb, similarities, weights);
 		double pe = 0;
 		computeXaXsTransitions(scope, filter, fuzzytransitions, distance, agents, nbCat, XaPerTransition,
 			XsPerTransition, Xvals);
@@ -352,10 +358,9 @@ public class MapComparison {
 			int valSimId = categoriesId.get(valSim);
 			int valInitId = categoriesId.get(valInit);
 			IAgent agent = agents.get(scope, i);
-			double[] XaXs =
-				computeXaXs(scope, filter, categoriesId, agsId, valObsId, valSimId, valInitId, fuzzytransitions,
-					distance, agent, valsInit, valsObs, valsSim, agents, nbCat);
-			similarities.add(Math.min(XaXs[0], XaXs[1]));
+			double[] XaXs = computeXaXs(scope, filter, categoriesId, agsId, valObsId, valSimId, valInitId,
+				fuzzytransitions, distance, agent, valsInit, valsObs, valsSim, agents, nbCat);
+			similarities.add(FastMath.min(XaXs[0], XaXs[1]));
 		}
 		double meanSimilarity = 0;
 		double total = 0;
@@ -377,10 +382,9 @@ public class MapComparison {
 		double xa = 0.0;
 		double xs = 0.0;
 		double[] XaXs = new double[2];
-		double sizeNorm = Math.sqrt(agent.getEnvelope().getArea());
-		List<IAgent> neighbours =
-			distance == 0 || filter == null ? new ArrayList<IAgent>() : new ArrayList<IAgent>(scope.getTopology()
-				.getNeighboursOf(scope, agent, distance, filter));
+		double sizeNorm = FastMath.sqrt(agent.getEnvelope().getArea());
+		List<IAgent> neighbours = distance == 0 || filter == null ? new ArrayList<IAgent>()
+			: new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, agent, distance, filter));
 
 		Map<IAgent, Double> distancesCoeff = new TOrderedHashMap<IAgent, Double>();
 		distancesCoeff.put(agent, 1.0);
@@ -432,10 +436,9 @@ public class MapComparison {
 		ILocation centralLoc = (ILocation) Stats.getMean(scope, locs);
 		if ( filter != null ) {
 			IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
-			List<IAgent> neighbours =
-				distance == 0 ? new ArrayList<IAgent>() : new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(
-					scope, centralAg, distance, filter));
-			double sizeNorm = Math.sqrt(centralAg.getEnvelope().getArea());
+			List<IAgent> neighbours = distance == 0 ? new ArrayList<IAgent>()
+				: new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, centralAg, distance, filter));
+			double sizeNorm = FastMath.sqrt(centralAg.getEnvelope().getArea());
 
 			Map<IAgent, Double> distancesCoeff = new TOrderedHashMap<IAgent, Double>();
 			distancesCoeff.put(centralAg, 1.0);
@@ -509,7 +512,7 @@ public class MapComparison {
 		if ( dist > 0.0 ) {
 			n = ringsPn.get(dist);
 		}
-		return (1 - Math.pow(1 - X[a], n)) * (1 - Math.pow(1 - Y[b], n));
+		return (1 - FastMath.pow(1 - X[a], n)) * (1 - FastMath.pow(1 - Y[b], n));
 	}
 
 	private static double computeExpectedSim(final int nbCat, final double[] X, final double[] Y, final int nbRings,
@@ -523,7 +526,7 @@ public class MapComparison {
 		for ( int p = 0; p < nbRings; p++ ) {
 			double dist1 = dist;
 			dist = rings.get(p);
-			double Mdi = Math.pow(2, dist / -2);
+			double Mdi = FastMath.pow(2, dist / -2);
 			double Ei = 0;
 			for ( int a = 0; a < nbCat; a++ ) {
 				double Ya = Y[a];
@@ -555,10 +558,9 @@ public class MapComparison {
 			} else {
 				IAgent agent = agents.get(scope, i);
 				// double sizeNorm = agent.getPerimeter() / 4.0;
-				double sizeNorm = Math.sqrt(agent.getEnvelope().getArea());
-				List<IAgent> neighbours =
-					distance == 0 || filter == null ? new ArrayList<IAgent>() : new ArrayList<IAgent>(scope
-						.getTopology().getNeighboursOf(scope, agent, distance, filter));
+				double sizeNorm = FastMath.sqrt(agent.getEnvelope().getArea());
+				List<IAgent> neighbours = distance == 0 || filter == null ? new ArrayList<IAgent>()
+					: new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, agent, distance, filter));
 
 				Map<IAgent, Double> distancesCoeff = new TOrderedHashMap<IAgent, Double>();
 				distancesCoeff.put(agent, 1.0);
@@ -588,8 +590,8 @@ public class MapComparison {
 				double s2Max = -1 * Double.MAX_VALUE;
 
 				for ( int j = 0; j < nbCat; j++ ) {
-					double s1 = Math.min(fuzzyVector1[i][j], crispVector2[i][j]);
-					double s2 = Math.min(fuzzyVector2[i][j], crispVector1[i][j]);
+					double s1 = FastMath.min(fuzzyVector1[i][j], crispVector2[i][j]);
+					double s2 = FastMath.min(fuzzyVector2[i][j], crispVector1[i][j]);
 					if ( s1 > s1Max ) {
 						s1Max = s1;
 					}
@@ -597,7 +599,7 @@ public class MapComparison {
 						s2Max = s2;
 					}
 				}
-				similarities.add(Math.min(s1Max, s2Max));
+				similarities.add(FastMath.min(s1Max, s2Max));
 			}
 		}
 		double meanSimilarity = 0;
@@ -658,9 +660,8 @@ public class MapComparison {
 		}
 		ILocation centralLoc = (ILocation) Stats.getMean(scope, locs);
 		IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
-		List<IAgent> neighbours =
-			distance == 0 || filter == null ? new ArrayList<IAgent>() : new ArrayList<IAgent>(scope.getTopology()
-				.getNeighboursOf(scope, centralAg, distance, filter));
+		List<IAgent> neighbours = distance == 0 || filter == null ? new ArrayList<IAgent>()
+			: new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, centralAg, distance, filter));
 
 		for ( IAgent ag : neighbours ) {
 			double dist = centralLoc.euclidianDistanceTo(ag.getLocation());
@@ -689,11 +690,12 @@ public class MapComparison {
 	@operator(value = { "percent_absolute_deviation" },
 		content_type = IType.FLOAT,
 		category = { IOperatorCategory.MAP_COMPARAISON })
-	@doc(value = "percent absolute deviation indicator for 2 series of values: percent_absolute_deviation(list_vals_observe,list_vals_sim)",
+	@doc(
+		value = "percent absolute deviation indicator for 2 series of values: percent_absolute_deviation(list_vals_observe,list_vals_sim)",
 		examples = { @example(value = "percent_absolute_deviation([200,300,150,150,200],[250,250,100,200,200])",
 			isExecutable = false) })
-	public static
-		double percentAbsoluteDeviation(final IScope scope, final IList<Double> vals1, final IList<Double> vals2) {
+	public static double percentAbsoluteDeviation(final IScope scope, final IList<Double> vals1,
+		final IList<Double> vals2) {
 		if ( vals1 == null || vals2 == null ) { return 1; }
 		int nb = vals1.size();
 		if ( nb != vals2.size() ) { return 0; }
@@ -703,7 +705,7 @@ public class MapComparison {
 			double val1 = Cast.asFloat(scope, vals1.get(i));
 			double val2 = Cast.asFloat(scope, vals2.get(i));
 			coeff += val1;
-			sum += Math.abs(val1 - val2) * 100.0;
+			sum += FastMath.abs(val1 - val2) * 100.0;
 		}
 		if ( coeff == 0 ) { return 0; }
 		return sum / coeff;

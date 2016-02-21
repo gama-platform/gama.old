@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.audio"
       label="Audio"
-      version="1.0.0.qualifier"
+      version="1.7.0.qualifier"
       provider-name="UMMISCO">
 
    <description url="http://www.example.com/description">
@@ -18,7 +18,7 @@
    </license>
 
    <url>
-      <update label="GAMA 1.6.1 Update Site" url="https://gama-platform.googlecode.com/svn/update_site"/>
+      <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
    <requires>

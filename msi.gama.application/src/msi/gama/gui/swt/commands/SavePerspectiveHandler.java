@@ -49,7 +49,7 @@ public class SavePerspectiveHandler extends AbstractHandler {
 	private void saveNonSingleton(final IWorkbenchPage page, final PerspectiveDescriptor oldDesc) {
 		// Get reg.
 		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-
+		// org.eclipse.ui.internal.e4.migration.PerspectiveBuilder builder;
 		// // Get persp name.
 		// SavePerspectiveDialog dlg = new SavePerspectiveDialog(page.getWorkbenchWindow().getShell(), reg);
 		// Look up the descriptor by id again to ensure it is still valid.
