@@ -39,10 +39,12 @@ import msi.gaml.variables.SignalVariable.SignalValidator;
 	// represent this signal on the specified grid") ),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.VALUE,
+		// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 		type = IType.NONE,
 		optional = true,
 		doc = @doc(value = "", deprecated = "Use 'update' instead")),
 	@facet(name = IKeyword.UPDATE,
+		// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 		type = IType.NONE,
 		optional = true,
 		doc = @doc("An expression that will be evaluated each cycle to update the value of the signal on each grid cell")),

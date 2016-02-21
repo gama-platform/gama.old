@@ -32,6 +32,7 @@ import msi.gaml.types.IType;
 		optional = true,
 		doc = @doc("The type of the attribute, either 'int' or 'float'")),
 	@facet(name = IKeyword.INIT,
+		// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 		type = { IType.INT, IType.FLOAT },
 		optional = true,
 		doc = @doc("The initial value of the attribute")),

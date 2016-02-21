@@ -71,7 +71,7 @@ import msi.gaml.types.*;
 		@facet(name = IKeyword.FROM,
 			type = IType.NONE,
 			optional = true,
-			doc = @doc("an expression that evaluates to a localized entity, a list of localized entities, a string (the path of a shapefile, a .csv, a .asc or a OSM file) or a container returned by a request to a database")),
+			doc = @doc("an expression that evaluates to a localized entity, a list of localized entities, a string (the path of a file), a file (shapefile, a .csv, a .asc or a OSM file) or a container returned by a request to a database")),
 		@facet(name = IKeyword.NUMBER,
 			type = IType.INT,
 			optional = true,
@@ -79,6 +79,8 @@ import msi.gaml.types.*;
 		@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc = @doc("")),
 		@facet(name = IKeyword.WITH,
 			type = { IType.MAP },
+			of = IType.NONE,
+			index = IType.STRING,
 			optional = true,
 			doc = @doc("an expression that evaluates to a map, for each pair the key is a species attribute and the value the assigned value")),
 		@facet(name = IKeyword.HEADER,
@@ -360,7 +362,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			}
 		}
 		// As we are in the create statement, the agents are not restored
-		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false, shouldBeScheduled);
+		final IList<? extends IAgent> list =
+			population.createAgents(scope, inits.size(), inits, false, shouldBeScheduled);
 
 		// hqnghi in case of creating experiment of micro-models, we must implicitely initialize it and its simulation output
 		if ( population instanceof ExperimentPopulation ) {

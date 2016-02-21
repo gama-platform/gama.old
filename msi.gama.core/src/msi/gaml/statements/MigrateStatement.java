@@ -1,28 +1,21 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'MigrateStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.statements;
 
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -35,33 +28,38 @@ import msi.gaml.types.*;
 /**
  * This command permits agents to migrate from one population/species to another population/species
  * and stay in the same host after the migration.
- * 
+ *
  * It has two mandatory parameters:
  * + source: can be an agent, a list of agents, a agent's population to be migrated
  * + target: target species/population that source agent(s) migrate to.
- * 
+ *
  * Species of source agents and target species respect the following constraints:
  * + they are "peer" species (sharing the same direct macro-species)
  * + they have sub-species vs. parent-species relationship.
  */
 @symbol(name = { IKeyword.MIGRATE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@facets(value = {
-	@facet(name = IKeyword.SOURCE,
-		type = IType.ID,
-		optional = false,
-		doc = @doc("can be an agent, a list of agents, a agent's population to be migrated")), // workaround
-	@facet(name = IKeyword.TARGET,
-		type = IType.ID,
-		optional = false,
-		doc = @doc("target species/population that source agent(s) migrate to.")),
-	@facet(name = IKeyword.RETURNS,
-		type = IType.NEW_TEMP_ID,
-		optional = true,
-		doc = @doc("the list of returned agents in a new local variable")) }, omissible = IKeyword.SOURCE)
+@facets(
+	value = {
+		@facet(name = IKeyword.SOURCE,
+			type = { IType.AGENT, IType.SPECIES, IType.CONTAINER },
+			of = IType.AGENT,
+			optional = false,
+			doc = @doc("can be an agent, a list of agents, a agent's population to be migrated")), // workaround
+		@facet(name = IKeyword.TARGET,
+			type = IType.SPECIES,
+			optional = false,
+			doc = @doc("target species/population that source agent(s) migrate to.")),
+		@facet(name = IKeyword.RETURNS,
+			type = IType.NEW_TEMP_ID,
+			optional = true,
+			doc = @doc("the list of returned agents in a new local variable")) },
+	omissible = IKeyword.SOURCE)
 @validator(MigrateValidator.class)
-@doc(value = "This command permits agents to migrate from one population/species to another population/species and stay in the same host after the migration. Species of source agents and target species respect the following constraints: (i) they are \"peer\" species (sharing the same direct macro-species), (ii) they have sub-species vs. parent-species relationship.",
-	usages = { @usage(value = "It can be used in a 3-levels model, in case where individual agents can be captured into group meso agents and groups into clouds macro agents. migrate is used to allows agents captured by groups to migrate into clouds. See the model 'Balls, Groups and Clouds.gaml' in the library.",
+@doc(
+	value = "This command permits agents to migrate from one population/species to another population/species and stay in the same host after the migration. Species of source agents and target species respect the following constraints: (i) they are \"peer\" species (sharing the same direct macro-species), (ii) they have sub-species vs. parent-species relationship.",
+	usages = { @usage(
+		value = "It can be used in a 3-levels model, in case where individual agents can be captured into group meso agents and groups into clouds macro agents. migrate is used to allows agents captured by groups to migrate into clouds. See the model 'Balls, Groups and Clouds.gaml' in the library.",
 		examples = { @example(value = "migrate ball_in_group target: ball_in_cloud;", isExecutable = false) }) },
 	see = { IKeyword.CAPTURE, IKeyword.RELEASE })
 public class MigrateStatement extends AbstractStatementSequence {
@@ -79,8 +77,9 @@ public class MigrateStatement extends AbstractStatementSequence {
 				final SpeciesDescription macroSpecies = cd.getSpeciesContext();
 				final TypeDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 				if ( microSpecies == null ) {
-					cd.error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName +
-						" as micro-species", IGamlIssue.UNKNOWN_SUBSPECIES, TARGET, microSpeciesName);
+					cd.error(
+						macroSpecies.getName() + " species doesn't contain " + microSpeciesName + " as micro-species",
+						IGamlIssue.UNKNOWN_SUBSPECIES, TARGET, microSpeciesName);
 				}
 			}
 
@@ -108,8 +107,8 @@ public class MigrateStatement extends AbstractStatementSequence {
 	private void verifyTarget() {
 		final SpeciesDescription species = this.getDescription().getSpeciesContext();
 		final TypeDescription targetSpeciesDesc = species.getMicroSpecies(target);
-		if ( targetSpeciesDesc == null ) { throw GamaRuntimeException.error(target + " is not a micro-species of " +
-			species.getName()); }
+		if ( targetSpeciesDesc == null ) { throw GamaRuntimeException
+			.error(target + " is not a micro-species of " + species.getName()); }
 	}
 
 	@Override
@@ -132,7 +131,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 
 		/*
 		 * Object immigrantCandidates = source.value(stack);
-		 * 
+		 *
 		 * if (immigrantCandidates instanceof ISpecies) {
 		 * immigrants.addAll(executor.migrateMicroAgent((ISpecies) immigrantCandidates,
 		 * targetMicroSpecies));
