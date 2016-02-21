@@ -2595,7 +2595,7 @@ public abstract class Spatial {
 	public static abstract class Statistics {
 
 		@operator(value = { "simple_clustering_by_distance", "simple_clustering_by_envelope_distance" },
-			content_type = IType.LIST,
+			content_type = ITypeProvider.FIRST_TYPE,
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL, IOperatorCategory.STATISTICAL })
 		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.",
 			examples = { @example(value = "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0",
@@ -2633,7 +2633,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "hierarchical_clustering" },
-			content_type = IType.LIST,
+			content_type = ITypeProvider.FIRST_TYPE,
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL, IOperatorCategory.STATISTICAL })
 		@doc(
 			value = "A tree (list of list) contained groups of agents clustered by distance considering a distance min between two groups.",

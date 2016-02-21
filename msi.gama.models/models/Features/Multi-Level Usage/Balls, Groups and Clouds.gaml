@@ -70,7 +70,7 @@ global {
 
 		if (length (free_balls) > 1) {
 			//Clustering of the balls according to their distance with at least a minimal number of balls in a group
-			list<list> satisfying_ball_groups <- (free_balls simple_clustering_by_distance group_creation_distance) where ( (length (each)) > min_group_member ) ;
+			list<list<ball>> satisfying_ball_groups <- (free_balls simple_clustering_by_distance group_creation_distance) where ( (length (each)) > min_group_member ) ;
 			
 			
 			loop one_group over: satisfying_ball_groups {
@@ -90,7 +90,7 @@ global {
 		list<group> candidate_groups <- group where (length(each.members) > (0.05 * ball_number) );
 		
 		//A cloud can be created also only using group which aren't too far away 
-		list<list> satisfying_groups <- (candidate_groups simple_clustering_by_distance cloud_creation_distance) where (length(each) >= min_cloud_member);
+		list<list<group>> satisfying_groups <- (candidate_groups simple_clustering_by_distance cloud_creation_distance) where (length(each) >= min_cloud_member);
 		
 		//Creation of the different clouds using the groups satisfying both conditions
 		loop one_group over: satisfying_groups {
@@ -102,8 +102,7 @@ global {
 
 			loop gd over: (newCloud.members) {
 				ask gd as group_delegation {
-					migrate 
-					ball_in_group target: ball_in_cloud;
+					migrate ball_in_group target: ball_in_cloud;
 				}
 			} 
 			

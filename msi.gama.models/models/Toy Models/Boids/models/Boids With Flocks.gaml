@@ -19,7 +19,7 @@ global {
 
 	reflex create_flocks when: create_flocks {
 		if (length(boids) > 1) {
-			list<list> satisfying_boids_groups <- (boids simple_clustering_by_distance flock_creation_distance) where ((length(each)) > min_group_member);
+			list<list<boids>> satisfying_boids_groups <- (boids.population simple_clustering_by_distance flock_creation_distance) where ((length(each)) > min_group_member);
 			loop one_group over: satisfying_boids_groups {
 				geometry potential_flock_polygon <- convex_hull(solid(polygon(one_group collect boids(each).location)) + (base_perception_range + 5));
 				if (empty(obstacle overlapping potential_flock_polygon)) {
