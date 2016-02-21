@@ -22,6 +22,8 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	public final String name;
 	public String deprecated = null;
 	public final int[] types;
+	public final int contentType;
+	public final int keyType;
 	public final boolean optional;
 	public final boolean internal;
 	private final boolean isLabel;
@@ -34,10 +36,12 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	static FacetProto DEPENDS_ON = DEPENDS_ON();
 	static FacetProto NAME = NAME();
 
-	public FacetProto(final String name, final int[] types, final String[] values, final boolean optional,
-		final boolean internal, final String doc) {
+	public FacetProto(final String name, final int[] types, final int ct, final int kt, final String[] values,
+		final boolean optional, final boolean internal, final String doc) {
 		this.name = name;
 		this.types = types;
+		this.contentType = ct;
+		this.keyType = kt;
 		this.optional = optional;
 		this.internal = internal;
 		isLabel = SymbolProto.ids.contains(types[0]);
@@ -75,18 +79,18 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	// }
 
 	static FacetProto DEPENDS_ON() {
-		return new FacetProto(IKeyword.DEPENDS_ON, new int[] { IType.LIST }, new String[0], true, true,
-			"the dependencies of expressions (internal)");
+		return new FacetProto(IKeyword.DEPENDS_ON, new int[] { IType.LIST }, IType.STRING, IType.INT, new String[0],
+			true, true, "the dependencies of expressions (internal)");
 	}
 
 	static FacetProto KEYWORD() {
-		return new FacetProto(IKeyword.KEYWORD, new int[] { IType.ID }, new String[0], true, true,
-			"the declared keyword (internal)");
+		return new FacetProto(IKeyword.KEYWORD, new int[] { IType.ID }, IType.NONE, IType.NONE, new String[0], true,
+			true, "the declared keyword (internal)");
 	}
 
 	static FacetProto NAME() {
-		return new FacetProto(IKeyword.NAME, new int[] { IType.LABEL }, new String[0], true, true,
-			"the declared name (internal)");
+		return new FacetProto(IKeyword.NAME, new int[] { IType.LABEL }, IType.NONE, IType.NONE, new String[0], true,
+			true, "the declared name (internal)");
 	}
 
 	/**

@@ -107,7 +107,7 @@ public final class GamlAnnotations {
 		 * Ommissible.
 		 *
 		 * @return the facet that can be safely omitted by the modeler (provided its value is the
-		 * first following the keyword of the statement).
+		 *         first following the keyword of the statement).
 		 */
 		String omissible() default "name";
 
@@ -135,17 +135,33 @@ public final class GamlAnnotations {
 		/**
 		 * Type.
 		 *
-		 * @return The string values of the different types that can be taken by this facet.
+		 * @return The int values of the different types that can be taken by this facet.
 		 * @see msi.gaml.types.IType
 		 */
 
 		int[] type();
 
 		/**
+		 * Of.
+		 *
+		 * @return The int representation of the content type of the facet (see
+		 *         IType#defaultContentType()). Only applies to the types considered as containers
+		 */
+		int of() default 0;
+
+		/**
+		 * Index.
+		 *
+		 * @return The int representation of the index type of the facet (see
+		 *         IType#defaultKeyType()). Only applies to the types considered as containers
+		 */
+		int index() default 0;
+
+		/**
 		 * Values.
 		 *
 		 * @return the values that can be taken by this facet. The value of the facet expression
-		 * will be chosen among the values described here
+		 *         will be chosen among the values described here
 		 */
 		String[] values() default {};
 
@@ -208,15 +224,15 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return the unique identifier for this type. User-added types can be chosen
-		 * between IType.AVAILABLE_TYPE and IType.SPECIES_TYPE (exclusive)
+		 *         between IType.AVAILABLE_TYPE and IType.SPECIES_TYPE (exclusive)
 		 */
 		int id();
 
 		/**
 		 * @return the list of Java Classes this type is "wrapping" (i.e. representing). The first
-		 * one is the one that will be used preferentially throughout GAMA. The other ones
-		 * are to ensure compatibility, in operators, with compatible Java classes (for
-		 * instance, List and GamaList).
+		 *         one is the one that will be used preferentially throughout GAMA. The other ones
+		 *         are to ensure compatibility, in operators, with compatible Java classes (for
+		 *         instance, List and GamaList).
 		 */
 		Class[] wraps();
 
@@ -234,11 +250,11 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
-		 * documentation indexes)
+		 *         documentation indexes)
 		 */
 
-		String[] category() default {};		
-		
+		String[] category() default {};
+
 		/**
 		 * Doc.
 		 *
@@ -275,7 +291,7 @@ public final class GamlAnnotations {
 		 * Attach_to.
 		 *
 		 * @return An array of species names to which the skill will be automatically added
-		 * (complements the "skills" parameter of species)
+		 *         (complements the "skills" parameter of species)
 		 * @see species
 		 */
 		String[] attach_to() default {};
@@ -289,11 +305,11 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
-		 * documentation indexes)
+		 *         documentation indexes)
 		 */
 
-		String[] category() default {};		
-		
+		String[] category() default {};
+
 		/**
 		 * Doc.
 		 *
@@ -344,7 +360,7 @@ public final class GamlAnnotations {
 		 * Name.
 		 *
 		 * @return The name of the species that will be created with this class as base. Must be
-		 * unique throughout GAML.
+		 *         unique throughout GAML.
 		 */
 		String name();
 
@@ -352,7 +368,7 @@ public final class GamlAnnotations {
 		 * Skills.
 		 *
 		 * @return An array of skill names that will be automatically attached to this species.
-		 * Example: <code> @species(value="animal" skills={"moving"}) </code>
+		 *         Example: <code> @species(value="animal" skills={"moving"}) </code>
 		 * @see skill
 		 */
 		String[] skills() default {};
@@ -366,11 +382,11 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
-		 * documentation indexes)
+		 *         documentation indexes)
 		 */
 
-		String[] category() default {};		
-		
+		String[] category() default {};
+
 		/**
 		 * Doc.
 		 *
@@ -395,7 +411,7 @@ public final class GamlAnnotations {
 		 *
 		 *
 		 * @return an Array of strings, each representing an argument that can be passed to a
-		 * action. Used to tag the method that will implement the action.
+		 *         action. Used to tag the method that will implement the action.
 		 */
 		String[] names();
 
@@ -474,7 +490,7 @@ public final class GamlAnnotations {
 		 * Type.
 		 *
 		 * @return An array containing the textual representation of the types that can be taken by
-		 * the argument (see IType)
+		 *         the argument (see IType)
 		 */
 		int[] type() default {};
 
@@ -545,16 +561,16 @@ public final class GamlAnnotations {
 		/**
 		 * Of.
 		 *
-		 * @return The textual representation of the content type of the variable (see
-		 * IType#defaultContentType())
+		 * @return The int representation of the content type of the variable (see
+		 *         IType#defaultContentType())
 		 */
 		int of() default 0;
 
 		/**
 		 * Index.
 		 *
-		 * @return The textual representation of the index type of the variable (see
-		 * IType#defaultKeyType())
+		 * @return The int representation of the index type of the variable (see
+		 *         IType#defaultKeyType())
 		 */
 		int index() default 0;
 
@@ -576,7 +592,7 @@ public final class GamlAnnotations {
 		 * Depends_on.
 		 *
 		 * @return an array of String representing the names of the variables on which this variable
-		 * depends (so that they are computed before)
+		 *         depends (so that they are computed before)
 		 */
 		String[] depends_on() default {};
 
@@ -635,8 +651,8 @@ public final class GamlAnnotations {
 		 * NoScope.
 		 *
 		 * @return Indicates if the statement (usually a sequence) defines its own scope.
-		 * Otherwise, all the temporary variables defined in it are actually defined in the
-		 * super-scope
+		 *         Otherwise, all the temporary variables defined in it are actually defined in the
+		 *         super-scope
 		 */
 		boolean with_scope() default true;
 
@@ -644,7 +660,7 @@ public final class GamlAnnotations {
 		 * WithSequence.
 		 *
 		 * @return Indicates wether or not a sequence can ou should follow the symbol denoted by
-		 * this class.
+		 *         this class.
 		 */
 		boolean with_sequence();
 
@@ -659,9 +675,9 @@ public final class GamlAnnotations {
 		 * RemoteContext.
 		 *
 		 * @return Indicates that the context of this statement is actually an hybrid context:
-		 * although it will be executed in a remote context, any temporary variables
-		 * declared in the enclosing scopes should be passed on as if the statement was
-		 * executed in the current context.
+		 *         although it will be executed in a remote context, any temporary variables
+		 *         declared in the enclosing scopes should be passed on as if the statement was
+		 *         executed in the current context.
 		 */
 
 		boolean remote_context() default false;
@@ -684,22 +700,22 @@ public final class GamlAnnotations {
 		/**
 		 *
 		 * @return Indicates that this statement must be unique in its super context (for example,
-		 * only one return is allowed in the body of an action).
+		 *         only one return is allowed in the body of an action).
 		 */
 		boolean unique_in_context() default false;
 
 		/**
 		 *
 		 * @return Indicates that only one statement with the same name should be allowed in the
-		 * same super context
+		 *         same super context
 		 */
 		boolean unique_name() default false;
-		
+
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
-		 * documentation indexes)
+		 *         documentation indexes)
 		 */
-		String[] category() default {};		
+		String[] category() default {};
 
 	}
 
@@ -715,21 +731,21 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return an array of strings, each representing a category in which this operator can be classified (for
-		 * documentation indexes)
+		 *         documentation indexes)
 		 */
 
 		String[] category() default {};
 
 		/**
 		 * @return an Array of strings, each representing a possible keyword for the operator. Does
-		 * not need to be unique throughout GAML
+		 *         not need to be unique throughout GAML
 		 *
 		 */
 		String[] value();
 
 		/**
 		 * @return true if this operator should be treated as an iterator (i.e.requires initializing
-		 * the special variable "each" of WorldSkill within the method)
+		 *         the special variable "each" of WorldSkill within the method)
 		 * @see WorldSkill
 		 */
 
@@ -737,14 +753,14 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return whether or not the operator can be evaluated as a constant if its child (resp.
-		 * children) is (resp. are) constant.
+		 *         children) is (resp. are) constant.
 		 */
 		boolean can_be_const() default false;
 
 		/**
 		 * @return the type of the content if the returned value is a container. Can be directly a
-		 * type in IType or one of the constants declared in ITypeProvider (in which case,
-		 * the content type is searched using this provider).
+		 *         type in IType or one of the constants declared in ITypeProvider (in which case,
+		 *         the content type is searched using this provider).
 		 * @see IType
 		 * @see ITypeProvider
 		 */
@@ -752,8 +768,8 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return the type of the index if the returned value is a container. Can be directly a
-		 * type in IType or one of the constants declared in ITypeProvider (in which case,
-		 * the index type is searched using this provider).
+		 *         type in IType or one of the constants declared in ITypeProvider (in which case,
+		 *         the index type is searched using this provider).
 		 * @see IType
 		 * @see ITypeProvider
 		 */
@@ -761,7 +777,7 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return if the argument is a container, return the types expected for its contents.
-		 * Should be an array of IType.XXX.
+		 *         Should be an array of IType.XXX.
 		 * @see IType
 		 * @see ITypeProvider
 		 */
@@ -770,9 +786,9 @@ public final class GamlAnnotations {
 		/**
 		 *
 		 * @return the type of the expression if it cannot be determined at compile time (i.e. when
-		 * the return type is "Object"). Can be directly a type in IType or one of the
-		 * constants declared in ITypeProvider (in which case, the type is searched using
-		 * this provider).
+		 *         the return type is "Object"). Can be directly a type in IType or one of the
+		 *         constants declared in ITypeProvider (in which case, the type is searched using
+		 *         this provider).
 		 * @see IType
 		 * @see ITypeProvider
 		 */
@@ -808,7 +824,7 @@ public final class GamlAnnotations {
 		 * Value.
 		 *
 		 * @return the name of the variable for which the annotated method is to be considered as a
-		 * getter.
+		 *         getter.
 		 */
 		String value();
 
@@ -835,7 +851,7 @@ public final class GamlAnnotations {
 		 * Value.
 		 *
 		 * @return the name of the variable for which the annotated method is to be considered as a
-		 * getter.
+		 *         getter.
 		 */
 		String value();
 	}
@@ -858,14 +874,14 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return The symbol kinds defining the symbols this factory is intended to parse and
-		 * compile
+		 *         compile
 		 * @see ISymbolKind
 		 */
 		int[] handles();
 
 		/**
 		 * @return The subfactories that this factory can invocate, based on the kind of symbols
-		 * they are handling
+		 *         they are handling
 		 * @deprecated This annotation is not used anymore and can be safely removed
 		 * @see ISymbolKind
 		 */
@@ -901,7 +917,7 @@ public final class GamlAnnotations {
 		 * masterDoc.
 		 *
 		 * @return a boolean representing the fact whether this instance of the operator is the master one,
-		 * that is whether its value will subsume the value of all other instances of it.
+		 *         that is whether its value will subsume the value of all other instances of it.
 		 */
 		boolean masterDoc() default false;
 
@@ -909,7 +925,7 @@ public final class GamlAnnotations {
 		 * Deprecated.
 		 *
 		 * @return a String indicating (if it is not empty) that the element is deprecated and
-		 * defining, if possible, what to use instead
+		 *         defining, if possible, what to use instead
 		 */
 		String deprecated() default "";
 
@@ -931,7 +947,7 @@ public final class GamlAnnotations {
 		 * Special_cases
 		 *
 		 * @return An array of String representing the documentation of the "special cases" in which
-		 * the documented element takes part
+		 *         the documented element takes part
 		 */
 		String[] special_cases() default {};
 
@@ -939,7 +955,7 @@ public final class GamlAnnotations {
 		 * Examples
 		 *
 		 * @return An array of String representing some examples or use-cases about how to use this
-		 * element
+		 *         element
 		 */
 		example[] examples() default {};
 
@@ -1027,12 +1043,12 @@ public final class GamlAnnotations {
 		 * The path indicates where to put this template in the menu. For instance, the following annotation:
 		 *
 		 * @template {
-		 * menu = STATEMENT;
-		 * path = {"Control", "If"}
-		 * }
+		 *           menu = STATEMENT;
+		 *           path = {"Control", "If"}
+		 *           }
 		 *
-		 * will put the template in a menu called "If", within "Control", within the top menu "Statement"
-		 * When no path is defined, GAMA will try to guess it from the context where the template is defined (i.e. keyword of the statement, etc.)
+		 *           will put the template in a menu called "If", within "Control", within the top menu "Statement"
+		 *           When no path is defined, GAMA will try to guess it from the context where the template is defined (i.e. keyword of the statement, etc.)
 		 *
 		 */
 		String[] path() default {};
@@ -1044,7 +1060,7 @@ public final class GamlAnnotations {
 		 * Examples
 		 *
 		 * @return An array of String representing some examples or use-cases about how to use this
-		 * element, related to the particular usage above
+		 *         element, related to the particular usage above
 		 */
 		example[] examples() default {};
 
@@ -1126,7 +1142,7 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return whether or not this example should be treated as part of a pattern (see @usage). If true, the developers might want to
-		 * consider writing the example line (and its associated lines) using template variables (e.g. ${my_agent})
+		 *         consider writing the example line (and its associated lines) using template variables (e.g. ${my_agent})
 		 */
 		boolean isPattern() default false;
 	}
@@ -1141,7 +1157,7 @@ public final class GamlAnnotations {
 		 * "is_"+name. The first operator may have variants taking one or several arguments, depending on the @builder
 		 * annotations present on the class.
 		 * @return a (human-understandable) string describing this type of files, suitable for use in composed operator
-		 * names (e.g. "shape", "image"...)
+		 *         names (e.g. "shape", "image"...)
 		 *
 		 */
 		String name();
@@ -1151,14 +1167,14 @@ public final class GamlAnnotations {
 		 * validity of the file path, but also to generate the correct type of file when a path is passed to the generic
 		 * "file" operator.
 		 * @return an array of extensions (without the '.' delimiter) or an empty array if no specific extensions are
-		 * associated to this type of files (e.g. ["png","jpg","jpeg"...])
+		 *         associated to this type of files (e.g. ["png","jpg","jpeg"...])
 		 */
 		String[] extensions();
 
 		/**
 		 * @return the type of the content of the buffer. Can be directly a
-		 * type in IType or one of the constants declared in ITypeProvider (in which case,
-		 * the content type is searched using this provider).
+		 *         type in IType or one of the constants declared in ITypeProvider (in which case,
+		 *         the content type is searched using this provider).
 		 * @see IType
 		 * @see ITypeProvider
 		 */
@@ -1166,8 +1182,8 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return the type of the index of the buffer. Can be directly a
-		 * type in IType or one of the constants declared in ITypeProvider (in which case,
-		 * the index type is searched using this provider).
+		 *         type in IType or one of the constants declared in ITypeProvider (in which case,
+		 *         the index type is searched using this provider).
 		 * @see IType
 		 * @see ITypeProvider
 		 */
@@ -1176,8 +1192,8 @@ public final class GamlAnnotations {
 		/**
 		 *
 		 * @return the type of the buffer. Can be directly a type in IType or one of the
-		 * constants declared in ITypeProvider (in which case, the type is searched using
-		 * this provider).
+		 *         constants declared in ITypeProvider (in which case, the type is searched using
+		 *         this provider).
 		 * @see IType
 		 * @see ITypeProvider
 		 */
@@ -1185,11 +1201,11 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
-		 * documentation indexes)
+		 *         documentation indexes)
 		 */
 
-		String[] category() default {};		
-		
+		String[] category() default {};
+
 		doc[] doc() default {};
 	}
 
@@ -1205,21 +1221,21 @@ public final class GamlAnnotations {
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
-		 * documentation indexes)
+		 *         documentation indexes)
 		 */
 
 		String[] category() default {};
 
 		/**
 		 * @return a string representing the basic keyword for the constant. Does
-		 * not need to be unique throughout GAML
+		 *         not need to be unique throughout GAML
 		 *
 		 */
 		String value();
 
 		/**
 		 * @return an Array of strings, each representing a possible alternative name for the constant. Does
-		 * not need to be unique throughout GAML.
+		 *         not need to be unique throughout GAML.
 		 *
 		 **/
 		String[] altNames() default {};
