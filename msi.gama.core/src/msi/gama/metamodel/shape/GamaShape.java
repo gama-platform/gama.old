@@ -191,7 +191,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if ( bounds != null && !isPoint() ) {
 			if ( getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE ) {
 				GamaPoint previous = getLocation();
-				getEnvelope();
+				// getEnvelope();
 				boolean flat = getEnvelope().isFlat();
 				if ( isBoundingBox ) {
 					geometry.apply(AffineTransform3D.createScaling(bounds.x / getEnvelope().getWidth(),
@@ -323,7 +323,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 				// time.
 			}
 
-			geometry.geometryChanged();
+			// geometry.geometryChanged();
 		}
 	}
 
@@ -495,7 +495,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	public void setInnerGeometry(final Geometry geom) {
 		if ( geom == null ) {
 			geometry = null;
-			setEnvelope(null);
+			// setEnvelope(null);
 			return;
 		}
 		if ( geom.isEmpty() ) {
@@ -507,7 +507,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		} else {
 			geometry = geom;
 		}
-		setEnvelope(null);
+		// setEnvelope(null);
 	}
 
 	public void setEnvelope(final Envelope3D envelope) {
