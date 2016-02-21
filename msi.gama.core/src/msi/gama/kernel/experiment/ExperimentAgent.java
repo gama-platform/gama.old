@@ -26,6 +26,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -45,7 +46,7 @@ import msi.gaml.types.*;
 @vars({
 
 	@var(name = IKeyword.SIMULATION,
-		type = IType.AGENT,
+		type = ITypeProvider.MODEL_TYPE,
 		doc = @doc(value = "contains a reference to the current simulation being run by this experiment",
 			comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
 	// @var(name = GAMA._FATAL, type = IType.BOOL),

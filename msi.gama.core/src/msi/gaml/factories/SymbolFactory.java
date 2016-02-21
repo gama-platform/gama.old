@@ -38,8 +38,5 @@ public abstract class SymbolFactory {
 
 	protected abstract IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
 		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto, final String plugin);
-	// {
-	// return new SymbolDescription(keyword, enclosing, children, element, facets);
-	// }
 
 }

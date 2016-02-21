@@ -14,13 +14,15 @@ package msi.gaml.descriptions;
 import java.util.*;
 import org.eclipse.emf.ecore.EObject;
 import gnu.trove.set.hash.*;
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.descriptions.SymbolSerializer.VarSerializer;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
@@ -128,13 +130,54 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getType() {
-		if ( getName().equals("neighbors") ) {
-			System.out.println("...");
-		}
 		if ( type == null ) {
 			type = super.getType();
 		}
 		return type;
+	}
+
+	/**
+	 * Returns the type denoted by this string. This is a contextual retrieval, as the string can contain the value of one of the ITypeProvider constants.
+	 * Method getTypeNamed()
+	 * @see msi.gaml.descriptions.SymbolDescription#getTypeNamed(java.lang.String)
+	 */
+	@Override
+	public IType getTypeNamed(final String s) {
+		IType result = super.getTypeNamed(s);
+		if ( result == Types.NO_TYPE ) {
+			int provider = GamaIntegerType.staticCast(null, s, null, false);
+			switch (provider) {
+				case ITypeProvider.MACRO_TYPE:
+					IDescription species = this.getEnclosingDescription();
+					IDescription macro = species.getEnclosingDescription();
+					if ( macro == null ) { return Types.AGENT; }
+					return macro.getType();
+				case ITypeProvider.OWNER_TYPE: // This represents the type of the agents of the enclosing species
+					return this.getEnclosingDescription().getType();
+				case ITypeProvider.MODEL_TYPE: // This represents the type of the model (used for simulations)
+					ModelDescription md = this.getModelDescription();
+					if ( md == null ) { return Types.AGENT; }
+					return md.getType();
+				case ITypeProvider.MIRROR_TYPE:
+					IExpression mirrors = getEnclosingDescription().getFacets().getExpr(MIRRORS);
+					if ( mirrors != null ) {
+						// We try to change the type of the 'target' variable if the expression contains only agents from the
+						// same species
+						IType t = mirrors.getType().getContentType();
+						if ( t.isAgentType() && t.id() != IType.AGENT ) {
+							getEnclosingDescription().info(
+								"The 'target' attribute will be of type " + t.getSpeciesName(), IGamlIssue.GENERAL,
+								MIRRORS);
+						}
+						return t;
+					} else {
+						getEnclosingDescription().info(
+							"No common species detected in 'mirrors'. The 'target' variable will be of generic type 'agent'",
+							IGamlIssue.WRONG_TYPE, MIRRORS);
+					}
+			}
+		}
+		return result;
 	}
 
 	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
@@ -267,10 +310,6 @@ public class VariableDescription extends SymbolDescription {
 
 	public GamaHelper getSetter() {
 		return set;
-	}
-
-	public void setType(final IType t) {
-		type = t;
 	}
 
 	public boolean isGlobal() {

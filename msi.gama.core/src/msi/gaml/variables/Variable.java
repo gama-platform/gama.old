@@ -116,7 +116,7 @@ public class Variable extends Symbol implements IVariable {
 
 			if ( !isParameter ) {
 				// Verifying that the name is not a type
-				IType t = cd.getTypeNamed(name);
+				IType t = cd.getEnclosingDescription().getTypeNamed(name);
 				if ( t != Types.NO_TYPE && !t.isAgentType() ) {
 					cd.error(name + " is a type name. It cannot be used as a variable name", IGamlIssue.IS_A_TYPE, NAME,
 						name);

@@ -17,6 +17,7 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.fastmaths.CmnFastMath;
@@ -32,7 +33,7 @@ import msi.gaml.types.IType;
 	@var(name = "target_node", type = IType.AGENT, doc = @doc("the target node of the road")),
 	@var(name = "lanes", type = IType.INT, doc = @doc("the number of lanes")),
 	@var(name = "linked_road",
-		type = IType.AGENT,
+		type = ITypeProvider.OWNER_TYPE,
 		doc = @doc("the linked road: the lanes of this linked road will be usable by drivers on the road")),
 	@var(name = "maxspeed", type = IType.FLOAT, doc = @doc("the maximal speed on the road")) })
 @skill(name = "skill_road")
