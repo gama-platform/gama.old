@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Additions to GAML from CTU (NetCDF reader)
-Bundle-SymbolicName: msi.gama.netcdf;singleton:=true
+Bundle-SymbolicName: cict.gaml.extensions.netcdf;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: UMMISCO
 Require-Bundle: msi.gama.core;bundle-version="1.6.0",
  msi.gama.ext;bundle-version="1.0.0",
  msi.gama.processor;bundle-version="1.4.0"
-Export-Package: msi.gama.netcdf.file
+Export-Package: cict.gaml.extensions.netcdf.file
 Bundle-ClassPath: lib/netcdfAll-4.6.jar,
  .
