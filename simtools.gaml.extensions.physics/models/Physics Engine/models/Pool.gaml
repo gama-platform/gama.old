@@ -167,7 +167,7 @@ global {
 
 		//Add the agents inside the registered agents in the physic engine
 		ask world2 {
-			registeredAgents <- (ball as list) + (ground as list) + (wall as list);
+			agents <- (ball as list) + (ground as list) + (wall as list);
 		}
 
 	}
@@ -175,7 +175,7 @@ global {
 	//Reflex to compute the forces at each step
 	reflex computeForces {
 		ask world2 {
-			do computeForces timeStep : 1;
+			do compute_forces step : 1;
 		}
 
 	}
@@ -183,10 +183,10 @@ global {
 }
 
 //Species corresponding to the physics engine, derivated from the built-in species Physical3DWorld
-species physic_world parent: Physical3DWorld ;
+species physic_world parent: physical_world ;
 
 //Species representing the ground agents used for the computation of the forces, using the skill physical3D
-species ground skills: [physical3D] {
+species ground skills: [physics] {
 	aspect default {
 		draw shape color: rgb([10, 114, 63]) border: rgb([10, 114, 63]);
 	}
@@ -194,7 +194,7 @@ species ground skills: [physical3D] {
 }
 
 //Species representing the wall agents of the pool using the skill physical3D
-species wall skills: [physical3D] {
+species wall skills: [physics] {
 	rgb color;
 	aspect default {
 		draw shape color: color depth: 10;
@@ -203,7 +203,7 @@ species wall skills: [physical3D] {
 }
 
 //Species representing the ball agents of the pool using the skill physical3D
-species ball skills: [physical3D] {
+species ball skills: [physics] {
 	rgb color<-#white;
 	int size <- size_of_agents;
 	float speed <- speed_of_agents;

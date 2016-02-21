@@ -78,7 +78,7 @@ global {
 		
 		//The physic engine agent gets all the other agents of the world to compute their forces
 		ask world2 {
-			registeredAgents <- (ball as list) + (ground as list) + (wall as list);
+			agents <- (ball as list) + (ground as list) + (wall as list);
 		}
 
 		world2.gravity <- true;
@@ -87,7 +87,7 @@ global {
 	//Reflex to compute the forces at each step
 	reflex computeForces {
 		ask world2 {
-			do computeForces timeStep : 1;
+			do compute_forces step: 1;
 		}
 
 	}
@@ -95,10 +95,10 @@ global {
 }
 
 //Species that will represent the physic engine, derivated from builti-in species Physical3DWorld
-species physic_world parent: Physical3DWorld ;
+species physic_world parent: physical_world ;
 
 //Species that will represent the ground of the tank, using the skill physical 3D
-species ground skills: [physical3D] {
+species ground skills: [physics] {
 	aspect default {
 		draw shape color: rgb(60, 60, 60);
 	}
@@ -107,7 +107,7 @@ species ground skills: [physical3D] {
 
 
 //Species that will represent the walls of the tank, using the skill physical 3D
-species wall skills: [physical3D] {
+species wall skills: [physics] {
 	rgb color;
 	aspect default {
 		draw shape color: rgb(40, 40, 40) depth: wall_height;
@@ -117,7 +117,7 @@ species wall skills: [physical3D] {
 
 
 //Species that will represent the balls falling in the tank, using the skill physical 3D
-species ball skills: [physical3D] {
+species ball skills: [physics] {
 	float radius;
 	aspect default {
 		draw sphere(radius) color: rgb(4, 158, 189);

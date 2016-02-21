@@ -44,7 +44,7 @@ global {
 		create physic_world{
 		  world2 <- self;
 		  //Add to the agents that will be used to compute the forces.
-		  ask world2 {registeredAgents <-  (ball as list) + (ground as list);}
+		  ask world2 {agents <-  (ball as list) + (ground as list);}
 		  //Boolean to set gravity 	
 		  world2.gravity <- true;
 		}
@@ -52,20 +52,20 @@ global {
 	
 	//Reflex to compute the forces at each step
 	reflex computeForces  {
-	  ask world2 {do computeForces timeStep : 1;}
+	  ask world2 {do compute_forces step: 1;}
 	} 			
 } 
 
 
-species physic_world parent: Physical3DWorld ;
+species physic_world parent: physical_world ;
 
-species ground skills: [physical3D]{    	
+species ground skills: [physics]{    	
 	aspect image{
 		draw imageRaster size: environment_size;
 	}
 }
  
-species ball skills: [physical3D] {  
+species ball skills: [physics] {  
 	rgb color <- rgb (217,229,143); 
 	float radius;
 

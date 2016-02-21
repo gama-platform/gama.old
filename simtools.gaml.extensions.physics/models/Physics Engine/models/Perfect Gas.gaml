@@ -91,28 +91,28 @@ global {
 		}
 		
 		//Add the agents to compute their forces
-		ask world2 {registeredAgents <-  (ball as list) + (ground as list) + (wall as list);}
+		ask world2 {agents <-  (ball as list) + (ground as list) + (wall as list);}
 		
 	}
 	
 	//Reflex to compute the forces at each step
 	reflex computeForces  {
-		ask world2 {do computeForces timeStep : 1;}
+		ask world2 {do compute_forces step: 1;}
 	} 
 			
 } 
 //Species to represent the physic engine, derivated from the Physical3DWorld built-in species
-species physic_world parent: Physical3DWorld ;
+species physic_world parent: physical_world ;
  
 //Species to represent the ground using the physical3D skill
-species ground skills: [physical3D]{
+species ground skills: [physics]{
 	aspect default {
 		draw shape color: #black empty:true;
 	}
 }
 
 //Species to represent the wall using the physical3D skill
-species wall skills: [physical3D]{
+species wall skills: [physics]{
 	rgb color;
 	float height;
     aspect default {
@@ -121,7 +121,7 @@ species wall skills: [physical3D]{
 }
  	
 //Species to represent the ball using the physical3D skill
-species ball skills: [physical3D] {  
+species ball skills: [physics] {  
 	rgb color;
 	int radius;
 	int size  <- size_of_agents;
