@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 
 /**
  * The class Popup.
@@ -165,7 +166,7 @@ public class Popup {
 		final int availableWidth = screenArea.x + screenArea.width - point.x - 5;
 		// scope.getGui().debug("Popup.display: availableWidth = " + availableWidth);
 		// We compute the final width of the popup
-		int popupWidth = Math.min(availableWidth, maxPopupWidth);
+		int popupWidth = CmnFastMath.min(availableWidth, maxPopupWidth);
 		// scope.getGui().debug("Popup.display: popupWidth = " + popupWidth);
 
 		// If the width of the text is greater than the computed width, we wrap the text accordingly, otherwise we

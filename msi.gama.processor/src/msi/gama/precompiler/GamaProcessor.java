@@ -562,6 +562,8 @@ public class GamaProcessor extends AbstractProcessor {
 		StringBuilder sb = new StringBuilder();
 		sb.append(facet.name()).append(SEP);
 		sb.append(arrayToString(facet.type())).append(SEP);
+		sb.append(facet.of()).append(SEP);
+		sb.append(facet.index()).append(SEP);
 		sb.append(arrayToString(facet.values())).append(SEP);
 		sb.append(facet.optional()).append(SEP);
 		sb.append(facet.internal()).append(SEP);

@@ -3,8 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Weka plug-in
 Bundle-SymbolicName: idees.gama.weka;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: msi.gama.core;bundle-version="1.6.1",
- msi.gama.ext;bundle-version="1.0.0",
+Require-Bundle: msi.gama.core;bundle-version="1.7.0",
+ msi.gama.ext;bundle-version="1.7.0",
  msi.gama.processor;bundle-version="1.4.0"
 Bundle-ClassPath: lib/weka.jar,
  .

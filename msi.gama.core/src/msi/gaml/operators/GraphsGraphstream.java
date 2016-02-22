@@ -22,6 +22,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
+import msi.gaml.operators.fastmaths.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
 
@@ -114,7 +115,8 @@ public class GraphsGraphstream {
 				createdAgent = existingNodes.get(scope.getRandom().between(0, existingNodes.size() - 1));
 				existingNodes.remove(createdAgent);
 			} else {
-				IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, initialValues, false, true);
+				IList<? extends IAgent> createdAgents =
+					populationNodes.createAgents(scope, 1, initialValues, false, true);
 				createdAgent = createdAgents.get(0);
 			}
 
@@ -276,8 +278,7 @@ public class GraphsGraphstream {
 
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
 			new BarabasiAlbertGenerator(m), size - 2 // nota: in graphstream, two nodes are already created by default.,
-				,
-			isSychronized);
+			, isSychronized);
 
 	}
 
@@ -307,8 +308,7 @@ public class GraphsGraphstream {
 		nodes.addAll(agents.listValue(scope, Types.AGENT, false));
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy, new BarabasiAlbertGenerator(m),
 			nodes.size() - 2 // nota: in graphstream, two nodes are already created by default.,
-				,
-			isSychronized);
+			, isSychronized);
 
 	}
 
@@ -400,13 +400,13 @@ public class GraphsGraphstream {
 		IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy, new FullGenerator(),
 			size - 1, isSychronized);
 
-		double THETA = 2 * Math.PI / size;
+		double THETA = 2 * CmnFastMath.PI / size;
 		int i = 0;
 		IList<GamlAgent> listVertex = g.getVertices();
 		ILocation locEnv = scope.getSimulationScope().getGeometry().getLocation();
 		for ( GamlAgent e : listVertex ) {
-			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i),
-				locEnv.getY() + layoutRadius * Math.sin(THETA * i), locEnv.getZ()));
+			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
+				locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
 			scope.getGui().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA, scope.getRoot());
 			i++;
 		}
@@ -436,13 +436,13 @@ public class GraphsGraphstream {
 		IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy, new FullGenerator(),
 			nodes.size() - 1, isSychronized);
 
-		double THETA = 2 * Math.PI / nodes.size();
+		double THETA = 2 * CmnFastMath.PI / nodes.size();
 		int i = 0;
 		IList<GamlAgent> listVertex = g.getVertices();
 		ILocation locEnv = scope.getSimulationScope().getGeometry().getLocation();
 		for ( GamlAgent e : listVertex ) {
-			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i),
-				locEnv.getY() + layoutRadius * Math.sin(THETA * i), locEnv.getZ()));
+			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
+				locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
 			scope.getGui().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA, scope.getRoot());
 			i++;
 		}

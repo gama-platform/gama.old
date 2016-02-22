@@ -27,6 +27,7 @@ import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.runtime.GAMA;
+import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * A simple image viewer editor.
@@ -320,8 +321,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 * SWT thread.
 	 *
 	 * @param createImage
-	 * true to (re)create the image object from the imageData, false
-	 * to reuse.
+	 *            true to (re)create the image object from the imageData, false
+	 *            to reuse.
 	 */
 	private void showImage(final boolean createImage) {
 		if ( imageData != null ) {
@@ -575,7 +576,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 		if ( imageData != null ) {
 			double maxWidth = (double) Integer.MAX_VALUE / imageData.width;
 			double maxHeight = (double) Integer.MAX_VALUE / imageData.height;
-			return Math.min(maxWidth, maxHeight);
+			return FastMath.min(maxWidth, maxHeight);
 		}
 		return 1.0d;
 	}
@@ -595,7 +596,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 */
 	public void setZoomFactor(double newZoom) {
 		// don't go bigger than the maz zoom
-		newZoom = Math.min(newZoom, maxZoomFactor);
+		newZoom = FastMath.min(newZoom, maxZoomFactor);
 		if ( zoomFactor != newZoom && newZoom > 0.0d ) {
 			// Double old = Double.valueOf(zoomFactor);
 			this.zoomFactor = newZoom;

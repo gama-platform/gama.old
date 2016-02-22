@@ -9,6 +9,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGridFile;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.*;
 
 /**
@@ -43,7 +44,7 @@ public class CreateFromGridFileDelegate implements ICreateDelegate {
 	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object input,
 		final Arguments init, final CreateStatement statement) {
 		final GamaGridFile file = (GamaGridFile) input;
-		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
+		final int num = max == null ? file.length(scope) : CmnFastMath.min(file.length(scope), max);
 		for ( int i = 0; i < num; i++ ) {
 			final IShape g = file.get(scope, i);
 			final Map map = g.getOrCreateAttributes();

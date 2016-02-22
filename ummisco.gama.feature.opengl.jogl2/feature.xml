@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.opengl.jogl2"
       label="OpenGL for GAMA with JOGL2"
-      version="1.6.1.qualifier">
+      version="1.7.0.qualifier">
 
    <description>
       OpenGL extension for GAMA, which allows to use OpenGL technologies to display simulations.
@@ -17,7 +17,7 @@
    </license>
 
    <url>
-      <update label="GAMA 1.6.1 Update Site" url="http://gama-platform.googlecode.com/svn/update_site"/>
+      <update label="GAMA 1.7.x Update Site" url="http://gama-platform.googlecode.com/svn/update_site"/>
    </url>
 
    <plugin

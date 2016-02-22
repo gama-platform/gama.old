@@ -15,6 +15,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.util.GamaColor;
+import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * Class GamaIcons.
@@ -142,7 +143,7 @@ public class GamaColors {
 		float[] newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1] / 2;
-		newHsb[2] = Math.min(1.0f, hsb[2] + 0.2f);
+		newHsb[2] = FastMath.min(1.0f, hsb[2] + 0.2f);
 		RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}
@@ -153,7 +154,7 @@ public class GamaColors {
 		float[] newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1];
-		newHsb[2] = Math.max(0.0f, hsb[2] - 0.1f);
+		newHsb[2] = FastMath.max(0.0f, hsb[2] - 0.1f);
 		RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}
@@ -169,7 +170,7 @@ public class GamaColors {
 		float[] newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1];
-		newHsb[2] = Math.min(1f, hsb[2] + 0.2f);
+		newHsb[2] = FastMath.min(1f, hsb[2] + 0.2f);
 		RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}

@@ -19,6 +19,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -36,10 +37,11 @@ import msi.gaml.types.IType;
 	doc = { @doc("Returns the name of the agent (not necessarily unique in its population)") }),
 	@var(name = IKeyword.PEERS,
 		type = IType.LIST,
+		of = ITypeProvider.OWNER_TYPE,
 		doc = {
 			@doc("Returns the population of agents of the same species, in the same host, minus the receiver agent") }),
 	@var(name = IKeyword.HOST,
-		type = IType.AGENT,
+		type = ITypeProvider.MACRO_TYPE,
 		doc = { @doc("Returns the agent that hosts the population of the receiver agent") }),
 	@var(name = IKeyword.LOCATION,
 		type = IType.POINT,

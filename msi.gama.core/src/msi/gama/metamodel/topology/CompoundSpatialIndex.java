@@ -19,6 +19,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 
 public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
@@ -32,8 +33,8 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		indexes = new TObjectIntHashMap(10, 0.75f, -1);
 		// noEntryValue is 0 by default
 		all = new ISpatialIndex[] { new GamaQuadTree(bounds) };
-		final double biggest = Math.max(bounds.getWidth(), bounds.getHeight());
-		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest, biggest * Math.sqrt(2) };
+		final double biggest = FastMath.max(bounds.getWidth(), bounds.getHeight());
+		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest, biggest * FastMath.sqrt(2) };
 	}
 
 	private ISpatialIndex findSpatialIndex(final ISpecies s) {
@@ -64,7 +65,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	}
 
 	@Override
-	public void remove(final IShape previous, final IAgent o) {
+	public void remove(final Envelope previous, final IAgent o) {
 		final IAgent a = o.getAgent();
 		if ( a == null ) { return; }
 		final ISpatialIndex si = findSpatialIndex(a.getSpecies());

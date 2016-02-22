@@ -16,6 +16,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
@@ -78,11 +79,11 @@ public class ResourceObject extends AbstractObject {
 		// We then compute the scaling factor to apply
 		double factor = 0.0;
 		if ( size != null && env != null ) {
-			if ( !(file instanceof Gama3DGeometryFile) ) {
-				factor = Math.min(size.x / env.getWidth(), size.y / env.getHeight());
+			if ( !(file instanceof Gama3DGeometryFile) || size.z == 0d ) {
+				factor = FastMath.min(size.x / env.getWidth(), size.y / env.getHeight());
 			} else {
-				factor = Math.min(Math.min(size.x / env.getWidth(), size.y / env.getHeight()),
-					size.z / ((Envelope3D) env).getDepth());
+				double min_xy = FastMath.min(size.x / env.getWidth(), size.y / env.getHeight());
+				factor = FastMath.min(min_xy, size.z / ((Envelope3D) env).getDepth());
 			}
 			gl.glScaled(factor, factor, factor);
 		}

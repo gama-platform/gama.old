@@ -12,6 +12,7 @@ import msi.gama.util.file.GamaCSVFile;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.*;
 
 /**
@@ -54,7 +55,7 @@ public class CreateFromCSVDelegate implements ICreateDelegate {
 		if ( mat == null || mat.isEmpty(scope) ) { return false; }
 		int rows = mat.getRows(scope);
 		int cols = mat.getCols(scope);
-		rows = max == null ? rows : Math.min(rows, max);
+		rows = max == null ? rows : CmnFastMath.min(rows, max);
 
 		List headers;
 		if ( hasHeader ) {

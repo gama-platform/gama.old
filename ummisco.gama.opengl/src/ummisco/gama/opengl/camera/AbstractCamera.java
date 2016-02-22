@@ -25,13 +25,14 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
+import msi.gaml.operators.fastmaths.*;
 import ummisco.gama.opengl.JOGLRenderer;
 
 // import java.awt.event.*;
 
 public abstract class AbstractCamera implements ICamera {
 
-	protected static final double factor = Math.PI / 180d;
+	protected static final double factor = FastMath.PI / 180d;
 
 	private JOGLRenderer renderer;
 	// protected boolean isMacOS = false;
@@ -354,12 +355,12 @@ public abstract class AbstractCamera implements ICamera {
 		if ( howManyObjects > 0 ) {
 			// simple searching algorithm
 			selectedIndex = selectBuffer.get(3);
-			int mindistance = Math.abs(selectBuffer.get(1));
+			int mindistance = CmnFastMath.abs(selectBuffer.get(1));
 			for ( int i = 0; i < howManyObjects; i++ ) {
 
-				if ( mindistance < Math.abs(selectBuffer.get(1 + i * 4)) ) {
+				if ( mindistance < CmnFastMath.abs(selectBuffer.get(1 + i * 4)) ) {
 
-					mindistance = Math.abs(selectBuffer.get(1 + i * 4));
+					mindistance = CmnFastMath.abs(selectBuffer.get(1 + i * 4));
 					selectedIndex = selectBuffer.get(3 + i * 4);
 
 				}

@@ -52,10 +52,10 @@ public class MyAPP {
 					rowList = initValue.get(i);
 					geo= (Geometry) rowList.get(index);
 					en0=geo.getEnvelopeInternal();
-					maxX= Math.max(maxX,en0.getMaxX());
-					maxY= Math.max(maxY,en0.getMaxY());
-					minX= Math.min(minX,en0.getMinX());
-					minY= Math.min(minY,en0.getMinY());
+					maxX= FastMath.max(maxX,en0.getMaxX());
+					maxY= FastMath.max(maxY,en0.getMaxY());
+					minX= FastMath.min(minX,en0.getMinX());
+					minY= FastMath.min(minY,en0.getMinY());
 					
 					System.out.println("Envolope["+i+"]"+geo.getEnvelopeInternal());
 					en0.init(maxX, minX, maxY, minY);

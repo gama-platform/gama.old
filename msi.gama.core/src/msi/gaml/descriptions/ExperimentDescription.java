@@ -18,7 +18,6 @@ import msi.gama.kernel.experiment.*;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.IType;
 
 public class ExperimentDescription extends SpeciesDescription {
 
@@ -39,17 +38,6 @@ public class ExperimentDescription extends SpeciesDescription {
 		}
 
 		parameters.put(var.getName(), var);
-	}
-
-	@Override
-	protected void addVariableNoCheck(final VariableDescription var) {
-		if ( var.getName().equals(SIMULATION) ) {
-			// We are dealing with the built-in variable. We gather the precise type of the model itself and pass it
-			// to the variable (instead of its generic "agent" type).
-			final IType t = enclosing.getModelDescription().getType();
-			var.setType(t);
-		}
-		super.addVariableNoCheck(var);
 	}
 
 	@Override

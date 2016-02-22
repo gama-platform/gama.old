@@ -18,6 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 /**
@@ -338,7 +339,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	public double norm() {
-		return Math.hypot(Math.hypot(x, y), z);
+		return FastMath.hypot(x, y, z);
 	}
 
 	@Override

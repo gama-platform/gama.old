@@ -35,6 +35,7 @@ import msi.gama.util.path.*;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
+import msi.gaml.operators.fastmaths.*;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
@@ -208,7 +209,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					matrix[i] = poly;
 					hexAgentToLoc.put(poly, new GamaPoint(c, l));
 					actualNumberOfCells++;
-					lastCell = Math.max(lastCell, i);
+					lastCell = CmnFastMath.max(lastCell, i);
 				}
 			}
 		}
@@ -224,7 +225,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					matrix[i] = poly;
 					hexAgentToLoc.put(poly, new GamaPoint(c, l));
 					actualNumberOfCells++;
-					lastCell = Math.max(lastCell, i);
+					lastCell = CmnFastMath.max(lastCell, i);
 				}
 			}
 		}
@@ -566,7 +567,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 			return result;
 		}
-		int result = Math.max(dx, dy);
+		int result = CmnFastMath.max(dx, dy);
 		double centroid_dx = Maths.abs(g2.getLocation().getX() - g1.getLocation().getX());
 		double centroid_dy = Maths.abs(g2.getLocation().getY() - g1.getLocation().getY());
 		if ( centroid_dx < cellWidth && centroid_dy < cellHeight ) {
@@ -854,7 +855,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public void insert(final IAgent a) {}
 
 	@Override
-	public void remove(final IShape previous, final IAgent a) {}
+	public void remove(final Envelope previous, final IAgent a) {}
 
 	//
 	@Override
@@ -1244,9 +1245,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			// WARNING THE PROBLEM IS THAT THESE AGENTS ARE BREAKING THE HIERARCHY
 
 			public GamlGridAgent(final int index) {
-				super(GridPopulation.this);
+				super(GridPopulation.this, matrix[index].getGeometry());
 				setIndex(index);
-				geometry = matrix[getIndex()].getGeometry(); // TODO Verify this
+				// geometry = matrix[getIndex()].getGeometry(); // TODO Verify this
 			}
 
 			@Override
@@ -1355,17 +1356,17 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return GridPopulation.this;
 			}
 
-			@Override
-			protected IPopulation checkedPopulation() {
-				// The population is never null
-				return GridPopulation.this;
-			}
+			// @Override
+			// protected IPopulation checkedPopulation() {
+			// // The population is never null
+			// return GridPopulation.this;
+			// }
 
-			@Override
-			protected IShape checkedGeometry() {
-				// The geometry is never null (?)
-				return geometry;
-			}
+			// @Override
+			// protected IShape checkedGeometry() {
+			// // The geometry is never null (?)
+			// return geometry;
+			// }
 
 			@Override
 			public IShape getGeometry() {
@@ -1489,11 +1490,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final List<Integer> v = new ArrayList<Integer>(radius << 2);
 			int p;
 			for ( int i = -radius; i < radius; i++ ) {
-				p = getPlaceIndexAt(x - i, y - Math.abs(i) + radius);
+				p = getPlaceIndexAt(x - i, y - CmnFastMath.abs(i) + radius);
 				if ( p != -1 ) {
 					v.add(p);
 				}
-				p = getPlaceIndexAt(x + i, y + Math.abs(i) - radius);
+				p = getPlaceIndexAt(x + i, y + CmnFastMath.abs(i) - radius);
 				if ( p != -1 ) {
 					v.add(p);
 				}
@@ -1665,7 +1666,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				for ( int i = 0; i < places.length; i++ ) {
 					if ( places[i] == p ) {
 						final double v = values[i];
-						values[i] = type == IGrid.GRADIENT ? Math.max(v, value) : v + value;
+						values[i] = type == IGrid.GRADIENT ? FastMath.max(v, value) : v + value;
 						return;
 					}
 				}
@@ -1762,7 +1763,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					vn = vn * prop - variation;
 					max_range++;
 				}
-				range = Math.min(range, max_range);
+				range = CmnFastMath.min(range, max_range);
 				try {
 					neighbours = neighbourhood.getRawNeighboursIncluding(scope, placeIndex, range);
 				} catch (final GamaRuntimeException e) {
@@ -1822,7 +1823,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					vn = vn * proportion - variation;
 					max_range++;
 				}
-				range = Math.min(range, max_range);
+				range = CmnFastMath.min(range, max_range);
 				try {
 					neighbours = neighbourhood.getRawNeighboursIncluding(scope, placeIndex, range);
 				} catch (final GamaRuntimeException e) {
@@ -2026,11 +2027,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final TIntHashSet v = new TIntHashSet(radius << 2);
 			int p;
 			for ( int i = -radius; i < radius; i++ ) {
-				p = getPlaceIndexAt(x - i, y - Math.abs(i) + radius);
+				p = getPlaceIndexAt(x - i, y - CmnFastMath.abs(i) + radius);
 				if ( p != -1 ) {
 					v.add(p);
 				}
-				p = getPlaceIndexAt(x + i, y + Math.abs(i) - radius);
+				p = getPlaceIndexAt(x + i, y + CmnFastMath.abs(i) - radius);
 				if ( p != -1 ) {
 					v.add(p);
 				}

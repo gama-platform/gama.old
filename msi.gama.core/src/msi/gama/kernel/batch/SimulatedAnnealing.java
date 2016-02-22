@@ -21,44 +21,35 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.ANNEALING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(
-	value = { @facet(name = IKeyword.NAME,
-		type = IType.ID,
-		optional = false,
-		internal = true),
-		@facet(name = SimulatedAnnealing.TEMP_END,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("final temperature") ),
-		@facet(name = SimulatedAnnealing.TEMP_DECREASE,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("temperature decrease coefficient") ),
-		@facet(name = SimulatedAnnealing.TEMP_INIT,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("initial temperature") ),
-		@facet(name = SimulatedAnnealing.NB_ITER,
-			type = IType.INT,
-			optional = true,
-			doc = @doc("number of iterations per level of temperature") ),
-		@facet(name = IKeyword.MAXIMIZE,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("the value the algorithm tries to maximize") ),
-		@facet(name = IKeyword.MINIMIZE,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("the value the algorithm tries to minimize") ),
-		@facet(name = IKeyword.AGGREGATION,
-			type = IType.LABEL,
-			optional = true,
-			values = { IKeyword.MIN, IKeyword.MAX },
-			doc = @doc("the agregation method") ) },
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
+	@facet(name = SimulatedAnnealing.TEMP_END, type = IType.FLOAT, optional = true, doc = @doc("final temperature")),
+	@facet(name = SimulatedAnnealing.TEMP_DECREASE,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("temperature decrease coefficient")),
+	@facet(name = SimulatedAnnealing.TEMP_INIT, type = IType.FLOAT, optional = true, doc = @doc("initial temperature")),
+	@facet(name = SimulatedAnnealing.NB_ITER,
+		type = IType.INT,
+		optional = true,
+		doc = @doc("number of iterations per level of temperature")),
+	@facet(name = IKeyword.MAXIMIZE,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the value the algorithm tries to maximize")),
+	@facet(name = IKeyword.MINIMIZE,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the value the algorithm tries to minimize")),
+	@facet(name = IKeyword.AGGREGATION,
+		type = IType.LABEL,
+		optional = true,
+		values = { IKeyword.MIN, IKeyword.MAX },
+		doc = @doc("the agregation method")) },
 	omissible = IKeyword.NAME)
 @doc(
 	value = "This algorithm is an implementation of the Simulated Annealing algorithm. See the wikipedia article and [batch161 the batch dedicated page].",
@@ -93,6 +84,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	}
 
 	// FIXME SimulationScope is normally null at that point. Should be better called from initializeFor()
+	@Override
 	public void initParams(final IScope scope) {
 		final IExpression tempend = getFacet(TEMP_END);
 		if ( tempend != null ) {
@@ -146,9 +138,9 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 				if ( isMaximize() &&
 					(neighborFitness >= currentFitness ||
-						scope.getRandom().next() < Math.exp((neighborFitness - currentFitness) / temperature)) ||
+						scope.getRandom().next() < FastMath.exp((neighborFitness - currentFitness) / temperature)) ||
 					!isMaximize() && (neighborFitness <= currentFitness ||
-						scope.getRandom().next() < Math.exp((currentFitness - neighborFitness) / temperature)) ) {
+						scope.getRandom().next() < FastMath.exp((currentFitness - neighborFitness) / temperature)) ) {
 					bestSolutionAlgo = neighborSol;
 					currentFitness = neighborFitness;
 				}

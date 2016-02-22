@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ummisco.gama.feature.core"
-      label="Core"
-      version="1.6.1.qualifier"
+      label="Core feature"
+      version="1.7.1.qualifier"
       provider-name="UMMISCO">
 
    <description url="http://www.example.com/description">
@@ -18,7 +18,7 @@
    </license>
 
    <url>
-      <update label="Gama 1.6.1 Update Site" url="https://gama-platform.googlecode.com/svn/update_site"/>
+      <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
    <plugin

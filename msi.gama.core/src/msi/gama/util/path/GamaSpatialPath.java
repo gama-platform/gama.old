@@ -24,6 +24,7 @@ import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial.Punctal;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, IShape>> {
@@ -117,7 +118,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					}
 					if ( cpt == 0 && !source.equals(pt) ) {
 						GamaPoint falseSource = new GamaPoint(source.getLocation());
-						if ( source.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000) ) {
+						if ( source.euclidianDistanceTo(edge2) > FastMath.min(0.01, edge2.getPerimeter() / 1000) ) {
 							falseSource = (GamaPoint) Punctal._closest_point_to(source, edge2);
 							falseSource.z = zVal(falseSource, edge2);
 						}
@@ -127,7 +128,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 						edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry().getNumPoints() - 1]) ) {
 
 						GamaPoint falseTarget = new GamaPoint(target.getLocation());
-						if ( target.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000) ) {
+						if ( target.euclidianDistanceTo(edge2) > FastMath.min(0.01, edge2.getPerimeter() / 1000) ) {
 							falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
 							falseTarget.z = zVal(falseTarget, edge2);
 						}

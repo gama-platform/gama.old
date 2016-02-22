@@ -16,6 +16,7 @@ import javax.vecmath.Vector3f;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.RigidBody;
 import com.vividsolutions.jts.geom.Coordinate;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -32,16 +33,20 @@ import msi.gaml.types.*;
  * @author Javier Gil-Quijano - Arnaud Grignard - 18-Nov-2012 (Gama Winter School)
  * Last Modified: 23-Mar-2012
  */
-@species(name = "Physical3DWorld")
+@species(name = "physical_world")
+@doc("The base species for agents that act as a 3D physical world")
 @vars({
 	@var(name = "gravity",
 		type = IType.BOOL,
 		init = "true",
-		doc = @doc("Define if the physical world has a gravity or not") ),
-	@var(name = "registeredAgents", type = IType.LIST, init = "[]") })
-public class Physical3DWorldAgent extends GamlAgent {
+		doc = @doc("Define if the physical world has a gravity or not")),
+	@var(name = IKeyword.AGENTS,
+		type = IType.LIST,
+		of = IType.AGENT,
+		init = "[]",
+		doc = { @doc("The list of agents registered in this physical world") }) })
+public class Physical3DWorldAgent extends MinimalAgent {
 
-	public final static String REGISTERED_AGENTS = "registeredAgents";
 	private IList<IAgent> registeredAgents = null;
 	private final HashMap<IAgent, RigidBody> registeredMap = new HashMap<IAgent, RigidBody>();
 	private final PhysicsWorldJBullet world;
@@ -51,12 +56,12 @@ public class Physical3DWorldAgent extends GamlAgent {
 		world = new PhysicsWorldJBullet(true);
 	}
 
-	@getter("registeredAgents")
+	@getter(IKeyword.AGENTS)
 	public IList<IAgent> getRegisteredAgents() {
 		return registeredAgents;
 	}
 
-	@setter("registeredAgents")
+	@setter(IKeyword.AGENTS)
 	public void setRegisteredAgents(final IList<IAgent> agents) {
 		cleanRegisteredAgents();
 		registeredAgents = agents;
@@ -173,11 +178,11 @@ public class Physical3DWorldAgent extends GamlAgent {
 		registeredMap.put(ia, body);
 	}
 
-	@action(name = "computeForces")
-	@args(names = { "timeStep", "velocityIterations", "port", "dbName", "usrName", "password" })
+	@action(name = "compute_forces")
+	@args(names = { "step" })
 	public Object primComputeForces(final IScope scope) throws GamaRuntimeException {
 
-		Double timeStep = scope.hasArg("timeStep") ? (Double) scope.getArg("timeStep", IType.FLOAT) : 1.0;
+		Double timeStep = scope.hasArg("step") ? (Double) scope.getArg("step", IType.FLOAT) : 1.0;
 		// System.out.println("Time step : "+ timeStep);
 		world.update(timeStep.floatValue());
 

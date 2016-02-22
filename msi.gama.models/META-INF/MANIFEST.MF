@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Models
+Bundle-Name: Models of GAMA
 Bundle-SymbolicName: msi.gama.models
-Bundle-Version: 1.6.1.qualifier
+Bundle-Version: 1.7.0.qualifier
 Bundle-Vendor: MSI
 Eclipse-BundleShape: dir

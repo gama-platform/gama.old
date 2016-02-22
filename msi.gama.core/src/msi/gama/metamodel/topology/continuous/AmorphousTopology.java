@@ -13,7 +13,7 @@ package msi.gama.metamodel.topology.continuous;
 
 import java.awt.Graphics2D;
 import java.util.*;
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -93,7 +93,7 @@ public class AmorphousTopology implements ITopology {
 	// }
 	//
 	@Override
-	public void updateAgent(final IShape previous, final IAgent agent) {
+	public void updateAgent(final Envelope previous, final IAgent agent) {
 		final IShape ng =
 			Spatial.Operators.union(agent.getScope(), expandableEnvironment.getGeometry(), agent.getGeometry());
 		expandableEnvironment.setGeometry(new GamaShape(ng.getInnerGeometry().getEnvelope()));

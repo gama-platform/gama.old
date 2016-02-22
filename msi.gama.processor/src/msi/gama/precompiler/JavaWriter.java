@@ -446,6 +446,10 @@ public class JavaWriter {
 				facets += toJavaString(segments[pointer++]) + ',';
 				// types
 				facets += toArrayOfInts(segments[pointer++]) + ",";
+				// of
+				facets += segments[pointer++] + ",";
+				// index
+				facets += segments[pointer++] + ",";
 				// values
 				String values = segments[pointer++];
 				if ( !values.isEmpty() ) {

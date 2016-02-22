@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ContinuousTopology.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.topology.continuous;
 
@@ -18,19 +18,20 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gaml.operators.Maths;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 4 juil. 2011
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class ContinuousTopology extends AbstractTopology {
 
 	/**
 	 * Initializes inner environment for agents other than "world".
-	 * 
+	 *
 	 * @param directMacro
 	 * @param torus
 	 */
@@ -106,7 +107,7 @@ public class ContinuousTopology extends AbstractTopology {
 		final double dy = y2 - source.getY();
 		// AD 21/03/15: Fixes two long-standing bugs (see Issue 1177) + problems in MovingSkill.move().
 		final double result = Maths.atan2(dy, dx);
-		return (int) Math.round(Maths.checkHeading(result));
+		return (int) FastMath.round(Maths.checkHeading(result));
 	}
 
 	@Override

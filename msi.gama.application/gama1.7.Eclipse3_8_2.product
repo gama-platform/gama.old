@@ -254,7 +254,7 @@ openFile
    </plugins>
 
    <features>
-      <feature id="ummisco.gama.feature.jogl2.product" version="1.6.1.qualifier"/>
+      <feature id="ummisco.gama.feature.jogl2.product" version="1.7.0.qualifier"/>
       <feature id="org.eclipse.equinox.p2.core.feature"/>
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>

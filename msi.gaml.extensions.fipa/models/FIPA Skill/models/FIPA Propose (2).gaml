@@ -26,7 +26,7 @@ global {
 	}
 }
 
-species Initiator skills: [communicating] {
+species Initiator skills: [fipa] {
 	reflex send_propose_message when: (time = 1) {
 		write name + ' sends a propose message';
 		do start_conversation with: [ receivers :: [p], protocol :: 'fipa-propose', performative :: 'propose', content :: ['Go swimming?'] ];
@@ -40,7 +40,7 @@ species Initiator skills: [communicating] {
 	}
 }
 
-species Participant skills: [communicating] {
+species Participant skills: [fipa] {
 	reflex accept_proposal when: !(empty(proposes)) {
 		message proposalFromInitiator <- proposes at 0;
 		

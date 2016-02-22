@@ -1,42 +1,30 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SolveStatement.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
-import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.validator;
+import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.ConstantExpression;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.VariableExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.ode.statements.SolveStatement.SolveValidator;
-import ummisco.gaml.extensions.maths.ode.utils.solver.DormandPrince853Solver;
-import ummisco.gaml.extensions.maths.ode.utils.solver.Rk4Solver;
-import ummisco.gaml.extensions.maths.ode.utils.solver.Solver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 
 @facets(value = {
 	@facet(name = IKeyword.EQUATION,
@@ -59,16 +47,18 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.Solver;
 	@facet(name = "discretizing_step",
 		type = IType.INT,
 		optional = true,
-		doc = @doc(value = "number of discret beside 2 step of simulation (default value: 0)")),
+		doc = @doc(value = "number of discret between 2 steps of simulation (default value: 0)")),
 	@facet(name = "time_initial", type = IType.FLOAT, optional = true, doc = @doc(value = "initial time")),
 	@facet(name = "time_final",
 		type = IType.FLOAT,
 		optional = true,
-		doc = @doc(value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
+		doc = @doc(
+			value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
 	@facet(name = "cycle_length",
 		type = IType.INT,
 		optional = true,
-		doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator (default value: 1)")),
+		doc = @doc(
+			value = "length of simulation cycle which will be synchronize with step of integrator (default value: 1)")),
 	@facet(name = IKeyword.STEP,
 		type = IType.FLOAT,
 		optional = true,
@@ -76,11 +66,13 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.Solver;
 	@facet(name = "min_step",
 		type = IType.FLOAT,
 		optional = true,
-		doc = @doc(value = "minimal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
+		doc = @doc(
+			value = "minimal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 	@facet(name = "max_step",
 		type = IType.FLOAT,
 		optional = true,
-		doc = @doc(value = "maximal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
+		doc = @doc(
+			value = "maximal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 	@facet(name = "scalAbsoluteTolerance",
 		type = IType.FLOAT,
 		optional = true,
@@ -93,9 +85,10 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.Solver;
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(SolveValidator.class)
-@doc(value = "Solves all equations which matched the given name, with all systems of agents that should solved simultaneously.",
-	usages = { @usage(value = "", examples = { @example(value = "solve SIR method: \"rk4\" step:0.001;",
-		isExecutable = false) }) })
+@doc(
+	value = "Solves all equations which matched the given name, with all systems of agents that should solved simultaneously.",
+	usages = { @usage(value = "",
+		examples = { @example(value = "solve SIR method: \"rk4\" step:0.001;", isExecutable = false) }) })
 public class SolveStatement extends AbstractStatement {
 
 	public static class SolveValidator implements IDescriptionValidator {
@@ -103,19 +96,25 @@ public class SolveStatement extends AbstractStatement {
 		@Override
 		public void validate(final IDescription desc) {
 			IExpression method = desc.getFacets().getExpr(IKeyword.METHOD);
-			if (method != null) {
+			if ( method != null ) {
 				String methodName = method.literalValue();
-				if (methodName != null) {
-					if ("dp853".equals(methodName)) {
-						if (!desc.getFacets().containsKey("min_step") || !desc.getFacets().containsKey("min_step") || !desc.getFacets().containsKey("max_step")
-								|| !desc.getFacets().containsKey("scalAbsoluteTolerance")|| !desc.getFacets().containsKey("scalRelativeTolerance"))
-						desc.error("For method dp853, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined", IGamlIssue.GENERAL);
-					}else if (!"rk4".equals(methodName)) {
-						desc.error("The method facet must have for value either \"rk4\" or \"dp853\"", IGamlIssue.GENERAL);
+				if ( methodName != null ) {
+					if ( "dp853".equals(methodName) ) {
+						if ( !desc.getFacets().containsKey("min_step") || !desc.getFacets().containsKey("min_step") ||
+							!desc.getFacets().containsKey("max_step") ||
+							!desc.getFacets().containsKey("scalAbsoluteTolerance") ||
+							!desc.getFacets().containsKey("scalRelativeTolerance") ) {
+							desc.error(
+								"For method dp853, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined",
+								IGamlIssue.GENERAL);
+						}
+					} else if ( !"rk4".equals(methodName) ) {
+						desc.error("The method facet must have for value either \"rk4\" or \"dp853\"",
+							IGamlIssue.GENERAL);
 					}
 				} else {
 					desc.error("The method facet must have for value either \"rk4\" or \"dp853\"", IGamlIssue.GENERAL);
-				}		
+				}
 			}
 		}
 	}
@@ -128,7 +127,6 @@ public class SolveStatement extends AbstractStatement {
 	double cycle_length = 1;
 	final IExpression stepExp, cycleExp, discretExp, minStepExp, maxStepExp, absTolerExp, relTolerExp, timeInitExp,
 		timeFinalExp;
-
 
 	public SolveStatement(final IDescription desc) {
 		super(desc);
@@ -151,7 +149,8 @@ public class SolveStatement extends AbstractStatement {
 
 	private SystemOfEquationsStatement getEquations(final IScope scope) {
 		if ( theEquations == null ) {
-			theEquations = scope.getAgentScope().getSpecies().getStatement(SystemOfEquationsStatement.class, equationName);
+			theEquations =
+				scope.getAgentScope().getSpecies().getStatement(SystemOfEquationsStatement.class, equationName);
 		}
 		return theEquations;
 	}
@@ -170,23 +169,24 @@ public class SolveStatement extends AbstractStatement {
 		theEquations.currentScope = scope;
 
 		if ( solverName.equals("rk4") ) {
-			solver = new Rk4Solver(step, discret>0?discret:0, theEquations.integrated_times, theEquations.integrated_values);
-		} else if ( solverName.equals("dp853")) {
-			if (minStepExp != null && maxStepExp != null && absTolerExp != null &&
-				relTolerExp != null ) {
+			solver = new Rk4Solver(step, discret > 0 ? discret : 0, theEquations.integrated_times,
+				theEquations.integrated_values);
+		} else if ( solverName.equals("dp853") ) {
+			if ( minStepExp != null && maxStepExp != null && absTolerExp != null && relTolerExp != null ) {
 				double minStep = Cast.asFloat(scope, minStepExp.value(scope));
 				double maxStep = Cast.asFloat(scope, maxStepExp.value(scope));
 				minStep = cycle_length > 1.0 ? minStep / cycle_length : minStep;
 				maxStep = cycle_length > 1.0 ? maxStep / cycle_length : maxStep;
-	
+
 				double scalAbsoluteTolerance = Cast.asFloat(scope, absTolerExp.value(scope));
 				double scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
-	
-				solver =
-					new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, discret>0?discret:0,
-							theEquations.integrated_times, theEquations.integrated_values);
+
+				solver = new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+					discret > 0 ? discret : 0, theEquations.integrated_times, theEquations.integrated_values);
 			} else {
-				throw GamaRuntimeException.error("For method dp853, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined", scope);
+				throw GamaRuntimeException.error(
+					"For method dp853, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined",
+					scope);
 			}
 		}
 		timeInit = timeInitExp == null ? scope.getClock().getCycle() : Cast.asFloat(scope, timeInitExp.value(scope));
@@ -208,7 +208,7 @@ public class SolveStatement extends AbstractStatement {
 			IExpression fv = getFacet("integrated_values");
 			IList fvListe = Cast.asList(scope, fv.value(scope));
 			fvListe.addAll(theEquations.integrated_values);
-			
+
 		}
 
 		return null;

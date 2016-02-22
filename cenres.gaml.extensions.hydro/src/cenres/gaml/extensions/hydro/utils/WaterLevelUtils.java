@@ -17,6 +17,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.Types;
 
 /**
@@ -175,8 +176,8 @@ public class WaterLevelUtils {
 						}
 					}
 				}
-				double sol1 = (-B + Math.sqrt(B * B - 4.0 * A * C)) / (2.0 * A);
-				double sol2 = (-B - Math.sqrt(B * B - 4.0 * A * C)) / (2.0 * A);
+				double sol1 = (-B + FastMath.sqrt(B * B - 4.0 * A * C)) / (2.0 * A);
+				double sol2 = (-B - FastMath.sqrt(B * B - 4.0 * A * C)) / (2.0 * A);
 				if ( A == 0 & B > 0 ) {
 					sol1 = -C / B;
 				}

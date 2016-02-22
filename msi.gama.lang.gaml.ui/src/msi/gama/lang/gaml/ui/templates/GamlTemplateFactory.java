@@ -5,16 +5,16 @@
 package msi.gama.lang.gaml.ui.templates;
 
 import java.util.*;
-import msi.gama.common.interfaces.INamed;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
-import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.descriptions.*;
-import msi.gaml.operators.Strings;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+import msi.gama.common.interfaces.INamed;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
+import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.descriptions.*;
+import msi.gaml.operators.Strings;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 
 /**
  * The class GamlTemplateFactory.
@@ -56,7 +56,7 @@ public class GamlTemplateFactory {
 	// if ( index == -1 ) {
 	// index = doc.length();
 	// }
-	// desc += doc.substring(0, Math.min(index, 150)) + " [...]";
+	// desc += doc.substring(0, FastMath.min(index, 150)) + " [...]";
 	// }
 	//
 	// menuPath = menu + "." + menuPath.substring(0, menuPath.length() - 1);
@@ -108,7 +108,7 @@ public class GamlTemplateFactory {
 			if ( index == -1 ) {
 				index = doc.length();
 			}
-			desc += doc.substring(0, Math.min(index, 150)) + " [...]";
+			desc += doc.substring(0, CmnFastMath.min(index, 150)) + " [...]";
 		}
 		menuPath = menu + "." + menuPath.substring(0, menuPath.length() - 1);
 		if ( isExample ) {
@@ -154,8 +154,9 @@ public class GamlTemplateFactory {
 		dump(inheritedAttributes, AbstractGamlAdditions.getVariablesForSkill(skill), comment);
 		dump(inheritedActions, AbstractGamlAdditions.getActionsForSkill(skill), comment);
 		comment.append(endComment);
-		return new Template("A species with the skill " + skill, "Defines a species that implements the skill named " +
-			skill, getContextId(), "species ${species_name} skills: [" + skill + "]" + body(comment.toString()), true);
+		return new Template("A species with the skill " + skill,
+			"Defines a species that implements the skill named " + skill, getContextId(),
+			"species ${species_name} skills: [" + skill + "]" + body(comment.toString()), true);
 	}
 
 	public static Template speciesWithControl(final String skill) {
@@ -196,9 +197,8 @@ public class GamlTemplateFactory {
 			sb.setLength(length - 2);
 		}
 		sb.append(")");
-		Template t =
-			new Template("A call to action " + name, "A call to action " + name + " will all its arguments",
-				getContextId(), "do " + name + sb.toString() + ";" + Strings.LN, true);
+		Template t = new Template("A call to action " + name, "A call to action " + name + " will all its arguments",
+			getContextId(), "do " + name + sb.toString() + ";" + Strings.LN, true);
 		return t;
 	}
 

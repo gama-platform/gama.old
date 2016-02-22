@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Gama Modelling Language
 Bundle-Vendor: MSI
-Bundle-Version: 1.4.2
+Bundle-Version: 1.7.0.qualifier
 Bundle-SymbolicName: msi.gama.lang.gaml; singleton:=true
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.util,

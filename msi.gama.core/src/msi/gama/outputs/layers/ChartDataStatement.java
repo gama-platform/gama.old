@@ -31,12 +31,15 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.DATA, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
-@facets(
-	value = { @facet(name = IKeyword.VALUE, type = { IType.FLOAT, IType.POINT, IType.LIST }, optional = false),
-		@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
-		@facet(name = IKeyword.LEGEND, type = IType.STRING, optional = true),
-		@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true), @facet(
-			name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
+@facets(value = {
+	@facet(name = IKeyword.VALUE,
+		type = { IType.FLOAT, IType.POINT, IType.LIST },
+		// of = IType.FLOAT,
+		optional = false),
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
+	@facet(name = IKeyword.LEGEND, type = IType.STRING, optional = true),
+	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.MARKERSHAPE,
 		type = IType.ID,
@@ -46,12 +49,12 @@ import msi.gaml.types.IType;
 			ChartDataStatement.MARKER_HOR_ELLIPSE, ChartDataStatement.MARKER_RIGHT_TRIANGLE,
 			ChartDataStatement.MARKER_VERT_RECTANGLE, ChartDataStatement.MARKER_LEFT_TRIANGLE },
 		optional = true),
-		@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
-		@facet(name = IKeyword.STYLE,
-			type = IType.ID,
-			values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT, IKeyword.STEP,
-				IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED },
-			optional = true) },
+	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.STYLE,
+		type = IType.ID,
+		values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT, IKeyword.STEP,
+			IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED },
+		optional = true) },
 	omissible = IKeyword.LEGEND)
 public class ChartDataStatement extends AbstractStatement {
 
@@ -367,9 +370,9 @@ public class ChartDataStatement extends AbstractStatement {
 // double minX = dataset.getXValue(series, 0);
 // double maxX = dataset.getXValue(series, numX - 1);
 // if ( this.getGapThresholdType() == UnitType.ABSOLUTE ) {
-// drawLine = Math.abs(x1 - x0) <= this.getGapThreshold();
+// drawLine = FastMath.abs(x1 - x0) <= this.getGapThreshold();
 // } else {
-// drawLine = Math.abs(x1 - x0) <= (maxX - minX) / numX * getGapThreshold();
+// drawLine = FastMath.abs(x1 - x0) <= (maxX - minX) / numX * getGapThreshold();
 // }
 // }
 // if ( drawLine ) {

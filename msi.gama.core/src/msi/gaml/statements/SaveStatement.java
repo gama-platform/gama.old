@@ -47,32 +47,35 @@ import msi.gaml.types.*;
 	with_args = true,
 	remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
-@facets(value = {
-	@facet(name = IKeyword.TYPE,
-		type = IType.ID,
-		optional = true,
-		doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"text\" or \"csv\") ") ),
-	@facet(name = IKeyword.DATA,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("any expression, that will be saved in the file") ),
-	@facet(name = IKeyword.REWRITE,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it") ),
-	@facet(name = IKeyword.HEADER,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist") ),
-	@facet(name = IKeyword.TO,
-		type = IType.STRING,
-		optional = false,
-		doc = @doc("an expression that evaluates to an string, the path to the file") ),
-	@facet(name = "crs",
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org") ),
-	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true, doc = @doc("") ) }, omissible = IKeyword.DATA)
+@facets(
+	value = {
+		@facet(name = IKeyword.TYPE,
+			type = IType.ID,
+			optional = true,
+			values = { "shp", "text", "csv", "asc" },
+			doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"text\" or \"csv\") ")),
+		@facet(name = IKeyword.DATA,
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("any expression, that will be saved in the file")),
+		@facet(name = IKeyword.REWRITE,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
+		@facet(name = IKeyword.HEADER,
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
+		@facet(name = IKeyword.TO,
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("an expression that evaluates to an string, the path to the file")),
+		@facet(name = "crs",
+			type = IType.NONE,
+			optional = true,
+			doc = @doc("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
+		@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true, doc = @doc("")) },
+	omissible = IKeyword.DATA)
 @doc(value = "Allows to save data in a file. The type of file can be \"shp\", \"text\" or \"csv\".",
 	usages = {
 		@usage(value = "Its simple syntax is:",
@@ -396,7 +399,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
 		/* final String featureTypeName, */final String specs, final Map<String, String> attributes)
-			throws IOException, SchemaException, GamaRuntimeException {
+		throws IOException, SchemaException, GamaRuntimeException {
 
 		String code = null;
 		if ( crsCode != null ) {

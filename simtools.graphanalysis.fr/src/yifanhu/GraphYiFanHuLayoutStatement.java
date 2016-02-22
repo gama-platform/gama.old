@@ -1,22 +1,19 @@
 package yifanhu;
 
+import org.gephi.layout.plugin.force.StepDisplacement;
+import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout;
+import org.gephi.layout.plugin.multilevel.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
-import org.gephi.layout.plugin.force.StepDisplacement;
-import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout;
-import org.gephi.layout.plugin.multilevel.*;
 
 @symbol(name = "layout_yifanhu",
 	kind = ISymbolKind.SINGLE_STATEMENT,
@@ -102,8 +99,7 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.OPTIMAL_DIST, OPTIMAL_DIST_DEFAULT));
 		double initial_step =
 			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.STEP_SIZE, INITIAL_STEP_DEFAULT));
-		int nb_steps =
-				Cast.asInt(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.NB_STEPS, NB_STEPS_DEFAULT));
+		int nb_steps = Cast.asInt(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.NB_STEPS, NB_STEPS_DEFAULT));
 		double barnes_hut_theta =
 			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.BARNES_THETA, BARNES_THETA_DEFAULT));
 		int max_level = Cast.asInt(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.QUAD_MAX, QUAD_MAX_DEFAULT));
@@ -121,17 +117,17 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
 		InitializingYifanHuLayout(layout, optimal_distance, initial_step, STEP_RATIO_DEFAULT,
 			CONVERGENCE_THRESHOLD_DEFAULT, barnes_hut_theta, max_level, relative_strength);
-	//	layout.goAlgo();
-//		for ( int i = 0; i < nb_steps && layout.canAlgo(); i++ ) {
-			for ( int i = 0; i < nb_steps ; i++ ) {
+		// layout.goAlgo();
+		// for ( int i = 0; i < nb_steps && layout.canAlgo(); i++ ) {
+		for ( int i = 0; i < nb_steps; i++ ) {
 			layout.goAlgo();
-//			System.out.println("..." + i + "/" + nb_steps + "/" + layout.canAlgo());
+			// System.out.println("..." + i + "/" + nb_steps + "/" + layout.canAlgo());
 		}
 		if ( bp1 != null && bp2 != null ) {
 			ILocation p1 = Cast.asPoint(scope, bp1);
 			ILocation p2 = Cast.asPoint(scope, bp2);
-			Update_locations(g, Math.min(p1.getX(), p2.getX()), Math.min(p1.getY(), p2.getY()),
-				Math.max(p1.getX(), p2.getX()), Math.max(p1.getY(), p2.getY()));
+			Update_locations(g, FastMath.min(p1.getX(), p2.getX()), FastMath.min(p1.getY(), p2.getY()),
+				Math.max(p1.getX(), p2.getX()), FastMath.max(p1.getY(), p2.getY()));
 		} else {
 			Update_locations(g);
 		}

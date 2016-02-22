@@ -13,7 +13,7 @@ package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
 import java.util.*;
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -63,7 +63,7 @@ public interface ITopology extends IValue {
 	// public abstract void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
 	// final ILocation previousLoc, final Envelope previousEnv);
 
-	void updateAgent(IShape previous, IAgent agent);
+	void updateAgent(Envelope previous, IAgent agent);
 
 	public abstract void removeAgent(final IAgent agent);
 

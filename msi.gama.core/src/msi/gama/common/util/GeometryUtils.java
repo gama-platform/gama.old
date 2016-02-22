@@ -32,6 +32,7 @@ import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 
@@ -384,7 +385,7 @@ public class GeometryUtils {
 
 	public static IList<IShape> discretisation(final Geometry geom, final int nb_squares, final boolean overlaps,
 		final double coeff_precision) {
-		double size = Math.sqrt(geom.getArea() / nb_squares);
+		double size = FastMath.sqrt(geom.getArea() / nb_squares);
 		List<IShape> rectToRemove = new ArrayList<IShape>();
 		IList<IShape> squares = discretisation(geom, size, size, overlaps, rectToRemove);
 		if ( squares.size() < nb_squares ) {
@@ -509,7 +510,7 @@ public class GeometryUtils {
 		final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
 
 		final Geometry points = GamaGeometryType.geometriesToGeometry(scope, lines).getInnerGeometry();
-		final double sizeTol = Math.sqrt(points.getEnvelope().getArea()) / 100.0;
+		final double sizeTol = FastMath.sqrt(points.getEnvelope().getArea()) / 100.0;
 
 		dtb.setSites(points);
 		dtb.setConstraints(points);
@@ -560,7 +561,7 @@ public class GeometryUtils {
 			}
 		} else if ( geom instanceof Polygon ) {
 			final Polygon polygon = (Polygon) geom;
-			final double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
+			final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
 			final DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
 			GeometryCollection tri = null;
 			try {
@@ -601,7 +602,7 @@ public class GeometryUtils {
 			}
 		} else if ( geom instanceof Polygon ) {
 			final Polygon polygon = (Polygon) geom;
-			final double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
+			final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
 			final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
 			GeometryCollection tri = null;
 			try {

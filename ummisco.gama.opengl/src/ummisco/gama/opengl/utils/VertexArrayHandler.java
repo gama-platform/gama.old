@@ -193,14 +193,14 @@ public class VertexArrayHandler {
 	// private float planAlpha;
 
 	static { // Initialize the data for the icosahedron.
-		float t = (float) ((Math.sqrt(5) - 1) / 2);
+		float t = (float) ((FastMath.sqrt(5) - 1) / 2);
 		icoshedronVertices = new float[][] { new float[] { -1, -t, 0 }, new float[] { 0, 1, t },
 			new float[] { 0, 1, -t }, new float[] { 1, t, 0 }, new float[] { 1, -t, 0 }, new float[] { 0, -1, -t },
 			new float[] { 0, -1, t }, new float[] { t, 0, 1 }, new float[] { -t, 0, 1 }, new float[] { t, 0, -1 },
 			new float[] { -t, 0, -1 }, new float[] { -1, t, 0 }, };
 		for ( float[] v : icoshedronVertices ) {
 			// Normalize the vertices to have unit length.
-			float length = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+			float length = (float) FastMath.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 			v[0] /= length;
 			v[1] /= length;
 			v[2] /= length;
@@ -746,10 +746,10 @@ public class VertexArrayHandler {
 
 		double angle;
 		for ( int k = 0; k < numPoints; k++ ) {
-			angle = k * 2 * Math.PI / numPoints;
+			angle = k * 2 * FastMath.PI / numPoints;
 
-			pointTriangles.add(new GamaPoint(point.getCoordinate().x + Math.cos(angle) * radius,
-				-1 * point.getCoordinate().y + Math.sin(angle) * radius, z));
+			pointTriangles.add(new GamaPoint(point.getCoordinate().x + FastMath.cos(angle) * radius,
+				-1 * point.getCoordinate().y + FastMath.sin(angle) * radius, z));
 
 			pointColor.add(color);
 		}
@@ -1526,7 +1526,7 @@ public class VertexArrayHandler {
 		for ( int i = 0; i < 3; i++ ) {
 			total += normal[i] * normal[i];
 		}
-		double length = Math.sqrt(total);
+		double length = FastMath.sqrt(total);
 
 		for ( int i = 0; i < 3; i++ ) {
 			normal[i] /= length;
@@ -1598,7 +1598,7 @@ public class VertexArrayHandler {
 			float a1 = vertices.get(3 * v1) + vertices.get(3 * v2);
 			float a2 = vertices.get(3 * v1 + 1) + vertices.get(3 * v2 + 1);
 			float a3 = vertices.get(3 * v1 + 2) + vertices.get(3 * v2 + 2);
-			float length = (float) Math.sqrt(a1 * a1 + a2 * a2 + a3 * a3);
+			float length = (float) FastMath.sqrt(a1 * a1 + a2 * a2 + a3 * a3);
 			a1 /= length;
 			a2 /= length;
 			a3 /= length;
@@ -1610,7 +1610,7 @@ public class VertexArrayHandler {
 			float b1 = vertices.get(3 * v3) + vertices.get(3 * v2);
 			float b2 = vertices.get(3 * v3 + 1) + vertices.get(3 * v2 + 1);
 			float b3 = vertices.get(3 * v3 + 2) + vertices.get(3 * v2 + 2);
-			length = (float) Math.sqrt(b1 * b1 + b2 * b2 + b3 * b3);
+			length = (float) FastMath.sqrt(b1 * b1 + b2 * b2 + b3 * b3);
 			b1 /= length;
 			b2 /= length;
 			b3 /= length;
@@ -1622,7 +1622,7 @@ public class VertexArrayHandler {
 			float c1 = vertices.get(3 * v1) + vertices.get(3 * v3);
 			float c2 = vertices.get(3 * v1 + 1) + vertices.get(3 * v3 + 1);
 			float c3 = vertices.get(3 * v1 + 2) + vertices.get(3 * v3 + 2);
-			length = (float) Math.sqrt(c1 * c1 + c2 * c2 + c3 * c3);
+			length = (float) FastMath.sqrt(c1 * c1 + c2 * c2 + c3 * c3);
 			c1 /= length;
 			c2 /= length;
 			c3 /= length;

@@ -28,7 +28,7 @@ global {
 	}
 }
 
-species Initiator skills: [communicating] {
+species Initiator skills: [fipa] {
 	reflex print_debug_infor {
 		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(messages));
 	}
@@ -53,7 +53,7 @@ species Initiator skills: [communicating] {
 	}
 }
 
-species Participant skills: [communicating] {
+species Participant skills: [fipa] {
 	reflex print_debug_infor {
 		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(messages));
 	}

@@ -71,7 +71,7 @@ species ant skills: [moving] control: fsm {
 	}
 
 	point choose_best_place {
-		container<ant_grid> list_places <- container<ant_grid>((ant_grid(location)).neighbors);
+		list<ant_grid> list_places <- ant_grid(location).neighbors;
 		if (list_places count (each.food > 0)) > 0 {
 			return point(list_places first_with (each.food > 0));
 		} else {

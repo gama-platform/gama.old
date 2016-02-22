@@ -31,7 +31,7 @@ public interface ISpatialIndex {
 
 	public abstract void insert(IAgent agent);
 
-	public abstract void remove(final IShape previous, final IAgent agent);
+	public abstract void remove(final Envelope previous, final IAgent agent);
 
 	public abstract IAgent firstAtDistance(IScope scope, final IShape source, final double dist, final IAgentFilter f);
 
