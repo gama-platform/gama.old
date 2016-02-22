@@ -41,13 +41,11 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the identifier of the focus")),	
-	@facet(name = FocusStatement.VAR/*IKeyword.VAR*/, type = {IType.NONE,IType.LIST,IType.CONTAINER},optional = true, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
+	@facet(name = FocusStatement.VAR, type = {IType.NONE,IType.LIST,IType.CONTAINER},optional = true, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
 	@facet(name = FocusStatement.EXPRESSION, type = IType.NONE,optional = true, doc = @doc("an expression that will be the value kept in the belief")),
-//	@facet(name = IKeyword.AGENT, type = IType.AGENT,optional = false, doc = @doc("the agent that will add the belief (use the myself pseudo-variable")),
 	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to focus only with a certian condition")),
 	@facet(name = FocusStatement.PRIORITY, type = {IType.FLOAT,IType.INT}, optional = true, doc = @doc("The priority of the created predicate"))}
 ,omissible = IKeyword.NAME)
-//@validator(ValidNameValidator.class)
 @doc( value = "enables to directly add a belief from the variable of a perceived specie.",
 		examples={@example("focus var:speed /*where speed is a variable from a species that is being perceived*/ agent: myself")})
 public class FocusStatement extends AbstractStatement {
@@ -60,7 +58,6 @@ public class FocusStatement extends AbstractStatement {
 	final IExpression name;
 	final IExpression variable;
 	final IExpression expression;
-//	final IExpression agentMyself;
 	final IExpression when;
 	final IExpression priority;
 	
@@ -70,7 +67,6 @@ public class FocusStatement extends AbstractStatement {
 		name = getFacet(IKeyword.NAME);
 		variable = getFacet(FocusStatement.VAR);
 		expression = getFacet(FocusStatement.EXPRESSION);
-//		agentMyself = getFacet(IKeyword.AGENT);
 		when = getFacet(IKeyword.WHEN);
 		priority = getFacet(FocusStatement.PRIORITY);
 	}
@@ -78,8 +74,6 @@ public class FocusStatement extends AbstractStatement {
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
 		if ( when == null || Cast.asBool(scope, when.value(scope)) ){
-//			final IAgent mySelfAgent = (IAgent) agentMyself.value(scope);
-//			IAgent[] test = scope.getAgentsStack();
 			final IAgent mySelfAgent = scope.getAgentsStack()[1];
 			IScope scopeMySelf = null;
 			if(mySelfAgent!=null){
@@ -98,15 +92,11 @@ public class FocusStatement extends AbstractStatement {
 					}
 					String nameVarTemp;
 					Map<String,Object> tempValues = (Map<String, Object>) new GamaMap<String,Object>(1, null, null);
-//					Object truc = (Object)variable/*.value(scope)*/;
-//					final IList variablesTemp = (IList) truc;
 					final IList variablesTemp = ((IContainer) variable.value(scope)).listValue(scope, null, true);
 					for(int temp=0;temp<variablesTemp.length(scope);temp++){
 						Object temp2 = variablesTemp.get(temp);
 						nameVarTemp = "test"+temp;
-//						if(temp2 instanceof Integer){
-							tempValues.put(nameVarTemp + "_value", Cast.asInt(scope, temp2));
-//						}
+						tempValues.put(nameVarTemp + "_value", Cast.asInt(scope, temp2));
 					}
 					tempPred = new Predicate(namePred,(Map<String, Object>) GamaMapFactory.createWithoutCasting(((GamaMap<String,Object>) tempValues).getType().getKeyType(), ((GamaMap<String,Object>) tempValues).getType().getContentType(), tempValues));
 					if(priority!=null){

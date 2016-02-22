@@ -19,6 +19,8 @@ public class Emotion implements IValue {
 	Double intensity=-1.0;
 	Predicate about;
 	Double decay = 0.0;
+	private boolean noIntensity = true; 
+	private boolean noAbout = true;
 	
 	@getter("name")
 	public String getName() {
@@ -40,16 +42,22 @@ public class Emotion implements IValue {
 		return decay;
 	}
 	
+	public boolean getNoIntensity(){
+		return this.noIntensity;
+	}
+	
 	public void setName(String name){
 		this.name = name;
 	}
 	
 	public void setIntensity(Double intens){
 		this.intensity = intens;
+		this.noIntensity = false;
 	}
 	
 	public void setAbout(Predicate ab){
 		this.about = ab;
+		this.noAbout = false;
 	}
 	
 	public void setDecay(Double de){
@@ -70,11 +78,13 @@ public class Emotion implements IValue {
 		this.name=name;
 		this.intensity=intensity2;
 		this.about=null;
+		this.noIntensity = false;
 	}
 	
 	public Emotion(String name,Predicate ab){
 		this.name=name;
 		this.about=ab;
+		this.noAbout = false;
 	}
 	
 	public Emotion(String name, Double intens, Double de){
@@ -82,12 +92,16 @@ public class Emotion implements IValue {
 		this.intensity=intens;
 		this.about=null;
 		this.decay=de;
+		this.noIntensity = false;
+		this.noAbout = false;
 	}
 	
 	public Emotion(String name, Double intens, Predicate ab){
 		this.name=name;
 		this.intensity=intens;
 		this.about=ab;
+		this.noIntensity = false;
+		this.noAbout = false;
 	}
 	
 	public Emotion(String name, Double intens, Predicate ab, Double de){
@@ -95,6 +109,8 @@ public class Emotion implements IValue {
 		this.intensity=intens;
 		this.about=ab;
 		this.decay=de;
+		this.noIntensity = false;
+		this.noAbout = false;
 	}
 	
 	public void decayIntensity(){
@@ -135,6 +151,9 @@ public class Emotion implements IValue {
 		if(name==null){
 			if(other.name!=null){return false;}
 		}else if(!name.equals(other.name)){return false;}
+		if(noAbout || other.noAbout){
+			return true;
+		}
 		if(about==null){
 			if(other.about!=null){return false;}			
 		}else if(!about.equals(other.about)){return false;}

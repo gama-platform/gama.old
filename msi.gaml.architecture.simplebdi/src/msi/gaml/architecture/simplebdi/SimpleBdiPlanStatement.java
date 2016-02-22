@@ -37,7 +37,9 @@ import msi.gaml.architecture.simplebdi.SimpleBdiPlanStatement.SimpleBdiPlanValid
 		@facet(name = SimpleBdiArchitecture.FINISHEDWHEN, type = IType.BOOL, optional = true),
 	@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
-	@facet(name = SimpleBdiPlanStatement.INTENTION, type = IType.NONE, optional = true),
+	@facet(name = SimpleBdiPlanStatement.INTENTION, type = PredicateType.id, optional = true),
+	@facet(name = SimpleBdiPlanStatement.EMOTION, type = EmotionType.id, optional = true),
+	@facet(name = SimpleBdiPlanStatement.THRESHOLD, type = IType.FLOAT, optional = true),
 	@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true)}, omissible = IKeyword.NAME)
 @validator(SimpleBdiPlanValidator.class)
 public class SimpleBdiPlanStatement extends AbstractStatementSequence {
@@ -61,12 +63,16 @@ public class SimpleBdiPlanStatement extends AbstractStatementSequence {
 		}
 	}
 	public static final String INTENTION = "intention";
+	public static final String EMOTION = "emotion";
+	public static final String THRESHOLD = "threshold";
 
 	 final IExpression _when;
 	 final IExpression _priority;
 	 final IExpression _executedwhen;
 	 final IExpression _instantaneous;
 	 final IExpression _intention;
+	 final IExpression _emotion;
+	 final  IExpression _threshold;
 
 	public IExpression getPriorityExpression() {
 		return _priority;
@@ -88,6 +94,14 @@ public class SimpleBdiPlanStatement extends AbstractStatementSequence {
 		return _intention;
 	}
 	
+	public IExpression getEmotionExpression(){
+		return _emotion;
+	}
+	
+	public IExpression getThreshold(){
+		return _threshold;
+	}
+	
 	public SimpleBdiPlanStatement(final IDescription desc) {
 		super(desc);
 		_when = getFacet(IKeyword.WHEN);
@@ -95,6 +109,8 @@ public class SimpleBdiPlanStatement extends AbstractStatementSequence {
 		_executedwhen = getFacet(SimpleBdiArchitecture.FINISHEDWHEN);
 		_instantaneous = getFacet(SimpleBdiArchitecture.INSTANTANEAOUS);
 		_intention = getFacet(SimpleBdiPlanStatement.INTENTION);
+		_emotion = getFacet(SimpleBdiPlanStatement.EMOTION);
+		_threshold = getFacet(SimpleBdiPlanStatement.THRESHOLD);
 		if ( hasFacet(IKeyword.NAME) ) {
 			setName(getLiteral(IKeyword.NAME));
 		}
@@ -103,7 +119,6 @@ public class SimpleBdiPlanStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if ( _when == null || Cast.asBool(scope, _when.value(scope)) ) { return super.privateExecuteIn(scope); }
-		// scope.setStatus(ExecutionStatus.skipped);
 		return null;
 	}
 
