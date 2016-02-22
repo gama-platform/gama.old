@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.types.GamaBoolType;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -15,10 +16,10 @@ import msi.gaml.types.IType;
 public class GamaBasicTypeConverter implements Converter {
 
 	private final static String TAG="GamaType";
-	ConverterScope scope;
+	ConverterScope convertScope;
 	
 	public GamaBasicTypeConverter(ConverterScope s){
-		scope = s;
+		convertScope = s;
 	}
 
 	@Override
@@ -39,25 +40,24 @@ public class GamaBasicTypeConverter implements Converter {
 
 	@Override
 	public void marshal(Object arg0, HierarchicalStreamWriter writer, MarshallingContext arg2) {
-		//GamaPoint pt = (GamaPoint) arg0;
-		// String line=pt.getX()+SEPARATOR+pt.getY()+SEPARATOR+pt.getZ();
+		GamaType type = (GamaType) arg0;
 		System.out.println("==GamaType  " + arg0);
 		writer.startNode(TAG);
-		writer.setValue(""+arg0.getClass());
+		writer.setValue(""+type.getName());		
+//		writer.setValue(""+arg0.getClass());
 	    writer.endNode();
 	}
 
 	// TODO
 	@Override
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext arg1) {
-		// TODO Auto-generated method stub
 		reader.moveDown();
-		IType t = scope.getScope().getModelContext().getTypeNamed(reader.getValue());
+		IType t = convertScope.getScope().getModelContext().getTypeNamed(reader.getValue());
+	//	ModelDescription modelDesc = ((ModelDescription) convertScope.getScope().getModelContext());
+	//	IType t = ((ModelDescription) convertScope.getScope().getModelContext()).getTypesManager().get(type)
 //		String val = reader.getValue();
 		reader.moveUp();
-	//	x= Double.valueOf(lines[0]).doubleValue();
-	//	y= Double.valueOf(lines[0]).doubleValue();
-	//	z= Double.valueOf(lines[0]).doubleValue();
+
 		return t;
 	}
 

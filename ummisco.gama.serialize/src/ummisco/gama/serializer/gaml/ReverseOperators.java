@@ -14,6 +14,7 @@ import ummisco.gama.serializer.gamaType.converters.*;
 public class ReverseOperators {
 
 	public static XStream newXStream(ConverterScope cs) {
+		// TODO check whether a BinaryStreamDriver could not be better ... 
 		XStream xstream = new XStream(new DomDriver());
 		xstream.registerConverter(new LogConverter());
 		xstream.registerConverter(new GamaBasicTypeConverter(cs));
@@ -22,14 +23,17 @@ public class ReverseOperators {
 		xstream.registerConverter(new GamaListConverter(cs));
 		xstream.registerConverter(new GamaMapConverter(cs));
 		xstream.registerConverter(new SavedAgentConverter(cs));
+		xstream.registerConverter(new GamaPairConverter());
+		xstream.registerConverter(new GamaMatrixConverter(cs));
+		xstream.registerConverter(new GamaGraphConverter(cs));		
+		
 		// xstream.registerConverter(new GamaShapeConverter());
-		// xstream.registerConverter(new GamaScopeConverter());
 		// xstream.registerConverter(new GamaPointConverter());
-		// xstream.registerConverter(new GamaPairConverter());
 		// xstream.registerConverter(new GamaSimulationAgentConverter());
 		return xstream;
 	}
 	
+	// TODO : la faire prendre un agent en paramètre ... 
 	@operator(value = "serializeSimulation")
 	@doc("")
 	public static String serializeSimulation(final IScope scope, final int i) {
@@ -38,8 +42,10 @@ public class ReverseOperators {
 		ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		SimulationAgent simAgt = expAgt.getSimulation();
 
+		System.out.println("**** TODO list = Get an agent as parameter");
+		System.out.println("**** TODO list = Simplify matrix");
+		System.out.println("**** TODO list = deal with graph type");
 		System.out.println("**** TODO list = Reducer for any kind of file");
-		System.out.println("**** TODO list = Handle the random generator too");
 		System.out.println("**** TODO list = Case of multi-simulation ?");
 
 		return xstream.toXML(new SavedAgent(scope, simAgt));

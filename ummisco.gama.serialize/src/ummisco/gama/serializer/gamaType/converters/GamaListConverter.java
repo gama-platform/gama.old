@@ -15,10 +15,10 @@ import ummisco.gama.serializer.gamaType.reduced.GamaMapReducer;
 
 public class GamaListConverter implements Converter {
 
-	ConverterScope scope;
+	ConverterScope convertScope;
 	
 	public GamaListConverter(ConverterScope s){
-		scope = s;
+		convertScope = s;
 	}
 	
 	@Override
@@ -48,7 +48,7 @@ public class GamaListConverter implements Converter {
 	//	reader.moveDown();
 		GamaListReducer rmt = (GamaListReducer) arg1.convertAnother(null, GamaListReducer.class);
 	//	reader.moveUp();
-		return rmt.constructObject(scope.getScope());
+		return rmt.constructObject(convertScope.getScope());
 	}
 
 }

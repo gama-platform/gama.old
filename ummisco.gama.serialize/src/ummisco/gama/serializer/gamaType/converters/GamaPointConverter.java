@@ -42,8 +42,8 @@ public class GamaPointConverter implements Converter {
 		String[] lines = reader.getValue().split(SEPARATOR);
 		reader.moveUp();
 		x= Double.valueOf(lines[0]).doubleValue();
-		y= Double.valueOf(lines[0]).doubleValue();
-		z= Double.valueOf(lines[0]).doubleValue();
+		y= Double.valueOf(lines[1]).doubleValue();
+		z= Double.valueOf(lines[2]).doubleValue();
 		return new GamaPoint(x,y,z);
 	}
 

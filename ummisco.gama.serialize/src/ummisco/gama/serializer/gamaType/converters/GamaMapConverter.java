@@ -22,12 +22,6 @@ public class GamaMapConverter implements Converter {
 	@Override
 	public boolean canConvert(Class arg0) {
 		if(GamaMap.class.equals(arg0)){return true;}
-		Class<?>[] allInterface=arg0.getInterfaces();
-		for( Class<?> c:allInterface)
-		{
-			if(c.equals(GamaMap.class))
-				return true;
-		}
 		return false;
 	}
 
