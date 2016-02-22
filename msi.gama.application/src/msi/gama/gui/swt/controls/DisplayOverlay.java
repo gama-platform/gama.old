@@ -88,7 +88,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		parentShell.addControlListener(listener);
 		c.addControlListener(listener);
 		if ( provider != null ) {
-			provider.setTarget(new ThreadedOverlayUpdater(this));
+			provider.setTarget(new ThreadedOverlayUpdater(this), view.getDisplaySurface());
 		}
 	}
 

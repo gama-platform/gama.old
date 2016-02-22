@@ -41,7 +41,6 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		xRatioBetweenPixelsAndModelUnits = widthOfDisplayInPixels / widthOfEnvironmentInModelUnits;
 		yRatioBetweenPixelsAndModelUnits = heightOfDisplayInPixels / heightOfEnvironmentInModelUnits;
 		data = surface.getData();
-		initFor(surface);
 	}
 
 	@Override

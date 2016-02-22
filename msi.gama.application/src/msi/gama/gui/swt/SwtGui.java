@@ -343,7 +343,7 @@ public class SwtGui extends AbstractGui {
 	}
 
 	public static void setStatusControl(final StatusControlContribution l) {
-		status.setTarget(l);
+		status.setTarget(l, null);
 	}
 
 	private int dialog(final Dialog dialog) {
@@ -1420,11 +1420,11 @@ public class SwtGui extends AbstractGui {
 	 * IAdaptable interface as well.
 	 *
 	 * @param o
-	 * the object.
+	 *            the object.
 	 * @param actualType
-	 * the actual type that must be returned.
+	 *            the actual type that must be returned.
 	 * @param adapterType
-	 * the adapter type to check for.
+	 *            the adapter type to check for.
 	 */
 	public static <T> T adaptTo(Object o, final Class<T> actualType, final Class<?> adapterType) {
 		if ( actualType.isInstance(o) ) {
@@ -1529,7 +1529,7 @@ public class SwtGui extends AbstractGui {
 	 * @param index
 	 * @return
 	 */
-			@Override
+	@Override
 	public GamaColor getColorForSimulationNumber(final int index) {
 		return SIMULATION_COLORS[index % 5];
 	}

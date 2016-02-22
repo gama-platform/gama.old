@@ -42,7 +42,7 @@ import msi.gaml.statements.draw.*;
 
 public class AWTDisplayGraphics extends AbstractDisplayGraphics implements PointTransformation {
 
-	private final Graphics2D renderer;
+	private Graphics2D renderer;
 	private final ShapeWriter sw = new ShapeWriter(this);
 	private boolean highlight;
 	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
@@ -299,6 +299,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Envelope getVisibleRegion() {
 		return surface.getVisibleRegionForLayer(currentLayer);
+	}
+
+	/**
+	 * @param g
+	 */
+	public void setGraphics2D(final Graphics2D g) {
+		renderer = g;
 	}
 
 }
