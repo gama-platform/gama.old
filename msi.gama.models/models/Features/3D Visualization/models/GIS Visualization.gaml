@@ -19,7 +19,7 @@ experiment GIS_visualization type: gui {
 		display gis_displays_graphics type: opengl light: true ambient_light: 50{
 			graphics "Buildings as shapes" refresh: false {
 				loop bd over: shape_file_buildings {
-					draw bd depth: rnd(50) + 50 texture:[roof_texture,texture] ;
+					draw bd depth: rnd(50) + 50 texture:[roof_texture,texture] border:false;
 				}
 			}
 		}
