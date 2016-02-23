@@ -15,6 +15,7 @@ import java.awt.Point;
 import org.eclipse.swt.SWT;
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.*;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -105,12 +106,14 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	// Move in the XY plan by changing camera pos and look pos.
+	//Old method use before to fix issue #1568
 	private void moveXYPlan2(final double diffx, final double diffy, final double z, final double w, final double h) {
 
 		double translationValue = 0;
+		
 
-		translationValue = FastMath.abs(diffx) * ((z + 1) / w);
-
+		translationValue = FastMath.abs(diffx) * ((z + 1) / w );
+		
 		if ( diffx > 0 ) {// move right
 			updatePosition(position.x - translationValue, position.y, position.z);
 			lookPosition(target.x - translationValue, target.y, target.z);
@@ -129,6 +132,12 @@ public class CameraArcBall extends AbstractCamera {
 			lookPosition(target.x, target.y - translationValue, target.z);
 		}
 
+	}
+	
+	
+	private void moveXYPlan(final double diffx, final double diffy, final double z, final double w, final double h) {
+		updatePosition(position.x - diffx, position.y -diffy, position.z);
+		lookPosition(target.x - diffx, target.y -diffy, target.z);
 	}
 
 	@Override
@@ -281,20 +290,25 @@ public class CameraArcBall extends AbstractCamera {
 		} else {
 			// check the difference between the current x and the last x position
 			int diffx = newPoint.x - lastMousePressedPosition.x;
+			
 			// check the difference between the current y and the last y position
 			int diffy = newPoint.y - lastMousePressedPosition.y;
+			
+			
+			GamaPoint newRealPoint = this.getRenderer().getRealWorldPointFromWindowPoint(newPoint);
+			GamaPoint lastMousePressedPositionReal = this.getRenderer().getRealWorldPointFromWindowPoint(lastMousePressedPosition);			
+			
+			// check the difference between the current x and the last x position
+			double diffxReal = newRealPoint.x - lastMousePressedPositionReal.x;
+						
+			// check the difference between the current y and the last y position
+			double diffyReal = newRealPoint.y - lastMousePressedPositionReal.y;
+			
 			lastMousePressedPosition = newPoint;
 
-			// double speed = 0.035;
-
-			// Decrease the speed of the translation if z is negative.
-			// if ( position.z < 0 ) {
-			// speed = speed / FastMath.abs(position.z) * 2;
-			// } else {
-			// speed = speed * position.z / 4;
-			// }
-
-			moveXYPlan2(diffx, diffy, position.z, getRenderer().getWidth(), getRenderer().getHeight());
+			//moveXYPlan2(diffx, diffy, position.z, getRenderer().getWidth(), getRenderer().getHeight());
+		    //Need method use to fix issue #1568
+			moveXYPlan(diffxReal, diffyReal, position.z, getRenderer().getWidth(), getRenderer().getHeight());
 		}
 
 		// PrintParam();
