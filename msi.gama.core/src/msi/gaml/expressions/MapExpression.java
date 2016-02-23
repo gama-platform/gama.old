@@ -49,6 +49,12 @@ public class MapExpression extends AbstractExpression {
 				BinaryOperator pair = (BinaryOperator) e;
 				keys[i] = pair.exprs[0];
 				vals[i] = pair.exprs[1];
+			} else if ( e instanceof ConstantExpression && e.getType().getType() == Types.PAIR ) {
+				GamaPair pair = (GamaPair) e.value(null);
+				Object left = pair.key;
+				Object right = pair.value;
+				keys[i] = GAML.getExpressionFactory().createConst(left, e.getType().getKeyType());
+				vals[i] = GAML.getExpressionFactory().createConst(right, e.getType().getContentType());
 			}
 		}
 		IType keyType = GamaType.findCommonType(keys, GamaType.TYPE);
