@@ -135,7 +135,7 @@ public class CameraArcBall extends AbstractCamera {
 	}
 	
 	
-	private void moveXYPlan(final double diffx, final double diffy, final double z, final double w, final double h) {
+	private void moveXYPlan(final double diffx, final double diffy) {
 		updatePosition(position.x - diffx, position.y -diffy, position.z);
 		lookPosition(target.x - diffx, target.y -diffy, target.z);
 	}
@@ -308,7 +308,7 @@ public class CameraArcBall extends AbstractCamera {
 
 			//moveXYPlan2(diffx, diffy, position.z, getRenderer().getWidth(), getRenderer().getHeight());
 		    //Need method use to fix issue #1568
-			moveXYPlan(diffxReal, diffyReal, position.z, getRenderer().getWidth(), getRenderer().getHeight());
+			moveXYPlan(diffxReal, diffyReal);
 		}
 
 		// PrintParam();
