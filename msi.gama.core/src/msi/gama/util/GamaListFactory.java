@@ -5,6 +5,7 @@
 package msi.gama.util;
 
 import java.util.*;
+import org.apache.commons.lang.ArrayUtils;
 import com.google.common.collect.Iterables;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
@@ -36,6 +37,18 @@ public class GamaListFactory {
 	public static <T> IList<T> createWithoutCasting(final IType contentType, final T ... objects) {
 		IList<T> list = create(contentType, objects.length);
 		list.addAll(Arrays.asList(objects));
+		return list;
+	}
+
+	public static IList<Integer> createWithoutCasting(final IType contentType, final int[] objects) {
+		IList<Integer> list = create(contentType, objects.length);
+		list.addAll(Arrays.asList(ArrayUtils.toObject(objects)));
+		return list;
+	}
+
+	public static IList<Double> createWithoutCasting(final IType contentType, final double[] objects) {
+		IList<Double> list = create(contentType, objects.length);
+		list.addAll(Arrays.asList(ArrayUtils.toObject(objects)));
 		return list;
 	}
 
