@@ -14,10 +14,7 @@ global {
 	file shape_file_buildings <- shape_file('../includes/building.shp', 0);
 	file shape_file_roads <- shape_file('../includes/road.shp', 0);
 	file shape_file_bounds <- shape_file('../includes/bounds.shp', 0);
-	
-	string texture <- "../images/building_texture/texture1.jpg";
-	string roof_texture <- "../images/building_texture/roof_top.png";	
-	
+		
 	//Definition of the shape of the world as the bounds of the shapefiles to show everything contained
 	// by the area delimited by the bounds
 	geometry shape <- envelope(shape_file_bounds);
@@ -55,7 +52,6 @@ global {
 		}
 
 	}
-
 }
 
 
@@ -131,17 +127,7 @@ experiment road_traffic type: gui {
 			species road aspect: base;
 			species people aspect: base;
 		}
-		
-		display gis_displays_graphics type: opengl light: true ambient_light: 50{
-			graphics "buildings" refresh: false {
-				loop bd over: shape_file_buildings {
-					draw bd depth: 50 texture:[roof_texture,texture] ;
-				}
-			}
-		}
-
 	}
-
 }
 
 experiment road_traffic_multi_layer type: gui {
