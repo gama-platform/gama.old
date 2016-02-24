@@ -52,20 +52,20 @@ public class Colors {
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
-	@doc(value = "a new color resulting from the substraction of each component of the color with the right operand",
+	@doc(value = "a new color resulting from the subtraction of each component of the color with the right operand",
 		usages = @usage(
-			value = "if one operand is a color and the other an integer, returns a new color resulting from the substraction of each component of the color with the right operand",
+			value = "if one operand is a color and the other an integer, returns a new color resulting from the subtraction of each component of the color with the right operand",
 			examples = { @example(value = "rgb([255, 128, 32]) - 3", equals = "rgb([252,125,29])") }))
-	public static GamaColor substract(final GamaColor c, final Integer i) {
+	public static GamaColor subtract(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() - i, c.getGreen() - i, c.getBlue() - i, c.alpha());
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
-	@doc(value = "a new color resulting from the substraction of the two operands, component by component",
+	@doc(value = "a new color resulting from the subtraction of the two operands, component by component",
 		usages = @usage(
-			value = "if both operands are colors, returns a new color resulting from the substraction of the two operands, component by component",
+			value = "if both operands are colors, returns a new color resulting from the subtraction of the two operands, component by component",
 			examples = { @example(value = "rgb([255, 128, 32]) - rgb('red')", equals = "rgb([0,128,32])") }))
-	public static GamaColor substract(final GamaColor c1, final GamaColor c) {
+	public static GamaColor subtract(final GamaColor c1, final GamaColor c) {
 		return new GamaColor(c1.getRed() - c.getRed(), c1.getGreen() - c.getGreen(), c1.getBlue() - c.getBlue(),
 			c1.alpha());
 	}
