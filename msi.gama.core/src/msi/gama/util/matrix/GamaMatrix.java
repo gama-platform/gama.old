@@ -107,7 +107,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	public static IMatrix opMinus(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
-		throw GamaRuntimeException.error("ATTENTION : Matrix substractions not implemented. Returns nil for the moment",
+		throw GamaRuntimeException.error("ATTENTION : Matrix subtractions not implemented. Returns nil for the moment",
 			scope);
 	}
 
