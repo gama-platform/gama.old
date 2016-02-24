@@ -35,9 +35,9 @@ public class GamaPairConverter implements Converter {
 
 	@Override
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext arg1) {
-		reader.moveDown();
+		//reader.moveDown();
 		GamaPairReducer rmt = (GamaPairReducer) arg1.convertAnother(null, GamaPairReducer.class);
-		reader.moveUp();
+		//reader.moveUp();
 		return rmt.constructObject();
 	}
 

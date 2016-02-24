@@ -8,21 +8,21 @@ import msi.gaml.types.GamaBoolType;
 import msi.gaml.types.IType;
 
 public class GamaPairReducer {
-	private IType keysType;
-	private IType dataType;
+	private IType keyPairType;
+	private IType dataPairType;
 	private Object key;
 	private Object value;
 	
 	public GamaPairReducer(GamaPair m)
 	{
-		keysType=m.getType().getKeyType();
-		dataType=m.getType().getContentType();
+		keyPairType=m.getType().getKeyType();
+		dataPairType=m.getType().getContentType();
 		key=m.getKey();
 		value=m.getValue();
 	}
 	
 	public GamaPair constructObject()
 	{
-		return new GamaPair(key, value, keysType, dataType);
+		return new GamaPair(key, value, keyPairType, dataPairType);
 	}
 }

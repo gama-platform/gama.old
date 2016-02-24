@@ -31,7 +31,7 @@ import msi.gaml.types.*;
 		doc = { @doc("Returns the key of this pair (can be nil)") }),
 	@var(name = GamaPair.VALUE,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
-		doc = { @doc("Returns the value of this pair (can be ni)") }) })
+		doc = { @doc("Returns the value of this pair (can be nil)") }) })
 public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.Addressable<Integer, Object>, Map.Entry<K, V> {
 
 	// TODO Makes it inherit from Map.Entry<K,V> in order to tighten the link between it and GamaMap

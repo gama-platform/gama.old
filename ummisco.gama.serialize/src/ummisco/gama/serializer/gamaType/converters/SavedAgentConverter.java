@@ -32,7 +32,8 @@ import com.thoughtworks.xstream.io.*;
 import gnu.trove.map.hash.THashMap;
 
 public class SavedAgentConverter implements Converter {
-
+	
+	private final static String TAG="IMacroAgent";
 	ConverterScope convertScope;
 	
 	public SavedAgentConverter(ConverterScope s){
@@ -54,8 +55,17 @@ public class SavedAgentConverter implements Converter {
 		writer.endNode();
 		
 		writer.startNode("innerPopulations");
-		context.convertAnother(savedAgt.getInnerPopulations());
+		Map<String, List<SavedAgent>> inPop = savedAgt.getInnerPopulations();
+		if(inPop == null) {
+			context.convertAnother(new THashMap<String, Object>(11, 0.9f));
+		} else {
+			context.convertAnother(inPop);	
+		}
 		writer.endNode();
+		
+		writer.startNode(TAG);
+		context.convertAnother(new Boolean(inPop==null?false:true));
+	    writer.endNode();		
 		
 		System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");	
 	}
@@ -69,8 +79,12 @@ public class SavedAgentConverter implements Converter {
 		reader.moveDown();
 		Map<String, List<SavedAgent>> inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, THashMap.class);
 		reader.moveUp();
+		
+		reader.moveDown();
+		Boolean isIMacroAgent = (Boolean) arg1.convertAnother(null, Boolean.class);
+		reader.moveUp();
 
-		SavedAgent agtToReturn = new SavedAgent(v, inPop);
+		SavedAgent agtToReturn = new SavedAgent(v, (isIMacroAgent.booleanValue())?inPop:null);
 
 		SimulationAgent simAgent = convertScope.getSimulationAgent();
 		

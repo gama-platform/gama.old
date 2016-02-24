@@ -8,15 +8,15 @@ import msi.gaml.types.GamaGraphType;
 import msi.gaml.types.IType;
 
 public class GamaGraphReducer {
-	private IType contentType;
-	private IList values;
+	private IType contentTypeGraphReducer;
+	private IList valuesGraphReducer;
 	private boolean spatial;
 	
 	public GamaGraphReducer(IScope scope, GamaGraph g)
 	{		
 		spatial = (g instanceof GamaSpatialGraph);
-		contentType = g.getType().getContentType();
-		values = g.listValue(scope, contentType, true);
+		contentTypeGraphReducer = g.getType().getContentType();
+		valuesGraphReducer = g.listValue(scope, contentTypeGraphReducer, true);
 	}
 	
 	public GamaGraph constructObject(IScope scope)
@@ -24,7 +24,7 @@ public class GamaGraphReducer {
 //		public static IGraph from(final IScope scope, final GamaMap<?, ?> obj, final boolean spatial) {
 //		public static IGraph from(final IScope scope, final IList obj, final boolean spatial) {
 
-		return (GamaGraph) GamaGraphType.from(scope, values, true)	;
+		return (GamaGraph) GamaGraphType.from(scope, valuesGraphReducer, true)	;
 
 	}
 }

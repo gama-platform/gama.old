@@ -12,7 +12,7 @@ public class GamaMapReducer {
 	private IType keysType;
 	private IType dataType;
 //	private ArrayList<GamaPair> values = new ArrayList<GamaPair>();
-	private HashMap values = new HashMap();
+	private HashMap valuesMapReducer = new HashMap();
 	
 	public GamaMapReducer( GamaMap m)
 	{		
@@ -21,7 +21,7 @@ public class GamaMapReducer {
 		
 		for(Object p : m.getPairs()) {
 			GamaPair pair = (GamaPair) p;
-			values.put(pair.key, pair.value);			
+			valuesMapReducer.put(pair.key, pair.value);			
 		//	values.add((GamaPair) p);
 		}
 		//Object[] o = m.getKeys()
@@ -30,7 +30,7 @@ public class GamaMapReducer {
 	
 	public GamaMap constructObject(IScope scope)
 	{
-		GamaMap mp = GamaMapFactory.create(scope, keysType, dataType, values);
+		GamaMap mp = GamaMapFactory.create(scope, keysType, dataType, valuesMapReducer);
 		
 	//	GamaMap mp = GamaMapFactory.create(keysType, dataType,values.size());
 	//	for(GamaPair p:values)
@@ -43,5 +43,5 @@ public class GamaMapReducer {
 	public IType getKeysType(){return keysType;}
 	public IType getDataType(){return dataType;}
 //	public ArrayList<GamaPair> getValues() {return values;}
-	public HashMap getValues() {return values;}	
+	public HashMap getValues() {return valuesMapReducer;}	
 }

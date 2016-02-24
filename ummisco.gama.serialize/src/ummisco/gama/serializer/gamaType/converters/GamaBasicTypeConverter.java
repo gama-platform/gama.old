@@ -6,10 +6,6 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.IScope;
-import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.types.GamaBoolType;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
@@ -27,14 +23,12 @@ public class GamaBasicTypeConverter implements Converter {
 		if((arg0.equals(GamaType.class)) || (arg0.getSuperclass().equals(GamaType.class)))
 		{return true;}
 		
-		
-		Class<?>[] allInterface=arg0.getInterfaces();
-		for( Class<?> c:allInterface)
-		{
-			
-		//	if(c.equals(Gam.class))
-		//		return true;
-		}
+	//	List allInterfaceApa = ClassUtils.getAllInterfaces(arg0);
+	//	
+	//	for(Object i : allInterfaceApa) {
+	//		if(i.equals(IType.class))
+	//			return true;
+	//	}
 		return false;
 	}
 

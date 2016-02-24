@@ -37,9 +37,9 @@ public class GamaMatrixConverter implements Converter {
 	public void marshal(Object arg0, HierarchicalStreamWriter writer, MarshallingContext arg2) {
 		GamaMatrix mat = (GamaMatrix) arg0;
 
-		System.out.println("ConvertAnother : GamaList " + mat.getClass());			        
+		System.out.println("ConvertAnother : GamaMatrix " + mat.getClass());			        
 		arg2.convertAnother(new GamaMatrixReducer(convertScope.getScope(), mat));        		
-		System.out.println("END --- ConvertAnother : GamaList ");			        
+		System.out.println("END --- ConvertAnother : GamaMatrix ");			        
 
 	}
 

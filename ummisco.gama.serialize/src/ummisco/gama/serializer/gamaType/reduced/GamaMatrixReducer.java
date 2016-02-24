@@ -8,22 +8,22 @@ import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IType;
 
 public class GamaMatrixReducer {
-	private IType contentType;
-	private IList values;
+	private IType contentTypeMatrixReducer;
+	private IList valuesMatrixReducer;
 	private int nRows;
 	private int nCols;
 	
 	public GamaMatrixReducer(IScope scope, GamaMatrix m)
 	{		
-		contentType = m.getType().getContentType();
+		contentTypeMatrixReducer = m.getType().getContentType();
 		nRows = m.getRows(null);
 		nCols = m.getCols(null);
-		values = m.listValue(scope, contentType, true);
+		valuesMatrixReducer = m.listValue(scope, contentTypeMatrixReducer, true);
 	}
 	
 	public GamaMatrix constructObject(IScope scope)
 	{
-		return (GamaMatrix) GamaMatrixType.from(scope, values, contentType, new GamaPoint(nCols, nRows))	;
+		return (GamaMatrix) GamaMatrixType.from(scope, valuesMatrixReducer, contentTypeMatrixReducer, new GamaPoint(nCols, nRows))	;
 
 	}
 }

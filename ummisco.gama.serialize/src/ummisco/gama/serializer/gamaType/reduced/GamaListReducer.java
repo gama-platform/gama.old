@@ -12,21 +12,20 @@ import msi.gama.util.GamaPair;
 import msi.gaml.types.IType;
 
 public class GamaListReducer {
-	private IType contentType;
-	private ArrayList<Object> values = new ArrayList<>();
+	private ArrayList<Object> valuesListReducer = new ArrayList<>();
+	private IType contentTypeListReducer;
 	
 	public GamaListReducer(GamaList l)
 	{		
-		contentType = l .getType().getContentType();
+		contentTypeListReducer = l .getType().getContentType();
 		
 		for(Object p : l) {
-			values.add(p);
+			valuesListReducer.add(p);
 		}
 	}
 	
 	public GamaList constructObject(IScope scope)
 	{
-		return (GamaList) GamaListFactory.create(scope, contentType, values);
-
+		return (GamaList) GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
 	}
 }
