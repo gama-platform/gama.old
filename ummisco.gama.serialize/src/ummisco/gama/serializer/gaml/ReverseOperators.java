@@ -43,10 +43,9 @@ public class ReverseOperators {
 		SimulationAgent simAgt = expAgt.getSimulation();
 
 		System.out.println("**** TODO list = Get an agent as parameter");
-		System.out.println("**** TODO list = Simplify matrix");
-		System.out.println("**** TODO list = deal with graph type");
 		System.out.println("**** TODO list = Reducer for any kind of file");
 		System.out.println("**** TODO list = Case of multi-simulation ?");
+		System.out.println("**** TODO list Improvment = simplify GamaShape");		
 
 		return xstream.toXML(new SavedAgent(scope, simAgt));
 	}

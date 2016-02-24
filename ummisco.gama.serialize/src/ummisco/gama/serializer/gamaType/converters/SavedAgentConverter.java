@@ -88,6 +88,9 @@ public class SavedAgentConverter implements Converter {
 
 		SimulationAgent simAgent = convertScope.getSimulationAgent();
 		
+		// The unserialization requieres 2 steps. 
+		// After the first step: the SavedAgent is restored. simAgt is null during the first step.
+		// After the second step: the simAgt is not null. Its agents variables are only updated.
 		if(simAgent != null){		
 			// get the existing agent with the same name in the simulationAgent
 			// update/replace its variables
@@ -98,26 +101,31 @@ public class SavedAgentConverter implements Converter {
 			boolean found = false;
 			int i = 0;
 			IAgent agt = null;
-			while(!found && (i < lagt.size())) {
-				
+			while(!found && (i < lagt.size())) {	
 				if(lagt.get(i).getName().equals(savedAgtName)) {
 					found = true;
 					agt = lagt.get(i);
 				}
 				i++;
 			}
+			// If the agent is not found in the simAgent agents, it should be the simulationAgent itself
+			if(agt == null) {
+				if (savedAgtName.equals(simAgent.getName())) {
+					agt = simAgent;
+				}
+			}
+			
 			if(agt != null) {
-				// We have in agt the chosen agent we need to update 
+				// We have in agt the chosen agent we need to update variables
 				final List<Map> agentAttrs = new ArrayList<Map>();
 				agentAttrs.add(agtToReturn.getVariables());
 				ArrayList<IAgent> agentsList = new ArrayList<>();
 				agentsList.add(agt);			
 				GamaPopulation pop = (GamaPopulation) agt.getPopulation();
 				
-				pop.createVariablesFor(convertScope.getScope(), agentsList, agentAttrs);
+				pop.createAndUpdateVariablesFor(convertScope.getScope(), agentsList, agentAttrs, true);
 				
-			}
-			
+			} 
 		} 
 		return agtToReturn; 
 	}

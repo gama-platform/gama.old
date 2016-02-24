@@ -322,7 +322,36 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	public void createVariablesFor(final IScope scope, final List<? extends IAgent> agents,
-		final List<? extends Map> initialValues) throws GamaRuntimeException {
+			final List<? extends Map> initialValues) throws GamaRuntimeException {
+		createAndUpdateVariablesFor(scope, agents, initialValues, false);
+	}
+	
+//	public void createVariablesFor(final IScope scope, final List<? extends IAgent> agents,
+//		final List<? extends Map> initialValues) throws GamaRuntimeException {
+//		if ( agents == null || agents.isEmpty() ) { return; }
+//		final boolean empty = initialValues == null || initialValues.isEmpty();
+//		Map<String, Object> inits;
+//		for ( int i = 0, n = agents.size(); i < n; i++ ) {
+//			final IAgent a = agents.get(i);
+//			try {
+//				// a.acquireLock();
+//				if ( empty ) {
+//					inits = Collections.EMPTY_MAP;
+//				} else {
+//					inits = initialValues.get(i);
+//				}
+//				for ( final String s : orderedVarNames ) {
+//					final IVariable var = species.getVar(s);
+//					var.initializeWith(scope, a, empty ? null : inits.get(s));
+//				}
+//			} finally {
+//				// a.releaseLock();
+//			}
+//		}
+//	}
+
+	public void createAndUpdateVariablesFor(final IScope scope, final List<? extends IAgent> agents,
+		final List<? extends Map> initialValues, boolean update) throws GamaRuntimeException {
 		if ( agents == null || agents.isEmpty() ) { return; }
 		final boolean empty = initialValues == null || initialValues.isEmpty();
 		Map<String, Object> inits;
@@ -337,14 +366,19 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 				}
 				for ( final String s : orderedVarNames ) {
 					final IVariable var = species.getVar(s);
-					var.initializeWith(scope, a, empty ? null : inits.get(s));
+					Object initGet = inits.get(s);
+					if(!update){
+						var.initializeWith(scope, a, empty ? null : initGet);
+					} else if(initGet != null) {
+						var.initializeWith(scope, a, empty ? null : initGet);
+					} // else if initGet == null : do not do anything, this will keep the previously defined value for the variable
 				}
 			} finally {
 				// a.releaseLock();
 			}
 		}
-	}
-
+	}	
+	
 	@Override
 	public void initializeFor(final IScope scope) throws GamaRuntimeException {
 		dispose();

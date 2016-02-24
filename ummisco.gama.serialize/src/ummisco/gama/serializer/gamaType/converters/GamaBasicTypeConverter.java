@@ -1,5 +1,9 @@
 package ummisco.gama.serializer.gamaType.converters;
 
+import java.util.List;
+
+import org.apache.commons.lang.ClassUtils;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -20,8 +24,13 @@ public class GamaBasicTypeConverter implements Converter {
 
 	@Override
 	public boolean canConvert(Class arg0) {
-		if((arg0.equals(GamaType.class)) || (arg0.getSuperclass().equals(GamaType.class)))
-		{return true;}
+		List allClassesApa = ClassUtils.getAllSuperclasses(arg0);
+		for(Object c : allClassesApa) {
+			if(c.equals(GamaType.class))
+				return true;
+		}		
+	//	if((arg0.equals(GamaType.class)) || (arg0.getSuperclass().equals(GamaType.class)))
+	//	{return true;}
 		
 	//	List allInterfaceApa = ClassUtils.getAllInterfaces(arg0);
 	//	

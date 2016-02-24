@@ -11,11 +11,10 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
-import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
-import msi.gama.runtime.IScope;
 
 import java.util.List;
 
@@ -51,7 +50,14 @@ public class GamaAgentConverter implements Converter {
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 
 		reader.moveDown();
-		List<IAgent> lagt = (convertScope.getScope()).getSimulationScope().getAgents(convertScope.getScope());
+		SimulationAgent simAgt = convertScope.getSimulationAgent();
+		List<IAgent> lagt;
+		if(simAgt == null) {
+			lagt = (convertScope.getScope()).getSimulationScope().getAgents(convertScope.getScope());
+		} else {
+			lagt = simAgt.getAgents(convertScope.getScope());
+		}
+		
 		boolean found = false;
 		int i = 0;
 		IAgent agt = null;
