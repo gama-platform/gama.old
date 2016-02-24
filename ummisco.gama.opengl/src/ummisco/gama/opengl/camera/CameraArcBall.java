@@ -111,7 +111,6 @@ public class CameraArcBall extends AbstractCamera {
 
 		double translationValue = 0;
 		
-
 		translationValue = FastMath.abs(diffx) * ((z + 1) / w );
 		
 		if ( diffx > 0 ) {// move right
@@ -265,11 +264,8 @@ public class CameraArcBall extends AbstractCamera {
 
 		if ( isArcBallOn(e) ) {
 
-			// check the difference between the current x and the last x position
 			int horizMovement = e.x - lastMousePressedPosition.x;
-			// check the difference between the current y and the last y position
 			int vertMovement = e.y - lastMousePressedPosition.y;
-
 			horizInertia = newPoint.x - lastMousePressedPosition.x;
 			vertInertia = newPoint.y - lastMousePressedPosition.y;
 			velocityHoriz = horizInertia;
@@ -280,38 +276,24 @@ public class CameraArcBall extends AbstractCamera {
 			updateCartesianCoordinatesFromAngles();
 
 		}
-		// ROI Is enabled only if the view is in a 2D plan.
-		// else if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() ) {
-
 		else if ( (shift(e) || alt(e)) && isViewIn2DPlan() ) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
 			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
 		} else {
-			// check the difference between the current x and the last x position
-			int diffx = newPoint.x - lastMousePressedPosition.x;
-			
-			// check the difference between the current y and the last y position
-			int diffy = newPoint.y - lastMousePressedPosition.y;
-			
-			
+
+						
 			GamaPoint newRealPoint = this.getRenderer().getRealWorldPointFromWindowPoint(newPoint);
 			GamaPoint lastMousePressedPositionReal = this.getRenderer().getRealWorldPointFromWindowPoint(lastMousePressedPosition);			
 			
-			// check the difference between the current x and the last x position
 			double diffxReal = newRealPoint.x - lastMousePressedPositionReal.x;
-						
-			// check the difference between the current y and the last y position
 			double diffyReal = newRealPoint.y - lastMousePressedPositionReal.y;
 			
-			lastMousePressedPosition = newPoint;
-
-			//moveXYPlan2(diffx, diffy, position.z, getRenderer().getWidth(), getRenderer().getHeight());
-		    //Need method use to fix issue #1568
 			moveXYPlan(diffxReal, diffyReal);
+			
+			lastMousePressedPosition = newPoint;	
 		}
 
-		// PrintParam();
 	}
 
 	@Override

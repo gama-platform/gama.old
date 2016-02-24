@@ -179,7 +179,7 @@ public class SimulationClock {
 	}
 
 	/**
-	 * Computes the duration by substracting start to the current time in milliseconds
+	 * Computes the duration by subtracting start to the current time in milliseconds
 	 */
 	private void computeDuration() {
 		duration = System.currentTimeMillis() - start;

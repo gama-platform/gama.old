@@ -167,7 +167,7 @@ public class Points {
 			value = "if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the difference of the operand coordinate with this number.",
 			examples = { @example(value = "{1, 2} - 4.5", equals = "{-3.5, -2.5, -4.5}"),
 				@example(value = "{1, 2} - 4", equals = "{-3.0,-2.0,-4.0}") }))
-	public static ILocation substract(final GamaPoint p1, final Double p) {
+	public static ILocation subtract(final GamaPoint p1, final Double p) {
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
@@ -175,13 +175,13 @@ public class Points {
 	@doc(value = "Returns a point with coordinate resulting from the first operand minus the second operand.",
 		usages = @usage(value = "if both operands are points, returns their difference (coordinates per coordinates).",
 			examples = @example(value = "{1, 2} - {4, 5}", equals = "{-3.0, -3.0}")))
-	public static ILocation substract(final GamaPoint p1, final GamaPoint p) {
+	public static ILocation subtract(final GamaPoint p1, final GamaPoint p) {
 		return new GamaPoint(p1.x - p.x, p1.y - p.y, p1.z - p.z);
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, category = IOperatorCategory.POINT)
 	@doc(value = "Returns a point with coordinate resulting from the first operand minus the second operand.")
-	public static ILocation substract(final GamaPoint p1, final Integer p) {
+	public static ILocation subtract(final GamaPoint p1, final Integer p) {
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 

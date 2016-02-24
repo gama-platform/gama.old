@@ -16,6 +16,7 @@ import org.geotools.brewer.color.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConceptKeyword;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -31,7 +32,7 @@ import msi.gaml.types.*;
  */
 public class Colors {
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.COLOR })
+	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "A new color resulting from the sum of the two operands, component by component",
 		usages = @usage(
 			value = "if both operands are colors, returns a new color resulting from the sum of the two operands, component by component",
@@ -41,7 +42,7 @@ public class Colors {
 			c1.alpha());
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.COLOR })
+	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "A new color resulting from the sum of each component of the color with the right operand",
 		usages = @usage(
 			value = "if one operand is a color and the other an integer, returns a new color resulting from the sum of each component of the color with the right operand",
@@ -50,26 +51,26 @@ public class Colors {
 		return new GamaColor(c.getRed() + i, c.getGreen() + i, c.getBlue() + i, c.alpha());
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.COLOR })
-	@doc(value = "a new color resulting from the substraction of each component of the color with the right operand",
+	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
+	@doc(value = "a new color resulting from the subtraction of each component of the color with the right operand",
 		usages = @usage(
-			value = "if one operand is a color and the other an integer, returns a new color resulting from the substraction of each component of the color with the right operand",
+			value = "if one operand is a color and the other an integer, returns a new color resulting from the subtraction of each component of the color with the right operand",
 			examples = { @example(value = "rgb([255, 128, 32]) - 3", equals = "rgb([252,125,29])") }))
-	public static GamaColor substract(final GamaColor c, final Integer i) {
+	public static GamaColor subtract(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() - i, c.getGreen() - i, c.getBlue() - i, c.alpha());
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.COLOR })
-	@doc(value = "a new color resulting from the substraction of the two operands, component by component",
+	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
+	@doc(value = "a new color resulting from the subtraction of the two operands, component by component",
 		usages = @usage(
-			value = "if both operands are colors, returns a new color resulting from the substraction of the two operands, component by component",
+			value = "if both operands are colors, returns a new color resulting from the subtraction of the two operands, component by component",
 			examples = { @example(value = "rgb([255, 128, 32]) - rgb('red')", equals = "rgb([0,128,32])") }))
-	public static GamaColor substract(final GamaColor c1, final GamaColor c) {
+	public static GamaColor subtract(final GamaColor c1, final GamaColor c) {
 		return new GamaColor(c1.getRed() - c.getRed(), c1.getGreen() - c.getGreen(), c1.getBlue() - c.getBlue(),
 			c1.alpha());
 	}
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.COLOR })
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "a new color resulting from the product of each component of the color with the right operand",
 		usages = @usage(
 			value = "if one operand is a color and the other an integer, returns a new color resulting from the product of each component of the color with the right operand (with a maximum value at 255)",
@@ -78,7 +79,7 @@ public class Colors {
 		return new GamaColor(c.getRed() * i, c.getGreen() * i, c.getBlue() * i, c.alpha());
 	}
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.COLOR })
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "a new color resulting from the division of each component of the color by the right operand",
 		usages = @usage(
 			value = "if one operand is a color and the other an integer, returns a new color resulting from the division of each component of the color by the right operand",
@@ -87,7 +88,7 @@ public class Colors {
 		return new GamaColor(c.getRed() / i, c.getGreen() / i, c.getBlue() / i, c.alpha());
 	}
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.COLOR })
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(
 		value = "a new color resulting from the division of each component of the color by the right operand. The result on each component is then truncated.",
 		usages = @usage(
@@ -111,7 +112,7 @@ public class Colors {
 	// return new GamaColor(c1.getRed(), c1.getGreen(), c1.getBlue(), 255);
 	// }
 
-	@operator(value = "hsb", category = { IOperatorCategory.COLOR })
+	@operator(value = "hsb", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "Converts hsb (h=hue, s=saturation, b=brightness) value to Gama color",
 		masterDoc = true,
 		comment = "h,s and b components should be floating-point values between 0.0 and 1.0 and when used alpha should be an integer (between 0 and 255) or a float (between 0 and 1) . Examples: Red=(0.0,1.0,1.0), Yellow=(0.16,1.0,1.0), Green=(0.33,1.0,1.0), Cyan=(0.5,1.0,1.0), Blue=(0.66,1.0,1.0), Magenta=(0.83,1.0,1.0)",
@@ -121,20 +122,20 @@ public class Colors {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()));
 	}
 
-	@operator(value = "hsb", category = { IOperatorCategory.COLOR })
+	@operator(value = "hsb", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "Converts hsb (h=hue, s=saturation, b=brightness) value to Gama color",
 		examples = @example(value = "hsb (0.5,1.0,1.0,0.0)", equals = "rgb(\"cyan\",0)"))
 	public static GamaColor hsb(final Double h, final Double s, final Double b, final Double a) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()), a);
 	}
 
-	@operator(value = "hsb", category = { IOperatorCategory.COLOR })
+	@operator(value = "hsb", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "Converts hsb (h=hue, s=saturation, b=brightness) value to Gama color")
 	public static GamaColor hsb(final Double h, final Double s, final Double b, final Integer a) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()), a);
 	}
 
-	@operator(value = "rgb", category = { IOperatorCategory.COLOR })
+	@operator(value = "rgb", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "Returns a color defined by red, green, blue components and an alpha blending value.",
 		masterDoc = true,
 		usages = @usage("It can be used with r=red, g=greeb, b=blue, each between 0 and 255"),
@@ -144,7 +145,7 @@ public class Colors {
 		return new GamaColor(r, g, b, 255);
 	}
 
-	@operator(value = "rgb", category = { IOperatorCategory.COLOR })
+	@operator(value = "rgb", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "rgb color",
 		usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0 and 255)"),
 		examples = { @example(value = "rgb (255,0,0,125)", equals = "a light red color", test = false),
@@ -154,7 +155,7 @@ public class Colors {
 		return new GamaColor(r, g, b, alpha);
 	}
 
-	@operator(value = "rgb", category = { IOperatorCategory.COLOR })
+	@operator(value = "rgb", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "rgb color",
 		usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0.0 and 1.0)"),
 		examples = @example(value = "rgb (255,0,0,0.5)", equals = "a light red color", test = false),
@@ -163,7 +164,7 @@ public class Colors {
 		return new GamaColor(r, g, b, alpha);
 	}
 
-	@operator(value = "rgb", category = { IOperatorCategory.COLOR })
+	@operator(value = "rgb", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "rgb named color",
 		usages = @usage("It can be used with a name of color and alpha (between 0 and 255)"),
 		examples = @example(value = "rgb (\"red\")", equals = "rgb(255,0,0)"),
@@ -186,7 +187,7 @@ public class Colors {
 	 * }
 	 */
 
-	@operator(value = "rgb", category = { IOperatorCategory.COLOR })
+	@operator(value = "rgb", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "rgb color",
 		usages = @usage("It can be used with a color and an alpha between 0 and 255"),
 		examples = @example(value = "rgb(rgb(255,0,0),125)", equals = "a light red color", test = false),
@@ -195,7 +196,7 @@ public class Colors {
 		return GamaColorType.staticCast(scope, s, a, false);
 	}
 
-	@operator(value = "rgb", category = { IOperatorCategory.COLOR })
+	@operator(value = "rgb", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "rgb color",
 		usages = @usage("It can be used with a color and an alpha between 0 and 1"),
 		examples = @example(value = "rgb(rgb(255,0,0),0.5)", equals = "a light red color", test = false),
@@ -204,7 +205,7 @@ public class Colors {
 		return GamaColorType.staticCast(scope, s, a, false);
 	}
 
-	@operator(value = "grayscale", category = { IOperatorCategory.COLOR })
+	@operator(value = "grayscale", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "Converts rgb color to grayscale value",
 		comment = "r=red, g=greeb, b=blue. Between 0 and 255 and gray = 0.299 `*` red + 0.587 `*` green + 0.114 `*` blue (Photoshop value)",
 		examples = { @example(value = "grayscale (rgb(255,0,0))", equals = "to a dark grey", isExecutable = false),
@@ -215,7 +216,7 @@ public class Colors {
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
 	}
 
-	@operator(value = "rnd_color", category = { IOperatorCategory.COLOR })
+	@operator(value = "rnd_color", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "rgb color",
 		comment = "Return a random color equivalent to rgb(rnd(operand),rnd(operand),rnd(operand))",
 		examples = @example(value = "rnd_color(255)",
@@ -228,7 +229,7 @@ public class Colors {
 		return new GamaColor(r.between(0, realMax), r.between(0, realMax), r.between(0, realMax), 255);
 	}
 
-	@operator(value = "blend", category = { IOperatorCategory.COLOR })
+	@operator(value = "blend", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1",
 		masterDoc = true,
 		examples = { @example(value = "blend(#red, #blue, 0.3)", equals = "rgb(76,0,178)", isTestOnly = true),
@@ -244,7 +245,7 @@ public class Colors {
 		return color;
 	}
 
-	@operator(value = "blend", category = { IOperatorCategory.COLOR })
+	@operator(value = "blend", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(
 		value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1. If the ratio is ommitted, an even blend is done",
 		usages = @usage(value = "If the ratio is ommitted, an even blend is done",
@@ -255,7 +256,7 @@ public class Colors {
 		return blend(color1, color2, 0.5);
 	}
 
-	@operator(value = "brewer_colors", category = { IOperatorCategory.COLOR })
+	@operator(value = "brewer_colors", category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "Build a list of colors of a given type (see website http://colorbrewer2.org/)",
 		examples = { @example(value = "list<rgb> colors <- brewer_colors(\"OrRd\");",
 			equals = "a list of 6 blue colors",
@@ -276,7 +277,7 @@ public class Colors {
 		return colors;
 	}
 
-	@operator(value = "brewer_colors", content_type = IType.COLOR, category = { IOperatorCategory.COLOR })
+	@operator(value = "brewer_colors", content_type = IType.COLOR, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(
 		value = "Build a list of colors of a given type (see website http://colorbrewer2.org/) with a given number of classes",
 		examples = { @example(value = "list<rgb> colors <- brewer_colors(\"Pastel1\", 10);",
@@ -295,7 +296,7 @@ public class Colors {
 		}
 	}
 
-	@operator(value = "brewer_palettes", content_type = IType.COLOR, category = { IOperatorCategory.COLOR })
+	@operator(value = "brewer_palettes", content_type = IType.COLOR, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "returns the list a palette with a given min number of classes and max number of classes)",
 		examples = { @example(value = "list<rgb> colors <- brewer_palettes(5,10);",
 			equals = "a list of palettes that are composed of a min of 5 colors and a max of 10 colors",
@@ -312,7 +313,7 @@ public class Colors {
 		return palettes;
 	}
 
-	@operator(value = "brewer_palettes", content_type = IType.STRING, category = { IOperatorCategory.COLOR })
+	@operator(value = "brewer_palettes", content_type = IType.STRING, category = { IOperatorCategory.COLOR }, keywords = {IConceptKeyword.COLOR_OPERATOR} )
 	@doc(value = "returns the list a palette with a given min number of classes and max number of classes)",
 		examples = { @example(value = "list<rgb> colors <- brewer_palettes();",
 			equals = "a list of palettes that are composed of a min of 5 colors",

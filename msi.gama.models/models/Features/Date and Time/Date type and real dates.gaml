@@ -40,14 +40,14 @@ global {
 		
 		write "\n ----------------------------------------------- " ;
 		
-		//to add or substract a duration (in secondes) to a date:
+		//to add or subtract a duration (in secondes) to a date:
 		 write "my_date2 + 10: " + (my_date2 + 10);
 		 write "my_date2 - 10: " + (my_date2 - 10);
 		 
 		 write "\n ----------------------------------------------- " ;
 		 
 		 
-		 //to add or substract a duration (in years, months, weeks, days, hours, minutes,  secondes) to a date:
+		 //to add or subtract a duration (in years, months, weeks, days, hours, minutes,  secondes) to a date:
 		  write "my_date2 add_years 1: " + (my_date2 add_years 1);
 		  write "my_date2 add_months 1: " + (my_date2 add_months 1);
 		  write "my_date2 add_weeks 1: " + (my_date2 add_weeks 1);
@@ -56,13 +56,13 @@ global {
 		  write "my_date2 add_minutes 1: " + (my_date2 add_minutes 1);
 		  write "my_date2 add_seconds 1: " + (my_date2 add_seconds 1);
 		  
-		  write "my_date2 substract_years 1: " + (my_date2 substract_years 1);
-		  write "my_date2 substract_months 1: " + (my_date2 substract_months 1);
-		  write "my_date2 substract_weeks 1: " + (my_date2 substract_weeks 1);
-		  write "my_date2 substract_days 1: " + (my_date2 substract_days 1);
-		  write "my_date2 substract_hours 1: " + (my_date2 substract_hours 1);
-		  write "my_date2 substract_minutes 1: " + (my_date2 substract_minutes 1);
-		  write "my_date2 substract_seconds 1: " + (my_date2 substract_seconds 1);
+		  write "my_date2 subtract_years 1: " + (my_date2 subtract_years 1);
+		  write "my_date2 subtract_months 1: " + (my_date2 subtract_months 1);
+		  write "my_date2 subtract_weeks 1: " + (my_date2 subtract_weeks 1);
+		  write "my_date2 subtract_days 1: " + (my_date2 subtract_days 1);
+		  write "my_date2 subtract_hours 1: " + (my_date2 subtract_hours 1);
+		  write "my_date2 subtract_minutes 1: " + (my_date2 subtract_minutes 1);
+		  write "my_date2 subtract_seconds 1: " + (my_date2 subtract_seconds 1);
 	}
 	
 	reflex info_date {

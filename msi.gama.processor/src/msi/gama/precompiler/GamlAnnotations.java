@@ -214,6 +214,13 @@ public final class GamlAnnotations {
 	@Inherited
 	@Target(ElementType.TYPE)
 	public static @interface type {
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 *        website search feature.
+		 */
+
+		String[] keywords() default {};
 
 		/**
 		 * Name.
@@ -279,6 +286,13 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	public static @interface skill {
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 *        website search feature.
+		 */
+
+		String[] keywords() default {};
 
 		/**
 		 * Name.
@@ -355,6 +369,13 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	public static @interface species {
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 *        website search feature.
+		 */
+
+		String[] keywords() default {};
 
 		/**
 		 * Name.
@@ -720,7 +741,7 @@ public final class GamlAnnotations {
 	}
 
 	/**
-	 * Written by drogoul Modified on 9 ao�t 2010
+	 * Written by drogoul Modified on 9 august 2010
 	 *
 	 * Used to annotate methods that can be used as operators in GAML.
 	 *
@@ -728,6 +749,13 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.METHOD, ElementType.TYPE })
 	public static @interface operator {
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 *        website search feature.
+		 */
+
+		String[] keywords() default {};
 
 		/**
 		 * @return an array of strings, each representing a category in which this operator can be classified (for
