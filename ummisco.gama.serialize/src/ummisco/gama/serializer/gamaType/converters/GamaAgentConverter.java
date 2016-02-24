@@ -14,6 +14,7 @@ package ummisco.gama.serializer.gamaType.converters;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.runtime.IScope;
 
 import java.util.List;
@@ -31,12 +32,12 @@ public class GamaAgentConverter implements Converter {
 	
 	@Override
 	public boolean canConvert(final Class arg0) {
-		return (arg0.equals(GamlAgent.class));
+		return (arg0.equals(GamlAgent.class) || arg0.equals(MinimalAgent.class));
 	}
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		GamlAgent agt = (GamlAgent) arg0;
+		MinimalAgent agt = (MinimalAgent) arg0;
 		
 		writer.startNode("agentReference");
 		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());
