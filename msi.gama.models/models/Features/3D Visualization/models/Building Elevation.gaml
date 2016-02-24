@@ -11,13 +11,16 @@ model tutorial_gis_city_traffic
 
 global {
 	//Load of the different shapefiles used by the model
-	file shape_file_buildings <- shape_file('../includes/building.shp', 0);
+	file shape_file_buildings <- shape_file('../includes/simplebuilding/building.shp', 0);
 	file shape_file_roads <- shape_file('../includes/road.shp', 0);
 	file shape_file_bounds <- shape_file('../includes/bounds.shp', 0);
+	
+	string texture <- "../images/building_texture/texture1.jpg";
+	string roof_texture <- "../images/building_texture/roof_top.png";	
 		
 	//Definition of the shape of the world as the bounds of the shapefiles to show everything contained
 	// by the area delimited by the bounds
-	geometry shape <- envelope(shape_file_bounds);
+	geometry shape <- envelope(shape_file_buildings);
 	int nb_people <- 100;
 	int day_time update: cycle mod 144;
 	int min_work_start <- 36;
@@ -37,7 +40,7 @@ global {
 			height <- 10 + rnd(90);
 		}
 
-		create road from: shape_file_roads;
+		/*create road from: shape_file_roads;
 		the_graph <- as_edge_graph(road);
 		list<building> residential_buildings <- building where (each.type = 'Residential');
 		list<building> industrial_buildings <- building where (each.type = 'Industrial');
@@ -49,7 +52,7 @@ global {
 			working_place <- one_of(industrial_buildings);
 			location <- any_location_in(living_place);
 			location <- {location.x, location.y,living_place.height };
-		}
+		}*/
 
 	}
 }
@@ -60,7 +63,7 @@ species building {
 	rgb color <- #gray;
 	int height;
 	aspect base {
-		draw shape color: color depth: 100;
+		draw shape color: color depth: 100;// texture:[roof_texture,texture];
 	}
 }
 
