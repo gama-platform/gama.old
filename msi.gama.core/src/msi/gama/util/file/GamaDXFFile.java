@@ -34,6 +34,7 @@ import org.kabeja.parser.ParserBuilder;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
@@ -204,7 +205,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 		
 		protected void fillBuffer(IScope scope, DXFDocument doc ) {
 			IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+			double xmax = (doc.getBounds().getMaximumX() - doc.getBounds().getMinimumX()) * (unit == null ? 1 : unit);
+			double ymax =  (doc.getBounds().getMaximumY() - doc.getBounds().getMinimumY()) * (unit == null ? 1 : unit);
 			
+			IShape env = GamaGeometryType.buildPolygon(GamaListFactory.createWithoutCasting(Types.POINT, new GamaPoint(0,0),new GamaPoint(xmax,0),new GamaPoint(xmax,ymax),new GamaPoint(0,ymax),new GamaPoint(0,0)));
 			Iterator it =    doc.getDXFLayerIterator();
 			List<IShape> entities = new ArrayList<IShape>();
 			while (it.hasNext()) {
@@ -215,7 +219,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 					List<DXFEntity> entity_list = (List<DXFEntity>)layer.getDXFEntities(entityType);
 					for (DXFEntity obj : entity_list) {
 						IShape g = defineGeom(scope,obj);
-						if (g != null) {
+						if (g != null && g.intersects(env)) {
 							if (entities.contains(g)) continue;
 							entities.add(g);
 						
@@ -244,7 +248,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 			    while (itent.hasNext()) {
 			    	DXFEntity obj = (DXFEntity)itent.next();
 			    	IShape g = defineGeom(scope,obj);
-					if (g != null) {
+			    	if (g != null && g.intersects(env)) {
 						if (entities.contains(g)) continue;
 						entities.add(g);
 					
