@@ -6,6 +6,7 @@
  <xsl:text disable-output-escaping="yes">&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr"&gt;</xsl:text>
 
 <!-- === Concepts === -->
+<!-- concept -->
 <!-- operator -->
 <!-- statement -->
 	<!--  XXXXXX architecture -->
@@ -23,7 +24,91 @@
 	<!-- species -->
 <!-- Type -->
 
-		
+
+<!-- ======================== concept ======================== -->
+
+<xsl:for-each select="/doc/conceptList/concept"> 
+	<xsl:sort select="@id" />
+	<xsl:variable name="conceptName" select="@id"/>
+
+	<xsl:text disable-output-escaping="yes">
+   	&lt;keyword id="concept_</xsl:text><xsl:value-of select="@id"/><xsl:text>"&gt;
+   		&lt;name&gt;</xsl:text><xsl:value-of select="@id"/><xsl:text>&lt;/name&gt;
+   		&lt;category&gt;concept&lt;/category&gt;
+   		&lt;associatedKeywordList&gt;</xsl:text>
+	
+	<!-- browse the operators -->
+	<xsl:for-each select="/doc/operators/operator"> 
+		<xsl:variable name="operatorName" select="@name"/>
+		<xsl:for-each select="concepts/concept"> 
+			<xsl:if test="$conceptName = @id">
+				<xsl:text>
+			&lt;associatedKeyword&gt;operator_</xsl:text><xsl:value-of select="$operatorName"/><xsl:text>&lt;/associatedKeyword&gt;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+
+	<!-- browse the statements -->
+	<xsl:for-each select="/doc/statements/statement"> 
+		<xsl:variable name="statementName" select="@name"/>
+		<xsl:for-each select="concepts/concept"> 
+			<xsl:if test="$conceptName = @id">
+				<xsl:text>
+			&lt;associatedKeyword&gt;statement_</xsl:text><xsl:value-of select="$statementName"/><xsl:text>&lt;/associatedKeyword&gt;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+
+	<!-- browse the skills -->
+	<xsl:for-each select="/doc/skills/skill"> 
+		<xsl:variable name="skillName" select="@name"/>
+		<xsl:for-each select="concepts/concept"> 
+			<xsl:if test="$conceptName = @id">
+				<xsl:text>
+			&lt;associatedKeyword&gt;skill_</xsl:text><xsl:value-of select="$skillName"/><xsl:text>&lt;/associatedKeyword&gt;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+
+	<!-- browse the constants -->
+	<xsl:for-each select="/doc/constants/constant"> 
+		<xsl:variable name="constantName" select="@name"/>
+		<xsl:for-each select="concepts/concept"> 
+			<xsl:if test="$conceptName = @id">
+				<xsl:text>
+			&lt;associatedKeyword&gt;constant_</xsl:text><xsl:value-of select="$constantName"/><xsl:text>&lt;/associatedKeyword&gt;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+
+	<!-- browse the species -->
+	<xsl:for-each select="/doc/speciess/species"> 
+		<xsl:variable name="speciesName" select="@name"/>
+		<xsl:for-each select="concepts/concept"> 
+			<xsl:if test="$conceptName = @id">
+				<xsl:text>
+			&lt;associatedKeyword&gt;species_</xsl:text><xsl:value-of select="$speciesName"/><xsl:text>&lt;/associatedKeyword&gt;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+
+	<!-- browse the species -->
+	<xsl:for-each select="/doc/types/type"> 
+		<xsl:variable name="typeName" select="@name"/>
+		<xsl:for-each select="concepts/concept"> 
+			<xsl:if test="$conceptName = @id">
+				<xsl:text>
+			&lt;associatedKeyword&gt;type_</xsl:text><xsl:value-of select="$typeName"/><xsl:text>&lt;/associatedKeyword&gt;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+
+	<xsl:text>
+		&lt;/associatedKeywordList&gt;	
+   	&lt;/keyword&gt; 	
+   	</xsl:text>
+</xsl:for-each>
+
 <!-- ======================== operator ======================== -->
 
 <xsl:for-each select="/doc/operators/operator"> 
@@ -196,7 +281,7 @@
    	<xsl:param name="insideEltConcept" select="''"/>
    	<xsl:text disable-output-escaping="yes">
    	&lt;keyword id="</xsl:text><xsl:value-of select="$category"/><xsl:text>_</xsl:text><xsl:value-of select="$nameGAMLElement"/>
-   		<xsl:if test="$insideElt != ''"><xsl:text>_</xsl:text><xsl:value-of select="$insideEltConcept"/><xsl:text>_</xsl:text><xsl:value-of select="$insideElt"/></xsl:if>   	
+   		<xsl:if test="$insideElt != '' and $category != 'concept'"><xsl:text>_</xsl:text><xsl:value-of select="$insideEltConcept"/><xsl:text>_</xsl:text><xsl:value-of select="$insideElt"/></xsl:if>   	
    		<xsl:text>"&gt;
    		&lt;name&gt;</xsl:text><xsl:value-of select="$nameGAMLElement"/><xsl:text>&lt;/name&gt;
    		&lt;category&gt;</xsl:text><xsl:value-of select="$category"/><xsl:text>&lt;/category&gt;</xsl:text>   	

@@ -31,9 +31,43 @@ import msi.gaml.types.IType;
  * @modified November 2011 to include isPoint(), getInnerGeometry() and getEnvelope()
  *
  */
-@vars({ @var(name = "perimeter",
-	type = IType.FLOAT,
-	doc = { @doc("Returns the length of the contour of this geometry") }) })
+@vars({ @var(name = "area", type = IType.FLOAT, doc = { @doc("Returns the total area of this geometry") }),
+	@var(name = "volume", type = IType.FLOAT, doc = { @doc("Returns the total volume of this geometry") }),
+	@var(name = "centroid", type = IType.POINT, doc = { @doc("Returns the centroid of this geometry") }),
+	@var(name = "width",
+		type = IType.FLOAT,
+		doc = { @doc("Returns the width (length on the x-axis) of the rectangular envelope of this  geometry") }),
+	@var(name = "depth",
+		type = IType.FLOAT,
+		doc = { @doc("Returns the depth (length on the z-axis) of the rectangular envelope of this geometry") }),
+	@var(name = "height",
+		type = IType.FLOAT,
+		doc = { @doc("Returns the height (length on the y-axis) of the rectangular envelope of this geometry") }),
+	@var(name = "points",
+		type = IType.LIST,
+		of = IType.POINT,
+		doc = {
+			@doc("Returns the list of points that delimit this geometry. A point will return a list with itself") }),
+	@var(name = "envelope",
+		type = IType.GEOMETRY,
+		doc = { @doc("Returns the envelope of this geometry (the smallest rectangle that contains the geometry)") }),
+	@var(name = "geometries",
+		type = IType.LIST,
+		of = IType.GEOMETRY,
+		doc = {
+			@doc("Returns the list of geometries that compose this geometry, or a list containing the geometry itself if it is simple") }),
+	@var(name = "multiple",
+		type = IType.BOOL,
+		doc = { @doc("Returns whether this geometry is composed of multiple geometries or not") }),
+	@var(name = "perimeter", type = IType.FLOAT, doc = { @doc("Returns the length of the contour of this geometry") }),
+	@var(name = "holes",
+		type = IType.LIST,
+		of = IType.GEOMETRY,
+		doc = {
+			@doc("Returns the list of holes inside this geometry as a list of geometries, and an emptly list if this geometry is solid") }),
+	@var(name = "contour",
+		type = IType.GEOMETRY,
+		doc = { @doc("Returns the polyline representing the contour of this geometry") }) })
 public interface IShape extends ILocated, IValue, IAttributed {
 
 	static enum Type {
@@ -76,8 +110,6 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	public abstract Envelope3D getEnvelope();
 
-	public IList<? extends ILocation> getPoints();
-
 	/**
 	 * Returns the geometrical type of this shape. May be computed dynamically (from the JTS inner geometry) or stored
 	 * somewhere (in the attributes of the shape, using TYPE_ATTRIBUTE)
@@ -89,9 +121,6 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public abstract IShape getGeometry();
 
 	public abstract Geometry getInnerGeometry();
-
-	@getter("perimeter")
-	public abstract double getPerimeter();
 
 	public abstract boolean intersects(IShape g);
 
@@ -106,5 +135,44 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public abstract void setInnerGeometry(Geometry intersection);
 
 	public void setDepth(double depth);
+
+	@getter("multiple")
+	public boolean isMultiple();
+
+	@getter("area")
+	public Double getArea();
+
+	@getter("volume")
+	public Double getVolume();
+
+	@getter("perimeter")
+	public double getPerimeter();
+
+	@getter("holes")
+	public IList<GamaShape> getHoles();
+
+	@getter("centroid")
+	public GamaPoint getCentroid();
+
+	@getter("contour")
+	public GamaShape getExteriorRing(IScope scope);
+
+	@getter("width")
+	public Double getWidth();
+
+	@getter("height")
+	public Double getHeight();
+
+	@getter("depth")
+	public Double getDepth();
+
+	@getter("envelope")
+	public GamaShape getGeometricEnvelope();
+
+	@getter("points")
+	public IList<? extends ILocation> getPoints();
+
+	@getter("geometries")
+	public IList<? extends IShape> getGeometries();
 
 }

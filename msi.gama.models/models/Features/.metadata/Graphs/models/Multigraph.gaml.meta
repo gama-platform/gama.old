@@ -1,2 +1,10 @@
-msi.gama.core
-ummisco.gama.opengl
+#
+#Thu Feb 25 16:43:30 ICT 2016
+operators=as~envelope~any_location_in~one_of~rnd~.~path_between~\!\=~max~length~<~distance_to~+~circle~as_edge_graph~node~-~edge~\:\:~link
+plugins=msi.gama.core~ummisco.gama.opengl
+attributes=edges
+statements=action~let~if~set~reflex~do~arg~aspect~draw~init~create~add~loop~output~display~display_population
+skills=reflex~moving
+constants=red~blue~black
+types=list~int~unknown~string~file~geometry~point~agent~float~date~rgb~graph~container~path~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

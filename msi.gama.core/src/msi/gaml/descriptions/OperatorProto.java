@@ -15,8 +15,8 @@ import java.lang.reflect.*;
 import java.util.*;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
@@ -191,6 +191,12 @@ public class OperatorProto extends AbstractProto {
 				return name + "(" + signature.asPattern(withVariables) + ")";
 			}
 		}
+	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		super.collectMetaInformation(meta);
+		meta.put(GamlProperties.OPERATORS, name);
 	}
 
 }

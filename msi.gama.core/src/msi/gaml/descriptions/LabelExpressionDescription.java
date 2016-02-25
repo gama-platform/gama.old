@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.util.StringUtils;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
@@ -73,7 +74,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 		 */
 		@Override
-		public void collectPlugins(final Set<String> plugins) {}
+		public void collectMetaInformation(final GamlProperties meta) {}
 
 	}
 

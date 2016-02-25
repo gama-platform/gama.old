@@ -436,9 +436,14 @@ public class GamaPreferences {
 		create("core.sync", "Synchronize displays with simulations", false, IType.BOOL).in(DISPLAY)
 			.group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlay", false, IType.BOOL)
-		.in(DISPLAY).activates("core.scale").group("Properties (settings effective after experiment relaunch)");
+		.in(DISPLAY).activates("core.scale", "core.show_fps")
+		.group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_SCALE = create("core.scale", "Show scale bar in overlay", false, IType.BOOL)
 		.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_SHOW_FPS =
+		create("core.show_fps", "Show number of frames per second in overlay", false, IType.BOOL).in(DISPLAY)
+			.group("Properties (settings effective after experiment relaunch)");
+
 	public static final Entry<Boolean> CORE_ANTIALIAS =
 		create("core.antialias", "Apply antialiasing", false, IType.BOOL).in(DISPLAY)
 			.group("Properties (settings effective after experiment relaunch)");
@@ -475,9 +480,6 @@ public class GamaPreferences {
 	// .group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env", "Draw 3D referential", true, IType.BOOL)
 		.in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
-	// public static final Entry<Boolean> CORE_SHOW_FPS =
-	// create("core.show_fps", "Show number of frames per second", false, IType.BOOL).in(DISPLAY)
-	// .group("OpenGL (settings effective after experiment relaunch)");
 	// public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Enable lighting", true, IType.BOOL)
 	// .in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Double> OPENGL_ZOOM =

@@ -31,6 +31,7 @@ import msi.gama.lang.gaml.parsing.GamlCompatibilityConverter;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -49,7 +50,7 @@ public class GamlResource extends LazyLinkingResource {
 	private volatile ErrorCollector collector;
 	private volatile boolean isValidating;
 	private volatile boolean isEdited;
-	private final Set<String> requires = new LinkedHashSet();
+	private final GamlProperties requires = new GamlProperties();
 	// private final Map<ResourceSet, TOrderedHashMap<GamlResource, Import>> imports = new HashMap();
 
 	public ErrorCollector getErrorCollector() {
@@ -285,7 +286,7 @@ public class GamlResource extends LazyLinkingResource {
 		// If plugins, required for building this model, are missing in the current version of GAMA
 		// raise an error and abort the build.
 		IPath path = getPath();
-		List<String> plugins = new ArrayList();
+		Set<String> plugins = null;
 		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 		if ( resource != null ) {
 			IProject project = resource.getProject();
@@ -299,15 +300,10 @@ public class GamlResource extends LazyLinkingResource {
 					BufferedReader in = null;
 					try {
 						in = new BufferedReader(new InputStreamReader(m.getContents()));
-						String inputLine;
+						GamlProperties req = new GamlProperties(in);
+						plugins = req.get(GamlProperties.PLUGINS);
 
-						while ((inputLine = in.readLine()) != null) {
-							if ( !inputLine.equals(GamaBundleLoader.CORE_PLUGIN) && !inputLine.isEmpty() ) {
-								plugins.add(inputLine);
-							}
-						}
-
-					} catch (CoreException | IOException e) {
+					} catch (CoreException e) {
 						e.printStackTrace();
 					} finally {
 						if ( in != null ) {
@@ -321,7 +317,7 @@ public class GamlResource extends LazyLinkingResource {
 				}
 			}
 		}
-		if ( !plugins.isEmpty() ) {
+		if ( plugins != null && !plugins.isEmpty() ) {
 			for ( String plugin : plugins ) {
 				if ( !GamaBundleLoader.contains(plugin) ) {
 					invalidateBecauseOfImportedProblem("The plugin " + plugin + " is required to run this model", this);
@@ -352,8 +348,8 @@ public class GamlResource extends LazyLinkingResource {
 	/**
 	 * Validates the resource by compiling its contents into a ModelDescription.
 	 * @return errors an ErrorCollector which contains semantic errors (as opposed to the ones obtained via
-	 * resource.getErrors(), which are syntactic errors), This collector can be probed for compilation
-	 * errors via its hasErrors(), hasInternalErrors(), hasImportedErrors() methods
+	 *         resource.getErrors(), which are syntactic errors), This collector can be probed for compilation
+	 *         errors via its hasErrors(), hasInternalErrors(), hasImportedErrors() methods
 	 *
 	 */
 	public void validate(final ResourceSet set) {
@@ -374,7 +370,7 @@ public class GamlResource extends LazyLinkingResource {
 			// marked as 'edited'
 			model.validate(isEdited);
 			updateWith(model);
-			model.collectPlugins(requires);
+			model.collectMetaInformation(requires);
 			model.dispose();
 
 			//
@@ -477,7 +473,7 @@ public class GamlResource extends LazyLinkingResource {
 	/**
 	 * @return the requires
 	 */
-	public Set<String> getRequires() {
+	public GamlProperties getRequires() {
 		requires.remove(null);
 		return requires;
 	}

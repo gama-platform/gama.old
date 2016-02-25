@@ -11,8 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.descriptions.StatementDescription.StatementWithChildrenDescription;
 import msi.gaml.factories.ChildrenProvider;
@@ -65,8 +65,11 @@ public class PrimitiveDescription extends StatementWithChildrenDescription {
 	}
 
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
-		plugins.add(plugin);
+	public void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.PLUGINS, plugin);
+		if ( isBuiltIn() ) {
+			meta.put(GamlProperties.ACTIONS, getName());
+		}
 	}
 
 }

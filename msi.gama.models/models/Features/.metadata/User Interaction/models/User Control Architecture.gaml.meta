@@ -1,1 +1,10 @@
-msi.gama.core
+#
+#Thu Feb 25 16:43:30 ICT 2016
+architectures=user_only
+operators=envelope~circle~and~every~\!~one_of~among~as
+plugins=msi.gama.core
+statements=aspect~draw~user_panel~transition~user_command~ask~do~create~set~user_input~init~output~display~display_population
+skills=reflex~user_only
+constants=green
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~bool~container
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

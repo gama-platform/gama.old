@@ -23,8 +23,8 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.outputs.LayeredDisplayOutput.*;
 import msi.gama.outputs.layers.*;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -152,15 +152,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		 * @see msi.gaml.descriptions.SymbolSerializer#collectPluginsInFacetValue(msi.gaml.descriptions.SymbolDescription, java.lang.String, java.util.Set)
 		 */
 		@Override
-		protected void collectPluginsInFacetValue(final SymbolDescription desc, final String key, final Set plugins) {
-			super.collectPluginsInFacetValue(desc, key, plugins);
+		protected void collectMetaInformationInFacetValue(final SymbolDescription desc, final String key,
+			final GamlProperties plugins) {
+			super.collectMetaInformationInFacetValue(desc, key, plugins);
 			if ( key.equals(TYPE) ) {
 				IExpressionDescription exp = desc.getFacets().get(TYPE);
 				if ( exp.getExpression() != null ) {
 					String type = exp.getExpression().literalValue();
 					DisplayDescription dd = GAMA.getGui().getDisplayDescriptionFor(type);
 					if ( dd != null ) {
-						plugins.add(dd.getDefiningPlugin());
+						plugins.put(GamlProperties.PLUGINS, dd.getDefiningPlugin());
 					}
 				}
 			}
@@ -574,11 +575,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void setChildren(final List<? extends ISymbol> commands) {
 		List<AbstractLayerStatement> list = new ArrayList();
 		for ( ISymbol s : commands ) {
-			if ( s instanceof OverlayStatement ) {
+			if ( s instanceof OverlayStatement && ((OverlayStatement) s).hasInfo() ) {
 				overlayInfo = (OverlayStatement) s;
-			} else if ( s instanceof AbstractLayerStatement ) {
-				list.add((AbstractLayerStatement) s);
 			}
+			list.add((AbstractLayerStatement) s);
+
 		}
 		setLayers(list);
 	}

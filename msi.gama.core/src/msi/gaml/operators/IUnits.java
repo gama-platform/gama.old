@@ -73,10 +73,10 @@ public class IUnits {
 	@constant(value = "pixels",
 		altNames = { "px" },
 		category = { IConstantCategory.GRAPHIC },
-		doc = @doc("This unit, only available when running aspects or declaring displays, can be obtained using the same approach, but returns a dynamic value instead of a fixed one. px (or pixels), returns the value of one pixel on the current view in terms of model units."))
-	public final static double pixels = 1, px = pixels; // Represents the value of a pixel in terms
-														// of model units. Parsed early
-														// and never used as a constant.
+		doc = @doc("This unit, only available when running aspects or declaring displays,  returns a dynamic value instead of a fixed one. px (or pixels), returns the value of one pixel on the current view in terms of model units."))
+	public final static Double pixels = 1d, px = pixels; // Represents the value of a pixel in terms
+	// of model units. Parsed early
+	// and never used as a constant.
 	@constant(value = "display_width",
 		category = { IConstantCategory.GRAPHIC },
 		doc = @doc("This constant is only accessible in a graphical context: display, graphics..."))

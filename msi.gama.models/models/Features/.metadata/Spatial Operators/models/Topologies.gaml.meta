@@ -1,1 +1,10 @@
-msi.gama.core
+#
+#Thu Feb 25 16:43:30 ICT 2016
+operators=envelope~as~closest_to~internal_at~of_species~agents_at_distance~neighbors_at~simple_clustering_by_distance~rgb~rnd~\=~length~\:\:~hierarchical_clustering~-~circle~.~path_to~+~line~distance_to
+plugins=msi.gama.core
+attributes=pairs~key~keys~edges~location
+statements=action~add~ask~loop~let~if~else~create~arg~set~aspect~draw~init~do~output~display~graphics
+skills=reflex~grid
+constants=yellow~red~black~green~silver~grey~pink
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~map~container~bool~path
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

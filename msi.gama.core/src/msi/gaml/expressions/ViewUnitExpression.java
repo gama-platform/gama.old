@@ -31,9 +31,9 @@ public class ViewUnitExpression extends UnitConstantExpression {
 			case "view_y":
 				return -g.getYOffsetInPixels() / g.getyRatioBetweenPixelsAndModelUnits();
 			case "view_width":
-				return g.getDisplayWidthInPixels() / g.getxRatioBetweenPixelsAndModelUnits();
+				return g.getDisplayWidth() / g.getxRatioBetweenPixelsAndModelUnits();
 			case "view_height":
-				return g.getDisplayHeightInPixels() / g.getyRatioBetweenPixelsAndModelUnits();
+				return g.getDisplayHeight() / g.getyRatioBetweenPixelsAndModelUnits();
 		}
 		return 0d;
 	}

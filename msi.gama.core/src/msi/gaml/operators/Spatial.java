@@ -1123,9 +1123,10 @@ public abstract class Spatial {
 		private static IShape difference(final IShape geom, final List<IShape> geoms, final PreparedGeometry ref) {
 			if ( geom == null ) { return null; }
 			Geometry gR = geom.getInnerGeometry();
+			if ( gR == null ) { return null; }
 			for ( IShape g : geoms ) {
 
-				if ( g != null && geom.intersects(g) ) {
+				if ( g != null && gR != null && geom.intersects(g) ) {
 					try {
 						gR = gR.difference(g.getInnerGeometry());
 

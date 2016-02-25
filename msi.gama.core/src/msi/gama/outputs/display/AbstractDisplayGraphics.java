@@ -12,112 +12,85 @@
 package msi.gama.outputs.display;
 
 import java.awt.geom.Rectangle2D;
+import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 
 public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
+	protected static final GamaPoint origin = new GamaPoint(0, 0);
 	protected double currentAlpha = 1;
-	protected double widthOfLayerInPixels;
-	protected double heightOfLayerInPixels;
-	protected int xOffsetInPixels;
-	protected int yOffsetInPixels;
-	protected double xRatioBetweenPixelsAndModelUnits;
-	protected double yRatioBetweenPixelsAndModelUnits;
-	final protected double widthOfDisplayInPixels;
-	final protected double heightOfDisplayInPixels;
-	final protected double widthOfEnvironmentInModelUnits;
-	final protected double heightOfEnvironmentInModelUnits;
-	final protected LayeredDisplayData data;
+	public final LayeredDisplayData data;
+	protected final IDisplaySurface surface;
+	protected boolean highlight = false;
 
 	protected ILayer currentLayer;
 
 	public AbstractDisplayGraphics(final IDisplaySurface surface) {
-		widthOfEnvironmentInModelUnits = surface.getEnvWidth();
-		heightOfEnvironmentInModelUnits = surface.getEnvHeight();
-		widthOfDisplayInPixels = surface.getDisplayWidth();
-		heightOfDisplayInPixels = surface.getDisplayHeight();
-		xRatioBetweenPixelsAndModelUnits = widthOfDisplayInPixels / widthOfEnvironmentInModelUnits;
-		yRatioBetweenPixelsAndModelUnits = heightOfDisplayInPixels / heightOfEnvironmentInModelUnits;
+		this.surface = surface;
 		data = surface.getData();
 	}
 
 	@Override
-	public void initFor(final IDisplaySurface surface) {
-
-		// setQualityRendering(surface.getQualityRendering());
+	public void beginHighlight() {
+		highlight = true;
 	}
 
 	@Override
-	public int getDisplayWidthInPixels() {
-		return (int) widthOfDisplayInPixels;
-	}
-
-	@Override
-	public int getDisplayHeightInPixels() {
-		return (int) heightOfDisplayInPixels;
+	public void endHighlight() {
+		highlight = false;
 	}
 
 	@Override
 	public void setOpacity(final double alpha) {
 		// 1 means opaque ; 0 means transparent
-		// if ( IntervalSize.isZeroWidth(alpha, currentAlpha) ) { return; }
 		currentAlpha = alpha;
 	}
 
 	protected final double xFromModelUnitsToPixels(final double mu) {
-		return xOffsetInPixels + xRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */;
+		return getXOffsetInPixels() + getxRatioBetweenPixelsAndModelUnits() * mu /* + 0.5 */;
 	}
 
 	protected final double yFromModelUnitsToPixels(final double mu) {
-		return yOffsetInPixels + yRatioBetweenPixelsAndModelUnits * mu;
+		return getYOffsetInPixels() + getyRatioBetweenPixelsAndModelUnits() * mu;
 	}
 
 	protected final double wFromModelUnitsToPixels(final double mu) {
-		return xRatioBetweenPixelsAndModelUnits * mu;
+		return getxRatioBetweenPixelsAndModelUnits() * mu;
 	}
 
 	protected final double hFromModelUnitsToPixels(final double mu) {
-		return yRatioBetweenPixelsAndModelUnits * mu;
+		return getyRatioBetweenPixelsAndModelUnits() * mu;
 	}
-
-	// protected double wFromPixelsToModelUnits(final int px) {
-	// return px / xRatioBetweenPixelsAndModelUnits;
-	// }
-	//
-	// protected double hFromPixelsToModelUnits(final int py) {
-	// return py / yRatioBetweenPixelsAndModelUnits;
-	// }
-
-	// protected double xFromPixelsToModelUnits(final int px) {
-	// double mu = (px - xOffsetInPixels) / xRatioBetweenPixelsAndModelUnits;
-	// return mu;
-	// }
-	//
-	// protected double yFromPixelsToModelUnits(final int px) {
-	// double mu = (px - yOffsetInPixels) / yRatioBetweenPixelsAndModelUnits;
-	// return mu;
-	// }
 
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
-		return xRatioBetweenPixelsAndModelUnits;
+		if ( currentLayer == null ) {
+			return getDisplayWidth() / data.getEnvWidth();
+		} else {
+			return currentLayer.getSizeInPixels().x / data.getEnvWidth();
+		}
 	}
 
 	@Override
 	public double getyRatioBetweenPixelsAndModelUnits() {
-		return yRatioBetweenPixelsAndModelUnits;
+		if ( currentLayer == null ) {
+			return getDisplayHeight() / data.getEnvHeight();
+		} else {
+			return currentLayer.getSizeInPixels().y / data.getEnvHeight();
+		}
 	}
 
 	@Override
 	public double getXOffsetInPixels() {
-		return xOffsetInPixels;
+		return currentLayer == null ? origin.x : currentLayer.getPositionInPixels().getX();
 	}
 
 	@Override
 	public double getYOffsetInPixels() {
-		return yOffsetInPixels;
+		return currentLayer == null ? origin.y : currentLayer.getPositionInPixels().getY();
 	}
 
 	@Override
@@ -126,27 +99,57 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
 		currentLayer = layer;
-		xOffsetInPixels = layer.getPositionInPixels().x;
-		yOffsetInPixels = layer.getPositionInPixels().y;
-		widthOfLayerInPixels = layer.getSizeInPixels().x;
-		heightOfLayerInPixels = layer.getSizeInPixels().y;
-		xRatioBetweenPixelsAndModelUnits = widthOfLayerInPixels / widthOfEnvironmentInModelUnits;
-		yRatioBetweenPixelsAndModelUnits = heightOfLayerInPixels / heightOfEnvironmentInModelUnits;
 	}
 
 	@Override
 	public void endDrawingLayer(final ILayer layer) {
-		xRatioBetweenPixelsAndModelUnits = widthOfDisplayInPixels / widthOfEnvironmentInModelUnits;
-		yRatioBetweenPixelsAndModelUnits = heightOfDisplayInPixels / heightOfEnvironmentInModelUnits;
+		currentLayer = null;
 	}
 
-	/**
-	 * Method getZoomLevel()
-	 * @see msi.gama.common.interfaces.IGraphics#getZoomLevel()
-	 */
+	@Override
+	public void endDrawingLayers() {}
+
 	@Override
 	public Double getZoomLevel() {
 		return data.getZoomLevel();
+	}
+
+	@Override
+	public IDisplaySurface getSurface() {
+		return surface;
+	}
+
+	@Override
+	public int getViewWidth() {
+		return surface.getWidth();
+	}
+
+	@Override
+	public int getViewHeight() {
+		return surface.getHeight();
+	}
+
+	@Override
+	public int getDisplayWidth() {
+		return (int) surface.getDisplayWidth();
+	}
+
+	@Override
+	public int getDisplayHeight() {
+		return (int) surface.getDisplayHeight();
+	}
+
+	public int getLayerWidth() {
+		return currentLayer == null ? getDisplayWidth() : currentLayer.getSizeInPixels().x;
+	}
+
+	public int getLayerHeight() {
+		return currentLayer == null ? getDisplayHeight() : currentLayer.getSizeInPixels().y;
+	}
+
+	@Override
+	public Envelope getVisibleRegion() {
+		return surface.getVisibleRegionForLayer(currentLayer);
 	}
 
 }

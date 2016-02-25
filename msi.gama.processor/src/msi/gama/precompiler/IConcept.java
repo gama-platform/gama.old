@@ -1,6 +1,6 @@
 package msi.gama.precompiler;
 
-public interface IConceptKeyword {
+public interface IConcept {
 	// list of all the "concept" keywords used in the website.
 	
 	/* note : 

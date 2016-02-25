@@ -1,1 +1,10 @@
-msi.gama.core
+#
+#Thu Feb 25 16:43:31 ICT 2016
+operators=rectangle~/~+~*~ln~-~line~point~first_with~\=~last~first~internal_at~as~<\=~max~?~\!\=~.~\:~min~<~sum~collect
+plugins=msi.gama.core
+attributes=points
+statements=aspect~draw~init~loop~create~arg~ask~set~reflex~if~else~let~do~output~monitor~display~display_population~chart~data
+skills=reflex
+constants=green~gray~red
+types=list~int~unknown~string~float~geometry~point~agent~date~rgb~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

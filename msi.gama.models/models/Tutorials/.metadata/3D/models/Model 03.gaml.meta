@@ -1,2 +1,9 @@
-msi.gama.core
-ummisco.gama.opengl
+#
+#Thu Feb 25 16:43:32 ICT 2016
+operators=cube~rnd~select~<~distance_to~sphere~line~.~point~rgb
+plugins=msi.gama.core~ummisco.gama.opengl
+statements=reflex~do~set~aspect~draw~loop~init~create~output~display~display_population
+skills=reflex~moving3D
+constants=orange
+types=list~int~unknown~string~geometry~point~agent~float~date~rgb~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

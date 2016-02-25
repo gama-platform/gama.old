@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Set;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -64,5 +64,5 @@ public class TempVariableExpression extends VariableExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {}
+	public void collectMetaInformation(final GamlProperties meta) {}
 }

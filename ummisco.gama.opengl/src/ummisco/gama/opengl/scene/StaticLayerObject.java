@@ -59,7 +59,7 @@ public class StaticLayerObject extends LayerObject {
 
 			gl.glDisable(GL.GL_BLEND);
 			gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
-			gl.glRasterPos3d(-renderer.getWidth() / 10d, renderer.getHeight() / 10d, 0);
+			gl.glRasterPos3d(-renderer.getDisplayWidth() / 10d, renderer.getHeight() / 10d, 0);
 			gl.glScaled(8.0d, 8.0d, 8.0d);
 			GLUT glut = new GLUT();
 			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "Loading...");

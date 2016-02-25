@@ -1,1 +1,9 @@
-msi.gama.core
+#
+#Thu Feb 25 16:43:32 ICT 2016
+operators=envelope~length~one_of~*~/~rnd~-~.~<\=~and~>\=~flip~as~+~circle~square~with_precision~with_max_of~>~min~inside~first_with~shuffle~\!~empty~\!\=~rgb~neighbors_at~min_of~max_of~or~\=~every~count
+plugins=msi.gama.core
+statements=action~return~init~set~reflex~do~let~create~aspect~draw~if~else~ask~save~output~display~display_grid~display_population~chart~data~monitor
+skills=reflex~grid
+constants=black~blue~red~lightgray
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~file~species~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

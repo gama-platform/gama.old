@@ -63,6 +63,16 @@ public class LayerBox implements IDisplayLayerBox {
 		setTrace(scope, tr == null ? trace : tr);
 		setFading(scope, fd == null ? fading : fd);
 		setSelectable(scope, sl == null ? selectable : sl);
+		setConstantBoundingBox(loc.isConst() && size.isConst());
+	}
+
+	@Override
+	public void setConstantBoundingBox(final boolean b) {
+		constantBoundingBox = b;
+		if ( b ) {
+			constantPosition = currentPosition;
+			constantSize = currentSize;
+		}
 	}
 
 	@Override

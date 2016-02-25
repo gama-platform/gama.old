@@ -19,6 +19,7 @@ import com.google.common.collect.Iterables;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.*;
@@ -88,8 +89,8 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
-		getSerializer().collectPlugins(this, plugins);
+	public void collectMetaInformation(final GamlProperties meta) {
+		getSerializer().collectMetaInformation(this, meta);
 	}
 
 	@Override

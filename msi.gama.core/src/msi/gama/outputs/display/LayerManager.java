@@ -30,6 +30,7 @@ public class LayerManager implements ILayerManager {
 
 	private final List<ILayer> enabledLayers = new ArrayList();
 	private final List<ILayer> disabledLayers = new ArrayList();
+	private OverlayLayer overlay = null;
 	private final IDisplaySurface surface;
 	private int count = 0;
 
@@ -37,7 +38,12 @@ public class LayerManager implements ILayerManager {
 		this.surface = surface;
 		final List<AbstractLayerStatement> layers = output.getLayers();
 		for ( final AbstractLayerStatement layer : layers ) {
-			addLayer(AbstractLayer.createLayer(output.getScope(), layer));
+			ILayer result = AbstractLayer.createLayer(output.getScope(), layer);
+			if ( result instanceof OverlayLayer ) {
+				overlay = (OverlayLayer) result;
+			} else {
+				addLayer(result);
+			}
 		}
 	}
 
@@ -141,6 +147,9 @@ public class LayerManager implements ILayerManager {
 			for ( int i = 0, n = enabledLayers.size(); i < n; i++ ) {
 				final ILayer dis = enabledLayers.get(i);
 				dis.drawDisplay(scope, g);
+			}
+			if ( overlay != null ) {
+				overlay.drawDisplay(scope, g);
 			}
 		} catch (final Exception e) {
 			scope.getGui().debug(e);

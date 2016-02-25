@@ -13,6 +13,7 @@ package msi.gaml.expressions;
 
 import java.util.*;
 import msi.gama.common.GamaPreferences;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -124,10 +125,10 @@ public class ListExpression extends AbstractExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
+	public void collectMetaInformation(final GamlProperties meta) {
 		for ( IExpression e : elements ) {
 			if ( e != null ) {
-				e.collectPlugins(plugins);
+				e.collectMetaInformation(meta);
 			}
 		}
 	}

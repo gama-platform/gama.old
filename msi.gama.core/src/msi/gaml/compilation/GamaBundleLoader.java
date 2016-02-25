@@ -43,23 +43,23 @@ public class GamaBundleLoader {
 	public static String MODELS_EXTENSION = "gama.models";
 	public static String CONTENT_EXTENSION = "org.eclipse.core.contenttype.contentTypes";
 	private static Set<String> GAMA_PLUGINS = new THashSet<String>();
-	private static Map<String, String> MODEL_PLUGINS = new THashMap<String,String>();
+	private static Map<String, String> MODEL_PLUGINS = new THashMap<String, String>();
 	public static Set<String> HANDLED_FILE_EXTENSIONS = new THashSet<String>();
 
 	public static void preBuildContributions() {
 		final long start = System.currentTimeMillis();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-				// We retrieve the elements declared as extensions to the GAML language, either with the new or the deprecated extension
+		// We retrieve the elements declared as extensions to the GAML language, either with the new or the deprecated extension
 		Set<IExtension> extensions = new HashSet<IExtension>();
 		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
 		extensions.addAll(Arrays.asList(p.getExtensions()));
 		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
 		extensions.addAll(Arrays.asList(p.getExtensions()));
-		
+
 		// We retrieve their contributor plugin and add them to the GAMA_PLUGINS. In addition, we verify if they declare a folder called `models`
 		for ( IExtension e : extensions ) {
 			IContributor plugin = e.getContributor();
-			
+
 			GAMA_PLUGINS.add(plugin.getName());
 			if ( hasModels(plugin) ) {
 				MODEL_PLUGINS.put(plugin.getName(), "models");
@@ -109,11 +109,11 @@ public class GamaBundleLoader {
 		//
 		GAMA.getGui().debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
-	public static PrintWriter pp = null; 
-	public static void writeLine(String s)
-	{
-		if( pp == null)
-		{
+
+	public static PrintWriter pp = null;
+
+	public static void writeLine(final String s) {
+		if ( pp == null ) {
 			try {
 				pp = new PrintWriter("monLog.txt");
 			} catch (FileNotFoundException e) {
@@ -121,10 +121,10 @@ public class GamaBundleLoader {
 				e.printStackTrace();
 			}
 		}
-		pp.write(s+"\r\n");
+		pp.write(s + "\r\n");
 		pp.flush();
 	}
-	
+
 	/**
 	 * @param contributor
 	 * @return
@@ -146,7 +146,7 @@ public class GamaBundleLoader {
 			file = normalizedPath.toFile();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 		return file != null && file.exists() && file.isDirectory();
 	}
 
@@ -197,7 +197,8 @@ public class GamaBundleLoader {
 	 * @return
 	 */
 	public static boolean contains(final String name) {
-		return GAMA_PLUGINS.contains(name);
+
+		return name.equals(CORE_PLUGIN) || GAMA_PLUGINS.contains(name);
 	}
 
 }

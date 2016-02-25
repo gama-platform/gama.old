@@ -1,2 +1,10 @@
-msi.gama.core
-ummisco.gama.opengl
+#
+#Thu Feb 25 16:43:31 ICT 2016
+operators=as~envelope~point~+~rnd~rgb~<\=~distance_to~.~*~where~neighbors_at~and~not~in~empty~with_min_of~shuffle~>~length~internal_at~pyramid~sphere~/~overlapping~closest_to~one_of~-
+plugins=msi.gama.core~ummisco.gama.opengl
+statements=aspect~draw~reflex~set~do~let~if~add~remove~init~create~ask~output~display~image~display_population~graphics
+attributes=x~y~height
+skills=reflex~grid
+constants=gray~white~black~green
+types=list~int~unknown~string~file~geometry~point~agent~float~date~rgb~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

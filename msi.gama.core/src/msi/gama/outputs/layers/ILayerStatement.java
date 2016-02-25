@@ -59,9 +59,6 @@ public interface ILayerStatement extends INamed, IStepable, ISymbol, Comparable<
 
 	public abstract void setDisplayOutput(IDisplayOutput output);
 
-	/**
-	 * @param s
-	 */
 	void setSelectable(Boolean s);
 
 }

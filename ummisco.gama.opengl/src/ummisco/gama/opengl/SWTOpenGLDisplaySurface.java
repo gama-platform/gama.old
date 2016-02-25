@@ -82,6 +82,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		setDisplayScope(output.getScope().copy());
 		renderer = createRenderer();
 		animator = createAnimator();
+		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 		manager = new LayerManager(this, output);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 
@@ -323,7 +324,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public int getWidth() {
-		return 0;
+		return renderer.getDrawable().getSurfaceWidth();
 		// return size.x;
 	}
 
@@ -333,7 +334,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public int getHeight() {
-		return 0;
+		return renderer.getDrawable().getSurfaceHeight();
 		// return size.y;
 	}
 
@@ -818,6 +819,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		for ( ILayer layer : manager.getItems() ) {
 			layer.setVisibleRegion(null);
 		}
+	}
+
+	/**
+	 * Method getFPS()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getFPS()
+	 */
+	@Override
+	public int getFPS() {
+		return (int) this.animator.getTotalFPS();
 	}
 
 }

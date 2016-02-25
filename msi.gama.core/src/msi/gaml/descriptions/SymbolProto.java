@@ -15,7 +15,7 @@ import java.util.*;
 import gnu.trove.procedure.TIntProcedure;
 import gnu.trove.set.hash.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.*;
 import msi.gaml.compilation.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.Facets;
@@ -250,4 +250,10 @@ public class SymbolProto extends AbstractProto {
 		}
 		return getName() + " " + sb.toString();
 	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.STATEMENTS, name);
+	}
+
 }

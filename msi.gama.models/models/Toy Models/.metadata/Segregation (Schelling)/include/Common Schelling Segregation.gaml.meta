@@ -1,1 +1,8 @@
-msi.gama.core
+#
+#Thu Feb 25 16:43:31 ICT 2016
+operators=envelope~count~.~sum~collect~\=~length~>\=~*~as
+plugins=msi.gama.core
+statements=action~write~init~do~set
+skills=reflex
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

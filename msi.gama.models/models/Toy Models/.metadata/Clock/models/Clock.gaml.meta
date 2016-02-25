@@ -1,2 +1,10 @@
-msi.gama.core
-ummisco.gama.opengl
+#
+#Thu Feb 25 16:43:31 ICT 2016
+operators=envelope~image_file~as~/~*~+~?~\:~\=~point~-
+plugins=msi.gama.core~ummisco.gama.opengl
+attributes=width~height
+statements=reflex~if~write~aspect~set~draw~init~create~output~display~graphics~display_population
+skills=reflex
+constants=black
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~file~bool~container
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

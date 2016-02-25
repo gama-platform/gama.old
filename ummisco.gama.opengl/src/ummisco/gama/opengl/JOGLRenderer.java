@@ -31,6 +31,8 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayData;
+import msi.gama.outputs.display.AbstractDisplayGraphics;
+import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.*;
@@ -49,14 +51,11 @@ import ummisco.gama.opengl.utils.GLUtilLight;
  * @since 27 avr. 2015
  *
  */
-public class JOGLRenderer implements IGraphics, GLEventListener {
+public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, GLEventListener {
 
 	private static boolean BLENDING_ENABLED; // blending on/off
 	GLCanvas canvas;
-	public final LayeredDisplayData data;
-	private int width, height;
 	public ICamera camera;
-	public SWTOpenGLDisplaySurface displaySurface;
 	public final SceneBuffer sceneBuffer;
 	public int frame = 0;
 	private boolean picking = false;
@@ -66,17 +65,8 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
-	private boolean highlight = false;
 	protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
-	protected double currentAlpha = 1;
-	protected int widthOfLayerInPixels;
-	protected int heightOfLayerInPixels;
-	protected int xOffsetInPixels;
-	protected int yOffsetInPixels;
-	protected double xRatioBetweenPixelsAndModelUnits;
-	protected double yRatioBetweenPixelsAndModelUnits;
 	private GLU glu;
-	// private GL2 gl;
 	private final GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
@@ -90,7 +80,6 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	// Does not allow renderers to be created for text bigger than 200 pixels
 
 	Map<String, Map<Integer, Map<Integer, TextRenderer>>> textRenderersCache = new LinkedHashMap();
-	private ILayer currentLayer;
 
 	public TextRenderer get(final Font font) {
 		return get(font.getName(), font.getSize(), font.getStyle());
@@ -122,8 +111,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	// private final GLModel chairModel = null;
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
-		displaySurface = d;
-		data = d.getData();
+		super(d);
 		camera = new CameraArcBall(this);
 		sceneBuffer = new SceneBuffer(this);
 		yFlag = -1;
@@ -196,8 +184,6 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 
 		initializeCanvasWithListeners();
 
-		width = drawable.getSurfaceWidth();
-		height = drawable.getSurfaceHeight();
 		updateCameraPosition();
 
 		// Putting the swap interval to 0 (instead of 1) seems to cure some of the problems of resizing of views.
@@ -340,8 +326,8 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 		// System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
 		// Get the OpenGL graphics context
 		if ( width <= 0 || height <= 0 ) { return; }
-		this.width = width;
-		this.height = height;
+		// this.width = width;
+		// this.height = height;
 		GL2 gl = drawable.getContext().getGL().getGL2();
 		// Set the viewport (display area) to cover the entire window
 		gl.glViewport(0, 0, width, height);
@@ -360,7 +346,8 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	}
 
 	public final void updatePerspective(final GL2 gl) {
-		double aspect = (double) width / (double) (height == 0 ? 1 : height);
+		int height = getDrawable().getSurfaceHeight();
+		double aspect = (double) getDrawable().getSurfaceWidth() / (double) (height == 0 ? 1 : height);
 
 		double maxDim = getMaxEnvDim();
 
@@ -451,11 +438,11 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	}
 
 	public double getWidth() {
-		return width * displaySurface.getZoomLevel();
+		return getDrawable().getSurfaceWidth() * surface.getZoomLevel();
 	}
 
 	public double getHeight() {
-		return height * displaySurface.getZoomLevel();
+		return getDrawable().getSurfaceHeight() * surface.getZoomLevel();
 	}
 
 	public void updateCameraPosition() {
@@ -483,7 +470,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 		if ( pickedObjectIndex == -1 ) {
 			setPicking(false);
 		} else if ( pickedObjectIndex == -2 ) {
-			displaySurface.selectAgent(null);
+			getSurface().selectAgent(null);
 			setPicking(false);
 		}
 	}
@@ -571,7 +558,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	}
 
 	// This method is normally called either when the graphics is created or when the output is changed
-	@Override
+	// @Override
 	public void initFor(final IDisplaySurface surface) {
 		if ( sceneBuffer != null ) {
 			ModelScene scene = sceneBuffer.getSceneToRender();
@@ -626,31 +613,11 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 
 		if ( file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath()) ) {
-			envelopes.put(file.getPath(), file.computeEnvelope(displaySurface.getDisplayScope()));
+			envelopes.put(file.getPath(), file.computeEnvelope(surface.getDisplayScope()));
 		}
 		sceneBuffer.getSceneToUpdate().addFile(file, attributes);
 		return rect;
 	}
-	//
-	// @Override
-	// public Rectangle2D drawFile(final IScope scope, final GamaFile fileName, final Color color,
-	// final ILocation locationInModelUnits, final ILocation sizeInModelUnits,
-	// final GamaPair<Double, GamaPoint> rotate3D, final GamaPair<Double, GamaPoint> rotate3DInit) {
-	// if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
-	// GamaPoint location = new GamaPoint(locationInModelUnits);
-	// Envelope env = envelopes.get(fileName.getPath());
-	// if ( env == null ) {
-	// envelopes.put(fileName.getPath(), fileName.computeEnvelope(null));
-	// }
-	// GamaPoint dimensions = new GamaPoint(sizeInModelUnits);
-	// sceneBuffer.getSceneToUpdate().addFile(fileName, scope == null ? null : scope.getAgentScope(), color, 1.0,
-	// location, dimensions, rotate3D, rotate3DInit, env);
-	// return rect;
-	// }
-	//
-	// private Envelope3D getWorldEnvelopeWithZ(final double z) {
-	// return new Envelope3D(0, data.getEnvWidth(), 0, data.getEnvHeight(), 0, z);
-	// }
 
 	@Override
 	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
@@ -691,8 +658,8 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 		if ( sceneBuffer.getSceneToUpdate() == null ) { return null; }
 		if ( string.contains("\n") ) {
 			for ( String s : string.split("\n") ) {
-				attributes.location.setY(
-					attributes.location.getY() + attributes.font.getSize() * this.yRatioBetweenPixelsAndModelUnits);
+				attributes.location.setY(attributes.location.getY() +
+					attributes.font.getSize() * this.getyRatioBetweenPixelsAndModelUnits());
 				drawString(s, attributes);
 			}
 			return null;
@@ -730,43 +697,30 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	 */
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
-		currentLayer = layer;
-		xOffsetInPixels = layer.getPositionInPixels().x;
-		yOffsetInPixels = layer.getPositionInPixels().y;
-		widthOfLayerInPixels = layer.getSizeInPixels().x;
-		heightOfLayerInPixels = layer.getSizeInPixels().y;
-		xRatioBetweenPixelsAndModelUnits = widthOfLayerInPixels / data.getEnvWidth();
-		yRatioBetweenPixelsAndModelUnits = heightOfLayerInPixels / data.getEnvHeight();
-		// TODO Correct if and only if the z is given as a percentage
-		double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
+		super.beginDrawingLayer(layer);
+		GamaPoint currentOffset, currentScale;
+		if ( !(layer instanceof OverlayLayer) ) {
+			double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
 
-		// get the value of the z scale if positive otherwise set it to 1.
-		double z_scale;
-		if ( layer.getExtent().getZ() > 0 ) {
-			z_scale = layer.getExtent().getZ();
+			// get the value of the z scale if positive otherwise set it to 1.
+			double z_scale;
+			if ( layer.getExtent().getZ() > 0 ) {
+				z_scale = layer.getExtent().getZ();
+			} else {
+				z_scale = 1;
+			}
+
+			currentOffset = new GamaPoint(getXOffsetInPixels() / (getDisplayWidth() / data.getEnvWidth()),
+				getYOffsetInPixels() / (getHeight() / data.getEnvHeight()), currentZLayer);
+			currentScale = new GamaPoint(getLayerWidth() / getDisplayWidth(), getLayerHeight() / getHeight(), z_scale);
 		} else {
-			z_scale = 1;
+			currentOffset = new GamaPoint(getXOffsetInPixels(), getYOffsetInPixels());
+			currentScale = new GamaPoint(1, 1, 1);
 		}
-
-		GamaPoint currentOffset = new GamaPoint(xOffsetInPixels / (getWidth() / data.getEnvWidth()),
-			yOffsetInPixels / (getHeight() / data.getEnvHeight()), currentZLayer);
-		GamaPoint currentScale =
-			new GamaPoint(widthOfLayerInPixels / getWidth(), heightOfLayerInPixels / getHeight(), z_scale);
-
 		ModelScene scene = sceneBuffer.getSceneToUpdate();
 		if ( scene != null ) {
 			scene.beginDrawingLayer(layer, currentOffset, currentScale, currentAlpha);
 		}
-	}
-
-	@Override
-	public void beginHighlight() {
-		highlight = true;
-	}
-
-	@Override
-	public void endHighlight() {
-		highlight = false;
 	}
 
 	/**
@@ -776,31 +730,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	@Override
 	public void endDrawingLayers() {
 		sceneBuffer.endUpdatingScene();
-		displaySurface.invalidateVisibleRegions();
-	}
-
-	@Override
-	public void endDrawingLayer(final ILayer layer) {
-		xRatioBetweenPixelsAndModelUnits = getWidth() / data.getEnvWidth();
-		yRatioBetweenPixelsAndModelUnits = getHeight() / data.getEnvHeight();
-	}
-
-	/**
-	 * Method getyRatioBetweenPixelsAndModelUnits()
-	 * @see msi.gama.common.interfaces.IGraphics#getyRatioBetweenPixelsAndModelUnits()
-	 */
-	@Override
-	public double getyRatioBetweenPixelsAndModelUnits() {
-		return yRatioBetweenPixelsAndModelUnits;
-	}
-
-	/**
-	 * Method getxRatioBetweenPixelsAndModelUnits()
-	 * @see msi.gama.common.interfaces.IGraphics#getxRatioBetweenPixelsAndModelUnits()
-	 */
-	@Override
-	public double getxRatioBetweenPixelsAndModelUnits() {
-		return xRatioBetweenPixelsAndModelUnits;
+		getSurface().invalidateVisibleRegions();
 	}
 
 	/**
@@ -808,7 +738,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	 * @see msi.gama.common.interfaces.IGraphics#getDisplayWidthInPixels()
 	 */
 	@Override
-	public int getDisplayWidthInPixels() {
+	public int getDisplayWidth() {
 		return (int) FastMath.round(getWidth());
 	}
 
@@ -817,7 +747,7 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	 * @see msi.gama.common.interfaces.IGraphics#getDisplayHeightInPixels()
 	 */
 	@Override
-	public int getDisplayHeightInPixels() {
+	public int getDisplayHeight() {
 		return (int) FastMath.round(getHeight());
 	}
 
@@ -866,24 +796,6 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 	}
 
 	/**
-	 * Method getXOffsetInPixels()
-	 * @see msi.gama.common.interfaces.IGraphics#getXOffsetInPixels()
-	 */
-	@Override
-	public double getXOffsetInPixels() {
-		return xOffsetInPixels;
-	}
-
-	/**
-	 * Method getYOffsetInPixels()
-	 * @see msi.gama.common.interfaces.IGraphics#getYOffsetInPixels()
-	 */
-	@Override
-	public double getYOffsetInPixels() {
-		return yOffsetInPixels;
-	}
-
-	/**
 	 * Method getZoomLevel()
 	 * @see msi.gama.common.interfaces.IGraphics#getZoomLevel()
 	 */
@@ -924,13 +836,9 @@ public class JOGLRenderer implements IGraphics, GLEventListener {
 		return GamaPreferences.CORE_LINE_WIDTH.getValue().floatValue();
 	}
 
-	/**
-	 * Method getVisibleRegion()
-	 * @see msi.gama.common.interfaces.IGraphics#getVisibleRegion()
-	 */
 	@Override
-	public Envelope getVisibleRegion() {
-		return displaySurface.getVisibleRegionForLayer(currentLayer);
+	public SWTOpenGLDisplaySurface getSurface() {
+		return (SWTOpenGLDisplaySurface) surface;
 	}
 
 }

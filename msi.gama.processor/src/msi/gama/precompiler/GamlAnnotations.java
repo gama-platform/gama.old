@@ -216,18 +216,18 @@ public final class GamlAnnotations {
 	public static @interface type {
 		
 		/**
-		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
-		 *        website search feature.
-		 */
-
-		String[] keywords() default {};
-
-		/**
 		 * Name.
 		 *
 		 * @return a String representing the type name in GAML
 		 */
 		String name();
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 *        website search feature.
+		 */
+
+		String[] concept() default {};
 
 		/**
 		 * @return the unique identifier for this type. User-added types can be chosen
@@ -286,13 +286,6 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	public static @interface skill {
-		
-		/**
-		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
-		 *        website search feature.
-		 */
-
-		String[] keywords() default {};
 
 		/**
 		 * Name.
@@ -300,6 +293,13 @@ public final class GamlAnnotations {
 		 * @return a String representing the skill name in GAML (must be unique throughout GAML)
 		 */
 		String name();
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 *        website search feature.
+		 */
+
+		String[] concept() default {};
 
 		/**
 		 * Attach_to.
@@ -369,13 +369,6 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	public static @interface species {
-		
-		/**
-		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
-		 *        website search feature.
-		 */
-
-		String[] keywords() default {};
 
 		/**
 		 * Name.
@@ -384,6 +377,13 @@ public final class GamlAnnotations {
 		 *         unique throughout GAML.
 		 */
 		String name();
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 *        website search feature.
+		 */
+
+		String[] concept() default {};
 
 		/**
 		 * Skills.
@@ -659,6 +659,13 @@ public final class GamlAnnotations {
 		 *
 		 */
 		String[] name() default {};
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 *        website search feature.
+		 */
+
+		String[] concept() default {};
 
 		/**
 		 * Kind.
@@ -755,7 +762,7 @@ public final class GamlAnnotations {
 		 *        website search feature.
 		 */
 
-		String[] keywords() default {};
+		String[] concept() default {};
 
 		/**
 		 * @return an array of strings, each representing a category in which this operator can be classified (for
@@ -1253,6 +1260,13 @@ public final class GamlAnnotations {
 		 */
 
 		String[] category() default {};
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 *        website search feature.
+		 */
+
+		String[] concept() default {};
 
 		/**
 		 * @return a string representing the basic keyword for the constant. Does

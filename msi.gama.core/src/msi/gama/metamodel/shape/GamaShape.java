@@ -18,7 +18,6 @@ import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -30,42 +29,6 @@ import msi.gaml.types.*;
  *
  *
  */
-@vars({ @var(name = "area", type = IType.FLOAT, doc = { @doc("Returns the total area of this geometry") }),
-	@var(name = "volume", type = IType.FLOAT, doc = { @doc("Returns the total volume of this geometry") }),
-	@var(name = "centroid", type = IType.POINT, doc = { @doc("Returns the centroid of this geometry") }),
-	@var(name = "width",
-		type = IType.FLOAT,
-		doc = { @doc("Returns the width (length on the x-axis) of the rectangular envelope of this  geometry") }),
-	@var(name = "depth",
-		type = IType.FLOAT,
-		doc = { @doc("Returns the depth (length on the z-axis) of the rectangular envelope of this geometry") }),
-	@var(name = "height",
-		type = IType.FLOAT,
-		doc = { @doc("Returns the height (length on the y-axis) of the rectangular envelope of this geometry") }),
-	@var(name = "points",
-		type = IType.LIST,
-		of = IType.POINT,
-		doc = {
-			@doc("Returns the list of points that delimit this geometry. A point will return a list with itself") }),
-	@var(name = "envelope",
-		type = IType.GEOMETRY,
-		doc = { @doc("Returns the envelope of this geometry (the smallest rectangle that contains the geometry)") }),
-	@var(name = "geometries",
-		type = IType.LIST,
-		of = IType.GEOMETRY,
-		doc = {
-			@doc("Returns the list of geometries that compose this geometry, or a list containing the geometry itself if it is simple") }),
-	@var(name = "multiple",
-		type = IType.BOOL,
-		doc = { @doc("Returns whether this geometry is composed of multiple geometries or not") }),
-	@var(name = "holes",
-		type = IType.LIST,
-		of = IType.GEOMETRY,
-		doc = {
-			@doc("Returns the list of holes inside this geometry as a list of geometries, and an emptly list if this geometry is solid") }),
-	@var(name = "contour",
-		type = IType.GEOMETRY,
-		doc = { @doc("Returns the polyline representing the contour of this geometry") }) })
 public class GamaShape implements IShape /* , IContainer */ {
 
 	static Field envelopeField = null;
@@ -119,11 +82,27 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	public GamaShape(final IShape source, final Geometry geom) {
 		this((Geometry) (geom == null ? source.getInnerGeometry().clone() : geom));
-		if ( source != null ) {
-			GamaMap attr = source.getAttributes();
-			if ( attr != null ) {
-				getOrCreateAttributes().putAll(attr);
-			}
+		mixAttributes(source);
+	}
+
+	/**
+	 * This is where the attributes of this shape and the attributes of an incoming shape are mixed. The strategy is to only copy the geometrical attributes, leaving aside the attributes read from
+	 * files or set by the agent. Any attribute-specific behavior should be introduced here
+	 * @param source
+	 */
+	private void mixAttributes(final IShape source) {
+		if ( source == null ) { return; }
+		GamaMap attr = source.getAttributes();
+		if ( attr == null ) { return; }
+		Object depth = attr.get(IShape.DEPTH_ATTRIBUTE);
+		if ( depth != null ) {
+			// we have a depth. Choose to copy it
+			setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		}
+		Object type = attr.get(IShape.TYPE_ATTRIBUTE);
+		if ( type != null ) {
+			// we have a specific type of geometry. Choose to copy it.
+			setAttribute(IShape.TYPE_ATTRIBUTE, type);
 		}
 	}
 
@@ -234,12 +213,12 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	public GamaShape() {}
 
-	@getter("multiple")
+	@Override
 	public boolean isMultiple() {
 		return getInnerGeometry() instanceof GeometryCollection;
 	}
 
-	@getter("geometries")
+	@Override
 	public IList<GamaShape> getGeometries() {
 		final IList<GamaShape> result = GamaListFactory.create(Types.GEOMETRY);
 		if ( isMultiple() ) {
@@ -366,13 +345,13 @@ public class GamaShape implements IShape /* , IContainer */ {
 		return this;
 	}
 
-	@getter("area")
+	@Override
 	public Double getArea() {
 		// WARNING only 2D (XY) area
 		return getInnerGeometry().getArea();
 	}
 
-	@getter("volume")
+	@Override
 	public Double getVolume() {
 		return getEnvelope().getVolume();
 	}
@@ -382,7 +361,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		return getInnerGeometry().getLength();
 	}
 
-	@getter("holes")
+	@Override
 	public IList<GamaShape> getHoles() {
 		final IList<GamaShape> holes = GamaListFactory.create(Types.GEOMETRY);
 		if ( getInnerGeometry() instanceof Polygon ) {
@@ -395,7 +374,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		return holes;
 	}
 
-	@getter("centroid")
+	@Override
 	public GamaPoint getCentroid() {
 		if ( geometry == null ) { return null; }
 		if ( isPoint() ) { return getLocation(); }
@@ -404,8 +383,8 @@ public class GamaShape implements IShape /* , IContainer */ {
 		return new GamaPoint(c);
 	}
 
-	@getter("contour")
-	public GamaShape getExteriorRing() {
+	@Override
+	public GamaShape getExteriorRing(final IScope scope) {
 
 		// WARNING Only in 2D
 		Geometry result = getInnerGeometry();
@@ -425,17 +404,17 @@ public class GamaShape implements IShape /* , IContainer */ {
 		return new GamaShape(result);
 	}
 
-	@getter("width")
+	@Override
 	public Double getWidth() {
 		return getEnvelope().getWidth();
 	}
 
-	@getter("height")
+	@Override
 	public Double getHeight() {
 		return getEnvelope().getHeight();
 	}
 
-	@getter("depth")
+	@Override
 	public Double getDepth() {
 		return (Double) this.getAttribute(IShape.DEPTH_ATTRIBUTE);
 	}
@@ -446,13 +425,12 @@ public class GamaShape implements IShape /* , IContainer */ {
 		this.setEnvelope(null);
 	}
 
-	@getter("envelope")
+	@Override
 	public GamaShape getGeometricEnvelope() {
 		return new GamaShape(getEnvelope());
 	}
 
 	@Override
-	@getter("points")
 	public IList<? extends ILocation> getPoints() {
 		final IList<GamaPoint> result = GamaListFactory.create(Types.POINT);
 		if ( getInnerGeometry() == null ) { return result; }
@@ -510,7 +488,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		// setEnvelope(null);
 	}
 
-	public void setEnvelope(final Envelope3D envelope) {
+	private void setEnvelope(final Envelope3D envelope) {
 		if ( geometry == null ) { return; }
 		try {
 			envelopeField.set(geometry, envelope);
@@ -524,9 +502,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	public void setGeometry(final IShape geom) {
 		if ( geom == null || geom == this ) { return; }
 		setInnerGeometry(geom.getInnerGeometry());
-		if ( geom.getAttributes() != null ) {
-			getOrCreateAttributes().putAll(geom.getAttributes());
-		}
+		mixAttributes(geom);
 	}
 
 	private double computeAverageZOrdinate() {

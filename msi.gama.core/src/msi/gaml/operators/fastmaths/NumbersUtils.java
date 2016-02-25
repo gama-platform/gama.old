@@ -159,22 +159,6 @@ public final class NumbersUtils {
 	 *         and +-Infinity).
 	 */
 	public static boolean isEquidistant(final float value) {
-		if ( false ) {
-			// Also works, but slower.
-			final int bits = Float.floatToRawIntBits(value);
-			final int exponent = (bits >> 23 & 0xFF) - 127;
-			final int nbrOfPostCommaBits = 23 - exponent;
-			if ( nbrOfPostCommaBits <= 0 || nbrOfPostCommaBits >= 25 ) {
-				// No mantissa bit after comma, or all mantissa bits
-				// (including implicit 1) are at least one bit away from it.
-				// System.out.println("can't be");
-				return false;
-			}
-			final int mantissa = 0x00800000 | bits & 0x007FFFFF;
-			final int postCommaMask = ~(-1 << nbrOfPostCommaBits);
-			// True if in post-comma bits the only 1-bit is the one for 0.5.
-			return (mantissa & postCommaMask) == 1 << nbrOfPostCommaBits - 1;
-		}
 		final float valueAbs = Math.abs(value);
 		if ( !(valueAbs < 1 << 23) ) {
 			// NaN or too large to have a chance
@@ -192,21 +176,6 @@ public final class NumbersUtils {
 	 *         and +-Infinity).
 	 */
 	public static boolean isEquidistant(final double value) {
-		if ( false ) {
-			// Also works, but slower.
-			final long bits = Double.doubleToRawLongBits(value);
-			final int exponent = ((int) (bits >> 52) & 0x7FF) - 1023;
-			final int nbrOfPostCommaBits = 52 - exponent;
-			if ( nbrOfPostCommaBits <= 0 || nbrOfPostCommaBits >= 54 ) {
-				// No mantissa bit after comma, or all mantissa bits
-				// (including implicit 1) are at least one bit away from it.
-				return false;
-			}
-			final long mantissa = 0x0010000000000000L | bits & 0x000FFFFFFFFFFFFFL;
-			final long postCommaMask = ~(-1L << nbrOfPostCommaBits);
-			// True if in post-comma bits the only 1-bit is the one for 0.5.
-			return (mantissa & postCommaMask) == 1L << nbrOfPostCommaBits - 1;
-		}
 		final double valueAbs = Math.abs(value);
 		if ( !(valueAbs < 1L << 52) ) { return false; }
 		final double twice = valueAbs + valueAbs;
@@ -269,7 +238,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Returns false if any value is NaN.
-	 * 
+	 *
 	 * @return True if the specified value is in the specified range (inclusive), false otherwise.
 	 */
 	public static boolean isInRange(final float min, final float max, final float a) {
@@ -278,7 +247,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Returns false if any value is NaN.
-	 * 
+	 *
 	 * @return True if the specified value is in the specified range (inclusive), false otherwise.
 	 */
 	public static boolean isInRange(final double min, final double max, final double a) {
@@ -286,7 +255,7 @@ public final class NumbersUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	/**
@@ -328,7 +297,7 @@ public final class NumbersUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	/**
@@ -442,7 +411,7 @@ public final class NumbersUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	/**
@@ -641,7 +610,7 @@ public final class NumbersUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	/**
@@ -689,7 +658,7 @@ public final class NumbersUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	/**
@@ -755,7 +724,7 @@ public final class NumbersUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	/**
@@ -907,10 +876,6 @@ public final class NumbersUtils {
 	 */
 	public static boolean isPowerOfTwo(final int a) {
 		if ( a <= 0 ) { return false; }
-		if ( false ) {
-			// also works
-			return (a & -a) == a;
-		}
 		return (a & a - 1) == 0;
 	}
 
@@ -920,10 +885,6 @@ public final class NumbersUtils {
 	 */
 	public static boolean isPowerOfTwo(final long a) {
 		if ( a <= 0 ) { return false; }
-		if ( false ) {
-			// also works
-			return (a & -a) == a;
-		}
 		return (a & a - 1) == 0;
 	}
 
@@ -1046,7 +1007,7 @@ public final class NumbersUtils {
 	/**
 	 * Useful because a positive int value could not represent half the width
 	 * of full int range width, which is mathematically Integer.MAX_VALUE+1.
-	 * 
+	 *
 	 * @return Minus half the range width (inclusive, and rounded to the value of smaller magnitude)
 	 *         between the specified bounds.
 	 * @throws IllegalArgumentException if min > max.
@@ -1060,7 +1021,7 @@ public final class NumbersUtils {
 	/**
 	 * Useful because a positive long value could not represent half the width
 	 * of full long range width, which is mathematically Long.MAX_VALUE+1.
-	 * 
+	 *
 	 * @return Minus half the range width (inclusive, and rounded to the value of smaller magnitude)
 	 *         between the specified bounds.
 	 * @throws IllegalArgumentException if min > max.
@@ -1074,7 +1035,7 @@ public final class NumbersUtils {
 	/**
 	 * This treatment being designed for optimization, the fact that spot
 	 * is a signed power of two is not checked.
-	 * 
+	 *
 	 * @param value A value.
 	 * @param spot A signed power of two (i.e. a value of the form +-2^k, k >= 0).
 	 * @return value % spot, i.e. a value in ]-|spot|,|spot|[.
@@ -1091,7 +1052,7 @@ public final class NumbersUtils {
 	/**
 	 * This treatment being designed for optimization, the fact that spot
 	 * is a signed power of two is not checked.
-	 * 
+	 *
 	 * @param value A value.
 	 * @param spot A signed power of two (i.e. a value of the form +-2^k, k >= 0).
 	 * @return value % spot, i.e. a value in ]-|spot|,|spot|[.
@@ -1129,7 +1090,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Possibly faster than java.lang.Math.abs(int).
-	 * 
+	 *
 	 * @return The absolute value, except if value is Integer.MIN_VALUE, for which it returns Integer.MIN_VALUE.
 	 */
 	public static int abs(final int a) {
@@ -1138,7 +1099,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Possibly faster than java.lang.Math.abs(long).
-	 * 
+	 *
 	 * @return The absolute value, except if value is Long.MIN_VALUE, for which it returns Long.MIN_VALUE.
 	 */
 	public static long abs(final long a) {
@@ -1161,18 +1122,10 @@ public final class NumbersUtils {
 
 	/**
 	 * If the specified value is in int range, the returned value is identical.
-	 * 
+	 *
 	 * @return An int hash of the specified value.
 	 */
 	public static int intHash(final long a) {
-		if ( false ) {
-			// also works
-			int hash = (int) (a >> 32) ^ (int) a;
-			if ( a < 0 ) {
-				hash = -hash - 1;
-			}
-			return hash;
-		}
 		int hash = (int) (a >> 32) + (int) a;
 		if ( a < 0 ) {
 			hash++;
@@ -1182,7 +1135,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Not defining an asByte(long) method, since asByte((int)aLong) works.
-	 * 
+	 *
 	 * @param a An int value.
 	 * @return The specified value as byte.
 	 * @throws ArithmeticException if the specified value is not in [Byte.MIN_VALUE,Byte.MAX_VALUE] range.
@@ -1374,7 +1327,7 @@ public final class NumbersUtils {
 	/**
 	 * Returns the exact result, provided it's in double range,
 	 * i.e. if power is in [-1074,1023].
-	 * 
+	 *
 	 * @param power An int power.
 	 * @return 2^power as a double, or +-Infinity in case of overflow.
 	 */
@@ -1460,7 +1413,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param a A value.
 	 * @return a*a.
 	 */
@@ -1478,7 +1431,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param a A value.
 	 * @return a*a.
 	 */
@@ -1512,7 +1465,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param a A value.
 	 * @return a*a*a.
 	 */
@@ -1530,7 +1483,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param a A value.
 	 * @return a*a*a.
 	 */
@@ -1558,7 +1511,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param angRad An angle, in radians.
 	 * @return angRad + 2*PI, accurately computed.
 	 */
@@ -1588,7 +1541,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param angRad An angle, in radians.
 	 * @return angRad - 2*PI, accurately computed.
 	 */
@@ -1618,7 +1571,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param angRad An angle, in radians.
 	 * @return angRad + PI, accurately computed.
 	 */
@@ -1648,7 +1601,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param angRad An angle, in radians.
 	 * @return angRad - PI, accurately computed.
 	 */
@@ -1678,7 +1631,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param angRad An angle, in radians.
 	 * @return angRad + PI/2, accurately computed.
 	 */
@@ -1708,7 +1661,7 @@ public final class NumbersUtils {
 
 	/**
 	 * Strict version.
-	 * 
+	 *
 	 * @param angRad An angle, in radians.
 	 * @return angRad - PI/2, accurately computed.
 	 */
@@ -1834,7 +1787,7 @@ public final class NumbersUtils {
 	/**
 	 * This method just delegates to Integer.toString(int),
 	 * but is defined here to complete the API.
-	 * 
+	 *
 	 * @return String representation of the specified value in base 10.
 	 */
 	public static String toString(final int value) {
@@ -1844,7 +1797,7 @@ public final class NumbersUtils {
 	/**
 	 * This method just delegates to Long.toString(long),
 	 * but is defined here to complete the API.
-	 * 
+	 *
 	 * @return String representation of the specified value in base 10.
 	 */
 	public static String toString(final long value) {
@@ -2197,7 +2150,7 @@ public final class NumbersUtils {
 
 	/*
 	 * toString (floating points)
-	 * 
+	 *
 	 * toStringCSN(double) and toStringNoCSN(double)
 	 * could be made faster, by using directly internals
 	 * of Double.toString(double), but this would require
@@ -2405,18 +2358,18 @@ public final class NumbersUtils {
 	private NumbersUtils() {}
 
 	/*
-	 * 
+	 *
 	 */
 
 	/**
 	 * Had such isInXXX methods, and corresponding checkXXX methods,
 	 * but they seem actually slower in practice, so just keeping this
 	 * code here in case some day it becomes faster than regular isInXXX.
-	 * 
+	 *
 	 * Only works for non-empty ranges, i.e. such as min <= max.
 	 * This treatment being designed for optimization, min <= max
 	 * is not checked.
-	 * 
+	 *
 	 * @return True if the specified value is in the specified range (inclusive), false otherwise.
 	 */
 	private static boolean dontUseMe_isInNonEmptyRange_(final int min, final int max, final int a) {
@@ -2425,7 +2378,7 @@ public final class NumbersUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	private static int minSignedIntForBitSize_noCheck(final int bitSize) {
@@ -2449,7 +2402,7 @@ public final class NumbersUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	/**
@@ -2481,7 +2434,7 @@ public final class NumbersUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	private static boolean checkBitPositions(final int firstBitPos, final int lastBitPosExcl, final int bitSize) {
@@ -2495,7 +2448,7 @@ public final class NumbersUtils {
 	 * Common method for byte, short and int.
 	 * Could be a bit faster to have specific methods for byte and short,
 	 * but not much, and that would also make more messy (byte-)code.
-	 * 
+	 *
 	 * @param bitSize Must be in [0,32].
 	 */
 	private static String toStringBits_0_32_bitPosAlreadyChecked(final int bitSize, final int bits,

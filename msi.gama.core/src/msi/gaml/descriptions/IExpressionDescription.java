@@ -14,6 +14,7 @@ package msi.gaml.descriptions;
 import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IGamlable;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
@@ -50,6 +51,6 @@ public interface IExpressionDescription extends IGamlable {
 
 	public abstract IType getDenotedType(IDescription context);
 
-	public abstract void collectPlugins(Set<String> plugins);
+	public abstract void collectMetaInformation(GamlProperties meta);
 
 }

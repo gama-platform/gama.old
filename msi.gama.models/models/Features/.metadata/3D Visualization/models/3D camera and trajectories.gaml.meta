@@ -1,2 +1,10 @@
-msi.gama.core
-ummisco.gama.opengl
+#
+#Thu Feb 25 16:43:30 ICT 2016
+operators=square~as~/~-~point~+~rnd~circle~*~\!~<~>~and~\=~copy~overlapping~.~mean~collect~?~length~\:~at~triangle~flip~one_of~hsb~sphere~cos~first~sin
+plugins=msi.gama.core~ummisco.gama.opengl
+attributes=x~y~z~width~height
+statements=reflex~do~arg~set~aspect~draw~action~if~else~let~ask~loop~init~create~output~display~image~display_population
+skills=reflex~moving
+constants=red~orange~yellow
+types=list~int~unknown~string~float~geometry~point~agent~date~rgb~bool~file~container
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

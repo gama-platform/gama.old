@@ -1,2 +1,10 @@
-msi.gama.core
-ummisco.gama.opengl
+#
+#Thu Feb 25 16:43:31 ICT 2016
+operators=as~envelope~gauss~at_distance~mean~collect~.~or~empty~and~>~*~<~/~-~+~any_location_in~point~one_of~where~internal_at~\=~\!~sphere~rgb~?~\:~rnd~distance_between~length~read~select~as_edge_graph
+plugins=msi.gama.core~ummisco.gama.opengl
+attributes=z~area~x~y
+statements=action~let~return~set~add~remove~init~do~reflex~aspect~draw~loop~put~create~arg~output~display~display_grid~display_population
+skills=reflex~grid
+constants=pink~gray~black~white
+types=list~int~unknown~string~file~geometry~point~agent~float~date~rgb~graph~topology~container~bool~map
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

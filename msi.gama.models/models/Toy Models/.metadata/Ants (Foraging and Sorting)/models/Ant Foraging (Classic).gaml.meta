@@ -1,3 +1,10 @@
-msi.gama.core
-ummisco.gaml.extensions.maths
-ummisco.gama.opengl
+#
+#Thu Feb 25 16:43:31 ICT 2016
+architectures=fsm
+operators=square~as~point~/~pgm_file~rnd~.~-~+~>~count~min_of~sort~?~\=~\:~last~first_with~<~circle~\!~font~*~<\=~at~distance_to~neighbors_at~any_location_in
+plugins=msi.gama.core~ummisco.gaml.extensions.maths~ummisco.gama.opengl
+statements=action~set~let~if~else~return~reflex~state~do~arg~transition~aspect~draw~init~create~diffuse~output~display~display_grid~display_population
+skills=reflex~fsm~moving~grid
+constants=white~zoom~plain~orange~sienna~brown~darkgoldenrod
+types=list~int~unknown~string~float~geometry~point~agent~date~rgb~bool~file~container
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

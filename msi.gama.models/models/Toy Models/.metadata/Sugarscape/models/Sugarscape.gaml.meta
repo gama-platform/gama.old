@@ -1,1 +1,9 @@
-msi.gama.core
+#
+#Thu Feb 25 16:43:31 ICT 2016
+operators=rectangle~as~rnd~+~-~one_of~.~internal_at~where~>~?~empty~\:~or~\=~circle~at~neighbors_at~point~every~count~<
+plugins=msi.gama.core
+statements=init~set~reflex~let~if~create~do~aspect~draw~loop~put~ask~output~display~display_grid~display_population~chart~data
+skills=reflex~grid
+constants=red~white~yellow~pink~lightgray~green
+types=list~int~unknown~string~geometry~point~agent~float~date~rgb~bool~file~container~map
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

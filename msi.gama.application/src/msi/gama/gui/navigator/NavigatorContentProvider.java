@@ -17,8 +17,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.util.file.GAMLFile;
-import msi.gaml.compilation.GamaBundleLoader;
 
 public class NavigatorContentProvider extends WorkbenchContentProvider {
 
@@ -112,19 +112,12 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 		try {
 			InputStream is = m.getContents();
 			BufferedReader in = new BufferedReader(new InputStreamReader(is));
-			List<String> contents = new ArrayList();
-			String inputLine;
+			GamlProperties props = new GamlProperties(in);
+			Set<String> contents = props.get(GamlProperties.PLUGINS);
 
-			while ((inputLine = in.readLine()) != null) {
-				if ( !inputLine.equals(GamaBundleLoader.CORE_PLUGIN) && !inputLine.isEmpty() ) {
-					contents.add(inputLine);
-				}
-			}
-			in.close();
-
-			if ( contents.isEmpty() ) { return; }
+			if ( contents == null || contents.isEmpty() ) { return; }
 			l.add(new WrappedPlugins(f, contents, "Requires"));
-		} catch (CoreException | IOException e) {
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}

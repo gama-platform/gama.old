@@ -1,2 +1,9 @@
-msi.gama.core
-ummisco.gaml.extensions.maths
+#
+#Thu Feb 25 16:43:31 ICT 2016
+operators=envelope~point~+~<~or~\=~.~as~first~and~>~round~count~diff~/~*~-~rnd~length~of_species~neighbors_at~one_of~\!~any~flip~^~not~circle
+plugins=msi.gama.core~ummisco.gaml.extensions.maths
+statements=reflex~if~write~create~set~do~ask~action~equation~\=~solve~init~else~loop~aspect~draw~let~output~display~display_grid~display_population~chart~data
+skills=reflex~moving~grid
+constants=green~red~yellow~black~lightgray~white
+types=list~int~unknown~string~point~agent~float~date~rgb~bool~geometry~container
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

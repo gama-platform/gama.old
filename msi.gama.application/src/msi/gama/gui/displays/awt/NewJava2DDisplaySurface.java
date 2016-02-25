@@ -38,7 +38,7 @@ import msi.gaml.operators.*;
 import msi.gaml.operators.fastmaths.*;
 
 @display("experimental")
-public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface {
+public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySurface {
 
 	private final LayeredDisplayOutput output;
 	protected final Rectangle viewPort = new Rectangle();
@@ -58,17 +58,18 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 
 	private IScope scope;
 	final DisplayMouseListener listener;
+	int frames;
 
 	private boolean alreadyZooming = false;
 
-	public AWTJava2DDisplaySurface2(final Object ... args) {
+	public NewJava2DDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy());
 		// data = output.getData();
 		output.getData().addListener(this);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
-		setOpaque(true);
+		// setOpaque(true);
 		setDoubleBuffered(true);
 		// Experimental
 		setIgnoreRepaint(true);
@@ -103,6 +104,13 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 			}
 		});
 
+	}
+
+	@Override
+	public int getFPS() {
+		int result = frames;
+		frames = 0;
+		return result;
 	}
 
 	@Override
@@ -142,6 +150,7 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 		return manager;
 	}
 
+	@Override
 	public Point getOrigin() {
 		return viewPort.getLocation();
 	}
@@ -252,7 +261,8 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 		return null;
 	}
 
-	protected void setOrigin(final int x, final int y) {
+	@Override
+	public void setOrigin(final int x, final int y) {
 		viewPort.x = x;
 		viewPort.y = y;
 		translation.setToTranslation(x, y);
@@ -387,6 +397,7 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 
 	@Override
 	public void paintComponent(final Graphics g) {
+		if ( iGraphics == null ) { return; }
 		super.paintComponent(g);
 		// ((Graphics2D) g).drawImage(buffImage, translation, null);
 		if ( output.getData().isAutosave() ) {
@@ -394,9 +405,16 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 		}
 		Graphics2D g2d =
 			(Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) getDisplayWidth(), (int) getDisplayHeight());
-		((AWTDisplayGraphics) iGraphics).setGraphics2D(g2d);
+
+		getIGraphics().setGraphics2D(g2d);
+		getIGraphics().setUntranslatedGraphics2D((Graphics2D) g);
 		manager.drawLayersOn(iGraphics);
 		g2d.dispose();
+		frames++;
+	}
+
+	AWTDisplayGraphics getIGraphics() {
+		return (AWTDisplayGraphics) iGraphics;
 	}
 
 	@Override
@@ -563,7 +581,6 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 
 	@Override
 	public void dispose() {
-		java.lang.System.out.println("Disposing Java2D display");
 		getData().removeListener(this);
 		if ( disposed ) { return; }
 		disposed = true;
@@ -665,6 +682,7 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 		super.setBounds(r);
 	}
 
+	@Override
 	public double applyZoom(final double factor) {
 		double real_factor = FastMath.min(factor, 10 / getZoomLevel());
 		boolean success = false;
@@ -747,11 +765,13 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 
 	}
 
+	@Override
 	public void centerOnDisplayCoordinates(final Point p) {
 		Point origin = getOrigin();
 		centerOnViewCoordinates(new Point(p.x + origin.x, p.y + origin.y));
 	}
 
+	@Override
 	public void selectAgents(final int mousex, final int mousey) {
 		Point origin = getOrigin();
 		final int xc = mousex - origin.x;
@@ -803,6 +823,24 @@ public class AWTJava2DDisplaySurface2 extends JPanel implements IDisplaySurface 
 	public synchronized void releaseLock() {
 		lockAcquired = false;
 		notify();
+	}
+
+	/**
+	 * Method canBeUpdated()
+	 * @see msi.gama.gui.displays.awt.IJava2DDisplaySurface#canBeUpdated(boolean)
+	 */
+	@Override
+	public void canBeUpdated(final boolean b) {
+		canBeUpdated = b;
+	}
+
+	/**
+	 * Method getZoomIncrement()
+	 * @see msi.gama.gui.displays.awt.IJava2DDisplaySurface#getZoomIncrement()
+	 */
+	@Override
+	public double getZoomIncrement() {
+		return zoomIncrement;
 	}
 
 }

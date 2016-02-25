@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlProperties.java', in plugin 'msi.gama.processor', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.precompiler;
 
@@ -16,20 +16,26 @@ import java.util.*;
 
 /**
  * Written by drogoul Modified on 27 juil. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class GamlProperties {
 
 	Map<String, LinkedHashSet<String>> map;
 
 	public final static String SKILLS = "skills";
+	public final static String ACTIONS = "actions";
+	public final static String ATTRIBUTES = "attributes";
+	public final static String STATEMENTS = "statements";
 	public final static String OPERATORS = "operators";
 	public final static String GAML = "gaml.properties";
-	public final static String SYMBOLS = "symbols";
 	public final static String FACTORIES = "factories";
 	public final static String SPECIES = "species";
+	public final static String CONSTANTS = "constants";
+	public final static String ARCHITECTURES = "architectures";
+	public final static String TYPES = "types";
+	public final static String PLUGINS = "plugins";
 	public final static String SEPARATOR = JavaWriter.DOC_SEP;
 
 	static final String NULL = "";
@@ -72,12 +78,14 @@ public class GamlProperties {
 		if ( !map.containsKey(key) ) {
 			map.put(key, new LinkedHashSet<String>());
 		}
-		map.get(key).add(value);
+		if ( value != null ) {
+			map.get(key).add(value);
+		}
 	}
 
-	void put(final String key, final LinkedHashSet<String> values) {
+	public void put(final String key, final Set<String> values) {
 		if ( !map.containsKey(key) ) {
-			map.put(key, values);
+			map.put(key, new LinkedHashSet(values));
 		} else {
 			map.get(key).addAll(values);
 		}
@@ -158,6 +166,13 @@ public class GamlProperties {
 			reader.close();
 		} catch (IOException e) {}
 		return this;
+	}
+
+	/**
+	 *
+	 */
+	public void clear() {
+		map.clear();
 	}
 
 }

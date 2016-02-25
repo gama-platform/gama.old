@@ -1,3 +1,8 @@
-msi.gama.core
-ummisco.gaml.extensions.maths
-ummisco.gama.opengl
+#
+#Thu Feb 25 16:43:28 ICT 2016
+operators=envelope~*~square~as~as_matrix~point~min~hsb
+plugins=msi.gama.core~ummisco.gaml.extensions.maths~ummisco.gama.opengl
+statements=init~set~reflex~ask~diffuse~output~display~display_grid
+skills=reflex~grid
+types=list~int~unknown~string~float~geometry~point~agent~date~rgb~file~matrix~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

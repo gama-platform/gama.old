@@ -1,1 +1,10 @@
-msi.gama.core
+#
+#Thu Feb 25 16:43:30 ICT 2016
+operators=point~rectangle~circle~as~/~at_location~-~+~rnd~towards~\=~or~<\=~>\=~overlapping~\!~empty~.~where~*~length~at~mod~every
+plugins=msi.gama.core
+statements=action~arg~set~reflex~let~do~if~else~aspect~draw~init~create~capture~loop~release~ask~output~display~display_population~chart~data
+attributes=x~y
+skills=reflex~moving
+constants=green~black~blue~pixels~white
+types=list~int~unknown~string~point~geometry~agent~float~date~rgb~bool~container~topology
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

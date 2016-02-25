@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.util.Set;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.descriptions.IGamlDescription;
 
 public interface IDisplayCreator {
@@ -93,8 +93,8 @@ public interface IDisplayCreator {
 		 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 		 */
 		@Override
-		public void collectPlugins(final Set<String> plugins) {
-			plugins.add(plugin);
+		public void collectMetaInformation(final GamlProperties meta) {
+			meta.put(GamlProperties.PLUGINS, plugin);
 		}
 	}
 

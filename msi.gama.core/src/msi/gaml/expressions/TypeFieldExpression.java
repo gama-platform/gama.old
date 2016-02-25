@@ -12,6 +12,7 @@
 package msi.gaml.expressions;
 
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.*;
 
@@ -64,6 +65,11 @@ public class TypeFieldExpression extends UnaryOperator {
 	@Override
 	public String getTitle() {
 		return "field <b>" + getName() + "</b> of type " + getType().getTitle();
+	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.ATTRIBUTES, name);
 	}
 
 }

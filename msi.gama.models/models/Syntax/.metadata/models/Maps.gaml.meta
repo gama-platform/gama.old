@@ -1,1 +1,9 @@
-msi.gama.core
+#
+#Thu Feb 25 16:43:31 ICT 2016
+operators=envelope~as~sample~any~as_map~\:\:~length~index_by~distance_to~group_by~\=~mod~first~last~at~internal_at~mean~max~min~among~contains~contains_all~contains_any~reverse~collect~+~norm~point~where~>~count~even~index_of~last_index_of~sort_by~first_with~with_min_of~with_max_of~min_of~max_of~-~inter~union~rnd~select~.
+plugins=msi.gama.core
+attributes=keys~pairs~key~value
+statements=init~write~let~create~trace~add~put~loop~remove~set~ask~user_command
+skills=reflex
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~map~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

@@ -14,13 +14,13 @@ class DisplayMouseListener extends MouseAdapter {
 	/**
 	 *
 	 */
-	private final AWTJava2DDisplaySurface2 surface;
+	private final IJava2DDisplaySurface surface;
 	public Point mousePosition;
 
 	/**
 	 * @param awtJava2DDisplaySurface2
 	 */
-	DisplayMouseListener(final AWTJava2DDisplaySurface2 awtJava2DDisplaySurface2) {
+	DisplayMouseListener(final IJava2DDisplaySurface awtJava2DDisplaySurface2) {
 		surface = awtJava2DDisplaySurface2;
 	}
 
@@ -30,7 +30,7 @@ class DisplayMouseListener extends MouseAdapter {
 	public void mouseDragged(final MouseEvent e) {
 		if ( SwingUtilities.isLeftMouseButton(e) ) {
 			dragging = true;
-			surface.canBeUpdated = false;
+			surface.canBeUpdated(false);
 			final Point p = e.getPoint();
 			if ( mousePosition == null ) {
 				mousePosition = new Point(surface.getWidth() / 2, surface.getHeight() / 2);
@@ -54,7 +54,8 @@ class DisplayMouseListener extends MouseAdapter {
 		final boolean zoomIn = e.getWheelRotation() < 0;
 		mousePosition = e.getPoint();
 		Point p = new Point(mousePosition.x, mousePosition.y);
-		double zoomFactor = surface.applyZoom(zoomIn ? 1.0 + surface.zoomIncrement : 1.0 - surface.zoomIncrement);
+		double zoomFactor =
+			surface.applyZoom(zoomIn ? 1.0 + surface.getZoomIncrement() : 1.0 - surface.getZoomIncrement());
 		Point origin = surface.getOrigin();
 		double newx = FastMath.round(zoomFactor * (p.x - origin.x) - p.x + surface.getWidth() / 2d);
 		double newy = FastMath.round(zoomFactor * (p.y - origin.y) - p.y + surface.getHeight() / 2d);
@@ -74,7 +75,7 @@ class DisplayMouseListener extends MouseAdapter {
 	@Override
 	public void mouseReleased(final MouseEvent e) {
 		if ( dragging ) {
-			surface.canBeUpdated = true;
+			surface.canBeUpdated(true);
 			surface.updateDisplay(true);
 			dragging = false;
 

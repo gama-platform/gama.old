@@ -814,7 +814,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public void diffuseVariable(final IScope scope, final boolean method_diffu, final boolean is_gradient,
-		final double[][] mat_diffu, final double[][] mask, final String var_diffu, final IPopulation pop, final double min_value) {
+		final double[][] mat_diffu, final double[][] mask, final String var_diffu, final IPopulation pop,
+		final double min_value) {
 		getDiffuser(scope).addDiffusion(scope, var_diffu, (GridPopulation) pop, method_diffu, is_gradient, mat_diffu,
 			mask, min_value);
 	}
@@ -1003,6 +1004,35 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		public void setDepth(final double depth) {
 			// TODO Auto-generated method stub
 
+		}
+
+		/**
+		 * Method getGeometries()
+		 * @see msi.gama.metamodel.shape.IShape#getGeometries()
+		 */
+		@Override
+		public IList<? extends IShape> getGeometries() {
+
+			final IList<IShape> result = GamaListFactory.create(Types.GEOMETRY);
+			if ( isMultiple() ) {
+				Geometry g = getInnerGeometry();
+				for ( int i = 0, n = g.getNumGeometries(); i < n; i++ ) {
+					result.add(new GamaShape(g.getGeometryN(i)));
+				}
+			} else {
+				result.add(this);
+			}
+			return result;
+
+		}
+
+		/**
+		 * Method isMultiple()
+		 * @see msi.gama.metamodel.shape.IShape#isMultiple()
+		 */
+		@Override
+		public boolean isMultiple() {
+			return getReferenceGeometry().isMultiple();
 		}
 
 	}
@@ -1391,6 +1421,110 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			public void setDepth(final double depth) {
 				// TODO Auto-generated method stub
 
+			}
+
+			/**
+			 * Method getArea()
+			 * @see msi.gama.metamodel.shape.IShape#getArea()
+			 */
+			@Override
+			public Double getArea() {
+				return geometry.getArea();
+			}
+
+			/**
+			 * Method getVolume()
+			 * @see msi.gama.metamodel.shape.IShape#getVolume()
+			 */
+			@Override
+			public Double getVolume() {
+				return geometry.getVolume();
+			}
+
+			/**
+			 * Method getPerimeter()
+			 * @see msi.gama.metamodel.shape.IShape#getPerimeter()
+			 */
+			@Override
+			public double getPerimeter() {
+				return geometry.getPerimeter();
+			}
+
+			/**
+			 * Method getHoles()
+			 * @see msi.gama.metamodel.shape.IShape#getHoles()
+			 */
+			@Override
+			public IList<GamaShape> getHoles() {
+				return geometry.getHoles();
+			}
+
+			/**
+			 * Method getCentroid()
+			 * @see msi.gama.metamodel.shape.IShape#getCentroid()
+			 */
+			@Override
+			public GamaPoint getCentroid() {
+				return geometry.getCentroid();
+			}
+
+			/**
+			 * Method getExteriorRing()
+			 * @see msi.gama.metamodel.shape.IShape#getExteriorRing(msi.gama.runtime.IScope)
+			 */
+			@Override
+			public GamaShape getExteriorRing(final IScope scope) {
+				return geometry.getExteriorRing(scope);
+			}
+
+			/**
+			 * Method getWidth()
+			 * @see msi.gama.metamodel.shape.IShape#getWidth()
+			 */
+			@Override
+			public Double getWidth() {
+				return geometry.getWidth();
+			}
+
+			/**
+			 * Method getHeight()
+			 * @see msi.gama.metamodel.shape.IShape#getHeight()
+			 */
+			@Override
+			public Double getHeight() {
+				return geometry.getHeight();
+			}
+
+			/**
+			 * Method getDepth()
+			 * @see msi.gama.metamodel.shape.IShape#getDepth()
+			 */
+			@Override
+			public Double getDepth() {
+				return geometry.getDepth();
+			}
+
+			/**
+			 * Method getGeometricEnvelope()
+			 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
+			 */
+			@Override
+			public GamaShape getGeometricEnvelope() {
+				return geometry.getGeometricEnvelope();
+			}
+
+			@Override
+			public IList<? extends IShape> getGeometries() {
+				return geometry.getGeometries();
+			}
+
+			/**
+			 * Method isMultiple()
+			 * @see msi.gama.metamodel.shape.IShape#isMultiple()
+			 */
+			@Override
+			public boolean isMultiple() {
+				return geometry.isMultiple();
 			}
 
 			// // hqnghi must-implement methods from GamlAgent
