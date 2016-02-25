@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Set;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.Types;
@@ -51,8 +51,8 @@ public class DenotedActionExpression extends VariableExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final Set<String> plugins) {
-		description.collectMetaInformation(plugins);
+	public void collectMetaInformation(final GamlProperties meta) {
+		description.collectMetaInformation(meta);
 	}
 
 }

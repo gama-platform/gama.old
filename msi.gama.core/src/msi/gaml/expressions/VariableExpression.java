@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Set;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -77,11 +77,11 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final Set<String> plugins) {
+	public void collectMetaInformation(final GamlProperties meta) {
 		if ( definitionDescription != null ) {
 			IDescription var = definitionDescription.getSpeciesContext().getVariable(getName());
 			if ( var != null ) {
-				plugins.add(var.getDefiningPlugin());
+				meta.put(GamlProperties.PLUGINS, var.getDefiningPlugin());
 			}
 		}
 	}

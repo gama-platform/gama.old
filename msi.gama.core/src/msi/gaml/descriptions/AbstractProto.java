@@ -8,6 +8,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.GamlProperties;
 
 /**
  * Class AbstractProto.
@@ -101,8 +102,8 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 	}
 
 	@Override
-	public void collectMetaInformation(final Set<String> plugins) {
-		plugins.add(plugin);
+	public void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.PLUGINS, plugin);
 	}
 
 	public AnnotatedElement getSupport() {

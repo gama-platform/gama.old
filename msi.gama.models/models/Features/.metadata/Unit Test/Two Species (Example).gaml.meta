@@ -1,2 +1,3 @@
-msi.gama.core
-irit.gaml.extensions.test
+#
+#Thu Feb 25 13:53:28 ICT 2016
+plugins=msi.gama.core~irit.gaml.extensions.test

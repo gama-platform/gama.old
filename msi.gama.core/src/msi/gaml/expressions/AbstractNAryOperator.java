@@ -13,6 +13,7 @@ package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
 import java.util.*;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.types.*;
@@ -183,11 +184,11 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final Set<String> plugins) {
-		prototype.collectMetaInformation(plugins);
+	public void collectMetaInformation(final GamlProperties meta) {
+		prototype.collectMetaInformation(meta);
 		for ( IExpression e : exprs ) {
 			if ( e != null ) {
-				e.collectMetaInformation(plugins);
+				e.collectMetaInformation(meta);
 			}
 		}
 	}

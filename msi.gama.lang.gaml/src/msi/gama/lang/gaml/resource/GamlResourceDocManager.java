@@ -12,12 +12,12 @@
 package msi.gama.lang.gaml.resource;
 
 import java.nio.charset.Charset;
-import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import gnu.trove.map.hash.THashMap;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory.IDocManager;
 
@@ -77,7 +77,7 @@ public class GamlResourceDocManager implements IDocManager {
 		 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 		 */
 		@Override
-		public void collectMetaInformation(final Set<String> plugins) {}
+		public void collectMetaInformation(final GamlProperties meta) {}
 
 		@Override
 		public String getDocumentation() {

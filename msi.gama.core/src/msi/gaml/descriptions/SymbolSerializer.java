@@ -7,6 +7,7 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
 
@@ -164,11 +165,11 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	public static class StatementSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
-		protected void collectPluginsInFacets(final StatementDescription desc, final Set<String> plugins) {
-			super.collectPluginsInFacets(desc, plugins);
+		protected void collectMetaInformationInFacets(final StatementDescription desc, final GamlProperties plugins) {
+			super.collectMetaInformationInFacets(desc, plugins);
 			if ( desc.args == null || desc.args.isEmpty() ) { return; }
 			for ( StatementDescription arg : desc.args.values() ) {
-				collectPlugins(arg, plugins);
+				collectMetaInformation(arg, plugins);
 			}
 		}
 
@@ -206,7 +207,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	 * Method serialize()
 	 * @see msi.gaml.descriptions.IDescriptionSerializer#serialize(msi.gaml.descriptions.IDescription)
 	 */
-		public final String serialize(final C description, final boolean includingBuiltIn) {
+	public final String serialize(final C description, final boolean includingBuiltIn) {
 		if ( description.isBuiltIn() && !includingBuiltIn ) { return ""; }
 		StringBuilder sb = new StringBuilder();
 		serialize(description, sb, includingBuiltIn);
@@ -295,10 +296,10 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	}
 
-	protected void collectPlugins(final C desc, final Set<String> plugins) {
-		plugins.add(desc.getDefiningPlugin());
-		collectPluginsInFacets(desc, plugins);
-		collectPluginsInChildren(desc, plugins);
+	protected void collectMetaInformation(final C desc, final GamlProperties plugins) {
+		plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
+		collectMetaInformationInFacets(desc, plugins);
+		collectMetaInformationInChildren(desc, plugins);
 		desc.getType().collectMetaInformation(plugins);
 	}
 
@@ -306,9 +307,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	 * @param desc
 	 * @param plugins
 	 */
-	protected void collectPluginsInFacets(final C desc, final Set<String> plugins) {
+	protected void collectMetaInformationInFacets(final C desc, final GamlProperties plugins) {
 		for ( final String key : desc.getFacets().keySet() ) {
-			collectPluginsInFacetValue(desc, key, plugins);
+			collectMetaInformationInFacetValue(desc, key, plugins);
 		}
 	}
 
@@ -317,17 +318,17 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	 * @param key
 	 * @param plugins
 	 */
-	protected void collectPluginsInFacetValue(final C desc, final String key, final Set<String> plugins) {
+	protected void collectMetaInformationInFacetValue(final C desc, final String key, final GamlProperties plugins) {
 		IExpressionDescription ed = desc.getFacets().get(key);
 		if ( ed == null ) { return; }
-		ed.collectPlugins(plugins);
+		ed.collectMetaInformation(plugins);
 	}
 
 	/**
 	 * @param desc
 	 * @param plugins
 	 */
-	protected void collectPluginsInChildren(final C desc, final Set<String> plugins) {
+	protected void collectMetaInformationInChildren(final C desc, final GamlProperties plugins) {
 		List<IDescription> children = desc.getChildren();
 		for ( IDescription s : children ) {
 			s.collectMetaInformation(plugins);

@@ -15,6 +15,7 @@ import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IValue;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -406,8 +407,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public void collectMetaInformation(final Set<String> plugins) {
-		plugins.add(getDefiningPlugin());
+	public void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.PLUGINS, getDefiningPlugin());
 	}
 
 }

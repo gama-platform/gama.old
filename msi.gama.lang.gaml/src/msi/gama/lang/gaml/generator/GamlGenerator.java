@@ -4,13 +4,13 @@
  */
 package msi.gama.lang.gaml.generator;
 
-import java.util.Set;
+import java.io.StringWriter;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.*;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gaml.operators.Strings;
+import msi.gama.precompiler.GamlProperties;
 
 /**
  * Class GamlGenerator.
@@ -43,12 +43,10 @@ public class GamlGenerator implements IGenerator {
 	 * @return
 	 */
 	private String getContentsFor(final GamlResource input) {
-		Set<String> requires = input.getRequires();
-		StringBuilder sb = new StringBuilder(requires.size() * 30);
-		for ( String s : requires ) {
-			sb.append(s).append(Strings.LN);
-		}
-		return sb.toString();
+		GamlProperties requires = input.getRequires();
+		StringWriter sw = new StringWriter();
+		requires.store(sw);
+		return sw.toString();
 	}
 
 	/**

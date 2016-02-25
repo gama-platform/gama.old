@@ -11,9 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Set;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.IType;
@@ -68,10 +68,10 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final Set<String> plugins) {
+	public void collectMetaInformation(final GamlProperties meta) {
 		SpeciesDescription sd = getType().getContentType().getSpecies();
 		if ( sd != null ) {
-			plugins.add(sd.getDefiningPlugin());
+			meta.put(GamlProperties.PLUGINS, sd.getDefiningPlugin());
 		}
 	}
 

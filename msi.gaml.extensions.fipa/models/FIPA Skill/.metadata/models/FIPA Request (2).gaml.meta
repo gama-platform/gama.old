@@ -1,2 +1,3 @@
-msi.gama.core
-msi.gaml.extensions.fipa
+#
+#Thu Feb 25 13:53:27 ICT 2016
+plugins=msi.gama.core~msi.gaml.extensions.fipa

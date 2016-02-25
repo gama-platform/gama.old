@@ -11,8 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Set;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 
@@ -45,6 +45,6 @@ public class SelfExpression extends VariableExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final Set<String> plugins) {}
+	public void collectMetaInformation(final GamlProperties meta) {}
 
 }

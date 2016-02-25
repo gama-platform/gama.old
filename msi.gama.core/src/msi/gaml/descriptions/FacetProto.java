@@ -14,7 +14,7 @@ package msi.gaml.descriptions;
 import java.util.*;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.JavaWriter;
+import msi.gama.precompiler.*;
 import msi.gaml.types.*;
 
 public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGamlable {
@@ -204,7 +204,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final Set<String> plugins) {}
+	public void collectMetaInformation(final GamlProperties meta) {}
 
 	/**
 	 * @return

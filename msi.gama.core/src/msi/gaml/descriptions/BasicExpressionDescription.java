@@ -14,6 +14,7 @@ package msi.gaml.descriptions;
 import java.util.*;
 import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.util.StringUtils;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
@@ -46,9 +47,9 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	}
 
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
+	public void collectMetaInformation(final GamlProperties meta) {
 		if ( expression != null ) {
-			expression.collectMetaInformation(plugins);
+			expression.collectMetaInformation(meta);
 		}
 	}
 

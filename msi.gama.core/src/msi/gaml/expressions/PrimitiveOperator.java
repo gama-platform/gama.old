@@ -17,6 +17,7 @@ import com.google.common.collect.*;
 import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -166,13 +167,13 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final Set<String> plugins) {
-		plugins.add(action.getDefiningPlugin());
+	public void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.PLUGINS, action.getDefiningPlugin());
 		parameters.forEachValue(new TObjectProcedure<IExpressionDescription>() {
 
 			@Override
 			public boolean execute(final IExpressionDescription exp) {
-				exp.collectPlugins(plugins);
+				exp.collectMetaInformation(meta);
 				return true;
 			}
 		});

@@ -32,7 +32,7 @@ species house_element {
 	aspect default {
 		draw shape color: color;
 	}
-}
+} 
 
 experiment DXFAgents type: gui {
 	output {
