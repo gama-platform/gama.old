@@ -69,7 +69,7 @@ species managementUnit{
 }	
 species izard {	
 	init{
-		location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
+		location <- (shuffle(cell) first_with ((each.color != #white) and (empty(izard inside each)))).location ;
 	}	
 	aspect default{
 		draw square(5000) color: #orange;

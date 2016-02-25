@@ -35,14 +35,14 @@ global {
 }
  
 
-// We create izard agents and locate them on one'cell' among the list of cellules that verifies the following conditions : is empty ('empty(each.agents)') 
+// We create izard agents and locate them on one'cell' among the list of cellules in which there is no izard 
 // and with a color that is not white 'each.color != #white'
 // the shuffle operator is used to randomized the list of cells
 
 
 species izard {	
 	init{
-		location <- (shuffle(cell) first_with ((each.color != #white) and (empty(agents overlapping each)))).location ;
+		location <- (shuffle(cell) first_with ((each.color != #white) and (empty(izard inside each)))).location ;
 	}		
 	aspect default{
 		draw square(1) color: #orange;
