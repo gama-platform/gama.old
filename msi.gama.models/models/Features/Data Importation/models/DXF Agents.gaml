@@ -40,7 +40,7 @@ experiment DXFAgents type: gui {
 			species house_element;
 		}
 		
-		display "As_Image" {
+		display "As_Image" type: opengl{
 			graphics "House" {
 				draw house_file color: #brown ;
 			}

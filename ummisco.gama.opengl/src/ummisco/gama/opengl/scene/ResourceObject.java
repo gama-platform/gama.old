@@ -36,18 +36,15 @@ public class ResourceObject extends AbstractObject {
 		// We first push the matrix so that all translations, etc. are done locally
 
 		gl.glPushMatrix();
-
+		Envelope env = renderer.getEnvelopeFor(file.getPath());
 		// If a location is provided we use it otherwise we use that of the agent if it exists
 		if ( attributes.location != null ) {
 			gl.glTranslated(attributes.location.x, renderer.yFlag * attributes.location.y, attributes.location.z);
-		} else {
-			if ( attributes.getAgent() != null ) {
-				ILocation loc = attributes.getAgent().getLocation();
-				gl.glTranslated(loc.getX(), renderer.yFlag * loc.getY(), loc.getZ());
-			}
+		} else if ( attributes.getAgent() != null ) {
+			ILocation loc = attributes.getAgent().getLocation();
+			gl.glTranslated(loc.getX(), renderer.yFlag * loc.getY(), loc.getZ());
 		}
 
-		Envelope env = renderer.getEnvelopeFor(file.getPath());
 		GamaPoint size = getDimensions();
 
 		// If there is a rotation we apply it
@@ -72,9 +69,9 @@ public class ResourceObject extends AbstractObject {
 		//
 		// if ( size != null ) {
 		// gl.glTranslated(-size.x / 2, renderer.yFlag * size.y / 2, 0);
-		// } else if ( env != null ) {
-		// gl.glTranslated(-env.getWidth() / 2, renderer.yFlag * env.getHeight() / 2, 0);
-		// }
+		if ( size == null && env != null ) {
+			gl.glTranslated(-env.getWidth() / 2, -renderer.yFlag * env.getHeight() / 2, 0);
+		}
 
 		// We then compute the scaling factor to apply
 		double factor = 0.0;

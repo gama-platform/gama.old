@@ -17,9 +17,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.*;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.file.GamaGeometryFile;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.files.GamaObjFile;
@@ -63,36 +62,11 @@ public class GeometryCache {
 		if ( extension.equals("obj") ) {
 			((GamaObjFile) file).drawToOpenGL(gl);
 		} else {
-			GamaShape g = GAMA.run(new InScope<GamaShape>() {
-
-				@Override
-				public GamaShape run(final IScope scope) {
-					return (GamaShape) file.getGeometry(scope);
-				}
-
-			});
-			// DrawingAttributes attributes =
-			// new ShapeDrawingAttributes(new GamaPoint(0, 0, 0), defautColor, defautColor, g.getGeometricalType());
-			// GeometryObject object = new GeometryObject(g.getInnerGeometry(), attributes, null);
-			// drawer.draw(gl, object);
-
-			//
-			//
-			// object.draw(gl, new GeometryDrawer(), false);
-			//
-			Color c = new Color(0, 0, 0);
-			if ( g.getInnerGeometry().getNumGeometries() > 1 ) {
-				for ( int i = 0; i < g.getInnerGeometry().getNumGeometries(); i++ ) {
-					Geometry jts = g.getInnerGeometry().getGeometryN(i);
-					if ( jts instanceof Polygon ) {
-						drawer.drawTesselatedPolygon(gl, (Polygon) jts, 1, c, 1);
-					}
-				}
-			} else {
-				if ( g.getInnerGeometry() instanceof Polygon ) {
-					drawer.drawTesselatedPolygon(gl, (Polygon) g.getInnerGeometry(), 1, c, 1);
-				}
-			}
+			IDisplaySurface surface = renderer.getSurface();
+			IShape shape = file.getGeometry(surface.getDisplayScope());
+			if ( shape == null ) { return index; }
+			Geometry g = shape.getInnerGeometry();
+			drawSimpleGeometry(gl, g);
 		}
 		// We then pop the matrix
 		gl.glPopMatrix();
