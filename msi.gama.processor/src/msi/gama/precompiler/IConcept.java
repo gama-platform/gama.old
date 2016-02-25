@@ -37,6 +37,7 @@ public interface IConcept {
 	public static final String GRAPH					= "graph";
 	public static final String GRAPH_WEIGHT				= "graph_weight";
 	public static final String GRID						= "grid";
+	public static final String GRAPHIC					= "graphic";
 	public static final String GRAPHIC_UNIT				= "graphic_unit";
 	public static final String HALT						= "halt";
 	public static final String IMPORT					= "import";
@@ -48,6 +49,7 @@ public interface IConcept {
 	public static final String LOGICAL					= "logical";
 	public static final String LOOP						= "loop";
 	public static final String MATRIX					= "matrix";
+	public static final String MATH						= "math";
 	public static final String MAP						= "map";
 	public static final String MIRROR					= "mirror";
 	public static final String MULTI_LEVEL				= "multi_level";
@@ -65,8 +67,10 @@ public interface IConcept {
 	public static final String RANDOM_OPERATOR			= "random_operator";
 	public static final String REFLEX					= "reflex";
 	public static final String REFRESH					= "refresh";
+	public static final String SHAPE					= "shape";
 	public static final String SHORTEST_PATH			= "shortest_path";
 	public static final String SKILL					= "skill";
+	public static final String SPATIAL_COMPUTATION		= "spatial_computation";
 	public static final String SPATIAL_GRAPH			= "spatial_graph";
 	public static final String SPECIES					= "species";
 	public static final String STATIC					= "static";
@@ -74,6 +78,8 @@ public interface IConcept {
 	public static final String STRING					= "string";
 	public static final String SURFACE_UNIT				= "surface_unit";
 	public static final String TERNARY					= "ternary";
+	public static final String TEXT						= "text";
+	public static final String THREED					= "3d";
 	public static final String TIME						= "time";
 	public static final String TIME_UNIT				= "time_unit";
 	public static final String TOPOLOGY					= "topology";

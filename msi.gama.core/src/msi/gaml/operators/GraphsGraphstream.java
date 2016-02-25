@@ -18,6 +18,7 @@ import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -254,7 +255,8 @@ public class GraphsGraphstream {
 	 * @param parameters
 	 * @return
 	 */
-	@operator(value = "generate_barabasi_albert")
+	@operator(value = "generate_barabasi_albert",
+			concept = { IConcept.ALGORITHM })
 	@doc(value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
 		comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. " +
 			"A scale-free network is a network whose degree distribution follows a power law, at least asymptotically." +
@@ -282,7 +284,8 @@ public class GraphsGraphstream {
 
 	}
 
-	@operator(value = "generate_barabasi_albert")
+	@operator(value = "generate_barabasi_albert",
+			concept = {})
 	@doc(value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
 		comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. " +
 			"A scale-free network is a network whose degree distribution follows a power law, at least asymptotically." +
@@ -312,7 +315,8 @@ public class GraphsGraphstream {
 
 	}
 
-	@operator(value = "generate_watts_strogatz")
+	@operator(value = "generate_watts_strogatz",
+			concept = { IConcept.ALGORITHM })
 	@doc(value = "returns a random small-world network (following Watts-Strogatz model).",
 		comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering." +
 			"A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]" +
@@ -345,7 +349,8 @@ public class GraphsGraphstream {
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy, gen, -1, isSychronized);
 	}
 
-	@operator(value = "generate_watts_strogatz")
+	@operator(value = "generate_watts_strogatz",
+			concept = {})
 	@doc(value = "returns a random small-world network (following Watts-Strogatz model).",
 		comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering." +
 			"A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]" +
@@ -379,7 +384,8 @@ public class GraphsGraphstream {
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_specy, gen, -1, isSychronized);
 	}
 
-	@operator(value = "generate_complete_graph")
+	@operator(value = "generate_complete_graph",
+			concept = { IConcept.GRAPH })
 	@doc(value = "returns a fully connected graph.",
 		comment = "Arguments should include following elements:",
 		usages = { @usage("\"vertices_specy\": the species of vertices"),
@@ -413,7 +419,8 @@ public class GraphsGraphstream {
 		return g;
 	}
 
-	@operator(value = "generate_complete_graph")
+	@operator(value = "generate_complete_graph",
+			concept = {})
 	@doc(value = "returns a fully connected graph.",
 		comment = "Arguments should include following elements:",
 		usages = { @usage("\"agents\": list of existing node agents"), @usage("\"edges_specy\": the species of edges"),
@@ -449,7 +456,8 @@ public class GraphsGraphstream {
 		return g;
 	}
 
-	@operator(value = "generate_complete_graph")
+	@operator(value = "generate_complete_graph",
+			concept = {})
 	@doc(value = "returns a fully connected graph.",
 		comment = "Arguments should include following elements:",
 		usages = { @usage("\"vertices_specy\": the species of vertices"),
@@ -470,7 +478,8 @@ public class GraphsGraphstream {
 			size - 1, isSychronized);
 	}
 
-	@operator(value = "generate_complete_graph")
+	@operator(value = "generate_complete_graph",
+			concept = {})
 	@doc(value = "returns a fully connected graph.",
 		comment = "Arguments should include following elements:",
 		usages = { @usage("\"agents\": list of existing node agents"), @usage("\"edges_specy\": the species of edges"),
