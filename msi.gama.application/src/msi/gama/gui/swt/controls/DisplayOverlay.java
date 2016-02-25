@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
+import java.util.*;
 import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -18,6 +19,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.views.LayeredDisplayView;
@@ -42,6 +44,22 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	protected final Composite referenceComposite;
 	private final Shell parentShell;
 	final boolean createExtraInfo;
+	Timer timer = new Timer();
+
+	public class FPSTask extends TimerTask {
+
+		@Override
+		public void run() {
+			GAMA.getGui().asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					zoom.setText(getView().getOverlayZoomInfo());
+				}
+			});
+
+		}
+	}
 
 	class OverlayListener extends ShellAdapter implements ControlListener {
 
@@ -89,6 +107,9 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		c.addControlListener(listener);
 		if ( provider != null ) {
 			provider.setTarget(new ThreadedOverlayUpdater(this), view.getDisplaySurface());
+		}
+		if ( GamaPreferences.CORE_SHOW_FPS.getValue() ) {
+			timer.schedule(new FPSTask(), 0, 1000);
 		}
 	}
 
@@ -185,7 +206,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	private String getScaleRight() {
 		double real = getView().getValueOfOnePixelInModelUnits() * 100;
-		System.out.println("GetScaleRight " + real);
+		// System.out.println("GetScaleRight " + real);
 		if ( real > 1000 ) {
 			return String.format("%.1fkm", real / 1000d);
 		} else if ( real < 0.001 ) {
@@ -456,6 +477,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 				parentShell.removeControlListener(listener);
 				parentShell.removeShellListener(listener);
 			}
+			timer.cancel();
 			popup.dispose();
 		}
 	}

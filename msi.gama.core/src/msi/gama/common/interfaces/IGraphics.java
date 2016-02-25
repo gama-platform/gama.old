@@ -31,9 +31,9 @@ public interface IGraphics {
 	public static final RenderingHints SPEED_RENDERING = new RenderingHints(null);
 	public static final RenderingHints MEDIUM_RENDERING = new RenderingHints(null);
 
-	public abstract int getDisplayWidthInPixels();
+	public abstract int getDisplayWidth();
 
-	public abstract int getDisplayHeightInPixels();
+	public abstract int getDisplayHeight();
 
 	// public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 	// final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, GamaColor gridColor,
@@ -48,8 +48,6 @@ public interface IGraphics {
 	public abstract Rectangle2D drawString(final String string, final TextDrawingAttributes attributes);
 
 	public abstract Rectangle2D drawShape(final IShape shape, final ShapeDrawingAttributes attributes);
-
-	public abstract void initFor(IDisplaySurface surface);
 
 	public abstract void setOpacity(double i);
 
@@ -81,5 +79,11 @@ public interface IGraphics {
 	public abstract Double getZoomLevel();
 
 	public abstract boolean is2D();
+
+	public abstract int getViewWidth();
+
+	public abstract int getViewHeight();
+
+	public IDisplaySurface getSurface();
 
 }

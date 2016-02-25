@@ -139,29 +139,20 @@ public final class FastMath extends CmnFastMath {
 			negateResult = true;
 		}
 		if ( angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO ) {
-			if ( false ) {
-				// Can give very bad relative error near PI (mod 2*PI).
-				angle = remainderTwoPi(angle);
-				if ( angle < 0.0 ) {
-					angle = -angle;
-					negateResult = !negateResult;
-				}
+			final long remAndQuad = remainderPiO2(angle);
+			angle = decodeRemainder(remAndQuad);
+			final double sin;
+			final int q = decodeQuadrant(remAndQuad);
+			if ( q == 0 ) {
+				sin = sin(angle);
+			} else if ( q == 1 ) {
+				sin = cos(angle);
+			} else if ( q == 2 ) {
+				sin = -sin(angle);
 			} else {
-				final long remAndQuad = remainderPiO2(angle);
-				angle = decodeRemainder(remAndQuad);
-				final double sin;
-				final int q = decodeQuadrant(remAndQuad);
-				if ( q == 0 ) {
-					sin = sin(angle);
-				} else if ( q == 1 ) {
-					sin = cos(angle);
-				} else if ( q == 2 ) {
-					sin = -sin(angle);
-				} else {
-					sin = -cos(angle);
-				}
-				return negateResult ? -sin : sin;
+				sin = -cos(angle);
 			}
+			return negateResult ? -sin : sin;
 		}
 		// index: possibly outside tables range.
 		int index = (int) (angle * SIN_COS_INDEXER + 0.5);
@@ -199,28 +190,20 @@ public final class FastMath extends CmnFastMath {
 		if ( USE_JDK_MATH ) { return Math.cos(angle); }
 		angle = Math.abs(angle);
 		if ( angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO ) {
-			if ( false ) {
-				// Can give very bad relative error near PI (mod 2*PI).
-				angle = remainderTwoPi(angle);
-				if ( angle < 0.0 ) {
-					angle = -angle;
-				}
+			final long remAndQuad = remainderPiO2(angle);
+			angle = decodeRemainder(remAndQuad);
+			final double cos;
+			final int q = decodeQuadrant(remAndQuad);
+			if ( q == 0 ) {
+				cos = cos(angle);
+			} else if ( q == 1 ) {
+				cos = -sin(angle);
+			} else if ( q == 2 ) {
+				cos = -cos(angle);
 			} else {
-				final long remAndQuad = remainderPiO2(angle);
-				angle = decodeRemainder(remAndQuad);
-				final double cos;
-				final int q = decodeQuadrant(remAndQuad);
-				if ( q == 0 ) {
-					cos = cos(angle);
-				} else if ( q == 1 ) {
-					cos = -sin(angle);
-				} else if ( q == 2 ) {
-					cos = -cos(angle);
-				} else {
-					cos = sin(angle);
-				}
-				return cos;
+				cos = sin(angle);
 			}
+			return cos;
 		}
 		// index: possibly outside tables range.
 		int index = (int) (angle * SIN_COS_INDEXER + 0.5);
@@ -268,33 +251,24 @@ public final class FastMath extends CmnFastMath {
 			negateResult = true;
 		}
 		if ( angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO ) {
-			if ( false ) {
-				// Can give very bad relative error near PI (mod 2*PI).
-				angle = remainderTwoPi(angle);
-				if ( angle < 0.0 ) {
-					angle = -angle;
-					negateResult = !negateResult;
-				}
+			final long remAndQuad = remainderPiO2(angle);
+			angle = decodeRemainder(remAndQuad);
+			final double sin;
+			final int q = decodeQuadrant(remAndQuad);
+			if ( q == 0 ) {
+				sin = sin(angle);
+				cosine.value = cos(angle);
+			} else if ( q == 1 ) {
+				sin = cos(angle);
+				cosine.value = -sin(angle);
+			} else if ( q == 2 ) {
+				sin = -sin(angle);
+				cosine.value = -cos(angle);
 			} else {
-				final long remAndQuad = remainderPiO2(angle);
-				angle = decodeRemainder(remAndQuad);
-				final double sin;
-				final int q = decodeQuadrant(remAndQuad);
-				if ( q == 0 ) {
-					sin = sin(angle);
-					cosine.value = cos(angle);
-				} else if ( q == 1 ) {
-					sin = cos(angle);
-					cosine.value = -sin(angle);
-				} else if ( q == 2 ) {
-					sin = -sin(angle);
-					cosine.value = -cos(angle);
-				} else {
-					sin = -cos(angle);
-					cosine.value = sin(angle);
-				}
-				return negateResult ? -sin : sin;
+				sin = -cos(angle);
+				cosine.value = sin(angle);
 			}
+			return negateResult ? -sin : sin;
 		}
 		int index = (int) (angle * SIN_COS_INDEXER + 0.5);
 		double delta = angle - index * SIN_COS_DELTA_HI - index * SIN_COS_DELTA_LO;
@@ -1274,16 +1248,6 @@ public final class FastMath extends CmnFastMath {
 	 */
 	public static double log1p(final double value) {
 		if ( USE_JDK_MATH ) { return Math.log1p(value); }
-		if ( false ) {
-			// This also works. Simpler but a bit slower.
-			if ( value == Double.POSITIVE_INFINITY ) { return Double.POSITIVE_INFINITY; }
-			double valuePlusOne = 1 + value;
-			if ( valuePlusOne == 1.0 ) {
-				return value;
-			} else {
-				return log(valuePlusOne) * (value / (valuePlusOne - 1.0));
-			}
-		}
 		if ( value > -1.0 ) {
 			if ( value == Double.POSITIVE_INFINITY ) { return Double.POSITIVE_INFINITY; }
 
@@ -1578,24 +1542,9 @@ public final class FastMath extends CmnFastMath {
 	 * @param value A double value.
 	 * @return Inverse of value square root.
 	 */
-	public static double invSqrtQuick(double value) {
+	public static double invSqrtQuick(final double value) {
 		if ( USE_JDK_MATH ) { return 1 / Math.sqrt(value); }
-		/*
-		 * http://en.wikipedia.org/wiki/Fast_inverse_square_root
-		 */
-		if ( false ) {
-			// With one Newton step (much slower than
-			// 1/Math.sqrt(double) if not optimized).
-			final double halfInitial = value * 0.5;
-			long bits = Double.doubleToRawLongBits(value);
-			// If n=0, 6910474759270000000L might be better (3.38e-2 max relative error).
-			bits = 0x5FE6EB50C7B537A9L - (bits >> 1);
-			value = Double.longBitsToDouble(bits);
-			value = value * (1.5 - halfInitial * value * value); // Newton step, can repeat.
-			return value;
-		} else {
-			return Double.longBitsToDouble(0x5FE6EB50C7B537A9L - (Double.doubleToRawLongBits(value) >> 1));
-		}
+		return Double.longBitsToDouble(0x5FE6EB50C7B537A9L - (Double.doubleToRawLongBits(value) >> 1));
 	}
 
 	/**
@@ -1952,14 +1901,6 @@ public final class FastMath extends CmnFastMath {
 			// then ">>1" do.
 			return (extendedMantissa >> shift) + 1 >> 1;
 		} else {
-			// +-Infinity, NaN, or a mathematical integer.
-			if ( false && ANTI_SLOW_CASTS ) { // not worth it
-				if ( Math.abs(value) >= -(float) Integer.MIN_VALUE ) {
-					// +-Infinity or a mathematical integer (mostly) out of int range.
-					return value < 0.0 ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-				}
-				// NaN or a mathematical integer (mostly) in int range.
-			}
 			return (int) value;
 		}
 	}

@@ -65,7 +65,7 @@ public class PrimitiveDescription extends StatementWithChildrenDescription {
 	}
 
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
+	public void collectMetaInformation(final Set<String> plugins) {
 		plugins.add(plugin);
 	}
 

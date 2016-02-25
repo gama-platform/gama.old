@@ -406,7 +406,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
+	public void collectMetaInformation(final Set<String> plugins) {
 		plugins.add(getDefiningPlugin());
 	}
 

@@ -42,7 +42,8 @@ public abstract class AbstractLayer implements ILayer {
 
 	protected ILayerStatement definition;
 	private String name;
-	private final Point positionInPixels, sizeInPixels;
+	protected final Point positionInPixels;
+	protected final Point sizeInPixels;
 	private Envelope visibleModelRegion;
 
 	protected AbstractLayer(final ILayerStatement layer) {
@@ -88,8 +89,8 @@ public abstract class AbstractLayer implements ILayer {
 	public void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		if ( definition != null ) {
 			definition.getBox().compute(scope);
-			g.setOpacity(definition.getTransparency());
 			setPositionAndSize(definition.getBox(), g);
+			g.setOpacity(definition.getTransparency());
 		}
 		g.beginDrawingLayer(this);
 		privateDrawDisplay(scope, g);
@@ -143,8 +144,8 @@ public abstract class AbstractLayer implements ILayer {
 	 */
 	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
 		// Voir comment conserver cette information
-		final int pixelWidth = g.getDisplayWidthInPixels();
-		final int pixelHeight = g.getDisplayHeightInPixels();
+		final int pixelWidth = g.getDisplayWidth();
+		final int pixelHeight = g.getDisplayHeight();
 
 		ILocation point = box.getPosition();
 		// Computation of x
@@ -256,9 +257,9 @@ public abstract class AbstractLayer implements ILayer {
 			case ILayerStatement.SPECIES: {
 				return new SpeciesLayer(layer);
 			}
-			case ILayerStatement.TEXT: {
-				return new TextLayer(layer);
-			}
+			// case ILayerStatement.TEXT: {
+			// return new TextLayer(layer);
+			// }
 			case ILayerStatement.IMAGE: {
 				return new ImageLayer(scope, layer);
 			}
@@ -268,14 +269,17 @@ public abstract class AbstractLayer implements ILayer {
 			case ILayerStatement.CHART: {
 				return new ChartLayer(layer);
 			}
-			case ILayerStatement.QUADTREE: {
-				return new QuadTreeLayer(layer);
-			}
+			// case ILayerStatement.QUADTREE: {
+			// return new QuadTreeLayer(layer);
+			// }
 			case ILayerStatement.EVENT: {
 				return new EventLayer(layer);
 			}
 			case ILayerStatement.GRAPHICS: {
 				return new GraphicLayer(layer);
+			}
+			case ILayerStatement.OVERLAY: {
+				return new OverlayLayer(layer);
 			}
 			default:
 				return null;

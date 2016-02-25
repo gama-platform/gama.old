@@ -68,7 +68,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
+	public void collectMetaInformation(final Set<String> plugins) {
 		SpeciesDescription sd = getType().getContentType().getSpecies();
 		if ( sd != null ) {
 			plugins.add(sd.getDefiningPlugin());

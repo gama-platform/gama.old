@@ -88,7 +88,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
+	public void collectMetaInformation(final Set<String> plugins) {
 		getSerializer().collectPlugins(this, plugins);
 	}
 

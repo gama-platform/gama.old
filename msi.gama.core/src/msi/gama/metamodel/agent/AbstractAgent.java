@@ -150,14 +150,14 @@ public abstract class AbstractAgent implements IAgent {
 	public boolean crosses(final IShape g) {
 		return getGeometry().crosses(g);
 	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#getPerimeter()
-	 */
-	@Override
-	public double getPerimeter() {
-		return getGeometry().getPerimeter();
-	}
+	//
+	// /**
+	// * @see msi.gama.interfaces.IGeometry#getPerimeter()
+	// */
+	// @Override
+	// public double getPerimeter() {
+	// return getGeometry().getPerimeter();
+	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)

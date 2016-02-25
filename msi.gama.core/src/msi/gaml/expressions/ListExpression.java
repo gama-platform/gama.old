@@ -124,10 +124,10 @@ public class ListExpression extends AbstractExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
+	public void collectMetaInformation(final Set<String> plugins) {
 		for ( IExpression e : elements ) {
 			if ( e != null ) {
-				e.collectPlugins(plugins);
+				e.collectMetaInformation(plugins);
 			}
 		}
 	}

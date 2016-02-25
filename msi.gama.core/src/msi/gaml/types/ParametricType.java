@@ -437,10 +437,10 @@ public class ParametricType implements IContainerType {
 	public void setDefiningPlugin(final String plugin) {}
 
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
-		type.collectPlugins(plugins);
-		contentsType.collectPlugins(plugins);
-		keyType.collectPlugins(plugins);
+	public void collectMetaInformation(final Set<String> plugins) {
+		type.collectMetaInformation(plugins);
+		contentsType.collectMetaInformation(plugins);
+		keyType.collectMetaInformation(plugins);
 	}
 
 	@Override

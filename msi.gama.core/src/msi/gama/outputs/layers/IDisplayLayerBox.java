@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'IDisplayLayerBox.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -18,10 +18,10 @@ import msi.gaml.expressions.IExpression;
 
 /**
  * The class IDisplayLayerBox.
- * 
+ *
  * @author drogoul
  * @since 14 d�c. 2011
- * 
+ *
  */
 public interface IDisplayLayerBox {
 
@@ -68,5 +68,7 @@ public interface IDisplayLayerBox {
 	public abstract void setSelectable(IScope s, IExpression r);
 
 	public abstract void setSelectable(Boolean b);
+
+	public abstract void setConstantBoundingBox(boolean b);
 
 }

@@ -20,6 +20,7 @@ import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
+import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
@@ -42,11 +43,10 @@ import msi.gaml.statements.draw.*;
 
 public class AWTDisplayGraphics extends AbstractDisplayGraphics implements PointTransformation {
 
-	private Graphics2D renderer;
+	private Graphics2D currentRenderer, overlayRenderer, normalRenderer;
 	private final ShapeWriter sw = new ShapeWriter(this);
 	private boolean highlight;
 	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
-	IDisplaySurface surface;
 
 	static {
 
@@ -72,21 +72,20 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	public AWTDisplayGraphics(final IDisplaySurface surface, final Graphics2D g2) {
 		super(surface);
-		this.surface = surface;
-		renderer = g2;
-		renderer.setFont(defaultFont);
+		currentRenderer = g2;
+		currentRenderer.setFont(defaultFont);
 
 	}
 
 	@Override
 	public void beginDrawingLayers() {
-		renderer.setRenderingHints(data.isAntialias() ? QUALITY_RENDERING : SPEED_RENDERING);
+		currentRenderer.setRenderingHints(data.isAntialias() ? QUALITY_RENDERING : SPEED_RENDERING);
 	}
 
 	@Override
 	public void setOpacity(final double alpha) {
 		super.setOpacity(alpha);
-		renderer.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha));
+		currentRenderer.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha));
 	}
 
 	/**
@@ -128,32 +127,32 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
-		final AffineTransform saved = renderer.getTransform();
+		final AffineTransform saved = currentRenderer.getTransform();
 		double curX, curY;
 		if ( attributes.location == null ) {
-			curX = xOffsetInPixels;
-			curY = yOffsetInPixels;
+			curX = getXOffsetInPixels();
+			curY = getYOffsetInPixels();
 		} else {
 			curX = xFromModelUnitsToPixels(attributes.location.getX());
 			curY = yFromModelUnitsToPixels(attributes.location.getY());
 		}
 		double curWidth, curHeight;
 		if ( attributes.size == null ) {
-			curWidth = widthOfLayerInPixels;
-			curHeight = heightOfLayerInPixels;
+			curWidth = getLayerWidth();
+			curHeight = getLayerHeight();
 		} else {
 			curWidth = wFromModelUnitsToPixels(attributes.size.getX());
 			curHeight = hFromModelUnitsToPixels(attributes.size.getY());
 		}
 		if ( attributes.rotation != null && attributes.rotation.key != null ) {
-			renderer.rotate(Maths.toRad * attributes.rotation.key, curX + curWidth / 2, curY + curHeight / 2);
+			currentRenderer.rotate(Maths.toRad * attributes.rotation.key, curX + curWidth / 2, curY + curHeight / 2);
 		}
-		renderer.drawImage(img, (int) FastMath.round(curX), (int) FastMath.round(curY), (int) curWidth, (int) curHeight,
-			null);
+		currentRenderer.drawImage(img, (int) FastMath.round(curX), (int) FastMath.round(curY), (int) curWidth,
+			(int) curHeight, null);
 		if ( attributes.border != null ) {
 			drawGridLine(img, attributes.border);
 		}
-		renderer.setTransform(saved);
+		currentRenderer.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
 		if ( highlight ) {
 			highlightRectangleInPixels(rect);
@@ -181,25 +180,26 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			}
 			return result;
 		}
-		renderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
+		currentRenderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
 		double curX, curY, curZ;
 		if ( attributes.location == null ) {
-			curX = xOffsetInPixels;
-			curY = yOffsetInPixels;
+			curX = getXOffsetInPixels();
+			curY = getYOffsetInPixels();
 			// curZ = 0;
 		} else {
 			curX = xFromModelUnitsToPixels(attributes.location.getX());
 			curY = yFromModelUnitsToPixels(attributes.location.getY());
 		}
-		renderer.setFont(attributes.font);
-		final AffineTransform saved = renderer.getTransform();
+		currentRenderer.setFont(attributes.font);
+		final AffineTransform saved = currentRenderer.getTransform();
 		if ( attributes.rotation != null && attributes.rotation.key != null ) {
-			final Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);
-			renderer.rotate(Maths.toRad * attributes.rotation.key, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
+			final Rectangle2D r = currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
+			currentRenderer.rotate(Maths.toRad * attributes.rotation.key, curX + r.getWidth() / 2,
+				curY + r.getHeight() / 2);
 		}
-		renderer.drawString(string, (int) curX, (int) curY);
-		renderer.setTransform(saved);
-		return renderer.getFontMetrics().getStringBounds(string, renderer);
+		currentRenderer.drawString(string, (int) curX, (int) curY);
+		currentRenderer.setTransform(saved);
+		return currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
 
 	}
 
@@ -210,15 +210,15 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final Shape s = sw.toShape(geom);
 		try {
 			final Rectangle2D r = s.getBounds2D();
-			renderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
+			currentRenderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
 			if ( geom instanceof Lineal || geom instanceof Puntal ? false : !attributes.empty ) {
-				renderer.fill(s);
+				currentRenderer.fill(s);
 				if ( attributes.border != null ) {
-					renderer.setColor(highlight ? data.getHighlightColor() : attributes.border);
+					currentRenderer.setColor(highlight ? data.getHighlightColor() : attributes.border);
 				}
 			}
 			if ( attributes.border != null ) {
-				renderer.draw(s);
+				currentRenderer.draw(s);
 			}
 			return r;
 		} catch (final Exception e) {
@@ -230,58 +230,45 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public void fillBackground(final Color bgColor, final double opacity) {
 		setOpacity(opacity);
-		renderer.setColor(bgColor);
-		renderer.fillRect(0, 0, (int) widthOfDisplayInPixels, (int) heightOfDisplayInPixels);
+		currentRenderer.setColor(bgColor);
+		currentRenderer.fillRect(0, 0, (int) surface.getDisplayWidth(), (int) surface.getDisplayHeight());
 	}
 
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 		final Line2D line = new Line2D.Double();
-		renderer.setColor(lineColor);
+		currentRenderer.setColor(lineColor);
 		// The image contains the dimensions of the grid.
-		final double stepx = widthOfLayerInPixels / image.getWidth();
-		for ( double step = 0.0, end = widthOfLayerInPixels; step < end + 1; step += stepx ) {
-			line.setLine(xOffsetInPixels + step, yOffsetInPixels, xOffsetInPixels + step,
-				yOffsetInPixels + heightOfLayerInPixels);
-			renderer.draw(line);
+		final double stepx = getLayerWidth() / image.getWidth();
+		for ( double step = 0.0, end = getLayerWidth(); step < end + 1; step += stepx ) {
+			line.setLine(getXOffsetInPixels() + step, getYOffsetInPixels(), getXOffsetInPixels() + step,
+				getYOffsetInPixels() + getLayerHeight());
+			currentRenderer.draw(line);
 		}
-		line.setLine(xOffsetInPixels + widthOfLayerInPixels - 1, yOffsetInPixels,
-			xOffsetInPixels + widthOfLayerInPixels - 1, yOffsetInPixels + heightOfLayerInPixels - 1);
-		renderer.draw(line);
-		final double stepy = heightOfLayerInPixels / image.getHeight();
-		for ( double step = 0.0, end = heightOfLayerInPixels; step < end + 1; step += stepy ) {
-			line.setLine(xOffsetInPixels, yOffsetInPixels + step, xOffsetInPixels + widthOfLayerInPixels,
-				yOffsetInPixels + step);
-			renderer.draw(line);
+		line.setLine(getXOffsetInPixels() + getLayerWidth() - 1, getYOffsetInPixels(),
+			getXOffsetInPixels() + getLayerWidth() - 1, getYOffsetInPixels() + getLayerHeight() - 1);
+		currentRenderer.draw(line);
+		final double stepy = getLayerHeight() / image.getHeight();
+		for ( double step = 0.0, end = getLayerHeight(); step < end + 1; step += stepy ) {
+			line.setLine(getXOffsetInPixels(), getYOffsetInPixels() + step, getXOffsetInPixels() + getLayerWidth(),
+				getYOffsetInPixels() + step);
+			currentRenderer.draw(line);
 		}
-		line.setLine(xOffsetInPixels, yOffsetInPixels + heightOfLayerInPixels - 1,
-			xOffsetInPixels + widthOfLayerInPixels - 1, yOffsetInPixels + heightOfLayerInPixels - 1);
-		renderer.draw(line);
+		line.setLine(getXOffsetInPixels(), getYOffsetInPixels() + getLayerHeight() - 1,
+			getXOffsetInPixels() + getLayerWidth() - 1, getYOffsetInPixels() + getLayerHeight() - 1);
+		currentRenderer.draw(line);
 
 	}
 
 	private void highlightRectangleInPixels(final Rectangle2D r) {
 		if ( r == null ) { return; }
-		final Stroke oldStroke = renderer.getStroke();
-		renderer.setStroke(new BasicStroke(5));
-		final Color old = renderer.getColor();
-		renderer.setColor(data.getHighlightColor());
-		renderer.draw(r);
-		renderer.setStroke(oldStroke);
-		renderer.setColor(old);
+		final Stroke oldStroke = currentRenderer.getStroke();
+		currentRenderer.setStroke(new BasicStroke(5));
+		final Color old = currentRenderer.getColor();
+		currentRenderer.setColor(data.getHighlightColor());
+		currentRenderer.draw(r);
+		currentRenderer.setStroke(oldStroke);
+		currentRenderer.setColor(old);
 	}
-
-	@Override
-	public void beginHighlight() {
-		highlight = true;
-	}
-
-	@Override
-	public void endHighlight() {
-		highlight = false;
-	}
-
-	@Override
-	public void endDrawingLayers() {}
 
 	/**
 	 * Method is2D()
@@ -292,20 +279,24 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		return true;
 	}
 
-	/**
-	 * Method getVisibleRegion()
-	 * @see msi.gama.common.interfaces.IGraphics#getVisibleRegion()
-	 */
-	@Override
-	public Envelope getVisibleRegion() {
-		return surface.getVisibleRegionForLayer(currentLayer);
+	public void beginOverlay(final OverlayLayer layer) {
+		currentRenderer = overlayRenderer;
+		currentRenderer.setColor(layer.getBackground());
+		currentRenderer.fillRoundRect((int) getXOffsetInPixels(), (int) getYOffsetInPixels(), getLayerWidth(),
+			getLayerHeight(), 10, 10);
 	}
 
-	/**
-	 * @param g
-	 */
+	public void endOverlay() {
+		currentRenderer = normalRenderer;
+	}
+
 	public void setGraphics2D(final Graphics2D g) {
-		renderer = g;
+		normalRenderer = g;
+		currentRenderer = g;
+	}
+
+	public void setUntranslatedGraphics2D(final Graphics2D g) {
+		overlayRenderer = g;
 	}
 
 }

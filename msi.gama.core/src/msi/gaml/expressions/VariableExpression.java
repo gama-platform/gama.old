@@ -77,7 +77,7 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
+	public void collectMetaInformation(final Set<String> plugins) {
 		if ( definitionDescription != null ) {
 			IDescription var = definitionDescription.getSpeciesContext().getVariable(getName());
 			if ( var != null ) {

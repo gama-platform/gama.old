@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JPanel;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -39,7 +39,7 @@ import msi.gaml.operators.*;
 import msi.gaml.operators.fastmaths.*;
 
 @display("java2D")
-public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
+public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySurface {
 
 	private final LayeredDisplayOutput output;
 	// protected final LayeredDisplayData data;
@@ -65,67 +65,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	private BufferedImage buffImage;
 	private boolean alreadyZooming = false;
 
-	private class DisplayMouseListener extends MouseAdapter {
-
-		boolean dragging;
-
-		@Override
-		public void mouseDragged(final MouseEvent e) {
-			if ( SwingUtilities.isLeftMouseButton(e) ) {
-				dragging = true;
-				canBeUpdated = false;
-				final Point p = e.getPoint();
-				if ( mousePosition == null ) {
-					mousePosition = new Point(getWidth() / 2, getHeight() / 2);
-				}
-				Point origin = getOrigin();
-				setOrigin(origin.x + p.x - mousePosition.x, origin.y + p.y - mousePosition.y);
-				mousePosition = p;
-				repaint();
-			}
-		}
-
-		@Override
-		public void mouseMoved(final MouseEvent e) {
-			// we need the mouse position so that after zooming
-			// that position of the image is maintained
-			mousePosition = e.getPoint();
-		}
-
-		@Override
-		public void mouseWheelMoved(final MouseWheelEvent e) {
-			final boolean zoomIn = e.getWheelRotation() < 0;
-			mousePosition = e.getPoint();
-			Point p = new Point(mousePosition.x, mousePosition.y);
-			double zoomFactor = applyZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement);
-			Point origin = getOrigin();
-			double newx = FastMath.round(zoomFactor * (p.x - origin.x) - p.x + getWidth() / 2d);
-			double newy = FastMath.round(zoomFactor * (p.y - origin.y) - p.y + getHeight() / 2d);
-			centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
-			updateDisplay(true);
-		}
-
-		@Override
-		public void mouseClicked(final MouseEvent evt) {
-			if ( evt.getClickCount() == 2 ) {
-				zoomFit();
-			} else if ( evt.isControlDown() || evt.isMetaDown() || evt.isPopupTrigger() ) {
-				selectAgents(evt.getX(), evt.getY());
-			}
-		}
-
-		@Override
-		public void mouseReleased(final MouseEvent e) {
-			if ( dragging ) {
-				canBeUpdated = true;
-				updateDisplay(true);
-				dragging = false;
-
-			}
-
-		}
-
-	}
+	protected volatile int frames = 0;
 
 	public AWTJava2DDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
@@ -145,7 +85,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		setBackground(output.getData().getBackgroundColor());
 		setName(output.getName());
 		manager = new LayerManager(this, output);
-		final DisplayMouseListener d = new DisplayMouseListener();
+		final DisplayMouseListener d = new DisplayMouseListener(this);
 		addMouseListener(d);
 		addMouseMotionListener(d);
 		addMouseWheelListener(d);
@@ -208,6 +148,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		return manager;
 	}
 
+	@Override
 	public Point getOrigin() {
 		return viewPort.getLocation();
 	}
@@ -375,7 +316,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	// return canBeUpdated && iGraphics != null;
 	// }
 
-	protected void setOrigin(final int x, final int y) {
+	@Override
+	public void setOrigin(final int x, final int y) {
 		viewPort.x = x;
 		viewPort.y = y;
 		translation.setToTranslation(x, y);
@@ -394,6 +336,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 				repaint();
 			} finally {
 				canBeUpdated = true;
+				frames++;
 			}
 		}
 	};
@@ -439,6 +382,13 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		// }
 
 		// EXPERIMENTAL
+	}
+
+	@Override
+	public int getFPS() {
+		int result = frames;
+		frames = 0;
+		return result;
 	}
 
 	@Override
@@ -795,6 +745,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 		super.setBounds(r);
 	}
 
+	@Override
 	public double applyZoom(final double factor) {
 		double real_factor = FastMath.min(factor, 10 / getZoomLevel());
 		boolean success = false;
@@ -877,11 +828,13 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	}
 
+	@Override
 	public void centerOnDisplayCoordinates(final Point p) {
 		Point origin = getOrigin();
 		centerOnViewCoordinates(new Point(p.x + origin.x, p.y + origin.y));
 	}
 
+	@Override
 	public void selectAgents(final int mousex, final int mousey) {
 		Point origin = getOrigin();
 		final int xc = mousex - origin.x;
@@ -933,6 +886,24 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public synchronized void releaseLock() {
 		lockAcquired = false;
 		notify();
+	}
+
+	/**
+	 * Method canBeUpdated()
+	 * @see msi.gama.gui.displays.awt.IJava2DDisplaySurface#canBeUpdated(boolean)
+	 */
+	@Override
+	public void canBeUpdated(final boolean b) {
+		canBeUpdated = b;
+	}
+
+	/**
+	 * Method getZoomIncrement()
+	 * @see msi.gama.gui.displays.awt.IJava2DDisplaySurface#getZoomIncrement()
+	 */
+	@Override
+	public double getZoomIncrement() {
+		return zoomIncrement;
 	}
 
 }

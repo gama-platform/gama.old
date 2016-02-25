@@ -333,14 +333,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public String getOverlayZoomInfo() {
 		IDisplaySurface surface = getDisplaySurface();
 		boolean openGL = isOpenGL();
-
+		String result = GamaPreferences.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
 		if ( !openGL ) {
-			return "Zoom " + getZoomLevel() + "%";
+			return result + "Zoom " + getZoomLevel() + "%";
 		} else {
 			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
 			ILocation camera = ds.getCameraPosition();
-			return String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(), camera.getY(),
-				camera.getZ());
+			return result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
+				camera.getY(), camera.getZ());
 		}
 	}
 

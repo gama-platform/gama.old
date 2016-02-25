@@ -574,11 +574,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void setChildren(final List<? extends ISymbol> commands) {
 		List<AbstractLayerStatement> list = new ArrayList();
 		for ( ISymbol s : commands ) {
-			if ( s instanceof OverlayStatement ) {
+			if ( s instanceof OverlayStatement && ((OverlayStatement) s).hasInfo() ) {
 				overlayInfo = (OverlayStatement) s;
-			} else if ( s instanceof AbstractLayerStatement ) {
-				list.add((AbstractLayerStatement) s);
 			}
+			list.add((AbstractLayerStatement) s);
+
 		}
 		setLayers(list);
 	}

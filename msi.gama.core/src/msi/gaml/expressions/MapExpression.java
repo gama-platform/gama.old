@@ -185,16 +185,16 @@ public class MapExpression extends AbstractExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
+	public void collectMetaInformation(final Set<String> plugins) {
 		for ( IExpression e : keys ) {
 			if ( e != null ) {
-				e.collectPlugins(plugins);
+				e.collectMetaInformation(plugins);
 			}
 		}
 
 		for ( IExpression e : vals ) {
 			if ( e != null ) {
-				e.collectPlugins(plugins);
+				e.collectMetaInformation(plugins);
 			}
 		}
 	}

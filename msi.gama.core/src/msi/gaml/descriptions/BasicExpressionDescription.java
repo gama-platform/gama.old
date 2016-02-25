@@ -48,7 +48,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	@Override
 	public void collectPlugins(final Set<String> plugins) {
 		if ( expression != null ) {
-			expression.collectPlugins(plugins);
+			expression.collectMetaInformation(plugins);
 		}
 	}
 

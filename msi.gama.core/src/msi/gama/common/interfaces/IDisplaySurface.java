@@ -169,4 +169,9 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	 */
 	Envelope getVisibleRegionForLayer(ILayer currentLayer);
 
+	/**
+	 * @return
+	 */
+	int getFPS();
+
 }

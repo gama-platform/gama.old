@@ -374,7 +374,7 @@ public class GamlResource extends LazyLinkingResource {
 			// marked as 'edited'
 			model.validate(isEdited);
 			updateWith(model);
-			model.collectPlugins(requires);
+			model.collectMetaInformation(requires);
 			model.dispose();
 
 			//

@@ -335,4 +335,13 @@ public class NullDisplaySurface implements IDisplaySurface {
 		return null;
 	}
 
+	/**
+	 * Method getFPS()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getFPS()
+	 */
+	@Override
+	public int getFPS() {
+		return 0;
+	}
+
 }

@@ -12,6 +12,7 @@
 package msi.gama.metamodel.shape;
 
 import com.vividsolutions.jts.geom.*;
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -340,6 +341,106 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 			result.add(new GamaPoint(c));
 		}
 		return result;
+	}
+
+	/**
+	 * Method setDepth()
+	 * @see msi.gama.metamodel.shape.IShape#setDepth(double)
+	 */
+	@Override
+	public void setDepth(final double depth) {
+		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+	}
+
+	/**
+	 * Method getArea()
+	 * @see msi.gama.metamodel.shape.IShape#getArea()
+	 */
+	@Override
+	public Double getArea() {
+		return getReferenceGeometry().getArea();
+	}
+
+	/**
+	 * Method getVolume()
+	 * @see msi.gama.metamodel.shape.IShape#getVolume()
+	 */
+	@Override
+	public Double getVolume() {
+		return getReferenceGeometry().getVolume();
+	}
+
+	/**
+	 * Method getHoles()
+	 * @see msi.gama.metamodel.shape.IShape#getHoles()
+	 */
+	@Override
+	public IList<GamaShape> getHoles() {
+		final IList<GamaShape> holes = GamaListFactory.create(Types.GEOMETRY);
+		Geometry g = getInnerGeometry();
+		if ( g instanceof Polygon ) {
+			final Polygon p = (Polygon) g;
+			final int n = p.getNumInteriorRing();
+			for ( int i = 0; i < n; i++ ) {
+				holes.add(new GamaShape(GeometryUtils.fromLineToPoylgon(p.getInteriorRingN(i))));
+			}
+		}
+		return holes;
+
+	}
+
+	/**
+	 * Method getCentroid()
+	 * @see msi.gama.metamodel.shape.IShape#getCentroid()
+	 */
+	@Override
+	public GamaPoint getCentroid() {
+		return new GamaPoint(absoluteLocation);
+	}
+
+	/**
+	 * Method getExteriorRing()
+	 * @see msi.gama.metamodel.shape.IShape#getExteriorRing()
+	 */
+	@Override
+	public GamaShape getExteriorRing(final IScope scope) {
+		return getReferenceGeometry().getExteriorRing(scope).translatedTo(scope, absoluteLocation);
+	}
+
+	/**
+	 * Method getWidth()
+	 * @see msi.gama.metamodel.shape.IShape#getWidth()
+	 */
+	@Override
+	public Double getWidth() {
+		return getReferenceGeometry().getWidth();
+	}
+
+	/**
+	 * Method getHeight()
+	 * @see msi.gama.metamodel.shape.IShape#getHeight()
+	 */
+	@Override
+	public Double getHeight() {
+		return getReferenceGeometry().getHeight();
+	}
+
+	/**
+	 * Method getDepth()
+	 * @see msi.gama.metamodel.shape.IShape#getDepth()
+	 */
+	@Override
+	public Double getDepth() {
+		return getReferenceGeometry().getDepth();
+	}
+
+	/**
+	 * Method getGeometricEnvelope()
+	 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
+	 */
+	@Override
+	public GamaShape getGeometricEnvelope() {
+		return new GamaShape(getEnvelope().toGeometry());
 	}
 
 }

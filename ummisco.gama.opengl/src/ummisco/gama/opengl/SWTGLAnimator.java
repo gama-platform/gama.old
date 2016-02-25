@@ -11,7 +11,7 @@ import msi.gama.common.GamaPreferences;
  */
 public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
 
-	static int FRAME_PER_SECOND = GamaPreferences.OPENGL_FPS.getValue(); // TODO Make it a preference
+	static int FRAME_PER_SECOND = GamaPreferences.OPENGL_FPS.getValue();
 	protected final int targetFPS = FRAME_PER_SECOND;
 	protected final Thread animatorThread;
 	protected final GLAutoDrawable drawable;
@@ -19,6 +19,8 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 	protected volatile boolean stopRequested = false;
 	protected volatile boolean pauseRequested = false;
 	protected volatile boolean animating = false;
+
+	protected int frames = 0;
 
 	public SWTGLAnimator(final GLAutoDrawable drawable) {
 		// this.targetFPS = FRAME_PER_SECOND;
@@ -60,7 +62,9 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	@Override
 	public float getLastFPS() {
-		return 0;
+		int result = frames;
+		frames = 0;
+		return result;
 	}
 
 	@Override
@@ -75,7 +79,9 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	@Override
 	public float getTotalFPS() {
-		return 0;
+		int result = frames;
+		frames = 0;
+		return result;
 	}
 
 	@Override
@@ -157,6 +163,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 			if ( !pauseRequested ) {
 				long timeBegin = System.currentTimeMillis();
 				this.displayGL();
+				frames++;
 				long timeUsed = System.currentTimeMillis() - timeBegin;
 				long timeSleep = frameDuration - timeUsed;
 				if ( timeSleep >= 0 ) {

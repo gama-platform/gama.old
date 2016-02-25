@@ -94,9 +94,9 @@ public abstract class AbstractObject {
 								new GamaPoint(pickedPoint.x, -pickedPoint.y));
 						}
 					});
-					renderer.displaySurface.selectAgent(ag);
+					renderer.getSurface().selectAgent(ag);
 				} else {
-					renderer.displaySurface.selectAgent(attributes.getAgent());
+					renderer.getSurface().selectAgent(attributes.getAgent());
 				}
 
 			}

@@ -37,8 +37,8 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.operators.fastmaths.*;
 
-@display("experimental")
-public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySurface {
+@display("canvas")
+public class BufferStrategyJava2DDisplaySurface extends JPanel implements IJava2DDisplaySurface {
 
 	private final LayeredDisplayOutput output;
 	protected final Rectangle viewPort = new Rectangle();
@@ -55,14 +55,16 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
 	protected boolean disposed;
+	BufferStrategy bs;
 
 	private IScope scope;
 	final DisplayMouseListener listener;
 	int frames;
 
 	private boolean alreadyZooming = false;
+	private final Canvas canvas;
 
-	public NewJava2DDisplaySurface(final Object ... args) {
+	public BufferStrategyJava2DDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy());
@@ -70,21 +72,25 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 		output.getData().addListener(this);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 		// setOpaque(true);
-		setDoubleBuffered(true);
+		// setDoubleBuffered(true);
 		// Experimental
 		setIgnoreRepaint(true);
+		this.setLayout(new BorderLayout());
+		canvas = new Canvas();
+		canvas.setIgnoreRepaint(true);
+		add(canvas);
 
 		//
 
-		setLayout(new BorderLayout());
+		// setLayout(new BorderLayout());
 		setBackground(output.getData().getBackgroundColor());
 		setName(output.getName());
 		manager = new LayerManager(this, output);
 		listener = new DisplayMouseListener(this);
-		addMouseListener(listener);
-		addMouseMotionListener(listener);
-		addMouseWheelListener(listener);
-		addComponentListener(new ComponentAdapter() {
+		canvas.addMouseListener(listener);
+		canvas.addMouseMotionListener(listener);
+		canvas.addMouseWheelListener(listener);
+		canvas.addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
@@ -289,7 +295,7 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 	public void updateDisplay(final boolean force) {
 		if ( disposed ) { return; }
 		// if ( !canBeUpdated ) { return; }
-		repaint();
+		draw();
 		// if ( EventQueue.isDispatchThread() ) {
 		// EventQueue.invokeLater(displayRunnable);
 		// } else {
@@ -395,26 +401,53 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 	// }
 	// }
 
-	@Override
-	public void paintComponent(final Graphics g) {
+	// @Override
+	// public void paintComponent(final Graphics g) {
+	// if ( iGraphics == null ) { return; }
+	// super.paintComponent(g);
+	// // ((Graphics2D) g).drawImage(buffImage, translation, null);
+	// if ( output.getData().isAutosave() ) {
+	// snapshot();
+	// }
+	// Graphics2D g2d =
+	// (Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) getDisplayWidth(), (int) getDisplayHeight());
+	//
+	// ((AWTDisplayGraphics) iGraphics).setGraphics2D(g2d);
+	// manager.drawLayersOn(iGraphics);
+	// g2d.dispose();
+	// frames++;
+	// }
+
+	public BufferStrategy getBufferStrategy() {
+		if ( bs == null ) {
+			canvas.createBufferStrategy(3);
+			bs = canvas.getBufferStrategy();
+		}
+		return bs;
+	}
+
+	void draw() {
 		if ( iGraphics == null ) { return; }
-		super.paintComponent(g);
-		// ((Graphics2D) g).drawImage(buffImage, translation, null);
 		if ( output.getData().isAutosave() ) {
 			snapshot();
 		}
+
+		// Method which prepares the screen for drawing
+		bs = getBufferStrategy(); // Gets the buffer strategy our canvas is currently using
+
+		Graphics g = bs.getDrawGraphics(); // Get the graphics from our buffer strategy (which is connected to our canvas)
+
 		Graphics2D g2d =
 			(Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) getDisplayWidth(), (int) getDisplayHeight());
 
-		getIGraphics().setGraphics2D(g2d);
-		getIGraphics().setUntranslatedGraphics2D((Graphics2D) g);
+		((AWTDisplayGraphics) iGraphics).setGraphics2D(g2d);
 		manager.drawLayersOn(iGraphics);
 		g2d.dispose();
-		frames++;
-	}
 
-	AWTDisplayGraphics getIGraphics() {
-		return (AWTDisplayGraphics) iGraphics;
+		g.dispose(); // Dispose of our graphics object because it is no longer needed, and unnecessarily taking up memory
+		bs.show(); // Show the buffer strategy, flip it if necessary (make back buffer the visible buffer and vice versa)
+		frames++;
+
 	}
 
 	@Override
@@ -581,6 +614,7 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 
 	@Override
 	public void dispose() {
+		java.lang.System.out.println("Disposing Java2D display");
 		getData().removeListener(this);
 		if ( disposed ) { return; }
 		disposed = true;

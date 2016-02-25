@@ -175,8 +175,8 @@ public class ScopedExpression implements IExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
-		wrapped.collectPlugins(plugins);
+	public void collectMetaInformation(final Set<String> plugins) {
+		wrapped.collectMetaInformation(plugins);
 	}
 
 }

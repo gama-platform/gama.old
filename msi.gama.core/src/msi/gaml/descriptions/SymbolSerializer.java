@@ -299,7 +299,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		plugins.add(desc.getDefiningPlugin());
 		collectPluginsInFacets(desc, plugins);
 		collectPluginsInChildren(desc, plugins);
-		desc.getType().collectPlugins(plugins);
+		desc.getType().collectMetaInformation(plugins);
 	}
 
 	/**
@@ -330,7 +330,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	protected void collectPluginsInChildren(final C desc, final Set<String> plugins) {
 		List<IDescription> children = desc.getChildren();
 		for ( IDescription s : children ) {
-			s.collectPlugins(plugins);
+			s.collectMetaInformation(plugins);
 		}
 	}
 

@@ -177,9 +177,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
-		prototype.collectPlugins(plugins);
-		child.collectPlugins(plugins);
+	public void collectMetaInformation(final Set<String> plugins) {
+		prototype.collectMetaInformation(plugins);
+		child.collectMetaInformation(plugins);
 	}
 
 }

@@ -77,7 +77,7 @@ public class GamlResourceDocManager implements IDocManager {
 		 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 		 */
 		@Override
-		public void collectPlugins(final Set<String> plugins) {}
+		public void collectMetaInformation(final Set<String> plugins) {}
 
 		@Override
 		public String getDocumentation() {

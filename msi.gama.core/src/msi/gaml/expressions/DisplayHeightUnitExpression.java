@@ -25,7 +25,7 @@ public class DisplayHeightUnitExpression extends UnitConstantExpression {
 	public Double value(final IScope scope) {
 		IGraphics g = scope.getGraphics();
 		if ( g == null ) { return 0d; }
-		return (double) g.getDisplayHeightInPixels();
+		return (double) g.getDisplayHeight();
 		// return (double) g.getEnvironmentHeight();
 	}
 

@@ -29,6 +29,6 @@ public interface IGamlDescription extends INamed {
 
 	public String getDefiningPlugin();
 
-	public void collectPlugins(Set<String> plugins);
+	public void collectMetaInformation(Set<String> plugins);
 
 }

@@ -266,14 +266,14 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public void setAgent(final IAgent agent) {}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#getPerimeter()
-	 */
-	@Override
-	public double getPerimeter() {
-		return 0d;
-	}
+	//
+	// /**
+	// * @see msi.gama.interfaces.IGeometry#getPerimeter()
+	// */
+	// @Override
+	// public double getPerimeter() {
+	// return 0d;
+	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
@@ -399,6 +399,114 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public IType getType() {
 		return Types.POINT;
+	}
+
+	/**
+	 * Method getArea()
+	 * @see msi.gama.metamodel.shape.IShape#getArea()
+	 */
+	@Override
+	public Double getArea() {
+		return 0d;
+	}
+
+	/**
+	 * Method getVolume()
+	 * @see msi.gama.metamodel.shape.IShape#getVolume()
+	 */
+	@Override
+	public Double getVolume() {
+		return 0d;
+	}
+
+	/**
+	 * Method getPerimeter()
+	 * @see msi.gama.metamodel.shape.IShape#getPerimeter()
+	 */
+	@Override
+	public double getPerimeter() {
+		return 0;
+	}
+
+	/**
+	 * Method getHoles()
+	 * @see msi.gama.metamodel.shape.IShape#getHoles()
+	 */
+	@Override
+	public IList<GamaShape> getHoles() {
+		return GamaListFactory.EMPTY_LIST;
+	}
+
+	/**
+	 * Method getCentroid()
+	 * @see msi.gama.metamodel.shape.IShape#getCentroid()
+	 */
+	@Override
+	public GamaPoint getCentroid() {
+		return this;
+	}
+
+	/**
+	 * Method getExteriorRing()
+	 * @see msi.gama.metamodel.shape.IShape#getExteriorRing()
+	 */
+	@Override
+	public GamaShape getExteriorRing(final IScope scope) {
+		return new GamaShape(this);
+	}
+
+	/**
+	 * Method getWidth()
+	 * @see msi.gama.metamodel.shape.IShape#getWidth()
+	 */
+	@Override
+	public Double getWidth() {
+		return 0d;
+	}
+
+	/**
+	 * Method getHeight()
+	 * @see msi.gama.metamodel.shape.IShape#getHeight()
+	 */
+	@Override
+	public Double getHeight() {
+		return 0d;
+	}
+
+	/**
+	 * Method getDepth()
+	 * @see msi.gama.metamodel.shape.IShape#getDepth()
+	 */
+	@Override
+	public Double getDepth() {
+		return 0d;
+	}
+
+	/**
+	 * Method getGeometricEnvelope()
+	 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
+	 */
+	@Override
+	public GamaShape getGeometricEnvelope() {
+		return new GamaShape(this);
+	}
+
+	/**
+	 * Method getGeometries()
+	 * @see msi.gama.metamodel.shape.IShape#getGeometries()
+	 */
+	@Override
+	public IList<? extends IShape> getGeometries() {
+		return GamaListFactory.createWithoutCasting(Types.GEOMETRY, new GamaShape(this));
+	}
+
+	/**
+	 * Method isMultiple()
+	 * @see msi.gama.metamodel.shape.IShape#isMultiple()
+	 */
+	@Override
+	public boolean isMultiple() {
+		return false;
 	}
 
 }

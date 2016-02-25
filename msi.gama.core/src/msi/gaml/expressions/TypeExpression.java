@@ -84,8 +84,8 @@ public class TypeExpression extends AbstractExpression {
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
-		type.collectPlugins(plugins);
+	public void collectMetaInformation(final Set<String> plugins) {
+		type.collectMetaInformation(plugins);
 	}
 
 }

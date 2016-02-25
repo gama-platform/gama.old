@@ -183,11 +183,11 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectPlugins(final Set<String> plugins) {
-		prototype.collectPlugins(plugins);
+	public void collectMetaInformation(final Set<String> plugins) {
+		prototype.collectMetaInformation(plugins);
 		for ( IExpression e : exprs ) {
 			if ( e != null ) {
-				e.collectPlugins(plugins);
+				e.collectMetaInformation(plugins);
 			}
 		}
 	}
