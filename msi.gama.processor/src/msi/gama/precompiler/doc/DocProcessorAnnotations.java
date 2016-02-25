@@ -28,6 +28,10 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -400,7 +404,7 @@ public class DocProcessorAnnotations {
 	public static org.w3c.dom.Element getCategories(final Element e, final Document doc, org.w3c.dom.Element categoriesElt, TypeConverter tc){	
 		ArrayList<String> categories = new ArrayList<String>();
 		String[] categoriesTab = null;
-		NodeList nL = categoriesElt.getElementsByTagName(XMLElements.CATEGORY);
+		NodeList nL = categoriesElt.getElementsByTagName(XMLElements.CATEGORIES);
 		for(int i = 0; i < nL.getLength() ; i++){
 			categories.add(((org.w3c.dom.Element) nL.item(i)).getAttribute(XMLElements.ATT_CAT_ID));
 		}
@@ -431,7 +435,7 @@ public class DocProcessorAnnotations {
 			}			
 		}
 
-		// We had a particular category that is red from the iterator 
+		// We had a particular category that is read from the iterator 
 		if(e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).iterator()){
 			org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
 			catElt.setAttribute(XMLElements.ATT_CAT_ID, IOperatorCategory.ITERATOR);
@@ -445,5 +449,55 @@ public class DocProcessorAnnotations {
 		org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATORS_CATEGORIES);
 		
 		return getCategories(e,doc,categoriesElt, tc);
+	}
+	
+	public static org.w3c.dom.Element getConcepts(final Element e, final Document doc, org.w3c.dom.Element conceptElt, TypeConverter tc){	
+		ArrayList<String> concepts = new ArrayList<String>();
+		String[] conceptsTab = null;
+		NodeList nL = conceptElt.getElementsByTagName(XMLElements.CONCEPTS);
+		for(int i = 0; i < nL.getLength() ; i++){
+			concepts.add(((org.w3c.dom.Element) nL.item(i)).getAttribute(XMLElements.ATT_CAT_ID));
+		}
+		
+		// To be able to deal with various annotations....
+		if(e.getAnnotation(operator.class) != null){
+			conceptsTab = e.getAnnotation(operator.class).concept();			
+		} else if (e.getAnnotation(constant.class) != null) {
+			conceptsTab = e.getAnnotation(constant.class).concept();				
+		} else if (e.getAnnotation(type.class) != null) {
+			conceptsTab = e.getAnnotation(type.class).concept();				
+		} else if (e.getAnnotation(species.class) != null) {
+			conceptsTab = e.getAnnotation(species.class).concept();				
+		} else if (e.getAnnotation(symbol.class) != null) {
+			conceptsTab = e.getAnnotation(symbol.class).concept();				
+		} else if (e.getAnnotation(skill.class) != null) {
+			conceptsTab = e.getAnnotation(skill.class).concept();				
+		} 
+		
+		if((e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).concept().length > 0) || 
+				(e.getAnnotation(constant.class) != null && e.getAnnotation(constant.class).concept().length > 0) || 
+				(e.getAnnotation(type.class) != null && e.getAnnotation(type.class).concept().length > 0) || 
+				(e.getAnnotation(skill.class) != null && e.getAnnotation(skill.class).concept().length > 0) || 
+				(e.getAnnotation(species.class) != null && e.getAnnotation(species.class).concept().length > 0) || 
+				(e.getAnnotation(symbol.class) != null && e.getAnnotation(symbol.class).concept().length > 0)) {
+			for(String conceptName : conceptsTab){
+				if(!concepts.contains(conceptName)){
+					concepts.add(conceptName);
+					
+					org.w3c.dom.Element catElt = doc.createElement(XMLElements.CONCEPT);
+					catElt.setAttribute(XMLElements.ATT_CAT_ID, conceptName);
+					conceptElt.appendChild(catElt);
+				}
+			}			
+		}
+
+		// We had a particular category that is red from the iterator 
+		if(e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).iterator()){
+			org.w3c.dom.Element catElt = doc.createElement(XMLElements.CONCEPT);
+			catElt.setAttribute(XMLElements.ATT_CAT_ID, IOperatorCategory.ITERATOR);
+			conceptElt.appendChild(catElt);
+		}
+	
+		return conceptElt;
 	}	
 }

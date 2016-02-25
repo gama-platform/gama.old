@@ -12,6 +12,7 @@
 package msi.gama.precompiler;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.*;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -80,6 +81,12 @@ public class GamlDocProcessor {
 		Set<? extends Element> setConstants = env.getElementsAnnotatedWith(constant.class);
 
 		root.appendChild(this.processDocXMLCategories(setConstants, doc, XMLElements.CONSTANTS_CATEGORIES));
+		
+		// ////////////////////////////////////////////////
+		// /// Parsing of Concepts
+		Field [] conceptArray = IConcept.class.getFields();
+		
+		root.appendChild(this.processDocXMLConcepts(conceptArray, doc, XMLElements.CONCEPT_LIST));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Constants
@@ -199,6 +206,8 @@ public class GamlDocProcessor {
 							((int[]) colorTab[i + 1])[2] + ", alpha=" + ((int[]) colorTab[i + 1])[3]);
 					constantElt.appendChild(
 						DocProcessorAnnotations.getCategories(e, doc, doc.createElement(XMLElements.CATEGORIES), tc));
+					constantElt.appendChild(
+							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc));
 
 					eltConstants.appendChild(constantElt);
 				}
@@ -319,6 +328,28 @@ public class GamlDocProcessor {
 		}
 		return categories;
 	}
+	
+	private org.w3c.dom.Element processDocXMLConcepts(final Field[] conceptArray, final Document doc, final String typeElement) {
+		org.w3c.dom.Element concepts = doc.createElement(typeElement);
+		for (Field field : conceptArray) {
+			org.w3c.dom.Element conceptElem;
+			conceptElem = doc.createElement(XMLElements.CONCEPT);
+			try {
+				conceptElem.setAttribute(XMLElements.ATT_CAT_ID, field.get(new Object()).toString());
+			} catch (DOMException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			concepts.appendChild(conceptElem);
+		}
+		return concepts;
+	}
 
 	private org.w3c.dom.Element processDocXMLOperators(final Set<? extends ExecutableElement> set, final Document doc) {
 		org.w3c.dom.Element operators = doc.createElement(XMLElements.OPERATORS);
@@ -385,6 +416,7 @@ public class GamlDocProcessor {
 
 					// Category
 					org.w3c.dom.Element categoriesElt;
+					org.w3c.dom.Element conceptsElt;
 					if ( operator.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).getLength() == 0 ) {
 						categoriesElt = DocProcessorAnnotations.getCategories(e, doc,
 							doc.createElement(XMLElements.OPERATOR_CATEGORIES), tc);
@@ -392,8 +424,11 @@ public class GamlDocProcessor {
 						categoriesElt = DocProcessorAnnotations.getCategories(e, doc, (org.w3c.dom.Element) operator
 							.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).item(0), tc);
 					}
+					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+							doc.createElement(XMLElements.CONCEPTS), tc);
 
 					operator.appendChild(categoriesElt);
+					operator.appendChild(conceptsElt);
 
 					// Parse the combination operands / result
 					org.w3c.dom.Element combinaisonOpResElt;
