@@ -152,7 +152,8 @@ public class Graphs {
 
 	@operator(value = "agent_from_geometry",
 		type = IType.AGENT,
-		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH })
+		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+		concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.PATH} )
 	@doc(
 		value = "returns the agent corresponding to given geometry (right-hand operand) in the given path (left-hand operand).",
 		usages = @usage("if the left-hand operand is nil, returns nil") ,
@@ -180,7 +181,8 @@ public class Graphs {
 	 * }
 	 */
 
-	@operator(value = "contains_vertex", type = IType.BOOL, category = { IOperatorCategory.GRAPH })
+	@operator(value = "contains_vertex", type = IType.BOOL, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE } )
 	@doc(
 		value = "returns true if the graph(left-hand operand) contains the given vertex (righ-hand operand), false otherwise",
 		usages = @usage("if the left-hand operand is nil, returns false") ,
@@ -193,7 +195,8 @@ public class Graphs {
 		return graph.containsVertex(vertex);
 	}
 
-	@operator(value = "contains_edge", type = IType.BOOL, category = { IOperatorCategory.GRAPH })
+	@operator(value = "contains_edge", type = IType.BOOL, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.EDGE } )
 	@doc(
 		value = "returns true if the graph(left-hand operand) contains the given edge (righ-hand operand), false otherwise",
 		masterDoc = true,
@@ -207,7 +210,8 @@ public class Graphs {
 		return graph.containsEdge(edge);
 	}
 
-	@operator(value = "contains_edge", type = IType.BOOL, category = { IOperatorCategory.GRAPH })
+	@operator(value = "contains_edge", type = IType.BOOL, category = { IOperatorCategory.GRAPH },
+			concept = {} )
 	@doc(
 		value = "returns true if the graph(left-hand operand) contains the given edge (righ-hand operand), false otherwise",
 		usages = @usage(
@@ -223,7 +227,8 @@ public class Graphs {
 		return graph.containsEdge(edge.first(), edge.last());
 	}
 
-	@operator(value = "source_of", type = ITypeProvider.FIRST_KEY_TYPE, category = { IOperatorCategory.GRAPH })
+	@operator(value = "source_of", type = ITypeProvider.FIRST_KEY_TYPE, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.EDGE, IConcept.NODE } )
 	@doc(
 		value = "returns the source of the edge (right-hand operand) contained in the graph given in left-hand operand.",
 		usages = @usage("if the lef-hand operand (the graph) is nil, throws an Exception") ,
@@ -244,7 +249,8 @@ public class Graphs {
 		return null;
 	}
 
-	@operator(value = "target_of", type = ITypeProvider.FIRST_KEY_TYPE, category = { IOperatorCategory.GRAPH })
+	@operator(value = "target_of", type = ITypeProvider.FIRST_KEY_TYPE, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.EDGE, IConcept.NODE } )
 	@doc(
 		value = "returns the target of the edge (right-hand operand) contained in the graph given in left-hand operand.",
 		usages = @usage("if the lef-hand operand (the graph) is nil, returns nil") ,
@@ -263,7 +269,8 @@ public class Graphs {
 		return null;
 	}
 
-	@operator(value = "weight_of", category = { IOperatorCategory.GRAPH })
+	@operator(value = "weight_of", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.GRAPH_WEIGHT } )
 	@doc(
 		value = "returns the weight of the given edge (right-hand operand) contained in the graph given in right-hand operand.",
 		comment = "In a localized graph, an edge has a weight by default (the distance between both vertices).",
@@ -284,7 +291,8 @@ public class Graphs {
 	@operator(value = "in_edges_of",
 		type = IType.LIST,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.EDGE } )
 	@doc(
 		value = "returns the list of the in-edges of a vertex (right-hand operand) in the graph given as left-hand operand.",
 		examples = { @example(value = "graph graphFromMap <- graph([]);", isTestOnly = true),
@@ -300,7 +308,7 @@ public class Graphs {
 
 	@operator(value = "edge_between",
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH, IConcept.EDGE })
 	@doc(value = "returns the edge linking two nodes",
 		examples = {
 			@example(value = "graphFromMap edge_between node1::node2", equals = "edge1", isExecutable = false) },
@@ -313,7 +321,7 @@ public class Graphs {
 		return null;
 	}
 
-	@operator(value = "in_degree_of", type = IType.INT, category = { IOperatorCategory.GRAPH })
+	@operator(value = "in_degree_of", type = IType.INT, category = { IOperatorCategory.GRAPH }, concept = { IConcept.GRAPH, IConcept.NODE } )
 	@doc(value = "returns the in degree of a vertex (right-hand operand) in the graph given as left-hand operand.",
 		examples = { @example(value = "graph graphFromMap <- graph([]);", isTestOnly = true),
 			@example(value = "graphFromMap in_degree_of (node(3))", equals = "2", test = false) },
@@ -328,7 +336,8 @@ public class Graphs {
 	@operator(value = "out_edges_of",
 		type = IType.LIST,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
 	@doc(
 		value = "returns the list of the out-edges of a vertex (right-hand operand) in the graph given as left-hand operand.",
 		masterDoc = true,
@@ -343,7 +352,8 @@ public class Graphs {
 		return GamaListFactory.create(graph.getType().getContentType());
 	}
 
-	@operator(value = "out_degree_of", type = IType.INT, category = { IOperatorCategory.GRAPH })
+	@operator(value = "out_degree_of", type = IType.INT, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
 	@doc(value = "returns the out degree of a vertex (right-hand operand) in the graph given as left-hand operand.",
 		examples = { @example(value = "graph graphFromMap <- graph([]);", isTestOnly = true),
 			@example(value = "graphFromMap out_degree_of (node(3))", equals = "4", test = false) },
@@ -355,7 +365,8 @@ public class Graphs {
 		return 0;
 	}
 
-	@operator(value = "degree_of", type = IType.INT, category = { IOperatorCategory.GRAPH })
+	@operator(value = "degree_of", type = IType.INT, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE })
 	@doc(
 		value = "returns the degree (in+out) of a vertex (right-hand operand) in the graph given as left-hand operand.",
 		examples = { @example(value = "graph graphFromMap <- graph([]);", isTestOnly = true),
@@ -371,7 +382,8 @@ public class Graphs {
 	@operator(value = "connected_components_of",
 		type = IType.LIST,
 		content_type = IType.LIST,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
 	@doc(
 		value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ",
 		examples = { @example(value = "graph my_graph <- graph([]);"),
@@ -394,7 +406,8 @@ public class Graphs {
 		return results;
 	}
 
-	@operator(value = "nb_cycles", type = IType.INT, category = { IOperatorCategory.GRAPH })
+	@operator(value = "nb_cycles", type = IType.INT, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
 	@doc(
 		value = "returns the maximum number of independent cycles in a graph. This number (u) is estimated through the number of nodes (v), links (e) and of sub-graphs (p): u = e - v + p.",
 		examples = { @example(value = "graph graphEpidemio <- graph([]);"),
@@ -409,7 +422,8 @@ public class Graphs {
 		return L - S + C;
 	}
 
-	@operator(value = "alpha_index", category = { IOperatorCategory.GRAPH })
+	@operator(value = "alpha_index", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
 	@doc(
 		value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected: alpha = nb_cycles / (2`*`S-5) - planar graph)",
 		examples = { @example(value = "graph graphEpidemio <- graph([]);", isTestOnly = true),
@@ -422,7 +436,8 @@ public class Graphs {
 		return nbCycles(scope, graph) / (2.0 * S - 5);
 	}
 
-	@operator(value = "beta_index", category = { IOperatorCategory.GRAPH })
+	@operator(value = "beta_index", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
 	@doc(
 		value = "returns the beta index of the graph (Measures the level of connectivity in a graph and is expressed by the relationship between the number of links (e) over the number of nodes (v) : beta = e/v.",
 		examples = { @example(value = "graph graphEpidemio <- graph([]);"),
@@ -434,7 +449,8 @@ public class Graphs {
 		return (graph.edgeSet().size() + 0.0) / graph.vertexSet().size();
 	}
 
-	@operator(value = "gamma_index", category = { IOperatorCategory.GRAPH })
+	@operator(value = "gamma_index", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
 	@doc(
 		value = "returns the gamma index of the graph (A measure of connectivity that considers the relationship between the number of observed links and the number of possible links: gamma = e/(3 `*` (v - 2)) - for planar graph.",
 		examples = { @example(value = "graph graphEpidemio <- graph([]);"),
@@ -446,7 +462,8 @@ public class Graphs {
 		return graph.edgeSet().size() / (2.0 * graph.vertexSet().size() - 5);
 	}
 
-	@operator(value = "connectivity_index", category = { IOperatorCategory.GRAPH })
+	@operator(value = "connectivity_index", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
 	@doc(
 		value = "retruns a simple connetivity index. This number is estimated through the number of nodes (v) and of sub-graphs (p) : IC = (v - p) /(v - 1).",
 		examples = { @example(value = "graph graphEpidemio <- graph([]);"),
@@ -466,7 +483,8 @@ public class Graphs {
 	@operator(value = "betweenness_centrality",
 		type = IType.MAP,
 		content_type = IType.FLOAT,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH })
 	@doc(
 		value = "returns a map containing for each vertex (key), its betweenness centrality (value): number of shortest paths passing through each vertex ",
 		examples = { @example(value = "graph graphEpidemio <- graph([]);"),
@@ -510,7 +528,8 @@ public class Graphs {
 	@operator(value = { "neighbors_of" },
 		type = IType.LIST,
 		content_type = ITypeProvider.FIRST_KEY_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.NODE, IConcept.NEIGHBORS })
 	@doc(
 		value = "returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)",
 		examples = {
@@ -530,7 +549,8 @@ public class Graphs {
 	@operator(value = "predecessors_of",
 		type = IType.LIST,
 		content_type = ITypeProvider.FIRST_KEY_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.NODE, IConcept.NEIGHBORS })
 	@doc(
 		value = "returns the list of predecessors (i.e. sources of in edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)",
 		examples = {
@@ -547,7 +567,8 @@ public class Graphs {
 
 	@operator(value = "successors_of",
 		content_type = ITypeProvider.FIRST_KEY_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.NODE, IConcept.NEIGHBORS })
 	@doc(
 		value = "returns the list of successors (i.e. targets of out edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)",
 		examples = {
@@ -570,7 +591,8 @@ public class Graphs {
 	@operator(value = "as_edge_graph",
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		index_type = IType.GEOMETRY,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.CAST, IConcept.MAP, IConcept.LIST, IConcept.EDGE })
 	@doc(value = "creates a graph from the list/map of edges given as operand",
 		masterDoc = true,
 		usages = @usage(
@@ -598,7 +620,8 @@ public class Graphs {
 
 	@operator(value = "as_edge_graph",
 		index_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = {})
 	@doc(usages = @usage(
 		value = "if the operand is a map, the graph will be built by creating edges from pairs of the map",
 		examples = @example(value = "as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])",
@@ -618,7 +641,8 @@ public class Graphs {
 	@operator(value = "as_intersection_graph",
 		content_type = IType.GEOMETRY,
 		index_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.NODE, IConcept.CAST })
 	@doc(
 		value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices with an intersection (with a given tolerance).",
 		comment = "as_intersection_graph is more efficient for a list of geometries (but less accurate) than as_distance_graph.",
@@ -641,7 +665,8 @@ public class Graphs {
 	@operator(value = "as_distance_graph",
 		content_type = IType.GEOMETRY,
 		index_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE, IConcept.CAST })
 	@doc(
 		value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
 		masterDoc = true,
@@ -660,7 +685,8 @@ public class Graphs {
 	@operator(value = "grid_cells_to_graph",
 		content_type = IType.GEOMETRY,
 		index_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.GRID, IConcept.CAST, IConcept.NEIGHBORS })
 	@doc(value = "creates a graph from a list of cells (operand). An edge is created between neighbours.",
 		masterDoc = true,
 		comment = "",
@@ -678,7 +704,8 @@ public class Graphs {
 	@operator(value = "as_distance_graph",
 		content_type = IType.GEOMETRY,
 		index_type = IType.GEOMETRY,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = {})
 	@doc(
 		value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
 		see = { "as_intersection_graph", "as_edge_graph" })
@@ -693,7 +720,8 @@ public class Graphs {
 		return createdGraph;
 	}
 
-	@operator(value = "as_distance_graph", category = { IOperatorCategory.GRAPH })
+	@operator(value = "as_distance_graph", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(
 		value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
 		see = { "as_intersection_graph", "as_edge_graph" })
@@ -713,7 +741,8 @@ public class Graphs {
 
 	@operator(value = "spatial_graph",
 		index_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH })
+		category = { IOperatorCategory.GRAPH },
+		concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT, IConcept.SPATIAL_GRAPH })
 	@doc(
 		value = "allows to create a spatial graph from a container of vertices, without trying to wire them. The container can be empty. Emits an error if the contents of the container are not geometries, points or agents",
 		see = { "graph" })
@@ -732,7 +761,8 @@ public class Graphs {
 	// return GamaGraphType.asRegularGraph(g);
 	// }
 
-	@operator(value = "use_cache", category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH })
+	@operator(value = "use_cache", category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH })
 	@doc(
 		value = "if the second operand is true, the operand graph will store in a cache all the previously computed shortest path (the cache be cleared if the graph is modified).",
 		comment = "the operator alters the operand graph, it does not create a new one.",
@@ -741,7 +771,8 @@ public class Graphs {
 		return GamaGraphType.useChacheForShortestPath(g, useCache);
 	}
 
-	@operator(value = "directed", category = { IOperatorCategory.GRAPH })
+	@operator(value = "directed", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
 	@doc(value = "the operand graph becomes a directed graph.",
 		comment = "the operator alters the operand graph, it does not create a new one.",
 		see = { "undirected" })
@@ -750,7 +781,8 @@ public class Graphs {
 		return GamaGraphType.asDirectedGraph(g);
 	}
 
-	@operator(value = "undirected", category = { IOperatorCategory.GRAPH })
+	@operator(value = "undirected", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH })
 	@doc(value = "the operand graph becomes an undirected graph.",
 		comment = "the operator alters the operand graph, it does not create a new one.",
 		see = { "directed" })
@@ -759,7 +791,8 @@ public class Graphs {
 		return GamaGraphType.asUndirectedGraph(g);
 	}
 
-	@operator(value = "with_weights", category = { IOperatorCategory.GRAPH })
+	@operator(value = "with_weights", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.GRAPH_WEIGHT })
 	@doc(value = "returns the graph (left-hand operand) with weight given in the map (right-hand operand).",
 		masterDoc = true,
 		comment = "this operand re-initializes the path finder",
@@ -780,7 +813,8 @@ public class Graphs {
 		return graph;
 	}
 
-	@operator(value = "with_weights", category = { IOperatorCategory.GRAPH })
+	@operator(value = "with_weights", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(
 		usages = @usage("if the right-hand operand is a list, affects the n elements of the list to the n first edges. " +
 			"Note that the ordering of edges may change overtime, which can create some problems...") )
@@ -800,8 +834,9 @@ public class Graphs {
 		return graph;
 	}
 
-	@operator(value = "with_optimizer_type", category = { IOperatorCategory.GRAPH })
-	@doc(value = "changes the shortest path computation method of the griven graph",
+	@operator(value = "with_optimizer_type", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH, IConcept.GRAPH_WEIGHT, IConcept.OPTIMIZATION, IConcept.ALGORITHM })
+	@doc(value = "changes the shortest path computation method of the given graph",
 		comment = "the right-hand operand can be \"Djikstra\", \"Bellmann\", \"Astar\" to use the associated algorithm. " +
 			"Note that these methods are dynamic: the path is computed when needed. In contrarily, if the operand is another string, " +
 			"a static method will be used, i.e. all the shortest are previously computed.",
@@ -813,7 +848,8 @@ public class Graphs {
 		return graph;
 	}
 
-	@operator(value = "add_node", type = IType.GRAPH, category = { IOperatorCategory.GRAPH })
+	@operator(value = "add_node", type = IType.GRAPH, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE })
 	@doc(value = "adds a node in a graph.",
 		examples = @example(value = "graph add_node node(0) ",
 			equals = "the graph with node(0)",
@@ -825,7 +861,8 @@ public class Graphs {
 		return g;
 	}
 
-	@operator(value = "remove_node_from", category = { IOperatorCategory.GRAPH })
+	@operator(value = "remove_node_from", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE })
 	@doc(value = "removes a node from a graph.",
 		comment = "all the edges containing this node are also removed.",
 		examples = @example(value = "node(0) remove_node_from graphEpidemio",
@@ -838,7 +875,8 @@ public class Graphs {
 		return g;
 	}
 
-	@operator(value = "rewire_n", category = { IOperatorCategory.GRAPH })
+	@operator(value = "rewire_n", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.EDGE })
 	@doc(value = "rewires the given count of edges.",
 		comment = "If there are too many edges, all the edges will be rewired.",
 		examples = {
@@ -852,7 +890,8 @@ public class Graphs {
 		return g;
 	}
 
-	@operator(value = "add_edge", type = IType.GRAPH, category = { IOperatorCategory.GRAPH })
+	@operator(value = "add_edge", type = IType.GRAPH, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.EDGE })
 	@doc(
 		value = "add an edge between a source vertex and a target vertex (resp. the left and the right element of the pair operand)",
 		comment = "if the edge already exists, the graph is unchanged",
@@ -866,7 +905,8 @@ public class Graphs {
 
 	@operator(value = "path_between",
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH })
+		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+		concept = { IConcept.GRAPH, IConcept.PATH })
 	@doc(value = "The shortest path between a list of two objects in a graph",
 		masterDoc = true,
 		examples = { @example(value = "path_between (my_graph, ag1, ag2)",
@@ -885,7 +925,8 @@ public class Graphs {
 	@operator(value = "paths_between",
 		type = IType.LIST,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH })
+		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+		concept = { IConcept.GRAPH, IConcept.PATH })
 	@doc(value = "The K shortest paths between a list of two objects in a graph",
 		examples = { @example(value = "paths_between(my_graph, ag1:: ag2, 2)",
 			equals = "the 2 shortest paths (ordered by length) between ag1 and ag2",
@@ -902,7 +943,8 @@ public class Graphs {
 	@operator(value = "as_path",
 		type = IType.PATH,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH })
+		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+		concept = { IConcept.GRAPH, IConcept.PATH, IConcept.CAST })
 	@doc(value = "create a graph path from the list of shape",
 		examples = { @example(value = "[road1,road2,road3] as_path my_graph",
 			equals = "a path road1->road2->road3 of my_graph",
@@ -937,7 +979,8 @@ public class Graphs {
 
 	// version depuis un filename avec edge et specy et indication si spatial ou pas
 
-	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH })
+	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.FILE })
 	@doc(
 		value = "returns a graph loaded from a given file encoded into a given format. The last boolean parameter indicates whether the resulting graph will be considered as spatial or not by GAMA",
 		masterDoc = true,
@@ -959,7 +1002,8 @@ public class Graphs {
 
 	}
 
-	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH })
+	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(
 		value = "returns a graph loaded from a given file encoded into a given format. This graph will not be spatial.",
 		comment = comment,
@@ -980,7 +1024,8 @@ public class Graphs {
 
 	}
 
-	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH })
+	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(value = "loads a graph from a file",
 		masterDoc = true,
 		usages = @usage(
@@ -1001,7 +1046,8 @@ public class Graphs {
 
 	// version depuis un file avec edge et specy
 
-	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH })
+	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(
 		usages = @usage(
 			value = "\"format\": the format of the file, \"file\": the file containing the network, \"edges_specy\": the species of edges, \"vertices_specy\": the species of vertices",
@@ -1020,7 +1066,8 @@ public class Graphs {
 
 	// version depuis un filename sans edge et sans specy
 
-	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH })
+	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(
 		usages = { @usage(
 			value = "\"format\": the format of the file, \"filename\": the filename of the file containing the network",
@@ -1037,7 +1084,8 @@ public class Graphs {
 
 	// version depuis un file avec edge et specy
 
-	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH })
+	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(
 		usages = { @usage(value = "\"format\": the format of the file, \"file\": the file containing the network",
 			examples = {
@@ -1053,7 +1101,8 @@ public class Graphs {
 
 	}
 
-	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH })
+	@operator(value = "load_graph_from_file", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(
 		usages = { @usage(value = "\"file\": the file containing the network",
 			examples = {
@@ -1072,7 +1121,8 @@ public class Graphs {
 	 * }
 	 */
 
-	@operator(value = "load_shortest_paths", category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH })
+	@operator(value = "load_shortest_paths", category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH })
 	@doc(
 		value = "put in the graph cache the computed shortest paths contained in the matrix (rows: source, columns: target)",
 		examples = { @example(value = "load_shortest_paths(shortest_paths_matrix)",
@@ -1092,7 +1142,8 @@ public class Graphs {
 	@operator(value = "all_pairs_shortest_path",
 		type = IType.MATRIX,
 		content_type = IType.INT,
-		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH })
+		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+		concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH })
 	@doc(
 		value = "returns the successor matrix of shortest paths betwenn all node pairs (rows: source, columns: target): a cell (i,j) will thus contains the next node in the shortest path between i and j.",
 		examples = { @example(value = "all_pairs_shortest_paths(my_graph)",
@@ -1105,7 +1156,8 @@ public class Graphs {
 		return graph.saveShortestPaths(scope);
 	}
 
-	@operator(value = "layout", category = { IOperatorCategory.GRAPH })
+	@operator(value = "layout", category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
 	@doc(value = "layouts a GAMA graph.", masterDoc = true)
 	// TODO desc
 	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine,
@@ -1130,52 +1182,55 @@ public class Graphs {
 		return graph;
 	}
 
-	@operator(value = "layout", category = { IOperatorCategory.GRAPH })
+	@operator(value = "layout", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(value = "layouts a GAMA graph.")
 	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine,
 		final int timeout) {
 		return layoutOneshot(scope, graph, layoutEngine, timeout, GamaMapFactory.create(Types.STRING, Types.NO_TYPE));
 	}
 
-	@operator(value = "layout", category = { IOperatorCategory.GRAPH })
+	@operator(value = "layout", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(value = "layouts a GAMA graph.")
 	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine) {
 		return layoutOneshot(scope, graph, layoutEngine, -1);
 	}
 
-	@operator(value = "adjacency", category = { IOperatorCategory.GRAPH })
+	@operator(value = "adjacency", category = { IOperatorCategory.GRAPH },
+			concept = {})
 	@doc(value = "adjacency matrix of the given graph.")
 	public static GamaFloatMatrix adjacencyMatrix(final IScope scope, final GamaGraph graph) {
 		return graph.toMatrix(scope);
 	}
 
-	// TODO "complete" (pour cr�er un graphe complet)
+	// TODO "complete" (pour créer un graphe complet)
 
 	// vertices_to_graph [vertices] with_weights (vertices collect: each.val) -> renvoie un graphe
-	// construit � partir des vertex (edges g�n�r�s soit sous la forme d'une paire vertex::vertex,
-	// soit sous la forme d'un lien g�om�trique)
-	// vertices_to_graph [a1, a2, a3] with_weights ([1, 4, 8]) -> m�me chose
+	// construit à partir des vertex (edges g�n�r�s soit sous la forme d'une paire vertex::vertex,
+	// soit sous la forme d'un lien géométrique)
+	// vertices_to_graph [a1, a2, a3] with_weights ([1, 4, 8]) -> même chose
 	// edges_to_graph [edges] with_weights (edges collect: each.length) -> renvoie un graphe
-	// construit � partir des edges (vertex g�n�r�s soit sous la forme d'une paire edge::edge, soit
-	// sous la forme d'un point pour les g�om�tries)
-	// edges_to_graph [a1::a2, a2::a3] with_weights ([3.0, 1.3]) -> m�me chose
+	// construit à partir des edges (vertex g�n�r�s soit sous la forme d'une paire edge::edge, soit
+	// sous la forme d'un point pour les géométries)
+	// edges_to_graph [a1::a2, a2::a3] with_weights ([3.0, 1.3]) -> même chose
 	// add item: v1 to:g weight: 1 -> ajout d'un vertex
 	// add item: v1::v2 to:g weight:1 -> ajout d'un edge g�n�r� (et des vertex correspondants si
-	// n�cessaire)
+	// nécessaire)
 	// add item: (v1::v2)::e to: g weight: 1 -> edge (ajout d'un edge explicite et des vertex
-	// correspondants si n�cessaire)
+	// correspondants si nécessaire)
 	// remove item: v1::v2 from: g -> remove edge
 	// remove item: o from: g -> remove edge / vertex
-	// put item: e2 at: v1::v2 in: g -> replace/add an edge (on peut aussi faire la m�me chose pour
+	// put item: e2 at: v1::v2 in: g -> replace/add an edge (on peut aussi faire la même chose pour
 	// remplacer un vertex)
 
-	// TODO Transformer peu � peu toutes les primitives (GeometricFunctions, GeometricSkill, etc.)
-	// en op�rateurs (as_graph, as_network, as_triangle_graph, as_complete_graph -- En cr�ant les
+	// TODO Transformer peu à peu toutes les primitives (GeometricFunctions, GeometricSkill, etc.)
+	// en opérateurs (as_graph, as_network, as_triangle_graph, as_complete_graph -- En créant les
 	// liens dynamiques correspondants --, as_weighted_graph ...).
 
-	// TODO Ajouter les op�rateurs d'union, d'intersection, d'�galit�, de diff�rence
+	// TODO Ajouter les opérateurs d'union, d'intersection, d'égalité, de différence
 
-	// TODO Ajouter des g�n�rateurs sp�cifiques a partir de GraphGenerator (pb: quelles classes pour
+	// TODO Ajouter des générateurs spécifiques a partir de GraphGenerator (pb: quelles classes pour
 	// les vertices/edges ??
 
 }

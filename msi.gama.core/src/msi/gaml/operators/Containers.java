@@ -43,7 +43,7 @@ import msi.gaml.types.*;
  */
 public class Containers {
 
-	@operator(value = { "internal_at" }, content_type = IType.NONE, category = { IOperatorCategory.CONTAINER })
+	@operator(value = { "internal_at" }, content_type = IType.NONE, category = { IOperatorCategory.CONTAINER }, concept = { IConcept.CONTAINER, IConcept.GEOMETRY })
 	@doc("For internal use only. Corresponds to the implementation, for geometries, of the access to containers with [index]")
 	public static Object internal_at(final IScope scope, final IShape shape, final IList indices)
 		throws GamaRuntimeException {
@@ -54,7 +54,7 @@ public class Containers {
 		return map.getFromIndicesList(scope, indices);
 	}
 
-	@operator(value = { "internal_at" }, content_type = IType.NONE, category = { IOperatorCategory.CONTAINER })
+	@operator(value = { "internal_at" }, content_type = IType.NONE, category = { IOperatorCategory.CONTAINER }, concept = { IConcept.SPECIES })
 	@doc("For internal use only. Corresponds to the implementation, for agents, of the access to containers with [index]")
 	public static Object internal_at(final IScope scope, final IAgent agent, final IList indices)
 		throws GamaRuntimeException {
@@ -64,7 +64,8 @@ public class Containers {
 
 	@operator(value = { "grid_at" },
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.POINT, IOperatorCategory.GRID })
+		category = { IOperatorCategory.POINT, IOperatorCategory.GRID },
+		concept = { IConcept.GRID, IConcept.POINT })
 	@doc(value = "returns the cell of the grid (right-hand operand) at the position given by the right-hand operand",
 		comment = "If the left-hand operand is a point of floats, it is used as a point of ints.",
 		usages = { @usage("if the left-hand operand is not a grid cell species, returns nil") },
@@ -86,7 +87,8 @@ public class Containers {
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		index_type = ITypeProvider.FIRST_KEY_TYPE,
-		category = { IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.CONTAINER },
+		concept = { IConcept.CONTAINER })
 	@doc(value = "produces a set from the elements of the operand (i.e. a list without duplicated elements)",
 		usages = { @usage(value = "if the operand is nil, remove_duplicates returns nil"),
 			@usage(value = "if the operand is a graph, remove_duplicates returns the set of nodes"),
@@ -100,7 +102,8 @@ public class Containers {
 			Sets.newLinkedHashSet(nullCheck(scope, l).iterable(scope)));
 	}
 
-	@operator(value = "contains_all", can_be_const = true, category = { IOperatorCategory.CONTAINER })
+	@operator(value = "contains_all", can_be_const = true, category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
 	@doc(value = "true if the left operand contains all the elements of the right operand, false otherwise",
 		comment = "the definition of contains depends on the container",
 		usages = { @usage("if the right operand is nil or empty, contains_all returns true") },
@@ -113,7 +116,8 @@ public class Containers {
 		return Iterables.all(nullCheck(scope, l).iterable(scope), Guava.inContainer(scope, m));
 	}
 
-	@operator(value = "contains_any", can_be_const = true, category = { IOperatorCategory.CONTAINER })
+	@operator(value = "contains_any", can_be_const = true, category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
 	@doc(value = "true if the left operand contains one of the elements of the right operand, false otherwise",
 		comment = "the definition of contains depends on the container",
 		special_cases = { "if the right operand is nil or empty, contains_any returns false" },
@@ -129,7 +133,8 @@ public class Containers {
 	@operator(value = { "copy_between" /* , "copy" */ },
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.LIST })
+		category = { IOperatorCategory.LIST },
+		concept = { IConcept.CONTAINER, IConcept.LIST })
 	@doc(
 		value = "Returns a copy of the first operand between the indexes determined by the second (inclusive) and third operands (exclusive)",
 		examples = { @example(value = " copy_between ([4, 1, 6, 9 ,7], 1, 3)", equals = "[1, 6]") },
@@ -147,7 +152,8 @@ public class Containers {
 	@operator(value = { "first" },
 		can_be_const = true,
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-		category = { IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.CONTAINER },
+		concept = { IConcept.CONTAINER })
 	@doc(
 		value = "Returns the nth first elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
 	public static IList first(final IScope scope, final Integer number, final IContainer l1) {
@@ -158,7 +164,8 @@ public class Containers {
 	@operator(value = { "last" },
 		can_be_const = true,
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-		category = { IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.CONTAINER },
+		concept = { IConcept.CONTAINER })
 	@doc(
 		value = "Returns the nth last elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
 	public static IList last(final IScope scope, final Integer number, final IContainer l1) {
@@ -182,7 +189,8 @@ public class Containers {
 		// return contains(nullCheck(scope, source).iterable(scope), o);
 	}
 
-	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.SPECIES })
+	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.SPECIES },
+			concept = { IConcept.CONTAINER, IConcept.SPECIES })
 	@doc(value = "the index of the first occurence of the right operand in the left operand container",
 		usages = @usage("if the left operator is a species, returns the index of an agent in a species. If the argument is not an agent of this species, returns -1. Use int(agent) instead"),
 		masterDoc = true)
@@ -192,7 +200,8 @@ public class Containers {
 		return ((IAgent) o).getIndex();
 	}
 
-	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.LIST })
+	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.LIST },
+			concept = { IConcept.LIST })
 	@doc(value = "the index of the first occurence of the right operand in the left operand container",
 		masterDoc = true,
 		comment = "The definition of index_of and the type of the index depend on the container",
@@ -204,7 +213,8 @@ public class Containers {
 		return nullCheck(scope, l1).indexOf(o);
 	}
 
-	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.MAP })
+	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.MAP },
+			concept = { IConcept.MAP })
 	@doc(value = "the index of the first occurence of the right operand in the left operand container",
 		usages = @usage("if the left operand is a map, index_of returns the index of a value or nil if the value is not mapped"),
 		examples = { @example(value = "[1::2, 3::4, 5::6] index_of 4", equals = "3") })
@@ -215,7 +225,8 @@ public class Containers {
 		return null;
 	}
 
-	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.MATRIX })
+	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.MATRIX },
+			concept = { IConcept.CONTAINER, IConcept.MATRIX })
 	@doc(value = "the index of the first occurence of the right operand in the left operand container",
 		usages = @usage(value = "if the left operand is a matrix, index_of returns the index as a point",
 			examples = { @example(value = "matrix([[1,2,3],[4,5,6]]) index_of 4", equals = "{1.0,0.0}") }))
@@ -228,7 +239,8 @@ public class Containers {
 		return null;
 	}
 
-	@operator(value = "last_index_of", can_be_const = true, category = { IOperatorCategory.SPECIES })
+	@operator(value = "last_index_of", can_be_const = true, category = { IOperatorCategory.SPECIES },
+			concept = { IConcept.CONTAINER, IConcept.SPECIES })
 	@doc(value = "the index of the last occurence of the right operand in the left operand container",
 		usages = @usage("if the left operand is a species, the last index of an agent is the same as its index"),
 		see = { "at", "index_of" })
@@ -236,7 +248,7 @@ public class Containers {
 		return index_of(scope, nullCheck(scope, l1), o);
 	}
 
-	@operator(value = "last_index_of", can_be_const = true, category = { IOperatorCategory.LIST })
+	@operator(value = "last_index_of", can_be_const = true, category = { IOperatorCategory.LIST }, concept = { IConcept.LIST })
 	@doc(value = "the index of the last occurence of the right operand in the left operand container",
 		masterDoc = true,
 		comment = "The definition of last_index_of and the type of the index depend on the container",
@@ -248,7 +260,8 @@ public class Containers {
 		return l1.lastIndexOf(nullCheck(scope, o));
 	}
 
-	@operator(value = "last_index_of", can_be_const = true, category = { IOperatorCategory.MATRIX })
+	@operator(value = "last_index_of", can_be_const = true, category = { IOperatorCategory.MATRIX },
+			concept = { IConcept.CONTAINER, IConcept.MATRIX })
 	@doc(value = "the index of the last occurence of the right operand in the left operand container",
 		usages = @usage(value = "if the left operand is a matrix, last_index_of returns the index as a point",
 			examples = { @example(value = "matrix([[1,2,3],[4,5,4]]) last_index_of 4", equals = "{1.0,2.0}") }))
@@ -264,7 +277,8 @@ public class Containers {
 	@operator(value = "last_index_of",
 		can_be_const = true,
 		type = ITypeProvider.FIRST_KEY_TYPE,
-		category = { IOperatorCategory.MAP })
+		category = { IOperatorCategory.MAP },
+		concept = { IConcept.MAP })
 	@doc(value = "the index of the last occurence of the right operand in the left operand container",
 		usages = @usage(
 			value = "if the left operand is a map, last_index_of returns the index as an int (the key of the pair)",
@@ -280,7 +294,8 @@ public class Containers {
 	@operator(value = "inter",
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(value = "the intersection of the two operands",
 		comment = "both containers are transformed into sets (so without duplicated element, cf. remove_deplicates operator) before the set intersection is computed.",
 		usages = { @usage(value = "if an operand is a graph, it will be transformed into the set of its nodes"),
@@ -302,7 +317,8 @@ public class Containers {
 	@operator(value = IKeyword.MINUS,
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(
 		value = "returns a new list in which all the elements of the right operand have been removed from the left one",
 		comment = "The behavior of the operator depends on the type of the operands.",
@@ -324,7 +340,8 @@ public class Containers {
 	@operator(value = IKeyword.MINUS,
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(usages = { @usage(
 		value = "if the left operand is a list and the right operand is an object of any type (except list), " +
 			IKeyword.MINUS +
@@ -340,7 +357,8 @@ public class Containers {
 	@operator(value = IKeyword.MINUS,
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = {})
 	@doc(usages = {
 		@usage(value = "if the left operand is a species and the right operand is an agent of the species, " +
 			IKeyword.MINUS + " returns a list containining all the agents of the species minus this agent") })
@@ -355,7 +373,8 @@ public class Containers {
 
 	@operator(value = "of_generic_species",
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-		category = IOperatorCategory.SPECIES)
+		category = IOperatorCategory.SPECIES,
+		concept = { IConcept.SPECIES })
 	@doc(
 		value = "a list, containing the agents of the left-hand operand whose species is that denoted by the right-hand operand " +
 			"and whose species extends the right-hand operand species ",
@@ -379,7 +398,8 @@ public class Containers {
 
 	@operator(value = "of_species",
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-		category = IOperatorCategory.SPECIES)
+		category = IOperatorCategory.SPECIES,
+		concept = { IConcept.SPECIES })
 	@doc(
 		value = "a list, containing the agents of the left-hand operand whose species is the one denoted by the right-hand operand." +
 			"The expression agents of_species (species self) is equivalent to agents where (species each = species self); " +
@@ -416,7 +436,8 @@ public class Containers {
 		can_be_const = true,
 		type = IType.PAIR,
 		index_type = ITypeProvider.FIRST_TYPE,
-		content_type = ITypeProvider.SECOND_TYPE)
+		content_type = ITypeProvider.SECOND_TYPE,
+		concept = { IConcept.CONTAINER })
 	@doc(value = "produces a new pair combining the left and the right operands",
 		special_cases = "nil is not acceptable as a key (although it is as a value). If such a case happens, :: will throw an appropriate error")
 	public static GamaPair pair(final IScope scope, final IExpression a, final IExpression b) {
@@ -429,7 +450,8 @@ public class Containers {
 		can_be_const = true,
 		type = ITypeProvider.BOTH,
 		content_type = ITypeProvider.BOTH,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(value = "returns a new list containing all the elements of both operands",
 		usages = { @usage(value = "if one of the operands is nil, " + IKeyword.PLUS + " throws an error"),
 			@usage(value = "if both operands are species, returns a special type of list called meta-population"),
@@ -456,7 +478,8 @@ public class Containers {
 	@operator(value = IKeyword.PLUS,
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = {})
 	@doc(usages = @usage(
 		value = "if the right operand is an object of any type (except a container), " + IKeyword.PLUS +
 			" returns a list of the elements of the left operand, to which this object has been added",
@@ -471,7 +494,8 @@ public class Containers {
 	@operator(value = "union",
 		can_be_const = true,
 		content_type = ITypeProvider.BOTH,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(value = "returns a new list containing all the elements of both containers without duplicated elements.",
 		comment = "",
 		usages = { @usage("if the left or right operand is nil, union throws an error") },
@@ -497,7 +521,8 @@ public class Containers {
 	@operator(value = { "group_by" },
 		iterator = true,
 		index_type = ITypeProvider.SECOND_TYPE,
-		content_type = ITypeProvider.FIRST_TYPE)
+		content_type = ITypeProvider.FIRST_TYPE,
+		concept = { IConcept.CONTAINER })
 	@doc(
 		value = "Returns a map, where the keys take the possible values of the right-hand operand and the map values are the list of elements " +
 			"of the left-hand operand associated to the key value",
@@ -553,7 +578,8 @@ public class Containers {
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		iterator = true,
 		expected_content_type = IType.BOOL,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc(value = "the last element of the left-hand operand that makes the right-hand operand evaluate to true.",
 		comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
 		usages = { @usage("if the left-hand operand is nil, last_with throws an error."),
@@ -579,7 +605,8 @@ public class Containers {
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		iterator = true,
 		expected_content_type = IType.BOOL,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc(value = "the first element of the left-hand operand that makes the right-hand operand evaluate to true.",
 		comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
 		usages = {
@@ -601,7 +628,8 @@ public class Containers {
 	@operator(value = { "max_of" },
 		type = ITypeProvider.SECOND_TYPE,
 		iterator = true,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc(
 		value = "the maximum value of the right-hand expression evaluated on each of the elements of the left-hand operand",
 		comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
@@ -623,7 +651,8 @@ public class Containers {
 	@operator(value = { "min_of" },
 		type = ITypeProvider.SECOND_TYPE,
 		iterator = true,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc(
 		value = "the minimum value of the right-hand expression evaluated on each of the elements of the left-hand operand",
 		comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
@@ -661,7 +690,8 @@ public class Containers {
 	// return result;
 	// }
 
-	@operator(value = "among", content_type = ITypeProvider.SECOND_CONTENT_TYPE, category = IOperatorCategory.CONTAINER)
+	@operator(value = "among", content_type = ITypeProvider.SECOND_CONTENT_TYPE, category = IOperatorCategory.CONTAINER,
+			concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc(
 		value = "Returns a list of length the value of the left-hand operand, containing random elements from the right-hand operand. As of GAMA 1.6, the order in which the elements are returned can be different than the order in which they appear in the right-hand container",
 		special_cases = {
@@ -696,7 +726,8 @@ public class Containers {
 	@operator(value = { "sort_by", "sort" },
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		iterator = true,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+				concept = { IConcept.CONTAINER })
 	@doc(
 		value = "Returns a list, containing the elements of the left-hand operand sorted in ascending order by the value of the right-hand operand when it is evaluated on them. ",
 		comment = "the left-hand operand is casted to a list before applying the operator. In the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.",
@@ -762,7 +793,8 @@ public class Containers {
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		iterator = true,
 		expected_content_type = IType.BOOL,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+				concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc(
 		value = "a list containing all the elements of the left-hand operand that make the right-hand operand evaluate to true. ",
 		comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
@@ -786,7 +818,8 @@ public class Containers {
 	@operator(value = { "with_max_of" },
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		iterator = true,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc(value = "one of elements of the left-hand operand that maximizes the value of the right-hand operand",
 		comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
 		usages = { @usage(
@@ -807,7 +840,8 @@ public class Containers {
 	@operator(value = { "with_min_of" },
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		iterator = true,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc(value = "one of elements of the left-hand operand that minimizes the value of the right-hand operand",
 		comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
 		usages = { @usage(
@@ -828,7 +862,8 @@ public class Containers {
 	@operator(value = { "accumulate" },
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE_OR_TYPE,
 		iterator = true,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(
 		value = "returns a new flat list, in which each element is the evaluation of the right-hand operand. If this evaluation returns a list, the elements of this result are added directly to the list returned",
 		comment = "accumulate is dedicated to the application of a same computation on each element of a container (and returns a list). " +
@@ -861,7 +896,8 @@ public class Containers {
 	@operator(value = { "collect" },
 		content_type = ITypeProvider.SECOND_TYPE,
 		iterator = true,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(value = "returns a new list, in which each element is the evaluation of the right-hand operand.",
 		comment = "collect is similar to accumulate except that accumulate always produces flat lists if the right-hand operand returns a list." +
 			"In addition, collect can be applied to any container.",
@@ -881,7 +917,8 @@ public class Containers {
 
 	@operator(value = { "interleave" },
 		content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(value = "a new list containing the interleaved elements of the containers contained in the operand",
 		comment = "the operand should be a list of lists of elements. The result is a list of elements. ",
 		examples = { @example(value = "interleave([1,2,4,3,5,7,6,8])", equals = "[1,2,4,3,5,7,6,8]"),
@@ -900,7 +937,8 @@ public class Containers {
 	@operator(value = { "count" },
 		iterator = true,
 		expected_content_type = IType.BOOL,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(
 		value = "returns an int, equal to the number of elements of the left-hand operand that make the right-hand operand evaluate to true.",
 		comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.",
@@ -923,7 +961,8 @@ public class Containers {
 		iterator = true,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		index_type = ITypeProvider.SECOND_TYPE,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(
 		value = "produces a new map from the evaluation of the right-hand operand for each element of the left-hand operand",
 		usages = { @usage("if the left-hand operand is nil, index_by throws an error.") },
@@ -948,7 +987,8 @@ public class Containers {
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
 		index_type = ITypeProvider.SECOND_KEY_TYPE,
 		expected_content_type = IType.PAIR,
-		category = IOperatorCategory.MAP)
+		category = IOperatorCategory.MAP,
+		concept = { IConcept.CONTAINER, IConcept.MAP })
 	@doc(
 		value = "produces a new map from the evaluation of the right-hand operand for each element of the left-hand operand",
 		comment = "the right-hand operand should be a pair",
@@ -978,7 +1018,8 @@ public class Containers {
 		can_be_const = true,
 		type = ITypeProvider.BOTH,
 		content_type = ITypeProvider.BOTH,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(value = "returns a new map containing all the elements of both operands",
 		examples = { @example(value = "['a'::1,'b'::2] + ['c'::3]", equals = "['a'::1,'b'::2,'c'::3]"),
 			@example(value = "['a'::1,'b'::2] + [5::3.0]", equals = "['a'::1.0,'b'::2.0,5::3.0]") },
@@ -994,7 +1035,8 @@ public class Containers {
 		can_be_const = true,
 		type = ITypeProvider.FIRST_TYPE,
 		content_type = ITypeProvider.BOTH,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = { IConcept.CONTAINER })
 	@doc(value = "returns a new map containing all the elements of both operands",
 		examples = { @example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]"),
 			@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]") },
@@ -1010,7 +1052,8 @@ public class Containers {
 		can_be_const = true,
 		type = ITypeProvider.BOTH,
 		content_type = ITypeProvider.BOTH,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = {})
 	@doc(value = "returns a new map containing all the elements of the first operand not present in the second operand",
 		examples = { @example(value = "['a'::1,'b'::2] - ['b'::2]", equals = "['a'::1]"),
 			@example(value = "['a'::1,'b'::2] - ['b'::2,'c'::3]", equals = "['a'::1]") },
@@ -1027,7 +1070,8 @@ public class Containers {
 		can_be_const = true,
 		type = ITypeProvider.FIRST_TYPE,
 		content_type = ITypeProvider.BOTH,
-		category = IOperatorCategory.CONTAINER)
+		category = IOperatorCategory.CONTAINER,
+		concept = {})
 	@doc(
 		value = "returns a new map containing all the elements of the first operand without the one of the second operand",
 		examples = { @example(value = "['a'::1,'b'::2] - ('b'::2)", equals = "['a'::1]"),

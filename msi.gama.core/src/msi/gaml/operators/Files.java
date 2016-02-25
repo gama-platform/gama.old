@@ -18,6 +18,7 @@ import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -36,7 +37,7 @@ public class Files {
 	public static final String FOLDER = "folder";
 	public static final String WRITE = "write";
 
-	@operator(value = IKeyword.FILE, can_be_const = true, category = IOperatorCategory.FILE)
+	@operator(value = IKeyword.FILE, can_be_const = true, category = IOperatorCategory.FILE, concept = { IConcept.FILE })
 	@doc(value = "Creates a file in read/write mode, setting its contents to the container passed in parameter",
 		comment = "The type of container to pass will depend on the type of file (see the management of files in the documentation). Can be used to copy files since files are considered as containers. For example: save file('image_copy.png', file('image.png')); will copy image.png to image_copy.png")
 	public static IGamaFile from(final IScope scope, final String s, final IContainer container) {
@@ -47,7 +48,7 @@ public class Files {
 		return (IGamaFile) Types.FILE.cast(scope, s, container, key, content, false);
 	}
 
-	@operator(value = IKeyword.FILE, can_be_const = true, category = IOperatorCategory.FILE)
+	@operator(value = IKeyword.FILE, can_be_const = true, category = IOperatorCategory.FILE, concept = { IConcept.FILE })
 	@doc(
 		value = "opens a file in read only mode, creates a GAML file object, and tries to determine and store the file content in the contents attribute.",
 		comment = "The file should have a supported extension, see file type deifnition for supported file extensions.",
@@ -60,7 +61,7 @@ public class Files {
 		return from(scope, s, null);
 	}
 
-	@operator(value = "file_exists", can_be_const = true, category = IOperatorCategory.FILE)
+	@operator(value = "file_exists", can_be_const = true, category = IOperatorCategory.FILE, concept = { IConcept.FILE })
 	@doc(value = "Test whether the parameter is the path to an existing file.")
 	public static boolean exist_file(final IScope scope, final String s) {
 		if ( s == null ) { return false; }
@@ -75,7 +76,7 @@ public class Files {
 	}
 
 	// FIXME These methods should not be necessary. To remove at some point in favor of the constructors
-	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT, category = IOperatorCategory.FILE)
+	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT, category = IOperatorCategory.FILE, concept = { IConcept.FILE, IConcept.OSM })
 	@doc(value = "opens a file that a is a kind of OSM file with some filtering.",
 		masterDoc = true,
 		comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.",
@@ -89,7 +90,7 @@ public class Files {
 		return new GamaOsmFile(scope, s, filteringOption);
 	}
 
-	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT, category = IOperatorCategory.FILE)
+	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT, category = IOperatorCategory.FILE, concept = {})
 	@doc(
 		value = "opens a file that a is a kind of OSM file with some filtering, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected.",
 		masterDoc = true,
@@ -104,7 +105,7 @@ public class Files {
 		return new GamaOsmFile(scope, s, filteringOption, code);
 	}
 
-	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT, category = IOperatorCategory.FILE)
+	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT, category = IOperatorCategory.FILE, concept = { IConcept.FILE })
 	@doc(value = "opens an existing repository",
 		usages = @usage("If the specified string does not refer to an existing repository, an exception is risen.") ,
 		examples = { @example(value = "folder(\"../includes/\")", raises = "error"),
@@ -116,7 +117,7 @@ public class Files {
 		return new GamaFolderFile(scope, s);
 	}
 
-	@operator(value = "writable", category = IOperatorCategory.FILE)
+	@operator(value = "writable", category = IOperatorCategory.FILE, concept = { IConcept.FILE })
 	@doc(
 		value = "Marks the file as read-only or not, depending on the second boolean argument, and returns the first argument",
 		comment = "A file is created using its native flags. This operator can change them. Beware that this change is system-wide (and not only restrained to GAMA): changing a file to read-only mode (e.g. \"writable(f, false)\")",
@@ -141,7 +142,7 @@ public class Files {
 	 * @param s the name of the attribute to read
 	 * @return
 	 */
-	@operator(value = { "read", "get" }, category = IOperatorCategory.FILE)
+	@operator(value = { "read", "get" }, category = IOperatorCategory.FILE, concept = { IConcept.FILE })
 	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand.",
 		masterDoc = true,
 		examples = { @example(var = "agent_name",
@@ -156,7 +157,7 @@ public class Files {
 		return opRead(scope, scope.getAgentScope(), s);
 	}
 
-	@operator(value = { "read", "get" }, category = IOperatorCategory.FILE)
+	@operator(value = { "read", "get" }, category = IOperatorCategory.FILE, concept = {})
 	@doc(value = "Reads an attribute of the agent. The attribute index is specified by the operand.",
 		examples = { @example(value = "read (2)",
 			var = "second_variable",
@@ -171,7 +172,7 @@ public class Files {
 		return g.getAttribute(index);
 	}
 
-	@operator(value = "get", category = IOperatorCategory.CONTAINER)
+	@operator(value = "get", category = IOperatorCategory.CONTAINER, concept = { IConcept.CONTAINER, IConcept.SPECIES, IConcept.ATTRIBUTE })
 	// @doc(examples = {
 	// "let agent_name value: an_agent get ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'second_variable' variable."
 	// })
@@ -186,7 +187,7 @@ public class Files {
 		return g.get(scope, s);
 	}
 
-	@operator(value = "get", category = IOperatorCategory.FILE)
+	@operator(value = "get", category = IOperatorCategory.FILE, concept = { IConcept.GEOMETRY })
 	// @doc(examples = {
 	// "let geom_area value: a_geometry get ('area'); --: reads the 'area' attribute of the 'a_geometry' geometry then assigns the returned value to the 'geom_area' variable."
 	// })
@@ -204,7 +205,7 @@ public class Files {
 	@operator(value = { "new_folder" },
 		index_type = IType.INT,
 		content_type = IType.STRING,
-		category = IOperatorCategory.FILE)
+		category = IOperatorCategory.FILE, concept = { IConcept.FILE })
 	@doc(value = "opens an existing repository or create a new folder if it does not exist.",
 		comment = "",
 		usages = {
