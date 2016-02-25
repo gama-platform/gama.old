@@ -67,7 +67,7 @@ public class Cast {
 	// return a;
 	// }
 
-	@operator(value = { IKeyword.IS }, category = { IOperatorCategory.CASTING }, keywords = {IConceptKeyword.CASTING_OPERATOR, IConceptKeyword.TYPE} )
+	@operator(value = { IKeyword.IS }, category = { IOperatorCategory.CASTING }, concept = {IConcept.CASTING_OPERATOR, IConcept.TYPE} )
 	@doc(value = "returns true if the left operand is of the right operand type, false otherwise",
 		examples = { @example(value = "0 is int", equals = "true"),
 			@example(value = "an_agent is node", equals = "true", isExecutable = false),
@@ -82,7 +82,7 @@ public class Cast {
 		return type.isAssignableFrom(GamaType.of(a));
 	}
 
-	@operator(value = IKeyword.IS_SKILL, category = { IOperatorCategory.CASTING }, keywords = {IConceptKeyword.CASTING_OPERATOR, IConceptKeyword.SKILL})
+	@operator(value = IKeyword.IS_SKILL, category = { IOperatorCategory.CASTING }, concept = {IConcept.CASTING_OPERATOR, IConcept.SKILL})
 	@doc(value = "returns true if the left operand is an agent whose species implementes the right-hand skill name",
 		examples = { @example(value = "agentA is_skill 'moving'", equals = "true", isExecutable = false) })
 	public static Boolean isSkill(final IScope scope, final Object a, final String skill) {
@@ -107,7 +107,7 @@ public class Cast {
 		return GamaGraphType.staticCast(scope, val, null, false);
 	}
 
-	@operator(value = IKeyword.TOPOLOGY, content_type = IType.GEOMETRY, category = { IOperatorCategory.CASTING }, keywords = {IConceptKeyword.CASTING_OPERATOR})
+	@operator(value = IKeyword.TOPOLOGY, content_type = IType.GEOMETRY, category = { IOperatorCategory.CASTING }, concept = {IConcept.CASTING_OPERATOR})
 	@doc(value = "casting of the operand to a topology.",
 		usages = { @usage("if the operand is a topology, returns the topology itself;"),
 			@usage("if the operand is a spatial graph, returns the graph topology associated;"),
@@ -147,7 +147,7 @@ public class Cast {
 		index_type = ITypeProvider.SECOND_KEY_TYPE,
 		can_be_const = true,
 		category = { IOperatorCategory.CASTING },
-		keywords = {IConceptKeyword.CASTING_OPERATOR})
+		concept = {IConcept.CASTING_OPERATOR})
 	@doc(value = "casting of the first argument into a given type",
 		comment = "It is equivalent to the application of the type operator on the left operand.",
 		examples = @example(value = "3.5 as int", returnType = "int", equals = "int(3.5)"))
@@ -337,7 +337,7 @@ public class Cast {
 		return (GamaMap) Types.MAP.cast(scope, val, null, copy);
 	}
 
-	@operator(value = "as_int", can_be_const = true, category = { IOperatorCategory.CASTING }, keywords = {IConceptKeyword.CASTING_OPERATOR})
+	@operator(value = "as_int", can_be_const = true, category = { IOperatorCategory.CASTING }, concept = {IConcept.CASTING_OPERATOR})
 	@doc(value = "parses the string argument as a signed integer in the radix specified by the second argument.",
 		usages = { @usage("if the left operand is nil or empty, as_int returns 0"),
 			@usage("if the left operand does not represent an integer in the specified radix, as_int throws an exception ") },
@@ -370,7 +370,7 @@ public class Cast {
 		return GamaListType.staticCast(scope, val, null, false);
 	}
 
-	@operator(value = "list_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = false, keywords = {IConceptKeyword.CASTING_OPERATOR, IConceptKeyword.CONTAINER})
+	@operator(value = "list_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = false, concept = {IConcept.CASTING_OPERATOR, IConcept.CONTAINER})
 	@doc(value = "creates a list with a size provided by the first operand, and filled with the second operand",
 		comment = "Note that the right operand  should be positive, and that the second one is evaluated for each position  in the list.",
 		see = { "list" })
@@ -393,7 +393,7 @@ public class Cast {
 		content_type = ITypeProvider.SECOND_TYPE,
 		can_be_const = true, // AD: was true -- see Issue 1127
 		category = { IOperatorCategory.CASTING },
-		keywords = {IConceptKeyword.CASTING_OPERATOR, IConceptKeyword.CONTAINER})
+		concept = {IConcept.CASTING_OPERATOR, IConcept.CONTAINER})
 	@doc(value = "creates a matrix with a size provided by the first operand, and filled with the second operand",
 		comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.",
 		see = { IKeyword.MATRIX, "as_matrix" })
@@ -421,7 +421,7 @@ public class Cast {
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE,
 		can_be_const = true, // AD: was previously true -- see Issue 1127
 		category = { IOperatorCategory.CASTING },
-		keywords = {IConceptKeyword.CASTING_OPERATOR, IConceptKeyword.CONTAINER})
+		concept = {IConcept.CASTING_OPERATOR, IConcept.CONTAINER})
 	@doc(value = "casts the left operand into a matrix with right operand as preferrenced size",
 		comment = "This operator is very useful to cast a file containing raster data into a matrix." +
 			"Note that both components of the right operand point should be positive, otherwise an exception is raised." +
@@ -437,7 +437,7 @@ public class Cast {
 	@operator(value = { IKeyword.SPECIES, "species_of" },
 		content_type = ITypeProvider.FIRST_TYPE,
 		category = { IOperatorCategory.CASTING },
-		keywords = {IConceptKeyword.CASTING_OPERATOR})
+		concept = {IConcept.CASTING_OPERATOR})
 	@doc(value = "casting of the operand to a species.",
 		usages = { @usage("if the operand is nil, returns nil;"),
 			@usage("if the operand is an agent, returns its species;"),
