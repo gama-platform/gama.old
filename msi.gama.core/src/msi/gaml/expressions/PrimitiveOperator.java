@@ -169,6 +169,9 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
 		meta.put(GamlProperties.PLUGINS, action.getDefiningPlugin());
+		if ( action.isBuiltIn() ) {
+			meta.put(GamlProperties.ACTIONS, action.getName());
+		}
 		parameters.forEachValue(new TObjectProcedure<IExpressionDescription>() {
 
 			@Override

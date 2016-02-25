@@ -1,3 +1,11 @@
 #
-#Thu Feb 25 13:53:28 ICT 2016
+#Thu Feb 25 16:43:31 ICT 2016
 plugins=msi.gama.core~ummisco.gaml.extensions.maths~ummisco.gama.opengl
+attributes=location
+actions=error~debug~tell~write~die~halt~pause~_step_~_init_~follow~wander~goto~move
+operators=envelope~rnd~list_with~+~length~as~?~>~\:~where~\=~.~min~diff~/~*~select~internal_at~square~collect~any~flip~union~circle~sphere
+skills=fsm~moving~reflex~grid
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~map~file~path~bool
+statements=action~arg~return~write~init~equation~\=~reflex~solve~state~create~let~set~put~add~remove~do~ask~aspect~draw~output~display~graphics~if~else
+architectures=fsm
+constants=e~white~pixels~display_width~display_height

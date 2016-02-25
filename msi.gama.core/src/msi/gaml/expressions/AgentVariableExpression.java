@@ -46,6 +46,10 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {}
+	public void collectMetaInformation(final GamlProperties meta) {
+		if ( getDefinitionDescription().isBuiltIn() ) {
+			meta.put(GamlProperties.ATTRIBUTES, getName());
+		}
+	}
 
 }

@@ -1,3 +1,9 @@
 #
-#Thu Feb 25 13:53:29 ICT 2016
+#Thu Feb 25 16:43:31 ICT 2016
+operators=envelope~rnd~sphere~hsb~/~as~.~as_distance_graph
 plugins=msi.gama.core~ummisco.gama.opengl
+statements=reflex~do~set~aspect~draw~init~create~ask~output~display~display_population
+skills=reflex~moving
+constants=red~green
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~graph~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

@@ -1,3 +1,9 @@
 #
-#Thu Feb 25 13:53:29 ICT 2016
+#Thu Feb 25 16:43:32 ICT 2016
+operators=envelope~circle
 plugins=msi.gama.core
+statements=aspect~draw~init~create~output~display~display_population
+skills=reflex
+constants=blue
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

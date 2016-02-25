@@ -12,6 +12,7 @@
 package msi.gaml.expressions;
 
 import msi.gama.precompiler.GamlProperties;
+import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.skills.ISkill;
 import msi.gaml.types.IType;
@@ -20,15 +21,6 @@ public class SkillConstantExpression extends ConstantExpression {
 
 	public SkillConstantExpression(final String val, final IType<ISkill> t) {
 		super(AbstractGamlAdditions.getSkillInstanceFor(val), t);
-	}
-
-	/**
-	 * Method collectPlugins()
-	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
-	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		meta.put(GamlProperties.PLUGINS, ((ISkill) value).getDefiningPlugin());
 	}
 
 	/**
@@ -47,6 +39,14 @@ public class SkillConstantExpression extends ConstantExpression {
 	@Override
 	public String literalValue() {
 		return ((ISkill) value).getName();
+	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		ISkill skill = (ISkill) value;
+		meta.put(GamlProperties.PLUGINS, skill.getDefiningPlugin());
+		meta.put(skill instanceof IArchitecture ? GamlProperties.ARCHITECTURES : GamlProperties.SKILLS,
+			skill.getName());
 	}
 
 }

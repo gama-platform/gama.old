@@ -1,3 +1,10 @@
 #
-#Thu Feb 25 13:53:29 ICT 2016
+#Thu Feb 25 16:43:31 ICT 2016
+operators=envelope~list_with~-~as_matrix~point~rgb~+~rnd~sphere~as~internal_at~hsb~/~*~and~\!\=~line~.~\=~>~buffer~length~at~source_of~target_of~generate_barabasi_albert~as_distance_graph~cos~sin
 plugins=msi.gama.core~ummisco.gama.opengl
+attributes=x~y
+statements=action~loop~put~reflex~aspect~draw~if~ask~do~user_command~let~create~set~init~else~output~display~graphics~display_population
+skills=reflex
+constants=black
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~graph~bool~matrix~container
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

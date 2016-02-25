@@ -1,3 +1,11 @@
 #
-#Thu Feb 25 13:53:29 ICT 2016
+#Thu Feb 25 16:43:31 ICT 2016
 plugins=msi.gama.core~ummisco.gama.opengl
+attributes=x~y~z~perimeter
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move
+operators=envelope~rnd~sphere~hsb~/~as~.~<~distance_to~degree_of~+~line~point~*~>~-
+skills=reflex~moving
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~graph~bool~topology
+statements=reflex~do~set~aspect~draw~action~arg~using~return~let~init~create~if~output~display~display_population
+constants=red~green~blue
+species=graph_node~base_edge

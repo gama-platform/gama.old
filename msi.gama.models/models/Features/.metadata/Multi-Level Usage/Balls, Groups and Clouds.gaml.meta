@@ -1,3 +1,11 @@
 #
-#Thu Feb 25 13:53:28 ICT 2016
+#Thu Feb 25 16:43:30 ICT 2016
 plugins=msi.gama.core
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move
+attributes=x~y~darker~envelope~points~location
+operators=rectangle~as~/~-~+~*~circle~rnd~distance_to~.~towards~cos~sin~point~and~\!~<~>~at_location~empty~where~intersects~\=~closest_to~\!\=~overlapping~buffer~polygon~length~?~\:~in~direction_to~mod~species_of~at~<\=~>\=~convex_hull~collect~overlaps~or~dead~one_of~of_generic_species~simple_clustering_by_distance
+skills=reflex~moving~fsm
+statements=action~arg~let~loop~set~return~init~if~state~enter~do~transition~aspect~draw~release~reflex~capture~else~ask~migrate~create~output~display~display_population~monitor
+types=list~int~unknown~string~point~geometry~agent~float~date~rgb~bool~container~topology
+architectures=fsm
+constants=green~red~blue

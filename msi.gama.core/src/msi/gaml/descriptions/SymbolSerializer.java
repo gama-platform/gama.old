@@ -24,6 +24,12 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	public static class VarSerializer extends SymbolSerializer<VariableDescription> {
 
 		@Override
+		protected void collectMetaInformationInSymbol(final VariableDescription desc, final GamlProperties plugins) {
+			plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
+			// plugins.put(GamlProperties.STATEMENTS, desc.keyword);
+		}
+
+		@Override
 		protected void serializeKeyword(final VariableDescription desc, final StringBuilder sb,
 			final boolean includingBuiltIn) {
 			String k = desc.getFacets().getLabel(IKeyword.KEYWORD);
@@ -66,6 +72,25 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 				return strings.toString();
 			}
 			return super.serializeFacetValue(s, key, includingBuiltIn);
+		}
+
+		@Override
+		protected void collectMetaInformationInSymbol(final SpeciesDescription desc, final GamlProperties plugins) {
+			plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
+			plugins.put(GamlProperties.SKILLS, desc.getSkillsNames());
+			// plugins.put(GamlProperties.STATEMENTS, desc.keyword);
+		}
+
+		@Override
+		protected void collectMetaInformationInFacetValue(final SpeciesDescription desc, final String key,
+			final GamlProperties plugins) {
+			if ( key.equals(SKILLS) ) {
+				System.out.println();
+			}
+			IExpressionDescription ed = desc.getFacets().get(key);
+			if ( ed == null ) { return; }
+
+			ed.collectMetaInformation(plugins);
 		}
 
 		// @Override
@@ -297,10 +322,15 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	}
 
 	protected void collectMetaInformation(final C desc, final GamlProperties plugins) {
-		plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
+		collectMetaInformationInSymbol(desc, plugins);
 		collectMetaInformationInFacets(desc, plugins);
 		collectMetaInformationInChildren(desc, plugins);
 		desc.getType().collectMetaInformation(plugins);
+	}
+
+	protected void collectMetaInformationInSymbol(final C desc, final GamlProperties plugins) {
+		plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
+		plugins.put(GamlProperties.STATEMENTS, desc.keyword);
 	}
 
 	/**

@@ -1,3 +1,9 @@
 #
-#Thu Feb 25 13:53:29 ICT 2016
+#Thu Feb 25 16:43:32 ICT 2016
+operators=envelope~length~one_of~*~/~rnd~-~.~<\=~and~>\=~flip~as~+~circle~square~with_precision~>~min~inside~\!~empty~rgb~neighbors_at
 plugins=msi.gama.core
+statements=init~set~reflex~do~let~create~aspect~draw~ask~output~display~display_grid~display_population~monitor
+skills=reflex~grid
+constants=black~blue~red
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~file~species~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

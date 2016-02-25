@@ -1,3 +1,10 @@
 #
-#Thu Feb 25 13:53:28 ICT 2016
+#Thu Feb 25 16:43:30 ICT 2016
+operators=envelope~rnd~as~as_path~>~circle~line~as_map~\:\:~*~with_weights~as_edge_graph
 plugins=msi.gama.core
+attributes=edges~perimeter
+statements=reflex~do~arg~if~else~set~aspect~draw~loop~init~create~let~output~display~display_population
+skills=reflex~moving
+constants=green~blue~pink~red
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~graph~container~path~map~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

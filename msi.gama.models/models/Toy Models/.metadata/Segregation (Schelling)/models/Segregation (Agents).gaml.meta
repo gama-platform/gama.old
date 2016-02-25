@@ -1,3 +1,9 @@
 #
-#Thu Feb 25 13:53:29 ICT 2016
+#Thu Feb 25 16:43:31 ICT 2016
+operators=square~as~count~.~sum~collect~shuffle~\=~length~>\=~*~at~rnd~-~at_distance~one_of~\!~circle~/
 plugins=msi.gama.core
+statements=action~write~set~create~init~remove~reflex~add~aspect~draw~do~output~display~display_population~chart~data
+skills=reflex~grid
+constants=gray~green~yellow~white~blue~red
+types=list~int~unknown~string~float~geometry~point~agent~date~rgb~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

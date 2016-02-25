@@ -25,6 +25,8 @@ public class GamlProperties {
 	Map<String, LinkedHashSet<String>> map;
 
 	public final static String SKILLS = "skills";
+	public final static String ACTIONS = "actions";
+	public final static String ATTRIBUTES = "attributes";
 	public final static String STATEMENTS = "statements";
 	public final static String OPERATORS = "operators";
 	public final static String GAML = "gaml.properties";
@@ -81,9 +83,9 @@ public class GamlProperties {
 		}
 	}
 
-	void put(final String key, final LinkedHashSet<String> values) {
+	public void put(final String key, final Set<String> values) {
 		if ( !map.containsKey(key) ) {
-			map.put(key, values);
+			map.put(key, new LinkedHashSet(values));
 		} else {
 			map.get(key).addAll(values);
 		}

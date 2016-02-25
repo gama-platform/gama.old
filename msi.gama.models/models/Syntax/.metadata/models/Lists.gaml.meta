@@ -1,3 +1,9 @@
 #
-#Thu Feb 25 13:53:28 ICT 2016
+#Thu Feb 25 16:43:31 ICT 2016
+operators=envelope~list_with~as~sample~collect~.~any~first~last~at~internal_at~length~mean~max~min~among~contains~contains_all~contains_any~reverse~+~norm~point~where~>~count~group_by~even~index_by~index_of~last_index_of~sort_by~first_with~\=~with_min_of~with_max_of~min_of~max_of~copy_between~-~inter~union~interleave~rnd~select~remove_duplicates
 plugins=msi.gama.core
+attributes=values
+statements=init~write~let~create~trace~add~put~loop~remove~set~ask~user_command
+skills=reflex
+types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

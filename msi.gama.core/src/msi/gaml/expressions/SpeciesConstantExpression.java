@@ -72,6 +72,9 @@ public class SpeciesConstantExpression extends ConstantExpression {
 		SpeciesDescription sd = getType().getContentType().getSpecies();
 		if ( sd != null ) {
 			meta.put(GamlProperties.PLUGINS, sd.getDefiningPlugin());
+			if ( sd.isBuiltIn() ) {
+				meta.put(GamlProperties.SPECIES, name);
+			}
 		}
 	}
 

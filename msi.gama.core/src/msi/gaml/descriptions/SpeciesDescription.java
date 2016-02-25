@@ -20,7 +20,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.*;
-import msi.gama.precompiler.ITypeProvider;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -970,6 +970,14 @@ public class SpeciesDescription extends TypeDescription {
 	 */
 	public Collection<StatementDescription> getBehaviors() {
 		return behaviors == null ? Collections.EMPTY_LIST : behaviors.values();
+	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		super.collectMetaInformation(meta);
+		if ( isBuiltIn() ) {
+			meta.put(GamlProperties.SPECIES, getName());
+		}
 	}
 
 }

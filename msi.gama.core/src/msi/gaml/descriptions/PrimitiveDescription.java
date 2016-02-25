@@ -67,6 +67,9 @@ public class PrimitiveDescription extends StatementWithChildrenDescription {
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
 		meta.put(GamlProperties.PLUGINS, plugin);
+		if ( isBuiltIn() ) {
+			meta.put(GamlProperties.ACTIONS, getName());
+		}
 	}
 
 }

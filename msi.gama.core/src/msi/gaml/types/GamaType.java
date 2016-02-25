@@ -408,7 +408,10 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		meta.put(GamlProperties.PLUGINS, getDefiningPlugin());
+		if ( plugin != null ) {
+			meta.put(GamlProperties.PLUGINS, this.plugin);
+			meta.put(GamlProperties.TYPES, this.name);
+		}
 	}
 
 }

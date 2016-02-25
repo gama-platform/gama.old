@@ -1,3 +1,10 @@
 #
-#Thu Feb 25 13:53:29 ICT 2016
+#Thu Feb 25 16:43:31 ICT 2016
+operators=square~as~pgm_file~count~>~.~+~rnd~\=~and~\!~first_with~\!\=~min_of~sort~?~\:~last~-~circle~<~distance_to~internal_at~<\=~*~neighbors_at~every~or
 plugins=msi.gama.core~ummisco.gaml.extensions.maths
+attributes=x~y
+statements=action~arg~write~reflex~set~do~let~if~else~aspect~draw~init~create~diffuse~output~display~display_grid~display_population~graphics~event~exhaustive~genetic
+skills=reflex~moving~grid
+constants=red
+types=list~int~unknown~string~geometry~point~agent~float~date~rgb~matrix~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

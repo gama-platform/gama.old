@@ -5,6 +5,7 @@
 package msi.gaml.expressions;
 
 import java.util.*;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.types.IType;
 
 /**
@@ -65,6 +66,11 @@ public class UnitConstantExpression extends ConstantExpression {
 	@Override
 	public boolean shouldBeParenthesized() {
 		return false;
+	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.CONSTANTS, name);
 	}
 
 }

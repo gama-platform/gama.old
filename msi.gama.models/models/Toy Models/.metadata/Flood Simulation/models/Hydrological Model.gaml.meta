@@ -1,3 +1,10 @@
 #
-#Thu Feb 25 13:53:29 ICT 2016
+#Thu Feb 25 16:43:31 ICT 2016
+operators=as~envelope~neighbors_at~overlapping~\=~-~+~max_of~.~min~/~accumulate~>~*~rgb~rnd~mean~collect~empty~where~\!~sort_by~shuffle~max~every~count~length~<
 plugins=msi.gama.core~ummisco.gama.opengl
+attributes=rows
+statements=action~ask~set~let~create~do~if~else~return~add~aspect~draw~arg~reflex~user_command~loop~remove~init~output~display~display_grid~display_population~chart~data
+skills=reflex~grid
+constants=white~magenta~red~orange~green
+types=list~int~unknown~string~file~geometry~point~agent~float~date~rgb~container~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause

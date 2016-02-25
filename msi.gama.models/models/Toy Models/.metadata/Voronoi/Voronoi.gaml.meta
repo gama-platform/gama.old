@@ -1,3 +1,9 @@
 #
-#Thu Feb 25 13:53:29 ICT 2016
+#Thu Feb 25 16:43:31 ICT 2016
+operators=rectangle~as~rnd~square~using~closest_to~.
 plugins=msi.gama.core~ummisco.gama.opengl
+statements=reflex~do~arg~aspect~draw~init~write~create~output~display~display_grid~display_population
+skills=reflex~moving~grid
+constants=white
+types=list~int~unknown~string~float~geometry~point~agent~date~rgb~container~topology~bool
+actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move
