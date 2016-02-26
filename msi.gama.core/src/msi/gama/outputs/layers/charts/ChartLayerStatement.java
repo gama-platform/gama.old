@@ -63,7 +63,7 @@ import org.jfree.ui.RectangleInsets;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true)
+@symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.CHART, IConcept.DISPLAY })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true), */

@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
+import msi.gaml.statements.draw.FileDrawingAttributes;
 
 import org.jfree.chart.JFreeChart;
 
@@ -47,8 +48,13 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
+		
+//		getChart().setAntiAlias(false);
+//		getChart().setTextAntiAlias(false);
 		BufferedImage im = getChart().getImage(scope,getSizeInPixels().x, getSizeInPixels().y);
-		dg.drawChart(scope, im, 0.0);
+//		dg.drawChart(scope, im, 0.0);
+		FileDrawingAttributes attributes = new FileDrawingAttributes(null);
+		dg.drawImage(im, attributes);
 	}
 
 	@Override

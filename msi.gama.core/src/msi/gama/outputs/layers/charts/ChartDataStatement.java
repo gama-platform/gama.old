@@ -35,7 +35,7 @@ import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.*;
 import org.jfree.chart.renderer.xy.*;
 
-@symbol(name = IKeyword.DATA, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = IKeyword.DATA, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.CHART })
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @facets(value = {
 	@facet(name = IKeyword.VALUE, type = { IType.FLOAT, IType.POINT, IType.LIST }, optional = false),
