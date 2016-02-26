@@ -743,7 +743,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildPolyplan(shapes, depth);
 		}
 
-		@operator(value = { "link" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = { "link" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.SPATIAL_COMPUTATION, IConcept.GEOMETRY })
 		@doc(value = "A link between the 2 elements of the pair.",
 			usages = { @usage("if the operand is nil, link returns a point {0,0}"),
 				@usage("if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species") },
@@ -759,7 +760,8 @@ public abstract class Spatial {
 			return GamaGeometryType.pairToGeometry(scope, points);
 		}
 
-		@operator(value = "around", category = { IOperatorCategory.SPATIAL })
+		@operator(value = "around", category = { IOperatorCategory.SPATIAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(
 			value = "A geometry resulting from the difference between a buffer around the right-operand casted in geometry at a distance left-operand (right-operand buffer left-operand) and the right-operand casted as geometry.",
 			usages = { @usage(value = "returns a circle geometry of radius right-operand if the left-operand is nil") },
@@ -791,7 +793,8 @@ public abstract class Spatial {
 		 * }
 		 */
 
-		@operator(value = "envelope", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "envelope", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(
 			value = "A 3D geometry that represents the box that surrounds the geometries or the surface described by the arguments. More general than geometry(arguments).envelope, as it allows to pass int, double, point, image files, shape files, asc files, or any list combining these arguments, in which case the envelope will be correctly expanded. If an envelope cannot be determined from the arguments, a default one of dimensions (0,100, 0, 100, 0, 100) is returned")
 		public static IShape envelope(final IScope scope, final Object obj) {
@@ -839,7 +842,8 @@ public abstract class Spatial {
 			return new GamaShape(g1, geom);
 		}
 
-		@operator(value = { "+", "union" }, category = { IOperatorCategory.SPATIAL })
+		@operator(value = { "+", "union" }, category = { IOperatorCategory.SPATIAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(usages = @usage(
 			value = "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries",
 			examples = @example(value = "geom1 + geom2",
@@ -874,7 +878,8 @@ public abstract class Spatial {
 
 		@operator(value = { "union" },
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
-			category = { IOperatorCategory.SPATIAL })
+			category = { IOperatorCategory.SPATIAL },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(
 			usages = { @usage(
 				value = "if the right-operand is a container of points, geometries or agents, returns the geometry resulting from the union all the geometries") },
@@ -889,7 +894,8 @@ public abstract class Spatial {
 			}
 		}
 
-		@operator(value = IKeyword.MINUS, category = { IOperatorCategory.SPATIAL })
+		@operator(value = IKeyword.MINUS, category = { IOperatorCategory.SPATIAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(usages = @usage(
 			value = "if both operands are a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries",
 			examples = @example(value = "geom1 - geom2",
@@ -903,7 +909,8 @@ public abstract class Spatial {
 			return null;
 		}
 
-		@operator(value = IKeyword.MINUS, category = { IOperatorCategory.SPATIAL })
+		@operator(value = IKeyword.MINUS, category = { IOperatorCategory.SPATIAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(usages = @usage(
 			value = "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries",
 			examples = @example(value = "rectangle(10,10) - [circle(2), square(2)]",
@@ -945,7 +952,8 @@ public abstract class Spatial {
 			}
 		}
 
-		@operator(value = { "add_point" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
+		@operator(value = { "add_point" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
+				concept = { IConcept.POINT, IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(value = "A geometry resulting from the addition of the right point (coordinate) to the left-hand geometry",
 			examples = { @example(value = "polygon([{10,10},{10,20},{20,20}]) add_point {20,10}",
 				returnType = "geometry",
@@ -1074,7 +1082,8 @@ public abstract class Spatial {
 			return index;
 		}
 
-		@operator(value = "masked_by", category = { IOperatorCategory.SPATIAL })
+		@operator(value = "masked_by", category = { IOperatorCategory.SPATIAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.OBSTACLE })
 		@doc(examples = { @example(value = "perception_geom masked_by obstacle_list",
 			equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
 			isExecutable = false) })
@@ -1180,7 +1189,8 @@ public abstract class Spatial {
 			return null;
 		}
 
-		@operator(value = "masked_by", category = { IOperatorCategory.SPATIAL })
+		@operator(value = "masked_by", category = { IOperatorCategory.SPATIAL },
+				concept = {})
 		@doc(examples = { @example(value = "perception_geom masked_by obstacle_list",
 			equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
 			isExecutable = false) })
@@ -1292,7 +1302,8 @@ public abstract class Spatial {
 
 	public static abstract class Transformations {
 
-		@operator(value = "convex_hull", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+		@operator(value = "convex_hull", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "A geometry corresponding to the convex hull of the operand.",
 			examples = { @example(value = "convex_hull(self)",
 				equals = "the convex hull of the geometry of the agent applying the operator",
@@ -1302,7 +1313,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { IKeyword.MULTIPLY, "scaled_by" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(usages = { @usage(
 			value = "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficient",
 			examples = {
@@ -1317,7 +1329,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { IKeyword.MULTIPLY, "scaled_by" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = {})
 		@doc(usages = { @usage(
 			value = "if the left-hand operand is a geometry and the rigth-hand operand a point, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficients in the 3 dimensions",
 			examples = { @example(value = "shape * {0.5,0.5,2}",
@@ -1331,7 +1344,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "scaled_to" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "allows to restrict the size of a geometry so that it fits in the envelope {width, height, depth} defined by the second operand",
 			examples = { @example(value = "shape scaled_to {10,10}",
@@ -1346,7 +1360,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "",
 			usages = @usage(
 				value = "if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters",
@@ -1363,7 +1378,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = {})
 		@doc(usages = { @usage(
 			value = "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance",
 			examples = { @example(value = "circle(5) + 5",
@@ -1377,7 +1393,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "-", "reduced_by" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(usages = { @usage(
 			value = "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance",
 			examples = { @example(value = "shape - 5",
@@ -1395,7 +1412,8 @@ public abstract class Spatial {
 		 * @param args : angle --: double, degree
 		 *
 		 */
-		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A geometry resulting from the application of a rotation by the right-hand operand angle (degree) to the left-hand operand (geometry, agent, point)",
 			masterDoc = true,
@@ -1411,7 +1429,8 @@ public abstract class Spatial {
 			// return new GamaShape(s.getInnerGeometry()).rotatedBy(scope, FastMath.toRadians(angle));
 		}
 
-		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A geometry resulting from the application of a rotation by the right-hand operand angles (degree) along the three axis (x,y,z) to the left-hand operand (geometry, agent, point)",
 			masterDoc = true,
@@ -1425,7 +1444,8 @@ public abstract class Spatial {
 			return new GamaShape(g1, null, rotation, vector, g1.getLocation());
 		}
 
-		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = {})
 		@doc(comment = "the right-hand operand can be a float or a int")
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Integer angle) {
 			if ( g1 == null ) { return null; }
@@ -1447,7 +1467,8 @@ public abstract class Spatial {
 		 *
 		 */
 		@operator(value = "transformed_by",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A geometry resulting from the application of a rotation and a scaling (rigth-operand : point {angle(degree), scale factor} of the left-hand operand (geometry, agent, point)",
 			examples = { @example(value = "self transformed_by {45, 0.5}",
@@ -1467,7 +1488,8 @@ public abstract class Spatial {
 		 *
 		 */
 		@operator(value = "translated_by",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A geometry resulting from the application of a translation by the right-hand operand distance to the left-hand operand (geometry, agent, point)",
 			examples = { @example(value = "self translated_by {10,10,10}",
@@ -1481,7 +1503,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "at_location", "translated_to" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.AGENT_LOCATION })
 		@doc(
 			value = "A geometry resulting from the tran of a translation to the right-hand operand point of the left-hand operand (geometry, agent, point)",
 			examples = { @example(value = "self at_location {10, 20}",
@@ -1494,7 +1517,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "without_holes", "solid" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.AGENT_LOCATION })
 		@doc(value = "A geometry corresponding to the operand geometry (geometry, agent, point) without its holes",
 			examples = { @example(value = "solid(self)",
 				equals = "the geometry corresponding to the geometry of the agent applying the operator without its holes.",
@@ -1521,7 +1545,8 @@ public abstract class Spatial {
 
 		@operator(value = "triangulate",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)",
 			masterDoc = true,
@@ -1535,7 +1560,8 @@ public abstract class Spatial {
 
 		@operator(value = { "triangulate", "to_triangles" },
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = {})
 		@doc(
 			value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries",
 			examples = { @example(value = "triangulate(self)",
@@ -1547,7 +1573,8 @@ public abstract class Spatial {
 
 		@operator(value = "voronoi",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "A list of geometries corresponding to the Voronoi diagram built from the list of points",
 			masterDoc = true,
 			examples = { @example(value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}])",
@@ -1560,7 +1587,8 @@ public abstract class Spatial {
 
 		@operator(value = "voronoi",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = {})
 		@doc(
 			value = "A list of geometries corresponding to the Voronoi diagram built from the list of points according to the given clip",
 			masterDoc = true,
@@ -1574,7 +1602,8 @@ public abstract class Spatial {
 
 		@operator(value = "smooth",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "Returns a 'smoothed' geometry, where straight lines are replaces by polynomial (bicubic) curves. The first parameter is the original geometry, the second is the 'fit' parameter which can be in the range 0 (loose fit) to 1 (tightest fit).",
 			masterDoc = true,
@@ -1588,7 +1617,8 @@ public abstract class Spatial {
 		@operator(value = "to_squares",
 			type = IType.LIST,
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A list of squares of the size corresponding to the given size that result from the decomposition of the geometry into squares (geometry, size, overlaps), if overlaps = true, add the squares that overlap the border of the geometry",
 			examples = { @example(value = "to_squares(self, 10.0, true)",
@@ -1604,7 +1634,8 @@ public abstract class Spatial {
 		@operator(value = "to_squares",
 			type = IType.LIST,
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = {})
 		@doc(
 			value = "A list of a given number of squares from the decomposition of the geometry into squares (geometry, nb_square, overlaps), if overlaps = true, add the squares that overlap the border of the geometry",
 			examples = { @example(value = "to_squares(self, 10, true)",
@@ -1620,7 +1651,8 @@ public abstract class Spatial {
 		@operator(value = "to_squares",
 			type = IType.LIST,
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = {})
 		@doc(
 			value = "A list of a given number of squares from the decomposition of the geometry into squares (geometry, nb_square, overlaps, precision_coefficient), if overlaps = true, add the squares that overlap the border of the geometry, coefficient_precision should be close to 1.0",
 			examples = { @example(value = "to_squares(self, 10, true, 0.99)",
@@ -1635,7 +1667,8 @@ public abstract class Spatial {
 
 		@operator(value = "to_rectangles",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A list of rectangles of the size corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, dimension, overlaps), if overlaps = true, add the rectangles that overlap the border of the geometry",
 			examples = { @example(value = "to_rectangles(self, {10.0, 15.0}, true)",
@@ -1651,7 +1684,8 @@ public abstract class Spatial {
 		@operator(value = "to_rectangles",
 			type = IType.LIST,
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = {})
 		@doc(
 			value = "A list of rectangles corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, nb_cols, nb_rows, overlaps) by a grid composed of the given number of columns and rows, if overlaps = true, add the rectangles that overlap the border of the geometry",
 			examples = { @example(value = "to_rectangles(self, 5, 20, true)",
@@ -1669,7 +1703,8 @@ public abstract class Spatial {
 
 		@operator(value = { "split_geometry", "to_squares" },
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A list of geometries that result from the decomposition of the geometry by square cells of the given side size (geometry, size)",
 			examples = { @example(value = "to_squares(self, 10.0)",
@@ -1683,7 +1718,8 @@ public abstract class Spatial {
 
 		@operator(value = { "split_geometry", "to_rectangles" },
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A list of geometries that result from the decomposition of the geometry by rectangle cells of the given dimension (geometry, {size_x, size_y})",
 			examples = { @example(value = "to_rectangles(self, {10.0, 15.0})",
@@ -1697,7 +1733,8 @@ public abstract class Spatial {
 
 		@operator(value = { "split_geometry", "to_rectangles" },
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = {})
 		@doc(
 			value = "A list of geometries that result from the decomposition of the geometry according to a grid with the given number of rows and columns (geometry, nb_cols, nb_rows)",
 			examples = { @example(value = "to_rectangles(self, 10,20)",
@@ -1715,7 +1752,8 @@ public abstract class Spatial {
 
 		@operator(value = "as_hexagonal_grid",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS, IOperatorCategory.GRID })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS, IOperatorCategory.GRID },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.GRID })
 		@doc(
 			value = "A list of geometries (hexagonal) corresponding to the hexagonal tesselation of the first operand geometry",
 			examples = { @example(value = "self as_hexagonal_grid {10, 5}",
@@ -1728,7 +1766,8 @@ public abstract class Spatial {
 
 		@operator(value = "as_grid",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS, IOperatorCategory.GRID })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS, IOperatorCategory.GRID },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.GRID })
 		@doc(
 			value = "A matrix of square geometries (grid with 8-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
 			examples = { @example(value = "self as_grid {10, 5}",
@@ -1743,7 +1782,8 @@ public abstract class Spatial {
 
 		@operator(value = "as_4_grid",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS, IOperatorCategory.GRID })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS, IOperatorCategory.GRID },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.GRID })
 		@doc(
 			value = "A matrix of square geometries (grid with 4-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
 			examples = { @example(value = "self as_4_grid {10, 5}",
@@ -1758,7 +1798,8 @@ public abstract class Spatial {
 
 		@operator(value = "split_lines",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "A list of geometries resulting after cutting the lines at their intersections.",
 			examples = { @example(value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
 				equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
@@ -1787,7 +1828,8 @@ public abstract class Spatial {
 
 		@operator(value = "skeletonize",
 			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent)",
 			examples = { @example(value = "skeletonize(self)",
@@ -1802,7 +1844,8 @@ public abstract class Spatial {
 			return geoms;
 		}
 
-		@operator(value = "clean", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+		@operator(value = "clean", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "A geometry corresponding to the cleaning of the operand (geometry, agent, point)",
 			comment = "The cleaning corresponds to a buffer with a distance of 0.0",
 			examples = { @example(value = "clean(self)",
@@ -1831,7 +1874,8 @@ public abstract class Spatial {
 		 */
 
 		@operator(value = "simplification",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A geometry corresponding to the simplification of the operand (geometry, agent, point) considering a tolerance distance.",
 			comment = "The algorithm used for the simplification is Douglas-Peucker",
@@ -1852,7 +1896,8 @@ public abstract class Spatial {
 	public static abstract class Relations {
 
 		@operator(value = { "towards", "direction_to" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS },
+			concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
 		@doc(
 			value = "The direction (in degree) between the two geometries (geometries, agents, points) considering the topology of the agent applying the operator.",
 			examples = { @example(value = "ag1 towards ag2",
@@ -1863,7 +1908,8 @@ public abstract class Spatial {
 			return scope.getTopology().directionInDegreesTo(scope, agent, target);
 		}
 
-		@operator(value = "distance_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS })
+		@operator(value = "distance_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS },
+				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
 		@doc(value = "A distance between a list of geometries (geometries, agents, points) considering a topology.",
 			examples = { @example(value = "my_topology distance_between [ag1, ag2, ag3]",
 				equals = "the distance between ag1, ag2 and ag3 considering the topology my_topology",
@@ -1886,7 +1932,8 @@ public abstract class Spatial {
 			return distance;
 		}
 
-		@operator(value = "direction_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS })
+		@operator(value = "direction_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS },
+				concept = {})
 		@doc(
 			value = "A direction (in degree) between a list of two geometries (geometries, agents, points) considering a topology.",
 			examples = { @example(value = "my_topology direction_between [ag1, ag2]",
@@ -1905,7 +1952,8 @@ public abstract class Spatial {
 		@operator(value = "path_between",
 			type = IType.PATH,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH },
+			concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
 		@doc(value = "A path between a list of two geometries (geometries, agents or points) considering a topology.",
 			examples = { @example(value = "my_topology path_between [ag1, ag2]",
 				equals = "A path between ag1 and ag2",
@@ -1940,7 +1988,8 @@ public abstract class Spatial {
 
 		@operator(value = "path_between",
 
-			category = { IOperatorCategory.GRID, IOperatorCategory.PATH })
+			category = { IOperatorCategory.GRID, IOperatorCategory.PATH },
+			concept = { IConcept.GRID })
 		@doc(value = "The shortest path between two objects according to set of cells",
 			masterDoc = true,
 			examples = { @example(value = "path_between (cell_grid where each.is_free, ag1, ag2)",
@@ -1957,7 +2006,8 @@ public abstract class Spatial {
 			}
 		}
 
-		@operator(value = "distance_to", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS })
+		@operator(value = "distance_to", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS },
+				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
 		@doc(
 			value = "A distance between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.",
 			masterDoc = true,
@@ -1978,7 +2028,8 @@ public abstract class Spatial {
 
 		@operator(value = "path_to",
 			type = IType.PATH,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH },
+			concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY, IConcept.PATH })
 		@doc(
 			value = "A path between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.",
 			masterDoc = true,
@@ -1993,7 +2044,8 @@ public abstract class Spatial {
 
 		@operator(value = "path_to",
 			type = IType.PATH,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH },
+			concept = { IConcept.SHORTEST_PATH })
 		@doc(value = "A shortest path between two points considering the topology of the agent applying the operator.")
 		// No documentation because it is same same as the previous one (but optimized for points?)
 		public static IPath path_to(final IScope scope, final GamaPoint g, final GamaPoint g1)
@@ -2006,7 +2058,8 @@ public abstract class Spatial {
 
 	public static abstract class Properties {
 
-		@operator(value = { "disjoint_from" }, category = { IOperatorCategory.SPATIAL })
+		@operator(value = { "disjoint_from" }, category = { IOperatorCategory.SPATIAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) is disjoints from the right-geometry (or agent/point).",
 			usages = { @usage(value = "if one of the operand is null, returns true."),
@@ -2037,7 +2090,8 @@ public abstract class Spatial {
 		 *
 		 */
 
-		@operator(value = "overlaps", category = { IOperatorCategory.SPATIAL })
+		@operator(value = "overlaps", category = { IOperatorCategory.SPATIAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) overlaps the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false."),
@@ -2078,7 +2132,8 @@ public abstract class Spatial {
 		 */
 
 		@operator(value = "partially_overlaps",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) partially overlaps the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
@@ -2121,7 +2176,8 @@ public abstract class Spatial {
 		 * @param args : agent --: a localized entity
 		 *
 		 */
-		@operator(value = "touches", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES })
+		@operator(value = "touches", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) touches the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
@@ -2157,7 +2213,8 @@ public abstract class Spatial {
 		 *
 		 */
 
-		@operator(value = "crosses", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES })
+		@operator(value = "crosses", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) crosses the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false."),
@@ -2173,7 +2230,8 @@ public abstract class Spatial {
 			return g1.crosses(g2);
 		}
 
-		@operator(value = "intersects", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES })
+		@operator(value = "intersects", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) intersects the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
@@ -2192,7 +2250,8 @@ public abstract class Spatial {
 		// return pl.intersects(p, g1.getInnerGeometry());
 		// }
 
-		@operator(value = "covers", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES })
+		@operator(value = "covers", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) covers the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
@@ -2208,7 +2267,8 @@ public abstract class Spatial {
 	public static abstract class Punctal {
 
 		@operator(value = { "any_location_in", "any_point_in" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "A point inside (or touching) the operand-geometry.",
 			examples = { @example(value = "any_location_in(square(5))",
 				equals = "a point in the square, for example : {3,4.6}.",
@@ -2222,7 +2282,8 @@ public abstract class Spatial {
 		@operator(value = { "points_on" },
 			type = IType.LIST,
 			content_type = IType.POINT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "A list of points of the operand-geometry distant from each other to the float right-operand .",
 			examples = { @example(value = " square(5) points_on(2)",
 				equals = "a list of points belonging to the exterior ring of the square distant from each other of 2.",
@@ -2242,7 +2303,8 @@ public abstract class Spatial {
 
 		@operator(value = { "points_at" },
 			content_type = IType.POINT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(
 			value = "A list of left-operand number of points located at a the right-operand distance to the agent location.",
 			examples = { @example(value = "3 points_at(20.0)",
@@ -2271,7 +2333,8 @@ public abstract class Spatial {
 		@operator(value = "closest_points_with",
 			type = IType.LIST,
 			content_type = IType.POINT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "A list of two closest points between the two geometries.",
 			examples = { @example(value = "geom1 closest_points_with(geom2)",
 				equals = "[pt1, pt2] with pt1 the closest point of geom1 to geom2 and pt1 the closest point of geom2 to geom1",
@@ -2282,7 +2345,8 @@ public abstract class Spatial {
 			return GamaListFactory.createWithoutCasting(Types.POINT, new GamaPoint(coors[0]), new GamaPoint(coors[1]));
 		}
 
-		@operator(value = "farthest_point_to", category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
+		@operator(value = "farthest_point_to", category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "the farthest point of the left-operand to the left-point.",
 			examples = { @example(value = "geom farthest_point_to(pt)",
 				equals = "the closest point of geom to pt",
@@ -2328,7 +2392,8 @@ public abstract class Spatial {
 			return new GamaPoint(ppd.getCoordinate(0));
 		}
 
-		@operator(value = "angle_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
+		@operator(value = "angle_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
+				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "the angle between vectors P0P1 and P0P2 (P0, P1, P2 being the three point operands)",
 			examples = { @example(value = "angle_between({5,5},{10,5},{5,10})", equals = "90") })
 		public static Integer angleInDegreesBetween(final IScope scope, final GamaPoint p0, final GamaPoint p1,
@@ -2352,7 +2417,8 @@ public abstract class Spatial {
 
 		@operator(value = "neighbors_of",
 			content_type = IType.AGENT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.NEIGHBORS })
 		@doc(
 			value = "a list, containing all the agents of the same species than the argument (if it is an agent) located at a distance inferior or equal to 1 to the right-hand operand agent considering the left-hand operand topology.",
 			masterDoc = true,
@@ -2368,7 +2434,8 @@ public abstract class Spatial {
 
 		@operator(value = "neighbors_of",
 			content_type = IType.AGENT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = {})
 		/* TODO, expected_content_type = { IType.FLOAT, IType.INT } */
 		@doc(usages = @usage(
 			value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the third argument to the second argument (agent, geometry or point) considering the first operand topology.",
@@ -2385,7 +2452,8 @@ public abstract class Spatial {
 
 		@operator(value = "neighbors_at",
 			content_type = ITypeProvider.FIRST_TYPE,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.NEIGHBORS })
 		@doc(
 			value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).",
 			comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.",
@@ -2402,7 +2470,8 @@ public abstract class Spatial {
 
 		@operator(value = "at_distance",
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(
 			value = "A list of agents or geometries among the left-operand list that are located at a distance <= the right operand from the caller agent (in its topology)",
 			examples = { @example(value = "[ag1, ag2, ag3] at_distance 20",
@@ -2436,7 +2505,8 @@ public abstract class Spatial {
 
 		@operator(value = { "inside" },
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(
 			value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), covered by the operand (casted as a geometry).",
 			examples = {
@@ -2459,7 +2529,8 @@ public abstract class Spatial {
 
 		@operator(value = { "overlapping" },
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(
 			value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), overlapping the operand (casted as a geometry).",
 			examples = {
@@ -2501,7 +2572,8 @@ public abstract class Spatial {
 
 		@operator(value = { "closest_to" },
 			type = ITypeProvider.FIRST_CONTENT_TYPE,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(
 			value = "An agent or a geometry among the left-operand list of agents, species or meta-population (addition of species), the closest to the operand (casted as a geometry).",
 			comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
@@ -2540,7 +2612,8 @@ public abstract class Spatial {
 
 		@operator(value = "agent_closest_to",
 			type = IType.AGENT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(value = "An agent, the closest to the operand (casted as a geometry).",
 			comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
 			examples = { @example(value = "agent_closest_to(self)",
@@ -2554,7 +2627,8 @@ public abstract class Spatial {
 
 		@operator(value = "agents_inside",
 			content_type = IType.AGENT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(value = "A list of agents covered by the operand (casted as a geometry).",
 			examples = { @example(value = "agents_inside(self)",
 				equals = "the agents that are covered by the shape of the agent applying the operator.",
@@ -2566,7 +2640,8 @@ public abstract class Spatial {
 
 		@operator(value = "agents_overlapping",
 			content_type = IType.AGENT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(value = "A list of agents overlapping the operand (casted as a geometry).",
 			examples = { @example(value = "agents_overlapping(self)",
 				equals = "the agents that overlap the shape of the agent applying the operator.",
@@ -2579,7 +2654,8 @@ public abstract class Spatial {
 
 		@operator(value = "agents_at_distance",
 			content_type = IType.AGENT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(value = "A list of agents situated at a distance lower than the right argument.",
 			examples = { @example(value = "agents_at_distance(20)",
 				equals = "all the agents (excluding the caller) which distance to the caller is lower than 20",
@@ -2626,7 +2702,8 @@ public abstract class Spatial {
 
 		@operator(value = { "simple_clustering_by_distance", "simple_clustering_by_envelope_distance" },
 			content_type = ITypeProvider.FIRST_TYPE,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL, IOperatorCategory.STATISTICAL })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL, IOperatorCategory.STATISTICAL },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.AGENT_LOCATION, IConcept.STATISTIC })
 		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.",
 			examples = { @example(value = "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0",
 				equals = "for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]",
@@ -2664,7 +2741,8 @@ public abstract class Spatial {
 
 		@operator(value = { "hierarchical_clustering" },
 			content_type = ITypeProvider.FIRST_TYPE,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL, IOperatorCategory.STATISTICAL })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL, IOperatorCategory.STATISTICAL },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.AGENT_LOCATION, IConcept.STATISTIC })
 		@doc(
 			value = "A tree (list of list) contained groups of agents clustered by distance considering a distance min between two groups.",
 			comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.",
@@ -2762,7 +2840,8 @@ public abstract class Spatial {
 			return groups;
 		}
 
-		@operator(value = { "IDW", "inverse_distance_weighting" }, category = { IOperatorCategory.SPATIAL })
+		@operator(value = { "IDW", "inverse_distance_weighting" }, category = { IOperatorCategory.SPATIAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.STATISTIC })
 		@doc(
 			value = "Inverse Distance Weighting (IDW) is a type of deterministic method for multivariate " +
 				"interpolation with a known scattered set of points. The assigned values to each geometry are calculated with a weighted average of the values available at the known points. See: http://en.wikipedia.org/wiki/Inverse_distance_weighting " +
@@ -2808,7 +2887,8 @@ public abstract class Spatial {
 
 	public static abstract class ThreeD {
 
-		@operator(value = { "set_z" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+		@operator(value = { "set_z" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.POINT, IConcept.THREED })
 		@doc(value = "Sets the z ordinate of the n-th point of a geometry to the value provided by the third argument",
 			masterDoc = true,
 			examples = { @example("loop i from: 0 to: length(shape.points) - 1{" +
@@ -2846,7 +2926,8 @@ public abstract class Spatial {
 			return geom;
 		}
 
-		@operator(value = { "set_z" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+		@operator(value = { "set_z" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+				concept = {})
 		@doc(
 			value = "Sets the z ordinate of each point of a geometry to the value provided, in order, by the right argument",
 			examples = { @example("shape <- triangle(3) set_z [5,10,14];") },
@@ -2882,7 +2963,8 @@ public abstract class Spatial {
 			return geom;
 		}
 
-		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED, IConcept.TEXTURE })
 		@doc(value = "A polygon that is equivalent to the surface of the texture",
 			masterDoc = true,
 			comment = "",
@@ -2894,7 +2976,8 @@ public abstract class Spatial {
 			return dem(scope, demFileName, demFileName, 1.0);
 		}
 
-		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+				concept = {})
 		@doc(value = "A polygon equivalent to the surface of the texture",
 			examples = { @example(value = "dem(dem,texture)",
 				equals = "a geometry as a rectangle of weight and height equal to the texture.",
@@ -2904,7 +2987,8 @@ public abstract class Spatial {
 			return dem(scope, demFile, textureFile, 1.0);
 		}
 
-		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+				concept = {})
 		@doc(value = "A polygon that is equivalent to the surface of the texture",
 			examples = { @example(value = "dem(dem,z_factor)",
 				equals = "a geometry as a rectangle of weight and height equal to the texture.",
@@ -2914,7 +2998,8 @@ public abstract class Spatial {
 			return dem(scope, demFileName, demFileName, z_factor);
 		}
 
-		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+				concept = {})
 		@doc(value = "A polygon equivalent to the surface of the texture",
 			examples = { @example(value = "dem(dem,texture,z_factor)",
 				equals = "a geometry as a rectangle of width and height equal to the texture.",
@@ -2966,7 +3051,8 @@ public abstract class Spatial {
 		@operator(value = "rgb_to_xyz",
 			type = IType.LIST,
 			content_type = IType.POINT,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED, IConcept.COLOR })
 		@doc(value = "A list of point corresponding to RGB value of an image (r:x , g:y, b:z)",
 			examples = { @example(value = "rgb_to_xyz(texture)", equals = "a list of points", isExecutable = false) },
 			see = {})
@@ -2997,7 +3083,8 @@ public abstract class Spatial {
 
 		@operator(value = "is_clockwise",
 			type = IType.BOOL,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED })
 		@doc(value = "returns true if the geometry is defined clockwise ",
 			examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
 			see = { "change_clockwise" })
@@ -3009,7 +3096,8 @@ public abstract class Spatial {
 
 		@operator(value = "change_clockwise",
 			type = IType.GEOMETRY,
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED })
 		@doc(value = "returns true if the geometry is defined clockwise ",
 			examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
 			see = { "is_clockwise" })
@@ -3023,7 +3111,8 @@ public abstract class Spatial {
 
 	public static abstract class Projections {
 
-		@operator(value = "crs", category = { IOperatorCategory.SPATIAL, IOperatorCategory.FILE })
+		@operator(value = "crs", category = { IOperatorCategory.SPATIAL, IOperatorCategory.FILE },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.FILE, IConcept.GIS })
 		@doc(value = "the Coordinate Reference System (CRS) of the GIS file",
 			examples = {
 				@example(value = "crs(my_shapefile)", equals = "the crs of the shapefile", isExecutable = false) },
@@ -3045,9 +3134,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "CRS_transform" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.GIS })
 		@doc(usages = { @usage(
-			value = "returns the geometry corresponding to the transfomartion of the given geometry by the current CRS (Coordinate Reference System), the one corresponding to the world's agent one",
+			value = "returns the geometry corresponding to the transformation of the given geometry by the current CRS (Coordinate Reference System), the one corresponding to the world's agent one",
 			examples = { @example(value = "CRS_transform(shape)",
 				equals = "a geometry corresponding to the agent geometry transformed into the current CRS",
 				test = false) }) })
@@ -3060,7 +3150,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "to_GAMA_CRS" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.GIS })
 		@doc(usages = { @usage(
 			value = "returns the geometry corresponding to the transfomartion of the given geometry to the GAMA CRS (Coordinate Reference System) assuming the given geometry is referenced by the current CRS, the one corresponding to the world's agent one",
 			examples = { @example(value = "to_GAMA_CRS({121,14})",
@@ -3075,7 +3166,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "to_GAMA_CRS" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = {})
 		@doc(usages = { @usage(
 			value = "returns the geometry corresponding to the transfomartion of the given geometry to the GAMA CRS (Coordinate Reference System) assuming the given geometry is referenced by given CRS",
 			examples = { @example(value = "to_GAMA_CRS({121,14}, \"EPSG:4326\")",
@@ -3096,7 +3188,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "CRS_transform" },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.GIS })
 		@doc(usages = { @usage(
 			value = "returns the geometry corresponding to the transfomartion of the given geometry by the left operand CRS (Coordinate Reference System)",
 			examples = { @example(value = "shape CRS_transform(\"EPSG:4326\")",

@@ -312,7 +312,8 @@ public class Stats {
 		can_be_const = true,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
-		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+		concept = { IConcept.STATISTIC })
 	@doc(value = "the maximum element found in the operand",
 		masterDoc = true,
 		comment = "the max operator behavior depends on the nature of the operand",
@@ -356,7 +357,8 @@ public class Stats {
 		can_be_const = true,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
-		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+		concept = { IConcept.STATISTIC })
 	@doc(value = "the minimum element found in the operand.",
 		masterDoc = true,
 		comment = "the min operator behavior depends on the nature of the operand",
@@ -403,7 +405,8 @@ public class Stats {
 		can_be_const = true,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
-		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+		concept = { IConcept.STATISTIC })
 	@doc(value = "the product of all the elements of the operand",
 		masterDoc = true,
 		comment = "the mul operator behavior depends on the nature of the operand",
@@ -454,7 +457,8 @@ public class Stats {
 		can_be_const = true,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT, IType.COLOR },
-		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR })
+		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR },
+		concept = { IConcept.STATISTIC, IConcept.COLOR })
 	@doc(value = "the sum of all the elements of the operand",
 		masterDoc = true,
 		comment = "the sum operator behavior depends on the nature of the operand",
@@ -538,7 +542,8 @@ public class Stats {
 
 	}
 
-	@operator(value = "sum", can_be_const = true, type = IType.GRAPH, category = { IOperatorCategory.GRAPH })
+	@operator(value = "sum", can_be_const = true, type = IType.GRAPH, category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
 	public static double sum(final IScope scope, final IGraph g) {
 		if ( g == null ) { return 0.0; }
 		return g.computeTotalWeight();
@@ -548,7 +553,8 @@ public class Stats {
 		can_be_const = true,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT, IType.COLOR },
-		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR })
+		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR },
+		concept = { IConcept.STATISTIC, IConcept.COLOR })
 	@doc(value = "the mean of all the elements of the operand",
 		comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.",
 		special_cases = {
@@ -595,7 +601,8 @@ public class Stats {
 	@operator(value = "median",
 		can_be_const = true,
 		expected_content_type = { IType.INT, IType.FLOAT },
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(value = "the median of all the elements of the operand.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
 		special_cases = { "" },
@@ -609,7 +616,8 @@ public class Stats {
 	@operator(value = "standard_deviation",
 		can_be_const = true,
 		expected_content_type = { IType.INT, IType.FLOAT },
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(
 		value = "the standard deviation on the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> for more details.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
@@ -624,7 +632,8 @@ public class Stats {
 	@operator(value = "geometric_mean",
 		can_be_const = true,
 		expected_content_type = { IType.INT, IType.FLOAT },
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(
 		value = "the geometric mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</A> for more details.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
@@ -639,7 +648,8 @@ public class Stats {
 	@operator(value = "harmonic_mean",
 		can_be_const = true,
 		expected_content_type = { IType.INT, IType.FLOAT },
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(
 		value = "the harmonic mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Harmonic_mean\">Harmonic_mean</A> for more details.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
@@ -654,7 +664,8 @@ public class Stats {
 	@operator(value = "variance",
 		can_be_const = true,
 		expected_content_type = { IType.INT, IType.FLOAT },
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(
 		value = "the variance of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Variance\">Variance</A> for more details.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded. ",
@@ -668,7 +679,8 @@ public class Stats {
 	@operator(value = "mean_deviation",
 		can_be_const = true,
 		expected_content_type = { IType.INT, IType.FLOAT },
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(
 		value = "the deviation from the mean of all the elements of the operand. See <A href= \"http://en.wikipedia.org/wiki/Absolute_deviation\" >Mean_deviation</A> for more details.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
@@ -684,7 +696,8 @@ public class Stats {
 		iterator = true,
 		index_type = ITypeProvider.SECOND_CONTENT_TYPE,
 		content_type = IType.INT,
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(
 		value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)",
 		comment = "",
@@ -711,7 +724,8 @@ public class Stats {
 	@operator(value = { "corR", "R_correlation" },
 		can_be_const = false,
 		type = IType.FLOAT,
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(
 		value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -766,7 +780,8 @@ public class Stats {
 	@operator(value = { "meanR", "R_mean" },
 		can_be_const = false,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).",
 		examples = { @example("list<int> X <- [2, 3, 1];"),
 			@example(value = "meanR(X)", equals = "2", returnType = IKeyword.INT) })
@@ -799,7 +814,8 @@ public class Stats {
 		return results[0];
 	}
 
-	@operator(value = "dbscan", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = "dbscan", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
 	@doc(
 		value = "returns the list of clusters (list of instance indices) computed with the dbscan (density-based spatial clustering of applications with noise) algorithm from the first operand data according to the maximum radius of the neighborhood to be considered (eps) and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -829,7 +845,8 @@ public class Stats {
 		return results;
 	}
 
-	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
 	@doc(
 		value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k) and the maximum number of iterations to run the algorithm for (If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -860,7 +877,8 @@ public class Stats {
 		return results;
 	}
 
-	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
 	@doc(
 		value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k). Usage: kmeans(data,k)",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -873,7 +891,8 @@ public class Stats {
 	@operator(value = "build",
 		can_be_const = false,
 		type = IType.REGRESSION,
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(
 		value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build(data,method)",
 		examples = { @example("build(matrix([[1,2,3,4],[2,3,4,2]]),\"GLS\")") })
@@ -889,7 +908,8 @@ public class Stats {
 	@operator(value = "build",
 		can_be_const = false,
 		type = IType.REGRESSION,
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = {})
 	@doc(
 		value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given ordinary least squares method. Usage: build(data)",
 		examples = { @example("matrix([[1,2,3,4],[2,3,4,2]])") })
@@ -903,7 +923,8 @@ public class Stats {
 		}
 	}
 
-	@operator(value = "predict", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = "predict", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL },
+			concept = {})
 	@doc(
 		value = "returns the value predict by the regression parameters for a given instance. Usage: predict(regression, instance)",
 		examples = { @example("predict(my_regression, [1,2,3]") })

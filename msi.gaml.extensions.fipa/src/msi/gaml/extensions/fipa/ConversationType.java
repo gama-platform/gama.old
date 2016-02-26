@@ -43,7 +43,8 @@ public class ConversationType extends GamaContainerType<Conversation> {
 		return Types.get(Message.class);
 	}
 
-	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true, category = { IOperatorCategory.FIPA })
+	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true, category = { IOperatorCategory.FIPA },
+			concept = { IConcept.FIPA })
 	// @doc(value = "to be added", comment = "", special_cases = { "" }, examples = { })
 		public static
 		Conversation asMessage(final IScope scope, final Object val) throws GamaRuntimeException {

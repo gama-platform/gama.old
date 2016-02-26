@@ -7,6 +7,7 @@ package msi.gama.util;
 import java.awt.Font;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -112,7 +113,8 @@ public class GamaFont extends Font implements IValue {
 		return new GamaFont(name, style, size);
 	}
 
-	@operator(value = "font", category = { IOperatorCategory.CASTING }, can_be_const = true)
+	@operator(value = "font", category = { IOperatorCategory.CASTING },
+			concept = { IConcept.TEXT, IConcept.DISPLAY }, can_be_const = true)
 	@doc(
 		value = "Creates a new font, by specifying its name (either a font face name like 'Lucida Grande Bold' or 'Helvetica', or a logical name like 'Dialog', 'SansSerif', 'Serif', etc.), a size in points and a style, either #bold, #italic or #plain or a combination (addition) of them.",
 		examples = @example(value = "font ('Helvetica Neue',12, #bold + #italic)",

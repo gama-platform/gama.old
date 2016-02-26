@@ -65,7 +65,8 @@ public class Clustering {
 
 	}
 
-	@operator(value = { "clustering_xmeans" }, content_type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = { "clustering_xmeans" }, content_type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
 	@doc(value = "A list of agent groups clustered by X-Means Algorithm based on the given attributes. Some paremeters can be defined: bin_value: value given for true value of boolean attributes; cut_off_factor: the cut-off factor to use;"
 		+ "distance_f: The distance function to use. 4 possible distance functions: euclidean (by default) ; 'chebyshev', 'manhattan' or 'levenshtein'; "
 		+ "max_iterations: the maximum number of iterations to perform; max_kmeans: the maximum number of iterations to perform in KMeans; max_kmeans_for_children: the maximum number of iterations KMeans that is performed on the child centers;"
@@ -126,7 +127,8 @@ public class Clustering {
 
 	@operator(value = { "clustering_simple_kmeans" },
 		content_type = IType.LIST,
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(value = "A list of agent groups clustered by K-Means Algorithm based on the given attributes. Some paremeters can be defined: "
 		+ "distance_f: The distance function to use. 4 possible distance functions: euclidean (by default) ; 'chebyshev', 'manhattan' or 'levenshtein'; "
 		+ "dont_replace_missing_values: if false, replace missing values globally with mean/mode; max_iterations: the maximum number of iterations to perform;"
@@ -173,7 +175,8 @@ public class Clustering {
 		return groupes;
 	}
 
-	@operator(value = { "clustering_em" }, content_type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = { "clustering_em" }, content_type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
 	@doc(value = "A list of agent groups clustered by EM Algorithm based on the given attributes. Some paremeters can be defined: "
 		+ "max_iterations: the maximum number of iterations to perform;"
 		+ "num_clusters: the number of clusters; minStdDev: minimum allowable standard deviation",
@@ -211,7 +214,8 @@ public class Clustering {
 
 	@operator(value = { "clustering_farthestFirst" },
 		content_type = IType.LIST,
-		category = { IOperatorCategory.STATISTICAL })
+		category = { IOperatorCategory.STATISTICAL },
+		concept = { IConcept.STATISTIC })
 	@doc(value = "A list of agent groups clustered by Farthest First Algorithm based on the given attributes. Some paremeters can be defined: "
 		+ "num_clusters: the number of clusters",
 		examples = { @example(value = "clustering_farthestFirst([ag1, ag2, ag3, ag4, ag5],[\"size\",\"age\", \"weight\"],[\"num_clusters\"::3])",
@@ -239,7 +243,8 @@ public class Clustering {
 		return groupes;
 	}
 
-	@operator(value = { "clustering_DBScan" }, content_type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = { "clustering_DBScan" }, content_type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
 	@doc(value = "A list of agent groups clustered by DBScan Algorithm based on the given attributes. Some paremeters can be defined: "
 		+ "distance_f: The distance function to use for instances comparison (euclidean or manhattan); "
 		+ "min_points: minimun number of DataObjects required in an epsilon-range-query"
@@ -280,7 +285,8 @@ public class Clustering {
 		return groupes;
 	}
 
-	@operator(value = { "clustering_cobweb" }, content_type = IType.LIST, category = { IOperatorCategory.STATISTICAL })
+	@operator(value = { "clustering_cobweb" }, content_type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
 	@doc(value = "A list of agent groups clusteredby CobWeb Algorithm based on the given attributes. Some paremeters can be defined: "
 		+ "acuity: minimum standard deviation for numeric attributes; "
 		+ "cutoff: category utility threshold by which to prune nodes seed",

@@ -40,7 +40,8 @@ public class MessageType extends GamaType<Message> {
 		return true;
 	}
 
-	@operator(value = MessageType.MESSAGE_STR, can_be_const = true, category = { IOperatorCategory.FIPA })
+	@operator(value = MessageType.MESSAGE_STR, can_be_const = true, category = { IOperatorCategory.FIPA },
+			concept = { IConcept.FIPA })
 	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = {})
 	public static Message asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return MessageType.staticCast(scope, val, null);

@@ -8,6 +8,7 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.gamaType.converters.*;
 
@@ -34,7 +35,7 @@ public class ReverseOperators {
 	}
 	
 	// TODO : la faire prendre un agent en paramètre ... 
-	@operator(value = "serializeSimulation")
+	@operator(value = "serializeSimulation", concept = { IConcept.SERIALIZE })
 	@doc("")
 	public static String serializeSimulation(final IScope scope, final int i) {
 		XStream xstream = newXStream(new ConverterScope(scope));
@@ -50,7 +51,7 @@ public class ReverseOperators {
 		return xstream.toXML(new SavedAgent(scope, simAgt));
 	}
 
-	@operator(value = "unSerializeSimulation")
+	@operator(value = "unSerializeSimulation", concept = { IConcept.SERIALIZE })
 	@doc("")
 	public static int unSerializeSimulation(final IScope scope, final String simul) {
 		ConverterScope cScope = new ConverterScope(scope);
@@ -72,7 +73,7 @@ public class ReverseOperators {
 		return 1;
 	}
 
-	@operator(value = "saveSimulation")
+	@operator(value = "saveSimulation", concept = { IConcept.SERIALIZE })
 	@doc("")
 	public static int saveSimulation(final IScope scope, final String pathname) {
 		String path = FileUtils.constructAbsoluteFilePath(scope, pathname, false);

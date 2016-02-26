@@ -16,6 +16,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.filter.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
@@ -31,7 +32,8 @@ import msi.gaml.types.*;
 //
 public class MapComparison {
 
-	@operator(value = { "kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@operator(value = { "kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON },
+			concept = { IConcept.MAP })
 	@doc(
 		value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20.",
 		examples = {
@@ -46,7 +48,8 @@ public class MapComparison {
 		return kappa(scope, vals1, vals2, categories, null);
 	}
 
-	@operator(value = { "kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@operator(value = { "kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON },
+			concept = {})
 	@doc(
 		value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories, weights). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20. ",
 		examples = { @example(
@@ -102,7 +105,8 @@ public class MapComparison {
 		return (po - pe) / (1 - pe);
 	}
 
-	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON },
+			concept = { IConcept.MAP })
 	@doc(
 		value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8).",
 		examples = { @example(
@@ -113,7 +117,8 @@ public class MapComparison {
 		return kappaSimulation(scope, valsInit, valsObs, valsSim, categories, null);
 	}
 
-	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON },
+			concept = {})
 	@doc(
 		value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories, weights). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8)",
 		examples = { @example(
@@ -180,7 +185,8 @@ public class MapComparison {
 		return (po - pe) / (1 - pe);
 	}
 
-	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON },
+			concept = { IConcept.MAP })
 	@doc(
 		value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21",
 		examples = { @example(
@@ -193,7 +199,8 @@ public class MapComparison {
 		return fuzzyKappa(scope, agents, vals1, vals2, similarities, categories, fuzzycategories, distance, null);
 	}
 
-	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON },
+			concept = {})
 	@doc(
 		value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance, weights). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21",
 		examples = { @example(
@@ -236,7 +243,8 @@ public class MapComparison {
 
 	@operator(value = { "fuzzy_kappa_sim" },
 		content_type = IType.FLOAT,
-		category = { IOperatorCategory.MAP_COMPARAISON })
+		category = { IOperatorCategory.MAP_COMPARAISON },
+		concept = { IConcept.MAP })
 	@doc(
 		value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ",
 		examples = { @example(
@@ -253,7 +261,8 @@ public class MapComparison {
 
 	@operator(value = { "fuzzy_kappa_sim" },
 		content_type = IType.FLOAT,
-		category = { IOperatorCategory.MAP_COMPARAISON })
+		category = { IOperatorCategory.MAP_COMPARAISON },
+		concept = { IConcept.MAP })
 	@doc(
 		value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance, weights). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ",
 		examples = { @example(
@@ -689,7 +698,8 @@ public class MapComparison {
 
 	@operator(value = { "percent_absolute_deviation" },
 		content_type = IType.FLOAT,
-		category = { IOperatorCategory.MAP_COMPARAISON })
+		category = { IOperatorCategory.MAP_COMPARAISON },
+		concept = { IConcept.STATISTIC })
 	@doc(
 		value = "percent absolute deviation indicator for 2 series of values: percent_absolute_deviation(list_vals_observe,list_vals_sim)",
 		examples = { @example(value = "percent_absolute_deviation([200,300,150,150,200],[250,250,100,200,200])",

@@ -46,7 +46,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		@operator(value = { IKeyword.AT, "@" },
 			can_be_const = true,
 			type = ITypeProvider.FIRST_CONTENT_TYPE,
-			category = { IOperatorCategory.CONTAINER })
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
 		@doc(value = "the element at the right operand index of the container",
 			masterDoc = true,
 			comment = "The first element of the container is located at the index 0. " +
@@ -79,7 +80,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		 */
 		@operator(value = { "internal_at" },
 			type = ITypeProvider.FIRST_CONTENT_TYPE,
-			category = { IOperatorCategory.CONTAINER })
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
 		@doc(
 			value = "For internal use only. Corresponds to the implementation of the access to containers with [index]",
 			see = { IKeyword.AT })
@@ -121,7 +123,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 
 	// Operators available in GAML
 
-	@operator(value = "contains", can_be_const = true, category = { IOperatorCategory.CONTAINER })
+	@operator(value = "contains", can_be_const = true, category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
 	@doc(value = "true, if the container contains the right operand, false otherwise",
 		masterDoc = true,
 		comment = "the contains operator behavior depends on the nature of the operand",
@@ -140,7 +143,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@operator(value = "first",
 		can_be_const = true,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.CONTAINER },
+		concept = { IConcept.CONTAINER })
 	@doc(value = "the first value of the operand",
 		masterDoc = true,
 		comment = "the first operator behavior depends on the nature of the operand",
@@ -161,7 +165,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@operator(value = "last",
 		can_be_const = true,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.CONTAINER },
+		concept = { IConcept.CONTAINER })
 	@doc(value = "the last element of the operand",
 		masterDoc = true,
 		comment = "the last operator behavior depends on the nature of the operand",
@@ -179,7 +184,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		see = { "first" })
 	public ValueType lastValue(IScope scope) throws GamaRuntimeException;
 
-	@operator(value = "length", can_be_const = true, category = { IOperatorCategory.CONTAINER })
+	@operator(value = "length", can_be_const = true, category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
 	@doc(value = "the number of elements contained in the operand",
 		masterDoc = true,
 		comment = "the length operator behavior depends on the nature of the operand",
@@ -194,7 +200,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 					equals = "6") }) })
 	public int length(IScope scope);
 
-	@operator(value = "empty", can_be_const = true, category = { IOperatorCategory.CONTAINER })
+	@operator(value = "empty", can_be_const = true, category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
 	@doc(value = "true if the operand is empty, false otherwise.",
 		masterDoc = true,
 		comment = "the empty operator behavior depends on the nature of the operand",
@@ -220,7 +227,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		can_be_const = true,
 		type = ITypeProvider.FIRST_TYPE,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.CONTAINER },
+		concept = { IConcept.CONTAINER })
 	@doc(value = "the operand elements in the reversed order in a copy of the operand.",
 		masterDoc = true,
 		comment = "the reverse operator behavior depends on the nature of the operand",
@@ -248,7 +256,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@operator(value = { "one_of", "any" },
 		can_be_const = false,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.CONTAINER })
+		category = { IOperatorCategory.CONTAINER },
+		concept = { IConcept.CONTAINER })
 	@doc(value = "one of the values stored in this container  at a random key",
 		masterDoc = true,
 		comment = "the one_of operator behavior depends on the nature of the operand",

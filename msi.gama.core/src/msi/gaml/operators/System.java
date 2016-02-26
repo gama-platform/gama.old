@@ -31,14 +31,16 @@ import msi.gaml.types.*;
  */
 public class System {
 
-	@operator(value = "dead", category = { IOperatorCategory.SYSTEM })
+	@operator(value = "dead", category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM, IConcept.SPECIES })
 	@doc(value = "true if the agent is dead, false otherwise.",
 		examples = @example(value = "dead(agent_A)", equals = "true or false", isExecutable = false) )
 	public static Boolean opDead(final IScope scope, final IAgent a) {
 		return a == null || a.dead();
 	}
 
-	@operator(value = "every", category = { IOperatorCategory.SYSTEM })
+	@operator(value = "every", category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM, IConcept.CYCLE })
 	@doc(value = "true every operand * cycle, false otherwise",
 		comment = "the value of the every operator depends on the cycle. It can be used to do something every x cycle.",
 		examples = { @example("if every(2) {write \"the time step is even\";}"),
@@ -52,7 +54,8 @@ public class System {
 		type = ITypeProvider.SECOND_TYPE,
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
 		index_type = ITypeProvider.SECOND_KEY_TYPE,
-		category = { IOperatorCategory.SYSTEM })
+		category = { IOperatorCategory.SYSTEM },
+		concept = { IConcept.SYSTEM, IConcept.ATTRIBUTE })
 	@doc(
 		value = "It has two different uses: it can be the dot product between 2 matrices or return an evaluation of the expresion (right-hand operand) in the scope the given agent.",
 		masterDoc = true,
@@ -84,14 +87,16 @@ public class System {
 	@operator(value = "copy",
 		type = ITypeProvider.FIRST_TYPE,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-		category = { IOperatorCategory.SYSTEM })
+		category = { IOperatorCategory.SYSTEM },
+		concept = { IConcept.SYSTEM })
 	@doc(value = "returns a copy of the operand.")
 	public static Object opCopy(final IScope scope, final Object o) throws GamaRuntimeException {
 		if ( o instanceof IValue ) { return ((IValue) o).copy(scope); }
 		return o;
 	}
 
-	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL })
+	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = { IConcept.SYSTEM, IConcept.GUI })
 	@doc(
 		value = "asks the user for some values (not defined as parameters). Takes a string (optionnal) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
 		masterDoc = true,
@@ -109,7 +114,8 @@ public class System {
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
 	}
 
-	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL })
+	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
 	@doc(
 		value = "asks the user for some values (not defined as parameters). Takes a string (optionnal) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
 		examples = {
@@ -139,7 +145,8 @@ public class System {
 			scope.getGui().openUserInputDialog(title, initialValues, initialTypes));
 	}
 
-	@operator(value = "eval_gaml", can_be_const = false, category = { IOperatorCategory.SYSTEM })
+	@operator(value = "eval_gaml", can_be_const = false, category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM })
 	@doc(value = "evaluates the given GAML string.",
 		examples = { @example(value = "eval_gaml(\"2+3\")", equals = "5") })
 	public static Object opEvalGaml(final IScope scope, final String gaml) {

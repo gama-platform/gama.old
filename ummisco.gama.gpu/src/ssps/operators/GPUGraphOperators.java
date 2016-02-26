@@ -29,7 +29,8 @@ import ssps.graph.Graph;
 public class GPUGraphOperators {
 
 	@operator(value = "GPU_path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-		IOperatorCategory.GRAPH, IOperatorCategory.PATH })
+		IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+			concept = { IConcept.PATH, IConcept.SYSTEM, IConcept.OPTIMIZATION, IConcept.GRAPH })
 	@doc(value = "The shortest path between a list of two objects in a graph computed with GPU",
 		examples = { @example(value = "my_graph GPU_path_between (ag1:: ag2)",
 			equals = "A path between ag1 and ag2",
@@ -40,7 +41,8 @@ public class GPUGraphOperators {
 	}
 
 	@operator(value = "CPU_path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-		IOperatorCategory.GRAPH, IOperatorCategory.PATH })
+		IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+			concept = { IConcept.PATH, IConcept.SYSTEM, IConcept.OPTIMIZATION, IConcept.GRAPH })
 	@doc(value = "The shortest path between a list of two objects in a graph computed with CPU",
 		examples = { @example(value = "my_graph CPU_path_between (ag1:: ag2)",
 			equals = "A path between ag1 and ag2",

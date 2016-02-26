@@ -179,7 +179,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	@Override
 	@operator(value = IKeyword.APPEND_VERTICALLY,
 		content_type = ITypeProvider.BOTH,
-		category = { IOperatorCategory.MATRIX })
+		category = { IOperatorCategory.MATRIX },
+		concept = { IConcept.MATRIX })
 	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
 		if ( this instanceof GamaIntMatrix &&
 			b instanceof GamaIntMatrix ) { return ((GamaIntMatrix) this)._opAppendVertically(scope, b); }
@@ -214,7 +215,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	@Override
 	@operator(value = IKeyword.APPEND_HORIZONTALLY,
 		content_type = ITypeProvider.BOTH,
-		category = { IOperatorCategory.MATRIX })
+		category = { IOperatorCategory.MATRIX },
+		concept = { IConcept.MATRIX })
 	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
 		if ( this instanceof GamaIntMatrix &&
 			b instanceof GamaIntMatrix ) { return ((GamaIntMatrix) this)._opAppendHorizontally(scope, b); }

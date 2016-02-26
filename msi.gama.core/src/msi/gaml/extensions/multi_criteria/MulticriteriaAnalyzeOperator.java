@@ -23,6 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -33,7 +34,8 @@ public class MulticriteriaAnalyzeOperator {
 	
 	final static String MULTICRITERIA = "multicriteria operators";
 	
-	@operator(value = "weighted_means_DM", category = { MULTICRITERIA })
+	@operator(value = "weighted_means_DM", category = { MULTICRITERIA },
+			concept = { IConcept.MULTI_CRITERIA })
 	@doc(value = "The index of the candidate that maximizes the weighted mean of its criterion values. The first operand is the list of candidates (a candidate is a list of criterion values); the second operand the list of criterion (list of map)",
 	special_cases = { "returns -1 is the list of candidates is nil or empty" },
 	examples = { @example(value = "weighted_means_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [[\"name\"::\"utility\", \"weight\" :: 2.0],[\"name\"::\"price\", \"weight\" :: 1.0]])", equals = "1") },
@@ -73,7 +75,8 @@ public class MulticriteriaAnalyzeOperator {
 		return indexCand;
 
 	}
-@operator(value = "promethee_DM", category = { MULTICRITERIA })
+@operator(value = "promethee_DM", category = { MULTICRITERIA },
+		concept = { IConcept.MULTI_CRITERIA })
 	@doc(value = "The index of the best candidate according to the Promethee II method. This method is based on a comparison per pair of possible candidates along each criterion: all candidates are compared to each other by pair and ranked. More information about this method can be found in [http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6VCT-4VF56TV-1&_user=10&_coverDate=01%2F01%2F2010&_rdoc=1&_fmt=high&_orig=search&_sort=d&_docanchor=&view=c&_searchStrId=1389284642&_rerunOrigin=google&_acct=C000050221&_version=1&_urlVersion=0&_userid=10&md5=d334de2a4e0d6281199a39857648cd36 Behzadian, M., Kazemzadeh, R., Albadvi, A., M., A.: PROMETHEE: A comprehensive literature review on methodologies and applications. European Journal of Operational Research(2009)]. The first operand is the list of candidates (a candidate is a list of criterion values); the second operand the list of criterion: A criterion is a map that contains fours elements: a name, a weight, a preference value (p) and an indifference value (q). The preference value represents the threshold from which the difference between two criterion values allows to prefer one vector of values over another. The indifference value represents the threshold from which the difference between two criterion values is considered significant.",
 	special_cases = { "returns -1 is the list of candidates is nil or empty" },
 	examples = { @example(value = "promethee_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [[\"name\"::\"utility\", \"weight\" :: 2.0,\"p\"::0.5, \"q\"::0.0, \"s\"::1.0, \"maximize\" :: true],[\"name\"::\"price\", \"weight\" :: 1.0,\"p\"::0.5, \"q\"::0.0, \"s\"::1.0, \"maximize\" :: false]])", equals = "1") },
@@ -145,7 +148,8 @@ public class MulticriteriaAnalyzeOperator {
 		return decision.getIndex();
 
 	}
-	@operator(value = "electre_DM", category = { MULTICRITERIA })
+	@operator(value = "electre_DM", category = { MULTICRITERIA },
+			concept = { IConcept.MULTI_CRITERIA })
 	@doc(value = "The index of the best candidate according to a method based on the ELECTRE methods. The principle of the ELECTRE methods is to compare the possible candidates by pair. These methods analyses the possible outranking relation existing between two candidates. An candidate outranks another if this one is at least as good as the other one. The ELECTRE methods are based on two concepts: the concordance and the discordance. The concordance characterises the fact that, for an outranking relation to be validated, a sufficient majority of criteria should be in favor of this assertion. The discordance characterises the fact that, for an outranking relation to be validated, none of the criteria in the minority should oppose too strongly this assertion. These two conditions must be true for validating the outranking assertion. More information about the ELECTRE methods can be found in [http://www.springerlink.com/content/g367r44322876223/	Figueira,  J., Mousseau, V., Roy, B.: ELECTRE Methods. In: Figueira, J., Greco, S., and Ehrgott, M., (Eds.), Multiple Criteria Decision Analysis: State of the Art Surveys, Springer, New York, 133--162 (2005)]. The first operand is the list of candidates (a candidate is a list of criterion values); the second operand the list of criterion: A criterion is a map that contains fives elements: a name, a weight, a preference value (p), an indifference value (q) and a veto value (v). The preference value represents the threshold from which the difference between two criterion values allows to prefer one vector of values over another. The indifference value represents the threshold from which the difference between two criterion values is considered significant. The veto value represents the threshold from which the difference between two criterion values disqualifies the candidate that obtained the smaller value; the last operand is the fuzzy cut.",
 	special_cases = { "returns -1 is the list of candidates is nil or empty" },
 	examples = { @example(value = "electre_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [[\"name\"::\"utility\", \"weight\" :: 2.0,\"p\"::0.5, \"q\"::0.0, \"s\"::1.0, \"maximize\" :: true],[\"name\"::\"price\", \"weight\" :: 1.0,\"p\"::0.5, \"q\"::0.0, \"s\"::1.0, \"maximize\" :: false]])", equals = "0") },
@@ -218,13 +222,15 @@ public class MulticriteriaAnalyzeOperator {
 	}
 
 
-	@operator(value = "evidence_theory_DM", category = { MULTICRITERIA })
+	@operator(value = "evidence_theory_DM", category = { MULTICRITERIA },
+			concept = { IConcept.MULTI_CRITERIA })
 	@doc(usages = { 
 		@usage(value = "if the operator is used with only 2 operands (the candidates and the criteria), the last parameter (use simple method) is set to true") })
 	public static Integer evidenceTheoryDecisionMaking(IScope scope,final List<List> cands, List<Map<String, Object>> criteriaMap) throws GamaRuntimeException {
 		return evidenceTheoryDecisionMaking(scope, cands, criteriaMap, true);
 	}
-	@operator(value = "evidence_theory_DM", category = { MULTICRITERIA })
+	@operator(value = "evidence_theory_DM", category = { MULTICRITERIA },
+			concept = { IConcept.MULTI_CRITERIA })
 	@doc(value = "The index of the best candidate according to a method based on the Evidence theory. This theory, which was proposed by Shafer ([http://www.glennshafer.com/books/amte.html Shafer G (1976) A mathematical theory of evidence, Princeton University Press]), is based on the work of Dempster ([http://projecteuclid.org/DPubS?service=UI&version=1.0&verb=Display&handle=euclid.aoms/1177698950 Dempster A (1967) Upper and lower probabilities induced by multivalued mapping. Annals of Mathematical Statistics, vol.  38, pp. 325--339]) on lower and upper probability distributions. The first operand is the list of candidates (a candidate is a list of criterion values); the second operand the list of criterion: A criterion is a map that contains seven elements: a name, a first threshold s1, a second threshold s2, a value for the assertion \"this candidate is the best\" at threshold s1 (v1p), a value for the assertion \"this candidate is the best\" at threshold s2 (v2p), a value for the assertion \"this candidate is not the best\" at threshold s1 (v1c), a value for the assertion \"this candidate is not the best\" at threshold s2 (v2c). v1p, v2p, v1c and v2c have to been defined in order that: v1p + v1c <= 1.0; v2p + v2c <= 1.0.; the last operand allows to use a simple version of this multi-criteria decision making method (simple if true)",
 	masterDoc = true,
 	special_cases = { "returns -1 is the list of candidates is nil or empty" },

@@ -24,6 +24,8 @@ import org.geotools.xml.gml.GMLComplexTypes;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.xml.sax.*;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
@@ -32,7 +34,8 @@ import msi.gaml.types.Types;
 
 public class OpenGIS {
 
-	@operator(value = "image_from_wms", can_be_const = true)
+	@operator(value = "image_from_wms", can_be_const = true,
+			concept = { IConcept.GIS, IConcept.FILE })
 	@doc(value = "WMS: A simple call to WMS")
 	public static IGamaFile read_wms(final IScope scope, final String fakeFile, final String slink, final Integer epsg,
 		final Integer width, final Integer height, final Double bbox1, final Double bbox2, final Double bbox3,
@@ -74,7 +77,8 @@ public class OpenGIS {
 		return gif;
 	}
 
-	@operator(value = "image_from_direct_wms", can_be_const = true)
+	@operator(value = "image_from_direct_wms",
+			concept = { IConcept.GIS, IConcept.FILE }, can_be_const = true)
 	@doc(value = "WMS: A simple call to WMS")
 	public static IGamaFile read_wms_direct(final IScope scope, final String fakeFile, final String slink) {
 		if ( slink == null ) { return null; }
@@ -96,7 +100,8 @@ public class OpenGIS {
 		return gif;
 	}
 
-	@operator(value = "gml_from_wfs", can_be_const = true)
+	@operator(value = "gml_from_wfs",
+			concept = { IConcept.GIS, IConcept.FILE }, can_be_const = true)
 	@doc(value = "WMS: A simple call to WFS/GML2")
 	public static IList<IList<Object>> read_wfs(final IScope scope, final String fakeFile, final String schemaLink,
 		final String gmlLink)
@@ -190,7 +195,8 @@ public class OpenGIS {
 		return featureList;
 	}
 
-	@operator(value = "read_json_rest", can_be_const = true)
+	@operator(value = "read_json_rest",
+			concept = { IConcept.GIS, IConcept.FILE }, can_be_const = true)
 	@doc(value = "REST: Read data from RESTService")
 	public static IList<IList<Object>> read_json_rest(final IScope scope, final String fakeFile,
 		final String restLink) {
