@@ -14,12 +14,10 @@ package msi.gaml.operators;
 import java.awt.Font;
 import java.lang.reflect.Field;
 import java.util.*;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.IConstantCategory;
 import msi.gama.util.*;
 import msi.gaml.expressions.UnitConstantExpression;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
 
 public class IUnits {
@@ -29,17 +27,20 @@ public class IUnits {
 	 */
 
 	@constant(value = "bold",
-		category = { IConstantCategory.GRAPHIC }, concept = { IConcept.GRAPHIC, IConcept.TEXT },
+		category = { IConstantCategory.GRAPHIC },
+		concept = { IConcept.GRAPHIC, IConcept.TEXT },
 		doc = @doc("This contant allows to build a font with a bold face. Can be combined with #italic"))
 	public final static int bold = Font.BOLD; /* 1 */
 
 	@constant(value = "italic",
-		category = { IConstantCategory.GRAPHIC }, concept = { IConcept.GRAPHIC, IConcept.TEXT },
+		category = { IConstantCategory.GRAPHIC },
+		concept = { IConcept.GRAPHIC, IConcept.TEXT },
 		doc = @doc("This contant allows to build a font with an italic face. Can be combined with #bold"))
 	public final static int italic = Font.ITALIC; /* 2 */
 
 	@constant(value = "plain",
-		category = { IConstantCategory.GRAPHIC }, concept = { IConcept.GRAPHIC, IConcept.TEXT },
+		category = { IConstantCategory.GRAPHIC },
+		concept = { IConcept.GRAPHIC, IConcept.TEXT },
 		doc = @doc("This contant allows to build a font with a plain face"))
 	public final static int plain = Font.PLAIN;
 	/**
@@ -67,29 +68,34 @@ public class IUnits {
 	// public final static double view_height = 1;
 
 	@constant(value = "zoom",
-		category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC, IConcept.DISPLAY },
+		category = IConstantCategory.GRAPHIC,
+		concept = { IConcept.GRAPHIC, IConcept.DISPLAY },
 		doc = @doc("This unit, only available when running aspects or declaring displays, returns the current zoom level of the display as a positive float, where 1.0 represent the neutral zoom (100%)"))
 	public final static double zoom = 1;
 
 	@constant(value = "pixels",
 		altNames = { "px" },
-		category = { IConstantCategory.GRAPHIC }, concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
+		category = { IConstantCategory.GRAPHIC },
+		concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
 		doc = @doc("This unit, only available when running aspects or declaring displays,  returns a dynamic value instead of a fixed one. px (or pixels), returns the value of one pixel on the current view in terms of model units."))
-	public final static Double pixels = 1d, px = pixels; // Represents the value of a pixel in terms
+	public final static double pixels = 1d, px = pixels; // Represents the value of a pixel in terms
 	// of model units. Parsed early
 	// and never used as a constant.
 	@constant(value = "display_width",
-		category = { IConstantCategory.GRAPHIC }, concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
+		category = { IConstantCategory.GRAPHIC },
+		concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
 		doc = @doc("This constant is only accessible in a graphical context: display, graphics..."))
 	public final static double display_width = 1;
 
 	@constant(value = "display_height",
-		category = { IConstantCategory.GRAPHIC }, concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
+		category = { IConstantCategory.GRAPHIC },
+		concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
 		doc = @doc("This constant is only accessible in a graphical context: display, graphics..."))
 	public final static double display_height = 1;
 
 	@constant(value = "now",
-		category = { IConstantCategory.TIME }, concept = { IConcept.DATE, IConcept.TIME },
+		category = { IConstantCategory.TIME },
+		concept = { IConcept.DATE, IConcept.TIME },
 		doc = @doc("This constant represents the current date"))
 	public final static double now = 1;
 
@@ -97,24 +103,28 @@ public class IUnits {
 	 * Mathematical constants
 	 *
 	 */
-	@constant(value = "pi", category = { IConstantCategory.CONSTANT },
-			concept = { IConcept.CONSTANT, IConcept.MATH }, doc = @doc("The PI constant"))
-	public final static double pi = FastMath.PI;
+	@constant(value = "pi",
+		category = { IConstantCategory.CONSTANT },
+		concept = { IConcept.CONSTANT, IConcept.MATH },
+		doc = @doc("The PI constant"))
+	public final static double pi = Math.PI;
 
-	@constant(value = "e", category = { IConstantCategory.CONSTANT },
-			concept = { IConcept.CONSTANT, IConcept.MATH }, doc = @doc("The e constant"))
-	public final static double e = FastMath.E;
+	@constant(value = "e",
+		category = { IConstantCategory.CONSTANT },
+		concept = { IConcept.CONSTANT, IConcept.MATH },
+		doc = @doc("The e constant"))
+	public final static double e = Math.E;
 
 	@constant(value = "to_deg",
 		category = { IConstantCategory.CONSTANT },
 		concept = { IConcept.CONSTANT },
 		doc = @doc("A constant holding the value to convert radians into degrees"))
-	public final static double to_deg = 180d / FastMath.PI;
+	public final static double to_deg = 180d / Math.PI;
 	@constant(value = "to_rad",
 		category = { IConstantCategory.CONSTANT },
 		concept = { IConcept.CONSTANT },
 		doc = @doc("A constant holding the value to convert degrees into radians"))
-	public final static double to_rad = FastMath.PI / 180d;
+	public final static double to_rad = Math.PI / 180d;
 
 	@constant(value = "nan",
 		category = { IConstantCategory.CONSTANT },
@@ -304,8 +314,11 @@ public class IUnits {
 	public final static double gram = kg / 1000, grams = gram;
 
 	/** The Constant ton. */
-	@constant(value = "ton", altNames = { "tons" }, category = { IConstantCategory.WEIGHT },
-			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT }, doc = { @doc("ton unit") })
+	@constant(value = "ton",
+		altNames = { "tons" },
+		category = { IConstantCategory.WEIGHT },
+		concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
+		doc = { @doc("ton unit") })
 	public final static double ton = 1000 * kg, tons = ton;
 
 	/** The Constant ounce. */

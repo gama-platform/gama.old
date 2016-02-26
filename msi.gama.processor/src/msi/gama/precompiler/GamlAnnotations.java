@@ -214,17 +214,17 @@ public final class GamlAnnotations {
 	@Inherited
 	@Target(ElementType.TYPE)
 	public static @interface type {
-		
+
 		/**
 		 * Name.
 		 *
 		 * @return a String representing the type name in GAML
 		 */
 		String name();
-		
+
 		/**
 		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
-		 *        website search feature.
+		 *         website search feature.
 		 */
 
 		String[] concept() default {};
@@ -293,10 +293,10 @@ public final class GamlAnnotations {
 		 * @return a String representing the skill name in GAML (must be unique throughout GAML)
 		 */
 		String name();
-		
+
 		/**
 		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
-		 *        website search feature.
+		 *         website search feature.
 		 */
 
 		String[] concept() default {};
@@ -377,10 +377,10 @@ public final class GamlAnnotations {
 		 *         unique throughout GAML.
 		 */
 		String name();
-		
+
 		/**
 		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
-		 *        website search feature.
+		 *         website search feature.
 		 */
 
 		String[] concept() default {};
@@ -659,10 +659,10 @@ public final class GamlAnnotations {
 		 *
 		 */
 		String[] name() default {};
-		
+
 		/**
 		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
-		 *        website search feature.
+		 *         website search feature.
 		 */
 
 		String[] concept() default {};
@@ -756,10 +756,10 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.METHOD, ElementType.TYPE })
 	public static @interface operator {
-		
+
 		/**
 		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
-		 *        website search feature.
+		 *         website search feature.
 		 */
 
 		String[] concept() default {};
@@ -1247,7 +1247,7 @@ public final class GamlAnnotations {
 	/**
 	 * Written by gaudou Modified on 24 mars 2014
 	 *
-	 * Used to annotate fields that are used as constants in GAML.
+	 * Used to annotate fields that are used as constants in GAML. Note that these constants need to be either a String or a Java primitive type. No other constants can be defined.
 	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
@@ -1260,10 +1260,10 @@ public final class GamlAnnotations {
 		 */
 
 		String[] category() default {};
-		
+
 		/**
 		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
-		 *        website search feature.
+		 *         website search feature.
 		 */
 
 		String[] concept() default {};
