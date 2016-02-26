@@ -43,7 +43,6 @@ import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
-import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.*;
@@ -1278,7 +1277,7 @@ public class SwtGui extends AbstractGui {
 			// TODO in case of multi controllers, open an experiment cause "closing-reopen" many times displays,
 			// TODO so waitForViewsToBeClosed only with mono controller
 			// if ( GAMA.getControllers().size() == 0 ) {
-			OutputSynchronizer.waitForViewsToBeClosed();
+			// OutputSynchronizer.waitForViewsToBeClosed();
 			// }
 			// end-hqnghi
 		} else {
@@ -1319,7 +1318,7 @@ public class SwtGui extends AbstractGui {
 	 */
 	@Override
 	public void waitForViewsToBeInitialized() {
-		OutputSynchronizer.waitForViewsToBeInitialized();
+		// OutputSynchronizer.waitForViewsToBeInitialized();
 	}
 
 	@Override

@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
@@ -234,7 +233,7 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 	public void removeNotify() {
 		// dispose();
 		super.removeNotify();
-		OutputSynchronizer.decClosingViews(getOutput().getName());
+		// OutputSynchronizer.decClosingViews(getOutput().getName());
 	}
 
 	protected void scaleOrigin() {
@@ -369,7 +368,9 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 
 	@Override
 	public boolean resizeImage(final int x, final int y, final boolean force) {
+		java.lang.System.out.println("Resize display : " + x + "  " + y);
 		if ( !force && x == viewPort.width && y == viewPort.height ) { return true; }
+		if ( x < 10 || y < 10 ) { return false; }
 		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
 		try {
 			canBeUpdated = false;
@@ -468,9 +469,6 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 
 	public void newZoomLevel(final double newZoomLevel) {
 		getData().setZoomLevel(newZoomLevel);
-		// if ( zoomListener != null ) {
-		// zoomListener.newZoomLevel(getData().getZoomLevel());
-		// }
 	}
 
 	@Override
@@ -686,48 +684,10 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 	@Override
 	public double applyZoom(final double factor) {
 		double real_factor = FastMath.min(factor, 10 / getZoomLevel());
-		boolean success = false;
-
-		try {
-			success = resizeImage(CmnFastMath.max(1, (int) FastMath.round(getDisplayWidth() * real_factor)),
-				Math.max(1, (int) FastMath.round(getDisplayHeight() * real_factor)), false);
-		} catch (Exception e) {
-			// System.gc();
-			// scope.getGui().debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
-			real_factor = MAX_ZOOM_FACTOR;
-			try {
-				success = resizeImage(CmnFastMath.max(1, (int) FastMath.round(getDisplayWidth() * real_factor)),
-					Math.max(1, (int) FastMath.round(getDisplayHeight() * real_factor)), false);
-			} catch (Exception e1) {
-				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
-				// real_factor);
-				real_factor = 1;
-				success = true;
-			} catch (Error e1) {
-				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
-				// real_factor);
-				real_factor = 1;
-				success = true;
-			}
-		} catch (Error e) {
-			java.lang.System.gc();
-			// scope.getGui().debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
-			real_factor = MAX_ZOOM_FACTOR;
-			try {
-				success = resizeImage(CmnFastMath.max(1, (int) FastMath.round(getDisplayWidth() * real_factor)),
-					Math.max(1, (int) FastMath.round(getDisplayHeight() * real_factor)), false);
-			} catch (Exception e1) {
-				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
-				// real_factor);
-				real_factor = 1;
-				success = true;
-			} catch (Error e1) {
-				// scope.getGui().debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
-				// real_factor);
-				real_factor = 1;
-				success = true;
-			}
-		}
+		real_factor = FastMath.max(MIN_ZOOM_FACTOR, real_factor);
+		real_factor = FastMath.min(MAX_ZOOM_FACTOR, real_factor);
+		boolean success = resizeImage(CmnFastMath.max(1, (int) FastMath.round(getDisplayWidth() * real_factor)),
+			Math.max(1, (int) FastMath.round(getDisplayHeight() * real_factor)), false);
 
 		if ( success ) {
 			zoomFit = false;

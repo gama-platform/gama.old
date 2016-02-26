@@ -32,7 +32,8 @@ import msi.gama.runtime.IScope;
 public interface IDisplaySurface extends DisplayDataListener /* extends IPerspectiveListener, IPartListener */ {
 
 	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
-	static final int MAX_ZOOM_FACTOR = 2;
+	static final double MIN_ZOOM_FACTOR = 0.1;
+	static final int MAX_ZOOM_FACTOR = 4;
 
 	public interface OpenGL extends IDisplaySurface/* , IZoomListener */ {
 

@@ -235,10 +235,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
-		final Line2D line = new Line2D.Double();
-		currentRenderer.setColor(lineColor);
+
 		// The image contains the dimensions of the grid.
 		final double stepx = getLayerWidth() / image.getWidth();
+		final double stepy = getLayerHeight() / image.getHeight();
+		if ( stepx < 2 || stepy < 2 ) { return; }
+		final Line2D line = new Line2D.Double();
+		currentRenderer.setColor(lineColor);
 		for ( double step = 0.0, end = getLayerWidth(); step < end + 1; step += stepx ) {
 			line.setLine(getXOffsetInPixels() + step, getYOffsetInPixels(), getXOffsetInPixels() + step,
 				getYOffsetInPixels() + getLayerHeight());
@@ -247,7 +250,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		line.setLine(getXOffsetInPixels() + getLayerWidth() - 1, getYOffsetInPixels(),
 			getXOffsetInPixels() + getLayerWidth() - 1, getYOffsetInPixels() + getLayerHeight() - 1);
 		currentRenderer.draw(line);
-		final double stepy = getLayerHeight() / image.getHeight();
+
 		for ( double step = 0.0, end = getLayerHeight(); step < end + 1; step += stepy ) {
 			line.setLine(getXOffsetInPixels(), getYOffsetInPixels() + step, getXOffsetInPixels() + getLayerWidth(),
 				getYOffsetInPixels() + step);
@@ -279,6 +282,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		return true;
 	}
 
+	@Override
 	public void beginOverlay(final OverlayLayer layer) {
 		currentRenderer = overlayRenderer;
 		currentRenderer.setColor(layer.getBackground());
@@ -301,6 +305,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 	}
 
+	@Override
 	public void endOverlay() {
 		currentRenderer = normalRenderer;
 	}
