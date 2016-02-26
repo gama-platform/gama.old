@@ -8,6 +8,11 @@ import java.util.HashMap;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.AbstractCategoryItemLabelGenerator;
+import org.jfree.chart.labels.CategoryItemLabelGenerator;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.CombinedDomainCategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
@@ -23,12 +28,14 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYShapeRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
+import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.category.DefaultIntervalCategoryDataset;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
 import org.jfree.data.xy.XYIntervalSeries;
 import org.jfree.data.xy.XYIntervalSeriesCollection;
+import org.jfree.ui.TextAnchor;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.layers.charts.ChartJFreeChartOutputScatter.myXYErrorRenderer;
@@ -56,6 +63,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			chart =
 				ChartFactory.createBarChart(getName(), null, null, null, PlotOrientation.VERTICAL, true, true,
 					false);
+
 		}		
 	}
 	public void initdataset()
@@ -105,7 +113,26 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	{
 		return new DefaultCategoryDataset();
 	}
-
+	
+  static class LabelGenerator extends StandardCategoryItemLabelGenerator
+  		implements CategoryItemLabelGenerator
+  {
+    /**
+     * Generates an item label.
+     * 
+     * @param dataset  the dataset.
+     * @param series  the series index.
+     * @param category  the category index.
+     * 
+     * @return the label.
+     */
+      public String generateLabel(final CategoryDataset dataset, 
+                                    final int series, 
+                                      final int category) {
+        return dataset.getRowKey(series).toString();
+    }
+}
+	
 	protected AbstractRenderer createRenderer(IScope scope,String serieid)
 	{
 		String style=this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
@@ -145,13 +172,20 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 //		AbstractCategoryItemRenderer newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope, serieid);
         CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
 		AbstractCategoryItemRenderer newr=(AbstractCategoryItemRenderer)plot.getRenderer();
-                
+		
 		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
 		int myrow=IdPosition.get(serieid);
 		if (myserie.getMycolor()!=null)
 		{
 			newr.setSeriesPaint(myrow,myserie.getMycolor());
 		}
+
+		((BarRenderer)newr).setBaseItemLabelGenerator(new LabelGenerator());
+        ItemLabelPosition itemlabelposition = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER);
+        newr.setBasePositiveItemLabelPosition(itemlabelposition);
+        newr.setBaseNegativeItemLabelPosition(itemlabelposition);
+        newr.setBaseItemLabelsVisible(true);
+
 		
 	}
 	
@@ -239,11 +273,22 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		this.resetRenderer(scope, serieid); 
 				
 	}
+	
+	public void initChart(IScope scope, String chartname)
+	{
+		super.initChart(scope, chartname);
+		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
+		pp.setDomainGridlinePaint(axesColor);
+		pp.setRangeGridlinePaint(axesColor);
+		pp.setRangeCrosshairVisible(true);
+		
+	}
+	
 	protected void initRenderer(IScope scope) {
 		// TODO Auto-generated method stub
-        CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
-        defaultrenderer = new BarRenderer();
-        plot.setRenderer((BarRenderer)defaultrenderer);
+//        CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
+ //       defaultrenderer = new BarRenderer();
+  //      plot.setRenderer((BarRenderer)defaultrenderer);
 		
 		
 	}
