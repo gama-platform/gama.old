@@ -45,7 +45,7 @@ public class GamaProcessor extends AbstractProcessor {
 	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
 
 	static final Class[] classes = new Class[] { symbol.class, factory.class, species.class, skill.class, getter.class,
-		setter.class, action.class, type.class, operator.class, vars.class, display.class };
+		constant.class, setter.class, action.class, type.class, operator.class, vars.class, display.class };
 
 	final static Set<String> annotNames = new HashSet();
 
@@ -156,10 +156,10 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	String rawNameOf(final Element e) {
-		return rawNameOf(e.asType(), e);
+		return rawNameOf(e.asType());
 	}
 
-	String rawNameOf(final TypeMirror t, final Element e) {
+	String rawNameOf(final TypeMirror t) {
 		String init = processingEnv.getTypeUtils().erasure(t).toString();
 		String[] segments = init.split("\\.");
 		StringBuilder sb = new StringBuilder();
@@ -262,7 +262,7 @@ public class GamaProcessor extends AbstractProcessor {
 						// method
 						sb.append(ex.getSimpleName()).append(SEP);
 						// retClass
-						sb.append(rawNameOf(ex.getReturnType(), e)).append(SEP);
+						sb.append(rawNameOf(ex.getReturnType())).append(SEP);
 						// dynamic ?
 						sb.append(!scope && n > 0 || scope && n > 1).append(SEP);
 						// field ?
@@ -432,9 +432,9 @@ public class GamaProcessor extends AbstractProcessor {
 
 			sb.append(SYMBOL_PREFIX);
 			// validator
-			sb.append(type_validator == null ? "" : rawNameOf(type_validator, e)).append(SEP);
+			sb.append(type_validator == null ? "" : rawNameOf(type_validator)).append(SEP);
 			// serializer
-			sb.append(type_serializer == null ? "" : rawNameOf(type_serializer, e)).append(SEP);
+			sb.append(type_serializer == null ? "" : rawNameOf(type_serializer)).append(SEP);
 			// kind
 			sb.append(symbol.kind()).append(SEP);
 			// class
@@ -758,7 +758,7 @@ public class GamaProcessor extends AbstractProcessor {
 				}
 			}
 			for ( TypeMirror tm : wraps ) {
-				sb.append(SEP).append(rawNameOf(tm, e));
+				sb.append(SEP).append(rawNameOf(tm));
 			}
 			doc[] docs = t.doc();
 			doc doc;
@@ -822,7 +822,7 @@ public class GamaProcessor extends AbstractProcessor {
 				// "; begin: " + begin + "; shift: " + shift);
 			}
 
-			String ret = rawNameOf(ex.getReturnType(), ex);
+			String ret = rawNameOf(ex.getReturnType());
 			methodName = stat ? declClass + "." + methodName : methodName;
 			StringBuilder sb = new StringBuilder();
 			// prefix
@@ -886,7 +886,7 @@ public class GamaProcessor extends AbstractProcessor {
 			if ( tm.getKind().equals(TypeKind.VOID) ) {
 				sb.append("void").append(SEP);
 			} else {
-				sb.append(rawNameOf(tm, e)).append(SEP);
+				sb.append(rawNameOf(tm)).append(SEP);
 			}
 			// virtual
 			sb.append(action.virtual()).append(SEP);
@@ -948,7 +948,19 @@ public class GamaProcessor extends AbstractProcessor {
 	public void processConstants(final RoundEnvironment env) {
 		for ( Element e : env.getElementsAnnotatedWith(constant.class) ) {
 			VariableElement ve = (VariableElement) e;
+			TypeMirror tm = ve.asType();
+			boolean ok = tm instanceof PrimitiveType || tm instanceof ArrayType;
+			ok |= this.rawNameOf(tm).startsWith("String");
 			constant constant = ve.getAnnotation(constant.class);
+			if ( !ok ) {
+
+				processingEnv.getMessager().printMessage(Kind.ERROR,
+					"GAML: constant '" + constant.value() + "' cannot be instance of " + tm.toString() +
+						". The type of constants must be either a primitive type or String",
+					e);
+
+			}
+
 			doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
 
 			if ( documentation == null ) {
@@ -956,7 +968,7 @@ public class GamaProcessor extends AbstractProcessor {
 					"GAML: constant '" + constant.value() + "' is not documented", e);
 			}
 
-			String ret = rawNameOf(ve.asType(), ve);
+			String ret = rawNameOf(ve.asType());
 			String constantName = constant.value();
 			Object valueConstant = ve.getConstantValue();
 

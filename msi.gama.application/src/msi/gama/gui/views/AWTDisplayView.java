@@ -56,7 +56,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 		final String outputName = getOutput().getName();
 
-		OutputSynchronizer.incInitializingViews(outputName, getOutput().isPermanent()); // incremented in the SWT thread
+		// OutputSynchronizer.incInitializingViews(outputName, getOutput().isPermanent()); // incremented in the SWT thread
 		surfaceComposite = new SwingControl(parent, SWT.NONE) {
 
 			@Override
@@ -96,7 +96,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 				// if ( !isOpenGL ) {
 				// Deferred to the OpenGL renderer to signify its initialization
 				// see JOGLAWTGLRendered.init()
-				OutputSynchronizer.decInitializingViews(outputName);
+				// OutputSynchronizer.decInitializingViews(outputName);
 				// }
 
 				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);

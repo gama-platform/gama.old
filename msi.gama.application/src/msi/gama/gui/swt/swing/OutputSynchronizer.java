@@ -68,28 +68,6 @@ public class OutputSynchronizer {
 			try {
 				GAMA.getGui().waitStatus("Initializing " + getNumberOfViewsWaitingToOpen() + " display(s) :" +
 					new HashSet(viewsScheduledToOpen));
-				System.out.println("Waiting for views to open");
-				// if ( getNumberOfViewsWaitingToOpen() > 0 ) {
-				// Workaround for OpenGL views. Necessary to "show" the view
-				// even briefly so that OpenGL can call the init() method of the renderer
-				// final List<String> names = new ArrayList(viewsScheduledToOpen);
-				// GAMA.getGui();
-				// scope.getGui().debug("Briefly showing :" + names.get(0));
-				// final LayeredDisplayView view = (LayeredDisplayView) GAMA.getGui().showView(IGui.LAYER_VIEW_ID,
-				// names.get(0), IWorkbenchPage.VIEW_ACTIVATE);
-
-				// if ( view != null ) {
-				// GAMA.getGui().run(new Runnable() {
-				//
-				// @Override
-				// public void run() {
-				// view.getSurfaceComposite().getParent().layout(true, true);
-				// }
-				//
-				// });
-
-				// }
-				// }
 				Thread.sleep(100);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();

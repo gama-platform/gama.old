@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
@@ -240,7 +239,7 @@ public class BufferStrategyJava2DDisplaySurface extends JPanel implements IJava2
 	public void removeNotify() {
 		// dispose();
 		super.removeNotify();
-		OutputSynchronizer.decClosingViews(getOutput().getName());
+		// OutputSynchronizer.decClosingViews(getOutput().getName());
 	}
 
 	protected void scaleOrigin() {
