@@ -18,6 +18,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.outputs.layers.GridLayerStatement.GridLayerSerializer;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -35,7 +36,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@symbol(name = IKeyword.GRID_POPULATION, kind = ISymbolKind.LAYER, with_sequence = false)
+@symbol(name = IKeyword.GRID_POPULATION, kind = ISymbolKind.LAYER, with_sequence = false, concept = { IConcept.GRID, IConcept.DISPLAY, IConcept.INSPECTOR })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(
 	value = { @facet(name = IKeyword.POSITION,

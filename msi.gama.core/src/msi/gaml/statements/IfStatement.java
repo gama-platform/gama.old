@@ -37,7 +37,7 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul 14 nov. 07
  */
-@symbol(name = IKeyword.IF, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.IF, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = { IConcept.CONDITION })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @facets(value = { @facet(name = IKeyword.CONDITION,
 	type = IType.BOOL,

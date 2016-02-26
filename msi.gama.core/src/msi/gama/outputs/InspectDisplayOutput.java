@@ -17,6 +17,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -35,7 +36,7 @@ import msi.gaml.types.*;
  * @author drogoul
  */
 @SuppressWarnings("unchecked")
-@symbol(name = { IKeyword.INSPECT, IKeyword.BROWSE }, kind = ISymbolKind.OUTPUT, with_sequence = false)
+@symbol(name = { IKeyword.INSPECT, IKeyword.BROWSE }, kind = ISymbolKind.OUTPUT, with_sequence = false, concept = { IConcept.INSPECTOR})
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @facets(
 	value = {

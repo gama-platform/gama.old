@@ -13,6 +13,7 @@ package msi.gaml.variables;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
@@ -72,7 +73,8 @@ import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 			doc = @doc(value = "",
 				deprecated = "Use the operator matrix_with(size, fill_with) or list_with(size, fill_with) instead")) },
 	omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.CONTAINER, with_sequence = false)
+@symbol(kind = ISymbolKind.Variable.CONTAINER, with_sequence = false,
+concept = { IConcept.CONTAINER })
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @doc("Allows to declare an attribute of a species or an experiment")
 @validator(ContainerVarValidator.class)

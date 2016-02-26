@@ -15,6 +15,7 @@ import java.util.Collection;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
@@ -29,7 +30,7 @@ import msi.gaml.types.*;
  *
  * @author drogoul
  */
-@symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES, with_sequence = true)
+@symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES, with_sequence = true, concept = { IConcept.SPECIES })
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES })
 @facets(
 	value = { @facet(name = IKeyword.WIDTH,

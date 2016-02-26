@@ -16,6 +16,7 @@ import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -24,7 +25,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.GENETIC, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
+@symbol(name = IKeyword.GENETIC, kind = ISymbolKind.BATCH_METHOD, with_sequence = false, concept = { IConcept.BATCH, IConcept.ALGORITHM })
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @facets(
 	value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),

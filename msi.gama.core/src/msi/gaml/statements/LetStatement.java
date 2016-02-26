@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.TYPE, type = { IType.TYPE_ID }, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.LET },
-	kind = ISymbolKind.SINGLE_STATEMENT,
+	kind = ISymbolKind.SINGLE_STATEMENT, concept = { IConcept.SYSTEM },
 	with_sequence = false,
 	doc = @doc("Allows to declare a temporary variable of the specified type and to initialize it with a value"))
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })

@@ -15,6 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -92,7 +93,8 @@ import msi.gaml.types.*;
 			optional = true,
 			doc = @doc("A list of constant values among which the attribute can take its value")) },
 	omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.REGULAR, with_sequence = false)
+@symbol(kind = ISymbolKind.Variable.REGULAR, with_sequence = false,
+concept = { IConcept.ATTRIBUTE })
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @doc("Allows to declare an attribute of a species or an experiment")
 @validator(msi.gaml.variables.Variable.VarValidator.class)

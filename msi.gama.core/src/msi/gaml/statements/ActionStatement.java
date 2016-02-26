@@ -38,7 +38,7 @@ import msi.gaml.types.*;
  * 
  * @author drogoul
  */
-@symbol(name = IKeyword.ACTION, kind = ISymbolKind.ACTION, with_sequence = true, with_args = true, unique_name = true)
+@symbol(name = IKeyword.ACTION, kind = ISymbolKind.ACTION, with_sequence = true, with_args = true, unique_name = true, concept = { IConcept.SPECIES, IConcept.ACTION })
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("identifier of the action")),

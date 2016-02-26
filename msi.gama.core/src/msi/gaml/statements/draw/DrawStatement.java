@@ -16,6 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,7 +29,7 @@ import msi.gaml.types.*;
 
 // A command that is used to draw shapes, figures, text on the display
 
-@symbol(name = DRAW, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = DRAW, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.DISPLAY })
 @facets(value = {
 	// Allows to pass any arbitrary geometry to the drawing command
 	@facet(name = IKeyword.GEOMETRY,

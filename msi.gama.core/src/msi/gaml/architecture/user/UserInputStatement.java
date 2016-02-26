@@ -15,6 +15,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -29,7 +30,7 @@ import msi.gaml.types.*;
  * @todo Description
  *
  */
-@symbol(name = { IKeyword.USER_INPUT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = { IKeyword.USER_INPUT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.GUI })
 @inside(symbols = IKeyword.USER_COMMAND)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = true, doc = @doc("the displayed name")),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the variable type")),

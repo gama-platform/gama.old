@@ -16,6 +16,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -25,7 +26,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.OVERLAY, kind = ISymbolKind.LAYER, with_sequence = true, unique_in_context = true)
+@symbol(name = IKeyword.OVERLAY, kind = ISymbolKind.LAYER, with_sequence = true, unique_in_context = true, concept = { IConcept.DISPLAY })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	@facet(name = IKeyword.ROUNDED,

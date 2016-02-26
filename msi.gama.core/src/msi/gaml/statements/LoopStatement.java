@@ -13,6 +13,7 @@ package msi.gaml.statements;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -27,7 +28,7 @@ import msi.gaml.types.IType;
 
 // A group of commands that can be executed repeatedly.
 
-@symbol(name = IKeyword.LOOP, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.LOOP, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = { IConcept.LOOP })
 @facets(value = { @facet(name = IKeyword.FROM, type = IType.INT, optional = true, doc = @doc("an int expression")),
 	@facet(name = IKeyword.TO, type = IType.INT, optional = true, doc = @doc("an int expression")),
 	@facet(name = IKeyword.STEP, type = IType.INT, optional = true, doc = @doc("an int expression")),

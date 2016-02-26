@@ -14,6 +14,7 @@ package msi.gama.outputs.layers;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -23,7 +24,7 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.types.IType;
 
-@symbol(name = "graphics", kind = ISymbolKind.LAYER, with_sequence = true)
+@symbol(name = "graphics", kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.DISPLAY })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(
 	value = { @facet(name = IKeyword.POSITION,

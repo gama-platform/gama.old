@@ -15,6 +15,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -78,7 +79,8 @@ import msi.gaml.variables.SignalVariable.SignalValidator;
 		optional = true,
 		doc = @doc("Indicates the distance (in meter) at which the signal stops propagating")),
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
-@symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.Variable.SIGNAL, with_sequence = false)
+@symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.Variable.SIGNAL, with_sequence = false,
+concept = {})
 @inside(kinds = { ISymbolKind.SPECIES })
 @doc(deprecated = "Use the statement 'diffuse' instead",
 	value = "A special attribute that holds signals that can be propagated in the environment. Signals have a fixed name, a variable float intensity (represented by their facet 'value'), propagate in only one grid environment (facet 'environment'), can be limited to a specific range (facet 'range', in meter), and can see their intensity decrease over time (facet 'decay'). Signals can be propagated using different combinations of the 'variation', 'proportion' and 'propagation' facets. ")

@@ -14,6 +14,7 @@ package msi.gama.outputs.layers;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -22,7 +23,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.CAMERA, kind = ISymbolKind.LAYER, with_sequence = false, unique_in_context = false)
+@symbol(name = IKeyword.CAMERA, kind = ISymbolKind.LAYER, with_sequence = false, unique_in_context = false, concept = { IConcept.CAMERA, IConcept.DISPLAY })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.STRING, optional = false, doc = @doc("The name of the camera") ),

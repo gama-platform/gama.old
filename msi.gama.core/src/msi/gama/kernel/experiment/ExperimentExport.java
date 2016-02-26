@@ -33,7 +33,7 @@ import msi.gaml.types.*;
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.STRING, optional = true),
 	@facet(name = IKeyword.VAR, type = IType.ID, optional = false),
 	@facet(name = IKeyword.FRAMERATE, type = IType.INT, optional = true)}, omissible = IKeyword.VAR)
-@symbol(name = { IKeyword.EXPORT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true)
+@symbol(name = { IKeyword.EXPORT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true, concept = { IConcept.EXPERIMENT })
 @inside(kinds = { ISymbolKind.EXPERIMENT })
  
 public class ExperimentExport extends Symbol  {

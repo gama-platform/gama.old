@@ -36,7 +36,8 @@ import msi.gaml.types.IType;
  * 
  */
 
-@symbol(name = IKeyword.STATUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = IKeyword.STATUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
+concept = { IConcept.DISPLAY, IConcept.TEXT })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @facets(value = {
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),

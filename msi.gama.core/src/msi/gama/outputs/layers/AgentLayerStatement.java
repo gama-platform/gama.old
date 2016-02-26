@@ -16,6 +16,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.AgentLayerStatement.AgentLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -33,7 +34,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER, with_sequence = true)
+@symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.SPECIES, IConcept.DISPLAY })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(
 	value = {

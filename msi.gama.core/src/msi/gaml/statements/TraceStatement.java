@@ -26,7 +26,8 @@ import msi.gaml.descriptions.IDescription;
  * @since 23 févr. 2014
  * 
  */
-@symbol(name = IKeyword.TRACE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.TRACE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
+concept = { IConcept.DISPLAY })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @doc(value="All the statements executed in the trace statement are displayed in the console.")
 public class TraceStatement extends AbstractStatementSequence {

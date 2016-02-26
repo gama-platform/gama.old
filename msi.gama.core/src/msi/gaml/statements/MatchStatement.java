@@ -35,7 +35,7 @@ import msi.gaml.types.IType;
  * @author drogoul 14 nov. 07
  */
 @symbol(name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE },
-	kind = ISymbolKind.SEQUENCE_STATEMENT,
+	kind = ISymbolKind.SEQUENCE_STATEMENT, concept = { IConcept.CONDITION },
 	with_sequence = true)
 @inside(symbols = IKeyword.SWITCH)
 @facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE, optional = true) }, omissible = IKeyword.VALUE)

@@ -19,6 +19,7 @@ import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -55,7 +56,7 @@ import msi.gaml.types.*;
 @symbol(name = IKeyword.CREATE,
 	kind = ISymbolKind.SEQUENCE_STATEMENT,
 	with_sequence = true,
-	with_args = true,
+	with_args = true, concept = { IConcept.SPECIES },
 	remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(

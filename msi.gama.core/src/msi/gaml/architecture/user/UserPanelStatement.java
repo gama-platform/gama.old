@@ -15,6 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.AbstractGui;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -24,7 +25,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.USER_PANEL, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
+@symbol(name = IKeyword.USER_PANEL, kind = ISymbolKind.BEHAVIOR, with_sequence = true, concept = { IConcept.GUI })
 @inside(symbols = { IKeyword.FSM, IKeyword.USER_FIRST, IKeyword.USER_LAST, IKeyword.USER_INIT, IKeyword.USER_ONLY },
 	kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL, optional = true),

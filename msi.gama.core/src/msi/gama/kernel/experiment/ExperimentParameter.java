@@ -15,6 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -51,7 +52,7 @@ import msi.gaml.variables.*;
 		doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values")) },
 	omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false)
+@symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false, concept = { IConcept.EXPERIMENT, IConcept.PARAMETER })
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @validator(Variable.VarValidator.class)
 @doc(

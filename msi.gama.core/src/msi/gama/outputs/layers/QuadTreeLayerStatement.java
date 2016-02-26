@@ -13,6 +13,7 @@ package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -25,7 +26,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@symbol(name = IKeyword.QUADTREE, kind = ISymbolKind.LAYER, with_sequence = false)
+@symbol(name = IKeyword.QUADTREE, kind = ISymbolKind.LAYER, with_sequence = false, concept = { IConcept.DISPLAY })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(
 	value = {

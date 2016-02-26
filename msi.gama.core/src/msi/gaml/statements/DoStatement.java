@@ -14,6 +14,7 @@ package msi.gaml.statements;
 import java.util.Set;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -36,7 +37,7 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.DO, IKeyword.REPEAT },
 	kind = ISymbolKind.SINGLE_STATEMENT,
 	with_sequence = true,
-	with_scope = false,
+	with_scope = false, concept = { IConcept.ACTION },
 	with_args = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @facets(

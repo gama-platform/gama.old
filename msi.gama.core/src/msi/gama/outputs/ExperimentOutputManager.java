@@ -13,6 +13,7 @@ package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -22,7 +23,7 @@ import msi.gaml.descriptions.IDescription;
  *
  * @author Alexis Drogoul modified by Romain Lavaud 05.07.2010
  */
-@symbol(name = IKeyword.PERMANENT, kind = ISymbolKind.OUTPUT, with_sequence = true)
+@symbol(name = IKeyword.PERMANENT, kind = ISymbolKind.OUTPUT, with_sequence = true, concept = { IConcept.BATCH, IConcept.PARAMETER })
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @doc(
 	value = "In a batch experiment, the permanent section allows to define an output block that will NOT be re-initialized at the beginning of each simulation but will be filled at the end of each simulation.",

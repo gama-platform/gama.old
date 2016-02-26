@@ -16,6 +16,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
@@ -27,7 +28,7 @@ import msi.gaml.types.IType;
 
 // A group of commands that can be executed on remote agents.
 
-@symbol(name = IKeyword.ASK, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
+@symbol(name = IKeyword.ASK, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true, concept = { IConcept.SPECIES })
 @facets(
 	value = { @facet(name = IKeyword.TARGET,
 		type = { IType.CONTAINER, IType.AGENT },

@@ -32,7 +32,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.OPTIONAL, type = IType.BOOL, optional = true, doc=@doc("a boolean specifying if the argument is optional (false by default) (only in an action statement)")),
 	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = true, doc=@doc("the value of the argument (only in a do statement)")),
 	@facet(name = IKeyword.DEFAULT, type = { IType.NONE }, optional = true, doc=@doc("the default value of the argument (only in an action statement)")) }, omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.ARG }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_name = true, internal=true)
+@symbol(name = { IKeyword.ARG }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_name = true, internal=true, concept = { IConcept.ACTION })
 @inside(symbols = { IKeyword.ACTION, IKeyword.DO })
 @validator(ValidNameValidator.class)
 @doc(value="This statement to define the arguments of an action.", usages={

@@ -36,6 +36,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.ChartDataListStatement.ChartDataList;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -56,7 +57,7 @@ import msi.gaml.types.*;
  * @todo Description
  *
  */
-@symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true)
+@symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.CHART, IConcept.DISPLAY })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true), */

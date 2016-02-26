@@ -18,6 +18,7 @@ import org.jfree.chart.renderer.xy.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -30,7 +31,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = "datalist",
 	kind = ISymbolKind.SINGLE_STATEMENT,
-	with_sequence = false,
+	with_sequence = false, concept = { IConcept.CHART },
 	doc = @doc("add a list of series to a chart. The number of series can be dynamic (the size of the list changes each step). See Ant Foraging (Charts) model in ChartTest for examples."))
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @facets(value = { @facet(name = IKeyword.VALUE,

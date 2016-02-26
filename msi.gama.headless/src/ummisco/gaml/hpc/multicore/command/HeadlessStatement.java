@@ -25,6 +25,7 @@ import msi.gama.headless.runtime.SimulationRuntime;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -34,7 +35,8 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeywords.STARTSIMULATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeywords.STARTSIMULATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
+concept = { IConcept.HEADLESS })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @facets(value = {
 		@facet(name = IKeywords.MODEL, type = IType.STRING, optional = false),

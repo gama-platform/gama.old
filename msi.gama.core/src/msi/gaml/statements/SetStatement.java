@@ -45,7 +45,8 @@ import msi.gaml.types.IType;
 		doc = @doc("the name of an existing variable or attribute to be modified")),
 	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = false,
 		doc = @doc("the value to affect to the variable or attribute")) }, omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT,
+concept = { IConcept.ATTRIBUTE }, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @validator(AssignmentValidator.class)
 @doc(value = "Allows to assign a value to the variable or attribute specified")

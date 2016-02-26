@@ -32,7 +32,7 @@ import msi.gaml.statements.BreakStatement.BreakValidator;
  * @since 22 avr. 2012
  * 
  */
-@symbol(name = IKeyword.BREAK, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = IKeyword.BREAK, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.LOOP })
 @inside(kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @doc(value = "`" + IKeyword.BREAK + "` allows to interrupt the current sequence of statements.")
 @validator(BreakValidator.class)

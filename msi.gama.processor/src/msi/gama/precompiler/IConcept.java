@@ -9,14 +9,19 @@ public interface IConcept {
 	 * - GAML keywords can be tagged with those keywords by adding the attribute "keyword" in the declaration.
 	 */
 	
+	public static final String ACTION					= "action";
 	public static final String AGENT_LOCATION			= "agent_location";
 	public static final String ALGORITHM				= "algorithm";
 	public static final String ARITHMETIC				= "arithmetic";
 	public static final String ASPATIAL_GRAPH			= "aspacial_graph";
 	public static final String ATTRIBUTE				= "attribute";
+	public static final String BATCH					= "batch";
 	public static final String BDI						= "bdi";
+	public static final String BEHAVIOR					= "behavior";
 	public static final String BROWSE					= "browse";
+	public static final String CAMERA					= "camera";
 	public static final String CAST						= "cast";
+	public static final String CHART					= "chart";
 	public static final String COLOR					= "color";
 	public static final String COMPARISON				= "comparison";
 	public static final String CONDITION				= "condition";
@@ -29,6 +34,7 @@ public interface IConcept {
 	public static final String DISTRIBUTION				= "distribution";
 	public static final String EDGE						= "edge";
 	public static final String ENUMERATION				= "enumeration";
+	public static final String EXPERIMENT				= "experiment";
 	public static final String FACET					= "facet";
 	public static final String FILE						= "file";
 	public static final String FILTER					= "filter";
@@ -44,9 +50,11 @@ public interface IConcept {
 	public static final String GRAPHIC_UNIT				= "graphic_unit";
 	public static final String GUI						= "gui";
 	public static final String HALT						= "halt";
+	public static final String HEADLESS					= "headless";
 	public static final String IMPORT					= "import";
 	public static final String INHERITANCE				= "inheritance";
 	public static final String INIT						= "init";
+	public static final String INSPECTOR				= "inspector";
 	public static final String KEYWORD					= "keyword";
 	public static final String LENGTH_UNIT				= "length_unit";
 	public static final String LIST						= "list";
@@ -66,6 +74,7 @@ public interface IConcept {
 	public static final String OPTIMIZATION				= "optimization";
 	public static final String OSM						= "osm";
 	public static final String PATH						= "path";
+	public static final String PARAMETER				= "parameter";
 	public static final String PAUSE					= "pause";
 	public static final String POINT					= "point";
 	public static final String PROBABILITY				= "probability";
@@ -73,6 +82,7 @@ public interface IConcept {
 	public static final String RANDOM_OPERATOR			= "random_operator";
 	public static final String REFLEX					= "reflex";
 	public static final String REFRESH					= "refresh";
+	public static final String SCHEDULER				= "scheduler";
 	public static final String SERIALIZE				= "serialize";
 	public static final String SHAPE					= "shape";
 	public static final String SHORTEST_PATH			= "shortest_path";

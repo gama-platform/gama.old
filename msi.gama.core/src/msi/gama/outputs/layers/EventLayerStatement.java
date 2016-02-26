@@ -15,6 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.layers.EventLayerStatement.EventLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,7 +29,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@symbol(name = IKeyword.EVENT, kind = ISymbolKind.LAYER, with_sequence = true)
+@symbol(name = IKeyword.EVENT, kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.GUI })
 @inside(symbols = { IKeyword.DISPLAY })
 @facets(
 	value = {

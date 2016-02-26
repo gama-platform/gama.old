@@ -15,6 +15,7 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -37,7 +38,7 @@ import msi.gaml.types.*;
  * + they are "peer" species (sharing the same direct macro-species)
  * + they have sub-species vs. parent-species relationship.
  */
-@symbol(name = { IKeyword.MIGRATE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
+@symbol(name = { IKeyword.MIGRATE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true, concept = { IConcept.MULTI_LEVEL })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(
 	value = {

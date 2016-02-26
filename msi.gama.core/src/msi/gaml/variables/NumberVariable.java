@@ -14,6 +14,7 @@ package msi.gaml.variables;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -74,7 +75,8 @@ import msi.gaml.types.IType;
 		optional = true,
 		doc = @doc("A list of constant values among which the attribute can take its value")) },
 	omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false)
+@symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false,
+concept = {})
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @doc("Allows to declare an attribute of a species or experiment")
 public class NumberVariable extends Variable {

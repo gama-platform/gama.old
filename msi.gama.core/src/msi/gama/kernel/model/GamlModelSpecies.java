@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
@@ -24,7 +25,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.species.*;
 import msi.gaml.types.IType;
 
-@symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true, internal = true)
+@symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true, internal = true, concept = {})
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.VERSION, type = IType.ID, optional = true),
 	@facet(name = IKeyword.AUTHOR, type = IType.ID, optional = true),

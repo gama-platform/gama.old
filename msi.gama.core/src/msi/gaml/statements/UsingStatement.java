@@ -33,7 +33,8 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul 19 janv. 13
  */
-@symbol(name = IKeyword.USING, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.USING, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
+concept = { IConcept.TOPOLOGY })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @facets(value = { @facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = false, doc = @doc("the topology")) }, omissible = IKeyword.TOPOLOGY)
 @doc(value="`"+IKeyword.USING+"` is a statement that allows to set the topology to use by its sub-statements. They can gather it by asking the scope to provide it.", usages = {

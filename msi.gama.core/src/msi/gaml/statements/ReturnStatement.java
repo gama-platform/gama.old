@@ -13,6 +13,7 @@ package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -27,7 +28,7 @@ import msi.gaml.types.IType;
  *
  */
 
-@symbol(name = IKeyword.RETURN, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_in_context = true)
+@symbol(name = IKeyword.RETURN, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_in_context = true, concept = { IConcept.ACTION })
 @inside(symbols = IKeyword.ACTION, kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(
 	value = { @facet(name = IKeyword.VALUE,

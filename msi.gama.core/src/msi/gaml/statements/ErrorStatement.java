@@ -35,7 +35,7 @@ import msi.gaml.types.IType;
  * 
  */
 
-@symbol(name = IKeyword.ERROR, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = IKeyword.ERROR, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.SYSTEM })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @facets(value = { @facet(name = IKeyword.MESSAGE,
 	type = IType.STRING,

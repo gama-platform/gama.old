@@ -14,6 +14,7 @@ package msi.gama.outputs;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -30,7 +31,7 @@ import msi.gaml.types.IType;
  *
  * @author drogoul
  */
-@symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false)
+@symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false, concept = { IConcept.INSPECTOR })
 @facets(
 	value = {
 		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the monitor")),

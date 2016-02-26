@@ -15,6 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -24,7 +25,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.ANNEALING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
+@symbol(name = IKeyword.ANNEALING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false, concept = {IConcept.BATCH})
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
 	@facet(name = SimulatedAnnealing.TEMP_END, type = IType.FLOAT, optional = true, doc = @doc("final temperature")),

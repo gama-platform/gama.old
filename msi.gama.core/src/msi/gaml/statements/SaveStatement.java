@@ -27,6 +27,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -43,6 +44,7 @@ import msi.gaml.types.*;
 
 @symbol(name = IKeyword.SAVE,
 	kind = ISymbolKind.SINGLE_STATEMENT,
+	concept = { IConcept.FILE },
 	with_sequence = false,
 	with_args = true,
 	remote_context = true)

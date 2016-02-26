@@ -13,6 +13,7 @@ package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -22,7 +23,7 @@ import msi.gaml.descriptions.IDescription;
  *
  * @author Alexis Drogoul modified by Romain Lavaud 05.07.2010
  */
-@symbol(name = IKeyword.OUTPUT, kind = ISymbolKind.OUTPUT, with_sequence = true)
+@symbol(name = IKeyword.OUTPUT, kind = ISymbolKind.OUTPUT, with_sequence = true, concept = {})
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })
 @doc(
 	value = "`output` blocks define how to visualize a simulation (with one or more display blocks that define separate windows). It will include a set of displays, monitors and files statements. It will be taken into account only if the experiment type is `gui`.",

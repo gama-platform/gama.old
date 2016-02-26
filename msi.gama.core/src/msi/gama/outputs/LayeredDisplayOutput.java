@@ -39,7 +39,7 @@ import msi.gaml.types.*;
  *
  * @author drogoul
  */
-@symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true)
+@symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true, concept = { IConcept.DISPLAY })
 @facets(value = {
 	@facet(name = IKeyword.BACKGROUND,
 		type = IType.COLOR,

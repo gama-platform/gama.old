@@ -30,7 +30,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
-@symbol(name = { IKeyword.REFLEX, IKeyword.INIT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
+@symbol(name = { IKeyword.REFLEX, IKeyword.INIT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true, concept = { IConcept.BEHAVIOR, IConcept.SCHEDULER })
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates a boolean, the condition to fulfill in order to execute the statements embedded in the reflex.")),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the identifier of the reflex")) }, omissible = IKeyword.NAME)

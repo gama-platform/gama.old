@@ -24,7 +24,7 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.ELSE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.ELSE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = { IConcept.CONDITION })
 @inside(symbols = IKeyword.IF)
 @doc(value="This statement cannot be used alone",see={IKeyword.IF})
 public class ElseStatement extends AbstractStatementSequence {

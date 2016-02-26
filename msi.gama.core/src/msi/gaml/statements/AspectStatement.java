@@ -20,6 +20,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -29,7 +30,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.*;
 
-@symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
+@symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true, concept = { IConcept.DISPLAY })
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @facets(
 	value = { @facet(name = IKeyword.NAME,

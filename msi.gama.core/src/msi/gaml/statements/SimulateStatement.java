@@ -27,7 +27,8 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
-@symbol(name = "simulate", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = "simulate", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
+concept = {})
 @facets(value = { @facet(name = "comodel", type = { IType.FILE }, optional = false),
 	@facet(name = "with_experiment", type = { IType.STRING }, optional = true),
 	@facet(name = "share", type = { IType.LIST }, optional = true),
