@@ -29,7 +29,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.*;
-import msi.gama.outputs.layers.IEventLayerListener;
+import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -525,13 +525,14 @@ public class NewJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 
 	@Override
 	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
+		if ( currentLayer instanceof OverlayLayer ) { return getDisplayScope().getSimulationScope().getEnvelope(); }
 		Envelope e = new Envelope();
 		Point origin = getOrigin();
 		int xc = -origin.x;
 		int yc = -origin.y;
 		e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
-		xc = xc + this.getWidth();
-		yc = yc + this.getHeight();
+		xc = xc + getIGraphics().getViewWidth();
+		yc = yc + getIGraphics().getViewHeight();
 		e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
 		return e;
 	}

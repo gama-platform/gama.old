@@ -16,6 +16,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
+import msi.gama.outputs.layers.OverlayLayer;
 
 public abstract class AbstractDisplayGraphics implements IGraphics {
 
@@ -78,6 +79,8 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	public double getyRatioBetweenPixelsAndModelUnits() {
 		if ( currentLayer == null ) {
 			return getDisplayHeight() / data.getEnvHeight();
+		} else if ( currentLayer instanceof OverlayLayer ) {
+			return getxRatioBetweenPixelsAndModelUnits();
 		} else {
 			return currentLayer.getSizeInPixels().y / data.getEnvHeight();
 		}

@@ -16,6 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.statements.draw.*;
 
@@ -56,6 +57,10 @@ public interface IGraphics {
 	public abstract void beginDrawingLayers();
 
 	public abstract void beginDrawingLayer(ILayer layer);
+
+	public abstract void beginOverlay(OverlayLayer layer);
+
+	public abstract void endOverlay();
 
 	public abstract double getyRatioBetweenPixelsAndModelUnits();
 

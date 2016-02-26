@@ -25,7 +25,7 @@ import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.LayerManager;
-import msi.gama.outputs.layers.IEventLayerListener;
+import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -501,6 +501,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
+		if ( currentLayer instanceof OverlayLayer ) { return getDisplayScope().getSimulationScope().getEnvelope(); }
 		Envelope e = currentLayer.getVisibleRegion();
 		if ( e == null ) {
 			e = new Envelope();

@@ -699,24 +699,26 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	public void beginDrawingLayer(final ILayer layer) {
 		super.beginDrawingLayer(layer);
 		GamaPoint currentOffset, currentScale;
-		if ( !(layer instanceof OverlayLayer) ) {
-			double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
+		// if ( !(layer instanceof OverlayLayer) ) {
+		double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
 
-			// get the value of the z scale if positive otherwise set it to 1.
-			double z_scale;
-			if ( layer.getExtent().getZ() > 0 ) {
-				z_scale = layer.getExtent().getZ();
-			} else {
-				z_scale = 1;
-			}
-
-			currentOffset = new GamaPoint(getXOffsetInPixels() / (getDisplayWidth() / data.getEnvWidth()),
-				getYOffsetInPixels() / (getHeight() / data.getEnvHeight()), currentZLayer);
-			currentScale = new GamaPoint(getLayerWidth() / getDisplayWidth(), getLayerHeight() / getHeight(), z_scale);
+		// get the value of the z scale if positive otherwise set it to 1.
+		double z_scale;
+		if ( layer.getExtent().getZ() > 0 ) {
+			z_scale = layer.getExtent().getZ();
 		} else {
-			currentOffset = new GamaPoint(getXOffsetInPixels(), getYOffsetInPixels());
-			currentScale = new GamaPoint(1, 1, 1);
+			z_scale = 1;
 		}
+
+		currentOffset = new GamaPoint(getXOffsetInPixels() / (getWidth() / data.getEnvWidth()),
+			getYOffsetInPixels() / (getHeight() / data.getEnvHeight()), currentZLayer);
+		currentScale =
+			new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), z_scale);
+		// }
+		// else {
+		// currentOffset = new GamaPoint(getXOffsetInPixels(), getYOffsetInPixels());
+		// currentScale = new GamaPoint(1, 1, 1);
+		// }
 		ModelScene scene = sceneBuffer.getSceneToUpdate();
 		if ( scene != null ) {
 			scene.beginDrawingLayer(layer, currentOffset, currentScale, currentAlpha);
@@ -839,6 +841,28 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	@Override
 	public SWTOpenGLDisplaySurface getSurface() {
 		return (SWTOpenGLDisplaySurface) surface;
+	}
+
+	/**
+	 * Method beginOverlay()
+	 * @see msi.gama.common.interfaces.IGraphics#beginOverlay(msi.gama.outputs.layers.OverlayLayer)
+	 */
+	@Override
+	public void beginOverlay(final OverlayLayer layer) {
+		ModelScene scene = sceneBuffer.getSceneToUpdate();
+		if ( scene != null ) {
+			scene.beginOverlay();
+		}
+
+	}
+
+	/**
+	 * Method endOverlay()
+	 * @see msi.gama.common.interfaces.IGraphics#endOverlay()
+	 */
+	@Override
+	public void endOverlay() {
+
 	}
 
 }

@@ -28,6 +28,14 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.OVERLAY, kind = ISymbolKind.LAYER, with_sequence = true, unique_in_context = true)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
+	@facet(name = IKeyword.ROUNDED,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("Whether or not the rectangular shape of the overlay should be rounded. True by default")),
+	@facet(name = IKeyword.BORDER,
+		type = IType.COLOR,
+		optional = true,
+		doc = @doc("Color to apply to the border of the rectangular shape of the overlay. Nil by default")),
 	@facet(name = IKeyword.POSITION,
 		type = IType.POINT,
 		optional = true,
@@ -73,10 +81,11 @@ import msi.gaml.types.IType;
 		IKeyword.IMAGE, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
 public class OverlayStatement extends GraphicLayerStatement implements IOverlayProvider<OverlayInfo> {
 
-	final IExpression left, right, center;
-	final IExpression color, background;
+	final IExpression left, right, center, round;
+	final IExpression color, background, border;
 	String leftValue, rightValue, centerValue;
-	Color bgColor;
+	Color bgColor, borderColor;
+	boolean rounded;
 	List<int[]> constantColors;
 	IUpdaterTarget<OverlayInfo> overlay;
 
@@ -104,6 +113,9 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 		center = getFacet(IKeyword.CENTER);
 		color = getFacet(IKeyword.COLOR);
 		background = getFacet(IKeyword.BACKGROUND);
+		border = getFacet(IKeyword.BORDER);
+		round = getFacet(IKeyword.ROUNDED);
+
 		if ( color != null && color.isConst() ) {
 			constantColors = computeColors(null);
 		}
@@ -143,6 +155,8 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 
 	@Override
 	protected boolean _step(final IScope scope) {
+		rounded = round == null ? true : Cast.asBool(scope, round.value(scope));
+		borderColor = border == null ? null : Cast.asColor(scope, border.value(scope));
 		bgColor = background == null ? Color.black : Cast.asColor(scope, background.value(scope));
 		if ( overlay == null ) { return true; }
 		leftValue = left == null ? null : Cast.asString(scope, left.value(scope));
@@ -168,6 +182,14 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 	public Color getBackgroundColor() {
 		return new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(),
 			(int) (getBox().getTransparency() * 255));
+	}
+
+	public Color getBorderColor() {
+		return borderColor;
+	}
+
+	public boolean isRounded() {
+		return rounded;
 	}
 
 	/**

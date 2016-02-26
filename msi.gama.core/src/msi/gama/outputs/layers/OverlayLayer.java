@@ -8,7 +8,6 @@ import java.awt.Color;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.outputs.display.AWTDisplayGraphics;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -21,6 +20,8 @@ import msi.gaml.operators.fastmaths.FastMath;
  *
  */
 public class OverlayLayer extends GraphicLayer {
+
+	boolean computed = false;
 
 	protected OverlayLayer(final ILayerStatement layer) {
 		super(layer);
@@ -46,21 +47,21 @@ public class OverlayLayer extends GraphicLayer {
 			setPositionAndSize(definition.getBox(), g);
 
 		}
-		AWTDisplayGraphics graphics = (AWTDisplayGraphics) g;
 
 		g.beginDrawingLayer(this);
 		g.setOpacity(definition.getTransparency());
-		graphics.beginOverlay(this);
+		g.beginOverlay(this);
 		privateDrawDisplay(scope, g);
-		graphics.endOverlay();
+		g.endOverlay();
 		g.endDrawingLayer(this);
 	}
 
 	@Override
 	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
+		if ( computed ) { return; }
 		// Voir comment conserver cette information
-		final int pixelWidth = g.getViewWidth();
-		final int pixelHeight = g.getViewHeight();
+		final int pixelWidth = g.getDisplayWidth();
+		final int pixelHeight = g.getDisplayHeight();
 		final double envWidth = g.getSurface().getData().getEnvWidth();
 		final double envHeight = g.getSurface().getData().getEnvHeight();
 		double xRatioBetweenPixelsAndModelUnits = pixelWidth / envWidth;
@@ -87,6 +88,7 @@ public class OverlayLayer extends GraphicLayer {
 		positionInPixels.setLocation(absolute_x, absolute_y);
 		System.out.println("Overlay position: " + positionInPixels + " size: " + sizeInPixels);
 		definition.getBox().setConstantBoundingBox(true);
+		computed = true;
 	}
 
 	/**
@@ -95,4 +97,13 @@ public class OverlayLayer extends GraphicLayer {
 	public Color getBackground() {
 		return ((OverlayStatement) definition).getBackgroundColor();
 	}
+
+	public Color getBorder() {
+		return ((OverlayStatement) definition).getBorderColor();
+	}
+
+	public boolean isRounded() {
+		return ((OverlayStatement) definition).isRounded();
+	}
+
 }

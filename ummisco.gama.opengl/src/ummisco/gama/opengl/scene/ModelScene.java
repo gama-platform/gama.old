@@ -248,6 +248,10 @@ public class ModelScene {
 		currentLayer.setAlpha(alpha);
 	}
 
+	public void beginOverlay() {
+		currentLayer.setOverlay(true);
+	}
+
 	/**
 	 * @return
 	 */

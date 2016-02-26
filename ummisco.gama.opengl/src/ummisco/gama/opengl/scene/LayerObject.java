@@ -14,6 +14,7 @@ package ummisco.gama.opengl.scene;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -35,6 +36,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	Double alpha = 1d;
 	final ILayer layer;
 	volatile boolean isInvalid;
+	volatile boolean overlay;
 
 	protected ISceneObjects<GeometryObject> geometries;
 	protected ISceneObjects<ResourceObject> resources;
@@ -94,7 +96,18 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public void draw(final GL2 gl, final JOGLRenderer renderer, final boolean picking) {
 		if ( isInvalid() ) { return; }
-		// GL2 gl = GLContext.getCurrentGL().getGL2();
+		if ( overlay ) {
+			gl.glDisable(GL.GL_DEPTH_TEST);
+			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+			gl.glPushMatrix();
+			gl.glLoadIdentity();
+			gl.glOrtho(0.0, renderer.data.getEnvWidth(), renderer.data.getEnvHeight(), 0.0, -1.0,
+				renderer.getMaxEnvDim());
+			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+			gl.glLoadIdentity();
+			// gl.glDisable(GL.GL_CULL_FACE);
+			// gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+		}
 		gl.glPushMatrix();
 		gl.glTranslated(offset.x, -offset.y, offset.z);
 		gl.glScaled(scale.x, scale.y, scale.z);
@@ -116,6 +129,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 		dems.draw(gl, picking && isPickable());
 
 		gl.glPopMatrix();
+		if ( overlay ) {
+			// Making sure we can render 3d again
+			gl.glEnable(GL.GL_DEPTH_TEST);
+			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+			gl.glPopMatrix();
+			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+			// glPopMatrix(); ----and this?
+		}
 		// gl.glFlush();
 	}
 
@@ -228,6 +249,13 @@ public class LayerObject implements Iterable<GeometryObject> {
 	 */
 	public void preload(final GL2 gl) {
 		resources.preload(gl);
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setOverlay(final boolean b) {
+		overlay = b;
 	}
 
 }
