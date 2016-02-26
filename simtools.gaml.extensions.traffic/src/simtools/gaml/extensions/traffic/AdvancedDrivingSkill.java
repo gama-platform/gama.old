@@ -18,6 +18,7 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.graph.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -111,7 +112,7 @@ import msi.gaml.types.*;
 		type = IType.INT,
 		init = "-1",
 		doc = @doc("current segment index of the agent on the current road ")), })
-@skill(name = "advanced_driving")
+@skill(name = "advanced_driving", concept = { IConcept.TRANSPORT, IConcept.SKILL })
 public class AdvancedDrivingSkill extends MovingSkill {
 
 	public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";

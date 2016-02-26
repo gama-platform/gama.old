@@ -15,6 +15,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -53,7 +54,7 @@ import msi.gaml.types.IType;
 		type = IType.POINT,
 		depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },
 		doc = @doc("continuously updated destination of the agent with respect to its speed and heading (read-only)")) })
-@skill(name = IKeyword.MOVING_3D_SKILL)
+@skill(name = IKeyword.MOVING_3D_SKILL, concept = { IConcept.THREED, IConcept.SKILL })
 public class MovingSkill3D extends MovingSkill {
 
 	@Override

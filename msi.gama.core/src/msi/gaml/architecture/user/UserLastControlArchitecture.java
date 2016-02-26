@@ -12,11 +12,12 @@
 package msi.gaml.architecture.user;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-@skill(name = IKeyword.USER_LAST)
+@skill(name = IKeyword.USER_LAST, concept = { IConcept.GUI, IConcept.SKILL })
 // @vars({ @var(name = IKeyword.STATE, type = IType.STRING),
 // @var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
 public class UserLastControlArchitecture extends UserControlArchitecture {

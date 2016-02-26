@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.text.*;
 import java.util.Calendar;
 import msi.gama.database.sql.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -63,7 +64,7 @@ import msi.gaml.types.*;
  * getDateOffset: get (datetime + offsettime)
  * Last Modified: 01-Aug-2014
  */
-@skill(name = "SQLSKILL")
+@skill(name = "SQLSKILL", concept = { IConcept.DATABASE, IConcept.SKILL })
 public class SQLSkill extends Skill {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version

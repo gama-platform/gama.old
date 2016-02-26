@@ -8,6 +8,7 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -23,7 +24,7 @@ import msi.gaml.types.IType;
  * randomly and avoid the others 2. approach : with this skill, the agent move more and more near
  * his goal and avoid the others Created by LE Van Minh - April 2010 Updated at 14:00 May 29, 2010
  */
-@skill(name = "humanmoving")
+@skill(name = "humanmoving", concept = { IConcept.SKILL })
 public class HumanMovingSkill extends MovingSkill {
 
 	private final double MIN_DISTANCE = 1;

@@ -7,6 +7,7 @@ import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -30,7 +31,7 @@ import ummisco.miro.extension.transportation.graph.*;
 	@var(name = "isTemporalGraph", type = IType.BOOL, init = "true"),
 	@var(name = "individualGraph", type = IType.GRAPH),
 	@var(name = "stationID", type = IType.STRING, doc = @doc("DB identificator of the station")) })
-@skill(name = "busTransportation")
+@skill(name = "busTransportation", concept = { IConcept.TRANSPORT, IConcept.SKILL })
 public class TransportationSkill extends Skill {
 
 	final static String FILE_PATH = "filePath";

@@ -15,6 +15,7 @@ import java.util.Map;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -36,7 +37,7 @@ import msi.gaml.types.*;
 		type = IType.LIST,
 		constant = true,
 		doc = @doc("Returns the list of all possible states the agents can be in") ) })
-@skill(name = IKeyword.FSM,
+@skill(name = IKeyword.FSM, concept = { IConcept.FSM, IConcept.BEHAVIOR, IConcept.SKILL },
 	doc = @doc("The Finite State Machine architecture, that allows to program agents using a finite set of states and conditional transitions between them") )
 public class FsmArchitecture extends ReflexArchitecture {
 

@@ -13,6 +13,7 @@ package msi.gaml.architecture.reflex;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -25,7 +26,7 @@ import msi.gaml.statements.IStatement;
  * @todo Description
  * 
  */
-@skill(name = IKeyword.REFLEX)
+@skill(name = IKeyword.REFLEX, concept = { IConcept.BEHAVIOR, IConcept.SKILL })
 public class ReflexArchitecture extends AbstractArchitecture {
 
 	private final List<IStatement> _inits = new ArrayList();

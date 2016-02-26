@@ -21,6 +21,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.*;
 import msi.gama.metamodel.topology.graph.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -51,7 +52,7 @@ import msi.gaml.types.*;
 		type = IType.FLOAT,
 		init = "1.0",
 		doc = @doc("the speed of the agent (in meter/second)")) })
-@skill(name = "driving")
+@skill(name = "driving", concept = { IConcept.TRANSPORT, IConcept.SKILL })
 public class DrivingSkill extends MovingSkill {
 
 	public final static String LIVING_SPACE = "living_space";

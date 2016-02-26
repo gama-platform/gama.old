@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -27,7 +28,7 @@ import msi.gaml.skills.Skill;
 import msi.gaml.types.*;
 import org.eclipse.core.runtime.FileLocator;
 
-@skill(name = "optimizing")
+@skill(name = "optimizing", concept = { IConcept.OPTIMIZATION, IConcept.SKILL })
 public class OptimizingSkill extends Skill {
 
 	public static int q_variable = 0;

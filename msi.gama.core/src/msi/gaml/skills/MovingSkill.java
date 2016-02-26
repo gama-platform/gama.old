@@ -22,6 +22,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.grid.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -54,7 +55,7 @@ import msi.gaml.types.*;
 		type = IType.POINT,
 		depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },
 		doc = @doc("Represents the next location of the agent if it keeps its current speed and heading (read-only)") ) })
-@skill(name = IKeyword.MOVING_SKILL)
+@skill(name = IKeyword.MOVING_SKILL, concept = { IConcept.SKILL })
 public class MovingSkill extends Skill {
 
 	@getter(IKeyword.HEADING)

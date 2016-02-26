@@ -14,6 +14,7 @@ package dream.gama.opengis.operators;
 import java.io.*;
 import java.net.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -23,7 +24,8 @@ import msi.gaml.types.IType;
 @doc("k")
 @vars({ @var(name = "msg", type = IType.STRING), @var(name = "port", type = IType.INT, doc = @doc("t)") ),
 	@var(name = "ip", type = IType.STRING, doc = @doc("cs") ) })
-@skill(name = "socket")
+@skill(name = "socket",
+concept = { IConcept.SKILL, IConcept.NETWORK })
 public class SocketSkill extends Skill {
 
 	private Integer myPort;

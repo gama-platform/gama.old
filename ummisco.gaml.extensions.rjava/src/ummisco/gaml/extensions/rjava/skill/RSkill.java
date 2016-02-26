@@ -21,6 +21,7 @@ import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
 
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -34,7 +35,7 @@ import msi.gaml.skills.Skill;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.*;
 
-@skill(name = "RSkill")
+@skill(name = "RSkill", concept = { IConcept.STATISTIC, IConcept.SKILL })
 public class RSkill extends Skill{
 
 	class TextConsole implements RMainLoopCallbacks {

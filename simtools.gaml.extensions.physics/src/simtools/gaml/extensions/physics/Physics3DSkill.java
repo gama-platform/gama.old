@@ -12,6 +12,7 @@
 package simtools.gaml.extensions.physics;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
@@ -20,7 +21,7 @@ import msi.gaml.types.IType;
 	@var(name = "mass", type = IType.FLOAT, init = "1.0"),
 	@var(name = "velocity", type = IType.LIST, init = "[0.0, 0.0, 0.0]"),
 	@var(name = "collisionBound", type = IType.MAP), @var(name = "motor", type = IType.POINT, init = "{0.0, 0.0}") })
-@skill(name = "physics")
+@skill(name = "physics", concept = { IConcept.SKILL, IConcept.THREED })
 public class Physics3DSkill extends Skill {
 
 	@setter("physical_3D_world")

@@ -24,11 +24,13 @@ public interface IConcept {
 	public static final String CHART					= "chart";
 	public static final String COLOR					= "color";
 	public static final String COMPARISON				= "comparison";
+	public static final String COMMUNICATION			= "communication";
 	public static final String CONDITION				= "condition";
 	public static final String CONSTANT					= "constant";
 	public static final String CONTAINER				= "container";
 	public static final String CYCLE					= "cycle";
 	public static final String DATE						= "date";
+	public static final String DATABASE					= "database";
 	public static final String DIMENSION				= "dimension";
 	public static final String DISPLAY					= "display";
 	public static final String DISTRIBUTION				= "distribution";
@@ -40,6 +42,7 @@ public interface IConcept {
 	public static final String FILE						= "file";
 	public static final String FILTER					= "filter";
 	public static final String FIPA						= "fipa";
+	public static final String FSM						= "fsm";
 	public static final String GAML						= "gaml";
 	public static final String GEOMETRY					= "geometry";
 	public static final String GIS						= "gis";
@@ -52,6 +55,7 @@ public interface IConcept {
 	public static final String GUI						= "gui";
 	public static final String HALT						= "halt";
 	public static final String HEADLESS					= "headless";
+	public static final String HYDROLOGY				= "hydrology";
 	public static final String IMPORT					= "import";
 	public static final String INHERITANCE				= "inheritance";
 	public static final String INIT						= "init";
@@ -68,6 +72,7 @@ public interface IConcept {
 	public static final String MULTI_LEVEL				= "multi_level";
 	public static final String MULTI_CRITERIA			= "multi_criteria";
 	public static final String NEIGHBORS				= "neighbors";
+	public static final String NETWORK					= "network";
 	public static final String NODE						= "node";
 	public static final String OBSTACLE					= "obstacle";
 	public static final String OPENGL					= "opengl";
@@ -107,6 +112,7 @@ public interface IConcept {
 	public static final String TIME_UNIT				= "time_unit";
 	public static final String TOPOLOGY					= "topology";
 	public static final String TORUS					= "torus";
+	public static final String TRANSPORT				= "transport";
 	public static final String TYPE						= "type";
 	public static final String UPDATE					= "update";
 	public static final String VOLUME_UNIT				= "volume_unit";

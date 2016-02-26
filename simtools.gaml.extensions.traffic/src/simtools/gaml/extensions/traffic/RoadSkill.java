@@ -17,6 +17,7 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -36,7 +37,7 @@ import msi.gaml.types.IType;
 		type = ITypeProvider.OWNER_TYPE,
 		doc = @doc("the linked road: the lanes of this linked road will be usable by drivers on the road")),
 	@var(name = "maxspeed", type = IType.FLOAT, doc = @doc("the maximal speed on the road")) })
-@skill(name = "skill_road")
+@skill(name = "skill_road", concept = { IConcept.TRANSPORT, IConcept.SKILL })
 public class RoadSkill extends Skill {
 
 	public final static String AGENTS = "all_agents";

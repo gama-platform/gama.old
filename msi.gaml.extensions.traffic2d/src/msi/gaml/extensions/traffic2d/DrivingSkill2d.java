@@ -20,6 +20,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -40,7 +41,7 @@ import msi.gaml.types.*;
 	@var(name = "obstacle_species", type = IType.LIST, init = "[]"),
 	@var(name = "background_species", type = IType.LIST, init = "[]"),
 	@var(name = IKeyword.SPEED, type = IType.FLOAT, init = "1.0") })
-@skill(name = "driving2d")
+@skill(name = "driving2d", concept = { IConcept.SKILL, IConcept.TRANSPORT })
 public class DrivingSkill2d extends MovingSkill {
 
 	public final static String OBSTACLE_SPECIES = "obstacle_species";

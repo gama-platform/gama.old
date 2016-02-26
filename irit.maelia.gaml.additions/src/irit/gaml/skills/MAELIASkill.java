@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package irit.gaml.skills;
 
+import msi.gama.precompiler.IConcept;
+
 /*
  * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
@@ -43,7 +45,7 @@ import msi.gaml.skills.Skill;
  * @author Benoit Gaudou 17 jan. 12
  */
 
-@skill(name = "MAELIA")
+@skill(name = "MAELIA", concept = { IConcept.SKILL })
 public class MAELIASkill extends Skill {
 
 	@action(name = "maeliaTimeStamp")

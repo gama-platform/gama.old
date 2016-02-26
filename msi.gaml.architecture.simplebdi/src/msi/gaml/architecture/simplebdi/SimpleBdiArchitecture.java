@@ -13,6 +13,7 @@ package msi.gaml.architecture.simplebdi;
 
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -44,7 +45,7 @@ import msi.gaml.types.*;
 	@var(name = SimpleBdiArchitecture.UNCERTAINTY_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.PLAN_BASE, type = IType.LIST, of = BDIPlanType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.CURRENT_PLAN, type = IType.NONE) })
-@skill(name = SimpleBdiArchitecture.SIMPLE_BDI)
+@skill(name = SimpleBdiArchitecture.SIMPLE_BDI, concept = { IConcept.BDI, IConcept.SKILL })
 
 public class SimpleBdiArchitecture extends ReflexArchitecture {
 

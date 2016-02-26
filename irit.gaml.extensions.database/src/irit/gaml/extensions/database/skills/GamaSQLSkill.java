@@ -3,12 +3,13 @@ package irit.gaml.extensions.database.skills;
 import org.geotools.data.DataStore;
 import msi.gama.database.geosql.GamaSqlConnection;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@skill(name = "GAMASQL")
+@skill(name = "GAMASQL", concept = { IConcept.DATABASE, IConcept.SKILL })
 public class GamaSQLSkill extends Skill {
 	// private static final boolean DEBUG = false; // Change DEBUG = false for release version
 

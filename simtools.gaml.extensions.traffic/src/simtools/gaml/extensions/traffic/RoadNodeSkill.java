@@ -13,6 +13,7 @@ package simtools.gaml.extensions.traffic;
 
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
@@ -33,7 +34,7 @@ import msi.gaml.types.IType;
 	@var(name = "block",
 		type = IType.MAP,
 		doc = @doc("define the list of agents blocking the node, and for each agent, the list of concerned roads")) })
-@skill(name = "skill_road_node")
+@skill(name = "skill_road_node", concept = { IConcept.TRANSPORT, IConcept.SKILL })
 public class RoadNodeSkill extends Skill {
 
 	public final static String ROADS_IN = "roads_in";

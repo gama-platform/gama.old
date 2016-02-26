@@ -12,9 +12,10 @@
 package msi.gaml.skills;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.skill;
 
-@skill(name = IKeyword.GRAPH_SKILL)
+@skill(name = IKeyword.GRAPH_SKILL, concept = { IConcept.GRAPH, IConcept.SKILL })
 /**
  * A future graph skill (to be defined)
  * 

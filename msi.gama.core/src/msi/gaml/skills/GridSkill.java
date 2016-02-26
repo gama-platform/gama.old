@@ -15,6 +15,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
@@ -49,7 +50,7 @@ import msi.gaml.types.IType;
 		type = IType.INT,
 		constant = true,
 		doc = { @doc("Returns the 0-based index of the row of the cell in the grid") }) })
-@skill(name = GridSkill.SKILL_NAME)
+@skill(name = GridSkill.SKILL_NAME, concept = { IConcept.GRID, IConcept.SKILL })
 public class GridSkill extends Skill {
 
 	public static interface IGridAgent {

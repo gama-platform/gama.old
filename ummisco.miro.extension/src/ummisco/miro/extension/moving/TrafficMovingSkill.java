@@ -6,6 +6,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -19,7 +20,7 @@ import msi.gaml.skills.MovingSkill;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Coordinate;
 
-@skill(name = "trafficMoving")
+@skill(name = "trafficMoving", concept = { IConcept.TRANSPORT, IConcept.SKILL })
 public class TrafficMovingSkill extends MovingSkill {
 
 	@action(name = "goto_traffic",

@@ -13,6 +13,7 @@ package ummisco.gama.communicator.skills;
 
 import javax.jms.JMSException;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -27,7 +28,7 @@ import msi.gaml.types.IType;
 import ummisco.gama.communicator.common.*;
 
 @vars({ @var(name = ICommunicatorSkill.NET_AGENT_NAME, type = IType.STRING, doc = @doc("Net ID of the agent")) })
-@skill(name = ICommunicatorSkill.NETWORK_SKILL)
+@skill(name = ICommunicatorSkill.NETWORK_SKILL, concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
 public class Communication extends ConnectionManager {
 
 	@action(name = ICommunicatorSkill.CONNECT_TOPIC, args = {

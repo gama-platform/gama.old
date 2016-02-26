@@ -13,6 +13,7 @@ package irit.gaml.extensions.database.skills;
 
 import org.olap4j.OlapConnection;
 import msi.gama.database.mdx.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -39,7 +40,7 @@ import msi.gaml.types.IType;
  *
  * Last Modified: 08-Jul-2013
  */
-@skill(name = "MDXSKILL")
+@skill(name = "MDXSKILL", concept = { IConcept.DATABASE, IConcept.SKILL })
 public class MDXSkill extends Skill {
 
 	// private static final boolean DEBUG = false; // Change DEBUG = false for release version

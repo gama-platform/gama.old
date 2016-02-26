@@ -13,6 +13,7 @@ package cenres.gaml.extensions.hydro.operators;
 
 import cenres.gaml.extensions.hydro.utils.WaterLevelUtils;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
@@ -23,7 +24,7 @@ public class WaterLevel {
 	/*
 	 * author: Philippe Caillou
 	 */
-	@operator(value = { "water_level_for" })
+	@operator(value = { "water_level_for" }, concept = { IConcept.HYDROLOGY })
 	@doc(
 		special_cases = {
 			"if the left operand is a polyline and the right operand a float for the area, returrns the y coordinate of the water (water level)" },
@@ -35,7 +36,7 @@ public class WaterLevel {
 			GamaListFactory.create(scope, Types.POINT, shape.getInnerGeometry().getCoordinates()), val);
 	}
 
-	@operator(value = { "water_area_for" })
+	@operator(value = { "water_area_for" }, concept = { IConcept.HYDROLOGY })
 	@doc(
 		special_cases = {
 			"if the left operand is a polyline and the right operand a float for the water y coordinate, returrns the area of the water (water flow area)" },
@@ -47,7 +48,7 @@ public class WaterLevel {
 			.area(GamaListFactory.create(scope, Types.POINT, shape.getInnerGeometry().getCoordinates()), val);
 	}
 
-	@operator(value = { "water_polylines_for" })
+	@operator(value = { "water_polylines_for" }, concept = { IConcept.HYDROLOGY })
 	@doc(
 		special_cases = {
 			"if the left operand is a polyline and the right operand a float for the water y coordinate, returrns the shapes of the river sections (list of list of points)" },

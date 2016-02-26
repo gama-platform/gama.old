@@ -14,6 +14,7 @@ package msi.gaml.extensions.fipa;
 import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.*;
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,7 +29,7 @@ import msi.gaml.types.*;
  */
 @doc(
 	value = "The fipa skill offers some primitives and built-in variables which enable agent to communicate with each other using the FIPA interaction protocol. ")
-@skill(name = "fipa")
+@skill(name = "fipa", concept = { IConcept.FIPA, IConcept.SKILL, IConcept.COMMUNICATION })
 @vars({
 	@var(name = "conversations",
 		type = IType.LIST,
@@ -95,7 +96,7 @@ import msi.gaml.types.*;
 public class CommunicatingSkill extends Skill {
 
 	@doc(deprecated = "Use the keyword 'fipa' instead")
-	@skill(name = "communicating")
+	@skill(name = "communicating", concept = { IConcept.FIPA, IConcept.SKILL, IConcept.COMMUNICATION })
 	public static class Deprecated extends CommunicatingSkill {}
 
 	/** The protocol indexes. */
