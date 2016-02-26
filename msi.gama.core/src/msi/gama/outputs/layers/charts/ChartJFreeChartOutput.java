@@ -134,10 +134,7 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		// chart.getLegend().setBackgroundPaint(null);
 
 		if ( plot instanceof CategoryPlot ) {
-			final CategoryPlot pp = (CategoryPlot) chart.getPlot();
-			pp.setDomainGridlinePaint(axesColor);
-			pp.setRangeGridlinePaint(axesColor);
-			pp.setRangeCrosshairVisible(true);
+
 		} else if ( plot instanceof XYPlot ) {
 			final XYPlot pp = (XYPlot) chart.getPlot();
 			pp.setDomainGridlinePaint(axesColor);
