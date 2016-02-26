@@ -71,6 +71,7 @@ public abstract class Spatial {
 
 		@operator(value = "using",
 			category = { IOperatorCategory.SPATIAL },
+			concept = { IConcept.TOPOLOGY, IConcept.SPATIAL_COMPUTATION },
 			type = ITypeProvider.FIRST_TYPE,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			index_type = ITypeProvider.FIRST_KEY_TYPE)
@@ -95,7 +96,8 @@ public abstract class Spatial {
 
 	public static abstract class Creation {
 
-		@operator(value = "circle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "circle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A circle geometry which radius is equal to the operand.",
 			usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
 			comment = "the centre of the circle is by default the location of the current agent in which has been called this operator.",
@@ -111,7 +113,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildCircle(radius, location);
 		}
 
-		@operator(value = "ellipse", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "ellipse", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(
 			value = "An ellipse geometry which x-radius is equal to the first operand and y-radius is equal to the second operand",
 			usages = {
@@ -132,7 +135,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildEllipse(xRadius, yRadius, location);
 		}
 
-		@operator(value = "squircle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "squircle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(
 			value = "A mix of square and circle geometry (see : http://en.wikipedia.org/wiki/Squircle), which side size is equal to the first operand and power is equal to the second operand",
 			usages = { @usage(value = "returns a point if the side operand is lower or equal to 0.") },
@@ -150,7 +154,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildSquircle(xRadius, power, location);
 		}
 
-		@operator(value = "arc", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "arc", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(
 			value = "An arc, which radius is equal to the first operand, heading to the second and amplitude the third",
 			usages = { @usage(value = "returns a point if the radius operand is lower or equal to 0.") },
@@ -165,7 +170,8 @@ public abstract class Spatial {
 			return arc(scope, xRadius, heading, amplitude, true);
 		}
 
-		@operator(value = "arc", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "arc", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
 		@doc(
 			value = "An arc, which radius is equal to the first operand, heading to the second, amplitude to the third and a boolean indicating whether to return a linestring or a polygon to the fourth",
 			usages = { @usage(value = "returns a point if the radius operand is lower or equal to 0.") },
@@ -185,7 +191,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "cylinder",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A cylinder geometry which radius is equal to the operand.",
 			usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
 			comment = "the centre of the cylinder is by default the location of the current agent in which has been called this operator.",
@@ -202,7 +209,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "sphere",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A sphere geometry which radius is equal to the operand.",
 			usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
 			comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
@@ -220,7 +228,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "teapot",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A teapot geometry which radius is equal to the operand.",
 			special_cases = { "returns a point if the operand is lower or equal to 0." },
 			comment = "the centre of the teapot is by default the location of the current agent in which has been called this operator.",
@@ -237,7 +246,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildTeapot(size, location);
 		}
 
-		@operator(value = "cone", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "cone", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A cone geometry which min and max angles are given by the operands.",
 			special_cases = { "returns nil if the operand is nil." },
 			comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.",
@@ -269,7 +279,8 @@ public abstract class Spatial {
 
 		}
 
-		@operator(value = "cone", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "cone", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
 		@doc(value = "A cone geometry which min and max angles are given by the operands.",
 			special_cases = { "returns nil if the operand is nil." },
 			comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.",
@@ -284,7 +295,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "cone3D",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A cone geometry which radius is equal to the operand.",
 			special_cases = { "returns a point if the operand is lower or equal to 0." },
 			comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.",
@@ -301,7 +313,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildCone3D(radius, height, location);
 		}
 
-		@operator(value = "square", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "square", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A square geometry which side size is equal to the operand.",
 			usages = { @usage(value = "returns nil if the operand is nil.") },
 			comment = "the centre of the square is by default the location of the current agent in which has been called this operator.",
@@ -318,7 +331,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "cube",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A cube geometry which side size is equal to the operand.",
 			usages = { @usage(value = "returns nil if the operand is nil.") },
 			comment = "the centre of the cube is by default the location of the current agent in which has been called this operator.",
@@ -334,7 +348,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildCube(side_size, location);
 		}
 
-		@operator(value = "rectangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "rectangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A rectangle geometry which side sizes are given by the operands.",
 			masterDoc = true,
 			usages = { @usage(value = "returns nil if the operand is nil.") },
@@ -351,7 +366,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildRectangle(p.x, p.y, location);
 		}
 
-		@operator(value = "rectangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "rectangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
 		@doc(value = "A rectangle geometry which side sizes are given by the operands.",
 			usages = { @usage(value = "returns nil if the operand is nil.") },
 			comment = "the centre of the rectangle is by default the location of the current agent in which has been called this operator.",
@@ -368,7 +384,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "box",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A box geometry which side sizes are given by the operands.",
 			masterDoc = true,
 			usages = { @usage(value = "returns nil if the operand is nil.") },
@@ -386,7 +403,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "box",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+			concept = {})
 		@doc(value = "A box geometry which side sizes are given by the operands.",
 			usages = { @usage(value = "returns nil if the operand is nil.") },
 			comment = "the centre of the box is by default the location of the current agent in which has been called this operator.",
@@ -402,7 +420,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildBox(x, y, z, location);
 		}
 
-		@operator(value = "triangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "triangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A triangle geometry which side size is given by the operand.",
 			usages = { @usage("returns nil if the operand is nil.") },
 			comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.",
@@ -420,7 +439,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "pyramid",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A square geometry which side size is given by the operand.",
 			usages = { @usage(value = "returns nil if the operand is nil.") },
 			comment = "the centre of the pyramid is by default the location of the current agent in which has been called this operator.",
@@ -436,7 +456,8 @@ public abstract class Spatial {
 			return GamaGeometryType.buildPyramid(side_size, location);
 		}
 
-		@operator(value = "hexagon", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@operator(value = "hexagon", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A hexagon geometry which the given with and height",
 			masterDoc = true,
 			usages = { @usage("returns nil if the operand is nil.") },
@@ -455,7 +476,8 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "hexagon",
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+			concept = { IConcept.THREED })
 		@doc(value = "A hexagon geometry which the given with and height",
 			usages = { @usage("returns nil if the operand is nil.") },
 			comment = "the centre of the hexagon is by default the location of the current agent in which has been called this operator.",
@@ -476,7 +498,8 @@ public abstract class Spatial {
 
 		@operator(value = "polygon",
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
 		@doc(value = "A polygon geometry from the given list of points.",
 			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
 				@usage(value = "if the operand is composed of a single point, returns a point geometry"),
@@ -502,7 +525,8 @@ public abstract class Spatial {
 
 		@operator(value = "polyhedron",
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
 		@doc(value = "A polyhedron geometry from the given list of points.",
 			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
 				@usage(value = "" + "if the operand is composed of a single point, returns a point geometry"),
@@ -529,7 +553,8 @@ public abstract class Spatial {
 
 		@operator(value = { "curve" },
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
 		@doc(value = "A quadratic Bezier curve geometry built from the three given points composed of 10 points.",
 			usages = { @usage(value = "if the operand is nil, returns nil") },
 			examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
@@ -545,7 +570,8 @@ public abstract class Spatial {
 
 		@operator(value = { "curve" },
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+			concept = {})
 		@doc(
 			value = "A quadratic Bezier curve geometry built from the three given points composed of a given numnber of points.",
 			usages = { @usage(value = "if the operand is nil, returns nil"),
@@ -563,7 +589,8 @@ public abstract class Spatial {
 
 		@operator(value = { "curve" },
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+			concept = {})
 		@doc(value = "A cubic Bezier curve geometry built from the four given points composed of 10 points.",
 			usages = { @usage(value = "if the operand is nil, returns nil") },
 			examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
@@ -579,7 +606,8 @@ public abstract class Spatial {
 
 		@operator(value = { "curve" },
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+			concept = {})
 		@doc(
 			value = "A cubic Bezier curve geometry built from the four given points composed of a given number of points.",
 			usages = { @usage(value = "if the operand is nil, returns nil"),
@@ -631,7 +659,8 @@ public abstract class Spatial {
 
 		@operator(value = { "line", "polyline" },
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
-			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
 		@doc(value = "A polyline geometry from the given list of points.",
 			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
 				@usage(value = "if the operand is composed of a single point, returns a point geometry.") },

@@ -28,7 +28,7 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.*;
 
 /**
- * Written by drogoul Modified on 10 d�c. 2010
+ * Written by drogoul Modified on 10 dec. 2010
  *
  * @todo Description
  *
@@ -43,7 +43,8 @@ public class Random {
 		return r;
 	}
 
-	@operator(value = { "truncated_gauss", "TGauss" }, category = { IOperatorCategory.RANDOM })
+	@operator(value = { "truncated_gauss", "TGauss" }, category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
 	@doc(value = "A random value from a normally distributed random variable in the interval ]mean - standardDeviation; mean + standardDeviation[.",
 		usages = { @usage(value = "when the operand is a point, it is read as {mean, standardDeviation}") },
 		examples = { @example(value = "truncated_gauss ({0, 0.3})",
@@ -54,7 +55,8 @@ public class Random {
 		return opTGauss(scope, GamaListFactory.createWithoutCasting(Types.FLOAT, p.x, p.y));
 	}
 
-	@operator(value = { "truncated_gauss", "TGauss" }, category = { IOperatorCategory.RANDOM })
+	@operator(value = { "truncated_gauss", "TGauss" }, category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(usages = {
 		@usage(value = "if the operand is a list, only the two first elements are taken into account as [mean, standardDeviation]"),
 		@usage(value = "when truncated_gauss is called with a list of only one element mean, it will always return 0.0") },
@@ -84,7 +86,8 @@ public class Random {
 
 	}
 
-	@operator(value = "gauss", category = { IOperatorCategory.RANDOM })
+	@operator(value = "gauss", category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
 	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.",
 		usages = { @usage(value = "when the operand is a point, it is read as {mean, standardDeviation}"),
 			@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") },
@@ -98,7 +101,8 @@ public class Random {
 		return RANDOM(scope).createGaussian(mean, sd);
 	}
 
-	@operator(value = "gauss", category = { IOperatorCategory.RANDOM })
+	@operator(value = "gauss", category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.",
 		usages = { @usage(value = "when the operand is a point, it is read as {mean, standardDeviation}"),
 			@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") },
@@ -110,7 +114,8 @@ public class Random {
 		return RANDOM(scope).createGaussian(mean, sd);
 	}
 
-	@operator(value = "poisson", category = { IOperatorCategory.RANDOM })
+	@operator(value = "poisson", category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
 	@doc(value = "A value from a random variable following a Poisson distribution (with the positive expected number of occurence lambda as operand).",
 		comment = "The Poisson distribution is a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time and/or space if these events occur with a known average rate and independently of the time since the last event, cf. Poisson distribution on Wikipedia.",
 		examples = { @example(value = "poisson(3.5)", equals = "a random positive integer", test = false) },
@@ -120,7 +125,8 @@ public class Random {
 		return RANDOM(scope).createPoisson(mean);
 	}
 
-	@operator(value = "binomial", category = { IOperatorCategory.RANDOM })
+	@operator(value = "binomial", category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
 	@doc(value = "A value from a random variable following a binomial distribution. The operands represent the number of experiments n and the success probability p.",
 		comment = "The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.",
 		examples = { @example(value = "binomial(15,0.6)", equals = "a random positive integer", test = false) },
@@ -131,7 +137,8 @@ public class Random {
 	}
 
 	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-		IOperatorCategory.RANDOM, IOperatorCategory.CONTAINER })
+		IOperatorCategory.RANDOM, IOperatorCategory.CONTAINER },
+			concept = { IConcept.RANDOM })
 	@doc(value = "The elements of the operand in random order.",
 		usages = { @usage(value = "if the operand is empty, returns an empty list (or string, matrix)") },
 		examples = { @example(value = "shuffle ([12, 13, 14])", equals = "[14,12,13] (for example)", test = false) },
@@ -152,7 +159,8 @@ public class Random {
 	// }
 
 	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-		IOperatorCategory.RANDOM, IOperatorCategory.MATRIX })
+		IOperatorCategory.RANDOM, IOperatorCategory.MATRIX },
+			concept = {})
 	@doc(examples = { @example(value = "shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))",
 		equals = "matrix([[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]) (for example)",
 		test = false) })
@@ -163,13 +171,15 @@ public class Random {
 	}
 
 	@operator(value = "shuffle", content_type = IType.STRING, category = { IOperatorCategory.RANDOM,
-		IOperatorCategory.STRING })
+		IOperatorCategory.STRING },
+			concept = { IConcept.RANDOM })
 	@doc(examples = { @example(value = "shuffle ('abc')", equals = "'bac' (for example)", test = false) })
 	public static String opShuffle(final IScope scope, final String target) {
 		return RANDOM(scope).shuffle(target);
 	}
 
-	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
 	@doc(value = "a random integer in the interval [0, operand]",
 		masterDoc = true,
 		comment = "to obtain a probability between 0 and 1, use the expression (rnd n) / n, where n is used to indicate the precision",
@@ -186,7 +196,8 @@ public class Random {
 		return opRnd(scope, 0, max);
 	}
 
-	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
 	@doc(value = "a random integer in the interval [first operand, second operand]",
 		examples = { @example(value = "rnd (2, 4)", equals = "2, 3 or 4", test = false) },
 		see = {})
@@ -195,7 +206,8 @@ public class Random {
 		return r.between(min, max);
 	}
 
-	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(value = "a random integer in the interval [first operand, second operand], constrained by a step given by the last operand",
 		examples = { @example(value = "rnd (2, 12, 4)", equals = "2, 6 or 10", test = false) },
 		see = {})
@@ -205,7 +217,8 @@ public class Random {
 		return r.between(min, max, step);
 	}
 
-	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(value = "a random float in the interval [first operand, second operand]",
 		examples = { @example(value = "rnd (2.0, 4.0)", equals = "a float number between 2.0 and 4.0", test = false) },
 		see = {})
@@ -214,7 +227,8 @@ public class Random {
 		return r.between(min, max);
 	}
 
-	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(value = "a random float in the interval [first operand, second operand] constrained by the last operand (step)",
 		examples = { @example(value = "rnd (2.0, 4.0, 0.5)",
 			equals = "a float number between 2.0 and 4.0 every 0.5",
@@ -225,7 +239,8 @@ public class Random {
 		return r.between(min, max, step);
 	}
 
-	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(value = "a random point in the interval [first operand, second operand]",
 		examples = { @example(value = "rnd ({2.0, 4.0}, {2.0, 5.0, 10.0})",
 			equals = "a point with x = 2.0, y between 2.0 and 4.0 and z between 0.0 and 10.0",
@@ -237,7 +252,8 @@ public class Random {
 		return new GamaPoint(x, y, z);
 	}
 
-	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(value = "a random point in the interval [first operand, second operand], constained by the step provided by the last operand",
 		examples = { @example(value = "rnd ({2.0, 4.0}, {2.0, 5.0, 10.0}, 1)",
 			equals = "a point with x = 2.0, y equal to 2.0, 3.0 or 4.0 and z between 0.0 and 10.0 every 1.0",
@@ -252,7 +268,8 @@ public class Random {
 
 	static GamaPoint NULL_POINT = new GamaPoint(0, 0, 0);
 
-	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(usages = { @usage(value = "if the operand is a point, returns a point with three random float ordinates, each in the interval [0, ordinate of argument]") },
 		examples = { @example(value = "rnd ({2.5,3, 0.0})",
 			equals = "{x,y} with x in [0.0,2.0], y in [0.0,3.0], z = 0.0",
@@ -262,7 +279,8 @@ public class Random {
 		return opRnd(scope, NULL_POINT, max);
 	}
 
-	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(usages = { @usage(value = "if the operand is a float, returns an uniformly distributed float random number in [0.0, to]") },
 		examples = { @example(value = "rnd(3.4)", equals = "a random float between 0.0 and 3.4", test = false) })
 	public static
@@ -270,7 +288,8 @@ public class Random {
 		return opRnd(scope, 0.0, max);
 	}
 
-	@operator(value = "flip", category = { IOperatorCategory.RANDOM })
+	@operator(value = "flip", category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
 	@doc(value = "true or false given the probability represented by the operand",
 		usages = { @usage(value = "flip 0 always returns false, flip 1 true") },
 		examples = { @example(value = "flip (0.66666)", equals = "2/3 chances to return true.", test = false) },
@@ -279,7 +298,8 @@ public class Random {
 		return probability > RANDOM(scope).between(0., 1.);
 	}
 
-	@operator(value = "rnd_choice")
+	@operator(value = "rnd_choice",
+			concept = { IConcept.RANDOM })
 	@doc(value = "returns an index of the given list with a probability following the (normalized) distribution described in the list (a form of lottery)",
 		examples = { @example(value = "rnd_choice([0.2,0.5,0.3])",
 			equals = "2/10 chances to return 0, 5/10 chances to return 1, 3/10 chances to return 2",
@@ -314,7 +334,8 @@ public class Random {
 	}
 	
 
-	@operator(value = "sample", category = { IOperatorCategory.RANDOM })
+	@operator(value = "sample", category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
 	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement",
 		examples = { @example(value = "sample([2,10,1],2,false)", equals = "[1,2]", test = false)})
 	public static
@@ -331,7 +352,8 @@ public class Random {
 		return result;
 	}
 	
-	@operator(value = "sample", category = { IOperatorCategory.RANDOM })
+	@operator(value = "sample", category = { IOperatorCategory.RANDOM },
+			concept = {})
 	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement with given weights",
 		examples = { @example(value = "sample([2,10,1],2,false,[0.1,0.7,0.2])", equals = "[10,2]", test = false)})
 	public static

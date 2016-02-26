@@ -24,7 +24,8 @@ import msi.gaml.operators.fastmaths.FastMath;
  */
 public class Maths {
 
-	@operator(value = { "^" }, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = { "^" }, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the value (always a float) of the left operand raised to the power of the right operand.",
 		masterDoc = true,
 		usages = { @usage("if the right-hand operand is equal to 0, returns 1"),
@@ -47,19 +48,22 @@ public class Maths {
 		return pow(a.doubleValue(), b.doubleValue());
 	}
 
-	@operator(value = { "^" }, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = { "^" }, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns the value (always a float) of the left operand raised to the power of the right operand.")
 	public static Double pow(final Double a, final Integer b) {
 		return pow(a, b.doubleValue());
 	}
 
-	@operator(value = { "^" }, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = { "^" }, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns the value (always a float) of the left operand raised to the power of the right operand.")
 	public static Double pow(final Integer a, final Double b) {
 		return pow(a.doubleValue(), b);
 	}
 
-	@operator(value = { "^" }, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = { "^" }, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns the value (always a float) of the left operand raised to the power of the right operand.",
 		usages = { @usage(value = "", examples = { @example(value = "4.84 ^ 0.5", equals = "2.2") }) })
 	public static Double pow(final Double a, final Double b) {
@@ -68,7 +72,8 @@ public class Maths {
 
 	// ==== Operators
 
-	@operator(value = "abs", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "abs", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the absolute value of the operand (so a positive int or float depending on the type of the operand).",
 		masterDoc = true,
@@ -77,7 +82,8 @@ public class Maths {
 		return rv < 0 ? -rv : rv;
 	}
 
-	@operator(value = "abs", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "abs", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(
 		value = "Returns the absolute value of the operand (so a positive int or float depending on the type of the operand).",
 		usages = { @usage(value = "",
@@ -87,7 +93,8 @@ public class Maths {
 		return (rv ^ rv >> 31) - (rv >> 31);
 	}
 
-	@operator(value = "acos", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "acos", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in the interval [0,180], in decimal degrees) of the arccos of the operand (which should be in [-1,1]).",
 		masterDoc = true,
@@ -98,13 +105,15 @@ public class Maths {
 		return FastMath.acos(rv) * toDeg;
 	}
 
-	@operator(value = "acos", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "acos", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the arccos of the operand ")
 	public static Double acos(final Integer rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
 
-	@operator(value = "asin", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "asin", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in the interval [-90,90], in decimal degrees) of the arcsin of the operand (which should be in [-1,1]).",
 		usages = { @usage(value = "if the right-hand operand is outside of the [-1,1] interval, returns NaN") },
@@ -114,7 +123,8 @@ public class Maths {
 		return FastMath.asin(rv) * toDeg;
 	}
 
-	@operator(value = "asin", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "asin", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the arcsin of the operand",
 		masterDoc = true,
 		examples = @example(value = "asin (90)", equals = "#nan"),
@@ -123,7 +133,8 @@ public class Maths {
 		return FastMath.asin(rv) * toDeg;
 	}
 
-	@operator(value = "atan", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "atan", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in the interval [-90,90], in decimal degrees) of the arctan of the operand (which can be any real number).",
 		masterDoc = true,
@@ -133,13 +144,15 @@ public class Maths {
 		return FastMath.atan(rv) * toDeg;
 	}
 
-	@operator(value = "atan", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "atan", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the arctan of the operand")
 	public static Double atan(final Integer rv) {
 		return FastMath.atan(rv) * toDeg;
 	}
 
-	@operator(value = "tanh", can_be_const = true)
+	@operator(value = "tanh", can_be_const = true,
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in the interval [-1,1]) of the hyperbolic tangent of the operand (which can be any real number, expressed in decimal degrees).",
 		masterDoc = true,
@@ -148,14 +161,16 @@ public class Maths {
 		return FastMath.tanh(rv);
 	}
 
-	@operator(value = "tanh", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "tanh", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the hyperbolic tangent of the operand (which has to be expressed in decimal degrees).")
 	public static Double tanh(final Integer rv) {
 		return FastMath.tanh(rv);
 	}
 
 	// hqnghi & Tri 14/04/2013
-	@operator(value = "cos_rad", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "cos_rad", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in [-1,1]) of the cosinus of the operand (in decimal degrees).  The argument is casted to an int before being evaluated.",
 		masterDoc = true,
@@ -165,7 +180,8 @@ public class Maths {
 		return FastMath.cos(rv);
 	}
 
-	@operator(value = "sin_rad", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "sin_rad", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in [-1,1]) of the sinus of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
 		masterDoc = true,
@@ -176,7 +192,8 @@ public class Maths {
 		return FastMath.sin(rv);
 	}
 
-	@operator(value = "tan_rad", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "tan_rad", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
 		masterDoc = true,
@@ -192,7 +209,8 @@ public class Maths {
 
 	// end hqnghi & Tri 14/04/2013
 
-	@operator(value = "cos", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "cos", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in [-1,1]) of the cosinus of the operand (in decimal degrees).  The argument is casted to an int before being evaluated.",
 		masterDoc = true,
@@ -205,7 +223,8 @@ public class Maths {
 		return FastMath.cos(rad);
 	}
 
-	@operator(value = "cos", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "cos", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the cosinus of the operand.",
 		examples = { @example(value = "cos (0)", equals = "1.0"), @example(value = "cos(360)", equals = "1.0"),
 			@example(value = "cos(-720)", equals = "1.0") })
@@ -215,7 +234,8 @@ public class Maths {
 		// return FastMath.cos(rad);
 	}
 
-	@operator(value = "sin", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "sin", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in [-1,1]) of the sinus of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
 		masterDoc = true,
@@ -229,7 +249,8 @@ public class Maths {
 		return FastMath.sin(rad);
 	}
 
-	@operator(value = "sin", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "sin", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the sinus of the operand (in decimal degrees).",
 		examples = { @example(value = "sin (0)", equals = "0.0") })
 	public static Double sin(final Integer rv) {
@@ -239,7 +260,8 @@ public class Maths {
 		// return FastMath.sin(rad);
 	}
 
-	@operator(value = "tan", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "tan", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
 		masterDoc = true,
@@ -254,7 +276,8 @@ public class Maths {
 		return FastMath.tan(rad);
 	}
 
-	@operator(value = "tan", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "tan", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(
 		value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
 		examples = { @example(value = "tan (0)", equals = "0.0"),
@@ -264,7 +287,8 @@ public class Maths {
 		return FastMath.tan(rad);
 	}
 
-	@operator(value = "even", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "even", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns true if the operand is even and false if it is odd.",
 		usages = { @usage(value = "if the operand is equal to 0, it returns true."),
 			@usage(value = "if the operand is a float, it is truncated before") },
@@ -273,7 +297,8 @@ public class Maths {
 		return rv.intValue() % 2 == 0;
 	}
 
-	@operator(value = "exp", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "exp", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns Euler's number e raised to the power of the operand.",
 		masterDoc = true,
 		usages = @usage(value = "the operand is casted to a float before being evaluated."),
@@ -283,14 +308,16 @@ public class Maths {
 		return FastMath.exp(rv);
 	}
 
-	@operator(value = "exp", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "exp", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "returns Euler's number e raised to the power of the operand.",
 		special_cases = "the operand is casted to a float before being evaluated.")
 	public static Double exp(final Integer rv) {
 		return FastMath.exp(rv.doubleValue());
 	}
 
-	@operator(value = "fact", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "fact", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the factorial of the operand.",
 		usages = @usage("if the operand is less than 0, fact returns 0."),
 		examples = @example(value = "fact(4)", equals = "24"))
@@ -303,7 +330,8 @@ public class Maths {
 		return product;
 	}
 
-	@operator(value = "ln", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "ln", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the natural logarithm (base e) of the operand.",
 		masterDoc = true,
 		usages = @usage(value = "an exception is raised if the operand is less than zero."),
@@ -316,7 +344,8 @@ public class Maths {
 		return FastMath.log(x);
 	}
 
-	@operator(value = "ln", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "ln", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "returns the natural logarithm (base e) of the operand.",
 		examples = @example(value = "ln(1)", equals = "0.0"))
 	public static Double ln(final IScope scope, final Integer x) {
@@ -327,7 +356,8 @@ public class Maths {
 		return FastMath.log(x);
 	}
 
-	@operator(value = "log", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "log", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the logarithm (base 10) of the operand.",
 		masterDoc = true,
 		usages = @usage("an exception is raised if the operand is equals or less than zero."),
@@ -341,7 +371,8 @@ public class Maths {
 		return FastMath.log10(x);
 	}
 
-	@operator(value = "log", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "log", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "returns the logarithm (base 10) of the operand.",
 		examples = @example(value = "log(1)", equals = "0.0"))
 	public static Double log(final IScope scope, final Integer x) {
@@ -352,19 +383,22 @@ public class Maths {
 		return FastMath.log10(x);
 	}
 
-	@operator(value = "-", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "-", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "If it is used as an unary operator, it returns the opposite of the operand.", masterDoc = true)
 	public static Double negate(final Double x) {
 		return -x;
 	}
 
-	@operator(value = "-", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "-", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns the opposite of the operand.", examples = @example(value = "- (-56)", equals = "56"))
 	public static Integer negate(final Integer x) {
 		return -x;
 	}
 
-	@operator(value = "round", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "round", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the rounded value of the operand.",
 		masterDoc = true,
 		examples = { @example(value = "round (0.51)", equals = "1"), @example(value = "round (100.2)", equals = "100"),
@@ -380,13 +414,15 @@ public class Maths {
 		return i;
 	}
 
-	@operator(value = "round", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "round", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(special_cases = "if the operand is an int, round returns it")
 	public static Integer round(final Integer v) {
 		return v;
 	}
 
-	@operator(value = "sqrt", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "sqrt", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the square root of the operand.",
 		masterDoc = true,
 		usages = @usage(value = "if the operand is negative, an exception is raised"),
@@ -396,14 +432,16 @@ public class Maths {
 		return FastMath.sqrt(v);
 	}
 
-	@operator(value = "sqrt", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "sqrt", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns the square root of the operand.", examples = @example(value = "sqrt(4)", equals = "2.0"))
 	public static Double sqrt(final Double v) throws GamaRuntimeException {
 		if ( v < 0 ) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs"); }
 		return FastMath.sqrt(v);
 	}
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the division of the two operands.",
 		masterDoc = true,
 		usages = { @usage(
@@ -416,7 +454,8 @@ public class Maths {
 		return Double.valueOf(a.doubleValue() / b.doubleValue());
 	}
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.",
 		see = "*")
 	public static Double opDivide(final IScope scope, final Double a, final Integer b) throws GamaRuntimeException {
@@ -424,7 +463,8 @@ public class Maths {
 		return a / b.doubleValue();
 	}
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.",
 		see = "*")
 	public static Double opDivide(final IScope scope, final Double a, final Double b) throws GamaRuntimeException {
@@ -432,7 +472,8 @@ public class Maths {
 		return a / b;
 	}
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.",
 		see = "*")
 	public static Double opDivide(final IScope scope, final Integer a, final Double b) throws GamaRuntimeException {
@@ -440,7 +481,8 @@ public class Maths {
 		return a.doubleValue() / b.doubleValue();
 	}
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the product of the two operands.",
 		masterDoc = true,
 		usages = @usage(
@@ -451,7 +493,8 @@ public class Maths {
 		return a * b;
 	}
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns the product of the two operands",
 		examples = { @example(value = "2.5 * 2", equals = "5.0") },
 		see = "/")
@@ -459,13 +502,15 @@ public class Maths {
 		return Double.valueOf(a * b);
 	}
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "Returns the product of the two operands", examples = {}, see = "/")
 	public static Double opTimes(final Double a, final Double b) {
 		return a * b;
 	}
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true,
+			concept = {})
 	@doc(value = "Returns the product of the two operands", examples = {}, see = "/")
 	public static Double opTimes(final Integer a, final Double b) {
 		return Double.valueOf(a * b);
@@ -474,7 +519,8 @@ public class Maths {
 	@operator(value = IKeyword.MULTIPLY,
 		can_be_const = true,
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-		category = { IOperatorCategory.ARITHMETIC })
+		category = { IOperatorCategory.ARITHMETIC },
+		concept = {})
 	@doc(usages = { @usage(
 		value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic product of the number with each element of the matrix (results are float if the number is a float.",
 		examples = {
@@ -486,12 +532,14 @@ public class Maths {
 	@operator(value = IKeyword.MULTIPLY,
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_TYPE,
-		category = { IOperatorCategory.ARITHMETIC })
+		category = { IOperatorCategory.ARITHMETIC },
+		concept = {})
 	public static IMatrix opTimes(final Double a, final IMatrix b) {
 		return b.times(a);
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the sum, union or concatenation of the two operands.",
 		masterDoc = true,
 		usages = { @usage(
@@ -503,19 +551,22 @@ public class Maths {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the sum, union or concatenation of the two operands.")
 	public static Double opPlus(final Double a, final Integer b) {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the sum, union or concatenation of the two operands.")
 	public static Double opPlus(final Double a, final Double b) {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the sum, union or concatenation of the two operands.")
 	public static Double opPlus(final Integer a, final Double b) {
 		return a + b;
@@ -524,7 +575,8 @@ public class Maths {
 	@operator(value = IKeyword.PLUS,
 		can_be_const = true,
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-		category = { IOperatorCategory.ARITHMETIC })
+		category = { IOperatorCategory.ARITHMETIC },
+		concept = {})
 	@doc(usages = { @usage(
 		value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic sum of the number with each element of the matrix (results are float if the number is a float.",
 		examples = { @example(value = "3.5 + matrix([[2,5],[3,4]])", equals = "matrix([[5.5,8.5],[6.5,7.5]])") }) })
@@ -536,13 +588,15 @@ public class Maths {
 	@operator(value = IKeyword.PLUS,
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_TYPE,
-		category = { IOperatorCategory.ARITHMETIC })
+		category = { IOperatorCategory.ARITHMETIC },
+		concept = {})
 	@doc(value = "Returns the sum of the two operands", examples = {}, see = "/")
 	public static IMatrix opPlus(final Double a, final IMatrix b) {
 		return b.plus(a);
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the difference of the two operands.",
 		masterDoc = true,
 		usages = { @usage(
@@ -554,19 +608,22 @@ public class Maths {
 		return a - b;
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the difference of the two operands")
 	public static Double opMinus(final Double a, final Integer b) {
 		return a - b;
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the difference of the two operands")
 	public static Double opMinus(final Double a, final Double b) {
 		return a - b;
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "the difference of the two operands")
 	public static Double opMinus(final Integer a, final Double b) {
 		return a - b;
@@ -575,7 +632,8 @@ public class Maths {
 	@operator(value = IKeyword.MINUS,
 		can_be_const = true,
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-		category = { IOperatorCategory.ARITHMETIC })
+		category = { IOperatorCategory.ARITHMETIC },
+		concept = {})
 	@doc(value = "the difference of the two operands",
 		usages = { @usage(
 			value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic difference of the number with each element of the matrix (results are float if the number is a float.",
@@ -589,7 +647,8 @@ public class Maths {
 	@operator(value = IKeyword.MINUS,
 		can_be_const = true,
 		content_type = ITypeProvider.FIRST_TYPE,
-		category = { IOperatorCategory.ARITHMETIC })
+		category = { IOperatorCategory.ARITHMETIC },
+		concept = {})
 	@doc(value = "the difference of the two operands")
 	public static IMatrix opMinus(final Double a, final IMatrix b) {
 		return b.times(-1).plus(a);
@@ -619,7 +678,8 @@ public class Maths {
 		return whole + fract;
 	}
 
-	@operator(value = "with_precision", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "with_precision", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Rounds off the value of left-hand operand to the precision given by the value of right-hand operand",
 		examples = { @example(value = "12345.78943 with_precision 2", equals = "12345.79"),
 			@example(value = "123 with_precision 2", equals = "123.00") },
@@ -629,7 +689,8 @@ public class Maths {
 		return (double) (long) (v > 0 ? v * t + 0.5 : v * t - 0.5) / t;
 	}
 
-	@operator(value = "floor", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "floor", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Maps the operand to the largest previous following integer, i.e. the largest integer not greater than x.",
 		examples = { @example(value = "floor(3)", equals = "3.0"), @example(value = "floor(3.5)", equals = "3.0"),
@@ -639,7 +700,8 @@ public class Maths {
 		return FastMath.floor(d);
 	}
 
-	@operator(value = "ceil", can_be_const = true)
+	@operator(value = "ceil", can_be_const = true,
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Maps the operand to the smallest following integer, i.e. the smallest integer not less than x.",
 		examples = { @example(value = "ceil(3)", equals = "3.0"), @example(value = "ceil(3.5)", equals = "4.0"),
 			@example(value = "ceil(-4.7)", equals = "-4.0") },
@@ -648,7 +710,8 @@ public class Maths {
 		return FastMath.ceil(d);
 	}
 
-	@operator(value = "mod", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "mod", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the remainder of the integer division of the left-hand operand by the rigth-hand operand.",
 		usages = { @usage(value = "if operands are float, they are truncated"),
 			@usage(value = "if the right-hand operand is equal to zero, raises an exception.") },
@@ -658,7 +721,8 @@ public class Maths {
 		return a % b;
 	}
 
-	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns the truncation of the division of the left-hand operand by the right-hand operand.",
 		masterDoc = true,
 		usages = @usage(value = "if the right-hand operand is equal to zero, raises an exception."),
@@ -669,7 +733,8 @@ public class Maths {
 		return a / b;
 	}
 
-	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.",
 		usages = @usage(value = "if the right-hand operand is equal to zero, raises an exception."),
 		examples = @example(value = "40.5 div 3", equals = "13"),
@@ -679,7 +744,8 @@ public class Maths {
 		return (int) (a / b);
 	}
 
-	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.",
 		usages = @usage(value = "if the right-hand operand is equal to zero, raises an exception."),
 		examples = @example(value = "40 div 4.1", equals = "9"))
@@ -688,7 +754,8 @@ public class Maths {
 		return (int) (a / b);
 	}
 
-	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "div", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = {})
 	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.",
 		examples = @example(value = "40.1 div 4.5", equals = "8"))
 	public static Integer div(final IScope scope, final Double a, final Double b) throws GamaRuntimeException {
@@ -726,7 +793,8 @@ public class Maths {
 		}
 	}
 
-	@operator(value = "atan2", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "atan2", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "the atan2 value of the two operands.",
 		comment = "The function atan2 is the arctangent function with two arguments. The purpose of using two arguments instead of one is to gather information on the signs of the inputs in order to return the appropriate quadrant of the computed angle, which is not possible for the single-argument arctangent function.",
 		masterDoc = true,
@@ -769,7 +837,8 @@ public class Maths {
 		return result;
 	}
 
-	@operator(value = "hypot", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "hypot", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns sqrt(x2 +y2) without intermediate overflow or underflow.",
 		special_cases = "If either argument is infinite, then the result is positive infinity. If either argument is NaN and neither argument is infinite, then the result is NaN.",
 		examples = @example(value = "hypot(0,1,0,1)", equals = "sqrt(2)"))
@@ -780,7 +849,8 @@ public class Maths {
 		return sqrt(dx * dx + dy * dy);
 	}
 
-	@operator(value = "is_number", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "is_number", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC, IConcept.TYPE })
 	@doc(value = "Returns whether the argument is a real number or not",
 		examples = { @example(value = "is_number(4.66)", equals = "true"),
 			@example(value = "is_number(#infinity)", equals = "true"),
@@ -789,7 +859,8 @@ public class Maths {
 		return !Double.isNaN(d);
 	}
 
-	@operator(value = "is_finite", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "is_finite", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(value = "Returns whether the argument is a finite number or not",
 		examples = { @example(value = "is_finite(4.66)", equals = "true"),
 			@example(value = "is_finite(#infinity)", equals = "false") })
@@ -797,7 +868,8 @@ public class Maths {
 		return !Double.isInfinite(d);
 	}
 
-	@operator(value = "signum", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
+	@operator(value = "signum", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc(
 		value = "Returns -1 if the argument is negative, +1 if it is positive, 0 if it is equal to zero or not a number",
 		examples = { @example(value = "signum(-12)", equals = "-1"), @example(value = "signum(14)", equals = "1"),
