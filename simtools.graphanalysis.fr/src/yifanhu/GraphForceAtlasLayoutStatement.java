@@ -3,11 +3,8 @@ package yifanhu;
 import org.gephi.layout.plugin.forceAtlas2.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.ILocation;
-<<<<<<< HEAD
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.IConcept;
-=======
->>>>>>> branch 'graphs' of https://github.com/gama-platform/gama.git
 import msi.gama.outputs.layers.charts.ChartDataListStatement;
 import msi.gama.outputs.layers.charts.ChartDataStatement;
 import msi.gama.outputs.layers.charts.ChartDataListStatement.ChartDataList;
