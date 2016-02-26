@@ -416,7 +416,6 @@ public class GamlDocProcessor {
 
 					// Category
 					org.w3c.dom.Element categoriesElt;
-					org.w3c.dom.Element conceptsElt;
 					if ( operator.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).getLength() == 0 ) {
 						categoriesElt = DocProcessorAnnotations.getCategories(e, doc,
 							doc.createElement(XMLElements.OPERATOR_CATEGORIES), tc);
@@ -424,10 +423,18 @@ public class GamlDocProcessor {
 						categoriesElt = DocProcessorAnnotations.getCategories(e, doc, (org.w3c.dom.Element) operator
 							.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).item(0), tc);
 					}
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
-							doc.createElement(XMLElements.CONCEPTS), tc);
-
 					operator.appendChild(categoriesElt);
+					
+					// Concept
+					org.w3c.dom.Element conceptsElt;
+					
+					if ( operator.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0 ) {
+						conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+								doc.createElement(XMLElements.CONCEPTS), tc);
+					} else {
+						conceptsElt = DocProcessorAnnotations.getConcepts(e, doc, (org.w3c.dom.Element) operator
+							.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
+					}
 					operator.appendChild(conceptsElt);
 
 					// Parse the combination operands / result

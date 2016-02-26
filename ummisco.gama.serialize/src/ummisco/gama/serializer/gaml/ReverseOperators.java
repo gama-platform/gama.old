@@ -6,9 +6,10 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.*;
+import msi.gama.metamodel.agent.AbstractAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.gamaType.converters.*;
 
@@ -19,7 +20,6 @@ public class ReverseOperators {
 		XStream xstream = new XStream(new DomDriver());
 		xstream.registerConverter(new LogConverter());
 		xstream.registerConverter(new GamaBasicTypeConverter(cs));
-		xstream.registerConverter(new GamaShapeFileConverter(cs));
 		xstream.registerConverter(new GamaAgentConverter(cs));
 		xstream.registerConverter(new GamaListConverter(cs));
 		xstream.registerConverter(new GamaMapConverter(cs));
@@ -27,6 +27,8 @@ public class ReverseOperators {
 		xstream.registerConverter(new GamaPairConverter());
 		xstream.registerConverter(new GamaMatrixConverter(cs));
 		xstream.registerConverter(new GamaGraphConverter(cs));		
+		xstream.registerConverter(new GamaFileConverter(cs));
+		//		xstream.registerConverter(new GamaShapeFileConverter(cs));
 		
 		// xstream.registerConverter(new GamaShapeConverter());
 		// xstream.registerConverter(new GamaPointConverter());
@@ -34,24 +36,26 @@ public class ReverseOperators {
 		return xstream;
 	}
 	
-	// TODO : la faire prendre un agent en paramètre ... 
-	@operator(value = "serializeSimulation", concept = { IConcept.SERIALIZE })
+	@operator(value = "serializeAgent")
 	@doc("")
-	public static String serializeSimulation(final IScope scope, final int i) {
-		XStream xstream = newXStream(new ConverterScope(scope));
+//	public static String serializeSimulation(final IScope scope, final int i) {
+	public static String serializeAgent(final IScope scope, final IAgent agent) {
 
-		ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
-		SimulationAgent simAgt = expAgt.getSimulation();
+	XStream xstream = newXStream(new ConverterScope(scope));
 
-		System.out.println("**** TODO list = Get an agent as parameter");
+	//	ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
+	//	SimulationAgent simAgt = expAgt.getSimulation();
+
+		System.out.println("**** TODO list = Problème dans les displays");
+//		System.out.println("**** TODO list = Get an agent as parameter");
 		System.out.println("**** TODO list = Reducer for any kind of file");
 		System.out.println("**** TODO list = Case of multi-simulation ?");
 		System.out.println("**** TODO list Improvment = simplify GamaShape");		
 
-		return xstream.toXML(new SavedAgent(scope, simAgt));
+		return xstream.toXML(new SavedAgent(scope, agent));
 	}
 
-	@operator(value = "unSerializeSimulation", concept = { IConcept.SERIALIZE })
+	@operator(value = "unSerializeSimulation")
 	@doc("")
 	public static int unSerializeSimulation(final IScope scope, final String simul) {
 		ConverterScope cScope = new ConverterScope(scope);
@@ -73,13 +77,12 @@ public class ReverseOperators {
 		return 1;
 	}
 
-	@operator(value = "saveSimulation", concept = { IConcept.SERIALIZE })
+	@operator(value = "saveAgent")
 	@doc("")
-	public static int saveSimulation(final IScope scope, final String pathname) {
+	public static int saveAgent(final IScope scope, final IAgent agent, final String pathname) {
 		String path = FileUtils.constructAbsoluteFilePath(scope, pathname, false);
-		// checkValidity(scope);
 
-		String simulation = serializeSimulation(scope, 0);
+		String simulation = serializeAgent(scope, agent);
 
 		FileWriter fw = null;
 		try {
@@ -96,5 +99,14 @@ public class ReverseOperators {
 
 		return 0;
 	}
+	
+	@operator(value = "saveSimulation")
+	@doc("")
+	public static int saveSimulation(final IScope scope, final String pathname) {
+		ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
+		SimulationAgent simAgt = expAgt.getSimulation();
+
+		return saveAgent(scope, simAgt, pathname);
+	}	
 
 }

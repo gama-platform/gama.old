@@ -404,7 +404,7 @@ public class DocProcessorAnnotations {
 	public static org.w3c.dom.Element getCategories(final Element e, final Document doc, org.w3c.dom.Element categoriesElt, TypeConverter tc){	
 		ArrayList<String> categories = new ArrayList<String>();
 		String[] categoriesTab = null;
-		NodeList nL = categoriesElt.getElementsByTagName(XMLElements.CATEGORIES);
+		NodeList nL = categoriesElt.getElementsByTagName(XMLElements.CATEGORY);
 		for(int i = 0; i < nL.getLength() ; i++){
 			categories.add(((org.w3c.dom.Element) nL.item(i)).getAttribute(XMLElements.ATT_CAT_ID));
 		}
@@ -454,7 +454,7 @@ public class DocProcessorAnnotations {
 	public static org.w3c.dom.Element getConcepts(final Element e, final Document doc, org.w3c.dom.Element conceptElt, TypeConverter tc){	
 		ArrayList<String> concepts = new ArrayList<String>();
 		String[] conceptsTab = null;
-		NodeList nL = conceptElt.getElementsByTagName(XMLElements.CONCEPTS);
+		NodeList nL = conceptElt.getElementsByTagName(XMLElements.CONCEPT);
 		for(int i = 0; i < nL.getLength() ; i++){
 			concepts.add(((org.w3c.dom.Element) nL.item(i)).getAttribute(XMLElements.ATT_CAT_ID));
 		}
