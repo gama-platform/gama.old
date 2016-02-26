@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
+<<<<<<< HEAD
 import msi.gaml.statements.draw.FileDrawingAttributes;
 
 import org.jfree.chart.JFreeChart;
@@ -55,6 +56,40 @@ public class ChartLayer extends AbstractLayer {
 //		dg.drawChart(scope, im, 0.0);
 		FileDrawingAttributes attributes = new FileDrawingAttributes(null);
 		dg.drawImage(im, attributes);
+=======
+
+import org.jfree.chart.JFreeChart;
+
+/**
+ * Written by drogoul Modified on 1 avr. 2010
+ * 
+ * @todo Description
+ * 
+ */
+public class ChartLayer extends AbstractLayer {
+
+	public ChartLayer(final ILayerStatement model) {
+		super(model);
+	}
+
+//	private JFreeChart getChart() {
+//		return ((ChartLayerStatement) definition).getChart();
+//	}
+
+	private ChartOutput getChart() {
+	return ((ChartLayerStatement) definition).getOutput();
+	}
+
+	@Override
+	public String getType() {
+		return "Chart layer";
+	}
+
+	@Override
+	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
+		BufferedImage im = getChart().getImage(scope,getSizeInPixels().x, getSizeInPixels().y);
+		dg.drawChart(scope, im, 0.0);
+>>>>>>> branch 'graphs' of https://github.com/gama-platform/gama.git
 	}
 
 	@Override

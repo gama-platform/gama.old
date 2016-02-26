@@ -63,7 +63,11 @@ import org.jfree.ui.RectangleInsets;
  * @todo Description
  * 
  */
+<<<<<<< HEAD
 @symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.CHART, IConcept.DISPLAY })
+=======
+@symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true)
+>>>>>>> branch 'graphs' of https://github.com/gama-platform/gama.git
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true), */

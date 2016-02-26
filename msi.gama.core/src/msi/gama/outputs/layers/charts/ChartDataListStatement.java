@@ -38,7 +38,11 @@ import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.renderer.xy.*;
 
+<<<<<<< HEAD
 @symbol(name = "datalist", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.CHART }, doc = @doc("add a list of series to a chart. The number of series can be dynamic (the size of the list changes each step). See Ant Foraging (Charts) model in ChartTest for examples."))
+=======
+@symbol(name = "datalist", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, doc = @doc("add a list of series to a chart. The number of series can be dynamic (the size of the list changes each step). See Ant Foraging (Charts) model in ChartTest for examples."))
+>>>>>>> branch 'graphs' of https://github.com/gama-platform/gama.git
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @facets(value = {
 	@facet(name = IKeyword.VALUE, type = IType.LIST, optional = false, doc = @doc("the values to display. Has to be a List of List. Each element can be a number (series/histogram) or a list with two values (XY chart)")),
