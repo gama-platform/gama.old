@@ -42,7 +42,7 @@ public class ModelScene {
 	protected LayerObject currentLayer;
 	protected final JOGLRenderer renderer;
 	private volatile boolean staticObjectsAreLocked;
-	private final Map<BufferedImage, Texture> textures = new HashMap(10);
+	private final Map<BufferedImage, Texture> localVolatileTextures = new HashMap(10);
 	private volatile boolean rendered = false;
 
 	public ModelScene(final JOGLRenderer renderer, final boolean withWorld) {
@@ -77,27 +77,27 @@ public class ModelScene {
 			}
 		}
 		// Wipe the textures. However, might be necessary to know what to do for the trace...
-		int size = textures.size();
+		int size = localVolatileTextures.size();
 		if ( size != 0 ) {
 			int[] textureIdsToDestroy = new int[size];
 			int index = 0;
-			for ( Map.Entry<BufferedImage, Texture> entry : textures.entrySet() ) {
+			for ( Map.Entry<BufferedImage, Texture> entry : localVolatileTextures.entrySet() ) {
 				Texture t = entry.getValue();
 				textureIdsToDestroy[index++] = t == null ? 0 : t.getTextureObject();
 			}
 			gl.glDeleteTextures(textureIdsToDestroy.length, textureIdsToDestroy, 0);
-			textures.clear();
+			localVolatileTextures.clear();
 		}
 
 	}
 
 	public Texture getTexture(final GL gl, final BufferedImage image) {
 		if ( image == null ) { return null; }
-		Texture texture = textures.get(image);
+		Texture texture = localVolatileTextures.get(image);
 		if ( texture == null ) {
-			texture = TextureCache.buildTexture(gl, image);
+			texture = renderer.getSharedTextureCache().buildTexture(gl, image);
 			image.flush();
-			textures.put(image, texture);
+			localVolatileTextures.put(image, texture);
 		}
 		if ( texture != null ) {
 			boolean antiAlias = renderer.data.isAntialias();
@@ -111,13 +111,7 @@ public class ModelScene {
 	// Must have been stored before
 	public Texture getTexture(final GL gl, final GamaImageFile file) {
 		if ( file == null ) { return null; }
-
-		// if ( !TextureCache.contains(file) ) {
-		// TextureCache.initializeStaticTexture(file);
-		// }
-
-		Texture texture = TextureCache.get(gl, file);
-
+		Texture texture = renderer.getSharedTextureCache().get(gl, file);
 		if ( texture != null ) {
 			boolean antiAlias = renderer.data.isAntialias();
 			// Apply antialas to the texture based on the current preferences
@@ -146,7 +140,7 @@ public class ModelScene {
 	public void addFile(final GamaFile file, final FileDrawingAttributes attributes) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		if ( file instanceof GamaImageFile ) {
-			TextureCache.initializeStaticTexture((GamaImageFile) file);
+			renderer.getSharedTextureCache().initializeStaticTexture((GamaImageFile) file);
 			// if ( attributes.depth != null && attributes.textures != null ) {
 			// // We deal here with an image representing a DEM (with a depth = z_factor) and a texture.
 			// for ( Object img : attributes.textures ) {
@@ -184,7 +178,7 @@ public class ModelScene {
 		if ( attributes.textures != null && !attributes.textures.isEmpty() ) {
 			for ( Object img : attributes.textures ) {
 				if ( img instanceof GamaImageFile ) {
-					TextureCache.initializeStaticTexture((GamaImageFile) img);
+					renderer.getSharedTextureCache().initializeStaticTexture((GamaImageFile) img);
 				}
 			}
 		}
@@ -196,7 +190,7 @@ public class ModelScene {
 		if ( attributes.textures != null && !attributes.textures.isEmpty() ) {
 			for ( Object img : attributes.textures ) {
 				if ( img instanceof GamaImageFile ) {
-					TextureCache.initializeStaticTexture((GamaImageFile) img);
+					renderer.getSharedTextureCache().initializeStaticTexture((GamaImageFile) img);
 				}
 			}
 		}

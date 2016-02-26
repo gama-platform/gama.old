@@ -75,6 +75,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<String, Envelope>();
 	// Use to inverse y composaant
 	public int yFlag;
+	private final TextureCache textureCache =
+		GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue() ? TextureCache.getSharedInstance() : new TextureCache();
 
 	// Global text renderers
 	// Does not allow renderers to be created for text bigger than 200 pixels
@@ -118,13 +120,16 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public GLAutoDrawable createDrawable(final Composite parent) {
-		GLProfile profile = TextureCache.getSharedContext().getGLProfile();
+		boolean useSharedContext = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue();
+		GLProfile profile = useSharedContext ? TextureCache.getSharedContext().getGLProfile() : GLProfile.getDefault();
 		GLCapabilities cap = new GLCapabilities(profile);
 		cap.setStencilBits(8);
 		cap.setDoubleBuffered(true);
 		cap.setHardwareAccelerated(true);
 		canvas = new GLCanvas(parent, SWT.NONE, cap, null);
-		canvas.setSharedAutoDrawable(TextureCache.getSharedContext());
+		if ( useSharedContext ) {
+			canvas.setSharedAutoDrawable(TextureCache.getSharedContext());
+		}
 		canvas.setAutoSwapBufferMode(true);
 		SWTGLAnimator animator = new SWTGLAnimator(canvas);
 		canvas.addGLEventListener(this);
@@ -712,8 +717,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 		currentOffset = new GamaPoint(getXOffsetInPixels() / (getWidth() / data.getEnvWidth()),
 			getYOffsetInPixels() / (getHeight() / data.getEnvHeight()), currentZLayer);
-		currentScale =
-			new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), z_scale);
+		currentScale = new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), z_scale);
 		// }
 		// else {
 		// currentOffset = new GamaPoint(getXOffsetInPixels(), getYOffsetInPixels());
@@ -863,6 +867,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	@Override
 	public void endOverlay() {
 
+	}
+
+	public TextureCache getSharedTextureCache() {
+		return textureCache;
 	}
 
 }

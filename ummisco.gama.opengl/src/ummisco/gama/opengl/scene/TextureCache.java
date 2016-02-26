@@ -19,6 +19,7 @@ import java.util.concurrent.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.util.file.GamaImageFile;
 
@@ -29,30 +30,47 @@ public class TextureCache {
 		TextureIO.setTexRectEnabled(false);
 	}
 
-	private static final Map<String, Texture> TEXTURES = new ConcurrentHashMap(100, 0.75f, 4);
-	private static final TextureAsyncBuilder BUILDER = new TextureAsyncBuilder();
+	private final Map<String, Texture> TEXTURES = new ConcurrentHashMap(100, 0.75f, 4);
+	private static TextureAsyncBuilder BUILDER;
 
 	public static GLAutoDrawable getSharedContext() {
+		if ( BUILDER == null ) {
+			BUILDER = new TextureAsyncBuilder();
+		}
 		return BUILDER.drawable;
 	}
 
 	// Assumes the texture has been created. But it may be processed at the time
 	// of the call, so we wait for its availability.
-	public static Texture get(final GL gl, final GamaImageFile image) {
+	public Texture get(final GL gl, final GamaImageFile image) {
 		if ( image == null ) { return null; }
 		Texture texture = TEXTURES.get(image.getPath());
-		while (texture == null) {
-			texture = TEXTURES.get(image.getPath());
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		if ( texture == null ) {
+			if ( !GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue() ) {
+				if ( !gl.getContext().isCurrent() ) {
+					gl.getContext().makeCurrent();
+				}
+				texture = buildTexture(gl, image);
+				if ( texture != null ) {
+					TEXTURES.put(image.getPath(), texture);
+				}
+			} else {
+				while (texture == null) {
+					texture = TEXTURES.get(image.getPath());
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
+
 		return texture;
 	}
 
-	public static void initializeStaticTexture(final GamaImageFile image) {
+	public void initializeStaticTexture(final GamaImageFile image) {
+		if ( !GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue() ) { return; }
 		if ( contains(image) ) { return; }
 		BuildingTask task = new BuildingTask(null, image);
 		BUILDER.tasks.offer(task);
@@ -62,11 +80,11 @@ public class TextureCache {
 	 * @param image
 	 * @return
 	 */
-	static boolean contains(final GamaImageFile image) {
+	boolean contains(final GamaImageFile image) {
 		return TEXTURES.containsKey(image.getPath());
 	}
 
-	public static Texture buildTexture(final GL gl, final GamaImageFile image) {
+	private Texture buildTexture(final GL gl, final GamaImageFile image) {
 		try {
 			Texture texture = TextureIO.newTexture(image.getFile(), false);
 			return texture;
@@ -78,7 +96,7 @@ public class TextureCache {
 
 	// These textures are not cached
 
-	public static Texture buildTexture(final GL gl, final BufferedImage image) {
+	Texture buildTexture(final GL gl, final BufferedImage image) {
 		try {
 			Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(), correctImage(image), true);
 			return texture;
@@ -186,7 +204,7 @@ public class TextureCache {
 
 	}
 
-	protected static class BuildingTask implements GLTask {
+	protected class BuildingTask implements GLTask {
 
 		protected final GamaImageFile image;
 
@@ -207,5 +225,17 @@ public class TextureCache {
 			gl.glFinish();
 
 		}
+	}
+
+	private static TextureCache sharedInstance;
+
+	/**
+	 * @return
+	 */
+	public static TextureCache getSharedInstance() {
+		if ( sharedInstance == null ) {
+			sharedInstance = new TextureCache();
+		}
+		return sharedInstance;
 	}
 }

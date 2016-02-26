@@ -456,9 +456,14 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_DISPLAY_ORDER =
 		create("core.display_order", "Stack displays on screen in the order defined by the model", true, IType.BOOL)
 			.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
+
 	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE =
 		create("core.display_visible", "Only process for display the agents that are visible", false, IType.BOOL)
 			.in(EXPERIMENTAL).group(DISPLAY);
+	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("core.shared_context",
+		"Enable OpenGL background loading of textures (disable it if you have problems with Intel graphics cards on Linux)",
+		true, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+
 	/**
 	 * Default Aspect
 	 */
