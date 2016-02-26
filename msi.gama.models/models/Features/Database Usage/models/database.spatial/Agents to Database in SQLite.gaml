@@ -1,10 +1,10 @@
 /**
- *  SAVE_AGENT2SQL
- *  Author: Truong Minh Thai (thai.truongminh@gmail.com)
- *  Description: 
- *      init: Select data from table vnm_adm2 (Created via QGis software)  and create  agents
+* Name:  Agents to Database in SQLite
+* Author: Truong Minh Thai
+* Description:    init: Select data from table vnm_adm2 (Created via QGis software)  and create  agents
  * 	    savetosql: Save data of agent into MySQL. 
  * 					transform= true because you need to transform geometry data from Absolute(GAMA) to Gis
+ * Tags: Database
  */
 
 model agent2DB_SQLite  

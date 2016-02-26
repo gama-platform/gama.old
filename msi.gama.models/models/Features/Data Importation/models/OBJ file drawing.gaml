@@ -2,7 +2,7 @@
 * Name: OBJ File to Geometry
 * Author:  Arnaud Grignard
 * Description: Model which shows how to use a OBJ File to draw a complex geometry. The geometry is simply used, in this case, to draw the agents.
-* Tags:  Import Files, 3D Display
+* Tags:  Import Files, 3D Display, Skill
 */
 
 

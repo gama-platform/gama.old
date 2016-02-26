@@ -1,7 +1,7 @@
 /**
- *  Author: Truong Minh Thai (thai.truongminh@gmail.com)
- *  Description:
- *   This model does SQl query commands:
+* Name:  Simple SQL Command in SQLIte
+* Author: Truong Minh Thai
+* Description:  This model does SQl query commands:
  * 		- Create table 
  * 		- Insert data
  *      - Select data
@@ -9,7 +9,8 @@
  *      - Drop table 
  * 
  *  Note: the file emptyFile.db is only ... an empty file.
- */
+* Tags: Database
+  */
 model SQLite_selectNUpdate
 
 global {

@@ -1,9 +1,9 @@
 /**
- *  CreateBuildingTableMySQL
- *  Author: thaitruongminh
- *  Description: 
+* Name:  CreateBuildingTableMSSQL
+* Author: Truong Minh Thai
+* Description:    This model shows how to create a database and a table in MSSQL using GAMA
+ * Tags: Database
  */
-
 model CreateBuildingTable_MSSQL
 
 

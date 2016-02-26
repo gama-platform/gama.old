@@ -1,8 +1,9 @@
 /**
- *  DB2agentSQLite
- *  Author: bgaudou
- *  Description: 
- */
+* Name:  Agents from Database in PostGIS
+* Author: Benoit Gaudou
+* Description:  This model does SQL query commands and create agents using the results
+* Tags: Database
+  */
 
 model DB2agentMySQL 
 

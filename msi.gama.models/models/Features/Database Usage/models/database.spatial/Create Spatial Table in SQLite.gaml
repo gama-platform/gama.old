@@ -1,10 +1,8 @@
 /**
- *  Author: Truong Minh Thai (thai.truongminh@gmail.com)
- *  Description: 
- * 		Create a spatial table in Sqlite
- * 	See:
- * 		SQLite_Agent2DB and SQLite_libspatialite models
- *      
+* Name:  CreateBuildingTableSQLite
+* Author: Truong Minh Thai
+* Description:    This model shows how to create a database and a table in SQLite using GAMA
+ * Tags: Database
  */
 
 model SQLite_selectNUpdate

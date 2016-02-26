@@ -1,8 +1,8 @@
 /**
- *  SQLConnection
- *  Author: thaitruongminh
- *  Description: 
- *   00: Test DBMS Connection
+* Name: SQLConnection
+* Author: thaitruongminh
+* Description: How to create a connection to a database in GAMA
+* Tags: Database
  */
 model test_connection
 

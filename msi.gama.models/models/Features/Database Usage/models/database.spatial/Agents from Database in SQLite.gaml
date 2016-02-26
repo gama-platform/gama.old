@@ -1,9 +1,9 @@
 /**
- *  DB2agentSQLite
- *  Author: bgaudou
- *  Description: 
- */
-
+* Name:  Agents from Database in SQLite 
+* Author: Benoit Gaudou
+* Description:  This model creates buildings agents from the sqlite database using the result of a query
+* Tags: Database
+  */
 model DB2agentSQLite
 
 global {

@@ -1,9 +1,9 @@
 /**
- *  DB2agentMSSQL
- *  Author: bgaudou
- *  Description: 
- */
-
+* Name:  Agents from Database in MSSQL
+* Author: Benoit Gaudou
+* Description:  This model does SQl query commands and create agents using the results
+* Tags: Database
+  */
 model DB2agentMSSQL
 
 global {

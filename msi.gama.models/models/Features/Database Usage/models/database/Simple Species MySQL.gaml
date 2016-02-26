@@ -1,7 +1,7 @@
 /**
- *  Author: Truong Minh Thai (thai.truongminh@gmail.com)
- *  Description:
- *  This model illustrates the use of the AgentDB species (instead of the SQLSKILL), and in particular following actions:
+* Name:  Simple Species MySql
+* Author: Truong Minh Thai
+* Description:  This model illustrates the use of the AgentDB species (instead of the SQLSKILL), and in particular following actions:
  *    - testConection
  *    - isConnected
  *    - close 
@@ -18,6 +18,7 @@
  * 
  *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (meteo_DB here) AND IMPORTED THE FILE (../../includes/meteo_DB_dump.sql)
  *        IN ORDER THAT THE MODEL CAN RUN PROPERLY.
+* Tags: Database
  */
 model simpleSQL_DBSpecies_MySQL
 

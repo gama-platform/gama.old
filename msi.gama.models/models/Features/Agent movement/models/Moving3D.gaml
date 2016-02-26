@@ -1,7 +1,10 @@
 /**
- *  Moving3D: This model illustrates the different action and effect offered by the movingSkill3D (move,wander,goto and follow)
- *  Author: Arnaud Grignard - Tri Nguyen Huu
- */
+* Name:  Movement in 3D
+* Author:  Arnaud Grignard - Tri Nguyen Huu
+* Description: This model illustrates the different action and effect offered by the movingSkill3D (move,wander,goto and follow)
+* Tags: 3D Display, Movement of Agents, Graph, Skill
+*/
+
 
 
 model Moving3DModel   

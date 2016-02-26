@@ -1,14 +1,28 @@
-
+/**
+* Name: Boids Imported Model
+* Author: 
+* Description: 
+* Tags: 
+*/
 model boids 
 
+//make the environment torus according to the bool variable torus_environment 
 global torus: torus_environment{ 
+	
+	//Variable to represent the number of boids to create
 	int number_of_agents <- 10 min: 1 max: 1000000;
+	//Variable to represent the number of obstacles to create
 	int number_of_obstacles <- 5 min: 0;
+	//Variable to represent the maximal speed of the boids agents
 	float maximal_speed <- 15.0 min: 0.1 max: 15.0;
+	
+	//Variables to manage the boids movements
 	int cohesion_factor <- 200;
 	int alignment_factor <- 100; 
 	float minimal_distance <- 10.0; 
 	int maximal_turn <- 90 min: 0 max: 359; 
+	
+	//Variables for the environment 
 	int width_and_height_of_environment <- 800;  
 	bool torus_environment <- false; 
 	bool apply_cohesion <- true ;
@@ -18,11 +32,20 @@ global torus: torus_environment{
 	bool apply_avoid <- true;  
 	bool apply_wind <- true;   
 	bool moving_obstacles <- false;   
+	
+	//Bounds of the environment
 	int bounds <- int(width_and_height_of_environment / 20) depends_on: [width_and_height_of_environment]; 
+	//Vector to represent the direction of the wind
 	point wind_vector <- {0,0}; 
+	
+	//Variables for the goal : its duration and its location determined randomlly
 	int goal_duration <- 30 update: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
+	
+	//Images available for the aspect of the boids
 	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
+	
+	//Determine the bounding rectangle of the environment
 	int xmin <- bounds depends_on: [bounds];    
 	int ymin <- bounds depends_on: [bounds];  
 	int xmax <- (width_and_height_of_environment - bounds);     

@@ -1,7 +1,9 @@
 /**
- *  SAVE_AGENT2SQL
- *  Author: Truong Minh Thai (thai.truongminh@gmail.com)
- */
+* Name:  Agents to Database in MSSQL
+* Author: Truong Minh Thai
+* Description:  This model shows how to Insert and Delete agents from a MSSQL DB
+* Tags: Database
+  */
 
 model agent2DB_MSSQL 
   
