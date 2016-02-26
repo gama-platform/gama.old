@@ -18,6 +18,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -27,7 +28,8 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 import ummisco.gaml.extensions.sound.StopSoundStatement.StopSoundValidator;
 
-@symbol(name = IKeyword.STOP_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.STOP_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
+concept = { IConcept.SOUND })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(StopSoundValidator.class)
 public class StopSoundStatement extends AbstractStatementSequence {

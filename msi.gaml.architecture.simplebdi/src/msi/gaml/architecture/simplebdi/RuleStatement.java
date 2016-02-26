@@ -15,6 +15,7 @@ package msi.gaml.architecture.simplebdi;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -32,7 +33,8 @@ import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
 
-@symbol(name = RuleStatement.RULE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = RuleStatement.RULE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
+concept = { IConcept.BDI })
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = {
 	@facet(name = RuleStatement.BELIEF, type = PredicateType.id, optional = true, doc = @doc("The mandatory belief")),

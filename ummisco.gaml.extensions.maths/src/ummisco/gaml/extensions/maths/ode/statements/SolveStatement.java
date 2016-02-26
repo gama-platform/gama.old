@@ -13,6 +13,7 @@ package ummisco.gaml.extensions.maths.ode.statements;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -82,7 +83,8 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 		optional = true,
 		doc = @doc(value = "allowed relative error (used with dp853 method only)")) },
 	omissible = IKeyword.EQUATION)
-@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
+concept = { IConcept.EQUATION })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(SolveValidator.class)
 @doc(

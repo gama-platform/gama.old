@@ -15,6 +15,7 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -39,7 +40,8 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.*;
  *
  */
 
-@symbol(name = { EQUATION_OP }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = { EQUATION_OP }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
+concept = { IConcept.EQUATION })
 @facets(
 	value = {
 		@facet(name = EQUATION_LEFT,

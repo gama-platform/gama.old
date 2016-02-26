@@ -16,6 +16,7 @@ import java.util.List;
 import ummisco.gaml.extensions.sound.ResumeSoundStatement.ResumeSoundValidator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
@@ -28,7 +29,8 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 
 
-@symbol(name = IKeyword.RESUME_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.RESUME_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
+concept = { IConcept.SOUND })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(ResumeSoundValidator.class)
 public class ResumeSoundStatement extends AbstractStatementSequence {

@@ -17,6 +17,7 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -40,7 +41,8 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
  * @since 26 janv. 2013
  *
  */
-@symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
+concept = { IConcept.EQUATION })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false, doc = @doc("the equation identifier")),
 	@facet(name = IKeyword.TYPE,

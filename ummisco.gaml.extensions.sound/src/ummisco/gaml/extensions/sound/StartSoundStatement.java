@@ -32,7 +32,8 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.sound.StartSoundStatement.StartSoundValidator;
 
-@symbol(name = IKeyword.START_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, doc = @doc("Starts playing a music file. The supported formats are aif, au, mp3, wav. One agent"))
+@symbol(name = IKeyword.START_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT,
+concept = { IConcept.SOUND }, with_sequence = true, doc = @doc("Starts playing a music file. The supported formats are aif, au, mp3, wav. One agent"))
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 	@facet(name = IKeyword.SOURCE, type = IType.STRING, optional = false, doc = @doc("The path to music file. This path is relative to the path of the model.")),

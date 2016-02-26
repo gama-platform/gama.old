@@ -34,6 +34,7 @@ public interface IConcept {
 	public static final String DISTRIBUTION				= "distribution";
 	public static final String EDGE						= "edge";
 	public static final String ENUMERATION				= "enumeration";
+	public static final String EQUATION					= "equation";
 	public static final String EXPERIMENT				= "experiment";
 	public static final String FACET					= "facet";
 	public static final String FILE						= "file";
@@ -87,6 +88,7 @@ public interface IConcept {
 	public static final String SHAPE					= "shape";
 	public static final String SHORTEST_PATH			= "shortest_path";
 	public static final String SKILL					= "skill";
+	public static final String SOUND					= "sound";
 	public static final String SPATIAL_COMPUTATION		= "spatial_computation";
 	public static final String SPATIAL_GRAPH			= "spatial_graph";
 	public static final String SPATIAL_RELATION			= "spatial_relation";

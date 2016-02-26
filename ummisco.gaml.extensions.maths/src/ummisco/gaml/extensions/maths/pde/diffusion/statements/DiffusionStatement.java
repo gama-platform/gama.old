@@ -17,6 +17,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -82,7 +83,8 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 		optional = true,
 		doc = @doc("the number of diffusion operation applied in one simulation step")) },
 	omissible = IKeyword.VAR)
-@symbol(name = { IKeyword.DIFFUSE, IKeyword.DIFFUSION }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = { IKeyword.DIFFUSE, IKeyword.DIFFUSION }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
+concept = { IConcept.MATH })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(DiffusionValidator.class)
 @doc(

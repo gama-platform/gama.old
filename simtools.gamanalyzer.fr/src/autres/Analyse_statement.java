@@ -19,6 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -38,7 +39,8 @@ import msi.gama.util.*;
 		//@facet(name = Analyse_statement.ANALYSE_STATEMENT_VAR, type = { IType.STRING, IType.STRING}, optional = false),// facets = paramètres
 		@facet(name = Analyse_statement.ANALYSE_STATEMENT_CONSTRAINT, type = { IType.STRING, IType.STRING}, optional = false)}, 
 		omissible = Analyse_statement.ANALYSE_STATEMENT_VARIABLE) 
-@symbol (name = {"analyse"}, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false )
+@symbol (name = {"analyse"}, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
+concept = {} )
 @inside (symbols = IKeyword.EXPERIMENT)
 
 public class Analyse_statement extends AbstractStatement {

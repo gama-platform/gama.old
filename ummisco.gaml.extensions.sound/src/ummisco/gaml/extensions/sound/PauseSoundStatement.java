@@ -16,6 +16,7 @@ import java.util.List;
 import ummisco.gaml.extensions.sound.PauseSoundStatement.PauseSoundValidator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
@@ -28,7 +29,8 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.PAUSE_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.PAUSE_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
+concept = { IConcept.SOUND })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(PauseSoundValidator.class)
 public class PauseSoundStatement extends AbstractStatementSequence {

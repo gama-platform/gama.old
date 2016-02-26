@@ -6,6 +6,7 @@ import org.gephi.layout.plugin.multilevel.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -17,6 +18,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = "layout_yifanhu",
 	kind = ISymbolKind.SINGLE_STATEMENT,
+	concept = { IConcept.GRAPH },
 	with_sequence = false,
 	doc = @doc("Apply YifanHu Layout."))
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })

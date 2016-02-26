@@ -26,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -41,7 +42,8 @@ import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 
 
-@symbol(name={PerceiveStatement.PERCEIVE}, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context=true)
+@symbol(name={PerceiveStatement.PERCEIVE}, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context=true,
+concept = { IConcept.BDI })
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the name of the perception")),
