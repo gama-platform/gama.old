@@ -191,6 +191,19 @@ public class GamlDocProcessor {
 			if ( e.getAnnotation(constant.class).value().equals(e.getSimpleName().toString()) ) {
 				org.w3c.dom.Element eltConstant =
 					DocProcessorAnnotations.getConstantElt(e.getAnnotation(constant.class), doc, e, mes, tc);
+				
+				// Concept
+				org.w3c.dom.Element conceptsElt;
+				if ( eltConstant.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0 ) {
+					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+							doc.createElement(XMLElements.CONCEPTS), tc);
+				} else {
+					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc, (org.w3c.dom.Element) eltConstant
+						.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
+				}
+				
+				eltConstant.appendChild(conceptsElt);
+				
 				eltConstants.appendChild(eltConstant);
 			}
 
@@ -205,9 +218,18 @@ public class GamlDocProcessor {
 						"r=" + ((int[]) colorTab[i + 1])[0] + ", g=" + ((int[]) colorTab[i + 1])[1] + ", b=" +
 							((int[]) colorTab[i + 1])[2] + ", alpha=" + ((int[]) colorTab[i + 1])[3]);
 					constantElt.appendChild(
-						DocProcessorAnnotations.getCategories(e, doc, doc.createElement(XMLElements.CATEGORIES), tc));
-					constantElt.appendChild(
-							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc));
+						DocProcessorAnnotations.getCategories(e, doc, doc.createElement(XMLElements.CATEGORIES), tc));					
+					
+					// Concept
+					org.w3c.dom.Element conceptsElt;
+					if ( constantElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0 ) {
+						conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+								doc.createElement(XMLElements.CONCEPTS), tc);
+					} else {
+						conceptsElt = DocProcessorAnnotations.getConcepts(e, doc, (org.w3c.dom.Element) constantElt
+							.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
+					}
+					constantElt.appendChild(conceptsElt);
 
 					eltConstants.appendChild(constantElt);
 				}
