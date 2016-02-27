@@ -37,7 +37,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.operators.fastmaths.*;
 
-@display("java2D")
+@display("old")
 public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySurface {
 
 	private final LayeredDisplayOutput output;
@@ -50,7 +50,6 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 
 	protected DisplaySurfaceMenu menuManager;
 	protected volatile boolean canBeUpdated = true;
-	private volatile boolean lockAcquired = false;
 	protected IExpression temp_focus;
 
 	protected Dimension previousPanelSize;
@@ -108,11 +107,6 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 			}
 		});
 
-	}
-
-	@Override
-	public boolean isDisposed() {
-		return disposed;
 	}
 
 	@Override
@@ -868,24 +862,6 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 		}
 
 	};
-
-	@Override
-	public synchronized void acquireLock() {
-		while (lockAcquired) {
-			try {
-				wait();
-			} catch (final InterruptedException e) {
-				// e.printStackTrace();
-			}
-		}
-		lockAcquired = true;
-	}
-
-	@Override
-	public synchronized void releaseLock() {
-		lockAcquired = false;
-		notify();
-	}
 
 	/**
 	 * Method canBeUpdated()

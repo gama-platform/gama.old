@@ -35,7 +35,6 @@ public abstract class AbstractCamera implements ICamera {
 	protected static final double factor = FastMath.PI / 180d;
 
 	private JOGLRenderer renderer;
-	// protected boolean isMacOS = false;
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);// will store information
 
 	// picking
@@ -46,10 +45,6 @@ public abstract class AbstractCamera implements ICamera {
 	protected Point lastMousePressedPosition;
 	protected Point firstMousePressedPosition;
 	protected boolean firsttimeMouseDown = true;
-
-	// protected double maxDim;
-
-	// To handle mouse event
 
 	protected final GamaPoint position = new GamaPoint(0, 0, 0);
 	protected final GamaPoint target = new GamaPoint(0, 0, 0);
@@ -73,7 +68,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	public AbstractCamera(final JOGLRenderer renderer) {
 		setRenderer(renderer);
-		// detectMacOS();
 		setMousePosition(new Point(0, 0));
 		upPosition(0.0, 1.0, 0.0);
 	}
@@ -394,16 +388,6 @@ public abstract class AbstractCamera implements ICamera {
 	protected void setMousePosition(final Point mousePosition) {
 		this.mousePosition = mousePosition;
 	}
-
-	//
-	// @Override
-	// public boolean isEnableROIDrawing() {
-	// return enableROIDrawing;
-	// }
-	//
-	// protected void setEnableROIDrawing(final boolean enableROIDrawing) {
-	// this.enableROIDrawing = enableROIDrawing;
-	// }
 
 	@Override
 	public Point getLastMousePressedPosition() {

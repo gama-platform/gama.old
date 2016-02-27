@@ -99,7 +99,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 				// OutputSynchronizer.decInitializingViews(outputName);
 				// }
 
-				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
+				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite);
 			}
 		};
 

@@ -29,7 +29,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 		surface = new SWTOpenGLDisplaySurface(parent, getOutput());
 		surfaceComposite = surface.renderer.getCanvas();
 		surfaceComposite.addMouseMoveListener(this);
-		surface.setSWTMenuManager(new DisplaySurfaceMenu(surface, surfaceComposite, this));
+		surface.setSWTMenuManager(new DisplaySurfaceMenu(surface, surfaceComposite));
 		surface.outputReloaded();
 		return surfaceComposite;
 	}

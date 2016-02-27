@@ -17,7 +17,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -28,11 +27,9 @@ public class DisplaySurfaceMenu {
 	private final IDisplaySurface surface;
 	private final Control swtControl;
 	private final DisplayedAgentsMenu menuBuilder;
-	private final LayeredDisplayView view;
 
-	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final LayeredDisplayView view) {
+	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c) {
 		surface = s;
-		this.view = view;
 		swtControl = c;
 		menuBuilder = new DisplayedAgentsMenu();
 		s.setSWTMenuManager(this);
@@ -75,8 +72,8 @@ public class DisplaySurfaceMenu {
 				if ( menu != null && !menu.isDisposed() ) {
 					menu.dispose();
 				}
-				menu = menuBuilder.getMenu(view.getDisplaySurface(), swtControl, true, byLayer, agents,
-					modelCoordinates, view.isOpenGL());
+				menu = menuBuilder.getMenu(surface, swtControl, true, byLayer, agents, modelCoordinates,
+					surface.getOutput().isOpenGL());
 				menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
 				menu.setLocation(swtControl.toDisplay(mousex, mousey));
 				menu.setVisible(true);
