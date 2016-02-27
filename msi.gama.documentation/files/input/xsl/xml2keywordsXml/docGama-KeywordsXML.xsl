@@ -245,7 +245,7 @@
 	<xsl:for-each select="actions/action"> 
 	
 <xsl:call-template name="keyword">    
-	<xsl:with-param name="category" select="'attribute'"/>
+	<xsl:with-param name="category" select="'action'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
 	<xsl:with-param name="insideElt" select="$skillName"/>	
 	<xsl:with-param name="insideEltConcept" select="'skill'"/>				
