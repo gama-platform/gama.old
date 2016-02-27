@@ -1,9 +1,0 @@
-#
-#Thu Feb 25 16:43:31 ICT 2016
-operators=envelope~sample~as
-plugins=msi.gama.core
-statements=init~write~user_command~create
-skills=reflex
-constants=m
-types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~pair~map~bool
-actions=error~debug~tell~write~die~_step_~_init_~halt~pause

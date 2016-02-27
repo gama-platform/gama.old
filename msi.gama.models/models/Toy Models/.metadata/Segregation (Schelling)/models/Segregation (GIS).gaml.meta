@@ -1,9 +1,0 @@
-#
-#Thu Feb 25 16:43:31 ICT 2016
-operators=as~envelope~count~.~sum~collect~read~shuffle~*~\=~length~>\=~at~rnd~-~at_distance~first_with~>~\!~\!\=~circle~rgb~+~/~any_location_in~?~empty~\:~mean~square
-plugins=msi.gama.core
-statements=action~write~create~arg~set~ask~do~reflex~if~aspect~draw~add~remove~init~output~display~display_population~chart~data
-skills=reflex
-constants=white~black~blue~lightgray~green~yellow~red
-types=list~int~unknown~string~file~geometry~point~agent~float~date~rgb~container~bool
-actions=error~debug~tell~write~die~_step_~_init_~halt~pause

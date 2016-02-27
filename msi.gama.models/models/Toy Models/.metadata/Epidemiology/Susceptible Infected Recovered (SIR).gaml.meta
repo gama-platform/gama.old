@@ -1,9 +1,0 @@
-#
-#Thu Feb 25 16:43:31 ICT 2016
-operators=square~+~one_of~as~.~/~accumulate~overlapping~flip~*~and~circle~neighbors_at~count~every
-plugins=msi.gama.core
-statements=init~set~reflex~let~if~else~loop~create~do~aspect~draw~write~output~display~display_grid~display_population~chart~data
-skills=reflex~grid
-constants=green~red~blue~black~lightgray
-types=list~int~unknown~string~geometry~point~agent~float~date~rgb~bool~container~species
-actions=error~debug~tell~write~die~_step_~_init_~halt~pause

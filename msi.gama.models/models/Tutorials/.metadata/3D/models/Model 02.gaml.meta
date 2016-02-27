@@ -1,9 +1,0 @@
-#
-#Thu Feb 25 16:43:32 ICT 2016
-operators=cube~as~rnd~sphere~*~point
-plugins=msi.gama.core~ummisco.gama.opengl
-statements=reflex~do~aspect~draw~init~create~set~output~display~graphics~display_population
-skills=reflex~moving3D
-constants=blue~black
-types=list~int~unknown~string~float~geometry~point~agent~date~rgb~container~bool
-actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move
