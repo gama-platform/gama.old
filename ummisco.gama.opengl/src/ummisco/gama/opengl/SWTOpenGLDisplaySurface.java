@@ -56,7 +56,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected IExpression temp_focus;
 	IScope scope;
 	final Composite parent;
-	boolean disposed;
+	private volatile boolean lockAcquired = false;
 
 	// NEVER USED
 	public SWTOpenGLDisplaySurface(final Object ... objects) {
@@ -602,7 +602,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
 	 */
 	@Override
-	public LayeredDisplayOutput getOutput() {
+	public IDisplayOutput getOutput() {
 		return output;
 	}
 
@@ -694,8 +694,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public void dispose() {
-		if ( disposed ) { return; }
-		disposed = true;
+		if ( isDisposed() ) { return; }
 		if ( manager != null ) {
 			manager.dispose();
 		}
@@ -760,6 +759,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	/**
+	 * Method isDisposed()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#isDisposed()
+	 */
+	@Override
+	public boolean isDisposed() {
+		return false;
+	}
+
+	/**
 	 * @return
 	 */
 	public Composite getParent() {
@@ -788,6 +796,24 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void layersChanged() {
 		renderer.sceneBuffer.layersChanged();
 
+	}
+
+	@Override
+	public synchronized void acquireLock() {
+		while (lockAcquired) {
+			try {
+				wait();
+			} catch (final InterruptedException e) {
+				// e.printStackTrace();
+			}
+		}
+		lockAcquired = true;
+	}
+
+	@Override
+	public synchronized void releaseLock() {
+		lockAcquired = false;
+		notify();
 	}
 
 	public void invalidateVisibleRegions() {

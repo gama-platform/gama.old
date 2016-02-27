@@ -15,6 +15,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import com.vividsolutions.jts.geom.Envelope;
+// import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
@@ -34,7 +35,7 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	static final double MIN_ZOOM_FACTOR = 0.1;
 	static final int MAX_ZOOM_FACTOR = 4;
 
-	public interface OpenGL extends IDisplaySurface {
+	public interface OpenGL extends IDisplaySurface/* , IZoomListener */ {
 
 		/**
 		 * @return the position of the camera
@@ -48,6 +49,11 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 		void selectSeveralAgents(Collection<IAgent> shapes);
 
 	}
+	//
+	// public interface IZoomListener {
+	//
+	// public void newZoomLevel(double zoomLevel);
+	// }
 
 	public static final double SELECTION_SIZE = 5; // pixels
 	public static final int MAX_SIZE = Integer.MAX_VALUE; // pixels
@@ -64,6 +70,8 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	 */
 	void setSWTMenuManager(Object displaySurfaceMenu);
 
+	// int[] computeBoundsFrom(int width, int height);
+
 	boolean resizeImage(int width, int height, boolean force);
 
 	void zoomIn();
@@ -75,6 +83,8 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	ILayerManager getManager();
 
 	void focusOn(IShape geometry);
+
+	// void canBeUpdated(boolean ok);
 
 	void runAndUpdate(Runnable r);
 
@@ -105,6 +115,8 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	public abstract double getDisplayHeight();
 
+	// public abstract void setZoomListener(IZoomListener listener);
+
 	public ILocation getModelCoordinates();
 
 	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
@@ -121,22 +133,46 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	void setSize(int x, int y);
 
+	// boolean getQualityRendering();
+
 	IScope getDisplayScope();
 
-	LayeredDisplayOutput getOutput();
+	IDisplayOutput getOutput();
 
 	LayeredDisplayData getData();
 
+	/**
+	 * @return
+	 */
+	boolean isDisposed();
+
+	/**
+	 *
+	 */
 	void layersChanged();
+
+	void acquireLock();
+
+	void releaseLock();
 
 	public void addListener(IEventLayerListener e);
 
 	public void removeListener(IEventLayerListener e);
 
+	/**
+	 * @return
+	 */
 	Collection<IEventLayerListener> getLayerListeners();
 
+	/**
+	 * @param currentLayer
+	 * @return
+	 */
 	Envelope getVisibleRegionForLayer(ILayer currentLayer);
 
+	/**
+	 * @return
+	 */
 	int getFPS();
 
 }

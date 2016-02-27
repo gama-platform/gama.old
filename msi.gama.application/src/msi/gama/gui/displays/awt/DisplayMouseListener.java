@@ -11,26 +11,34 @@ import msi.gaml.operators.fastmaths.FastMath;
 
 class DisplayMouseListener extends MouseAdapter {
 
-	private final Java2DDisplaySurface surface;
-	private Point mousePosition;
-	private boolean dragging;
+	/**
+	 *
+	 */
+	private final IJava2DDisplaySurface surface;
+	public Point mousePosition;
 
-	DisplayMouseListener(final Java2DDisplaySurface surface) {
-		this.surface = surface;
+	/**
+	 * @param awtJava2DDisplaySurface2
+	 */
+	DisplayMouseListener(final IJava2DDisplaySurface awtJava2DDisplaySurface2) {
+		surface = awtJava2DDisplaySurface2;
 	}
+
+	boolean dragging;
 
 	@Override
 	public void mouseDragged(final MouseEvent e) {
 		if ( SwingUtilities.isLeftMouseButton(e) ) {
 			dragging = true;
+			surface.canBeUpdated(false);
 			final Point p = e.getPoint();
-			if ( getMousePosition() == null ) {
-				setMousePosition(new Point(surface.getWidth() / 2, surface.getHeight() / 2));
+			if ( mousePosition == null ) {
+				mousePosition = new Point(surface.getWidth() / 2, surface.getHeight() / 2);
 			}
 			Point origin = surface.getOrigin();
-			surface.setOrigin(origin.x + p.x - getMousePosition().x, origin.y + p.y - getMousePosition().y);
-			setMousePosition(p);
-			surface.updateDisplay(true);
+			surface.setOrigin(origin.x + p.x - mousePosition.x, origin.y + p.y - mousePosition.y);
+			mousePosition = p;
+			surface.repaint();
 		}
 	}
 
@@ -38,14 +46,14 @@ class DisplayMouseListener extends MouseAdapter {
 	public void mouseMoved(final MouseEvent e) {
 		// we need the mouse position so that after zooming
 		// that position of the image is maintained
-		setMousePosition(e.getPoint());
+		mousePosition = e.getPoint();
 	}
 
 	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
 		final boolean zoomIn = e.getWheelRotation() < 0;
-		setMousePosition(e.getPoint());
-		Point p = new Point(getMousePosition().x, getMousePosition().y);
+		mousePosition = e.getPoint();
+		Point p = new Point(mousePosition.x, mousePosition.y);
 		double zoomFactor =
 			surface.applyZoom(zoomIn ? 1.0 + surface.getZoomIncrement() : 1.0 - surface.getZoomIncrement());
 		Point origin = surface.getOrigin();
@@ -67,25 +75,12 @@ class DisplayMouseListener extends MouseAdapter {
 	@Override
 	public void mouseReleased(final MouseEvent e) {
 		if ( dragging ) {
+			surface.canBeUpdated(true);
 			surface.updateDisplay(true);
 			dragging = false;
 
 		}
 
-	}
-
-	/**
-	 * @return the mousePosition
-	 */
-	public Point getMousePosition() {
-		return mousePosition;
-	}
-
-	/**
-	 * @param mousePosition the mousePosition to set
-	 */
-	public void setMousePosition(final Point mousePosition) {
-		this.mousePosition = mousePosition;
 	}
 
 }

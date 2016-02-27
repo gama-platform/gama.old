@@ -105,6 +105,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 				renderer.getMaxEnvDim());
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 			gl.glLoadIdentity();
+			// gl.glDisable(GL.GL_CULL_FACE);
+			// gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 		}
 		gl.glPushMatrix();
 		gl.glTranslated(offset.x, -offset.y, offset.z);
@@ -116,6 +118,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		gl.glDisable(GL.GL_TEXTURE_2D);
 		resources.draw(gl, picking && isPickable());
 		geometries.draw(gl, picking && isPickable());
+		//
 		strings.draw(gl, picking && isPickable());
 		gl.glPopMatrix();
 
@@ -132,7 +135,9 @@ public class LayerObject implements Iterable<GeometryObject> {
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
 			gl.glPopMatrix();
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+			// glPopMatrix(); ----and this?
 		}
+		// gl.glFlush();
 	}
 
 	public boolean isStatic() {

@@ -16,7 +16,6 @@ import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -37,15 +36,13 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.operators.fastmaths.*;
 
-@display("java2D")
-public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySurface {
+@display("canvas")
+public class BufferStrategyJava2DDisplaySurface extends JPanel implements IJava2DDisplaySurface {
 
 	private final LayeredDisplayOutput output;
-	// protected final LayeredDisplayData data;
 	protected final Rectangle viewPort = new Rectangle();
-	protected final ILayerManager manager;
 	protected final AffineTransform translation = new AffineTransform();
-
+	protected final ILayerManager manager;
 	protected IGraphics iGraphics;
 
 	protected DisplaySurfaceMenu menuManager;
@@ -57,42 +54,46 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
 	protected boolean disposed;
-	// private IZoomListener zoomListener;
+	BufferStrategy bs;
 
 	private IScope scope;
-	private Point mousePosition;
-	private BufferedImage buffImage;
+	final DisplayMouseListener listener;
+	int frames;
+
 	private boolean alreadyZooming = false;
+	private final Canvas canvas;
 
-	protected volatile int frames = 0;
-
-	public AWTJava2DDisplaySurface(final Object ... args) {
+	public BufferStrategyJava2DDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy());
 		// data = output.getData();
 		output.getData().addListener(this);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
-		setOpaque(true);
-		setDoubleBuffered(true);
+		// setOpaque(true);
+		// setDoubleBuffered(true);
 		// Experimental
-		// setIgnoreRepaint(true);
+		setIgnoreRepaint(true);
+		this.setLayout(new BorderLayout());
+		canvas = new Canvas();
+		canvas.setIgnoreRepaint(true);
+		add(canvas);
 
 		//
 
-		setLayout(new BorderLayout());
+		// setLayout(new BorderLayout());
 		setBackground(output.getData().getBackgroundColor());
 		setName(output.getName());
 		manager = new LayerManager(this, output);
-		final DisplayMouseListener d = new DisplayMouseListener(this);
-		addMouseListener(d);
-		addMouseMotionListener(d);
-		addMouseWheelListener(d);
-		addComponentListener(new ComponentAdapter() {
+		listener = new DisplayMouseListener(this);
+		canvas.addMouseListener(listener);
+		canvas.addMouseMotionListener(listener);
+		canvas.addMouseWheelListener(listener);
+		canvas.addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				if ( buffImage == null || zoomFit ) {
+				if ( zoomFit ) {
 					zoomFit();
 				} else {
 					if ( isFullImageInPanel() ) {
@@ -108,6 +109,13 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 			}
 		});
 
+	}
+
+	@Override
+	public int getFPS() {
+		int result = frames;
+		frames = 0;
+		return result;
 	}
 
 	@Override
@@ -255,65 +263,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 
 	@Override
 	public BufferedImage getImage() {
-
-		if ( buffImage == null ) {
-
-			BufferedImage image = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_RGB);
-			Graphics2D g2d = image.createGraphics();
-
-			// Paint a background for non-opaque components,
-			// otherwise the background will be black
-
-			if ( !isOpaque() ) {
-				g2d.setColor(getBackground());
-				g2d.fillRect(0, 0, getSize().width, getSize().height);
-			}
-
-			paint(g2d);
-			g2d.dispose();
-			return image;
-		} else {
-			while (!canBeUpdated) {
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			try {
-				canBeUpdated = false;
-
-				return ImageUtils.toCompatibleImage(buffImage);
-			} finally {
-				canBeUpdated = true;
-			}
-		}
-
-		// Robot screenRobot;
-		// try {
-		// screenRobot = new Robot();
-		// } catch (AWTException e) {
-		// e.printStackTrace();
-		// return null;
-		// }
-		// if ( isDisplayable() && isShowing() ) {
-		// Rectangle rectangle = new Rectangle(this.getLocationOnScreen(), this.getSize());
-		// final BufferedImage buffImage = screenRobot.createScreenCapture(rectangle);
-		// return buffImage;
-		// }
-		// return null;
-		// = renderer.getScreenShot();
-
+		return null;
 	}
-
-	// @Override
-	// public void canBeUpdated(final boolean canBeUpdated) {
-	// this.canBeUpdated = canBeUpdated;
-	// }
-	//
-	// public boolean canBeUpdated() {
-	// return canBeUpdated && iGraphics != null;
-	// }
 
 	@Override
 	public void setOrigin(final int x, final int y) {
@@ -322,45 +273,40 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 		translation.setToTranslation(x, y);
 	}
 
-	private final Runnable displayRunnable = new Runnable() {
-
-		@Override
-		public void run() {
-			if ( disposed ) { return; }
-			if ( iGraphics == null ) { return; }
-			try {
-				canBeUpdated = false;
-				iGraphics.fillBackground(getBackground(), 1);
-				manager.drawLayersOn(iGraphics);
-				repaint();
-			} finally {
-				canBeUpdated = true;
-				frames++;
-			}
-		}
-	};
+	// private final Runnable displayRunnable = new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// if ( disposed ) { return; }
+	// if ( iGraphics == null ) { return; }
+	// try {
+	// // canBeUpdated = false;
+	// // iGraphics.fillBackground(getBackground(), 1);
+	// manager.drawLayersOn(iGraphics);
+	// // repaint();
+	// } finally {
+	// // canBeUpdated = true;
+	// }
+	// }
+	// };
 
 	@Override
 	public void updateDisplay(final boolean force) {
 		if ( disposed ) { return; }
-		if ( !canBeUpdated ) { return; }
-		if ( /* GAMA.isPaused() || */EventQueue.isDispatchThread() ) {
-			EventQueue.invokeLater(displayRunnable);
-		} else {
-			try {
-				EventQueue.invokeAndWait(displayRunnable);
-			} catch (InterruptedException e) {
-				// e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-		}
+		// if ( !canBeUpdated ) { return; }
+		draw();
+		// if ( EventQueue.isDispatchThread() ) {
+		// EventQueue.invokeLater(displayRunnable);
+		// } else {
+		// try {
+		// EventQueue.invokeAndWait(displayRunnable);
+		// } catch (InterruptedException | InvocationTargetException e) {}
+		// }
 
 		if ( temp_focus != null ) {
 			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()), false);
 			if ( geometry != null ) {
 				Rectangle2D r = this.getManager().focusOn(geometry, this);
-				java.lang.System.out.println("Rectangle = " + r);
 				if ( r == null ) { return; }
 				double xScale = getWidth() / r.getWidth();
 				double yScale = getHeight() / r.getHeight();
@@ -384,18 +330,11 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 	}
 
 	@Override
-	public int getFPS() {
-		int result = frames;
-		frames = 0;
-		return result;
-	}
-
-	@Override
 	public void zoomIn() {
 		if ( alreadyZooming ) { return; }
 		alreadyZooming = true;
 		Point origin = getOrigin();
-		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
+		listener.mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		double zoomFactor = applyZoom(1.0 + zoomIncrement);
 		double newx = FastMath.round(zoomFactor * (getWidth() / 2 - origin.x));
 		double newy = FastMath.round(zoomFactor * (getHeight() / 2 - origin.y));
@@ -409,7 +348,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 		if ( alreadyZooming ) { return; }
 		alreadyZooming = true;
 		Point origin = getOrigin();
-		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
+		listener.mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		double zoomFactor = applyZoom(1.0 - zoomIncrement);
 		double newx = FastMath.round(zoomFactor * (getWidth() / 2 - origin.x));
 		double newy = FastMath.round(zoomFactor * (getHeight() / 2 - origin.y));
@@ -442,15 +381,9 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 			int[] point = computeBoundsFrom(x, y);
 			int imageWidth = CmnFastMath.max(1, point[0]);
 			int imageHeight = CmnFastMath.max(1, point[1]);
-			final BufferedImage newImage = ImageUtils.createCompatibleImage(imageWidth, imageHeight);
-			if ( buffImage != null ) {
-				newImage.getGraphics().drawImage(buffImage, 0, 0, imageWidth, imageHeight, null);
-				buffImage.flush();
-			}
-			buffImage = newImage;
 			setDisplayHeight(imageHeight);
 			setDisplayWidth(imageWidth);
-			iGraphics = new AWTDisplayGraphics(this, buffImage.createGraphics());
+			iGraphics = new AWTDisplayGraphics(this, (Graphics2D) this.getGraphics());
 		} finally {
 			canBeUpdated = true;
 		}
@@ -467,21 +400,61 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 	// }
 	// }
 
-	@Override
-	public void paintComponent(final Graphics g) {
-		super.paintComponent(g);
-		((Graphics2D) g).drawImage(buffImage, translation, null);
+	// @Override
+	// public void paintComponent(final Graphics g) {
+	// if ( iGraphics == null ) { return; }
+	// super.paintComponent(g);
+	// // ((Graphics2D) g).drawImage(buffImage, translation, null);
+	// if ( output.getData().isAutosave() ) {
+	// snapshot();
+	// }
+	// Graphics2D g2d =
+	// (Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) getDisplayWidth(), (int) getDisplayHeight());
+	//
+	// ((AWTDisplayGraphics) iGraphics).setGraphics2D(g2d);
+	// manager.drawLayersOn(iGraphics);
+	// g2d.dispose();
+	// frames++;
+	// }
+
+	public BufferStrategy getBufferStrategy() {
+		if ( bs == null ) {
+			canvas.createBufferStrategy(3);
+			bs = canvas.getBufferStrategy();
+		}
+		return bs;
+	}
+
+	void draw() {
+		if ( iGraphics == null ) { return; }
 		if ( output.getData().isAutosave() ) {
 			snapshot();
 		}
+
+		// Method which prepares the screen for drawing
+		bs = getBufferStrategy(); // Gets the buffer strategy our canvas is currently using
+
+		Graphics g = bs.getDrawGraphics(); // Get the graphics from our buffer strategy (which is connected to our canvas)
+
+		Graphics2D g2d =
+			(Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) getDisplayWidth(), (int) getDisplayHeight());
+
+		((AWTDisplayGraphics) iGraphics).setGraphics2D(g2d);
+		manager.drawLayersOn(iGraphics);
+		g2d.dispose();
+
+		g.dispose(); // Dispose of our graphics object because it is no longer needed, and unnecessarily taking up memory
+		bs.show(); // Show the buffer strategy, flip it if necessary (make back buffer the visible buffer and vice versa)
+		frames++;
+
 	}
 
 	@Override
 	public ILocation getModelCoordinates() {
 		Point origin = getOrigin();
-		if ( mousePosition == null ) { return null; }
-		final int xc = mousePosition.x - origin.x;
-		final int yc = mousePosition.y - origin.y;
+		if ( listener.mousePosition == null ) { return null; }
+		final int xc = listener.mousePosition.x - origin.x;
+		final int yc = listener.mousePosition.y - origin.y;
 		List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
 		if ( layers.isEmpty() ) { return null; }
 		return layers.get(0).getModelCoordinatesFrom(xc, yc, this);
@@ -547,7 +520,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 
 	@Override
 	public void zoomFit() {
-		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
+		listener.mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		if ( resizeImage(getWidth(), getHeight(), false) ) {
 			newZoomLevel(1d);
 			zoomFit = true;
@@ -647,9 +620,7 @@ public class AWTJava2DDisplaySurface extends JPanel implements IJava2DDisplaySur
 		if ( manager != null ) {
 			manager.dispose();
 		}
-		if ( buffImage != null ) {
-			buffImage.flush();
-		}
+
 		GAMA.releaseScope(getDisplayScope());
 		setDisplayScope(null);
 	}

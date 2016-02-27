@@ -123,6 +123,7 @@ public class LayerManager implements ILayerManager {
 
 			@Override
 			public void run() {
+				// surface.canBeUpdated(false);
 				if ( enable ) {
 					enable(display);
 				} else {
@@ -130,6 +131,7 @@ public class LayerManager implements ILayerManager {
 				}
 				surface.layersChanged();
 
+				// surface.canBeUpdated(true);
 			}
 		});
 	}

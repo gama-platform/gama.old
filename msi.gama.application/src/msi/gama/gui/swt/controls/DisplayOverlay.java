@@ -54,9 +54,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 				@Override
 				public void run() {
-					if ( !zoom.isDisposed() ) {
-						zoom.setText(getView().getOverlayZoomInfo());
-					}
+					zoom.setText(getView().getOverlayZoomInfo());
 				}
 			});
 

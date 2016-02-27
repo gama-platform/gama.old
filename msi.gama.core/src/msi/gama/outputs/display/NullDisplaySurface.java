@@ -47,6 +47,11 @@ public class NullDisplaySurface implements IDisplaySurface {
 		return null;
 	}
 
+	@Override
+	public boolean isDisposed() {
+		return false;
+	}
+
 	/**
 	 * Method dispose()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#dispose()
@@ -261,7 +266,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
 	 */
 	@Override
-	public LayeredDisplayOutput getOutput() {
+	public IDisplayOutput getOutput() {
 		return null;
 	}
 
@@ -301,6 +306,20 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void changed(final Changes property, final boolean value) {}
+
+	/**
+	 * Method acquireLock()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#acquireLock()
+	 */
+	@Override
+	public void acquireLock() {}
+
+	/**
+	 * Method releaseLock()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#releaseLock()
+	 */
+	@Override
+	public void releaseLock() {}
 
 	@Override
 	public Collection<IEventLayerListener> getLayerListeners() {

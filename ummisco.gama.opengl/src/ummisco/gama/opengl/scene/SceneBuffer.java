@@ -149,6 +149,8 @@ public class SceneBuffer {
 	 * discarded and their layers invalidated.
 	 */
 	public void layersChanged() {
+		// System.out.println("Asking the scene buffer to invalidate layers");
+		// FIXME What to do with the textures ?
 		if ( staticScene != null ) {
 			garbage.add(staticScene);
 			staticScene.invalidateLayers();
