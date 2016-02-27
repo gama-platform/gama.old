@@ -20,7 +20,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.expressions.IExpression;
 
-@type(name = IKeyword.MAP, id = IType.MAP, wraps = { GamaMap.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.MAP, id = IType.MAP, wraps = { GamaMap.class }, kind = ISymbolKind.Variable.CONTAINER,
+concept = { IConcept.TYPE, IConcept.CONTAINER, IConcept.MAP })
 public class GamaMapType extends GamaContainerType<GamaMap> {
 
 	@Override

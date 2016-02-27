@@ -15,6 +15,7 @@ import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -30,7 +31,8 @@ import msi.gaml.descriptions.IDescription;
 @type(name = IKeyword.INT,
 	id = IType.INT,
 	wraps = { Integer.class, int.class, Long.class },
-	kind = ISymbolKind.Variable.NUMBER)
+	kind = ISymbolKind.Variable.NUMBER,
+	concept = { IConcept.TYPE })
 public class GamaIntegerType extends GamaType<Integer> {
 
 	@Override

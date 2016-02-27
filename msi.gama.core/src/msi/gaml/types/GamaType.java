@@ -22,7 +22,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 
 /**
- * Written by drogoul Modified on 25 ao�t 2010
+ * Written by drogoul Modified on 25 aout 2010
  *
  * The superclass of all types descriptions in GAMA. Provides convenience methods, as well as some
  * basic definitions. Types allow to manipulate any Java class as a type in GAML. To be recognized

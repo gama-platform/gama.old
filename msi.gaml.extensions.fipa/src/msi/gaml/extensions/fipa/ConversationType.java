@@ -21,7 +21,8 @@ import msi.gaml.types.*;
 @type(name = ConversationType.CONVERSATION_STR,
 	id = ConversationType.CONV_ID,
 	wraps = { Conversation.class },
-	kind = ISymbolKind.Variable.CONTAINER)
+	kind = ISymbolKind.Variable.CONTAINER,
+	concept = { IConcept.TYPE, IConcept.FIPA })
 public class ConversationType extends GamaContainerType<Conversation> {
 
 	public final static String CONVERSATION_STR = "conversation";

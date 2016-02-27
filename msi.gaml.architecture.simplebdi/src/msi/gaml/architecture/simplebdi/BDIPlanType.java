@@ -1,11 +1,13 @@
 package msi.gaml.architecture.simplebdi;
 
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
 
-@type(name = "BDIPlan", id = BDIPlanType.id, wraps = { BDIPlan.class })
+@type(name = "BDIPlan", id = BDIPlanType.id, wraps = { BDIPlan.class },
+concept = { IConcept.TYPE, IConcept.BDI })
 public class BDIPlanType extends GamaType<BDIPlan> {
 
 	public final static int id = IType.AVAILABLE_TYPES + 546655;

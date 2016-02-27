@@ -23,7 +23,8 @@ import msi.gama.util.graph.*;
 import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 
-@type(name = IKeyword.GRAPH, id = IType.GRAPH, wraps = { IGraph.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.GRAPH, id = IType.GRAPH, wraps = { IGraph.class }, kind = ISymbolKind.Variable.CONTAINER,
+concept = { IConcept.TYPE, IConcept.GRAPH })
 public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	@Override

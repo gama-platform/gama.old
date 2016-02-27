@@ -23,7 +23,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.expressions.IExpression;
 
-@type(name = IKeyword.LIST, id = IType.LIST, wraps = { IList.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.LIST, id = IType.LIST, wraps = { IList.class }, kind = ISymbolKind.Variable.CONTAINER,
+concept = { IConcept.TYPE, IConcept.CONTAINER, IConcept.LIST })
 public class GamaListType extends GamaContainerType<IList> {
 
 	@Override

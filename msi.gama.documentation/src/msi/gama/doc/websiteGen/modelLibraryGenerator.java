@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ public class modelLibraryGenerator {
 	static String inputModelScreenshot = "F:/gama_doc_17.wiki/modelScreenshot.xml";
 	
 	static HashMap<String,ScreenshotStructure> mapModelScreenshot;
+	static HashMap<String,String> mainKeywordsMap; // the key is the name of the model, the value is the metadata formated which contains all the important keywords of the model.
 	static List<String> expeUsedFromTheXML = new ArrayList<String>(); // this variable is just here to verify if the modelScreenshot.xml is well formed, and if all
 	// the experiments have been used.
 
@@ -69,13 +71,120 @@ public class modelLibraryGenerator {
 		System.out.println("----> NOT IMPLEMENTED YET");
 		
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		// browse a second time all the models, build the md file, including the screenshot computed from the headless execution.
+		// read all the metadatas of the model files, and extract only the GAML keywords "important".
+		// Store those data in the map mainKeywordsMap.
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		System.out.println("----- Read all the meta files to generate the map of main keywords for each model -----");
+		prepareMainKeywordMap(gamlFiles);
+		System.out.println("----> NOT IMPLEMENTED YET");
+		
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		// browse a second time all the models, build the md file, including the screenshots computed from the
+		// headless execution, informations in the header of each model, and gaml keywords read from mainKeywordsMap.
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		System.out.println("----- Start to write md content -----");
 		writeMdContent(gamlFiles);
 		System.out.println("----> MD content generated !");
 
+	}
+	
+	private static void prepareMainKeywordMap(ArrayList<File> files) throws IOException {
+		//read all the metadatas of the model files, and extract only the "important" GAML keywords.
+		// Store those data in the map mainKeywordsMap.
+		mainKeywordsMap = new HashMap<String,String>();
+		HashMap<String,Integer> occurenceOfKeywords = new HashMap<String,Integer>(); // key is gaml world, value is occurence.
+		ArrayList<String> mostSignificantKeywords = new ArrayList<String>(); // the list of the less employed gaml keywords.
+		int maxOccurenceNumber = 15; // the maximum number of occurence for the "mostSignificantKeywordsList".
+		
+		// store all the keywords in a list
+		for (int fileIdx=0; fileIdx < files.size(); fileIdx++) {
+			String absPath = files.get(fileIdx).getAbsolutePath();
+			String absPathMeta = "";
+			String[] modelCategory = {"Features","Syntax","Toy Models","Tutorials"};
+			for (String modCat : modelCategory) {
+				absPath = absPath.replace("\\", "/");
+				absPathMeta = absPath.replace("models/"+modCat,"models/"+modCat+"/.metadata");
+				absPathMeta = absPathMeta+".meta";
+				
+				// we have the meta file.
+				File metaFile = new File(absPathMeta);
+				if (metaFile.exists()) {
+					ArrayList<String> gamlWords = getGAMLWords(new File(absPathMeta));
+					for (String gamlWord : gamlWords) {
+						if (occurenceOfKeywords.containsKey(gamlWord)) {
+							// we increment the number of occurence of the gaml word
+							int oldVal = occurenceOfKeywords.get(gamlWord);
+							occurenceOfKeywords.put(gamlWord, oldVal+1);
+						}
+						else {
+							occurenceOfKeywords.put(gamlWord, 1);
+						}
+					}
+				}
+			}
+		}
+		
+		// remove from the list the keywords which are not "important"
+		for (String keyword : occurenceOfKeywords.keySet()) {
+			if (occurenceOfKeywords.get(keyword)<maxOccurenceNumber) {
+				mostSignificantKeywords.add(keyword);
+			}
+		}
+		
+		// browse a second time all the meta files, and store the most important keyword in the map
+		for (int fileIdx=0; fileIdx < files.size(); fileIdx++) {
+			String absPath = files.get(fileIdx).getAbsolutePath();
+			String absPathMeta = "";
+			String[] modelCategory = {"Features","Syntax","Toy Models","Tutorials"};
+			for (String modCat : modelCategory) {
+				absPath = absPath.replace("\\", "/");
+				absPathMeta = absPath.replace("models/"+modCat,"models/"+modCat+"/.metadata");
+				absPathMeta = absPathMeta+".meta";
+				
+				// we have the meta file.
+				File metaFile = new File(absPathMeta);
+				if (metaFile.exists()) {
+					ArrayList<String> gamlWords = getGAMLWords(new File(absPathMeta));
+					String metadataKeyword = "";
+					for (String gamlWord : gamlWords) {
+						if (mostSignificantKeywords.contains(gamlWord)) {
+							metadataKeyword+="[//]: # (keyword|"+gamlWord+")\n";
+						}
+					}
+					String modelKey = (absPathMeta.replace("/.metadata", "")).replace(".meta", "");
+					mainKeywordsMap.put(modelKey, metadataKeyword);
+				}
+			}
+		}
+	}
+	
+	private static ArrayList<String> getGAMLWords(File file) throws IOException {
+		// returns the list of experiments
+		ArrayList<String> result = new ArrayList<String>();
+		String extractedStr = "";
+		
+		FileInputStream fis = new FileInputStream(file);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		
+		String line = null;
+		
+		String[] categoryKeywords = {"operator", "type", "statement", "skill", "architecture", "constant"};
+		
+		while ((line = br.readLine()) != null) {
+			for (String catKeywords : categoryKeywords) {
+				extractedStr = findAndReturnRegex(line,catKeywords+"s=(.*)");
+				String[] keywordArray = extractedStr.split("~");
+				for (String kw : keywordArray) {
+					kw = catKeywords+"_"+kw;
+					result.add(kw);
+				}
+			}
+		}
+		br.close();
+		
+		return result;
 	}
 	
 	private static void loadModelScreenshot() {
@@ -189,7 +298,7 @@ public class modelLibraryGenerator {
 		String line = null;
 		
 		while ((line = br.readLine()) != null) {
-			expeName = findAndReturnRegex(line,"^experiment (\\w+)");
+			expeName = findAndReturnRegex(line,"experiment (\\w+)");
 			if (expeName != "") {
 				result.add(expeName);
 				expeName = "";
@@ -214,18 +323,18 @@ public class modelLibraryGenerator {
 		
 		while ((line = br.readLine()) != null) {
 			if (inTheRightExperiment) {
-				if (findAndReturnRegex(line,"^experiment (\\w+)") != "") {
+				if (findAndReturnRegex(line,"experiment (\\w+)") != "") {
 					// we are out of the right experiment. Return the result.
 					br.close();
 					return result;
 				}
-				displayName = findAndReturnRegex(line,"^[\\t,\\s]+display (\\w+)");
+				displayName = findAndReturnRegex(line,"[\\t,\\s]+display (\\w+)");
 				if (displayName != "") {
 					result.add(displayName);
 					displayName = "";
 				}
 			}
-			if (expeName.compareTo(findAndReturnRegex(line,"^experiment (\\w+)")) == 0) {
+			if (expeName.compareTo(findAndReturnRegex(line,"experiment (\\w+)")) == 0) {
 				inTheRightExperiment = true;
 			}
 		}
@@ -238,22 +347,30 @@ public class modelLibraryGenerator {
 		for (int idx = 0 ; idx < gamlFiles.size() ; idx++) {
 			File gamlFile = gamlFiles.get(idx);
 			String header = extractHeader(gamlFile);
-			if (header != "") {
-				// extract the header properties
-				MetadataStructure metaStruct = new MetadataStructure(header);
+			// extract the header properties
+			MetadataStructure metaStruct = new MetadataStructure(header);
+				
+			if (metaStruct.getName() != "") {
 				
 				// prepare the output file
 				String fileName = "";
 				fileName = gamlFile.getAbsolutePath().replace("\\", "/");
 				fileName = fileName.split(inputPathToModelLibrary)[1];
-				fileName = fileName.replace("/", "_");
-				fileName = formatString(fileName);
+				fileName = fileName.replace(".gaml", "");
+				fileName = fileName.replace("/models", "");
 				String outputFileName = outputPathToModelLibrary + "/" + fileName;
 				outputFileName = outputFileName+".md";
 				File outputFile = new File(outputFileName);
+				// I know, this is very ugly, but I'm tired, I don't want to do something nicer :)
+				outputFile.getParentFile().getParentFile().getParentFile().getParentFile().mkdir();
+				outputFile.getParentFile().getParentFile().getParentFile().mkdir();
+				outputFile.getParentFile().getParentFile().mkdir();
+				outputFile.getParentFile().mkdir();
+				outputFile.createNewFile();
 				FileOutputStream fileOut = new FileOutputStream(outputFile);
 				
 				// write the header
+				fileOut.write(mainKeywordsMap.get(gamlFile.getAbsolutePath().replace("\\", "/")).getBytes());
 				fileOut.write(metaStruct.getMdHeader().getBytes());
 				
 				// write the code
@@ -267,9 +384,14 @@ public class modelLibraryGenerator {
 						// we are in the code
 						fileOut.write(new String(line+"\n").getBytes());
 					}
-					if (line.startsWith("*/")) {
+					else if (line.startsWith("*/") || line.startsWith(" */")) {
 						// we are out of the header
 						inHeader = false;
+					}
+					else if (line.startsWith("model")) {
+						// we are in the code
+						inHeader = false;
+						fileOut.write(new String(line+"\n").getBytes());
 					}
 				}
 				fileOut.write("```\n".getBytes());

@@ -15,6 +15,7 @@ import java.awt.Font;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -31,7 +32,8 @@ import msi.gama.util.GamaFont;
 	wraps = { GamaFont.class },
 	kind = ISymbolKind.Variable.REGULAR,
 	doc = {
-		@doc("Represents font objects that can be passed directly as arguments to draw statements and text layers. A font is identified by its face name (e.g. 'Helvetica'), its size in points (e.g. 12) and its style (i.e., #bold, #italic, or an addition of the 2") })
+		@doc("Represents font objects that can be passed directly as arguments to draw statements and text layers. A font is identified by its face name (e.g. 'Helvetica'), its size in points (e.g. 12) and its style (i.e., #bold, #italic, or an addition of the 2") },
+	concept = { IConcept.TYPE, IConcept.TEXT, IConcept.DISPLAY })
 public class GamaFontType extends GamaType<GamaFont> {
 
 	public static GamaPreferences.Entry<GamaFont> DEFAULT_DISPLAY_FONT = GamaPreferences

@@ -14,6 +14,7 @@ package msi.gaml.types;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -25,7 +26,8 @@ import msi.gaml.operators.Cast;
 @type(name = IKeyword.MATRIX,
 	id = IType.MATRIX,
 	wraps = { IMatrix.class, GamaIntMatrix.class, GamaFloatMatrix.class, GamaObjectMatrix.class },
-	kind = ISymbolKind.Variable.CONTAINER)
+	kind = ISymbolKind.Variable.CONTAINER,
+	concept = { IConcept.TYPE, IConcept.CONTAINER, IConcept.MATRIX })
 public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	public static IMatrix staticCast(final IScope scope, final Object obj, final Object param, final IType contentType,

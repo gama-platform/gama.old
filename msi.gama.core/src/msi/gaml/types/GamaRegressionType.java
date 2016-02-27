@@ -1,5 +1,6 @@
 package msi.gaml.types;
 
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
@@ -9,7 +10,8 @@ import msi.gama.util.GamaRegression;
 @type(name = "regression",
 id = IType.REGRESSION,
 wraps = {GamaRegression.class },
-kind = ISymbolKind.Variable.REGULAR)
+kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE })
 public class GamaRegressionType extends GamaType<GamaRegression> {
 
 	@Override

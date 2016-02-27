@@ -25,6 +25,7 @@ public class XmlToCategoryXML {
 		createKeywordXML(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2KEYWORDS_XML_FOLDER + File.separator + "docGama-KeywordsXML.xsl",
 				Constants.XML_KEYWORD_GEN_FOLDER + File.separator + "keywords.xml");
+//		removeDuplications(Constants.XML_KEYWORD_GEN_FOLDER + File.separator + "keywords.xml");
 		System.out.println("Done");				
 	}
 
@@ -38,5 +39,10 @@ public class XmlToCategoryXML {
 		
 		XMLUtils.transformDocument(document, xsl, wiki); 		
 	}
+	
+//	private static void removeDuplications(String xml) {
+//		File fileXml = new File(xml);
+//		
+//	}
 
 }

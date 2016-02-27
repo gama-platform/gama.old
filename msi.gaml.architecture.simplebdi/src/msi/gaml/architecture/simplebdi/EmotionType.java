@@ -2,13 +2,15 @@ package msi.gaml.architecture.simplebdi;
 
 import java.util.Map;
 
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
-@type(name = "emotion", id = EmotionType.id, wraps = { Emotion.class })
+@type(name = "emotion", id = EmotionType.id, wraps = { Emotion.class },
+concept = { IConcept.TYPE, IConcept.BDI })
 public class EmotionType extends GamaType<Emotion> {
 
 	public final static int id = IType.AVAILABLE_TYPES + 546656;
