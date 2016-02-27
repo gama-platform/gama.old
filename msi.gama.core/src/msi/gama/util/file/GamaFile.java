@@ -158,9 +158,9 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {
+	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {
 		fillBuffer(scope);
-		getBuffer().removeAllOccurencesOfValue(scope, value);
+		getBuffer().removeAllOccurrencesOfValue(scope, value);
 	}
 
 	@Override

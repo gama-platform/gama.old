@@ -219,7 +219,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {
+	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {
 		for ( final Iterator iterator = iterator(); iterator.hasNext(); ) {
 			final Object obj = iterator.next();
 			if ( obj.equals(value) ) {

@@ -24,12 +24,13 @@ import msi.gaml.species.ISpecies;
 /**
  * The type used for representing species objects (since they can be manipulated in a model)
  * 
- * Written by drogoul Modified on 1 ao�t 2010
+ * Written by drogoul Modified on 1 aout 2010
  * 
  * @todo Description
  * 
  */
-@type(name = IKeyword.SPECIES, id = IType.SPECIES, wraps = { ISpecies.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.SPECIES, id = IType.SPECIES, wraps = { ISpecies.class }, kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE, IConcept.SPECIES })
 public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 
 	@Override

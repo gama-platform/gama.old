@@ -17,7 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-@skill(name = IKeyword.USER_LAST, concept = { IConcept.GUI, IConcept.SKILL })
+@skill(name = IKeyword.USER_LAST, concept = { IConcept.GUI, IConcept.ARCHITECTURE })
 // @vars({ @var(name = IKeyword.STATE, type = IType.STRING),
 // @var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
 public class UserLastControlArchitecture extends UserControlArchitecture {

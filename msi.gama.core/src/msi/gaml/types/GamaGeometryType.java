@@ -21,6 +21,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -39,7 +40,8 @@ import msi.gaml.species.ISpecies;
 @type(name = IKeyword.GEOMETRY,
 	id = IType.GEOMETRY,
 	wraps = { GamaShape.class, IShape.class },
-	kind = ISymbolKind.Variable.REGULAR)
+	kind = ISymbolKind.Variable.REGULAR,
+	concept = { IConcept.TYPE, IConcept.GEOMETRY })
 public class GamaGeometryType extends GamaType<IShape> {
 
 	public static WKTReader SHAPE_READER = new WKTReader();

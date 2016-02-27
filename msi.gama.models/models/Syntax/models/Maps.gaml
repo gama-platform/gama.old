@@ -195,7 +195,7 @@ species modifying_maps {
 		// it can also be written
 		m1 >- 0;
 		write(sample(m1));
-		// To remove all occurences of pairs with a specific value, "all:" (or ">>-") can be used
+		// To remove all occurrences of pairs with a specific value, "all:" (or ">>-") can be used
 		// For instance:
 		m1 >>- 2;
 		// or, written using the long syntactic form

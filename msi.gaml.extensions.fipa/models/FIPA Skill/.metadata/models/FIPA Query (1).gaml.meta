@@ -1,9 +1,0 @@
-#
-#Thu Feb 25 16:43:28 ICT 2016
-operators=envelope~\=~+~\!~empty~as~at
-plugins=msi.gama.core~msi.gaml.extensions.fipa
-attributes=content
-statements=reflex~write~do~arg~loop~let~init~create~set
-skills=reflex~fipa
-types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~message~bool
-actions=error~debug~tell~write~die~_step_~_init_~halt~pause~request~accept_proposal~propose~query~failure~reject_proposal~subscribe~reply~end_conversation~cfp~inform~agree~refuse~cancel~start_conversation~send

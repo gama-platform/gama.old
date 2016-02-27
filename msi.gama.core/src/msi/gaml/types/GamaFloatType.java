@@ -14,6 +14,7 @@ package msi.gaml.types;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -30,7 +31,8 @@ import msi.gaml.descriptions.IDescription;
 	id = IType.FLOAT,
 	wraps = { Double.class, double.class },
 	kind = ISymbolKind.Variable.NUMBER,
-	doc = { @doc("Represents floating point numbers (equivalent to Double in Java)") })
+	doc = { @doc("Represents floating point numbers (equivalent to Double in Java)") },
+	concept = { IConcept.TYPE })
 public class GamaFloatType extends GamaType<Double> {
 
 	@Override

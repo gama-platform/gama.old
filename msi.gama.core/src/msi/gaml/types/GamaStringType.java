@@ -26,7 +26,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @todo Description
  * 
  */
-@type(name = IKeyword.STRING, id = IType.STRING, wraps = { String.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.STRING, id = IType.STRING, wraps = { String.class }, kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE, IConcept.STRING })
 public class GamaStringType extends GamaType<String> {
 
 	@Override

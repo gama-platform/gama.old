@@ -1,12 +1,15 @@
 package msi.gaml.architecture.simplebdi;
 
 import java.util.Map;
+
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
 
-@type(name = "predicate", id = PredicateType.id, wraps = { Predicate.class })
+@type(name = "predicate", id = PredicateType.id, wraps = { Predicate.class },
+concept = { IConcept.TYPE, IConcept.BDI })
 public class PredicateType extends GamaType<Predicate> {
 
 	public final static int id = IType.AVAILABLE_TYPES + 546654;

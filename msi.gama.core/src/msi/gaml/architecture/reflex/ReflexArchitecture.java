@@ -26,7 +26,7 @@ import msi.gaml.statements.IStatement;
  * @todo Description
  * 
  */
-@skill(name = IKeyword.REFLEX, concept = { IConcept.BEHAVIOR, IConcept.SKILL })
+@skill(name = IKeyword.REFLEX, concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE })
 public class ReflexArchitecture extends AbstractArchitecture {
 
 	private final List<IStatement> _inits = new ArrayList();

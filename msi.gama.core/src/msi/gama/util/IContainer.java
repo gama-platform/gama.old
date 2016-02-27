@@ -117,7 +117,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 
 		public void removeValues(IScope scope, IContainer<?, ?> values);
 
-		public void removeAllOccurencesOfValue(IScope scope, Object value);
+		public void removeAllOccurrencesOfValue(IScope scope, Object value);
 
 	}
 

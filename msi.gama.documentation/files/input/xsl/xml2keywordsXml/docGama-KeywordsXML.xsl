@@ -92,13 +92,24 @@
 		</xsl:for-each>
 	</xsl:for-each>
 
-	<!-- browse the species -->
+	<!-- browse the types -->
 	<xsl:for-each select="/doc/types/type"> 
 		<xsl:variable name="typeName" select="@name"/>
 		<xsl:for-each select="concepts/concept"> 
 			<xsl:if test="$conceptName = @id">
 				<xsl:text>
 			&lt;associatedKeyword&gt;type_</xsl:text><xsl:value-of select="$typeName"/><xsl:text>&lt;/associatedKeyword&gt;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+	
+	<!-- browse the architectures -->
+	<xsl:for-each select="/doc/architectures/architecture"> 
+		<xsl:variable name="typeName" select="@name"/>
+		<xsl:for-each select="concepts/concept"> 
+			<xsl:if test="$conceptName = @id">
+				<xsl:text>
+			&lt;associatedKeyword&gt;architecture_</xsl:text><xsl:value-of select="$typeName"/><xsl:text>&lt;/associatedKeyword&gt;</xsl:text>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:for-each>
@@ -234,7 +245,7 @@
 	<xsl:for-each select="actions/action"> 
 	
 <xsl:call-template name="keyword">    
-	<xsl:with-param name="category" select="'attribute'"/>
+	<xsl:with-param name="category" select="'action'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
 	<xsl:with-param name="insideElt" select="$skillName"/>	
 	<xsl:with-param name="insideEltConcept" select="'skill'"/>				
@@ -265,6 +276,16 @@
 			<xsl:sort select="@name" />
 <xsl:call-template name="keyword">    
 	<xsl:with-param name="category" select="'type'"/>
+	<xsl:with-param name="nameGAMLElement" select="@name"/>
+</xsl:call-template>
+</xsl:for-each> 
+
+<!-- ======================== architecture ======================== -->
+ 
+<xsl:for-each select="/doc/architectures/architecture"> 
+			<xsl:sort select="@name" />
+<xsl:call-template name="keyword">    
+	<xsl:with-param name="category" select="'architecture'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
 </xsl:call-template>
 </xsl:for-each> 

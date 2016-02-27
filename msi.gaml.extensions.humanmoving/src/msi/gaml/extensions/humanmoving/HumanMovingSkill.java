@@ -1477,9 +1477,9 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            "speed". if the agent displace inside a specific geometry, several other
 	 *            parameters have to be added: either the name of a precomputed graph "graph_name",
 	 *            a agent, or a geometry. In case where no graph is available, the choice of the
-	 *            discretisation method can be made between a triangulation and a square
-	 *            discretisation through the boolean "triangulation". At least for the square
-	 *            discretisation, a square size has to be chosen "square_size".
+	 *            discretization method can be made between a triangulation and a square
+	 *            discretization through the boolean "triangulation". At least for the square
+	 *            discretization, a square size has to be chosen "square_size".
 	 *
 	 * @return the success, failure, running state of the action
 	 */
@@ -1652,9 +1652,9 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            "speed". if the agent displace inside a specific geometry, several other
 	 *            parameters have to be added: either the name of a precomputed graph "graph_name",
 	 *            a agent, or a geometry. In case where no graph is available, the choice of the
-	 *            discretisation method can be made between a triangulation and a square
-	 *            discretisation through the boolean "triangulation". At least for the square
-	 *            discretisation, a square size has to be chosen "square_size".
+	 *            discretization method can be made between a triangulation and a square
+	 *            discretization through the boolean "triangulation". At least for the square
+	 *            discretization, a square size has to be chosen "square_size".
 	 *
 	 * @return the success, failure, running state of the action
 	 */
@@ -2073,9 +2073,9 @@ public class HumanMovingSkill extends MovingSkill {
 	 *            "speed". if the agent displace inside a specific geometry, several other
 	 *            parameters have to be added: either the name of a precomputed graph "graph_name",
 	 *            a agent, or a geometry. In case where no graph is available, the choice of the
-	 *            discretisation method can be made between a triangulation and a square
-	 *            discretisation through the boolean "triangulation". At least for the square
-	 *            discretisation, a square size has to be chosen "square_size".
+	 *            discretization method can be made between a triangulation and a square
+	 *            discretization through the boolean "triangulation". At least for the square
+	 *            discretization, a square size has to be chosen "square_size".
 	 *
 	 * @return the success, failure, running state of the action
 	 */

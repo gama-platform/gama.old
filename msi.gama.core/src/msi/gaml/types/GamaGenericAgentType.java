@@ -28,7 +28,8 @@ import msi.gaml.descriptions.SpeciesDescription;
  * @modified 08 juin 2012
  * 
  */
-@type(name = IKeyword.AGENT, id = IType.AGENT, wraps = { IAgent.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.AGENT, id = IType.AGENT, wraps = { IAgent.class }, kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE, IConcept.SPECIES })
 public class GamaGenericAgentType extends GamaAgentType {
 
 	public GamaGenericAgentType() {

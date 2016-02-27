@@ -21,7 +21,7 @@ entities {
 		graph graphFromMap;
 	
 		setUp {
-			// set graphEpidemio <- generate_barabasi_albert( ["edges_specy"::edge,"vertices_specy"::node,"size"::3,"m"::5] );
+			// set graphEpidemio <- generate_barabasi_albert( ["edges_species"::edge,"vertices_specy"::node,"size"::3,"m"::5] );
 			set graphFromMap <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);		
 		}
 		

@@ -274,7 +274,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
-	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {
+	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {
 		for ( int i = 0; i < _size; i++ ) {
 			if ( Objects.equal(_values[i], value) ) {
 				removeAt(i);

@@ -1,9 +1,0 @@
-#
-#Thu Feb 25 16:43:32 ICT 2016
-operators=envelope~square~mod~as~/~count~.~-~length~rnd~at_distance~flip~circle~?~\:~among~\=~every
-plugins=msi.gama.core
-statements=reflex~do~ask~if~set~aspect~draw~init~create~output~monitor~display~display_population~chart~data
-skills=reflex~moving
-constants=red~green
-types=list~int~unknown~string~geometry~point~agent~float~date~rgb~container~bool
-actions=error~debug~tell~write~die~_step_~_init_~halt~pause~follow~wander~goto~move

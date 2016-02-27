@@ -456,7 +456,7 @@ public class Maths {
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
-	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.",
+	@doc(value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 		see = "*")
 	public static Double opDivide(final IScope scope, final Double a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero", scope); }
@@ -465,7 +465,7 @@ public class Maths {
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
-	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.",
+	@doc(value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 		see = "*")
 	public static Double opDivide(final IScope scope, final Double a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero", scope); }
@@ -474,7 +474,7 @@ public class Maths {
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
-	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.",
+	@doc(value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 		see = "*")
 	public static Double opDivide(final IScope scope, final Integer a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero", scope); }
@@ -712,7 +712,7 @@ public class Maths {
 
 	@operator(value = "mod", can_be_const = true, category = { IOperatorCategory.ARITHMETIC },
 			concept = { IConcept.MATH, IConcept.ARITHMETIC })
-	@doc(value = "Returns the remainder of the integer division of the left-hand operand by the rigth-hand operand.",
+	@doc(value = "Returns the remainder of the integer division of the left-hand operand by the right-hand operand.",
 		usages = { @usage(value = "if operands are float, they are truncated"),
 			@usage(value = "if the right-hand operand is equal to zero, raises an exception.") },
 		examples = { @example(value = "40 mod 3", equals = "1") },

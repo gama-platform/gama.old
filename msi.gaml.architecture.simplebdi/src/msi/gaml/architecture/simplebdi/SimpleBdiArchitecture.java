@@ -45,7 +45,7 @@ import msi.gaml.types.*;
 	@var(name = SimpleBdiArchitecture.UNCERTAINTY_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.PLAN_BASE, type = IType.LIST, of = BDIPlanType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.CURRENT_PLAN, type = IType.NONE) })
-@skill(name = SimpleBdiArchitecture.SIMPLE_BDI, concept = { IConcept.BDI, IConcept.SKILL })
+@skill(name = SimpleBdiArchitecture.SIMPLE_BDI, concept = { IConcept.BDI, IConcept.ARCHITECTURE })
 
 public class SimpleBdiArchitecture extends ReflexArchitecture {
 
@@ -1296,7 +1296,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if ( predicateDirect != null ) {
-			getBase(scope, BELIEF_BASE).removeAllOccurencesOfValue(scope, predicateDirect);
+			getBase(scope, BELIEF_BASE).removeAllOccurrencesOfValue(scope, predicateDirect);
 			return true;
 		}
 		return false;

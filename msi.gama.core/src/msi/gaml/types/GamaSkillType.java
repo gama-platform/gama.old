@@ -13,6 +13,7 @@ package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -27,7 +28,8 @@ import msi.gaml.skills.ISkill;
  * @todo Description
  *
  */
-@type(name = IKeyword.SKILL, id = IType.SKILL, wraps = { ISkill.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.SKILL, id = IType.SKILL, wraps = { ISkill.class }, kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE, IConcept.SKILL })
 public class GamaSkillType extends GamaType<ISkill> {
 
 	@Override

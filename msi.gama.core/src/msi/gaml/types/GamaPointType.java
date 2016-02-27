@@ -30,7 +30,8 @@ import msi.gaml.operators.Cast;
 @type(name = IKeyword.POINT,
 	id = IType.POINT,
 	wraps = { ILocation.class, GamaPoint.class },
-	kind = ISymbolKind.Variable.REGULAR)
+	kind = ISymbolKind.Variable.REGULAR,
+	concept = { IConcept.TYPE, IConcept.POINT })
 public class GamaPointType extends GamaType<ILocation> {
 
 	@Override

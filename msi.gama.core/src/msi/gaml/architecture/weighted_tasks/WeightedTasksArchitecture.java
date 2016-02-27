@@ -12,6 +12,8 @@
 package msi.gaml.architecture.weighted_tasks;
 
 import java.util.*;
+
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -27,10 +29,11 @@ import msi.gaml.statements.IStatement;
  * task t2 weight: another_float {...}
  * 
  * @author drogoul
- * @since 21 d�c. 2011
+ * @since 21 dec. 2011
  * 
  */
-@skill(name = WeightedTasksArchitecture.WT)
+@skill(name = WeightedTasksArchitecture.WT,
+concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED })
 public class WeightedTasksArchitecture extends ReflexArchitecture {
 
 	public static final String WT = "weighted_tasks";

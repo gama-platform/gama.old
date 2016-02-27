@@ -383,22 +383,22 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static IList<IShape> discretisation(final Geometry geom, final int nb_squares, final boolean overlaps,
+	public static IList<IShape> discretization(final Geometry geom, final int nb_squares, final boolean overlaps,
 		final double coeff_precision) {
 		double size = FastMath.sqrt(geom.getArea() / nb_squares);
 		List<IShape> rectToRemove = new ArrayList<IShape>();
-		IList<IShape> squares = discretisation(geom, size, size, overlaps, rectToRemove);
+		IList<IShape> squares = discretization(geom, size, size, overlaps, rectToRemove);
 		if ( squares.size() < nb_squares ) {
 			while (squares.size() < nb_squares) {
 				size *= coeff_precision;
 				rectToRemove = new ArrayList<IShape>();
-				squares = discretisation(geom, size, size, overlaps, rectToRemove);
+				squares = discretization(geom, size, size, overlaps, rectToRemove);
 			}
 		} else if ( squares.size() > nb_squares ) {
 			while (squares.size() > nb_squares) {
 				size /= coeff_precision;
 				List<IShape> rectToRemove2 = new ArrayList<IShape>();
-				IList<IShape> squares2 = discretisation(geom, size, size, overlaps, rectToRemove2);
+				IList<IShape> squares2 = discretization(geom, size, size, overlaps, rectToRemove2);
 				if ( squares2.size() < nb_squares ) {
 					break;
 				}
@@ -420,18 +420,18 @@ public class GeometryUtils {
 		return squares;
 	}
 
-	public static IList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y,
+	public static IList<IShape> discretization(final Geometry geom, final double size_x, final double size_y,
 		final boolean overlaps) {
-		return discretisation(geom, size_x, size_y, overlaps, null);
+		return discretization(geom, size_x, size_y, overlaps, null);
 	}
 
-	public static IList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y,
+	public static IList<IShape> discretization(final Geometry geom, final double size_x, final double size_y,
 		final boolean overlaps, final List<IShape> borders) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		if ( geom instanceof GeometryCollection ) {
 			final GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
-				geoms.addAll(discretisation(gc.getGeometryN(i), size_x, size_y, overlaps, borders));
+				geoms.addAll(discretization(gc.getGeometryN(i), size_x, size_y, overlaps, borders));
 			}
 		} else {
 			final Envelope env = geom.getEnvelopeInternal();
@@ -481,7 +481,7 @@ public class GeometryUtils {
 	public static IList<IShape> geometryDecomposition(final IShape geom, final double x_size, final double y_size) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		double zVal = geom.getLocation().getZ();
-		IList<IShape> rects = discretisation(geom.getInnerGeometry(), x_size, y_size, true);
+		IList<IShape> rects = discretization(geom.getInnerGeometry(), x_size, y_size, true);
 		for ( IShape shape : rects ) {
 			IShape gg = Operators.inter(null, shape, geom);
 			if ( gg != null && !gg.getInnerGeometry().isEmpty() ) {

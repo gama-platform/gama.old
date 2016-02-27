@@ -23,7 +23,7 @@ global {
 		  */
 		 set mongraphe <- load_graph_from_dgs_old( [
 				"filename"::"../includes/BarabasiGenerated.dgs", 
-				"edges_specy"::edgeSpecy,
+				"edges_species"::edgeSpecy,
 				"vertices_specy"::nodeSpecy
 			] );
 			  

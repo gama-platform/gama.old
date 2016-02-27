@@ -13,6 +13,7 @@ package msi.gaml.types;
 
 import org.joda.time.MutableDateTime;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -25,7 +26,8 @@ import msi.gaml.operators.Cast;
  * @todo Description
  *
  */
-@type(name = "date", id = IType.DATE, wraps = { GamaDate.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = "date", id = IType.DATE, wraps = { GamaDate.class }, kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE, IConcept.DATE, IConcept.TIME })
 public class GamaDateType extends GamaType<GamaDate> {
 
 	@Override

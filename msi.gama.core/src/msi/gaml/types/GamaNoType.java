@@ -24,7 +24,8 @@ import msi.gama.runtime.IScope;
  * @todo Description
  *
  */
-@type(name = IKeyword.UNKNOWN, id = IType.NONE, wraps = { Object.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.UNKNOWN, id = IType.NONE, wraps = { Object.class }, kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE })
 public class GamaNoType extends GamaType {
 
 	@Override

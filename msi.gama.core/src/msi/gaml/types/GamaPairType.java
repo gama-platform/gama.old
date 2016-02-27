@@ -25,7 +25,8 @@ import msi.gama.util.*;
  * @todo Description
  * 
  */
-@type(name = IKeyword.PAIR, id = IType.PAIR, wraps = { GamaPair.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.PAIR, id = IType.PAIR, wraps = { GamaPair.class }, kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE, IConcept.CONTAINER })
 public class GamaPairType extends GamaContainerType<GamaPair> {
 
 	@Override

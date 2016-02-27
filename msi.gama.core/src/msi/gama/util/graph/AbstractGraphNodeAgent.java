@@ -16,6 +16,7 @@ import msi.gama.common.util.AbstractGui;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -30,7 +31,7 @@ import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 
 // FIXME: Add all the necessary variables (degree, neighbours, edges)
-@species(name = "graph_node")
+@species(name = "graph_node", concept = { IConcept.GRAPH, IConcept.NODE })
 @vars({ @var(name = IKeyword.MYGRAPH, type = IType.GRAPH) })
 public class AbstractGraphNodeAgent extends GamlAgent {
 

@@ -1,9 +1,0 @@
-#
-#Thu Feb 25 16:43:31 ICT 2016
-operators=envelope~-~/~.~first
-plugins=msi.gama.core~ummisco.gaml.extensions.maths
-statements=equation~reflex~solve~init~create~output~display~chart~data
-skills=reflex
-constants=lightgray~green~red~blue
-types=geometry~list~int~unknown~string~point~agent~float~date~rgb~container~bool
-actions=error~debug~tell~write~die~_step_~_init_~halt~pause

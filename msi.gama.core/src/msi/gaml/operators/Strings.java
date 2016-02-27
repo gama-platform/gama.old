@@ -319,7 +319,7 @@ public class Strings {
 
 	@operator(value = "reverse", can_be_const = true, category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING })
-	@doc(usages = @usage(value = "if it is a string, reverse returns a new string with caracters in the reversed order",
+	@doc(usages = @usage(value = "if it is a string, reverse returns a new string with characters in the reversed order",
 		examples = @example(value = "reverse ('abcd')", equals = "'dcba'")))
 	static public
 		String reverse(final String s) {

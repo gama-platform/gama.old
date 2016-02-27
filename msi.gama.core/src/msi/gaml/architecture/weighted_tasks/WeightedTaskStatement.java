@@ -36,7 +36,7 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 
-@symbol(name = WeightedTaskStatement.TASK, kind = ISymbolKind.BEHAVIOR, with_sequence = true, concept = { IConcept.BEHAVIOR, IConcept.SCHEDULER })
+@symbol(name = WeightedTaskStatement.TASK, kind = ISymbolKind.BEHAVIOR, with_sequence = true, concept = { IConcept.BEHAVIOR, IConcept.SCHEDULER, IConcept.TASK_BASED, IConcept.ARCHITECTURE })
 @inside(symbols = { WeightedTasksArchitecture.WT, SortedTasksArchitecture.ST, ProbabilisticTasksArchitecture.PT },
 	kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @facets(

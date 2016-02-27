@@ -206,7 +206,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			addVariableNoCheck(vd);
 			return;
 		}
-		// A previous deifnition has been found
+		// A previous definition has been found
 		VariableDescription existing = getVariable(newVarName);
 		// We assert whether their types are compatible or not
 		if ( assertVarsAreCompatible(existing, vd) ) {

@@ -123,9 +123,9 @@ public class EditToolbar {
 		});
 		folding.setSelection(editor.isRangeIndicatorEnabled());
 
-		// Mark Occurences button (synchronized with the global preference)
-		final GamaPreferences.Entry<Boolean> pref = GamaPreferences.get("editor.mark.occurences", Boolean.class);
-		mark = toolbar.check("editor.mark2", null, "Mark occurences", new SelectionAdapter() {
+		// Mark Occurrences button (synchronized with the global preference)
+		final GamaPreferences.Entry<Boolean> pref = GamaPreferences.get("editor.mark.occurrences", Boolean.class);
+		mark = toolbar.check("editor.mark2", null, "Mark occurrences", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -405,7 +405,7 @@ public class EditToolbar {
 		if ( listenersRegistered ) { return; }
 		listenersRegistered = true;
 		// Listening to "Mark occurrences..."
-		final GamaPreferences.Entry<Boolean> pref = GamaPreferences.get("editor.mark.occurences", Boolean.class);
+		final GamaPreferences.Entry<Boolean> pref = GamaPreferences.get("editor.mark.occurrences", Boolean.class);
 		final IPreferenceChangeListener<Boolean> change = new IPreferenceChangeListener<Boolean>() {
 
 			@Override

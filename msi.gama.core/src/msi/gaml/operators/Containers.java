@@ -94,7 +94,7 @@ public class Containers {
 			@usage(value = "if the operand is a graph, remove_duplicates returns the set of nodes"),
 			@usage(value = "if the operand is a map, remove_duplicates returns the set of values without duplicate",
 				examples = { @example(value = "remove_duplicates([1::3,2::4,3::3,5::7])", equals = "[3,4,7]") }),
-			@usage(value = "if the operand is a matrix, remove_duplicates returns a matrix withtout duplicated row") },
+			@usage(value = "if the operand is a matrix, remove_duplicates returns a matrix without duplicated row") },
 		examples = { @example(value = "remove_duplicates([3,2,5,1,2,3,5,5,5])", equals = "[3,2,5,1]") })
 	// TODO finish doc for other kinds of Container
 	public static IList remove_duplicates(final IScope scope, final IContainer l) {
@@ -345,7 +345,7 @@ public class Containers {
 	@doc(usages = { @usage(
 		value = "if the left operand is a list and the right operand is an object of any type (except list), " +
 			IKeyword.MINUS +
-			" returns a list containining the elements of the left operand minus all the occurences of this object",
+			" returns a list containing the elements of the left operand minus all the occurrences of this object",
 		examples = { @example(value = "[1,2,3,4,5,6] - 2", returnType = "list<int>", equals = "[1,3,4,5,6]"),
 			@example(value = "[1,2,3,4,5,6] - 0", returnType = "list<int>", equals = "[1,2,3,4,5,6]") }) })
 	public static IList minus(final IScope scope, final IList l1, final Object object) {
@@ -361,7 +361,7 @@ public class Containers {
 		concept = {})
 	@doc(usages = {
 		@usage(value = "if the left operand is a species and the right operand is an agent of the species, " +
-			IKeyword.MINUS + " returns a list containining all the agents of the species minus this agent") })
+			IKeyword.MINUS + " returns a list containing all the agents of the species minus this agent") })
 	public static IList minus(final IScope scope, final ISpecies l1, final IAgent object) {
 		return minus(scope, l1.listValue(scope, Types.NO_TYPE, false), object);
 	}
@@ -405,11 +405,11 @@ public class Containers {
 			"The expression agents of_species (species self) is equivalent to agents where (species each = species self); " +
 			"however, the advantage of using the first syntax is that the resulting list is correctly typed with the right species, " +
 			"whereas, in the second syntax, the parser cannot determine the species of the agents within the list " +
-			"(resulting in the need to cast it explicitely if it is to be used in an ask statement, for instance).",
+			"(resulting in the need to cast it explicitly if it is to be used in an ask statement, for instance).",
 		usages = @usage("if the right operand is nil, of_species returns the right operand"),
 		examples = {
-			@example(value = "(self neighbours_at 10) of_species (species (self))",
-				equals = "all the neighbouring agents of the same species.",
+			@example(value = "(self neighbors_at 10) of_species (species (self))",
+				equals = "all the neighboring agents of the same species.",
 				isExecutable = false),
 			@example(value = "[test(0),test(1),node(1),node(2)] of_species test",
 				equals = "[test0,test1]",
@@ -869,8 +869,8 @@ public class Containers {
 		comment = "accumulate is dedicated to the application of a same computation on each element of a container (and returns a list). " +
 			"In the right-hand operand, the keyword each can be used to represent, in turn, each of the left-hand operand elements. ",
 		examples = {
-			@example(value = "[a1,a2,a3] accumulate (each neighbours_at 10)",
-				equals = "a flat list of all the neighbours of these three agents",
+			@example(value = "[a1,a2,a3] accumulate (each neighbors_at 10)",
+				equals = "a flat list of all the neighbors of these three agents",
 				isExecutable = false),
 			@example(value = "[1,2,4] accumulate ([2,4])", returnType = "list<int>", equals = "[2,4,2,4,2,4]"),
 			@example(value = "[1,2,4] accumulate (each * 2)", returnType = "list<int>", equals = "[2,4,8]") },

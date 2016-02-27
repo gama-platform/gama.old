@@ -83,7 +83,7 @@ public class Cast {
 	}
 
 	@operator(value = IKeyword.IS_SKILL, category = { IOperatorCategory.CASTING }, concept = {IConcept.CAST, IConcept.SKILL})
-	@doc(value = "returns true if the left operand is an agent whose species implementes the right-hand skill name",
+	@doc(value = "returns true if the left operand is an agent whose species implements the right-hand skill name",
 		examples = { @example(value = "agentA is_skill 'moving'", equals = "true", isExecutable = false) })
 	public static Boolean isSkill(final IScope scope, final Object a, final String skill) {
 		if ( !(a instanceof IAgent) ) { return false; }
@@ -292,7 +292,7 @@ public class Cast {
 	// "if the operand is an int or a float, returns their string representation (as in Java);",
 	// "if the operand is a boolean, returns 'true' or 'false';",
 	// "if the operand is a species, returns its name;",
-	// "if the operand is a color, returns its litteral value if it has been created with one (i.e. 'black', 'green', etc.) or the string representation of its hexadecimal value.",
+	// "if the operand is a color, returns its literal value if it has been created with one (i.e. 'black', 'green', etc.) or the string representation of its hexadecimal value.",
 	// "if the operand is a container, returns its string representation." }, examples = { "string(0) --: 0",
 	// "string({23, 4.0} --: {23.0;4.0}", "string(5::34) --: 5::34",
 	// "string(['a'::345, 'b'::13, 'c'::12]) --: b,13; c,12; a,345;" })
@@ -422,7 +422,7 @@ public class Cast {
 		can_be_const = true, // AD: was previously true -- see Issue 1127
 		category = { IOperatorCategory.CASTING },
 		concept = {IConcept.CAST, IConcept.CONTAINER})
-	@doc(value = "casts the left operand into a matrix with right operand as preferrenced size",
+	@doc(value = "casts the left operand into a matrix with right operand as preferred size",
 		comment = "This operator is very useful to cast a file containing raster data into a matrix." +
 			"Note that both components of the right operand point should be positive, otherwise an exception is raised." +
 			"The operator as_matrix creates a matrix of preferred size. It fills in it with elements of the left operand until the matrix is full " +
@@ -454,7 +454,7 @@ public class Cast {
 
 	@operator(value = "to_gaml", category = { IOperatorCategory.CASTING }, concept = {IConcept.CAST, IConcept.GAML})
 	@doc(
-		value = "returns the litteral description of an expression or description -- action, behavior, species, aspect, even model -- in gaml",
+		value = "returns the literal description of an expression or description -- action, behavior, species, aspect, even model -- in gaml",
 		examples = { @example(value = "to_gaml(0)", equals = "'0'"),
 			@example(value = "to_gaml(3.78)", equals = "'3.78'"), @example(value = "to_gaml(true)", equals = "'true'"),
 			@example(value = "to_gaml({23, 4.0})", equals = "'{23.0,4.0,0.0}'"),

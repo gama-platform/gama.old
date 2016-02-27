@@ -44,8 +44,8 @@ public class GamlMarkOccurrenceActionContributor extends MarkOccurrenceActionCon
 	}
 
 	// Preference here is an instance variable, but only one will be created as this class is a singleton.
-	public final Entry<Boolean> EDITOR_MARK_OCCURENCES = GamaPreferences
-		.create("editor.mark.occurences", "Mark occurences of symbols in models", true, IType.BOOL)
+	public final Entry<Boolean> EDITOR_MARK_OCCURRENCES = GamaPreferences
+		.create("editor.mark.occurrences", "Mark occurrences of symbols in models", true, IType.BOOL)
 		.in(GamaPreferences.EDITOR).group("Presentation").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 			@Override
@@ -68,8 +68,8 @@ public class GamlMarkOccurrenceActionContributor extends MarkOccurrenceActionCon
 	public void initialize(final IPreferenceStoreAccess preferenceStoreAccess) {
 		access = preferenceStoreAccess;
 		preferenceStoreAccess.getWritablePreferenceStore().setDefault(getPreferenceKey(),
-			EDITOR_MARK_OCCURENCES.getValue());
+			EDITOR_MARK_OCCURRENCES.getValue());
 		preferenceStoreAccess.getWritablePreferenceStore().setValue(getPreferenceKey(),
-			EDITOR_MARK_OCCURENCES.getValue());
+			EDITOR_MARK_OCCURRENCES.getValue());
 	}
 }

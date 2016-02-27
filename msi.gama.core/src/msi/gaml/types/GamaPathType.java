@@ -15,6 +15,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -25,7 +26,8 @@ import msi.gaml.operators.Cast;
 @type(name = IKeyword.PATH,
 	id = IType.PATH,
 	wraps = { IPath.class, GamaPath.class },
-	kind = ISymbolKind.Variable.REGULAR)
+	kind = ISymbolKind.Variable.REGULAR,
+	concept = { IConcept.TYPE, IConcept.PATH })
 public class GamaPathType extends GamaType<IPath> {
 
 	@Override

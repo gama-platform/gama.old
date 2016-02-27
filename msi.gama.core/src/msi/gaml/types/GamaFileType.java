@@ -18,6 +18,7 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
@@ -31,7 +32,8 @@ import msi.gaml.expressions.IExpression;
  * Modified on 30 Dec. 2013
  *
  */
-@type(name = IKeyword.FILE, id = IType.FILE, wraps = { IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.FILE, id = IType.FILE, wraps = { IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER,
+concept = { IConcept.TYPE, IConcept.FILE })
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	public static Map<String, IContainerType> extensionsToFullType = new THashMap();

@@ -92,7 +92,7 @@ public class DeprecatedOperators {
 		category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
 	@doc(deprecated = "use neighbors_at instead",
 		value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).",
-		comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.",
+		comment = "The topology used to compute the neighborhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.",
 		examples = { @example(value = "(self neighbours_at (10))",
 			equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator.",
 			test = false) },
@@ -195,7 +195,7 @@ public class DeprecatedOperators {
 	@operator(value = "image", can_be_const = true, index_type = IType.POINT)
 	@doc(deprecated = "use image_file instead",
 		value = "opens a file that is a kind of image.",
-		comment = "The file should have an image extension, cf. file type deifnition for supported file extensions.",
+		comment = "The file should have an image extension, cf. file type definition for supported file extensions.",
 		special_cases = "If the specified string does not refer to an existing image file, an exception is risen.",
 		examples = {
 			@example("let fileT type: file value: image(\"../includes/testImage.png\");  // fileT represents the file \"../includes/testShape.png\"") },
@@ -635,7 +635,7 @@ public class DeprecatedOperators {
 	 @doc(value = "A cube geometry which side size is equal to the operand.",
 			 deprecated = "This operator is deprecated and return a cube instead",
 	 		usages = { @usage(value = "returns nil if the operand is nil.") },
-	 		comment = "the centre of the cube is by default the location of the current agent in which has been called this operator.",
+	 		comment = "the center of the cube is by default the location of the current agent in which has been called this operator.",
 	 		examples = {
 	 			@example(value = "cube(10)", equals = "a geometry as a square of side size 10.", test = false) },
 	 		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
@@ -652,7 +652,7 @@ public class DeprecatedOperators {
 	 @operator(value = "rgb_triangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
 	 @doc(value = "A triangle geometry which side size is given by the operand.",
 	 		usages = { @usage("returns nil if the operand is nil.") },
-	 		comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.",
+	 		comment = "the center of the triangle is by default the location of the current agent in which has been called this operator.",
 	 		examples = { @example(value = "triangle(5)",
 	 			equals = "a geometry as a triangle with side_size = 5.",
 	 			test = false) },

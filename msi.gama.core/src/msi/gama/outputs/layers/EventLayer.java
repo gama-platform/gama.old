@@ -82,7 +82,7 @@ public class EventLayer extends AbstractLayer {
 		return "Event layer";
 	}
 
-	// We explicitely translate by the origin of the surface
+	// We explicitly translate by the origin of the surface
 	@Override
 	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
 		return g.getModelCoordinates();

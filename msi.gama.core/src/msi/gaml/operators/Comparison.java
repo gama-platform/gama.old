@@ -324,7 +324,7 @@ public class Comparison {
 
 	@operator(value = GT, can_be_const = true, category = { IOperatorCategory.COMPARISON, IOperatorCategory.POINT }, concept = { IConcept.POINT })
 	@doc(value = "true if the left-hand operand is greater than the right-hand operand, false otherwise.",
-		usages = { @usage(value = "if both operands are points, returns true if abd only if the left component (x) of the left operand if greater than x of the right one and if the right component (y) of the left operand is greater than y of the right one.",
+		usages = { @usage(value = "if both operands are points, returns true if and only if the left component (x) of the left operand if greater than x of the right one and if the right component (y) of the left operand is greater than y of the right one.",
 			examples = { @example(value = "{5,7} > {4,6}", equals = "true"),
 				@example(value = "{5,7} > {4,8}", equals = "false") }) })
 	public static

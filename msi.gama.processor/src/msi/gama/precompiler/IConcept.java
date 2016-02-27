@@ -12,6 +12,7 @@ public interface IConcept {
 	public static final String ACTION					= "action";
 	public static final String AGENT_LOCATION			= "agent_location";
 	public static final String ALGORITHM				= "algorithm";
+	public static final String ARCHITECTURE				= "architecture";
 	public static final String ARITHMETIC				= "arithmetic";
 	public static final String ASPATIAL_GRAPH			= "aspacial_graph";
 	public static final String ATTRIBUTE				= "attribute";
@@ -104,6 +105,7 @@ public interface IConcept {
 	public static final String STRING					= "string";
 	public static final String SURFACE_UNIT				= "surface_unit";
 	public static final String SYSTEM					= "system";
+	public static final String TASK_BASED				= "task_based";
 	public static final String TERNARY					= "ternary";
 	public static final String TEXT						= "text";
 	public static final String TEXTURE					= "texture";
