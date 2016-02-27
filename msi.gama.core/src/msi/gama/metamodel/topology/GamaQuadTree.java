@@ -92,7 +92,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	protected Collection<IAgent> findIntersects(final IScope scope, final IShape source, final Envelope r,
 		final IAgentFilter filter) {
 		// final java.util.List<IAgent> list = new ArrayList();
-		// Adresses Issue 722 by explicitely shuffling the results with GAMA random procedures and removing duplicates
+		// Adresses Issue 722 by explicitly shuffling the results with GAMA random procedures and removing duplicates
 		final Set<IAgent> list = new TLinkedHashSet();
 		root.findIntersects(scope, source, r, list);
 		filter.filter(scope, source, list);

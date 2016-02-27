@@ -21,7 +21,7 @@ global {
 		  * Note that for technical reasons, parameters are provided as a gama map.  
 		  */
 		set mongraphe <- generate_watts_strogatz( [
-				"edges_specy"::edgeSpecy,
+				"edges_species"::edgeSpecy,
 				"vertices_specy"::nodeSpecy,
 				"size"::200,
 				"p"::0.08,

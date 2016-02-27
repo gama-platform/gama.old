@@ -86,7 +86,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 		can_be_const = true,
 		category = { IOperatorCategory.MATRIX },
 		concept = { IConcept.MATRIX })
-	@doc(value = "returns the row at a num_line (rigth-hand operand)",
+	@doc(value = "returns the row at a num_line (right-hand operand)",
 		examples = { @example(
 			value = "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2",
 			equals = "[\"el13\",\"el23\",\"el33\"]") },
@@ -98,7 +98,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 		can_be_const = true,
 		category = { IOperatorCategory.MATRIX },
 		concept = { IConcept.MATRIX })
-	@doc(value = "returns the column at a num_col (rigth-hand operand)",
+	@doc(value = "returns the column at a num_col (right-hand operand)",
 		examples = { @example(
 			value = "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2",
 			equals = "[\"el31\",\"el32\",\"el33\"]") },
@@ -249,7 +249,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 
 	@operator(value = "transpose", category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
-	@doc(value = "The tranposition of the given matrix",
+	@doc(value = "The transposition of the given matrix",
 		masterDoc = true,
 		examples = { @example(value = "transpose(matrix([[5,-3],[6,-4]]))", equals = "[[5,6],[-3,-4]]") })
 	public abstract IMatrix transpose(IScope scope) throws GamaRuntimeException;

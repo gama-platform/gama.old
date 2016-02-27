@@ -210,7 +210,7 @@ species modifying_lists {
 		// it can also be written
 		l1 >- first(l1);
 		write(sample(l1));
-		// To remove all occurences of a specific element, "all:" (or ">>-") can be used
+		// To remove all occurrences of a specific element, "all:" (or ">>-") can be used
 		// For instance:
 		l1 >>- 2;
 		l1 >>- 1;

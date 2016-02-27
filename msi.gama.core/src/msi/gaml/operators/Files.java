@@ -51,7 +51,7 @@ public class Files {
 	@operator(value = IKeyword.FILE, can_be_const = true, category = IOperatorCategory.FILE, concept = { IConcept.FILE })
 	@doc(
 		value = "opens a file in read only mode, creates a GAML file object, and tries to determine and store the file content in the contents attribute.",
-		comment = "The file should have a supported extension, see file type deifnition for supported file extensions.",
+		comment = "The file should have a supported extension, see file type definition for supported file extensions.",
 		usages = @usage("If the specified string does not refer to an existing file, an exception is risen when the variable is used.") ,
 		examples = { @example(value = "let fileT type: file value: file(\"../includes/Stupid_Cell.Data\"); "),
 			@example(value = "			// fileT represents the file \"../includes/Stupid_Cell.Data\""), @example(

@@ -611,7 +611,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {
+	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {
 		removeValue(scope, value);
 	}
 

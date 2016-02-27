@@ -1296,7 +1296,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if ( predicateDirect != null ) {
-			getBase(scope, BELIEF_BASE).removeAllOccurencesOfValue(scope, predicateDirect);
+			getBase(scope, BELIEF_BASE).removeAllOccurrencesOfValue(scope, predicateDirect);
 			return true;
 		}
 		return false;

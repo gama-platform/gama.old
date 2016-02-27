@@ -17,7 +17,7 @@ import msi.gaml.types.IType;
 public class Dates {
 	
 	@operator(value = { IKeyword.MINUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = { IConcept.DATE })
-	@doc(usages = @usage(value = "if both operands are dates, returns the durations in second between from date2 to date1",
+	@doc(usages = @usage(value = "if both operands are dates, returns the duration in second between from date2 to date1",
 			examples = { @example(value = "date1 - date2", equals = "598") }))		
 	public static double minusDate(final IScope scope, final GamaDate date1, final GamaDate date2)
 		throws GamaRuntimeException {

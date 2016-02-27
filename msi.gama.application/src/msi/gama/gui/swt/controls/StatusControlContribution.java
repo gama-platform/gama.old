@@ -123,7 +123,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		StringBuilder sb = new StringBuilder(300);
 		SimulationClock clock = agent.getClock();
 		sb.append(String.format("%-20s %-10d\n", "Cycles elapsed: ", clock.getCycle()));
-		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Durations (ms)", clock.getDuration(),
+		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 			(int) clock.getAverageDuration(), clock.getTotalDuration()));
 		result.put(GamaColors.get(agent.getColor()), sb.toString());
 		IAgent[] simulations = agent.getSimulationPopulation().toArray();
@@ -136,7 +136,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
 				clock.getStartingDate() == null ? Strings.asDate(clock.getTime(), null)
 					: Strings.asDate(clock.getStartingDate(), clock.getCurrentDate(), null)));
-			sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Durations (ms)", clock.getDuration(),
+			sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 				(int) clock.getAverageDuration(), clock.getTotalDuration()));
 			result.put(GamaColors.get(sim.getColor()), sb.toString());
 

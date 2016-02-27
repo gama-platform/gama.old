@@ -47,7 +47,7 @@ public class ContentAssistContextFactory extends StatefulFactory {
 
 	/**
 	 * AD 08/13 : Workaround for a bug manifesting itself as an infinite recursion over an AlternativesImpl element.
-	 * The choice here is to allow for 10 occurences of the element to be computed and then fall back to the caller.
+	 * The choice here is to allow for 10 occurrences of the element to be computed and then fall back to the caller.
 	 */
 	@Override
 	protected void computeFollowElements(final FollowElementCalculator calculator, final FollowElement element,

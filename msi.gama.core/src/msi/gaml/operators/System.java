@@ -57,11 +57,11 @@ public class System {
 		category = { IOperatorCategory.SYSTEM },
 		concept = { IConcept.SYSTEM, IConcept.ATTRIBUTE })
 	@doc(
-		value = "It has two different uses: it can be the dot product between 2 matrices or return an evaluation of the expresion (right-hand operand) in the scope the given agent.",
+		value = "It has two different uses: it can be the dot product between 2 matrices or return an evaluation of the expression (right-hand operand) in the scope the given agent.",
 		masterDoc = true,
 		special_cases = "if the agent is nil or dead, throws an exception",
 		usages = @usage(
-			value = "if the left operand is an agent, it evaluates of the expresion (right-hand operand) in the scope the given agent",
+			value = "if the left operand is an agent, it evaluates of the expression (right-hand operand) in the scope the given agent",
 			examples = {
 				@example(value = "agent1.location", equals = "the location of the agent agent1", isExecutable = false),
 				@example(value = "map(nil).keys", raises = "exception", isTestOnly = false) }) )
@@ -98,7 +98,7 @@ public class System {
 	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			concept = { IConcept.SYSTEM, IConcept.GUI })
 	@doc(
-		value = "asks the user for some values (not defined as parameters). Takes a string (optionnal) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
+		value = "asks the user for some values (not defined as parameters). Takes a string (optional) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
 		masterDoc = true,
 		comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). " +
 			"The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
@@ -117,7 +117,7 @@ public class System {
 	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			concept = {})
 	@doc(
-		value = "asks the user for some values (not defined as parameters). Takes a string (optionnal) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
+		value = "asks the user for some values (not defined as parameters). Takes a string (optional) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
 		examples = {
 			@example("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
 			@example(

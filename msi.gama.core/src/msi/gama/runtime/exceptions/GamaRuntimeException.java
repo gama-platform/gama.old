@@ -34,7 +34,7 @@ public class GamaRuntimeException extends RuntimeException {
 	protected final List<String> context = new ArrayList();
 	protected EObject editorContext;
 	protected int lineNumber;
-	protected int occurences = 0;
+	protected int occurrences = 0;
 	protected boolean reported = false;
 	protected final IScope scope;
 
@@ -166,7 +166,7 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public void addAgent(final String agent) {
-		occurences++;
+		occurrences++;
 		if ( agentsNames.contains(agent) ) { return; }
 		agentsNames.add(agent);
 	}
@@ -185,7 +185,7 @@ public class GamaRuntimeException extends RuntimeException {
 		int size = agentsNames.size();
 		String agents = size == 0 ? "" : size == 1 ? agentsNames.get(0) : String.valueOf(size) + " agents";
 		String occurence =
-			occurences == 0 ? "" : occurences == 1 ? "1 occurence in " : String.valueOf(occurences) + " occurences in ";
+			occurrences == 0 ? "" : occurrences == 1 ? "1 occurence in " : String.valueOf(occurrences) + " occurrences in ";
 		return occurence + agents;
 	}
 

@@ -62,7 +62,7 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	void dispose();
 
-	/** Asks the surface to update its display, optionnaly forcing it to do so (if it is paused, for instance) **/
+	/** Asks the surface to update its display, optionaly forcing it to do so (if it is paused, for instance) **/
 	void updateDisplay(boolean force);
 
 	/**

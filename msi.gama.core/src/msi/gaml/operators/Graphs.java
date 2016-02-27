@@ -217,7 +217,7 @@ public class Graphs {
 		usages = @usage(
 			value = "if the right-hand operand is a pair, returns true if it exists an edge between the two elements of the pair in the graph",
 			examples = {
-				// @example(value="graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",isExecutable=false),
+				// @example(value="graph graphEpidemio <- generate_barabasi_albert( [\"edges_species\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",isExecutable=false),
 				@example(value = "graphEpidemio contains_edge (node(0)::node(3))",
 					equals = "true",
 					isExecutable = false) }) )
@@ -234,7 +234,7 @@ public class Graphs {
 		usages = @usage("if the lef-hand operand (the graph) is nil, throws an Exception") ,
 		examples = {
 			@example(
-				value = "graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
+				value = "graph graphEpidemio <- generate_barabasi_albert( [\"edges_species\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
 				isExecutable = false),
 			@example(value = "graphEpidemio source_of(edge(3))", equals = "node1", isExecutable = false),
 			@example(value = "graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
@@ -256,7 +256,7 @@ public class Graphs {
 		usages = @usage("if the lef-hand operand (the graph) is nil, returns nil") ,
 		examples = {
 			@example(
-				value = "graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
+				value = "graph graphEpidemio <- generate_barabasi_albert( [\"edges_species\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
 				isExecutable = false),
 			@example(value = "graphEpidemio source_of(edge(3))", equals = "node1", isExecutable = false),
 			@example("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
@@ -465,7 +465,7 @@ public class Graphs {
 	@operator(value = "connectivity_index", category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	@doc(
-		value = "retruns a simple connetivity index. This number is estimated through the number of nodes (v) and of sub-graphs (p) : IC = (v - p) /(v - 1).",
+		value = "returns a simple connectivity index. This number is estimated through the number of nodes (v) and of sub-graphs (p) : IC = (v - p) /(v - 1).",
 		examples = { @example(value = "graph graphEpidemio <- graph([]);"),
 			@example(value = "connectivity_index(graphEpidemio)",
 				equals = "the connectivity index of the graph",
@@ -882,7 +882,7 @@ public class Graphs {
 		examples = {
 			@example(value = "graph graphEpidemio <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 				isTestOnly = true),
-			@example(value = "graphEpidemio rewire_n 10", equals = "the graph with 3 egdes rewired", test = false) },
+			@example(value = "graphEpidemio rewire_n 10", equals = "the graph with 3 edges rewired", test = false) },
 		see = "rewire_p")
 	public static IGraph rewireGraph(final IScope scope, final IGraph g, final Integer count) {
 		GraphAlgorithmsHandmade.rewireGraphCount(scope, g, count);
@@ -987,7 +987,7 @@ public class Graphs {
 		comment = comment,
 		usages = { @usage(value = "\"format\": the format of the file"),
 			@usage(value = "\"filename\": the filename of the file containing the network"),
-			@usage(value = "\"edges_specy\": the species of edges"),
+			@usage(value = "\"edges_species\": the species of edges"),
 			@usage(value = "\"vertices_specy\": the species of vertices") },
 		examples = {
 			@example(value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", isExecutable = false),
@@ -1009,7 +1009,7 @@ public class Graphs {
 		comment = comment,
 		usages = { @usage(value = "\"format\": the format of the file"),
 			@usage(value = "\"filename\": the filename of the file containing the network"),
-			@usage(value = "\"edges_specy\": the species of edges"),
+			@usage(value = "\"edges_species\": the species of edges"),
 			@usage(value = "\"vertices_specy\": the species of vertices") },
 		examples = {
 			@example(value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", isExecutable = false),
@@ -1029,7 +1029,7 @@ public class Graphs {
 	@doc(value = "loads a graph from a file",
 		masterDoc = true,
 		usages = @usage(
-			value = "\"filename\": the filename of the file containing the network, \"edges_specy\": the species of edges, \"vertices_specy\": the species of vertices",
+			value = "\"filename\": the filename of the file containing the network, \"edges_species\": the species of edges, \"vertices_specy\": the species of vertices",
 			examples = {
 				@example(value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
 					isExecutable = false),
@@ -1050,7 +1050,7 @@ public class Graphs {
 			concept = {})
 	@doc(
 		usages = @usage(
-			value = "\"format\": the format of the file, \"file\": the file containing the network, \"edges_specy\": the species of edges, \"vertices_specy\": the species of vertices",
+			value = "\"format\": the format of the file, \"file\": the file containing the network, \"edges_species\": the species of edges, \"vertices_specy\": the species of vertices",
 			examples = {
 				@example(value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
 					isExecutable = false),
@@ -1145,7 +1145,7 @@ public class Graphs {
 		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
 		concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH })
 	@doc(
-		value = "returns the successor matrix of shortest paths betwenn all node pairs (rows: source, columns: target): a cell (i,j) will thus contains the next node in the shortest path between i and j.",
+		value = "returns the successor matrix of shortest paths between all node pairs (rows: source, columns: target): a cell (i,j) will thus contains the next node in the shortest path between i and j.",
 		examples = { @example(value = "all_pairs_shortest_paths(my_graph)",
 			equals = "shortest_paths_matrix will contain all pairs of shortest paths",
 			isExecutable = false) })

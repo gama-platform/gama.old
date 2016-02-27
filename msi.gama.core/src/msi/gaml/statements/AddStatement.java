@@ -102,7 +102,7 @@ import msi.gaml.types.*;
 					equals = "[\"x\"::\"val1\"]",
 					returnType = "null") }), // workingMap now equals [x::val1]";
 		@usage(
-			value = "If the at facet is ommitted, a pair expr_item::expr_item will be added to the map. " +
+			value = "If the at facet is omitted, a pair expr_item::expr_item will be added to the map. " +
 				"An important exception is the case where the expr_item is a pair: in this case the pair is added.",
 			examples = {
 				@example(value = "add \"val2\" to: workingMap;",

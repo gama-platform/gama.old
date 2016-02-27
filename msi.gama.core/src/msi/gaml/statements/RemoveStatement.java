@@ -80,7 +80,7 @@ concept = { IConcept.CONTAINER, IConcept.GRAPH, IConcept.NODE, IConcept.EDGE, IC
 				@example(value = "remove key: expr from: expr_container;", isExecutable = false),
 				@example(value = "remove all: expr from: expr_container;", isExecutable = false) }),
 		@usage(
-			value = "In the case of list, the facet `item:` is used to remove the first occurence of a given expression, whereas `all` is used to remove all the occurences of the given expression.",
+			value = "In the case of list, the facet `item:` is used to remove the first occurence of a given expression, whereas `all` is used to remove all the occurrences of the given expression.",
 			examples = { @example("list<int> removeList <- [3,2,1,2,3];"),
 				@example(value = "remove 2 from: removeList;",
 					var = "removeList",
@@ -186,7 +186,7 @@ public class RemoveStatement extends AbstractContainerStatement {
 					container.removeValues(scope, (IContainer) object);
 				} else {
 					// otherwise if it is a simple value
-					container.removeAllOccurencesOfValue(scope, object);
+					container.removeAllOccurrencesOfValue(scope, object);
 				}
 			} else {
 				// if it is a simple remove

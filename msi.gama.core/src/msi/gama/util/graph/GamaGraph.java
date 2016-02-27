@@ -318,7 +318,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
-	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {
+	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {
 		removeValue(scope, value);
 	}
 

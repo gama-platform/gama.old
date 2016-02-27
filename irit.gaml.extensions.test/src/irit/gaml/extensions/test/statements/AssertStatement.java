@@ -38,7 +38,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.EQUALS,
 		type = IType.NONE,
 		optional = true,
-		doc = @doc("an expresion, assert tests whether the value is equals to this expression")),
+		doc = @doc("an expression, assert tests whether the value is equals to this expression")),
 	@facet(name = IKeyword.ISNOT,
 		type = IType.NONE,
 		optional = true,
@@ -46,7 +46,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.RAISES,
 		type = IType.ID,
 		optional = true,
-		doc = @doc("\"error\" or \"warning\", used in testing what raises the evaluation of the value: expresion")) },
+		doc = @doc("\"error\" or \"warning\", used in testing what raises the evaluation of the value: expression")) },
 	omissible = IKeyword.VALUE)
 @inside(symbols = { "test" })
 @doc(value = "Allows to check whether the evaluation of a given expression fulfils a given condition. If it is not fulfilled, an exception is raised.",

@@ -138,7 +138,7 @@ public class Colors {
 	@operator(value = "rgb", category = { IOperatorCategory.COLOR }, concept = {IConcept.COLOR} )
 	@doc(value = "Returns a color defined by red, green, blue components and an alpha blending value.",
 		masterDoc = true,
-		usages = @usage("It can be used with r=red, g=greeb, b=blue, each between 0 and 255"),
+		usages = @usage("It can be used with r=red, g=green, b=blue, each between 0 and 255"),
 		examples = @example(value = "rgb (255,0,0)", equals = "#red"),
 		see = "hsb")
 	public static GamaColor rgb(final int r, final int g, final int b) {
@@ -147,7 +147,7 @@ public class Colors {
 
 	@operator(value = "rgb", category = { IOperatorCategory.COLOR }, concept = {} )
 	@doc(value = "rgb color",
-		usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0 and 255)"),
+		usages = @usage("It can be used with r=red, g=green, b=blue (each between 0 and 255), a=alpha (between 0 and 255)"),
 		examples = { @example(value = "rgb (255,0,0,125)", equals = "a light red color", test = false),
 			@example(value = "rgb (255,0,0,125).alpha", equals = "125", returnType = IKeyword.INT, isTestOnly = true) },
 		see = "hsb")
@@ -157,7 +157,7 @@ public class Colors {
 
 	@operator(value = "rgb", category = { IOperatorCategory.COLOR }, concept = {} )
 	@doc(value = "rgb color",
-		usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0.0 and 1.0)"),
+		usages = @usage("It can be used with r=red, g=green, b=blue (each between 0 and 255), a=alpha (between 0.0 and 1.0)"),
 		examples = @example(value = "rgb (255,0,0,0.5)", equals = "a light red color", test = false),
 		see = "hsb")
 	public static GamaColor rgb(final int r, final int g, final int b, final double alpha) {
@@ -207,7 +207,7 @@ public class Colors {
 
 	@operator(value = "grayscale", category = { IOperatorCategory.COLOR }, concept = {IConcept.COLOR} )
 	@doc(value = "Converts rgb color to grayscale value",
-		comment = "r=red, g=greeb, b=blue. Between 0 and 255 and gray = 0.299 `*` red + 0.587 `*` green + 0.114 `*` blue (Photoshop value)",
+		comment = "r=red, g=green, b=blue. Between 0 and 255 and gray = 0.299 `*` red + 0.587 `*` green + 0.114 `*` blue (Photoshop value)",
 		examples = { @example(value = "grayscale (rgb(255,0,0))", equals = "to a dark grey", isExecutable = false),
 			@example(value = "grayscale (rgb(255,0,0))", equals = "rgb(76,76,76)", isTestOnly = true) },
 		see = { "rgb", "hsb" })
@@ -247,8 +247,8 @@ public class Colors {
 
 	@operator(value = "blend", category = { IOperatorCategory.COLOR }, concept = {} )
 	@doc(
-		value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1. If the ratio is ommitted, an even blend is done",
-		usages = @usage(value = "If the ratio is ommitted, an even blend is done",
+		value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1. If the ratio is omitted, an even blend is done",
+		usages = @usage(value = "If the ratio is omitted, an even blend is done",
 			examples = { @example(value = "blend(#red, #blue)", equals = "rgb(127,0,127)", isTestOnly = true), @example(
 				value = "blend(#red, #blue)", equals = "to a color very close to the purple", isExecutable = false) }),
 		see = { "rgb", "hsb" })

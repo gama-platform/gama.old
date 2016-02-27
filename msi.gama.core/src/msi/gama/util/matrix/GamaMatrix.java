@@ -522,7 +522,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public void removeValues(final IScope scope, final IContainer<?, ?> values) {};
 
 	@Override
-	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {};
+	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {};
 
 	/*
 	 * (non-Javadoc)

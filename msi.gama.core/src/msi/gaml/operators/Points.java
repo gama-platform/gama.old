@@ -149,7 +149,7 @@ public class Points {
 
 	@operator(value = "norm", can_be_const = true, category = IOperatorCategory.POINT,
 			concept = { IConcept.POINT })
-	@doc(value = "the norm of the vector with the coordinnates of the point operand.",
+	@doc(value = "the norm of the vector with the coordinates of the point operand.",
 		examples = @example(value = "norm({3,4})", equals = "5.0"))
 	public static Double norm(final IScope scope, final GamaPoint p) throws GamaRuntimeException {
 		return Maths.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);

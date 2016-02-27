@@ -47,7 +47,7 @@ import msi.gaml.types.*;
 		@facet(name = IKeyword.IN,
 			type = { IType.AGENT },
 			optional = true,
-			doc = @doc("an expresion that is evaluated as an agent that will be the macro-agent in which micro-agent will be released, i.e. their new host")),
+			doc = @doc("an expression that is evaluated as an agent that will be the macro-agent in which micro-agent will be released, i.e. their new host")),
 		@facet(name = IKeyword.RETURNS,
 			type = IType.NEW_TEMP_ID,
 			optional = true,
