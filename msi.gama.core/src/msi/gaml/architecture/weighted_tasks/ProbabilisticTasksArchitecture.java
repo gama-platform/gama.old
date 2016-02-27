@@ -13,6 +13,7 @@ package msi.gaml.architecture.weighted_tasks;
 
 import java.util.*;
 import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -23,10 +24,11 @@ import msi.gaml.compilation.ISymbol;
  * have the same weight, one is randomly chosen each step.
  * 
  * @author drogoul
- * @since 22 d�c. 2011
+ * @since 22 dec. 2011
  * 
  */
-@skill(name = ProbabilisticTasksArchitecture.PT)
+@skill(name = ProbabilisticTasksArchitecture.PT,
+concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED })
 public class ProbabilisticTasksArchitecture extends WeightedTasksArchitecture {
 
 	public final static String PT = "probabilistic_tasks";

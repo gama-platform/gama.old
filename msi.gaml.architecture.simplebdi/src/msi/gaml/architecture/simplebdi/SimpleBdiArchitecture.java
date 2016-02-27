@@ -45,7 +45,7 @@ import msi.gaml.types.*;
 	@var(name = SimpleBdiArchitecture.UNCERTAINTY_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.PLAN_BASE, type = IType.LIST, of = BDIPlanType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.CURRENT_PLAN, type = IType.NONE) })
-@skill(name = SimpleBdiArchitecture.SIMPLE_BDI, concept = { IConcept.BDI, IConcept.SKILL })
+@skill(name = SimpleBdiArchitecture.SIMPLE_BDI, concept = { IConcept.BDI, IConcept.ARCHITECTURE })
 
 public class SimpleBdiArchitecture extends ReflexArchitecture {
 
