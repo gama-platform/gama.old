@@ -170,9 +170,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public BufferedImage getImage() {
+	public BufferedImage getImage(final int w, final int h) {
 		paint();
-		return buffImage;
+		return ImageUtils.resize(buffImage, w, h);
 	}
 
 	/*
@@ -236,14 +236,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	// public void canBeUpdated(final boolean ok) {
 	// needsUpdate = ok;
 	// }
-
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
-	 */
-	@Override
-	public void snapshot() {
-		save(buffImage);
-	}
 
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getWidth()

@@ -11,16 +11,24 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.awt.Color;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import javax.imageio.ImageIO;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerSideControls;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
@@ -31,6 +39,8 @@ import msi.gama.outputs.*;
 import msi.gama.outputs.LayeredDisplayData.*;
 import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.operators.Files;
 
 public abstract class LayeredDisplayView extends GamaViewPart implements DisplayDataListener, IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable {
 
@@ -39,10 +49,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected Composite layersPanel;
 	protected IPerspectiveListener perspectiveListener;
 	protected DisplayOverlay overlay;
-	// protected Integer zoomLevel = null;
 	protected volatile boolean disposed;
 	protected volatile boolean realized = false;
 	protected ToolItem overlayItem;
+	protected final java.awt.Rectangle surfaceCompositeBounds = new java.awt.Rectangle();
 
 	// private LayeredDisplayKeyboardListener globalKeyboardListener;
 
@@ -91,8 +101,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public void ownCreatePartControl(final Composite c) {
 		if ( getOutput() == null ) { return; }
 
-		// Cursor cr = new Cursor(SwtGui.getDisplay(), SWT.CURSOR_WAIT);
-		// c.setCursor(cr);
 		// First create the sashform
 
 		form = new SashForm(c, SWT.HORIZONTAL);
@@ -117,6 +125,15 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		gl.verticalSpacing = 0;
 		parent.setLayout(gl);
 		createSurfaceComposite();
+
+		surfaceComposite.addControlListener(new ControlAdapter() {
+
+			@Override
+			public void controlResized(final ControlEvent e) {
+				Rectangle r = Display.getCurrent().map(surfaceComposite, null, surfaceComposite.getBounds());
+				surfaceCompositeBounds.setBounds(r.x, r.y, r.width, r.height);
+			}
+		});
 
 		// surfaceComposite.addFocusListener(new FocusAdapter() {
 		//
@@ -255,14 +272,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			default:
 				break;
 		}
-		// this.zoomLevel = (int) (zoomLevel * 100);
-		// scope.getGui().asyncRun(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// overlay.update();
-		// }
-		// });
 
 	}
 
@@ -390,7 +399,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					getDisplaySurface().snapshot();
+					doSnapshot();
 				}
 
 			}, SWT.RIGHT);
@@ -447,6 +456,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 					while (!disposed) {
 						if ( s != null ) {
 							acquireLock();
+							if ( getOutput() != null && getOutput().getData().isAutosave() && s.isRealized() ) {
+								doSnapshot();
+							}
 							s.updateDisplay(false);
 						}
 					}
@@ -457,6 +469,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 		if ( output.isSynchronized() ) {
 			s.updateDisplay(false);
+			if ( getOutput().getData().isAutosave() && s.isRealized() ) {
+				doSnapshot();
+			}
 			while (!s.isRendered() && !disposed) {
 				try {
 					Thread.sleep(10);
@@ -471,6 +486,74 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			}
 		}
 
+	}
+
+	private void doSnapshot() {
+		LayeredDisplayData data = getOutput().getData();
+		int w = (int) data.getImageDimension().getX();
+		int h = (int) data.getImageDimension().getY();
+		final int previousWidth = getDisplaySurface().getWidth();
+		final int previousHeight = getDisplaySurface().getHeight();
+		final int width = w == -1 ? previousWidth : w;
+		final int height = h == -1 ? previousHeight : h;
+		BufferedImage snapshot = null;
+		if ( GamaPreferences.DISPLAY_FAST_SNAPSHOT.getValue() ) {
+			try {
+				Robot robot = new Robot();
+				snapshot = robot.createScreenCapture(surfaceCompositeBounds);
+				snapshot = ImageUtils.resize(snapshot, width, height);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		// in case it has not worked, snapshot is still null
+		if ( snapshot == null ) {
+			snapshot = getDisplaySurface().getImage(width, height);
+		}
+		saveSnapshot(getDisplaySurface().getDisplayScope(), snapshot);
+	}
+
+	/**
+	 * Save this surface into an image passed as a parameter
+	 * @param scope
+	 * @param image
+	 */
+	public final void saveSnapshot(final IScope scope, final BufferedImage image) {
+		// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to prevent the exceptions from being masked.
+		if ( image == null ) { return; }
+		try {
+			Files.newFolder(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME);
+		} catch (GamaRuntimeException e1) {
+			e1.addContext("Impossible to create folder " + IDisplaySurface.SNAPSHOT_FOLDER_NAME);
+			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
+			e1.printStackTrace();
+			return;
+		}
+		String snapshotFile = FileUtils.constructAbsoluteFilePath(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME + "/" +
+			GAMA.getModel().getName() + "_display_" + getOutput().getName(), false);
+
+		String file = snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
+			scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
+		DataOutputStream os = null;
+		try {
+			os = new DataOutputStream(new FileOutputStream(file));
+			ImageIO.write(image, "png", os);
+			image.flush();
+		} catch (java.io.IOException ex) {
+			GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
+			e.addContext("Unable to create output stream for snapshot image");
+			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
+		} finally {
+			try {
+				if ( os != null ) {
+					os.close();
+				}
+			} catch (Exception ex) {
+				GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
+				e.addContext("Unable to close output stream for snapshot image");
+				GAMA.reportError(GAMA.getRuntimeScope(), e, false);
+			}
+		}
 	}
 
 	private volatile boolean lockAcquired = false;

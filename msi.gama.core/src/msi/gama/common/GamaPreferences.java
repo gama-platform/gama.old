@@ -463,6 +463,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("core.shared_context",
 		"Enable OpenGL background loading of textures (disable it if you have problems with Intel graphics cards on Linux)",
 		true, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+	public static final Entry<Boolean> DISPLAY_FAST_SNAPSHOT = create("core.fast_snapshot",
+		"Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)",
+		false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 
 	/**
 	 * Default Aspect

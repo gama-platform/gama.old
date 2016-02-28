@@ -1,27 +1,26 @@
 /**
  * Created by drogoul, 9 févr. 2015
- * 
+ *
  */
 package msi.gama.gui.views.actions;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.commands.*;
+import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.commands.GamaColorMenu.IColorRunnable;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.util.GamaColor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
 
 /**
  * Class FontSizer.
- * 
+ *
  * @author drogoul
  * @since 9 févr. 2015
- * 
+ *
  */
 public class BackgroundChooser {
 
@@ -64,9 +63,9 @@ public class BackgroundChooser {
 
 				void changeColor(final int r, final int g, final int b) {
 					colors[index] = GamaColors.get(r, g, b);
-					Image temp = item.getImage();
+					// Image temp = item.getImage();
 					item.setImage(GamaIcons.createTempColorIcon(colors[index]));
-					temp.dispose();
+					// temp.dispose();
 					view.setColor(index, colors[index]);
 				}
 

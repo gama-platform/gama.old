@@ -53,7 +53,7 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	public static final double SELECTION_SIZE = 5; // pixels
 	public static final int MAX_SIZE = Integer.MAX_VALUE; // pixels
 
-	BufferedImage getImage();
+	BufferedImage getImage(int width, int height);
 
 	void dispose();
 
@@ -78,8 +78,6 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	void focusOn(IShape geometry);
 
 	void runAndUpdate(Runnable r);
-
-	void snapshot();
 
 	/**
 	 * @return the width of the panel

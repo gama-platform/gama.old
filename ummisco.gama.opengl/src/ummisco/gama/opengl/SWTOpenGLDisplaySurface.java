@@ -5,10 +5,8 @@
 package ummisco.gama.opengl;
 
 import java.awt.Point;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
-import javax.imageio.ImageIO;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -16,7 +14,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
@@ -28,9 +26,8 @@ import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Cast;
 
 /**
  * Class OpenGLSWTDisplaySurface.
@@ -44,11 +41,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	final GLAnimatorControl animator;
 	final JOGLRenderer renderer;
-	// protected volatile boolean canBeUpdated = true;
 	protected double zoomIncrement = 0.1;
-	// protected Double zoomLevel = null;
 	protected boolean zoomFit = true;
-	// private IZoomListener zoomListener;
 	Map<IEventLayerListener, OwnMouseListener> mouseListeners = new HashMap();
 	final LayeredDisplayOutput output;
 	final LayerManager manager;
@@ -60,8 +54,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	// NEVER USED
 	public SWTOpenGLDisplaySurface(final Object ... objects) {
-		// super((Composite) objects[0], SWT.None);
-		// data = null;
 		parent = null;
 		manager = null;
 		output = null;
@@ -94,7 +86,14 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getImage()
 	 */
 	@Override
-	public BufferedImage getImage() {
+	public BufferedImage getImage(final int w, final int h) {
+		while (renderer.getCurrentScene() == null || !renderer.getCurrentScene().rendered()) {
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		GLAutoDrawable glad = renderer.getDrawable();
 		if ( glad == null || glad.getGL() == null || glad.getGL().getContext() == null ) { return null; }
 		boolean current = glad.getGL().getContext().isCurrent();
@@ -106,7 +105,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if ( !current ) {
 			glad.getGL().getContext().release();
 		}
-		return image;
+		return ImageUtils.resize(image, w, h);
 	}
 
 	/**
@@ -116,30 +115,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void updateDisplay(final boolean force) {
 
-		// acquireLock();
 		boolean oldState = animator.isPaused();
 		if ( force ) {
 			animator.resume();
 		}
-		// canBeUpdated(false);
-		// try {
 		manager.drawLayersOn(renderer);
-
-		if ( output.getData().isAutosave() ) {
-			while (renderer.getCurrentScene() == null || !renderer.getCurrentScene().rendered()) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			snapshot();
-		}
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// } finally {
-		// releaseLock();
-		// }
 
 		// EXPERIMENTAL
 
@@ -155,7 +135,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				animator.pause();
 			}
 		}
-
 	}
 
 	/**
@@ -164,27 +143,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public boolean resizeImage(final int x, final int y, final boolean force) {
-		// if ( !force && x == viewPort.width && y == viewPort.height ) { return true; }
-		// // if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
-		// canBeUpdated(false);
-		// final int[] point = new int[2];
-		// if ( !manager.stayProportional() ) {
-		// point[0] = x;
-		// point[1] = y;
-		// } else {
-		// double widthHeightConstraint = getEnvHeight() / getEnvWidth();
-		// if ( widthHeightConstraint < 1 ) {
-		// point[1] = FastMath.min(y, (int) FastMath.round(x * widthHeightConstraint));
-		// point[0] = FastMath.min(x, (int) FastMath.round(point[1] / widthHeightConstraint));
-		// } else {
-		// point[0] = FastMath.min(x, (int) FastMath.round(y / widthHeightConstraint));
-		// point[1] = FastMath.min(y, (int) FastMath.round(point[0] * widthHeightConstraint));
-		// }
-		// }
-		// viewPort.height = FastMath.max(1, point[1]);;
-		// viewPort.width = FastMath.max(1, point[0]);;
-		// canBeUpdated(true);
-		// setSize(x, y);
 		return true;
 	}
 
@@ -270,52 +228,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			animator.resume();
 			animator.pause();
 		}
-	}
-
-	public final void save(final IScope scope, final RenderedImage image) {
-		// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to prevent the exceptions from being masked.
-		if ( image == null ) { return; }
-		try {
-			Files.newFolder(scope, SNAPSHOT_FOLDER_NAME);
-		} catch (GamaRuntimeException e1) {
-			e1.addContext("Impossible to create folder " + SNAPSHOT_FOLDER_NAME);
-			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
-			e1.printStackTrace();
-			return;
-		}
-		String snapshotFile = FileUtils.constructAbsoluteFilePath(scope,
-			SNAPSHOT_FOLDER_NAME + "/" + GAMA.getModel().getName() + "_display_" + output.getName(), false);
-
-		String file = snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
-			scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
-		DataOutputStream os = null;
-		try {
-			os = new DataOutputStream(new FileOutputStream(file));
-			ImageIO.write(image, "png", os);
-		} catch (java.io.IOException ex) {
-			GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
-			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
-		} finally {
-			try {
-				if ( os != null ) {
-					os.close();
-				}
-			} catch (Exception ex) {
-				GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
-				e.addContext("Unable to close output stream for snapshot image");
-				GAMA.reportError(GAMA.getRuntimeScope(), e, false);
-			}
-		}
-	}
-
-	/**
-	 * Method snapshot()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
-	 */
-	@Override
-	public void snapshot() {
-		save(getDisplayScope(), getImage());
 	}
 
 	/**
@@ -647,7 +559,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void selectSeveralAgents(final Collection<IAgent> agents) {
 
-		// animator.pause();
 		scope.getGui().asyncRun(new Runnable() {
 
 			@Override
@@ -667,7 +578,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					@Override
 					public void menuHidden(final MenuEvent e) {
 						animator.resume();
-						// animator.resume();
 					}
 
 					@Override
@@ -676,10 +586,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					}
 				});
 				menu.setVisible(true);
-
-				// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :
-				// http://www.eclipse.org/forums/index.php/t/208284/
-				// retryVisible(menu, MAX_RETRIES);
 			}
 		});
 
@@ -807,7 +713,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public boolean isRealized() {
-		return this.animator != null;
+		if ( renderer == null ) { return false; }
+		GLAutoDrawable d = renderer.getDrawable();
+		if ( d == null ) { return false; }
+		return d.isRealized();
 	}
 
 	@Override

@@ -582,7 +582,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	public BufferedImage getImage() {
-		return surface == null ? null : surface.getImage();
+		return surface == null ? null : surface.getImage(surface.getWidth(), surface.getHeight());
+	}
+
+	public BufferedImage getImage(final int w, final int h) {
+		return surface == null ? null : surface.getImage(w, h);
 	}
 
 	private void setBackgroundColor(final Color background) {

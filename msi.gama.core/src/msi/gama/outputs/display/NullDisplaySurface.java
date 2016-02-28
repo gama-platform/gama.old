@@ -38,7 +38,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getImage()
 	 */
 	@Override
-	public BufferedImage getImage() {
+	public BufferedImage getImage(final int w, final int h) {
 		return null;
 	}
 
@@ -106,13 +106,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void focusOn(final IShape geometry) {}
-
-	/**
-	 * Method snapshot()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
-	 */
-	@Override
-	public void snapshot() {}
 
 	/**
 	 * Method getWidth()

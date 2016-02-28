@@ -14,15 +14,14 @@ package msi.gama.gui.displays.awt;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.*;
@@ -31,9 +30,8 @@ import msi.gama.outputs.display.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.fastmaths.*;
 
 @display("java2D")
@@ -46,7 +44,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	protected IGraphics iGraphics;
 
 	protected DisplaySurfaceMenu menuManager;
-	protected volatile boolean canBeUpdated = true;
 	protected IExpression temp_focus;
 
 	protected Dimension previousPanelSize;
@@ -154,81 +151,36 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		// super.setFont(null);
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
-	 */
 	@Override
-	public void snapshot() {
-		// TODO DEBUG
-		this.getVisibleRegionForLayer(manager.getItems().get(0));
-		LayeredDisplayData data = output.getData();
-		if ( data.getImageDimension().getX() == -1 && data.getImageDimension().getY() == -1 ) {
-			save(getDisplayScope(), getImage());
-			return;
-		}
+	public BufferedImage getImage(final int w, final int h) {
+		final int previousWidth = getWidth();
+		final int previousHeight = getHeight();
+		final int width = w == -1 ? previousWidth : w;
+		final int height = h == -1 ? previousHeight : h;
+		final BufferedImage newImage = ImageUtils.createCompatibleImage(width, height);
+		final Graphics g = newImage.getGraphics();
 
-		final BufferedImage newImage =
-			ImageUtils.createCompatibleImage(data.getImageDimension().getX(), data.getImageDimension().getY());
-		final IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
-		tempGraphics.fillBackground(getBackground(), 1);
-		manager.drawLayersOn(tempGraphics);
-		save(getDisplayScope(), newImage);
-		newImage.flush();
-
-	}
-
-	/**
-	 * Save this surface into an image passed as a parameter
-	 * @param scope
-	 * @param image
-	 */
-	public final void save(final IScope scope, final RenderedImage image) {
-		// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to prevent the exceptions from being masked.
-		if ( image == null ) { return; }
-		try {
-			Files.newFolder(scope, SNAPSHOT_FOLDER_NAME);
-		} catch (GamaRuntimeException e1) {
-			e1.addContext("Impossible to create folder " + SNAPSHOT_FOLDER_NAME);
-			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
-			e1.printStackTrace();
-			return;
-		}
-		String snapshotFile = FileUtils.constructAbsoluteFilePath(scope,
-			SNAPSHOT_FOLDER_NAME + "/" + GAMA.getModel().getName() + "_display_" + output.getName(), false);
-
-		String file = snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
-			scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
-		DataOutputStream os = null;
-		try {
-			os = new DataOutputStream(new FileOutputStream(file));
-			ImageIO.write(image, "png", os);
-		} catch (java.io.IOException ex) {
-			GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
-			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
-		} finally {
+		while (!rendered) {
 			try {
-				if ( os != null ) {
-					os.close();
-				}
-			} catch (Exception ex) {
-				GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
-				e.addContext("Unable to close output stream for snapshot image");
-				GAMA.reportError(GAMA.getRuntimeScope(), e, false);
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
-	}
-	//
-	// @Override
-	// public InputContext getInputContext() {
-	// return null;
-	// }
+		try {
+			EventQueue.invokeAndWait(new Runnable() {
 
-	@Override
-	public void removeNotify() {
-		// dispose();
-		super.removeNotify();
-		// OutputSynchronizer.decClosingViews(getOutput().getName());
+				@Override
+				public void run() {
+					resizeImage(width, height, false);
+					paintComponent(g);
+					resizeImage(previousWidth, previousHeight, false);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			e.printStackTrace();
+		}
+		return newImage;
 	}
 
 	protected void scaleOrigin() {
@@ -250,11 +202,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		return getOrigin().y;
 	}
 
-	@Override
-	public BufferedImage getImage() {
-		return null;
-	}
-
 	void setOrigin(final int x, final int y) {
 		viewPort.x = x;
 		viewPort.y = y;
@@ -267,27 +214,26 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		rendered = false;
 		if ( temp_focus != null ) {
 			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()), false);
-			if ( geometry != null ) {
-				Rectangle2D r = this.getManager().focusOn(geometry, this);
-				if ( r == null ) { return; }
-				double xScale = getWidth() / r.getWidth();
-				double yScale = getHeight() / r.getHeight();
-				double zoomFactor = FastMath.min(xScale, yScale);
-				Point center = new Point((int) FastMath.round(r.getCenterX()), (int) FastMath.round(r.getCenterY()));
-
-				zoomFactor = applyZoom(zoomFactor);
-				center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
-				centerOnDisplayCoordinates(center);
-			}
 			temp_focus = null;
+			focusOn(geometry);
 		}
 		repaint();
+	}
 
-		// else {
-		// EventQueue.invokeLater(displayRunnable);
-		// }
+	@Override
+	public void focusOn(final IShape geometry) {
+		Rectangle2D r = this.getManager().focusOn(geometry, this);
+		if ( r == null ) { return; }
+		double xScale = getWidth() / r.getWidth();
+		double yScale = getHeight() / r.getHeight();
+		double zoomFactor = FastMath.min(xScale, yScale);
+		Point center = new Point((int) FastMath.round(r.getCenterX()), (int) FastMath.round(r.getCenterY()));
 
-		// EXPERIMENTAL
+		zoomFactor = applyZoom(zoomFactor);
+		center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
+		centerOnDisplayCoordinates(center);
+
+		updateDisplay(true);
 	}
 
 	@Override
@@ -339,17 +285,12 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if ( x < 10 || y < 10 ) { return false; }
 		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
 		// java.lang.System.out.println("Resize display : " + x + " " + y);
-		try {
-			canBeUpdated = false;
-			int[] point = computeBoundsFrom(x, y);
-			int imageWidth = CmnFastMath.max(1, point[0]);
-			int imageHeight = CmnFastMath.max(1, point[1]);
-			setDisplayHeight(imageHeight);
-			setDisplayWidth(imageWidth);
-			iGraphics = new AWTDisplayGraphics(this, (Graphics2D) this.getGraphics());
-		} finally {
-			canBeUpdated = true;
-		}
+		int[] point = computeBoundsFrom(x, y);
+		int imageWidth = CmnFastMath.max(1, point[0]);
+		int imageHeight = CmnFastMath.max(1, point[1]);
+		setDisplayHeight(imageHeight);
+		setDisplayWidth(imageWidth);
+		iGraphics = new AWTDisplayGraphics(this, (Graphics2D) this.getGraphics());
 		return true;
 
 	}
@@ -357,16 +298,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void paintComponent(final Graphics g) {
 		realized = true;
-		// java.lang.System.out.println("Bounds:" + getBounds() + "Origin:" + getOrigin() + "Display size" +
-		// (int) getDisplayWidth() + "x" + (int) getDisplayHeight());
 		if ( iGraphics == null ) { return; }
 		super.paintComponent(g);
-		if ( output.getData().isAutosave() ) {
-			snapshot();
-		}
 		Graphics2D g2d =
 			(Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) getDisplayWidth(), (int) getDisplayHeight());
-
 		getIGraphics().setGraphics2D(g2d);
 		getIGraphics().setUntranslatedGraphics2D((Graphics2D) g);
 		manager.drawLayersOn(iGraphics);
@@ -647,22 +582,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			}
 		}
 		return real_factor;
-	}
-
-	@Override
-	public void focusOn(final IShape geometry) {
-		Rectangle2D r = this.getManager().focusOn(geometry, this);
-		if ( r == null ) { return; }
-		double xScale = getWidth() / r.getWidth();
-		double yScale = getHeight() / r.getHeight();
-		double zoomFactor = FastMath.min(xScale, yScale);
-		Point center = new Point((int) FastMath.round(r.getCenterX()), (int) FastMath.round(r.getCenterY()));
-
-		zoomFactor = applyZoom(zoomFactor);
-		center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
-		centerOnDisplayCoordinates(center);
-
-		updateDisplay(true);
 	}
 
 	private void centerOnViewCoordinates(final Point p) {
