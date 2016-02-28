@@ -13,20 +13,34 @@ package msi.gama.gui.views;
 
 import javax.swing.JComponent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
+import msi.gama.gui.displays.awt.*;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.swing.*;
+import msi.gama.gui.swt.swing.SwingControl;
 import msi.gama.runtime.GAMA;
 
-public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider {
+public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvider */ {
 
 	public static final String ID = IGui.LAYER_VIEW_ID;
 
+	@Override
+	public Java2DDisplaySurface getDisplaySurface() {
+		return (Java2DDisplaySurface) super.getDisplaySurface();
+	}
+
+	// protected Composite createSurfaceCompositeSimple() {
+	// if ( getOutput() == null ) { return null; }
+	// surfaceComposite = new Composite(parent, SWT.EMBEDDED | SWT.NO_BACKGROUND);
+	// Frame frame = SWT_AWT.new_Frame(surfaceComposite);
+	// frame.setVisible(true);
+	// frame.add(getDisplaySurface());
+	// return surfaceComposite;
+	// }
+
+	// @Override
 	@Override
 	protected Composite createSurfaceComposite() {
 		if ( getOutput() == null ) { return null; }
@@ -61,16 +75,16 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			protected JComponent createSwingComponent() {
-				final JComponent frameAwt = (JComponent) getDisplaySurface();
-				frameAwt.addMouseMotionListener(mlAwt2);
-				return frameAwt;
+				final JComponent component = getDisplaySurface();
+				component.addMouseMotionListener(mlAwt2);
+				return component;
 			}
 
 			@Override
 			public Composite getLayoutAncestor() {
-				// Seems necessary to return null for OpenGL displays to show up and call init on the
-				// renderer
+				// AD 02/16 Seems necessary to return null for displays to show up and correctly initialize their graphics environment
 				return null;
+				// return parent;
 			}
 
 			@Override
@@ -80,7 +94,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			public boolean isAWTPermanentFocusLossForced() {
-				return false;
+				return true;
 			}
 
 			@Override
@@ -88,17 +102,19 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
 					overlay.setVisible(true);
 				}
+				System.out.println("afterComponentCreatedSWTThread on " + AWTDisplayView.this.getPartName());
 				WorkaroundForIssue1353.installOn(surfaceComposite, AWTDisplayView.this);
 			}
 
 			@Override
 			public void afterComponentCreatedAWTThread() {
+
 				// if ( !isOpenGL ) {
 				// Deferred to the OpenGL renderer to signify its initialization
 				// see JOGLAWTGLRendered.init()
 				// OutputSynchronizer.decInitializingViews(outputName);
 				// }
-
+				System.out.println("afterComponentCreatedAWTThread on " + AWTDisplayView.this.getPartName());
 				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
@@ -139,53 +155,57 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
 		return surfaceComposite;
 	}
+	//
+	// @Override
+	// public void fixSize() {
+	//
+	// // AD: Reworked to address Issue 535. It seems necessary to read the size of the composite inside an SWT
+	// // thread and run the sizing inside an AWT thread
+	// GAMA.getGui().asyncRun(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// if ( parent.isDisposed() ) { return; }
+	// final org.eclipse.swt.graphics.Rectangle r = parent.getBounds();
+	//
+	// java.awt.EventQueue.invokeLater(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// if ( surfaceComposite == null ) { return; }
+	// ((JComponent) getDisplaySurface()).setBounds(r.x, r.y, r.width, r.height);
+	// // ((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
+	// getDisplaySurface().resizeImage(r.width, r.height, true);
+	// // getDisplaySurface().updateDisplay(true);
+	//
+	// GAMA.getGui().asyncRun(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// parent.layout(true, true);
+	// System.out.println("After fixSize:" + getDisplaySurface().getWidth() + " " +
+	// getDisplaySurface().getHeight());
+	// getDisplaySurface().zoomFit();
+	// }
+	// });
+	// }
+	// });
+	//
+	// }
+	//
+	// });
+	// }
 
-	@Override
-	public void fixSize() {
-
-		// AD: Reworked to address Issue 535. It seems necessary to read the size of the composite inside an SWT
-		// thread and run the sizing inside an AWT thread
-		OutputSynchronizer.cleanResize(new Runnable() {
-
-			@Override
-			public void run() {
-				if ( parent.isDisposed() ) { return; }
-				final Rectangle r = parent.getBounds();
-
-				java.awt.EventQueue.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-						if ( surfaceComposite == null ) { return; }
-						((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
-						getDisplaySurface().resizeImage(r.width, r.height, false);
-						getDisplaySurface().updateDisplay(true);
-
-						GAMA.getGui().run(new Runnable() {
-
-							@Override
-							public void run() {
-								parent.layout(true, true);
-							}
-						});
-					}
-				});
-
-			}
-
-		});
-	}
-
-	@Override
-	public int getSizeFlags(final boolean width) {
-		return SWT.MIN;
-	}
-
-	@Override
-	public int computePreferredSize(final boolean width, final int availableParallel, final int availablePerpendicular,
-		final int preferredResult) {
-		return 600;
-	}
+	// @Override
+	// public int getSizeFlags(final boolean width) {
+	// return SWT.MIN;
+	// }
+	//
+	// @Override
+	// public int computePreferredSize(final boolean width, final int availableParallel, final int availablePerpendicular,
+	// final int preferredResult) {
+	// return 600;
+	// }
 
 	/**
 	 * Method zoomWhenScrolling()
@@ -194,5 +214,29 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 	@Override
 	public boolean zoomWhenScrolling() {
 		return true;
+	}
+
+	/**
+	 * Wait for the AWT environment is completely initialized, preventing a thread lock when two views want to open at the same time. Must not be called in neither the AWT or the SWT thread. A
+	 * configurable timeout is applied, so that other views are not blocked. It remains to be seen what to do if this times out, as we should normally cancel the view.
+	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
+	 */
+
+	public static long REALIZATION_TIME_OUT = 2000;
+
+	@Override
+	public void waitToBeRealized() {
+		long start = System.currentTimeMillis();
+		boolean openable = false;
+		while (!openable) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			long now = System.currentTimeMillis();
+			openable = now - start > REALIZATION_TIME_OUT || this.getDisplaySurface().isRealized();
+		}
+
 	}
 }

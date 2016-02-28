@@ -1,23 +1,23 @@
-/*********************************************************************************************
- * 
+/*******************************************************************************
+ * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * 'LookAndFeelHandler.java', in plugin 'msi.gama.application', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ * Contributors:
+ * SAS Institute Inc. - initial API and implementation
+ * ILOG S.A. - initial API and implementation
+ *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
 import java.awt.*;
 import java.io.PrintStream;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 
 /**
  * This class deals with the customization of the look&amp;feel
@@ -97,13 +97,17 @@ public class LookAndFeelHandler {
 
 	/**
 	 * Specifies which look&amp;feel should be used.
-	 * @param choice Either a class name, such as <code>"javax.swing.plaf.metal.MetalLookAndFeel"</code>,
+	 * @param choice Either a class name, such as
+	 *            <code>"javax.swing.plaf.metal.MetalLookAndFeel"</code>,
 	 *            <code>"com.sun.java.swing.plaf.windows.WindowsLookAndFeel"</code>,
 	 *            <code>"com.sun.java.swing.plaf.gtk.GTKLookAndFeel"</code>,
 	 *            <code>"com.sun.java.swing.plaf.motif.MotifLookAndFeel"</code>,
 	 *            <code>"apple.laf.AquaLookAndFeel"</code>,
-	 *            or one of the shorthands {@link #LAFChoiceSwingDefault}, {@link #LAFChoiceCrossPlatform},
-	 *            {@link #LAFChoiceNativeSystem}, {@link #LAFChoiceNativeSystemPreferGtk},
+	 *            or one of the shorthands
+	 *            {@link #LAFChoiceSwingDefault},
+	 *            {@link #LAFChoiceCrossPlatform},
+	 *            {@link #LAFChoiceNativeSystem},
+	 *            {@link #LAFChoiceNativeSystemPreferGtk},
 	 *            {@link #LAFChoiceNativeSystemNoGtk}.
 	 */
 	public void setLAFChoice(final String choice) {
@@ -130,12 +134,15 @@ public class LookAndFeelHandler {
 	 * Configures automatic propagation of changes to the SWT default font to
 	 * the underlying Swing look and feel.
 	 * <p>
-	 * The default value of this flag is <code>true</code>. Normally, this ensures that Swing fonts will closely match
-	 * the corresponding SWT fonts, and that changes to the system font settings will be obeyed by both Swing and SWT.
-	 * However, Swing does not render certain fonts very well (e.g. the default "Segoe UI" font in Windows Vista).
-	 * Setting the flag to <code>false</code> will disable the propagation in cases where the Swing rendering is not
-	 * acceptable, and Swing will use its default fonts. Note, however, that if propagation is disabled, changes to
-	 * system font settings may not be detected by Swing.
+	 * The default value of this flag is <code>true</code>.
+	 * Normally, this ensures that Swing fonts will closely match the
+	 * corresponding SWT fonts, and that changes to the system font settings
+	 * will be obeyed by both Swing and SWT. However, Swing does not render
+	 * certain fonts very well (e.g. the default "Segoe UI" font in Windows
+	 * Vista). Setting the flag to <code>false</code> will disable the
+	 * propagation in cases where the Swing rendering is not acceptable, and
+	 * Swing will use its default fonts. Note, however, that if propagation is
+	 * disabled, changes to system font settings may not be detected by Swing.
 	 * 
 	 * @param val boolean flag. If <code>true</code>, default fonts will be
 	 *            propagated to Swing.
@@ -146,7 +153,8 @@ public class LookAndFeelHandler {
 
 	/**
 	 * Returns whether Swing's default tooltip behavior will be changed to
-	 * be more consistent with SWT. See {@link #setTooltipAlwaysShown(boolean)} for more information.
+	 * be more consistent with SWT. See {@link #setTooltipAlwaysShown(boolean)}
+	 * for more information.
 	 * 
 	 * @return the current isTooltipAlwaysShown flag
 	 */
@@ -162,8 +170,9 @@ public class LookAndFeelHandler {
 	 * the window is inactive. This makes the Swing tooltips more consistent
 	 * with SWT tooltips.
 	 * <p>
-	 * Note: This change of behavior currently works only on JDK 1.6 and higher. See sun bug <a
-	 * href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6178004"> 6178004</a>
+	 * Note: This change of behavior currently works only on JDK 1.6 and higher.
+	 * See sun bug <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6178004">
+	 * 6178004</a>
 	 * 
 	 * @param isTooltipAlwaysShown the new isTooltipAlwaysShown value to set
 	 */
@@ -180,8 +189,8 @@ public class LookAndFeelHandler {
 	 * Sets the desired look&amp;feel.
 	 * @see #setLAFChoice(String)
 	 */
-	public void setLookAndFeel() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-		UnsupportedLookAndFeelException {
+	public void setLookAndFeel()
+		throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
 		if ( isTooltipAlwaysShown ) {
@@ -228,8 +237,8 @@ public class LookAndFeelHandler {
 		doSetLookAndFeel(laf);
 	}
 
-	private static void doSetLookAndFeel(final String laf) throws ClassNotFoundException, InstantiationException,
-		IllegalAccessException, UnsupportedLookAndFeelException {
+	private static void doSetLookAndFeel(final String laf)
+		throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 		// Although UIManager.setLookAndFeel is specified to throw an
 		// UnsupportedLookAndFeelException when the look&feel is not supported,
 		// the com.sun.java.swing.plaf.gtk.GTKParser of JDK 1.5.0 reports
@@ -285,7 +294,8 @@ public class LookAndFeelHandler {
 	/**
 	 * Propagates the default SWT font to the Swing look&feel,
 	 * if allowed by {@link #isSwtDefaultFontPropagated()}.
-	 * In this implementation, this method calls the {@link #updateLookAndFeelFonts(java.awt.Font)} method.
+	 * In this implementation, this method calls the
+	 * {@link #updateLookAndFeelFonts(java.awt.Font)} method.
 	 * @param swtFont The default SWT font.
 	 * @param swtFontData Result of <code>swtFont.getFontData()</code>,
 	 *            obtained on the SWT event thread.
@@ -361,7 +371,8 @@ public class LookAndFeelHandler {
 	 *            or inherited) is already the same as the given
 	 *            foreground color.
 	 */
-	public void propagateSwtForeground(final Component component, final Color foreground, final boolean preserveDefaults) {
+	public void propagateSwtForeground(final Component component, final Color foreground,
+		final boolean preserveDefaults) {
 		assert EventQueue.isDispatchThread();
 		assert component != null;
 
@@ -382,7 +393,8 @@ public class LookAndFeelHandler {
 	 *            or inherited) is already the same as the given
 	 *            background color.
 	 */
-	public void propagateSwtBackground(final Component component, final Color background, final boolean preserveDefaults) {
+	public void propagateSwtBackground(final Component component, final Color background,
+		final boolean preserveDefaults) {
 		assert EventQueue.isDispatchThread();
 		assert component != null;
 

@@ -430,6 +430,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
+	public void open() {
+		super.open();
+		view.waitToBeRealized();
+	}
+
+	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		for ( final ILayerStatement layer : getLayers() ) {
 			getScope().step(layer);
@@ -504,26 +510,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			getScope().step(overlayInfo);
 		}
 
-		if ( isSynchronized() ) {
-			surface.updateDisplay(false);
-		} else {
-			super.update();
-		}
+		// if ( isSynchronized() ) {
+		// surface.updateDisplay(false);
+		// } else {
+		super.update();
+		// }
 
 	}
-
-	// private void computeTrace(final IScope scope) {
-	// final IExpression agg = getFacet(IKeyword.TRACE);
-	// if ( agg != null ) {
-	// int limit = 0;
-	// if ( agg.getType().id() == IType.BOOL && Cast.asBool(scope, agg.value(scope)) ) {
-	// limit = Integer.MAX_VALUE;
-	// } else {
-	// limit = Cast.asInt(scope, agg.value(scope));
-	// }
-	// this.data.setTraceDisplay(limit);
-	// }
-	// }
 
 	public boolean shouldDisplayScale() {
 		return data.isDisplayScale();
@@ -538,7 +531,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( disposed ) { return; }
 		setSynchronized(false);
 		super.dispose();
-		if ( surface != null && !surface.isDisposed() ) {
+		if ( surface != null ) {
 			surface.dispose();
 		}
 		surface = null;

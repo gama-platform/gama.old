@@ -290,4 +290,15 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 		}
 	}
 
+	/**
+	 * By default, no temporization is applied
+	 * Method waitToBeRealized()
+	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
+	 */
+
+	@Override
+	public void waitToBeRealized() {
+
+	}
+
 }

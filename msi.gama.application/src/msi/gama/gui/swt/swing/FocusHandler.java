@@ -1,14 +1,14 @@
-/*********************************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- *
- * 'FocusHandler.java', in plugin 'msi.gama.application', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Contributors:
+ * SAS Institute Inc. - initial API and implementation
+ * ILOG S.A. - initial API and implementation
+ *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
 import java.awt.*;
@@ -24,7 +24,6 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 
 public class FocusHandler {
 
@@ -32,6 +31,7 @@ public class FocusHandler {
 
 	// Whether to print debugging information regarding focus events.
 	public static final boolean verboseFocusEvents = false;
+	public static final boolean verboseKFHEvents = false;
 	public static final boolean verboseTraverseOut = false;
 
 	// synthesizeWindowActivation method on the frame's class (Win32 only,
@@ -56,10 +56,10 @@ public class FocusHandler {
 	private boolean pendingDeactivate = false;
 
 	// Listeners
-	// private final KeyEventDispatcher keyEventDispatcher = new AwtKeyDispatcher();
-	// private final WindowFocusListener awtWindowFocusListener = new AwtWindowFocusListener();
-	// private final FocusListener swtFocusListener = new SwtFocusListener();
-	// private final Listener swtEventFilter = new SwtEventFilter();
+	private final KeyEventDispatcher keyEventDispatcher = new AwtKeyDispatcher();
+	private final WindowFocusListener awtWindowFocusListener = new AwtWindowFocusListener();
+	private final FocusListener swtFocusListener = new SwtFocusListener();
+	private final Listener swtEventFilter = new SwtEventFilter();
 
 	public FocusHandler(final SwingControl swingControl, final GlobalFocusHandler globalHandler,
 		final Composite borderless, final Frame frame) {
@@ -77,24 +77,20 @@ public class FocusHandler {
 
 		getSynthesizeMethod(frame.getClass());
 
-		// globalHandler.addEventFilter(swtEventFilter);
+		globalHandler.addEventFilter(swtEventFilter);
 
-		// frame.addWindowFocusListener(awtWindowFocusListener);
-		// KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
+		frame.addWindowFocusListener(awtWindowFocusListener);
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
 
-		// borderless.addFocusListener(swtFocusListener);
+		borderless.addFocusListener(swtFocusListener);
 
-	}
-
-	private boolean isWin32() {
-		return true; // Platform.isWin32();
 	}
 
 	public void dispose() {
-		// globalHandler.removeEventFilter(swtEventFilter);
-		// frame.removeWindowFocusListener(awtWindowFocusListener);
-		// KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(keyEventDispatcher);
-		// borderless.removeFocusListener(swtFocusListener);
+		globalHandler.removeEventFilter(swtEventFilter);
+		frame.removeWindowFocusListener(awtWindowFocusListener);
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(keyEventDispatcher);
+		borderless.removeFocusListener(swtFocusListener);
 	}
 
 	// ================
@@ -194,7 +190,7 @@ public class FocusHandler {
 				trace("Processing typeahead traversals, count=" + extraTabCount);
 			}
 			int direction = extraTabCount > 0 ? SWT.TRAVERSE_TAB_NEXT : SWT.TRAVERSE_TAB_PREVIOUS;
-			swtTraverse(direction, CmnFastMath.abs(extraTabCount), true);
+			swtTraverse(direction, Math.abs(extraTabCount), true);
 		}
 		pendingTraverseOut = false;
 		currentTraverseOutSeqNum++;
@@ -259,10 +255,10 @@ public class FocusHandler {
 				// so none of this code is ever executed.
 				adjustFocusForSwtTraversal(direction);
 			}
-			//
-			// if ( verboseTraverseOut && !traverse ) {
-			// trace("traverse failed, from=" + focusControl);
-			// }
+
+			if ( verboseTraverseOut && !traverse ) {
+				trace("traverse failed, from=" + focusControl);
+			}
 		}
 	}
 
@@ -294,13 +290,14 @@ public class FocusHandler {
 	 * workaround bugs in earlier (pre-3.4) versions of SWT, and to handle cases
 	 * where the Composite is not properly activated/deactivated, even today. See
 	 * the callers of this method for more information.
-	 *
-	 * @param activate <code>true</code> if the embedded frame whould be activated; <code>false</code> otherwise
+	 * 
+	 * @param activate <code>true</code> if the embedded frame whould be activated;
+	 *            <code>false</code> otherwise
 	 * @return
 	 */
 	protected void synthesizeWindowActivation(final boolean activate) {
 		assert Display.getCurrent() != null; // On SWT event thread
-		assert isWin32(); // Only done on Windows
+		assert Platform.isWin32(); // Only done on Windows
 
 		EventQueue.invokeLater(new Runnable() {
 
@@ -314,7 +311,7 @@ public class FocusHandler {
 							if ( verboseFocusEvents ) {
 								trace("Calling synthesizeWindowActivation(" + activate + ")");
 							}
-							synthesizeMethod.invoke(frame, new Object[] { activate });
+							synthesizeMethod.invoke(frame, new Object[] { new Boolean(activate) });
 						}
 					} catch (IllegalAccessException e) {
 						handleSynthesizeException(e);
@@ -335,7 +332,7 @@ public class FocusHandler {
 	}
 
 	private void getSynthesizeMethod(final Class clazz) {
-		if ( isWin32() && !synthesizeMethodInitialized ) {
+		if ( Platform.isWin32() && !synthesizeMethodInitialized ) {
 			synthesizeMethodInitialized = true;
 			try {
 				synthesizeMethod = clazz.getMethod("synthesizeWindowActivation", new Class[] { boolean.class });
@@ -467,12 +464,12 @@ public class FocusHandler {
 		// the deactivation altogether, the subsequent Activate triggered by this event, does
 		// nothing and the embedded frame never gets focus. So we do the deactivate right here,
 		// just before the activation.
-		if ( isWin32() && pendingDeactivate ) {
+		if ( Platform.isWin32() && pendingDeactivate ) {
 			synthesizeWindowActivation(false);
 			pendingDeactivate = false;
 		}
 
-		if ( isWin32() && synthesizeMethod != null ) {
+		if ( Platform.isWin32() && synthesizeMethod != null ) {
 			// Activate the window now
 			synthesizeWindowActivation(true);
 		}
@@ -512,7 +509,7 @@ public class FocusHandler {
 
 						// On windows, the actual activation needs to be deferred until doActivation() to
 						// prevent the problem described above, so veto the activation normally done by SWT_AWT.
-						if ( isWin32() && synthesizeMethod != null ) {
+						if ( Platform.isWin32() && synthesizeMethod != null ) {
 							if ( verboseFocusEvents ) {
 								trace("Consuming SWT.Activate event: " + event);
 							}
@@ -530,7 +527,7 @@ public class FocusHandler {
 						// To work around this problem, we defer the deactivation
 						// of the embedded frame here. See the SWT.Activate case above for processing of the
 						// deferred event.
-						if ( isWin32() && synthesizeMethod != null ) {
+						if ( Platform.isWin32() && synthesizeMethod != null ) {
 							pendingDeactivate = true;
 							// Prevent the SWT_AWT-installed listener from running (and deactivating the frame).
 							if ( verboseFocusEvents ) {
@@ -569,7 +566,7 @@ public class FocusHandler {
 
 		@Override
 		public void windowLostFocus(final WindowEvent e) {
-			if ( isWin32() ) {
+			if ( Platform.isWin32() ) {
 				hideTextSelection();
 				processTypeAheadKeys(pendingTraverseOutSeqNum);
 			}

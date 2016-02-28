@@ -26,7 +26,7 @@ import msi.gama.metamodel.shape.GamaPoint;
  */
 public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListener, MouseMoveListener, MouseTrackListener, MouseWheelListener {
 
-	public final static double INIT_Z_FACTOR = 1.5;
+	public final static double INIT_Z_FACTOR = 1.08;
 
 	// Position, look & up
 

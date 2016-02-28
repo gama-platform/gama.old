@@ -332,7 +332,7 @@ public class EditToolbarFindControls {
 	 * Tests whether each character in the given string is a letter.
 	 *
 	 * @param str
-	 * the string to check
+	 *            the string to check
 	 * @return <code>true</code> if the given string is a word
 	 */
 	private boolean isWord(final String str) {

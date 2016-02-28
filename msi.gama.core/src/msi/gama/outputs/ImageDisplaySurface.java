@@ -45,7 +45,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public static String snapshotFolder = "/tmp/";
 	protected IScope scope;
 	private final LayeredDisplayData data;
-	private boolean disposed;
 
 	public ImageDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
@@ -71,11 +70,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public IScope getDisplayScope() {
 		return scope;
-	}
-
-	@Override
-	public boolean isDisposed() {
-		return disposed;
 	}
 
 	/**
@@ -166,7 +160,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void dispose() {
-		if ( disposed ) { return; }
 		if ( g2 != null ) {
 			g2.dispose();
 		}
@@ -404,7 +397,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
 	 */
 	@Override
-	public IDisplayOutput getOutput() {
+	public LayeredDisplayOutput getOutput() {
 		return output;
 	}
 
@@ -448,20 +441,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void changed(final Changes property, final boolean value) {}
 
 	/**
-	 * Method acquireLock()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#acquireLock()
-	 */
-	@Override
-	public void acquireLock() {}
-
-	/**
-	 * Method releaseLock()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#releaseLock()
-	 */
-	@Override
-	public void releaseLock() {}
-
-	/**
 	 * Method getVisibleRegionForLayer()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getVisibleRegionForLayer(msi.gama.common.interfaces.ILayer)
 	 */
@@ -477,6 +456,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public int getFPS() {
 		return 0;
+	}
+
+	@Override
+	public boolean isRealized() {
+		return true;
 	}
 
 }

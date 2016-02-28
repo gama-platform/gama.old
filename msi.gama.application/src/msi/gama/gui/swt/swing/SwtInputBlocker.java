@@ -1,14 +1,14 @@
-/*********************************************************************************************
- * 
+/*******************************************************************************
+ * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * 'SwtInputBlocker.java', in plugin 'msi.gama.application', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ * Contributors:
+ * SAS Institute Inc. - initial API and implementation
+ * ILOG S.A. - initial API and implementation
+ *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
 import java.util.Stack;
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.*;
  * This class, together with {@link AwtDialogListener}, ensures the proper
  * modal behavior of Swing dialogs when running within a SWT environment.
  * It allows to block SWT input while the AWT/Swing modal dialog is visible.
- * 
+ *
  * @see AwtDialogListener
  */
 public class SwtInputBlocker {
@@ -30,7 +30,7 @@ public class SwtInputBlocker {
 	private Shell shell;
 	private final AwtDialogListener dialogListener;
 	private final Shell parentShell;
-	private Stack /* of Shell */shellsWithActivateListener;
+	private Stack /* of Shell */ shellsWithActivateListener;
 
 	private final Listener activateListener = new Listener() {
 

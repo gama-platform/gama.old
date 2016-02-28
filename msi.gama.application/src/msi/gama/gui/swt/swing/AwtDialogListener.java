@@ -1,20 +1,20 @@
-/*********************************************************************************************
- * 
- * 
- * 'AwtDialogListener.java', in plugin 'msi.gama.application', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+/*******************************************************************************
+ * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * SAS Institute Inc. - initial API and implementation
+ * ILOG S.A. - initial API and implementation
+ *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.swt.widgets.Display;
 
@@ -22,15 +22,15 @@ import org.eclipse.swt.widgets.Display;
  * A listener that insures the proper modal behavior of Swing dialogs when running
  * within a SWT environment. When initialized, it blocks and unblocks SWT input
  * as modal Swing dialogs are shown and hidden.
- * 
+ *
  * @see SwtInputBlocker
  */
 public class AwtDialogListener implements AWTEventListener, ComponentListener, WindowFocusListener {
 
 	private static boolean verboseModalityHandling = false;
 
-	protected static boolean USING_ALWAYS_ON_TOP = Platform.isGtk() &&
-		Platform.JAVA_VERSION >= Platform.javaVersion(1, 5, 0);
+	protected static boolean USING_ALWAYS_ON_TOP =
+		Platform.isGtk() && Platform.JAVA_VERSION >= Platform.javaVersion(1, 5, 0);
 	private static boolean alwaysOnTopMethodsInitialized = false;
 	private static Method setAlwaysOnTopMethod = null;
 	private static Method isAlwaysOnTopMethod = null;
@@ -79,7 +79,7 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 			if ( verboseModalityHandling ) {
 				System.err.println("Calling setAlwaysOnTop(" + onTop + ") for " + window);
 			}
-			setAlwaysOnTopMethod.invoke(window, new Object[] { Boolean.valueOf(onTop) });
+			setAlwaysOnTopMethod.invoke(window, new Object[] { new Boolean(onTop) });
 		} catch (IllegalAccessException e) {
 			handleAlwaysOnTopException(e);
 		} catch (InvocationTargetException e) {

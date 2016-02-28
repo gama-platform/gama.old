@@ -35,7 +35,7 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	static final double MIN_ZOOM_FACTOR = 0.1;
 	static final int MAX_ZOOM_FACTOR = 4;
 
-	public interface OpenGL extends IDisplaySurface/* , IZoomListener */ {
+	public interface OpenGL extends IDisplaySurface {
 
 		/**
 		 * @return the position of the camera
@@ -49,11 +49,6 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 		void selectSeveralAgents(Collection<IAgent> shapes);
 
 	}
-	//
-	// public interface IZoomListener {
-	//
-	// public void newZoomLevel(double zoomLevel);
-	// }
 
 	public static final double SELECTION_SIZE = 5; // pixels
 	public static final int MAX_SIZE = Integer.MAX_VALUE; // pixels
@@ -62,15 +57,13 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	void dispose();
 
-	/** Asks the surface to update its display, optionaly forcing it to do so (if it is paused, for instance) **/
+	/** Asks the surface to update its display, optionnaly forcing it to do so (if it is paused, for instance) **/
 	void updateDisplay(boolean force);
 
 	/**
 	 * @param displaySurfaceMenu
 	 */
 	void setSWTMenuManager(Object displaySurfaceMenu);
-
-	// int[] computeBoundsFrom(int width, int height);
 
 	boolean resizeImage(int width, int height, boolean force);
 
@@ -83,8 +76,6 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	ILayerManager getManager();
 
 	void focusOn(IShape geometry);
-
-	// void canBeUpdated(boolean ok);
 
 	void runAndUpdate(Runnable r);
 
@@ -115,8 +106,6 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	public abstract double getDisplayHeight();
 
-	// public abstract void setZoomListener(IZoomListener listener);
-
 	public ILocation getModelCoordinates();
 
 	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
@@ -133,46 +122,27 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	void setSize(int x, int y);
 
-	// boolean getQualityRendering();
-
 	IScope getDisplayScope();
 
-	IDisplayOutput getOutput();
+	LayeredDisplayOutput getOutput();
 
 	LayeredDisplayData getData();
 
-	/**
-	 * @return
-	 */
-	boolean isDisposed();
-
-	/**
-	 *
-	 */
 	void layersChanged();
-
-	void acquireLock();
-
-	void releaseLock();
 
 	public void addListener(IEventLayerListener e);
 
 	public void removeListener(IEventLayerListener e);
 
-	/**
-	 * @return
-	 */
 	Collection<IEventLayerListener> getLayerListeners();
 
-	/**
-	 * @param currentLayer
-	 * @return
-	 */
 	Envelope getVisibleRegionForLayer(ILayer currentLayer);
+
+	int getFPS();
 
 	/**
 	 * @return
 	 */
-	int getFPS();
+	boolean isRealized();
 
 }

@@ -623,7 +623,10 @@ public class SwtGui extends AbstractGui {
 			if ( partRef.getPart(false) instanceof LayeredDisplayView ) {
 				LayeredDisplayView view = (LayeredDisplayView) partRef.getPart(false);
 				surfaces.add(view.getDisplaySurface());
-				view.fixSize();
+			}
+			if ( partRef.getPart(false) instanceof AWTDisplayView ) {
+				AWTDisplayView view = (AWTDisplayView) partRef.getPart(false);
+				// view.fixSize();
 			}
 
 		}

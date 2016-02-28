@@ -135,15 +135,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 		for ( final IOutput output : list ) {
 
-			/**
-			 * TODO For the moment, the try block fixes issue 470, must be replaced by better solution
-			 */
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-
 			if ( scope.init(output) ) {
 				output.setPaused(false);
 				if ( initialStep(scope, output) ) {
@@ -163,6 +154,10 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			GAMA.startFrontmostExperiment();
 		}
 		return true;
+	}
+
+	private void waitForOutputToBeRealized(final IDisplayOutput output) {
+
 	}
 
 	/**

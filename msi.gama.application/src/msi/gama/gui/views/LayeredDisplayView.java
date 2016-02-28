@@ -152,11 +152,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		overlay = new DisplayOverlay(this, parent, getOutput().getOverlayProvider());
 		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
 		getOutput().getData().addListener(this);
-		// getDisplaySurface().setZoomListener(this);
 		overlay.setVisible(GamaPreferences.CORE_OVERLAY.getValue());
 		if ( overlay.isVisible() ) {
 			overlay.update();
 		}
+		// parent.setLayoutDeferred(false);
 		parent.layout();
 
 		// Create after the surface composite
@@ -180,9 +180,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	@Override
 	public void setFocus() {
-		// if ( surfaceComposite != null ) {
-		// surfaceComposite.forceFocus();
-		// }
+		if ( surfaceComposite != null ) {
+			surfaceComposite.setFocus();
+		}
 	}
 
 	protected abstract Composite createSurfaceComposite();
@@ -211,7 +211,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		}
 		IDisplaySurface s = getDisplaySurface();
 		if ( s != null ) {
-			s.releaseLock();
+			releaseLock();
 		}
 		if ( updateThread != null ) {
 			updateThread.interrupt();
@@ -270,6 +270,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	 * Between 0 and 100;
 	 */
 	public int getZoomLevel() {
+		if ( getOutput() == null ) { return 0; }
 		Double dataZoom = getOutput().getData().getZoomLevel();
 		if ( dataZoom == null ) {
 			return 1;
@@ -332,6 +333,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	public String getOverlayZoomInfo() {
 		IDisplaySurface surface = getDisplaySurface();
+		if ( surface == null ) { return ""; }
 		boolean openGL = isOpenGL();
 		String result = GamaPreferences.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
 		if ( !openGL ) {
@@ -444,7 +446,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 					while (!disposed) {
 						IDisplaySurface s = getDisplaySurface();
 						if ( s != null ) {
-							s.acquireLock();
+							acquireLock();
 							s.updateDisplay(false);
 						}
 					}
@@ -455,10 +457,28 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( updateThread.isAlive() ) {
 			IDisplaySurface s = getDisplaySurface();
 			if ( s != null ) {
-				s.releaseLock();
+				releaseLock();
 			}
 		}
 
+	}
+
+	private volatile boolean lockAcquired = false;
+
+	private synchronized void acquireLock() {
+		while (lockAcquired) {
+			try {
+				wait();
+			} catch (final InterruptedException e) {
+				// e.printStackTrace();
+			}
+		}
+		lockAcquired = true;
+	}
+
+	private synchronized void releaseLock() {
+		lockAcquired = false;
+		notify();
 	}
 
 	public Composite fillLayerSideControls(final Composite parent) {
@@ -533,14 +553,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	 */
 	public void overlayChanged() {
 		overlayItem.setSelection(overlay.isVisible());
-	}
-
-	public boolean isRealized() {
-		return realized;
-	}
-
-	public void setRealized(final boolean r) {
-		realized = r;
 	}
 
 }

@@ -88,7 +88,7 @@ species ant skills: [moving] control: fsm {
 	}
 	aspect text {
 		if use_icons {
-			draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: location size: 5 ;
+			draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: location size: {7,5} ;
 		} else {
 			draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
 		}
@@ -137,9 +137,9 @@ experiment Ant type: gui {
 			}
 //			add length((list(world.ant) collect (each.next_place distance_to each.location)) where (each=x)) to:nbants;
 		}
-		write("nbants"+nbants);
-		write("nbantsbydist"+nbantsbydist);
-		write("states"+statesnames);		
+		//write("nbants"+nbants);
+		//write("nbantsbydist"+nbantsbydist);
+		//write("states"+statesnames);		
 	}
 	output {
 		display Ants type: opengl {

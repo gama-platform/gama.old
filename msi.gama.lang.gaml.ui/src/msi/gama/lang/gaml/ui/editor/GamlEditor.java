@@ -599,11 +599,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		}
 	}
 
-	@Override
-	public void setFocus() {
-		getStyledText().setFocus();
-	}
-	//
+	// @Override
+	// public void setFocus() {
+	// getStyledText().setFocus();
+	// }
+	// //
 	// @Override
 	// public void setToogle(final Action toggle) {}
 

@@ -1,14 +1,14 @@
-/*********************************************************************************************
- * 
+/*******************************************************************************
+ * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * 'FocusDebugging.java', in plugin 'msi.gama.application', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ * Contributors:
+ * SAS Institute Inc. - initial API and implementation
+ * ILOG S.A. - initial API and implementation
+ *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
 import java.awt.*;
@@ -21,15 +21,19 @@ import org.eclipse.swt.widgets.Event;
  * This class contains utility functions for debugging focus issues relating
  * to the SWT_AWT bridge.
  * <p>
- * Debugging focus issues cannot be done in a debugger running on the same machine, because the interactions with the
- * debugger often cause the application window to be deactivated. Therefore a println based approach has been adopted.
+ * Debugging focus issues cannot be done in a debugger running on the same
+ * machine, because the interactions with the debugger often cause the
+ * application window to be deactivated. Therefore a println based approach
+ * has been adopted.
  * <p>
  * There are four kinds of events:
  * <ul>
  * <li>SWT focus events relating to the IlvSwingControl.</li>
- * <li>AWT window focus events relating to the topmost window under the IlvSwingControl.</li>
+ * <li>AWT window focus events relating to the topmost window under the
+ * IlvSwingControl.</li>
  * <li>AWT focus events relating to components inside that window.</li>
- * <li>Property change events of the AWT <code>KeyboardFocusManager</code>.</li>
+ * <li>Property change events of the AWT
+ * <code>KeyboardFocusManager</code>.</li>
  * </ul>
  */
 public class FocusDebugging {
@@ -84,8 +88,8 @@ public class FocusDebugging {
 					name = "Activate";
 					break;
 			}
-			System.err.println("@" + System.currentTimeMillis() + " SWT Event: " + name + " " +
-				System.identityHashCode(event.widget));
+			System.err.println(
+				"@" + System.currentTimeMillis() + " SWT Event: " + name + " " + System.identityHashCode(event.widget));
 		}
 	}
 

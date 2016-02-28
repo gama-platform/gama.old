@@ -1,21 +1,11 @@
-/*********************************************************************************************
- * 
- *
- * 'Platform.java', in plugin 'msi.gama.application', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+/* $Id: Platform.java,v 1.6 2008/04/28 17:17:13 bhaible Exp $ */
 /*******************************************************************************
  * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
@@ -49,10 +39,6 @@ public class Platform {
 
 	public static boolean isCarbon() {
 		return "carbon".equals(platformString); //$NON-NLS-1$
-	}
-
-	public static boolean isCocoa() {
-		return "cocoa".equals(platformString);
 	}
 
 	// Java
@@ -114,11 +100,9 @@ public class Platform {
 	// the internal dependency is localized.
 	public static final int SWT_VERSION = Library.SWT_VERSION;
 	// For the SWT version numbers, look at
-	// <http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.swt/Eclipse SWT
-	// PI/common_j2me/org/eclipse/swt/internal/Library.java?view=log>
+	// <http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.swt/Eclipse SWT PI/common_j2me/org/eclipse/swt/internal/Library.java?view=log>
 	public static final int SWT_33 = swtVersion(3, 346);
 	public static final int SWT_FIX216431 = swtVersion(3, 426); // between 3.4M4 and 3.4M5
-
 	// public static final int SWT_34 = swtVersion(3, 4??);
 
 	private static int swtVersion(final int major, final int minor) {

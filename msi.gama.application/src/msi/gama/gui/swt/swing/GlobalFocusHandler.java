@@ -1,14 +1,3 @@
-/*********************************************************************************************
- *
- *
- * 'GlobalFocusHandler.java', in plugin 'msi.gama.application', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
- **********************************************************************************************/
 package msi.gama.gui.swt.swing;
 
 import java.awt.*;
@@ -24,7 +13,7 @@ import org.eclipse.swt.widgets.Event;
 // on a single SwingControl.
 public class GlobalFocusHandler {
 
-	private static final String SAVED_FOCUS_OWNER_KEY = "msi.gama.gui.swt.swing.experimental.savedFocusOwner";
+	private static final String SAVED_FOCUS_OWNER_KEY = "org.eclipse.albireo.savedFocusOwner";
 	private final Display display;
 	private final SwtEventFilter swtEventFilter;
 	private final List listeners = new ArrayList();
@@ -58,33 +47,33 @@ public class GlobalFocusHandler {
 		return swtEventFilter.activeEmbedded;
 	}
 
-	// public Widget getLastActiveWidget() {
-	// assert Display.getCurrent() != null; // On SWT event thread
-	// return swtEventFilter.lastActiveWidget;
-	// }
+	public Widget getLastActiveWidget() {
+		assert Display.getCurrent() != null; // On SWT event thread
+		return swtEventFilter.lastActiveWidget;
+	}
 
-	// public SwingControl getLastActiveEmbedded() {
-	// assert Display.getCurrent() != null; // On SWT event thread
-	// return swtEventFilter.lastActiveEmbedded;
-	// }
+	public SwingControl getLastActiveEmbedded() {
+		assert Display.getCurrent() != null; // On SWT event thread
+		return swtEventFilter.lastActiveEmbedded;
+	}
 
-	// public boolean getLastActiveFocusCleared() {
-	// assert Display.getCurrent() != null; // On SWT event thread
-	// return swtEventFilter.lastActiveFocusCleared;
-	// }
+	public boolean getLastActiveFocusCleared() {
+		assert Display.getCurrent() != null; // On SWT event thread
+		return swtEventFilter.lastActiveFocusCleared;
+	}
 
-	// public void setLastActiveFocusCleared(final boolean lastActiveFocusCleared) {
-	// assert Display.getCurrent() != null; // On SWT event thread
-	// swtEventFilter.lastActiveFocusCleared = lastActiveFocusCleared;
-	// }
+	public void setLastActiveFocusCleared(final boolean lastActiveFocusCleared) {
+		assert Display.getCurrent() != null; // On SWT event thread
+		swtEventFilter.lastActiveFocusCleared = lastActiveFocusCleared;
+	}
 
-	// public void addEventFilter(final Listener filter) {
-	// listeners.add(filter);
-	// }
-	//
-	// public void removeEventFilter(final Listener filter) {
-	// listeners.remove(filter);
-	// }
+	public void addEventFilter(final Listener filter) {
+		listeners.add(filter);
+	}
+
+	public void removeEventFilter(final Listener filter) {
+		listeners.remove(filter);
+	}
 
 	protected void fireEvent(final Event event) {
 		for ( Iterator iterator = listeners.iterator(); iterator.hasNext(); ) {

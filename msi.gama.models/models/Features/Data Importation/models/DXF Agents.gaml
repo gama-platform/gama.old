@@ -16,7 +16,8 @@ global {
 	init {
 		//create house_element agents from the dxf file and initialized the layer attribute of the agents from the the file
 		create house_element from: house_file with: [layer::string(get("layer"))];
-		
+				create house_element from: house_file with: [layer::string(get("layer"))];
+						create house_element from: house_file with: [layer::string(get("layer"))];
 		//define a random color for each layer
 		map layers <- list(house_element) group_by each.layer;
 		loop la over: layers.keys {
@@ -36,11 +37,11 @@ species house_element {
 
 experiment DXFAgents type: gui {
 	output {
-		display map type: opengl{
+		display map {
 			species house_element;
 		}
 		
-		display "As_Image" type: opengl{
+		display "As_Image" {
 			graphics "House" {
 				draw house_file color: #brown ;
 			}
