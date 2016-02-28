@@ -330,4 +330,13 @@ public class NullDisplaySurface implements IDisplaySurface {
 		return true;
 	}
 
+	/**
+	 * Method isRendered()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#isRendered()
+	 */
+	@Override
+	public boolean isRendered() {
+		return true;
+	}
+
 }

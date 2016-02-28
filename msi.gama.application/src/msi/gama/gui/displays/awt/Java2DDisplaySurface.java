@@ -57,7 +57,9 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	private IScope scope;
 	final DisplayMouseListener listener;
 	int frames;
-	private boolean realized = false;
+	private volatile boolean realized = false;
+	private volatile boolean rendered = false;
+	Map<IEventLayerListener, MouseAdapter> listeners = new HashMap();
 
 	// private boolean alreadyZooming = false;
 
@@ -262,7 +264,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void updateDisplay(final boolean force) {
 		if ( disposed ) { return; }
-
+		rendered = false;
 		if ( temp_focus != null ) {
 			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()), false);
 			if ( geometry != null ) {
@@ -370,6 +372,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		manager.drawLayersOn(iGraphics);
 		g2d.dispose();
 		frames++;
+		rendered = true;
 	}
 
 	AWTDisplayGraphics getIGraphics() {
@@ -537,8 +540,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		GAMA.releaseScope(getDisplayScope());
 		setDisplayScope(null);
 	}
-
-	Map<IEventLayerListener, MouseAdapter> listeners = new HashMap();
 
 	@Override
 	public void addListener(final IEventLayerListener listener) {
@@ -723,6 +724,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public boolean isRealized() {
 		return realized;
+	}
+
+	@Override
+	public boolean isRendered() {
+		return rendered;
 	}
 
 	// Code to use a BufferStrategy instead. Problem is it needs a Canvas, which is difficult to obtain. One possibility could be to directly use SWT_AWT to obtain a Frame and build a Canvas on top of

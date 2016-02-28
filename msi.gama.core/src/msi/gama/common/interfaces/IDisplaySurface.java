@@ -141,8 +141,13 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	int getFPS();
 
 	/**
-	 * @return
+	 * @return true if the surface is considered as "realized" (i.e. displayed on the UI)
 	 */
 	boolean isRealized();
+
+	/**
+	 * @return true if the surface has been "rendered" (i.e. all the layers have been displayed)
+	 */
+	boolean isRendered();
 
 }

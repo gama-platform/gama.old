@@ -37,7 +37,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 	@Override
 	public void setFocus() {
 		if ( surfaceComposite != null ) {
-			surfaceComposite.forceFocus();
+			surfaceComposite.setFocus();
 		}
 	}
 

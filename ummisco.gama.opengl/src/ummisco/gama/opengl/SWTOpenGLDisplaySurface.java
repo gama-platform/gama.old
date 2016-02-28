@@ -810,4 +810,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return this.animator != null;
 	}
 
+	@Override
+	public boolean isRendered() {
+		return renderer.sceneBuffer.getSceneToRender().rendered();
+	}
+
 }

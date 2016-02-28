@@ -68,15 +68,15 @@ public class SceneBuffer {
 		frontScene = backScene;
 		// ... and clear the backScene
 		backScene = null;
-		// If we are synchronized with the simulation, we wait until this new frontScene has been rendered
-		while (renderer.data.isSynchronized() && !frontScene.rendered()) {
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				// e.printStackTrace();
-				return;
-			}
-		}
+		// If we are synchronized with the simulation, we wait until this new frontScene has been rendered. 02/2016 Now taken in charge by the view
+		// while (renderer.data.isSynchronized() && !frontScene.rendered()) {
+		// try {
+		// Thread.sleep(20);
+		// } catch (InterruptedException e) {
+		// // e.printStackTrace();
+		// return;
+		// }
+		// }
 	}
 
 	/**

@@ -438,13 +438,13 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	@Override
 	public void update(final IDisplayOutput output) {
+		final IDisplaySurface s = getDisplaySurface();
 		if ( updateThread == null ) {
 			updateThread = new Thread(new Runnable() {
 
 				@Override
 				public void run() {
 					while (!disposed) {
-						IDisplaySurface s = getDisplaySurface();
 						if ( s != null ) {
 							acquireLock();
 							s.updateDisplay(false);
@@ -454,8 +454,18 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			});
 			updateThread.start();
 		}
-		if ( updateThread.isAlive() ) {
-			IDisplaySurface s = getDisplaySurface();
+
+		if ( output.isSynchronized() ) {
+			s.updateDisplay(false);
+			while (!s.isRendered() && !disposed) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+			}
+		} else if ( updateThread.isAlive() ) {
 			if ( s != null ) {
 				releaseLock();
 			}
