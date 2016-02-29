@@ -1567,7 +1567,7 @@
       <command
             defaultHandler="msi.gama.gui.swt.commands.PlayPauseSimulationHandler"
             id="msi.gama.application.commands.PlaySimulation"
-            name="Play Simulation">
+            name="Play Experiment">
       </command>
       <command
             defaultHandler="msi.gama.gui.swt.commands.PlayPauseSimulationHandler"
