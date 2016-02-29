@@ -1,0 +1,7 @@
+body { 
+  margin:0;
+  padding:0;
+  background: url(welcome.png) no-repeat center fixed; 
+  -webkit-background-size: contain; /* pour anciens Chrome et Safari */
+  background-size: contain; /* version standardisée */
+}
