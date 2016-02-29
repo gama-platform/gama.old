@@ -28,7 +28,7 @@
 ----
 ==General syntax==
 
-A statement represents either a declaration or an imperative command. It consists in a keyword, followed by specific facets, some of them mandatory (in bold), some of them optional. One of the facet names can be ommitted (the one denoted as omissible). It has to be the first one.
+A statement represents either a declaration or an imperative command. It consists in a keyword, followed by specific facets, some of them mandatory (in bold), some of them optional. One of the facet names can be omitted (the one denoted as omissible). It has to be the first one.
 
 {{{
 statement_keyword expression1 facet2: expression2 ... ;

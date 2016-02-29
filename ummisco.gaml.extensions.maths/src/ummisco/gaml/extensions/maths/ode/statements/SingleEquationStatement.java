@@ -59,7 +59,7 @@ concept = { IConcept.EQUATION })
 @doc(
 	value = "Allows to implement an equation in the form function(n, t) = expression. The left function is only here as a placeholder for enabling a simpler syntax and grabbing the variable as its left member.",
 	usages = { @usage(
-		value = "The syntax of the = statement is a bit different from the other statements. It hase to be used as follows (in an equation):",
+		value = "The syntax of the = statement is a bit different from the other statements. It has to be used as follows (in an equation):",
 		examples = { @example(value = "float t;", isExecutable = false),
 			@example(value = "float S;", isExecutable = false), @example(value = "float I;", isExecutable = false),
 			@example(value = "equation SI { ", isExecutable = false),

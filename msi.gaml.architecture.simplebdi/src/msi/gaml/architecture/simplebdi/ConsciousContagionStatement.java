@@ -26,7 +26,7 @@ concept = { IConcept.BDI })
 	@facet(name = ConsciousContagionStatement.EMOTIONDETECTED, type = EmotionType.id,optional = false, doc = @doc("the emotion that will start the contagion")),
 	@facet(name = ConsciousContagionStatement.EMOTIONCREATED, type = EmotionType.id,optional = false, doc = @doc("the emotion that will be created with the contagion")),
 	@facet(name = ConsciousContagionStatement.CHARISMA, type = IType.FLOAT,optional = true, doc = @doc("The charisma value of the perceived agent (between 0 and 1)")),
-	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to get the emotion only with a certian condition")),
+	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to get the emotion only with a certain condition")),
 	@facet(name = ConsciousContagionStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("The threshold value to make the contagion")),
 	@facet(name = ConsciousContagionStatement.RECEPTIVITY, type = IType.FLOAT, optional = true, doc = @doc("The receptivity value of the current agent (between 0 and 1)"))}
 ,omissible = IKeyword.NAME)

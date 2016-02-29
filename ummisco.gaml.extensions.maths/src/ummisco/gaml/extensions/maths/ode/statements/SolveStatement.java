@@ -48,7 +48,7 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 	@facet(name = "discretizing_step",
 		type = IType.INT,
 		optional = true,
-		doc = @doc(value = "number of discret between 2 steps of simulation (default value: 0)")),
+		doc = @doc(value = "number of discrete between 2 steps of simulation (default value: 0)")),
 	@facet(name = "time_initial", type = IType.FLOAT, optional = true, doc = @doc(value = "initial time")),
 	@facet(name = "time_final",
 		type = IType.FLOAT,

@@ -45,7 +45,7 @@ concept = { IConcept.BDI })
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the identifier of the focus")),	
 	@facet(name = FocusStatement.VAR, type = {IType.NONE,IType.LIST,IType.CONTAINER},optional = true, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
 	@facet(name = FocusStatement.EXPRESSION, type = IType.NONE,optional = true, doc = @doc("an expression that will be the value kept in the belief")),
-	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to focus only with a certian condition")),
+	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to focus only with a certain condition")),
 	@facet(name = FocusStatement.PRIORITY, type = {IType.FLOAT,IType.INT}, optional = true, doc = @doc("The priority of the created predicate"))}
 ,omissible = IKeyword.NAME)
 @doc( value = "enables to directly add a belief from the variable of a perceived specie.",

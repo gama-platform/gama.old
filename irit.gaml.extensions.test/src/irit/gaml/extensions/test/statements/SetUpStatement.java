@@ -25,7 +25,7 @@ import msi.gaml.statements.AbstractStatementSequence;
 @symbol(name = { "setup" }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @doc(value="The setup statement is used to define the set of instructions that will be executed before every [#test test].", usages={ 
-	@usage(value="As every test should be independant from the others, the setup will mainly contain initialization of variables that will be used in each test.", examples ={
+	@usage(value="As every test should be independent from the others, the setup will mainly contain initialization of variables that will be used in each test.", examples ={
 		@example(value="species Tester {", isExecutable=false),
 		@example(value="    int val_to_test;", isExecutable=false),
 		@example(value="", isExecutable=false),		

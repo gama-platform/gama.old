@@ -49,7 +49,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.FOCUS,
 		type = IType.GEOMETRY,
 		optional = true,
-		doc = @doc("the geometry (or agent) on which the displau will (dynamically) focus")),
+		doc = @doc("the geometry (or agent) on which the display will (dynamically) focus")),
 	// WARNING VALIDER EN VERIFIANT LE TYPE DU DISPLAY
 	@facet(name = IKeyword.TYPE,
 		type = IType.LABEL,

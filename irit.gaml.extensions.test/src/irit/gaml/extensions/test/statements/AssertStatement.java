@@ -49,7 +49,7 @@ import msi.gaml.types.IType;
 		doc = @doc("\"error\" or \"warning\", used in testing what raises the evaluation of the value: expression")) },
 	omissible = IKeyword.VALUE)
 @inside(symbols = { "test" })
-@doc(value = "Allows to check whether the evaluation of a given expression fulfils a given condition. If it is not fulfilled, an exception is raised.",
+@doc(value = "Allows to check whether the evaluation of a given expression fulfills a given condition. If it is not fulfilled, an exception is raised.",
 	usages = {
 		@usage(value = "if the equals: facet is used, the equality between the evaluation of expressions in the value: and in the equals: facets is tested",
 			examples = @example("assert (2+2) equals: 4;")),
