@@ -156,10 +156,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return true;
 	}
 
-	private void waitForOutputToBeRealized(final IDisplayOutput output) {
-
-	}
-
 	/**
 	 * @param output
 	 * @return

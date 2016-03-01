@@ -92,7 +92,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 					if ( jtsDrawer.renderer.getComputeNormal() ) {
 						int norm_dir = 1;
 						Vertex[] vertices = jtsDrawer.getExteriorRingVertices((Polygon) geometry.geometry);
-						if ( !jtsDrawer.isClockwise(vertices) ) {
+						if ( !JTSDrawer.isClockwise(vertices) ) {
 							norm_dir = -1;
 						}
 						jtsDrawer.drawPolygon(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
@@ -117,7 +117,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 					jtsDrawer.drawPlan(gl, (LineString) geometry.geometry, 0, color, geometry.getBorder(),
 						geometry.getAlpha(), height, 0, true, geometry);
 				} else {
-					jtsDrawer.drawLineString(gl, (LineString) geometry.geometry, 0, renderer.getLineWidth(), color,
+					jtsDrawer.drawLineString(gl, (LineString) geometry.geometry, 0, JOGLRenderer.getLineWidth(), color,
 						geometry.getAlpha());
 				}
 				break;

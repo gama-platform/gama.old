@@ -301,7 +301,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
 		IEObjectDescription e = EObjectDescription.create(t, stub/* , userData */);
-		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+		descriptions.get(eClass).put(e.getName(), e);
 	}
 
 	static void add(final EClass eClass, final String t, final OperatorProto o) {
@@ -317,7 +317,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			doc = new ImmutableMap("type", "operator");
 		}
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
-		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+		descriptions.get(eClass).put(e.getName(), e);
 
 	}
 
@@ -335,7 +335,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			doc = new ImmutableMap("type", keyword);
 		}
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
-		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+		descriptions.get(eClass).put(e.getName(), e);
 
 	}
 
@@ -352,7 +352,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			doc = new ImmutableMap("type", "action");
 		}
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
-		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+		descriptions.get(eClass).put(e.getName(), e);
 
 	}
 
@@ -363,7 +363,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		String d = IExpressionFactory.UNITS_EXPR.get(t).getDocumentation();
 		Map<String, String> doc = new ImmutableMap("title", d, "type", "unit");
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
-		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+		descriptions.get(eClass).put(e.getName(), e);
 
 	}
 
@@ -374,7 +374,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		resources.get(eClass).getContents().add(stub);
 		Map<String, String> doc = new ImmutableMap("title", "Type " + type, "type", "type");
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
-		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+		descriptions.get(eClass).put(e.getName(), e);
 
 	}
 

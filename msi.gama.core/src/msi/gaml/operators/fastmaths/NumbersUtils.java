@@ -2357,30 +2357,6 @@ public final class NumbersUtils {
 
 	private NumbersUtils() {}
 
-	/*
-	 *
-	 */
-
-	/**
-	 * Had such isInXXX methods, and corresponding checkXXX methods,
-	 * but they seem actually slower in practice, so just keeping this
-	 * code here in case some day it becomes faster than regular isInXXX.
-	 *
-	 * Only works for non-empty ranges, i.e. such as min <= max.
-	 * This treatment being designed for optimization, min <= max
-	 * is not checked.
-	 *
-	 * @return True if the specified value is in the specified range (inclusive), false otherwise.
-	 */
-	private static boolean dontUseMe_isInNonEmptyRange_(final int min, final int max, final int a) {
-		// Using modulo arithmetic.
-		return Integer.MIN_VALUE + a - min <= Integer.MIN_VALUE + max - min;
-	}
-
-	/*
-	 *
-	 */
-
 	private static int minSignedIntForBitSize_noCheck(final int bitSize) {
 		// i.e. (-1<<(bitSize-1))
 		return Integer.MIN_VALUE >> 32 - bitSize;

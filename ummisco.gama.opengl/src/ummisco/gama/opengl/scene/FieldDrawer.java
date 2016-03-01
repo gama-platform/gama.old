@@ -54,10 +54,10 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		// Get Texture Properties
 		Texture curTexture = demObj.getTexture(gl, renderer, 0);
 		if ( curTexture == null ) { return; }
-		double textureWidth = curTexture.getWidth();
-		double textureHeight = curTexture.getHeight();
-		double textureWidthInEnvironment = columns / textureWidth;
-		double textureHeightInEnvironment = rows / textureHeight;
+		// double textureWidth = curTexture.getWidth();
+		// double textureHeight = curTexture.getHeight();
+		// double textureWidthInEnvironment = columns / textureWidth;
+		// double textureHeightInEnvironment = rows / textureHeight;
 
 		// FIXME: Need to set it dynamicly
 		double altFactor = demObj.getZFactor();
@@ -264,9 +264,9 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 	private double GetMaxValue(final double[] gridValue) {
 		double maxValue = 0.0;
 		if ( gridValue != null ) {
-			for ( int i = 0; i < gridValue.length; i++ ) {
-				if ( gridValue[i] > maxValue ) {
-					maxValue = gridValue[i];
+			for ( double element : gridValue ) {
+				if ( element > maxValue ) {
+					maxValue = element;
 				}
 			}
 		}

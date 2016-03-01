@@ -29,6 +29,7 @@ import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaColor;
 
 /**
  * Class GamaPreferencesView.
@@ -167,6 +168,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		for ( String groupName : entries.keySet() ) {
 			ParameterExpandItem item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
+			item.setColor(new GamaColor(230, 230, 230, 255));
 			Composite compo = new Composite(viewer, SWT.NONE);
 			GridLayout layout = new GridLayout(2, false);
 			layout.marginHeight = 0;

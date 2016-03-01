@@ -258,7 +258,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void outputReloaded() {
 		setDisplayScope(output.getScope().copy());
 		getDisplayScope().disableErrorReporting();
-		renderer.initFor(this);
+		renderer.initScene();
 		manager.outputChanged();
 
 		// resizeImage(getWidth(), getHeight(), true);

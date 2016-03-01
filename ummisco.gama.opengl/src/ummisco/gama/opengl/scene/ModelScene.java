@@ -95,7 +95,7 @@ public class ModelScene {
 		if ( image == null ) { return null; }
 		Texture texture = localVolatileTextures.get(image);
 		if ( texture == null ) {
-			texture = renderer.getSharedTextureCache().buildTexture(gl, image);
+			texture = TextureCache.buildTexture(gl, image);
 			image.flush();
 			localVolatileTextures.put(image, texture);
 		}

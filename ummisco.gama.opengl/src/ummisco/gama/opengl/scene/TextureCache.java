@@ -20,17 +20,32 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.util.file.GamaImageFile;
+import ummisco.gama.opengl.JOGLRenderer;
 
 public class TextureCache {
 
+
 	static {
 		TextureIO.addTextureProvider(new PGMTextureProvider());
-		TextureIO.setTexRectEnabled(false);
+		GamaPreferences.DISPLAY_POWER_OF_TWO.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final Boolean newValue) {
+				TextureIO.setTexRectEnabled(newValue);
+			}
+		});
+		TextureIO.setTexRectEnabled(GamaPreferences.DISPLAY_POWER_OF_TWO.getValue());
 	}
 
-	private final Map<String, Texture> TEXTURES = new ConcurrentHashMap(100, 0.75f, 4);
+	final Map<String, Texture> textures = new ConcurrentHashMap(100, 0.75f, 4);
 	private static TextureAsyncBuilder BUILDER;
 
 	public static GLAutoDrawable getSharedContext() {
@@ -44,7 +59,7 @@ public class TextureCache {
 	// of the call, so we wait for its availability.
 	public Texture get(final GL gl, final GamaImageFile image) {
 		if ( image == null ) { return null; }
-		Texture texture = TEXTURES.get(image.getPath());
+		Texture texture = textures.get(image.getPath());
 		if ( texture == null ) {
 			if ( !GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue() ) {
 				if ( !gl.getContext().isCurrent() ) {
@@ -52,11 +67,11 @@ public class TextureCache {
 				}
 				texture = buildTexture(gl, image);
 				if ( texture != null ) {
-					TEXTURES.put(image.getPath(), texture);
+					textures.put(image.getPath(), texture);
 				}
 			} else {
 				while (texture == null) {
-					texture = TEXTURES.get(image.getPath());
+					texture = textures.get(image.getPath());
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
@@ -81,10 +96,10 @@ public class TextureCache {
 	 * @return
 	 */
 	boolean contains(final GamaImageFile image) {
-		return TEXTURES.containsKey(image.getPath());
+		return textures.containsKey(image.getPath());
 	}
 
-	private Texture buildTexture(final GL gl, final GamaImageFile image) {
+	public static Texture buildTexture(final GL gl, final GamaImageFile image) {
 		try {
 			Texture texture = TextureIO.newTexture(image.getFile(), false);
 			return texture;
@@ -96,9 +111,10 @@ public class TextureCache {
 
 	// These textures are not cached
 
-	Texture buildTexture(final GL gl, final BufferedImage image) {
+	public static Texture buildTexture(final GL gl, final BufferedImage image) {
 		try {
-			Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(), correctImage(image), true);
+			Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(),
+				correctImage(image, !JOGLRenderer.isNonPowerOf2TexturesAvailable), true);
 			return texture;
 		} catch (final GLException e) {
 			e.printStackTrace();
@@ -106,16 +122,18 @@ public class TextureCache {
 		}
 	}
 
-	private static BufferedImage correctImage(final BufferedImage image) {
+	private static BufferedImage correctImage(final BufferedImage image, final boolean force) {
 		BufferedImage corrected = image;
-		if ( !IsPowerOfTwo(image.getWidth()) || !IsPowerOfTwo(image.getHeight()) ) {
-			int width = getClosestPow(image.getWidth());
-			int height = getClosestPow(image.getHeight());
-			corrected = ImageUtils.createCompatibleImage(width, height);
-			Graphics2D g2 = corrected.createGraphics();
-			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			g2.drawImage(image, 0, 0, width, height, null);
-			g2.dispose();
+		if ( GamaPreferences.DISPLAY_POWER_OF_TWO.getValue() || force ) {
+			if ( !IsPowerOfTwo(image.getWidth()) || !IsPowerOfTwo(image.getHeight()) ) {
+				int width = getClosestPow(image.getWidth());
+				int height = getClosestPow(image.getHeight());
+				corrected = ImageUtils.createCompatibleImage(width, height);
+				Graphics2D g2 = corrected.createGraphics();
+				g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+				g2.drawImage(image, 0, 0, width, height, null);
+				g2.dispose();
+			}
 		}
 		return corrected;
 	}
@@ -134,7 +152,7 @@ public class TextureCache {
 
 	public static class TextureAsyncBuilder implements Runnable {
 
-		final LinkedBlockingQueue<GLTask> tasks = new LinkedBlockingQueue<GLTask>();
+		final LinkedBlockingQueue<GLTask> tasks = new LinkedBlockingQueue<>();
 		final GLAutoDrawable drawable;
 		final Thread loadingThread;
 
@@ -220,7 +238,7 @@ public class TextureCache {
 			// System.out.println("Building texture : " + image);
 			// We use the original image to keep track of the texture
 			if ( texture != null ) {
-				TEXTURES.put(image.getPath(), texture);
+				textures.put(image.getPath(), texture);
 			}
 			gl.glFinish();
 

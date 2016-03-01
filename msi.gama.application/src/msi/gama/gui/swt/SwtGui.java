@@ -663,7 +663,8 @@ public class SwtGui extends AbstractGui {
 		GamaFont font = BASE_BUTTON_FONT.getValue();
 		FontData fd = new FontData(font.getName(), font.getSize(), font.getStyle());
 		labelFont = new Font(getDisplay(), fd);
-		expandFont = new Font(Display.getDefault(), fd);
+		FontData fd2 = new FontData(fd.getName(), fd.getHeight(), SWT.BOLD);
+		expandFont = new Font(Display.getDefault(), fd2);
 		fd = new FontData(fd.getName(), fd.getHeight(), SWT.ITALIC);
 		unitFont = new Font(Display.getDefault(), fd);
 		smallNavigLinkFont = new Font(Display.getDefault(), fd);
@@ -869,58 +870,58 @@ public class SwtGui extends AbstractGui {
 
 	public static GamaPreferences.Entry<String> COLOR_MENU_SORT =
 		GamaPreferences.create("menu.colors.sort", "Sort colors menu by", "RGB value", IType.STRING)
-			.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
-			.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
+		.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
+		.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
 
-				@Override
-				public boolean beforeValueChange(final String newValue) {
-					return true;
-				}
+			@Override
+			public boolean beforeValueChange(final String newValue) {
+				return true;
+			}
 
-				@Override
-				public void afterValueChange(final String pref) {
-					if ( pref.equals(GamaColorMenu.SORT_NAMES[0]) ) {
-						GamaColorMenu.colorComp = GamaColorMenu.byRGB;
-					} else if ( pref.equals(GamaColorMenu.SORT_NAMES[1]) ) {
-						GamaColorMenu.colorComp = GamaColorMenu.byName;
-					} else if ( pref.equals(GamaColorMenu.SORT_NAMES[2]) ) {
-						GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
-					} else {
-						GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
-					}
-					GamaColorMenu.instance.reset();
+			@Override
+			public void afterValueChange(final String pref) {
+				if ( pref.equals(GamaColorMenu.SORT_NAMES[0]) ) {
+					GamaColorMenu.colorComp = GamaColorMenu.byRGB;
+				} else if ( pref.equals(GamaColorMenu.SORT_NAMES[1]) ) {
+					GamaColorMenu.colorComp = GamaColorMenu.byName;
+				} else if ( pref.equals(GamaColorMenu.SORT_NAMES[2]) ) {
+					GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
+				} else {
+					GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
 				}
-			});
+				GamaColorMenu.instance.reset();
+			}
+		});
 	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE =
 		GamaPreferences.create("menu.colors.reverse", "Reverse order", false, IType.BOOL).in(GamaPreferences.UI)
-			.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+		.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-				@Override
-				public boolean beforeValueChange(final Boolean newValue) {
-					return true;
-				}
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
 
-				@Override
-				public void afterValueChange(final Boolean pref) {
-					GamaColorMenu.reverse = pref ? -1 : 1;
-					GamaColorMenu.instance.reset();
-				}
-			});
+			@Override
+			public void afterValueChange(final Boolean pref) {
+				GamaColorMenu.reverse = pref ? -1 : 1;
+				GamaColorMenu.instance.reset();
+			}
+		});
 	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP =
 		GamaPreferences.create("menu.colors.group", "Group colors", false, IType.BOOL).in(GamaPreferences.UI)
-			.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+		.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-				@Override
-				public boolean beforeValueChange(final Boolean newValue) {
-					return true;
-				}
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
 
-				@Override
-				public void afterValueChange(final Boolean pref) {
-					GamaColorMenu.breakdown = pref;
-					GamaColorMenu.instance.reset();
-				}
-			});
+			@Override
+			public void afterValueChange(final Boolean pref) {
+				GamaColorMenu.breakdown = pref;
+				GamaColorMenu.instance.reset();
+			}
+		});
 	public static final Entry<Boolean> NAVIGATOR_METADATA = GamaPreferences
 		.create("navigator.metadata", "Display metadata of data and GAML files in navigator", true, IType.BOOL)
 		.in(GamaPreferences.UI).group("Navigator").addChangeListener(new IPreferenceChangeListener<Boolean>() {

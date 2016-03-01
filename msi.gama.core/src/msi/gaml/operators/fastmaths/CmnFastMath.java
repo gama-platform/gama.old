@@ -2076,15 +2076,6 @@ public abstract class CmnFastMath {
 		return Double.doubleToRawLongBits(value) >> 62 | 1;
 	}
 
-	private static boolean getBooleanProperty(final String key, final boolean defaultValue) {
-		final String tmp = System.getProperty(key);
-		if ( tmp != null ) {
-			return Boolean.parseBoolean(tmp);
-		} else {
-			return defaultValue;
-		}
-	}
-
 	/**
 	 * Use look-up tables size power through this method,
 	 * to make sure is it small in case java.lang.Math

@@ -79,7 +79,7 @@ public class JTSDrawer {
 				if ( height > 0 ) {
 					drawPlan(gl, l, z, c, border, alpha, height, 0, true, object);
 				} else {
-					drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha);
+					drawLineString(gl, l, z, JOGLRenderer.getLineWidth(), c, alpha);
 				}
 			}
 		}
@@ -269,14 +269,14 @@ public class JTSDrawer {
 
 	void drawTriangulatedPolygon(final GL2 gl, final Polygon p, final boolean showTriangulation,
 		final Texture texture) {
-		boolean simplifyGeometry = false;
+		// boolean simplifyGeometry = false;
 		List<IShape> triangles = null;
 		// Workaround to compute the z value of each triangle as triangulation
 		// create new point during the triangulation that are set with z=NaN
 		if ( p.getNumPoints() > 4 ) {
 			triangles = GeometryUtils.triangulationSimple(null, p); // VERIFY NULL SCOPE
 
-			List<Geometry> segments = new ArrayList<Geometry>();
+			List<Geometry> segments = new ArrayList<>();
 			for ( int i = 0; i < p.getNumPoints() - 1; i++ ) {
 				Coordinate[] cs = new Coordinate[2];
 				cs[0] = p.getCoordinates()[i];
@@ -310,7 +310,7 @@ public class JTSDrawer {
 				}
 			}
 		} else if ( p.getNumPoints() == 4 ) {
-			triangles = new ArrayList<IShape>();
+			triangles = new ArrayList<>();
 			triangles.add(new GamaShape(p));
 		}
 		if ( triangles != null ) {
@@ -325,11 +325,11 @@ public class JTSDrawer {
 
 		Polygon polygon = (Polygon) shape.getInnerGeometry();
 
-		final Envelope env = triangulatedPolygon.getEnvelopeInternal();
-		final double xMin = env.getMinX();
-		final double xMax = env.getMaxX();
-		final double yMin = env.getMinY();
-		final double yMax = env.getMaxY();
+		// final Envelope env = triangulatedPolygon.getEnvelopeInternal();
+		// final double xMin = env.getMinX();
+		// final double xMax = env.getMaxX();
+		// final double yMin = env.getMinY();
+		// final double yMax = env.getMaxY();
 
 		if ( showTriangulation ) {
 			if ( Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true ) {
@@ -788,7 +788,7 @@ public class JTSDrawer {
 			if ( height > 0 ) {
 				drawPlan(gl, l, z, c, b, alpha, height, 0, true, object);
 			} else {
-				drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha);
+				drawLineString(gl, l, z, JOGLRenderer.getLineWidth(), c, alpha);
 			}
 
 		}
@@ -829,12 +829,13 @@ public class JTSDrawer {
 
 	}
 
-	public void drawPlan(final GL2 gl, final LineString l, double z, final Color c, final Color b, final double alpha,
+	public void drawPlan(final GL2 gl, final LineString l, final double z_ordinate, final Color c, final Color b,
+		final double alpha,
 		final double height, final Integer angle, final boolean drawPolygonContour, final GeometryObject object) {
-
+		double z = z_ordinate;
 		if ( object.isTextured() == false ) {
-			drawLineString(gl, l, z, renderer.getLineWidth(), c, alpha);
-			drawLineString(gl, l, z + height, renderer.getLineWidth(), c, alpha);
+			drawLineString(gl, l, z, JOGLRenderer.getLineWidth(), c, alpha);
+			drawLineString(gl, l, z + height, JOGLRenderer.getLineWidth(), c, alpha);
 		}
 
 		// Draw a quad
@@ -928,8 +929,10 @@ public class JTSDrawer {
 		}
 	}
 
-	public void drawPoint(final GL2 gl, final Point point, double z, final int numPoints, final double radius,
+	public void drawPoint(final GL2 gl, final Point point, final double z_ordinate, final int numPoints,
+		final double radius,
 		final Color c, final double alpha) {
+		double z = z_ordinate;
 		if ( !colorpicking ) {
 			setColor(gl, c, alpha);
 		}
@@ -1321,7 +1324,7 @@ public class JTSDrawer {
 
 	}
 
-	public boolean isClockwise(final Vertex[] vertices) {
+	public static boolean isClockwise(final Vertex[] vertices) {
 		double sum = 0.0;
 		for ( int i = 0; i < vertices.length; i++ ) {
 			Vertex v1 = vertices[i];
@@ -1331,7 +1334,7 @@ public class JTSDrawer {
 		return sum > 0.0;
 	}
 
-	public void drawRoundRectangle(final GL2 gl, final Polygon p) {
+	public static void drawRoundRectangle(final GL2 gl, final Polygon p) {
 
 		double width = p.getEnvelopeInternal().getWidth();
 		double height = p.getEnvelopeInternal().getHeight();
@@ -1344,7 +1347,7 @@ public class JTSDrawer {
 
 	}
 
-	void drawRectangle(final GL2 gl, final double width, final double height, final Point point) {
+	static void drawRectangle(final GL2 gl, final double width, final double height, final Point point) {
 
 		gl.glBegin(GL2.GL_POLYGON); // draw using quads
 		gl.glVertex3d(-width / 2, height / 2, 0.0d);
@@ -1354,7 +1357,8 @@ public class JTSDrawer {
 		gl.glEnd();
 	}
 
-	void drawFan(final GL2 gl, final double radius, final double x, final double y, final int or_x, final int or_y,
+	static void drawFan(final GL2 gl, final double radius, final double x, final double y, final int or_x,
+		final int or_y,
 		final int timestep) {
 
 		gl.glBegin(GL.GL_TRIANGLE_FAN); // upper right
@@ -1368,7 +1372,7 @@ public class JTSDrawer {
 		gl.glEnd();
 	}
 
-	void drawRoundCorner(final GL2 gl, final double width, final double height, final double x_radius,
+	static void drawRoundCorner(final GL2 gl, final double width, final double height, final double x_radius,
 		final double y_radius, final int nbPoints) {
 
 		double xc = width / 2 * 0.8;
