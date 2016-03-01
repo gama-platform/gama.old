@@ -46,13 +46,12 @@ public class SimulationPopulation extends GamaPopulation {
 		if ( executor == null ) {
 			boolean isMultiThreaded = getHost().getSpecies().isMulticore();
 			int numberOfThreads = GamaPreferences.NUMBERS_OF_THREADS.getValue();
-			executor = isMultiThreaded ? Executors.newFixedThreadPool(numberOfThreads, factory)
+			executor = isMultiThreaded ? new ThreadPoolExecutor(1, numberOfThreads, 2L, TimeUnit.SECONDS,
+				new SynchronousQueue<Runnable>(), factory)
 				: MoreExecutors.sameThreadExecutor();
 			if ( executor instanceof ThreadPoolExecutor ) {
 				ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
-				tpe.setKeepAliveTime(10, TimeUnit.SECONDS);
 				tpe.allowCoreThreadTimeOut(true);
-
 			}
 		}
 		return executor;
@@ -107,7 +106,7 @@ public class SimulationPopulation extends GamaPopulation {
 				world.prepareGuiForSimulation(scope);
 				world.initOutputs();
 			} else {
-				world.schedule(scope);				
+				world.schedule(scope);
 			}
 			runnables.put(world, new Callable<Object>() {
 
@@ -168,7 +167,7 @@ public class SimulationPopulation extends GamaPopulation {
 	public int getNumberOfActiveThreads() {
 		if ( getExecutorService() instanceof ThreadPoolExecutor ) {
 			ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
-			return e.getPoolSize();
+			return e.getCorePoolSize();
 		}
 		return 0;
 	}
