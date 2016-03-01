@@ -50,7 +50,7 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 			float scale = 1f / (float) renderer.getGlobalYRatioBetweenPixelsAndModelUnits();
 			// gl.glPushMatrix();
 			Font f = s.getFont();
-			TextRenderer r = renderer.get(f);
+			TextRenderer r = renderer.getTextRendererFor(f);
 			if ( r == null ) { return; }
 			r.setColor(s.getColor());
 			r.begin3DRendering();

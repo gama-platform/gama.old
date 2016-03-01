@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'INeighbourhood.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
@@ -17,10 +17,10 @@ import msi.gama.runtime.IScope;
 
 /**
  * Class INeighbourhood.
- * 
+ *
  * @author drogoul
  * @since 19 mai 2013
- * 
+ *
  */
 public interface INeighbourhood {
 
@@ -41,5 +41,10 @@ public interface INeighbourhood {
 	 * @return
 	 */
 	public abstract int neighboursIndexOf(IScope scope, int placeIndex, int n);
+
+	/**
+	 *
+	 */
+	public abstract void clear();
 
 }

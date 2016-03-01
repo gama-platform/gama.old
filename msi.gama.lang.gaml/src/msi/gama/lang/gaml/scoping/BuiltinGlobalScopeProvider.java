@@ -222,7 +222,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			THashSet<Map.Entry<String, String>> keys = new THashSet();
 			for ( int i = 0; i < contents.length; i += 2 ) {
 				Map.Entry<String, String> entry =
-					new GamaPair<String, String>(contents[i], contents[i + 1], Types.STRING, Types.STRING);
+					new GamaPair<>(contents[i], contents[i + 1], Types.STRING, Types.STRING);
 				keys.add(entry);
 			}
 			return keys;
@@ -381,7 +381,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	/**
 	 * Get the object descriptions for the built-in types.
 	 */
-	public THashMap<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
+	public static THashMap<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
 		createDescriptions();
 		return descriptions.get(eClass);
 	}
@@ -416,7 +416,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 				add(eVar, t.getName());
 			}
 			for ( Map.Entry<String, Map<Signature, OperatorProto>> t : IExpressionCompiler.OPERATORS.entrySet() ) {
-				List<OperatorProto> ccc = new ArrayList<OperatorProto>(t.getValue().values());
+				List<OperatorProto> ccc = new ArrayList<>(t.getValue().values());
 				OperatorProto p;
 				if ( ccc.isEmpty() ) {
 					p = null;

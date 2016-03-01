@@ -68,7 +68,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		preferenceNames.put("org.eclipse.ui.preferencePages.Workspace", "Workspace");
 		prefs_images.put(GamaPreferences.UI, GamaIcons.create("prefs.ui2").image());
 		prefs_images.put(GamaPreferences.EDITOR, IGamaIcons.PREFS_EDITOR.image());
-
+		prefs_images.put(GamaPreferences.EXPERIMENTAL, GamaIcons.create("prefs.experimental2").image());
 		prefs_images.put(GamaPreferences.EXPERIMENTS, GamaIcons.create("prefs.simulations2").image());
 		prefs_images.put(GamaPreferences.SIMULATIONS, IGamaIcons.PREFS_GENERAL.image());
 		prefs_images.put(GamaPreferences.DISPLAY, IGamaIcons.PREFS_DISPLAY.image());
@@ -114,15 +114,17 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 	private void buildContents() {
 		tabFolder = new CTabFolder(shell, SWT.TOP | SWT.NO_TRIM);
-		tabFolder.setBorderVisible(false);
+		tabFolder.setBorderVisible(true);
 		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		tabFolder.setSimple(true); // rounded tabs
+		tabFolder.setMRUVisible(true);
+		tabFolder.setSimple(false); // rounded tabs
 		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		final Label sep = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		Map<String, Map<String, List<Entry>>> prefs = GamaPreferences.organizePrefs();
 		for ( String tabName : prefs.keySet() ) {
 			CTabItem item = new CTabItem(tabFolder, SWT.NONE);
+			item.setFont(SwtGui.getNavigHeaderFont());
 			item.setText(tabName);
 			item.setImage(prefs_images.get(tabName));
 			item.setShowClose(false);

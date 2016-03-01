@@ -76,6 +76,21 @@ public abstract class AbstractScope implements IScope {
 		statements.push(new NullRecord());
 	}
 
+	/**
+	 * Method clear()
+	 * @see msi.gama.runtime.IScope#clear()
+	 */
+	@Override
+	public void clear() {
+		agents.clear();
+		statements.clear();
+		each = null;
+		graphics = null;
+		topology = null;
+		currentStatement = null;
+		readAttributes.clear();
+	}
+
 	@Override
 	public void disableErrorReporting() {
 		reportErrors = false;
@@ -271,20 +286,6 @@ public abstract class AbstractScope implements IScope {
 	 */
 	protected abstract boolean _root_interrupted();
 
-	/**
-	 * Method clear()
-	 * @see msi.gama.runtime.IScope#clear()
-	 */
-	@Override
-	public void clear() {
-		agents.clear();
-		statements.clear();
-		each = null;
-		graphics = null;
-		topology = null;
-		currentStatement = null;
-		readAttributes.clear();
-	}
 
 	/**
 	 * Method push()
@@ -316,7 +317,7 @@ public abstract class AbstractScope implements IScope {
 			IAgent a = agents.pop();
 			if ( !a.equals(agent) ) {
 				System.out
-					.println("Problem with the scope. Trying to pop  " + agent + " but " + a + " was in the stack...");
+				.println("Problem with the scope. Trying to pop  " + agent + " but " + a + " was in the stack...");
 			}
 			if ( traceAgents ) {
 				for ( int i = 0; i < agents.size(); i++ ) {

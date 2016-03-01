@@ -36,16 +36,16 @@ import msi.gaml.types.*;
 public class GamaPreferences {
 
 	// public static final String GENERAL = "General";
-	public static final String UI = "UI";
+	public static final String UI = "Presentation";
 	public static final String EXPERIMENTS = "Experiments";
 	public static final String SIMULATIONS = "Simulations";
-	public static final String EXPERIMENTAL = "Experimental";
-	public static final String DISPLAY = "Display";
+	public static final String EXPERIMENTAL = "Performances";
+	public static final String DISPLAY = "Displays";
 	// public static final String CODE = "Code";
-	public static final String EDITOR = "Editor";
+	public static final String EDITOR = "Editors";
 	// public static final String WORKSPACE = "Workspace";
 	public static final String LIBRARIES = "External";
-	public static final String CHARTS = "Charts";
+	// public static final String CHARTS = "Charts";
 	static Preferences store;
 	private static Map<String, Entry> prefs = new LinkedHashMap();
 	private static List<String> storeKeys;
@@ -362,6 +362,34 @@ public class GamaPreferences {
 	public static final List<String> GENERATOR_NAMES =
 		Arrays.asList(IKeyword.CELLULAR, IKeyword.JAVA, IKeyword.MERSENNE);
 	/**
+	 * User Interface
+	 */
+	public static final Entry<Integer> CORE_MENU_SIZE =
+		create("core.menu_size", "Break down agents in menus every", 50, IType.INT).between(10, 100).in(UI)
+		.group("Menus");
+
+	public static final Entry<Integer> CORE_CONSOLE_SIZE =
+		create("core.console_size", "Max. number of characters to display in the console (-1 means no limit) ", 20000,
+			IType.INT).in(UI).group("Console");
+	public static final Entry<Integer> CORE_CONSOLE_BUFFER = create("core.console_buffer",
+		"Max. number of characters to keep in memory when console is paused (-1 means no limit)", 20000, IType.INT)
+		.in(UI).group("Console");
+	// EDITOR PAGE
+	public static final Entry<Boolean> CORE_PERSPECTIVE =
+		create("core.perspective", "Automatically switch to modeling perspective when editing a model", false,
+			IType.BOOL).in(EDITOR).group("Options");
+
+	/**
+	 * Validation
+	 */
+	public static final GamaPreferences.Entry<Boolean> WARNINGS_ENABLED =
+		GamaPreferences.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Validation");
+
+	public static final GamaPreferences.Entry<Boolean> INFO_ENABLED =
+		GamaPreferences.create("editor.info.enabled", "Show information markers when editing a model", true, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Validation");
+	/**
 	 * Random Number Generation
 	 */
 	public static final Entry<String> CORE_RNG =
@@ -376,19 +404,7 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_RND_EDITABLE =
 		create("core.define_rng", "Include in the parameters of models", true, IType.BOOL).in(EXPERIMENTS)
 		.group("Random Number Generation");
-	/**
-	 * User Interface
-	 */
-	public static final Entry<Integer> CORE_MENU_SIZE =
-		create("core.menu_size", "Break down agents in menus every", 50, IType.INT).between(10, 100).in(UI)
-		.group("Menus");
 
-	public static final Entry<Integer> CORE_CONSOLE_SIZE =
-		create("core.console_size", "Max. number of characters to display in the console (-1 means no limit) ", 20000,
-			IType.INT).in(UI).group("Console");
-	public static final Entry<Integer> CORE_CONSOLE_BUFFER = create("core.console_buffer",
-		"Max. number of characters to keep in memory when console is paused (-1 means no limit)", 20000, IType.INT)
-		.in(UI).group("Console");
 	/**
 	 * Simulation Errors
 	 */
@@ -421,6 +437,18 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_ASK_CLOSING =
 		create("core.ask_closing", "Ask to close the previous experiment before launching a new one ?", true,
 			IType.BOOL).in(EXPERIMENTS).group("Runtime");
+
+	public static final Color[] BASIC_COLORS = new Color[] { new Color(74, 97, 144), new Color(66, 119, 42),
+		new Color(83, 95, 107), new Color(195, 98, 43), new Color(150, 132, 106) };
+	public static final Entry<Color>[] SIMULATION_COLORS = new Entry[5];
+
+	static {
+		for ( int i = 0; i < 5; i++ ) {
+			SIMULATION_COLORS[i] =
+				create("simulation.ui.color" + i, "Color of Simulation " + i, BASIC_COLORS[i], IType.COLOR)
+				.in(SIMULATIONS).group("Simulation colors in the interface (console, views)");
+		}
+	}
 
 	// DISPLAY PAGE
 	/**
@@ -457,18 +485,7 @@ public class GamaPreferences {
 		create("core.display_order", "Stack displays on screen in the order defined by the model", true, IType.BOOL)
 		.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
 
-	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE =
-		create("core.display_visible", "Only process for display the agents that are visible", false, IType.BOOL)
-		.in(EXPERIMENTAL).group(DISPLAY);
-	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("core.shared_context",
-		"Enable OpenGL background loading of textures (disable it if you have problems with Intel graphics cards on Linux)",
-		true, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
-	public static final Entry<Boolean> DISPLAY_FAST_SNAPSHOT = create("core.fast_snapshot",
-		"Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)",
-		false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
-	public static final Entry<Boolean> DISPLAY_POWER_OF_TWO = create("core.power_of_two",
-		"Forces the dimensions of OpenGL textures to be power of 2 (e.g. 8x8, 16x16, etc.). Necessary on some graphic cards",
-		false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+
 
 	/**
 	 * Default Aspect
@@ -509,21 +526,7 @@ public class GamaPreferences {
 	// create("core.cubedisplay", "Display as a cube", false, IType.BOOL).in(DISPLAY)
 	// .group("OpenGL (settings effective after experiment relaunch)");
 
-	// EDITOR PAGE
-	public static final Entry<Boolean> CORE_PERSPECTIVE =
-		create("core.perspective", "Automatically switch to modeling perspective when editing a model", false,
-			IType.BOOL).in(EDITOR).group("Options");
 
-	/**
-	 * Validation
-	 */
-	public static final GamaPreferences.Entry<Boolean> WARNINGS_ENABLED =
-		GamaPreferences.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL)
-		.in(GamaPreferences.EDITOR).group("Validation");
-
-	public static final GamaPreferences.Entry<Boolean> INFO_ENABLED =
-		GamaPreferences.create("editor.info.enabled", "Show information markers when editing a model", true, IType.BOOL)
-		.in(GamaPreferences.EDITOR).group("Validation");
 
 	// LIBRARIES PAGE
 	/**
@@ -617,18 +620,19 @@ public class GamaPreferences {
 	// SIMULATIONS PAGE
 	// Corresponds to IGamaColors.BLUE.toGamaColor(), IGamaColors.OK.toGamaColor(),
 	// IGamaColors.NEUTRAL.toGamaColor(), IGamaColors.WARNING.toGamaColor(), IGamaColors.BROWN.toGamaColor()
-	public static final Color[] BASIC_COLORS = new Color[] { new Color(74, 97, 144), new Color(66, 119, 42),
-		new Color(83, 95, 107), new Color(195, 98, 43), new Color(150, 132, 106) };
-	public static final Entry<Color>[] SIMULATION_COLORS = new Entry[5];
 
-	static {
-		for ( int i = 0; i < 5; i++ ) {
-			SIMULATION_COLORS[i] =
-				create("simulation.ui.color" + i, "Color of Simulation " + i, BASIC_COLORS[i], IType.COLOR)
-				.in(SIMULATIONS).group("Simulation colors in the interface (console, views)");
-		}
-	}
-
+	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE =
+		create("core.display_visible", "Only process for display the agents that are visible", false, IType.BOOL)
+			.in(EXPERIMENTAL).group(DISPLAY);
+	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("core.shared_context",
+		"Enable OpenGL background loading of textures (disable it if you have problems with Intel graphics cards on Linux)",
+		true, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+	public static final Entry<Boolean> DISPLAY_FAST_SNAPSHOT = create("core.fast_snapshot",
+		"Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)",
+		false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+	public static final Entry<Boolean> DISPLAY_POWER_OF_TWO = create("core.power_of_two",
+		"Forces the dimensions of OpenGL textures to be power of 2 (e.g. 8x8, 16x16, etc.). Necessary on some graphic cards",
+		false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> MULTITHREADED_SIMULATIONS =
 		create("core.multithreaded_simulations", "Run multiple simulations in multiple threads", true, IType.BOOL)
 		.activates("core.threads_number").in(EXPERIMENTAL).group(SIMULATIONS);

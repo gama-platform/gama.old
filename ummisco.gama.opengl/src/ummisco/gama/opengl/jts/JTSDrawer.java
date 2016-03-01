@@ -53,7 +53,7 @@ public class JTSDrawer {
 	}
 
 	public void drawGeometryCached(final GL2 gl, final GamaGeometryFile file) {
-		int index = renderer.getGeometryCache().get(gl, file);
+		int index = renderer.getGeometryListFor(gl, file);
 		if ( index != -1 ) {
 			gl.glCallList(index);
 		}

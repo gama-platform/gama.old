@@ -9,7 +9,7 @@
  *
  *
  **********************************************************************************************/
-package ummisco.gama.opengl.scene;
+package ummisco.gama.opengl;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -23,7 +23,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.util.file.GamaImageFile;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.scene.*;
 
 public class TextureCache {
 
@@ -53,6 +53,14 @@ public class TextureCache {
 			BUILDER = new TextureAsyncBuilder();
 		}
 		return BUILDER.drawable;
+	}
+
+	public void dispose(final GL gl) {
+		if ( this == sharedInstance ) { return; }
+		for ( Texture t : textures.values() ) {
+			t.destroy(gl);
+		}
+		textures.clear();
 	}
 
 	// Assumes the texture has been created. But it may be processed at the time
@@ -174,9 +182,15 @@ public class TextureCache {
 		@Override
 		public void run() {
 			drawable.display();
-			final ArrayList<GLTask> copy = new ArrayList();
+			final Set<GLTask> copy = new HashSet<>();
 			while (true) {
-				tasks.drainTo(copy);
+				if ( tasks.drainTo(copy) == 0 ) {
+					try {
+						copy.add(tasks.take());
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 				try {
 					drawable.getContext().makeCurrent();
 					for ( GLTask currentTask : copy ) {

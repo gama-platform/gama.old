@@ -322,7 +322,10 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gama.metamodel.shape.IShape#dispose()
 	 */
 	@Override
-	public void dispose() {}
+	public void dispose() {
+		attributes.clear();
+		attributes = null;
+	}
 
 	@Override
 	public Type getGeometricalType() {

@@ -145,7 +145,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curHeight = hFromModelUnitsToPixels(attributes.size.getY());
 		}
 		if ( attributes.rotation != null && attributes.rotation.key != null ) {
-			currentRenderer.rotate(Maths.toRad * attributes.rotation.key, curX + curWidth / 2, curY + curHeight / 2);
+			currentRenderer.rotate(Maths.toRad * attributes.rotation.key, curX + curWidth / 2d, curY + curHeight / 2d);
 		}
 		currentRenderer.drawImage(img, (int) FastMath.round(curX), (int) FastMath.round(curY), (int) curWidth,
 			(int) curHeight, null);

@@ -47,86 +47,86 @@ import msi.gaml.types.*;
 		doc = @doc("Allows to fill the background of the display with a specific color")),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the display")),
 	@facet(name = IKeyword.FOCUS,
-		type = IType.GEOMETRY,
-		optional = true,
-		doc = @doc("the geometry (or agent) on which the display will (dynamically) focus")),
+	type = IType.GEOMETRY,
+	optional = true,
+	doc = @doc("the geometry (or agent) on which the display will (dynamically) focus")),
 	// WARNING VALIDER EN VERIFIANT LE TYPE DU DISPLAY
 	@facet(name = IKeyword.TYPE,
-		type = IType.LABEL,
-		optional = true,
-		doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
+	type = IType.LABEL,
+	optional = true,
+	doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
 	@facet(name = IKeyword.REFRESH_EVERY,
-		type = IType.INT,
-		optional = true,
-		doc = @doc(value = "Allows to refresh the display every n time steps (default is 1)",
-			deprecated = "Use refresh: every(n) instead")),
+	type = IType.INT,
+	optional = true,
+	doc = @doc(value = "Allows to refresh the display every n time steps (default is 1)",
+	deprecated = "Use refresh: every(n) instead")),
 	@facet(name = IKeyword.REFRESH,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Indicates the condition under which this output should be refreshed (default is true)")),
+	type = IType.BOOL,
+	optional = true,
+	doc = @doc("Indicates the condition under which this output should be refreshed (default is true)")),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.ZFIGHTING,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
+	type = IType.BOOL,
+	optional = true,
+	doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
 	@facet(name = IKeyword.TRACE,
-		type = { IType.BOOL, IType.INT },
-		optional = true,
-		doc = @doc(deprecated = "The value of the trace must instead be defined in each layer's definition now.",
-			value = "Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. This facet can also be applied to individual layers")),
+	type = { IType.BOOL, IType.INT },
+	optional = true,
+	doc = @doc(deprecated = "The value of the trace must instead be defined in each layer's definition now.",
+	value = "Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. This facet can also be applied to individual layers")),
 	@facet(name = IKeyword.SCALE,
-		type = { IType.BOOL, IType.FLOAT },
-		optional = true,
-		doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
+	type = { IType.BOOL, IType.FLOAT },
+	optional = true,
+	doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
 	@facet(name = IKeyword.SHOWFPS,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
+	type = IType.BOOL,
+	optional = true,
+	doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
 	@facet(name = IKeyword.DRAWENV,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
+	type = IType.BOOL,
+	optional = true,
+	doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
 	@facet(name = IKeyword.ORTHOGRAPHIC_PROJECTION,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Allows to enable/disable the orthographic projection. Default can be configured in Preferences")),
+	type = IType.BOOL,
+	optional = true,
+	doc = @doc("Allows to enable/disable the orthographic projection. Default can be configured in Preferences")),
 	@facet(name = IKeyword.AMBIENT_LIGHT,
-		type = { IType.INT, IType.COLOR },
-		optional = true,
-		doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(125,125,125)")),
+	type = { IType.INT, IType.COLOR },
+	optional = true,
+	doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(125,125,125)")),
 	@facet(name = IKeyword.DIFFUSE_LIGHT,
-		type = { IType.INT, IType.COLOR },
-		optional = true,
-		doc = @doc("Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is rgb(125,125,125)")),
+	type = { IType.INT, IType.COLOR },
+	optional = true,
+	doc = @doc("Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is rgb(125,125,125)")),
 	@facet(name = IKeyword.DIFFUSE_LIGHT_POS,
-		type = IType.POINT,
-		optional = true,
-		doc = @doc("Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width`*`2}")),
+	type = IType.POINT,
+	optional = true,
+	doc = @doc("Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width`*`2}")),
 	@facet(name = IKeyword.IS_LIGHT_ON,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Allows to enable/disable the light. Default is true")),
+	type = IType.BOOL,
+	optional = true,
+	doc = @doc("Allows to enable/disable the light. Default is true")),
 	@facet(name = IKeyword.DRAW_DIFFUSE_LIGHT,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Allows to enable/disable the drawing of the diffuse light. Default is false")),
+	type = IType.BOOL,
+	optional = true,
+	doc = @doc("Allows to enable/disable the drawing of the diffuse light. Default is false")),
 	@facet(name = IKeyword.CAMERA_POS,
-		type = { IType.POINT, IType.AGENT },
-		optional = true,
-		doc = @doc("Allows to define the position of the camera")),
+	type = { IType.POINT, IType.AGENT },
+	optional = true,
+	doc = @doc("Allows to define the position of the camera")),
 	@facet(name = IKeyword.CAMERA_LOOK_POS,
-		type = IType.POINT,
-		optional = true,
-		doc = @doc("Allows to define the direction of the camera")),
+	type = IType.POINT,
+	optional = true,
+	doc = @doc("Allows to define the direction of the camera")),
 	@facet(name = IKeyword.CAMERA_UP_VECTOR,
-		type = IType.POINT,
-		optional = true,
-		doc = @doc("Allows to define the orientation of the camera")),
+	type = IType.POINT,
+	optional = true,
+	doc = @doc("Allows to define the orientation of the camera")),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.AUTOSAVE,
-		type = { IType.BOOL, IType.POINT },
-		optional = true,
-		doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
+	type = { IType.BOOL, IType.POINT },
+	optional = true,
+	doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @validator(InfoValidator.class)
@@ -137,12 +137,12 @@ import msi.gaml.types.*;
 		@usage(value = "The general syntax is:",
 			examples = @example(value = "display my_display [additional options] { ... }", isExecutable = false)),
 		@usage(value = "Each display can include different layers (like in a GIS).",
-			examples = {
-				@example(value = "display gridWithElevationTriangulated type: opengl ambient_light: 100 {",
-					isExecutable = false),
-				@example(value = "	grid cell elevation: true triangulation: true;", isExecutable = false),
-				@example(value = "	species people aspect: base;", isExecutable = false),
-				@example(value = "}", isExecutable = false) }) })
+		examples = {
+			@example(value = "display gridWithElevationTriangulated type: opengl ambient_light: 100 {",
+				isExecutable = false),
+			@example(value = "	grid cell elevation: true triangulation: true;", isExecutable = false),
+			@example(value = "	species people aspect: base;", isExecutable = false),
+			@example(value = "}", isExecutable = false) }) })
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public static class DisplaySerializer extends SymbolSerializer {
@@ -203,19 +203,19 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 				// Do we display a grid ?
 
-				Boolean gridDisplayed = false;
+				// Boolean gridDisplayed = false;
 				for ( IDescription desc : d.getChildren() ) {
 					if ( desc.getKeyword().equals(GRID_POPULATION) ) {
-						gridDisplayed = true;
+						// gridDisplayed = true;
 						break;
 					}
 				}
-				if ( gridDisplayed ) {
-					IExpressionDescription zfight = d.getFacets().get(ZFIGHTING);
-					Boolean zFightDefault = true; // GamaPreferences.CORE_Z_FIGHTING.getValue();
-					Boolean zFightWanted =
-						zfight == null ? zFightDefault : zfight.getExpression().literalValue().equals(IKeyword.TRUE);
-				}
+				// if ( gridDisplayed ) {
+				// IExpressionDescription zfight = d.getFacets().get(ZFIGHTING);
+				// Boolean zFightDefault = true; // GamaPreferences.CORE_Z_FIGHTING.getValue();
+				// Boolean zFightWanted =
+				// zfight == null ? zFightDefault : zfight.getExpression().literalValue().equals(IKeyword.TRUE);
+				// }
 			}
 
 			IExpressionDescription camera = d.getFacets().getDescr(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR);
@@ -227,7 +227,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 			// AD: addressing the deprecation of the "trace:" facet
 			IExpressionDescription trace = d.getFacets().get(TRACE);
-			if ( d != null ) {
+			if ( trace != null ) {
 				for ( IDescription layer : d.getChildren() ) {
 					if ( !layer.getFacets().containsKey(TRACE) ) {
 						layer.getFacets().put(TRACE, trace);
@@ -238,7 +238,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	}
 
-	private List<AbstractLayerStatement> layers;
+	private final List<AbstractLayerStatement> layers;
 	protected IDisplaySurface surface;
 	private boolean constantBackground = true;
 	private boolean constantAmbientLight = true;
@@ -257,7 +257,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( hasFacet(IKeyword.TYPE) ) {
 			data.setDisplayType(getLiteral(IKeyword.TYPE));
 		}
-		layers = new ArrayList<AbstractLayerStatement>();
+		layers = new ArrayList<>();
 	}
 
 	public IOverlayProvider getOverlayProvider() {
@@ -594,7 +594,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	public void setLayers(final List<AbstractLayerStatement> layers) {
-		this.layers = layers;
+		this.layers.clear();
+		this.layers.addAll(layers);
 	}
 
 	public List<AbstractLayerStatement> getLayers() {

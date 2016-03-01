@@ -197,7 +197,8 @@ public class DrawingData {
 					currentRotation = Cast.asPair(scope, rotationExp.value(scope), true);
 					currentRotation.key = Cast.asFloat(scope, currentRotation.key);
 				} else {
-					currentRotation = new GamaPair(rotationExp.value(scope), DEFAULT_AXIS, Types.FLOAT, Types.POINT);
+					currentRotation =
+						new GamaPair(scope, rotationExp.value(scope), DEFAULT_AXIS, Types.FLOAT, Types.POINT);
 					currentRotation.key = Cast.asFloat(scope, currentRotation.key);
 				}
 			}

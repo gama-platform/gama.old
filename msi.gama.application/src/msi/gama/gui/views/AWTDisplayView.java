@@ -19,7 +19,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.displays.awt.*;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.swing.SwingControl;
+import msi.gama.gui.swt.swing.*;
 import msi.gama.runtime.GAMA;
 
 public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvider */ {
@@ -226,6 +226,9 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 
 	@Override
 	public void waitToBeRealized() {
+		if ( Platform.isWin32() ) {
+			return;
+		}
 		long start = System.currentTimeMillis();
 		boolean openable = false;
 		while (!openable) {

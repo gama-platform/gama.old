@@ -20,7 +20,7 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.*;
 import msi.gaml.statements.draw.*;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.*;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
 
 /**

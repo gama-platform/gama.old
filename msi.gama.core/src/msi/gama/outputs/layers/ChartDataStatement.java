@@ -18,9 +18,8 @@ import org.jfree.chart.renderer.category.*;
 import org.jfree.chart.renderer.xy.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -43,20 +42,20 @@ import msi.gaml.types.IType;
 	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.MARKERSHAPE,
-		type = IType.ID,
-		values = { ChartDataStatement.MARKER_EMPTY, ChartDataStatement.MARKER_SQUARE, ChartDataStatement.MARKER_CIRCLE,
-			ChartDataStatement.MARKER_UP_TRIANGLE, ChartDataStatement.MARKER_DIAMOND,
-			ChartDataStatement.MARKER_HOR_RECTANGLE, ChartDataStatement.MARKER_DOWN_TRIANGLE,
-			ChartDataStatement.MARKER_HOR_ELLIPSE, ChartDataStatement.MARKER_RIGHT_TRIANGLE,
-			ChartDataStatement.MARKER_VERT_RECTANGLE, ChartDataStatement.MARKER_LEFT_TRIANGLE },
-		optional = true),
+	type = IType.ID,
+	values = { ChartDataStatement.MARKER_EMPTY, ChartDataStatement.MARKER_SQUARE, ChartDataStatement.MARKER_CIRCLE,
+		ChartDataStatement.MARKER_UP_TRIANGLE, ChartDataStatement.MARKER_DIAMOND,
+		ChartDataStatement.MARKER_HOR_RECTANGLE, ChartDataStatement.MARKER_DOWN_TRIANGLE,
+		ChartDataStatement.MARKER_HOR_ELLIPSE, ChartDataStatement.MARKER_RIGHT_TRIANGLE,
+		ChartDataStatement.MARKER_VERT_RECTANGLE, ChartDataStatement.MARKER_LEFT_TRIANGLE },
+	optional = true),
 	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.STYLE,
-		type = IType.ID,
-		values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT, IKeyword.STEP,
-			IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED },
-		optional = true) },
-	omissible = IKeyword.LEGEND)
+	type = IType.ID,
+	values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT, IKeyword.STEP,
+		IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED },
+	optional = true) },
+omissible = IKeyword.LEGEND)
 public class ChartDataStatement extends AbstractStatement {
 
 	public static final String MARKER = "marker";
@@ -114,10 +113,14 @@ public class ChartDataStatement extends AbstractStatement {
 			return value;
 		}
 
-		public Object getValue(final IScope scope) throws GamaRuntimeException {
+		public Object getValue(final IScope scope) {
 			Object o;
 			if ( value != null && !scope.interrupted() ) {
-				o = value.value(scope);
+				try {
+					o = value.value(scope);
+				} catch (GamaRuntimeException e) {
+					o = lastvalue;
+				}
 			} else {
 				o = lastvalue;
 			}

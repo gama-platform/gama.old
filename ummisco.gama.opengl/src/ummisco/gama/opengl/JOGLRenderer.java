@@ -16,7 +16,7 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.BufferOverflowException;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -65,51 +65,22 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
-	// protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
 	private GLU glu;
 	private final GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
 	private volatile boolean inited;
-	private GeometryCache cache;
+
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
 	// Use to inverse y composaant
 	public int yFlag;
+	private final GeometryCache geometryCache = new GeometryCache();
+	private final TextRenderersCache textRendererCache = new TextRenderersCache();
 	private final TextureCache textureCache =
 		GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue() ? TextureCache.getSharedInstance() : new TextureCache();
 
-		// Global text renderers
-		// Does not allow renderers to be created for text bigger than 200 pixels
 
-		Map<String, Map<Integer, Map<Integer, TextRenderer>>> textRenderersCache = new LinkedHashMap();
-
-		public TextRenderer get(final Font font) {
-			return get(font.getName(), font.getSize(), font.getStyle());
-		}
-
-		public TextRenderer get(final String font, final int s, final int style) {
-			int size = s > 150 ? 150 : s;
-			if ( size < 6 ) { return null; }
-			Map<Integer, Map<Integer, TextRenderer>> map1 = textRenderersCache.get(font);
-			if ( map1 == null ) {
-				map1 = new HashMap();
-				textRenderersCache.put(font, map1);
-			}
-			Map<Integer, TextRenderer> map2 = map1.get(size);
-			if ( map2 == null ) {
-				map2 = new HashMap();
-				map1.put(size, map2);
-			}
-			TextRenderer r = map2.get(style);
-			if ( r == null ) {
-				r = new TextRenderer(new Font(font, style, size), true, false, null, true);
-				r.setSmoothing(true);
-				r.setUseVertexArrays(true);
-				map2.put(style, r);
-			}
-			return r;
-		}
 
 		// private final GLModel chairModel = null;
 
@@ -185,7 +156,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			// GLU objects are NOT thread safe...
 			glu = new GLU();
 			GL2 gl = drawable.getContext().getGL().getGL2();
-		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
+			isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
 
 			// GL2 gl = GLContext.getCurrentGL().getGL2();
 
@@ -224,12 +195,15 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 		}
 
-		public GeometryCache getGeometryCache() {
-			if ( cache == null ) {
-				cache = new GeometryCache(this);
-			}
-			return cache;
+		public Integer getGeometryListFor(final GL2 gl, final GamaGeometryFile file) {
+		return geometryCache.get(gl, this, file);
 		}
+
+		public TextRenderer getTextRendererFor(final Font font) {
+			return textRendererCache.get(font);
+		}
+
+
 
 		public boolean getDrawNormal() {
 			return data.isDraw_norm();
@@ -485,6 +459,14 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		@Override
 		public void dispose(final GLAutoDrawable drawable) {
 			sceneBuffer.dispose();
+			textureCache.dispose(drawable.getGL());
+			geometryCache.dispose(drawable.getGL().getGL2());
+			textRendererCache.dispose(drawable.getGL());
+			this.canvas = null;
+			this.camera = null;
+			this.currentLayer = null;
+			this.currentPickedObject = null;
+			this.currentScene = null;
 		}
 
 		// Use when the rotation button is on.

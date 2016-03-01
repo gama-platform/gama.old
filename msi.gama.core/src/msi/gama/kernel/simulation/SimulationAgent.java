@@ -23,7 +23,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.*;
 import msi.gama.outputs.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -45,49 +45,49 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.COLOR,
 		type = IType.COLOR,
 		doc = @doc(value = "The color used to identify this simulation in the UI",
-			comment = "Can be set freely by the modeler")),
+		comment = "Can be set freely by the modeler")),
 	@var(name = IKeyword.SEED,
-		type = IType.FLOAT,
-		doc = @doc(value = "The seed of the random number generator",
-			comment = "Each time it is set, the random number generator is reinitialized")),
+	type = IType.FLOAT,
+	doc = @doc(value = "The seed of the random number generator",
+	comment = "Each time it is set, the random number generator is reinitialized")),
 	@var(name = IKeyword.RNG,
-		type = IType.STRING,
-		doc = @doc("The random number generator to use for this simulation. Three different ones are at the disposal of the modeler: " +
-			IKeyword.MERSENNE +
-			" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
-			IKeyword.CELLULAR +
-			" is a cellular automaton based generator that should be a bit faster, but less reliable; and " +
-			IKeyword.JAVA + " invokes the standard Java generator")),
+	type = IType.STRING,
+	doc = @doc("The random number generator to use for this simulation. Three different ones are at the disposal of the modeler: " +
+		IKeyword.MERSENNE +
+		" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
+		IKeyword.CELLULAR +
+		" is a cellular automaton based generator that should be a bit faster, but less reliable; and " +
+		IKeyword.JAVA + " invokes the standard Java generator")),
 	@var(name = IKeyword.STEP,
-		type = IType.FLOAT,
-		doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles",
-			comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
+	type = IType.FLOAT,
+	doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles",
+	comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
 	@var(name = SimulationAgent.TIME,
-		type = IType.FLOAT,
-		doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation",
-			comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
+	type = IType.FLOAT,
+	doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation",
+	comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
 	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
 	@var(name = SimulationAgent.DURATION,
-		type = IType.STRING,
-		doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
+	type = IType.STRING,
+	doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
 	@var(name = SimulationAgent.TOTAL_DURATION,
-		type = IType.STRING,
-		doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
+	type = IType.STRING,
+	doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
 	@var(name = SimulationAgent.AVERAGE_DURATION,
-		type = IType.STRING,
-		doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
+	type = IType.STRING,
+	doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
 	@var(name = SimulationAgent.MACHINE_TIME,
-		type = IType.FLOAT,
-		doc = @doc(value = "Returns the current system time in milliseconds",
-			comment = "The return value is a float number")),
+	type = IType.FLOAT,
+	doc = @doc(value = "Returns the current system time in milliseconds",
+	comment = "The return value is a float number")),
 	@var(name = SimulationAgent.CURRENT_DATE,
-		type = IType.DATE,
-		doc = @doc(value = "Returns the current date in the simulation",
-			comment = "The return value is a date; the starting_date have to be initialized to use this attribute")),
+	type = IType.DATE,
+	doc = @doc(value = "Returns the current date in the simulation",
+	comment = "The return value is a date; the starting_date have to be initialized to use this attribute")),
 	@var(name = SimulationAgent.STARTING_DATE,
-		type = IType.DATE,
-		doc = @doc(value = "Represents the starting date of the simulation",
-			comment = "It is required to intiliaze this value to be able to use the current_date attribute")), })
+	type = IType.DATE,
+	doc = @doc(value = "Represents the starting date of the simulation",
+	comment = "It is required to intiliaze this value to be able to use the current_date attribute")), })
 public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public static final String DURATION = "duration";
@@ -102,9 +102,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	final SimulationClock clock;
 	GamaColor color;
 
-	IScope scope;
+	final IScope scope;
 	IOutputManager outputs;
-	ProjectionFactory projectionFactory;
+	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
 	private final RandomUtils random;
 	private final ActionExecuter executer;
@@ -233,8 +233,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			outputs.dispose();
 			outputs = null;
 		}
+
+		GAMA.releaseScope(scope);
 		// end-hqnghi
-		projectionFactory = new ProjectionFactory();
+		// projectionFactory
 		// System.out.println("SimulationAgent.dipose END");
 	}
 
@@ -399,14 +401,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			IDescription des = ((ISymbol) iOutputManager).getDescription();
 			if ( des == null ) { return; }
 			outputs = (IOutputManager) des.compile();
-			Map<String, IOutput> mm = new TOrderedHashMap<String, IOutput>();
+			Map<String, IOutput> mm = new TOrderedHashMap<>();
 			for ( Map.Entry<String, ? extends IOutput> entry : outputs.getOutputs().entrySet() ) {
 				IOutput output = entry.getValue();
 				String keyName, newOutputName;
 				if ( !scheduled ) {
 					keyName =
 						output.getName() + "#" + this.getSpecies().getDescription().getModelDescription().getAlias() +
-							"#" + this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
+						"#" + this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
 					newOutputName = keyName;
 				} else {
 					String postfix = " (" + getUserFriendlyName() + ")";

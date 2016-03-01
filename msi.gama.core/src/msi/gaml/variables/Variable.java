@@ -14,9 +14,8 @@ package msi.gaml.variables;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -42,56 +41,56 @@ import msi.gaml.types.*;
 			optional = false,
 			doc = @doc("The name of the attribute")),
 		@facet(name = IKeyword.TYPE,
-			type = IType.TYPE_ID,
-			optional = true,
-			doc = {
-				@doc("The type of this attribute. Can be combined with facets 'of' and 'index' to describe container types") }),
+		type = IType.TYPE_ID,
+		optional = true,
+		doc = {
+			@doc("The type of this attribute. Can be combined with facets 'of' and 'index' to describe container types") }),
 		@facet(name = IKeyword.OF,
-			type = IType.TYPE_ID,
-			optional = true,
-			doc = {
-				@doc("The type of the elements contained in the type of this attribute if it is a container type") }),
+		type = IType.TYPE_ID,
+		optional = true,
+		doc = {
+			@doc("The type of the elements contained in the type of this attribute if it is a container type") }),
 		@facet(name = IKeyword.INDEX,
-			type = IType.TYPE_ID,
-			optional = true,
-			doc = {
-				@doc("The type of the index used to retrieve elements if the type of the attribute is a container type") }),
+		type = IType.TYPE_ID,
+		optional = true,
+		doc = {
+			@doc("The type of the index used to retrieve elements if the type of the attribute is a container type") }),
 		@facet(name = IKeyword.INIT,
-			// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
-			type = IType.NONE,
-			optional = true,
-			doc = @doc("The initial value of the attribute")),
+		// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("The initial value of the attribute")),
 		@facet(name = IKeyword.VALUE,
-			// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
-			type = IType.NONE,
-			optional = true,
-			doc = @doc(value = "", deprecated = "Use 'update' instead")),
+		// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+		type = IType.NONE,
+		optional = true,
+		doc = @doc(value = "", deprecated = "Use 'update' instead")),
 		@facet(name = IKeyword.UPDATE,
-			// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
-			type = IType.NONE,
-			optional = true,
-			doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
+		// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
 		@facet(name = IKeyword.FUNCTION,
-			// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
-			type = IType.NONE,
-			optional = true,
-			doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
+		// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
 		@facet(name = IKeyword.CONST,
-			type = IType.BOOL,
-			optional = true,
-			doc = @doc("Indicates whether this attribute can be subsequently modified or not")),
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("Indicates whether this attribute can be subsequently modified or not")),
 		@facet(name = IKeyword.CATEGORY,
-			type = IType.LABEL,
-			optional = true,
-			doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
+		type = IType.LABEL,
+		optional = true,
+		doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
 		@facet(name = IKeyword.PARAMETER,
-			type = IType.LABEL,
-			optional = true,
-			doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
+		type = IType.LABEL,
+		optional = true,
+		doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
 		@facet(name = IKeyword.AMONG,
-			type = IType.LIST,
-			optional = true,
-			doc = @doc("A list of constant values among which the attribute can take its value")) },
+		type = IType.LIST,
+		optional = true,
+		doc = @doc("A list of constant values among which the attribute can take its value")) },
 	omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.REGULAR, with_sequence = false,
 concept = { IConcept.ATTRIBUTE })
@@ -227,7 +226,7 @@ public class Variable extends Symbol implements IVariable {
 			// AD 15/04/14: special case for files
 			if ( !init.isConst() && init.getType().id() != IType.FILE ) {
 				String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + "initial value must be constant", IGamlIssue.NOT_CONST, INIT);
+				cd.error(p + "initial value must be constant" + init.isConst(), IGamlIssue.NOT_CONST, INIT);
 				return;
 			}
 			if ( facets.containsKey(UPDATE) || facets.containsKey(VALUE) || facets.containsKey(FUNCTION) ) {

@@ -25,7 +25,6 @@ import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
@@ -448,15 +447,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public Collection<IAgent> selectAgent(final int x, final int y) {
 		final ILocation pp = getModelCoordinatesFrom(x, y, null, null);
-		return GAMA.run(new InScope<Collection<IAgent>>() {
-
-			@Override
-			public Collection<IAgent> run(final IScope scope) {
-				return scope.getRoot().getPopulation().getTopology().getNeighboursOf(scope,
-					new GamaPoint(pp.getX(), pp.getY()), renderer.getMaxEnvDim() / 100, Different.with());
-			}
-		});
-
+		return scope.getRoot().getPopulation().getTopology().getNeighboursOf(scope, new GamaPoint(pp.getX(), pp.getY()),
+			renderer.getMaxEnvDim() / 100, Different.with());
 	}
 
 	/**
@@ -608,6 +600,14 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if ( animator != null && animator.isStarted() ) {
 			animator.stop();
 		}
+		if ( this.menu != null && !menu.isDisposed() ) {
+			menu.dispose();
+			this.menu = null;
+		}
+
+		this.menuManager = null;
+		this.mouseListeners.clear();
+
 		GAMA.releaseScope(getDisplayScope());
 		setDisplayScope(null);
 	}

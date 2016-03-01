@@ -163,6 +163,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void dispose() {
 		if ( dead ) { return; }
 		closeSimulations();
+		GAMA.releaseScope(scope);
 		super.dispose();
 	}
 

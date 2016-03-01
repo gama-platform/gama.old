@@ -36,7 +36,7 @@ public class ResourceObject extends AbstractObject {
 		// We first push the matrix so that all translations, etc. are done locally
 
 		gl.glPushMatrix();
-		Envelope env = renderer.getEnvelopeFor(file.getPath());
+		Envelope env = JOGLRenderer.getEnvelopeFor(file.getPath());
 		// If a location is provided we use it otherwise we use that of the agent if it exists
 		if ( attributes.location != null ) {
 			gl.glTranslated(attributes.location.x, renderer.yFlag * attributes.location.y, attributes.location.z);
@@ -98,6 +98,6 @@ public class ResourceObject extends AbstractObject {
 
 	@Override
 	public void preload(final GL2 gl, final JOGLRenderer renderer) {
-		renderer.getGeometryCache().get(gl, file);
+		renderer.getGeometryListFor(gl, file);
 	}
 }

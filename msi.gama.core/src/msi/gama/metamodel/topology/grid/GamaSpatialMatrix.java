@@ -17,7 +17,6 @@ import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import gnu.trove.iterator.TIntIterator;
-import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
@@ -26,7 +25,7 @@ import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGridFile;
@@ -35,7 +34,7 @@ import msi.gama.util.path.*;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
-import msi.gaml.operators.fastmaths.*;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
@@ -75,15 +74,18 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	Map hexAgentToLoc = null;
 
-	private final IShape referenceShape;
+	final IShape referenceShape;
 
 	@Override
 	public void dispose() {
+		neighbourhood.clear();
 		neighbourhood = null;
 		gridValue = null;
+		_clear();
 		matrix = null;
 		diffuser = null;
 		diffuser_deprecated = null;
+		cellSpecies = null;
 	}
 
 	public IContainerType getPreciseType(final IScope scope) {
@@ -96,9 +98,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
 		final boolean isTorus, final boolean usesVN, final boolean indiv, final boolean useNeighboursCache)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		super(cols, rows, Types.GEOMETRY);
-		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / cols;
@@ -274,10 +275,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public INeighbourhood getNeighbourhood() {
 		if ( neighbourhood == null ) {
 			if ( useNeighboursCache ) {
-				neighbourhood = isHexagon ? new GridHexagonalNeighbourhood()
-					: usesVN ? new GridVonNeumannNeighbourhood() : new GridMooreNeighbourhood();
+				neighbourhood = isHexagon ? new GridHexagonalNeighbourhood(this)
+					: usesVN ? new GridVonNeumannNeighbourhood(this) : new GridMooreNeighbourhood(this);
 			} else {
-				neighbourhood = new NoCacheNeighbourhood();
+				neighbourhood = new NoCacheNeighbourhood(this);
 			}
 		}
 		return neighbourhood;
@@ -315,7 +316,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return 0.0;
 	}
 
-	private final int getPlaceIndexAt(final int xx, final int yy) {
+	final int getPlaceIndexAt(final int xx, final int yy) {
 		if ( isHexagon ) { return yy * numCols + xx; }
 		if ( isTorus ) { return (yy < 0 ? yy + numCols : yy) % numRows * numCols +
 			(xx < 0 ? xx + numCols : xx) % numCols; }
@@ -389,14 +390,14 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return matrix[p];
 	}
 
-	private void diffuse_deprecated(final IScope scope) throws GamaRuntimeException {
+	void diffuse_deprecated(final IScope scope) throws GamaRuntimeException {
 		// this was once used for "Signal" statement (deprecated since GAMA 1.8). It will have to be removed soon.
 		// AD Fixes a NPE when relaunching a simulation
 		if ( diffuser_deprecated == null ) { return; }
 		getDiffuser_deprecated(scope).diffuse_deprecated(scope);
 	}
 
-	private void diffuse(final IScope scope) throws GamaRuntimeException {
+	void diffuse(final IScope scope) throws GamaRuntimeException {
 		diffuser.diffuse();
 	}
 
@@ -440,6 +441,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public void _clear() {
 		Arrays.fill(matrix, null);
+		matrix = null;
 	}
 
 	@Override
@@ -630,10 +632,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return allPlaces;
 	}
 
-	IAgent testPlace(final IScope scope, final IShape source, final IAgentFilter filter, final IShape toTest) {
-		List<IAgent> agents = new ArrayList<IAgent>(scope.getTopology().getAgentsIn(scope, toTest, filter, false));
+	static IAgent testPlace(final IScope scope, final IShape source, final IAgentFilter filter, final IShape toTest) {
+		List<IAgent> agents = new ArrayList<>(scope.getTopology().getAgentsIn(scope, toTest, filter, false));
 		agents.remove(source);
-		if ( agents == null || agents.isEmpty() ) { return null; }
+		if ( agents.isEmpty() ) { return null; }
 		return (IAgent) scope.getRandom().shuffle(agents).get(0);
 	}
 
@@ -644,16 +646,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if ( filter.accept(scope, source, startAg) ) { return startAg; }
 		IAgent agT = testPlace(scope, source, filter, startAg);
 		if ( agT != null ) { return agT; }
-		final List<IAgent> cells = new ArrayList<IAgent>();
+		final List<IAgent> cells = new ArrayList<>();
 
 		int cpt = 0;
 		cells.add(startAg);
-		final int max = this.numCols * this.numRows;
+		// final int max = this.numCols * this.numRows;
 		List<IAgent> neighb =
 			scope.getRandom().shuffle(getNeighborhoods(scope, startAg, cells, new ArrayList<IAgent>()));
 		while (cpt < this.numCols * this.numRows) {
 			cpt++;
-			final Set<IAgent> neighb2 = new THashSet<IAgent>();
+			final Set<IAgent> neighb2 = new THashSet<>();
 			for ( final IAgent ag : neighb ) {
 				agT = testPlace(scope, source, filter, ag);
 				if ( agT != null ) { return agT; }
@@ -661,7 +663,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				neighb2.addAll(getNeighborhoods(scope, ag, cells, neighb));
 
 			}
-			neighb = new ArrayList<IAgent>(neighb2);
+			neighb = new ArrayList<>(neighb2);
 
 		}
 		return null;
@@ -670,7 +672,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	private List<IAgent> getNeighborhoods(final IScope scope, final IAgent agent, final List cells,
 		final List<IAgent> currentList) throws GamaRuntimeException {
 		final List<IAgent> agents = new ArrayList(getNeighboursOf(scope, agent.getLocation(), 1.0, null));
-		final List<IAgent> neighs = new ArrayList<IAgent>();
+		final List<IAgent> neighs = new ArrayList<>();
 		for ( IAgent ag : agents ) {
 			if ( !cells.contains(ag) && !currentList.contains(ag) && !neighs.contains(ag) ) {
 				neighs.add(ag);
@@ -707,7 +709,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		dists[startAg.getIndex()] = 0;
 		final int max = this.numCols * this.numRows;
 		final Set<IAgent> agentsTmp = getNeighboursOf(scope, startAg.getLocation(), 1.0, null);
-		Set<IAgent> neighb = new THashSet<IAgent>();
+		Set<IAgent> neighb = new THashSet<>();
 		for ( IAgent ag : agentsTmp ) {
 			if ( dists[ag.getIndex()] == -1 ) {
 				neighb.add(ag);
@@ -715,7 +717,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 		while (true) {
 			cpt++;
-			final Set<IAgent> neighb2 = new THashSet<IAgent>();
+			final Set<IAgent> neighb2 = new THashSet<>();
 			for ( final IAgent cel : neighb ) {
 				if ( dists[cel.getIndex()] == -1 ) {
 					dists[cel.getIndex()] = cpt;
@@ -773,12 +775,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	private GridDiffuser_deprecated getDiffuser_deprecated(final IScope scope) {
 		// this was once used for "Signal" statement (deprecated since GAMA 1.8). It will have to be removed soon.
 		if ( diffuser_deprecated != null ) { return diffuser_deprecated; }
-		diffuser_deprecated = new GridDiffuser_deprecated();
+		diffuser_deprecated = new GridDiffuser_deprecated(this);
 		scope.getExperiment().getActionExecuter().insertEndAction(new GamaHelper() {
 
 			@Override
-			public Object run(final IScope scope) throws GamaRuntimeException {
-				diffuse_deprecated(scope);
+			public Object run(final IScope s) throws GamaRuntimeException {
+				diffuse_deprecated(s);
 				return null;
 			}
 
@@ -792,9 +794,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		scope.getExperiment().getActionExecuter().insertEndAction(new GamaHelper() {
 
 			@Override
-			public Object run(final IScope scope) throws GamaRuntimeException {
+			public Object run(final IScope s) throws GamaRuntimeException {
 				if ( diffuser != null ) {
-					diffuse(scope);
+					diffuse(s);
 				}
 				return null;
 			}
@@ -840,9 +842,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if ( matrix == null ) { return Collections.EMPTY_LIST; }
 		// Later, do return Arrays.asList(matrix);
 		final List<IAgent> agents = GamaListFactory.create(Types.AGENT);
-		for ( int i = 0; i < matrix.length; i++ ) {
-			if ( matrix[i] != null ) {
-				agents.add(matrix[i].getAgent());
+		for ( IShape element : matrix ) {
+			if ( element != null ) {
+				agents.add(element.getAgent());
 			}
 		}
 		return agents;
@@ -1341,6 +1343,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				geometry = matrix[index].getGeometry();
 			}
 
+
+
 			@Override
 			public GamaColor getColor() {
 				if ( isHexagon ) { return (GamaColor) getAttribute(IKeyword.COLOR); }
@@ -1561,623 +1565,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	// }
 	//
 	// private final Function<Integer, IAgent> intToAgents = new IntToAgents();
-
-	public class NoCacheNeighbourhood implements INeighbourhood {
-
-		public NoCacheNeighbourhood() {}
-
-		/**
-		 * Method getNeighboursIn()
-		 * @see msi.gama.metamodel.topology.grid.INeighbourhood#getNeighboursIn(int, int)
-		 */
-		@Override
-		public Set<IAgent> getNeighboursIn(final IScope scope, final int placeIndex, final int radius) {
-			return computeNeighboursFrom(scope, placeIndex, 1, radius);
-		}
-
-		private Set<IAgent> computeNeighboursFrom(final IScope scope, final int placeIndex, final int begin,
-			final int end) {
-			Set<IAgent> result = new TLinkedHashSet();
-			for ( int i = begin; i <= end; i++ ) {
-				for ( Integer index : usesVN ? get4NeighboursAtRadius(placeIndex, i)
-					: get8NeighboursAtRadius(placeIndex, i) ) {
-					result.add(matrix[index].getAgent());
-				}
-			}
-			// Addresses Issue 1071 by explicitly shuffling the result
-			scope.getRandom().shuffle2(result);
-			return result;
-		}
-
-		protected List<Integer> get8NeighboursAtRadius(final int placeIndex, final int radius) {
-			final int y = placeIndex / numCols;
-			final int x = placeIndex - y * numCols;
-			final List<Integer> v = new ArrayList<Integer>(radius + 1 * radius + 1);
-			int p;
-			for ( int i = 1 - radius; i < radius; i++ ) {
-				p = getPlaceIndexAt(x + i, y - radius);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-				p = getPlaceIndexAt(x - i, y + radius);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-			}
-			for ( int i = -radius; i < radius + 1; i++ ) {
-				p = getPlaceIndexAt(x - radius, y - i);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-				p = getPlaceIndexAt(x + radius, y + i);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-			}
-			return v;
-		}
-
-		protected List<Integer> get4NeighboursAtRadius(final int placeIndex, final int radius) {
-			final int y = placeIndex / numCols;
-			final int x = placeIndex - y * numCols;
-
-			final List<Integer> v = new ArrayList<Integer>(radius << 2);
-			int p;
-			for ( int i = -radius; i < radius; i++ ) {
-				p = getPlaceIndexAt(x - i, y - CmnFastMath.abs(i) + radius);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-				p = getPlaceIndexAt(x + i, y + CmnFastMath.abs(i) - radius);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-			}
-			return v;
-		}
-
-		/**
-		 * Method isVN()
-		 * @see msi.gama.metamodel.topology.grid.INeighbourhood#isVN()
-		 */
-		@Override
-		public boolean isVN() {
-			return false;
-		}
-
-		/**
-		 * Method getRawNeighboursIncluding()
-		 * @see msi.gama.metamodel.topology.grid.INeighbourhood#getRawNeighboursIncluding(int, int)
-		 */
-		@Override
-		public int[] getRawNeighboursIncluding(final IScope scope, final int placeIndex, final int range) {
-			throw GamaRuntimeException.warning("The diffusion of signals must rely on a neighbours cache in the grid",
-				scope);
-		}
-
-		/**
-		 * Method neighboursIndexOf()
-		 * @see msi.gama.metamodel.topology.grid.INeighbourhood#neighboursIndexOf(int, int)
-		 */
-		@Override
-		public int neighboursIndexOf(final IScope scope, final int placeIndex, final int n) {
-			throw GamaRuntimeException.warning("The diffusion of signals must rely on a neighbours cache in the grid",
-				scope);
-		}
-
-	}
-
-	/**
-	 * Written by drogoul Modified on 8 mars 2011
-	 *
-	 * @todo Description
-	 *
-	 */
-	public abstract class GridNeighbourhood implements INeighbourhood {
-
-		// i : index of agents; j : index of neighbours
-		protected int[][] neighbours;
-		// i : index of agents; j : index of the neighbours by distance
-		protected int[][] neighboursIndexes;
-
-		public GridNeighbourhood() {
-			neighbours = new int[matrix.length][0];
-			// neighboursIndexes = new ArrayList[agents.length];
-			neighboursIndexes = new int[matrix.length][];
-		}
-
-		@Override
-		public int[] getRawNeighboursIncluding(final IScope scope, final int placeIndex, final int radius) {
-			// List<Integer> n = neighboursIndexes[placeIndex];
-			int[] n = neighboursIndexes[placeIndex];
-			if ( n == null ) {
-				// n = new ArrayList<Integer>();
-				n = new int[0];
-				neighboursIndexes[placeIndex] = n;
-			}
-			// final int size = n.size();
-			final int size = n.length;
-			if ( radius > size ) {
-				computeNeighboursFrom(placeIndex, size + 1, radius);
-			}
-			return neighbours[placeIndex];
-		}
-
-		protected abstract TIntHashSet getNeighboursAtRadius(final int placeIndex, final int radius);
-
-		private void computeNeighboursFrom(final int placeIndex, final int begin, final int end) {
-			for ( int i = begin; i <= end; i++ ) {
-				// final int previousIndex = i == 1 ? 0 : neighboursIndexes[placeIndex].get(i - 2);
-				final int previousIndex = i == 1 ? 0 : neighboursIndexes[placeIndex][i - 2];
-				final TIntHashSet list = getNeighboursAtRadius(placeIndex, i);
-				int[] listArray = list.toArray();
-				int size = listArray.length;
-				// final int size = list.size();
-				// final int[] listArray = new int[size];
-				// for ( int j = 0; j < size; j++ ) {
-				// listArray[j] = list.get(j);
-				// }
-				final int[] newArray = new int[neighbours[placeIndex].length + size];
-				if ( neighbours[placeIndex].length != 0 ) {
-					java.lang.System.arraycopy(neighbours[placeIndex], 0, newArray, 0, neighbours[placeIndex].length);
-				}
-				java.lang.System.arraycopy(listArray, 0, newArray, neighbours[placeIndex].length, size);
-				neighbours[placeIndex] = newArray;
-				// neighboursIndexes[placeIndex].add(previousIndex + size);
-				addToNeighboursIndex(placeIndex, previousIndex + size);
-			}
-		}
-
-		private final void addToNeighboursIndex(final int placeIndex, final int newIndex) {
-			final int[] previous = neighboursIndexes[placeIndex];
-			final int[] newOne = new int[previous.length + 1];
-			java.lang.System.arraycopy(previous, 0, newOne, 0, previous.length);
-			newOne[previous.length] = newIndex;
-			neighboursIndexes[placeIndex] = newOne;
-		}
-
-		@Override
-		public int neighboursIndexOf(final IScope scope, final int placeIndex, final int n) {
-			if ( n == 1 ) { return 0; }
-			final int size = neighboursIndexes[placeIndex].length;
-			if ( n > size ) { return neighbours[placeIndex].length - 1; }
-			return neighboursIndexes[placeIndex][n - 2];
-		}
-
-		@Override
-		public Set<IAgent> getNeighboursIn(final IScope scope, final int placeIndex, final int radius) {
-			int[] n = neighboursIndexes[placeIndex];
-			if ( n == null ) {
-				n = new int[0];
-				neighboursIndexes[placeIndex] = n;
-			}
-			final int size = n.length;
-			if ( radius > size ) {
-				computeNeighboursFrom(placeIndex, size + 1, radius);
-			}
-			final int[] nn = neighbours[placeIndex];
-			final int nnSize = neighboursIndexes[placeIndex][radius - 1];
-			final Set<IAgent> result = new TLinkedHashSet();
-			for ( int i = 0; i < nnSize; i++ ) {
-				result.add(matrix[nn[i]].getAgent());
-			}
-			scope.getRandom().shuffle2(result);
-			return result;
-		}
-
-		@Override
-		public abstract boolean isVN();
-
-	}
-
-	protected class GridDiffuser_deprecated {
-		// this was once used for "Signal" statement (deprecated since GAMA 1.8). It will have to be removed soon.
-
-		private class GridDiffusion_deprecated {
-
-			IShape[] places;
-			double[] values;
-			final double proportion;
-			final double variation;
-			final double range;
-			final short type;
-			final IContainer<?, IAgent> candidates;
-
-			private GridDiffusion_deprecated(final short type, final double proportion, final double variation,
-				final double range, final IContainer<?, IAgent> cand) {
-				this.type = type;
-				this.proportion = proportion;
-				this.variation = variation;
-				this.range = range;
-				places = new IAgent[0];
-				values = new double[0];
-				candidates = cand;
-			}
-
-			// TODO Take candidates into account here as well (by making an intersection ? or better a union)
-			void add(final IScope scope, final IAgent p, final double value) {
-				if ( candidates != null && !candidates.contains(scope, p) ) { return; }
-				for ( int i = 0; i < places.length; i++ ) {
-					if ( places[i] == p ) {
-						final double v = values[i];
-						values[i] = type == IGrid.GRADIENT ? FastMath.max(v, value) : v + value;
-						return;
-					}
-				}
-				places = Arrays.copyOf(places, places.length + 1);
-				values = Arrays.copyOf(values, values.length + 1);
-				places[places.length - 1] = p;
-				values[values.length - 1] = value;
-			}
-		}
-
-		private final int neighboursSize;
-
-		public GridDiffuser_deprecated() {
-			neighboursSize = getNeighbourhood().isVN() ? 4 : 8;
-		}
-
-		protected final Map<String, GridDiffusion_deprecated> diffusions_deprecated = new THashMap();
-
-		// public static final short GRADIENT = 1;
-		// public static final short DIFFUSION = 0;
-
-		protected void addDiffusion(final IScope scope, final short type, final String var, final IAgent agent,
-			final double value, final double proportion, final double variation, final double range,
-			final IContainer<?, IAgent> candidates) {
-			if ( !diffusions_deprecated.containsKey(var) ) {
-				diffusions_deprecated.put(var,
-					new GridDiffusion_deprecated(type, proportion, variation, range, candidates));
-			}
-			diffusions_deprecated.get(var).add(scope, agent, value);
-		}
-
-		public void diffuse_deprecated(final IScope scope) throws GamaRuntimeException {
-			for ( final String v : diffusions_deprecated.keySet() ) {
-				final GridDiffusion_deprecated d = diffusions_deprecated.get(v);
-				if ( d.type == IGrid.DIFFUSION ) {
-					spreadDiffusion(scope, v, d);
-				} else {
-					spreadGradient(scope, v, d);
-				}
-			}
-			diffusions_deprecated.clear();
-		}
-
-		protected final int getPlaceIndexAt(final ILocation p) {
-			final double xx = p.getX() / cellWidth;
-			final double yy = p.getY() / cellWidth;
-			final int x = (int) xx;
-			final int y = (int) yy;
-			return GamaSpatialMatrix.this.getPlaceIndexAt(x, y);
-		}
-
-		public void diffuseVariable(final IScope scope, final String name, final double value, final short type,
-			final double proportion, final double variation, final ILocation location, final double range,
-			final Object candidates) {
-			final int p = getPlaceIndexAt(location);
-			if ( p == -1 ) { return; }
-			IContainer<?, IAgent> cand = candidates instanceof IPopulation ? null
-				: candidates instanceof IContainer ? (IContainer) candidates : null;
-			addDiffusion(scope, type, name, matrix[p].getAgent(), value, proportion, variation, range, cand);
-		}
-
-		private void spreadDiffusion(final IScope scope, final String v, final GridDiffusion_deprecated gridDiffusion)
-			throws GamaRuntimeException {
-			int[] neighbours;
-			IAgent p;
-			final double proportion = gridDiffusion.proportion;
-			final double variation = gridDiffusion.variation;
-			int range = (int) (gridDiffusion.range / cellWidth);
-			if ( range < 0 ) {
-				range = 1000;
-			}
-			if ( range == 0 ) { return; }
-
-			int n;
-			double r0, rn;
-			final double prop = proportion / neighboursSize;
-			final double propInit = 1 - proportion;
-			for ( int i = 0, halt = gridDiffusion.places.length; i < halt; i++ ) {
-				p = gridDiffusion.places[i].getAgent();
-				// if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, p) ) {
-				// continue;
-				// }
-				final int placeIndex = p.getIndex();
-				r0 = gridDiffusion.values[i];
-				final Double previous = (Double) scope.getAgentVarValue(p, v);
-				// If we cant get access to the value of the variable, it means probably that the agent is dead. Better
-				// to stop spreading !
-				if ( previous == null ) { return; }
-				scope.setAgentVarValue(p, v, previous + r0 * propInit);
-				rn = r0 * prop - variation;
-				int max_range = 1;
-				double vn = rn;
-				while (vn > 0.1) {
-					vn = vn * prop - variation;
-					max_range++;
-				}
-				range = CmnFastMath.min(range, max_range);
-				try {
-					neighbours = neighbourhood.getRawNeighboursIncluding(scope, placeIndex, range);
-				} catch (final GamaRuntimeException e) {
-					// We change the neighbourhood to a cached version dynamically
-					GAMA.reportError(scope, e, false);
-					useNeighboursCache = true;
-					neighbourhood = null;
-					neighbours = getNeighbourhood().getRawNeighboursIncluding(scope, placeIndex, range);
-				}
-				for ( n = 1; n <= range; n++ ) {
-					final int begin = neighbourhood.neighboursIndexOf(scope, placeIndex, n);
-					final int end = neighbourhood.neighboursIndexOf(scope, placeIndex, n + 1);
-					for ( int k = begin; k < end; k++ ) {
-						final IAgent z = matrix[neighbours[k]].getAgent();
-						if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z) ) {
-							continue;
-						}
-						// v.addDirectFloat(z, rn);
-						final Double value = (Double) scope.getAgentVarValue(z, v);
-						// If we cant get access to the value of the variable, it means probably that the agent is dead.
-						// Better to stop spreading !
-						if ( value == null ) { return; }
-						scope.setAgentVarValue(z, v, value + rn);
-					}
-					rn = rn * prop - variation;
-				}
-			}
-		}
-
-		private void spreadGradient(final IScope scope, final String v, final GridDiffusion_deprecated gridDiffusion)
-			throws GamaRuntimeException {
-			int[] neighbours;
-			IAgent p;
-			final double proportion = gridDiffusion.proportion;
-			final double variation = gridDiffusion.variation;
-			int range = (int) (gridDiffusion.range / cellWidth);
-			if ( range < 0 ) {
-				range = 1000;
-			}
-			if ( range == 0 ) { return; }
-
-			int n;
-			double r0, rn;
-			for ( int i = 0, halt = gridDiffusion.places.length; i < halt; i++ ) {
-				p = gridDiffusion.places[i].getAgent();
-				final int placeIndex = p.getIndex();
-				r0 = gridDiffusion.values[i];
-				final Double previous = (Double) scope.getAgentVarValue(p, v);
-				// If we cant get access to the value of the variable, it means probably that the agent is dead. Better
-				// to stop spreading !
-				if ( previous == null || previous > r0 ) { return; }
-				scope.setAgentVarValue(p, v, r0);
-				rn = r0 * proportion - variation;
-				int max_range = 1;
-				double vn = rn;
-				while (vn > 0.1) {
-					vn = vn * proportion - variation;
-					max_range++;
-				}
-				range = CmnFastMath.min(range, max_range);
-				try {
-					neighbours = neighbourhood.getRawNeighboursIncluding(scope, placeIndex, range);
-				} catch (final GamaRuntimeException e) {
-					// We change the neighbourhood to a cached version dynamically
-					GAMA.reportError(scope, e, false);
-					useNeighboursCache = true;
-					neighbourhood = null;
-					neighbours = getNeighbourhood().getRawNeighboursIncluding(scope, placeIndex, range);
-				}
-				boolean cont = true;
-				for ( n = 1; n <= range; n++ ) {
-					final int begin = neighbourhood.neighboursIndexOf(scope, placeIndex, n);
-					final int end = neighbourhood.neighboursIndexOf(scope, placeIndex, n + 1);
-					cont = false;
-					for ( int k = begin; k < end; k++ ) {
-						final IAgent z = matrix[neighbours[k]].getAgent();
-						if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z) ) {
-							continue;
-						}
-						final Double value = (Double) scope.getAgentVarValue(z, v);
-						// If we cant get access to the value of the variable, it means probably that the agent is dead.
-						// Better to stop spreading !
-						if ( value == null ) { return; }
-						if ( value < rn ) {
-							scope.setAgentVarValue(z, v, rn);
-							cont = true;
-						}
-					}
-					if ( !cont ) {
-						break;
-					}
-					rn = rn * proportion - variation;
-				}
-			}
-		}
-
-	}
-
-	public class GridHexagonalNeighbourhood extends GridNeighbourhood {
-
-		final int getIndexAt(int x, int y, final int xSize, final int ySize, final boolean isTorus) {
-			if ( x < 0 || y < 0 || x > xSize - 1 || y > ySize - 1 ) {
-				if ( !isTorus ) { return -1; }
-				if ( x < 0 ) {
-					x = xSize - 1;
-				}
-				if ( y < 0 ) {
-					y = ySize - 1;
-				}
-				if ( x > xSize - 1 ) {
-					x = 0;
-				}
-				if ( y > ySize - 1 ) {
-					y = 0;
-				}
-			}
-			return y * xSize + x;
-		}
-
-		public TIntHashSet getNeighboursAtRadius(final int placeIndex, final int radius, final int xSize,
-			final int ySize, final boolean isTorus) {
-			final TIntHashSet currentNeigh = new TIntHashSet();
-			currentNeigh.add(placeIndex);
-			for ( int i = 0; i < radius; i++ ) {
-				final TIntHashSet newNeigh = new TIntHashSet();
-				TIntIterator it = currentNeigh.iterator();
-				while (it.hasNext()) {
-					newNeigh.addAll(getNeighboursAtRadius1(it.next(), xSize, ySize, isTorus));
-				}
-				currentNeigh.addAll(newNeigh);
-			}
-			currentNeigh.remove(placeIndex);
-			return currentNeigh;
-
-		}
-
-		public TIntHashSet getNeighboursAtRadius1(final int placeIndex, final int xSize, final int ySize,
-			final boolean isTorus) {
-			final int y = placeIndex / xSize;
-			final int x = placeIndex - y * xSize;
-			final TIntHashSet neigh = new TIntHashSet();
-			int id = getIndexAt(x, y - 1, xSize, ySize, isTorus);
-			if ( id != -1 ) {
-				neigh.add(id);
-			}
-			id = getIndexAt(x, y + 1, xSize, ySize, isTorus);
-			if ( id != -1 ) {
-				neigh.add(id);
-			}
-			id = getIndexAt(x - 1, y, xSize, ySize, isTorus);
-			if ( id != -1 ) {
-				neigh.add(id);
-			}
-			id = getIndexAt(x + 1, y, xSize, ySize, isTorus);
-			if ( id != -1 ) {
-				neigh.add(id);
-			}
-			if ( x % 2 == 0 ) {
-				id = getIndexAt(x + 1, y - 1, xSize, ySize, isTorus);
-				if ( id != -1 ) {
-					neigh.add(id);
-				}
-				id = getIndexAt(x - 1, y - 1, xSize, ySize, isTorus);
-				if ( id != -1 ) {
-					neigh.add(id);
-				}
-			} else {
-				id = getIndexAt(x + 1, y + 1, xSize, ySize, isTorus);
-				if ( id != -1 ) {
-					neigh.add(id);
-				}
-				id = getIndexAt(x - 1, y + 1, xSize, ySize, isTorus);
-				if ( id != -1 ) {
-					neigh.add(id);
-				}
-			}
-			return neigh;
-		}
-
-		@Override
-		protected TIntHashSet getNeighboursAtRadius(final int placeIndex, final int radius) {
-			final TIntHashSet neigh2 = new TIntHashSet();
-			final TIntHashSet neigh = getNeighboursAtRadius(placeIndex, radius, numCols, numRows, isTorus);
-			TIntIterator it = neigh.iterator();
-			while (it.hasNext()) {
-				int id = it.next();
-				if ( matrix[id] != null ) {
-					neigh2.add(id);
-				}
-			}
-			return neigh2;
-		}
-
-		@Override
-		public boolean isVN() {
-			return false;
-		}
-
-	}
-
-	/**
-	 * Written by drogoul Modified on 8 mars 2011
-	 *
-	 * @todo Description
-	 *
-	 */
-	public class GridMooreNeighbourhood extends GridNeighbourhood {
-
-		public GridMooreNeighbourhood() {
-			super();
-		}
-
-		@Override
-		protected TIntHashSet getNeighboursAtRadius(final int placeIndex, final int radius) {
-			final int y = placeIndex / numCols;
-			final int x = placeIndex - y * numCols;
-			final TIntHashSet v = new TIntHashSet(radius + 1 * radius + 1);
-			int p;
-			for ( int i = 1 - radius; i < radius; i++ ) {
-				p = getPlaceIndexAt(x + i, y - radius);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-				p = getPlaceIndexAt(x - i, y + radius);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-			}
-			for ( int i = -radius; i < radius + 1; i++ ) {
-				p = getPlaceIndexAt(x - radius, y - i);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-				p = getPlaceIndexAt(x + radius, y + i);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-			}
-			return v;
-		}
-
-		@Override
-		public boolean isVN() {
-			return false;
-		}
-	}
-
-	/**
-	 * Written by drogoul Modified on 8 mars 2011
-	 *
-	 * @todo Description
-	 *
-	 */
-	public class GridVonNeumannNeighbourhood extends GridNeighbourhood {
-
-		@Override
-		protected TIntHashSet getNeighboursAtRadius(final int placeIndex, final int radius) {
-			final int y = placeIndex / numCols;
-			final int x = placeIndex - y * numCols;
-
-			final TIntHashSet v = new TIntHashSet(radius << 2);
-			int p;
-			for ( int i = -radius; i < radius; i++ ) {
-				p = getPlaceIndexAt(x - i, y - CmnFastMath.abs(i) + radius);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-				p = getPlaceIndexAt(x + i, y + CmnFastMath.abs(i) - radius);
-				if ( p != -1 ) {
-					v.add(p);
-				}
-			}
-			return v;
-		}
-
-		@Override
-		public boolean isVN() {
-			return true;
-		}
-	}
 
 	/**
 	 * Method usesNeighboursCache()

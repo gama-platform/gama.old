@@ -123,14 +123,14 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		orderedVarNames = ecd.getVarNames().toArray(new String[0]);
 		final List<String> updatableVarNames = ecd.getUpdatableVarNames();
 		final int updatableVarsSize = updatableVarNames.size();
-		updatableVars = new IVariable[updatableVarNames.size()];
+		updatableVars = new IVariable[updatableVarsSize];
 		for ( int i = 0; i < updatableVarsSize; i++ ) {
 			final String s = updatableVarNames.get(i);
 			updatableVars[i] = species.getVar(s);
 		}
 		if ( species.isMirror() && host != null ) {
 			host.getScope().getExperiment().getActionExecuter()
-				.insertEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
+			.insertEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
 
 		// Add an attribute to the agents (dans SpeciesDescription)
@@ -151,8 +151,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public void updateVariables(final IScope scope, final IAgent a) {
-		for ( int j = 0; j < updatableVars.length; j++ ) {
-			final IVariable v = updatableVars[j];
+		for ( final IVariable v : updatableVars ) {
 			v.setVal(scope, a, v.getUpdatedValue(scope));
 			// updatableVars[j].updateFor(scope, a);
 		}
@@ -322,36 +321,36 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	public void createVariablesFor(final IScope scope, final List<? extends IAgent> agents,
-			final List<? extends Map> initialValues) throws GamaRuntimeException {
+		final List<? extends Map> initialValues) throws GamaRuntimeException {
 		createAndUpdateVariablesFor(scope, agents, initialValues, false);
 	}
-	
-//	public void createVariablesFor(final IScope scope, final List<? extends IAgent> agents,
-//		final List<? extends Map> initialValues) throws GamaRuntimeException {
-//		if ( agents == null || agents.isEmpty() ) { return; }
-//		final boolean empty = initialValues == null || initialValues.isEmpty();
-//		Map<String, Object> inits;
-//		for ( int i = 0, n = agents.size(); i < n; i++ ) {
-//			final IAgent a = agents.get(i);
-//			try {
-//				// a.acquireLock();
-//				if ( empty ) {
-//					inits = Collections.EMPTY_MAP;
-//				} else {
-//					inits = initialValues.get(i);
-//				}
-//				for ( final String s : orderedVarNames ) {
-//					final IVariable var = species.getVar(s);
-//					var.initializeWith(scope, a, empty ? null : inits.get(s));
-//				}
-//			} finally {
-//				// a.releaseLock();
-//			}
-//		}
-//	}
+
+	//	public void createVariablesFor(final IScope scope, final List<? extends IAgent> agents,
+	//		final List<? extends Map> initialValues) throws GamaRuntimeException {
+	//		if ( agents == null || agents.isEmpty() ) { return; }
+	//		final boolean empty = initialValues == null || initialValues.isEmpty();
+	//		Map<String, Object> inits;
+	//		for ( int i = 0, n = agents.size(); i < n; i++ ) {
+	//			final IAgent a = agents.get(i);
+	//			try {
+	//				// a.acquireLock();
+	//				if ( empty ) {
+	//					inits = Collections.EMPTY_MAP;
+	//				} else {
+	//					inits = initialValues.get(i);
+	//				}
+	//				for ( final String s : orderedVarNames ) {
+	//					final IVariable var = species.getVar(s);
+	//					var.initializeWith(scope, a, empty ? null : inits.get(s));
+	//				}
+	//			} finally {
+	//				// a.releaseLock();
+	//			}
+	//		}
+	//	}
 
 	public void createAndUpdateVariablesFor(final IScope scope, final List<? extends IAgent> agents,
-		final List<? extends Map> initialValues, boolean update) throws GamaRuntimeException {
+		final List<? extends Map> initialValues, final boolean update) throws GamaRuntimeException {
 		if ( agents == null || agents.isEmpty() ) { return; }
 		final boolean empty = initialValues == null || initialValues.isEmpty();
 		Map<String, Object> inits;
@@ -377,8 +376,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 				// a.releaseLock();
 			}
 		}
-	}	
-	
+	}
+
 	@Override
 	public void initializeFor(final IScope scope) throws GamaRuntimeException {
 		dispose();
@@ -476,15 +475,15 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			? species.hasFacet(IKeyword.CELL_WIDTH)
 				? (int) (scope.getSimulationScope().getGeometry().getEnvelope().getWidth() /
 					Cast.asInt(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope)))
-				: 100
-			: Cast.asInt(scope, exp.value(scope));
+					: 100
+					: Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
 		final int columns = exp == null
 			? species.hasFacet(IKeyword.CELL_HEIGHT)
 				? (int) (scope.getSimulationScope().getGeometry().getEnvelope().getHeight() /
 					Cast.asInt(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope)))
-				: 100
-			: Cast.asInt(scope, exp.value(scope));
+					: 100
+					: Cast.asInt(scope, exp.value(scope));
 
 		// exp = species.getFacet(IKeyword.TORUS);
 		// final boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
@@ -541,6 +540,12 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 				a.dispose();
 			}
 		}
+		// topology = null;
+		for ( int i = 0; i < updatableVars.length; i++ ) {
+			updatableVars[i] = null;
+		}
+		// In case
+		this.clear();
 		// final Iterator<IAgent> it = ag.iterator();
 		// while (it.hasNext()) {
 		// final IAgent a = it.next();

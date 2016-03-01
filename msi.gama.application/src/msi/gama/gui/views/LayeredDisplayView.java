@@ -48,7 +48,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected Composite surfaceComposite;
 	protected Composite layersPanel;
 	protected IPerspectiveListener perspectiveListener;
-	protected DisplayOverlay overlay;
+	public DisplayOverlay overlay;
 	protected volatile boolean disposed;
 	protected volatile boolean realized = false;
 	protected ToolItem overlayItem;
@@ -74,7 +74,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			if ( scope != null && scope.getSimulationScope() != null ) {
 				ITopLevelAgent root = scope.getRoot();
 				Color color = root.getColor();
-				String name = root.getClass().getSimpleName() + root.getIndex();
+				// String name = root.getClass().getSimpleName() + root.getIndex();
 				this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));
 			}
 		}
@@ -397,12 +397,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT.getCode(), "Take a snapshot", "Take a snapshot",
 			new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					doSnapshot();
-				}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				doSnapshot();
+			}
 
-			}, SWT.RIGHT);
+		}, SWT.RIGHT);
 	}
 
 	@Override
@@ -488,7 +488,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	}
 
-	private void doSnapshot() {
+	void doSnapshot() {
 		LayeredDisplayData data = getOutput().getData();
 		int w = (int) data.getImageDimension().getX();
 		int h = (int) data.getImageDimension().getY();
@@ -558,7 +558,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	private volatile boolean lockAcquired = false;
 
-	private synchronized void acquireLock() {
+	synchronized void acquireLock() {
 		while (lockAcquired) {
 			try {
 				wait();
@@ -609,9 +609,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			}
 			Composite control = compo;
 			ParameterExpandItem i = new ParameterExpandItem(viewer, layer, SWT.None, null);
-			if ( name != null ) {
 				i.setText(name);
-			}
 			control.pack(true);
 			control.layout();
 			i.setControl(control);

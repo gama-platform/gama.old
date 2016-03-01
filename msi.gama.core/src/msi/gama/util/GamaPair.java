@@ -30,8 +30,8 @@ import msi.gaml.types.*;
 		type = ITypeProvider.FIRST_KEY_TYPE,
 		doc = { @doc("Returns the key of this pair (can be nil)") }),
 	@var(name = GamaPair.VALUE,
-		type = ITypeProvider.FIRST_CONTENT_TYPE,
-		doc = { @doc("Returns the value of this pair (can be nil)") }) })
+	type = ITypeProvider.FIRST_CONTENT_TYPE,
+	doc = { @doc("Returns the value of this pair (can be nil)") }) })
 public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.Addressable<Integer, Object>, Map.Entry<K, V> {
 
 	// TODO Makes it inherit from Map.Entry<K,V> in order to tighten the link between it and GamaMap
@@ -48,6 +48,12 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 	public GamaPair(final K k, final V v, final IType keyType, final IType contentsType) {
 		key = k;
 		value = v;
+		type = Types.PAIR.of(keyType, contentsType);
+	}
+
+	public GamaPair(final IScope scope, final K k, final V v, final IType keyType, final IType contentsType) {
+		key = (K) keyType.cast(scope, k, null, false);
+		value = (V) contentsType.cast(scope, v, null, false);
 		type = Types.PAIR.of(keyType, contentsType);
 	}
 
