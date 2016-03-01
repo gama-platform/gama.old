@@ -1191,9 +1191,16 @@
             class="msi.gama.gui.swt.commands.StepByStepHandler"
             commandId="msi.gama.application.commands.StepByStepSimulation">
          <activeWhen>
-            <reference
-                  definitionId="isSimulationReady">
-            </reference>
+            <and>
+               <reference
+                     definitionId="isSimulationReady">
+               </reference>
+               <not>
+                  <reference
+                        definitionId="isSimulationBatch">
+                  </reference>
+               </not>
+            </and>
          </activeWhen>
          <enabledWhen>
             <reference
@@ -1362,6 +1369,10 @@
             provider="msi.gama.gui.swt.commands.SimulationStateProvider">
          <variable
                name="msi.gama.application.commands.SimulationRunningState"
+               priorityLevel="workbench">
+         </variable>
+         <variable
+               name="msi.gama.application.commands.SimulationType"
                priorityLevel="workbench">
          </variable>
       </sourceProvider>
@@ -1553,6 +1564,48 @@
                      property="org.eclipse.xtext.ui.editor.XtextEditor.languageName"
                      value="msi.gama.lang.gaml.Gaml">
                </test>
+            </with>
+         </and>
+      </definition>
+      <definition
+            id="isSimulationBatch">
+         <and>
+            <reference
+                  definitionId="isInSimulationPerspective">
+            </reference>
+            <with
+                  variable="msi.gama.application.commands.SimulationType">
+               <equals
+                     value="BATCH">
+               </equals>
+            </with>
+         </and>
+      </definition>
+      <definition
+            id="isSimulationBatch">
+         <and>
+            <reference
+                  definitionId="isInSimulationPerspective">
+            </reference>
+            <with
+                  variable="msi.gama.application.commands.SimulationType">
+               <equals
+                     value="RUNNING">
+               </equals>
+            </with>
+         </and>
+      </definition>
+      <definition
+            id="isSimulationBatch">
+         <and>
+            <reference
+                  definitionId="isInSimulationPerspective">
+            </reference>
+            <with
+                  variable="msi.gama.application.commands.SimulationRunningState">
+               <equals
+                     value="RUNNING">
+               </equals>
             </with>
          </and>
       </definition>

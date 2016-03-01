@@ -22,8 +22,9 @@ import msi.gama.runtime.*;
 public class SimulationStateProvider extends AbstractSourceProvider implements ISimulationStateProvider {
 
 	public final static String SIMULATION_RUNNING_STATE = "msi.gama.application.commands.SimulationRunningState";
+	public final static String SIMULATION_TYPE = "msi.gama.application.commands.SimulationType";
 
-	private final static Map<String, String> map = new HashMap<String, String>(1);
+	private final static Map<String, String> map = new HashMap<>(2);
 
 	@Override
 	public void dispose() {}
@@ -35,7 +36,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public String[] getProvidedSourceNames() {
-		return new String[] { SIMULATION_RUNNING_STATE };
+		return new String[] { SIMULATION_RUNNING_STATE, SIMULATION_TYPE };
 	}
 
 	@Override
@@ -45,7 +46,9 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 		if ( exp != null ) {
 			state = exp.getExperimentScope().getGui().getFrontmostSimulationState();
 		}
+		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : "REGULAR";
 		map.put(SIMULATION_RUNNING_STATE, state);
+		map.put(SIMULATION_TYPE, type);
 
 		return map;
 	}
@@ -56,6 +59,9 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 	@Override
 	public void updateStateTo(final String state) {
 		fireSourceChanged(ISources.WORKBENCH, SIMULATION_RUNNING_STATE, state);
+		IExperimentPlan exp = GAMA.getExperiment();
+		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : "REGULAR";
+		fireSourceChanged(ISources.WORKBENCH, SIMULATION_TYPE, type);
 	}
 
 }
