@@ -8,20 +8,17 @@ global {
 	file texture <- file('../includes/Texture.png');
 	geometry shape <- envelope(mnt);
 	graph<point, route> reseau_route;
-	topology topo_route;
 	list<batiment> industries;
 	
 	init {
+		create route from: shape_file_routes;
+		reseau_route <- as_edge_graph(route);
 		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))] {
 			float z <- (mnt_cell(location)).grid_value;   
 			location <- {location.x,location.y,z};
 		}
 		industries <- batiment select (each.type = "Industrial");
-		create route from: shape_file_routes;
 		create foyer number: 500;
-		reseau_route <- as_edge_graph(route);
-		topo_route <- topology(reseau_route);
-
 	}
 }
 
@@ -74,8 +71,7 @@ species batiment {
 	float revenu_moyen update: empty(foyer) ? 0.0 : mean (foyers collect each.revenu);
 	init {
 		loop bat over: batiment where (each.type = "Industrial") {
-			float dist <- topology(reseau_route) distance_between [self,bat];
-			put (topo_route distance_between [self,bat]) at: bat in: distances;
+			put (topology(reseau_route) distance_between [self,bat]) at: bat in: distances;
 		}
 	}
 	aspect geometrie {

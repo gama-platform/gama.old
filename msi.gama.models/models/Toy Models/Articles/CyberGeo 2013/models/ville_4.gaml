@@ -7,10 +7,10 @@ global {
 	geometry shape <- envelope(shape_file_routes);
 	graph<point, route> reseau_route;
 	init {
-		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))];
 		create route from: shape_file_routes;
-		create foyer number: 500;
 		reseau_route <- as_edge_graph(route);
+		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))];
+		create foyer number: 500;
 	}
 }
 species foyer {

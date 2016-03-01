@@ -6,8 +6,8 @@ global {
 	file shape_file_routes <- file("../includes/routes.shp");
 	geometry shape <- envelope(shape_file_routes);
 	init {
-		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))];
 		create route from: shape_file_routes;
+		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))];
 		create foyer number: 500;
 	}
 }
