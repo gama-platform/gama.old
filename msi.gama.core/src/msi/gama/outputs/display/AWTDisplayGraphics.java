@@ -237,8 +237,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 
 		// The image contains the dimensions of the grid.
-		final double stepx = getLayerWidth() / image.getWidth();
-		final double stepy = getLayerHeight() / image.getHeight();
+		final double stepx = (double) getLayerWidth() / (double) image.getWidth();
+		final double stepy = (double) getLayerHeight() / (double) image.getHeight();
 		if ( stepx < 2 || stepy < 2 ) { return; }
 		final Line2D line = new Line2D.Double();
 		currentRenderer.setColor(lineColor);
