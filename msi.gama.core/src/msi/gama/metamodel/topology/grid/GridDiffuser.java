@@ -305,7 +305,7 @@ public class GridDiffuser {
 							} else if ( v >= nbCols ) {
 								v = v - nbCols;
 							}
-						} else if ( u >= 0 && v >= 0 && v < nbCols && u < nbRows && mask[i][j]==1) {
+						} else if ( u >= 0 && v >= 0 && v < nbCols && u < nbRows && ( (mask==null) ? true : (mask[i][j] == 1)) ) {
 							if (output[u * nbCols + v]==-Double.MAX_VALUE) {
 								output[u * nbCols + v]=input[i * nbCols + j] * mat_diffu[um][vm];
 							}
