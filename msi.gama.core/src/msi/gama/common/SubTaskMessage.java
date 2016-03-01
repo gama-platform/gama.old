@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 5 nov. 2014
- * 
+ *
  */
 package msi.gama.common;
 
@@ -9,10 +9,10 @@ import msi.gama.util.GamaColor;
 
 /**
  * Class SubTaskMessage.
- * 
+ *
  * @author drogoul
  * @since 5 nov. 2014
- * 
+ *
  */
 public class SubTaskMessage implements IStatusMessage {
 
@@ -72,6 +72,16 @@ public class SubTaskMessage implements IStatusMessage {
 	 */
 	@Override
 	public GamaColor getColor() {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see msi.gama.common.IStatusMessage#getIcon()
+	 */
+	@Override
+	public String getIcon() {
 		return null;
 	}
 

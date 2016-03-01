@@ -73,6 +73,8 @@ public interface IGui {
 
 	void setStatus(String msg, GamaColor color);
 
+	void setStatus(String msg, String icon);
+
 	void beginSubStatus(String name);
 
 	void endSubStatus(String name);
@@ -234,5 +236,12 @@ public interface IGui {
 	void eraseConsole(boolean b);
 
 	public GamaColor getColorForSimulationNumber(final int index);
+
+	/**
+	 * @param msg
+	 * @param color
+	 * @param icon
+	 */
+	void setStatusInternal(String msg, GamaColor color, String icon);
 
 }

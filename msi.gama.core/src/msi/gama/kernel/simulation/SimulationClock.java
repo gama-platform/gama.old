@@ -65,14 +65,14 @@ public class SimulationClock {
 	private double step = 1d;
 
 	/** The duration (in milliseconds) of the last cycle elapsed. */
-	private long duration = 0;
+	protected long duration = 0;
 
 	/**
 	 * The total duration in milliseconds since the beginning of the simulation. Since it is the
 	 * addition of the consecutive durations of cycles, note that it may be different from the
 	 * actual duration of the simulation if the user chooses to pause it, for instance.
 	 */
-	private long total_duration = 0;
+	protected long total_duration = 0;
 
 	/**
 	 * A variable used to compute duration (holds the time, in milliseconds, of the beginning of a
@@ -103,7 +103,7 @@ public class SimulationClock {
 
 	// FIXME Make setCycle() or incrementCycle() advance the other variables as well, so as to allow writing
 	// "cycle <- cycle + 1" in GAML and have the correct information computed.
-	private void setCycle(final int i) throws GamaRuntimeException {
+	public void setCycle(final int i) throws GamaRuntimeException {
 		if ( i < 0 ) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative",
 			simulation.getScope()); }
 
@@ -251,7 +251,7 @@ public class SimulationClock {
 		int cycle = getCycle();
 		String info = displayCycles ? "" + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed"
 			: starting_date == null ? Strings.asDate(time, null) : current_date.toString();
-		return info;
+			return info;
 	}
 
 	public static class ExperimentClock extends SimulationClock {
@@ -262,6 +262,17 @@ public class SimulationClock {
 
 		@Override
 		public void waitDelay() {}
+
+		/**
+		 * @param totalDuration
+		 */
+		public void setTotalDuration(final long totalDuration) {
+			this.total_duration = totalDuration;
+		}
+
+		public void setLastDuration(final long duration) {
+			this.duration = duration;
+		}
 
 	}
 

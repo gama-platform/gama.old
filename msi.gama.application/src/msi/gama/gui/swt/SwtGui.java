@@ -332,8 +332,18 @@ public class SwtGui extends AbstractGui {
 	}
 
 	@Override
+	public void setStatus(final String msg, final String icon) {
+		setStatusInternal(msg, null, icon);
+	}
+
+	@Override
 	public void setStatusInternal(final String msg, final GamaColor color) {
-		status.updateWith(new UserStatusMessage(msg, color));
+		setStatusInternal(msg, color, null);
+	}
+
+	@Override
+	public void setStatusInternal(final String msg, final GamaColor color, final String icon) {
+		status.updateWith(new UserStatusMessage(msg, color, icon));
 	}
 
 	@Override

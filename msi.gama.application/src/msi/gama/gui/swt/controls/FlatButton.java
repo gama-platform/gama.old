@@ -256,6 +256,9 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * @param image
 	 */
 	public FlatButton setImage(final Image image) {
+		if ( this.image == image ) {
+		return this; 
+		}
 		this.image = image;
 		redraw();
 		return this;

@@ -116,7 +116,14 @@ public class BatchAgent extends ExperimentAgent {
 			e.addContext("in saving the results of the batch");
 			GAMA.reportError(getScope(), e, true);
 		}
+		// We save the clock value first (to address Issue #1592)
+		int cycle = clock.getCycle();
+		long totalDuration = clock.getTotalDuration();
+		long lastDuration = clock.getDuration();
 		super.reset();
+		clock.setCycle(cycle);
+		clock.setTotalDuration(totalDuration);
+		clock.setLastDuration(lastDuration);
 	}
 
 	/**
@@ -128,11 +135,11 @@ public class BatchAgent extends ExperimentAgent {
 	 */
 	@Override
 	public boolean step(final IScope scope) {
-		// We run the exloration algorithm (but dont start() it, as the thread is not used)
+		// We run the exloration algorithm
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is killed.
 		scope.getGui()
-			.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
+		.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
 		dispose();
 		return true;
 	}
@@ -140,6 +147,7 @@ public class BatchAgent extends ExperimentAgent {
 	public int getRunNumber() {
 		return this.runNumber;
 	}
+
 
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
@@ -158,23 +166,27 @@ public class BatchAgent extends ExperimentAgent {
 			setSeed(getSeeds()[repeatIndex]);
 			createSimulation(currentSolution, true);
 		}
+		int i = 0;
 		while (getSimulationPopulation().hasScheduledSimulations()) {
 			// We step all the simulations
 			getSimulationPopulation().step(getScope());
-			String cycles = "";
+			// String cycles = "";
 			// We evaluate their stopCondition and unschedule the ones who return true
 			for ( IAgent sim : getSimulationPopulation().toArray() ) {
 				SimulationAgent agent = (SimulationAgent) sim;
-				cycles += " " + simulation.getClock().getCycle();
+				// cycles += " " + simulation.getClock().getCycle();
 				boolean mustStop = Cast.asBool(sim.getScope(), sim.getScope().evaluate(stopCondition, sim));
 				if ( mustStop ) {
 					getSimulationPopulation().unscheduleSimulation(agent);
 				}
 			}
 			// We inform the status line
-			getScope().getGui()
-				.informStatus("Run " + runNumber + " | " + seeds.length + " simulations | Cycles " + cycles);
 
+			getScope().getGui().setStatus("Run " + runNumber + " | " + seeds.length + " simulations (using " +
+				getSimulationPopulation().getNumberOfActiveThreads() + " threads)", "small.batch" + i / 5);
+			if ( ++i == 20 ) {
+				i = 0;
+			}
 			// We then verify that the front scheduler has not been paused
 			while (getSpecies().getController().getScheduler().paused && !dead) {
 				try {

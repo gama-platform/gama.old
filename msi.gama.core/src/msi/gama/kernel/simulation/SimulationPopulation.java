@@ -167,7 +167,7 @@ public class SimulationPopulation extends GamaPopulation {
 	public int getNumberOfActiveThreads() {
 		if ( getExecutorService() instanceof ThreadPoolExecutor ) {
 			ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
-			return e.getCorePoolSize();
+			return e.getPoolSize();
 		}
 		return 0;
 	}

@@ -411,4 +411,24 @@ public class HeadlessListener extends AbstractGui {
 	public GamaColor getColorForSimulationNumber(final int index) {
 		return new GamaColor(Color.BLACK);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see msi.gama.common.interfaces.IGui#setStatusInternal(java.lang.String, msi.gama.util.GamaColor, java.lang.String)
+	 */
+	@Override
+	public void setStatusInternal(final String msg, final GamaColor color, final String icon) {
+		System.out.println(msg);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void setStatus(final String msg, final String icon) {
+		System.out.println(msg);
+	}
 }

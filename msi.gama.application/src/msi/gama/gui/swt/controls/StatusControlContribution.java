@@ -222,7 +222,11 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		}
 
 		// updater.run();
-
+		if (m.getIcon() != null) {
+			label.setImage(GamaIcons.create(m.getIcon()).image());
+		} else {
+			label.setImage(null);
+		}
 		label.setColor(getPopupBackground());
 		if ( inSubTask ) {
 			label.setText(

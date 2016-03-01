@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 4 nov. 2014
- * 
+ *
  */
 package msi.gama.common;
 
@@ -38,6 +38,16 @@ public class StatusMessage implements IStatusMessage {
 	 */
 	@Override
 	public GamaColor getColor() {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see msi.gama.common.IStatusMessage#getIcon()
+	 */
+	@Override
+	public String getIcon() {
 		return null;
 	}
 
