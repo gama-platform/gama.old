@@ -541,9 +541,9 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			}
 		}
 		// topology = null;
-		for ( int i = 0; i < updatableVars.length; i++ ) {
-			updatableVars[i] = null;
-		}
+		// for ( int i = 0; i < updatableVars.length; i++ ) {
+		// updatableVars[i] = null;
+		// }
 		// In case
 		this.clear();
 		// final Iterator<IAgent> it = ag.iterator();
