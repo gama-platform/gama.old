@@ -2,7 +2,7 @@
 * Name:  CreateBuildingTablePostGIS
 * Author: Truong Minh Thai
 * Description:    This model shows how to create a database and a table in PostGIS using GAMA
- * Tags: Database
+ * Tags: database
  */
 
 model CreateBuildingTablePostGIS

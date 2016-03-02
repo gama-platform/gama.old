@@ -2,7 +2,7 @@
 * Name:  Agents to Database in MSSQL
 * Author: Truong Minh Thai
 * Description:  This model shows how to Insert and Delete agents from a MSSQL DB
-* Tags: Database
+* Tags: database
   */
 
 model agent2DB_MSSQL 

@@ -2,7 +2,7 @@
 * Name: Graph Generation
 * Author: Patrick Taillandier
 * Description: Model which shows how to create three kind of graphs : a scale-free graph, a small-world graph, a complete graph and a complete graph with a radius.
-* Tags: Graph
+* Tags: graph
 */
 
 model classicgraphgeneration

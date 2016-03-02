@@ -5,7 +5,7 @@
 *     Five experiments are proposed with differents goals : understanding of the model used (Boids_gui), 3D Display (start), 3D Display with trajectories analysis of boids (trajectory_analysis),
 *     one coupling both previous experiments and the time simulated with boids going higher and higher according to the time (SpaceTimeCube) and a model presenting the different views 
 *     possible in the 3D Display : first person, third person and global view (Multiple view). 
-* Tags: 3D Display, Camera Positioning
+* Tags: 3d, camera
 */
 
 model boidsVisualization

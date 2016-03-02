@@ -3,7 +3,7 @@
 * Author: Patrick Taillandier
 * Description: Model using shapefiles to create buildings, linking their height and type attributes to the height and nature columns of the shapefiles
 * 	to finally save the data in an other shapefile.
-* Tags: GIS, Shapefiles, Save Files, Import Files, 3D Display
+* Tags: gis, shapefile, save_file, load_file, 3d
 */
   
 

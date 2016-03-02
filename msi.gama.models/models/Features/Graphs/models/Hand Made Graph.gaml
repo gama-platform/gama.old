@@ -4,9 +4,9 @@
 * Description: Model to show how to build a graph from scratch using three ways : by putting a list of edges as parameter of as_edge_graph, by adding 
 *      a node or an edge manually using facet to or by changing the graph itself after adding a node or an edge. The experiment has two displays : one for
 *      the first graph created from the list of edges, an other for the graph creating by adding the nodes and edges manually using add operator.
-* Tags: Graph
+* Tags: graph, node, edge
 */
-model hameMadeGraph
+model handMadeGraph
 
 global {
 	graph the_graph1 ;
@@ -17,8 +17,8 @@ global {
 		
 		the_graph2 <- graph([]);
 		//first way to add nodes and edges
-		add node: {50,50} to: the_graph2;
-		add edge: {10,10}::{90,50} to: the_graph2;
+		add node({50,50}) to: the_graph2;
+		add edge({10,10}::{90,50}) to: the_graph2;
 		
 		//second way to add nodes and edges
 		the_graph2 <- the_graph2 add_node {10,40} ;

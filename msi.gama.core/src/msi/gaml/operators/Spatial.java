@@ -2029,7 +2029,7 @@ public abstract class Spatial {
 		@operator(value = "path_to",
 			type = IType.PATH,
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH },
-			concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY, IConcept.PATH })
+			concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
 		@doc(
 			value = "A path between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.",
 			masterDoc = true,

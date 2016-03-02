@@ -2,7 +2,7 @@
 * Name: SQLConnection
 * Author: thaitruongminh
 * Description: How to create a connection to a database in GAMA
-* Tags: Database
+* Tags: database
  */
 model test_connection
 

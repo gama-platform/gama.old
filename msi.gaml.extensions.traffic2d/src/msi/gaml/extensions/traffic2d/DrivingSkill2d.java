@@ -41,7 +41,7 @@ import msi.gaml.types.*;
 	@var(name = "obstacle_species", type = IType.LIST, init = "[]"),
 	@var(name = "background_species", type = IType.LIST, init = "[]"),
 	@var(name = IKeyword.SPEED, type = IType.FLOAT, init = "1.0") })
-@skill(name = "driving2d", concept = { IConcept.SKILL, IConcept.TRANSPORT })
+@skill(name = "driving2d", concept = { IConcept.SKILL, IConcept.TRANSPORT, IConcept.AGENT_MOVEMENT })
 public class DrivingSkill2d extends MovingSkill {
 
 	public final static String OBSTACLE_SPECIES = "obstacle_species";

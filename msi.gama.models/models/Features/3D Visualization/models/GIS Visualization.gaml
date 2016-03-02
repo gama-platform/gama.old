@@ -2,7 +2,7 @@
 * Name: Visualization of GIS data
 * Author:  Patrick Taillandier
 * Description:  this model shows how to visualize GIS data without having to create agents  
-* Tags: 3D Display, Shapefiles
+* Tags: 3d, shapefile, texture
 */
 
 model GIS_visualization

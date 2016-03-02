@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package irit.gaml.extensions.test.statements;
 
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
@@ -22,7 +23,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 
-@symbol(name = { "setup" }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = { "setup" }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = { IConcept.TEST } )
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @doc(value="The setup statement is used to define the set of instructions that will be executed before every [#test test].", usages={ 
 	@usage(value="As every test should be independent from the others, the setup will mainly contain initialization of variables that will be used in each test.", examples ={

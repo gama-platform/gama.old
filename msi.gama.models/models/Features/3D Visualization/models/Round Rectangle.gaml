@@ -2,7 +2,7 @@
 * Name: 3D Display model of Rounded Rectangle
 * Author: Arnaud Grignard
 * Description: Model presenting a 3D display of rounded rectangle
-* Tags: 3D Display, Shapes
+* Tags: 3d, shape
 */
 
 
@@ -30,7 +30,7 @@ global {
 	geometry shape <- square(width_and_height_of_environment);
 	init { 
 		
-		global_color <- #yellow;//global_color hsb_to_rgb ([0.25,1.0,1.0]);
+		global_color <- #yellow;
 
 		maxSize<- 10;
 		

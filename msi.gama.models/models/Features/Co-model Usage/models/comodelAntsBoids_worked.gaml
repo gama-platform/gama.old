@@ -2,7 +2,7 @@
 * Name: ComodelAntsBoids
 * Author: hqnghi
 * Description: Co-model example : coupling Ants and Boids. In an experimental use case, Boids chase and eat Ants when Ants are trying to fill-up their nids.
-* Tags: Comodel
+* Tags: comodel
  */
   
 model comodelAnts

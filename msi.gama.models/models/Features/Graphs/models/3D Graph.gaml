@@ -4,7 +4,7 @@
 * Description: Model using a 3D Graph and updating it at each step according to the location and the degree of each sphere. 
 *	An arc is created between two adjacent spheres. Two different experiments are proposed : one with a dynamic size for
 *	the spheres according to their degree, one simpler with no update of the size.
-* Tags: Graph, 3D Display, Skill
+* Tags: graph, 3d, skill
 */
   
 

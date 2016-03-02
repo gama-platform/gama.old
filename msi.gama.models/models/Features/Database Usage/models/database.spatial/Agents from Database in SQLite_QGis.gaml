@@ -6,7 +6,7 @@
  *      
  * 		In other case, if we load Geometry data that is created by using libspatialite library then we must use Asbinary()
  *      to convert geometry to WKB format (see SQLite_libspatialite model)
-* Tags: Database
+* Tags: database
   */
 
 model Sqlite_QGis

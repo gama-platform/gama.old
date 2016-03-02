@@ -40,7 +40,10 @@ public class MetadataStructure {
 		// split into tags
 		String[] tags = null;
 		if (rawTags != "")
+		{
+			rawTags = rawTags.toLowerCase();
 			tags = rawTags.split(TAGS_SEPARATOR);
+		}
 		
 		m_name = name;
 		m_author = author;

@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,7 +76,7 @@ public class modelLibraryGenerator {
 		
 		System.out.println("----- Read all the meta files to generate the map of main keywords for each model -----");
 		prepareMainKeywordMap(gamlFiles);
-		System.out.println("----> NOT IMPLEMENTED YET");
+		System.out.println("----> selection of main keywords effectued !");
 		
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		// browse a second time all the models, build the md file, including the screenshots computed from the
@@ -96,7 +95,7 @@ public class modelLibraryGenerator {
 		mainKeywordsMap = new HashMap<String,String>();
 		HashMap<String,Integer> occurenceOfKeywords = new HashMap<String,Integer>(); // key is gaml world, value is occurence.
 		ArrayList<String> mostSignificantKeywords = new ArrayList<String>(); // the list of the less employed gaml keywords.
-		int maxOccurenceNumber = 15; // the maximum number of occurence for the "mostSignificantKeywordsList".
+		int maxOccurenceNumber = 20; // the maximum number of occurrence for the "mostSignificantKeywordsList".
 		
 		// store all the keywords in a list
 		for (int fileIdx=0; fileIdx < files.size(); fileIdx++) {
@@ -114,7 +113,7 @@ public class modelLibraryGenerator {
 					ArrayList<String> gamlWords = getGAMLWords(new File(absPathMeta));
 					for (String gamlWord : gamlWords) {
 						if (occurenceOfKeywords.containsKey(gamlWord)) {
-							// we increment the number of occurence of the gaml word
+							// we increment the number of occurrence of the gaml word
 							int oldVal = occurenceOfKeywords.get(gamlWord);
 							occurenceOfKeywords.put(gamlWord, oldVal+1);
 						}
@@ -454,12 +453,12 @@ public class modelLibraryGenerator {
 		return result;
 	}
 	
-	private static String formatString(String str) {
-		// remove extention, replace strange char by "_".
-		return (((((str.replace(".gaml",""))
-				.replace("(", "_")).replace(")", "_")).replace(",","_"))
-				.replace(".", "_")).replace(" ", "_");
-	}
+//	private static String formatString(String str) {
+//		// remove extension, replace strange char by "_".
+//		return (((((str.replace(".gaml",""))
+//				.replace("(", "_")).replace(")", "_")).replace(",","_"))
+//				.replace(".", "_")).replace(" ", "_");
+//	}
 	
 	private static String getModelName(File file) throws IOException {
 		// returns the name of the model

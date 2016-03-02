@@ -7,7 +7,7 @@
 * 	fuzzy kappa simulation, comparing the map observed, the map simulation and the map initial but being more permissive by using fuzzy logic
 * 	For each comparator, two comparisons are made : one without taking into account the weights of an area, just computing with each area having the same
 * 	importance, and an other using weights related to the area of the region
-* Tags: Shapefiles, Comparison
+* Tags: shapefile, comparison, statistic
 */
 
 model mapcomparison

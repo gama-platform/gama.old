@@ -34,7 +34,7 @@ import msi.gaml.types.IType;
  *
  * @author drogoul
  */
-@symbol(name = IKeyword.OUTPUT_FILE, kind = ISymbolKind.OUTPUT, with_sequence = false, concept = { IConcept.FILE })
+@symbol(name = IKeyword.OUTPUT_FILE, kind = ISymbolKind.OUTPUT, with_sequence = false, concept = { IConcept.FILE, IConcept.SAVE_FILE })
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @facets(value = { @facet(name = IKeyword.NAME,
 	type = IType.ID,

@@ -815,7 +815,7 @@ public class Stats {
 	}
 
 	@operator(value = "dbscan", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC })
+			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc(
 		value = "returns the list of clusters (list of instance indices) computed with the dbscan (density-based spatial clustering of applications with noise) algorithm from the first operand data according to the maximum radius of the neighborhood to be considered (eps) and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -846,7 +846,7 @@ public class Stats {
 	}
 
 	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC })
+			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc(
 		value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k) and the maximum number of iterations to run the algorithm for (If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -878,7 +878,7 @@ public class Stats {
 	}
 
 	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC })
+			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc(
 		value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k). Usage: kmeans(data,k)",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -892,7 +892,7 @@ public class Stats {
 		can_be_const = false,
 		type = IType.REGRESSION,
 		category = { IOperatorCategory.STATISTICAL },
-		concept = { IConcept.STATISTIC })
+		concept = { IConcept.STATISTIC, IConcept.REGRESSION })
 	@doc(
 		value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build(data,method)",
 		examples = { @example("build(matrix([[1,2,3,4],[2,3,4,2]]),\"GLS\")") })
@@ -924,7 +924,7 @@ public class Stats {
 	}
 
 	@operator(value = "predict", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL },
-			concept = {})
+			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
 	@doc(
 		value = "returns the value predict by the regression parameters for a given instance. Usage: predict(regression, instance)",
 		examples = { @example("predict(my_regression, [1,2,3]") })

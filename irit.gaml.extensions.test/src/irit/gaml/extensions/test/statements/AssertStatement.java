@@ -29,7 +29,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
-@symbol(name = { "assert" }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true)
+@symbol(name = { "assert" }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true, concept = { IConcept.TEST } )
 @facets(value = {
 	@facet(name = IKeyword.VALUE,
 		type = IType.NONE,

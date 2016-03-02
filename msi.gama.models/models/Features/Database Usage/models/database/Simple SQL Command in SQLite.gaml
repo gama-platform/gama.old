@@ -9,7 +9,7 @@
  *      - Drop table 
  * 
  *  Note: the file emptyFile.db is only ... an empty file.
-* Tags: Database
+* Tags: database
   */
 model SQLite_selectNUpdate
 

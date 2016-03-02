@@ -26,7 +26,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
-@symbol(name = { "test" }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
+@symbol(name = { "test" }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true, concept = { IConcept.TEST })
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("identifier of the test")) }, omissible = IKeyword.NAME)
 @doc(value="The test statement allows modeler to define a set of assertions that will be tested. Before the execution of the embedded set of instructions, if a setup is defined in the species, model or experiment, it is executed. In a test, if one assertion fails, the evaluation of other assertions continue (if GAMA is configured in the preferences that the program does not stop at the first exception).", usages={ 

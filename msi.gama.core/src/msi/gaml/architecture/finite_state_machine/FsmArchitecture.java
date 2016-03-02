@@ -37,7 +37,7 @@ import msi.gaml.types.*;
 		type = IType.LIST,
 		constant = true,
 		doc = @doc("Returns the list of all possible states the agents can be in") ) })
-@skill(name = IKeyword.FSM, concept = { IConcept.FSM, IConcept.BEHAVIOR, IConcept.ARCHITECTURE },
+@skill(name = IKeyword.FSM, concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE },
 	doc = @doc("The Finite State Machine architecture, that allows to program agents using a finite set of states and conditional transitions between them") )
 public class FsmArchitecture extends ReflexArchitecture {
 

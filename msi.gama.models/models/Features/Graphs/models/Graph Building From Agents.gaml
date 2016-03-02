@@ -3,7 +3,7 @@
 * Author: Patrick Taillandier
 * Description: Model which shows how to create a graph using agents of a species as vertices. Two kinds of generations are presented : one where the distance 
 * 	taken into account to link two vertices by an edge, an other where the intersections of two vertices joins these vertices by an edge. 
-* Tags: Graph
+* Tags: graph
 */
 
 model graphbuilding

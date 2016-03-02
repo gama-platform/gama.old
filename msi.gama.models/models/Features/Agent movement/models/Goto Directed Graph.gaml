@@ -3,7 +3,7 @@
 * Author:  Patrick Taillandier
 * Description: Model representing how to directed graph using GIS Data for the road networks : the GIS contains a column defining the direction of the roads  
 * 	and people moving from one random point to another on this graph
-* Tags: Graph, Movement of Agents, Skill 
+* Tags: graph, agent_movement, skill 
 */
 
 model simplemodel

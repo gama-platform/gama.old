@@ -4,7 +4,7 @@
 * Description: This model shows how to use multi-level architecture. Two corridors are presented : one which can capture the pedestrians
 * 	going through it and computing for them the time before releasing them at the end of the corridor, and an other doing nothing, letting
 * 	the pedestrians moving by themselves in the corridor. 
-* Tags: Multi-level, Movements of Agents
+* Tags: multi_level, agent_movement
 */
 
 model pedestrian_corridor_Hybrid_vs_ABM

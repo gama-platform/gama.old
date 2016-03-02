@@ -18,7 +18,7 @@
  * 
  *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (meteo_DB here) AND IMPORTED THE FILE (../../includes/meteo_DB_dump.sql)
  *        IN ORDER THAT THE MODEL CAN RUN PROPERLY.
-* Tags: Database
+* Tags: database
  */
 model simpleSQL_DBSpecies_MySQL
 

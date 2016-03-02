@@ -5,7 +5,7 @@
 *      in a SIR infection model where agents infect others and become immune for a certain time. The batch mode uses three different methods : Exhaustive,
 *      GA and Tabu Search. The model proposes five experiments : one simple with a User Interface, one running 5 experiments and saving the data, and one
 *      for each strategy. 
-* Tags: Batch, Save Files
+* Tags: batch, algorithm, save_file
 */
 
 

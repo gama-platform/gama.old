@@ -2,7 +2,7 @@
 * Name: Spatial Interpolation
 * Author: Patrick Taillandier
 * Description: A model which shows how to use spatial interpolation
-* Tags: Topology, Grid
+* Tags: topology, grid, spatial_computation
 */
 
 model spatialinterpolation

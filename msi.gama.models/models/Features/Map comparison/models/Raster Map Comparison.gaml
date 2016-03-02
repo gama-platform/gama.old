@@ -5,7 +5,7 @@
 * 	kappa, comparing the map observed and the map simulation ; kappa simulation comparing the initial map, the map observed and the map simulation;
 * 	fuzzy kappa, comparing the map observed and the map simulation but being more permissive by using fuzzy logic;
 * 	fuzzy kappa simulation, comparing the map observed, the map simulation and the map initial but being more permissive by using fuzzy logic
-* Tags: Grid, Comparison
+* Tags: grid, comparison, raster, statistic
 */
 
 model mapcomparison

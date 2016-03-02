@@ -2,7 +2,7 @@
 * Name:  CreateBuildingTableMSSQL
 * Author: Truong Minh Thai
 * Description:    This model shows how to create a database and a table in MSSQL using GAMA
- * Tags: Database
+ * Tags: database
  */
 model CreateBuildingTable_MSSQL
 

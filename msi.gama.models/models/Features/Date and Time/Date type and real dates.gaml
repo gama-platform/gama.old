@@ -3,7 +3,7 @@
 * Name: Use of the Date variables
 * Author:  Patrick Taillandier
 * Description: A model to show how to use date variables and more particularly the starting_date and current_date global variables. In this model,
-* Tags: Date
+* Tags: date
 */
 model date_model 
 

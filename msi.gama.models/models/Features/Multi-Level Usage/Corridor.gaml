@@ -5,7 +5,7 @@
 *	they are inside the corridor. This will result in changing their species from pedestrian to captured_pedestrian which will not be 
 *	displayed. Once they pass enought time to consider they reach the exit of the corridor, they will be released by the corridor agent 
 *	as pedestrians, letting them been displayed and going to their target. 
-* Tags: Multi-level, Movements of Agents
+* Tags: multi_level, agent_movement
 */
 
 model corridor

@@ -6,7 +6,7 @@
 * 	 agent chases it. The shelters capture the prey agents fleeing, changing them into prey_in_shelter species, that predator
 * 	can't chase during a certain time. They are released after that time in an invisible state so that they can wander in the 
 * 	environment without being chase by the predator, but also, for a certain time.
-* Tags: Multi-level, Movements of Agents
+* Tags: multi_level, agent_movement
 */
 
 model preys_predators_shelters

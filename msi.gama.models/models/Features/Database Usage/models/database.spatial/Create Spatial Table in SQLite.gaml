@@ -2,7 +2,7 @@
 * Name:  CreateBuildingTableSQLite
 * Author: Truong Minh Thai
 * Description:    This model shows how to create a database and a table in SQLite using GAMA
- * Tags: Database
+ * Tags: database
  */
 
 model SQLite_selectNUpdate

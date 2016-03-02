@@ -2,7 +2,7 @@
 * Name:  CreateBuildingTableMySQL
 * Author: Truong Minh Thai
 * Description:    This model shows how to create a database and a table in MySQL using GAMA
- * Tags: Database
+ * Tags: database
  */
 model CreateBuildingTableMySQL
 

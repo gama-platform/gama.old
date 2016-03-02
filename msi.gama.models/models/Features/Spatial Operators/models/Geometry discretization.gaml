@@ -2,7 +2,7 @@
 * Name: Discretization of Topology
 * Author: Patrick Taillandier
 * Description: A model which shows how to use the different convert topologies operators : to_square, to_rectangle, points_on, triangulate, voronoi.
-* Tags: Topology
+* Tags: topology, spatial_computation, spatial_transformation
 */
 
 model discretization

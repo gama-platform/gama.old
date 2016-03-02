@@ -2,7 +2,7 @@
 * Name: Regression
 * Author: Patrick Taillandier
 * Description: A model which shows how to use the regression 
-* Tags: Regression, 3D Display
+* Tags: regression, 3d, statistic
 */
 
 model example_regression

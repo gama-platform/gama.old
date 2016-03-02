@@ -2,7 +2,7 @@
 * Name: Complex Object Loading
 * Author:  Arnaud Grignard
 * Description: Provides a  complex geometry to agents (svg,obj or 3ds are accepted). The geometry becomes that of the agents.
-* Tags:  Import Files, 3D Display, Skill
+* Tags:  load_file, 3d, skill, obj
 */
 
 model obj_loading   

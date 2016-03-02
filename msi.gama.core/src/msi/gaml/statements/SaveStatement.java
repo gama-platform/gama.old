@@ -44,7 +44,7 @@ import msi.gaml.types.*;
 
 @symbol(name = IKeyword.SAVE,
 	kind = ISymbolKind.SINGLE_STATEMENT,
-	concept = { IConcept.FILE },
+	concept = { IConcept.FILE, IConcept.SAVE_FILE },
 	with_sequence = false,
 	with_args = true,
 	remote_context = true)

@@ -7,7 +7,7 @@
  * 
  *  NOTE: You should have imported the database (spatial_DB.sql) into the MySQL server 
  *        in order that the model can run properly.
-* Tags: Database
+* Tags: database
   */
 
 model agent2DB_MySQL 

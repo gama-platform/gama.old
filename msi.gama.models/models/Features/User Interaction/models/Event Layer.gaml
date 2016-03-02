@@ -3,7 +3,7 @@
 * Author: Arnaud Grignard & Patrick Taillandier
 * Description: Model which shows how to use the event layer to trigger an action according to an event occuring in the display. The experiment
 * has two displays : one for the changing color event, one for the changing shape event.
-* Tags: User Interaction
+* Tags: gui
  */
 model event_layer_model
 

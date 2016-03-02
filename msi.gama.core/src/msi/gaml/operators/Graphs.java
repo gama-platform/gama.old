@@ -153,7 +153,7 @@ public class Graphs {
 	@operator(value = "agent_from_geometry",
 		type = IType.AGENT,
 		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
-		concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.PATH} )
+		concept = { IConcept.GRAPH, IConcept.GEOMETRY } )
 	@doc(
 		value = "returns the agent corresponding to given geometry (right-hand operand) in the given path (left-hand operand).",
 		usages = @usage("if the left-hand operand is nil, returns nil") ,
@@ -742,7 +742,7 @@ public class Graphs {
 	@operator(value = "spatial_graph",
 		index_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		category = { IOperatorCategory.GRAPH },
-		concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT, IConcept.SPATIAL_GRAPH })
+		concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT })
 	@doc(
 		value = "allows to create a spatial graph from a container of vertices, without trying to wire them. The container can be empty. Emits an error if the contents of the container are not geometries, points or agents",
 		see = { "graph" })
@@ -762,7 +762,7 @@ public class Graphs {
 	// }
 
 	@operator(value = "use_cache", category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
-			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH })
+			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH })
 	@doc(
 		value = "if the second operand is true, the operand graph will store in a cache all the previously computed shortest path (the cache be cleared if the graph is modified).",
 		comment = "the operator alters the operand graph, it does not create a new one.",
@@ -782,7 +782,7 @@ public class Graphs {
 	}
 
 	@operator(value = "undirected", category = { IOperatorCategory.GRAPH },
-			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH })
+			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH })
 	@doc(value = "the operand graph becomes an undirected graph.",
 		comment = "the operator alters the operand graph, it does not create a new one.",
 		see = { "directed" })
@@ -792,7 +792,7 @@ public class Graphs {
 	}
 
 	@operator(value = "with_weights", category = { IOperatorCategory.GRAPH },
-			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.GRAPH_WEIGHT })
+			concept = { IConcept.GRAPH, IConcept.GRAPH_WEIGHT })
 	@doc(value = "returns the graph (left-hand operand) with weight given in the map (right-hand operand).",
 		masterDoc = true,
 		comment = "this operand re-initializes the path finder",
@@ -835,7 +835,7 @@ public class Graphs {
 	}
 
 	@operator(value = "with_optimizer_type", category = { IOperatorCategory.GRAPH },
-			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH, IConcept.GRAPH_WEIGHT, IConcept.OPTIMIZATION, IConcept.ALGORITHM })
+			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH, IConcept.GRAPH_WEIGHT, IConcept.OPTIMIZATION, IConcept.ALGORITHM })
 	@doc(value = "changes the shortest path computation method of the given graph",
 		comment = "the right-hand operand can be \"Djikstra\", \"Bellmann\", \"Astar\" to use the associated algorithm. " +
 			"Note that these methods are dynamic: the path is computed when needed. In contrarily, if the operand is another string, " +
@@ -906,7 +906,7 @@ public class Graphs {
 	@operator(value = "path_between",
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
-		concept = { IConcept.GRAPH, IConcept.PATH })
+		concept = { IConcept.GRAPH })
 	@doc(value = "The shortest path between a list of two objects in a graph",
 		masterDoc = true,
 		examples = { @example(value = "path_between (my_graph, ag1, ag2)",
@@ -926,7 +926,7 @@ public class Graphs {
 		type = IType.LIST,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
-		concept = { IConcept.GRAPH, IConcept.PATH })
+		concept = { IConcept.GRAPH })
 	@doc(value = "The K shortest paths between a list of two objects in a graph",
 		examples = { @example(value = "paths_between(my_graph, ag1:: ag2, 2)",
 			equals = "the 2 shortest paths (ordered by length) between ag1 and ag2",
@@ -944,7 +944,7 @@ public class Graphs {
 		type = IType.PATH,
 		content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
-		concept = { IConcept.GRAPH, IConcept.PATH, IConcept.CAST })
+		concept = { IConcept.GRAPH, IConcept.CAST })
 	@doc(value = "create a graph path from the list of shape",
 		examples = { @example(value = "[road1,road2,road3] as_path my_graph",
 			equals = "a path road1->road2->road3 of my_graph",
@@ -1122,7 +1122,7 @@ public class Graphs {
 	 */
 
 	@operator(value = "load_shortest_paths", category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
-			concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH })
+			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH })
 	@doc(
 		value = "put in the graph cache the computed shortest paths contained in the matrix (rows: source, columns: target)",
 		examples = { @example(value = "load_shortest_paths(shortest_paths_matrix)",
@@ -1143,7 +1143,7 @@ public class Graphs {
 		type = IType.MATRIX,
 		content_type = IType.INT,
 		category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
-		concept = { IConcept.GRAPH, IConcept.PATH, IConcept.SHORTEST_PATH })
+		concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH })
 	@doc(
 		value = "returns the successor matrix of shortest paths between all node pairs (rows: source, columns: target): a cell (i,j) will thus contains the next node in the shortest path between i and j.",
 		examples = { @example(value = "all_pairs_shortest_paths(my_graph)",

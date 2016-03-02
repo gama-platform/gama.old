@@ -2,7 +2,7 @@
 * Name: Visualisation of the primitive shapes
 * Author: Arnaud Grignard
 * Description: Model presenting a 3D display with all the primitive shapes existing in GAMA in 2D and 3D, with or without textures. 
-* Tags: 3D Display, Shapes, Textures
+* Tags: 3d, shape, texture
 */
 
 model shape   

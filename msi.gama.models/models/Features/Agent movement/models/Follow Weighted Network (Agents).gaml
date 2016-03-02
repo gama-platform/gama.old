@@ -4,7 +4,7 @@
 * Description: Model representing how to make a weighted graph and the impacts of the weights on the time to follow the path for the agents. 
 * 	Two agents are represented to show this difference : one knowing the weights and following a fast path, an other following a path longer 
 * 	without knowing it's a longer path.
-* Tags: Graph, Movement of Agents, Skill
+* Tags: graph, agent_movement, skill
 */
 
 model weightperagents

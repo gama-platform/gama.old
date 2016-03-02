@@ -52,7 +52,7 @@ import msi.gaml.types.*;
 		type = IType.FLOAT,
 		init = "1.0",
 		doc = @doc("the speed of the agent (in meter/second)")) })
-@skill(name = "driving", concept = { IConcept.TRANSPORT, IConcept.SKILL })
+@skill(name = "driving", concept = { IConcept.TRANSPORT, IConcept.SKILL, IConcept.AGENT_MOVEMENT })
 public class DrivingSkill extends MovingSkill {
 
 	public final static String LIVING_SPACE = "living_space";

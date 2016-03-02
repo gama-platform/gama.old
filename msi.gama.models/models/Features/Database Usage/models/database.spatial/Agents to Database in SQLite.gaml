@@ -4,7 +4,7 @@
 * Description:    init: Select data from table vnm_adm2 (Created via QGis software)  and create  agents
  * 	    savetosql: Save data of agent into MySQL. 
  * 					transform= true because you need to transform geometry data from Absolute(GAMA) to Gis
- * Tags: Database
+ * Tags: database
  */
 
 model agent2DB_SQLite  

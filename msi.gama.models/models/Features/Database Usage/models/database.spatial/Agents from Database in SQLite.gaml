@@ -2,7 +2,7 @@
 * Name:  Agents from Database in SQLite 
 * Author: Benoit Gaudou
 * Description:  This model creates buildings agents from the sqlite database using the result of a query
-* Tags: Database
+* Tags: database
   */
 model DB2agentSQLite
 

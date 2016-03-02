@@ -2,7 +2,7 @@
 * Name:  Agents from Database in PostGIS
 * Author: Benoit Gaudou
 * Description:  This model does SQL query commands and create agents using the results
-* Tags: Database
+* Tags: database
   */
 
 model DB2agentMySQL 

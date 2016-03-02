@@ -40,7 +40,7 @@ import msi.gaml.types.*;
  * The class GamaGeometryUtils.
  *
  * @author drogoul
- * @since 14 d�c. 2011
+ * @since 14 dec. 2011
  *
  */
 public class GeometryUtils {

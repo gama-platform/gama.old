@@ -30,7 +30,7 @@ import msi.gaml.types.*;
  * @todo Description
  *
  */
-@symbol(name = IKeyword.IMAGE, kind = ISymbolKind.LAYER, with_sequence = false, concept = { IConcept.DISPLAY, IConcept.FILE })
+@symbol(name = IKeyword.IMAGE, kind = ISymbolKind.LAYER, with_sequence = false, concept = { IConcept.DISPLAY, IConcept.FILE, IConcept.LOAD_FILE })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(
 	value = {

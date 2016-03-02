@@ -2,7 +2,7 @@
 * Name: Save to CSV
 * Author: Patrick Taillandier
 * Description: This is a model that shows how to save agents inside a CSV File to reuse it later or to keep it.
-* Tags: Save Files
+* Tags: save_file, csv
 */
 model SavetoCSV
 

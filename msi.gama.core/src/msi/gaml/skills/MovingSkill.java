@@ -55,7 +55,7 @@ import msi.gaml.types.*;
 		type = IType.POINT,
 		depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },
 		doc = @doc("Represents the next location of the agent if it keeps its current speed and heading (read-only)") ) })
-@skill(name = IKeyword.MOVING_SKILL, concept = { IConcept.SKILL })
+@skill(name = IKeyword.MOVING_SKILL, concept = { IConcept.SKILL, IConcept.AGENT_MOVEMENT })
 public class MovingSkill extends Skill {
 
 	@getter(IKeyword.HEADING)

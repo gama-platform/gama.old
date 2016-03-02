@@ -27,7 +27,7 @@ import msi.gaml.operators.Cast;
 	id = IType.PATH,
 	wraps = { IPath.class, GamaPath.class },
 	kind = ISymbolKind.Variable.REGULAR,
-	concept = { IConcept.TYPE, IConcept.PATH })
+	concept = { IConcept.TYPE })
 public class GamaPathType extends GamaType<IPath> {
 
 	@Override

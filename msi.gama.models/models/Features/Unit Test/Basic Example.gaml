@@ -3,7 +3,7 @@
 * Author: Benoit Gaudou
 * Description: A model which shows how to use the unit test to show the possible errors 
 * 	you have to go in the Views, Preferences, Simulation, in "Errors" Uncheck "stop at the first error", to show all the errors.
-* Tags: Unit Test
+* Tags: test
  */
 
 model test_unitTest_framework
