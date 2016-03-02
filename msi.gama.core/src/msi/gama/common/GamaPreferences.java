@@ -623,7 +623,7 @@ public class GamaPreferences {
 
 	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE =
 		create("core.display_visible", "Only process for display the agents that are visible", false, IType.BOOL)
-			.in(EXPERIMENTAL).group(DISPLAY);
+		.in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("core.shared_context",
 		"Enable OpenGL background loading of textures (disable it if you have problems with Intel graphics cards on Linux)",
 		true, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
@@ -637,7 +637,9 @@ public class GamaPreferences {
 		create("core.multithreaded_simulations", "Run multiple simulations in multiple threads", true, IType.BOOL)
 		.activates("core.threads_number").in(EXPERIMENTAL).group(SIMULATIONS);
 	public static final Entry<Integer> NUMBERS_OF_THREADS =
-		create("core.threads_number", "Max. number of threads to use", 4, IType.INT).between(1, null).in(EXPERIMENTAL)
+		create("core.threads_number",
+			"Max. number of threads to use (available processors: " + Runtime.getRuntime().availableProcessors() + ")",
+			4, IType.INT).between(1, null).in(EXPERIMENTAL)
 		.group(SIMULATIONS);
 	public static final Entry<Boolean> CONSTANT_OPTIMIZATION =
 		create("core.constant_optimization", "Automatically optimize constant expressions", false, IType.BOOL)

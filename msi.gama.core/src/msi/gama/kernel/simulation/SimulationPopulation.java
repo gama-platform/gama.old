@@ -13,6 +13,7 @@ package msi.gama.kernel.simulation;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import com.google.common.util.concurrent.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
@@ -36,6 +37,7 @@ public class SimulationPopulation extends GamaPopulation {
 		.setNameFormat("Simulation thread #%d of experiment " + getSpecies().getName()).build();
 	ExecutorService executor;
 	Map<SimulationAgent, Callable> runnables = new LinkedHashMap();
+	private int activeThreads;
 
 	public SimulationPopulation(final ExperimentAgent agent, final ISpecies species) {
 		super(agent, species);
@@ -46,13 +48,16 @@ public class SimulationPopulation extends GamaPopulation {
 		if ( executor == null ) {
 			boolean isMultiThreaded = getHost().getSpecies().isMulticore();
 			int numberOfThreads = GamaPreferences.NUMBERS_OF_THREADS.getValue();
-			executor = isMultiThreaded ? new ThreadPoolExecutor(1, numberOfThreads, 2L, TimeUnit.SECONDS,
-				new SynchronousQueue<Runnable>(), factory)
-				: MoreExecutors.sameThreadExecutor();
-			if ( executor instanceof ThreadPoolExecutor ) {
-				ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
-				tpe.allowCoreThreadTimeOut(true);
-			}
+			executor = isMultiThreaded
+				? new ThreadPoolExecutor(1, numberOfThreads, 100L, TimeUnit.MILLISECONDS,
+					new SynchronousQueue<Runnable>())
+					: MoreExecutors.sameThreadExecutor();
+				if ( executor instanceof ThreadPoolExecutor ) {
+					ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
+					// tpe.setKeepAliveTime(2L, TimeUnit.SECONDS);
+					tpe.setRejectedExecutionHandler(new CallerRunsPolicy());
+					tpe.allowCoreThreadTimeOut(true);
+				}
 		}
 		return executor;
 	}
@@ -113,6 +118,7 @@ public class SimulationPopulation extends GamaPopulation {
 				@Override
 				public Object call() {
 					return world._step_(scope);
+
 				}
 			});
 		}
@@ -149,6 +155,12 @@ public class SimulationPopulation extends GamaPopulation {
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		try {
 			getExecutorService().invokeAll((Collection<? extends Callable<Object>>) runnables.values());
+			if ( getExecutorService() instanceof ThreadPoolExecutor ) {
+				ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
+				activeThreads = e.getPoolSize();
+			} else {
+				activeThreads = 1;
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -165,11 +177,7 @@ public class SimulationPopulation extends GamaPopulation {
 	}
 
 	public int getNumberOfActiveThreads() {
-		if ( getExecutorService() instanceof ThreadPoolExecutor ) {
-			ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
-			return e.getPoolSize();
-		}
-		return 0;
+		return activeThreads;
 	}
 
 	/**
