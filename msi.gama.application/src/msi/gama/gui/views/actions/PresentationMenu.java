@@ -1,31 +1,31 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'OpenGLItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
-import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
-import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.*;
 
 /**
  * The class FocusItem.
- * 
+ *
  * @author drogoul
  * @since 19 janv. 2012
- * 
+ *
  */
 public class PresentationMenu {
 
@@ -175,27 +175,6 @@ public class PresentationMenu {
 				}
 			});
 
-			MenuItem inertia = new MenuItem(menu, SWT.CHECK);
-			inertia.setImage(IGamaIcons.DISPLAY_TOOLBAR_INERTIA.image());
-			boolean inertiable = view.getDisplaySurface().getData().isInertia();
-			inertia.setSelection(inertiable);
-			inertia.setText("Apply inertia");
-			inertia.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-
-					view.getDisplaySurface().runAndUpdate(new Runnable() {
-
-						@Override
-						public void run() {
-							boolean old = view.getDisplaySurface().getData().isInertia();
-							((OpenGL) view.getDisplaySurface()).getData().setInertia(!old);
-						}
-					});
-				}
-
-			});
 		}
 		new MenuItem(menu, SWT.SEPARATOR);
 

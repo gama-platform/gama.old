@@ -52,8 +52,6 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 
 	public abstract void zeroVelocity();
 
-	public abstract void doInertia();
-
 	// Picking
 
 	public abstract boolean beginPicking(final GL2 gl);

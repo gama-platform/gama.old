@@ -196,7 +196,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		}
 
 		public Integer getGeometryListFor(final GL2 gl, final GamaGeometryFile file) {
-		return geometryCache.get(gl, this, file);
+			return geometryCache.get(gl, this, file);
 		}
 
 		public TextRenderer getTextRendererFor(final Font font) {
@@ -286,11 +286,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			}
 
 			this.rotateModel(gl);
-
-			if ( data.isInertia() ) {
-				camera.doInertia();
-			}
-
 			drawScene(gl);
 
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
@@ -304,26 +299,19 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		@Override
 		public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width,
 			final int height) {
-			// System.out.println("Renderer reshaping to " + arg1 + "," + arg2 + "," + width + " , " + height);
 			// Get the OpenGL graphics context
 			if ( width <= 0 || height <= 0 ) { return; }
-			// this.width = width;
-			// this.height = height;
 			GL2 gl = drawable.getContext().getGL().getGL2();
 			// Set the viewport (display area) to cover the entire window
 			gl.glViewport(0, 0, width, height);
 			// Enable the model view - any new transformations will affect the model-view matrix
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 			gl.glLoadIdentity(); // reset
-			// System.out.println(" Renderer reshaping:" + "model view matrix reset");
 			// perspective view
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
 			gl.glLoadIdentity();
-			// System.out.println(" Renderer reshaping:" + "projection matrix reset");
-			// FIXME Update camera as well ??
 			// Only if zoomFit... camera.resetCamera(data.getEnvWidth(), data.getEnvHeight(), data.isOutput3D());
 			updatePerspective(gl);
-			// gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		}
 
 		public final void updatePerspective(final GL2 gl) {
@@ -332,7 +320,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 			double maxDim = getMaxEnvDim();
 
-			// System.out.println("Aspect = " + aspect);
 			if ( !data.isOrtho() ) {
 				try {
 					double zNear = maxDim / 1000;
@@ -351,10 +338,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 				}
 			} else {
 				if ( aspect >= 1.0 ) {
-					// maxDim = maxDim/10;
 					((GL2ES1) gl).glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
 				} else {
-					// maxDim = maxDim/10;
 					((GL2ES1) gl).glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
 				}
 				gl.glTranslated(0d, 0d, maxDim * 0.05);

@@ -82,7 +82,6 @@ public class LayeredDisplayData {
 	private boolean isDrawingEnvironment = GamaPreferences.CORE_DRAW_ENV.getValue();
 	private boolean isDrawingDiffuseLight = false;
 	private boolean isLightOn = true; // GamaPreferences.CORE_IS_LIGHT_ON.getValue();
-	private boolean isUsingInertia = false;
 	private ILocation diffuseLightPosition = getNoChange();
 	private ILocation cameraPos = getNoChange();
 	private ILocation cameraLookPos = getNoChange();
@@ -469,17 +468,6 @@ public class LayeredDisplayData {
 	public void setHighlightColor(final Color hc) {
 		highlightColor = hc;
 		notifyListeners(Changes.HIGHLIGHT, true);
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isInertia() {
-		return isUsingInertia;
-	}
-
-	public void setInertia(final boolean i) {
-		isUsingInertia = i;
 	}
 
 	public boolean isAntialias() {

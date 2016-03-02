@@ -376,11 +376,6 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	@Override
-	public void doInertia() {
-		// Nothing to do by default
-	}
-
-	@Override
 	public Point getMousePosition() {
 		return mousePosition;
 	}

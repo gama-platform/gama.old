@@ -70,7 +70,6 @@ public interface IGamaIcons {
 	public static final GamaIcon DISPLAY_TOOLBAR_SPLIT = GamaIcons.create("display.split2");
 	public static final GamaIcon DISPLAY_TOOLBAR_TRIANGULATE = GamaIcons.create("display.triangulate2");
 	public static final GamaIcon DISPLAY_TOOLBAR_DRAG = GamaIcons.create("display.drag2");
-	public static final GamaIcon DISPLAY_TOOLBAR_INERTIA = GamaIcons.create("display.inertia2");
 	public static final GamaIcon DISPLAY_TOOLBAR_OVERLAY = GamaIcons.create("display.overlay2");
 	public static final GamaIcon DISPLAY_TOOLBAR_SIDEBAR = GamaIcons.create("display.sidebar2");
 

@@ -200,7 +200,6 @@ public interface IKeyword {
 	public static final String IN = "in";
 	public static final String INCLUDE = "include";
 	public static final String INDEX = "index";
-	public static final String INERTIA = "inertia";
 	public static final String INIT = "init";
 	public static final String INPUT = "input";
 	public static final String INSPECT = "inspect";
@@ -372,7 +371,7 @@ public interface IKeyword {
 	public static final String THREE_D = "3d";
 	public static final String TIMES = "times";
 	public static final String TIMEXSERIES = "timexseries"; // hqnghi facet timeXseries for
-															// continuous Chart
+	// continuous Chart
 	public static final String TABLE = "table";
 	public static final String TITLE = "title";
 	public static final String TO = "to";
@@ -449,7 +448,7 @@ public interface IKeyword {
 	 * files
 	 */
 	public static final String OPEN = "open"; // TODO "launch", or "open", or "sysopen" ? This opens a file with an
-												// external progam
+	// external progam
 	public static final String ALPHA = "alpha";
 
 	public final static String INTERNAL = "internal_";
