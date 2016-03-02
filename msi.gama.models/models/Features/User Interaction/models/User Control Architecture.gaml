@@ -2,7 +2,7 @@
 * Name: User Command
 * Author: Patrick Taillandier
 * Description: Model which shows how to use the advanced user control, to create and kill agents. 
-* Tags: User Interaction
+* Tags: gui, architecture
  */
 
 

@@ -1,4 +1,3 @@
-
 /**
 * Name: RGB color to XYZ position
 * Author:  Arnaud Grignard

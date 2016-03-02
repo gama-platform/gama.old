@@ -452,7 +452,7 @@ public class Cast {
 		return (ISpecies) Types.SPECIES.cast(scope, val, null, false);
 	}
 
-	@operator(value = "to_gaml", category = { IOperatorCategory.CASTING }, concept = {IConcept.CAST, IConcept.GAML})
+	@operator(value = "to_gaml", category = { IOperatorCategory.CASTING }, concept = {IConcept.CAST})
 	@doc(
 		value = "returns the literal description of an expression or description -- action, behavior, species, aspect, even model -- in gaml",
 		examples = { @example(value = "to_gaml(0)", equals = "'0'"),

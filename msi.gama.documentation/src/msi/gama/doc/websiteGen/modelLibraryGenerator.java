@@ -86,6 +86,12 @@ public class modelLibraryGenerator {
 		System.out.println("----- Start to write md content -----");
 		writeMdContent(gamlFiles);
 		System.out.println("----> MD content generated !");
+		
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		// print further informations
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		ConceptManager.printStatistics();
 
 	}
 	
@@ -343,9 +349,19 @@ public class modelLibraryGenerator {
 	}
 	
 	private static void writeMdContent(ArrayList<File> gamlFiles) throws IOException {
+		// load the concepts
+		try {
+			ConceptManager.loadConcepts();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
 		for (int idx = 0 ; idx < gamlFiles.size() ; idx++) {
 			File gamlFile = gamlFiles.get(idx);
 			String header = extractHeader(gamlFile);
+			
 			// extract the header properties
 			MetadataStructure metaStruct = new MetadataStructure(header);
 				
@@ -372,30 +388,26 @@ public class modelLibraryGenerator {
 				fileOut.write(mainKeywordsMap.get(gamlFile.getAbsolutePath().replace("\\", "/")).getBytes());
 				fileOut.write(metaStruct.getMdHeader().getBytes());
 				
-				// write the code
-				fileOut.write("```\n".getBytes());
-				FileInputStream fis = new FileInputStream(gamlFile);
-				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-				String line = null;
-				boolean inHeader = true;
-				while ((line = br.readLine()) != null) {
-					if (!inHeader) {
-						// we are in the code
-						fileOut.write(new String(line+"\n").getBytes());
+				// write the input (if there are any)
+				List<String> inputFileList = searchInputList(gamlFile);
+				if (inputFileList.size() > 0) {
+					if (inputFileList.size()>1) {
+						fileOut.write(new String("Imported models : \n\n").getBytes());
 					}
-					else if (line.startsWith("*/") || line.startsWith(" */")) {
-						// we are out of the header
-						inHeader = false;
-					}
-					else if (line.startsWith("model")) {
-						// we are in the code
-						inHeader = false;
-						fileOut.write(new String(line+"\n").getBytes());
+					else {
+						fileOut.write(new String("Imported model : \n\n").getBytes());
 					}
 				}
-				fileOut.write("```\n".getBytes());
+				for (String inputPath : inputFileList) {
+					// write the code of the input files
+					fileOut.write(getModelCode(new File(inputPath)).getBytes());
+					fileOut.write(new String("\n\n").getBytes());
+				}
+				
+				// write the code
+				fileOut.write(new String("Code of the model : \n\n").getBytes());
+				fileOut.write(getModelCode(gamlFile).getBytes());
 				fileOut.close();
-				br.close();
 			}
 		}
 	}
@@ -425,7 +437,58 @@ public class modelLibraryGenerator {
 		}
 		br.close();
 		return result;
-	}	
+	}
+	
+	private static ArrayList<String> searchInputList(File file) throws IOException {
+		// returns the header
+		ArrayList<String> result = new ArrayList<String>();
+		
+		FileInputStream fis = new FileInputStream(file);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		
+		String line = null;
+		
+		line = br.readLine();
+		// search for a line that starts with "import"
+		while (line!=null)
+		{
+			String regexMatch = findAndReturnRegex(line,"import \"(.*[^\"])\"");
+			if (regexMatch != "") {
+				result.add(file.getParentFile().getAbsolutePath().replace("\\","/")+"/"+regexMatch);
+			}
+			line = br.readLine();
+		}
+		br.close();
+		return result;
+	}
+	
+	private static String getModelCode(File gamlFile) throws IOException {
+		// write the code
+		String result = "";
+		result = "```\n";
+		FileInputStream fis = new FileInputStream(gamlFile);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		String line = null;
+		boolean inHeader = true;
+		while ((line = br.readLine()) != null) {
+			if (!inHeader) {
+				// we are in the code
+				result += line+"\n";
+			}
+			else if (line.startsWith("*/") || line.startsWith(" */")) {
+				// we are out of the header
+				inHeader = false;
+			}
+			else if (line.startsWith("model")) {
+				// we are in the code
+				inHeader = false;
+				result += line+"\n";
+			}
+		}
+		result += "```\n";
+		br.close();
+		return result;
+	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////
 	// Util functions
@@ -452,13 +515,6 @@ public class modelLibraryGenerator {
 		}
 		return result;
 	}
-	
-//	private static String formatString(String str) {
-//		// remove extension, replace strange char by "_".
-//		return (((((str.replace(".gaml",""))
-//				.replace("(", "_")).replace(")", "_")).replace(",","_"))
-//				.replace(".", "_")).replace(" ", "_");
-//	}
 	
 	private static String getModelName(File file) throws IOException {
 		// returns the name of the model

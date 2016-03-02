@@ -1,4 +1,3 @@
-
 /**
 * Name: Use of the Date variables
 * Author:  Patrick Taillandier

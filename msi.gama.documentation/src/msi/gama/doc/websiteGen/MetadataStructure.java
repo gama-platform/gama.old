@@ -25,11 +25,18 @@ public class MetadataStructure {
 	}
 	
 	public MetadataStructure(String metadata) {
-		computeMetadata(metadata);
+		try {
+			computeMetadata(metadata);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	private void computeMetadata(String metadata) {
-
+	private void computeMetadata(String metadata) throws IllegalArgumentException, IllegalAccessException {
 		String name = findAndReturnRegex(metadata,NAME_REGEX);
 		String author = findAndReturnRegex(metadata,AUTHOR_REGEX);
 		String description = findAndReturnRegex(metadata,DESCRIPTION_REGEX);
@@ -56,7 +63,13 @@ public class MetadataStructure {
 		if (m_tags != null)
 		{
 			for (int tagIdx = 0 ; tagIdx < m_tags.length ; tagIdx++) {
-				result += "[//]: # (keyword|concept_"+m_tags[tagIdx]+")\n";
+				// check if the concept exists in IConcept
+				if (ConceptManager.conceptIsPossibleToAdd(m_tags[tagIdx])) {
+					result += "[//]: # (keyword|concept_"+m_tags[tagIdx]+")\n";
+				}
+				else {
+					System.out.println("WARNING : the concept "+m_tags[tagIdx]+" does not exist in the list predefined concept tags ! (in model "+m_name+")");
+				}
 			}
 		}
 		if (m_name != "")

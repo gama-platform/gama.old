@@ -1,4 +1,3 @@
-
 /**
 * Name: Color defined by choosing a Color Brewer
 * Author:  Arnaud Grignard & Patrick Taillandier

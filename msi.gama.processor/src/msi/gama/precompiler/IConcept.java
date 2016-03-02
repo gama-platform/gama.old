@@ -20,12 +20,12 @@ public interface IConcept {
 	public static final String BATCH					= "batch";
 	public static final String BDI						= "bdi";
 	public static final String BEHAVIOR					= "behavior";
-	public static final String BROWSE					= "browse";
 	public static final String CAMERA					= "camera";
 	public static final String CAST						= "cast";
 	public static final String CHART					= "chart";
 	public static final String CLUSTERING				= "clustering";
 	public static final String COLOR					= "color";
+	public static final String COMODEL					= "comodel";
 	public static final String COMPARISON				= "comparison";
 	public static final String COMMUNICATION			= "communication";
 	public static final String CONDITION				= "condition";
@@ -35,6 +35,7 @@ public interface IConcept {
 	public static final String CYCLE					= "cycle";
 	public static final String DATE						= "date";
 	public static final String DATABASE					= "database";
+	public static final String DEM						= "dem";
 	public static final String DGS						= "dgs";
 	public static final String DIMENSION				= "dimension";
 	public static final String DISPLAY					= "display";
@@ -48,7 +49,6 @@ public interface IConcept {
 	public static final String FILE						= "file";
 	public static final String FILTER					= "filter";
 	public static final String FIPA						= "fipa";
-	public static final String GAML						= "gaml";
 	public static final String GEOMETRY					= "geometry";
 	public static final String GIS						= "gis";
 	public static final String GLOBAL					= "global";
@@ -65,7 +65,6 @@ public interface IConcept {
 	public static final String INHERITANCE				= "inheritance";
 	public static final String INIT						= "init";
 	public static final String INSPECTOR				= "inspector";
-	public static final String KEYWORD					= "keyword";
 	public static final String LENGTH_UNIT				= "length_unit";
 	public static final String LIST						= "list";
 	public static final String LOAD_FILE				= "load_file";
