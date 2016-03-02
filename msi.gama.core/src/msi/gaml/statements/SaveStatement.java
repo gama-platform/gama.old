@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.metamodel.topology.projection.IProjection;
@@ -277,7 +278,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope)
 		throws GamaRuntimeException {
-
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		String geomType = "";
 		for ( final IShape be : agents ) {
@@ -298,7 +298,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 		specs.append("geometry:" + geomType);
 		try {
-			SpeciesDescription species = agents.getType().getContentType().getSpecies();
+			SpeciesDescription species = (agents instanceof IPopulation) ? (SpeciesDescription) ((IPopulation) agents).getSpecies().getDescription() : agents.getType().getContentType().getSpecies();
 			Map<String, String> attributes = GamaMapFactory.create(Types.STRING, Types.STRING);
 			if ( species != null ) {
 				computeInits(scope, attributes);
