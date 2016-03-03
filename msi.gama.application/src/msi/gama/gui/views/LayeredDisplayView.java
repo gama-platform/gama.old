@@ -459,7 +459,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 							if ( getOutput() != null && getOutput().getData().isAutosave() && s.isRealized() ) {
 								doSnapshot();
 							}
-							s.updateDisplay(false);
+							if ( !s.isDisposed() ) {
+								s.updateDisplay(false);
+							}
 						}
 					}
 				}
@@ -609,7 +611,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			}
 			Composite control = compo;
 			ParameterExpandItem i = new ParameterExpandItem(viewer, layer, SWT.None, null);
-				i.setText(name);
+			i.setText(name);
 			control.pack(true);
 			control.layout();
 			i.setControl(control);
