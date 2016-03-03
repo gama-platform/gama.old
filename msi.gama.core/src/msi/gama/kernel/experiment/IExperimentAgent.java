@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.*;
 
 public interface IExperimentAgent extends ITopLevelAgent {
 
@@ -38,5 +38,10 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	void closeSimulations();
 
 	public abstract void closeSimulation(SimulationAgent simulationAgent);
+
+	/**
+	 * @return
+	 */
+	public abstract SimulationPopulation getSimulationPopulation();
 
 }

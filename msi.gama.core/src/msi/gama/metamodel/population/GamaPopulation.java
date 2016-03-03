@@ -223,7 +223,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public java.lang.Iterable<IAgent> iterable(final IScope scope) {
+	public Iterable<? extends IAgent> iterable(final IScope scope) {
 		return (Iterable<IAgent>) getAgents(scope);
 	}
 

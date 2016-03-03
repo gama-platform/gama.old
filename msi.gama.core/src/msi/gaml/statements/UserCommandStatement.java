@@ -12,18 +12,20 @@
 package msi.gaml.statements;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
+import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.simulation.*;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
-import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.compilation.*;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.UserCommandStatement.UserCommandValidator;
 import msi.gaml.types.IType;
 
 /**
@@ -40,19 +42,19 @@ concept = { IConcept.GUI })
 		@facet(name = IKeyword.ACTION,
 			type = IType.ID,
 			optional = true,
-			doc = @doc("the identifier of the action to be executed") ),
+			doc = @doc("the identifier of the action to be executed. This action should be accessible in the context in which it is defined (an experiment, the global section or a species). A special case is allowed to maintain the compatibility with older versions of GAMA, when the user_command is declared in an experiment and the action is declared in 'global'. In that case, all the simulations managed by the experiment will run the action in response to the user executing the command")),
 		@facet(name = IKeyword.NAME,
-			type = IType.LABEL,
-			optional = false,
-			doc = @doc("the identifier of the user_command") ),
+		type = IType.LABEL,
+		optional = false,
+		doc = @doc("the identifier of the user_command") ),
 		@facet(name = IKeyword.WHEN,
-			type = IType.BOOL,
-			optional = true,
-			doc = @doc("the condition that should be fulfille in order that the action is executed") ),
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("the condition that should be fulfilled (in addition to the user clicking it) in order to execute this action")),
 		@facet(name = IKeyword.WITH,
-			type = IType.MAP,
-			optional = true,
-			doc = @doc("the map of the parameters::values that requires the action") ) },
+		type = IType.MAP,
+		optional = true,
+		doc = @doc("the map of the parameters::values required by the action")) },
 	omissible = IKeyword.NAME)
 @doc(
 	value = "Anywhere in the global block, in a species or in an (GUI) experiment, user_command statements allows to either call directly an existing action (with or without arguments) or to be followed by a block that describes what to do when this command is run.",
@@ -62,7 +64,43 @@ concept = { IConcept.GUI })
 				value = "user_command kill_myself action: some_action with: [arg1::val1, arg2::val2, ...];",
 				isExecutable = false) ) },
 	see = { IKeyword.USER_INIT, IKeyword.USER_PANEL, IKeyword.USER_INPUT })
+@validator(UserCommandValidator.class)
+
 public class UserCommandStatement extends AbstractStatementSequence implements IStatement.WithArgs {
+
+	public static class UserCommandValidator implements IDescriptionValidator {
+
+		/*
+		 * (non-Javadoc)
+		 *
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription description) {
+			String action = description.getFacets().getLabel(ACTION);
+			IDescription enclosing = description.getEnclosingDescription();
+			if ( enclosing.getAction(action) == null ) {
+				// 2 cases: we are in a simulation or in a "normal" species and we emit an error, or we are in an experiment, in which case we try to see if the simulations can run it. In that case we
+				// emit a warning (see Issue #1595)
+				if ( enclosing instanceof ExperimentDescription ) {
+					ModelDescription model = enclosing.getModelDescription();
+					if ( model.hasAction(action) ) {
+						description.warning(
+							"Action " + action +
+							" should be defined in the experiment, not in global. To maintain the compatibility with GAMA 1.6.1, the command will execute it on all the simulations managed by this experiment",
+							IGamlIssue.WRONG_CONTEXT, ACTION);
+					} else {
+						description.error("Action " + action + " does not exist in this experiment",
+							IGamlIssue.UNKNOWN_ACTION, ACTION);
+					}
+				} else {
+					String enclosingName = enclosing instanceof ModelDescription ? "global" : enclosing.getName();
+					description.error("Action " + action + " does not exist in " + enclosingName,
+						IGamlIssue.UNKNOWN_ACTION, ACTION);
+				}
+			}
+		}
+	}
 
 	Arguments args;
 	Arguments runtimeArgs;
@@ -112,18 +150,36 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 				runtimeArgs = null;
 				return result;
 			}
-			final ISpecies context = scope.getAgentScope().getSpecies();
-			final IStatement.WithArgs executer = context.getAction(actionName);
+			ISpecies context = scope.getAgentScope().getSpecies();
+			IStatement.WithArgs executer = context.getAction(actionName);
+			boolean isWorkaroundForIssue1595 = false;
+			if ( executer == null ) {
+				// See Issue #1595
+				if ( context instanceof ExperimentPlan ) {
+					context = ((ExperimentPlan) context).getModel();
+					executer = context.getAction(actionName);
+					isWorkaroundForIssue1595 = true;
+				} else {
+					throw GamaRuntimeException.error("Unknown action: " + actionName, scope);
+				}
+			}
 			Arguments tempArgs = new Arguments(args);
 			if ( runtimeArgs != null ) {
 				tempArgs.complementWith(runtimeArgs);
 			}
-			executer.setRuntimeArgs(tempArgs);
-			final Object result = executer.executeOn(scope);
-			runtimeArgs = null;
-			return result;
+			if ( isWorkaroundForIssue1595 ) {
+				SimulationPopulation simulations = scope.getExperiment().getSimulationPopulation();
+				Object[] resultArray = new Object[1];
+				for ( SimulationAgent sim : simulations.iterable(scope) ) {
+					scope.execute(executer, sim, tempArgs, resultArray);
+				}
+			} else {
+				executer.setRuntimeArgs(tempArgs);
+				final Object result = executer.executeOn(scope);
+				runtimeArgs = null;
+				return result;
+			}
 		}
-		// scope.setStatus(ExecutionStatus.success);
 		return null;
 	}
 

@@ -93,6 +93,11 @@ public class SimulationPopulation extends GamaPopulation {
 	}
 
 	@Override
+	public Iterable<SimulationAgent> iterable(final IScope scope) {
+		return (Iterable<SimulationAgent>) getAgents(scope);
+	}
+
+	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 		final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled) throws GamaRuntimeException {
 		scope.getGui().waitStatus("Initializing simulation");
