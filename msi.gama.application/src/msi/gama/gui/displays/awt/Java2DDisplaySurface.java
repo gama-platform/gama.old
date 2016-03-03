@@ -20,6 +20,8 @@ import java.util.*;
 import java.util.List;
 import javax.swing.JPanel;
 import com.vividsolutions.jts.geom.Envelope;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -37,7 +39,29 @@ import msi.gaml.operators.fastmaths.*;
 @display("java2D")
 public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
-	private final LayeredDisplayOutput output;
+	static {
+		GamaPreferences.DISPLAY_NO_ACCELERATION.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
+
+			// Corresponds to JVM options : -Dsun.java2d.noddraw=true -Dsun.awt.noerasebackground=true -Dsun.java2d.d3d=false -Dsun.java2d.opengl=false -Dsun.java2d.pmoffscreen=false
+			@Override
+			public void afterValueChange(final Boolean newValue) {
+				System.setProperty("sun.java2d.noddraw", newValue ? "true" : "false");
+				System.setProperty("sun.awt.noerasebackground", "true"); // Always true
+				System.setProperty("sun.java2d.d3d", newValue ? "false" : "true");
+				System.setProperty("sun.java2d.opengl", newValue ? "false" : "true");
+				System.setProperty("sun.java2d.pmoffscreen", newValue ? "false" : "true");
+			}
+		});
+		// Forces the listener to run at least once
+		GamaPreferences.DISPLAY_NO_ACCELERATION.set(GamaPreferences.DISPLAY_NO_ACCELERATION.getValue());
+	}
+
+	final LayeredDisplayOutput output;
 	protected final Rectangle viewPort = new Rectangle();
 	protected final AffineTransform translation = new AffineTransform();
 	protected final ILayerManager manager;
@@ -371,7 +395,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public double getZoomLevel() {
 		if ( getData().getZoomLevel() == null ) {
-			getData().setZoomLevel(computeInitialZoomLevel());
+			getData().setZoomLevel(1.0);
 		}
 		return getData().getZoomLevel();
 	}
@@ -477,55 +501,55 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void addListener(final IEventLayerListener listener) {
-		if ( listeners.containsKey(listener) ) { return; }
+	public void addListener(final IEventLayerListener ell) {
+		if ( listeners.containsKey(ell) ) { return; }
 
 		MouseAdapter l = new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(final MouseEvent e) {
-				listener.mouseClicked(e.getX(), e.getY(), e.getButton());
+				ell.mouseClicked(e.getX(), e.getY(), e.getButton());
 			}
 
 			@Override
 			public void mousePressed(final MouseEvent e) {
-				listener.mouseDown(e.getX(), e.getY(), e.getButton());
+				ell.mouseDown(e.getX(), e.getY(), e.getButton());
 			}
 
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				listener.mouseUp(e.getX(), e.getY(), e.getButton());
+				ell.mouseUp(e.getX(), e.getY(), e.getButton());
 			}
 
 			@Override
 			public void mouseMoved(final MouseEvent e) {
 				if ( e.getButton() > 0 ) { return; }
-				listener.mouseMove(e.getX(), e.getY());
+				ell.mouseMove(e.getX(), e.getY());
 			}
 
 			@Override
 			public void mouseEntered(final MouseEvent e) {
 				if ( e.getButton() > 0 ) { return; }
-				listener.mouseEnter(e.getX(), e.getY());
+				ell.mouseEnter(e.getX(), e.getY());
 			}
 
 			@Override
 			public void mouseExited(final MouseEvent e) {
 				if ( e.getButton() > 0 ) { return; }
-				listener.mouseExit(e.getX(), e.getY());
+				ell.mouseExit(e.getX(), e.getY());
 			}
 
 		};
-		listeners.put(listener, l);
+		listeners.put(ell, l);
 		addMouseListener(l);
 		addMouseMotionListener(l);
 	}
 
 	@Override
-	public void removeListener(final IEventLayerListener listener) {
-		MouseAdapter l = listeners.get(listener);
+	public void removeListener(final IEventLayerListener ell) {
+		MouseAdapter l = listeners.get(ell);
 		if ( l == null ) { return; }
-		listeners.remove(listener);
+		listeners.remove(ell);
 		super.removeMouseListener(l);
 		super.removeMouseMotionListener(l);
 	}
@@ -541,14 +565,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 */
 	@Override
 	public void followAgent(final IAgent a) {}
-
-	/**
-	 * Method computeInitialZoomLevel()
-	 * @see msi.gama.gui.displays.awt.AbstractAWTDisplaySurface#computeInitialZoomLevel()
-	 */
-	protected Double computeInitialZoomLevel() {
-		return 1.0;
-	}
 
 	@Override
 	public void setBounds(final int arg0, final int arg1, final int arg2, final int arg3) {

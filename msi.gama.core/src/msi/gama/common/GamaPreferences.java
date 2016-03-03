@@ -141,29 +141,29 @@ public class GamaPreferences {
 		String[] activates, deactivates;
 		Set<IPreferenceChangeListener<T>> listeners = new HashSet();
 
-		private Entry(final String key, final int type) {
+		Entry(final String key, final int type) {
 			tab = UI;
 			this.type = type;
 			this.key = key;
 		}
 
-		public Entry group(final String group) {
-			this.group = group;
+		public Entry group(final String g) {
+			this.group = g;
 			return this;
 		}
 
-		public Entry among(final T ... values) {
-			return among(Arrays.asList(values));
+		public Entry among(final T ... v) {
+			return among(Arrays.asList(v));
 		}
 
-		public Entry among(final List<T> values) {
-			this.values = values;
+		public Entry among(final List<T> v) {
+			this.values = v;
 			return this;
 		}
 
-		public Entry between(final Number min, final Number max) {
-			this.min = min;
-			this.max = max;
+		public Entry between(final Number mini, final Number maxi) {
+			this.min = mini;
+			this.max = maxi;
 			return this;
 		}
 
@@ -172,14 +172,14 @@ public class GamaPreferences {
 			return this;
 		}
 
-		public Entry named(final String title) {
-			this.title = title;
+		public Entry named(final String t) {
+			this.title = t;
 			return this;
 		}
 
-		public Entry init(final T value) {
-			this.initial = value;
-			this.value = value;
+		public Entry init(final T v) {
+			this.initial = v;
+			this.value = v;
 			return this;
 		}
 
@@ -633,6 +633,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> DISPLAY_POWER_OF_TWO = create("core.power_of_two",
 		"Forces the dimensions of OpenGL textures to be power of 2 (e.g. 8x8, 16x16, etc.). Necessary on some graphic cards",
 		false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+	public static final Entry<Boolean> DISPLAY_NO_ACCELERATION = create("core.java2D_no_acceleration",
+		"Disable graphics hardware acceleration for Java2D displays (can be necessary on some configurations)", false,
+		IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> MULTITHREADED_SIMULATIONS =
 		create("core.multithreaded_simulations", "Run multiple simulations in multiple threads", true, IType.BOOL)
 		.activates("core.threads_number").in(EXPERIMENTAL).group(SIMULATIONS);
