@@ -724,4 +724,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return renderer.sceneBuffer.getSceneToRender().rendered();
 	}
 
+	@Override
+	public boolean isDisposed() {
+		return disposed;
+	}
+
 }

@@ -148,4 +148,9 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	 */
 	boolean isRendered();
 
+	/**
+	 * @return
+	 */
+	boolean isDisposed();
+
 }

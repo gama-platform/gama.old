@@ -650,6 +650,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		return rendered;
 	}
 
+	@Override
+	public boolean isDisposed() {
+		return disposed;
+	}
+
 	// Code to use a BufferStrategy instead. Problem is it needs a Canvas, which is difficult to obtain. One possibility could be to directly use SWT_AWT to obtain a Frame and build a Canvas on top of
 	// it, bypassing all the problems raised by the Swing components.
 	// public BufferStrategy getBufferStrategy() {

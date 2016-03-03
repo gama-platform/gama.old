@@ -332,4 +332,14 @@ public class NullDisplaySurface implements IDisplaySurface {
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see msi.gama.common.interfaces.IDisplaySurface#isDisposed()
+	 */
+	@Override
+	public boolean isDisposed() {
+		return false;
+	}
+
 }

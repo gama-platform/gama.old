@@ -464,4 +464,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		return true;
 	}
 
+	@Override
+	public boolean isDisposed() {
+		return false;
+	}
+
 }
