@@ -78,8 +78,9 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 		@Override
 		public void validate(final IDescription description) {
 			String action = description.getFacets().getLabel(ACTION);
+
 			IDescription enclosing = description.getEnclosingDescription();
-			if ( enclosing.getAction(action) == null ) {
+			if ( action != null && enclosing.getAction(action) == null ) {
 				// 2 cases: we are in a simulation or in a "normal" species and we emit an error, or we are in an experiment, in which case we try to see if the simulations can run it. In that case we
 				// emit a warning (see Issue #1595)
 				if ( enclosing instanceof ExperimentDescription ) {
