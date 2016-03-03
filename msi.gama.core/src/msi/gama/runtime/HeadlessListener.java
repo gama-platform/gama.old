@@ -12,7 +12,7 @@
 package msi.gama.runtime;
 
 import java.awt.Color;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.*;
 import org.eclipse.core.runtime.CoreException;
 import msi.gama.common.interfaces.*;
@@ -430,5 +430,23 @@ public class HeadlessListener extends AbstractGui {
 	@Override
 	public void setStatus(final String msg, final String icon) {
 		System.out.println(msg);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see msi.gama.common.interfaces.IGui#registerView(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void registerView(final String modelName, final String expeName, final String name) {}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see msi.gama.common.interfaces.IGui#getViews(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Set<String> getViews(final String modelName, final String expeName) {
+		return null;
 	}
 }

@@ -43,6 +43,7 @@ import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
+import msi.gama.gui.swt.perspectives.SimulationPerspective;
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.*;
@@ -113,14 +114,14 @@ public class SwtGui extends AbstractGui {
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	// private static Logger log;
 	private static ThreadedUpdater<IStatusMessage> status = new ThreadedUpdater("Status refresh");
-	private static ISpeedDisplayer speedStatus;
+	static ISpeedDisplayer speedStatus;
 	private Tell tell = new Tell();
 	private Error error = new Error();
 	// private Views views = new Views();
-	private ConsoleView console = null;
+	ConsoleView console = null;
 	private final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
-	private static final List<IDisplaySurface> surfaces = new ArrayList();
+	static final List<IDisplaySurface> surfaces = new ArrayList();
 	private static IPartListener2 partListener;
 
 	public static final Entry<Color> SHAPEFILE_VIEWER_FILL = GamaPreferences
@@ -462,7 +463,7 @@ public class SwtGui extends AbstractGui {
 		return result[0];
 	}
 
-	private static final IEditorInput input = new IEditorInput() {
+	static final IEditorInput input = new IEditorInput() {
 
 		@Override
 		public Object getAdapter(final Class adapter) {
@@ -636,7 +637,7 @@ public class SwtGui extends AbstractGui {
 			}
 			if ( partRef.getPart(false) instanceof AWTDisplayView ) {
 				AWTDisplayView view = (AWTDisplayView) partRef.getPart(false);
-				// view.fixSize();
+				view.fixSize();
 			}
 
 		}
@@ -802,10 +803,15 @@ public class SwtGui extends AbstractGui {
 
 				@Override
 				public void run() {
-					activePage.setPerspective(descriptor);
+					try {
+						activePage.setPerspective(descriptor);
+					} catch (NullPointerException e) {
+						System.err.println(
+							"NPE in WorkbenchPage.setPerspective(). See Issue #1602. Working around the bug in e4...");
+						activePage.setPerspective(descriptor);
+					}
 					activateAutoSave(withAutoSave);
 					debug("Perspective " + perspectiveId + " open ");
-
 				}
 			};
 			if ( immediately ) {
@@ -818,14 +824,14 @@ public class SwtGui extends AbstractGui {
 		return false;
 	}
 
-	public final IPerspectiveDescriptor getActivePerspective() {
+	public final static IPerspectiveDescriptor getActivePerspective() {
 		final IWorkbenchPage activePage = getPage();
 		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
 		return currentDescriptor;
 
 	}
 
-	public final String getActivePerspectiveName() {
+	public final static String getActivePerspectiveName() {
 		return getActivePerspective().getId();
 
 	}
@@ -858,7 +864,9 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public void runModel(final IModel model, final String exp) {
+//		SimulationPerspective.setCurrentModelAndExperiment(model.getName(), exp);
 		GAMA.getGui().openSimulationPerspective(true);
+//		getPage().resetPerspective();
 		GAMA.runGuiExperiment(exp, model);
 	}
 
@@ -1545,6 +1553,34 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public GamaColor getColorForSimulationNumber(final int index) {
 		return SIMULATION_COLORS[index % 5];
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see msi.gama.common.interfaces.IGui#registerView(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void registerView(final String modelName, final String expeName, final String viewName) {
+		String key = modelName + expeName;
+		Set<String> ids = MODEL_VIEWS.get(key);
+		if ( ids == null ) {
+			ids = new HashSet<>();
+			MODEL_VIEWS.put(key, ids);
+		}
+		ids.add(viewName);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see msi.gama.common.interfaces.IGui#getViews(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Set<String> getViews(final String modelName, final String expeName) {
+		String key = modelName + expeName;
+		Set<String> ids = MODEL_VIEWS.get(key);
+		return ids == null ? Collections.EMPTY_SET : ids;
 	}
 
 }

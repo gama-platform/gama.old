@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
@@ -35,6 +35,8 @@ import msi.gaml.types.IType;
  *
  */
 public interface IGui {
+
+	public static Map<String, Set<String>> MODEL_VIEWS = new HashMap<>();
 
 	public static final int ERROR = 0;
 	public static final int WAIT = 1;
@@ -243,5 +245,15 @@ public interface IGui {
 	 * @param icon
 	 */
 	void setStatusInternal(String msg, GamaColor color, String icon);
+
+	/**
+	 * @param modelName
+	 * @param expeName
+	 * @param name
+	 */
+	void registerView(String modelName, String expeName, String name);
+
+	Set<String> getViews(String modelName, String expeName);
+
 
 }
