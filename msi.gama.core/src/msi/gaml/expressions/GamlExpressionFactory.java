@@ -176,7 +176,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 					context.error(
 						"No operator found for applying '" + op + "' to " + signature + " (operators available for " +
 							Arrays.toString(ops.keySet().toArray()) + ")",
-						IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
+							IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
 					return null;
 				}
 				signature = temp_types.get(0);
@@ -209,7 +209,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			}
 			final OperatorProto proto = ops.get(signature);
 			// We finally make an instance of the operator and init it with the arguments
-			IExpression copy = proto.create(context, args);
+			IExpression copy = proto.create(context, currentEObject, args);
 			if ( copy != null ) {
 				String ged = proto.getDeprecated();
 				if ( ged != null ) {

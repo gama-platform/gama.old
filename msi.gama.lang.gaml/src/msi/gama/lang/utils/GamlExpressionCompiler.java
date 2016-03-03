@@ -377,7 +377,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					var, type.toString());
 				return null;
 			}
-			TypeFieldExpression expr = (TypeFieldExpression) proto.create(getContext(), owner);
+			TypeFieldExpression expr = (TypeFieldExpression) proto.create(getContext(), fieldExpr, owner);
 			DescriptionFactory.setGamlDocumentation(fieldExpr, expr);
 			return expr;
 		}
@@ -917,7 +917,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 			getContext().error(
 				"The variable " + varName +
-					" is not defined or accessible in this context. Check its name or declare it",
+				" is not defined or accessible in this context. Check its name or declare it",
 				IGamlIssue.UNKNOWN_VAR, object, varName);
 		}
 		return null;

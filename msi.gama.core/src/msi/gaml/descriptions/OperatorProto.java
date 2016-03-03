@@ -13,6 +13,7 @@ package msi.gaml.descriptions;
 
 import java.lang.reflect.*;
 import java.util.*;
+import org.eclipse.emf.ecore.EObject;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.*;
@@ -47,7 +48,7 @@ public class OperatorProto extends AbstractProto {
 	public final int typeProvider, contentTypeProvider, keyTypeProvider;
 	public final int[] expectedContentType;
 
-	public IExpression create(final IDescription context, final IExpression ... exprs) {
+	public IExpression create(final IDescription context, final EObject currentEObject, final IExpression ... exprs) {
 		try {
 
 			switch (signature.size()) {
@@ -70,7 +71,13 @@ public class OperatorProto extends AbstractProto {
 		} catch (GamaRuntimeException e) {
 			// this can happen when optimizing the code
 			// in that case, report an error and return null as it means that the code is not functional
-			context.error("This code is not functional: " + e.getMessage(), IGamlIssue.GENERAL, getName());
+			context.error("This code is not functional: " + e.getMessage(), IGamlIssue.GENERAL, currentEObject);
+			return null;
+		} catch (Exception e) {
+			// this can happen when optimizing the code
+			// in that case, report an error and return null as it means that the code is not functional
+			context.error("The compiler encountered an internal error: " + e.getMessage(), IGamlIssue.GENERAL,
+				currentEObject);
 			return null;
 		}
 	}
@@ -135,8 +142,8 @@ public class OperatorProto extends AbstractProto {
 				return;
 			}
 		} else if ( signature.isUnary() ) {
-			for ( int i = 0; i < expectedContentType.length; i++ ) {
-				if ( rightType.isTranslatableInto(Types.get(expectedContentType[i])) ) { return; }
+			for ( int element : expectedContentType ) {
+				if ( rightType.isTranslatableInto(Types.get(element)) ) { return; }
 			}
 			context.error("Operator " + getName() + " expects arguments of type " + rightType, IGamlIssue.WRONG_TYPE);
 		}
