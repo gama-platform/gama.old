@@ -258,6 +258,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			data.setDisplayType(getLiteral(IKeyword.TYPE));
 		}
 		layers = new ArrayList<>();
+		String modelName = desc.getModelDescription().getName();
+		String expeName = desc.getExperimentContext().getName();
+		GAMA.getGui().registerView(modelName, expeName, getViewId() + ":" + getName() + "*");
 	}
 
 	public IOverlayProvider getOverlayProvider() {
@@ -538,20 +541,19 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		getLayers().clear();
 	}
 
-	private static boolean USES_OPENGL_SWT = true;
 
 	protected void createSurface(final IScope scope) {
 		if ( surface != null ) {
 			surface.outputReloaded();
 			return;
 		}
-		if ( isOpenGL() && USES_OPENGL_SWT ) { return; }
+		if ( isOpenGL() ) { return; }
 		surface = scope.getGui().getDisplaySurfaceFor(this);
 	}
 
 	@Override
 	public String getViewId() {
-		if ( USES_OPENGL_SWT && isOpenGL() ) { return "msi.gama.application.view.OpenGLDisplayView"; }
+		if ( isOpenGL() ) { return IGui.GL_LAYER_VIEW_ID; }
 		return IGui.LAYER_VIEW_ID;
 	}
 
