@@ -31,7 +31,7 @@ public class LayerManager implements ILayerManager {
 	private final List<ILayer> enabledLayers = new ArrayList();
 	private final List<ILayer> disabledLayers = new ArrayList();
 	private OverlayLayer overlay = null;
-	private final IDisplaySurface surface;
+	final IDisplaySurface surface;
 	private int count = 0;
 
 	public LayerManager(final IDisplaySurface surface, final LayeredDisplayOutput output) {
@@ -96,7 +96,7 @@ public class LayerManager implements ILayerManager {
 		return null;
 	}
 
-	private void enable(final ILayer found) {
+	void enable(final ILayer found) {
 		found.enableOn(surface);
 		enabledLayers.add(found);
 		disabledLayers.remove(found);
@@ -108,7 +108,7 @@ public class LayerManager implements ILayerManager {
 		return enabledLayers.contains(item);
 	}
 
-	private void disable(final ILayer found) {
+	void disable(final ILayer found) {
 		if ( found != null ) {
 			found.disableOn(surface);
 			removeLayer(found);
@@ -143,6 +143,7 @@ public class LayerManager implements ILayerManager {
 		try {
 			g.beginDrawingLayers();
 			for ( int i = 0, n = enabledLayers.size(); i < n; i++ ) {
+				if ( scope.interrupted() ) { return; }
 				final ILayer dis = enabledLayers.get(i);
 				dis.drawDisplay(scope, g);
 			}

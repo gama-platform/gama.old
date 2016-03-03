@@ -13,11 +13,12 @@ package msi.gama.util;
 
 import java.awt.Color;
 import java.util.Map;
+import gnu.trove.TCollections;
+import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.IConstantCategory;
 import msi.gama.precompiler.constants.ColorCSS;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
@@ -32,21 +33,21 @@ import msi.gaml.types.*;
 		type = IType.INT,
 		doc = { @doc("Returns the red component of the color (between 0 and 255)") }),
 	@var(name = IKeyword.COLOR_GREEN,
-		type = IType.INT,
-		doc = { @doc("Returns the green component of the color (between 0 and 255)") }),
+	type = IType.INT,
+	doc = { @doc("Returns the green component of the color (between 0 and 255)") }),
 	@var(name = IKeyword.COLOR_BLUE,
-		type = IType.INT,
-		doc = { @doc("Returns the blue component of the color (between 0 and 255)") }),
+	type = IType.INT,
+	doc = { @doc("Returns the blue component of the color (between 0 and 255)") }),
 	@var(name = IKeyword.ALPHA,
-		type = IType.INT,
-		doc = {
-			@doc("Returns the alpha component (transparency) of the color (between 0 for transparent and 255 for opaque)") }),
+	type = IType.INT,
+	doc = {
+		@doc("Returns the alpha component (transparency) of the color (between 0 for transparent and 255 for opaque)") }),
 	@var(name = IKeyword.BRIGHTER,
-		type = IType.COLOR,
-		doc = { @doc("Returns a lighter color (with increased luminance)") }),
+	type = IType.COLOR,
+	doc = { @doc("Returns a lighter color (with increased luminance)") }),
 	@var(name = IKeyword.DARKER,
-		type = IType.COLOR,
-		doc = { @doc("Returns a darker color (with decreased luminance)") }) })
+	type = IType.COLOR,
+	doc = { @doc("Returns a darker color (with decreased luminance)") }) })
 public class GamaColor extends Color implements IValue, Comparable<Color>/* implements IContainer<Integer, Integer> */ {
 
 	@constant(value = "the set of CSS colors",
@@ -56,7 +57,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	public final static Object[] array = ColorCSS.array;
 
 	public final static Map<String, GamaColor> colors = new THashMap();
-	public final static TIntObjectHashMap<GamaColor> int_colors = new TIntObjectHashMap();
+	public final static TIntObjectMap<GamaColor> int_colors =
+		TCollections.synchronizedMap(new TIntObjectHashMap<GamaColor>());
 
 	public static GamaColor getInt(final int rgb) {
 		GamaColor result = int_colors.get(rgb);
@@ -79,7 +81,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 
 		final String name;
 
-		private NamedGamaColor(final String n, final int[] c) {
+		NamedGamaColor(final String n, final int[] c) {
 			// c must be of length 4.
 			super(c[0], c[1], c[2], (double) c[3]);
 			name = n;

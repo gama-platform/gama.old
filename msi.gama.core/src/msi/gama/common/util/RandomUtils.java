@@ -169,8 +169,8 @@ public class RandomUtils {
 
 	}
 
-	private byte[] createSeed(final Double seed, final int length) {
-		this.seed = seed;
+	private byte[] createSeed(final Double s, final int length) {
+		this.seed = s;
 		Double realSeed = seed;
 		if ( realSeed < 0 ) {
 			realSeed *= -1;

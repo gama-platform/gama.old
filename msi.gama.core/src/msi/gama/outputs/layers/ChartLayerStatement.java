@@ -35,9 +35,8 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.ChartDataListStatement.ChartDataList;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -66,89 +65,89 @@ import msi.gaml.types.*;
 		optional = true,
 		doc = @doc("range of the x-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
 	@facet(name = ChartLayerStatement.YRANGE,
-		type = { IType.FLOAT, IType.INT, IType.POINT },
-		optional = true,
-		doc = @doc("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
+	type = { IType.FLOAT, IType.INT, IType.POINT },
+	optional = true,
+	doc = @doc("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
 	@facet(name = IKeyword.POSITION,
-		type = IType.POINT,
-		optional = true,
-		doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
+	type = IType.POINT,
+	optional = true,
+	doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
 	@facet(name = IKeyword.SIZE,
-		type = IType.POINT,
-		optional = true,
-		doc = @doc("extent of the layer in the screen from its position. Coordinates in [0,1[ are treated as percentages of the total surface, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Like in 'position', an elevation can be provided with the z coordinate, allowing to scale the layer in the 3 directions ")),
+	type = IType.POINT,
+	optional = true,
+	doc = @doc("extent of the layer in the screen from its position. Coordinates in [0,1[ are treated as percentages of the total surface, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Like in 'position', an elevation can be provided with the z coordinate, allowing to scale the layer in the 3 directions ")),
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("the background color")),
 	@facet(name = IKeyword.TIMEXSERIES,
-		type = IType.LIST,
-		optional = true,
-		doc = @doc("for series charts, change the default time serie (simulation cycle) for an other value.")),
+	type = IType.LIST,
+	optional = true,
+	doc = @doc("for series charts, change the default time serie (simulation cycle) for an other value.")),
 	@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true, doc = @doc("the axis color")),
 	@facet(name = IKeyword.TYPE,
-		type = IType.ID,
-		values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,
-			IKeyword.BOX_WHISKER },
-		optional = true,
-		doc = @doc("the type of chart. It could be histogram, series, xy, pie or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
+	type = IType.ID,
+	values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,
+		IKeyword.BOX_WHISKER },
+	optional = true,
+	doc = @doc("the type of chart. It could be histogram, series, xy, pie or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
 	@facet(name = IKeyword.STYLE,
-		type = IType.ID,
-		values = { IKeyword.EXPLODED, IKeyword.THREE_D, IKeyword.STACK, IKeyword.BAR },
-		optional = true),
+	type = IType.ID,
+	values = { IKeyword.EXPLODED, IKeyword.THREE_D, IKeyword.STACK, IKeyword.BAR },
+	optional = true),
 	@facet(name = IKeyword.TRANSPARENCY,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("the transparency of the chart")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc("the transparency of the chart")),
 	@facet(name = IKeyword.GAP, type = IType.FLOAT, optional = true),
 	@facet(name = ChartLayerStatement.YTICKUNIT,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
 	@facet(name = ChartLayerStatement.XTICKUNIT,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
 	@facet(name = IKeyword.NAME,
-		type = IType.LABEL,
-		optional = true,
-		doc = @doc("the human readable title of the chart layer")),
+	type = IType.LABEL,
+	optional = true,
+	doc = @doc("the human readable title of the chart layer")),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
 	@facet(name = ChartLayerStatement.TICKFONTFACE, type = IType.STRING, optional = true),
 	@facet(name = ChartLayerStatement.TICKFONTSIZE, type = IType.INT, optional = true),
 	@facet(name = ChartLayerStatement.TICKFONTSTYLE,
-		type = IType.ID,
-		values = { "plain", "bold", "italic" },
-		optional = true,
-		doc = @doc("the style used to display ticks")),
+	type = IType.ID,
+	values = { "plain", "bold", "italic" },
+	optional = true,
+	doc = @doc("the style used to display ticks")),
 	@facet(name = ChartLayerStatement.LABELFONTFACE, type = IType.STRING, optional = true),
 	@facet(name = ChartLayerStatement.LABELFONTSIZE, type = IType.INT, optional = true),
 	@facet(name = ChartLayerStatement.LABELFONTSTYLE,
-		type = IType.ID,
-		values = { "plain", "bold", "italic" },
-		optional = true,
-		doc = @doc("the style used to display labels")),
+	type = IType.ID,
+	values = { "plain", "bold", "italic" },
+	optional = true,
+	doc = @doc("the style used to display labels")),
 	@facet(name = ChartLayerStatement.LEGENDFONTFACE, type = IType.STRING, optional = true),
 	@facet(name = ChartLayerStatement.LEGENDFONTSIZE, type = IType.INT, optional = true),
 	@facet(name = ChartLayerStatement.LEGENDFONTSTYLE,
-		type = IType.ID,
-		values = { "plain", "bold", "italic" },
-		optional = true,
-		doc = @doc("the style used to display legend")),
+	type = IType.ID,
+	values = { "plain", "bold", "italic" },
+	optional = true,
+	doc = @doc("the style used to display legend")),
 	@facet(name = ChartLayerStatement.TITLEFONTFACE, type = IType.STRING, optional = true),
 	@facet(name = ChartLayerStatement.TITLEFONTSIZE, type = IType.INT, optional = true),
 	@facet(name = ChartLayerStatement.TITLEFONTSTYLE,
-		type = IType.ID,
-		values = { "plain", "bold", "italic" },
-		optional = true,
-		doc = @doc("the style used to display titles")), },
+	type = IType.ID,
+	values = { "plain", "bold", "italic" },
+	optional = true,
+	doc = @doc("the style used to display titles")), },
 
-	omissible = IKeyword.NAME)
+omissible = IKeyword.NAME)
 @doc(
 	value = "`" + IKeyword.CHART +
-		"` allows modeler to display a chart: this enables to display specific values of the model at each iteration. GAMA can display various chart types: time series (series), pie charts (pie) and histograms (histogram).",
+	"` allows modeler to display a chart: this enables to display specific values of the model at each iteration. GAMA can display various chart types: time series (series), pie charts (pie) and histograms (histogram).",
 	usages = { @usage(value = "The general syntax is:",
-		examples = { @example(value = "display chart_display {", isExecutable = false),
-			@example(value = "   chart \"chart name\" type: series [additional options] {", isExecutable = false),
-			@example(value = "      [Set of data, datalists statements]", isExecutable = false),
-			@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) },
+	examples = { @example(value = "display chart_display {", isExecutable = false),
+		@example(value = "   chart \"chart name\" type: series [additional options] {", isExecutable = false),
+		@example(value = "      [Set of data, datalists statements]", isExecutable = false),
+		@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) },
 	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
 		IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
 public class ChartLayerStatement extends AbstractLayerStatement {
@@ -280,7 +279,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					IKeyword.LEGEND, xAxisName, IKeyword.VALUE, SimulationAgent.CYCLE).compile();
 				if ( getFacet(IKeyword.TIMEXSERIES) != null ) {
 					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
-						.setExpression(getFacet(IKeyword.TIMEXSERIES));
+					.setExpression(getFacet(IKeyword.TIMEXSERIES));
 				}
 			}
 
@@ -366,8 +365,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			final String legend = e.getName();
 			if ( i != 0 | !isTimeSeries ) { // the first data is the domain
 
-				XYDataset data = plot.getDataset(i);
-				XYSeries serie = new XYSeries(0, false, false);
+				// XYDataset data = plot.getDataset(i);
+				// XYSeries serie = new XYSeries(0, false, false);
 				if ( type == SERIES_CHART || type == XY_CHART ) {
 					dataset = new DefaultTableXYDataset();
 					// final XYSeries nserie = new XYSeries(serie.getKey(), false, false);
@@ -421,7 +420,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		final int categoryCount = 3;
 		final int entityCount = 2;
 
-		final DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
+		final DefaultBoxAndWhiskerCategoryDataset dataset1 = new DefaultBoxAndWhiskerCategoryDataset();
 		for ( int i = 0; i < datas.size(); i++ ) {
 			// ChartData e = datas.get(i);
 			for ( int j = 0; j < categoryCount; j++ ) {
@@ -435,7 +434,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					final double value2 = 11.25 + scope.getRandom().next(); // concentrate values in the middle
 					list.add(new Double(value2));
 				}
-				dataset.add(list, "Series " + i, " Type " + j);
+				dataset1.add(list, "Series " + i, " Type " + j);
 
 				history.append("Series " + i);
 				history.append(',');
@@ -443,7 +442,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		history.deleteCharAt(history.length() - 1);
 		history.append(Strings.LN);
-		plot.setDataset(dataset);
+		plot.setDataset(dataset1);
 		chart.removeLegend();
 		final CategoryAxis axis = plot.getDomainAxis();
 		axis.setTickLabelFont(getTickFont());
@@ -452,7 +451,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		axis.setCategoryMargin(0.1);
 		axis.setUpperMargin(0.05);
 		axis.setLowerMargin(0.05);
-		return dataset;
+		return dataset1;
 	}
 
 	private void createData(final IScope scope) throws GamaRuntimeException {
@@ -772,7 +771,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		return true;
 	}
 
-	int toFontStyle(final String style) {
+	static int toFontStyle(final String style) {
 		if ( style.equals("bold") ) { return Font.BOLD; }
 		if ( style.equals("italic") ) { return Font.ITALIC; }
 		return Font.PLAIN;
@@ -780,7 +779,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public void updateseries(final IScope scope) throws GamaRuntimeException {
 		// datas=dataswithoutlists;
-		datasfromlists = new ArrayList<ChartData>();
+		datasfromlists = new ArrayList<>();
 		for ( int dl = 0; dl < datalists.size(); dl++ ) {
 			ChartDataList datalist = datalists.get(dl);
 
@@ -792,7 +791,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			List<List> values = Cast.asList(scope, val);
 			if ( datalist.doreverse ) {
 				List tempvalues = Cast.asList(scope, val);
-				values = new ArrayList<List>();
+				values = new ArrayList<>();
 				if ( tempvalues.get(0) instanceof GamaList ) {
 					IList nval = Cast.asList(scope, tempvalues.get(0));
 					for ( int j = 0; j < nval.size(); j++ ) {
@@ -888,14 +887,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				}
 			}
 
-			boolean dynamicseriesnames = false;
+			// boolean dynamicseriesnames = false;
 			List<String> seriesnames = new ArrayList();
 
 			if ( datalist.legendlistexp != null ) {
 				Object valc = datalist.legendlistexp.resolveAgainst(scope).value(scope);
 
 				if ( valc instanceof GamaList ) {
-					dynamicseriesnames = true;
+					// dynamicseriesnames = true;
 					seriesnames = (GamaList) valc;
 					for ( int i = 0; i < CmnFastMath.min(values.size(), seriesnames.size()); i++ ) {
 						defaultnames.set(i, seriesnames.get(i) + "(" + i + ")");
@@ -903,7 +902,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 							if ( ((DefaultTableXYDataset) ((XYPlot) chart.getPlot()).getDataset(i + 1))
 								.getSeriesCount() > 0 ) {
 								((DefaultTableXYDataset) ((XYPlot) chart.getPlot()).getDataset(i + 1)).getSeries(0)
-									.setKey(seriesnames.get(i) + "(" + i + ")");
+								.setKey(seriesnames.get(i) + "(" + i + ")");
 							}
 
 						}
@@ -1046,8 +1045,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				datalist.previoussize = nbseries;
 			}
 
-			boolean dynamiccategorynames = false;
-			List<String> categorynames = new ArrayList<String>();
+			// boolean dynamiccategorynames = false;
+			// List<String> categorynames = new ArrayList<String>();
 			/*
 			 * if (datalist.categlistexp!=null)
 			 * {
@@ -1126,13 +1125,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 				// GamaList defaultnames =new GamaList<String>(Types.STRING);
 
-				boolean dynamicseriesnames = false;
+				// boolean dynamicseriesnames = false;
 
 				if ( datalist.legendlistexp != null ) {
 					Object valc = datalist.legendlistexp.resolveAgainst(scope).value(scope);
 
 					if ( valc instanceof GamaList ) {
-						dynamicseriesnames = true;
+						// dynamicseriesnames = true;
 						GamaList seriesnames = (GamaList) valc;
 						for ( int i = 0; i < CmnFastMath.min(datas.size(), seriesnames.size()); i++ ) {
 							datas.get(i).setName(seriesnames.get(i) + "(" + i + ")");
@@ -1141,7 +1140,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				}
 
 				boolean dynamiccategorynames = false;
-				List<String> categorynames = new ArrayList<String>();
+				List<String> categorynames = new ArrayList<>();
 
 				if ( datalist.categlistexp != null ) {
 					Object valc = datalist.categlistexp.resolveAgainst(scope).value(scope);
