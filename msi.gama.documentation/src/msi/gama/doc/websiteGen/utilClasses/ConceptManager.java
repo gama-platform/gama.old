@@ -1,4 +1,4 @@
-package msi.gama.doc.websiteGen;
+package msi.gama.doc.websiteGen.utilClasses;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -9,73 +9,60 @@ import msi.gama.precompiler.IConcept;
 
 public class ConceptManager {
 	
-	static private String[] ConceptsToIgnore =
-		{
-				IConcept.ACTION,
-				IConcept.ARITHMETIC,
-				IConcept.ATTRIBUTE,
-				IConcept.BEHAVIOR,
-				IConcept.CAST,
-				IConcept.CONDITION,
-				IConcept.CONSTANT,
-				IConcept.CONTAINER,
-				IConcept.CYCLE,
-				IConcept.DIMENSION,
-				IConcept.DISPLAY,
-				IConcept.ENUMERATION,
-				IConcept.EXPERIMENT,
-				IConcept.FACET,
-				IConcept.GLOBAL,
-				IConcept.GRAPHIC_UNIT,
-				IConcept.HALT,
-				IConcept.IMPORT,
-				IConcept.INHERITANCE,
-				IConcept.INIT,
-				IConcept.LOOP,
-				IConcept.OPENGL,
-				IConcept.OPERATOR,
-				IConcept.PARAMETER,
-				IConcept.PAUSE,
-				IConcept.REFLEX,
-				IConcept.SPECIES,
-				IConcept.STATIC,
-				IConcept.STRING,
-				IConcept.WRITE
-		}; // this is the list of concepts that only concerns the "documentation" part, and not models.
+	static public enum WebsitePart { DOCUMENTATION, GAML_REFERENCES, MODEL_LIBRARY };
 	
 	static private ArrayList<String> m_concepts;
 	static HashMap<String,Integer> m_occurrence_of_concept; // the key is the name of the concept, the value is the number of occurrences.
 	
+	static HashMap<String,Integer> m_occurrence_of_concept_in_model_library; // the key is the name of the concept, the value is the number of occurrences.
+	static HashMap<String,Integer> m_occurrence_of_concept_in_gaml_ref; // the key is the name of the concept, the value is the number of occurrences.
+	static HashMap<String,Integer> m_occurrence_of_concept_in_documentation; // the key is the name of the concept, the value is the number of occurrences.
+	
 	static public void loadConcepts() throws IllegalArgumentException, IllegalAccessException {
 		m_concepts = new ArrayList<String>();
 		m_occurrence_of_concept = new HashMap<String,Integer>();
+		m_occurrence_of_concept_in_model_library = new HashMap<String,Integer>();
+		m_occurrence_of_concept_in_gaml_ref = new HashMap<String,Integer>();
+		m_occurrence_of_concept_in_documentation = new HashMap<String,Integer>();
 		// get the list of predefined concept
 		Field [] concept_fields = IConcept.class.getFields();
 		for (int i = 0; i < concept_fields.length; i++) {
 			String conceptName = (concept_fields[i].get(new Object())).toString();
 			
-			boolean conceptToBeIgnore = false;
-			for (String str : ConceptsToIgnore) {
-				if (str.equals(conceptName)) {
-					conceptToBeIgnore = true;
-				}
-			}
-			
-			if (!conceptToBeIgnore) {
-				m_concepts.add(conceptName);
-				m_occurrence_of_concept.put(conceptName, 0);
-			}
+			m_concepts.add(conceptName);
+			m_occurrence_of_concept.put(conceptName, 0);
+			m_occurrence_of_concept_in_model_library.put(conceptName, 0);
+			m_occurrence_of_concept_in_gaml_ref.put(conceptName, 0);
+			m_occurrence_of_concept_in_documentation.put(conceptName, 0);
 		}
 	}
 	
 	static public boolean conceptIsPossibleToAdd(String concept) {
+		return m_concepts.contains(concept);
+	}
+	
+	static public void addOccurrenceOfConcept(String concept) {
+		addOccurrenceOfConcept(concept, "");
+	}
+	
+	static public void addOccurrenceOfConcept(String concept, String websitePart) {
 		if (m_concepts.contains(concept)) {
 			// it is possible to add the concept. Update the number of occurrences of this concept in the library
 			int oldValue = m_occurrence_of_concept.get(concept);
 			m_occurrence_of_concept.put(concept, ++oldValue);
-			return true;
+			if (websitePart.equals(WebsitePart.DOCUMENTATION.toString())) {
+				oldValue = m_occurrence_of_concept_in_documentation.get(concept);
+				m_occurrence_of_concept_in_documentation.put(concept, ++oldValue);
+			}
+			if (websitePart.equals(WebsitePart.GAML_REFERENCES.toString())) {
+				oldValue = m_occurrence_of_concept_in_gaml_ref.get(concept);
+				m_occurrence_of_concept_in_gaml_ref.put(concept, ++oldValue);
+			}
+			if (websitePart.equals(WebsitePart.MODEL_LIBRARY.toString())) {
+				oldValue = m_occurrence_of_concept_in_model_library.get(concept);
+				m_occurrence_of_concept_in_model_library.put(concept, ++oldValue);
+			}
 		}
-		else return false;
 	}
 	
 	static public void printStatistics() {

@@ -4,6 +4,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
+import msi.gama.doc.websiteGen.utilClasses.LearningConcept;
+import msi.gama.doc.websiteGen.utilClasses.Topic;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 

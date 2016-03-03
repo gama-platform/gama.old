@@ -1,8 +1,8 @@
-package msi.gama.doc.websiteGen;
+package msi.gama.doc.websiteGen.utilClasses;
 
 import java.util.List;
 
-class LearningConcept {
+public class LearningConcept {
 	public String m_id;
 	public String m_name;
 	public String m_description;

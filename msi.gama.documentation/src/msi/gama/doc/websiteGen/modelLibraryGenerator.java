@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +18,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import msi.gama.doc.websiteGen.utilClasses.ConceptManager;
+import msi.gama.doc.websiteGen.utilClasses.MetadataStructure;
+import msi.gama.doc.websiteGen.utilClasses.ScreenshotStructure;
+import msi.gama.doc.websiteGen.utilClasses.Utils;
 
 public class modelLibraryGenerator {
 	
@@ -42,8 +45,8 @@ public class modelLibraryGenerator {
 		
 		// get all the gaml files in the model folder
 		ArrayList<File> listFiles = new ArrayList<File>();
-		getFilesFromFolder(inputPathToModelLibrary,listFiles);
-		ArrayList<File> gamlFiles = filterFilesByExtension(listFiles,"gaml");
+		Utils.getFilesFromFolder(inputPathToModelLibrary,listFiles);
+		ArrayList<File> gamlFiles = Utils.filterFilesByExtension(listFiles,"gaml");
 		
 		// read modelScreenshot.xml
 		System.out.println("----- Start to load the file "+inputModelScreenshot+" -----");
@@ -179,7 +182,7 @@ public class modelLibraryGenerator {
 		
 		while ((line = br.readLine()) != null) {
 			for (String catKeywords : categoryKeywords) {
-				extractedStr = findAndReturnRegex(line,catKeywords+"s=(.*)");
+				extractedStr = Utils.findAndReturnRegex(line,catKeywords+"s=(.*)");
 				String[] keywordArray = extractedStr.split("~");
 				for (String kw : keywordArray) {
 					kw = catKeywords+"_"+kw;
@@ -245,8 +248,8 @@ public class modelLibraryGenerator {
 			ArrayList<String> expeNames = new ArrayList<String>();
 			ArrayList<String> displayNames = new ArrayList<String>();
 			
-			modelName = getModelName(modelFile);
-			expeNames = getExpeNames(modelFile);
+			modelName = Utils.getModelName(modelFile);
+			expeNames = Utils.getExpeNames(modelFile);
 			
 			// browse all the experiments
 			for (int expeIdx = 0; expeIdx < expeNames.size(); expeIdx++) {
@@ -292,28 +295,6 @@ public class modelLibraryGenerator {
         }
 	}
 	
-	private static ArrayList<String> getExpeNames(File file) throws IOException {
-		// returns the list of experiments
-		ArrayList<String> result = new ArrayList<String>();
-		String expeName = "";
-		
-		FileInputStream fis = new FileInputStream(file);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-		
-		String line = null;
-		
-		while ((line = br.readLine()) != null) {
-			expeName = findAndReturnRegex(line,"experiment (\\w+)");
-			if (expeName != "") {
-				result.add(expeName);
-				expeName = "";
-			}
-		}
-		br.close();
-		
-		return result;
-	}
-	
 	private static ArrayList<String> getDisplayNamesByExpe(File file, String expeName) throws IOException {
 		// returns the list of experiments
 		ArrayList<String> result = new ArrayList<String>();
@@ -328,18 +309,18 @@ public class modelLibraryGenerator {
 		
 		while ((line = br.readLine()) != null) {
 			if (inTheRightExperiment) {
-				if (findAndReturnRegex(line,"experiment (\\w+)") != "") {
+				if (Utils.findAndReturnRegex(line,"experiment (\\w+)") != "") {
 					// we are out of the right experiment. Return the result.
 					br.close();
 					return result;
 				}
-				displayName = findAndReturnRegex(line,"[\\t,\\s]+display (\\w+)");
+				displayName = Utils.findAndReturnRegex(line,"[\\t,\\s]+display (\\w+)");
 				if (displayName != "") {
 					result.add(displayName);
 					displayName = "";
 				}
 			}
-			if (expeName.compareTo(findAndReturnRegex(line,"experiment (\\w+)")) == 0) {
+			if (expeName.compareTo(Utils.findAndReturnRegex(line,"experiment (\\w+)")) == 0) {
 				inTheRightExperiment = true;
 			}
 		}
@@ -452,7 +433,7 @@ public class modelLibraryGenerator {
 		// search for a line that starts with "import"
 		while (line!=null)
 		{
-			String regexMatch = findAndReturnRegex(line,"import \"(.*[^\"])\"");
+			String regexMatch = Utils.findAndReturnRegex(line,"import \"(.*[^\"])\"");
 			if (regexMatch != "") {
 				result.add(file.getParentFile().getAbsolutePath().replace("\\","/")+"/"+regexMatch);
 			}
@@ -488,62 +469,5 @@ public class modelLibraryGenerator {
 		result += "```\n";
 		br.close();
 		return result;
-	}
-	
-	//////////////////////////////////////////////////////////////////////////////////////
-	// Util functions
-	//////////////////////////////////////////////////////////////////////////////////////
-	
-	private static void getFilesFromFolder(String folderPath, ArrayList<File> files) {
-		File folder = new File(folderPath);
-	    File[] fList = folder.listFiles();
-	    for (File file : fList) {
-	        if (file.isFile()) {
-	        	files.add(file);
-	        } else if (file.isDirectory()) {
-	        	getFilesFromFolder(file.getAbsolutePath(), files);
-	        }
-	    }
-	}
-	
-	private static ArrayList<File> filterFilesByExtension(ArrayList<File> inputList, String ext)
-	{
-		ArrayList<File> result = new ArrayList<File>();
-		for (int i=0; i<inputList.size(); i++) {
-			if (inputList.get(i).getAbsoluteFile().toString().endsWith(ext))
-				result.add(inputList.get(i));
-		}
-		return result;
-	}
-	
-	private static String getModelName(File file) throws IOException {
-		// returns the name of the model
-		String result="";
-		
-		FileInputStream fis = new FileInputStream(file);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-		
-		String line = null;
-		
-		while ((line = br.readLine()) != null) {
-			result = findAndReturnRegex(line,"^model (\\w+)");
-			if (result != "") {
-				break;
-			}
-		}
-		br.close();
-		
-		return result;
-	}
-	
-	private static String findAndReturnRegex(String line, String regex)
-	{
-		String str = "";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(line);
-		if (matcher.find()) {
-			str = matcher.group(1);
-		}
-		return str;
 	}
 }

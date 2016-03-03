@@ -1,4 +1,4 @@
-package msi.gama.doc.websiteGen;
+package msi.gama.doc.websiteGen.utilClasses;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,6 +65,7 @@ public class MetadataStructure {
 			for (int tagIdx = 0 ; tagIdx < m_tags.length ; tagIdx++) {
 				// check if the concept exists in IConcept
 				if (ConceptManager.conceptIsPossibleToAdd(m_tags[tagIdx])) {
+					ConceptManager.addOccurrenceOfConcept(m_tags[tagIdx]);
 					result += "[//]: # (keyword|concept_"+m_tags[tagIdx]+")\n";
 				}
 				else {
