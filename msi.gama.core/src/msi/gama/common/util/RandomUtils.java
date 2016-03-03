@@ -179,7 +179,7 @@ public class RandomUtils {
 			realSeed *= Long.MAX_VALUE;
 		}
 		long l = realSeed.longValue();
-		System.out.println("Initial seed: " + seed + "; normalized seed: " + l);
+		// System.out.println("Initial seed: " + seed + "; normalized seed: " + l);
 
 		final byte[] result = new byte[length];
 		switch (length) {
@@ -211,7 +211,7 @@ public class RandomUtils {
 	}
 
 	public byte[] generateSeed(final int length) {
-		byte[] result;
+		// byte[] result;
 		return createSeed(seed, length);
 	}
 
@@ -456,7 +456,7 @@ public class RandomUtils {
 			if ( bitsUsed < WORD_LENGTH ) {
 				int unusedBits = WORD_LENGTH - bitsUsed;
 				int mask = 0xFFFFFFFF >>> unusedBits;
-				data[data.length - 1] &= mask;
+			data[data.length - 1] &= mask;
 			}
 		}
 

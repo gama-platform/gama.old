@@ -1,13 +1,6 @@
 package msi.gama.metamodel.topology.grid;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.runtime.IScope;
@@ -16,7 +9,7 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 
 public class GridDiffuser {
-	
+
 	// Structure of the Key for our map.
 	private class PairVarGrid {
 		String Var_name;
@@ -25,8 +18,8 @@ public class GridDiffuser {
 		int NbCols;
 		boolean Is_torus;
 		IPopulation Pop;
-		
-		public PairVarGrid(IScope scope, String var_name, GridPopulation pop) {
+
+		public PairVarGrid(final IScope scope, final String var_name, final GridPopulation pop) {
 			Var_name = var_name;
 			Grid_name = pop.getName();
 			NbRows = ((IGrid) pop.getTopology().getPlaces()).getRows(scope);
@@ -34,27 +27,29 @@ public class GridDiffuser {
 			Is_torus = pop.getTopology().isTorus();
 			Pop = pop;
 		}
-		
-	    @Override
-	    public int hashCode() {
-	    	return Var_name.hashCode()+Grid_name.hashCode();
-	    }
 
-	    @Override
-	    public boolean equals(Object obj) {
-	       if (!(obj instanceof PairVarGrid))
-	            return false;
-	        if (obj == this)
-	            return true;
-	        
-	        PairVarGrid otherGrid = (PairVarGrid)obj;
-	        if ((otherGrid.Var_name.equals(Var_name)) && (otherGrid.Grid_name.equals(Grid_name))) {
+		@Override
+		public int hashCode() {
+			return Var_name.hashCode()+Grid_name.hashCode();
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (!(obj instanceof PairVarGrid)) {
+				return false;
+			}
+			if (obj == this) {
+				return true;
+			}
+
+			PairVarGrid otherGrid = (PairVarGrid)obj;
+			if (otherGrid.Var_name.equals(Var_name) && otherGrid.Grid_name.equals(Grid_name)) {
 				return true;
 			}
 			return false;
-	    }
+		}
 	}
-	
+
 	// Structure for the Value of our map
 	private class GridDiffusion {
 		public boolean Use_convolution = true;
@@ -62,9 +57,9 @@ public class GridDiffuser {
 		public double[][] Mask, Mat_diffu;
 		public IScope Scope;
 		public double Min_value;
-		
-		public GridDiffusion(IScope scope, boolean use_convolution, boolean is_gradient, 
-				double[][] mat_diffu, double[][] mask, double min_value) {
+
+		public GridDiffusion(final IScope scope, final boolean use_convolution, final boolean is_gradient,
+			final double[][] mat_diffu, final double[][] mask, final double min_value) {
 			Scope = scope;
 			Use_convolution = use_convolution;
 			Mat_diffu = mat_diffu;
@@ -73,36 +68,37 @@ public class GridDiffuser {
 			Min_value = min_value;
 		}
 	}
-	
-	public boolean compareArrays(double[][] array1, double[][] array2) {
-        boolean b = true;
-        if (array1 != null && array2 != null){
-          if (array1.length != array2.length)
-              b = false;
-          else
-              for (int i = 0; i < array2.length; i++) {
-            	  if (array1[i].length != array2[i].length)
-            	  {
-            		  b = false;
-            	  }
-            	  else {
-            		  for (int j = 0; j < array2[i].length; j++) {
-                          if (array2[i][j] != array1[i][j]) {
-                              b = false;    
-                          } 
-            		  }
-            	  }                
-            }
-        }else{
-          b = false;
-        }
-        return b;
-    }
-	
+
+	public boolean compareArrays(final double[][] array1, final double[][] array2) {
+		boolean b = true;
+		if (array1 != null && array2 != null){
+			if (array1.length != array2.length) {
+				b = false;
+			} else {
+				for (int i = 0; i < array2.length; i++) {
+					if (array1[i].length != array2[i].length)
+					{
+						b = false;
+					}
+					else {
+						for (int j = 0; j < array2[i].length; j++) {
+							if (array2[i][j] != array1[i][j]) {
+								b = false;
+							}
+						}
+					}
+				}
+			}
+		}else{
+			b = false;
+		}
+		return b;
+	}
+
 	protected final Map<PairVarGrid, List<GridDiffusion>> m_diffusions = new HashMap<PairVarGrid,List<GridDiffusion>>();
-	
-	public void addDiffusion(IScope scope, String var_diffu, GridPopulation pop, boolean method_diffu, 
-			boolean is_gradient, double[][] mat_diffu, double[][] mask, double min_value) {
+
+	public void addDiffusion(final IScope scope, final String var_diffu, final GridPopulation pop, final boolean method_diffu,
+		final boolean is_gradient, final double[][] mat_diffu, final double[][] mask, final double min_value) {
 		GridDiffusion newGridDiff = new GridDiffusion(scope, method_diffu, is_gradient, mat_diffu, mask, min_value);
 		PairVarGrid keyValue = new PairVarGrid(scope, var_diffu, pop);
 		if (m_diffusions.containsKey(keyValue))
@@ -113,9 +109,9 @@ public class GridDiffuser {
 			for (int i = 0; i<listWithSameVar.size(); i++) {
 				GridDiffusion gridToAnalyze = listWithSameVar.get(i);
 				if (gridToAnalyze != newGridDiff
-						&& gridToAnalyze.Use_convolution == newGridDiff.Use_convolution
-						&& compareArrays(gridToAnalyze.Mask,newGridDiff.Mask)
-						&& gridToAnalyze.Is_gradient == newGridDiff.Is_gradient) {
+					&& gridToAnalyze.Use_convolution == newGridDiff.Use_convolution
+					&& compareArrays(gridToAnalyze.Mask,newGridDiff.Mask)
+					&& gridToAnalyze.Is_gradient == newGridDiff.Is_gradient) {
 					// we can add the two diffusion matrix
 					listWithSameVar.remove(gridToAnalyze);
 					int iiLength = gridToAnalyze.Mat_diffu.length;
@@ -146,18 +142,18 @@ public class GridDiffuser {
 							double result = 0;
 							int indexiForGridToAnalyze = gridToAnalyze.Mat_diffu.length - iiLength + ii + cellNbiiToAddToGridToAnalyze;
 							int indexjForGridToAnalyze = gridToAnalyze.Mat_diffu[0].length - jjLength + jj + cellNbjjToAddToGridToAnalyze;
-							if ((indexiForGridToAnalyze >= 0) 
-									&& (indexiForGridToAnalyze < gridToAnalyze.Mat_diffu.length)
-									&& (indexjForGridToAnalyze >= 0)
-									&& (indexjForGridToAnalyze < gridToAnalyze.Mat_diffu[0].length)) {
+							if (indexiForGridToAnalyze >= 0
+								&& indexiForGridToAnalyze < gridToAnalyze.Mat_diffu.length
+								&& indexjForGridToAnalyze >= 0
+								&& indexjForGridToAnalyze < gridToAnalyze.Mat_diffu[0].length) {
 								result += gridToAnalyze.Mat_diffu[indexiForGridToAnalyze][indexjForGridToAnalyze];
 							}
 							int indexiForNewGridDiff = newGridDiff.Mat_diffu.length - iiLength + ii + cellNbiiToAddToNewGrid;
 							int indexjForNewGridDiff = newGridDiff.Mat_diffu[0].length - jjLength + jj + cellNbjjToAddToNewGrid;
-							if ((indexiForNewGridDiff >= 0)
-									&& (indexiForNewGridDiff < newGridDiff.Mat_diffu.length)
-									&& (indexjForNewGridDiff >= 0)
-									&& (indexjForNewGridDiff < newGridDiff.Mat_diffu[0].length)) {
+							if (indexiForNewGridDiff >= 0
+								&& indexiForNewGridDiff < newGridDiff.Mat_diffu.length
+								&& indexjForNewGridDiff >= 0
+								&& indexjForNewGridDiff < newGridDiff.Mat_diffu[0].length) {
 								result += newGridDiff.Mat_diffu[indexiForNewGridDiff][indexjForNewGridDiff];
 							}
 							newMat[ii][jj] = result;
@@ -175,7 +171,7 @@ public class GridDiffuser {
 			m_diffusions.put(keyValue, valueToAdd);
 		}
 	}
-	
+
 	private boolean is_torus;
 	private boolean is_gradient;
 	private String var_diffu;
@@ -184,40 +180,46 @@ public class GridDiffuser {
 	boolean m_initialized = false;
 	double[][] mask, mat_diffu;
 	IScope scope;
-	
+
 	double[] input, output;
 	int nbRows, nbCols;
 	double min_value;
 	IPopulation pop;
-	
+
 	public GridDiffuser() {
 	}
-	
-	public void loadGridProperties(PairVarGrid pairVarGrid) {
+
+	public void loadGridProperties(final PairVarGrid pairVarGrid) {
 		nbRows = pairVarGrid.NbRows;
 		nbCols = pairVarGrid.NbCols;
 		is_torus = pairVarGrid.Is_torus;
 		var_diffu = pairVarGrid.Var_name;
 		pop = pairVarGrid.Pop;
 	}
-	
-	public void loadDiffProperties(GridDiffusion gridDiff) {
+
+	public boolean loadDiffProperties(final GridDiffusion gridDiff) {
+
 		mat_diffu = gridDiff.Mat_diffu;
 		mask = gridDiff.Mask;
 		use_convolution = gridDiff.Use_convolution;
 		is_gradient = gridDiff.Is_gradient;
 		min_value = gridDiff.Min_value;
 		scope = gridDiff.Scope;
-		
+		if ( scope == null || scope.interrupted() ) {
+			return false;
+		}
+
 		for ( int i = 0; i < input.length; i++ ) {
 			input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
-			if (input[i] < min_value)
+			if (input[i] < min_value) {
 				input[i] = 0;
+			}
 		}
-		
+		return true;
+
 
 	}
-	
+
 	public void doDiffusion_with_convolution() {
 		// default method : convolution
 
@@ -232,7 +234,7 @@ public class GridDiffuser {
 		{
 			for ( int j = 0; j < nbCols; ++j ) // columns
 			{
-				if ((input[j * nbCols + i] > min_value) && ( (mask==null) ? true : (mask[i][j] == 1)) ) 
+				if (input[j * nbCols + i] > min_value && ( mask==null ? true : mask[i][j] == 1) )
 				{
 					for ( int m = 0; m < kRows; ++m ) // kernel rows
 					{
@@ -248,7 +250,7 @@ public class GridDiffuser {
 								} else if ( ii >= nbRows ) {
 									ii = ii - nbRows;
 								}
-	
+
 								if ( jj < 0 ) {
 									jj = nbCols + jj;
 								} else if ( jj >= nbCols ) {
@@ -266,7 +268,7 @@ public class GridDiffuser {
 									else {
 										output[jj * nbCols + ii] += input[j * nbCols + i] * mat_diffu[m][n];
 									}
-								}							
+								}
 							}
 						}
 					}
@@ -305,14 +307,15 @@ public class GridDiffuser {
 							} else if ( v >= nbCols ) {
 								v = v - nbCols;
 							}
-						} else if ( u >= 0 && v >= 0 && v < nbCols && u < nbRows && ( (mask==null) ? true : (mask[i][j] == 1)) ) {
+						} else if ( u >= 0 && v >= 0 && v < nbCols && u < nbRows && ( mask==null ? true : mask[i][j] == 1) ) {
 							if (output[u * nbCols + v]==-Double.MAX_VALUE) {
 								output[u * nbCols + v]=input[i * nbCols + j] * mat_diffu[um][vm];
 							}
 							else {
 								if (is_gradient) {
-									if (output[u * nbCols + v] < input[i * nbCols + j] * mat_diffu[um][vm])
-									output[u * nbCols + v] = input[i * nbCols + j] * mat_diffu[um][vm];
+									if (output[u * nbCols + v] < input[i * nbCols + j] * mat_diffu[um][vm]) {
+										output[u * nbCols + v] = input[i * nbCols + j] * mat_diffu[um][vm];
+									}
 								}
 								else {
 									output[u * nbCols + v] += input[i * nbCols + j] * mat_diffu[um][vm];
@@ -370,10 +373,10 @@ public class GridDiffuser {
 	}
 
 	public Object diffuse() throws GamaRuntimeException {
-		
+
 		Set<PairVarGrid> keySet = m_diffusions.keySet();
 		Iterator<PairVarGrid> iterator = keySet.iterator();
-		
+
 		while (iterator.hasNext()) {
 			PairVarGrid pairVarGrid = iterator.next();
 			List<GridDiffusion> listGridDiffu = m_diffusions.get(pairVarGrid);
@@ -384,15 +387,17 @@ public class GridDiffuser {
 			Arrays.fill(output, -Double.MAX_VALUE);
 			while (gridDiffIterator.hasNext()) {
 				GridDiffusion gridDiffusion = gridDiffIterator.next();
-				loadDiffProperties(gridDiffusion);
-				if (!use_convolution) {
-					doDiffusion_with_dotProduct();
+				boolean success = loadDiffProperties(gridDiffusion);
+				if ( success ) {
+					if (!use_convolution) {
+						doDiffusion_with_dotProduct();
+					}
+					else {
+						doDiffusion_with_convolution();
+					}
 				}
-				else {
-					doDiffusion_with_convolution();
-				}
+				finishDiffusion(scope, pop);
 			}
-			finishDiffusion(scope, pop);
 		}
 		m_diffusions.clear();
 		return null;

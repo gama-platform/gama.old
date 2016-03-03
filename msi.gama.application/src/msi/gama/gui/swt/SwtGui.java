@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.*;
@@ -43,7 +43,6 @@ import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
-import msi.gama.gui.swt.perspectives.SimulationPerspective;
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.*;
@@ -810,7 +809,7 @@ public class SwtGui extends AbstractGui {
 							"NPE in WorkbenchPage.setPerspective(). See Issue #1602. Working around the bug in e4...");
 						activePage.setPerspective(descriptor);
 					}
-					activateAutoSave(withAutoSave);
+					// activateAutoSave(withAutoSave);
 					debug("Perspective " + perspectiveId + " open ");
 				}
 			};
@@ -864,9 +863,9 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public void runModel(final IModel model, final String exp) {
-//		SimulationPerspective.setCurrentModelAndExperiment(model.getName(), exp);
+		//		SimulationPerspective.setCurrentModelAndExperiment(model.getName(), exp);
 		GAMA.getGui().openSimulationPerspective(true);
-//		getPage().resetPerspective();
+		//		getPage().resetPerspective();
 		GAMA.runGuiExperiment(exp, model);
 	}
 
@@ -876,11 +875,11 @@ public class SwtGui extends AbstractGui {
 
 	}
 
-	public static void activateAutoSave(final boolean activate) {
-		System.out.println("auto-save activated: " + activate);
-		Workbench.getInstance().setEnableAutoSave(activate);
-		// ApplicationWorkbenchAdvisor.CONFIGURER.setSaveAndRestore(activate);
-	}
+	// public static void activateAutoSave(final boolean activate) {
+	// System.out.println("auto-save activated: " + activate);
+	// Workbench.getInstance().setEnableAutoSave(activate);
+	// // ApplicationWorkbenchAdvisor.CONFIGURER.setSaveAndRestore(activate);
+	// }
 
 	public final boolean openBatchPerspective(final boolean immediately) {
 		return openPerspective(PERSPECTIVE_HPC_ID, immediately, false);

@@ -40,11 +40,16 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		getChart().setAntiAlias(false);
-		getChart().setTextAntiAlias(false);
-		BufferedImage im = getChart().createBufferedImage(getSizeInPixels().x, getSizeInPixels().y);
-		FileDrawingAttributes attributes = new FileDrawingAttributes(null);
-		dg.drawImage(im, attributes);
+		try {
+			JFreeChart chart = getChart();
+			// getChart().setAntiAlias(false);
+			// getChart().setTextAntiAlias(false);
+			BufferedImage im = chart.createBufferedImage(getSizeInPixels().x, getSizeInPixels().y);
+			FileDrawingAttributes attributes = new FileDrawingAttributes(null);
+			dg.drawImage(im, attributes);
+		} catch (IndexOutOfBoundsException | IllegalArgumentException e) {
+			// Do nothing. See Issue #1605
+		}
 	}
 
 	@Override
