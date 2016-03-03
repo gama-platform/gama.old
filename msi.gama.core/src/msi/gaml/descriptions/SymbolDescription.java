@@ -143,7 +143,7 @@ public abstract class SymbolDescription implements IDescription {
 		// (i.e. we are probably in a runtime scenario)
 		if ( e == null ||
 			e.eResource().getURI().path().contains(IExpressionCompiler.SYNTHETIC_RESOURCES_PREFIX) ) { throw warning
-				? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s); }
+			? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s); }
 		ErrorCollector c = getErrorCollector();
 		if ( c == null ) {
 			System.out.println((warning ? "Warning" : "Error") + ": " + s);
@@ -266,15 +266,15 @@ public abstract class SymbolDescription implements IDescription {
 
 		IExpressionDescription f =
 			facet instanceof IExpressionDescription ? (IExpressionDescription) facet : facets.get(facet);
-		if ( f == null ) { return element; }
-		EObject target = f.getTarget();
-		if ( target == null ) { return element; }
-		return getExpressionFactory().getFacetExpression(this, target);
-		// if ( target.eContainer() == null ) { return target; }
-		// return target.eContainer(); // Should be a Facet
+			if ( f == null ) { return element; }
+			EObject target = f.getTarget();
+			if ( target == null ) { return element; }
+			return getExpressionFactory().getFacetExpression(this, target);
+			// if ( target.eContainer() == null ) { return target; }
+			// return target.eContainer(); // Should be a Facet
 
-		// if ( f != null && f.getTarget() != null && f.getTarget().eContainer() != null ) { return f.getTarget(); }
-		// return element;
+			// if ( f != null && f.getTarget() != null && f.getTarget().eContainer() != null ) { return f.getTarget(); }
+			// return element;
 
 	}
 
@@ -658,6 +658,11 @@ public abstract class SymbolDescription implements IDescription {
 				return input.getKeyword().equals(keyword);
 			}
 		});
+	}
+
+	@Override
+	public ExperimentDescription getExperimentContext() {
+		return enclosing == null ? null : enclosing.getExperimentContext();
 	}
 
 }

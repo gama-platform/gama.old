@@ -82,7 +82,7 @@ public class ExperimentDescription extends SpeciesDescription {
 	@Override
 	public Map<String, VariableDescription> getVariables() {
 		if ( variables == null ) {
-			variables = new TOrderedHashMap<String, VariableDescription>();
+			variables = new TOrderedHashMap<>();
 			// Trick to have these two variables always at the beginning.
 			variables.put(ExperimentAgent.PROJECT_PATH, null);
 			variables.put(ExperimentAgent.MODEL_PATH, null);
@@ -100,6 +100,11 @@ public class ExperimentDescription extends SpeciesDescription {
 	@Override
 	public Class<? extends ExperimentAgent> getJavaBase() {
 		return isBatch() ? BatchAgent.class : ExperimentAgent.class;
+	}
+
+	@Override
+	public ExperimentDescription getExperimentContext() {
+		return this;
 	}
 
 }

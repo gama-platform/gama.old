@@ -45,6 +45,10 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public abstract ModelDescription getModelDescription();
 
+	public abstract ExperimentDescription getExperimentContext();
+
+	public abstract SpeciesDescription getSpeciesContext();
+
 	public abstract void setEnclosingDescription(final IDescription desc);
 
 	public abstract EObject getUnderlyingElement(Object facet);
@@ -70,8 +74,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 * @return
 	 */
 	public abstract IExpression getVarExpr(final String name, boolean asField);
-
-	public abstract SpeciesDescription getSpeciesContext();
 
 	public abstract IExpression addTemp(IDescription declaration, final String name, final IType type);
 
