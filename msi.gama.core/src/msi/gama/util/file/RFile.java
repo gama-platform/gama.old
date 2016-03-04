@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,7 +29,8 @@ import com.vividsolutions.jts.geom.Envelope;
 	extensions = { "r" },
 	buffer_type = IType.MAP,
 	buffer_content = IType.LIST,
-	buffer_index = IType.STRING)
+	buffer_index = IType.STRING,
+	concept = { IConcept.FILE, IConcept.R })
 public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList> {
 
 	private final boolean DEBUG = false; // Change DEBUG = false for release version

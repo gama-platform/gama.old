@@ -18,6 +18,7 @@ import org.kabeja.parser.*;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -35,7 +36,8 @@ import msi.gaml.types.*;
 extensions = { "dxf" },
 buffer_type = IType.LIST,
 buffer_content = IType.GEOMETRY,
-buffer_index = IType.INT)
+buffer_index = IType.INT,
+concept = { IConcept.DXF, IConcept.FILE } )
 public class GamaDXFFile extends GamaGeometryFile {
 
 	GamaPoint size;

@@ -17,6 +17,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.outputs.IOutput;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -38,7 +39,8 @@ import msi.gaml.types.*;
 	extensions = { "gaml" },
 	buffer_type = IType.LIST,
 	buffer_content = IType.SPECIES,
-	buffer_index = IType.INT)
+	buffer_index = IType.INT,
+	concept = { IConcept.FILE })
 public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 
 	public static class GamlInfo extends GamaFileMetaData {

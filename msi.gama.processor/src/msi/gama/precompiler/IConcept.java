@@ -63,6 +63,7 @@ public interface IConcept {
 	public static final String HALT						= "halt"; // just in documentation
 	public static final String HEADLESS					= "headless";
 	public static final String HYDROLOGY				= "hydrology";
+	public static final String IMAGE					= "image";
 	public static final String IMPORT					= "import"; // just in documentation
 	public static final String INHERITANCE				= "inheritance";
 	public static final String INIT						= "init";
@@ -94,6 +95,7 @@ public interface IConcept {
 	public static final String PAUSE					= "pause"; // just in documentation
 	public static final String POINT					= "point";
 	public static final String PROBABILITY				= "probability";
+	public static final String R						= "r";
 	public static final String RANDOM					= "random";
 	public static final String RANDOM_OPERATOR			= "random_operator";
 	public static final String RASTER					= "raster";
@@ -116,6 +118,7 @@ public interface IConcept {
 	public static final String STATISTIC				= "statistic";
 	public static final String STRING					= "string";
 	public static final String SURFACE_UNIT				= "surface_unit";
+	public static final String SVG						= "svg";
 	public static final String SYSTEM					= "system";
 	public static final String TASK_BASED				= "task_based";
 	public static final String TERNARY					= "ternary";
@@ -135,4 +138,5 @@ public interface IConcept {
 	public static final String VOLUME_UNIT				= "volume_unit";
 	public static final String WEIGHT_UNIT				= "weight_unit";
 	public static final String WRITE					= "write"; // just in documentation
+	public static final String XML						= "xml";
 }

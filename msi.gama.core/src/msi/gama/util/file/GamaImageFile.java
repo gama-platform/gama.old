@@ -30,12 +30,14 @@ import msi.gaml.operators.Spatial.Projections;
 import msi.gaml.operators.Strings;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
+import msi.gama.precompiler.IConcept;
 
 @file(name = "image",
 	extensions = { "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" },
 	buffer_type = IType.MATRIX,
 	buffer_content = IType.INT,
-	buffer_index = IType.POINT)
+	buffer_index = IType.POINT,
+	concept = { IConcept.IMAGE, IConcept.FILE })
 public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation, Integer> {
 
 	public static class ImageInfo extends GamaFileMetaData {

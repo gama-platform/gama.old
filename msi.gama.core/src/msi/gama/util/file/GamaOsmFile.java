@@ -35,6 +35,7 @@ import crosby.binary.osmosis.OsmosisReader;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.hash.TLongHashSet;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -47,7 +48,8 @@ import msi.gaml.types.*;
 	extensions = { "osm", "pbf", "bz2", "gz" },
 	buffer_type = IType.LIST,
 	buffer_content = IType.GEOMETRY,
-	buffer_index = IType.INT)
+	buffer_index = IType.INT,
+	concept = { IConcept.OSM, IConcept.FILE })
 public class GamaOsmFile extends GamaGisFile {
 
 	public static class OSMInfo extends GamaFileMetaData {

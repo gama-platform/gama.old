@@ -250,7 +250,7 @@ public class GamlDocProcessor {
 		for ( Element e : set ) {
 			// Operators to be created:
 			// - name_type: converts the parameter into the type name_type
-			Operator op = new Operator(doc, tc.getProperCategory("Types"), e.getAnnotation(type.class).name());
+			Operator op = new Operator(doc, tc.getProperCategory("Types"), e.getAnnotation(type.class).concept(), e.getAnnotation(type.class).name());
 			op.setOperands(((TypeElement) e).getQualifiedName().toString(), "", e.getAnnotation(type.class).name(), "");
 			op.addOperand(new Operand(doc, "val", 0, "any"));
 			op.setDocumentation("Casts the operand into the type " + e.getAnnotation(type.class).name());
@@ -270,14 +270,14 @@ public class GamlDocProcessor {
 			// - "is_"+name : test whether the operand parameter is of the given kind of file
 			// - name+"_file": converts the parameter into the type name_type
 			Operator op_is =
-				new Operator(doc, tc.getProperCategory("Files"), "is_" + e.getAnnotation(file.class).name(),
+				new Operator(doc, tc.getProperCategory("Files"), e.getAnnotation(file.class).concept() , "is_" + e.getAnnotation(file.class).name(),
 					"Tests whether the operand is a " + e.getAnnotation(file.class).name() + " file.");
 			op_is.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "bool", "");
 			op_is.addOperand(new Operand(doc, "val", 0, "any"));
 			// op_is.setDocumentation("Tests whether the operand is a "+ e.getAnnotation(file.class).name() + " file.");
 
 			Operator op_file =
-				new Operator(doc, tc.getProperCategory("Files"), e.getAnnotation(file.class).name() + "_file");
+				new Operator(doc, tc.getProperCategory("Files"), e.getAnnotation(file.class).concept(), e.getAnnotation(file.class).name() + "_file");
 			op_file.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "file", "");
 			op_file.addOperand(new Operand(doc, "val", 0, "string"));
 

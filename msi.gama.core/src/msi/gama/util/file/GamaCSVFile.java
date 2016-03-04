@@ -24,6 +24,7 @@ import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 import msi.gaml.operators.*;
 import msi.gaml.types.*;
+import msi.gama.precompiler.IConcept;
 
 /**
  * Class GamaCSVFile.
@@ -32,7 +33,7 @@ import msi.gaml.types.*;
  * @since 9 janv. 2014
  *
  */
-@file(name = "csv", extensions = { "csv", "tsv" }, buffer_type = IType.MATRIX, buffer_index = IType.POINT)
+@file(name = "csv", extensions = { "csv", "tsv" }, buffer_type = IType.MATRIX, buffer_index = IType.POINT, concept = { IConcept.CSV, IConcept.FILE })
 public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Object> {
 
 	public static class CSVInfo extends GamaFileMetaData {

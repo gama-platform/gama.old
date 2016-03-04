@@ -22,6 +22,7 @@ public class Operator implements IElement {
 	Document doc;
 	
 	String category;
+	String[] concepts;
 	String name;
 	Operands operands;
 	String documentation;
@@ -31,17 +32,19 @@ public class Operator implements IElement {
 		operands = new Operands(_doc);
 	}
 
-	public Operator(Document _doc, String _category, String _name){
+	public Operator(Document _doc, String _category, String[] _concepts, String _name){
 		this(_doc);
 		category = _category;
 		name = _name;
+		concepts = _concepts;
 	}
-
-	public Operator(Document _doc, String _category, String _name, String _documentation){
+	
+	public Operator(Document _doc, String _category, String[] _concepts, String _name, String _documentation){
 		this(_doc);
 		category = _category;
 		name = _name;
 		documentation = _documentation;
+		concepts = _concepts;
 	}
 	
 	public void setDocumentation(String d){
@@ -71,7 +74,14 @@ public class Operator implements IElement {
 		catElt.setAttribute(XMLElements.ATT_CAT_ID, category);
 		categoriesElt.appendChild(catElt);
 		
-		eltOp.appendChild(categoriesElt);
+		// Concepts
+		org.w3c.dom.Element conceptsElt = doc.createElement(XMLElements.CONCEPTS);
+		for (String conceptName : concepts) {
+			org.w3c.dom.Element conceptElt = doc.createElement(XMLElements.CONCEPT);
+			conceptElt.setAttribute(XMLElements.ATT_CAT_ID, conceptName);
+			conceptsElt.appendChild(conceptElt);
+		}		
+		eltOp.appendChild(conceptsElt);
 		
 		// Combinaison IO
 		org.w3c.dom.Element combiElt = doc.createElement(XMLElements.COMBINAISON_IO);

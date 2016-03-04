@@ -26,6 +26,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -37,7 +38,8 @@ import msi.gaml.types.*;
 	extensions = { "asc", "tif" },
 	buffer_type = IType.LIST,
 	buffer_content = IType.GEOMETRY,
-	buffer_index = IType.INT)
+	buffer_index = IType.INT,
+	concept = { IConcept.GRID, IConcept.ASC, IConcept.TIF, IConcept.FILE })
 public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;

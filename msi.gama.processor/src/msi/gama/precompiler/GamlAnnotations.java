@@ -223,7 +223,7 @@ public final class GamlAnnotations {
 		String name();
 
 		/**
-		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 * @return an array of strings, each representing this GAML word we can use to find the type in the
 		 *         website search feature.
 		 */
 
@@ -295,7 +295,7 @@ public final class GamlAnnotations {
 		String name();
 
 		/**
-		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 * @return an array of strings, each representing this GAML word we can use to find the skill in the
 		 *         website search feature.
 		 */
 
@@ -379,7 +379,7 @@ public final class GamlAnnotations {
 		String name();
 
 		/**
-		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 * @return an array of strings, each representing this GAML word we can use to find the species in the
 		 *         website search feature.
 		 */
 
@@ -661,7 +661,7 @@ public final class GamlAnnotations {
 		String[] name() default {};
 
 		/**
-		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 * @return an array of strings, each representing this GAML word we can use to find the statement in the
 		 *         website search feature.
 		 */
 
@@ -1059,7 +1059,7 @@ public final class GamlAnnotations {
 		 * name="Create agents from shapefile"
 		 * menu=STATEMENT;
 		 * path={"Create", "Complex forms"}
-		 * description="Read agents from a shape file and initialze their attributes"
+		 * description="Read agents from a shape file and initialize their attributes"
 		 *
 		 * If no description is provided, GAMA will try to grab it from the context where the template is defined (in the documentation, for example)
 		 *
@@ -1196,6 +1196,13 @@ public final class GamlAnnotations {
 		 *
 		 */
 		String name();
+		
+		/**
+		 * @return an array of strings, each representing this GAML word we can use to find the operators related to this file in the
+		 *         website search feature.
+		 */
+
+		String[] concept() default {};
 
 		/**
 		 * The list of file extensions allowed for this type of files. These extensions will be used to check the
@@ -1262,7 +1269,7 @@ public final class GamlAnnotations {
 		String[] category() default {};
 
 		/**
-		 * @return an array of strings, each representing this GAML word we can use to find the operator in the
+		 * @return an array of strings, each representing this GAML word we can use to find the constant in the
 		 *         website search feature.
 		 */
 

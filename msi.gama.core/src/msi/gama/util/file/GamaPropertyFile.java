@@ -19,12 +19,14 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
+import msi.gama.precompiler.IConcept;
 
 @file(name = "property",
 	extensions = { "properties" },
 	buffer_type = IType.MAP,
 	buffer_content = IType.STRING,
-	buffer_index = IType.STRING)
+	buffer_index = IType.STRING,
+	concept = { IConcept.FILE })
 public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, String, String> {
 
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {

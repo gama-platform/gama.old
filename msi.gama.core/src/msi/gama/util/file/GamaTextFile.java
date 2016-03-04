@@ -13,6 +13,7 @@ package msi.gama.util.file;
 
 import java.io.*;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -23,7 +24,8 @@ import com.vividsolutions.jts.geom.Envelope;
 	extensions = { "txt", "data", "csv", "text", "tsv", "xml" },
 	buffer_type = IType.LIST,
 	buffer_content = IType.STRING,
-	buffer_index = IType.INT)
+	buffer_index = IType.INT,
+	concept = { IConcept.FILE, IConcept.TEXT, IConcept.CSV, IConcept.XML })
 public class GamaTextFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {

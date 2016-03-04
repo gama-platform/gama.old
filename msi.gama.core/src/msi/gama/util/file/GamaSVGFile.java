@@ -24,6 +24,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
+import msi.gama.precompiler.IConcept;
 
 /**
  * Class GamaSVGFile. Only loads vector shapes right now (and none of the associated elements: textures, colors, fonts,
@@ -37,7 +38,8 @@ import msi.gaml.types.*;
 	extensions = "svg",
 	buffer_type = IType.LIST,
 	buffer_content = IType.GEOMETRY,
-	buffer_index = IType.INT)
+	buffer_index = IType.INT,
+	concept = { IConcept.SVG })
 public class GamaSVGFile extends GamaGeometryFile {
 
 	GamaPoint size;

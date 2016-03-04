@@ -13,6 +13,8 @@ package msi.gama.util.file;
 
 import java.io.*;
 import com.vividsolutions.jts.geom.Envelope;
+
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -26,7 +28,7 @@ import msi.gaml.types.*;
  * @since 9 janv. 2014
  *
  */
-@file(name = "xml", extensions = "xml", buffer_type = IType.MAP)
+@file(name = "xml", extensions = "xml", buffer_type = IType.MAP, concept = { IConcept.FILE, IConcept.XML })
 public class GamaXMLFile extends GamaFile {
 
 	/**
