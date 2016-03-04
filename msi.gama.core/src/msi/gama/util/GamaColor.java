@@ -52,7 +52,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 
 	@constant(value = "the set of CSS colors",
 		category = IConstantCategory.COLOR_CSS,
-		concept = { IConcept.COLOR },
+		concept = {},
 		doc = @doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}") )
 	public final static Object[] array = ColorCSS.array;
 
