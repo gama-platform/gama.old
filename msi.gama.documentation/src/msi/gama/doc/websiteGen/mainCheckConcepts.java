@@ -1,8 +1,15 @@
 package msi.gama.doc.websiteGen;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -26,6 +33,8 @@ public class mainCheckConcepts {
 	
 	public static String PATH_TO_KEYWORDS_XML = "F:/gama_doc_17.wiki/keywords.xml";
 	
+	public static String PATH_TO_MD_REPORT = "F:/gama_doc_17.wiki/WikiOnly/DevelopingExtensions/WebsiteGeneration.md";
+	
 	public static void main(String[] args) throws IOException, IllegalArgumentException, IllegalAccessException {
 		// get all the concepts.
 		ConceptManager.loadConcepts();
@@ -41,6 +50,9 @@ public class mainCheckConcepts {
 		
 		// print statistics		
 		ConceptManager.printStatistics();
+		
+		// write report in websiteGeneration file
+		writeReport(PATH_TO_MD_REPORT);
 	}
 	
 	private static void executeForAWebsitePart(String path, String websitePart) {
@@ -83,7 +95,7 @@ public class mainCheckConcepts {
 	    		if (category.equals("concept")) {
 		    		if (ConceptManager.conceptIsPossibleToAdd(conceptName)) {
 		    			for (int i=0; i < eElement.getElementsByTagName("associatedKeyword").getLength(); i++) {
-		    				ConceptManager.addOccurrenceOfConcept(conceptName, PATH_TO_GAML_REFERENCES);
+		    				ConceptManager.addOccurrenceOfConcept(conceptName, WebsitePart.GAML_REFERENCES.toString());
 		    			}
 	    			}
 	    		}
@@ -92,5 +104,41 @@ public class mainCheckConcepts {
 	    catch (Exception e) {
 	    	e.printStackTrace();
 	    }
+	}
+	
+	private static void writeReport(String file) throws IOException {
+		String result = "";
+		
+		// read the file
+		FileInputStream fis = new FileInputStream(file);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		
+		String line = null;
+		
+		while ((line = br.readLine()) != null) {
+			if (line.contains("Here is the exhaustive list of concepts")) {
+				result += line+"\n";
+				break;
+			}
+			else {
+				result += line+"\n";
+			}
+		}
+		br.close();
+		result += "\n\n";
+		
+		// add the statistics
+		result += ConceptManager.getExtendedStatistics();
+		
+		// add the date
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		result += "\n\n_last update : "+dateFormat.format(date)+"_\n";
+		
+		// write the file
+		File outputFile = new File(file);
+		FileOutputStream fileOut = new FileOutputStream(outputFile);
+		fileOut.write(result.getBytes());
+		fileOut.close();
 	}
 }

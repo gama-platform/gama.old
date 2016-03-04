@@ -2,6 +2,7 @@ package msi.gama.doc.websiteGen.utilClasses;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -87,5 +88,28 @@ public class ConceptManager {
         for (String concept : concept_too_much_represented) {
         	System.out.println("WARNING : Too much occurrences ("+Integer.toString(m_occurrence_of_concept.get(concept))+") for concept "+concept+".");
         }
+	}
+	
+	static public String getExtendedStatistics() {
+		String result = "";
+		
+		// write header
+		result += "| **Concept name** | **in Doc** | **in GAML Ref** | **in Model Lib** | **TOTAL** |\n";
+		result += "|:----------------------------|:-------------|:-------------|:-------------|:-------------|\n";
+        m_concepts.sort(new Comparator<String>() {
+            public int compare(String s1, String s2) {
+                return s1.compareToIgnoreCase(s2);
+            }
+        });
+        for (int i = 0 ; i < m_concepts.size(); i++) {
+        	String id = m_concepts.get(i);
+        	int number_of_occurrences_total = m_occurrence_of_concept.get(id);
+        	int number_of_occurrences_in_doc = m_occurrence_of_concept_in_documentation.get(id);
+        	int number_of_occurrences_in_ref = m_occurrence_of_concept_in_gaml_ref.get(id);
+        	int number_of_occurrences_in_model = m_occurrence_of_concept_in_model_library.get(id);
+        	result += "| "+id+" | "+number_of_occurrences_in_doc+" | "+number_of_occurrences_in_ref+" | "+number_of_occurrences_in_model+" | "+number_of_occurrences_total+" |\n";
+        }
+        
+		return result;
 	}
 }
