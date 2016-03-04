@@ -107,4 +107,14 @@ public class Utils {
 		}
 		return str;
 	}
+	
+	public static boolean IsInList(String element, String[] list) {
+		boolean result = false;
+		for (String str : list) {
+			if (element.equals(str)) {
+				result = true;
+			}
+		}
+		return result;
+	}
 }

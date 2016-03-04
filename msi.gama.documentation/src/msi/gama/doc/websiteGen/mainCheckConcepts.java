@@ -6,10 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -115,7 +112,7 @@ public class mainCheckConcepts {
 		String line = null;
 		
 		while ((line = br.readLine()) != null) {
-			if (line.contains("Here is the exhaustive list of concepts")) {
+			if (line.contains("__________________________________")) {
 				result += line+"\n";
 				break;
 			}
@@ -128,11 +125,6 @@ public class mainCheckConcepts {
 		
 		// add the statistics
 		result += ConceptManager.getExtendedStatistics();
-		
-		// add the date
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
-		result += "\n\n_last update : "+dateFormat.format(date)+"_\n";
 		
 		// write the file
 		File outputFile = new File(file);

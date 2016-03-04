@@ -79,6 +79,7 @@ public interface IConcept {
 	public static final String MATH						= "math";
 	public static final String MAP						= "map";
 	public static final String MIRROR					= "mirror";
+	public static final String MODEL					= "model";
 	public static final String MULTI_LEVEL				= "multi_level";
 	public static final String MULTI_CRITERIA			= "multi_criteria";
 	public static final String NEIGHBORS				= "neighbors";
@@ -95,6 +96,7 @@ public interface IConcept {
 	public static final String PAUSE					= "pause"; // just in documentation
 	public static final String POINT					= "point";
 	public static final String PROBABILITY				= "probability";
+	public static final String PSEUDO_VARIABLE			= "pseudo_variable";
 	public static final String R						= "r";
 	public static final String RANDOM					= "random";
 	public static final String RANDOM_OPERATOR			= "random_operator";
@@ -114,7 +116,6 @@ public interface IConcept {
 	public static final String SPATIAL_RELATION			= "spatial_relation";
 	public static final String SPATIAL_TRANSFORMATION	= "spatial_transformation";
 	public static final String SPECIES					= "species";
-	public static final String STATIC					= "static";
 	public static final String STATISTIC				= "statistic";
 	public static final String STRING					= "string";
 	public static final String SURFACE_UNIT				= "surface_unit";

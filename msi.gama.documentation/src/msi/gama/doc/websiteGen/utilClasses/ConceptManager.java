@@ -1,14 +1,108 @@
 package msi.gama.doc.websiteGen.utilClasses;
 
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import msi.gama.precompiler.IConcept;
 
 public class ConceptManager {
+	
+	static public String[] CONCEPTS_NOT_FOR_GAML_REF = {
+			IConcept.AUTOSAVE,
+			IConcept.BACKGROUND,
+			IConcept.DISTRIBUTION,
+			IConcept.ENUMERATION,
+			IConcept.FACET,
+			IConcept.GLOBAL,
+			IConcept.HALT,
+			IConcept.IMPORT,
+			IConcept.INHERITANCE,
+			IConcept.INIT,
+			IConcept.LAYER,
+			IConcept.MODEL,
+			IConcept.OPENGL,
+			IConcept.OPERATOR,
+			IConcept.OUTPUT,
+			IConcept.PAUSE,
+			IConcept.PROBABILITY,
+			IConcept.PSEUDO_VARIABLE,
+			IConcept.REFLEX,
+			IConcept.REFRESH,
+			IConcept.TORUS,
+			IConcept.UPDATE,
+			IConcept.WRITE
+	};
+	
+	static public String[] CONCEPTS_NOT_FOR_MODEL_LIBRARY = {
+			IConcept.ACTION,
+			IConcept.ATTRIBUTE,
+			IConcept.AUTOSAVE,
+			IConcept.BACKGROUND,
+			IConcept.BEHAVIOR,
+			IConcept.CONSTANT,
+			IConcept.CYCLE,
+			IConcept.DIMENSION,
+			IConcept.DISPLAY,
+			IConcept.DISTRIBUTION,
+			IConcept.ENUMERATION,
+			IConcept.EXPERIMENT,
+			IConcept.FACET,
+			IConcept.FILE,
+			IConcept.GLOBAL,
+			IConcept.GRAPHIC_UNIT,
+			IConcept.HALT,
+			IConcept.IMPORT,	// concern the import of gaml files
+			IConcept.INIT,
+			IConcept.LAYER,
+			IConcept.LENGTH_UNIT,
+			IConcept.MODEL,
+			IConcept.OPENGL,
+			IConcept.OPERATOR,
+			IConcept.OPTIMIZATION,
+			IConcept.OUTPUT,
+			IConcept.PARAMETER,
+			IConcept.PAUSE,
+			IConcept.PROBABILITY,
+			IConcept.POINT,
+			IConcept.PSEUDO_VARIABLE,
+			IConcept.RANDOM,
+			IConcept.RANDOM_OPERATOR,
+			IConcept.REFLEX,
+			IConcept.REFRESH,
+			IConcept.SPECIES,
+			IConcept.SURFACE_UNIT,
+			IConcept.TIME,
+			IConcept.TIME_UNIT,
+			IConcept.TORUS,
+			IConcept.TYPE,
+			IConcept.UPDATE,
+			IConcept.VOLUME_UNIT,
+			IConcept.WEIGHT_UNIT,
+			IConcept.WRITE
+	};
+	
+	static public String[] CONCEPTS_DEDICATED_TO_SYNTAX = {
+		IConcept.ARITHMETIC,
+		IConcept.ATTRIBUTE,
+		IConcept.CAST,
+		IConcept.CONDITION,
+		IConcept.CONTAINER,
+		IConcept.FILTER,
+		IConcept.LIST,
+		IConcept.LOGICAL,
+		IConcept.LOOP,
+		IConcept.MAP,
+		IConcept.MATRIX,
+		IConcept.STRING,
+		IConcept.TERNARY
+		
+	};
 	
 	static public enum WebsitePart { DOCUMENTATION, GAML_REFERENCES, MODEL_LIBRARY };
 	
@@ -58,10 +152,16 @@ public class ConceptManager {
 			if (websitePart.equals(WebsitePart.GAML_REFERENCES.toString())) {
 				oldValue = m_occurrence_of_concept_in_gaml_ref.get(concept);
 				m_occurrence_of_concept_in_gaml_ref.put(concept, ++oldValue);
+				if (Utils.IsInList(concept, CONCEPTS_NOT_FOR_GAML_REF)) {
+					System.out.println("WARNING : The concept "+concept+" is not supposed to be for GAML References !!");
+				}
 			}
 			if (websitePart.equals(WebsitePart.MODEL_LIBRARY.toString())) {
 				oldValue = m_occurrence_of_concept_in_model_library.get(concept);
 				m_occurrence_of_concept_in_model_library.put(concept, ++oldValue);
+				if (Utils.IsInList(concept, CONCEPTS_NOT_FOR_MODEL_LIBRARY)) {
+					System.out.println("WARNING : The concept "+concept+" is not supposed to be for the model library !!");
+				}
 			}
 		}
 	}
@@ -93,20 +193,79 @@ public class ConceptManager {
 	static public String getExtendedStatistics() {
 		String result = "";
 		
-		// write header
-		result += "| **Concept name** | **in Doc** | **in GAML Ref** | **in Model Lib** | **TOTAL** |\n";
-		result += "|:----------------------------|:-------------|:-------------|:-------------|:-------------|\n";
         m_concepts.sort(new Comparator<String>() {
             public int compare(String s1, String s2) {
                 return s1.compareToIgnoreCase(s2);
             }
         });
+        
+		// write the header with the date
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		result += "\n\n_The following text has been automatically generated from \"mainCheckConcepts\"_\n\n";
+		result +="______________ _last update : "+dateFormat.format(date)+"_\n\n";
+		
+		// write the lists of concepts
+		// write the list of concepts to use in model library (except Syntax)
+        result += "**List of concepts to use for model library (except Syntax):**\n\n";
+        boolean isFirstElement = true;
+        for (String concept : m_concepts) {
+        	if (!Utils.IsInList(concept,CONCEPTS_DEDICATED_TO_SYNTAX) 
+        			&& !Utils.IsInList(concept, CONCEPTS_NOT_FOR_MODEL_LIBRARY)) {
+        		if (isFirstElement) {
+        			result += concept;
+        			isFirstElement = false;
+        		}
+        		else {
+        			result += ", "+concept;
+        		}
+        	}
+        }
+        result += "\n\n";
+        // write the list of concepts to use exclusively in Syntax
+        result += "**List of concepts to use exclusively in Syntax models:**\n\n";
+        isFirstElement = true;
+        for (String concept : m_concepts) {
+        	if (Utils.IsInList(concept,CONCEPTS_DEDICATED_TO_SYNTAX)) {
+        		if (isFirstElement) {
+        			result += concept;
+        			isFirstElement = false;
+        		}
+        		else {
+        			result += ", "+concept;
+        		}
+        	}
+        }
+        result += "\n\n";
+        // write the list of concepts to use in GAML Reference
+        result += "**List of concepts to use for GAML worlds:**\n\n";
+        isFirstElement = true;
+        for (String concept : m_concepts) {
+        	if (!Utils.IsInList(concept,CONCEPTS_NOT_FOR_GAML_REF)) {
+        		if (isFirstElement) {
+        			result += concept;
+        			isFirstElement = false;
+        		}
+        		else {
+        			result += ", "+concept;
+        		}
+        	}
+        }
+        result += "\n\n";
+		
+		// write array
+		result += "| **Concept name** | **in Doc** | **in GAML Ref** | **in Model Lib** | **TOTAL** |\n";
+		result += "|:----------------------------|:-------------|:-------------|:-------------|:-------------|\n";
         for (int i = 0 ; i < m_concepts.size(); i++) {
         	String id = m_concepts.get(i);
-        	int number_of_occurrences_total = m_occurrence_of_concept.get(id);
-        	int number_of_occurrences_in_doc = m_occurrence_of_concept_in_documentation.get(id);
-        	int number_of_occurrences_in_ref = m_occurrence_of_concept_in_gaml_ref.get(id);
-        	int number_of_occurrences_in_model = m_occurrence_of_concept_in_model_library.get(id);
+        	String number_of_occurrences_total = Integer.toString(m_occurrence_of_concept.get(id));
+        	String number_of_occurrences_in_doc = Integer.toString(m_occurrence_of_concept_in_documentation.get(id));
+        	String number_of_occurrences_in_ref = Integer.toString(m_occurrence_of_concept_in_gaml_ref.get(id));
+        	if (Utils.IsInList(id, CONCEPTS_NOT_FOR_GAML_REF))
+        		number_of_occurrences_in_ref = "_";
+        	String number_of_occurrences_in_model = Integer.toString(m_occurrence_of_concept_in_model_library.get(id));
+        	if (Utils.IsInList(id, CONCEPTS_NOT_FOR_MODEL_LIBRARY))
+        		number_of_occurrences_in_model = "_";
         	result += "| "+id+" | "+number_of_occurrences_in_doc+" | "+number_of_occurrences_in_ref+" | "+number_of_occurrences_in_model+" | "+number_of_occurrences_total+" |\n";
         }
         
