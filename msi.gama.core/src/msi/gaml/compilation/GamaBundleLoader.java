@@ -106,6 +106,8 @@ public class GamaBundleLoader {
 			}
 		}
 
+		// We reinit the type hierarchy to gather additional types
+		Types.init();
 		//
 		GAMA.getGui().debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
@@ -180,7 +182,7 @@ public class GamaBundleLoader {
 			return;
 		}
 		GAMA.getGui()
-			.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
+		.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
 
 	}
 

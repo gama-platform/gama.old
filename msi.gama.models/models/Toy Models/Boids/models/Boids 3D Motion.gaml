@@ -19,7 +19,7 @@ global torus: torus_environment{
 	point wind_vector <- {0,0,0}  parameter: 'Direction of the wind';   
 	int goal_duration <- 30 update: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 ,(rnd(z_max - 2) + 1)}; 
-	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
+	list images <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	geometry shape <- cube(width_and_height_of_environment);
 	init {
 		create boids number: number_of_agents { 

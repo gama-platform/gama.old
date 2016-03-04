@@ -26,6 +26,7 @@ import msi.gaml.expressions.IExpression;
  */
 public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
+
 	public static String[] vowels = new String[] { "a", "e", "i", "o", "u", "y" };
 
 	/** Constant fields to indicate the types of facets */
@@ -179,5 +180,15 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public void setDefiningPlugin(String plugin);
 
 	public boolean isNumber();
+
+	/**
+	 * @return
+	 */
+	public boolean isDrawable();
+
+	/**
+	 * @return
+	 */
+	public IType getWrappedType();
 
 }

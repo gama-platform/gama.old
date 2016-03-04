@@ -358,11 +358,15 @@ public abstract class SymbolDescription implements IDescription {
 			IExpression expr = facets.getExpr(INIT, VALUE, UPDATE, FUNCTION, DEFAULT);
 			if ( expr != null ) {
 				IType exprType = expr.getType();
-				if ( isContainerWithNoKeyType ) {
-					kt = exprType.getKeyType();
-				}
-				if ( isContainerWithNoContentsType || isSpeciesWithAgentType ) {
-					ct = exprType.getContentType();
+				if ( tt.isAssignableFrom(exprType) ) {
+					tt = exprType;
+				} else {
+					if ( isContainerWithNoKeyType ) {
+						kt = exprType.getKeyType();
+					}
+					if ( isContainerWithNoContentsType || isSpeciesWithAgentType ) {
+						ct = exprType.getContentType();
+					}
 				}
 			}
 		}

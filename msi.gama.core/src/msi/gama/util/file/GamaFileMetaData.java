@@ -1,18 +1,18 @@
 /**
  * Created by drogoul, 11 févr. 2015
- * 
+ *
  */
 package msi.gama.util.file;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.*;
 import org.apache.commons.lang.StringUtils;
 
 /**
  * Class GamaFileMetaInformation.
- * 
+ *
  * @author drogoul
  * @since 11 févr. 2015
- * 
+ *
  */
 public abstract class GamaFileMetaData implements IGamaFileMetaData {
 
@@ -36,6 +36,9 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 		} catch (Exception ignore) {
 			System.err.println("Error loading metadata " + s + " : " + ignore.getClass().getSimpleName() + ":" +
 				ignore.getMessage());
+			if ( ignore instanceof InvocationTargetException && ignore.getCause() != null ) {
+				ignore.getCause().printStackTrace();
+			}
 		}
 		return result;
 	}

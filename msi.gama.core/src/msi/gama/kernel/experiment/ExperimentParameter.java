@@ -14,9 +14,8 @@ package msi.gama.kernel.experiment;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -38,20 +37,20 @@ import msi.gaml.variables.*;
 	@facet(name = IKeyword.MIN, type = IType.NONE, optional = true, doc = @doc("the minimum value")),
 	@facet(name = IKeyword.MAX, type = IType.NONE, optional = true, doc = @doc("the maximum value")),
 	@facet(name = IKeyword.CATEGORY,
-		type = IType.LABEL,
-		optional = true,
-		doc = @doc("a category label, used to group parameters in the interface")),
+	type = IType.LABEL,
+	optional = true,
+	doc = @doc("a category label, used to group parameters in the interface")),
 	@facet(name = IKeyword.VAR,
-		type = IType.ID,
-		optional = false,
-		doc = @doc("the name of the variable (that should be declared in the global)")),
+	type = IType.ID,
+	optional = false,
+	doc = @doc("the name of the variable (that should be declared in the global)")),
 	@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true, doc = @doc("the variable unit")),
 	@facet(name = IKeyword.STEP,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values")) },
-	omissible = IKeyword.NAME)
+omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false, concept = { IConcept.EXPERIMENT, IConcept.PARAMETER })
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @validator(Variable.VarValidator.class)
@@ -66,7 +65,7 @@ import msi.gaml.variables.*;
 				@example(value = "parameter 'Value of toto:' var: toto among: [1, 3, 7, 15, 100]; ",
 					isExecutable = false),
 				@example(value = "parameter 'Value of titi:' var: titi min: 1 max: 100 step: 2; ",
-					isExecutable = false) }), })
+				isExecutable = false) }), })
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
@@ -148,7 +147,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setName(p.getName());
 		setCategory(category);
 		setType(p.getType());
-		if ( p instanceof IVariable && getType().id() == IType.FILE ) {
+		if ( p instanceof IVariable && getType().getType().id() == IType.FILE ) {
 			init = ((IVariable) p).getFacet(IKeyword.INIT);
 		} else {
 			init = null;

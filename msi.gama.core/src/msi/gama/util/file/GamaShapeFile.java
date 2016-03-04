@@ -45,10 +45,10 @@ import msi.gaml.types.*;
  *
  */
 @file(name = "shape",
-	extensions = { "shp" },
-	buffer_type = IType.LIST,
-	buffer_content = IType.GEOMETRY,
-	buffer_index = IType.INT)
+extensions = { "shp" },
+buffer_type = IType.LIST,
+buffer_content = IType.GEOMETRY,
+buffer_index = IType.INT)
 public class GamaShapeFile extends GamaGisFile {
 
 	public static class ShapeInfo extends GamaFileMetaData {
@@ -78,7 +78,9 @@ public class GamaShapeFile extends GamaGisFile {
 				if ( crs != null ) {
 					try {
 						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
-					} catch (Exception e) {}
+					} catch (Exception e) {
+						throw e;
+					}
 				}
 				number = features.size();
 				java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
@@ -93,6 +95,7 @@ public class GamaShapeFile extends GamaGisFile {
 				}
 			} catch (Exception e) {
 				System.out.println("Error in reading metadata of " + url);
+				e.printStackTrace();
 
 			} finally {
 				width = env.getWidth();
@@ -139,7 +142,7 @@ public class GamaShapeFile extends GamaGisFile {
 		public String getSuffix() {
 			String CRS = crs == null ? "No CRS" : crs.getName().getCode();
 			return "" + itemNumber + " objects | " + CRS + " | " + FastMath.round(width) + "m x " +
-				FastMath.round(height) + "m";
+			FastMath.round(height) + "m";
 		}
 
 		@Override
@@ -148,9 +151,9 @@ public class GamaShapeFile extends GamaGisFile {
 			sb.append("Shapefile").append(Strings.LN);
 			sb.append(itemNumber).append(" objects").append(Strings.LN);
 			sb.append("Dimensions: ").append(FastMath.round(width) + "m x " + FastMath.round(height) + "m")
-				.append(Strings.LN);
+			.append(Strings.LN);
 			sb.append("Coordinate Reference System: ").append(crs == null ? "No CRS" : crs.getName().getCode())
-				.append(Strings.LN);
+			.append(Strings.LN);
 			if ( !attributes.isEmpty() ) {
 				sb.append("Attributes: ").append(Strings.LN);
 				for ( Map.Entry<String, String> entry : attributes.entrySet() ) {

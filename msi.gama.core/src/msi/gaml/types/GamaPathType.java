@@ -14,9 +14,8 @@ package msi.gaml.types;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -24,10 +23,10 @@ import msi.gama.util.path.*;
 import msi.gaml.operators.Cast;
 
 @type(name = IKeyword.PATH,
-	id = IType.PATH,
-	wraps = { IPath.class, GamaPath.class },
-	kind = ISymbolKind.Variable.REGULAR,
-	concept = { IConcept.TYPE })
+id = IType.PATH,
+wraps = { IPath.class, GamaPath.class },
+kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE })
 public class GamaPathType extends GamaType<IPath> {
 
 	@Override
@@ -146,6 +145,11 @@ public class GamaPathType extends GamaType<IPath> {
 			return PathFactory.newInstance(scope, isEdges ? (IList<IShape>) obj : (IList<IShape>) list, isEdges);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean isDrawable() {
+		return true;
 	}
 
 	@Override

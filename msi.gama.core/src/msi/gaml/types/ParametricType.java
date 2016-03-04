@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import java.util.*;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -83,7 +83,6 @@ public class ParametricType implements IContainerType {
 	@Override
 	public int id() {
 		return type.id();
-		// return type.id() + keyType.id() * 100 + contentsType.id() * 1000;
 	}
 
 	/**
@@ -329,6 +328,11 @@ public class ParametricType implements IContainerType {
 		return type != null; // ??
 	}
 
+	@Override
+	public boolean isDrawable() {
+		return type.isDrawable();
+	}
+
 	/**
 	 * Method setSupport()
 	 * @see msi.gaml.types.IType#setSupport(java.lang.Class)
@@ -362,7 +366,7 @@ public class ParametricType implements IContainerType {
 			keyType == Types.NO_TYPE ) { return type.toString() + "<" + contentsType.toString() + ">"; }
 		if ( type.id() == IType.SPECIES ) { return type.toString() + "<" + contentsType.toString() + ">"; }
 		return type.toString() + "<" + keyType.serialize(includingBuiltIn) + ", " +
-			contentsType.serialize(includingBuiltIn) + ">";
+		contentsType.serialize(includingBuiltIn) + ">";
 	}
 
 	@Override
@@ -446,6 +450,11 @@ public class ParametricType implements IContainerType {
 	@Override
 	public boolean isNumber() {
 		return false;
+	}
+
+	@Override
+	public IType getWrappedType() {
+		return Types.NO_TYPE;
 	}
 
 }

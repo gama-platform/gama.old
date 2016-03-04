@@ -130,4 +130,9 @@ public class GamaAgentType extends GamaType<IAgent> {
 		return false;
 	}
 
+	@Override
+	public boolean isDrawable() {
+		return true;
+	}
+
 }

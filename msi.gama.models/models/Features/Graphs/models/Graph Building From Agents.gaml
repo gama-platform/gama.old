@@ -9,7 +9,7 @@
 model graphbuilding
 
 global {
-	graph the_graph ;
+	graph<geometry, geometry> the_graph ;
 	string graph_builing_type <- "distance";
 	float distance <- 20.0;
 	float tolerance <- 0.0;

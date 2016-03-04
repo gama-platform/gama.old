@@ -26,7 +26,7 @@ import msi.gaml.types.*;
  * @since 9 janv. 2014
  *
  */
-@file(name = "xml", extensions = "xml")
+@file(name = "xml", extensions = "xml", buffer_type = IType.MAP)
 public class GamaXMLFile extends GamaFile {
 
 	/**

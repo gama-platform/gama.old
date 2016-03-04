@@ -112,6 +112,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	private IType computeType(final int t, final IType def) {
 		if ( t == NONE ) { return def; }
+		if ( t == WRAPPED ) {
+			return child.getType().getWrappedType();
+		}
 		if ( t == FIRST_ELEMENT_CONTENT_TYPE ) {
 			if ( child instanceof ListExpression ) {
 				final IExpression[] array = ((ListExpression) child).getElements();
@@ -153,9 +156,6 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	}
 
-	public boolean hasChildren() {
-		return true;
-	}
 
 	@Override
 	public IOperator resolveAgainst(final IScope scope) {

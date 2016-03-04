@@ -43,7 +43,7 @@ global torus: torus_environment{
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 	
 	//Images available for the aspect of the boids
-	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
+	list images of: image_file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	
 	//Determine the bounding rectangle of the environment
 	int xmin <- bounds depends_on: [bounds];    

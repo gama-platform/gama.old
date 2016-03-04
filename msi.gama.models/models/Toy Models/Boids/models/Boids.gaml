@@ -17,7 +17,7 @@ global torus: torus_environment{
 	bool moving_obstacles <- false;   
 	int bounds <- int(width_and_height_of_environment / 20); 
 	point wind_vector <- {0,0}; 
-	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
+	list images of: image_file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	int xmin <- bounds;   
 	int ymin <- bounds;  
 	int xmax <- (width_and_height_of_environment - bounds);     

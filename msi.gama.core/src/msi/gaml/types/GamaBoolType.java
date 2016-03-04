@@ -14,9 +14,8 @@ package msi.gaml.types;
 import java.io.File;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -28,11 +27,11 @@ import msi.gama.util.IContainer;
  *
  */
 @type(name = IKeyword.BOOL,
-	id = IType.BOOL,
-	wraps = { Boolean.class, boolean.class },
-	kind = ISymbolKind.Variable.REGULAR,
-	doc = { @doc("Represents boolean values, either true or false") },
-	concept = { IConcept.TYPE, IConcept.LOGICAL, IConcept.CONDITION } )
+id = IType.BOOL,
+wraps = { Boolean.class, boolean.class },
+kind = ISymbolKind.Variable.REGULAR,
+doc = { @doc("Represents boolean values, either true or false") },
+concept = { IConcept.TYPE, IConcept.LOGICAL, IConcept.CONDITION } )
 public class GamaBoolType extends GamaType<Boolean> {
 
 	@Override
@@ -62,4 +61,6 @@ public class GamaBoolType extends GamaType<Boolean> {
 	public boolean canCastToConst() {
 		return true;
 	}
+
+
 }

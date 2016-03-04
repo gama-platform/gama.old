@@ -20,9 +20,8 @@ import com.vividsolutions.jts.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -38,10 +37,10 @@ import msi.gaml.species.ISpecies;
  *
  */
 @type(name = IKeyword.GEOMETRY,
-	id = IType.GEOMETRY,
-	wraps = { GamaShape.class, IShape.class },
-	kind = ISymbolKind.Variable.REGULAR,
-	concept = { IConcept.TYPE, IConcept.GEOMETRY })
+id = IType.GEOMETRY,
+wraps = { GamaShape.class, IShape.class },
+kind = ISymbolKind.Variable.REGULAR,
+concept = { IConcept.TYPE, IConcept.GEOMETRY })
 public class GamaGeometryType extends GamaType<IShape> {
 
 	public static WKTReader SHAPE_READER = new WKTReader();
@@ -97,6 +96,11 @@ public class GamaGeometryType extends GamaType<IShape> {
 	@Override
 	public GamaShape getDefault() {
 		return null;
+	}
+
+	@Override
+	public boolean isDrawable() {
+		return true;
 	}
 
 	@Override
@@ -237,8 +241,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	public static IShape buildLine(final IShape location1, final IShape location2) {
 		final Coordinate coordinates[] =
-			{ location1 == null ? new GamaPoint(0, 0) : (GamaPoint) location1.getLocation(),
-				location2 == null ? new GamaPoint(0, 0) : (GamaPoint) location2.getLocation() };
+		{ location1 == null ? new GamaPoint(0, 0) : (GamaPoint) location1.getLocation(),
+			location2 == null ? new GamaPoint(0, 0) : (GamaPoint) location2.getLocation() };
 		// WARNING Circumvents a bug in JTS 1.13, where a line built between two identical points would return a null
 		// centroid
 		if ( coordinates[0].equals(coordinates[1]) ) { return createPoint((GamaPoint) coordinates[0]); }

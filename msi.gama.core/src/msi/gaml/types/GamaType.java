@@ -213,8 +213,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 		if ( type == null ) { return false; }
 		if ( parented && type.isParented() ) { return type == this || isSuperTypeOf(type.getParent()); }
 		Class remote = type.toClass();
-		for ( int i = 0; i < supports.length; i++ ) {
-			if ( supports[i].isAssignableFrom(remote) ) { return true; }
+		for ( Class support : supports ) {
+			if ( support.isAssignableFrom(remote) ) { return true; }
 		}
 		return false;
 	}
@@ -232,8 +232,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object c) {
 		if ( c == null ) { return acceptNullInstances(); }
-		for ( int i = 0; i < supports.length; i++ ) {
-			if ( supports[i].isAssignableFrom(c.getClass()) ) { return true; }
+		for ( Class support : supports ) {
+			if ( support.isAssignableFrom(c.getClass()) ) { return true; }
 		}
 		return false;
 	}
@@ -333,7 +333,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	public static IType from(final IType t, final IType keyType, final IType contentType) {
-		if ( t instanceof IContainerType ) { return from((IContainerType) t, keyType, contentType); }
+		if ( t instanceof IContainerType ) {
+			if ( contentType.isAssignableFrom(t.getContentType()) &&
+				keyType.isAssignableFrom(t.getKeyType()) ) { return t; }
+			return from((IContainerType) t, keyType, contentType);
+		}
 		return t;
 	}
 
@@ -412,6 +416,16 @@ public abstract class GamaType<Support> implements IType<Support> {
 			meta.put(GamlProperties.PLUGINS, this.plugin);
 			meta.put(GamlProperties.TYPES, this.name);
 		}
+	}
+
+	@Override
+	public boolean isDrawable() {
+		return false;
+	}
+
+	@Override
+	public IType getWrappedType() {
+		return Types.NO_TYPE;
 	}
 
 }

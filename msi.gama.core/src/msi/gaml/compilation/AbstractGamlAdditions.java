@@ -205,7 +205,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile> helper,
 		final int innerType, final int keyType, final int contentType, final String[] s) {
 		helper.setSkillClass(clazz);
-		GamaFileType.addFileTypeDefinition(string, Types.get(keyType), Types.get(contentType), clazz, helper, s);
+		GamaFileType.addFileTypeDefinition(string, Types.get(innerType), Types.get(keyType), Types.get(contentType),
+			clazz, helper, s);
+		if ( !VARTYPE2KEYWORDS.containsKey(ISymbolKind.Variable.CONTAINER) ) {
+			VARTYPE2KEYWORDS.put(ISymbolKind.Variable.CONTAINER, new HashSet());
+		}
+		VARTYPE2KEYWORDS.get(ISymbolKind.Variable.CONTAINER).add(string + "_file");
 	}
 
 	protected void _skill(final String name, final Class clazz, final String ... species) {
@@ -283,7 +288,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, facets, omissible,
 			/* combinations, */contextKeywords, contextKinds, remote, unique, name_unique, sc, validator, serializer,
 			names == null || names.length == 0 ? "variable declaration" : names[0],
-			GamaBundleLoader.CURRENT_PLUGIN_NAME);
+				GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		// if ( names == null || names.length == 0 ) {
 		// md.setName("variable declaration");
 		// } else {
@@ -300,50 +305,54 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public void _operator(final String[] keywords, final AccessibleObject method, final Class[] classes,
-		final int[] expectedContentTypes, final Class ret, final boolean c, final int t, final int content,
-		final int index, final GamaHelper helper/* , final int doc */) {
+		final int[] expectedContentTypes, final Object returnClassOrType, final boolean c, final int t,
+		final int content,
+		final int index, final GamaHelper helper) {
 		Signature signature = new Signature(classes);
 		String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
-		for ( int i = 0; i < keywords.length; i++ ) {
-			String kw = keywords[i];
+		for ( String keyword : keywords ) {
+			String kw = keyword;
 			if ( !OPERATORS.containsKey(kw) ) {
 				OPERATORS.put(kw, new THashMap());
 			}
 			Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if ( !map.containsKey(signature) ) {
 				OperatorProto proto;
-				IType rt = Types.get(ret);
+				IType rt;
+				if ( returnClassOrType instanceof Class ) {
+					rt = Types.get((Class) returnClassOrType);
+				} else {
+					rt = (IType) returnClassOrType;
+				}
 				if ( classes.length == 1 ) { // unary
 					proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
 						IExpression.class.equals(classes[0]), t, content, index, expectedContentTypes, plugin);
-					// new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes,
-					// IExpression.class.equals(classes[0]), signature);
 				} else if ( classes.length == 2 ) { // binary
 					if ( (kw.equals(OF) || kw.equals(_DOT)) && signature.get(0).isAgentType() ) {
 						proto = new OperatorProto(kw, method, helper, c, true, rt, signature,
 							IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes, plugin);
-						// new BinaryVarOperator(rt, helper, c, t, content, index,
-						// IExpression.class.equals(classes[1]), expectedContentTypes, signature);
 					} else {
 						proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
 							IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes, plugin);
-						// new BinaryOperator(rt, helper, c, t, content, index, IExpression.class.equals(classes[1]),
-						// expectedContentTypes, signature);
 					}
 				} else {
 					proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
 						IExpression.class.equals(classes[classes.length - 1]), t, content, index, expectedContentTypes,
 						plugin);
-					// new NAryOperator(rt, helper, c, t, content, index,
-					// IExpression.class.equals(classes[classes.length - 1]), expectedContentTypes, signature);
-					// FIXME The lazy attribute is completely wrong here: it only applies to the last argument
 				}
-				// exp.setName(kw);
-				// exp.setDoc(doc);
 				map.put(signature, proto);
 			}
 		}
 
+	}
+
+	// For files
+	public void _operator(final String[] keywords, final AccessibleObject method, final Class[] classes,
+		final int[] expectedContentTypes, final Class ret, final boolean c, final String typeAlias,
+		final GamaHelper helper/* , final int doc */) {
+		ParametricFileType fileType = GamaFileType.getTypeFromAlias(typeAlias);
+		this._operator(keywords, method, classes, expectedContentTypes, fileType, c, ITypeProvider.NONE,
+			ITypeProvider.NONE, ITypeProvider.NONE, helper);
 	}
 
 	protected void _populationsLinker(final String name, final Class clazz,

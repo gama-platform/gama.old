@@ -33,27 +33,27 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.EXTENSION, type = IType.STRING, doc = { @doc("Returns the extension of the receiver file") }),
 	@var(name = IKeyword.PATH, type = IType.STRING, doc = { @doc("Returns the absolute path of the receiver file") }),
 	@var(name = IKeyword.EXISTS,
-		type = IType.BOOL,
-		doc = { @doc("Returns whether the receiver file exists or not in the filesystem") }),
+	type = IType.BOOL,
+	doc = { @doc("Returns whether the receiver file exists or not in the filesystem") }),
 	@var(name = IKeyword.ISFOLDER,
-		type = IType.BOOL,
-		doc = { @doc("Returns whether the receiver file is a folder or not") }),
+	type = IType.BOOL,
+	doc = { @doc("Returns whether the receiver file is a folder or not") }),
 	@var(name = IKeyword.READABLE,
-		type = IType.BOOL,
-		doc = { @doc("Returns true if the contents of the receiver file can be read") }),
+	type = IType.BOOL,
+	doc = { @doc("Returns true if the contents of the receiver file can be read") }),
 	@var(name = IKeyword.WRITABLE,
-		type = IType.BOOL,
-		doc = { @doc("Returns true if the contents of the receiver file can be written") }),
+	type = IType.BOOL,
+	doc = { @doc("Returns true if the contents of the receiver file can be written") }),
 	@var(name = IKeyword.ATTRIBUTES,
-		type = IType.LIST,
-		of = IType.STRING,
-		doc = {
-			@doc("Retrieves the list of 'attributes' present in the receiver files that support this concept (and an empty list for the others). For instance, in a CSV file, the attributes represent the headers of the columns (if any); in a shape file, the attributes provided to the objects, etc.") }),
+	type = IType.LIST,
+	of = IType.STRING,
+	doc = {
+		@doc("Retrieves the list of 'attributes' present in the receiver files that support this concept (and an empty list for the others). For instance, in a CSV file, the attributes represent the headers of the columns (if any); in a shape file, the attributes provided to the objects, etc.") }),
 	@var(name = IKeyword.CONTENTS,
-		type = IType.CONTAINER,
-		of = ITypeProvider.FIRST_CONTENT_TYPE,
-		index = ITypeProvider.FIRST_KEY_TYPE,
-		doc = { @doc("Returns the contents of the receiver file in the form of a container") }) })
+	type = ITypeProvider.WRAPPED,
+	of = ITypeProvider.FIRST_CONTENT_TYPE,
+	index = ITypeProvider.FIRST_KEY_TYPE,
+	doc = { @doc("Returns the contents of the receiver file in the form of a container") }) })
 public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V> extends IModifiableContainer<K, V, K, ValueToAdd>, IAddressableContainer<K, V, K, V> {
 
 	public abstract void setWritable(final boolean w);

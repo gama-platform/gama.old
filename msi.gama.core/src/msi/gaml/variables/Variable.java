@@ -224,9 +224,9 @@ public class Variable extends Symbol implements IVariable {
 				return;
 			}
 			// AD 15/04/14: special case for files
-			if ( !init.isConst() && init.getType().id() != IType.FILE ) {
+			if ( !init.isConst() && init.getType().getType().id() != IType.FILE ) {
 				String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + "initial value must be constant" + init.isConst(), IGamlIssue.NOT_CONST, INIT);
+				cd.error(p + "initial value must be constant", IGamlIssue.NOT_CONST, INIT);
 				return;
 			}
 			if ( facets.containsKey(UPDATE) || facets.containsKey(VALUE) || facets.containsKey(FUNCTION) ) {

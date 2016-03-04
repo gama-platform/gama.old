@@ -164,7 +164,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return data.getSuffix();
 	}
 
-	private IGamaFileMetaData getMetaData(final IProject project, final boolean includeOutdated) {
+	private static IGamaFileMetaData getMetaData(final IProject project, final boolean includeOutdated) {
 		if ( !project.isAccessible() ) { return null; }
 		String ct = "project";
 		Class infoClass = CLASSES.get(ct);
@@ -208,27 +208,27 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 				@Override
 				public void run() {
-					IGamaFileMetaData data = null;
+					IGamaFileMetaData data1 = null;
 					if ( SHAPEFILE_CT_ID.equals(ct) ) {
-						data = createShapeFileMetaData(theFile);
+						data1 = createShapeFileMetaData(theFile);
 					} else if ( OSM_CT_ID.equals(ct) ) {
-						data = createOSMMetaData(theFile);
+						data1 = createOSMMetaData(theFile);
 					} else if ( IMAGE_CT_ID.equals(ct) ) {
-						data = createImageFileMetaData(theFile);
+						data1 = createImageFileMetaData(theFile);
 					} else if ( CSV_CT_ID.equals(ct) ) {
-						data = createCSVFileMetaData(theFile);
+						data1 = createCSVFileMetaData(theFile);
 					} else if ( GAML_CT_ID.equals(ct) ) {
-						data = createGamlFileMetaData(theFile);
+						data1 = createGamlFileMetaData(theFile);
 					} else if ( SHAPEFILE_SUPPORT_CT_ID.equals(ct) ) {
-						data = createShapeFileSupportMetaData(theFile);
+						data1 = createShapeFileSupportMetaData(theFile);
 					}
 					// Last chance: we generate a generic info
-					if ( data == null ) {
-						data = createGenericFileMetaData(theFile);
+					if ( data1 == null ) {
+						data1 = createGenericFileMetaData(theFile);
 					}
 					// System.out
 					// .println("Storing the metadata just created (or recreated) while reading it for " + theFile);
-					storeMetadata(theFile, data, false);
+					storeMetadata(theFile, data1, false);
 					try {
 						theFile.refreshLocal(IResource.DEPTH_ZERO, null);
 					} catch (CoreException e) {
@@ -258,7 +258,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return data;
 	}
 
-	private <T extends IGamaFileMetaData> T readMetadata(final IResource file, final Class<T> clazz,
+	private static <T extends IGamaFileMetaData> T readMetadata(final IResource file, final Class<T> clazz,
 		final boolean includeOutdated) {
 		IGamaFileMetaData result = null;
 		long modificationStamp = file.getModificationStamp();
@@ -285,7 +285,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	}
 
-	public void storeMetadata(final IResource file, final IGamaFileMetaData data, final boolean immediately) {
+	public static void storeMetadata(final IResource file, final IGamaFileMetaData data, final boolean immediately) {
 		try {
 			// System.out.println("Writing back metadata to " + file);
 			if ( ResourcesPlugin.getWorkspace().isTreeLocked() ) {
@@ -338,12 +338,12 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	/**
 	 * @param file
 	 */
-	private GamlInfo createGamlFileMetaData(final IFile file) {
+	static GamlInfo createGamlFileMetaData(final IFile file) {
 		return DescriptionFactory.getModelFactory().getInfo(URI.createFileURI(file.getLocation().toOSString()),
 			file.getModificationStamp());
 	}
 
-	private GamaCSVFile.CSVInfo createCSVFileMetaData(final IFile file) {
+	static GamaCSVFile.CSVInfo createCSVFileMetaData(final IFile file) {
 		return new CSVInfo(file.getLocation().toOSString(), file.getModificationStamp(), null);
 	}
 
@@ -353,7 +353,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @param file
 	 * @return
 	 */
-	private ImageInfo createImageFileMetaData(final IFile file) {
+	static ImageInfo createImageFileMetaData(final IFile file) {
 		ImageInfo imageInfo = null;
 		ImageData imageData = null;
 
@@ -377,7 +377,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @param file
 	 * @return
 	 */
-	private GamaShapeFile.ShapeInfo createShapeFileMetaData(final IFile file) {
+	static GamaShapeFile.ShapeInfo createShapeFileMetaData(final IFile file) {
 		ShapeInfo info = null;
 		try {
 			info = new ShapeInfo(file.getLocationURI().toURL(), file.getModificationStamp());
@@ -388,7 +388,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	}
 
-	private GamaOsmFile.OSMInfo createOSMMetaData(final IFile file) {
+	static GamaOsmFile.OSMInfo createOSMMetaData(final IFile file) {
 		OSMInfo info = null;
 		try {
 			info = new OSMInfo(file.getLocationURI().toURL(), file.getModificationStamp());
@@ -399,7 +399,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	}
 
-	private GenericFileInfo createShapeFileSupportMetaData(final IFile file) {
+	static GenericFileInfo createShapeFileSupportMetaData(final IFile file) {
 		GenericFileInfo info = null;
 		IResource r = shapeFileSupportedBy(file);
 		if ( r == null ) { return null; }
@@ -410,7 +410,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	}
 
-	private GenericFileInfo createGenericFileMetaData(final IFile file) {
+	static GenericFileInfo createGenericFileMetaData(final IFile file) {
 		String ext = file.getFileExtension();
 		ext = ext.toUpperCase();
 		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");

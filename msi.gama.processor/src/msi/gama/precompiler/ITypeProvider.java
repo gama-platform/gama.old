@@ -59,6 +59,10 @@ public interface ITypeProvider {
 	 */
 	static final int MACRO_TYPE = -29;
 	/*
+	 * The type returned is the type of the internal buffer of the object (file)
+	 */
+	static final int WRAPPED = -30;
+	/*
 	 * The content type is provided by the type of the expression itself (i.e. species)
 	 */
 	static final int TYPE = -14;
@@ -67,7 +71,7 @@ public interface ITypeProvider {
 	 */
 	static final int NONE = -13;
 	/*
-	 * The type or content type are provided by both operands (which must match).
+	 * The type or content type are provided by both or all operands (which must match).
 	 */
 	static final int BOTH = -21;
 	static final int ALL = BOTH;

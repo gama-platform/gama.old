@@ -13,7 +13,7 @@
 model gridloading
 
 global {
-	file grid_file <- file("../includes/DEM-Vulcano/vulcano_50.asc");
+	file grid_data <- file("../includes/DEM-Vulcano/vulcano_50.asc");
 	file dem parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM.png');
 	file texture parameter: 'Texture' <- file('../includes/DEM-Vulcano/Texture.png');
 	geometry shape <- envelope(200);
@@ -41,7 +41,7 @@ global {
 	}
 }
 
-grid cell file: grid_file {
+grid cell file: grid_data {
 	rgb color;
 	reflex decreaseValue {
 		grid_value <- grid_value  + rnd (0.2) - 0.1;

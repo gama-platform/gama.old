@@ -56,6 +56,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	protected IType computeType(final int t, final IType def, final int kind) {
 		switch (t) {
+			case WRAPPED:
+				return arg(0).getType().getWrappedType();
 			case NONE:
 				return def;
 			case BOTH:
@@ -155,8 +157,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		StringBuilder sb = new StringBuilder(50);
 		sb.append("operator ").append(getName()).append(" (");
 		if ( exprs != null ) {
-			for ( int i = 0; i < exprs.length; i++ ) {
-				sb.append(exprs[i] == null ? "nil" : exprs[i].getType().getTitle());
+			for ( IExpression expr : exprs ) {
+				sb.append(expr == null ? "nil" : expr.getType().getTitle());
 				sb.append(',');
 			}
 			sb.setLength(sb.length() - 1);

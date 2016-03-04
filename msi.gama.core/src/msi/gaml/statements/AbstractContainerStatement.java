@@ -193,8 +193,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				if ( index != null && keyType != Types.NO_TYPE && !keyType.isTranslatableInto(index.getType()) ) {
 					cd.warning(
 						"The type of the index of " + list.serialize(false) + " (" + keyType +
-							") does not match with the type of " + index.serialize(false) + " (" + index.getType() +
-							"). The latter will be casted to " + keyType,
+						") does not match with the type of " + index.serialize(false) + " (" + index.getType() +
+						"). The latter will be casted to " + keyType,
 						IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
 				}
 			}
@@ -397,6 +397,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	@operator(value = "edge",
+		type = ITypeProvider.FIRST_TYPE, // FIXME This is false
 		category = { IOperatorCategory.GRAPH },
 		doc = @doc(
 			value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The third parameter indicates which weight this edge should have in the graph",
@@ -406,6 +407,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	@operator(value = "edge",
+		type = ITypeProvider.TYPE_AT_INDEX + 1,
 		category = { IOperatorCategory.GRAPH },
 		doc = @doc(
 			value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and a third and indicates  they should respectively be considered as the source (key of the pair), the target (value of the pair) and the actual object representing an edge of a graph. The third parameter indicates which weight this edge should have in the graph",
@@ -415,6 +417,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	@operator(value = "edge",
+		type = ITypeProvider.FIRST_TYPE, // FIXME this is false
 		category = { IOperatorCategory.GRAPH },
 		doc = @doc(
 			value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph ",
@@ -424,6 +427,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	@operator(value = "edge",
+		type = ITypeProvider.TYPE_AT_INDEX + 2,
 		category = { IOperatorCategory.GRAPH },
 		doc = @doc(
 			value = "Allows to create a wrapper (of type unknown) that wraps three objects and indicates they should respectively be considered as the source, the target and the actual object representing an edge of a graph",
@@ -433,6 +437,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	@operator(value = "edge",
+		type = ITypeProvider.TYPE_AT_INDEX + 2,
 		category = { IOperatorCategory.GRAPH },
 		doc = @doc(
 			value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The fourth parameter indicates which weight this edge should have in the graph",
@@ -452,6 +457,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	@operator(value = "edge",
+		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		category = { IOperatorCategory.GRAPH },
 		doc = @doc(
 			value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge. The second parameter indicates which weight this edge should have in the graph",
@@ -471,7 +477,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	@operator(value = "edge",
-		type = ITypeProvider.FIRST_TYPE,
+		type = ITypeProvider.FIRST_CONTENT_TYPE,
 		category = { IOperatorCategory.GRAPH },
 		doc = @doc(
 			value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge of a graph",

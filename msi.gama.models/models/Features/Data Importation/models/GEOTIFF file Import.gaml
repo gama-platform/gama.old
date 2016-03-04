@@ -9,10 +9,10 @@ model geotiffimport
 
 global {
 	//definiton of the file to import
-	file grid_file <- file('../includes/bogota_grid.tif') ;
+	file grid_data <- file('../includes/bogota_grid.tif') ;
 	
 	//computation of the environment size from the geotiff file
-	geometry shape <- envelope(grid_file);	
+	geometry shape <- envelope(grid_data);	
 	
 	float max_value;
 	float min_value;
@@ -27,7 +27,7 @@ global {
 }
 
 //definition of the grid from the geotiff file: the width and height of the grid are directly read from the asc file. The values of the asc file are stored in the grid_value attribute of the cells.
-grid cell file: grid_file;
+grid cell file: grid_data;
 
 experiment show_example type: gui {
 	output {

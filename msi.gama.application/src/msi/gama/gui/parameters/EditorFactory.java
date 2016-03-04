@@ -1,17 +1,18 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'EditorFactory.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
 import java.util.List;
+import org.eclipse.swt.widgets.Composite;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -20,7 +21,6 @@ import msi.gama.util.GamaFont;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
-import org.eclipse.swt.widgets.Composite;
 
 public class EditorFactory implements IEditorFactory {
 
@@ -122,7 +122,7 @@ public class EditorFactory implements IEditorFactory {
 	public AbstractEditor create(final IAgent agent, final IParameter var, final EditorListener l) {
 		final boolean canBeNull = var instanceof ExperimentParameter && ((ExperimentParameter) var).canBeNull();
 		final IType t = var.getType();
-		final int type = t.id();
+		final int type = t.getType().id();
 		if ( t.isContainer() && t.getContentType().isAgentType() ) { return new PopulationEditor(agent, var, l); }
 		if ( t.isAgentType() || type == IType.AGENT ) { return new AgentEditor(agent, var, l); }
 		switch (type) {

@@ -33,20 +33,20 @@ import msi.gaml.types.IType;
 @vars({ @var(name = IKeyword.TARGET, type = IType.NONE), @var(name = IKeyword.SOURCE, type = IType.NONE),
 	@var(name = IKeyword.GRAPH, type = IType.GRAPH), @var(name = IKeyword.SHAPE, type = IType.GEOMETRY),
 	@var(name = IKeyword.SEGMENTS,
-		type = IType.LIST,
-		of = IType.GEOMETRY,
-		doc = { @doc("Returns the list of segments that compose this path") }),
+	type = IType.LIST,
+	of = IType.GEOMETRY,
+	doc = { @doc("Returns the list of segments that compose this path") }),
 	@var(name = "distance",
-		type = IType.FLOAT,
-		doc = { @doc("Returns the total lenght of all the segments that compose this path") }),
-	@var(name = "weight", type = IType.FLOAT), @var(name = "edges", type = IType.LIST),
+	type = IType.FLOAT,
+	doc = { @doc("Returns the total lenght of all the segments that compose this path") }),
+	@var(name = "weight", type = IType.FLOAT), @var(name = "edges", type = IType.LIST, of = IType.GEOMETRY),
 	@var(name = "vertices", type = IType.LIST)
-	// @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
-	// Could be replaced by "geometries"
-	/*
-	 * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type =
-	 * IType.LIST, of = IType.POINT)
-	 */
+// @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
+// Could be replaced by "geometries"
+/*
+ * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type =
+ * IType.LIST, of = IType.POINT)
+ */
 })
 public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends IShape {
 

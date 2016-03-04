@@ -8,7 +8,7 @@
 model graphoperators
 
 global {
-	graph the_graph;
+	graph<geometry,geometry> the_graph;
 	init {
 		create people number: 50;
 		
