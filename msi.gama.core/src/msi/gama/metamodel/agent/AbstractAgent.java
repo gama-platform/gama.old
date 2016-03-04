@@ -205,7 +205,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(30);
-		sb.append(getSpeciesName()).append('[').append(getIndex()).append(']');
+		sb.append(getSpeciesName()).append('(').append(getIndex()).append(')');
 		if ( dead() ) {
 			sb.append(" /* dead */");
 		}
