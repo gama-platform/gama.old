@@ -10,7 +10,6 @@ import org.tmatesoft.svn.core.SVNException;
 import org.xml.sax.SAXException;
 
 import msi.gama.doc.transform.XmlToCategoryXML;
-import msi.gama.doc.transform.XmlToWiki;
 import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.UnifyDoc;

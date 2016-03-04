@@ -94,12 +94,14 @@ public class GamlDocProcessor {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators Categories
+		@SuppressWarnings("unchecked")
 		Set<? extends ExecutableElement> setOperatorsCategories =
 			(Set<? extends ExecutableElement>) env.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLCategories(setOperatorsCategories, doc, XMLElements.OPERATORS_CATEGORIES));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators
+		@SuppressWarnings("unchecked")
 		Set<? extends ExecutableElement> setOperators =
 			(Set<? extends ExecutableElement>) env.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLOperators(setOperators, doc));

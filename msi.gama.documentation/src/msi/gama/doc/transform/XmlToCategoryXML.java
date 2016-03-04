@@ -9,12 +9,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.XMLUtils;
-import msi.gama.precompiler.doc.utils.XMLElements;
 
 public class XmlToCategoryXML {
 
