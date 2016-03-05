@@ -15,6 +15,7 @@ import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.Strings;
 import msi.gaml.operators.fastmaths.CmnFastMath;
+import msi.gaml.types.Types;
 
 /**
  * The class GamlTemplateFactory.
@@ -157,6 +158,11 @@ public class GamlTemplateFactory {
 		return new Template("A species with the skill " + skill,
 			"Defines a species that implements the skill named " + skill, getContextId(),
 			"species ${species_name} skills: [" + skill + "]" + body(comment.toString()), true);
+	}
+
+	public static Template attributeWithType(final String type) {
+		return new Template("An attribute of type " + type, "Defines an attribute of type " + type, getContextId(),
+			type + " " + Types.get(type).asPattern() + " <- ${initial_value};", true);
 	}
 
 	public static Template speciesWithControl(final String skill) {

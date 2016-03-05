@@ -457,4 +457,14 @@ public class ParametricType implements IContainerType {
 		return Types.NO_TYPE;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see msi.gaml.types.IType#getFieldGetters()
+	 */
+	@Override
+	public Map getFieldGetters() {
+		return type.getFieldGetters();
+	}
+
 }

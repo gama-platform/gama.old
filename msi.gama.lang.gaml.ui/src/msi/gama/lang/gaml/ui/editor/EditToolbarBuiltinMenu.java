@@ -1,45 +1,90 @@
 /**
  * Created by drogoul, 5 déc. 2014
- * 
+ *
  */
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.Menu;
 import msi.gama.common.interfaces.INamed;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.Menu;
+import msi.gaml.types.Types;
 
 /**
  * The class EditToolbarTemplateMenu.
- * 
+ *
  * @author drogoul
  * @since 5 déc. 2014
- * 
+ *
  */
 public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 
 	@Override
 	protected void fillMenu() {
 		List<TypeDescription> list = new ArrayList(ModelDescription.ROOT.getTypesManager().getAllSpecies());
+		List<String> speciesList = new ArrayList();
 		Collections.sort(list, INamed.COMPARATOR);
-		title("Built-in Species");
+		Menu m = sub("Built-in species");
 		for ( TypeDescription species : list ) {
-			fillSpeciesSubmenu(sub(species.getName()), species);
+			speciesList.add(species.getName());
+			fillSpeciesSubmenu(sub(m, species.getName()), species);
 		}
-		List<String> strings = new ArrayList(AbstractGamlAdditions.getSkills());
-		Collections.sort(strings, IGNORE_CASE);
-		title("Skills");
-		for ( String skill : strings ) {
-			fillSkillSubmenu(sub(skill), skill, false);
+		List<String> skills = new ArrayList(AbstractGamlAdditions.getSkills());
+		Collections.sort(skills, IGNORE_CASE);
+		m = sub("Skills");
+		for ( String skill : skills ) {
+			fillSkillSubmenu(sub(m, skill), skill, false);
 		}
-		strings = new ArrayList(AbstractGamlAdditions.getControls());
-		Collections.sort(strings, IGNORE_CASE);
-		title("Control Architectures");
-		for ( String skill : strings ) {
-			fillSkillSubmenu(sub(skill), skill, true);
+		List<String> controls = new ArrayList(AbstractGamlAdditions.getControls());
+		Collections.sort(controls, IGNORE_CASE);
+		m = sub("Control architectures");
+		for ( String skill : controls ) {
+			fillSkillSubmenu(sub(m, skill), skill, true);
+		}
+		List<String> types = new ArrayList(Types.getTypeNames());
+		types.removeAll(speciesList);
+		Collections.sort(types, IGNORE_CASE);
+		m = sub("Types");
+		List<String> fileTypes = new ArrayList();
+		for ( String type : types ) {
+			if ( type.contains("_file") ) {
+				fileTypes.add(type);
+			}
+		}
+		types.removeAll(fileTypes);
+		for ( String type : types ) {
+			fillTypeSubmenu(sub(m, type), type);
+		}
+		m = sub("File types");
+		for ( String type : fileTypes ) {
+			fillTypeSubmenu(sub(m, type), type);
+		}
+	}
+
+	/**
+	 * @param sub
+	 * @param type
+	 */
+	private void fillTypeSubmenu(final Menu submenu, final String type) {
+		action(submenu, "Insert new attribute with this type", new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				applyTemplate(GamlTemplateFactory.attributeWithType(type));
+			}
+
+		});
+		Map<String, OperatorProto> getters = Types.get(type).getFieldGetters();
+		List<String> names = new ArrayList(getters.keySet());
+		if ( !names.isEmpty() ) {
+			Collections.sort(names);
+			title(submenu, "Attributes");
+			for ( String getter : names ) {
+				fillProtoSubMenu(sub(submenu, getter), getters.get(getter));
+			}
 		}
 	}
 
@@ -101,6 +146,18 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			}
 
 		});
+
+	}
+
+	private void fillProtoSubMenu(final Menu menu, final OperatorProto attribute) {
+		action(menu, "Insert attribute name", new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				getEditor().insertText(attribute.getName());
+			}
+
+		});;
 
 	}
 

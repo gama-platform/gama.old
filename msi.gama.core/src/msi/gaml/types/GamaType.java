@@ -121,6 +121,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 		return getters.get(field);
 	}
 
+	@Override
+	public Map<String, OperatorProto> getFieldGetters() {
+		return getters == null ? Collections.EMPTY_MAP : getters;
+	}
+
 	//
 	// @Override
 	// public Map<String, ? extends IGamlDescription> getFieldDescriptions(final ModelDescription desc) {

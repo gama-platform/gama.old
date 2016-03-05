@@ -153,12 +153,18 @@ public class VariableDescription extends SymbolDescription {
 					if ( macro == null ) { return Types.AGENT; }
 					return macro.getType();
 				case ITypeProvider.OWNER_TYPE: // This represents the type of the agents of the enclosing species
+					if ( this.getEnclosingDescription() == null ) {
+						return Types.AGENT;
+					}
 					return this.getEnclosingDescription().getType();
 				case ITypeProvider.MODEL_TYPE: // This represents the type of the model (used for simulations)
 					ModelDescription md = this.getModelDescription();
-					if ( md == null ) { return Types.AGENT; }
+					if ( md == null ) { return Types.get("model"); }
 					return md.getType();
 				case ITypeProvider.MIRROR_TYPE:
+					if ( getEnclosingDescription() == null ) {
+						return null;
+					}
 					IExpression mirrors = getEnclosingDescription().getFacets().getExpr(MIRRORS);
 					if ( mirrors != null ) {
 						// We try to change the type of the 'target' variable if the expression contains only agents from the

@@ -1,17 +1,17 @@
 /**
  * Created by drogoul, 11 déc. 2014
- * 
+ *
  */
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.Comparator;
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.commands.*;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.commands.*;
 
 public abstract class EditToolbarMenu extends GamaMenu {
 
@@ -88,6 +88,7 @@ public abstract class EditToolbarMenu extends GamaMenu {
 
 	protected abstract void openView();
 
+	@Override
 	protected abstract void fillMenu();
 
 	// Helper methods for working with editors and menus

@@ -79,7 +79,7 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
 	public OperatorProto getGetter(String name);
 
-	// public Map<String, ? extends IGamlDescription> getFieldDescriptions(ModelDescription model);
+	public Map<String, OperatorProto> getFieldGetters();
 
 	public boolean isAgentType();
 

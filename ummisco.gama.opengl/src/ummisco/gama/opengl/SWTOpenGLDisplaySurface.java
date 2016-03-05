@@ -388,15 +388,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return output.getData().getEnvHeight();
 	}
 
-	// /**
-	// * Method setZoomListener()
-	// * @see msi.gama.common.interfaces.IDisplaySurface#setZoomListener(msi.gama.common.interfaces.IDisplaySurface.IZoomListener)
-	// */
-	// @Override
-	// public void setZoomListener(final IZoomListener listener) {
-	// zoomListener = listener;
-	// }
-
 	/**
 	 * Method getModelCoordinates()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
@@ -408,6 +399,20 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
 		if ( p == null ) { return null; }
 		return new GamaPoint(p.x, -p.y);
+	}
+
+	@Override
+	public String getModelCoordinatesInfo() {
+		boolean canObtainInfo = getManager().isProvidingCoordinates();
+		if ( !canObtainInfo ) { return "No world coordinates"; }
+		canObtainInfo = getManager().isProvidingWorldCoordinates();
+		if ( !canObtainInfo ) { return "No world coordinates"; }
+		// By default, returns the coordinates in the world.
+		ILocation point = getModelCoordinates();
+		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
+		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
+		Object[] objects = new Object[] { x, y };
+		return String.format("X%10s | Y%10s", objects);
 	}
 
 	@Override
