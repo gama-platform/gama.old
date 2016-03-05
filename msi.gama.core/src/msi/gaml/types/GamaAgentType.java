@@ -75,11 +75,6 @@ public class GamaAgentType extends GamaType<IAgent> {
 		return true;
 	}
 
-	// @Override
-	// public Map<String, ? extends IGamlDescription> getFieldDescriptions(final ModelDescription model) {
-	// if ( model == null ) { return Collections.EMPTY_MAP; }
-	// return model.getSpeciesDescription(name).getVariables();
-	// }
 
 	@Override
 	public String getSpeciesName() {
@@ -96,12 +91,6 @@ public class GamaAgentType extends GamaType<IAgent> {
 		return false;
 	}
 
-	//
-	// @Override
-	// public boolean isSuperTypeOf(final IType type) {
-	// return type != this && type instanceof GamaAgentType &&
-	// toClass().isAssignableFrom(type.toClass());
-	// }
 
 	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object obj) {
@@ -119,11 +108,6 @@ public class GamaAgentType extends GamaType<IAgent> {
 		return Types.STRING;
 	}
 
-	//
-	// @Override
-	// public boolean hasContents() {
-	// return true;
-	// }
 
 	@Override
 	public boolean isFixedLength() {

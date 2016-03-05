@@ -205,6 +205,16 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
+	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+		// By default, returns the coordinates in the world. Redefined for charts
+		ILocation point = getModelCoordinatesFrom(xOnScreen, yOnScreen, g);
+		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
+		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
+		Object[] objects = new Object[] { x, y };
+		return String.format("X%10s | Y%10s", objects);
+	}
+
+	@Override
 	public Point getScreenCoordinatesFrom(final double x, final double y, final IDisplaySurface g) {
 		final double xFactor = x / g.getEnvWidth();
 		final double yFactor = y / g.getEnvHeight();
@@ -299,6 +309,16 @@ public abstract class AbstractLayer implements ILayer {
 	@Override
 	public Envelope getVisibleRegion() {
 		return visibleModelRegion;
+	}
+
+	@Override
+	public boolean isProvidingCoordinates() {
+		return true; // by default
+	}
+
+	@Override
+	public boolean isProvidingWorldCoordinates() {
+		return true; // by default
 	}
 
 }

@@ -254,4 +254,30 @@ public class LayerManager implements ILayerManager {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see msi.gama.common.interfaces.ILayerManager#isProvidingCoordinates()
+	 */
+	@Override
+	public boolean isProvidingCoordinates() {
+		for ( final ILayer i : enabledLayers ) {
+			if ( i.isProvidingCoordinates() ) { return true; }
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see msi.gama.common.interfaces.ILayerManager#isProvidingWorldCoordinates()
+	 */
+	@Override
+	public boolean isProvidingWorldCoordinates() {
+		for ( final ILayer i : enabledLayers ) {
+			if ( i.isProvidingWorldCoordinates() ) { return true; }
+		}
+		return false;
+	}
+
 }

@@ -288,24 +288,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		}
 	}
 
-	public String getOverlayText() {
-		boolean paused = getOutput().isPaused();
-		boolean synced = getOutput().getData().isSynchronized();
-		boolean openGL = isOpenGL();
-		ILocation point = getDisplaySurface().getModelCoordinates();
-		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
-		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
-		Object[] objects = null;
-		if ( !openGL ) {
-			objects = new Object[] { x, y, getZoomLevel() };
-		} else {
-			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) getDisplaySurface();
-			ILocation camera = ds.getCameraPosition();
-			objects = new Object[] { x, y, getZoomLevel(), camera.getX(), camera.getY(), camera.getZ() };
-		}
-		return String.format(" X%10s | Y%10s | Zoom%10d%%" + (paused ? " | Paused" : "") +
-			(synced ? " | Synchronized" : "") + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
-	};
 
 	@Override
 	public void pauseChanged() {
@@ -331,13 +313,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		boolean paused = output.isPaused();
 		boolean synced = getOutput().getData().isSynchronized();
 		IDisplaySurface surface = getDisplaySurface();
-		ILocation point = surface == null ? null : surface.getModelCoordinates();
-		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
-		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
-		Object[] objects = new Object[] { x, y };
-		return String.format("X%10s | Y%10s" + (paused ? " | Paused" : "") + (synced ? " | Synchronized" : ""),
-			objects);
-
+		String point = surface == null ? null : surface.getModelCoordinatesInfo();
+		return point + (paused ? " | Paused" : "") + (synced ? " | Synchronized" : "");
 	}
 
 	public String getOverlayZoomInfo() {
@@ -453,15 +430,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 				@Override
 				public void run() {
+					if ( s != null && !s.isDisposed() && !disposed )	s.updateDisplay(false);
 					while (!disposed) {
-						if ( s != null ) {
-							acquireLock();
-							if ( getOutput() != null && getOutput().getData().isAutosave() && s.isRealized() ) {
+						acquireLock();
+						if ( s != null && s.isRealized() && !s.isDisposed() && !disposed ) {
+							if (  s.getData().isAutosave() ) {
 								doSnapshot();
 							}
-							if ( !s.isDisposed() ) {
-								s.updateDisplay(false);
-							}
+							s.updateDisplay(false);
 						}
 					}
 				}
@@ -474,7 +450,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			if ( getOutput().getData().isAutosave() && s.isRealized() ) {
 				doSnapshot();
 			}
-			while (!s.isRendered() && !disposed) {
+			while (!s.isRendered() && !s.isDisposed() && !disposed) {
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
@@ -483,9 +459,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 			}
 		} else if ( updateThread.isAlive() ) {
-			if ( s != null ) {
-				releaseLock();
-			}
+			releaseLock();
 		}
 
 	}

@@ -346,8 +346,24 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int xc = mouse.x - origin.x;
 		final int yc = mouse.y - origin.y;
 		List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
-		if ( layers.isEmpty() ) { return null; }
-		return layers.get(0).getModelCoordinatesFrom(xc, yc, this);
+		for ( ILayer layer : layers ) {
+			if ( layer.isProvidingWorldCoordinates() ) { return layer.getModelCoordinatesFrom(xc, yc, this); }
+		}
+		return null;
+	}
+
+	@Override
+	public String getModelCoordinatesInfo() {
+		Point origin = getOrigin();
+		Point mouse = listener.getMousePosition();
+		if ( mouse == null ) { return null; }
+		final int xc = mouse.x - origin.x;
+		final int yc = mouse.y - origin.y;
+		List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
+		for ( ILayer layer : layers ) {
+			if ( layer.isProvidingCoordinates() ) { return layer.getModelCoordinatesInfo(xc, yc, this); }
+		}
+		return "No world coordinates";
 	}
 
 	@Override

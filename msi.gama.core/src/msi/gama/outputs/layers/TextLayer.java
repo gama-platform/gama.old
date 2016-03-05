@@ -44,4 +44,14 @@ public class TextLayer extends AbstractLayer {
 		return "Text layer";
 	}
 
+	@Override
+	public boolean isProvidingCoordinates() {
+		return false; // by default
+	}
+
+	@Override
+	public boolean isProvidingWorldCoordinates() {
+		return false; // by default
+	}
+
 }

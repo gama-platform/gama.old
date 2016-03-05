@@ -484,6 +484,7 @@ Export-Package: .,
    org.jfree.chart.renderer,
    org.jfree.chart,
    org.jfree.chart.axis",
+ org.jfree.data,
  org.jfree.data.category;uses:="org.jfree.data,org.jfree.util,org.jfree.data.general",
  org.jfree.data.general;
   uses:="org.jfree.data.xy,

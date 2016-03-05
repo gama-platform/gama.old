@@ -106,4 +106,14 @@ public class OverlayLayer extends GraphicLayer {
 		return ((OverlayStatement) definition).isRounded();
 	}
 
+	@Override
+	public boolean isProvidingCoordinates() {
+		return false; // by default
+	}
+
+	@Override
+	public boolean isProvidingWorldCoordinates() {
+		return false; // by default
+	}
+
 }

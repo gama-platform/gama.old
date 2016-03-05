@@ -153,4 +153,9 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	 */
 	boolean isDisposed();
 
+	/**
+	 * @return
+	 */
+	String getModelCoordinatesInfo();
+
 }

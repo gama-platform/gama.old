@@ -183,9 +183,6 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		if ( frequency == 0 || step % frequency != 0 ) { return GamaListFactory.EMPTY_LIST; }
 		final IExpression ags = getSpecies().getSchedule();
 		final IList<IAgent> agents = ags == null ? this : Cast.asList(scope, ags.value(scope));
-		// if ( getSpecies().getName().equals("flock") ) {
-		// scope.getGui().debug("GamaPopulation.computeAgentsToSchedule : " + agents);
-		// }
 		return agents;
 	}
 

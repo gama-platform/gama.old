@@ -334,12 +334,22 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#isDisposed()
 	 */
 	@Override
 	public boolean isDisposed() {
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesInfo()
+	 */
+	@Override
+	public String getModelCoordinatesInfo() {
+		return null;
 	}
 
 }

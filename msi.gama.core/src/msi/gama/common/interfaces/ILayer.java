@@ -108,4 +108,16 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	Envelope getVisibleRegion();
 
+	/**
+	 * @param xc
+	 * @param yc
+	 * @param java2dDisplaySurface
+	 * @return
+	 */
+	String getModelCoordinatesInfo(int xc, int yc, IDisplaySurface java2dDisplaySurface);
+
+	boolean isProvidingCoordinates();
+
+	boolean isProvidingWorldCoordinates();
+
 }

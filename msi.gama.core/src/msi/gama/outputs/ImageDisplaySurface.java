@@ -469,4 +469,14 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesInfo()
+	 */
+	@Override
+	public String getModelCoordinatesInfo() {
+		return null;
+	}
+
 }

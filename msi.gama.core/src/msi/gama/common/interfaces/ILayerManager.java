@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
  *
- * 'ILayerManager.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'ILayerManager.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -17,10 +17,10 @@ import msi.gama.metamodel.shape.IShape;
 
 /**
  * The class IDisplayManager.
- * 
+ *
  * @author drogoul
  * @since 15 d�c. 2011
- * 
+ *
  */
 public interface ILayerManager extends ItemList<ILayer> {
 
@@ -55,7 +55,7 @@ public interface ILayerManager extends ItemList<ILayer> {
 	void drawLayersOn(IGraphics displayGraphics);
 
 	/**
-	 * 
+	 *
 	 */
 	void dispose();
 
@@ -72,5 +72,15 @@ public interface ILayerManager extends ItemList<ILayer> {
 	 * @param geometry
 	 */
 	Rectangle2D focusOn(IShape geometry, IDisplaySurface s);
+
+	/**
+	 * @return
+	 */
+	boolean isProvidingCoordinates();
+
+	/**
+	 * @return
+	 */
+	boolean isProvidingWorldCoordinates();
 
 }
