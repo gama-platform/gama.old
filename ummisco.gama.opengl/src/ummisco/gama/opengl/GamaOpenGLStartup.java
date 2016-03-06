@@ -5,7 +5,6 @@ import java.net.*;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.ui.IStartup;
 import com.jogamp.common.util.JarUtil;
-import com.jogamp.opengl.GLProfile;
 
 public class GamaOpenGLStartup implements IStartup {
 
@@ -28,8 +27,7 @@ public class GamaOpenGLStartup implements IStartup {
 				}
 			}
 		});
-		// Necessary to initialize very early because initializing it while opening a Java2D view before leads to a deadlock
-		GLProfile.initSingleton();
+
 	}
 
 }

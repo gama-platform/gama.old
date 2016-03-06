@@ -1020,6 +1020,9 @@
                                  property="org.eclipse.core.resources.contentTypeId"
                                  value="msi.gama.gui.gaml.type">
                            </test>
+                           <adapt
+                                 type="org.eclipse.core.resources.IResource">
+                           </adapt>
                         </or>
                      </adapt>
                   </iterate>

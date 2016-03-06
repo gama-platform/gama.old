@@ -36,16 +36,16 @@
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-jdbc-sqlserver-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-jdbc-teradata-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-jts-wrapper-13.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-main-13.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-main-13.4.jar" sourcepath="geotools 13.4/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-metadata-13.4.jar" sourcepath="geotools 13.4/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-opengis-13.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-opengis-13.4.jar" sourcepath="geotools 13.4/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-process-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-process-feature-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-process-geometry-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-process-raster-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-property-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-property-old-13.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-referencing-13.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-referencing-13.4.jar" sourcepath="geotools 13.4/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-render-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-sfs-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-shapefile-13.4.jar"/>
@@ -58,7 +58,7 @@
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/imageio-ext-imagereadmt-1.1.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/imageio-ext-imagereadmt-1.1M012010.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/imageio-ext-streams-1.1.11.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/imageio-ext-tiff-1.1.11.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/imageio-ext-tiff-1.1.11.jar" sourcepath="geotools 13.4/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/imageio-ext-utilities-1.1.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/jai_codec-1.1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/jai_core-1.1.3.jar"/>

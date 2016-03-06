@@ -8,6 +8,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="gt-swt-13.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="gt-swt-13.4.jar" sourcepath="/msi.gama.ext/geotools 13.4/src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -106,7 +106,7 @@ public class ImageUtils {
 			cache.put(s, new BufferedImage[POSITIONS]);
 		}
 		final BufferedImage[] map = cache.get(s);
-		map[position] = toCompatibleImage(image);
+		map[position] = /* toCompatibleImage(image); */ image;
 	}
 
 	static boolean DEBUG_OPTION = true;
@@ -125,7 +125,7 @@ public class ImageUtils {
 	}
 
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
-		if ( DEBUG_OPTION || GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) { return image; }
+		if ( GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) { return image; }
 		// final GraphicsConfiguration gfx_config =
 		// GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
@@ -137,8 +137,9 @@ public class ImageUtils {
 
 		// image is not optimized, so create a new image that is
 		final BufferedImage new_image =
-			getCachedGC().createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
-
+			// getCachedGC().createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
+			new BufferedImage(image.getWidth() != 0 ? image.getWidth() : 1024,
+				image.getHeight() != 0 ? image.getHeight() : 1024, BufferedImage.TYPE_INT_ARGB);
 		// get the graphics context of the new image to draw the old image on
 		final Graphics2D g2d = (Graphics2D) new_image.getGraphics();
 

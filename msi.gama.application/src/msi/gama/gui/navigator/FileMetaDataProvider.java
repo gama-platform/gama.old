@@ -358,15 +358,15 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		ImageData imageData = null;
 
 		int type = -1, width = -1, height = -1;
-		try {
-			imageData = ImageDataLoader.getImageData(file);
-		} catch (Exception ex) {
-			System.out.println("Error in loading " + file.getLocation().toString());
-		}
+		imageData = ImageDataLoader.getImageData(file);
 		if ( imageData != null ) {
 			width = imageData.width;
 			height = imageData.height;
 			type = imageData.type;
+		} else {
+			width = -1;
+			height = -1;
+			type = -1;
 		}
 		imageInfo = new ImageInfo(file.getModificationStamp(), type, width, height);
 		return imageInfo;

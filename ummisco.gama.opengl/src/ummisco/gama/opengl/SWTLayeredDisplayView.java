@@ -6,6 +6,7 @@ package ummisco.gama.opengl;
 
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.Composite;
+import com.jogamp.opengl.GLProfile;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.views.LayeredDisplayView;
@@ -19,6 +20,18 @@ import msi.gama.runtime.GAMA;
  *
  */
 public class SWTLayeredDisplayView extends LayeredDisplayView implements /* ControlListener, */MouseMoveListener {
+
+	static {
+		// Necessary to initialize very early because initializing it while opening a Java2D view before leads to a deadlock
+		GLProfile.initSingleton();
+		while (!GLProfile.isInitialized()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	SWTOpenGLDisplaySurface surface;
 

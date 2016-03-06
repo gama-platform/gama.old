@@ -24,7 +24,6 @@ import org.geotools.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.*;
 import org.opengis.feature.type.*;
-import org.opengis.referencing.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.*;
 import msi.gama.metamodel.shape.*;
@@ -65,19 +64,19 @@ public class GamaShapeFile extends GamaGisFile {
 			super(modificationStamp);
 			ShapefileDataStore store = null;
 			ReferencedEnvelope env = new ReferencedEnvelope();
-			CoordinateReferenceSystem crs = null;
+			CoordinateReferenceSystem crs1 = null;
 			int number = 0;
 			try {
 				store = new ShapefileDataStore(url);
 				SimpleFeatureSource source = store.getFeatureSource();
 				SimpleFeatureCollection features = source.getFeatures();
 				try {
-					crs = source.getInfo().getCRS();
+					crs1 = source.getInfo().getCRS();
 				} catch (Exception e) {
 					System.out.println("Ignored exception in ShapeInfo getCRS:" + e.getMessage());
 				}
 				env = source.getBounds();
-				if ( crs != null ) {
+				if ( crs1 != null ) {
 					try {
 						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
 					} catch (Exception e) {
@@ -103,7 +102,7 @@ public class GamaShapeFile extends GamaGisFile {
 				width = env.getWidth();
 				height = env.getHeight();
 				itemNumber = number;
-				this.crs = crs;
+				this.crs = crs1;
 				if ( store != null ) {
 					store.dispose();
 				}
@@ -115,16 +114,22 @@ public class GamaShapeFile extends GamaGisFile {
 			return crs;
 		}
 
-		public ShapeInfo(final String propertiesString) throws NoSuchAuthorityCodeException, FactoryException {
+		public ShapeInfo(final String propertiesString) {
 			super(propertiesString);
 			String[] segments = split(propertiesString);
 			itemNumber = Integer.valueOf(segments[1]);
 			String crsString = segments[2];
-			if ( "null".equals(crsString) ) {
-				crs = null;
+			CoordinateReferenceSystem theCRS;
+			if ( "null".equals(crsString) || crsString.startsWith("Unknown") ) {
+				theCRS = null;
 			} else {
-				crs = CRS.parseWKT(crsString);
+				try {
+					theCRS = CRS.parseWKT(crsString);
+				} catch (Exception e) {
+					theCRS = null;
+				}
 			}
+			crs = theCRS;
 			width = Double.valueOf(segments[3]);
 			height = Double.valueOf(segments[4]);
 			if ( segments.length > 5 ) {
@@ -142,7 +147,7 @@ public class GamaShapeFile extends GamaGisFile {
 		 */
 		@Override
 		public String getSuffix() {
-			String CRS = crs == null ? "No CRS" : crs.getName().getCode();
+			String CRS = crs == null ? "Unknown CRS" : crs.getName().getCode();
 			return "" + itemNumber + " objects | " + CRS + " | " + FastMath.round(width) + "m x " +
 			FastMath.round(height) + "m";
 		}
@@ -154,7 +159,7 @@ public class GamaShapeFile extends GamaGisFile {
 			sb.append(itemNumber).append(" objects").append(Strings.LN);
 			sb.append("Dimensions: ").append(FastMath.round(width) + "m x " + FastMath.round(height) + "m")
 			.append(Strings.LN);
-			sb.append("Coordinate Reference System: ").append(crs == null ? "No CRS" : crs.getName().getCode())
+			sb.append("Coordinate Reference System: ").append(crs == null ? "Unknown CRS" : crs.getName().getCode())
 			.append(Strings.LN);
 			if ( !attributes.isEmpty() ) {
 				sb.append("Attributes: ").append(Strings.LN);
@@ -171,10 +176,24 @@ public class GamaShapeFile extends GamaGisFile {
 
 		@Override
 		public String toPropertyString() {
+			// See Issue #1603: .toWKT() && pa can sometimes cause problem with certain projections.
+			String system = crs == null ? "Unknown projection" : crs.toWKT();
+			try {
+				CoordinateReferenceSystem trial = CRS.parseWKT(system);
+			} catch (Exception e) {
+				// The toWKT()/parseWKT() pair has a problem
+				String srs = CRS.toSRS(crs);
+				if ( srs == null && crs != null ) {
+					srs = crs.getName().getCode();
+				}
+				system = "Unknown projection " + srs;
+
+			}
 			String attributeNames = join(attributes.keySet(), SUB_DELIMITER);
 			String types = join(attributes.values(), SUB_DELIMITER);
-			Object[] toSave = new Object[] { super.toPropertyString(), itemNumber, crs == null ? "null" : crs.toWKT(),
-				width, height, attributeNames, types };
+			Object[] toSave =
+				new Object[] { super.toPropertyString(), itemNumber, system,
+					width, height, attributeNames, types };
 			return join(toSave, DELIMITER);
 		}
 	}
