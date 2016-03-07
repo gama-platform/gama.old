@@ -80,10 +80,10 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		IType edgeType = populationEdges == null ? Types.NO_TYPE : populationEdges.getType().getContentType();
 		gamaGraph =
 			isSpatial ? new GamaSpatialGraph(scope, nodeType, edgeType) : new GamaGraph(scope, nodeType, edgeType);
-		nodeId2agent = new HashMap<String, IAgent>();
-		edgeId2agent = new HashMap<String, IAgent>();
+			nodeId2agent = new HashMap<String, IAgent>();
+			edgeId2agent = new HashMap<String, IAgent>();
 
-		warnings.clear();
+			warnings.clear();
 	}
 
 	public GamaGraph getGraph() {
@@ -112,14 +112,14 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	private void agentAttributeNotFound(final String attributeName) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("The agent attribute \"").append(attributeName)
-			.append("\" is not declared. The content of the corresponding attribute of the graph will be ignored");
+		.append("\" is not declared. The content of the corresponding attribute of the graph will be ignored");
 		warnings.addWarning(sb.toString());
 	}
 
 	private void edgeAttributeNotFound(final String attributeName) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("The edge attribute \"").append(attributeName)
-			.append("\" is not declared. The content of the corresponding attribute of the graph will be ignored");
+		.append("\" is not declared. The content of the corresponding attribute of the graph will be ignored");
 		warnings.addWarning(sb.toString());
 	}
 
@@ -165,7 +165,7 @@ public class GamaGraphParserListener implements IGraphParserListener {
 
 			// create the shape for this agent
 			if ( populationNodes != null ) {
-				GamaDynamicLink dl = new GamaDynamicLink((IShape) nodeFrom, (IShape) nodeTo);
+				GamaShape dl = GamaGeometryType.buildLink(scope, (IShape) nodeFrom, (IShape) nodeTo);
 				createdAgent.setGeometry(dl);
 			}
 
@@ -294,7 +294,7 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	public void endOfParsing() {
 
 		warnings
-			.publishAsGAMAWarning("during the interpretation of the graph as species, several warnings were raised:");
+		.publishAsGAMAWarning("during the interpretation of the graph as species, several warnings were raised:");
 	}
 
 }

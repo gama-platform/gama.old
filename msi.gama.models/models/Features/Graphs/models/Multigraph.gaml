@@ -36,7 +36,7 @@ global {
 			people p2 <- one_of(list(people) - p1);
 			create friendship_link  {
 				add edge (p1, p2, self) to: friendship_graph;
-				shape <- link(p1::p2);
+				shape <- link(p1,p2);
 			}
 		}
 	}
@@ -71,6 +71,7 @@ species people skills: [moving]{
 }
 	
 species friendship_link {
+	
 	aspect default {
 		draw shape color: #blue;
 	}

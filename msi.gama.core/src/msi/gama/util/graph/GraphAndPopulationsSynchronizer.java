@@ -17,6 +17,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
+import msi.gaml.types.GamaGeometryType;
 
 /**
  * Syncs a graph with two populations of agents (one for edges, one for nodes).
@@ -214,13 +215,13 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 					IAgent createdAgent = createdAgents.get(0);
 
 					// create the shape for this agent
-					GamaDynamicLink dl = new GamaDynamicLink((IShape) graph.getEdgeSource(event.edge),
+					GamaShape dl = GamaGeometryType.buildLink(event.scope, (IShape) graph.getEdgeSource(event.edge),
 						(IShape) graph.getEdgeTarget(event.edge));
 					createdAgent.setGeometry(dl);
 				}
 				currentEventEdge = null;
 			}
-				break;
+			break;
 			case VERTEX_ADDED: {
 				if ( currentEventVertex != event.vertex ) {
 					currentEventVertex = event.vertex;

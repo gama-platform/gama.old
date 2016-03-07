@@ -187,7 +187,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	protected Object generateEdgeObject(final Object v1, final Object v2) {
-		if ( v1 instanceof IShape && v2 instanceof IShape ) { return new GamaDynamicLink((IShape) v1, (IShape) v2); }
+		if ( v1 instanceof IShape &&
+			v2 instanceof IShape ) { return GamaGeometryType.buildLink(scope, (IShape) v1, (IShape) v2); }
 		return super.generateEdgeObject(v1, v2);
 	}
 

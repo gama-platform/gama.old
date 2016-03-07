@@ -76,10 +76,10 @@ public abstract class Spatial {
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			index_type = ITypeProvider.FIRST_KEY_TYPE)
 		@doc(value = "Allows to specify in which topology a spatial computation should take place.",
-			usages = { @usage(value = "has no effect if the topology passed as a parameter is nil") },
-			examples = { @example(value = "(agents closest_to self) using topology(world)",
-				equals = "the closest agent to self (the caller) in the continuous topology of the world",
-				test = false) })
+		usages = { @usage(value = "has no effect if the topology passed as a parameter is nil") },
+		examples = { @example(value = "(agents closest_to self) using topology(world)",
+		equals = "the closest agent to self (the caller) in the continuous topology of the world",
+		test = false) })
 		public static Object using(final IScope scope, final IExpression expression, final ITopology topology) {
 			ITopology oldTopo = scope.getTopology();
 			try {
@@ -97,14 +97,14 @@ public abstract class Spatial {
 	public static abstract class Creation {
 
 		@operator(value = "circle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A circle geometry which radius is equal to the operand.",
-			usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
-			comment = "the center of the circle is by default the location of the current agent in which has been called this operator.",
-			examples = {
-				@example(value = "circle(10)", equals = "a geometry as a circle of radius 10.", test = false) },
-			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+		usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
+		comment = "the center of the circle is by default the location of the current agent in which has been called this operator.",
+		examples = {
+			@example(value = "circle(10)", equals = "a geometry as a circle of radius 10.", test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape circle(final IScope scope, final Double radius) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -114,15 +114,15 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "ellipse", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(
 			value = "An ellipse geometry which x-radius is equal to the first operand and y-radius is equal to the second operand",
 			usages = {
 				@usage(value = "returns a point if both operands are lower or equal to 0, a line if only one is.") },
 			comment = "the center of the ellipse is by default the location of the current agent in which has been called this operator.",
 			examples = { @example(value = "ellipse(10, 10)",
-				equals = "a geometry as an ellipse of width 10 and height 10.",
-				test = false) },
+			equals = "a geometry as an ellipse of width 10 and height 10.",
+			test = false) },
 			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 				"circle", "squircle", "triangle" })
 		public static IShape ellipse(final IScope scope, final Double xRadius, final Double yRadius) {
@@ -136,14 +136,14 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "squircle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(
 			value = "A mix of square and circle geometry (see : http://en.wikipedia.org/wiki/Squircle), which side size is equal to the first operand and power is equal to the second operand",
 			usages = { @usage(value = "returns a point if the side operand is lower or equal to 0.") },
 			comment = "the center of the ellipse is by default the location of the current agent in which has been called this operator.",
 			examples = { @example(value = "squircle(4,4)",
-				equals = "a geometry as a squircle of side 4 with a power of 4.",
-				test = false) },
+			equals = "a geometry as a squircle of side 4 with a power of 4.",
+			test = false) },
 			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
 				"rectangle", "square", "circle", "ellipse", "triangle" })
 		public static IShape squicle(final IScope scope, final Double xRadius, final Double power) {
@@ -155,14 +155,14 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "arc", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(
 			value = "An arc, which radius is equal to the first operand, heading to the second and amplitude the third",
 			usages = { @usage(value = "returns a point if the radius operand is lower or equal to 0.") },
 			comment = "the center of the arc is by default the location of the current agent in which has been called this operator. This operator returns a polygon by default.",
 			examples = { @example(value = "arc(4,45,90)",
-				equals = "a geometry as an arc of radius 4, in a direction of 45° and an amplitude of 90°",
-				test = false) },
+			equals = "a geometry as an arc of radius 4, in a direction of 45° and an amplitude of 90°",
+			test = false) },
 			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
 				"rectangle", "square", "circle", "ellipse", "triangle" })
 		public static IShape arc(final IScope scope, final Double xRadius, final Double heading,
@@ -171,14 +171,14 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "arc", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = {})
+			concept = {})
 		@doc(
 			value = "An arc, which radius is equal to the first operand, heading to the second, amplitude to the third and a boolean indicating whether to return a linestring or a polygon to the fourth",
 			usages = { @usage(value = "returns a point if the radius operand is lower or equal to 0.") },
 			comment = "the center of the arc is by default the location of the current agent in which has been called this operator.",
 			examples = { @example(value = "arc(4,45,90, false)",
-				equals = "a geometry as an arc of radius 4, in a direction of 45° and an amplitude of 90°, which only contains the points on the arc",
-				test = false) },
+			equals = "a geometry as an arc of radius 4, in a direction of 45° and an amplitude of 90°, which only contains the points on the arc",
+			test = false) },
 			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
 				"rectangle", "square", "circle", "ellipse", "triangle" })
 		public static IShape arc(final IScope scope, final Double xRadius, final Double heading, final Double amplitude,
@@ -194,12 +194,12 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A cylinder geometry which radius is equal to the operand.",
-			usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
-			comment = "the center of the cylinder is by default the location of the current agent in which has been called this operator.",
-			examples = {
-				@example(value = "cylinder(10,10)", equals = "a geometry as a circle of radius 10.", test = false) },
-			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+		usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
+		comment = "the center of the cylinder is by default the location of the current agent in which has been called this operator.",
+		examples = {
+			@example(value = "cylinder(10,10)", equals = "a geometry as a circle of radius 10.", test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape cylinder(final IScope scope, final Double radius, final Double depth) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -212,13 +212,13 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A sphere geometry which radius is equal to the operand.",
-			usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
-			comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "sphere(10)",
-				equals = "a geometry as a circle of radius 10 but displays a sphere.",
-				test = false) },
-			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+		usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
+		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "sphere(10)",
+		equals = "a geometry as a circle of radius 10 but displays a sphere.",
+		test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape sphere(final IScope scope, final Double radius) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -231,13 +231,13 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A teapot geometry which radius is equal to the operand.",
-			special_cases = { "returns a point if the operand is lower or equal to 0." },
-			comment = "the centre of the teapot is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "teapot(10)",
-				equals = "a geometry as a circle of radius 10 but displays a teapot.",
-				test = false) },
-			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+		special_cases = { "returns a point if the operand is lower or equal to 0." },
+		comment = "the centre of the teapot is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "teapot(10)",
+		equals = "a geometry as a circle of radius 10 but displays a teapot.",
+		test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape teapot(final IScope scope, final Double size) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -247,15 +247,15 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "cone", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A cone geometry which min and max angles are given by the operands.",
-			special_cases = { "returns nil if the operand is nil." },
-			comment = "the center of the cone is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "cone(0, 45)",
-				equals = "a geometry as a cone with min angle is 0 and max angle is 45.",
-				test = false) },
-			see = { "around", "circle", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+		special_cases = { "returns nil if the operand is nil." },
+		comment = "the center of the cone is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "cone(0, 45)",
+		equals = "a geometry as a cone with min angle is 0 and max angle is 45.",
+		test = false) },
+		see = { "around", "circle", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape cone(final IScope scope, final Integer p1, final Integer p2) {
 			if ( p1 == null || p2 == null ) { return null; }
 			final Integer min_angle = Maths.checkHeading(p1);
@@ -280,15 +280,15 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "cone", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = {})
+			concept = {})
 		@doc(value = "A cone geometry which min and max angles are given by the operands.",
-			special_cases = { "returns nil if the operand is nil." },
-			comment = "the center of the cone is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "cone({0, 45})",
-				equals = "a geometry as a cone with min angle is 0 and max angle is 45.",
-				test = false) },
-			see = { "around", "circle", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+		special_cases = { "returns nil if the operand is nil." },
+		comment = "the center of the cone is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "cone({0, 45})",
+		equals = "a geometry as a cone with min angle is 0 and max angle is 45.",
+		test = false) },
+		see = { "around", "circle", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape cone(final IScope scope, final GamaPoint p) {
 			if ( p == null ) { return null; }
 			return cone(scope, (int) p.x, (int) p.y);
@@ -298,13 +298,13 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A cone geometry which radius is equal to the operand.",
-			special_cases = { "returns a point if the operand is lower or equal to 0." },
-			comment = "the center of the cone is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "cone3D(10.0,10.0)",
-				equals = "a geometry as a circle of radius 10 but displays a cone.",
-				test = false) },
-			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+		special_cases = { "returns a point if the operand is lower or equal to 0." },
+		comment = "the center of the cone is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "cone3D(10.0,10.0)",
+		equals = "a geometry as a circle of radius 10 but displays a cone.",
+		test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape cone3D(final IScope scope, final Double radius, final Double height) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -314,14 +314,14 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "square", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A square geometry which side size is equal to the operand.",
-			usages = { @usage(value = "returns nil if the operand is nil.") },
-			comment = "the centre of the square is by default the location of the current agent in which has been called this operator.",
-			examples = {
-				@example(value = "square(10)", equals = "a geometry as a square of side size 10.", test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
-				"triangle" })
+		usages = { @usage(value = "returns nil if the operand is nil.") },
+		comment = "the centre of the square is by default the location of the current agent in which has been called this operator.",
+		examples = {
+			@example(value = "square(10)", equals = "a geometry as a square of side size 10.", test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+		"triangle" })
 		public static IShape square(final IScope scope, final Double side_size) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -334,12 +334,12 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A cube geometry which side size is equal to the operand.",
-			usages = { @usage(value = "returns nil if the operand is nil.") },
-			comment = "the center of the cube is by default the location of the current agent in which has been called this operator.",
-			examples = {
-				@example(value = "cube(10)", equals = "a geometry as a square of side size 10.", test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
-				"triangle" })
+		usages = { @usage(value = "returns nil if the operand is nil.") },
+		comment = "the center of the cube is by default the location of the current agent in which has been called this operator.",
+		examples = {
+			@example(value = "cube(10)", equals = "a geometry as a square of side size 10.", test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+		"triangle" })
 		public static IShape cube(final IScope scope, final Double side_size) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -349,16 +349,16 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "rectangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A rectangle geometry which side sizes are given by the operands.",
-			masterDoc = true,
-			usages = { @usage(value = "returns nil if the operand is nil.") },
-			comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "rectangle({10, 5})",
-				equals = "a geometry as a rectangle with width = 10 and height = 5.",
-				test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
-				"triangle" })
+		masterDoc = true,
+		usages = { @usage(value = "returns nil if the operand is nil.") },
+		comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "rectangle({10, 5})",
+		equals = "a geometry as a rectangle with width = 10 and height = 5.",
+		test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
+		"triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint p) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -367,15 +367,15 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "rectangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = {})
+			concept = {})
 		@doc(value = "A rectangle geometry which side sizes are given by the operands.",
-			usages = { @usage(value = "returns nil if the operand is nil.") },
-			comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "rectangle(10, 5)",
-				equals = "a geometry as a rectangle with width = 10 and height = 5.",
-				test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
-				"triangle" })
+		usages = { @usage(value = "returns nil if the operand is nil.") },
+		comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "rectangle(10, 5)",
+		equals = "a geometry as a rectangle with width = 10 and height = 5.",
+		test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
+		"triangle" })
 		public static IShape rectangle(final IScope scope, final double x, final double y) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -387,14 +387,14 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A box geometry which side sizes are given by the operands.",
-			masterDoc = true,
-			usages = { @usage(value = "returns nil if the operand is nil.") },
-			comment = "the center of the box is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "box({10, 5 , 5})",
-				equals = "a geometry as a rectangle with width = 10, height = 5 depth= 5.",
-				test = false) },
-			see = { "around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
-				"square", "cube", "triangle" })
+		masterDoc = true,
+		usages = { @usage(value = "returns nil if the operand is nil.") },
+		comment = "the center of the box is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "box({10, 5 , 5})",
+		equals = "a geometry as a rectangle with width = 10, height = 5 depth= 5.",
+		test = false) },
+		see = { "around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
+			"square", "cube", "triangle" })
 		public static IShape box(final IScope scope, final GamaPoint p) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -406,13 +406,13 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 			concept = {})
 		@doc(value = "A box geometry which side sizes are given by the operands.",
-			usages = { @usage(value = "returns nil if the operand is nil.") },
-			comment = "the center of the box is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "box(10, 5 , 5)",
-				equals = "a geometry as a rectangle with width = 10, height = 5 depth= 5.",
-				test = false) },
-			see = { "around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
-				"square", "cube", "triangle" })
+		usages = { @usage(value = "returns nil if the operand is nil.") },
+		comment = "the center of the box is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "box(10, 5 , 5)",
+		equals = "a geometry as a rectangle with width = 10, height = 5 depth= 5.",
+		test = false) },
+		see = { "around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
+			"square", "cube", "triangle" })
 		public static IShape box(final IScope scope, final double x, final double y, final double z) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -421,15 +421,15 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "triangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A triangle geometry which side size is given by the operand.",
-			usages = { @usage("returns nil if the operand is nil.") },
-			comment = "the center of the triangle is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "triangle(5)",
-				equals = "a geometry as a triangle with side_size = 5.",
-				test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
-				"square" })
+		usages = { @usage("returns nil if the operand is nil.") },
+		comment = "the center of the triangle is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "triangle(5)",
+		equals = "a geometry as a triangle with side_size = 5.",
+		test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+		"square" })
 		public static IShape triangle(final IScope scope, final Double side_size) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -442,12 +442,12 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
 		@doc(value = "A square geometry which side size is given by the operand.",
-			usages = { @usage(value = "returns nil if the operand is nil.") },
-			comment = "the center of the pyramid is by default the location of the current agent in which has been called this operator.",
-			examples = {
-				@example(value = "pyramid(5)", equals = "a geometry as a square with side_size = 5.", test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
-				"square" })
+		usages = { @usage(value = "returns nil if the operand is nil.") },
+		comment = "the center of the pyramid is by default the location of the current agent in which has been called this operator.",
+		examples = {
+			@example(value = "pyramid(5)", equals = "a geometry as a square with side_size = 5.", test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+		"square" })
 		public static IShape pyramid(final IScope scope, final Double side_size) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -457,16 +457,16 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "hexagon", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc(value = "A hexagon geometry which the given with and height",
-			masterDoc = true,
-			usages = { @usage("returns nil if the operand is nil.") },
-			comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "hexagon(10)",
-				equals = "a geometry as a hexagon of width of 10 and height of 10.",
-				test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
-				"triangle" })
+		masterDoc = true,
+		usages = { @usage("returns nil if the operand is nil.") },
+		comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "hexagon(10)",
+		equals = "a geometry as a hexagon of width of 10 and height of 10.",
+		test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+		"triangle" })
 		public static IShape hexagon(final IScope scope, final Double size) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -479,13 +479,13 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 			concept = { IConcept.THREED })
 		@doc(value = "A hexagon geometry which the given with and height",
-			usages = { @usage("returns nil if the operand is nil.") },
-			comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "hexagon({10,5})",
-				equals = "a geometry as a hexagon of width of 10 and height of 5.",
-				test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
-				"triangle" })
+		usages = { @usage("returns nil if the operand is nil.") },
+		comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
+		examples = { @example(value = "hexagon({10,5})",
+		equals = "a geometry as a hexagon of width of 10 and height of 5.",
+		test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+		"triangle" })
 		public static IShape hexagon(final IScope scope, final GamaPoint size) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
@@ -501,14 +501,14 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
 		@doc(value = "A polygon geometry from the given list of points.",
-			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
-				@usage(value = "if the operand is composed of a single point, returns a point geometry"),
-				@usage(value = "if the operand is composed of 2 points, returns a polyline geometry.") },
-			examples = { @example(value = "polygon([{0,0}, {0,10}, {10,10}, {10,0}])",
-				equals = "a polygon geometry composed of the 4 points.",
-				test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square",
-				"triangle" })
+		usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
+			@usage(value = "if the operand is composed of a single point, returns a point geometry"),
+			@usage(value = "if the operand is composed of 2 points, returns a polyline geometry.") },
+		examples = { @example(value = "polygon([{0,0}, {0,10}, {10,10}, {10,0}])",
+		equals = "a polygon geometry composed of the 4 points.",
+		test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape polygon(final IScope scope, final IContainer<?, ? extends IShape> points) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now replaced by a copy of the list (see Issue 740)
@@ -528,14 +528,14 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
 		@doc(value = "A polyhedron geometry from the given list of points.",
-			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
-				@usage(value = "" + "if the operand is composed of a single point, returns a point geometry"),
-				@usage(value = "if the operand is composed of 2 points, returns a polyline geometry.") },
-			examples = { @example(value = "polyhedron([{0,0}, {0,10}, {10,10}, {10,0}],10)",
-				equals = "a polygon geometry composed of the 4 points and of depth 10.",
-				test = false) },
-			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square",
-				"triangle" })
+		usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
+			@usage(value = "" + "if the operand is composed of a single point, returns a point geometry"),
+			@usage(value = "if the operand is composed of 2 points, returns a polyline geometry.") },
+		examples = { @example(value = "polyhedron([{0,0}, {0,10}, {10,10}, {10,0}],10)",
+		equals = "a polygon geometry composed of the 4 points and of depth 10.",
+		test = false) },
+		see = { "around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape polyhedron(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now replaced by a copy of the list (see Issue 740)
@@ -556,12 +556,12 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
 		@doc(value = "A quadratic Bezier curve geometry built from the three given points composed of 10 points.",
-			usages = { @usage(value = "if the operand is nil, returns nil") },
-			examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
-				equals = "a quadratic Bezier curve geometry composed of 10 points from p0 to p2.",
-				test = false) },
-			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle",
-				"line" })
+		usages = { @usage(value = "if the operand is nil, returns nil") },
+		examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
+		equals = "a quadratic Bezier curve geometry composed of 10 points from p0 to p2.",
+		test = false) },
+		see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle",
+		"line" })
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 			final GamaPoint P2) {
 			if ( P0 == null || P1 == null || P2 == null ) { return null; }
@@ -577,10 +577,10 @@ public abstract class Spatial {
 			usages = { @usage(value = "if the operand is nil, returns nil"),
 				@usage(value = "if the last operand (number of points) is inferior to 2, returns nil") },
 			examples = { @example(value = "curve({0,0}, {0,10}, {10,10}, 20)",
-				equals = "a quadratic Bezier curve geometry composed of 20 points from p0 to p2.",
-				test = false) },
+			equals = "a quadratic Bezier curve geometry composed of 20 points from p0 to p2.",
+			test = false) },
 			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle",
-				"line" })
+			"line" })
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
 			final int nbPoints) {
 			if ( P0 == null || P1 == null || P2 == null || nbPoints < 2 ) { return null; }
@@ -592,12 +592,12 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 			concept = {})
 		@doc(value = "A cubic Bezier curve geometry built from the four given points composed of 10 points.",
-			usages = { @usage(value = "if the operand is nil, returns nil") },
-			examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
-				equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p3.",
-				test = false) },
-			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle",
-				"line" })
+		usages = { @usage(value = "if the operand is nil, returns nil") },
+		examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
+		equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p3.",
+		test = false) },
+		see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle",
+		"line" })
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
 			final GamaPoint P3) {
 			if ( P0 == null || P1 == null || P2 == null || P3 == null ) { return null; }
@@ -613,10 +613,10 @@ public abstract class Spatial {
 			usages = { @usage(value = "if the operand is nil, returns nil"),
 				@usage(value = "if the last operand (number of points) is inferior to 2, returns nil") },
 			examples = { @example(value = "curve({0,0}, {0,10}, {10,10})",
-				equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p3.",
-				test = false) },
+			equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p3.",
+			test = false) },
 			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle",
-				"line" })
+			"line" })
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
 			final GamaPoint P3, final int nbPoints) {
 			if ( P0 == null || P1 == null || P2 == null || P3 == null || nbPoints < 2 ) { return null; }
@@ -662,13 +662,13 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
 		@doc(value = "A polyline geometry from the given list of points.",
-			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
-				@usage(value = "if the operand is composed of a single point, returns a point geometry.") },
-			examples = { @example(value = "polyline([{0,0}, {0,10}, {10,10}, {10,0}])",
-				equals = "a polyline geometry composed of the 4 points.",
-				test = false) },
-			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
-				"triangle" })
+		usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
+			@usage(value = "if the operand is composed of a single point, returns a point geometry.") },
+		examples = { @example(value = "polyline([{0,0}, {0,10}, {10,10}, {10,0}])",
+		equals = "a polyline geometry composed of the 4 points.",
+		test = false) },
+		see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+		"triangle" })
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
@@ -683,13 +683,13 @@ public abstract class Spatial {
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
 		@doc(value = "A geometry collection (multi-geometry) composed of the given list of geometries.",
-			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
-				@usage(value = "if the operand is composed of a single geometry, returns a copy of the geometry.") },
-			examples = { @example(value = "geometry_collection([{0,0}, {0,10}, {10,10}, {10,0}])",
-				equals = "a geometry composed of the 4 points (multi-point).",
-				test = false) },
-			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle",
-				"line" })
+		usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
+			@usage(value = "if the operand is composed of a single geometry, returns a copy of the geometry.") },
+		examples = { @example(value = "geometry_collection([{0,0}, {0,10}, {10,10}, {10,0}])",
+		equals = "a geometry composed of the 4 points (multi-point).",
+		test = false) },
+		see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle",
+		"line" })
 		public static IShape geometryCollection(final IScope scope, final IContainer<?, IShape> geometries) {
 			if ( geometries == null || geometries.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = geometries.listValue(scope, Types.NO_TYPE, false);
@@ -704,14 +704,14 @@ public abstract class Spatial {
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
 		@doc(value = "A polyline geometry from the given list of points represented as a cylinder of radius r.",
-			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
-				@usage(value = "if the operand is composed of a single point, returns a point geometry."),
-				@usage(value = "if a radius is added, the given list of points represented as a cylinder of radius r",
-					examples = { @example(value = "polyline([{0,0}, {0,10}, {10,10}, {10,0}],0.2)",
-						equals = "a polyline geometry composed of the 4 points.",
-						test = false) }) },
-			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
-				"triangle" })
+		usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
+			@usage(value = "if the operand is composed of a single point, returns a point geometry."),
+			@usage(value = "if a radius is added, the given list of points represented as a cylinder of radius r",
+			examples = { @example(value = "polyline([{0,0}, {0,10}, {10,10}, {10,0}],0.2)",
+			equals = "a polyline geometry composed of the 4 points.",
+			test = false) }) },
+		see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+		"triangle" })
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points, final double radius) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
@@ -726,13 +726,13 @@ public abstract class Spatial {
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
 		@doc(value = "A polyline geometry from the given list of points.",
-			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
-				@usage(value = "if the operand is composed of a single point, returns a point geometry.") },
-			examples = { @example(value = "polyplan([{0,0}, {0,10}, {10,10}, {10,0}],10)",
-				equals = "a polyline geometry composed of the 4 points with a depth of 10.",
-				test = false) },
-			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
-				"triangle" })
+		usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
+			@usage(value = "if the operand is composed of a single point, returns a point geometry.") },
+		examples = { @example(value = "polyplan([{0,0}, {0,10}, {10,10}, {10,0}],10)",
+		equals = "a polyline geometry composed of the 4 points with a depth of 10.",
+		test = false) },
+		see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+		"triangle" })
 		public static IShape plan(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
@@ -744,31 +744,57 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "link" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.SHAPE, IConcept.SPATIAL_COMPUTATION, IConcept.GEOMETRY })
+			concept = { IConcept.SHAPE, IConcept.SPATIAL_COMPUTATION, IConcept.GEOMETRY })
 		@doc(value = "A link between the 2 elements of the pair.",
-			usages = { @usage("if the operand is nil, link returns a point {0,0}"),
-				@usage("if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species") },
-			comment = "The geometry of the link is the intersection of the two geometries when they intersect, and a line between their centroids when they do not.",
-			examples = { @example(value = "link (geom1::geom2)",
-				equals = "a link geometry between geom1 and geom2.",
-				isExecutable = false) },
-			see = { "around", "circle", "cone", "line", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+		deprecated = "Use link(g1, g2) instead",
+		usages = { @usage("if the operand is nil, link returns a point {0,0}"),
+			@usage("if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species") },
+			comment = "The geometry of the link is a line between the locations of the two elements of the pair, which is built and maintained dynamically ",
+		examples = { @example(value = "link (geom1::geom2)",
+		equals = "a link geometry between geom1 and geom2.",
+		isExecutable = false) },
+		see = { "around", "circle", "cone", "line", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
 		public static IShape link(final IScope scope, final GamaPair points) throws GamaRuntimeException {
 			if ( points == null ||
 				points.first() == null && points.last() == null ) { return new GamaShape(new GamaPoint(0, 0)); }
 			return GamaGeometryType.pairToGeometry(scope, points);
 		}
 
+		@operator(value = { "link" },
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+			concept = { IConcept.SHAPE, IConcept.SPATIAL_COMPUTATION, IConcept.GEOMETRY })
+		@doc(value = "A dynamic line geometry between the location of the two operands",
+		usages = {
+			@usage("if one of the operands is nil, link returns a point geometry at the location of the other. If both are null, it returns a point geometry at {0,0}"), },
+		comment = "The geometry of the link is a line between the locations of the two operands, which is built and maintained dynamically ",
+		examples = { @example(value = "link (geom1,geom2)",
+		equals = "a link geometry between geom1 and geom2.",
+		isExecutable = false) },
+		see = { "around", "circle", "cone", "line", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
+		public static IShape link(final IScope scope, final IShape source, final IShape target)
+			throws GamaRuntimeException {
+			if ( source == null ) {
+				if ( target == null ) {
+					return new GamaPoint(0, 0);
+				} else {
+					return GamaGeometryType.createPoint(target.getLocation());
+				}
+			}
+			if ( target == null ) { return GamaGeometryType.createPoint(source.getLocation()); }
+			return GamaGeometryType.buildLink(scope, source, target);
+		}
+
 		@operator(value = "around", category = { IOperatorCategory.SPATIAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(
 			value = "A geometry resulting from the difference between a buffer around the right-operand casted in geometry at a distance left-operand (right-operand buffer left-operand) and the right-operand casted as geometry.",
 			usages = { @usage(value = "returns a circle geometry of radius right-operand if the left-operand is nil") },
 			examples = {
 				@example(value = "10 around circle(5)", equals = "the ring geometry between 5 and 10.", test = false) },
 			see = { "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+			"triangle" })
 		public static IShape around(final IScope scope, final Double width, final Object toBeCastedIntoGeometry)
 			throws GamaRuntimeException {
 			final IShape g = Cast.asGeometry(scope, toBeCastedIntoGeometry, false);
@@ -794,7 +820,7 @@ public abstract class Spatial {
 		 */
 
 		@operator(value = "envelope", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(
 			value = "A 3D geometry that represents the box that surrounds the geometries or the surface described by the arguments. More general than geometry(arguments).envelope, as it allows to pass int, double, point, image files, shape files, asc files, or any list combining these arguments, in which case the envelope will be correctly expanded. If an envelope cannot be determined from the arguments, a default one of dimensions (0,100, 0, 100, 0, 100) is returned")
 		public static IShape envelope(final IScope scope, final Object obj) {
@@ -812,9 +838,9 @@ public abstract class Spatial {
 
 		@operator(value = { "inter", "intersection" }, category = { IOperatorCategory.SPATIAL })
 		@doc(value = "A geometry resulting from the intersection between the two geometries",
-			special_cases = { "returns nil if one of the operands is nil" },
-			examples = { @example(value = "square(10) inter circle(5)", equals = "circle(5)") },
-			see = { "union", "+", "-" })
+		special_cases = { "returns nil if one of the operands is nil" },
+		examples = { @example(value = "square(10) inter circle(5)", equals = "circle(5)") },
+		see = { "union", "+", "-" })
 		public static IShape inter(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g2 == null || g1 == null ) { return null; }
 			if ( g2.isPoint() && g1.covers(g2.getLocation()) ) { return g2.copy(scope); }
@@ -843,12 +869,12 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "+", "union" }, category = { IOperatorCategory.SPATIAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(usages = @usage(
 			value = "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries",
 			examples = @example(value = "geom1 + geom2",
-				equals = "a geometry corresponding to union between geom1 and geom2",
-				isExecutable = false)))
+			equals = "a geometry corresponding to union between geom1 and geom2",
+			isExecutable = false)))
 		public static IShape union(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null ) {
 				if ( g2 == null ) { return null; }
@@ -884,8 +910,8 @@ public abstract class Spatial {
 			usages = { @usage(
 				value = "if the right-operand is a container of points, geometries or agents, returns the geometry resulting from the union all the geometries") },
 			examples = { @example(value = "union([geom1, geom2, geom3])",
-				equals = "a geometry corresponding to union between geom1, geom2 and geom3",
-				isExecutable = false) })
+			equals = "a geometry corresponding to union between geom1, geom2 and geom3",
+			isExecutable = false) })
 		public static IShape union(final IScope scope, final IContainer<?, IShape> elements) {
 			try {
 				return Cast.asGeometry(scope, elements, false);
@@ -895,12 +921,12 @@ public abstract class Spatial {
 		}
 
 		@operator(value = IKeyword.MINUS, category = { IOperatorCategory.SPATIAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(usages = @usage(
 			value = "if both operands are a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries",
 			examples = @example(value = "geom1 - geom2",
-				equals = "a geometry corresponding to difference between geom1 and geom2",
-				isExecutable = false)))
+			equals = "a geometry corresponding to difference between geom1 and geom2",
+			isExecutable = false)))
 		public static IShape minus(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null || g1.getInnerGeometry() == null ||
 				g2.getInnerGeometry() == null ) { return g1; }
@@ -910,11 +936,11 @@ public abstract class Spatial {
 		}
 
 		@operator(value = IKeyword.MINUS, category = { IOperatorCategory.SPATIAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(usages = @usage(
 			value = "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries",
 			examples = @example(value = "rectangle(10,10) - [circle(2), square(2)]",
-				equals = "rectangle(10,10) - (circle(2) + square(2))")))
+			equals = "rectangle(10,10) - (circle(2) + square(2))")))
 		public static IShape minus(final IScope scope, final IShape g1, final IContainer<?, IShape> agents) {
 			if ( g1 == null || agents == null || g1.getInnerGeometry() == null || agents.isEmpty(scope) ) { return g1; }
 			Geometry geom1 = GeometryUtils.FACTORY.createGeometry(g1.getInnerGeometry());
@@ -953,11 +979,11 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "add_point" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
-				concept = { IConcept.POINT, IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
+			concept = { IConcept.POINT, IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc(value = "A geometry resulting from the addition of the right point (coordinate) to the left-hand geometry",
-			examples = { @example(value = "polygon([{10,10},{10,20},{20,20}]) add_point {20,10}",
-				returnType = "geometry",
-				equals = "polygon([{10,10},{10,20},{20,20},{20,10}])") })
+		examples = { @example(value = "polygon([{10,10},{10,20},{20,20}]) add_point {20,10}",
+		returnType = "geometry",
+		equals = "polygon([{10,10},{10,20},{20,20},{20,10}])") })
 		public static IShape add_point(final IScope scope, final IShape g, final ILocation p) {
 			if ( p == null ) { return g; }
 			final Coordinate point = (Coordinate) p;
@@ -1083,71 +1109,71 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "masked_by", category = { IOperatorCategory.SPATIAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.OBSTACLE })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.OBSTACLE })
 		@doc(examples = { @example(value = "perception_geom masked_by obstacle_list",
-			equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
-			isExecutable = false) })
+		equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
+		isExecutable = false) })
 		public static IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IShape> obstacles,
 			Integer precision) {
 			final IAgent a = scope.getAgentScope();
 			List<IShape> obst =
 				obstacles == null ? new ArrayList<IShape>() : obstacles.listValue(scope, Types.GEOMETRY, false);
-			final ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			if ( precision == null ) {
-				precision = 120;
-			}
-			final Geometry visiblePercept = GeometryUtils.FACTORY.createGeometry(source.getInnerGeometry());
-			boolean isPoint = source.isPoint();
-			if ( obstacles != null && !obstacles.isEmpty(scope) ) {
-				final Geometry pt = GeometryUtils.FACTORY.createPoint(location.toCoordinate());
-				final Geometry locG = pt.buffer(0.01).getEnvelope();
-				double percep_dist = 0;
-				for ( ILocation p : source.getPoints() ) {
-					double dist = location.euclidianDistanceTo(p);
-					if ( dist > percep_dist ) {
-						percep_dist = dist;
-					}
+				final ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+				if ( precision == null ) {
+					precision = 120;
 				}
-				final Geometry gbuff = pt.buffer(percep_dist, precision / 4);
-				final List<IShape> geoms = new ArrayList<IShape>();
-				for ( int k = 1; k < gbuff.getNumPoints(); k++ ) {
-
-					final Coordinate[] coordinates = new Coordinate[4];
-					coordinates[0] = location.toCoordinate();
-					coordinates[1] = gbuff.getCoordinates()[k - 1];
-					coordinates[2] = gbuff.getCoordinates()[k];
-					coordinates[3] = location.toCoordinate();
-					final LinearRing closeRing = GeometryUtils.FACTORY.createLinearRing(coordinates);
-					Geometry gg = source.getGeometry().getInnerGeometry()
-						.intersection(GeometryUtils.FACTORY.createPolygon(closeRing, null));
-					if ( isPoint || !(gg instanceof Point) ) {
-						geoms.add(new GamaShape(gg));
-					}
-				}
-				final GamaList geomsVisible = (GamaList) GamaListFactory.create();
-				final PreparedGeometry ref = PreparedGeometryFactory.prepare(locG);
-
-				for ( final IShape geom : geoms ) {
-					if ( !intersection(geom, obst) ) {
-						geomsVisible.addValue(scope, geom);
-					} else {
-						IShape perceptReal = difference(geom, obst, ref);
-
-						if ( perceptReal != null && (isPoint || !perceptReal.isPoint()) ) {
-							geomsVisible.addValue(scope, perceptReal);
+				final Geometry visiblePercept = GeometryUtils.FACTORY.createGeometry(source.getInnerGeometry());
+				boolean isPoint = source.isPoint();
+				if ( obstacles != null && !obstacles.isEmpty(scope) ) {
+					final Geometry pt = GeometryUtils.FACTORY.createPoint(location.toCoordinate());
+					final Geometry locG = pt.buffer(0.01).getEnvelope();
+					double percep_dist = 0;
+					for ( ILocation p : source.getPoints() ) {
+						double dist = location.euclidianDistanceTo(p);
+						if ( dist > percep_dist ) {
+							percep_dist = dist;
 						}
 					}
-				}
-				if ( !geomsVisible.isEmpty(scope) ) {
-					IShape result = Cast.asGeometry(scope, geomsVisible, false);
-					if ( result.getInnerGeometry() instanceof GeometryCollection ) {
-						result = Spatial.Transformations.enlarged_by(scope, result, 0.1);
+					final Geometry gbuff = pt.buffer(percep_dist, precision / 4);
+					final List<IShape> geoms = new ArrayList<IShape>();
+					for ( int k = 1; k < gbuff.getNumPoints(); k++ ) {
+
+						final Coordinate[] coordinates = new Coordinate[4];
+						coordinates[0] = location.toCoordinate();
+						coordinates[1] = gbuff.getCoordinates()[k - 1];
+						coordinates[2] = gbuff.getCoordinates()[k];
+						coordinates[3] = location.toCoordinate();
+						final LinearRing closeRing = GeometryUtils.FACTORY.createLinearRing(coordinates);
+						Geometry gg = source.getGeometry().getInnerGeometry()
+							.intersection(GeometryUtils.FACTORY.createPolygon(closeRing, null));
+						if ( isPoint || !(gg instanceof Point) ) {
+							geoms.add(new GamaShape(gg));
+						}
 					}
-					return result;
+					final GamaList geomsVisible = (GamaList) GamaListFactory.create();
+					final PreparedGeometry ref = PreparedGeometryFactory.prepare(locG);
+
+					for ( final IShape geom : geoms ) {
+						if ( !intersection(geom, obst) ) {
+							geomsVisible.addValue(scope, geom);
+						} else {
+							IShape perceptReal = difference(geom, obst, ref);
+
+							if ( perceptReal != null && (isPoint || !perceptReal.isPoint()) ) {
+								geomsVisible.addValue(scope, perceptReal);
+							}
+						}
+					}
+					if ( !geomsVisible.isEmpty(scope) ) {
+						IShape result = Cast.asGeometry(scope, geomsVisible, false);
+						if ( result.getInnerGeometry() instanceof GeometryCollection ) {
+							result = Spatial.Transformations.enlarged_by(scope, result, 0.1);
+						}
+						return result;
+					}
+					return null;
 				}
-				return null;
-			}
-			return new GamaShape(visiblePercept);
+				return new GamaShape(visiblePercept);
 		}
 
 		private static boolean intersection(final IShape geom, final List<IShape> geoms) {
@@ -1190,19 +1216,19 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "masked_by", category = { IOperatorCategory.SPATIAL },
-				concept = {})
+			concept = {})
 		@doc(examples = { @example(value = "perception_geom masked_by obstacle_list",
-			equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
-			isExecutable = false) })
+		equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
+		isExecutable = false) })
 		public static IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IShape> obstacles) {
 			return masked_by(scope, source, obstacles, null);
 		}
 
 		@operator(value = "split_at", content_type = IType.GEOMETRY, category = { IOperatorCategory.SPATIAL })
 		@doc(value = "The two part of the left-operand lines split at the given right-operand point",
-			usages = { @usage("if the left-operand is a point or a polygon, returns an empty list") },
-			examples = { @example(value = "polyline([{1,2},{4,6}]) split_at {7,6}",
-				equals = "[polyline([{1.0,2.0},{7.0,6.0}]), polyline([{7.0,6.0},{4.0,6.0}])]") })
+		usages = { @usage("if the left-operand is a point or a polygon, returns an empty list") },
+		examples = { @example(value = "polyline([{1,2},{4,6}]) split_at {7,6}",
+		equals = "[polyline([{1.0,2.0},{7.0,6.0}]), polyline([{7.0,6.0},{4.0,6.0}])]") })
 		public static IList<IShape> split_at(final IShape geom, final ILocation pt) {
 			final IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
 			List<Geometry> geoms = null;
@@ -1303,11 +1329,11 @@ public abstract class Spatial {
 	public static abstract class Transformations {
 
 		@operator(value = "convex_hull", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "A geometry corresponding to the convex hull of the operand.",
-			examples = { @example(value = "convex_hull(self)",
-				equals = "the convex hull of the geometry of the agent applying the operator",
-				test = false) })
+		examples = { @example(value = "convex_hull(self)",
+		equals = "the convex hull of the geometry of the agent applying the operator",
+		test = false) })
 		public static IShape convex_hull(final IScope scope, final IShape g) {
 			return new GamaShape(g, g.getInnerGeometry().convexHull());
 		}
@@ -1334,8 +1360,8 @@ public abstract class Spatial {
 		@doc(usages = { @usage(
 			value = "if the left-hand operand is a geometry and the right-hand operand a point, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficients in the 3 dimensions",
 			examples = { @example(value = "shape * {0.5,0.5,2}",
-				equals = "a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 0.5 in x, 0.5 in y and 2 in z",
-				test = false) }) })
+			equals = "a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 0.5 in x, 0.5 in y and 2 in z",
+			test = false) }) })
 		public static IShape scaled_by(final IScope scope, final IShape g, final GamaPoint coefficients) {
 			return new GamaShape(g, null, null, null, coefficients, false);
 			// return g1.scaledBy(scope, coefficient);
@@ -1349,8 +1375,8 @@ public abstract class Spatial {
 		@doc(
 			value = "allows to restrict the size of a geometry so that it fits in the envelope {width, height, depth} defined by the second operand",
 			examples = { @example(value = "shape scaled_to {10,10}",
-				equals = "a geometry corresponding to the geometry of the agent applying the operator scaled so that it fits a square of 10x10",
-				test = false) })
+			equals = "a geometry corresponding to the geometry of the agent applying the operator scaled so that it fits a square of 10x10",
+			test = false) })
 		public static IShape scaled_to(final IScope scope, final IShape g, final GamaPoint bounds) {
 			return new GamaShape(g, null, null, null, bounds, true);
 			// final GamaShape g1 = g.asShapeWithGeometry(scope, null);
@@ -1363,11 +1389,11 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "",
-			usages = @usage(
-				value = "if the left-hand operand is a geometry and the right-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters",
-				examples = @example(value = "shape + [\"distance\"::5.0, \"quadrantSegments\"::4, \"endCapStyle\":: 2]",
-					equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment",
-					test = false)))
+		usages = @usage(
+			value = "if the left-hand operand is a geometry and the right-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters",
+			examples = @example(value = "shape + [\"distance\"::5.0, \"quadrantSegments\"::4, \"endCapStyle\":: 2]",
+			equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment",
+			test = false)))
 		public static IShape enlarged_by(final IScope scope, final IShape g, final GamaMap parameters) {
 			final Double distance = (Double) parameters.get("distance");
 			final Integer quadrantSegments = (Integer) parameters.get("quadrantSegments");
@@ -1383,8 +1409,8 @@ public abstract class Spatial {
 		@doc(usages = { @usage(
 			value = "if the left-hand operand is a geometry and the right-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance",
 			examples = { @example(value = "circle(5) + 5",
-				// equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5", test = false
-				equals = "circle(10)") }) })
+			// equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5", test = false
+			equals = "circle(10)") }) })
 		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size) {
 			if ( g == null ) { return null; }
 			Geometry gg = g.getInnerGeometry().buffer(size);
@@ -1398,8 +1424,8 @@ public abstract class Spatial {
 		@doc(usages = { @usage(
 			value = "if the left-hand operand is a geometry and the right-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance",
 			examples = { @example(value = "shape - 5",
-				equals = "a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5",
-				test = false) }) })
+			equals = "a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5",
+			test = false) }) })
 		public static IShape reduced_by(final IScope scope, final IShape g, final Double size) {
 			if ( g == null ) { return null; }
 			return enlarged_by(scope, g, -size);
@@ -1413,13 +1439,13 @@ public abstract class Spatial {
 		 *
 		 */
 		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A geometry resulting from the application of a rotation by the right-hand operand angle (degree) to the left-hand operand (geometry, agent, point)",
 			masterDoc = true,
 			examples = { @example(value = "self rotated_by 45",
-				equals = "the geometry resulting from a 45 degrees rotation to the geometry of the agent applying the operator.",
-				test = false) },
+			equals = "the geometry resulting from a 45 degrees rotation to the geometry of the agent applying the operator.",
+			test = false) },
 			see = { "transformed_by", "translated_by" })
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double angle) {
 			if ( g1 == null ) { return null; }
@@ -1430,13 +1456,13 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(
 			value = "A geometry resulting from the application of a rotation by the right-hand operand angles (degree) along the three axis (x,y,z) to the left-hand operand (geometry, agent, point)",
 			masterDoc = true,
 			examples = { @example(value = "rotated_by(pyramid(10),45, {1,0,0})",
-				equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of the agent applying the operator.",
-				test = false) },
+			equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of the agent applying the operator.",
+			test = false) },
 			see = { "transformed_by", "translated_by" })
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double rotation,
 			final GamaPoint vector) {
@@ -1445,7 +1471,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "rotated_by", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
-				concept = {})
+			concept = {})
 		@doc(comment = "the right-hand operand can be a float or a int")
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Integer angle) {
 			if ( g1 == null ) { return null; }
@@ -1472,8 +1498,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A geometry resulting from the application of a rotation and a scaling (right-operand : point {angle(degree), scale factor} of the left-hand operand (geometry, agent, point)",
 			examples = { @example(value = "self transformed_by {45, 0.5}",
-				equals = "the geometry resulting from 45 degrees rotation and 50% scaling of the geometry of the agent applying the operator.",
-				test = false) },
+			equals = "the geometry resulting from 45 degrees rotation and 50% scaling of the geometry of the agent applying the operator.",
+			test = false) },
 			see = { "rotated_by", "translated_by" })
 		public static IShape transformed_by(final IScope scope, final IShape g, final GamaPoint p) {
 			if ( g == null ) { return null; }
@@ -1493,8 +1519,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A geometry resulting from the application of a translation by the right-hand operand distance to the left-hand operand (geometry, agent, point)",
 			examples = { @example(value = "self translated_by {10,10,10}",
-				equals = "the geometry resulting from applying the translation to the left-hand geometry (or agent).",
-				test = false) },
+			equals = "the geometry resulting from applying the translation to the left-hand geometry (or agent).",
+			test = false) },
 			see = { "rotated_by", "transformed_by" })
 		public static IShape translated_by(final IScope scope, final IShape g, final GamaPoint p)
 			throws GamaRuntimeException {
@@ -1508,8 +1534,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A geometry resulting from the tran of a translation to the right-hand operand point of the left-hand operand (geometry, agent, point)",
 			examples = { @example(value = "self at_location {10, 20}",
-				equals = "the geometry resulting from a translation to the location {10, 20} of the left-hand geometry (or agent).",
-				test = false) })
+			equals = "the geometry resulting from a translation to the location {10, 20} of the left-hand geometry (or agent).",
+			test = false) })
 		public static IShape at_location(final IScope scope, final IShape g, final ILocation p)
 			throws GamaRuntimeException {
 			if ( g == null ) { return null; }
@@ -1520,9 +1546,9 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.AGENT_LOCATION })
 		@doc(value = "A geometry corresponding to the operand geometry (geometry, agent, point) without its holes",
-			examples = { @example(value = "solid(self)",
-				equals = "the geometry corresponding to the geometry of the agent applying the operator without its holes.",
-				test = false) })
+		examples = { @example(value = "solid(self)",
+		equals = "the geometry corresponding to the geometry of the agent applying the operator without its holes.",
+		test = false) })
 		public static IShape without_holes(final IScope scope, final IShape g) {
 			if ( g == null ) { return null; }
 			final Geometry geom = g.getInnerGeometry();
@@ -1551,8 +1577,8 @@ public abstract class Spatial {
 			value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)",
 			masterDoc = true,
 			examples = { @example(value = "triangulate(self)",
-				equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
-				test = false) })
+			equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
+			test = false) })
 		public static IList<IShape> triangulate(final IScope scope, final IShape g) {
 			if ( g == null ) { return null; }
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry());
@@ -1565,8 +1591,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries",
 			examples = { @example(value = "triangulate(self)",
-				equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
-				test = false) })
+			equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
+			test = false) })
 		public static IList<IShape> triangulate(final IScope scope, final IList<IShape> ls) {
 			return GeometryUtils.triangulation(scope, ls);
 		}
@@ -1576,10 +1602,10 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "A list of geometries corresponding to the Voronoi diagram built from the list of points",
-			masterDoc = true,
-			examples = { @example(value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}])",
-				equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points.",
-				test = false) })
+		masterDoc = true,
+		examples = { @example(value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}])",
+		equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points.",
+		test = false) })
 		public static IList<IShape> vornoi(final IScope scope, final IList<GamaPoint> pts) {
 			if ( pts == null ) { return null; }
 			return GeometryUtils.voronoi(scope, pts);
@@ -1593,8 +1619,8 @@ public abstract class Spatial {
 			value = "A list of geometries corresponding to the Voronoi diagram built from the list of points according to the given clip",
 			masterDoc = true,
 			examples = { @example(value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}], square(300))",
-				equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points with a square of 300m side size as clip.",
-				test = false) })
+			equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points with a square of 300m side size as clip.",
+			test = false) })
 		public static IList<IShape> vornoi(final IScope scope, final IList<GamaPoint> pts, final IShape clip) {
 			if ( pts == null ) { return null; }
 			return GeometryUtils.voronoi(scope, pts, clip);
@@ -1622,8 +1648,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of squares of the size corresponding to the given size that result from the decomposition of the geometry into squares (geometry, size, overlaps), if overlaps = true, add the squares that overlap the border of the geometry",
 			examples = { @example(value = "to_squares(self, 10.0, true)",
-				equals = "the list of squares of side size 10.0 corresponding to the discretization into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
-				test = false) })
+			equals = "the list of squares of side size 10.0 corresponding to the discretization into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
+			test = false) })
 		public static IList<IShape> toSquares(final IScope scope, final IShape geom, final Double dimension,
 			final boolean overlaps) {
 			if ( geom == null ||
@@ -1639,8 +1665,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of a given number of squares from the decomposition of the geometry into squares (geometry, nb_square, overlaps), if overlaps = true, add the squares that overlap the border of the geometry",
 			examples = { @example(value = "to_squares(self, 10, true)",
-				equals = "the list of 10 squares corresponding to the discretization into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
-				test = false) })
+			equals = "the list of 10 squares corresponding to the discretization into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
+			test = false) })
 		public static IList<IShape> toSquares(final IScope scope, final IShape geom, final Integer nbSquares,
 			final boolean overlaps) {
 			if ( geom == null ||
@@ -1656,8 +1682,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of a given number of squares from the decomposition of the geometry into squares (geometry, nb_square, overlaps, precision_coefficient), if overlaps = true, add the squares that overlap the border of the geometry, coefficient_precision should be close to 1.0",
 			examples = { @example(value = "to_squares(self, 10, true, 0.99)",
-				equals = "the list of 10 squares corresponding to the discretization into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
-				test = false) })
+			equals = "the list of 10 squares corresponding to the discretization into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
+			test = false) })
 		public static IList<IShape> toSquares(final IScope scope, final IShape geom, final Integer nbSquares,
 			final boolean overlaps, final double precision) {
 			if ( geom == null ||
@@ -1672,8 +1698,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of rectangles of the size corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, dimension, overlaps), if overlaps = true, add the rectangles that overlap the border of the geometry",
 			examples = { @example(value = "to_rectangles(self, {10.0, 15.0}, true)",
-				equals = "the list of rectangles of size {10.0, 15.0} corresponding to the discretization into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",
-				test = false) })
+			equals = "the list of rectangles of size {10.0, 15.0} corresponding to the discretization into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",
+			test = false) })
 		public static IList<IShape> to_rectangle(final IScope scope, final IShape geom, final GamaPoint dimension,
 			final boolean overlaps) {
 			if ( geom == null ||
@@ -1689,8 +1715,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of rectangles corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, nb_cols, nb_rows, overlaps) by a grid composed of the given number of columns and rows, if overlaps = true, add the rectangles that overlap the border of the geometry",
 			examples = { @example(value = "to_rectangles(self, 5, 20, true)",
-				equals = "the list of rectangles corresponding to the discretization by a grid of 5 columns and 20 rows into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",
-				test = false) })
+			equals = "the list of rectangles corresponding to the discretization by a grid of 5 columns and 20 rows into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",
+			test = false) })
 		public static IList<IShape> to_rectangle(final IScope scope, final IShape geom, final int nbCols,
 			final int nbRows, final boolean overlaps) {
 			if ( geom == null ||
@@ -1708,8 +1734,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of geometries that result from the decomposition of the geometry by square cells of the given side size (geometry, size)",
 			examples = { @example(value = "to_squares(self, 10.0)",
-				equals = "the list of the geometries corresponding to the decomposition of the geometry by squares of side size 10.0",
-				test = false) })
+			equals = "the list of the geometries corresponding to the decomposition of the geometry by squares of side size 10.0",
+			test = false) })
 		public static IList<IShape> toSquares(final IScope scope, final IShape geom, final Double dimension) {
 			if ( geom == null ||
 				geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory.create(Types.GEOMETRY); }
@@ -1723,8 +1749,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of geometries that result from the decomposition of the geometry by rectangle cells of the given dimension (geometry, {size_x, size_y})",
 			examples = { @example(value = "to_rectangles(self, {10.0, 15.0})",
-				equals = "the list of the geometries corresponding to the decomposition of the geometry by rectangles of size 10.0, 15.0",
-				test = false) })
+			equals = "the list of the geometries corresponding to the decomposition of the geometry by rectangles of size 10.0, 15.0",
+			test = false) })
 		public static IList<IShape> toRectangle(final IScope scope, final IShape geom, final GamaPoint dimension) {
 			if ( geom == null ||
 				geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory.create(Types.GEOMETRY); }
@@ -1738,8 +1764,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of geometries that result from the decomposition of the geometry according to a grid with the given number of rows and columns (geometry, nb_cols, nb_rows)",
 			examples = { @example(value = "to_rectangles(self, 10,20)",
-				equals = "the list of the geometries corresponding to the decomposition of the geometry of the agent applying the operator",
-				test = false) })
+			equals = "the list of the geometries corresponding to the decomposition of the geometry of the agent applying the operator",
+			test = false) })
 		public static IList<IShape> to_rectangle(final IScope scope, final IShape geom, final int nbCols,
 			final int nbRows) {
 			if ( geom == null ||
@@ -1757,8 +1783,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of geometries (hexagonal) corresponding to the hexagonal tesselation of the first operand geometry",
 			examples = { @example(value = "self as_hexagonal_grid {10, 5}",
-				equals = "list of geometries (hexagonal) corresponding to the hexagonal tesselation of the first operand geometry",
-				test = false) },
+			equals = "list of geometries (hexagonal) corresponding to the hexagonal tesselation of the first operand geometry",
+			test = false) },
 			see = { "as_4_grid", "as_grid" })
 		public static IList<IShape> as_hexagonal_grid(final IShape ls, final GamaPoint param) {
 			return GeometryUtils.hexagonalGridFromGeom(ls, (int) param.x, (int) param.y);
@@ -1771,8 +1797,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A matrix of square geometries (grid with 8-neighbourhood) with dimension given by the right-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
 			examples = { @example(value = "self as_grid {10, 5}",
-				equals = "a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
-				test = false) },
+			equals = "a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
+			test = false) },
 			see = { "as_4_grid", "as_hexagonal_grid" })
 		public static IMatrix as_grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
@@ -1787,8 +1813,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A matrix of square geometries (grid with 4-neighbourhood) with dimension given by the right-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
 			examples = { @example(value = "self as_4_grid {10, 5}",
-				equals = "the matrix of square geometries (grid with 4-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
-				test = false) },
+			equals = "the matrix of square geometries (grid with 4-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
+			test = false) },
 			see = { "as_grid", "as_hexagonal_grid" })
 		public static IMatrix as_4_grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
@@ -1801,9 +1827,9 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "A list of geometries resulting after cutting the lines at their intersections.",
-			examples = { @example(value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
-				equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
-				test = false) })
+		examples = { @example(value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
+		equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
+		test = false) })
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 			throws GamaRuntimeException {
 			if ( geoms.isEmpty(scope) ) { return GamaListFactory.create(Types.GEOMETRY); }
@@ -1833,8 +1859,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent)",
 			examples = { @example(value = "skeletonize(self)",
-				equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
-				test = false) })
+			equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
+			test = false) })
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g) {
 			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry());
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
@@ -1845,12 +1871,12 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "clean", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc(value = "A geometry corresponding to the cleaning of the operand (geometry, agent, point)",
-			comment = "The cleaning corresponds to a buffer with a distance of 0.0",
-			examples = { @example(value = "clean(self)",
-				equals = "returns the geometry resulting from the cleaning of the geometry of the agent applying the operator.",
-				test = false) })
+		comment = "The cleaning corresponds to a buffer with a distance of 0.0",
+		examples = { @example(value = "clean(self)",
+		equals = "returns the geometry resulting from the cleaning of the geometry of the agent applying the operator.",
+		test = false) })
 		public static IShape clean(final IScope scope, final IShape g) {
 
 			if ( g == null || g.getInnerGeometry() == null ) { return g; }
@@ -1880,8 +1906,8 @@ public abstract class Spatial {
 			value = "A geometry corresponding to the simplification of the operand (geometry, agent, point) considering a tolerance distance.",
 			comment = "The algorithm used for the simplification is Douglas-Peucker",
 			examples = { @example(value = "self simplification 0.1",
-				equals = "the geometry resulting from the application of the Douglas-Peuker algorithm on the geometry of the agent applying the operator with a tolerance distance of 0.1.",
-				test = false) })
+			equals = "the geometry resulting from the application of the Douglas-Peuker algorithm on the geometry of the agent applying the operator with a tolerance distance of 0.1.",
+			test = false) })
 		public static IShape simplification(final IScope scope, final IShape g1, final Double distanceTolerance) {
 			if ( g1 == null || g1.getInnerGeometry() == null ) { return g1; }
 			if ( g1.isPoint() ) { return g1.copy(scope); }
@@ -1901,20 +1927,20 @@ public abstract class Spatial {
 		@doc(
 			value = "The direction (in degree) between the two geometries (geometries, agents, points) considering the topology of the agent applying the operator.",
 			examples = { @example(value = "ag1 towards ag2",
-				equals = "the direction between ag1 and ag2 and ag3 considering the topology of the agent applying the operator",
-				isExecutable = false) },
+			equals = "the direction between ag1 and ag2 and ag3 considering the topology of the agent applying the operator",
+			isExecutable = false) },
 			see = { "distance_between", "distance_to", "direction_between", "path_between", "path_to" })
 		public static Integer towards(final IScope scope, final IShape agent, final IShape target) {
 			return scope.getTopology().directionInDegreesTo(scope, agent, target);
 		}
 
 		@operator(value = "distance_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS },
-				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
+			concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
 		@doc(value = "A distance between a list of geometries (geometries, agents, points) considering a topology.",
-			examples = { @example(value = "my_topology distance_between [ag1, ag2, ag3]",
-				equals = "the distance between ag1, ag2 and ag3 considering the topology my_topology",
-				isExecutable = false) },
-			see = { "towards", "direction_to", "distance_to", "direction_between", "path_between", "path_to" })
+		examples = { @example(value = "my_topology distance_between [ag1, ag2, ag3]",
+		equals = "the distance between ag1, ag2 and ag3 considering the topology my_topology",
+		isExecutable = false) },
+		see = { "towards", "direction_to", "distance_to", "direction_between", "path_between", "path_to" })
 		public static Double distance_between(final IScope scope, final ITopology t,
 			final IContainer<?, IShape> geometries) {
 			final int size = geometries.length(scope);
@@ -1933,12 +1959,12 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "direction_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS },
-				concept = {})
+			concept = {})
 		@doc(
 			value = "A direction (in degree) between a list of two geometries (geometries, agents, points) considering a topology.",
 			examples = { @example(value = "my_topology direction_between [ag1, ag2]",
-				equals = "the direction between ag1 and ag2 considering the topology my_topology",
-				isExecutable = false) },
+			equals = "the direction between ag1 and ag2 considering the topology my_topology",
+			isExecutable = false) },
 			see = { "towards", "direction_to", "distance_to", "distance_between", "path_between", "path_to" })
 		public static Integer direction_between(final IScope scope, final ITopology t,
 			final IContainer<?, IShape> geometries) throws GamaRuntimeException {
@@ -1955,10 +1981,10 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH },
 			concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
 		@doc(value = "A path between a list of two geometries (geometries, agents or points) considering a topology.",
-			examples = { @example(value = "my_topology path_between [ag1, ag2]",
-				equals = "A path between ag1 and ag2",
-				isExecutable = false) },
-			see = { "towards", "direction_to", "distance_between", "direction_between", "path_to", "distance_to" })
+		examples = { @example(value = "my_topology path_between [ag1, ag2]",
+		equals = "A path between ag1 and ag2",
+		isExecutable = false) },
+		see = { "towards", "direction_to", "distance_between", "direction_between", "path_to", "distance_to" })
 		public static IPath path_between(final IScope scope, final ITopology graph, final IContainer<?, IShape> nodes)
 			throws GamaRuntimeException {
 			// TODO Assumes that all elements in nodes are vertices of the graph... Should be
@@ -1991,10 +2017,10 @@ public abstract class Spatial {
 			category = { IOperatorCategory.GRID, IOperatorCategory.PATH },
 			concept = { IConcept.GRID })
 		@doc(value = "The shortest path between two objects according to set of cells",
-			masterDoc = true,
-			examples = { @example(value = "path_between (cell_grid where each.is_free, ag1, ag2)",
-				equals = "A path between ag1 and ag2 passing through the given cell_grid agents",
-				isExecutable = false) })
+		masterDoc = true,
+		examples = { @example(value = "path_between (cell_grid where each.is_free, ag1, ag2)",
+		equals = "A path between ag1 and ag2 passing through the given cell_grid agents",
+		isExecutable = false) })
 		public static IPath path_between(final IScope scope, final IList<IAgent> cells, final IShape source,
 			final IShape target) throws GamaRuntimeException {
 			if ( cells == null || cells.isEmpty() ) { return null; }
@@ -2007,13 +2033,13 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "distance_to", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS },
-				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
+			concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION, IConcept.TOPOLOGY })
 		@doc(
 			value = "A distance between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.",
 			masterDoc = true,
 			examples = { @example(value = "ag1 distance_to ag2",
-				equals = "the distance between ag1 and ag2 considering the topology of the agent applying the operator",
-				isExecutable = false) },
+			equals = "the distance between ag1 and ag2 considering the topology of the agent applying the operator",
+			isExecutable = false) },
 			see = { "towards", "direction_to", "distance_between", "direction_between", "path_between", "path_to" })
 		public static Double distance_to(final IScope scope, final IShape source, final IShape target) {
 			return scope.getTopology().distanceBetween(scope, source, target);
@@ -2034,8 +2060,8 @@ public abstract class Spatial {
 			value = "A path between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.",
 			masterDoc = true,
 			examples = { @example(value = "ag1 path_to ag2",
-				equals = "the path between ag1 and ag2 considering the topology of the agent applying the operator",
-				isExecutable = false) },
+			equals = "the path between ag1 and ag2 considering the topology of the agent applying the operator",
+			isExecutable = false) },
 			see = { "towards", "direction_to", "distance_between", "direction_between", "path_between", "distance_to" })
 		public static IPath path_to(final IScope scope, final IShape g, final IShape g1) throws GamaRuntimeException {
 			if ( g == null ) { return null; }
@@ -2059,7 +2085,7 @@ public abstract class Spatial {
 	public static abstract class Properties {
 
 		@operator(value = { "disjoint_from" }, category = { IOperatorCategory.SPATIAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) is disjoints from the right-geometry (or agent/point).",
 			usages = { @usage(value = "if one of the operand is null, returns true."),
@@ -2091,7 +2117,7 @@ public abstract class Spatial {
 		 */
 
 		@operator(value = "overlaps", category = { IOperatorCategory.SPATIAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) overlaps the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false."),
@@ -2106,7 +2132,7 @@ public abstract class Spatial {
 					value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{35,35},{35,45},{45,45},{45,35}])",
 					equals = "false"),
 				@example(value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polyline([{10,10},{20,20}])",
-					equals = "true"),
+				equals = "true"),
 				@example(value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps {15,15}", equals = "true"),
 				@example(
 					value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{0,0},{0,30},{30,30}, {30,0}])",
@@ -2145,7 +2171,7 @@ public abstract class Spatial {
 					value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}])",
 					equals = "true"),
 				@example(value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {25,25}",
-					equals = "false"),
+				equals = "false"),
 				@example(
 					value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}])",
 					equals = "false"),
@@ -2153,7 +2179,7 @@ public abstract class Spatial {
 					value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polyline([{10,10},{20,20}])",
 					equals = "false"),
 				@example(value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {15,15}",
-					equals = "false"),
+				equals = "false"),
 				@example(
 					value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}])",
 					equals = "false"),
@@ -2177,7 +2203,7 @@ public abstract class Spatial {
 		 *
 		 */
 		@operator(value = "touches", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) touches the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
@@ -2214,7 +2240,7 @@ public abstract class Spatial {
 		 */
 
 		@operator(value = "crosses", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) crosses the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false."),
@@ -2223,7 +2249,7 @@ public abstract class Spatial {
 				@example(value = "polyline([{10,10},{20,20}]) crosses polyline([{10,20},{20,10}])", equals = "true"),
 				@example(value = "polyline([{10,10},{20,20}]) crosses {15,15}", equals = "true"),
 				@example(value = "polyline([{0,0},{25,25}]) crosses polygon([{10,10},{10,20},{20,20},{20,10}])",
-					equals = "true") },
+				equals = "true") },
 			see = { "disjoint_from", "intersects", "overlaps", "partially_overlaps", "touches" })
 		public static Boolean crosses(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
@@ -2231,7 +2257,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "intersects", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) intersects the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
@@ -2251,7 +2277,7 @@ public abstract class Spatial {
 		// }
 
 		@operator(value = "covers", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_PROPERTIES },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION })
 		@doc(
 			value = "A boolean, equal to true if the left-geometry (or agent/point) covers the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
@@ -2270,10 +2296,10 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "A point inside (or touching) the operand-geometry.",
-			examples = { @example(value = "any_location_in(square(5))",
-				equals = "a point in the square, for example : {3,4.6}.",
-				test = false) },
-			see = { "closest_points_with", "farthest_point_to", "points_at" })
+		examples = { @example(value = "any_location_in(square(5))",
+		equals = "a point in the square, for example : {3,4.6}.",
+		test = false) },
+		see = { "closest_points_with", "farthest_point_to", "points_at" })
 		public static ILocation any_location_in(final IScope scope, final IShape g) {
 			final ILocation p = GeometryUtils.pointInGeom(g.getInnerGeometry(), scope.getRandom());
 			return p;
@@ -2285,10 +2311,10 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "A list of points of the operand-geometry distant from each other to the float right-operand .",
-			examples = { @example(value = " square(5) points_on(2)",
-				equals = "a list of points belonging to the exterior ring of the square distant from each other of 2.",
-				test = false) },
-			see = { "closest_points_with", "farthest_point_to", "points_at" })
+		examples = { @example(value = " square(5) points_on(2)",
+		equals = "a list of points belonging to the exterior ring of the square distant from each other of 2.",
+		test = false) },
+		see = { "closest_points_with", "farthest_point_to", "points_at" })
 		public static IList points_on(final IShape geom, final Double distance) {
 			final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 			if ( geom.getInnerGeometry() instanceof GeometryCollection ) {
@@ -2308,8 +2334,8 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of left-operand number of points located at a the right-operand distance to the agent location.",
 			examples = { @example(value = "3 points_at(20.0)",
-				equals = "returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location",
-				test = false) },
+			equals = "returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location",
+			test = false) },
 			see = { "any_location_in", "any_point_in", "closest_points_with", "farthest_point_to" })
 		public static IList<ILocation> points_at(final IScope scope, final Integer nbLoc, final Double distance) {
 			if ( distance == null || nbLoc == null ) {
@@ -2336,22 +2362,22 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "A list of two closest points between the two geometries.",
-			examples = { @example(value = "geom1 closest_points_with(geom2)",
-				equals = "[pt1, pt2] with pt1 the closest point of geom1 to geom2 and pt1 the closest point of geom2 to geom1",
-				isExecutable = false) },
-			see = { "any_location_in", "any_point_in", "farthest_point_to", "points_at" })
+		examples = { @example(value = "geom1 closest_points_with(geom2)",
+		equals = "[pt1, pt2] with pt1 the closest point of geom1 to geom2 and pt1 the closest point of geom2 to geom1",
+		isExecutable = false) },
+		see = { "any_location_in", "any_point_in", "farthest_point_to", "points_at" })
 		public static IList<GamaPoint> closest_points_with(final IShape a, final IShape b) {
 			final Coordinate[] coors = DistanceOp.nearestPoints(a.getInnerGeometry(), b.getInnerGeometry());
 			return GamaListFactory.createWithoutCasting(Types.POINT, new GamaPoint(coors[0]), new GamaPoint(coors[1]));
 		}
 
 		@operator(value = "farthest_point_to", category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "the farthest point of the left-operand to the left-point.",
-			examples = { @example(value = "geom farthest_point_to(pt)",
-				equals = "the closest point of geom to pt",
-				isExecutable = false) },
-			see = { "any_location_in", "any_point_in", "closest_points_with", "points_at" })
+		examples = { @example(value = "geom farthest_point_to(pt)",
+		equals = "the closest point of geom to pt",
+		isExecutable = false) },
+		see = { "any_location_in", "any_point_in", "closest_points_with", "points_at" })
 		public static ILocation farthest_point_to(final IShape g, final GamaPoint p) {
 			if ( g == null ) { return p.getLocation(); }
 			if ( p == null ) { return g.getLocation(); }
@@ -2393,9 +2419,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "angle_between", category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
-				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
+			concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "the angle between vectors P0P1 and P0P2 (P0, P1, P2 being the three point operands)",
-			examples = { @example(value = "angle_between({5,5},{10,5},{5,10})", equals = "90") })
+		examples = { @example(value = "angle_between({5,5},{10,5},{5,10})", equals = "90") })
 		public static Integer angleInDegreesBetween(final IScope scope, final GamaPoint p0, final GamaPoint p1,
 			final GamaPoint p2) {
 			final double Xa = p1.x - p0.x;
@@ -2423,10 +2449,10 @@ public abstract class Spatial {
 			value = "a list, containing all the agents of the same species than the argument (if it is an agent) located at a distance inferior or equal to 1 to the right-hand operand agent considering the left-hand operand topology.",
 			masterDoc = true,
 			examples = { @example(value = "topology(self) neighbors_of self",
-				equals = "returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.",
-				test = false) },
+			equals = "returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.",
+			test = false) },
 			see = { "neighbors_at", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
-				"agent_closest_to" })
+			"agent_closest_to" })
 		public static IList neighbours_of(final IScope scope, final ITopology t, final IAgent agent) {
 			return _neighbours(scope, In.list(scope, agent.getPopulation()), agent, 1.0, t);
 			// TODO We could compute a filter based on the population if it is an agent
@@ -2440,13 +2466,13 @@ public abstract class Spatial {
 		@doc(usages = @usage(
 			value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the third argument to the second argument (agent, geometry or point) considering the first operand topology.",
 			examples = { @example(value = "neighbors_of (topology(self), self,10)",
-				equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
-				test = false) }))
+			equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
+			test = false) }))
 		public static IList neighbours_of(final IScope scope, final ITopology t, final IShape agent,
 			final Double distance) {
 			return _neighbours(scope,
 				agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation()) : Different.with(), agent,
-				distance, t);
+					distance, t);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
@@ -2458,14 +2484,14 @@ public abstract class Spatial {
 			value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).",
 			comment = "The topology used to compute the neighborhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.",
 			examples = { @example(value = "(self neighbors_at (10))",
-				equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator.",
-				test = false) },
+			equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator.",
+			test = false) },
 			see = { "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 				"agent_closest_to", "at_distance" })
 		public static IList neighbours_at(final IScope scope, final IShape agent, final Double distance) {
 			return _neighbours(scope,
 				agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation()) : Different.with(), agent,
-				distance);
+					distance);
 		}
 
 		@operator(value = "at_distance",
@@ -2475,10 +2501,10 @@ public abstract class Spatial {
 		@doc(
 			value = "A list of agents or geometries among the left-operand list that are located at a distance <= the right operand from the caller agent (in its topology)",
 			examples = { @example(value = "[ag1, ag2, ag3] at_distance 20",
-				equals = "the agents of the list located at a distance <= 20 from the caller agent (in the same order).",
-				isExecutable = false) },
+			equals = "the agents of the list located at a distance <= 20 from the caller agent (in the same order).",
+			isExecutable = false) },
 			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
-				"overlapping" })
+			"overlapping" })
 		public static IList<? extends IShape> at_distance(final IScope scope,
 			final IContainer<?, ? extends IShape> list, final Double distance) {
 			IType contentType = list.getType().getContentType();
@@ -2514,8 +2540,8 @@ public abstract class Spatial {
 					equals = "the agents among ag1, ag2 and ag3 that are covered by the shape of the right-hand argument.",
 					isExecutable = false),
 				@example(value = "(species1 + species2) inside (self)",
-					equals = "the agents among species species1 and species2 that are covered by the shape of the right-hand argument.",
-					isExecutable = false) },
+				equals = "the agents among species species1 and species2 that are covered by the shape of the right-hand argument.",
+				isExecutable = false) },
 			see = { "neighbours_at", "neighbours_of", "closest_to", "overlapping", "agents_overlapping",
 				"agents_inside", "agent_closest_to" })
 		public static IList<? extends IShape> inside(final IScope scope, final IContainer<?, ? extends IShape> list,
@@ -2539,7 +2565,7 @@ public abstract class Spatial {
 					isExecutable = false),
 				@example(value = "(species1 + species2) overlapping self", isExecutable = false) },
 			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
-				"agents_overlapping" })
+			"agents_overlapping" })
 		public static IList<? extends IShape> overlapping(final IScope scope,
 			final IContainer<?, ? extends IShape> list, final IShape source) {
 			IType contentType = list.getType().getContentType();
@@ -2615,12 +2641,12 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(value = "An agent, the closest to the operand (casted as a geometry).",
-			comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
-			examples = { @example(value = "agent_closest_to(self)",
-				equals = "the closest agent to the agent applying the operator.",
-				test = false) },
-			see = { "neighbors_at", "neighbors_of", "agents_inside", "agents_overlapping", "closest_to", "inside",
-				"overlapping" })
+		comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
+		examples = { @example(value = "agent_closest_to(self)",
+		equals = "the closest agent to the agent applying the operator.",
+		test = false) },
+		see = { "neighbors_at", "neighbors_of", "agents_inside", "agents_overlapping", "closest_to", "inside",
+		"overlapping" })
 		public static IAgent agent_closest_to(final IScope scope, final Object source) {
 			return _closest(scope, Different.with(), source);
 		}
@@ -2630,10 +2656,10 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(value = "A list of agents covered by the operand (casted as a geometry).",
-			examples = { @example(value = "agents_inside(self)",
-				equals = "the agents that are covered by the shape of the agent applying the operator.",
-				test = false) },
-			see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		examples = { @example(value = "agents_inside(self)",
+		equals = "the agents that are covered by the shape of the agent applying the operator.",
+		test = false) },
+		see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
 		public static IList<IAgent> agents_inside(final IScope scope, final Object source) {
 			return _gather(scope, Different.with(), source, true);
 		}
@@ -2643,11 +2669,11 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(value = "A list of agents overlapping the operand (casted as a geometry).",
-			examples = { @example(value = "agents_overlapping(self)",
-				equals = "the agents that overlap the shape of the agent applying the operator.",
-				test = false) },
-			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
-				"overlapping", "at_distance" })
+		examples = { @example(value = "agents_overlapping(self)",
+		equals = "the agents that overlap the shape of the agent applying the operator.",
+		test = false) },
+		see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
+			"overlapping", "at_distance" })
 		public static IList<IAgent> agents_overlapping(final IScope scope, final Object source) {
 			return _gather(scope, Different.with(), source, false);
 		}
@@ -2657,11 +2683,11 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION })
 		@doc(value = "A list of agents situated at a distance lower than the right argument.",
-			examples = { @example(value = "agents_at_distance(20)",
-				equals = "all the agents (excluding the caller) which distance to the caller is lower than 20",
-				test = false) },
-			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
-				"overlapping", "at_distance" })
+		examples = { @example(value = "agents_at_distance(20)",
+		equals = "all the agents (excluding the caller) which distance to the caller is lower than 20",
+		test = false) },
+		see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
+			"overlapping", "at_distance" })
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
 			return _neighbours(scope, Different.with(), scope.getAgentScope(), distance);
 		}
@@ -2705,10 +2731,10 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL, IOperatorCategory.STATISTICAL },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.AGENT_LOCATION, IConcept.STATISTIC })
 		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.",
-			examples = { @example(value = "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0",
-				equals = "for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]",
-				isExecutable = false) },
-			see = { "hierarchical_clustering" })
+		examples = { @example(value = "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0",
+		equals = "for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]",
+		isExecutable = false) },
+		see = { "hierarchical_clustering" })
 		public static IList<IList<IAgent>> simpleClusteringByDistance(final IScope scope,
 			final IContainer<?, IAgent> agents, final Double distance) {
 			final IList<IList<IAgent>> groups =
@@ -2747,8 +2773,8 @@ public abstract class Spatial {
 			value = "A tree (list of list) contained groups of agents clustered by distance considering a distance min between two groups.",
 			comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.",
 			examples = { @example(value = "[ag1, ag2, ag3, ag4, ag5] hierarchical_clustering 20.0",
-				equals = "for example, can return [[[ag1],[ag3]], [ag2], [[[ag4],[ag5]],[ag6]]",
-				isExecutable = false) },
+			equals = "for example, can return [[[ag1],[ag3]], [ag2], [[[ag4],[ag5]],[ag6]]",
+			isExecutable = false) },
 			see = { "simple_clustering_by_distance" })
 		public static IList hierarchicalClusteringe(final IScope scope, final IContainer<?, IAgent> agents,
 			final Double distance) {
@@ -2841,15 +2867,15 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "IDW", "inverse_distance_weighting" }, category = { IOperatorCategory.SPATIAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.STATISTIC })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.STATISTIC })
 		@doc(
 			value = "Inverse Distance Weighting (IDW) is a type of deterministic method for multivariate " +
 				"interpolation with a known scattered set of points. The assigned values to each geometry are calculated with a weighted average of the values available at the known points. See: http://en.wikipedia.org/wiki/Inverse_distance_weighting " +
 				"Usage: IDW (list of geometries, map of points (key: point, value: value), power parameter)",
-			examples = {
-				@example(value = "IDW([ag1, ag2, ag3, ag4, ag5],[{10,10}::25.0, {10,80}::10.0, {100,10}::15.0], 2)",
-					equals = "for example, can return [ag1::12.0, ag2::23.0,ag3::12.0,ag4::14.0,ag5::17.0]",
-					isExecutable = false) })
+				examples = {
+					@example(value = "IDW([ag1, ag2, ag3, ag4, ag5],[{10,10}::25.0, {10,80}::10.0, {100,10}::15.0], 2)",
+						equals = "for example, can return [ag1::12.0, ag2::23.0,ag3::12.0,ag4::14.0,ag5::17.0]",
+						isExecutable = false) })
 		public static GamaMap<IShape, Double> primIDW(final IScope scope,
 			final IContainer<?, ? extends IShape> geometries, final GamaMap<GamaPoint, Double> points,
 			final int power) {
@@ -2888,12 +2914,12 @@ public abstract class Spatial {
 	public static abstract class ThreeD {
 
 		@operator(value = { "set_z" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.POINT, IConcept.THREED })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.POINT, IConcept.THREED })
 		@doc(value = "Sets the z ordinate of the n-th point of a geometry to the value provided by the third argument",
-			masterDoc = true,
-			examples = { @example("loop i from: 0 to: length(shape.points) - 1{" +
-				"set shape <-  set_z (shape, i, 3.0);" + "}") },
-			see = { "add_z" })
+		masterDoc = true,
+		examples = { @example("loop i from: 0 to: length(shape.points) - 1{" +
+			"set shape <-  set_z (shape, i, 3.0);" + "}") },
+		see = { "add_z" })
 		public static IShape set_z(final IScope scope, final IShape geom, final Integer index, final Double z) {
 			if ( geom == null ) { return null; }
 			Geometry g = geom.getInnerGeometry();
@@ -2927,7 +2953,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "set_z" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
-				concept = {})
+			concept = {})
 		@doc(
 			value = "Sets the z ordinate of each point of a geometry to the value provided, in order, by the right argument",
 			examples = { @example("shape <- triangle(3) set_z [5,10,14];") },
@@ -2964,53 +2990,53 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED, IConcept.TEXTURE })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED, IConcept.TEXTURE })
 		@doc(value = "A polygon that is equivalent to the surface of the texture",
-			masterDoc = true,
-			comment = "",
-			examples = { @example(value = "dem(dem)",
-				equals = "returns a geometry as a rectangle of width and height equal to the texture.",
-				isExecutable = false) },
-			see = {})
+		masterDoc = true,
+		comment = "",
+		examples = { @example(value = "dem(dem)",
+		equals = "returns a geometry as a rectangle of width and height equal to the texture.",
+		isExecutable = false) },
+		see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFileName) {
 			return dem(scope, demFileName, demFileName, 1.0);
 		}
 
 		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
-				concept = {})
+			concept = {})
 		@doc(value = "A polygon equivalent to the surface of the texture",
-			examples = { @example(value = "dem(dem,texture)",
-				equals = "a geometry as a rectangle of weight and height equal to the texture.",
-				isExecutable = false) },
-			see = {})
+		examples = { @example(value = "dem(dem,texture)",
+		equals = "a geometry as a rectangle of weight and height equal to the texture.",
+		isExecutable = false) },
+		see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFile, final GamaFile textureFile) {
 			return dem(scope, demFile, textureFile, 1.0);
 		}
 
 		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
-				concept = {})
+			concept = {})
 		@doc(value = "A polygon that is equivalent to the surface of the texture",
-			examples = { @example(value = "dem(dem,z_factor)",
-				equals = "a geometry as a rectangle of weight and height equal to the texture.",
-				isExecutable = false) },
-			see = {})
+		examples = { @example(value = "dem(dem,z_factor)",
+		equals = "a geometry as a rectangle of weight and height equal to the texture.",
+		isExecutable = false) },
+		see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFileName, final Double z_factor) {
 			return dem(scope, demFileName, demFileName, z_factor);
 		}
 
 		@operator(value = "dem", category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
-				concept = {})
+			concept = {})
 		@doc(value = "A polygon equivalent to the surface of the texture",
-			examples = { @example(value = "dem(dem,texture,z_factor)",
-				equals = "a geometry as a rectangle of width and height equal to the texture.",
-				isExecutable = false) },
-			see = {})
+		examples = { @example(value = "dem(dem,texture,z_factor)",
+		equals = "a geometry as a rectangle of width and height equal to the texture.",
+		isExecutable = false) },
+		see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFile, final GamaFile textureFile,
 			final Double z_factor) {
 			if ( !(demFile instanceof GamaImageFile) ||
 				!(textureFile instanceof GamaImageFile) ) { throw GamaRuntimeException
-					.error("The 'dem' operator requires image files. Either " + demFile.getPath() + " or " +
-						textureFile.getPath() + " is not an image", scope); }
+				.error("The 'dem' operator requires image files. Either " + demFile.getPath() + " or " +
+					textureFile.getPath() + " is not an image", scope); }
 			final IGraphics graphics = scope.getGraphics();
 			// if ( !graphics.is2D() ) {
 			// BufferedImage dem = ((GamaImageFile) demFile).getImage(scope);
@@ -3054,8 +3080,8 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED, IConcept.COLOR })
 		@doc(value = "A list of point corresponding to RGB value of an image (r:x , g:y, b:z)",
-			examples = { @example(value = "rgb_to_xyz(texture)", equals = "a list of points", isExecutable = false) },
-			see = {})
+		examples = { @example(value = "rgb_to_xyz(texture)", equals = "a list of points", isExecutable = false) },
+		see = {})
 		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile textureFileName) {
 
 			final IList<ILocation> points = GamaListFactory.create(Types.POINT);
@@ -3086,8 +3112,8 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED })
 		@doc(value = "returns true if the geometry is defined clockwise ",
-			examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
-			see = { "change_clockwise" })
+		examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
+		see = { "change_clockwise" })
 		public static Boolean isClockwise(final IScope scope, final IShape shape) {
 			IShape sp = Cast.asGeometry(scope, shape);
 			if ( sp == null ) { return true; }
@@ -3099,8 +3125,8 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED })
 		@doc(value = "returns true if the geometry is defined clockwise ",
-			examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
-			see = { "is_clockwise" })
+		examples = { @example(value = "is_clockwise(circle(10))", equals = "true", isExecutable = true) },
+		see = { "is_clockwise" })
 		public static IShape changeClockwise(final IScope scope, final IShape shape) {
 			IShape sp = Cast.asGeometry(scope, shape);
 			if ( sp == null ) { return null; }
@@ -3112,11 +3138,11 @@ public abstract class Spatial {
 	public static abstract class Projections {
 
 		@operator(value = "crs", category = { IOperatorCategory.SPATIAL, IOperatorCategory.FILE },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.FILE, IConcept.GIS })
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.FILE, IConcept.GIS })
 		@doc(value = "the Coordinate Reference System (CRS) of the GIS file",
-			examples = {
-				@example(value = "crs(my_shapefile)", equals = "the crs of the shapefile", isExecutable = false) },
-			see = {})
+		examples = {
+			@example(value = "crs(my_shapefile)", equals = "the crs of the shapefile", isExecutable = false) },
+		see = {})
 		public static String crsFromFile(final IScope scope, final GamaFile gisFile) {
 			if ( gisFile instanceof GamaGisFile ) {
 				CoordinateReferenceSystem crs = ((GamaGisFile) gisFile).getGis(scope).getInitialCRS();
@@ -3139,8 +3165,8 @@ public abstract class Spatial {
 		@doc(usages = { @usage(
 			value = "returns the geometry corresponding to the transformation of the given geometry by the current CRS (Coordinate Reference System), the one corresponding to the world's agent one",
 			examples = { @example(value = "CRS_transform(shape)",
-				equals = "a geometry corresponding to the agent geometry transformed into the current CRS",
-				test = false) }) })
+			equals = "a geometry corresponding to the agent geometry transformed into the current CRS",
+			test = false) }) })
 		public static IShape transform_CRS(final IScope scope, final IShape g) {
 			IProjection gis = scope.getSimulationScope().getProjectionFactory().getWorld();
 			if ( gis == null ) { return g.copy(scope); }
@@ -3155,8 +3181,8 @@ public abstract class Spatial {
 		@doc(usages = { @usage(
 			value = "returns the geometry corresponding to the transformation of the given geometry to the GAMA CRS (Coordinate Reference System) assuming the given geometry is referenced by the current CRS, the one corresponding to the world's agent one",
 			examples = { @example(value = "to_GAMA_CRS({121,14})",
-				equals = "a geometry corresponding to the agent geometry transformed into the GAMA CRS",
-				test = false) }) })
+			equals = "a geometry corresponding to the agent geometry transformed into the GAMA CRS",
+			test = false) }) })
 		public static IShape to_GAMA_CRS(final IScope scope, final IShape g) {
 			IProjection gis = scope.getSimulationScope().getProjectionFactory().getWorld();
 			if ( gis == null ) { return g.copy(scope); }
@@ -3171,8 +3197,8 @@ public abstract class Spatial {
 		@doc(usages = { @usage(
 			value = "returns the geometry corresponding to the transformation of the given geometry to the GAMA CRS (Coordinate Reference System) assuming the given geometry is referenced by given CRS",
 			examples = { @example(value = "to_GAMA_CRS({121,14}, \"EPSG:4326\")",
-				equals = "a geometry corresponding to the agent geometry transformed into the GAMA CRS",
-				test = false) }) })
+			equals = "a geometry corresponding to the agent geometry transformed into the GAMA CRS",
+			test = false) }) })
 		public static IShape to_GAMA_CRS(final IScope scope, final IShape g, final String code) {
 			IProjection gis;
 			try {
@@ -3193,8 +3219,8 @@ public abstract class Spatial {
 		@doc(usages = { @usage(
 			value = "returns the geometry corresponding to the transformation of the given geometry by the left operand CRS (Coordinate Reference System)",
 			examples = { @example(value = "shape CRS_transform(\"EPSG:4326\")",
-				equals = "a geometry corresponding to the agent geometry transformed into the EPSG:4326 CRS",
-				test = false) }) })
+			equals = "a geometry corresponding to the agent geometry transformed into the EPSG:4326 CRS",
+			test = false) }) })
 		public static IShape transform_CRS(final IScope scope, final IShape g, final String code) {
 			IProjection gis;
 			try {

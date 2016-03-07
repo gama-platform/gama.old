@@ -558,12 +558,16 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return null;
 	}
 
+	public static GamaShape buildLink(final IScope scope, final IShape source, final IShape target) {
+		return new GamaShape(new DynamicLineString(GeometryUtils.FACTORY, source, target));
+	}
+
 	public static IShape pairToGeometry(final IScope scope, final GamaPair p) throws GamaRuntimeException {
 		final IShape first = staticCast(scope, p.first(), null, false);
 		if ( first == null ) { return null; }
 		final IShape second = staticCast(scope, p.last(), null, false);
 		if ( second == null ) { return null; }
-		return new GamaDynamicLink(first, second);
+		return buildLink(scope, first, second);
 	}
 
 	public static IShape buildMultiGeometry(final IList<IShape> shapes) {
