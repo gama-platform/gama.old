@@ -315,23 +315,23 @@ public class Stats {
 		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
 		concept = { IConcept.STATISTIC })
 	@doc(value = "the maximum element found in the operand",
-		masterDoc = true,
-		comment = "the max operator behavior depends on the nature of the operand",
-		usages = {
-			@usage(value = "if it is a list of int of float, max returns the maximum of all the elements",
-				examples = { @example(value = "max ([100, 23.2, 34.5])", equals = "100.0") }),
-			@usage(
-				value = "if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
-				examples = {
-					@example(value = "max([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{9.0,1.0}") }),
-			@usage("if it is a population of a list of other type: max transforms all elements into integer and returns the maximum of them"),
-			@usage("if it is a map, max returns the maximum among the list of all elements value"),
-			@usage("if it is a file, max returns the maximum of the content of the file (that is also a container)"),
-			@usage("if it is a graph, max returns the maximum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
-			@usage("if it is a matrix of int, float or object, max returns the maximum of all the numerical elements (thus all elements for integer and float matrices)"),
-			@usage("if it is a matrix of geometry, max returns the maximum of the list of the geometries"),
-			@usage("if it is a matrix of another type, max returns the maximum of the elements transformed into float") },
-		see = { "min" })
+	masterDoc = true,
+	comment = "the max operator behavior depends on the nature of the operand",
+	usages = {
+		@usage(value = "if it is a list of int of float, max returns the maximum of all the elements",
+			examples = { @example(value = "max ([100, 23.2, 34.5])", equals = "100.0") }),
+		@usage(
+			value = "if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
+			examples = {
+				@example(value = "max([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{9.0,1.0}") }),
+		@usage("if it is a population of a list of other type: max transforms all elements into integer and returns the maximum of them"),
+		@usage("if it is a map, max returns the maximum among the list of all elements value"),
+		@usage("if it is a file, max returns the maximum of the content of the file (that is also a container)"),
+		@usage("if it is a graph, max returns the maximum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
+		@usage("if it is a matrix of int, float or object, max returns the maximum of all the numerical elements (thus all elements for integer and float matrices)"),
+		@usage("if it is a matrix of geometry, max returns the maximum of the list of the geometries"),
+		@usage("if it is a matrix of another type, max returns the maximum of the elements transformed into float") },
+	see = { "min" })
 	public static Object max(final IScope scope, final IContainer l) {
 		Number maxNum = null;
 		ILocation maxPoint = null;
@@ -360,26 +360,26 @@ public class Stats {
 		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
 		concept = { IConcept.STATISTIC })
 	@doc(value = "the minimum element found in the operand.",
-		masterDoc = true,
-		comment = "the min operator behavior depends on the nature of the operand",
-		usages = {
-			@usage(value = "if it is a list of int or float: min returns the minimum of all the elements",
-				examples = { @example(value = "min ([100, 23.2, 34.5])", equals = "23.2") }),
-			@usage(
-				value = "if it is a list of points: min returns the minimum of all points as a point (i.e. the point with the smallest coordinate on the x-axis, in case of equality the point with the smallest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )"),
-			@usage(
-				value = "if it is a population of a list of other types: min transforms all elements into integer and returns the minimum of them"),
-			@usage(value = "if it is a map, min returns the minimum among the list of all elements value"),
-			@usage(
-				value = "if it is a file, min returns the minimum of the content of the file (that is also a container)"),
-			@usage(
-				value = "if it is a graph, min returns the minimum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
-			@usage(
-				value = "if it is a matrix of int, float or object, min returns the minimum of all the numerical elements (thus all elements for integer and float matrices)"),
-			@usage(value = "if it is a matrix of geometry, min returns the minimum of the list of the geometries"),
-			@usage(
-				value = "if it is a matrix of another type, min returns the minimum of the elements transformed into float") },
-		see = { "max" })
+	masterDoc = true,
+	comment = "the min operator behavior depends on the nature of the operand",
+	usages = {
+		@usage(value = "if it is a list of int or float: min returns the minimum of all the elements",
+			examples = { @example(value = "min ([100, 23.2, 34.5])", equals = "23.2") }),
+		@usage(
+			value = "if it is a list of points: min returns the minimum of all points as a point (i.e. the point with the smallest coordinate on the x-axis, in case of equality the point with the smallest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )"),
+		@usage(
+			value = "if it is a population of a list of other types: min transforms all elements into integer and returns the minimum of them"),
+		@usage(value = "if it is a map, min returns the minimum among the list of all elements value"),
+		@usage(
+			value = "if it is a file, min returns the minimum of the content of the file (that is also a container)"),
+		@usage(
+			value = "if it is a graph, min returns the minimum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
+		@usage(
+			value = "if it is a matrix of int, float or object, min returns the minimum of all the numerical elements (thus all elements for integer and float matrices)"),
+		@usage(value = "if it is a matrix of geometry, min returns the minimum of the list of the geometries"),
+		@usage(
+			value = "if it is a matrix of another type, min returns the minimum of the elements transformed into float") },
+	see = { "max" })
 	public static Object min(final IScope scope, final IContainer l) {
 		Number minNum = null;
 		ILocation minPoint = null;
@@ -408,26 +408,26 @@ public class Stats {
 		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
 		concept = { IConcept.STATISTIC })
 	@doc(value = "the product of all the elements of the operand",
-		masterDoc = true,
-		comment = "the mul operator behavior depends on the nature of the operand",
-		usages = {
-			@usage(value = "if it is a list of int or float: mul returns the product of all the elements",
-				examples = { @example(value = "mul ([100, 23.2, 34.5])", equals = "80040.0") }),
-			@usage(
-				value = "if it is a list of points: mul returns the product of all points as a point (each coordinate is the product of the corresponding coordinate of each element)"),
-			@usage(
-				value = "if it is a list of other types: mul transforms all elements into integer and multiplies them"),
-			@usage(value = "if it is a map, mul returns the product of the value of all elements"),
-			@usage(
-				value = "if it is a file, mul returns the product of the content of the file (that is also a container)"),
-			@usage(
-				value = "if it is a graph, mul returns the product of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
-			@usage(
-				value = "if it is a matrix of int, float or object, mul returns the product of all the numerical elements (thus all elements for integer and float matrices)"),
-			@usage(value = "if it is a matrix of geometry, mul returns the product of the list of the geometries"),
-			@usage(
-				value = "if it is a matrix of other types: mul transforms all elements into float and multiplies them") },
-		see = { "sum" })
+	masterDoc = true,
+	comment = "the mul operator behavior depends on the nature of the operand",
+	usages = {
+		@usage(value = "if it is a list of int or float: mul returns the product of all the elements",
+			examples = { @example(value = "mul ([100, 23.2, 34.5])", equals = "80040.0") }),
+		@usage(
+			value = "if it is a list of points: mul returns the product of all points as a point (each coordinate is the product of the corresponding coordinate of each element)"),
+		@usage(
+			value = "if it is a list of other types: mul transforms all elements into integer and multiplies them"),
+		@usage(value = "if it is a map, mul returns the product of the value of all elements"),
+		@usage(
+			value = "if it is a file, mul returns the product of the content of the file (that is also a container)"),
+		@usage(
+			value = "if it is a graph, mul returns the product of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
+		@usage(
+			value = "if it is a matrix of int, float or object, mul returns the product of all the numerical elements (thus all elements for integer and float matrices)"),
+		@usage(value = "if it is a matrix of geometry, mul returns the product of the list of the geometries"),
+		@usage(
+			value = "if it is a matrix of other types: mul transforms all elements into float and multiplies them") },
+	see = { "sum" })
 	public static Object product(final IScope scope, final IContainer l) {
 		DataSet x = new DataSet();
 		DataSet y = null, z = null;
@@ -456,36 +456,34 @@ public class Stats {
 	@operator(value = "sum",
 		can_be_const = true,
 		type = ITypeProvider.FIRST_CONTENT_TYPE,
-		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT, IType.COLOR },
+		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT, IType.COLOR, IType.STRING },
 		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR },
 		concept = { IConcept.STATISTIC, IConcept.COLOR })
 	@doc(value = "the sum of all the elements of the operand",
-		masterDoc = true,
-		comment = "the sum operator behavior depends on the nature of the operand",
-		usages = {
-			@usage(value = "if it is a list of int or float: sum returns the sum of all the elements",
-				examples = { @example(value = "sum ([12,10,3])", returnType = IKeyword.INT, equals = "25") }),
-			@usage(
-				value = "if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)",
-				examples = {
-					@example(value = "sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{20.0,17.0}") }),
-			@usage(
-				value = "if it is a population or a list of other types: sum transforms all elements into float and sums them"),
-			@usage(value = "if it is a map, sum returns the sum of the value of all elements"),
-			@usage(
-				value = "if it is a file, sum returns the sum of the content of the file (that is also a container)"),
-			@usage(
-				value = "if it is a graph, sum returns the sum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
-			@usage(
-				value = "if it is a matrix of int, float or object, sum returns the sum of all the numerical elements (i.e. all elements for integer and float matrices)"),
-			@usage(value = "if it is a matrix of geometry, sum returns the sum of the list of the geometries"),
-			@usage(value = "if it is a matrix of other types: sum transforms all elements into float and sums them"),
-			@usage(value = "if it is a list of colors: sum will sum them and return the blended resulting color") },
-		see = { "mul" })
-	public static Object sum(final IScope scope, final IExpression expr) {
-		IType type = expr.getType();
-		if ( !type.isContainer() ) { throw GamaRuntimeException.error("'sum' can only operate on containers.", scope); }
-		IContainer l = Types.CONTAINER.cast(scope, expr.value(scope), null, false);
+	masterDoc = true,
+	comment = "the behavior depends on the nature of the operand",
+	usages = {
+		@usage(value = "if it is a list of int or float: sum returns the sum of all the elements",
+			examples = { @example(value = "sum ([12,10,3])", returnType = IKeyword.INT, equals = "25") }),
+		@usage(
+			value = "if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)",
+			examples = {
+				@example(value = "sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{20.0,17.0}") }),
+		@usage(
+			value = "if it is a population or a list of other types: sum transforms all elements into float and sums them"),
+		@usage(value = "if it is a map, sum returns the sum of the value of all elements"),
+		@usage(
+			value = "if it is a file, sum returns the sum of the content of the file (that is also a container)"),
+		@usage(
+			value = "if it is a graph, sum returns the sum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
+		@usage(
+			value = "if it is a matrix of int, float or object, sum returns the sum of all the numerical elements (i.e. all elements for integer and float matrices)"),
+		@usage(value = "if it is a matrix of geometry, sum returns the sum of the list of the geometries"),
+		@usage(value = "if it is a matrix of other types: sum transforms all elements into float and sums them"),
+		@usage(value = "if it is a list of colors: sum will sum them and return the blended resulting color") },
+	see = { "mul" })
+	public static Object sum(final IScope scope, final IContainer l) {
+		IType type = l.getType();
 		IType contentType = type.getContentType();
 		return getSum(scope, l, contentType);
 	}
@@ -498,6 +496,12 @@ public class Stats {
 	 */
 	private static Object getSum(final IScope scope, final IContainer l, final IType contentType) {
 		switch (contentType.id()) {
+			case IType.STRING:
+				StringBuilder sb = new StringBuilder();
+				for ( Object o : l.iterable(scope) ) {
+					sb.append((String) o);
+				}
+				return sb.toString();
 			case IType.INT:
 			case IType.FLOAT:
 				DataSet d2 = new DataSet();
@@ -543,7 +547,7 @@ public class Stats {
 	}
 
 	@operator(value = "sum", can_be_const = true, type = IType.GRAPH, category = { IOperatorCategory.GRAPH },
-			concept = { IConcept.GRAPH })
+		concept = { IConcept.GRAPH })
 	public static double sum(final IScope scope, final IGraph g) {
 		if ( g == null ) { return 0.0; }
 		return g.computeTotalWeight();
@@ -556,35 +560,16 @@ public class Stats {
 		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR },
 		concept = { IConcept.STATISTIC, IConcept.COLOR })
 	@doc(value = "the mean of all the elements of the operand",
-		comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.",
-		special_cases = {
-			"if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" },
-		examples = { @example(value = "mean ([4.5, 3.5, 5.5, 7.0])", equals = "5.125 ") },
-		see = { "sum" })
-	public static Object getMean(final IScope scope, final IExpression expr) throws GamaRuntimeException {
-		IType type = expr.getType();
-		if ( !type
-			.isContainer() ) { throw GamaRuntimeException.error("'mean' can only operate on containers.", scope); }
-		IContainer l = Types.CONTAINER.cast(scope, expr.value(scope), null, false);
-		if ( l.length(scope) == 0 ) { return type.getContentType().cast(scope, 0, null, false); }
-		return getMean(scope, l, type.getContentType());
+	comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.",
+	special_cases = {
+	"if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" },
+	examples = { @example(value = "mean ([4.5, 3.5, 5.5, 7.0])", equals = "5.125 ") },
+	see = { "sum" })
+	public static Object getMean(final IScope scope, final IContainer l) throws GamaRuntimeException {
+		if ( l.length(scope) == 0 ) { return l.getType().getContentType().cast(scope, 0, null, false); }
+		return getMean(scope, l, l.getType().getContentType());
 	}
 
-	@Deprecated
-	/**
-	 * Only kept for backward compatibliity with the map comparison plugin and the Stats2 operations.
-	 * @param scope
-	 * @param l
-	 * @return
-	 * @throws GamaRuntimeException
-	 */
-	public static Object getMean(final IScope scope, final IContainer l) throws GamaRuntimeException {
-		if ( l.length(scope) == 0 ) { return 0.0; // False for points and colors !
-		}
-		Object o = l.firstValue(scope);
-		IType contentType = GamaType.of(o);
-		return getMean(scope, l, contentType);
-	}
 
 	public static Object getMean(final IScope scope, final IContainer l, final IType contentType)
 		throws GamaRuntimeException {
@@ -604,10 +589,10 @@ public class Stats {
 		category = { IOperatorCategory.STATISTICAL },
 		concept = { IConcept.STATISTIC })
 	@doc(value = "the median of all the elements of the operand.",
-		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		special_cases = { "" },
-		examples = { @example(value = "median ([4.5, 3.5, 5.5, 7.0])", equals = "5.0") },
-		see = { "mean" })
+	comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+	special_cases = { "" },
+	examples = { @example(value = "median ([4.5, 3.5, 5.5, 7.0])", equals = "5.0") },
+	see = { "mean" })
 	public static Double opMedian(final IScope scope, final IContainer values) {
 		DataSet d = from(scope, values);
 		return d.getMedian();
@@ -702,8 +687,8 @@ public class Stats {
 		value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)",
 		comment = "",
 		examples = { @example(value = "[ag1, ag2, ag3, ag4] frequency_of each.size",
-			equals = "the different sizes as keys and the number of agents of this size as values",
-			isExecutable = false) },
+		equals = "the different sizes as keys and the number of agents of this size as values",
+		isExecutable = false) },
 		see = "as_map")
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
 		throws GamaRuntimeException {
@@ -783,8 +768,8 @@ public class Stats {
 		category = { IOperatorCategory.STATISTICAL },
 		concept = { IConcept.STATISTIC })
 	@doc(value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).",
-		examples = { @example("list<int> X <- [2, 3, 1];"),
-			@example(value = "meanR(X)", equals = "2", returnType = IKeyword.INT) })
+	examples = { @example("list<int> X <- [2, 3, 1];"),
+		@example(value = "meanR(X)", equals = "2", returnType = IKeyword.INT) })
 	public static Object getMeanR(final IScope scope, final IContainer l)
 		throws GamaRuntimeException, ParseException, ExecutionException {
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
@@ -815,7 +800,7 @@ public class Stats {
 	}
 
 	@operator(value = "dbscan", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
+		concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc(
 		value = "returns the list of clusters (list of instance indices) computed with the dbscan (density-based spatial clustering of applications with noise) algorithm from the first operand data according to the maximum radius of the neighborhood to be considered (eps) and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -846,7 +831,7 @@ public class Stats {
 	}
 
 	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
+		concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc(
 		value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k) and the maximum number of iterations to run the algorithm for (If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -878,7 +863,7 @@ public class Stats {
 	}
 
 	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
+		concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc(
 		value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k). Usage: kmeans(data,k)",
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
@@ -924,7 +909,7 @@ public class Stats {
 	}
 
 	@operator(value = "predict", can_be_const = false, type = IType.FLOAT, category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
+		concept = { IConcept.STATISTIC, IConcept.REGRESSION })
 	@doc(
 		value = "returns the value predict by the regression parameters for a given instance. Usage: predict(regression, instance)",
 		examples = { @example("predict(my_regression, [1,2,3]") })

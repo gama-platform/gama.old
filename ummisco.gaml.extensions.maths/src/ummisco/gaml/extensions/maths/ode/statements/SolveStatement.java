@@ -12,9 +12,8 @@
 package ummisco.gaml.extensions.maths.ode.statements;
 
 import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -33,56 +32,56 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 		optional = false,
 		doc = @doc("the equation system identifier to be numerically solved")),
 	@facet(name = IKeyword.METHOD,
-		type = IType.ID /* CHANGE */,
-		optional = true,
-		values = { "rk4", "dp853" },
-		doc = @doc(value = "integrate method (can be only \"rk4\" or \"dp853\") (default value: \"rk4\")")),
+	type = IType.ID /* CHANGE */,
+	optional = true,
+	values = { "rk4", "dp853" },
+	doc = @doc(value = "integrate method (can be only \"rk4\" or \"dp853\") (default value: \"rk4\")")),
 	@facet(name = "integrated_times",
-		type = IType.LIST,
-		optional = true,
-		doc = @doc(value = "time interval inside integration process")),
+	type = IType.LIST,
+	optional = true,
+	doc = @doc(value = "time interval inside integration process")),
 	@facet(name = "integrated_values",
-		type = IType.LIST,
-		optional = true,
-		doc = @doc(value = "list of variables's value inside integration process")),
+	type = IType.LIST,
+	optional = true,
+	doc = @doc(value = "list of variables's value inside integration process")),
 	@facet(name = "discretizing_step",
-		type = IType.INT,
-		optional = true,
-		doc = @doc(value = "number of discrete between 2 steps of simulation (default value: 0)")),
+	type = IType.INT,
+	optional = true,
+	doc = @doc(value = "number of discrete between 2 steps of simulation (default value: 0)")),
 	@facet(name = "time_initial", type = IType.FLOAT, optional = true, doc = @doc(value = "initial time")),
 	@facet(name = "time_final",
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc(
-			value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc(
+		value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
 	@facet(name = "cycle_length",
-		type = IType.INT,
-		optional = true,
-		doc = @doc(
-			value = "length of simulation cycle which will be synchronize with step of integrator (default value: 1)")),
+	type = IType.INT,
+	optional = true,
+	doc = @doc(
+		value = "length of simulation cycle which will be synchronize with step of integrator (default value: 1)")),
 	@facet(name = IKeyword.STEP,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc(value = "integration step, use with most integrator methods (default value: 1)")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc(value = "integration step, use with most integrator methods (default value: 1)")),
 	@facet(name = "min_step",
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc(
-			value = "minimal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc(
+		value = "minimal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 	@facet(name = "max_step",
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc(
-			value = "maximal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc(
+		value = "maximal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 	@facet(name = "scalAbsoluteTolerance",
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc(value = "allowed absolute error (used with dp853 method only)")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc(value = "allowed absolute error (used with dp853 method only)")),
 	@facet(name = "scalRelativeTolerance",
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc(value = "allowed relative error (used with dp853 method only)")) },
-	omissible = IKeyword.EQUATION)
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc(value = "allowed relative error (used with dp853 method only)")) },
+omissible = IKeyword.EQUATION)
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
 concept = { IConcept.EQUATION })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
@@ -90,7 +89,7 @@ concept = { IConcept.EQUATION })
 @doc(
 	value = "Solves all equations which matched the given name, with all systems of agents that should solved simultaneously.",
 	usages = { @usage(value = "",
-		examples = { @example(value = "solve SIR method: \"rk4\" step:0.001;", isExecutable = false) }) })
+	examples = { @example(value = "solve SIR method: \"rk4\" step:0.001;", isExecutable = false) }) })
 public class SolveStatement extends AbstractStatement {
 
 	public static class SolveValidator implements IDescriptionValidator {
@@ -128,7 +127,7 @@ public class SolveStatement extends AbstractStatement {
 	int discret = 0;
 	double cycle_length = 1;
 	final IExpression stepExp, cycleExp, discretExp, minStepExp, maxStepExp, absTolerExp, relTolerExp, timeInitExp,
-		timeFinalExp;
+	timeFinalExp;
 
 	public SolveStatement(final IDescription desc) {
 		super(desc);
@@ -199,6 +198,7 @@ public class SolveStatement extends AbstractStatement {
 		timeFinal = cycle_length > 1.0 ? timeFinal / cycle_length : timeFinal;
 
 		theEquations.addExtern(equationName);
+		// In order to correctly compute within the scope
 		solver.solve(scope, theEquations, timeInit, timeFinal, cycle_length);
 		theEquations.removeExtern(scope, equationName);
 
@@ -212,6 +212,7 @@ public class SolveStatement extends AbstractStatement {
 			fvListe.addAll(theEquations.integrated_values);
 
 		}
+		theEquations.currentScope = null;
 
 		return null;
 	}

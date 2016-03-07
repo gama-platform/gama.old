@@ -16,10 +16,9 @@ import org.apache.commons.math3.exception.*;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -46,68 +45,64 @@ concept = { IConcept.EQUATION })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false, doc = @doc("the equation identifier")),
 	@facet(name = IKeyword.TYPE,
-		type = IType.ID /* CHANGE */,
-		optional = true,
-		values = { "SI", "SIS", "SIR", "SIRS", "SEIR", "LV" },
-		doc = @doc(value = "the choice of one among classical models (SI, SIS, SIR, SIRS, SEIR, LV)")),
+	type = IType.ID /* CHANGE */,
+	optional = true,
+	values = { "SI", "SIS", "SIR", "SIRS", "SEIR", "LV" },
+	doc = @doc(value = "the choice of one among classical models (SI, SIS, SIR, SIRS, SEIR, LV)")),
 	@facet(name = IKeyword.VARS,
-		type = IType.LIST,
-		optional = true,
-		doc = @doc("the list of variables used in predefined equation systems")),
+	type = IType.LIST,
+	optional = true,
+	doc = @doc("the list of variables used in predefined equation systems")),
 	@facet(name = IKeyword.PARAMS,
-		type = IType.LIST,
-		optional = true,
-		doc = @doc("the list of parameters used in predefined equation systems")),
+	type = IType.LIST,
+	optional = true,
+	doc = @doc("the list of parameters used in predefined equation systems")),
 	@facet(name = IKeyword.SIMULTANEOUSLY,
-		type = IType.LIST,
-		of = IType.SPECIES,
-		optional = true,
-		doc = @doc("a list of species containing a system of equations (all systems will be solved simultaneously)")) },
-	omissible = IKeyword.NAME)
+	type = IType.LIST,
+	of = IType.SPECIES,
+	optional = true,
+	doc = @doc("a list of species containing a system of equations (all systems will be solved simultaneously)")) },
+omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @doc(value = "The equation statement is used to create an equation system from several single equations.",
-	usages = {
-		@usage(value = "The basic syntax to define an equation system is:",
-			examples = { @example(value = "float t;", isExecutable = false),
-				@example(value = "float S;", isExecutable = false), @example(value = "float I;", isExecutable = false),
-				@example(value = "equation SI { ", isExecutable = false),
-				@example(value = "   diff(S,t) = (- 0.3 * S * I / 100);", isExecutable = false),
-				@example(value = "   diff(I,t) = (0.3 * S * I / 100);", isExecutable = false),
-				@example(value = "} ", isExecutable = false) }),
-		@usage(
-			value = "If the type: facet is used, a predefined equation system is defined using variables vars: and parameters params: in the right order. All possible predefined equation systems are the following ones (see [EquationPresentation161 EquationPresentation161] for precise definition of each classical equation system): ",
-			examples = {
-				@example(value = "equation eqSI type: SI vars: [S,I,t] params: [N,beta];", isExecutable = false),
-				@example(value = "equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma];",
-					isExecutable = false),
-				@example(value = "equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma];", isExecutable = false),
-				@example(value = "equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu];",
-					isExecutable = false),
-				@example(value = "equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu];",
-					isExecutable = false),
-				@example(value = "equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;",
-					isExecutable = false) }),
-		@usage(
-			value = "If the simultaneously: facet is used, system of all the agents will be solved simultaneously.") },
-	see = { "=", IKeyword.SOLVE })
+usages = {
+	@usage(value = "The basic syntax to define an equation system is:",
+		examples = { @example(value = "float t;", isExecutable = false),
+			@example(value = "float S;", isExecutable = false), @example(value = "float I;", isExecutable = false),
+			@example(value = "equation SI { ", isExecutable = false),
+			@example(value = "   diff(S,t) = (- 0.3 * S * I / 100);", isExecutable = false),
+			@example(value = "   diff(I,t) = (0.3 * S * I / 100);", isExecutable = false),
+			@example(value = "} ", isExecutable = false) }),
+	@usage(
+		value = "If the type: facet is used, a predefined equation system is defined using variables vars: and parameters params: in the right order. All possible predefined equation systems are the following ones (see [EquationPresentation161 EquationPresentation161] for precise definition of each classical equation system): ",
+		examples = {
+			@example(value = "equation eqSI type: SI vars: [S,I,t] params: [N,beta];", isExecutable = false),
+			@example(value = "equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma];",
+			isExecutable = false),
+			@example(value = "equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma];", isExecutable = false),
+			@example(value = "equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu];",
+			isExecutable = false),
+			@example(value = "equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu];",
+			isExecutable = false),
+			@example(value = "equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;",
+			isExecutable = false) }),
+	@usage(
+		value = "If the simultaneously: facet is used, system of all the agents will be solved simultaneously.") },
+see = { "=", IKeyword.SOLVE })
 public class SystemOfEquationsStatement extends AbstractStatementSequence implements FirstOrderDifferentialEquations {
 
-	public final Map<String, SingleEquationStatement> equations =
-		new TOrderedHashMap<String, SingleEquationStatement>();
-	public final Map<String, IExpression> variables_diff = new TOrderedHashMap<String, IExpression>();
+	public final Map<String, SingleEquationStatement> equations = new TOrderedHashMap<>();
+	public final Map<String, IExpression> variables_diff = new TOrderedHashMap<>();
 	public final IList<IExpression> variables_nondiff = GamaListFactory.create(Types.NO_TYPE);
-	// public final GamaMap variables=new GamaMap();
 	public final IList<SingleEquationStatement> external_equations = GamaListFactory.create(Types.NO_TYPE);
 	public final IList<IAgent> equaAgents = GamaListFactory.create(Types.AGENT);
 	public final IList<IAgent> equaAgents_ext = GamaListFactory.create(Types.AGENT);
-	// private GamaList integrated_times=new GamaList();
-	// public GamaList integrate_value=new GamaList();
 	public double equa_t = 0;
 	public IScope currentScope;
 	IExpression simultan = null;
 
-	public final List<Double> integrated_times = new ArrayList<Double>();
-	public final List<List<Double>> integrated_values = new ArrayList<List<Double>>();
+	public final List<Double> integrated_times = new ArrayList<>();
+	public final List<List<Double>> integrated_values = new ArrayList<>();
 
 	public SystemOfEquationsStatement(final IDescription desc) {
 		super(desc);
@@ -153,7 +148,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 			}
 		}
 
-		final List<ISymbol> others = new ArrayList<ISymbol>();
+		final List<ISymbol> others = new ArrayList<>();
 		for ( final ISymbol s : cmd ) {
 			if ( s instanceof SingleEquationStatement ) {
 				((SingleEquationStatement) s).establishVar();
@@ -162,7 +157,6 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 					IExpression v = ((SingleEquationStatement) s).getVar(i);
 
 					if ( ((SingleEquationStatement) s).getOrder() > 0 ) {
-						// if ( !variables_diff.contains(v) ) {
 						variables_diff.put(((SingleEquationStatement) s).toString(), v);
 						// }
 					} else {
@@ -420,8 +414,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 			try {
 				// AD: Does equationValues.get(i) return the correct equation ? The loop is bounded by getDimension()...
 				ydot[i] = Cast.asFloat(currentScope, equationValues.get(i).executeOn(currentScope));
-			} catch (final Exception ex1) {
-				// scope.getGui().debug(ex1);
+			} catch (final GamaRuntimeException ex1) {
+				GAMA.reportAndThrowIfNeeded(currentScope, ex1, true);
+			} catch (final Exception e2) {
+				GAMA.reportAndThrowIfNeeded(currentScope, GamaRuntimeException.create(e2, currentScope), true);
 			} finally {
 				if ( equaAgents.size() > 0 ) {
 					if ( pushed ) {
