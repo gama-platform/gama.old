@@ -68,7 +68,7 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 			}
 		};
 
-		final String outputName = getOutput().getName();
+		// final String outputName = getOutput().getName();
 
 		// OutputSynchronizer.incInitializingViews(outputName, getOutput().isPermanent()); // incremented in the SWT thread
 		surfaceComposite = new SwingControl(parent, SWT.NONE) {

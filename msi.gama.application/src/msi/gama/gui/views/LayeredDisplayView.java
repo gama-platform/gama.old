@@ -174,7 +174,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			overlay.update();
 		}
 		// parent.setLayoutDeferred(false);
-		parent.layout();
+
 
 		// Create after the surface composite
 
@@ -182,6 +182,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 		// form.setWeights(new int[] { 30, 70 });
 		form.setMaximizedControl(parent);
+		c.layout();
 
 		// c.setCursor(null);
 		// cr.dispose();
@@ -430,7 +431,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 				@Override
 				public void run() {
-					if ( s != null && !s.isDisposed() && !disposed )	s.updateDisplay(false);
+					if ( s != null && !s.isDisposed() && !disposed ) {
+						s.updateDisplay(false);
+					}
 					while (!disposed) {
 						acquireLock();
 						if ( s != null && s.isRealized() && !s.isDisposed() && !disposed ) {
