@@ -14,7 +14,7 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	public double depth = 0.0;
 	public boolean empty;
 	public final List textures;
-	public final IShape.Type type;
+	public IShape.Type type;
 
 	public ShapeDrawingAttributes(final ILocation size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
 		final ILocation location, final Boolean empty, final GamaColor color, final GamaColor border,

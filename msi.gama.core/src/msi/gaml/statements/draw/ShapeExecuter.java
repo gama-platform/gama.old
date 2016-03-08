@@ -32,7 +32,7 @@ class ShapeExecuter extends DrawExecuter {
 		throws GamaRuntimeException {
 		super(item);
 		constantShape = item.isConst() ? Cast.asGeometry(null, item.value(null)) : null;
-		hasArrows = beginArrow != null && endArrow != null;
+		hasArrows = beginArrow != null || endArrow != null;
 		if ( beginArrow != null ) {
 			if ( beginArrow.isConst() ) {
 				constantBegin = Cast.asFloat(null, beginArrow.value(null));
@@ -80,6 +80,8 @@ class ShapeExecuter extends DrawExecuter {
 		shape = addArrows(scope, shape, !attributes.empty);
 		// As well as the parts of the shape that can belong to a toroidal representation
 		shape = addToroidalParts(scope, shape);
+		// In case the shape has been changed
+		attributes.type = shape.getGeometricalType();
 
 		// XXX EXPERIMENTAL See Issue #1521
 		if ( GamaPreferences.DISPLAY_ONLY_VISIBLE.getValue() ) {
