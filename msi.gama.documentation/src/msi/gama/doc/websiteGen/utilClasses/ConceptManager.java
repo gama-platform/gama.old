@@ -24,13 +24,15 @@ public class ConceptManager {
 		IConcept.OPERATOR,
 		IConcept.OUTPUT,
 		IConcept.PAUSE,
+		IConcept.PERMANENT,
 		IConcept.PROBABILITY,
 		IConcept.PSEUDO_VARIABLE,
 		IConcept.REFLEX,
 		IConcept.REFRESH,
 		IConcept.TORUS,
 		IConcept.UPDATE,
-		IConcept.WRITE
+		IConcept.WRITE,
+		IConcept.WORLD
 	};
 
 	static public String[] CONCEPTS_NOT_FOR_MODEL_LIBRARY = {
@@ -62,6 +64,7 @@ public class ConceptManager {
 		IConcept.OUTPUT,
 		IConcept.PARAMETER,
 		IConcept.PAUSE,
+		IConcept.PERMANENT,
 		IConcept.PROBABILITY,
 		IConcept.POINT,
 		IConcept.PSEUDO_VARIABLE,
@@ -78,7 +81,8 @@ public class ConceptManager {
 		IConcept.UPDATE,
 		IConcept.VOLUME_UNIT,
 		IConcept.WEIGHT_UNIT,
-		IConcept.WRITE
+		IConcept.WRITE,
+		IConcept.WORLD
 	};
 
 	static public String[] CONCEPTS_DEDICATED_TO_SYNTAX = {

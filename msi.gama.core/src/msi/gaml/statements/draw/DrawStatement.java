@@ -71,7 +71,7 @@ import msi.gaml.types.*;
 	@facet(name = FONT,
 	type = { IType.FONT, IType.STRING },
 	optional = true,
-	doc = @doc("the font used to draw the text, if any. Applying this facet to geometries or images has no effect.")),
+	doc = @doc("the font used to draw the text, if any. Applying this facet to geometries or images has no effect. You can construct here your font with the operator \"font\". ex : font:font(\"Helvetica\", 20 , #plain)")),
 	@facet(name = DEPTH,
 	type = IType.FLOAT,
 	optional = true,

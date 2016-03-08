@@ -41,7 +41,7 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.*;
  */
 
 @symbol(name = { EQUATION_OP }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
-concept = { IConcept.EQUATION })
+concept = { IConcept.EQUATION, IConcept.MATH })
 @facets(
 	value = {
 		@facet(name = EQUATION_LEFT,
@@ -215,12 +215,12 @@ public class SingleEquationStatement extends AbstractStatement {
 	// the var or var_t,
 	// whenever they are called.
 
-	@operator(DIFF)
+	@operator(value=DIFF, concept={ IConcept.EQUATION, IConcept.MATH })
 	public static Double diff(final IScope scope, final Double var, final Double time) {
 		return Double.NaN;
 	}
 
-	@operator(DIF2)
+	@operator(value=DIF2, concept={ IConcept.EQUATION, IConcept.MATH })
 	public static Double diff2(final IScope scope, final Double var, final Double time) {
 		return Double.NaN;
 	}
@@ -233,7 +233,7 @@ public class SingleEquationStatement extends AbstractStatement {
 	 * @param time
 	 * @return
 	 */
-	@operator(ZERO)
+	@operator(value=ZERO, concept={ IConcept.EQUATION, IConcept.MATH })
 	public static Double f(final IScope scope, final IExpression var) {
 		return Double.NaN;
 	}

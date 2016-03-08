@@ -83,7 +83,7 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 	doc = @doc(value = "allowed relative error (used with dp853 method only)")) },
 omissible = IKeyword.EQUATION)
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
-concept = { IConcept.EQUATION })
+concept = { IConcept.EQUATION, IConcept.MATH })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(SolveValidator.class)
 @doc(
