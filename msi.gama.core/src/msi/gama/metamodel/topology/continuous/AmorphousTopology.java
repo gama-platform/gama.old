@@ -113,6 +113,10 @@ public class AmorphousTopology implements ITopology {
 		return null;
 	}
 
+	@Override
+	public IAgent getAgentFarthestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
+		return null;
+	}
 	/**
 	 * @see msi.gama.environment.ITopology#getNeighboursOf(msi.gama.interfaces.IGeometry, java.lang.Double, msi.gama.environment.IAgentFilter)
 	 */

@@ -38,10 +38,10 @@ import msi.gaml.types.IType;
 		doc = {
 			@doc("Returns the environment of this topology, either an agent or a geometry, which defines its boundaries") }),
 	@var(name = IKeyword.PLACES,
-		type = IType.CONTAINER,
-		of = IType.GEOMETRY,
-		doc = {
-			@doc("Returns the list of discrete places that compose this topology (e.g. the list of cells for a grid topology). The continuous topologies will return a singleton list with their environment") }),
+	type = IType.CONTAINER,
+	of = IType.GEOMETRY,
+	doc = {
+		@doc("Returns the list of discrete places that compose this topology (e.g. the list of cells for a grid topology). The continuous topologies will return a singleton list with their environment") }),
 	// Could be replaced by "geometries"
 	/*
 	 * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type =
@@ -70,6 +70,8 @@ public interface ITopology extends IValue {
 	public abstract List<Geometry> listToroidalGeometries(final Geometry geom);
 
 	public abstract IAgent getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter);
+
+	public abstract IAgent getAgentFarthestTo(IScope scope, final IShape source, IAgentFilter filter);
 
 	// public abstract IAgent getAgentClosestTo(IScope scope, final ILocation source, IAgentFilter filter);
 

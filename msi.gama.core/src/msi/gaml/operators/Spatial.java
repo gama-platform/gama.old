@@ -749,7 +749,7 @@ public abstract class Spatial {
 		deprecated = "Use link(g1, g2) instead",
 		usages = { @usage("if the operand is nil, link returns a point {0,0}"),
 			@usage("if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species") },
-			comment = "The geometry of the link is a line between the locations of the two elements of the pair, which is built and maintained dynamically ",
+		comment = "The geometry of the link is a line between the locations of the two elements of the pair, which is built and maintained dynamically ",
 		examples = { @example(value = "link (geom1::geom2)",
 		equals = "a link geometry between geom1 and geom2.",
 		isExecutable = false) },
@@ -2619,6 +2619,30 @@ public abstract class Spatial {
 			return null;
 		}
 
+		@operator(value = { "farthest_to" },
+			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+				IConcept.AGENT_LOCATION })
+		@doc(
+			value = "An agent or a geometry among the left-operand list of agents, species or meta-population (addition of species), the farthest to the operand (casted as a geometry).",
+			comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
+			examples = {
+				@example(value = "[ag1, ag2, ag3] closest_to(self)",
+					equals = "return the farthest agent among ag1, ag2 and ag3 to the agent applying the operator.",
+					isExecutable = false),
+				@example(value = "(species1 + species2) closest_to self", isExecutable = false) },
+			see = { "neighbours_at", "neighbours_of", "neighbours_at", "neighbours_of", "inside", "overlapping",
+				"agents_overlapping", "agents_inside", "agent_closest_to", "closest_to", "agent_farthest_to" })
+		public static IShape farthest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
+			final IShape source) {
+			IType contentType = list.getType().getContentType();
+			if ( contentType.isAgentType() ) {
+				return _farthest(scope, In.list(scope, list), source);
+			} else if ( contentType == Types.GEOMETRY ) { return geomFarthestTo(scope, list, source); }
+			return null;
+		}
+
 		public static IShape geomClostestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
 			final IShape source) {
 			IShape shp = null;
@@ -2631,6 +2655,23 @@ public abstract class Spatial {
 				if ( dist < distMin ) {
 					shp = (IShape) shape;
 					distMin = dist;
+				}
+			}
+			return shp;
+		}
+
+		public static IShape geomFarthestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
+			final IShape source) {
+			IShape shp = null;
+			double distMax = Double.MIN_VALUE;
+			for ( Object shape : list.listValue(scope, Types.GEOMETRY, false) ) {
+				if ( shape == null || !(shape instanceof IShape) ) {
+					continue;
+				}
+				double dist = scope.getTopology().distanceBetween(scope, source, (IShape) shape);
+				if ( dist > distMax ) {
+					shp = (IShape) shape;
+					distMax = dist;
 				}
 			}
 			return shp;
@@ -2649,6 +2690,22 @@ public abstract class Spatial {
 		"overlapping" })
 		public static IAgent agent_closest_to(final IScope scope, final Object source) {
 			return _closest(scope, Different.with(), source);
+		}
+
+		@operator(value = "agent_farthest_to",
+			type = IType.AGENT,
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+				IConcept.AGENT_LOCATION })
+		@doc(value = "An agent, the farthest to the operand (casted as a geometry).",
+		comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
+		examples = { @example(value = "agent_farthest_to(self)",
+		equals = "the farthest agent to the agent applying the operator.",
+		test = false) },
+		see = { "neighbors_at", "neighbors_of", "agents_inside", "agents_overlapping", "closest_to", "inside",
+			"overlapping", "agent_closest_to", "farthest_to" })
+		public static IAgent agent_farthest_to(final IScope scope, final Object source) {
+			return _farthest(scope, Different.with(), source);
 		}
 
 		@operator(value = "agents_inside",
@@ -2706,6 +2763,11 @@ public abstract class Spatial {
 		private static IAgent _closest(final IScope scope, final IAgentFilter filter, final Object source) {
 			if ( filter == null || source == null ) { return null; }
 			return scope.getTopology().getAgentClosestTo(scope, Cast.asGeometry(scope, source, false), filter);
+		}
+
+		private static IAgent _farthest(final IScope scope, final IAgentFilter filter, final Object source) {
+			if ( filter == null || source == null ) { return null; }
+			return scope.getTopology().getAgentFarthestTo(scope, Cast.asGeometry(scope, source, false), filter);
 		}
 
 		private static IList<IAgent> _neighbours(final IScope scope, final IAgentFilter filter, final Object source,

@@ -407,14 +407,53 @@ public abstract class AbstractTopology implements ITopology {
 		return result;
 	}
 
+	@Override
+	public IAgent getAgentFarthestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
+		if ( !isTorus() ) {
+			IAgent result = null;
+			double distMax = Double.MIN_VALUE;
+			IContainer<?, ? extends IShape> agents = getFilteredAgents(scope, filter);
+			for ( IShape s : agents.iterable(scope) ) {
+				if ( s instanceof IAgent ) {
+					double dist = this.distanceBetween(scope, source, s);
+					if ( dist > distMax ) {
+						result = (IAgent) s;
+						distMax = dist;
+					}
+				}
+			}
+			return result;
+		}
+		IAgent result = null;
+		final Geometry g0 = returnToroidalGeom(source);
+		final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
+		double distMax = Double.MIN_VALUE;
+		for ( final Geometry g1 : agents.keySet() ) {
+			final IAgent ag = agents.get(g1);
+			if ( source.getAgent() != null && ag == source.getAgent() ) {
+				continue;
+			}
+			final double dist = g0.distance(g1);
+			if ( dist > distMax ) {
+				distMax = dist;
+				result = ag;
+			}
+		}
+		return result;
+	}
+
 	public Map<Geometry, IAgent> getTororoidalAgents(final IScope scope, final IAgentFilter filter) {
+		return toroidalGeoms(scope, getFilteredAgents(scope, filter));
+	}
+
+	public static IContainer<?, ? extends IShape> getFilteredAgents(final IScope scope, final IAgentFilter filter) {
 		IContainer<?, ? extends IShape> shps;
 		if ( filter != null ) {
 			shps = filter.getAgents(scope);
 		} else {
 			shps = scope.getSimulationScope().getAgents(scope);
 		}
-		return toroidalGeoms(scope, shps);
+		return shps;
 	}
 
 	@Override
