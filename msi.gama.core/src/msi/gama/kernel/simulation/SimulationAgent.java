@@ -449,7 +449,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
-
 		System.out.println("simulation agent set seed: " + s);
 		Double seed;
 		if ( s == null ) {

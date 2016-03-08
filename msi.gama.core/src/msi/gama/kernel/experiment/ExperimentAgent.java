@@ -390,7 +390,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
-		// System.out.println("experiment agent set seed: " + s);
+		System.out.println("experiment agent set seed: " + s);
 		Double seed;
 		if ( s == null ) {
 			seed = null;
@@ -412,6 +412,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		getRandomGenerator().setGenerator(newRng, true);
 	}
 
+	@Override
 	public SimulationPopulation getSimulationPopulation() {
 		if ( populationOfSimulations == null ) {
 			populationOfSimulations = (SimulationPopulation) getMicroPopulation(getModel());

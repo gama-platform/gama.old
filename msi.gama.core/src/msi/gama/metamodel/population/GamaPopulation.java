@@ -353,26 +353,23 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		Map<String, Object> inits;
 		for ( int i = 0, n = agents.size(); i < n; i++ ) {
 			final IAgent a = agents.get(i);
-			try {
-				// a.acquireLock();
-				if ( empty ) {
-					inits = Collections.EMPTY_MAP;
-				} else {
-					inits = initialValues.get(i);
-				}
-				for ( final String s : orderedVarNames ) {
-					final IVariable var = species.getVar(s);
-					Object initGet = inits.get(s);
-					if(!update){
-						var.initializeWith(scope, a, empty ? null : initGet);
-					} else if(initGet != null) {
-						var.initializeWith(scope, a, empty ? null : initGet);
-					} // else if initGet == null : do not do anything, this will keep the previously defined value for the variable
-				}
-			} finally {
-				// a.releaseLock();
+			if ( empty ) {
+				inits = Collections.EMPTY_MAP;
+			} else {
+				inits = initialValues.get(i);
+			}
+			for ( final String s : orderedVarNames ) {
+				final IVariable var = species.getVar(s);
+				Object initGet = empty || !allowVarInitToBeOverridenByExternalInit(var) ? null : inits.get(s);
+				if ( !update || initGet != null ) {
+					var.initializeWith(scope, a, initGet);
+				} // else if initGet == null : do not do anything, this will keep the previously defined value for the variable
 			}
 		}
+	}
+
+	protected boolean allowVarInitToBeOverridenByExternalInit(final IVariable var) {
+		return true;
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
+import msi.gaml.variables.IVariable;
 
 public class SimulationPopulation extends GamaPopulation {
 
@@ -128,6 +129,17 @@ public class SimulationPopulation extends GamaPopulation {
 			});
 		}
 		return this;
+	}
+
+	@Override
+	protected boolean allowVarInitToBeOverridenByExternalInit(final IVariable var) {
+		switch (var.getName()) {
+			case IKeyword.SEED:
+			case IKeyword.RNG:
+				return !var.hasFacet(IKeyword.INIT);
+			default:
+				return true;
+		}
 	}
 
 	@Override
