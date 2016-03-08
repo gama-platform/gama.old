@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -30,7 +31,8 @@ import msi.gama.doc.websiteGen.utilClasses.Utils;
 public class modelLibraryGenerator {
 	
 	// inputs / outputs
-	static String inputPathToModelLibrary = "F:/Gama/GamaSource/msi.gama.models/models/";
+	static String[] inputPathToModelLibrary = {"F:/Gama/GamaSource/msi.gama.models/models/",
+			"F:/Gama/GamaSource/ummisco.gaml.extensions.maths/models"};
 	static String outputPathToModelLibrary = "F:/gama_doc_17.wiki/References/ModelLibrary";
 	static String inputFileForHeadlessExecution = "F:/gama_doc_17.wiki/tempInputForHeadless.xml";
 	static String inputModelScreenshot = "F:/gama_doc_17.wiki/modelScreenshot.xml";
@@ -48,7 +50,13 @@ public class modelLibraryGenerator {
 		
 		// get all the gaml files in the model folder
 		ArrayList<File> listFiles = new ArrayList<File>();
-		Utils.getFilesFromFolder(inputPathToModelLibrary,listFiles);
+		for (String path : inputPathToModelLibrary) {
+			ArrayList<File> listFilesTmp = new ArrayList<File>();
+			Utils.getFilesFromFolder(path,listFilesTmp);
+			for (File f : listFilesTmp) {
+				listFiles.add(f);
+			}
+		}
 		ArrayList<File> gamlFiles = Utils.filterFilesByExtension(listFiles,"gaml");
 		
 		// read modelScreenshot.xml
@@ -108,12 +116,13 @@ public class modelLibraryGenerator {
 		HashMap<String,Integer> occurenceOfKeywords = new HashMap<String,Integer>(); // key is gaml world, value is occurence.
 		ArrayList<String> mostSignificantKeywords = new ArrayList<String>(); // the list of the less employed gaml keywords.
 		int maxOccurenceNumber = 20; // the maximum number of occurrence for the "mostSignificantKeywordsList".
+		ArrayList<String> modelCategory = getSectionName();
 		
 		// store all the keywords in a list
 		for (int fileIdx=0; fileIdx < files.size(); fileIdx++) {
 			String absPath = files.get(fileIdx).getAbsolutePath();
 			String absPathMeta = "";
-			String[] modelCategory = {"Features","Syntax","Toy Models","Tutorials"};
+			
 			for (String modCat : modelCategory) {
 				absPath = absPath.replace("\\", "/");
 				absPathMeta = absPath.replace("models/"+modCat,"models/"+modCat+"/.metadata");
@@ -148,7 +157,6 @@ public class modelLibraryGenerator {
 		for (int fileIdx=0; fileIdx < files.size(); fileIdx++) {
 			String absPath = files.get(fileIdx).getAbsolutePath();
 			String absPathMeta = "";
-			String[] modelCategory = {"Features","Syntax","Toy Models","Tutorials"};
 			for (String modCat : modelCategory) {
 				absPath = absPath.replace("\\", "/");
 				absPathMeta = absPath.replace("models/"+modCat,"models/"+modCat+"/.metadata");
@@ -297,6 +305,23 @@ public class modelLibraryGenerator {
         }
 	}
 	
+	private static ArrayList<String> getSectionName() {
+		ArrayList<String> result = new ArrayList<String>();
+		for (String path : inputPathToModelLibrary) {
+			File directory = new File(path);
+			String[] sectionNames = directory.list(new FilenameFilter() {
+				  @Override
+				  public boolean accept(File current, String name) {
+				    return new File(current, name).isDirectory();
+				  }
+				});
+			for (String sectionName : sectionNames) {
+				result.add(sectionName);
+			}
+		}
+		return result;
+	}
+	
 	private static ArrayList<String> getDisplayNamesByExpe(File file, String expeName) throws IOException {
 		// returns the list of experiments
 		ArrayList<String> result = new ArrayList<String>();
@@ -356,11 +381,22 @@ public class modelLibraryGenerator {
 				// prepare the output file
 				String fileName = "";
 				fileName = gamlFile.getAbsolutePath().replace("\\", "/");
-				fileName = fileName.split(inputPathToModelLibrary)[1];
+				boolean isAdditionnalPlugin = false;
+				for (String path : inputPathToModelLibrary) {
+					if (fileName.contains(path)) {
+						if (!path.equals(inputPathToModelLibrary[0])) {
+							isAdditionnalPlugin = true;
+						}
+						fileName = fileName.split(path)[1];
+					}
+				}
 				if (!fileName.contains("include")) {
 					String newSubSectionName = fileName.split("/")[1];
 					String newSectionName = fileName.split("/")[0];
 					String modelName = fileName.split("/")[fileName.split("/").length-1];
+					if (isAdditionnalPlugin) {
+						newSectionName = "Additionnal Plugins";
+					}
 					fileName = newSectionName+"/"+newSubSectionName+"/"+modelName;
 					fileName = fileName.replace(".gaml", "");
 					fileName = fileName.replace("/models", "");
