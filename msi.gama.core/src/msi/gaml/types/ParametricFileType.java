@@ -4,6 +4,7 @@
 package msi.gaml.types;
 
 import msi.gama.common.GamaPreferences.GenericFile;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
@@ -98,8 +99,21 @@ public class ParametricFileType extends ParametricType {
 	}
 
 	@Override
+	public String getDefiningPlugin() {
+		return plugin;
+	}
+
+	@Override
 	public String toString() {
 		return alias;
+	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		if ( plugin != null ) {
+			meta.put(GamlProperties.PLUGINS, this.plugin);
+			meta.put(GamlProperties.TYPES, this.getName());
+		}
 	}
 
 
@@ -116,6 +130,11 @@ public class ParametricFileType extends ParametricType {
 	@Override
 	public IType getWrappedType() {
 		return bufferType;
+	}
+
+	@Override
+	public boolean isAssignableFrom(final IType l) {
+		return l == this;
 	}
 
 }

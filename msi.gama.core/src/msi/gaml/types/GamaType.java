@@ -216,7 +216,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	protected boolean isSuperTypeOf(final IType type) {
 		if ( type == null ) { return false; }
-		if ( parented && type.isParented() ) { return type == this || isSuperTypeOf(type.getParent()); }
+		if ( parented && type.isParented() ) {
+			return type == this || isSuperTypeOf(type.getParent());
+		}
 		Class remote = type.toClass();
 		for ( Class support : supports ) {
 			if ( support.isAssignableFrom(remote) ) { return true; }

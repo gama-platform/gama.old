@@ -325,7 +325,8 @@ public class ParametricType implements IContainerType {
 	 */
 	@Override
 	public boolean isParented() {
-		return type != null; // ??
+		return true;
+		// return type != null; // ??
 	}
 
 	@Override
@@ -459,7 +460,7 @@ public class ParametricType implements IContainerType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.types.IType#getFieldGetters()
 	 */
 	@Override

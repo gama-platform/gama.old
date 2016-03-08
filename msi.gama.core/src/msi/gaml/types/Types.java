@@ -170,6 +170,7 @@ public class Types {
 			type.setFieldGetters(vars);
 			type.setParent(node.getParent() == null ? null : node.getParent().getData());
 		}
+		System.out.println("Hierarchy" + hierarchy.toStringWithDepth());
 	}
 
 	private static TypeTree<IType> buildHierarchy() {
@@ -191,8 +192,10 @@ public class Types {
 		for ( int i = 0; i < 10; i++ ) {
 			depths[i] = new ArrayList();
 		}
-		Set<IType> list = new HashSet(builtInTypes.getAllTypes());
+		Set<IType> list = new LinkedHashSet(builtInTypes.getAllTypes());
 		for ( IType t : list ) {
+			System.out.println("Type: " + t);
+
 			int depth = 0;
 			for ( IType other : list ) {
 				if ( other.isAssignableFrom(t) && other != t ) {

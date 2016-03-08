@@ -70,8 +70,10 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		for ( String s : exts ) {
 			extensionsToFullType.put(s, t);
 		}
+		t.setParent(Types.FILE);
 		Types.builtInTypes.initType(alias + "_file", t, IType.AVAILABLE_TYPES + ++currentFileTypeIndex,
 			ISymbolKind.Variable.CONTAINER, new Class[] { clazz });
+
 	}
 
 	public static ParametricFileType getTypeFromAlias(final String alias) {
