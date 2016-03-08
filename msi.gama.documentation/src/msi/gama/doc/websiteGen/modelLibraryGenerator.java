@@ -6,6 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,10 +69,10 @@ public class modelLibraryGenerator {
 		System.out.println("----> NOT IMPLEMENTED YET");
 		
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		// copy-paste all the generated images in the write folder, with the write names
+		// copy-paste all the generated images in the write folder, with the right names
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		System.out.println("----- Move the generated images to the write folder, with the write name -----");
+		System.out.println("----- Move the generated images to the write folder, with the right name -----");
 		System.out.println("----> NOT IMPLEMENTED YET");
 		
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -257,7 +260,6 @@ public class modelLibraryGenerator {
 				
 				displayNames = getDisplayNamesByExpe(files.get(idx),experiment);
 				
-//				String formatedFileName = formatString(modelFile.getName());
 				String formatedFileName = modelFile.getName().replace(".gaml", "");
 				
 		        String expeId = formatedFileName + " " + modelName + " " + experiment;
@@ -339,6 +341,9 @@ public class modelLibraryGenerator {
 			e.printStackTrace();
 		}
 		
+		String sectionName = "";
+		String subSectionName = "";
+		
 		for (int idx = 0 ; idx < gamlFiles.size() ; idx++) {
 			File gamlFile = gamlFiles.get(idx);
 			String header = extractHeader(gamlFile);
@@ -352,45 +357,99 @@ public class modelLibraryGenerator {
 				String fileName = "";
 				fileName = gamlFile.getAbsolutePath().replace("\\", "/");
 				fileName = fileName.split(inputPathToModelLibrary)[1];
-				fileName = fileName.replace(".gaml", "");
-				fileName = fileName.replace("/models", "");
-				String outputFileName = outputPathToModelLibrary + "/" + fileName;
-				outputFileName = outputFileName+".md";
-				File outputFile = new File(outputFileName);
-				// I know, this is very ugly, but I'm tired, I don't want to do something nicer :)
-				outputFile.getParentFile().getParentFile().getParentFile().getParentFile().mkdir();
-				outputFile.getParentFile().getParentFile().getParentFile().mkdir();
-				outputFile.getParentFile().getParentFile().mkdir();
-				outputFile.getParentFile().mkdir();
-				outputFile.createNewFile();
-				FileOutputStream fileOut = new FileOutputStream(outputFile);
-				
-				// write the header
-				fileOut.write(mainKeywordsMap.get(gamlFile.getAbsolutePath().replace("\\", "/")).getBytes());
-				fileOut.write(metaStruct.getMdHeader().getBytes());
-				
-				// write the input (if there are any)
-				List<String> inputFileList = searchInputList(gamlFile);
-				if (inputFileList.size() > 0) {
-					if (inputFileList.size()>1) {
-						fileOut.write(new String("Imported models : \n\n").getBytes());
+				if (!fileName.contains("include")) {
+					String newSubSectionName = fileName.split("/")[1];
+					String newSectionName = fileName.split("/")[0];
+					String modelName = fileName.split("/")[fileName.split("/").length-1];
+					fileName = newSectionName+"/"+newSubSectionName+"/"+modelName;
+					fileName = fileName.replace(".gaml", "");
+					fileName = fileName.replace("/models", "");
+					
+					// manipulate section and subsection files
+					// case of "sub-section" (ex : 3D Visualization, Agent movement...)
+					if (!subSectionName.equals(newSubSectionName)) {
+						createSubSectionFile(outputPathToModelLibrary + "/" + newSectionName + "/" + newSubSectionName + ".md");
 					}
-					else {
-						fileOut.write(new String("Imported model : \n\n").getBytes());
+					addModel(outputPathToModelLibrary + "/" + newSectionName + "/" + newSubSectionName + ".md",modelName.replace(".gaml", ""));
+					// case of "section" (ex : Features, Toy Models...)
+					if (!sectionName.equals(newSectionName)) {
+						createSectionFile(outputPathToModelLibrary + "/" + newSectionName + ".md");
 					}
+					if (!subSectionName.equals(newSubSectionName)) {
+						addSubSection(outputPathToModelLibrary + "/" + newSectionName + ".md",newSubSectionName);
+					}
+					subSectionName = newSubSectionName;
+					sectionName = newSectionName;
+					
+					String outputFileName = outputPathToModelLibrary + "/" + fileName;
+					outputFileName = outputFileName+".md";
+					File outputFile = new File(outputFileName);
+					
+					Utils.CreateFolder(outputFile.getParentFile());
+					outputFile.createNewFile();
+					FileOutputStream fileOut = new FileOutputStream(outputFile);
+					
+					// write the header
+					System.out.println(outputFileName);
+					fileOut.write(mainKeywordsMap.get(gamlFile.getAbsolutePath().replace("\\", "/")).getBytes());
+					fileOut.write(metaStruct.getMdHeader().getBytes());
+					
+					// write the input (if there are any)
+					List<String> inputFileList = searchInputList(gamlFile);
+					if (inputFileList.size() > 0) {
+						if (inputFileList.size()>1) {
+							fileOut.write(new String("Imported models : \n\n").getBytes());
+						}
+						else {
+							fileOut.write(new String("Imported model : \n\n").getBytes());
+						}
+					}
+					for (String inputPath : inputFileList) {
+						// write the code of the input files
+						fileOut.write(getModelCode(new File(inputPath)).getBytes());
+						fileOut.write(new String("\n\n").getBytes());
+					}
+					
+					// write the code
+					fileOut.write(new String("Code of the model : \n\n").getBytes());
+					fileOut.write(getModelCode(gamlFile).getBytes());
+					fileOut.close();
 				}
-				for (String inputPath : inputFileList) {
-					// write the code of the input files
-					fileOut.write(getModelCode(new File(inputPath)).getBytes());
-					fileOut.write(new String("\n\n").getBytes());
-				}
-				
-				// write the code
-				fileOut.write(new String("Code of the model : \n\n").getBytes());
-				fileOut.write(getModelCode(gamlFile).getBytes());
-				fileOut.close();
 			}
 		}
+	}
+	
+	
+	private static void createSectionFile(String pathToSectionFile) throws IOException {
+		File outputFile = new File(pathToSectionFile);
+		Utils.CreateFolder(outputFile.getParentFile());
+		outputFile.createNewFile();
+		FileOutputStream fileOut = new FileOutputStream(outputFile);
+		
+		String sectionName = pathToSectionFile.split("/")[pathToSectionFile.split("/").length-1].replace(".md", "");
+		fileOut.write(new String("# "+sectionName+"\n\nThis section is composed of the following sub-section :\n\n").getBytes());
+		fileOut.close();
+	}
+	
+	private static void createSubSectionFile(String pathToSubSectionFile) throws IOException {
+		File outputFile = new File(pathToSubSectionFile);
+		Utils.CreateFolder(outputFile.getParentFile());
+		outputFile.createNewFile();
+		FileOutputStream fileOut = new FileOutputStream(outputFile);
+		
+		String sectionName = pathToSubSectionFile.split("/")[pathToSubSectionFile.split("/").length-1].replace(".md", "");
+		fileOut.write(new String("# "+sectionName+"\n\nThis sub-section is composed of the following models :\n\n").getBytes());
+		fileOut.close();
+	}
+	
+	private static void addSubSection(String pathToSectionFile, String subSectionName) throws IOException {
+		String urlToSubSection = Utils.getUrlFromName(subSectionName);
+		Files.write(Paths.get(pathToSectionFile), new String("["+subSectionName+"]("+urlToSubSection+")\n").getBytes(), StandardOpenOption.APPEND);
+	}
+	
+	private static void addModel(String pathToSubSectionFile, String modelName) throws IOException {
+		String urlToModel = Utils.getUrlFromName(modelName);
+		Files.write(Paths.get(pathToSubSectionFile), new String("["+modelName+"]("+urlToModel+")\n").getBytes(), StandardOpenOption.APPEND);
 	}
 	
 	private static String extractHeader(File file) throws IOException {

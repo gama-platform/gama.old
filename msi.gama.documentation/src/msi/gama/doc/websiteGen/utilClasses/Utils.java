@@ -117,4 +117,33 @@ public class Utils {
 		}
 		return result;
 	}
+	
+	public static void CreateFolder(File file) {
+		if (!file.mkdir() && !file.exists())
+		{
+			CreateFolder(file.getParentFile());
+			file.mkdir();
+		}
+		return;
+	}
+	
+	public static String getUrlFromName(String str) {
+		String result = "";
+		str = str.toLowerCase();
+		str = str.replace("-", " ");
+		str = str.replace(".", " ");
+		str = str.replace(",", " ");
+		String[] list = str.split(" ");
+		if (list.length == 0) {
+			result = String.valueOf(str.charAt(0)).toUpperCase()+str.substring(1);
+		}
+		else {
+			for (String word : list) {
+				if (word.length()>0) {
+				result += String.valueOf(word.charAt(0)).toUpperCase()+word.substring(1);
+				}
+			}
+		}
+		return result;
+	}
 }
