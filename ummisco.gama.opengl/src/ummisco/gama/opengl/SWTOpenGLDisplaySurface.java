@@ -182,7 +182,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void zoomFit() {
 		// resizeImage(getWidth(), getHeight(), false);
-		renderer.frame = 0;
+		renderer.currentZRotation = 0;
 		renderer.camera.zeroVelocity();
 		renderer.camera.resetCamera(getEnvWidth(), getEnvHeight(), output.getData().isOutput3D());
 		output.getData().setZoomLevel(1d);
