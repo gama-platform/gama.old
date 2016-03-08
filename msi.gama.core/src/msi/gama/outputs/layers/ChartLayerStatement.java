@@ -149,7 +149,7 @@ omissible = IKeyword.NAME)
 		@example(value = "      [Set of data, datalists statements]", isExecutable = false),
 		@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) },
 	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
-		IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
+		IKeyword.OVERLAY, IKeyword.POPULATION })
 public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String XRANGE = "x_range";

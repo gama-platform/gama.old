@@ -15,9 +15,8 @@ import java.awt.Color;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -34,52 +33,52 @@ import msi.gaml.types.IType;
 		optional = true,
 		doc = @doc("Whether or not the rectangular shape of the overlay should be rounded. True by default")),
 	@facet(name = IKeyword.BORDER,
-		type = IType.COLOR,
-		optional = true,
-		doc = @doc("Color to apply to the border of the rectangular shape of the overlay. Nil by default")),
+	type = IType.COLOR,
+	optional = true,
+	doc = @doc("Color to apply to the border of the rectangular shape of the overlay. Nil by default")),
 	@facet(name = IKeyword.POSITION,
-		type = IType.POINT,
-		optional = true,
-		doc = @doc("position of the upper-left corner of the overlay. Note that if coordinates are in [0,1[, the position is relative to the size of the view (e.g. {0.5,0.5} refers to the middle of the view) whereas it is absolute when coordinates are greater than 1. When the position is a 3D point {0.5, 0.5, 0.5}, the last coordinate specifies the elevation of the layer.")),
+	type = IType.POINT,
+	optional = true,
+	doc = @doc("position of the upper-left corner of the overlay. Note that if coordinates are in [0,1[, the position is relative to the size of the view (e.g. {0.5,0.5} refers to the middle of the view) whereas it is absolute when coordinates are greater than 1. When the position is a 3D point {0.5, 0.5, 0.5}, the last coordinate specifies the elevation of the layer.")),
 	@facet(name = IKeyword.SIZE,
-		type = IType.POINT,
-		optional = true,
-		doc = @doc("extent of the layer in the view from its position. Coordinates in [0,1[ are treated as percentages of the total surface of the view, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Unlike  'position', no elevation can be provided with the z coordinate ")),
+	type = IType.POINT,
+	optional = true,
+	doc = @doc("extent of the layer in the view from its position. Coordinates in [0,1[ are treated as percentages of the total surface of the view, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Unlike  'position', no elevation can be provided with the z coordinate ")),
 	@facet(name = IKeyword.TRANSPARENCY,
-		type = IType.FLOAT,
-		optional = true,
-		doc = @doc("the transparency rate of the overlay (between 0 and 1, 1 means no transparency) when it is displayed inside the view. The bottom overlay will remain at 0.75")),
+	type = IType.FLOAT,
+	optional = true,
+	doc = @doc("the transparency rate of the overlay (between 0 and 1, 1 means no transparency) when it is displayed inside the view. The bottom overlay will remain at 0.75")),
 	@facet(name = IKeyword.LEFT,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("an expression that will be evaluated and displayed in the left section of the bottom overlay")),
+	type = IType.NONE,
+	optional = true,
+	doc = @doc("an expression that will be evaluated and displayed in the left section of the bottom overlay")),
 	@facet(name = IKeyword.RIGHT,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("an expression that will be evaluated and displayed in the right section of the bottom overlay")),
+	type = IType.NONE,
+	optional = true,
+	doc = @doc("an expression that will be evaluated and displayed in the right section of the bottom overlay")),
 	@facet(name = IKeyword.CENTER,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("an expression that will be evaluated and displayed in the center section of the bottom overlay")),
+	type = IType.NONE,
+	optional = true,
+	doc = @doc("an expression that will be evaluated and displayed in the center section of the bottom overlay")),
 	@facet(name = IKeyword.BACKGROUND,
-		type = IType.COLOR,
-		optional = true,
-		doc = @doc("the background color of the overlay displayed inside the view (the bottom overlay remains black)")),
+	type = IType.COLOR,
+	optional = true,
+	doc = @doc("the background color of the overlay displayed inside the view (the bottom overlay remains black)")),
 	@facet(name = IKeyword.COLOR,
-		type = { IType.LIST, IType.COLOR },
-		of = IType.COLOR,
-		optional = true,
-		doc = @doc("the color(s) used to display the expressions given in the 'left', 'center' and 'right' facets")) })
+	type = { IType.LIST, IType.COLOR },
+	of = IType.COLOR,
+	optional = true,
+	doc = @doc("the color(s) used to display the expressions given in the 'left', 'center' and 'right' facets")) })
 // ,omissible = IKeyword.LEFT)
 @doc(
 	value = "`" + IKeyword.OVERLAY +
-		"` allows the modeler to display a line to the already existing bottom overlay, where the results of 'left', 'center' and 'right' facets, when they are defined, are displayed with the corresponding color if defined.",
+	"` allows the modeler to display a line to the already existing bottom overlay, where the results of 'left', 'center' and 'right' facets, when they are defined, are displayed with the corresponding color if defined.",
 	usages = { @usage(value = "To display information in the bottom overlay, the syntax is:",
-		examples = { @example(
-			value = "overlay \"Cycle: \" + (cycle) center: \"Duration: \" + total_duration + \"ms\" right: \"Model time: \" + as_date(time,\"\") color: [#yellow, #orange, #yellow];",
-			isExecutable = false) }) },
+	examples = { @example(
+		value = "overlay \"Cycle: \" + (cycle) center: \"Duration: \" + total_duration + \"ms\" right: \"Model time: \" + as_date(time,\"\") color: [#yellow, #orange, #yellow];",
+		isExecutable = false) }) },
 	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-		IKeyword.IMAGE, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
+		IKeyword.IMAGE, IKeyword.POPULATION })
 public class OverlayStatement extends GraphicLayerStatement implements IOverlayProvider<OverlayInfo> {
 
 	final IExpression left, right, center, round;

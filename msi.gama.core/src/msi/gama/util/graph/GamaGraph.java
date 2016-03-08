@@ -141,7 +141,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			final E e = entry.getKey();
 			final _Edge<V, E> v = entry.getValue();
 			sb.append(e.toString()).append(Strings.TAB).append("(").append(v.toString()).append("),")
-				.append(Strings.LN);
+			.append(Strings.LN);
 		}
 		sb.append("]\n}");
 		/*
@@ -341,8 +341,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		final List initVal = new ArrayList();
 		map.put(IKeyword.SOURCE, v1);
 		map.put(IKeyword.TARGET, v2);
-		map.put(IKeyword.SHAPE,
-			Creation.link(scope, new GamaPair(v1, v2, getType().getKeyType(), getType().getKeyType())));
+		map.put(IKeyword.SHAPE, Creation.link(scope, (IShape) v1, (IShape) v2));
 		initVal.add(map);
 		return generateEdgeAgent(initVal);
 	}

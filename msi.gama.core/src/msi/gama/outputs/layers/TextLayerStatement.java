@@ -15,9 +15,8 @@ import static msi.gama.common.interfaces.IKeyword.STYLE;
 import java.awt.Color;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -31,56 +30,56 @@ import msi.gaml.types.*;
 @facets(
 	value = { @facet(name = IKeyword.VALUE, type = IType.STRING, optional = true, internal = true),
 		@facet(name = IKeyword.POSITION,
-			type = IType.POINT,
-			optional = true,
-			doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.") ),
+		type = IType.POINT,
+		optional = true,
+		doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.") ),
 		@facet(name = IKeyword.SIZE,
-			type = { IType.INT, IType.FLOAT, IType.POINT },
-			optional = true,
-			doc = @doc("extent of the layer in the screen from its position. Coordinates in [0,1[ are treated as percentages of the total surface, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Like in 'position', an elevation can be provided with the z coordinate, allowing to scale the layer in the 3 directions ") ),
+		type = { IType.INT, IType.FLOAT, IType.POINT },
+		optional = true,
+		doc = @doc("extent of the layer in the screen from its position. Coordinates in [0,1[ are treated as percentages of the total surface, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Like in 'position', an elevation can be provided with the z coordinate, allowing to scale the layer in the 3 directions ") ),
 		@facet(name = IKeyword.TRANSPARENCY,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("the transparency rate of the layer (between 0 and 1, 1 means no transparency)") ),
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the transparency rate of the layer (between 0 and 1, 1 means no transparency)") ),
 		// 10/04/13 Name is not a constant ID anymore but can represent the text to display.
 
 		@facet(name = STYLE,
-			type = IType.ID,
-			values = { "plain", "bold", "italic" },
-			optional = true,
-			doc = @doc(
-				deprecated = "Use the 'font' operator together with the #bold, #italic and #plain constant styles",
-				value = "the style (bold, italic...) udes to display the text") ),
+		type = IType.ID,
+		values = { "plain", "bold", "italic" },
+		optional = true,
+		doc = @doc(
+			deprecated = "Use the 'font' operator together with the #bold, #italic and #plain constant styles",
+			value = "the style (bold, italic...) udes to display the text") ),
 		@facet(name = IKeyword.NAME, type = IType.STRING, optional = false, doc = @doc("the string to display") ),
 		@facet(name = IKeyword.FONT,
-			type = { IType.FONT, IType.STRING },
-			optional = true,
-			doc = @doc("the font used for the text") ),
+		type = { IType.FONT, IType.STRING },
+		optional = true,
+		doc = @doc("the font used for the text") ),
 		@facet(name = IKeyword.COLOR,
-			type = IType.COLOR,
-			optional = true,
-			doc = @doc("the color used to display the text") ),
+		type = IType.COLOR,
+		optional = true,
+		doc = @doc("the color used to display the text") ),
 		@facet(name = IKeyword.REFRESH,
-			type = IType.BOOL,
-			optional = true,
-			doc = @doc("(openGL only) specify whether the display of the text is refreshed. (true by default, useful in case of text that is not been modified over simulation)") ) },
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("(openGL only) specify whether the display of the text is refreshed. (true by default, useful in case of text that is not been modified over simulation)") ) },
 	omissible = IKeyword.NAME)
 @doc(deprecated = "Use a 'graphics' type of layer instead, with a `draw text ` statement inside",
-	value = "`" + IKeyword.TEXT +
-		"` allows the modeler to display a string (that can change at each step) in a given position of the display.",
-	usages = {
-		@usage(value = "The general syntax is:",
-			examples = { @example(value = "display my_display {", isExecutable = false),
-				@example(value = "   text expression [additional options];", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "For instance, in a segregation model, `agents` will only display unhappy agents:",
-			examples = { @example(value = "display Segregation {", isExecutable = false),
-				@example(
-					value = "   text 'Carrying ants : ' + (int(ant as list count(each.has_food)) + int(ant as list count(each.state = 'followingRoad'))) position: {0.5,0.03} color: rgb('black') size: {1,0.02};",
-					isExecutable = false),
-				@example(value = "}", isExecutable = false) }) },
-	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-		IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION })
+value = "`" + IKeyword.TEXT +
+"` allows the modeler to display a string (that can change at each step) in a given position of the display.",
+usages = {
+	@usage(value = "The general syntax is:",
+		examples = { @example(value = "display my_display {", isExecutable = false),
+			@example(value = "   text expression [additional options];", isExecutable = false),
+			@example(value = "}", isExecutable = false) }),
+	@usage(value = "For instance, in a segregation model, `agents` will only display unhappy agents:",
+	examples = { @example(value = "display Segregation {", isExecutable = false),
+		@example(
+			value = "   text 'Carrying ants : ' + (int(ant as list count(each.has_food)) + int(ant as list count(each.state = 'followingRoad'))) position: {0.5,0.03} color: rgb('black') size: {1,0.02};",
+			isExecutable = false),
+		@example(value = "}", isExecutable = false) }) },
+see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
+	IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.POPULATION })
 @Deprecated
 public class TextLayerStatement extends AbstractLayerStatement {
 

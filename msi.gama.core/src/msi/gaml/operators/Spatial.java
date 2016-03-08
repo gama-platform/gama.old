@@ -743,23 +743,7 @@ public abstract class Spatial {
 			return GamaGeometryType.buildPolyplan(shapes, depth);
 		}
 
-		@operator(value = { "link" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-			concept = { IConcept.SHAPE, IConcept.SPATIAL_COMPUTATION, IConcept.GEOMETRY })
-		@doc(value = "A link between the 2 elements of the pair.",
-		deprecated = "Use link(g1, g2) instead",
-		usages = { @usage("if the operand is nil, link returns a point {0,0}"),
-			@usage("if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species") },
-		comment = "The geometry of the link is a line between the locations of the two elements of the pair, which is built and maintained dynamically ",
-		examples = { @example(value = "link (geom1::geom2)",
-		equals = "a link geometry between geom1 and geom2.",
-		isExecutable = false) },
-		see = { "around", "circle", "cone", "line", "norm", "point", "polygon", "polyline", "rectangle", "square",
-		"triangle" })
-		public static IShape link(final IScope scope, final GamaPair points) throws GamaRuntimeException {
-			if ( points == null ||
-				points.first() == null && points.last() == null ) { return new GamaShape(new GamaPoint(0, 0)); }
-			return GamaGeometryType.pairToGeometry(scope, points);
-		}
+
 
 		@operator(value = { "link" },
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
@@ -2503,7 +2487,7 @@ public abstract class Spatial {
 			examples = { @example(value = "[ag1, ag2, ag3] at_distance 20",
 			equals = "the agents of the list located at a distance <= 20 from the caller agent (in the same order).",
 			isExecutable = false) },
-			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
+			see = { "neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 			"overlapping" })
 		public static IList<? extends IShape> at_distance(final IScope scope,
 			final IContainer<?, ? extends IShape> list, final Double distance) {
@@ -2542,7 +2526,7 @@ public abstract class Spatial {
 				@example(value = "(species1 + species2) inside (self)",
 				equals = "the agents among species species1 and species2 that are covered by the shape of the right-hand argument.",
 				isExecutable = false) },
-			see = { "neighbours_at", "neighbours_of", "closest_to", "overlapping", "agents_overlapping",
+			see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping",
 				"agents_inside", "agent_closest_to" })
 		public static IList<? extends IShape> inside(final IScope scope, final IContainer<?, ? extends IShape> list,
 			final IShape source) {
@@ -2564,7 +2548,7 @@ public abstract class Spatial {
 					equals = "return the agents among ag1, ag2 and ag3 that overlap the shape of the agent applying the operator.",
 					isExecutable = false),
 				@example(value = "(species1 + species2) overlapping self", isExecutable = false) },
-			see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
+			see = { "neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 			"agents_overlapping" })
 		public static IList<? extends IShape> overlapping(final IScope scope,
 			final IContainer<?, ? extends IShape> list, final IShape source) {
@@ -2608,7 +2592,7 @@ public abstract class Spatial {
 					equals = "return the closest agent among ag1, ag2 and ag3 to the agent applying the operator.",
 					isExecutable = false),
 				@example(value = "(species1 + species2) closest_to self", isExecutable = false) },
-			see = { "neighbours_at", "neighbours_of", "neighbours_at", "neighbours_of", "inside", "overlapping",
+			see = { "neighbors_at", "neighbors_of", "inside", "overlapping",
 				"agents_overlapping", "agents_inside", "agent_closest_to" })
 		public static IShape closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 			final IShape source) {
@@ -2632,7 +2616,7 @@ public abstract class Spatial {
 					equals = "return the farthest agent among ag1, ag2 and ag3 to the agent applying the operator.",
 					isExecutable = false),
 				@example(value = "(species1 + species2) closest_to self", isExecutable = false) },
-			see = { "neighbours_at", "neighbours_of", "neighbours_at", "neighbours_of", "inside", "overlapping",
+			see = { "neighbors_at", "neighbors_of", "neighbors_at", "inside", "overlapping",
 				"agents_overlapping", "agents_inside", "agent_closest_to", "closest_to", "agent_farthest_to" })
 		public static IShape farthest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 			final IShape source) {
@@ -2729,7 +2713,7 @@ public abstract class Spatial {
 		examples = { @example(value = "agents_overlapping(self)",
 		equals = "the agents that overlap the shape of the agent applying the operator.",
 		test = false) },
-		see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
+		see = { "neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 			"overlapping", "at_distance" })
 		public static IList<IAgent> agents_overlapping(final IScope scope, final Object source) {
 			return _gather(scope, Different.with(), source, false);
@@ -2743,7 +2727,7 @@ public abstract class Spatial {
 		examples = { @example(value = "agents_at_distance(20)",
 		equals = "all the agents (excluding the caller) which distance to the caller is lower than 20",
 		test = false) },
-		see = { "neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
+		see = { "neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 			"overlapping", "at_distance" })
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
 			return _neighbours(scope, Different.with(), scope.getAgentScope(), distance);
@@ -2981,7 +2965,7 @@ public abstract class Spatial {
 		masterDoc = true,
 		examples = { @example("loop i from: 0 to: length(shape.points) - 1{" +
 			"set shape <-  set_z (shape, i, 3.0);" + "}") },
-		see = { "add_z" })
+		see = {})
 		public static IShape set_z(final IScope scope, final IShape geom, final Integer index, final Double z) {
 			if ( geom == null ) { return null; }
 			Geometry g = geom.getInnerGeometry();
@@ -3019,7 +3003,7 @@ public abstract class Spatial {
 		@doc(
 			value = "Sets the z ordinate of each point of a geometry to the value provided, in order, by the right argument",
 			examples = { @example("shape <- triangle(3) set_z [5,10,14];") },
-			see = { "add_z" })
+			see = {})
 		public static IShape set_z(final IScope scope, final IShape geom, final IContainer<?, Double> coords) {
 			if ( geom == null ) { return null; }
 			Geometry g = geom.getInnerGeometry();
