@@ -1410,7 +1410,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					Emotion fearConfirmed = null;
 					Emotion sadness = null;
 					if(emo.getNoIntensity()){
-						fearConfirmed = new Emotion("fearConfirmed",emo.getAbout());
+						fearConfirmed = new Emotion("fear_confirmed",emo.getAbout());
 						sadness = new Emotion("sadness",emo.getAbout());
 					}else{
 						//On décide de transmettre l'intensité de l'émotion précédente.
