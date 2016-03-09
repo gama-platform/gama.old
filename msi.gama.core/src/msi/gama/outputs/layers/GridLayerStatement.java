@@ -106,7 +106,7 @@ import msi.gaml.types.IType;
 			isExecutable = false),
 			@example(value = "}", isExecutable = false) }) },
 	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.IMAGE,
-		IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
+		IKeyword.OVERLAY, IKeyword.POPULATION })
 @serializer(GridLayerSerializer.class)
 public class GridLayerStatement extends AbstractLayerStatement {
 

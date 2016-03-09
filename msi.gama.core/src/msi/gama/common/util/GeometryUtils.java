@@ -562,11 +562,11 @@ public class GeometryUtils {
 		} else if ( geom instanceof Polygon ) {
 			final Polygon polygon = (Polygon) geom;
 			final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
-			final DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
+			final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
 			GeometryCollection tri = null;
 			try {
 				dtb.setSites(polygon);
-				// dtb.setConstraints(polygon);
+				dtb.setConstraints(polygon);
 				dtb.setTolerance(sizeTol);
 				tri = (GeometryCollection) dtb.getTriangles(FACTORY);
 			} catch (final LocateFailureException e) {

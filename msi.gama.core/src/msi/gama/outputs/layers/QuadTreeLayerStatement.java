@@ -12,9 +12,8 @@
 package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -35,27 +34,27 @@ import msi.gaml.types.IType;
 			optional = true,
 			doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greater than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
 		@facet(name = IKeyword.SIZE,
-			type = IType.POINT,
-			optional = true,
-			doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
+		type = IType.POINT,
+		optional = true,
+		doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
 		@facet(name = IKeyword.TRANSPARENCY,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("the transparency rate of the agents (between 0 and 1, 1 means no transparency)")),
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the transparency rate of the agents (between 0 and 1, 1 means no transparency)")),
 		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the layer")),
 		@facet(name = IKeyword.REFRESH,
-			type = IType.BOOL,
-			optional = true,
-			doc = @doc("(openGL only) specify whether the layer is refreshed. (true by default, usefull in case of agents that do not move)")) },
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("(openGL only) specify whether the layer is refreshed. (true by default, usefull in case of agents that do not move)")) },
 	omissible = IKeyword.NAME)
 @doc(deprecated = "The `quadtree`layer will be removed soon from the definition of displays",
-	value = "`" + IKeyword.QUADTREE + "` allows the modeler to display the quadtree.",
-	usages = { @usage(value = "The general syntax is:",
-		examples = { @example(value = "display my_display {", isExecutable = false),
-			@example(value = "   quadtree 'qt' position: { 0, 0.5 } size: quadrant_size;", isExecutable = false),
-			@example(value = "}", isExecutable = false) }) },
-	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-		IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
+value = "`" + IKeyword.QUADTREE + "` allows the modeler to display the quadtree.",
+usages = { @usage(value = "The general syntax is:",
+examples = { @example(value = "display my_display {", isExecutable = false),
+	@example(value = "   quadtree 'qt' position: { 0, 0.5 } size: quadrant_size;", isExecutable = false),
+	@example(value = "}", isExecutable = false) }) },
+see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
+	IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.POPULATION })
 @Deprecated
 public class QuadTreeLayerStatement extends AbstractLayerStatement {
 

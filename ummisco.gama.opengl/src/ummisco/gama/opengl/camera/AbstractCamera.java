@@ -52,7 +52,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected double theta;
 	protected double phi;
-	protected double curZRotation = 0.0;
+	// protected double curZRotation = 0.0;
 
 	private final double _keyboardSensivity = 4.0;
 	private final double _sensivity = 1;
@@ -234,27 +234,27 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected abstract boolean canSelectOnRelease(org.eclipse.swt.events.MouseEvent arg0);
 
-	protected boolean ctrl(final org.eclipse.swt.events.MouseEvent e) {
+	protected static boolean ctrl(final org.eclipse.swt.events.MouseEvent e) {
 		return SWTAccessor.isOSX && (e.stateMask & SWT.COMMAND) != 0 || (e.stateMask & SWT.CTRL) != 0;
 	}
 
-	protected boolean ctrl(final org.eclipse.swt.events.KeyEvent e) {
+	protected static boolean ctrl(final org.eclipse.swt.events.KeyEvent e) {
 		return SWTAccessor.isOSX && (e.stateMask & SWT.COMMAND) != 0 || (e.stateMask & SWT.CTRL) != 0;
 	}
 
-	protected boolean shift(final org.eclipse.swt.events.MouseEvent e) {
+	protected static boolean shift(final org.eclipse.swt.events.MouseEvent e) {
 		return (e.stateMask & SWT.SHIFT) != 0;
 	}
 
-	protected boolean shift(final org.eclipse.swt.events.KeyEvent e) {
+	protected static boolean shift(final org.eclipse.swt.events.KeyEvent e) {
 		return (e.stateMask & SWT.SHIFT) != 0;
 	}
 
-	protected boolean alt(final org.eclipse.swt.events.MouseEvent e) {
+	protected static boolean alt(final org.eclipse.swt.events.MouseEvent e) {
 		return (e.stateMask & SWT.ALT) != 0;
 	}
 
-	protected boolean alt(final org.eclipse.swt.events.KeyEvent e) {
+	protected static boolean alt(final org.eclipse.swt.events.KeyEvent e) {
 		return (e.stateMask & SWT.ALT) != 0;
 	}
 

@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.*;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class CameraArcBall extends AbstractCamera {
@@ -32,11 +32,10 @@ public class CameraArcBall extends AbstractCamera {
 
 	// Use when the alt+right/left is pressed (rotate the camera upvector around z axis).
 	public void rotateCameraUpVectorOnZ(final boolean clock) {
-		upPosition(FastMath.cos(CmnFastMath.PI / 2 + curZRotation), FastMath.sin(CmnFastMath.PI / 2 + curZRotation), upVector.z);
 		if ( clock ) {
-			curZRotation = curZRotation - CmnFastMath.PI / 64;
+			getRenderer().currentZRotation = getRenderer().currentZRotation - 1;
 		} else {
-			curZRotation = curZRotation + CmnFastMath.PI / 64;
+			getRenderer().currentZRotation = getRenderer().currentZRotation + 1;
 		}
 	}
 
@@ -126,9 +125,8 @@ public class CameraArcBall extends AbstractCamera {
 				theta = theta - -get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				if ( isAltKeyDown() && isViewIn2DPlan() ) {
+				if ( isAltKeyDown() /*&& isViewIn2DPlan()*/ ) {
 					rotateCameraUpVectorOnZ(true);
-
 				} else {
 					updatePosition(position.x + translation, position.y, position.z);
 					lookPosition(target.x + translation, target.y, target.z);
@@ -140,7 +138,7 @@ public class CameraArcBall extends AbstractCamera {
 				theta = theta - get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				if ( isAltKeyDown() && isViewIn2DPlan() ) {
+				if ( isAltKeyDown() /*&& isViewIn2DPlan()*/ ) {
 					rotateCameraUpVectorOnZ(false);
 				} else {
 					updatePosition(position.x - translation, position.y, position.z);

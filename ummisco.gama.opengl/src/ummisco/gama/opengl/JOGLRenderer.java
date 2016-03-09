@@ -57,7 +57,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	GLCanvas canvas;
 	public ICamera camera;
 	public final SceneBuffer sceneBuffer;
-	public int frame = 0;
+	public double currentZRotation = 0;
 	private boolean picking = false;
 	public int pickedObjectIndex = -1;
 	public AbstractObject currentPickedObject;
@@ -103,7 +103,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 				canvas.setSharedAutoDrawable(TextureCache.getSharedContext());
 			}
 			canvas.setAutoSwapBufferMode(true);
-			SWTGLAnimator animator = new SWTGLAnimator(canvas);
+		new SWTGLAnimator(canvas);
 			canvas.addGLEventListener(this);
 			return canvas;
 		}
@@ -457,13 +457,13 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		// Use when the rotation button is on.
 		public void rotateModel(final GL2 gl) {
 			if ( data.isRotationOn() ) {
-				frame++;
+				currentZRotation++;
 			}
-			if ( frame != 0 ) {
+			if ( currentZRotation != 0 ) {
 				double env_width = data.getEnvWidth();
 				double env_height = data.getEnvHeight();
 				gl.glTranslated(env_width / 2, -env_height / 2, 0);
-				gl.glRotatef(frame, 0, 0, 1);
+				gl.glRotated(currentZRotation, 0, 0, 1);
 				gl.glTranslated(-env_width / 2, +env_height / 2, 0);
 			}
 		}
