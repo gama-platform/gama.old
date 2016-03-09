@@ -34,17 +34,23 @@ concept = { IConcept.BDI })
 	@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = SimpleBdiPlanStatement.INTENTION, type = IType.NONE, optional = true),
+	@facet(name = SimpleBdiPlanStatement.EMOTION, type = EmotionType.id, optional = true),
+	@facet(name = SimpleBdiPlanStatement.THRESHOLD, type = IType.FLOAT, optional = true),
 	@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true)}, omissible = IKeyword.NAME)
 //Ajouter un facet "intention" qui compléterait le when.
 public class SimpleBdiPlan extends AbstractStatementSequence {
 	
 	public static final String INTENTION = "intention";
+	public static final String EMOTION = "emotion";
+	public static final String THRESHOLD = "threshold";
 
 	private final IExpression _when;
 	private final IExpression _priority;
 	private final IExpression _executedwhen;
 	private final IExpression _instantaneous;
 	private final IExpression _intention;
+	final IExpression _emotion;
+	final  IExpression _threshold;
 
 	public IExpression getPriorityExpression() {
 		return _priority;
@@ -66,6 +72,14 @@ public class SimpleBdiPlan extends AbstractStatementSequence {
 		return _intention;
 	}
 	
+	public IExpression getEmotionExpression(){
+		return _emotion;
+	}
+	
+	public IExpression getThreshold(){
+		return _threshold;
+	}
+		
 	public SimpleBdiPlan(final IDescription desc) {
 		super(desc);
 		_when = getFacet(IKeyword.WHEN);
@@ -73,6 +87,8 @@ public class SimpleBdiPlan extends AbstractStatementSequence {
 		_executedwhen = getFacet(SimpleBdiArchitecture.FINISHEDWHEN);
 		_instantaneous = getFacet(SimpleBdiArchitecture.INSTANTANEAOUS);
 		_intention = getFacet(SimpleBdiPlan.INTENTION);
+		_emotion = getFacet(SimpleBdiPlanStatement.EMOTION);
+		_threshold = getFacet(SimpleBdiPlanStatement.THRESHOLD);
 		if ( hasFacet(IKeyword.NAME) ) {
 			setName(getLiteral(IKeyword.NAME));
 		}
