@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 csvedit
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,18 +16,18 @@
 package msi.gama.gui.viewers.csv;
 
 import java.util.*;
-import msi.gama.gui.viewers.csv.model.CSVRow;
-import msi.gama.gui.viewers.csv.text.SearchResultStyle;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
+import msi.gama.gui.viewers.csv.model.CSVRow;
+import msi.gama.gui.viewers.csv.text.SearchResultStyle;
 
 /**
- * 
+ *
  * @author fhenri
- * 
+ *
  */
 public class CSVLabelProvider extends StyledCellLabelProvider {
 
@@ -37,8 +37,8 @@ public class CSVLabelProvider extends StyledCellLabelProvider {
 	private final Color searchColor;
 
 	/**
-     *
-     */
+	 *
+	 */
 	public CSVLabelProvider() {
 		searchColor = Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);
 	}

@@ -195,41 +195,50 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			if ( element instanceof java.io.File ) {
 				IPath p = Path.fromOSString(((java.io.File) element).getAbsolutePath());
 				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(p);
-				if ( file == null || !file.exists() ) { return null; }
 			}
+			if ( file == null || !file.exists() ) { return null; }
 		} else if ( !file.isAccessible() ) { return null; }
 		final String ct = getContentTypeId(file);
 		Class infoClass = CLASSES.get(ct);
 		if ( infoClass == null ) { return null; }
-		IGamaFileMetaData data = readMetadata(file, infoClass, includeOutdated);
-		if ( data == null ) {
+		final IGamaFileMetaData[] data = new IGamaFileMetaData[] { readMetadata(file, infoClass, includeOutdated) };
+		if ( data[0] == null ) {
+
 			final IFile theFile = file;
 			Runnable create = new Runnable() {
 
 				@Override
 				public void run() {
-					IGamaFileMetaData data1 = null;
-					if ( SHAPEFILE_CT_ID.equals(ct) ) {
-						data1 = createShapeFileMetaData(theFile);
-					} else if ( OSM_CT_ID.equals(ct) ) {
-						data1 = createOSMMetaData(theFile);
-					} else if ( IMAGE_CT_ID.equals(ct) ) {
-						data1 = createImageFileMetaData(theFile);
-					} else if ( CSV_CT_ID.equals(ct) ) {
-						data1 = createCSVFileMetaData(theFile);
-					} else if ( GAML_CT_ID.equals(ct) ) {
-						data1 = createGamlFileMetaData(theFile);
-					} else if ( SHAPEFILE_SUPPORT_CT_ID.equals(ct) ) {
-						data1 = createShapeFileSupportMetaData(theFile);
+					switch (ct) {
+						case SHAPEFILE_CT_ID:
+							data[0] = createShapeFileMetaData(theFile);
+							break;
+						case OSM_CT_ID:
+							data[0] = createOSMMetaData(theFile);
+							break;
+						case IMAGE_CT_ID:
+							data[0] = createImageFileMetaData(theFile);
+							break;
+						case CSV_CT_ID:
+							data[0] = createCSVFileMetaData(theFile);
+							break;
+						case GAML_CT_ID:
+							data[0] = createGamlFileMetaData(theFile);
+							break;
+						case SHAPEFILE_SUPPORT_CT_ID:
+							data[0] = createShapeFileSupportMetaData(theFile);
+							break;
 					}
 					// Last chance: we generate a generic info
-					if ( data1 == null ) {
-						data1 = createGenericFileMetaData(theFile);
+					if ( data[0] == null ) {
+						data[0] = createGenericFileMetaData(theFile);
 					}
+
 					// System.out
 					// .println("Storing the metadata just created (or recreated) while reading it for " + theFile);
-					storeMetadata(theFile, data1, false);
+					storeMetadata(theFile, data[0], false);
 					try {
+
 						theFile.refreshLocal(IResource.DEPTH_ZERO, null);
 					} catch (CoreException e) {
 						e.printStackTrace();
@@ -248,6 +257,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				}
 
 			};
+
 			if ( immediately ) {
 				create.run();
 			} else {
@@ -255,7 +265,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			}
 
 		}
-		return data;
+		return data[0];
 	}
 
 	private static <T extends IGamaFileMetaData> T readMetadata(final IResource file, final Class<T> clazz,

@@ -1,30 +1,30 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'StringBasedExpressionDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import gnu.trove.set.hash.THashSet;
 import java.util.Set;
+import org.eclipse.emf.ecore.EObject;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.util.GAML;
-import msi.gaml.types.IType;
-import org.eclipse.emf.ecore.EObject;
+import msi.gaml.types.*;
 
 /**
  * The class StringBasedExpressionDescription.
- * 
+ *
  * @author drogoul
  * @since 31 mars 2012
- * 
+ *
  */
 public class StringBasedExpressionDescription extends BasicExpressionDescription {
 
@@ -92,8 +92,12 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 
 	@Override
 	public IType getDenotedType(final IDescription context) {
-		if ( GAML.getExpressionFactory().isInitialized() ) { return super.getDenotedType(context); }
-		return context.getTypeNamed(string);
+		IType type = context.getTypeNamed(string);
+		if (type == Types.NO_TYPE
+			&& GAML.getExpressionFactory().isInitialized() ) {
+			type = super.getDenotedType(context);
+		}
+		return type;
 	}
 
 }

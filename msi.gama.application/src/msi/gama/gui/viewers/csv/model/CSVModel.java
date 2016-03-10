@@ -30,13 +30,11 @@ import msi.gama.util.file.GamaCSVFile.CSVInfo;
  */
 public class CSVModel implements IRowChangesListener {
 
-	// private int nbOfColumns;
 	private boolean displayFirstLine;
 	private final ArrayList<CSVRow> rows;
-	// private final ArrayList<String> header;
 	private final ArrayList<ICsvFileModelListener> listeners;
-	// private final CSVInfo info;
 	private final IFile file;
+	private CSVInfo currentInfo;
 
 	/**
 	 * Default constructor
@@ -44,8 +42,8 @@ public class CSVModel implements IRowChangesListener {
 	public CSVModel(final IFile file) {
 		this.file = file;
 		displayFirstLine = true;
-		rows = new ArrayList<CSVRow>();
-		listeners = new ArrayList<ICsvFileModelListener>();
+		rows = new ArrayList<>();
+		listeners = new ArrayList<>();
 	}
 
 	/**
@@ -58,8 +56,10 @@ public class CSVModel implements IRowChangesListener {
 
 	public void setFirstLineHeader(final boolean header) {
 		CSVInfo info = getInfo();
-		info.header = header;
-		saveMetaData(info);
+		if ( info.header != header ) {
+			info.header = header;
+			saveMetaData();
+		}
 		// ResourceRefreshHandler.discardMetaData(file);
 	}
 
@@ -75,7 +75,7 @@ public class CSVModel implements IRowChangesListener {
 		CSVInfo info = getInfo();
 		if ( c == info.delimiter ) { return; }
 		info.delimiter = c;
-		saveMetaData(info);
+		saveMetaData();
 	}
 
 	/**
@@ -173,17 +173,21 @@ public class CSVModel implements IRowChangesListener {
 					if ( info.header && !setHeader ) {
 						setHeader = true;
 						csvRow.setHeader(true);
-						populateHeaders(rowValues);
+						getInfo().headers = new String[getInfo().cols];
+						for ( int i = 0; i < getInfo().cols; i++ ) {
+							getInfo().headers[i] = rowValues[i];
+						}
 					}
 				} else {
 					csvRow.setCommentLine(true);
 				}
 				rows.add(csvRow);
-
 			}
-
 			if ( !info.header ) {
-				populateHeaders(null);
+				getInfo().headers = new String[getInfo().cols];
+				for ( int i = 0; i < getInfo().cols; i++ ) {
+					getInfo().headers[i] = "Column" + (i + 1);
+				}
 			}
 
 			csvReader.close();
@@ -191,25 +195,7 @@ public class CSVModel implements IRowChangesListener {
 			System.out.println("exception in readLines " + e);
 			e.printStackTrace();
 		}
-		this.saveMetaData(info);
-	}
-
-	// ----------------------------------
-	// Helper method on header management
-	// ----------------------------------
-	/**
-	 * @param entries
-	 */
-	private void populateHeaders(final String[] entries) {
-		getInfo().headers = new String[getInfo().cols];
-		Arrays.fill(getInfo().headers, "");
-		if ( entries != null ) {
-			System.arraycopy(entries, 0, getInfo().headers, 0, entries.length);
-		} else {
-			for ( int i = 0; i < getInfo().cols; i++ ) {
-				getInfo().headers[i] = "Column" + (i + 1);
-			}
-		}
+		saveMetaData();
 	}
 
 	/**
@@ -233,18 +219,18 @@ public class CSVModel implements IRowChangesListener {
 	/**
 	 * @param row
 	 */
-	public void duplicateRow(final CSVRow row) {
-		CSVRow newRow = new CSVRow(row, this);
-		CSVInfo info = getInfo();
-		int indexRow = findRow(row);
-		if ( indexRow != -1 ) {
-			rows.add(indexRow, newRow);
-		} else {
-			addRow(newRow);
-		}
-		info.rows++;
-		saveMetaData(info);
-	}
+	// public void duplicateRow(final CSVRow row) {
+	// CSVRow newRow = new CSVRow(row, this);
+	// CSVInfo info = getInfo();
+	// int indexRow = findRow(row);
+	// if ( indexRow != -1 ) {
+	// rows.add(indexRow, newRow);
+	// } else {
+	// addRow(newRow);
+	// }
+	// info.rows++;
+	// saveMetaData();
+	// }
 
 	/**
 	 *
@@ -261,7 +247,7 @@ public class CSVModel implements IRowChangesListener {
 		rows.add(row);
 		CSVInfo info = getInfo();
 		info.rows++;
-		saveMetaData(info);
+		saveMetaData();
 
 	}
 
@@ -275,13 +261,11 @@ public class CSVModel implements IRowChangesListener {
 
 		if ( indexRow != -1 ) {
 			rows.add(indexRow, newRow);
+			info.rows++;
 		} else {
 			addRow(newRow);
 		}
-
-		info.rows++;
-		saveMetaData(info);
-
+		saveMetaData();
 	}
 
 	/**
@@ -308,7 +292,7 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public Object[] getArrayRows(final boolean includeCommentLine) {
 		// filter header and comment rows
-		ArrayList<CSVRow> myrows = new ArrayList<CSVRow>();
+		ArrayList<CSVRow> myrows = new ArrayList<>();
 		for ( CSVRow row : rows ) {
 			// should we return the comment line
 			if ( row.isCommentLine() ) {
@@ -358,7 +342,7 @@ public class CSVModel implements IRowChangesListener {
 		}
 		CSVInfo info = getInfo();
 		info.rows--;
-		saveMetaData(info);
+		saveMetaData();
 	}
 
 	// ----------------------------------
@@ -376,7 +360,7 @@ public class CSVModel implements IRowChangesListener {
 		for ( CSVRow row : rows ) {
 			row.addElement("");
 		}
-		saveMetaData(info);
+		saveMetaData();
 
 	}
 
@@ -406,7 +390,7 @@ public class CSVModel implements IRowChangesListener {
 				row.removeElementAt(colIndex);
 			}
 		}
-		saveMetaData(info);
+		saveMetaData();
 	}
 
 	/**
@@ -481,13 +465,9 @@ public class CSVModel implements IRowChangesListener {
 	/**
 	 *
 	 */
-	public void saveMetaData(final CSVInfo info) {
-		// reload();
-
-		System.out.println("Saving the following metadata: " + info.getSuffix());
-
-		FileMetaDataProvider.getInstance().storeMetadata(file, info, true);
-
+	public void saveMetaData() {
+		// System.out.println("Saving the following metadata: " + getInfo().getSuffix());
+		FileMetaDataProvider.storeMetadata(file, getInfo(), true);
 	}
 
 	/**
@@ -505,6 +485,9 @@ public class CSVModel implements IRowChangesListener {
 	 * @return the info
 	 */
 	public CSVInfo getInfo() {
-		return (CSVInfo) FileMetaDataProvider.getInstance().getMetaData(file, false, true);
+		if ( currentInfo == null ) {
+			currentInfo = (CSVInfo) FileMetaDataProvider.getInstance().getMetaData(file, false, true);
+		}
+		return currentInfo;
 	}
 }

@@ -14,9 +14,8 @@
  */
 package msi.gama.gui.viewers.csv;
 
+import org.eclipse.jface.viewers.*;
 import msi.gama.gui.viewers.csv.model.CSVModel;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  *
@@ -25,32 +24,35 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class CSVContentProvider implements IStructuredContentProvider {
 
-    /**
-     * Returns the elements to display in the table viewer
-     *
-     * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-     */
-    public Object[] getElements(Object element) {
+	/**
+	 * Returns the elements to display in the table viewer
+	 *
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+	 */
+	@Override
+	public Object[] getElements(final Object element) {
 
-        if(element instanceof CSVModel) {
-            CSVModel model = (CSVModel) element;
-            return model.getArrayRows(false);
-        }
-        return null;
-    }
+		if(element instanceof CSVModel) {
+			CSVModel model = (CSVModel) element;
+			return model.getArrayRows(false);
+		}
+		return null;
+	}
 
-    /**
-     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-     */
-    public void dispose() {
-    }
+	/**
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+	 */
+	@Override
+	public void dispose() {
+	}
 
-    /**
-     * Notifies this content provider that the given viewer's input
-     * has been switched to a different element.
-     *
-     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-     */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    }
+	/**
+	 * Notifies this content provider that the given viewer's input
+	 * has been switched to a different element.
+	 *
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
+	}
 }

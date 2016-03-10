@@ -55,7 +55,6 @@ public class SimulationPopulation extends GamaPopulation {
 					: MoreExecutors.sameThreadExecutor();
 				if ( executor instanceof ThreadPoolExecutor ) {
 					ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
-					// tpe.setKeepAliveTime(2L, TimeUnit.SECONDS);
 					tpe.setRejectedExecutionHandler(new CallerRunsPolicy());
 					tpe.allowCoreThreadTimeOut(true);
 				}
