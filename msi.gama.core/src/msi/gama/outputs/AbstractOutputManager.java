@@ -166,9 +166,17 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean step(final IScope scope) {
-		// final int cycle = scope.getClock().getCycle();
-		for ( final AbstractOutput o : ImmutableList.copyOf(outputs.values()) ) {
-			if ( !o.isPaused() && o.isOpen() && o.isRefreshable() && o.getScope().step(o) ) {
+		List<AbstractOutput> out = ImmutableList.copyOf(outputs.values());
+		boolean[] update = new boolean[out.size()];
+		int i = 0;
+		for ( final AbstractOutput o : out ) {
+			if ( !o.isPaused() && o.isOpen() && o.isRefreshable() ) {
+				update[i++] = o.getScope().step(o);
+			}
+		}
+		i = 0;
+		for ( final AbstractOutput o : out ) {
+			if ( update[i++] ) {
 				try {
 					o.update();
 				} catch (RuntimeException e) {

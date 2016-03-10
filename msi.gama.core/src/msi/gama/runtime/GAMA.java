@@ -36,7 +36,7 @@ public class GAMA {
 	// private final static ExperimentController controller = new ExperimentController(new ExperimentScheduler());
 
 	// hqnghi: add several controllers to have multi-thread experiments
-	private final static List<IExperimentController> controllers = new ArrayList<IExperimentController>();
+	private final static List<IExperimentController> controllers = new ArrayList<>();
 
 	public static List<IExperimentController> getControllers() {
 		return controllers;
