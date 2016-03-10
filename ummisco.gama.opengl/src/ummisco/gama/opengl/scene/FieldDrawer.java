@@ -30,9 +30,6 @@ import ummisco.gama.opengl.utils.*;
  */
 public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
-	// private boolean initialized;
-	final GLUT glut = new GLUT();
-
 	public FieldDrawer(final JOGLRenderer r) {
 		super(r);
 	}
@@ -54,10 +51,6 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		// Get Texture Properties
 		Texture curTexture = demObj.getTexture(gl, renderer, 0);
 		if ( curTexture == null ) { return; }
-		// double textureWidth = curTexture.getWidth();
-		// double textureHeight = curTexture.getHeight();
-		// double textureWidthInEnvironment = columns / textureWidth;
-		// double textureHeightInEnvironment = rows / textureHeight;
 
 		// FIXME: Need to set it dynamicly
 		double altFactor = demObj.getZFactor();
@@ -141,9 +134,9 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 					y2 = (j + 1) / rows * rows;
 					if ( demObj.values != null ) {
 						zValue = demObj.values[(int) (j * columns + i)];
-
+						System.out.println("> " + zValue);
 						if ( i < columns - 1 && j < rows - 1 ) {
-							z1 = demObj.values[(int) (j * columns + i)];
+							z1 = zValue;
 							z2 = demObj.values[(int) ((j + 1) * columns + i)];
 							z3 = demObj.values[(int) ((j + 1) * columns + (i + 1))];
 							z4 = demObj.values[(int) (j * columns + (i + 1))];
@@ -151,14 +144,14 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 						// Last rows
 						if ( j == rows - 1 && i < columns - 1 ) {
-							z1 = demObj.values[(int) (j * columns + i)];
+							z1 = zValue;
 							z4 = demObj.values[(int) (j * columns + (i + 1))];
 							z2 = z1;
 							z3 = z4;
 						}
 						// Last cols
 						if ( i == columns - 1 && j < rows - 1 ) {
-							z1 = demObj.values[(int) (j * columns + i)];
+							z1 = zValue;
 							z2 = demObj.values[(int) ((j + 1) * columns + i)];
 							z3 = z2;
 							z4 = z1;
@@ -166,7 +159,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 						// last cell
 						if ( i == columns - 1 && j == rows - 1 ) {
-							z1 = demObj.values[(int) (j * columns + i)];
+							z1 = zValue;
 							z2 = z1;
 							z3 = z1;
 							z4 = z1;
@@ -261,7 +254,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 	}
 
-	private double GetMaxValue(final double[] gridValue) {
+	private static double GetMaxValue(final double[] gridValue) {
 		double maxValue = 0.0;
 		if ( gridValue != null ) {
 			for ( double element : gridValue ) {
