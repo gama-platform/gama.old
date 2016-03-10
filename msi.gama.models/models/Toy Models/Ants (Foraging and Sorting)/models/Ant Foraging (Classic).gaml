@@ -1,12 +1,24 @@
+/**
+* Name: Ant Foraging (Classic)
+* Author: 
+* Description: Toy Model ant using the question of how ants search food and use pheromons to return to their
+* 	nest once they did find food. This model is considered as the classic one.
+* Tags: gui, skill, grid, diffusion
+*/
 model ants
 
 global {
+	//Number of ants
 	int ants_number <- 100 min: 1 max: 2000 ;
+	//Evaporation value per cycle
 	float evaporation_per_cycle <- 5.0 min: 0.0 max: 240.0 ;
+	//Diffusion rate for the pheromon diffused among the grid
 	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 ;
 	bool use_icons <- true ;
 	bool display_state <- true;
+	//Size of the grid
 	int gridsize <- 75 ;
+	//Center of the grid that will be used as a nest for the ants
 	const center type: point <- { (gridsize / 2),  (gridsize / 2)} ;
 	const types type: file <- (pgm_file('../images/environment75x75.pgm')) ;
 	const ant_shape_empty type: string <- '../icons/ant.png' ;
@@ -17,16 +29,17 @@ global {
 	int food_gathered <- 0 ;    
 	geometry shape <- square(gridsize);
 	init{  
+		//Creation of the ants that will be placed randomly in the nest
 		create ant number: ants_number with: [location::any_location_in (ant_grid(center))] ;
 	}
-
+	//Reflex to diffuse the pheromon among the grid
 	reflex diffuse {
       diffuse var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
 
 }
 
-
+//Grid that will be used to place the food in a discretized space
 grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: false {
 	list<ant_grid> neighbours <- self neighbors_at 1;
 	float road <- 0.0 max:240.0 update: (road<=evaporation_per_cycle) ? 0.0 : road-evaporation_per_cycle;
@@ -38,24 +51,29 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: 
 	const nest type: int <- 300 - int(self distance_to center) ;
 	
 }
+//Species ant that will move and follow a final state machine
 species ant skills: [moving] control: fsm {
 	float speed <- 2.0 ;
 	ant_grid place update: ant_grid (location ); 
 	string im <- 'ant_shape_empty' ;
 	bool hasFood <- false ;
+	//Reflex to allow the diffusion of the road of pheromon by putting pheromon inside a cell
 	reflex diffuse_road when:hasFood=true{
       ant_grid(location).road <- ant_grid(location).road + 100.0;
    }
+   //Action to pick the food
 	action pick {
 		im <- ant_shape_full ;
 		hasFood <- true ;
 		place.food <- place.food - 1 ;
 	}
+	//Action to drop the food
 	action drop {
 		food_gathered <- food_gathered + 1 ;  
 		hasFood <- false ;
 		heading <- heading - 180 ;
 	}
+	//Action to find the best cell in the neighbourhood of the ant
 	action choose_best_place type: ant_grid {  
 		list<ant_grid> list_places <- place.neighbours ;
 		if (list_places count (each.food > 0)) > 0  { 
@@ -66,6 +84,7 @@ species ant skills: [moving] control: fsm {
 				return last(list_places) ;
 			}
 	} 
+	//initial state of the ant that will make it wander until it finds food or a road
 	state wandering initial: true { 
 		do wander amplitude:120 ;
 		transition to: carryingFood when: place.food > 0 {
@@ -75,12 +94,14 @@ species ant skills: [moving] control: fsm {
 		}
 		transition to: followingRoad when: place.road > 0.05 ; 
 	}
+	//State to carry food to the nest once it has been found
 	state carryingFood {
 		do goto target: center ;
 		transition to: wandering when: place.isNestLocation { 
 			do drop ;
 		}
 	}
+	//State to follow a pheromon road once it has been found
 	state followingRoad {
 		location <- (self choose_best_place()) as point ;
 		transition to: carryingFood when: place.food > 0 {

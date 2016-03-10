@@ -1,15 +1,29 @@
+/**
+* Name: Ant Foraging (Complex)
+* Author: 
+* Description: Toy Model ant using the question of how ants search food and use pheromons to return to their
+* 	nest once they did find food. Two experiments are proposed to show how to use batch : Batch and Genetic.
+* Tags: gui, skill, grid, batch, diffusion
+*/
 model ants
 
 global {
+	//Evaporation value per cycle
 	float evaporation_per_cycle <- 5.0 min: 0.0 max: 240.0 parameter: 'Evaporation of the signal (unit/cycle):' category: 'Signals';
+	//Diffusion rate of the pheromon among the grid
 	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
+	//Size of the grid
 	int gridsize <- 100 min: 30 parameter: 'Width and Height of the grid:' category: 'Environment and Population';
+	//Number of ants
 	int ants_number <- 200 min: 1 parameter: 'Number of ants:' category: 'Environment and Population';
+	//Frequency of update of the grid
 	int grid_frequency <- 1 min: 1 max: 100 parameter: 'Grid updates itself every:' category: 'Environment and Population';
+	//Number of food places among the grid
 	int number_of_food_places <- 5 min: 1 parameter: 'Number of food depots:' category: 'Environment and Population';
 	float grid_transparency <- 1.0;
 	const ant_shape_empty type: file <- file('../icons/ant.png');
 	const ant_shape_full type: image_file <- file('../icons/full_ant.png');
+	//The center of the grid that will be considered as the nest location
 	const center type: point <- { round(gridsize / 2), round(gridsize / 2) };
 	var food_gathered type: int <- 1;
 	var food_placed type: int <- 1;
@@ -19,6 +33,7 @@ global {
 
 	geometry shape <- square(gridsize);
 	init {
+		//Creation of the food places placed randomly with a certain distance between each
 		loop times: number_of_food_places {
 			point loc <- { rnd(gridsize - 10) + 5, rnd(gridsize - 10) + 5 };
 			list<ant_grid> food_places <- (ant_grid where ((each distance_to loc) < 5));
@@ -30,16 +45,17 @@ global {
 				}                                           
 			}
 		}
+		//Creation of the ants that will be placed in the nest
 		create ant number: ants_number with: (location: center);
 	}
-	
+	//Reflex to diffuse the pheromon among the grid
 	reflex diffuse {
       diffuse var:road on:ant_grid proportion: diffusion_rate radius:3 propagation: gradient method:convolution;
    }
   
 }
 
-
+//Grid used to discretize the space to place food
 grid ant_grid width: gridsize height: gridsize neighbors: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
 	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
 	float road <- 0.0 max: 240.0 update: (road <= evaporation_per_cycle) ? 0.0 : road - evaporation_per_cycle;
@@ -47,26 +63,28 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 frequency: grid_freq
 	food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
 	int food <- 0;
 }
+//Species ant that will move and follow a final state machine
 species ant skills: [moving] control: fsm {
 	float speed <- 1.0;
 	bool has_food <- false;
 	
+	//Reflex to place a pheromon stock in the cell
 	reflex diffuse_road when:has_food=true{
       ant_grid(location).road <- ant_grid(location).road + 100.0;
    }
-	
+	//Action to pick food
 	action pick (int amount) {
 		has_food <- true;
 		ant_grid place <- ant_grid(location);
 		place.food <- place.food - amount;
 	}
-
+	//Action to drop food
 	action drop {
 		food_gathered <- food_gathered + 1;
 		has_food <- false;
 		heading <- heading - 180;
 	}
-
+	//Action to find the best place in the neighborhood cells
 	point choose_best_place {
 		container list_places <- ant_grid(location).neighbors;
 		if (list_places count (each.food > 0)) > 0 {
@@ -77,27 +95,27 @@ species ant skills: [moving] control: fsm {
 		}
 
 	}
-
+	//Reflex to drop food once the ant is in the nest
 	reflex drop when: has_food and (ant_grid(location)).is_nest {
 		do drop();
 	}
-
+	//Reflex to pick food when there is one at the same location
 	reflex pick when: !has_food and (ant_grid(location)).food > 0 {
 		do pick(1);
 	}
-
+	//Initial state to make the ant wander 
 	state wandering initial: true {
 		do wander(amplitude: 90);
 		float pr <- (ant_grid(location)).road;
 		transition to: carryingFood when: has_food;
 		transition to: followingRoad when: (pr > 0.05) and (pr < 4);
 	}
-
+	//State to carry food once it has been found
 	state carryingFood {
 		do goto(target: center);
 		transition to: wandering when: !has_food;
 	}
-
+	//State to follow a pheromon road if once has been found
 	state followingRoad {
 		point next_place <- choose_best_place();
 		float pr <- (ant_grid(location)).road;
@@ -125,7 +143,7 @@ species ant skills: [moving] control: fsm {
 		draw square(1) empty: !has_food color: #blue rotate: my heading;
 	}
 }	
-
+//Simple experiment to display the ants
 experiment Displays type: gui {
 	point quadrant_size <- { 0.5, 0.5 };
 	float inc <- 0.001;
@@ -148,7 +166,7 @@ experiment Displays type: gui {
 		}
 	}
 }
-
+//Complete experiment that will inspect all ants in a table
 experiment Complete type: gui {
 	parameter name: 'Number:' var: ants_number init: 100 unit: 'ants' category: 'Environment and Population';
 	parameter name: 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
@@ -177,7 +195,7 @@ experiment Complete type: gui {
 		inspect "All ants" type: table value: ant attributes: ['name', 'location', 'heading','state'];
 	}
 }
-
+//Batch experiment to find the best way to maximize the food gathered using exhaustive method
 experiment Batch type: batch repeat: 4 keep_seed: true until: (food_gathered = food_placed) or (time > 1000) {
 	parameter 'Size of the grid:' var: gridsize init: 75 unit: 'width and height';
 	parameter name: 'Number:' var: ants_number among:[10,20,50] unit: 'ants';
@@ -196,6 +214,7 @@ experiment Batch type: batch repeat: 4 keep_seed: true until: (food_gathered = f
 	}
 }
 
+//Batch experiment to find the best way to maximize the food gathered using genetic method
 experiment Genetic type: batch repeat: 2 keep_seed: true until: (food_gathered = food_placed) or (time > 1000) {
 	parameter name: 'Size of the grid:' var: gridsize init: 75 unit: '(width and height)';
 	parameter name: 'Number:' var: ants_number among:[10,20,50] unit: 'ants';

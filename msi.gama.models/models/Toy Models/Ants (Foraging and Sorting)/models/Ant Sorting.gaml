@@ -1,7 +1,17 @@
+/**
+* Name: Ant Sorting)
+* Author: 
+* Description: This model is loosely based on the behavior of ants sorting different elements in their nest. A of mobile agents - the ants - is placed on a grid. 
+* 	The grid itself contains cells of different colors. Each step, the agents move randomly. If they enter a colored cell, they pick this color if its density in the 
+* 	neighbourhood is less than *number_of_objects_around*. If they have picked a color, they drop it on a black cell if they have encountered at least 
+* 	*number_of_objects_in_history* cells with the same color.\n After a while, colors begin to be aggregated.
+* Tags: gui, skill, grid
+*/
+
 model ant_sort
 
 global  {
-	// Parameters
+	// Parameters 
 	int number_of_different_colors <- 5 max: 9 ;
 	int density_percent <- 30 min: 0 max: 99 ;
 	int number_of_objects_in_history <- 3 min: 0 ;
@@ -9,17 +19,19 @@ global  {
 	int width_and_height_of_grid <- 128 max: 400 min: 10 ;  
 	int ants <- 20 min: 1 ;
 	
+	//Action to kill all the ants
 	action kill_all {
 		ask ant {do die;}
 	}
 	
+	//Action to create all the ants
 	action create_all {
 		create ant number: ants;
 	}
 
 	rgb black <- #black  ;	
 	const colors type: list<rgb> <- [#yellow,#red, #orange, #blue, #green,#cyan, #gray,#pink,#magenta] ;
-	
+	//Action to write the description of the model
 	action description {
 		write "\n Description. \n This model is loosely based on the behavior of ants sorting different elements in their nest. \n A of mobile agents - the ants - is placed on a grid. The grid itself contains cells of different colors. Each step, the agents move randomly. If they enter a colored cell, they pick this color if its density in the neighbourhood is less than *number_of_objects_around*. If they have picked a color, they drop it on a black cell if they have encountered at least *number_of_objects_in_history* cells with the same color.\n After a while, colors begin to be aggregated. " ;	
 	}  
@@ -28,20 +40,23 @@ global  {
 		do create_all;
 	} 
 }
-
+//Species ant that will move and follow a final state machine
 species ant skills: [ moving ] control: fsm { 
 	rgb color <- #white ; 
 	ant_grid place -> {ant_grid (location)} ;
 	
+	//Reflex to make the ant wander
 	reflex wandering { 
 		do wander amplitude: 120;
 	}
+	//Initial state that will change to full
 	state empty initial: true {
 		transition to: full when: (place.color != black) and ( (place.neighbors count (each.color = place.color)) < (rnd(number_of_objects_around))) {
 			color <- place.color ;
 			place.color <- black ; 
 		}
 	}
+	//State full that will change to black if the place color is empty and drop the color inside it
 	state full {
 		enter { 
 			int encountered <- 0; 
@@ -59,7 +74,7 @@ species ant skills: [ moving ] control: fsm {
 		draw circle(5) empty: true color: color;
 	}
 }
-
+//Grid that will use the density to determine the color
 grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbors: 8 use_regular_agents: false frequency: 0{
 	rgb color <- (rnd(100)) < density_percent ? (colors at rnd(number_of_different_colors - 1)) : #black ;
 }

@@ -1,21 +1,36 @@
+/**
+* Name: Ant Foraging (Simple)
+* Author: 
+* Description: Toy Model ant using the question of how ants search food and use pheromons to return to their
+* 	nest once they did find food. This model is the simple one.
+* Tags: gui, skill, grid, batch, diffusion, user interaction
+*/
 model ants
-// A simple model with one food depot. 
+
 global {
 	int t <- 1;
+	//Evaporation value per cycle of the pheromons
 	float evaporation_per_cycle <- 5.0 min: 0.01 max: 240.0 ;
+	//Diffusion rate of the pheromons
 	const diffusion_rate type: float <- 1.0 min: 0.0 max: 1.0 ;
+	//Size of the grid
 	const gridsize type: int <- 75; 
+	//Number of ants to create
 	int ants_number  <- 50 min: 1 max: 200 parameter: 'Number of Ants:';
+	//Variable to keep information about the food remaining
 	int food_remaining update: list ( ant_grid ) count ( each . food > 0) <- 10;
+	//Center of the grid that will be considered as the nest of ants
 	const center type: point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };
 	const types type: matrix of: int <- matrix<int> (pgm_file ( '../images/environment75x75_scarce.pgm' )); 
 	
 	geometry shape <- square(gridsize);
 	
 	init {
+		//Creation of the ants placed in the nest
 		create ant number: ants_number with: [ location :: center ];
 	} 
 	
+	//Different actions triggered by an user interaction
 	action press (point loc, list selected_agents)
 	{
 		write("press " + loc.x + " " + loc.y + " "+selected_agents);
@@ -32,13 +47,13 @@ global {
 	{
 		write("click2");
 	}
-	
+	//Reflex to diffuse the pheromons among the grid
 	reflex diffuse {
       diffuse var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
 
 } 
-
+//Grid used to discretize space to place food in cells
 grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 	bool isNestLocation  <- ( self distance_to center ) < 4;
 	bool isFoodLocation <-  types[grid_x , grid_y] = 2;       
@@ -48,17 +63,23 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 	int food <- isFoodLocation ? 5 : 0; 
 	const nest type: int <- int(300 - ( self distance_to center ));
 }
+
+//Species ant that will move
 species ant skills: [ moving ] {     
 	rgb color <- #red;
 	ant_grid place function: {ant_grid ( location )};
 	bool hasFood <- false; 
 	bool hasRoad <- false update: place . road > 0.05;
+	
+	//Reflex to diffuse pheromon on the cell once the agent has food
 	reflex diffuse_road when:hasFood=true{
       ant_grid(location).road <- ant_grid(location).road + 100.0;
    }
+	//Reflex to wander while the ant has no food
 	reflex wandering when: ( ! hasFood ) and ( ! hasRoad ) and ( place . food = 0) {
 		do wander amplitude: 120 speed: 1.0;
 	}
+	//Reflex to search food when the agent has no food nor pheromon road close
 	reflex looking when: ( ! hasFood ) and ( hasRoad ) and ( place . food = 0 ) { 
 		list<ant_grid> list_places <- place . neighbours;
 		ant_grid goal <- list_places first_with ( each . food > 0 );
@@ -70,14 +91,16 @@ species ant skills: [ moving ] {
 			location <- point ( last ( list_places ) ) ;
 		}
 	}
+	//Reflex to take food
 	reflex taking when: ( ! hasFood ) and ( place . food > 0 ) { 
 		hasFood <- true ;
 		place . food <- place . food - 1 ;
 	}
-	
+	//Reflex to make the ant return to the nest once it has food
 	reflex homing when: ( hasFood ) and ( ! place . isNestLocation ) {
 		do goto target:center  speed:1.0;
 	}
+	//Reflex to drop food once the ant arrived at the nest
 	reflex dropping when: ( hasFood ) and ( place . isNestLocation ) {
 		hasFood <- false ;
 		heading <- heading - 180 ;
@@ -87,7 +110,7 @@ species ant skills: [ moving ] {
 	}
 	
 }
-
+//Experiment simple to display ant and have user interaction
 experiment Simple type:gui {
 	parameter 'Evaporation:' var: evaporation_per_cycle;
 	parameter 'Diffusion Rate:' var: diffusion_rate;
@@ -98,6 +121,7 @@ experiment Simple type:gui {
 			graphics 'displayText' {
 				draw string ( food_remaining ) size: 24.0 at: { 20 , 20 } color: rgb ( 'white' );
 			}
+			//Event triggering the action passed in parameter
 			event mouse_down action:press;
 			event mouse_up action:release;
 		}  

@@ -1,10 +1,22 @@
+/**
+* Name: Ant Foraging (Multi-Simulation)
+* Author: 
+* Description: Toy Model ant using the question of how ants search food and use pheromons to return to their
+* 	nest once they did find food. 
+* Tags: gui, skill, grid, multi-simulation, diffusion
+*/
 model ants
 
 global {
+	//Evaporation value per cycle of the pheromons
 	float evaporation_per_cycle <- 5.0 min: 0.0 max: 240.0 parameter: 'Evaporation of the signal (unit/cycle):' category: 'Signals';
+	//Diffusion rate of the pheromons
 	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
+	//Size of the grid
 	int gridsize <- 100 min: 30 parameter: 'Width and Height of the grid:' category: 'Environment and Population';
+	//Number of ants that will be created
 	int ants_number <- 50 min: 1 parameter: 'Number of ants:' category: 'Environment and Population';
+	//Number of food places to create
 	int number_of_food_places <- 5 min: 1 parameter: 'Number of food depots:' category: 'Environment and Population';
 	float grid_transparency <- 1.0;
 	const ant_shape_empty type: file <- file('../icons/ant.png');
@@ -18,7 +30,7 @@ global {
 
 	geometry shape <- square(gridsize);
 	init {
-
+		//Creation of the food places placed randomly with a certain distance between each
 		loop times: number_of_food_places {
 			point loc <- { rnd(gridsize - 10) + 5, rnd(gridsize - 10) + 5 };
 			list<ant_grid> food_places <- (ant_grid where ((each distance_to loc) < 5));
@@ -30,10 +42,12 @@ global {
 				}                                           
 			}
 		}
+		//Creation of the ants that will be placed in the nest
 		create ant number: ants_number with: (location: center);
+		//Write the index of the simulation
 		write "Simulation " + int(self) + " created";
 	}
-	
+	//Reflex to diffuse the pheromon among the grid
 	reflex diffuse {
       diffuse var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
@@ -42,7 +56,7 @@ global {
   
 } 
 
-
+//Grid used to discretize the space to place food
 grid ant_grid width: gridsize height: gridsize neighbors: 8 /*frequency: grid_frequency*/ use_regular_agents: false use_individual_shapes: false{
 	const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
 	float road <- 0.0 max:240.0 update: (road<=evaporation_per_cycle) ? 0.0 : road-evaporation_per_cycle;
@@ -50,26 +64,28 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 /*frequency: grid_fr
 	food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
 	int food <- 0;
 }
+//Species ant that will move and follow a final state machine
 species ant skills: [moving] control: fsm {
 	float speed <- 1.0;
 	bool has_food <- false;
 	
+	//Reflex to place a pheromon stock in the cell
 	reflex diffuse_road when:has_food=true{
       ant_grid(location).road <- ant_grid(location).road + 100.0;
    }
-	
+	//Action to pick food
 	action pick (int amount) {
 		has_food <- true;
 		ant_grid place <- ant_grid(location);
 		place.food <- place.food - amount;
 	}
-
+	//Action to drop food
 	action drop {
 		food_gathered <- food_gathered + 1;
 		has_food <- false;
 		heading <- heading - 180;
 	}
-
+	//Action to find the best place in the neighborhood cells	
 	point choose_best_place {
 		list<ant_grid> list_places <- ant_grid(location).neighbors;
 		if (list_places count (each.food > 0)) > 0 {
@@ -79,27 +95,27 @@ species ant skills: [moving] control: fsm {
 			return point(last(list_places));
 		}
 	}
-
+	//Reflex to drop food once the ant is in the nest	
 	reflex drop when: has_food and (ant_grid(location)).is_nest {
 		do drop();
 	}
-
+	//Reflex to pick food when there is one at the same location
 	reflex pick when: !has_food and (ant_grid(location)).food > 0 {
 		do pick(1);
 	}
-
+	//Initial state to make the ant wander 
 	state wandering initial: true {
 		do wander(amplitude: 90);
 		float pr <- (ant_grid(location)).road;
 		transition to: carryingFood when: has_food;
 		transition to: followingRoad when: (pr > 0.05) and (pr < 4);
 	}
-
+	//State to carry food once it has been found
 	state carryingFood {
 		do goto(target: center);
 		transition to: wandering when: !has_food;
 	}
-
+	//State to follow a pheromon road if once has been found
 	state followingRoad {
 		point next_place <- choose_best_place();
 		float pr <- (ant_grid(location)).road;
@@ -117,7 +133,7 @@ species ant skills: [moving] control: fsm {
 
 
 
-
+//Experiment to show how to make multi simulations
 experiment "4 Simulations" type: gui {
 	parameter name: 'Number:' var: ants_number init: 100 unit: 'ants' category: 'Environment and Population';
 	parameter name: 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
@@ -142,14 +158,14 @@ experiment "4 Simulations" type: gui {
 	}
 
 
-output {
-	display Ants background: #white type: opengl{
-		image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
-		agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
-		species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
+	output {
+		display Ants background: #white type: opengl{
+			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
+			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
+			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
+		}
+	
 	}
-
-}
 }
 
 
