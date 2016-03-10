@@ -435,7 +435,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void open() {
 		super.open();
-		view.waitToBeRealized();
+		if(view != null)
+			view.waitToBeRealized();
 	}
 
 	@Override
