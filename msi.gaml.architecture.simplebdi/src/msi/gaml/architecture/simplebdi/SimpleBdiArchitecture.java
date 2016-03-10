@@ -1501,7 +1501,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static boolean addEmotion(final IScope scope, final Emotion emo) {
-		return addToBase(scope, emo, EMOTION_BASE);
+		Emotion newEmo = emo;
+		if (!emo.getNoIntensity() && hasEmotion(scope,emo)){
+			Emotion oldEmo = getEmotion(scope,emo);
+			if(!oldEmo.getNoIntensity()){
+				newEmo = new Emotion(emo.getName(),emo.getIntensity()+oldEmo.getIntensity(),emo.getAbout(),Math.min(emo.getDecay(),oldEmo.getDecay()));
+			}
+		}
+		return addToBase(scope, newEmo, EMOTION_BASE); 
 	}
 
 	@action(name = "has_emotion",
