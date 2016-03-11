@@ -19,6 +19,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -109,16 +110,27 @@ public class PerceiveStatement extends AbstractStatementSequence{
 		if ( _when == null || Cast.asBool(scope, _when.value(scope)) ){
 			final Object obj = target.value(scope);
 			Object inArg = null;
+			IAgent ag = scope.getAgentScope();
 			if(_in!=null){
 				inArg = _in.value(scope);
 			}			
 			
 			if (inArg instanceof Float || inArg instanceof Integer || inArg instanceof Double){
 				IList<IAgent> temp = GamaListFactory.create();
+				double dist =  Cast.asFloat(scope, inArg);
 				if(obj instanceof IContainer){
-					temp=(IList<IAgent>) msi.gaml.operators.Spatial.Queries.at_distance(scope, (IContainer)obj, Cast.asFloat(scope, inArg));
+					IContainer ags = (IContainer) obj;
+					//Patrick: very ugly.... but well, quite efficient for the moment
+					if (ag.isPoint() && ags.length(scope) < 20) {
+						for (Object ob : ags.iterable(scope)) {
+							if (ag.euclidianDistanceTo((IAgent)ob) <= dist) 
+								temp.add((IAgent) ob);
+						}
+					}
+					else 
+						temp=(IList<IAgent>) msi.gaml.operators.Spatial.Queries.at_distance(scope, (IContainer)obj, Cast.asFloat(scope, inArg));
 				}else if(obj instanceof IAgent){
-					if(msi.gaml.operators.Spatial.Queries.agents_at_distance(scope,Cast.asFloat(scope, inArg)).contains(obj)){
+					if (ag.euclidianDistanceTo((IAgent)obj) <= dist) {
 						temp.add((IAgent) obj);
 					}
 				}
@@ -130,10 +142,11 @@ public class PerceiveStatement extends AbstractStatementSequence{
 					
 			}else if(inArg instanceof msi.gaml.types.GamaGeometryType || inArg instanceof GamaShape){
 				IList<IAgent> temp = GamaListFactory.create();
+				IShape geom = Cast.asGeometry(scope, inArg);
 				if(obj instanceof IContainer){
 					temp = (IList<IAgent>) msi.gaml.operators.Spatial.Queries.overlapping(scope, (IContainer)obj, Cast.asGeometry(scope, inArg));
 				}else if(obj instanceof IAgent){
-					if(msi.gaml.operators.Spatial.Queries.agents_overlapping(scope, Cast.asGeometry(scope, inArg)).contains(obj)){
+					if(geom.intersects((IShape) obj)){
 						temp.add((IAgent) obj);
 					}
 				}
