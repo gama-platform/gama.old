@@ -18,10 +18,10 @@ global {
 	reflex dododo{
 		
 		
-		ask (myAnt.Complete){
+		ask (first(myAnt.Complete).simulation){
 			do _step_;
 		}
-		ask (myBoids.boids_gui){
+		ask (first(myBoids.boids_gui).simulation){
 			do _step_;
 		}
 	}
