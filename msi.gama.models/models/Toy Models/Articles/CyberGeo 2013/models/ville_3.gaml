@@ -1,11 +1,19 @@
-
+/**
+* Name: Ville 3
+* Author: 
+* Description: Creation of buildings and roads thanks to a shape file. The color of the building depends on the type of the building,
+* 	while the color of a house depend on its income. People among the world will try to find the best building according to the
+* 	mean income of their neighbors and their own income.
+* Tags: gui, shapefile
+*/
 model ville
 
 global {
 	file shape_file_batiments <- file("../includes/batiments.shp");
 	file shape_file_routes <- file("../includes/routes.shp");
 	geometry shape <- envelope(shape_file_routes);
-	init {
+	init 
+	{
 		create route from: shape_file_routes;
 		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))];
 		create foyer number: 500;

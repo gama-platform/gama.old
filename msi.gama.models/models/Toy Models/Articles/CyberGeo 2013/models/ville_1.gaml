@@ -1,4 +1,9 @@
-
+/**
+* Name: Ville 1
+* Author: 
+* Description: This is a simple model showing different circle with a color according to the income of the house.
+* Tags: gui
+*/
 model ville
 
 global {
