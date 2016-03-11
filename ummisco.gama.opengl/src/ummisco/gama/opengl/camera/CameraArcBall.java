@@ -15,6 +15,7 @@ import java.awt.Point;
 import org.eclipse.swt.SWT;
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.*;
+import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -30,20 +31,11 @@ public class CameraArcBall extends AbstractCamera {
 		updateCartesianCoordinatesFromAngles();
 	}
 
-	// Use when the alt+right/left is pressed (rotate the camera upvector around z axis).
-	public void rotateCameraUpVectorOnZ(final boolean clock) {
-		if ( clock ) {
-			getRenderer().currentZRotation = getRenderer().currentZRotation - 1;
-		} else {
-			getRenderer().currentZRotation = getRenderer().currentZRotation + 1;
-		}
-	}
-
 	protected void updateCartesianCoordinatesFromAngles() {
 		theta = theta % 360;
 		phi = phi % 360;
-		double factorT = theta * factor;
-		double factorP = phi * factor;
+		double factorT = theta * Maths.toRad;
+		double factorP = phi * Maths.toRad;
 		double cosT = FastMath.cos(factorT);
 		double sinT = FastMath.sin(factorT);
 		double cosP = FastMath.cos(factorP);
@@ -57,6 +49,7 @@ public class CameraArcBall extends AbstractCamera {
 		double x = position.x - target.x;
 		double y = position.y - target.y;
 		double z = position.z - target.z;
+
 		radius = FastMath.sqrt(x * x + y * y + z * z);
 		theta = Maths.toDeg * FastMath.atan2(x, z);
 		phi = Maths.toDeg * FastMath.acos(y / radius);
@@ -83,7 +76,11 @@ public class CameraArcBall extends AbstractCamera {
 	// }
 
 	@Override
-	public void resetCamera(final double envWidth, final double envHeight, final boolean threeD) {
+	public void reset() {
+		LayeredDisplayData data = getRenderer().data;
+		double envWidth = data.getEnvWidth();
+		double envHeight = data.getEnvHeight();
+		final boolean threeD = data.isOutput3D();
 		radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
 		target.setLocation(envWidth / 2, -envHeight / 2, 0);
 		phi = threeD ? 135.0 : 90.0;
@@ -92,14 +89,11 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 
-	private void moveXYPlan(final double diffx, final double diffy) {
-		updatePosition(position.x - diffx, position.y -diffy, position.z);
-		lookPosition(target.x - diffx, target.y -diffy, target.z);
-	}
-
 	@Override
 	public void animate() {
-
+		// First we position the camera ???
+		super.animate();
+		// And we animate it if the keyboard is invoked
 		double translation = 2 * (FastMath.abs(position.z) + 1) / getRenderer().getHeight();
 		if ( isForward() ) {
 			if ( isShiftKeyDown() ) {
@@ -126,7 +120,7 @@ public class CameraArcBall extends AbstractCamera {
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				if ( isAltKeyDown() /*&& isViewIn2DPlan()*/ ) {
-					rotateCameraUpVectorOnZ(true);
+					getRenderer().currentZRotation = getRenderer().currentZRotation - 1;
 				} else {
 					updatePosition(position.x + translation, position.y, position.z);
 					lookPosition(target.x + translation, target.y, target.z);
@@ -139,7 +133,7 @@ public class CameraArcBall extends AbstractCamera {
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				if ( isAltKeyDown() /*&& isViewIn2DPlan()*/ ) {
-					rotateCameraUpVectorOnZ(false);
+					getRenderer().currentZRotation = getRenderer().currentZRotation + 1;
 				} else {
 					updatePosition(position.x - translation, position.y, position.z);
 					lookPosition(target.x - translation, target.y, target.z);
@@ -155,9 +149,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void zoom(final boolean in) {
-
 		double step = radius != 0d ? radius / 10d * GamaPreferences.OPENGL_ZOOM.getValue() : 0.1d;
-
 		radius = radius + (in ? -step : step);
 		getRenderer().data.setZoomLevel(zoomLevel());
 		updateCartesianCoordinatesFromAngles();
@@ -173,17 +165,19 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void zoomFocus(final double centerX, final double centerY, final double centerZ, final double extent) {
+	public void zoomFocus(final IShape shape) {
+		ILocation p = shape.getLocation();
+		double extent = shape.getEnvelope().maxExtent();
 		final double zPos;
 		if ( extent == 0 ) {
-			zPos = centerZ + getRenderer().getMaxEnvDim() / 10;
+			zPos = p.getZ() + getRenderer().getMaxEnvDim() / 10;
 		} else {
 			zPos = extent * 1.5;
 		}
 		radius = zPos;
 		updateCartesianCoordinatesFromAngles();
-		updatePosition(centerX, -centerY, zPos);
-		lookPosition(centerX, -centerY, 0);
+		updatePosition(p.getX(), -p.getY(), zPos);
+		lookPosition(p.getX(), -p.getY(), 0);
 	}
 
 	@Override
@@ -208,30 +202,19 @@ public class CameraArcBall extends AbstractCamera {
 			GamaPoint lastMousePressedPositionReal = this.getRenderer().getRealWorldPointFromWindowPoint(lastMousePressedPosition);
 			double diffxReal = newRealPoint.x - lastMousePressedPositionReal.x;
 			double diffyReal = newRealPoint.y - lastMousePressedPositionReal.y;
-			moveXYPlan(diffxReal, diffyReal);
+			final double diffx = diffxReal;
+			final double diffy = diffyReal;
+			updatePosition(position.x - diffx, position.y - diffy, position.z);
+			lookPosition(target.x - diffx, target.y - diffy, target.z);
 			lastMousePressedPosition = newPoint;
 		}
 
 	}
 
-	@Override
-	public void mouseDown(final org.eclipse.swt.events.MouseEvent arg0) {
-		zeroVelocity();
-		super.mouseDown(arg0);
-	}
 
 	@Override
 	protected boolean canSelectOnRelease(final org.eclipse.swt.events.MouseEvent arg0) {
 		return true;
 	}
 
-	@Override
-	public void mouseUp(final org.eclipse.swt.events.MouseEvent arg0) {
-		super.mouseUp(arg0);
-	}
-
-	@Override
-	public boolean isViewIn2DPlan() {
-		return phi > 85 && phi < 95 && theta > -5 && theta < 5;
-	}
 }// End of Class CameraArcBall

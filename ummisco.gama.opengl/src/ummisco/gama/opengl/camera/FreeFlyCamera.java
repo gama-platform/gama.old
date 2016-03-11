@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import com.jogamp.opengl.glu.GLU;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -50,6 +51,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void animate() {
+		super.animate();
 		if ( isForward() ) {
 			if ( isShiftKeyDown() ) {
 				this.phi = phi - -get_keyboardSensivity() * get_sensivity();
@@ -98,7 +100,10 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void resetCamera(final double envWidth, final double envHeight, final boolean threeD) {
+	public void reset() {
+		LayeredDisplayData data = getRenderer().data;
+		double envWidth = data.getEnvWidth();
+		double envHeight = data.getEnvHeight();
 		position.setLocation(envWidth / 2, -envHeight * 1.75, getRenderer().getMaxEnvDim());
 		target.setLocation(envWidth / 2, -envHeight * 0.5, 0);
 		this.phi = -45;
@@ -130,7 +135,11 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void zoomFocus(final double centerX, final double centerY, final double centerZ, final double extent) {
+	public void zoomFocus(final IShape shape) {
+		double centerX = shape.getLocation().getX();
+		double centerY = shape.getLocation().getY();
+		double centerZ = shape.getLocation().getZ();
+		double extent = shape.getEnvelope().maxExtent();
 		updatePosition(centerX, -centerY, extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 100);
 		lookPosition(centerX, -centerY, -(extent * 2));
 	}

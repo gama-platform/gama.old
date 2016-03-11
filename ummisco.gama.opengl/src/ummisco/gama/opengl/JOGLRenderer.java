@@ -36,7 +36,7 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.*;
-import msi.gaml.operators.fastmaths.*;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.*;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
@@ -80,8 +80,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	private final TextureCache textureCache =
 		GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue() ? TextureCache.getSharedInstance() : new TextureCache();
 
-
-
 		// private final GLModel chairModel = null;
 
 		public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
@@ -103,7 +101,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 				canvas.setSharedAutoDrawable(TextureCache.getSharedContext());
 			}
 			canvas.setAutoSwapBufferMode(true);
-		new SWTGLAnimator(canvas);
+			new SWTGLAnimator(canvas);
 			canvas.addGLEventListener(this);
 			return canvas;
 		}
@@ -202,8 +200,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		public TextRenderer getTextRendererFor(final Font font) {
 			return textRendererCache.get(font);
 		}
-
-
 
 		public boolean getDrawNormal() {
 			return data.isDraw_norm();
@@ -326,10 +322,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 					double fW, fH;
 					double fovY = 45.0d;
 					if ( aspect > 1.0 ) {
-						fH = FastMath.tan(fovY / 360 * CmnFastMath.PI) * zNear;
+						fH = FastMath.tan(fovY / 360 * Math.PI) * zNear;
 						fW = fH * aspect;
 					} else {
-						fW = FastMath.tan(fovY / 360 * CmnFastMath.PI) * zNear;
+						fW = FastMath.tan(fovY / 360 * Math.PI) * zNear;
 						fH = fW / aspect;
 					}
 					gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 10);
@@ -344,7 +340,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 				}
 				gl.glTranslated(0d, 0d, maxDim * 0.05);
 			}
-			camera.makeGluLookAt(glu);
+
 			camera.animate();
 		}
 
@@ -412,23 +408,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		}
 
 		public void updateCameraPosition() {
-			if ( data.isCameraLock() ) {
-				ILocation cameraPos = data.getCameraPos();
-				if ( cameraPos != LayeredDisplayData.getNoChange() ) {
-					camera.updatePosition(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
-				}
-				ILocation camLookPos = data.getCameraLookPos();
-				if ( camLookPos != LayeredDisplayData.getNoChange() ) {
-					camera.lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
-				}
-				ILocation upVector = data.getCameraUpVector();
-				if ( camera.getPhi() < 360 && camera.getPhi() > 180 ) {
-					camera.upPosition(0, -1, 0);
-				} else {
-					camera.upPosition(upVector.getX(), upVector.getY(), upVector.getZ());
-				}
-				camera.updateSphericalCoordinatesFromLocations();
-			}
+			camera.update();
 		}
 
 		public void setPickedObjectIndex(final int pickedObjectIndex) {
@@ -737,10 +717,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		public GLU getGlu() {
 			return glu;
 		}
-		//
-		// public GL2 getGL() {
-		// return gl;
-		// }
 
 		public GamaPoint getIntWorldPointFromWindowPoint(final Point windowPoint) {
 			GamaPoint p = getRealWorldPointFromWindowPoint(windowPoint);

@@ -181,12 +181,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomFit() {
-		// resizeImage(getWidth(), getHeight(), false);
 		renderer.currentZRotation = 0;
-		renderer.camera.zeroVelocity();
-		renderer.camera.resetCamera(getEnvWidth(), getEnvHeight(), output.getData().isOutput3D());
+		renderer.camera.reset();
 		output.getData().setZoomLevel(1d);
-		// newZoomLevel(1d);
 		zoomFit = true;
 
 	}
@@ -209,8 +206,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
 		// FIXME: Problem when an agent is placed on a layer with a z_value how to get this z_layer value to offset it?
-		ILocation p = geometry.getLocation();
-		renderer.camera.zoomFocus(p.getX(), p.getY(), p.getZ(), geometry.getEnvelope().maxExtent());
+		renderer.camera.zoomFocus(geometry);
 	}
 
 	/**
@@ -470,9 +466,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 					@Override
 					public void run() {
-						ILocation l = a.getGeometry().getLocation();
-						Envelope env = a.getGeometry().getEnvelope();
-						renderer.camera.zoomFocus(l.getX(), l.getY(), l.getZ(), env.maxExtent());
+						renderer.camera.zoomFocus(a);
 					}
 				});
 			}

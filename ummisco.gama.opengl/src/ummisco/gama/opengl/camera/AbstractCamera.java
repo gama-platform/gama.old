@@ -23,16 +23,15 @@ import com.jogamp.opengl.glu.GLU;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
-import msi.gaml.operators.fastmaths.*;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
 // import java.awt.event.*;
 
 public abstract class AbstractCamera implements ICamera {
-
-	protected static final double factor = FastMath.PI / 180d;
 
 	private JOGLRenderer renderer;
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);// will store information
@@ -52,7 +51,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected double theta;
 	protected double phi;
-	// protected double curZRotation = 0.0;
 
 	private final double _keyboardSensivity = 4.0;
 	private final double _sensivity = 1;
@@ -72,22 +70,40 @@ public abstract class AbstractCamera implements ICamera {
 		upPosition(0.0, 1.0, 0.0);
 	}
 
-	@Override
 	public void updateSphericalCoordinatesFromLocations() {
-
 	}
 
 	@Override
+	public void update() {
+		LayeredDisplayData data = renderer.data;
+		if ( data.isCameraLock() ) {
+			ILocation cameraPos = data.getCameraPos();
+			if ( cameraPos != LayeredDisplayData.getNoChange() ) {
+				updatePosition(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
+			}
+			ILocation camLookPos = data.getCameraLookPos();
+			if ( camLookPos != LayeredDisplayData.getNoChange() ) {
+				lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
+			}
+			ILocation upVector1 = data.getCameraUpVector();
+			if ( phi < 360 && phi > 180 ) {
+				upPosition(0, -1, 0);
+			} else {
+				upPosition(upVector1.getX(), upVector1.getY(), upVector1.getZ());
+			}
+			updateSphericalCoordinatesFromLocations();
+		}
+
+	}
+
 	public void updatePosition(final double xPos, final double yPos, final double zPos) {
 		position.setLocation(xPos, yPos, zPos);
 	}
 
-	@Override
 	public void lookPosition(final double xLPos, final double yLPos, final double zLPos) {
 		target.setLocation(xLPos, yLPos, zLPos);
 	}
 
-	@Override
 	public void upPosition(final double xPos, final double yPos, final double zPos) {
 		upVector.setLocation(xPos, yPos, zPos);
 	}
@@ -100,20 +116,13 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	@Override
-	public GamaPoint getLookPosition() {
-		return target;
-	}
-
-	@Override
-	public GamaPoint getUpPosition() {
-		return upVector;
-	}
-
-	@Override
-	public void makeGluLookAt(final GLU glu) {
-		glu.gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.x, upVector.y,
+	public void animate() {
+		renderer.getGlu().gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.x, upVector.y,
 			upVector.z);
 	}
+
+
+
 
 	/*------------------ Events controls ---------------------*/
 
@@ -384,6 +393,10 @@ public abstract class AbstractCamera implements ICamera {
 		this.mousePosition = mousePosition;
 	}
 
+	public boolean isViewIn2DPlan() {
+		return phi > 85 && phi < 95 && theta > -5 && theta < 5;
+	}
+
 
 	@Override
 	public Point getLastMousePressedPosition() {
@@ -422,10 +435,6 @@ public abstract class AbstractCamera implements ICamera {
 		return strafeRight;
 	}
 
-	@Override
-	public void zeroVelocity() {
-		// Nothing to do by default
-	}
 
 	protected JOGLRenderer getRenderer() {
 		return renderer;
@@ -435,10 +444,6 @@ public abstract class AbstractCamera implements ICamera {
 		this.renderer = renderer;
 	}
 
-	@Override
-	public double getPhi() {
-		return phi;
-	}
 
 	/**
 	 * Method keyPressed()

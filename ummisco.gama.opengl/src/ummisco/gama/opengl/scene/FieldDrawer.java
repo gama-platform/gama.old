@@ -134,7 +134,6 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 					y2 = (j + 1) / rows * rows;
 					if ( demObj.values != null ) {
 						zValue = demObj.values[(int) (j * columns + i)];
-						System.out.println("> " + zValue);
 						if ( i < columns - 1 && j < rows - 1 ) {
 							z1 = zValue;
 							z2 = demObj.values[(int) ((j + 1) * columns + i)];
