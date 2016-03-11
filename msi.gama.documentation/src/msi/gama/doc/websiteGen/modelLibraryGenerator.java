@@ -393,11 +393,12 @@ public class modelLibraryGenerator {
 				if (!fileName.contains("include")) {
 					String newSubSectionName = fileName.split("/")[1];
 					String newSectionName = fileName.split("/")[0];
-					String modelName = fileName.split("/")[fileName.split("/").length-1];
+					String modelFileName = fileName.split("/")[fileName.split("/").length-1];
+					String modelName = metaStruct.getName();
 					if (isAdditionnalPlugin) {
 						newSectionName = "Additionnal Plugins";
 					}
-					fileName = newSectionName+"/"+newSubSectionName+"/"+modelName;
+					fileName = newSectionName+"/"+newSubSectionName+"/"+modelFileName;
 					fileName = fileName.replace(".gaml", "");
 					fileName = fileName.replace("/models", "");
 					
@@ -406,7 +407,7 @@ public class modelLibraryGenerator {
 					if (!subSectionName.equals(newSubSectionName)) {
 						createSubSectionFile(outputPathToModelLibrary + "/" + newSectionName + "/" + newSubSectionName + ".md");
 					}
-					addModel(outputPathToModelLibrary + "/" + newSectionName + "/" + newSubSectionName + ".md",modelName.replace(".gaml", ""));
+					addModel(outputPathToModelLibrary + "/" + newSectionName + "/" + newSubSectionName + ".md",modelName,modelFileName.replace(".gaml", ""));
 					// case of "section" (ex : Features, Toy Models...)
 					if (!sectionName.equals(newSectionName)) {
 						createSectionFile(outputPathToModelLibrary + "/" + newSectionName + ".md");
@@ -479,13 +480,15 @@ public class modelLibraryGenerator {
 	}
 	
 	private static void addSubSection(String pathToSectionFile, String subSectionName) throws IOException {
-		String urlToSubSection = Utils.getUrlFromName(subSectionName);
-		Files.write(Paths.get(pathToSectionFile), new String("["+subSectionName+"]("+urlToSubSection+")\n").getBytes(), StandardOpenOption.APPEND);
+//		String urlToSubSection = Utils.getUrlFromName(subSectionName);
+		String urlToSubSection = subSectionName.replace(" ", "");
+		Files.write(Paths.get(pathToSectionFile), new String("* ["+subSectionName+"](references#"+urlToSubSection+")\n\n").getBytes(), StandardOpenOption.APPEND);
 	}
 	
-	private static void addModel(String pathToSubSectionFile, String modelName) throws IOException {
-		String urlToModel = Utils.getUrlFromName(modelName);
-		Files.write(Paths.get(pathToSubSectionFile), new String("["+modelName+"]("+urlToModel+")\n").getBytes(), StandardOpenOption.APPEND);
+	private static void addModel(String pathToSubSectionFile, String modelName, String modelFileName) throws IOException {
+//		String urlToModel = Utils.getUrlFromName(modelName);
+		String urlToModel = modelFileName.replace(" ", "");
+		Files.write(Paths.get(pathToSubSectionFile), new String("* ["+modelName+"](references#"+urlToModel+")\n\n").getBytes(), StandardOpenOption.APPEND);
 	}
 	
 	private static String extractHeader(File file) throws IOException {
