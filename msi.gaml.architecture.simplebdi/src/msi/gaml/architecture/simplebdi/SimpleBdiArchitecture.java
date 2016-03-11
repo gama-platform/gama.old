@@ -415,6 +415,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		for ( Predicate pred : getBase(scope, INTENTION_BASE) ) {
 			pred.isUpdated = false;
 		}
+		for ( Predicate pred : getBase(scope, UNCERTAINTY_BASE) ) {
+			pred.isUpdated = false;
+		}
 		for ( Predicate pred : getBase(scope, BELIEF_BASE) ) {
 			pred.updateLifetime();
 		}
@@ -432,6 +435,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		for ( Predicate pred : listIntentionsLifeTimeNull(scope) ) {
 			removeIntention(scope, pred);
+		}
+		for ( Predicate pred : getBase(scope, UNCERTAINTY_BASE) ) {
+			pred.updateLifetime();
+		}
+		for ( Predicate pred : listUncertaintyLifeTimeNull(scope) ) {
+			removeUncertainty(scope, pred);
 		}
 	}
 	
@@ -465,6 +474,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return tempPred;
 	}
 
+	private List<Predicate> listUncertaintyLifeTimeNull(final IScope scope) {
+		List<Predicate> tempPred = new ArrayList<Predicate>();
+		for ( Predicate pred : getBase(scope, UNCERTAINTY_BASE) ) {
+			if ( pred.getLifetime() == 0 ) {
+				tempPred.add(pred);
+			}
+		}
+		return tempPred;
+	}
+	
 	protected final List<SimpleBdiPlanStatement> listExecutablePlans(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		List<SimpleBdiPlanStatement> plans = new ArrayList<SimpleBdiPlanStatement>();
