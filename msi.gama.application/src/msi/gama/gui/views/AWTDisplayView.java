@@ -104,17 +104,11 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 				}
 				System.out.println("afterComponentCreatedSWTThread on " + AWTDisplayView.this.getPartName());
 				WorkaroundForIssue1353.installOn(surfaceComposite, AWTDisplayView.this);
+				
 			}
 
 			@Override
 			public void afterComponentCreatedAWTThread() {
-
-				// if ( !isOpenGL ) {
-				// Deferred to the OpenGL renderer to signify its initialization
-				// see JOGLAWTGLRendered.init()
-				// OutputSynchronizer.decInitializingViews(outputName);
-				// }
-				System.out.println("afterComponentCreatedAWTThread on " + AWTDisplayView.this.getPartName());
 				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
@@ -153,59 +147,10 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 		};
 
 		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
+		WorkaroundForIssue1594.installOn(AWTDisplayView.this, parent, surfaceComposite, getDisplaySurface());
 		return surfaceComposite;
 	}
-	//
-	// @Override
-	// public void fixSize() {
-	//
-	// // AD: Reworked to address Issue 535. It seems necessary to read the size of the composite inside an SWT
-	// // thread and run the sizing inside an AWT thread
-	// GAMA.getGui().asyncRun(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// if ( parent.isDisposed() ) { return; }
-	// final org.eclipse.swt.graphics.Rectangle r = parent.getBounds();
-	//
-	// java.awt.EventQueue.invokeLater(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// if ( surfaceComposite == null ) { return; }
-	// ((JComponent) getDisplaySurface()).setBounds(r.x, r.y, r.width, r.height);
-	// // ((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
-	// getDisplaySurface().resizeImage(r.width, r.height, true);
-	// // getDisplaySurface().updateDisplay(true);
-	//
-	// GAMA.getGui().asyncRun(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// parent.layout(true, true);
-	// System.out.println("After fixSize:" + getDisplaySurface().getWidth() + " " +
-	// getDisplaySurface().getHeight());
-	// getDisplaySurface().zoomFit();
-	// }
-	// });
-	// }
-	// });
-	//
-	// }
-	//
-	// });
-	// }
 
-	// @Override
-	// public int getSizeFlags(final boolean width) {
-	// return SWT.MIN;
-	// }
-	//
-	// @Override
-	// public int computePreferredSize(final boolean width, final int availableParallel, final int availablePerpendicular,
-	// final int preferredResult) {
-	// return 600;
-	// }
 
 	/**
 	 * Method zoomWhenScrolling()
