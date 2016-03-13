@@ -243,9 +243,9 @@ public class SwitchButton extends Canvas {
 		} else {
 			this.gc.drawRectangle(2, 2, buttonSize.x, buttonSize.y);
 		}
-
-		this.drawRightPart(buttonSize);
-		this.drawLeftPart(buttonSize);
+		if ( selection )
+			this.drawRightPart(buttonSize);
+		else this.drawLeftPart(buttonSize);
 		this.gc.setClipping(this.getClientArea());
 		this.drawToggleButton(buttonSize);
 	}
@@ -305,12 +305,12 @@ public class SwitchButton extends Canvas {
 			this.gc.fillRectangle(buttonSize.x / 2, 3, buttonSize.x / 2 + 2, buttonSize.y - 1);
 		}
 
-		this.gc.setForeground(this.buttonBorderColor);
-		if ( !this.selection ) {
-			this.gc.drawRoundRectangle(2, 2, buttonSize.x / 2, buttonSize.y, 3, 3);
-		} else {
-			this.gc.drawRoundRectangle(buttonSize.x / 2, 2, buttonSize.x / 2 + 2, buttonSize.y, 3, 3);
-		}
+		 this.gc.setForeground(this.buttonBorderColor);
+		 if ( !this.selection ) {
+		 this.gc.drawRoundRectangle(2, 2, buttonSize.x / 2, buttonSize.y, 3, 3);
+		 } else {
+		 this.gc.drawRoundRectangle(buttonSize.x / 2, 2, buttonSize.x / 2 + 2, buttonSize.y, 3, 3);
+		 }
 
 		// if ( this.focusColor != null && this.mouseInside ) {
 		// this.gc.setForeground(this.focusColor);
