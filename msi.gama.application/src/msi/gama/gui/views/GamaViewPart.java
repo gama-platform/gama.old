@@ -230,7 +230,6 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void setFocus() {}
 
-	public void fixSize() {};
 
 	@Override
 	public void dispose() {
