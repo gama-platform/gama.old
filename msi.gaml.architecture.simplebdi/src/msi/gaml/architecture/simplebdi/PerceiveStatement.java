@@ -119,16 +119,7 @@ public class PerceiveStatement extends AbstractStatementSequence{
 				IList<IAgent> temp = GamaListFactory.create();
 				double dist =  Cast.asFloat(scope, inArg);
 				if(obj instanceof IContainer){
-					IContainer ags = (IContainer) obj;
-					//Patrick: very ugly.... but well, quite efficient for the moment
-					if (ag.isPoint() && ags.length(scope) < 20) {
-						for (Object ob : ags.iterable(scope)) {
-							if (ag.euclidianDistanceTo((IAgent)ob) <= dist) 
-								temp.add((IAgent) ob);
-						}
-					}
-					else 
-						temp=(IList<IAgent>) msi.gaml.operators.Spatial.Queries.at_distance(scope, (IContainer)obj, Cast.asFloat(scope, inArg));
+					temp=(IList<IAgent>) msi.gaml.operators.Spatial.Queries.at_distance(scope, (IContainer)obj, Cast.asFloat(scope, inArg));
 				}else if(obj instanceof IAgent){
 					if (ag.euclidianDistanceTo((IAgent)obj) <= dist) {
 						temp.add((IAgent) obj);

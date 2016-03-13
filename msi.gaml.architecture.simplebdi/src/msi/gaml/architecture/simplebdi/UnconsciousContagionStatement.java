@@ -59,8 +59,8 @@ public class UnconsciousContagionStatement extends AbstractStatement {
 
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
-		
-			final IAgent mySelfAgent = scope.getAgentsStack()[1];
+			IAgent[] stack = scope.getAgentsStack(); 
+			final IAgent mySelfAgent = stack[stack.length-2];
 			Double charismaValue = 1.0;
 			Double receptivityValue = 1.0;
 			Double thresholdValue = 0.25;
