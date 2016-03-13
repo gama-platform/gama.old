@@ -114,6 +114,13 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 	private void buildContents() {
 		tabFolder = new CTabFolder(shell, SWT.TOP | SWT.NO_TRIM);
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			  public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
+			   tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true)); 
+			   tabFolder.layout(true);
+			   tabFolder.update();
+			  }
+			});
 		tabFolder.setBorderVisible(true);
 		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setMRUVisible(true);
@@ -183,8 +190,8 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			// item.setImage(GamaIcons.menu_action);
 			item.setExpanded(true);
-
 		}
+		
 	}
 
 	final Map<String, Boolean> activations = new HashMap();
@@ -361,9 +368,10 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	}
 
 	public void open() {
-		shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		shell.open();
+		shell.layout(true, true);
 
+		shell.open();
+		shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
 		while (!this.shell.isDisposed() && this.shell.isVisible()) {
 			if ( !this.shell.getDisplay().readAndDispatch() ) {
 				this.shell.getDisplay().sleep();

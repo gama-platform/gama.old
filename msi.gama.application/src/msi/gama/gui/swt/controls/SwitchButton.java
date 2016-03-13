@@ -218,15 +218,9 @@ public class SwitchButton extends Canvas {
 		final Rectangle rect = this.getClientArea();
 		if ( rect.width == 0 || rect.height == 0 ) { return; }
 		this.gc = event.gc;
-		this.gc.setAntialias(SWT.ON);
-
 		final Point buttonSize = this.computeButtonSize();
 		this.drawSwitchButton(buttonSize);
 		this.drawText(buttonSize);
-
-		// if ( this.borderColor != null ) {
-		// this.drawBorder();
-		// }
 
 	}
 
@@ -243,10 +237,9 @@ public class SwitchButton extends Canvas {
 		} else {
 			this.gc.drawRectangle(2, 2, buttonSize.x, buttonSize.y);
 		}
-
-		this.drawRightPart(buttonSize);
-		this.drawLeftPart(buttonSize);
-		this.gc.setClipping(this.getClientArea());
+		if ( selection )
+			this.drawRightPart(buttonSize);
+		else this.drawLeftPart(buttonSize);
 		this.drawToggleButton(buttonSize);
 	}
 
@@ -258,7 +251,6 @@ public class SwitchButton extends Canvas {
 	private void drawRightPart(final Point buttonSize) {
 		this.gc.setForeground(this.selectedBackgroundColor);
 		this.gc.setBackground(this.selectedBackgroundColor);
-		this.gc.setClipping(3, 3, buttonSize.x / 2, buttonSize.y - 1);
 		if ( this.round ) {
 			this.gc.fillRoundRectangle(2, 2, buttonSize.x, buttonSize.y, 5, 5);
 		} else {
@@ -278,7 +270,6 @@ public class SwitchButton extends Canvas {
 	private void drawLeftPart(final Point buttonSize) {
 		this.gc.setForeground(this.unselectedBackgroundColor);
 		this.gc.setBackground(this.unselectedBackgroundColor);
-		this.gc.setClipping(buttonSize.x / 2 + 3, 3, buttonSize.x / 2, buttonSize.y - 1);
 		if ( this.round ) {
 			this.gc.fillRoundRectangle(2, 2, buttonSize.x, buttonSize.y, 5, 5);
 		} else {
@@ -305,12 +296,12 @@ public class SwitchButton extends Canvas {
 			this.gc.fillRectangle(buttonSize.x / 2, 3, buttonSize.x / 2 + 2, buttonSize.y - 1);
 		}
 
-		this.gc.setForeground(this.buttonBorderColor);
-		if ( !this.selection ) {
-			this.gc.drawRoundRectangle(2, 2, buttonSize.x / 2, buttonSize.y, 3, 3);
-		} else {
-			this.gc.drawRoundRectangle(buttonSize.x / 2, 2, buttonSize.x / 2 + 2, buttonSize.y, 3, 3);
-		}
+		 this.gc.setForeground(this.buttonBorderColor);
+		 if ( !this.selection ) {
+		 this.gc.drawRoundRectangle(2, 2, buttonSize.x / 2, buttonSize.y, 3, 3);
+		 } else {
+		 this.gc.drawRoundRectangle(buttonSize.x / 2, 2, buttonSize.x / 2 + 2, buttonSize.y, 3, 3);
+		 }
 
 		// if ( this.focusColor != null && this.mouseInside ) {
 		// this.gc.setForeground(this.focusColor);
@@ -348,14 +339,14 @@ public class SwitchButton extends Canvas {
 	 * @param buttonSize whole size of the button
 	 */
 	private void drawText(final Point buttonSize) {
-		this.gc.setForeground(this.getForeground());
-		this.gc.setBackground(this.getBackground());
+		this.gc.setForeground(this.selection ? this.selectedBackgroundColor : this.unselectedBackgroundColor);
+		this.gc.setBackground(IGamaColors.WHITE.color());
 
-		final int widgetHeight = this.computeSize(0, 0, true).y;
+		final int widgetHeight = this.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
 		final int textHeight = this.gc.stringExtent(this.text).y;
 		final int x = 2 + buttonSize.x + this.gap;
-
-		this.gc.drawString(this.text, x, (widgetHeight - textHeight) / 2);
+		this.gc.drawText(text, x, (widgetHeight - textHeight) / 2);
+		//this.gc.drawString(this.text, x, (widgetHeight - textHeight) / 2);
 	}
 
 	// /**
