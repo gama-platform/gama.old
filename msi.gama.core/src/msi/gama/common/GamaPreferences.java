@@ -653,6 +653,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> MATH_OPTIMIZATION =
 		create("core.math_optimization", "Use optimized (but less accurate) arithmetic and trigonometric functions",
 			false, IType.BOOL).in(EXPERIMENTAL).group("Compilation");
+	public static final Entry<Boolean> AT_DISTANCE_OPTIMIZATION =
+			create("core.at_distance", "Automatically optimize the at_distance operator", true, IType.BOOL)
+			.in(EXPERIMENTAL).group("Spatial Operators");
 
 	private static void register(final Entry gp) {
 		System.out.println("+++ Registering preference " + gp.key + " in store");

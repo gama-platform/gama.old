@@ -156,7 +156,18 @@ public interface IMacroAgent extends IAgent {
 	 */
 	@getter(IKeyword.AGENTS)
 	public abstract IList<IAgent> getAgents(IScope scope);
+	
 
+	/**
+	 * Returns the number of  agents which consider this agent as direct host.
+	 *
+	 * @return
+	 */
+	public abstract int getNbAgents();
+	
+	public abstract void addSubAgents(int nb);
+	
+	public abstract void removeAgent();
 	/**
 	 * @return
 	 */

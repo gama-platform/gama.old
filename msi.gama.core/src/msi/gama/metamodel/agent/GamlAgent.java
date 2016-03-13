@@ -32,6 +32,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	// hqnghi manipulate micro-models AD put it to null to have lazy initialization (saves some bytes in each agent)
 	protected GamaMap<String, IPopulation> externMicroPopulations;
+	
+	protected int nbSubAgents = 0;
 
 	// end-hqnghi
 
@@ -349,6 +351,21 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public GamaMap<String, IPopulation> getExternMicroPopulations() {
 		if ( externMicroPopulations == null ) { return GamaMapFactory.EMPTY_MAP; }
 		return externMicroPopulations;
+	}
+
+	@Override
+	public int getNbAgents() {
+		return nbSubAgents;
+	}
+
+	@Override
+	public void addSubAgents(int nb) {
+		nbSubAgents+=nb;
+	}
+
+	@Override
+	public void removeAgent() {
+		nbSubAgents--;
 	}
 
 }

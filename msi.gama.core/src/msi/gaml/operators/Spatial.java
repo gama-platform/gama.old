@@ -28,11 +28,14 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
 import gnu.trove.set.hash.THashSet;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.continuous.AmorphousTopology;
+import msi.gama.metamodel.topology.continuous.ContinuousTopology;
 import msi.gama.metamodel.topology.filter.*;
 import msi.gama.metamodel.topology.grid.*;
 import msi.gama.metamodel.topology.projection.IProjection;
@@ -2491,6 +2494,17 @@ public abstract class Spatial {
 			"overlapping" })
 		public static IList<? extends IShape> at_distance(final IScope scope,
 			final IContainer<?, ? extends IShape> list, final Double distance) {
+			if (GamaPreferences.AT_DISTANCE_OPTIMIZATION.getValue() &&
+					!scope.getTopology().isTorus() && (scope.getTopology() instanceof AmorphousTopology || scope.getTopology() instanceof ContinuousTopology) 
+					&& scope.getAgentScope().isPoint() && (((list.length(scope) + 0.0) / scope.getSimulationScope().getNbAgents()) < 0.1) ) {
+				IList<IAgent> results = GamaListFactory.create();
+				IAgent ag = scope.getAgentScope();
+				for (IShape sp : list.iterable(scope)) {
+					if (ag.euclidianDistanceTo((IAgent)sp) <= distance) 
+						results.add((IAgent) sp);
+				}
+				return results;
+			}
 			IType contentType = list.getType().getContentType();
 			if ( contentType.isAgentType() ) {
 				return _neighbours(scope, In.list(scope, list), scope.getAgentScope(), distance);

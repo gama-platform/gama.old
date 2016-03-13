@@ -365,7 +365,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// As we are in the create statement, the agents are not restored
 		final IList<? extends IAgent> list =
 			population.createAgents(scope, inits.size(), inits, false, shouldBeScheduled);
-
+		IMacroAgent currentMacro = population.getHost();
+		if (currentMacro != null) currentMacro.addSubAgents(list.size());
+		
 		// hqnghi in case of creating experiment of micro-models, we must implicitely initialize it and its simulation output
 		if ( population instanceof ExperimentPopulation ) {
 			for ( final IAgent a : population ) {

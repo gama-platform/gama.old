@@ -494,6 +494,8 @@ public abstract class AbstractAgent implements IAgent {
 
 	@action(name = "die")
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
+		IMacroAgent currentMacro = this.getHost();
+		if (currentMacro != null) currentMacro.removeAgent();
 		scope.interruptAgent();
 		dispose();
 		return null;
