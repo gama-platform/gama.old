@@ -76,6 +76,7 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 			@Override
 			protected JComponent createSwingComponent() {
 				final JComponent component = getDisplaySurface();
+				if (component != null) // can happen if the view has not been realized yet
 				component.addMouseMotionListener(mlAwt2);
 				return component;
 			}

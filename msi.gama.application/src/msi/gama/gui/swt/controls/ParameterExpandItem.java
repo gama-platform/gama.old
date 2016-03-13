@@ -113,9 +113,9 @@ public class ParameterExpandItem extends Item {
 		if ( parent.hasVisibleToggle ) {
 			Image image =
 				isVisible ? GamaIcons.create("small.inspect").image() : GamaIcons.create("small.hidden").image();
-			endX -= 2 * TEXT_INSET + imageWidth;
-			visiblePosition = endX;
-			gc.drawImage(image, endX, imageY);
+				endX -= 2 * TEXT_INSET + imageWidth;
+				visiblePosition = endX;
+				gc.drawImage(image, endX, imageY);
 		}
 		if ( parent.hasSelectableToggle ) {
 			Image image = isSelectable ? GamaIcons.create("small.selectable").image()
@@ -160,9 +160,10 @@ public class ParameterExpandItem extends Item {
 				// gc.setFont(SwtGui.getParameterEditorsFont());
 				drawX += size.x + 2 * SEPARATION;
 				size = gc.stringExtent(other);
-				gc.setClipping(drawX, y, endX - drawX, headerHeight);
+
+				//gc.setClipping(drawX, y, endX - drawX, headerHeight);
 				gc.drawString(other, drawX, y + (headerHeight - size.y) / 2, true);
-				gc.setClipping((Rectangle) null);
+				//gc.setClipping(parent.getClientArea());
 			}
 		}
 	}
