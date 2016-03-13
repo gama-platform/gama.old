@@ -158,7 +158,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		recreateViewer();
 	}
 
-	private void updateSpecies() {
+	void updateSpecies() {
 		ISpecies species = getOutput().getSpecies();
 		IExpression expr = getOutput().getValue();
 
@@ -203,37 +203,12 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private void createMenus(final Composite parent) {
-		// _sComp = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-
-		// Create the composite to draw widgets onto and put the scroll bars on
-		// it
-		// _composite = new Composite(_sComp, SWT.NONE);
-		// _sComp.setContent(_composite);
-
-		// Set the size and configure the scrollbars
-		// Rectangle rect = _parent.getClientArea();
-		// Point size = _composite.computeSize(rect.width, SWT.DEFAULT);
-		// _composite.setSize(size);
-		// _sComp.setSize(rect.width, rect.height);
-
-		// _parent.addListener(SWT.Resize, new Listener() {
-		//
-		// @Override
-		// public void handleEvent(final Event e) {
-		// Rectangle rect = _parent.getClientArea();
-		// Point size = _composite.computeSize(rect.width, SWT.DEFAULT);
-		// _composite.setSize(size);
-		// _sComp.setSize(rect.width, rect.height);
-		// End handleEvent inner method
-		// End addListener
-
 		final ScrolledComposite scroll = new ScrolledComposite(parent, SWT.V_SCROLL);
 		scroll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
 		scroll.setExpandHorizontal(true);
 		scroll.setExpandVertical(true);
 		attributesMenu = new Composite(scroll, SWT.NONE);
 		scroll.setContent(attributesMenu);
-		// attributesMenu.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		GridLayout layout = new GridLayout(1, false);
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
@@ -241,33 +216,10 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		attributesMenu.setLayout(layout);
 		attributesMenu.setBackground(IGamaColors.WHITE.color());
 		fillAttributeMenu();
-		// attributesMenu.setSize(attributesMenu.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		// attributesMenu.layout();
-
-		attributesMenu.pack(true);
-
-		Point size = attributesMenu.computeSize(100, SWT.DEFAULT);
+		Point size = attributesMenu.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		attributesMenu.setSize(size);
+		attributesMenu.layout(true, true);
 		scroll.setMinSize(size);
-
-		// Rectangle rect = parent.getClientArea();
-		// Point size = attributesMenu.computeSize(200, SWT.DEFAULT);
-		// attributesMenu.setSize(size);
-		// scroll.setSize(rect.width, rect.height);
-		//
-		// // scroll.setExpandVertical(true);
-		// // scroll.setExpandHorizontal(true);
-		// // scroll.setMinHeight(attributesMenu.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-		// // scroll.setAlwaysShowScrollBars(true);
-		// parent.addControlListener(new ControlAdapter() {
-		//
-		// @Override
-		// public void controlResized(final ControlEvent e) {
-		// Rectangle rect = parent.getClientArea();
-		// Point size = attributesMenu.computeSize(200, SWT.DEFAULT);
-		// attributesMenu.setSize(size);
-		// scroll.setSize(rect.width, rect.height);
-		// }
-		// });
 
 	}
 
@@ -343,7 +295,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		return species.getName();
 	}
 
-	private void fillAttributeMenu() {
+	void fillAttributeMenu() {
 		if ( getOutput() == null ) { return; }
 		// Not yet declared or already disposed
 		if ( attributesMenu == null || attributesMenu.isDisposed() ) { return; }
@@ -378,7 +330,6 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	@Override
 	public void ownCreatePartControl(final Composite c) {
 		final Composite view = new Composite(c, SWT.None);
-		// speciesName = getOutput().getExpressionText();
 		final GridLayout viewLayout = new GridLayout(1, false);
 		viewLayout.marginWidth = 0;
 		viewLayout.marginHeight = 0;
@@ -393,7 +344,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		intermediate.setLayout(intermediateLayout);
 		createMenus(intermediate);
 		createViewer(intermediate);
-		intermediate.layout(true);
+		intermediate.layout(true, true);
 		parent = intermediate;
 	}
 
@@ -449,7 +400,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		// viewer.setComparator(comparator);
 	}
 
-	private void recreateViewer() {
+	void recreateViewer() {
 		if ( viewer == null ) { return; }
 		final Table table = viewer.getTable();
 		if ( table.isDisposed() ) { return; }
