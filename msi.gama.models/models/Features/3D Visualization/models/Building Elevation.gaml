@@ -20,7 +20,7 @@ global {
 		
 	//Definition of the shape of the world as the bounds of the shapefiles to show everything contained
 	// by the area delimited by the bounds
-	geometry shape <- envelope(shape_file_buildings);
+	geometry shape <- envelope(shape_file_bounds);
 	int nb_people <- 100;
 	int day_time update: cycle mod 144;
 	int min_work_start <- 36;
@@ -126,6 +126,12 @@ experiment road_traffic type: gui {
 	parameter 'maximal speed' var: max_speed category: 'People';
 	output {
 		display city_display type: opengl ambient_light: 100{
+			species building aspect: base;
+			species road aspect: base;
+			species people aspect: base;
+		}
+		
+		display city_display2 ambient_light: 100{
 			species building aspect: base;
 			species road aspect: base;
 			species people aspect: base;

@@ -35,6 +35,7 @@ public class DisplaySurfaceMenu {
 		this.view = view;
 		swtControl = c;
 		menuBuilder = new DisplayedAgentsMenu();
+		if (s != null)
 		s.setSWTMenuManager(this);
 
 	}

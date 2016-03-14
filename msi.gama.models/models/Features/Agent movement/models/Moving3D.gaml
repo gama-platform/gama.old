@@ -84,13 +84,8 @@ species abstractAgent skills: [moving3D]{
 		}
 		if(agentAspect = "direction"){
 		  draw sphere(radius) color:color;
-          draw line([{location.x,location.y,location.z},{location.x+directionSize*cos(pitch)*cos(heading),location.y+directionSize*cos(pitch)*sin(heading),location.z+directionSize*sin(pitch)}]) end_arrow:1.0;	
+          draw line([{location.x,location.y,location.z},{location.x+directionSize*cos(pitch)*cos(heading),location.y+directionSize*cos(pitch)*sin(heading),location.z+directionSize*sin(pitch)}]) end_arrow:1.0 color:color;	
 		}  	 	
-    }
-    
-    aspect directionSpeed{
-      draw sphere(radius) color:color;
-      draw line([{location.x,location.y,location.z},{location.x*speed,location.y,location.z}]);	
     }
 } 
 
