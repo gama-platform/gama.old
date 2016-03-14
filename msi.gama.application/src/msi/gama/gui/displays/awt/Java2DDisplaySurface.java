@@ -270,7 +270,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		double newx = FastMath.round(zoomFactor * (getWidth() / 2 - origin.x));
 		double newy = FastMath.round(zoomFactor * (getHeight() / 2 - origin.y));
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
-		// updateDisplay(true);
+		updateDisplay(true);
 		// alreadyZooming = false;
 	}
 
@@ -284,7 +284,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		double newx = FastMath.round(zoomFactor * (getWidth() / 2 - origin.x));
 		double newy = FastMath.round(zoomFactor * (getHeight() / 2 - origin.y));
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
-		// updateDisplay(true);
+		updateDisplay(true);
 		// alreadyZooming = false;
 	}
 
