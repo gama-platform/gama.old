@@ -26,7 +26,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	private static final GamaPoint up = new GamaPoint(0.0f, 0.0f, 1.0f);
 	protected final GamaPoint forward = new GamaPoint(0, 0, 0);
 	private final GamaPoint left = new GamaPoint(0, 0, 0);
-	private final double speed = 0.04;
+	private final double speed = getRenderer().getMaxEnvDim()*0.0001;
 
 	public FreeFlyCamera(final JOGLRenderer renderer) {
 		super(renderer);
