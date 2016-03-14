@@ -183,6 +183,7 @@ public interface IKeyword {
 	public static final String GRID_X = "grid_x";
 	public static final String GRID_Y = "grid_y";
 	public static final String GRID_VALUE = "grid_value";
+	public static final String BANDS = "bands";
 	public static final String GROUP = "group";
 	public final static String GUI_ = "gui";
 	public static final String HEADER = "header";

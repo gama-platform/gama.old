@@ -59,6 +59,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	double cellWidth, cellHeight;
 	public int[] supportImagePixels;
 	public double[] gridValue;
+	public int nbBands = 1;
+	public List<IList<Double>> bands = null;
 	protected Boolean usesVN = null;
 	protected Boolean isTorus = null;
 	protected Boolean isHexagon = null;
@@ -140,13 +142,19 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		useIndividualShapes = indiv;
 		this.isHexagon = false;
 		this.useNeighboursCache = useNeighboursCache;
-
+		this.nbBands = gfile.nbBands;
+		if (nbBands > 1) {
+			bands = new ArrayList<IList<Double>>();
+			
+		}
 		for ( int i = 0; i < size; i++ ) {
 			final IShape g = gfile.get(scope, i);
 			gridValue[i] = (Double) g.getAttribute("grid_value");
+			bands.add((IList<Double>) g.getAttribute("bands"));
 			// WARNING A bit overkill as we only use the GamaGisGeometry for its attribute...
 			// matrix[i] = g;
 		}
+		
 		actualNumberOfCells = 0;
 		firstCell = -1;
 		lastCell = -1;
@@ -1316,6 +1324,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 
 			@Override
+			public IList<Double> getBands() {
+				if (nbBands == 1) {
+					IList bd = GamaListFactory.create(null, Types.FLOAT);
+					bd.add(getValue());
+					return bd;
+				}
+				return bands.get(getIndex());
+			}
+			
+			@Override
 			public void setValue(final double d) {
 				if ( gridValue != null ) {
 					gridValue[getIndex()] = d;
@@ -1529,6 +1547,18 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			@Override
 			public boolean isMultiple() {
 				return geometry.isMultiple();
+			}
+
+
+
+			@Override
+			public IList<Double> getBands() {
+				if (nbBands == 1) {
+					IList bd = GamaListFactory.create(null, Types.FLOAT);
+					bd.add(getValue());
+					return bd;
+				}
+				return bands.get(getIndex());
 			}
 
 			// // hqnghi must-implement methods from GamlAgent

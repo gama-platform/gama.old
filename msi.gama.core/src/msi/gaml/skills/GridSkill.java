@@ -41,7 +41,12 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.GRID_VALUE,
 		type = IType.FLOAT,
 		doc = {
-			@doc("Represents a floating point value (automatically set when the grid is initialized from a DEM, and used by default to represent the elevation of the cell when displaying it on a display)") }),
+			@doc("Represents a floating point value (automatically set when the grid is initialized from a grid file, and used by default to represent the elevation of the cell when displaying it on a display)") }),
+	@var(name = IKeyword.BANDS,
+		type = IType.LIST,
+		of = IType.FLOAT,
+		doc = {
+		@doc("Represents the values of the different bands of the cell (list of floating point value automatically set when the grid is initialized from a grid file)") }),
 	@var(name = IKeyword.GRID_X,
 		type = IType.INT,
 		constant = true,
@@ -64,6 +69,8 @@ public class GridSkill extends Skill {
 		public int getY();
 
 		public double getValue();
+		
+		public IList<Double> getBands();
 
 		public IList<IAgent> getNeighbors(IScope scope);
 
@@ -84,6 +91,11 @@ public class GridSkill extends Skill {
 	@getter(value = "grid_value", initializer = true)
 	public final double getValue(final IAgent agent) {
 		return ((IGridAgent) agent).getValue();
+	}
+	
+	@getter(value = "bands", initializer = true)
+	public final IList<Double> getBands(final IAgent agent) {
+		return ((IGridAgent) agent).getBands();
 	}
 
 	@getter("grid_y")

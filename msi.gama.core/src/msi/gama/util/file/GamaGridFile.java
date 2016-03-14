@@ -42,6 +42,7 @@ public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;
 	private GridCoverage2D coverage;
+	public int nbBands;
 
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
@@ -159,7 +160,6 @@ public class GamaGridFile extends GamaGisFile {
 
 				final GamaPoint p = new GamaPoint(0, 0);
 				coverage = store.read(null);
-
 				final double cmx = cellWidth / 2;
 				final double cmy = cellHeight / 2;
 				boolean doubleValues = false;
@@ -187,12 +187,20 @@ public class GamaGridFile extends GamaGisFile {
 					}
 					rect.getOrCreateAttributes();
 					if ( doubleValues ) {
-						rect.getAttributes().put("grid_value", ((double[]) vals)[0]);
+						double[] vd = ((double[]) vals);
+						if (i == 0) nbBands = vd.length;
+						rect.getAttributes().put("grid_value", vd[0]);
+						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vd));
 					} else if ( intValues ) {
-						double v = Double.valueOf(((int[]) vals)[0]);
+						int[] vi = ((int[]) vals);
+						if (i == 0) nbBands = vi.length;
+						double v = Double.valueOf(vi[0]);
 						rect.getAttributes().put("grid_value", v);
+						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
+						
 					} else if ( byteValues ) {
 						byte[] bv = (byte[]) vals;
+						if (i == 0) nbBands = bv.length;
 						if ( bv.length == 1 ) {
 							double v = Double.valueOf(((byte[]) vals)[0]);
 							rect.getAttributes().put("grid_value", v);
@@ -201,10 +209,9 @@ public class GamaGridFile extends GamaGisFile {
 							int green = bv[0] < 0 ? 256 + bv[1] : bv[1];
 							int blue = bv[0] < 0 ? 256 + bv[2] : bv[2];
 							rect.getAttributes().put("grid_value", (red + green + blue) / 3.0);
-							// rect.getAttributes().put("color", new GamaColor( red, green, blue, 255));
 						}
+						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, bv));
 					}
-					// rect.getAttributes().put("grid_value", vals[0]);
 					((IList) getBuffer()).add(rect);
 				}
 			} catch (final Exception e) {
@@ -350,6 +357,7 @@ public class GamaGridFile extends GamaGisFile {
 		}
 		return null;
 	}
+	
 
 	// public static RenderedImage getImage(final String pathName) {
 	// return GAMA.run(new InScope<RenderedImage>() {
