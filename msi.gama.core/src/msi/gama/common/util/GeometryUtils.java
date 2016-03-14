@@ -554,6 +554,7 @@ public class GeometryUtils {
 
 	public static IList<IShape> triangulationSimple(final IScope scope, final Geometry geom) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+		Double zValue = null;
 		if ( geom instanceof GeometryCollection ) {
 			final GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
@@ -561,6 +562,17 @@ public class GeometryUtils {
 			}
 		} else if ( geom instanceof Polygon ) {
 			final Polygon polygon = (Polygon) geom;
+			Set<Double> zVals = new HashSet<Double>();
+			for (Coordinate c : polygon.getCoordinates()) {
+				if (c.z != Double.NaN) {
+					zVals.add(c.z);
+					zValue = c.z;
+					if (zVals.size() > 1) {
+						zValue =  null;
+						break;
+					}
+				}
+			} 
 			final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
 			final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
 			GeometryCollection tri = null;
@@ -586,7 +598,13 @@ public class GeometryUtils {
 				final Geometry gg = tri.getGeometryN(i);
 
 				if ( env.covers(gg) && pg.covers(gg) ) {
-					geoms.add(new GamaShape(gg));
+					GamaShape g = new GamaShape(gg);
+					if (zValue != null && g.getLocation().getZ() != zValue) {
+						IList cds = GamaListFactory.create();
+						for (int j=0; j< g.getPoints().size();j++)cds.add(zValue);
+						Spatial.ThreeD.set_z(null, g, cds);
+					}
+					geoms.add(g);
 				}
 			}
 		}
