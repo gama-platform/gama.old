@@ -64,6 +64,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		if ( output != null ) {
 			createItem(parent, output, output.getValue() == null,
 				output.getColor() == null ? null : GamaColors.get(output.getColor()));
+			//getViewer().setSize(getViewer().computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
 			return true;
 		}
 		return false;

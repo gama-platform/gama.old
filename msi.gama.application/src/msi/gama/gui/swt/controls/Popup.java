@@ -14,12 +14,12 @@ package msi.gama.gui.swt.controls;
 import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gaml.operators.fastmaths.CmnFastMath;
+import msi.gama.runtime.GAMA;
 
 /**
  * The class Popup.
@@ -31,7 +31,6 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
 public class Popup {
 
 	private static final Shell popup = new Shell(SwtGui.getDisplay(), SWT.ON_TOP | SWT.NO_TRIM);
-	// private static final Label popupText = new Label(popup, SWT.NONE);
 	private static final Listener hide = new Listener() {
 
 		@Override
@@ -42,16 +41,22 @@ public class Popup {
 
 	static {
 		popup.setLayout(new GridLayout(1, true));
-		// popupText.setForeground(IGamaColors.WHITE.color());
-		// popup.setAlpha(200);
 	}
 
 	private final MouseTrackListener mtl = new MouseTrackListener() {
 
 		@Override
 		public void mouseEnter(final MouseEvent e) {
-			open();
-			isVisible = true;
+			GAMA.getGui().asyncRun(new Runnable() {
+
+
+				@Override
+				public void run() {
+					open();
+					isVisible = true;
+				}
+			});
+
 		}
 
 		@Override
@@ -62,14 +67,21 @@ public class Popup {
 
 		@Override
 		public void mouseHover(final MouseEvent e) {
-			display();
-			isVisible = true;
+			GAMA.getGui().asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					display();
+					isVisible = true;
+				}
+			});
+
 		}
 
 	};
 
 	private final IPopupProvider provider;
-	private boolean isVisible;
+	boolean isVisible;
 
 	/*
 	 *
@@ -144,17 +156,10 @@ public class Popup {
 		for ( Map.Entry<GamaUIColor, String> entry : s.entrySet() ) {
 			Label label = (Label) labels[index++];
 			label.setText(entry.getValue());
-			// We compute the width of the text (+ 5 pixels to accomodate for the border)
-			// GC gc = new GC(label);
-			// final int textWidth = gc.textExtent(entry.getValue()).x + 5;
-			// if ( textWidth > maxTextWidth ) {
-			// maxTextWidth = textWidth;
-			// }
-			// gc.dispose();
 		}
 
 		// We fix the max. width to 400
-		final int maxPopupWidth = 800;
+		// final int maxPopupWidth = 800;
 
 		// scope.getGui().debug("Popup.display: textWidth = " + textWidth);
 		// We grab the location of the popup on the display
@@ -162,11 +167,11 @@ public class Popup {
 		popup.setLocation(point.x, point.y);
 
 		// We compute the available width on the display given this location (and a border of 5 pixels)
-		final Rectangle screenArea = popup.getDisplay().getClientArea();
-		final int availableWidth = screenArea.x + screenArea.width - point.x - 5;
+		// final Rectangle screenArea = popup.getDisplay().getClientArea();
+		// final int availableWidth = screenArea.x + screenArea.width - point.x - 5;
 		// scope.getGui().debug("Popup.display: availableWidth = " + availableWidth);
 		// We compute the final width of the popup
-		int popupWidth = CmnFastMath.min(availableWidth, maxPopupWidth);
+		// int popupWidth = CmnFastMath.min(availableWidth, maxPopupWidth);
 		// scope.getGui().debug("Popup.display: popupWidth = " + popupWidth);
 
 		// If the width of the text is greater than the computed width, we wrap the text accordingly, otherwise we

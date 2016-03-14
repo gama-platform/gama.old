@@ -29,19 +29,19 @@ public class IUnits {
 	@constant(value = "bold",
 		category = { IConstantCategory.GRAPHIC },
 		concept = { IConcept.GRAPHIC, IConcept.TEXT },
-		doc = @doc("This contant allows to build a font with a bold face. Can be combined with #italic"))
+		doc = @doc("This constant allows to build a font with a bold face. Can be combined with #italic"))
 	public final static int bold = Font.BOLD; /* 1 */
 
 	@constant(value = "italic",
 		category = { IConstantCategory.GRAPHIC },
 		concept = { IConcept.GRAPHIC, IConcept.TEXT },
-		doc = @doc("This contant allows to build a font with an italic face. Can be combined with #bold"))
+		doc = @doc("This constant allows to build a font with an italic face. Can be combined with #bold"))
 	public final static int italic = Font.ITALIC; /* 2 */
 
 	@constant(value = "plain",
 		category = { IConstantCategory.GRAPHIC },
 		concept = { IConcept.GRAPHIC, IConcept.TEXT },
-		doc = @doc("This contant allows to build a font with a plain face"))
+		doc = @doc("This constant allows to build a font with a plain face"))
 	public final static int plain = Font.PLAIN;
 	/**
 	 * Special units

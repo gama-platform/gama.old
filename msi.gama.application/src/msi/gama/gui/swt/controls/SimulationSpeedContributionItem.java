@@ -30,7 +30,7 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 
 	double max = 1000;
 
-	private static Image knob = GamaIcons.create("toolbar.knob4").image(); // IGamaIcons.TOOLBAR_KNOB.image(), IGamaIcons.TOOLBAR_KNOB_HOVER.image()
+	private static Image knob = GamaIcons.create("toolbar.knob4").image();
 
 	/**
 	 *
@@ -56,13 +56,6 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 		SwtGui.setSpeedControl(this);
 	}
 
-	/**
-	 * @param id
-	 */
-	// public SimulationSpeedContributionItem(final String id) {
-	// this();
-	// setId(id);
-	// }
 
 	@Override
 	protected double getInitialValue() {
