@@ -38,7 +38,6 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 		this.tip = tip == null ? this : tip;
 		this.init = init;
 		this.listener = listener == null ? this : listener;
-		// SwtGui.setSpeedControl(this);
 	}
 
 	@Override
@@ -83,10 +82,7 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 	public void setInit(final double i, final boolean notify) {
 		if ( slider == null ) { return; }
 		if ( slider.isDisposed() ) { return; }
-		// if ( Comparison.different(i, slider.getCurrentPosition()) ) {
 		slider.updateSlider(i, notify);
-		// }
-
 	}
 
 	/**
