@@ -3,7 +3,6 @@ package msi.gama.headless.runtime;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import com.sun.xml.internal.bind.v2.model.runtime.RuntimeMapPropertyInfo;
 
 public class SystemLogger extends PrintStream {
 	private static SystemLogger display;

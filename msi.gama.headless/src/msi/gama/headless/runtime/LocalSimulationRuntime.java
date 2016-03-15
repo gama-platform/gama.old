@@ -6,18 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Vector;
 
 import msi.gama.headless.core.HeadlessSimulationLoader;
-import msi.gama.headless.core.IExperiment;
 import msi.gama.headless.job.ExperimentJob;
-import msi.gama.headless.job.IExperimentJob;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.kernel.model.IModel;
-import msi.gama.runtime.GAMA;
-import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
 
 public class LocalSimulationRuntime extends Observable implements SimulationRuntime, RuntimeContext {

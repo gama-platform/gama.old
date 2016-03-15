@@ -14,19 +14,15 @@ package msi.gama.headless.runtime;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -34,27 +30,17 @@ import javax.xml.transform.stream.StreamResult;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
-import msi.gama.headless.core.HeadlessJarLoader;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
-import msi.gama.headless.job.JobPlan;
 import msi.gama.headless.script.ExperimentationPlanFactory;
-import msi.gama.headless.script.ScriptFactory;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
-import msi.gama.runtime.GAMA;
 
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.w3c.dom.Document;
-
-import com.googlecode.lanterna.TerminalFacade;
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.terminal.Terminal;
 
 
 
@@ -240,7 +226,8 @@ public class Application implements IApplication {
 		ArrayList<IExperimentJob> selectedJob = new ArrayList<IExperimentJob>();
 		for(IExperimentJob j : jb)
 		{
-			if(j.getExperimentName().equals(arg[arg.length-3]))
+			System.out.println("coucou "+ j.getExperimentID()+" "+arg[arg.length-3]);
+			if(j.getExperimentID().equals(arg[arg.length-3]))
 			{
 				selectedJob.add(j);
 				break;
@@ -332,17 +319,6 @@ public class Application implements IApplication {
 		 System.exit(0);	
 	}
 
-	private void show(Terminal term, String str, int x, int y) 
-	   { 
-	       term.moveCursor(x, y); 
-
-	       int len = str.length(); 
-
-	       for (int i = 0; i < len; i++) 
-	       { 
-	           term.putCharacter(str.charAt(i)); 
-	       } 
-	   } 
 	
 	public void buildAndRunSimulation(Collection<ExperimentJob> sims)
 	{
