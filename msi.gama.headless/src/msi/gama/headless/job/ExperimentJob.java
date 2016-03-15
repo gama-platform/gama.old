@@ -388,7 +388,7 @@ public class ExperimentJob implements IExperimentJob{
 			mseed = Long.valueOf(seedDescription.getExpression().literalValue()).longValue();
 		}
 		IDescription d = expD.getChildWithKeyword(IKeyword.OUTPUT);
-		ExperimentJob expJob = new ExperimentJob(path,expName,model.getName(),0,mseed );
+		ExperimentJob expJob = new ExperimentJob(path,new Long(ExperimentJob.generateID()).toString(),expName,0,mseed );
 		
 		if(d != null)
 		{

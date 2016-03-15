@@ -198,6 +198,7 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
+		SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
 		if(containHelpParameter(args))
@@ -208,7 +209,10 @@ public class Application implements IApplication {
 		{
 			buildXML(args);
 		}
-		else runSimulation(args);
+		else 
+		{
+			runSimulation(args);
+		}
 		return null;
 	}
 	
@@ -216,18 +220,17 @@ public class Application implements IApplication {
 	{
 		if(arg.length<3)
 		{
-			System.out.println("Check parameters");
+			SystemLogger.activeDisplay(); 
+			System.out.println("Check your parameters!");
 			System.out.println(showHelp());
 			return;
 		}
 		HeadlessSimulationLoader.preloadGAMA();
-
 		List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(arg[arg.length-2]);
 		ArrayList<IExperimentJob> selectedJob = new ArrayList<IExperimentJob>();
 		for(IExperimentJob j : jb)
 		{
-			System.out.println("coucou "+ j.getExperimentID()+" "+arg[arg.length-3]);
-			if(j.getExperimentID().equals(arg[arg.length-3]))
+			if(j.getExperimentName().equals(arg[arg.length-3]))
 			{
 				selectedJob.add(j);
 				break;
@@ -238,10 +241,11 @@ public class Application implements IApplication {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(dd);
-		StreamResult result = new StreamResult(new File(arg[arg.length-1]));
+		File output = new File(arg[arg.length-1]);
+		StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
-
-		System.out.println("File saved!");
+		SystemLogger.activeDisplay(); 
+		System.out.println("Parameter file saved at: " + output.getAbsolutePath());
 	}
 	
 	public void runSimulation(String args[]) throws FileNotFoundException, InterruptedException
@@ -251,7 +255,6 @@ public class Application implements IApplication {
 			System.exit(-1);
 		}
 		
-		SystemLogger.removeDisplay();
 		verbose = containVerboseParameter(args);
 		if(verbose)
 		{
