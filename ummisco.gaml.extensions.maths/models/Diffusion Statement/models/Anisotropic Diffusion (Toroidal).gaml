@@ -12,7 +12,7 @@ global torus: true {
 	int taille <- 64; // better to have a pow of 2 for the size of the grid
   	geometry shape <- envelope(square(taille) * 10);
   	cells selected_cells;
-  	matrix<float> math_diff <- matrix([
+  	matrix<float> mat_diff <- matrix([
 									[4/9,2/9,0/9],
 									[2/9,1/9,0.0],
 									[0/9,0.0,0.0]]);
@@ -26,7 +26,7 @@ global torus: true {
 	}
 
 	reflex diff {
-		diffuse var: phero on: cells matrix: math_diff method:dot_product;	
+		diffuse var: phero on: cells matrix: mat_diff method:dot_product;	
 	}
 }
 

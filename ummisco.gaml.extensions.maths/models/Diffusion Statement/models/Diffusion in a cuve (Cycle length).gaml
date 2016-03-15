@@ -16,7 +16,7 @@ global {
   	list<cells> selected_cells;
   	list<quick_cells> selected_quick_cells;
   	// Declare the anisotropic matrix (diffuse to the left-upper direction)
-  	matrix<float> math_diff <- matrix([
+  	matrix<float> mat_diff <- matrix([
 									[1/9,1/9,1/9],
 									[1/9,1/9,1/9],
 									[1/9,1/9,1/9]]);
@@ -50,9 +50,9 @@ global {
 		// The value of the diffusion will be store in the new variable "phero" of the cell.
 		// In order to not loosing phero value, we apply a hand made mask (with the operator "where") and we turn the "avoid_mask" facet to true.
 		list cells_where_diffuse <- cells where (each.grid_x < taille-cycle_length and each.grid_x > cycle_length and each.grid_y < taille-cycle_length and each.grid_y > cycle_length);
-		diffuse var: phero on: cells_where_diffuse matrix: math_diff avoid_mask: true method:dot_product;	
+		diffuse var: phero on: cells_where_diffuse matrix: mat_diff avoid_mask: true method:dot_product;	
 		list quick_cells_where_diffuse <- quick_cells where (each.grid_x < taille-cycle_length and each.grid_x > cycle_length and each.grid_y < taille-cycle_length and each.grid_y > cycle_length);
-		diffuse var: phero on: quick_cells_where_diffuse matrix: math_diff avoid_mask: true cycle_length: 10 method:dot_product;
+		diffuse var: phero on: quick_cells_where_diffuse matrix: mat_diff avoid_mask: true cycle_length: 10 method:dot_product;
 	}
 }
 

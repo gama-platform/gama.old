@@ -18,7 +18,7 @@ global {
   	// Load the image mask as a matrix. The white part of the image is the part where diffusion will work, and the black part is where diffusion will be blocked.
   	matrix mymask <- file("../includes/complex_mask.bmp") as_matrix({grid_size,grid_size});
   	// Declare the anisotropic matrix (diffuse from the center)
-  	matrix<float> math_diff <- matrix([
+  	matrix<float> mat_diff <- matrix([
 									[1/9,1/9,1/9],
 									[1/9,1/9,1/9],
 									[1/9,1/9,1/9]]);
@@ -38,8 +38,8 @@ global {
 
 	reflex diff {
 		// Declare a diffusion on the grid "cells". The value of the diffusion will be store in the new variable "phero" of the cell.
-		diffuse var: phero on: cells_avoid_mask matrix: math_diff mask: mymask avoid_mask: true;
-		diffuse var: phero on: cells_diffuse_on_mask matrix: math_diff mask: mymask;	
+		diffuse var: phero on: cells_avoid_mask matrix: mat_diff mask: mymask avoid_mask: true;
+		diffuse var: phero on: cells_diffuse_on_mask matrix: mat_diff mask: mymask;	
 	}
 }
 
