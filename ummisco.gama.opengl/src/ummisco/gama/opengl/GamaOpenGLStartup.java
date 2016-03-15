@@ -5,6 +5,8 @@ import java.net.*;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.ui.IStartup;
 import com.jogamp.common.util.JarUtil;
+import com.jogamp.opengl.GLProfile;
+import msi.gama.gui.swt.SwtGui;
 
 public class GamaOpenGLStartup implements IStartup {
 
@@ -25,6 +27,24 @@ public class GamaOpenGLStartup implements IStartup {
 				} catch (URISyntaxException urisyntaxexception) {
 					return url;
 				}
+			}
+		});
+
+		SwtGui.setOpenGLStartupSequence(new Runnable() {
+
+			@Override
+			public void run() {
+
+				// Necessary to initialize very early because initializing it while opening a Java2D view before leads to a deadlock
+				GLProfile.initSingleton();
+				while (!GLProfile.isInitialized()) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
 			}
 		});
 

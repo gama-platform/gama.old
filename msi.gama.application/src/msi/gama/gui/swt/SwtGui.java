@@ -112,7 +112,7 @@ public class SwtGui extends AbstractGui {
 	private static Font unitFont;
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	// private static Logger log;
-	private static ThreadedUpdater<IStatusMessage> status = new ThreadedUpdater("Status refresh");
+	private static ThreadedUpdater<IStatusMessage> status = new ThreadedUpdater<>("Status refresh");
 	static ISpeedDisplayer speedStatus;
 	private Tell tell = new Tell();
 	private Error error = new Error();
@@ -1282,6 +1282,10 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void prepareForExperiment(final IExperimentPlan exp) {
 		if ( exp.isGui() ) {
+			if ( openGLStartupSequence != null ) {
+				openGLStartupSequence.run();
+				openGLStartupSequence = null;
+			}
 			// showConsoleView();
 			setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 			updateParameterView(exp);
@@ -1521,7 +1525,7 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void updateSimulationState(final String forcedState) {
 		if ( state != null ) {
-			run(new Runnable() {
+			asyncRun(new Runnable() {
 
 				@Override
 				public void run() {
@@ -1575,6 +1579,15 @@ public class SwtGui extends AbstractGui {
 		String key = modelName + expeName;
 		Set<String> ids = MODEL_VIEWS.get(key);
 		return ids == null ? Collections.EMPTY_SET : ids;
+	}
+
+	static Runnable openGLStartupSequence;
+
+	/**
+	 * @param runnable
+	 */
+	public static void setOpenGLStartupSequence(final Runnable runnable) {
+		openGLStartupSequence = runnable;
 	}
 
 }

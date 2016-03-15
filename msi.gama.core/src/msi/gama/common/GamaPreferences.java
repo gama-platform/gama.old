@@ -17,6 +17,7 @@ import java.util.prefs.*;
 import org.geotools.referencing.CRS;
 import com.vividsolutions.jts.geom.Envelope;
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
@@ -41,13 +42,10 @@ public class GamaPreferences {
 	public static final String SIMULATIONS = "Simulations";
 	public static final String EXPERIMENTAL = "Performances";
 	public static final String DISPLAY = "Displays";
-	// public static final String CODE = "Code";
 	public static final String EDITOR = "Editors";
-	// public static final String WORKSPACE = "Workspace";
 	public static final String LIBRARIES = "External";
-	// public static final String CHARTS = "Charts";
 	static Preferences store;
-	private static Map<String, Entry> prefs = new LinkedHashMap();
+	private static Map<String, Entry> prefs = new LinkedHashMap<>();
 	private static List<String> storeKeys;
 
 	static {
@@ -83,7 +81,7 @@ public class GamaPreferences {
 	// }
 
 	public static <T> Entry<T> create(final String key, final String title, final T value, final int type) {
-		Entry e = new Entry(key, type).named(title).in(UI).init(value);
+		Entry<T> e = new Entry<T>(key, type).named(title).in(UI).init(value);
 		register(e);
 		return e;
 	}
@@ -94,7 +92,7 @@ public class GamaPreferences {
 		 * A change listener, that receives the beforeValueChange() message before the preference is assigned a new value,
 		 * with this value in parameter. Returning true will enable the change, returning false will veto it.
 		 * @param newValue, the new value set to this preference
-		 * @return true or false, wheter or not the change is accepted by the listener.
+		 * @return true or false, whether or not the change is accepted by the listener.
 		 */
 		public boolean beforeValueChange(T newValue);
 
@@ -102,7 +100,7 @@ public class GamaPreferences {
 		 * A change listener, that receives the afterValueChange() message after the preference is assigned a new value,
 		 * with this value in parameter, in order to perform anything needed for this change.
 		 * @param newValue, the new value set to this preference
-		 * @return true or false, wheter or not the change is accepted by the listener.
+		 * @return true or false, whether or not the change is accepted by the listener.
 		 */
 		public void afterValueChange(T newValue);
 	}
@@ -139,7 +137,7 @@ public class GamaPreferences {
 		List<T> values;
 		Number min, max;
 		String[] activates, deactivates;
-		Set<IPreferenceChangeListener<T>> listeners = new HashSet();
+		Set<IPreferenceChangeListener<T>> listeners = new HashSet<IPreferenceChangeListener<T>>();
 
 		Entry(final String key, final int type) {
 			tab = UI;
@@ -147,43 +145,43 @@ public class GamaPreferences {
 			this.key = key;
 		}
 
-		public Entry group(final String g) {
+		public Entry<T> group(final String g) {
 			this.group = g;
 			return this;
 		}
 
-		public Entry among(final T ... v) {
+		public Entry<T> among(final T ... v) {
 			return among(Arrays.asList(v));
 		}
 
-		public Entry among(final List<T> v) {
+		public Entry<T> among(final List<T> v) {
 			this.values = v;
 			return this;
 		}
 
-		public Entry between(final Number mini, final Number maxi) {
+		public Entry<T> between(final Number mini, final Number maxi) {
 			this.min = mini;
 			this.max = maxi;
 			return this;
 		}
 
-		public Entry in(final String category) {
+		public Entry<T> in(final String category) {
 			this.tab = category;
 			return this;
 		}
 
-		public Entry named(final String t) {
+		public Entry<T> named(final String t) {
 			this.title = t;
 			return this;
 		}
 
-		public Entry init(final T v) {
+		public Entry<T> init(final T v) {
 			this.initial = v;
 			this.value = v;
 			return this;
 		}
 
-		public Entry set(final T value) {
+		public Entry<T> set(final T value) {
 			if ( isValueChanged(value) && acceptChange(value) ) {
 				this.value = value;
 				afterChange(value);
@@ -200,12 +198,12 @@ public class GamaPreferences {
 		// return this;
 		// }
 
-		public Entry activates(final String ... link) {
+		public Entry<T> activates(final String ... link) {
 			activates = link;
 			return this;
 		}
 
-		public Entry deactivates(final String ... link) {
+		public Entry<T> deactivates(final String ... link) {
 			deactivates = link;
 			return this;
 		}
@@ -215,7 +213,7 @@ public class GamaPreferences {
 		}
 
 		@Override
-		public IType getType() {
+		public IType<?> getType() {
 			return Types.get(type);
 		}
 
@@ -260,7 +258,7 @@ public class GamaPreferences {
 			set((T) value);
 		}
 
-		public Entry addChangeListener(final IPreferenceChangeListener<T> r) {
+		public Entry<T> addChangeListener(final IPreferenceChangeListener<T> r) {
 			listeners.add(r);
 			return this;
 		}
@@ -532,13 +530,13 @@ public class GamaPreferences {
 	/**
 	 * Spatialite
 	 */
-	public static final Entry<IGamaFile> LIB_SPATIALITE =
+	public static final Entry<? extends IGamaFile> LIB_SPATIALITE =
 		create("core.lib_spatialite", "Path to the Spatialite (see http://www.gaia-gis.it/gaia-sins/) library",
 			new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group("Paths");
 	/**
 	 * R
 	 */
-	public static final Entry<IGamaFile> LIB_R =
+	public static final Entry<? extends IGamaFile> LIB_R =
 		create("core.lib_r", "Path to the RScript (see http://www.r-project.org) library",
 			new GenericFile(getDefaultRPath()), IType.FILE).in(LIBRARIES).group("Paths");
 	/**
