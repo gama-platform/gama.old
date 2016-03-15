@@ -88,7 +88,6 @@ public class CameraArcBall extends AbstractCamera {
 		updateCartesianCoordinatesFromAngles();
 	}
 
-
 	@Override
 	public void animate() {
 		// First we position the camera ???
