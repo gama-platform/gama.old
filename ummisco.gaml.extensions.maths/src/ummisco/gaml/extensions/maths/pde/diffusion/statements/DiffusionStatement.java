@@ -338,16 +338,12 @@ public class DiffusionStatement extends AbstractStatement {
 			if ( nb_neighbors == 8 ) {
 				for ( int i = 0; i < 3; i++ ) {
 					for ( int j = 0; j < 3; j++ ) {
-						if ( nb_neighbors == 8 ) {
-							distanceFromCenter =
-								CmnFastMath.max(CmnFastMath.abs(i - 3 / 2), CmnFastMath.abs(j - 3 / 2));
-						} else {
-							distanceFromCenter = CmnFastMath.abs(i - 3 / 2) + CmnFastMath.abs(j - 3 / 2);
-						}
+						distanceFromCenter =
+							CmnFastMath.max(CmnFastMath.abs(i - 3 / 2), CmnFastMath.abs(j - 3 / 2));
 						if ( distanceFromCenter == 0 ) {
-							mat_diffu[i][j] = 1 / (nb_neighbors + 1);
+							mat_diffu[i][j] = 1.0 / (nb_neighbors + 1.0);
 						} else if ( distanceFromCenter == 1 ) {
-							mat_diffu[i][j] = proportion / (nb_neighbors + 1);
+							mat_diffu[i][j] = proportion / (nb_neighbors + 1.0);
 						} else {
 							mat_diffu[i][j] = 0;
 						}

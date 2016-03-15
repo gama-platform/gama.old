@@ -3,13 +3,13 @@
 * Author: Benoit Gaudou
 * Description: This model is used to show two different computation methods to use diffusion : with the dot product method and with the convolution method. 
 *     The cell at the center of the grid emit a pheromon at each step, which is spread through the grid thanks to the diffusion mechanism, using a particular matrix of diffusion. 
-* Tags: Diffusion, Matrix, Elevation
+* Tags: diffusion, matrix, math
 */
 
-model diffusion
+model diffusion_computation_method
 
 global{
-	int taille <- 51;
+	int taille <- 64; // better to have a pow of 2 for the size of the grid
   	geometry shape <- envelope(square(taille) * 10);
   	cells_dot selected_cells_dot;
   	cells_convol selected_cells_convol;

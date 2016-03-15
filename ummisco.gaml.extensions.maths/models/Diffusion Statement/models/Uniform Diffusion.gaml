@@ -2,41 +2,50 @@
 * Name: Uniform diffusion
 * Author: Benoit Gaudou
 * Description: This model is used to show how a diffusion works with a uniform matrix of diffusion in a grid. The cell at the center of the grid emit a pheromon at each step, which is spread
-*     through the grid thanks to the diffusion mechanism.
-* Tags: Diffusion, Matrix, Elevation
+*     through the grid thanks to the diffusion mechanism. Without passing a diffusion matrix, the default diffusion matrix is a uniform matrix 3x3, with value 1/nb_neighbors.
+* Tags: diffusion, matrix, math
 */
 
-model diffusion
+model uniform_diffusion
 
 global {
-	int taille <- 51;
+	int taille <- 64; // better to have a pow of 2 for the size of the grid
   	geometry shape <- envelope(square(taille) * 10);
-  	cells selected_cells;
-  	
-  	// Define a uniform matrix of diffusion
-  	matrix<float> math_diff <- matrix([
-									[1/9,1/9,1/9],
-									[1/9,1/9,1/9],
-									[1/9,1/9,1/9]]);
+  	cells_eight_nb selected_cells_8;
+  	cells_four_nb selected_cells_4;
 
 	// Initialize the emiter cell as the cell at the center of the word
 	init {
-		selected_cells <- location as cells;
+		selected_cells_8 <- location as cells_eight_nb;
+		selected_cells_4 <- location as cells_four_nb;
 	}
 	reflex new_Value {
-		ask selected_cells {
+		ask selected_cells_4 {
+			phero <- 1.0;
+		}
+		ask selected_cells_8 {
 			phero <- 1.0;
 		}
 	}
 	reflex diff {
 		// Declare a diffusion on the grid "cells", with a uniform matrix of diffusion. The value of the diffusion
 		// will be store in the new variable "phero" of the cell.
-		diffuse var: phero on: cells matrix: math_diff;
+		diffuse var: phero on: cells_eight_nb ;
+		diffuse var: phero on: cells_four_nb ;
 	}
 }
 
 
-grid cells height: taille width: taille {
+grid cells_eight_nb height: taille width: taille neighbors: 8 {
+	// "phero" is the variable storing the value of the diffusion
+	float phero  <- 0.0;
+	// the color of the cell is linked to the value of "phero".
+	rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
+	// Update the "grid_value", which will be used for the elevation of the cell
+	float grid_value update: phero * 100;
+} 
+
+grid cells_four_nb height: taille width: taille neighbors: 4 {
 	// "phero" is the variable storing the value of the diffusion
 	float phero  <- 0.0;
 	// the color of the cell is linked to the value of "phero".
@@ -48,9 +57,13 @@ grid cells height: taille width: taille {
 
 experiment diffusion type: gui {
 	output {
-		display a type: opengl {
+		display uniform_diffusion_in_8_neighbors_grid type: opengl {
 			// Display the grid with elevation
-			grid cells elevation: true triangulation: true;
+			grid cells_eight_nb elevation: true triangulation: true;
+		}
+		display uniform_diffusion_in_4_neighbors_grid type: opengl {
+			// Display the grid with elevation
+			grid cells_four_nb elevation: true triangulation: true;
 		}
 	}
 }
