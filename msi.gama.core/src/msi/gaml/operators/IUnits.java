@@ -336,6 +336,14 @@ public class IUnits {
 		concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
 		doc = { @doc("pound unit") })
 	public final static double pound = 0.45359237 * kg, lb = pound, pounds = pound, lbm = pound;
+	
+	/** The Constant stone. */
+	@constant(value = "stone",
+		altNames = { "st" },
+		category = { IConstantCategory.WEIGHT },
+		concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
+		doc = { @doc("stone unit") })
+	public final static double stone = 14 * pound, st = stone;
 
 	/*
 	 *

@@ -196,6 +196,9 @@ public class modelLibraryGenerator {
 				extractedStr = Utils.findAndReturnRegex(line,catKeywords+"s=(.*)");
 				String[] keywordArray = extractedStr.split("~");
 				for (String kw : keywordArray) {
+					if (catKeywords.equals("constant")) {
+						kw = "#"+kw;
+					}
 					kw = catKeywords+"_"+kw;
 					result.add(kw);
 				}
@@ -300,7 +303,7 @@ public class modelLibraryGenerator {
         while (it.hasNext()) {
         	String id = it.next();
         	if (!expeUsedFromTheXML.contains(id)) {
-        		System.out.println("WARNING : The experiment "+id+" has not been used because it does not exist !");
+        		System.err.println("The experiment "+id+" has not been used because it does not exist !");
         	}
         }
 	}
@@ -336,7 +339,7 @@ public class modelLibraryGenerator {
 		
 		while ((line = br.readLine()) != null) {
 			if (inTheRightExperiment) {
-				if (Utils.findAndReturnRegex(line,"experiment (\\w+)") != "") {
+				if (Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment (\\w+)") != "") {
 					// we are out of the right experiment. Return the result.
 					br.close();
 					return result;
@@ -347,7 +350,7 @@ public class modelLibraryGenerator {
 					displayName = "";
 				}
 			}
-			if (expeName.compareTo(Utils.findAndReturnRegex(line,"experiment (\\w+)")) == 0) {
+			if (expeName.compareTo(Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment (\\w+)")) == 0) {
 				inTheRightExperiment = true;
 			}
 		}
@@ -427,7 +430,6 @@ public class modelLibraryGenerator {
 					FileOutputStream fileOut = new FileOutputStream(outputFile);
 					
 					// write the header
-					System.out.println(outputFileName);
 					fileOut.write(mainKeywordsMap.get(gamlFile.getAbsolutePath().replace("\\", "/")).getBytes());
 					fileOut.write(metaStruct.getMdHeader().getBytes());
 					
