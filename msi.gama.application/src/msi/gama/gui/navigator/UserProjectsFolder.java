@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import msi.gama.application.projects.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.swing.Platform;
 
 public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
@@ -26,7 +27,8 @@ public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
 	@Override
 	public Image getImage() {
-		return IGamaIcons.FOLDER_USER.image();
+		if (Platform.isGtk()) return IGamaIcons.FOLDER_USER_16.image();
+		return IGamaIcons.FOLDER_USER.image(); // FOLDER_USER
 	}
 
 	@Override

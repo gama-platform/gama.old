@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Image;
 import msi.gama.application.projects.BuiltinNature;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.swing.Platform;
 
 public class ModelsLibraryFolder extends TopLevelFolder {
 
@@ -25,7 +26,8 @@ public class ModelsLibraryFolder extends TopLevelFolder {
 
 	@Override
 	public Image getImage() {
-		return IGamaIcons.FOLDER_BUILTIN.image();
+		if (Platform.isGtk()) return IGamaIcons.FOLDER_BUILTIN_16.image();
+		return IGamaIcons.FOLDER_BUILTIN.image(); // FOLDER_BUILTIN
 	}
 
 	@Override

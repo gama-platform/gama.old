@@ -66,6 +66,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 				}
 			};
 		getCommonViewer().addPostSelectionChangedListener(this);
+
 		return manager;
 	}
 
@@ -74,7 +75,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		this.parent = GamaToolbarFactory.createToolbars(this, compo);
 
 		super.createPartControl(parent);
-		// getCommonViewer().getControl().setLayoutData(GamaToolbarFactory.getLayoutDataForChild());
 		IToolBarManager toolbar = getViewSite().getActionBars().getToolBarManager();
 		for ( IContributionItem item : toolbar.getItems() ) {
 			if ( item instanceof ActionContributionItem ) {
