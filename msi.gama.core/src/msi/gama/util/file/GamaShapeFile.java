@@ -274,13 +274,15 @@ public class GamaShapeFile extends GamaGisFile {
 		FeatureReader reader = null;
 		File file = getFile();
 		IList list = getBuffer();
+		int size = 0;
 		try {
 			store = new ShapefileDataStore(file.toURI().toURL());
 			Envelope env = store.getFeatureSource().getBounds();
-			int size = store.getFeatureSource().getCount(Query.ALL);
+			size = store.getFeatureSource().getCount(Query.ALL);
 			int index = 0;
 			computeProjection(scope, env);
 			reader = store.getFeatureReader();
+			
 			while (reader.hasNext()) {
 				scope.getGui().setSubStatusCompletion(index++ / size);
 				Feature feature = reader.next();
@@ -311,6 +313,13 @@ public class GamaShapeFile extends GamaGisFile {
 				store.dispose();
 			}
 			scope.getGui().endSubStatus("Reading file " + getName());
+		}
+		if (size > list.size()) {
+			GAMA.reportError(scope,
+					GamaRuntimeException.warning(
+						"Problem with file " + getFile() +": only " +  list.size() +" of the " + size+ " geometries could be added",
+						scope),
+					false);
 		}
 	}
 
