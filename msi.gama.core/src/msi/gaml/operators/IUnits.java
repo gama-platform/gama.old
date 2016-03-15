@@ -331,7 +331,7 @@ public class IUnits {
 
 	/** The Constant pound. */
 	@constant(value = "pound",
-		altNames = { "lb", "poudns", "lbm" },
+		altNames = { "lb", "pounds", "lbm" },
 		category = { IConstantCategory.WEIGHT },
 		concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
 		doc = { @doc("pound unit") })

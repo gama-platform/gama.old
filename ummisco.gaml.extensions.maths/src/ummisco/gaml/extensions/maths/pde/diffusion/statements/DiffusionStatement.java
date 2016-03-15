@@ -49,7 +49,7 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 		type = IType.MATRIX,
 		of = IType.FLOAT,
 		optional = true,
-		doc = @doc("the diffusion matrix (can have any size)")),
+		doc = @doc("the diffusion matrix (\"kernel\" or \"filter\" in image processing). Can have any size, as long as dimensions are odd values.")),
 	@facet(name = IKeyword.METHOD,
 		type = IType.ID,
 		optional = true,
@@ -81,7 +81,14 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 	@facet(name = IKeyword.CYCLE_LENGTH,
 		type = IType.INT,
 		optional = true,
-		doc = @doc("the number of diffusion operation applied in one simulation step")) },
+		doc = @doc("the number of diffusion operation applied in one simulation step")),
+	@facet(name = IKeyword.AVOID_MASK,
+	type = IType.BOOL,
+	optional = true,
+	doc = @doc("if true, the value will not be diffused in the masked cells, but will "
+			+ "be restitute to the neighboring cells, multiplied by the variation value (no signal lost)."
+			+ " If false, the value will be diffused in the masked cells, but masked cells "
+			+ "won't diffuse the value afterward (lost of signal). (default value : false)")) },
 	omissible = IKeyword.VAR)
 @symbol(name = { IKeyword.DIFFUSE, IKeyword.DIFFUSION }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
 concept = { IConcept.MATH })
@@ -387,6 +394,10 @@ public class DiffusionStatement extends AbstractStatement {
 		// true for convolution, false for dot_product
 		boolean use_convolution = getLiteral(IKeyword.METHOD, IKeyword.CONVOLUTION).equals(IKeyword.CONVOLUTION);
 		boolean is_gradient = getLiteral(IKeyword.PROPAGATION, IKeyword.DIFFUSION).equals(IKeyword.GRADIENT);
+		boolean avoid_mask = false;
+		if (getFacet(IKeyword.AVOID_MASK) != null) {
+			avoid_mask = Cast.asBool(scope, getFacet(IKeyword.AVOID_MASK).value(scope));
+		}
 		double minValue = Cast.asFloat(scope, getFacetValue(scope, IKeyword.MINVALUE, 0.0));
 
 		GridPopulation pop = computePopulation(scope);
@@ -411,7 +422,7 @@ public class DiffusionStatement extends AbstractStatement {
 
 		if ( pop != null ) {
 			getEnvironment(scope).diffuseVariable(scope, use_convolution, is_gradient, mat_diffu, mask, var_diffu, pop,
-				minValue);
+				minValue, avoid_mask);
 		}
 
 		return null;

@@ -57,15 +57,18 @@ public class GridDiffuser {
 		public double[][] Mask, Mat_diffu;
 		public IScope Scope;
 		public double Min_value;
+		public boolean Avoid_mask;
 
 		public GridDiffusion(final IScope scope, final boolean use_convolution, final boolean is_gradient,
-			final double[][] mat_diffu, final double[][] mask, final double min_value) {
+			final double[][] mat_diffu, final double[][] mask, final double min_value, 
+			final boolean avoid_mask) {
 			Scope = scope;
 			Use_convolution = use_convolution;
 			Mat_diffu = mat_diffu;
 			Mask = mask;
 			Is_gradient = is_gradient;
 			Min_value = min_value;
+			Avoid_mask = avoid_mask;
 		}
 	}
 
@@ -98,8 +101,9 @@ public class GridDiffuser {
 	protected final Map<PairVarGrid, List<GridDiffusion>> m_diffusions = new HashMap<PairVarGrid,List<GridDiffusion>>();
 
 	public void addDiffusion(final IScope scope, final String var_diffu, final GridPopulation pop, final boolean method_diffu,
-		final boolean is_gradient, final double[][] mat_diffu, final double[][] mask, final double min_value) {
-		GridDiffusion newGridDiff = new GridDiffusion(scope, method_diffu, is_gradient, mat_diffu, mask, min_value);
+		final boolean is_gradient, final double[][] mat_diffu, final double[][] mask, final double min_value, 
+		final boolean avoid_mask) {
+		GridDiffusion newGridDiff = new GridDiffusion(scope, method_diffu, is_gradient, mat_diffu, mask, min_value, avoid_mask);
 		PairVarGrid keyValue = new PairVarGrid(scope, var_diffu, pop);
 		if (m_diffusions.containsKey(keyValue))
 		{
@@ -111,7 +115,8 @@ public class GridDiffuser {
 				if (gridToAnalyze != newGridDiff
 					&& gridToAnalyze.Use_convolution == newGridDiff.Use_convolution
 					&& compareArrays(gridToAnalyze.Mask,newGridDiff.Mask)
-					&& gridToAnalyze.Is_gradient == newGridDiff.Is_gradient) {
+					&& gridToAnalyze.Is_gradient == newGridDiff.Is_gradient
+					&& gridToAnalyze.Avoid_mask == newGridDiff.Avoid_mask) {
 					// we can add the two diffusion matrix
 					listWithSameVar.remove(gridToAnalyze);
 					int iiLength = gridToAnalyze.Mat_diffu.length;
@@ -179,6 +184,8 @@ public class GridDiffuser {
 	private boolean use_convolution = true;
 	boolean m_initialized = false;
 	double[][] mask, mat_diffu;
+	private boolean avoid_mask;
+	private float variation; // in case of "avoid_mask", compute the variation.
 	IScope scope;
 
 	double[] input, output;
@@ -205,8 +212,19 @@ public class GridDiffuser {
 		is_gradient = gridDiff.Is_gradient;
 		min_value = gridDiff.Min_value;
 		scope = gridDiff.Scope;
+		avoid_mask = gridDiff.Avoid_mask;
 		if ( scope == null || scope.interrupted() ) {
 			return false;
+		}
+		
+		if (avoid_mask) {
+			// compute variation
+			variation = 0;
+			for (int i=0; i<mat_diffu.length; i++) {
+				for (int j=0; j<mat_diffu[0].length; j++) {
+					variation += mat_diffu[i][j];
+				}
+			}
 		}
 
 		for ( int i = 0; i < input.length; i++ ) {
@@ -219,56 +237,86 @@ public class GridDiffuser {
 
 
 	}
-
+	
 	public void doDiffusion_with_convolution() {
 		// default method : convolution
-
+	
 		int kRows = mat_diffu.length;
 		int kCols = mat_diffu[0].length;
-
+	
 		int kCenterX = kCols/ 2;
 		int kCenterY = kRows / 2;
-		int ii = 0, jj = 0;
-
-		for ( int i = 0; i < nbRows; ++i ) // rows
+		
+		for ( int i = 0; i < nbRows; ++i ) // output rows
 		{
-			for ( int j = 0; j < nbCols; ++j ) // columns
-			{
-				if (input[j * nbCols + i] > min_value && ( mask==null ? true : mask[i][j] == 1) )
+			for ( int j = 0; j < nbCols; ++j ) // output columns
+			{				
+				double value_to_redistribute = 0;
+				ArrayList<int[]> non_masked_cells = new ArrayList<int[]>();
+				for ( int m = 0; m < kRows; ++m ) // kernel rows
 				{
-					for ( int m = 0; m < kRows; ++m ) // kernel rows
+					for ( int n = 0; n < kCols; ++n ) // kernel columns
 					{
-						for ( int n = 0; n < kCols; ++n ) // kernel columns
-						{
-							// index of input signal, used for checking boundary
-							ii = i + n - kCenterX;
-							jj = j + m - kCenterY;
-							// ignore input samples which are out of bound
-							if ( is_torus ) {
-								if ( ii < 0 ) {
-									ii = nbRows + ii;
-								} else if ( ii >= nbRows ) {
-									ii = ii - nbRows;
-								}
+						// index of input signal, used for checking boundary
+						int ii = i + n - kCenterX;
+						int jj = j + m - kCenterY;
+						// ignore input samples which are out of bound
+						if ( is_torus ) {
+							if ( ii < 0 ) {
+								ii = nbRows + ii;
+							} else if ( ii >= nbRows ) {
+								ii = ii - nbRows;
+							}
 
-								if ( jj < 0 ) {
-									jj = nbCols + jj;
-								} else if ( jj >= nbCols ) {
-									jj = jj - nbCols;
+							if ( jj < 0 ) {
+								jj = nbCols + jj;
+							} else if ( jj >= nbCols ) {
+								jj = jj - nbCols;
+							}
+						}
+						// diffuse if the input value is in the grid, and if the cell is not masked
+						if ( (ii >= 0 && ii < nbCols && jj >= 0 && jj < nbRows)
+								&& (mask==null || mask[ii][jj] == 1) ) 
+						{
+							double value_before_change = output[j * nbCols + i];
+							if (output[j * nbCols + i] == -Double.MAX_VALUE) {
+								output[j * nbCols + i] = input[jj * nbCols + ii] * mat_diffu[kRows-m-1][kCols-n-1];
+							}
+							else {
+								if (is_gradient) {
+									if (output[j * nbCols + i] < input[jj * nbCols + ii] * mat_diffu[kRows-m-1][kCols-n-1]) {
+										output[j * nbCols + i] = input[jj * nbCols + ii] * mat_diffu[kRows-m-1][kCols-n-1];
+									}
+								}
+								else {
+									output[j * nbCols + i] += input[jj * nbCols + ii] * mat_diffu[kRows-m-1][kCols-n-1];
 								}
 							}
-							if ( ii >= 0 && ii < nbCols && jj >= 0 && jj < nbRows) {
-								if (output[jj * nbCols + ii] == -Double.MAX_VALUE) {output[jj * nbCols + ii] = input[j * nbCols + i] * mat_diffu[m][n];}
-								else {
-									if (is_gradient) {
-										if (output[jj * nbCols + ii] < input[j * nbCols + i] * mat_diffu[m][n]) {
-											output[jj * nbCols + ii] = input[j * nbCols + i] * mat_diffu[m][n];
-										}
-									}
-									else {
-										output[jj * nbCols + ii] += input[j * nbCols + i] * mat_diffu[m][n];
-									}
+						
+							// undo the changes if "avoid_mask" and if the output cell is masked.
+							if ( avoid_mask && (mask==null ? false : mask[i][j] != 1) ) {
+								value_to_redistribute+=output[j * nbCols + i];
+								output[j * nbCols + i] = value_before_change;
+								if (mask[ii][jj] == 1) {
+									// input cell not masked
+									non_masked_cells.add(new int[]{ii,jj});
 								}
+							}
+						}
+					}
+				}
+				if (value_to_redistribute != 0) 
+				{
+					double value_to_add = value_to_redistribute * variation / non_masked_cells.size();
+					for (int[] coord : non_masked_cells) 
+					{
+						if (output[coord[1] * nbCols + coord[0]] == -Double.MAX_VALUE) 
+						{
+							output[coord[1] * nbCols + coord[0]] = value_to_add;
+						}
+						else {
+							if (!is_gradient) {
+								output[coord[1] * nbCols + coord[0]] += value_to_add;
 							}
 						}
 					}
@@ -276,61 +324,94 @@ public class GridDiffuser {
 			}
 		}
 	}
-
+	
 	public void doDiffusion_with_dotProduct() {
-		// dot_product
-
+		// dot product
+		
 		int kRows = mat_diffu.length;
 		int kCols = mat_diffu[0].length;
+	
+		int kCenterX = kCols/ 2;
+		int kCenterY = kRows / 2;
+		
+		for ( int ii = 0; ii < nbRows; ++ii ) // input rows
+		{
+			for ( int jj = 0; jj < nbCols; ++jj ) // input columns
+			{				
+				if (mask == null || (mask[ii][jj] == 1)) {
+					// diffuse only if the input is not masked
+					double value_to_redistribute = 0;
+					ArrayList<int[]> non_masked_cells = new ArrayList<int[]>();
+					for ( int m = 0; m < kRows; ++m ) // kernel rows
+					{
+						for ( int n = 0; n < kCols; ++n ) // kernel columns
+						{
+							// index of output signal, used for checking boundary
+							int i = ii + n - kCenterX;
+							int j = jj + m - kCenterY;
+							// ignore output samples which are out of bound
+							if ( is_torus ) {
+								if ( i < 0 ) {
+									i = nbRows + i;
+								} else if ( i >= nbRows ) {
+									i = i - nbRows;
+								}
 
-		int xcenter = kRows / 2;
-		int ycenter = kCols / 2;
-
-		for ( int i = 0; i < nbRows; i++ ) {
-			for ( int j = 0; j < nbCols; j++ ) {
-
-				int um = 0;
-				for ( int uu = i - xcenter; uu <= i + xcenter; uu++ ) {
-					int vm = 0;
-					for ( int vv = j - ycenter; vv <= j + ycenter; vv++ ) {
-						int u = uu;
-						int v = vv;
-						if ( is_torus ) {
-							if ( u < 0 ) {
-								u = nbRows + u;
-							} else if ( u >= nbRows ) {
-								u = u - nbRows;
+								if ( j < 0 ) {
+									j = nbCols + j;
+								} else if ( j >= nbCols ) {
+									j = j - nbCols;
+								}
 							}
-
-							if ( v < 0 ) {
-								v = nbCols + v;
-							} else if ( v >= nbCols ) {
-								v = v - nbCols;
-							}
-						} else if ( u >= 0 && v >= 0 && v < nbCols && u < nbRows && ( mask==null ? true : mask[i][j] == 1) ) {
-							if (output[u * nbCols + v]==-Double.MAX_VALUE) {
-								output[u * nbCols + v]=input[i * nbCols + j] * mat_diffu[um][vm];
-							}
-							else {
-								if (is_gradient) {
-									if (output[u * nbCols + v] < input[i * nbCols + j] * mat_diffu[um][vm]) {
-										output[u * nbCols + v] = input[i * nbCols + j] * mat_diffu[um][vm];
-									}
+							// diffuse if the output value is in the grid
+							if (i >= 0 && i < nbCols && j >= 0 && j < nbRows)
+							{
+								double value_before_change = output[j * nbCols + i];
+								if (output[j * nbCols + i] == -Double.MAX_VALUE) {
+									output[j * nbCols + i] = input[jj * nbCols + ii] * mat_diffu[m][n];
 								}
 								else {
-									output[u * nbCols + v] += input[i * nbCols + j] * mat_diffu[um][vm];
+									if (is_gradient) {
+										if (output[j * nbCols + i] < input[jj * nbCols + ii] * mat_diffu[m][n]) {
+											output[j * nbCols + i] = input[jj * nbCols + ii] * mat_diffu[m][n];
+										}
+									}
+									else {
+										output[j * nbCols + i] += input[jj * nbCols + ii] * mat_diffu[m][n];
+									}
+								}
+							
+								// undo the changes if "avoid_mask" and if the output cell is masked.
+								if ( avoid_mask && (mask==null ? false : mask[i][j] != 1) ) {
+									value_to_redistribute+=output[j * nbCols + i];
+									output[j * nbCols + i] = value_before_change;
+									if (mask[ii][jj] == 1) {
+										// input cell not masked
+										non_masked_cells.add(new int[]{ii,jj});
+									}
 								}
 							}
 						}
-
-						vm++;
 					}
-					um++;
-
+					if (value_to_redistribute != 0) 
+					{
+						double value_to_add = value_to_redistribute * variation / non_masked_cells.size();
+						for (int[] coord : non_masked_cells) 
+						{
+							if (output[coord[1] * nbCols + coord[0]] == -Double.MAX_VALUE) 
+							{
+								output[coord[1] * nbCols + coord[0]] = value_to_add;
+							}
+							else {
+								if (!is_gradient) {
+									output[coord[1] * nbCols + coord[0]] += value_to_add;
+								}
+							}
+						}
+					}
 				}
 			}
 		}
-
 	}
 
 	public void finishDiffusion(final IScope scope, final IPopulation pop) {
