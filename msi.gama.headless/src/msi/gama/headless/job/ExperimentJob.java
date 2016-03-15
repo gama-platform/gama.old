@@ -99,6 +99,14 @@ public class ExperimentJob implements IExperimentJob{
 	 */
 	public IRichExperiment simulator;
 
+	public IRichExperiment getSimulation() {
+		return simulator;
+	}
+
+	public String getSourcePath() {
+		return sourcePath;
+	}
+
 	/**
 	 * current step
 	 */
@@ -198,6 +206,7 @@ public class ExperimentJob implements IExperimentJob{
 
 	public void setup() {
 		this.step = 0;
+	
 	}
 
 	public void play() {

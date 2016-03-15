@@ -16,4 +16,6 @@ import msi.gama.headless.core.IExperiment;
 public interface IMoleExperiment extends IExperiment
 {
     //keep to ensure compatibility with openMole	
+	void play(int finalStep);
+	void play(String exp, int finalStep);
 }

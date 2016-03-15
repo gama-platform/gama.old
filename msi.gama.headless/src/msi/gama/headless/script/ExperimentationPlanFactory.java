@@ -108,13 +108,12 @@ public class ExperimentationPlanFactory {
 	{
 		JobPlan jb = new JobPlan();
 		try
-			{
-				System.out.println("fdsqfdqsf mo "+ modelFileName);
-				System.out.println("fdsqfdqsf mo "+ jb.loadModelAndCompileJob(modelFileName).length);
-			}catch(Exception e)
-			{
+		{
+				jb.loadModelAndCompileJob(modelFileName);
+		}catch(Exception e)
+		{
 				err.write("Error building plan: " + modelFileName);
-			}
+		}
 		long[] seeds = {DEFAULT_SEED};
 		List<IExperimentJob> jobs = jb.constructAllJobs(seeds,DEFAULT_FINAL_STEP);
 		Document dd;
@@ -132,8 +131,15 @@ public class ExperimentationPlanFactory {
 		transformer.transform(source, result);
 		
 	}
-	
-	private static Document buildXmlDocument(List<IExperimentJob> jobs) throws ParserConfigurationException
+	public static List<IExperimentJob> buildExperiment(String modelFileName)
+	{
+		JobPlan jb = new JobPlan();
+		jb.loadModelAndCompileJob(modelFileName);
+		long[] seeds = {DEFAULT_SEED};
+		List<IExperimentJob> jobs = jb.constructAllJobs(seeds,DEFAULT_FINAL_STEP);
+		return jobs;
+	}
+	public static Document buildXmlDocument(List<IExperimentJob> jobs) throws ParserConfigurationException
 	{
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();

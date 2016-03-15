@@ -40,4 +40,5 @@ Export-Package:
  msi.gama.headless.script,
  msi.gama.headless.util,
  msi.gama.headless.xml;uses:="msi.gama.headless.core"
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ ext/lanterna-2.1.7.jar

@@ -14,14 +14,18 @@ import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.kernel.model.IModel;
+import msi.gama.runtime.GAMA;
+import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
 
 public class LocalSimulationRuntime extends Observable implements SimulationRuntime, RuntimeContext {
 	private Map<String, ExperimentJob> simulations;
 	private ArrayList<FakeApplication> queue ;
 	private ArrayList<FakeApplication> started ;
-	private HashMap<String,IModel> loadedModels;
+	private HashMap<String,ArrayList<IModel> >loadedModels;
+	private HashMap<String,ArrayList<IModel>> availableLoadedModels;
 	private int allocatedProcessor ;
 	private boolean isTraceKept;
 	
@@ -45,7 +49,12 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		simulations = new HashMap<String, ExperimentJob>();
 		queue = new ArrayList<FakeApplication>();
 		started = new ArrayList<FakeApplication>();
-		loadedModels = new HashMap<String,IModel>();
+		loadedModels = new HashMap<String,ArrayList<IModel>>();
+		availableLoadedModels = new HashMap<String,ArrayList<IModel>>();
+		if(proc == UNDEFINED_QUEUE_SIZE)
+		{
+			proc = getSatisfiedThreads();
+		}
 		this.allocatedProcessor=proc;
 	}
 	
@@ -53,8 +62,17 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		simulations = new HashMap<String, ExperimentJob>();
 		queue = new ArrayList<FakeApplication>();
 		started = new ArrayList<FakeApplication>();
-		loadedModels = new HashMap<String,IModel>();
-		this.allocatedProcessor=UNDEFINED_QUEUE_SIZE;
+		loadedModels = new HashMap<String,ArrayList<IModel>>();
+		availableLoadedModels = new HashMap<String,ArrayList<IModel>>();
+		this.allocatedProcessor=getSatisfiedThreads() ; //UNDEFINED_QUEUE_SIZE;
+	}
+	
+	private static int getSatisfiedThreads() {
+		int cpus = Runtime.getRuntime().availableProcessors();
+		System.out.println("cpus :" + cpus);
+		int maxThreads = cpus;
+		maxThreads = (maxThreads > 0 ? maxThreads : 1);
+		return maxThreads;
 	}
 	
 	public void listenMe(Observer v)
@@ -114,10 +132,60 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		return started.size() > 0 || queue.size() > 0;
 	}
 	
+	public synchronized void releaseModel(String key, IModel mdl)
+	{
+		//System.out.println("release simulation");
+		//String key = mdl.getFilePath();
+		//availableLoadedModels.get(key).add(mdl);
+		//System.out.println("remove " + mdl.getFilePath());
+		//lockUnLock(null,key, mdl);
+	//	System.out.println("model released ") ;
+	}
+	
+	private synchronized IModel lockUnLock(File fl, String key, IModel mdl)
+	{
+		IModel mm =null;
+		if(mdl!=null)
+		{
+			availableLoadedModels.get(key).add(mdl);
+			mm= mdl;
+		}
+		if(fl != null)
+		{
+			mm= lockModel(fl);
+		}
+		return mm;
+	}
+	
+	public synchronized IModel lockModel(File fl)
+	{
+		IModel mdl;
+		String key=fl.getAbsolutePath();
+		ArrayList<IModel> arr = availableLoadedModels.get(fl.getAbsolutePath());
+		System.out.println(fl.getAbsolutePath());
+		if(arr ==null)
+		{
+			arr = new ArrayList<IModel>();
+			availableLoadedModels.put(key, arr);
+			loadedModels.put(key, new ArrayList<IModel>());
+		}
+		if(arr.size() == 0)
+		{
+			mdl =HeadlessSimulationLoader.loadModel(fl);
+			loadedModels.get(key).add(mdl);
+		}
+		else
+		{
+			mdl = arr.get(0);
+			arr.remove(0);
+		}
+		return mdl;
+	}
+	
 	public synchronized IModel loadModel(File fl)
 	{
-		IModel mdl = HeadlessSimulationLoader.loadModel(fl);
-		return mdl;
+		//return lockUnLock( fl,null, null) ; //lockModel(fl); //
+		return HeadlessSimulationLoader.loadModel(fl); //lockModel(fl); //mdl.c;
 	}
 
 	public IExperimentPlan buildExperimentPlan(String expName, IModel mdl)
@@ -153,9 +221,23 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 				e.printStackTrace();
 			}
 			si.play(); 
-			runtime.closeSimulation(this);  
+			runtime.closeSimulation(this); 
+			runtime.releaseModel(si.getSourcePath(),si.getSimulation().getModel());
+			
+			
 		}
 
+	}
+
+	@Override
+	public HashMap<String, Double> getSimulationState() {
+		
+		HashMap<String,Double > res = new HashMap<String,Double>();
+		for(ExperimentJob exp :simulations.values())
+		{
+			res.put(exp.getExperimentID(), new Double(exp.getStep()/exp.getFinalStep()));
+		}
+		return res;
 	}
 
 

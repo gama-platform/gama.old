@@ -102,7 +102,7 @@ public class Reader {
 	private ExperimentJob readSimulation(final Element e) {
 
 		String expId = e.getAttribute(XmlTAG.EXPERIMENT_ID_TAG);
-		String finalStep = e.getAttribute(XmlTAG.FINAL_STEP_TAG);
+		//String finalStep = e.getAttribute(XmlTAG.FINAL_STEP_TAG);
 		int max = Integer.valueOf(e.getAttribute(XmlTAG.FINAL_STEP_TAG));
 		String sourcePath = e.getAttribute(XmlTAG.SOURCE_PATH_TAG);
 		String experimentName = e.getAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
@@ -114,10 +114,9 @@ public class Reader {
 			if ( fileName != null ) {
 				String prt;
 				File ff = new File(fileName);
-				prt = ff.getPath();
+				prt = ff.getAbsolutePath();
 				pr = prt.substring(0, prt.length() - ff.getName().length());
 				pr = pr + "/";
-
 			} else {
 				pr = new File(".").getAbsolutePath();
 			}

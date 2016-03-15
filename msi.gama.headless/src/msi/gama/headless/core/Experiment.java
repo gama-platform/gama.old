@@ -63,7 +63,6 @@ public class Experiment implements IExperiment {
 	private synchronized void loadCurrentExperiment(final String expName) {
 		this.experimentName = expName;
 		this.currentStep = 0;
-
 		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, seed);
 		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
 		// this.currentExperiment.isHeadless()
@@ -115,5 +114,16 @@ public class Experiment implements IExperiment {
 		return currentExperiment.getAgent().getSimulation() == null ||
 			currentExperiment.getAgent().getSimulation().dead() ||
 			currentExperiment.getAgent().getSimulation().getScope().interrupted();// currentExperiment.getAgent().dead(); //().interrupted();
+	}
+
+	@Override
+	public IModel getModel() {
+		// TODO Auto-generated method stub
+		return this.model;
+	}
+	
+	public IExperimentPlan getExperimentPlan()
+	{
+		return this.currentExperiment;
 	}
 }
