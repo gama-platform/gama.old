@@ -49,9 +49,9 @@ global {
 		// Declare a diffusion on the grid "cells" and on "quick_cells". The diffusion declared on "quick_cells" will make 5 computations at each step to accelerate the process. 
 		// The value of the diffusion will be store in the new variable "phero" of the cell.
 		// In order to not loosing phero value, we apply a hand made mask (with the operator "where") and we turn the "avoid_mask" facet to true.
-		list cells_where_diffuse <- cells where (each.grid_x < size-cycle_length and each.grid_x > cycle_length and each.grid_y < taille-cycle_length and each.grid_y > cycle_length);
+		list cells_where_diffuse <- cells where (each.grid_x < size-cycle_length and each.grid_x > cycle_length and each.grid_y < size-cycle_length and each.grid_y > cycle_length);
 		diffuse var: phero on: cells_where_diffuse matrix: mat_diff avoid_mask: true method:dot_product;	
-		list quick_cells_where_diffuse <- quick_cells where (each.grid_x < size-cycle_length and each.grid_x > cycle_length and each.grid_y < taille-cycle_length and each.grid_y > cycle_length);
+		list quick_cells_where_diffuse <- quick_cells where (each.grid_x < size-cycle_length and each.grid_x > cycle_length and each.grid_y < size-cycle_length and each.grid_y > cycle_length);
 		diffuse var: phero on: quick_cells_where_diffuse matrix: mat_diff avoid_mask: true cycle_length: 10 method:dot_product;
 	}
 }
