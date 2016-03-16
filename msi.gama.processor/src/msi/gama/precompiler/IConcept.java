@@ -96,6 +96,7 @@ public interface IConcept {
 	public static final String PARAMETER				= "parameter";
 	public static final String PAUSE					= "pause";
 	public static final String PERMANENT				= "permanent";
+	public static final String PHYSICS_ENGINE			= "physics_engine";
 	public static final String POINT					= "point";
 	public static final String PROBABILITY				= "probability";
 	public static final String PSEUDO_VARIABLE			= "pseudo_variable";

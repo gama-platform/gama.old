@@ -3,7 +3,7 @@
 * Author: Arnaud Grignard
 * Description: This is a model that shows how the physics engine work without gravity. Balls can collide each other and can't go further than the wall
 * 	and the ground agents.
-* Tags: Physical Engine, Skill
+* Tags: physics_engine, skill, 3d, spatial_computation
 */
 model Perfect_Gas
 
