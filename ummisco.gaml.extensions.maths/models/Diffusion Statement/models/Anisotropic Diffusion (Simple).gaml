@@ -9,8 +9,8 @@
 model anisotropic_diffusion
 
 global {
-	int taille <- 64; // better to have a pow of 2 for the size of the grid
-  	geometry shape <- envelope(square(taille) * 10);
+	int size <- 64; // better to have a pow of 2 for the size of the grid
+  	geometry shape <- envelope(square(size) * 10);
   	cells selected_cells;
   	
   	// Declare the anisotropic matrix (diffuse to the left-upper direction)
@@ -35,7 +35,7 @@ global {
 }
 
 
-grid cells height: taille width: taille {
+grid cells height: size width: size {
 	// "phero" is the variable storing the value of the diffusion
 	float phero  <- 0.0;
 	// the color of the cell is linked to the value of "phero".

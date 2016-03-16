@@ -9,8 +9,8 @@
 model uniform_diffusion
 
 global {
-	int taille <- 64; // better to have a pow of 2 for the size of the grid
-  	geometry shape <- envelope(square(taille) * 10);
+	int size <- 64; // better to have a pow of 2 for the size of the grid
+  	geometry shape <- envelope(square(size) * 10);
   	cells_eight_nb selected_cells_8;
   	cells_four_nb selected_cells_4;
 
@@ -36,7 +36,7 @@ global {
 }
 
 
-grid cells_eight_nb height: taille width: taille neighbors: 8 {
+grid cells_eight_nb height: size width: size neighbors: 8 {
 	// "phero" is the variable storing the value of the diffusion
 	float phero  <- 0.0;
 	// the color of the cell is linked to the value of "phero".
@@ -45,7 +45,7 @@ grid cells_eight_nb height: taille width: taille neighbors: 8 {
 	float grid_value update: phero * 100;
 } 
 
-grid cells_four_nb height: taille width: taille neighbors: 4 {
+grid cells_four_nb height: size width: size neighbors: 4 {
 	// "phero" is the variable storing the value of the diffusion
 	float phero  <- 0.0;
 	// the color of the cell is linked to the value of "phero".

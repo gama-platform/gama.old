@@ -9,8 +9,8 @@
 model diffusion_computation_method
 
 global{
-	int taille <- 64; // better to have a pow of 2 for the size of the grid
-  	geometry shape <- envelope(square(taille) * 10);
+	int size <- 64; // better to have a pow of 2 for the size of the grid
+  	geometry shape <- envelope(square(size) * 10);
   	cells_dot selected_cells_dot;
   	cells_convol selected_cells_convol;
   	// Declare the anisotropic matrix (diffuse to the left-upper direction)
@@ -42,7 +42,7 @@ global{
 }
 
 
-grid cells_dot height: taille width: taille {
+grid cells_dot height: size width: size {
 	// "phero" is the variable storing the value of the diffusion
 	float phero  <- 0.0;
 	// The color of the cell is linked to the value of "phero".
@@ -51,7 +51,7 @@ grid cells_dot height: taille width: taille {
 	float grid_value update: phero * 100;
 } 
 
-grid cells_convol height: taille width: taille {
+grid cells_convol height: size width: size {
 	// "phero" is the variable storing the value of the diffusion
 	float phero  <- 0.0;
 	// The color of the cell is linked to the value of "phero".
