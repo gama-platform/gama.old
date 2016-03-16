@@ -1,10 +1,10 @@
 /**
- * 	Name: Maps
- *  Author: Alexis Drogoul
- *  Description: Examples of the syntax and various operators used to manipulate the 'map' data type. 
- *  Read the comments and run the model to get a better idea on how to use maps in GAML. 
- *  Tags: map, loop
- */
+* Name: Maps
+* Author: Alexis Drogoul
+* Description: Examples of the syntax and various operators used to manipulate the 'map' data type. 
+* Read the comments and run the model to get a better idea on how to use maps in GAML. 
+* Tags: map, loop
+*/
 
 model Maps
 

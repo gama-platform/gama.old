@@ -1,9 +1,10 @@
 /**
- *  Name: Syntax
- *  Author: Alexis Drogoul
- *  Description: An overview of the new syntactic constructs that have been introduced in GAMA 1.6
- *  Tags: attribute, ternary, equation, action, container, list
- */
+* Name: Syntax
+* Author: Alexis Drogoul
+* Description: An overview of the new syntactic constructs that have been introduced in GAMA 1.6
+* Tags: attribute, ternary, equation, action, container, list
+*/
+
 model syntax
 
 /**

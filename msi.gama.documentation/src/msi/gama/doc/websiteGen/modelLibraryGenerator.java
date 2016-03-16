@@ -161,8 +161,12 @@ public class modelLibraryGenerator {
 			String absPathMeta = "";
 			for (String modCat : modelCategory) {
 				absPath = absPath.replace("\\", "/");
-				absPathMeta = absPath.replace("models/"+modCat,"models/"+modCat+"/.metadata");
+				absPathMeta = absPath.replace("models/"+modCat+"/","models/"+modCat+"/.metadata/");
 				absPathMeta = absPathMeta+".meta";
+				
+				if (absPath.contains("Syntax (1.6)")) {
+					System.out.println(absPath);
+				}
 				
 				// we have the meta file.
 				File metaFile = new File(absPathMeta);
