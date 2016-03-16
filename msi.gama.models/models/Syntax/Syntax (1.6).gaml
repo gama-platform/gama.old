@@ -1,7 +1,8 @@
 /**
- *  syntax
- *  Author: A. Drogoul
+ *  Name: Syntax
+ *  Author: Alexis Drogoul
  *  Description: An overview of the new syntactic constructs that have been introduced in GAMA 1.6
+ *  Tags: attribute, ternary, equation, action, container, list
  */
 model syntax
 
@@ -54,9 +55,8 @@ global skills: [moving] control: fsm {
 	
 
 	/**
- * UNITS
- */
-
+	 * UNITS
+	 */
 // The usage of units is improved ( "#" being replaced by "°"), and they can be combined
 	float c <- 10 °meter;
 	float speed <- 10 °meter / °sec;
@@ -69,20 +69,20 @@ global skills: [moving] control: fsm {
 	float e <- °e;
 
 	/**
-  * ACTIONS
-  */
-// Actions can also be declared in different ways. Classic:
-//	action dummy1 type: list of: int {
-//		arg a type: int default: 100;
-//		arg b type: float;
-//		return [a, int(b)];
-//	}
+	  * ACTIONS
+	  */
+	// Actions can also be declared in different ways. Classic:
+	action dummy1 type: list of: int {
+		arg a type: int default: 100;
+		arg b type: float;
+		return [a, int(b)];
+	}
 	// Semi-classic (prefixed by the type)
-//	list dummy2 of: int {
-//		arg a type: int default: 100;
-//		arg b type: float;
-//		return [a, int(b)];
-//	}
+	list dummy2 of: int {
+		arg a type: int default: 100;
+		arg b type: float;
+		return [a, int(b)];
+	}
 	//Compact
 	list<int> dummy1 (int a <- 100, float b) {
 		return [a, int(b)];
@@ -94,8 +94,8 @@ global skills: [moving] control: fsm {
 	}
 
 	/**
- * DEALING WITH VARIABLES
- */
+	 * DEALING WITH VARIABLES
+	 */
 	reflex variables {
 
 	// Temporary variables can use the same syntax as attributes. The classic form:
@@ -124,7 +124,7 @@ global skills: [moving] control: fsm {
 		agent0[0] <- 0;
 
 		// Accesses can be combined
-		species0[10]["name"] <- "A new name"; // which is equivalent to (spec at 10).name = "A new name";
+		species0[10].name <- "A new name"; // which is equivalent to (spec at 10).name = "A new name";
 
 		// Points can be used (with or without curly parentheses) to access agents in species
 		species0 agent1 <- species0[10, 10]; // returns the agent closest to point {10,10} for a "regular" species
@@ -189,8 +189,8 @@ global skills: [moving] control: fsm {
 	}
 
 	/**
-  * INVOCATION OF ACTIONS
-  */
+	  * INVOCATION OF ACTIONS
+	  */
 	reflex calling_actions {
 	// IN IMPERATIVE MODE (i.e. in a statement)
 	// The classic way
@@ -258,6 +258,7 @@ global skills: [moving] control: fsm {
 		create species0 with: (location: { 100, 100 }, name: "");
 	}
 
+	// The ternary operator "(condition) ? statement_if_condition_true : statement_if_condition_false" can be used as follow :
 	int max (int i, int j) {
 		return i > j ? i : j;
 	}
@@ -266,22 +267,9 @@ global skills: [moving] control: fsm {
 		return my_agents where (each.location = nil);
 	}
 
-
-	// 	  
-	// 	 int max (list<int> integers <- [0]) {
-	// 	 	int the_max <- integers[0];
-	// 	 	loop i from: 1 to: length(integers) - 1 { 
-	// 	 		int number <- integers[i];
-	// 	 		if (number > the_max) {
-	// 	 			the_max <- number;
-	// 	 		} 
-	// 	 	}
-	// 	 	return the_max;
-	// 	 }
-
 	/**
-  * USE OF OPERATORS 
-  */
+	  * USE OF OPERATORS 
+	  */
 	reflex operators {
 
 	// All the operators can now be written using a function-like form
@@ -302,8 +290,8 @@ global skills: [moving] control: fsm {
 		bool e1 <- between(5, 1, 10);
 	}
 	/**
-  * DEFINITION OF ASPECTS
-  */
+	  * DEFINITION OF ASPECTS
+	  */
 	aspect default {
 	// draw now accepts any kind of arguments and decides what to do based on the type of the argument
 		draw circle(1);

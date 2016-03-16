@@ -1,8 +1,9 @@
 /**
- *  Lists
- *  Author: drogoul
+ *  Name: Lists
+ *  Author: Alexis Drogoul
  *  Description: Examples of the syntax and various operators used to manipulate the 'list' data type. 
  *  Read the comments and run the model to get a better idea on how to use lists in GAML. 
+ *  Tags: list, loop
  */
 
 model Lists
