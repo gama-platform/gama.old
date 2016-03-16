@@ -17,7 +17,7 @@ global {
   	cells_diffuse_on_mask selected_cells2;
   	// Load the image mask as a matrix. The white part of the image is the part where diffusion will work, and the black part is where diffusion will be blocked.
   	matrix mymask <- file("../includes/complex_mask.bmp") as_matrix({grid_size,grid_size});
-  	// Declare the anisotropic matrix (diffuse from the center)
+  	// Declare a uniform diffusion matrix
   	matrix<float> mat_diff <- matrix([
 									[1/9,1/9,1/9],
 									[1/9,1/9,1/9],

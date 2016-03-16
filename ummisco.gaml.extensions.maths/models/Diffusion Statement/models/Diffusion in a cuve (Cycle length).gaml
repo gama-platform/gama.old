@@ -15,7 +15,7 @@ global {
   	geometry shape <- envelope(square(size));
   	list<cells> selected_cells;
   	list<quick_cells> selected_quick_cells;
-  	// Declare the anisotropic matrix (diffuse to the left-upper direction)
+  	// Declare an uniform diffusion matrix
   	matrix<float> mat_diff <- matrix([
 									[1/9,1/9,1/9],
 									[1/9,1/9,1/9],
