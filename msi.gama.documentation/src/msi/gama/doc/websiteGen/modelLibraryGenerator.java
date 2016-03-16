@@ -32,7 +32,9 @@ public class modelLibraryGenerator {
 	
 	// inputs / outputs
 	static String[] inputPathToModelLibrary = {"F:/Gama/GamaSource/msi.gama.models/models/",
-			"F:/Gama/GamaSource/ummisco.gaml.extensions.maths/models"};
+			"F:/Gama/GamaSource/ummisco.gaml.extensions.maths/models",
+			"F:/Gama/GamaSource/msi.gaml.extensions.fipa/models",
+			"F:/Gama/GamaSource/simtools.gaml.extensions.physics/models"};
 	static String outputPathToModelLibrary = "F:/gama_doc_17.wiki/References/ModelLibrary";
 	static String inputFileForHeadlessExecution = "F:/gama_doc_17.wiki/tempInputForHeadless.xml";
 	static String inputModelScreenshot = "F:/gama_doc_17.wiki/modelScreenshot.xml";

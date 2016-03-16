@@ -5,7 +5,7 @@
 *     through the grid thanks to the diffusion mechanism. A mask is used to restrict the diffusion to a "corridor" (the white part of the bmp image). The first display shows a
 *     diffusion avoiding the masked cells (the value is redistributed to the neighboring cells, to have a constant number of pheromon), the second display shows a diffusion 
 *     without avoiding the masked cells (the value is diffused in the masked cell, and never rediffused again).
-* Tags: diffusion, matrix, math, obstacle
+* Tags: diffusion, matrix, math, obstacle, elevation
 */
 
 model diffusion_with_mask

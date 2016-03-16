@@ -91,7 +91,7 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 			+ "won't diffuse the value afterward (lost of signal). (default value : false)")) },
 	omissible = IKeyword.VAR)
 @symbol(name = { IKeyword.DIFFUSE, IKeyword.DIFFUSION }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
-concept = { IConcept.MATH })
+concept = { IConcept.MATH, IConcept.DIFFUSION })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(DiffusionValidator.class)
 @doc(

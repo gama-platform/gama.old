@@ -3,7 +3,7 @@
 * Author: Benoit Gaudou
 * Description: This model is used to show how a diffusion works with a uniform matrix of diffusion in a grid. The cell at the center of the grid emit a pheromon at each step, which is spread
 *     through the grid thanks to the diffusion mechanism. Without passing a diffusion matrix, the default diffusion matrix is a uniform matrix 3x3, with value 1/nb_neighbors.
-* Tags: diffusion, matrix, math
+* Tags: diffusion, matrix, math, elevation
 */
 
 model uniform_diffusion
