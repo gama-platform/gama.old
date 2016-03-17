@@ -164,10 +164,6 @@ public class modelLibraryGenerator {
 				absPathMeta = absPath.replace("models/"+modCat+"/","models/"+modCat+"/.metadata/");
 				absPathMeta = absPathMeta+".meta";
 				
-				if (absPath.contains("Syntax (1.6)")) {
-					System.out.println(absPath);
-				}
-				
 				// we have the meta file.
 				File metaFile = new File(absPathMeta);
 				if (metaFile.exists()) {
@@ -402,7 +398,7 @@ public class modelLibraryGenerator {
 				if (!fileName.contains("include")) {
 					String newSubSectionName = fileName.split("/")[1];
 					String newSectionName = fileName.split("/")[0];
-					String modelFileName = fileName.split("/")[fileName.split("/").length-1];
+					String modelFileName = newSubSectionName+" "+fileName.split("/")[fileName.split("/").length-1];
 					String modelName = metaStruct.getName();
 					if (isAdditionnalPlugin) {
 						newSectionName = "Additionnal Plugins";
@@ -488,13 +484,11 @@ public class modelLibraryGenerator {
 	}
 	
 	private static void addSubSection(String pathToSectionFile, String subSectionName) throws IOException {
-//		String urlToSubSection = Utils.getUrlFromName(subSectionName);
 		String urlToSubSection = subSectionName.replace(" ", "");
 		Files.write(Paths.get(pathToSectionFile), new String("* ["+subSectionName+"](references#"+urlToSubSection+")\n\n").getBytes(), StandardOpenOption.APPEND);
 	}
 	
 	private static void addModel(String pathToSubSectionFile, String modelName, String modelFileName) throws IOException {
-//		String urlToModel = Utils.getUrlFromName(modelName);
 		String urlToModel = modelFileName.replace(" ", "");
 		Files.write(Paths.get(pathToSubSectionFile), new String("* ["+modelName+"](references#"+urlToModel+")\n\n").getBytes(), StandardOpenOption.APPEND);
 	}
