@@ -78,7 +78,7 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 * The `<xsl:value-of select="@name"/>` statement embeds statements: <xsl:for-each select="/doc/statements/statement"> 
 			<xsl:sort select="@name" />
 				<xsl:variable name="nameStat" select="@name"/>			
-			<xsl:for-each select="inside/symbols/symbol"><xsl:variable name="symbolItem" select="text()"/><xsl:if test="$symbolItem = $nameStatGlobal "><xsl:text>[#</xsl:text> <xsl:value-of select="$nameStat"/> <xsl:text> </xsl:text> <xsl:value-of select="$nameStat"/> <xsl:text>],  </xsl:text></xsl:if></xsl:for-each>
+			<xsl:for-each select="inside/symbols/symbol"><xsl:variable name="symbolItem" select="text()"/><xsl:if test="$symbolItem = $nameStatGlobal "><xsl:text>[</xsl:text> <xsl:value-of select="$nameStat"/> <xsl:text>](#</xsl:text> <xsl:value-of select="$nameStat"/> <xsl:text>),  </xsl:text></xsl:if></xsl:for-each>
 		</xsl:for-each>
   
 </xsl:template>
