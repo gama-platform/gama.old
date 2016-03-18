@@ -286,11 +286,11 @@ public class IUnits {
 
 	/** The Constant msec. */
 	@constant(value = "msec",
-		altNames = { "millisecond", "milliseconds" },
+		altNames = { "millisecond", "milliseconds", "ms" },
 		category = { IConstantCategory.TIME },
 		concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 		doc = { @doc("millisecond time unit") })
-	public final static double msec = sec / 1000, millisecond = msec, milliseconds = msec;
+	public final static double msec = sec / 1000, millisecond = msec, milliseconds = msec, ms = msec;
 
 	/*
 	 *

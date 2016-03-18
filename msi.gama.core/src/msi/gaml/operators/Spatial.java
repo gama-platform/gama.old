@@ -2362,7 +2362,7 @@ public abstract class Spatial {
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.POINT })
 		@doc(value = "the farthest point of the left-operand to the left-point.",
 		examples = { @example(value = "geom farthest_point_to(pt)",
-		equals = "the closest point of geom to pt",
+		equals = "the farthest point of geom to pt",
 		isExecutable = false) },
 		see = { "any_location_in", "any_point_in", "closest_points_with", "points_at" })
 		public static ILocation farthest_point_to(final IShape g, final GamaPoint p) {
