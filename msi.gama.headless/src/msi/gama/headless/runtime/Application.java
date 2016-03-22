@@ -221,6 +221,7 @@ public class Application implements IApplication {
 	
 	public void buildXML(String arg[]) throws ParserConfigurationException, TransformerException
 	{
+		verbose = containVerboseParameter(arg);
 		if(this.verbose )
 		{
 			SystemLogger.activeDisplay();
@@ -269,15 +270,6 @@ public class Application implements IApplication {
 			  SystemLogger.activeDisplay();  
 		}
 		HeadlessSimulationLoader.preloadGAMA();
-	//	loadJars();
-	//	HeadlessJarLoader.testJarLoading();
-		
-
-		
-		
-
-		
-		
 		this.tunnelingMode = Application.containTunnellingParameter(args);
 		this.consoleMode = Application.containConsoleParameter(args);
 		this.numberOfThread = Application.getNumberOfThread(args);
@@ -300,33 +292,10 @@ public class Application implements IApplication {
 		in.parseXmlFile();
 		 this.buildAndRunSimulation(in.getSimulation());
 		 in.dispose();
-		// Screen terminal = TerminalFacade.createScreen(TerminalFacade.createTextTerminal());
-		 
-//		 Screen term = TerminalFacade.createScreen(); 
-
-//	     term.startScreen(); 
 		 while (processorQueue.isPerformingSimulation()) {
 			  Thread.sleep(1000);
 		 }
-//			xx++;
-//			//term.clearScreen(); 
-//			
-//	//		HashMap<String, Double> states=processorQueue.getSimulationState();
-//		//	int i = 1;
-//		//	//show(term, "                                ",0,0);
-//			term.putString(0, 0, "                              ", Terminal.Color.WHITE, Terminal.Color.BLACK);
-//			for(String k :states.keySet() )
-//			{
-//				term.putString(0, i, k+"\t"+states.get(k)+ "                ", Terminal.Color.WHITE, Terminal.Color.BLACK);
-//				
-//				//show(term,k+"\t"+states.get(k)+ "                ",i,0);
-//				i++;   
-//			}
-//			term.putString(0, 0, "                              ", Terminal.Color.WHITE, Terminal.Color.BLACK);
-//			term.refresh();
-//	  	    Thread.sleep(1000);
-//		 }
-//		 term.stopScreen();
+
 		 System.exit(0);	
 	}
 
