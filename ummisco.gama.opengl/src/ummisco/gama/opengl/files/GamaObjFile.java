@@ -101,7 +101,6 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	private void loadObject() {
 		if ( loaded ) { return; }
-		int linecounter = 0;
 		int facecounter = 0;
 		BufferedReader br = null;
 		try {
@@ -109,16 +108,14 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			boolean firstpass = true;
 			String newline;
 			while ((newline = br.readLine()) != null) {
-				linecounter++;
 				if ( newline.length() > 0 ) {
 					newline = newline.trim();
 
 					// LOADS VERTEX COORDINATES
 					if ( newline.startsWith("v ") ) {
-						float coords[] = new float[4];
-						String coordstext[] = new String[4];
 						newline = newline.substring(2, newline.length());
 						StringTokenizer st = new StringTokenizer(newline, " ");
+						float coords[] = new float[st.countTokens()];
 						for ( int i = 0; st.hasMoreTokens(); i++ ) {
 							coords[i] = Float.parseFloat(st.nextToken());
 						}
