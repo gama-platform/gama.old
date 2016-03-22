@@ -190,7 +190,10 @@ public class Application implements IApplication {
 	}
 
 	private static boolean showError(final int errorCode, final String path) {
+		SystemLogger.activeDisplay();
 		System.out.println(HeadLessErrors.getError(errorCode, path));
+		SystemLogger.removeDisplay();
+		
 		return false;
 	}
 
