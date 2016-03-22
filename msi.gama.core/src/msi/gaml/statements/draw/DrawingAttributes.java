@@ -8,6 +8,8 @@ import java.util.List;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
+import msi.gaml.operators.Cast;
+import msi.gaml.types.Types;
 
 public abstract class DrawingAttributes {
 
@@ -19,7 +21,12 @@ public abstract class DrawingAttributes {
 	public DrawingAttributes(final ILocation size, final GamaPair<Double, GamaPoint> rotation, final ILocation location,
 		final GamaColor color) {
 		this.size = size == null ? null : new GamaPoint(size);
-		this.rotation = rotation;
+		
+		if (rotation != null) {
+			this.rotation = new GamaPair(Cast.asFloat(null, rotation.key), Cast.asPoint(null, rotation.value), Types.FLOAT,Types.POINT);
+		} else {
+			this.rotation = null;
+		}
 		// To make sure no side effect can happen
 		this.location = location == null ? null : new GamaPoint(location);
 		this.color = color;

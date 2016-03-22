@@ -42,7 +42,11 @@ import msi.gaml.types.*;
  */
 
 @doc("The moving skill is intended to define the minimal set of behaviours required for agents that are able to move on different topologies")
-@vars({ @var(name = IKeyword.LOCATION, type = IType.POINT, depends_on = IKeyword.SHAPE),
+@vars({ 
+	@var(name = IKeyword.LOCATION, 
+		type = IType.POINT, 
+		depends_on = IKeyword.SHAPE,
+		doc = @doc("Represents the current position of the agent") ),
 	@var(name = IKeyword.SPEED,
 		type = IType.FLOAT,
 		init = "1.0",

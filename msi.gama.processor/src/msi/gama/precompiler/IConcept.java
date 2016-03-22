@@ -39,11 +39,13 @@ public interface IConcept {
 	public static final String DATABASE					= "database";
 	public static final String DEM						= "dem";
 	public static final String DGS						= "dgs";
+	public static final String DIFFUSION				= "diffusion";
 	public static final String DIMENSION				= "dimension";
 	public static final String DISPLAY					= "display";
 	public static final String DISTRIBUTION				= "distribution";
 	public static final String DXF						= "dxf";
 	public static final String EDGE						= "edge";
+	public static final String ELEVATION				= "elevation";
 	public static final String ENUMERATION				= "enumeration";
 	public static final String EQUATION					= "equation";
 	public static final String EXPERIMENT				= "experiment";
@@ -96,6 +98,7 @@ public interface IConcept {
 	public static final String PARAMETER				= "parameter";
 	public static final String PAUSE					= "pause";
 	public static final String PERMANENT				= "permanent";
+	public static final String PHYSICS_ENGINE			= "physics_engine";
 	public static final String POINT					= "point";
 	public static final String PROBABILITY				= "probability";
 	public static final String PSEUDO_VARIABLE			= "pseudo_variable";

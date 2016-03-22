@@ -26,7 +26,7 @@ public class MainGenerateCategoryXML {
 		System.out.println("DONE");
 		
 		System.out.print("Merge all the docGAMA.xml files................");		
-		UnifyDoc.unify();
+		UnifyDoc.unifyAllProjects();
 		System.out.println("DONE");
 		
 		System.out.print("Transform the docGAMA.xml file into the XML category file ................");		

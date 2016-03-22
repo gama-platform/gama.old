@@ -42,6 +42,18 @@ public class UnifyDoc {
 		XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
 		sortie.output(doc, new FileOutputStream(Constants.DOCGAMA_GLOBAL_FILE));
 	}
+	
+	public static void unifyAllProjects() throws IOException, JDOMException, ParserConfigurationException, SAXException {
+		WorkspaceManager ws = new WorkspaceManager(".");
+		HashMap<String, File> hmFiles = ws.getAllDocFiles();
+
+		Document doc = mergeFiles(hmFiles);
+
+		System.out.println("" + hmFiles);
+
+		XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
+		sortie.output(doc, new FileOutputStream(Constants.DOCGAMA_GLOBAL_FILE));
+	}
 
 	private static Document mergeFiles(final HashMap<String, File> hmFilesPackages) throws JDOMException, IOException {
 		SAXBuilder builder = new SAXBuilder();
@@ -79,7 +91,7 @@ public class UnifyDoc {
 							}
 							found = found || equals;
 						}
-						// Add it if it is not already in the merged doc
+						// Add if it is not already in the merged doc
 						if ( !found ) {
 							doc.getRootElement().getChild(catXML).addContent(e.clone());
 						}

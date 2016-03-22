@@ -1,5 +1,5 @@
 /**
-* Name: Ant Sorting)
+* Name: Ant Sorting
 * Author: 
 * Description: This model is loosely based on the behavior of ants sorting different elements in their nest. A of mobile agents - the ants - is placed on a grid. 
 * 	The grid itself contains cells of different colors. Each step, the agents move randomly. If they enter a colored cell, they pick this color if its density in the 

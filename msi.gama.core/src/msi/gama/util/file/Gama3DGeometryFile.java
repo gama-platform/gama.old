@@ -11,6 +11,8 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaPair;
+import msi.gaml.operators.Cast;
+import msi.gaml.types.Types;
 
 public abstract class Gama3DGeometryFile extends GamaGeometryFile {
 
@@ -24,7 +26,11 @@ public abstract class Gama3DGeometryFile extends GamaGeometryFile {
 	public Gama3DGeometryFile(final IScope scope, final String pathName, final GamaPair<Double, GamaPoint> initRotation)
 		throws GamaRuntimeException {
 		super(scope, pathName);
-		this.initRotation = initRotation;
+		if (initRotation != null) {
+			this.initRotation = new GamaPair(Cast.asFloat(null, initRotation.key), Cast.asPoint(null, initRotation.value), Types.FLOAT,Types.POINT);
+		} else {
+			this.initRotation = null;
+		}
 	}
 
 	@Override
