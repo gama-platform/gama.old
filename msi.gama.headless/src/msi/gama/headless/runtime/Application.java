@@ -221,6 +221,11 @@ public class Application implements IApplication {
 	
 	public void buildXML(String arg[]) throws ParserConfigurationException, TransformerException
 	{
+		if(this.verbose )
+		{
+			SystemLogger.activeDisplay();
+		}
+		
 		if(arg.length<3)
 		{
 			SystemLogger.activeDisplay(); 
