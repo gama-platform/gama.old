@@ -6,8 +6,8 @@
 */
 model Comodel_SIR_Switch
 
-import "Legacy_model/SIR_IF_EBM.gaml" as SIR_1
-import "Legacy_model/SIR_IF_ABM.gaml" as SIR_2
+import "Legacy_models/SIR_EBM_coupling.gaml" as SIR_1
+import "Legacy_models/SIR_ABM_coupling.gaml" as SIR_2
 
 
 global
@@ -18,27 +18,9 @@ global
 	int threshold_to_Maths <- 20;
 	init
 	{
-		create SIR_1.SIR_EBM_interface;
-		create SIR_2.SIR_ABM_interface;
+		create SIR_1.SIR_EBM_coupling_exp;
+		create SIR_2.SIR_ABM_coupling_exp;
 		create Switch;
-	}
-
-	reflex dostep
-	{
-		ask first(SIR_1.SIR_EBM_interface).simulation
-		{
-			loop times: 1
-			{
-				do _step_;
-			}
-
-		}
-
-		ask first(SIR_2.SIR_ABM_interface).simulation
-		{
-			do _step_;
-		}
-
 	}
 
 }
@@ -56,10 +38,8 @@ species Switch
 			ask world
 			{
 				unknown call;
-				call <- first(SIR_1.SIR_EBM_interface).set_num_S(myself.S);
-				call <- first(SIR_1.SIR_EBM_interface).set_num_I(myself.I);
-				call <- first(SIR_1.SIR_EBM_interface).set_num_R(myself.R);
-				ask first(SIR_1.SIR_EBM_interface).simulation
+				call <- first(SIR_1.SIR_EBM_coupling_exp).set_num_S_I_R(myself.S, myself.I, myself.R);
+				ask first(SIR_1.SIR_EBM_coupling_exp).simulation
 				{
 					loop times: 5
 					{
@@ -68,9 +48,9 @@ species Switch
 
 				}
 
-				myself.S <- first(SIR_1.SIR_EBM_interface).get_num_S();
-				myself.I <- first(SIR_1.SIR_EBM_interface).get_num_I();
-				myself.R <- first(SIR_1.SIR_EBM_interface).get_num_R();
+				myself.S <- first(SIR_1.SIR_EBM_coupling_exp).get_num_S();
+				myself.I <- first(SIR_1.SIR_EBM_coupling_exp).get_num_I();
+				myself.R <- first(SIR_1.SIR_EBM_coupling_exp).get_num_R();
 			}
 
 		}
@@ -81,10 +61,8 @@ species Switch
 			ask world
 			{
 				unknown call;
-				call <- first(SIR_2.SIR_ABM_interface).set_num_S(myself.S);
-				call <- first(SIR_2.SIR_ABM_interface).set_num_I(myself.I);
-				call <- first(SIR_2.SIR_ABM_interface).set_num_R(myself.R);
-				ask first(SIR_2.SIR_ABM_interface).simulation
+				call <- first(SIR_2.SIR_ABM_coupling_exp).set_num_S_I_R(myself.S, myself.I, myself.R);
+				ask first(SIR_2.SIR_ABM_coupling_exp).simulation
 				{
 					loop times: 1
 					{
@@ -93,9 +71,9 @@ species Switch
 
 				}
 
-				myself.S <- first(SIR_2.SIR_ABM_interface).get_num_S();
-				myself.I <- first(SIR_2.SIR_ABM_interface).get_num_I();
-				myself.R <- first(SIR_2.SIR_ABM_interface).get_num_R();
+				myself.S <- first(SIR_2.SIR_ABM_coupling_exp).get_num_S();
+				myself.I <- first(SIR_2.SIR_ABM_coupling_exp).get_num_I();
+				myself.R <- first(SIR_2.SIR_ABM_coupling_exp).get_num_R();
 			}
 
 		}
@@ -109,7 +87,7 @@ species Switch
 
 }
 
-experiment simu type: gui
+experiment Simple_exp type: gui
 {
 	output
 	{

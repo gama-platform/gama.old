@@ -33,10 +33,10 @@ global
 
 	init
 	{
-		create road from: road_shapefile;
+		create roads from: road_shapefile;
 		create city_center from: city_center_shapefile;
-		roads_network <- as_edge_graph(road);
-		ask road {
+		roads_network <- as_edge_graph(roads);
+		ask roads {
 			do compute_cc_dist;
 		}
 		ask empty_plots {
@@ -74,7 +74,7 @@ species city_center {
 	}	
 }
 
-species road
+species roads
 {
 	float dist_cv;
 	action compute_cc_dist {
@@ -97,7 +97,7 @@ grid plot file: asc_grid use_individual_shapes: false use_regular_agents: false 
 	
 	action compute_distances
 	{
-		road route_pp <- road closest_to self;
+		roads route_pp <- roads closest_to self;
 		dist_route <- (self distance_to route_pp) using topology(world);
 		dist_cv <- dist_route + route_pp.dist_cv;
 	}
@@ -123,7 +123,7 @@ experiment raster type: gui {
  	output {
  		display map type: opengl {
 			grid plot;
-			species road;
+			species roads;
 			species city_center;
 		}
 	}

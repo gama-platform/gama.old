@@ -3,11 +3,10 @@
  *  Author: Quang and Nghi
  *  Description: 
  */
-model SIR_IF_EBM
+model SIR_EBM_coupling
 
 import "SIR_EBM.gaml"
-
-experiment SIR_EBM_interface type: gui parent: SIR_EBM_exp
+experiment SIR_EBM_coupling_exp type: gui parent: SIR_EBM_exp
 {
 	int get_num_S
 	{
@@ -24,6 +23,14 @@ experiment SIR_EBM_interface type: gui parent: SIR_EBM_exp
 		return first(agent_with_SIR_dynamic).R;
 	}
 
+	action set_num_S_I_R (int numS, int numI, int numR)
+	{
+		unknown call;
+		call <- set_num_S(numS);
+		call <- set_num_I(numI);
+		call <- set_num_R(numR);
+	}
+
 	action set_num_S (int num)
 	{
 		first(agent_with_SIR_dynamic).S <- num;
@@ -38,5 +45,9 @@ experiment SIR_EBM_interface type: gui parent: SIR_EBM_exp
 	{
 		first(agent_with_SIR_dynamic).R <- num;
 	}
-//	output{}
+
+	output
+	{
+	}
+
 }
