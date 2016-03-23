@@ -185,7 +185,7 @@ public class GridDiffuser {
 	boolean m_initialized = false;
 	double[][] mask, mat_diffu;
 	private boolean avoid_mask;
-	private float variation; // in case of "avoid_mask", compute the variation.
+	private float proportion; // in case of "avoid_mask", compute the proportion.
 	IScope scope;
 
 	double[] input, output;
@@ -218,11 +218,11 @@ public class GridDiffuser {
 		}
 		
 		if (avoid_mask) {
-			// compute variation
-			variation = 0;
+			// compute proportion
+			proportion = 0;
 			for (int i=0; i<mat_diffu.length; i++) {
 				for (int j=0; j<mat_diffu[0].length; j++) {
-					variation += mat_diffu[i][j];
+					proportion += mat_diffu[i][j];
 				}
 			}
 		}
@@ -307,7 +307,7 @@ public class GridDiffuser {
 				}
 				if (value_to_redistribute != 0) 
 				{
-					double value_to_add = value_to_redistribute * variation / non_masked_cells.size();
+					double value_to_add = value_to_redistribute * proportion / non_masked_cells.size();
 					for (int[] coord : non_masked_cells) 
 					{
 						if (output[coord[1] * nbCols + coord[0]] == -Double.MAX_VALUE) 
@@ -395,7 +395,7 @@ public class GridDiffuser {
 					}
 					if (value_to_redistribute != 0) 
 					{
-						double value_to_add = value_to_redistribute * variation / non_masked_cells.size();
+						double value_to_add = value_to_redistribute * proportion / non_masked_cells.size();
 						for (int[] coord : non_masked_cells) 
 						{
 							if (output[coord[1] * nbCols + coord[0]] == -Double.MAX_VALUE) 
