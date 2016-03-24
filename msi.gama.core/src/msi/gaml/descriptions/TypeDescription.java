@@ -162,6 +162,12 @@ public abstract class TypeDescription extends SymbolDescription {
 	public void markVariableRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
 		if ( newVar.isBuiltIn() && existingVar.isBuiltIn() ) { return; }
 		if ( newVar.getOriginName().equals(existingVar.getOriginName()) ) {
+			//TODO must be review carefully the inheritance in comodel
+			/// temporay fix for co-model, variable in micro-model can be defined multi time
+			if(!newVar.getModelDescription().getAlias().equals("")){
+				return;
+			}
+			///
 			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
 				NAME);
 			newVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION, NAME);
