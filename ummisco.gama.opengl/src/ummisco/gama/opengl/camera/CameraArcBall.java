@@ -197,15 +197,34 @@ public class CameraArcBall extends AbstractCamera {
 			getMousePosition().y = e.y;
 			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
 		} else {
-			GamaPoint newRealPoint = this.getRenderer().getRealWorldPointFromWindowPoint(newPoint);
-			GamaPoint lastMousePressedPositionReal = this.getRenderer().getRealWorldPointFromWindowPoint(lastMousePressedPosition);
-			double diffxReal = newRealPoint.x - lastMousePressedPositionReal.x;
-			double diffyReal = newRealPoint.y - lastMousePressedPositionReal.y;
-			final double diffx = diffxReal;
-			final double diffy = diffyReal;
-			updatePosition(position.x - diffx, position.y - diffy, position.z);
-			lookPosition(target.x - diffx, target.y - diffy, target.z);
+			int horizMovement = e.x - lastMousePressedPosition.x;
+			int vertMovement = e.y - lastMousePressedPosition.y;
+			
+			double theta_vect_z = -FastMath.sin(theta*Maths.toRad);
+			double theta_vect_x = FastMath.cos(theta*Maths.toRad);
+			double theta_vect_y = 0;
+			double theta_vect_ratio = horizMovement / (theta_vect_x*theta_vect_x + theta_vect_y*theta_vect_y + theta_vect_z*theta_vect_z);
+			double theta_vect_x_norm = theta_vect_x * theta_vect_ratio;
+			double theta_vect_y_norm = theta_vect_y * theta_vect_ratio;
+			double theta_vect_z_norm = theta_vect_z * theta_vect_ratio;
+			
+			double phi_vect_z = FastMath.cos(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
+			double phi_vect_x = FastMath.sin(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
+			double phi_vect_y = -FastMath.sin(phi*Maths.toRad); 
+			double phi_vect_ratio = vertMovement / (phi_vect_x*phi_vect_x + phi_vect_y*phi_vect_y + phi_vect_z*phi_vect_z);
+			double phi_vect_x_norm = phi_vect_x * phi_vect_ratio;
+			double phi_vect_y_norm = phi_vect_y * phi_vect_ratio;
+			double phi_vect_z_norm = phi_vect_z * phi_vect_ratio;
+			
+			double x_translation = theta_vect_x_norm + phi_vect_x_norm;
+			double y_translation = theta_vect_y_norm + phi_vect_y_norm;
+			double z_translation = theta_vect_z_norm + phi_vect_z_norm;
+			
+			updatePosition(position.x - x_translation,position.y - y_translation,position.z - z_translation);
+			lookPosition(target.x - x_translation,target.y - y_translation,target.z - z_translation);
+			
 			lastMousePressedPosition = newPoint;
+			updateSphericalCoordinatesFromLocations();
 		}
 
 	}
