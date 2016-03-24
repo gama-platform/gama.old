@@ -52,7 +52,7 @@ global {
    }
    
    action init_obstacles{
-      create building from: buildings_shapefile  {
+      create buildings from: buildings_shapefile  {
          do update_cells;
       }
       create dyke from: dykes_shapefile;
@@ -121,7 +121,7 @@ global {
          draw shape color: color depth: height*5 border: color;
       }
    }
-   species building parent: obstacle {
+   species buildings parent: obstacle {
       float height <- 2.0 + rnd(8);
    }
    
@@ -217,7 +217,7 @@ experiment main_gui type: gui {
    output { 
       display map type: opengl ambient_light: 100{
          grid cell triangulation: true;
-         species building aspect: geometry;
+         species buildings aspect: geometry;
          species dyke aspect: geometry ;
       }
       display chart_display refresh: every(24) { 
