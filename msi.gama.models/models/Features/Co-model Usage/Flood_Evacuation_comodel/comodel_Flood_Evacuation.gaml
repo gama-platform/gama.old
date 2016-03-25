@@ -11,14 +11,18 @@ import "Evacuation_coupling.gaml" as myEvacuation
 
 
 global
-{  
-	geometry shape<-envelope(square(400));
+{
+	geometry shape <- envelope(file("../../../Toy Models/Flood Simulation/includes/mnt50.asc"));
+	int casualty <- 0;
 	init
 	{
 		create myFlood.Flood_coupling_exp with:
-		[buildings_shapefile::"../../../Toy Models/Flood Simulation/includes/Building.shp", river_shapefile::file("../../../Toy Models/Flood Simulation/includes/RedRiver.shp"), dykes_shapefile::file("../../../Toy Models/Flood Simulation/includes/Dykes.shp"), dem_file::file("../../../Toy Models/Flood Simulation/includes/mnt50.asc")];
-		create myEvacuation.Evacuation_coupling_exp with: [target_point::{0,world.location.y},building_shapefile::file("../../../Toy Models/Evacuation/includes/building.shp")];
-		create myEvacuation.Evacuation_coupling_exp with: [target_point::{world.location.x,0},building_shapefile::file("../../../Toy Models/Evacuation/includes/building.shp")];
+		[buildings_shapefile::file("../../../Toy Models/Flood Simulation/includes/Building.shp"), river_shapefile::file("../../../Toy Models/Flood Simulation/includes/RedRiver.shp"), dykes_shapefile::file("../../../Toy Models/Flood Simulation/includes/Dykes.shp"), dem_file::file("../../../Toy Models/Flood Simulation/includes/mnt50.asc")];
+		create myEvacuation.Evacuation_coupling_exp with: [nb_people::200, target_point::{ 0, 1580 }, building_shapefile::file("../../../Toy Models/Evacuation/includes/building.shp")]
+		{
+			do transform_environement;
+		}
+
 	}
 
 	reflex dododo
@@ -30,9 +34,24 @@ global
 
 		ask myEvacuation.Evacuation_coupling_exp collect each.simulation
 		{
-			if (cycle mod 3 = 0)
+			if (cycle mod 1 = 0)
 			{
 				do _step_;
+			}
+
+		}
+
+		loop p over: first(myEvacuation.Evacuation_coupling_exp).getPeople()
+		{
+			cell c <- first(myFlood.Flood_coupling_exp).getCellAt(p);
+			if (c.grid_value > 8.0 and c overlaps p)
+			{
+				ask p
+				{
+					do die;
+				}
+
+				casualty <- casualty + 1;
 			}
 
 		}
@@ -41,23 +60,20 @@ global
 
 }
 
-experiment comodel_Urban_Traffic_exp type: gui
+experiment comodel_Flood_Evacuation_exp type: gui
 {
 	output
 	{
-		display "comodel_disp" type: opengl
+		display "comodel_disp"
 		{
-			agents "building" value: first(myEvacuation.Evacuation_coupling_exp).getBuilding()  position:{0,180};
-			agents "people" value: first(myEvacuation.Evacuation_coupling_exp).getPeople()  position:{0,180};
-			
-			agents "building" value: last(myEvacuation.Evacuation_coupling_exp).getBuilding()  position:{250,0};
-			agents "people" value: last(myEvacuation.Evacuation_coupling_exp).getPeople()  position:{250,0};
-			
-				
-			
-			agents "cell" value: first(myFlood.Flood_coupling_exp).getCell()  size:{0.07,0.07} ;
-			agents "dyke" value: first(myFlood.Flood_coupling_exp).getDyke()  size:{0.07,0.07};
-
+			agents "building" value: first(myEvacuation.Evacuation_coupling_exp).getBuilding();
+			agents "people" value: first(myEvacuation.Evacuation_coupling_exp).getPeople();
+			agents "cell" value: first(myFlood.Flood_coupling_exp).getCell();
+			agents "dyke" value: first(myFlood.Flood_coupling_exp).getDyke();
+			graphics 'CasualtyView'
+			{
+				draw ('Casualty: ' + casualty) at: { 0, 4000 } font: font("Arial", 18, # bold) color: # red;
+			}
 
 		}
 
