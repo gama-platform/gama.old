@@ -329,7 +329,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
 			ILocation camera = ds.getCameraPosition();
 			return result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
-				camera.getY(), camera.getZ());
+				camera.getY(), camera.getZ()/*, camera.getTheta(), camera.getPhi()*/);
 		}
 	}
 

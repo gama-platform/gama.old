@@ -13,6 +13,8 @@ package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
 import org.eclipse.swt.SWT;
+import org.geotools.arcsde.session.Commands.GetVersionCommand;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayData;
@@ -23,6 +25,9 @@ import ummisco.gama.opengl.JOGLRenderer;
 public class CameraArcBall extends AbstractCamera {
 
 	private double radius;
+	
+	private boolean mouse_interaction = false;
+	private boolean keyboard_interaction = false;
 
 	public CameraArcBall(final JOGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
@@ -35,10 +40,10 @@ public class CameraArcBall extends AbstractCamera {
 		theta = theta % 360;
 		phi = phi % 360;
 
-		if (phi == 0) {
+		if (phi <= 0) {
 			phi = 0.1;
 		}
-		if (phi == 180) {
+		if (phi >= 180) {
 			phi = 179.9;
 		}
 		double factorT = theta * Maths.toRad;
@@ -49,12 +54,6 @@ public class CameraArcBall extends AbstractCamera {
 		double sinP = FastMath.sin(factorP);
 		position.setLocation(radius * cosT * sinP + target.x, radius * sinT * sinP + target.y,
 			radius * cosP + target.z);
-		
-//		if ( phi < 360 && phi > 180 ) {
-//			upPosition(-FastMath.sin(theta)*FastMath.cos(phi),FastMath.sin(phi),-FastMath.cos(theta)*FastMath.cos(phi));
-//		} else {
-//			upPosition(FastMath.sin(theta)*FastMath.cos(phi),-FastMath.sin(phi),FastMath.cos(theta)*FastMath.cos(phi));
-//		}
 	}
 
 	@Override
@@ -66,12 +65,6 @@ public class CameraArcBall extends AbstractCamera {
 		radius = FastMath.sqrt(x * x + y * y + z * z);
 		theta = Maths.toDeg * FastMath.atan2(y, x);
 		phi = Maths.toDeg * FastMath.acos(z / radius);
-		
-//		if ( phi < 360 && phi > 180 ) {
-//			upPosition(-FastMath.sin(theta)*FastMath.cos(phi),FastMath.sin(phi),-FastMath.cos(theta)*FastMath.cos(phi));
-//		} else {
-//			upPosition(FastMath.sin(theta)*FastMath.cos(phi),-FastMath.sin(phi),FastMath.cos(theta)*FastMath.cos(phi));
-//		}
 	}
 	
 	public void translateCameraFromScreenPlan(final double x_translation_in_screen, final double y_translation_in_screen) {
@@ -174,6 +167,12 @@ public class CameraArcBall extends AbstractCamera {
 		super.animate();
 		// And we animate it if the keyboard is invoked
 		double translation = 2 * (FastMath.abs(position.z) + 1) / getRenderer().getHeight();
+		if ( isShiftKeyDown() ) {
+			keyboard_interaction = true;
+		}
+		else {
+			keyboard_interaction = false;
+		}
 		if ( isForward() ) {
 			if ( isShiftKeyDown() ) {
 				phi = phi - -get_keyboardSensivity() * get_sensivity();
@@ -258,7 +257,7 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
 		super.mouseMove(e);
-		if ( (e.stateMask & SWT.BUTTON_MASK) == 0 ) {getRenderer().stopDrawRotationHelper(); return; }
+		if ( (e.stateMask & SWT.BUTTON_MASK) == 0 ) {mouse_interaction = false; return; }
 		Point newPoint = new Point(e.x, e.y);
 		if ( isArcBallOn(e) ) {
 			int horizMovement = e.x - lastMousePressedPosition.x;
@@ -267,7 +266,7 @@ public class CameraArcBall extends AbstractCamera {
 			theta = theta - horizMovement * get_sensivity();
 			phi = phi - vertMovement * get_sensivity();
 			updateCartesianCoordinatesFromAngles();
-			getRenderer().startDrawRotationHelper(target);
+			mouse_interaction = true;
 		}
 		else if ( (shift(e) || alt(e)) && isViewIn2DPlan() ) {
 			getMousePosition().x = e.x;
@@ -289,6 +288,16 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	protected boolean canSelectOnRelease(final org.eclipse.swt.events.MouseEvent arg0) {
 		return true;
+	}
+	
+	@Override
+	protected void drawRotationHelper() {
+		if (mouse_interaction || keyboard_interaction) {
+			getRenderer().startDrawRotationHelper(target);
+		}
+		else {
+			getRenderer().stopDrawRotationHelper();
+		}
 	}
 
 }// End of Class CameraArcBall

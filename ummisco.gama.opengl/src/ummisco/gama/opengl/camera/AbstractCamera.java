@@ -86,16 +86,6 @@ public abstract class AbstractCamera implements ICamera {
 			if ( camLookPos != LayeredDisplayData.getNoChange() ) {
 				lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
 			}
-			ILocation upVector1 = data.getCameraUpVector();
-			
-//			if ( phi < 360 && phi > 180 ) {
-//				upPosition(FastMath.sin(theta)*FastMath.cos(phi),-FastMath.sin(phi),FastMath.cos(theta)*FastMath.cos(phi));
-//			} else {
-//				upPosition(-FastMath.sin(theta)*FastMath.cos(phi),FastMath.sin(phi),-FastMath.cos(theta)*FastMath.cos(phi));
-//			}
-			
-//			upPosition(FastMath.cos(theta)*FastMath.cos(phi),FastMath.sin(theta)*FastMath.cos(phi),-FastMath.sin(phi));
-			//upPosition(0,0,1);
 			
 			if ( phi < 360 && phi > 180 ) {
 				upPosition(0, 0, -1);
@@ -104,6 +94,7 @@ public abstract class AbstractCamera implements ICamera {
 			}
 			
 			updateSphericalCoordinatesFromLocations();
+			drawRotationHelper();
 		}
 
 	}
@@ -118,6 +109,10 @@ public abstract class AbstractCamera implements ICamera {
 
 	public void upPosition(final double xPos, final double yPos, final double zPos) {
 		upVector.setLocation(xPos, yPos, zPos);
+	}
+	
+	protected void drawRotationHelper() {
+		
 	}
 
 	/* -------Get commands--------- */
