@@ -94,10 +94,13 @@ public abstract class AbstractCamera implements ICamera {
 //				upPosition(-FastMath.sin(theta)*FastMath.cos(phi),FastMath.sin(phi),-FastMath.cos(theta)*FastMath.cos(phi));
 //			}
 			
+//			upPosition(FastMath.cos(theta)*FastMath.cos(phi),FastMath.sin(theta)*FastMath.cos(phi),-FastMath.sin(phi));
+			//upPosition(0,0,1);
+			
 			if ( phi < 360 && phi > 180 ) {
-				upPosition(0, -1, 0);
+				upPosition(0, 0, -1);
 			} else {
-				upPosition(0,1,0);
+				upPosition(0,0,1);
 			}
 			
 			updateSphericalCoordinatesFromLocations();

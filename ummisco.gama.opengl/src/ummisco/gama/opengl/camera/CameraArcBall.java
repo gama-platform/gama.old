@@ -26,8 +26,8 @@ public class CameraArcBall extends AbstractCamera {
 
 	public CameraArcBall(final JOGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
-		phi = 90.00;
-		theta = 360.00;
+		phi = 0.00;
+		theta = -90.00;
 		updateCartesianCoordinatesFromAngles();
 	}
 
@@ -47,8 +47,8 @@ public class CameraArcBall extends AbstractCamera {
 		double sinT = FastMath.sin(factorT);
 		double cosP = FastMath.cos(factorP);
 		double sinP = FastMath.sin(factorP);
-		position.setLocation(radius * sinT * sinP + target.x, radius * cosP + target.y,
-			radius * cosT * sinP + target.z);
+		position.setLocation(radius * cosT * sinP + target.x, radius * sinT * sinP + target.y,
+			radius * cosP + target.z);
 		
 //		if ( phi < 360 && phi > 180 ) {
 //			upPosition(-FastMath.sin(theta)*FastMath.cos(phi),FastMath.sin(phi),-FastMath.cos(theta)*FastMath.cos(phi));
@@ -64,8 +64,8 @@ public class CameraArcBall extends AbstractCamera {
 		double z = position.z - target.z;
 
 		radius = FastMath.sqrt(x * x + y * y + z * z);
-		theta = Maths.toDeg * FastMath.atan2(x, z);
-		phi = Maths.toDeg * FastMath.acos(y / radius);
+		theta = Maths.toDeg * FastMath.atan2(y, x);
+		phi = Maths.toDeg * FastMath.acos(z / radius);
 		
 //		if ( phi < 360 && phi > 180 ) {
 //			upPosition(-FastMath.sin(theta)*FastMath.cos(phi),FastMath.sin(phi),-FastMath.cos(theta)*FastMath.cos(phi));
@@ -75,17 +75,17 @@ public class CameraArcBall extends AbstractCamera {
 	}
 	
 	public void translateCameraFromScreenPlan(final double x_translation_in_screen, final double y_translation_in_screen) {
-		double theta_vect_z = -FastMath.sin(theta*Maths.toRad);
-		double theta_vect_x = FastMath.cos(theta*Maths.toRad);
-		double theta_vect_y = 0;
+		double theta_vect_x = -FastMath.sin(theta*Maths.toRad);
+		double theta_vect_y = FastMath.cos(theta*Maths.toRad);
+		double theta_vect_z = 0;
 		double theta_vect_ratio = x_translation_in_screen / (theta_vect_x*theta_vect_x + theta_vect_y*theta_vect_y + theta_vect_z*theta_vect_z);
 		double theta_vect_x_norm = theta_vect_x * theta_vect_ratio;
 		double theta_vect_y_norm = theta_vect_y * theta_vect_ratio;
 		double theta_vect_z_norm = theta_vect_z * theta_vect_ratio;
 		
-		double phi_vect_z = FastMath.cos(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
-		double phi_vect_x = FastMath.sin(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
-		double phi_vect_y = -FastMath.sin(phi*Maths.toRad); 
+		double phi_vect_x = FastMath.cos(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
+		double phi_vect_y = FastMath.sin(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
+		double phi_vect_z = -FastMath.sin(phi*Maths.toRad); 
 		double phi_vect_ratio = y_translation_in_screen / (phi_vect_x*phi_vect_x + phi_vect_y*phi_vect_y + phi_vect_z*phi_vect_z);
 		double phi_vect_x_norm = phi_vect_x * phi_vect_ratio;
 		double phi_vect_y_norm = phi_vect_y * phi_vect_ratio;
@@ -117,12 +117,14 @@ public class CameraArcBall extends AbstractCamera {
 	
 	@Override
 	protected void quickLeftTurn() {
-		getRenderer().currentZRotation = getRenderer().currentZRotation - 10;
+		theta -= 30;
+		updateCartesianCoordinatesFromAngles();
 	}
 	
 	@Override
 	protected void quickRightTurn() {
-		getRenderer().currentZRotation = getRenderer().currentZRotation + 10;
+		theta += 30;
+		updateCartesianCoordinatesFromAngles();
 	}
 	
 	@Override
@@ -161,8 +163,8 @@ public class CameraArcBall extends AbstractCamera {
 		final boolean threeD = data.isOutput3D();
 		radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
 		target.setLocation(envWidth / 2, -envHeight / 2, 0);
-		phi = threeD ? 135.0 : 90.0;
-		theta = 360.00;
+		phi = threeD ? 135.0 : 0.0;
+		theta = -90.00;
 		updateCartesianCoordinatesFromAngles();
 	}
 
