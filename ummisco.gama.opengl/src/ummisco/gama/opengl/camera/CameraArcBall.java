@@ -34,6 +34,13 @@ public class CameraArcBall extends AbstractCamera {
 	protected void updateCartesianCoordinatesFromAngles() {
 		theta = theta % 360;
 		phi = phi % 360;
+
+		if (phi == 0) {
+			phi = 0.1;
+		}
+		if (phi == 180) {
+			phi = 179.9;
+		}
 		double factorT = theta * Maths.toRad;
 		double factorP = phi * Maths.toRad;
 		double cosT = FastMath.cos(factorT);
@@ -42,6 +49,12 @@ public class CameraArcBall extends AbstractCamera {
 		double sinP = FastMath.sin(factorP);
 		position.setLocation(radius * sinT * sinP + target.x, radius * cosP + target.y,
 			radius * cosT * sinP + target.z);
+		
+//		if ( phi < 360 && phi > 180 ) {
+//			upPosition(-FastMath.sin(theta)*FastMath.cos(phi),FastMath.sin(phi),-FastMath.cos(theta)*FastMath.cos(phi));
+//		} else {
+//			upPosition(FastMath.sin(theta)*FastMath.cos(phi),-FastMath.sin(phi),FastMath.cos(theta)*FastMath.cos(phi));
+//		}
 	}
 
 	@Override
@@ -53,10 +66,75 @@ public class CameraArcBall extends AbstractCamera {
 		radius = FastMath.sqrt(x * x + y * y + z * z);
 		theta = Maths.toDeg * FastMath.atan2(x, z);
 		phi = Maths.toDeg * FastMath.acos(y / radius);
-		if ( upVector.getY() == -1 ) {
-			phi = 360.0 - phi;
-			theta = 180 + theta;
-		}
+		
+//		if ( phi < 360 && phi > 180 ) {
+//			upPosition(-FastMath.sin(theta)*FastMath.cos(phi),FastMath.sin(phi),-FastMath.cos(theta)*FastMath.cos(phi));
+//		} else {
+//			upPosition(FastMath.sin(theta)*FastMath.cos(phi),-FastMath.sin(phi),FastMath.cos(theta)*FastMath.cos(phi));
+//		}
+	}
+	
+	public void translateCameraFromScreenPlan(final double x_translation_in_screen, final double y_translation_in_screen) {
+		double theta_vect_z = -FastMath.sin(theta*Maths.toRad);
+		double theta_vect_x = FastMath.cos(theta*Maths.toRad);
+		double theta_vect_y = 0;
+		double theta_vect_ratio = x_translation_in_screen / (theta_vect_x*theta_vect_x + theta_vect_y*theta_vect_y + theta_vect_z*theta_vect_z);
+		double theta_vect_x_norm = theta_vect_x * theta_vect_ratio;
+		double theta_vect_y_norm = theta_vect_y * theta_vect_ratio;
+		double theta_vect_z_norm = theta_vect_z * theta_vect_ratio;
+		
+		double phi_vect_z = FastMath.cos(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
+		double phi_vect_x = FastMath.sin(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
+		double phi_vect_y = -FastMath.sin(phi*Maths.toRad); 
+		double phi_vect_ratio = y_translation_in_screen / (phi_vect_x*phi_vect_x + phi_vect_y*phi_vect_y + phi_vect_z*phi_vect_z);
+		double phi_vect_x_norm = phi_vect_x * phi_vect_ratio;
+		double phi_vect_y_norm = phi_vect_y * phi_vect_ratio;
+		double phi_vect_z_norm = phi_vect_z * phi_vect_ratio;
+		
+		double x_translation_in_world = theta_vect_x_norm + phi_vect_x_norm;
+		double y_translation_in_world = theta_vect_y_norm + phi_vect_y_norm;
+		double z_translation_in_world = theta_vect_z_norm + phi_vect_z_norm;
+		
+		double zoom = zoomLevel()*4; // the factor 4 makes the translation a bit slower. Maybe a future change of this value to make it more "mathematics" should be better.
+		updatePosition(position.x - x_translation_in_world/zoom,position.y - y_translation_in_world/zoom,position.z - z_translation_in_world/zoom);
+		lookPosition(target.x - x_translation_in_world/zoom,target.y - y_translation_in_world/zoom,target.z - z_translation_in_world/zoom);
+		
+		updateSphericalCoordinatesFromLocations();
+	}
+	
+	@Override
+	protected void resetPivot() {
+		LayeredDisplayData data = getRenderer().data;
+		double envWidth = data.getEnvWidth();
+		double envHeight = data.getEnvHeight();
+		double translate_x = target.x - envWidth / 2;
+		double translate_y = target.y + envHeight / 2;
+		double translate_z = target.z;
+		target.setLocation(envWidth / 2, -envHeight / 2, 0);
+		position.setLocation(position.x-translate_x,position.y-translate_y,position.z-translate_z);
+		updateSphericalCoordinatesFromLocations();
+	}
+	
+	@Override
+	protected void quickLeftTurn() {
+		getRenderer().currentZRotation = getRenderer().currentZRotation - 10;
+	}
+	
+	@Override
+	protected void quickRightTurn() {
+		getRenderer().currentZRotation = getRenderer().currentZRotation + 10;
+	}
+	
+	@Override
+	protected void quickUpTurn() {
+		phi -= 30;
+		updateCartesianCoordinatesFromAngles();
+	}
+	
+	@Override
+	protected void quickDownTurn() {
+		phi += 30;
+		updateCartesianCoordinatesFromAngles();
 	}
 
 	// public void followAgent(IAgent a) {
@@ -99,8 +177,7 @@ public class CameraArcBall extends AbstractCamera {
 				phi = phi - -get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				updatePosition(position.x, position.y - translation, position.z);
-				lookPosition(target.x, target.y - translation, target.z);
+				translateCameraFromScreenPlan(0.0,-get_keyboardSensivity() * get_sensivity());
 
 			}
 		}
@@ -109,8 +186,7 @@ public class CameraArcBall extends AbstractCamera {
 				phi = phi - get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				updatePosition(position.x, position.y + translation, position.z);
-				lookPosition(target.x, target.y + translation, target.z);
+				translateCameraFromScreenPlan(0.0,get_keyboardSensivity() * get_sensivity());
 			}
 		}
 		if ( isStrafeLeft() ) {
@@ -121,8 +197,7 @@ public class CameraArcBall extends AbstractCamera {
 				if ( isAltKeyDown() /*&& isViewIn2DPlan()*/ ) {
 					getRenderer().currentZRotation = getRenderer().currentZRotation - 1;
 				} else {
-					updatePosition(position.x + translation, position.y, position.z);
-					lookPosition(target.x + translation, target.y, target.z);
+					translateCameraFromScreenPlan(-get_keyboardSensivity() * get_sensivity(),0.0);
 				}
 			}
 		}
@@ -134,8 +209,7 @@ public class CameraArcBall extends AbstractCamera {
 				if ( isAltKeyDown() /*&& isViewIn2DPlan()*/ ) {
 					getRenderer().currentZRotation = getRenderer().currentZRotation + 1;
 				} else {
-					updatePosition(position.x - translation, position.y, position.z);
-					lookPosition(target.x - translation, target.y, target.z);
+					translateCameraFromScreenPlan(get_keyboardSensivity() * get_sensivity(),0.0);
 				}
 			}
 		}
@@ -182,7 +256,7 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
 		super.mouseMove(e);
-		if ( (e.stateMask & SWT.BUTTON_MASK) == 0 ) { return; }
+		if ( (e.stateMask & SWT.BUTTON_MASK) == 0 ) {getRenderer().stopDrawRotationHelper(); return; }
 		Point newPoint = new Point(e.x, e.y);
 		if ( isArcBallOn(e) ) {
 			int horizMovement = e.x - lastMousePressedPosition.x;
@@ -191,40 +265,20 @@ public class CameraArcBall extends AbstractCamera {
 			theta = theta - horizMovement * get_sensivity();
 			phi = phi - vertMovement * get_sensivity();
 			updateCartesianCoordinatesFromAngles();
+			getRenderer().startDrawRotationHelper(target);
 		}
 		else if ( (shift(e) || alt(e)) && isViewIn2DPlan() ) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
 			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
 		} else {
+			
 			int horizMovement = e.x - lastMousePressedPosition.x;
 			int vertMovement = e.y - lastMousePressedPosition.y;
 			
-			double theta_vect_z = -FastMath.sin(theta*Maths.toRad);
-			double theta_vect_x = FastMath.cos(theta*Maths.toRad);
-			double theta_vect_y = 0;
-			double theta_vect_ratio = horizMovement / (theta_vect_x*theta_vect_x + theta_vect_y*theta_vect_y + theta_vect_z*theta_vect_z);
-			double theta_vect_x_norm = theta_vect_x * theta_vect_ratio;
-			double theta_vect_y_norm = theta_vect_y * theta_vect_ratio;
-			double theta_vect_z_norm = theta_vect_z * theta_vect_ratio;
-			
-			double phi_vect_z = FastMath.cos(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
-			double phi_vect_x = FastMath.sin(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad);
-			double phi_vect_y = -FastMath.sin(phi*Maths.toRad); 
-			double phi_vect_ratio = vertMovement / (phi_vect_x*phi_vect_x + phi_vect_y*phi_vect_y + phi_vect_z*phi_vect_z);
-			double phi_vect_x_norm = phi_vect_x * phi_vect_ratio;
-			double phi_vect_y_norm = phi_vect_y * phi_vect_ratio;
-			double phi_vect_z_norm = phi_vect_z * phi_vect_ratio;
-			
-			double x_translation = theta_vect_x_norm + phi_vect_x_norm;
-			double y_translation = theta_vect_y_norm + phi_vect_y_norm;
-			double z_translation = theta_vect_z_norm + phi_vect_z_norm;
-			
-			updatePosition(position.x - x_translation,position.y - y_translation,position.z - z_translation);
-			lookPosition(target.x - x_translation,target.y - y_translation,target.z - z_translation);
+			translateCameraFromScreenPlan(horizMovement,vertMovement);
 			
 			lastMousePressedPosition = newPoint;
-			updateSphericalCoordinatesFromLocations();
 		}
 
 	}

@@ -986,6 +986,30 @@ public class JTSDrawer {
 
 	// //////////////////////////////SPECIAL 3D SHAPE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
+	
+	public void drawRotationHelper(final GL2 gl, final GamaPoint pos) {
+		// TODO
+		gl.glTranslated(pos.x,pos.y,pos.z);
+		
+		GLU glu = renderer.getGlu();
+
+		GLUquadric quad = glu.gluNewQuadric();
+
+		if ( !renderer.data.isTriangulation() ) {
+
+			glu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
+		} else {
+			glu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
+		}
+		glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
+
+		final int slices = 16;
+		final int stacks = 16;
+
+		glu.gluSphere(quad, 10.0, slices, stacks);
+		
+		gl.glTranslated(-pos.x,-pos.y,-pos.z);
+	}
 
 	public void drawSphere(final GL2 gl, final GeometryObject g) {
 		double z = 0.0;

@@ -27,6 +27,7 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gaml.operators.fastmaths.CmnFastMath;
+import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
 // import java.awt.event.*;
@@ -86,11 +87,19 @@ public abstract class AbstractCamera implements ICamera {
 				lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
 			}
 			ILocation upVector1 = data.getCameraUpVector();
+			
+//			if ( phi < 360 && phi > 180 ) {
+//				upPosition(FastMath.sin(theta)*FastMath.cos(phi),-FastMath.sin(phi),FastMath.cos(theta)*FastMath.cos(phi));
+//			} else {
+//				upPosition(-FastMath.sin(theta)*FastMath.cos(phi),FastMath.sin(phi),-FastMath.cos(theta)*FastMath.cos(phi));
+//			}
+			
 			if ( phi < 360 && phi > 180 ) {
 				upPosition(0, -1, 0);
 			} else {
-				upPosition(upVector1.getX(), upVector1.getY(), upVector1.getZ());
+				upPosition(0,1,0);
 			}
+			
 			updateSphericalCoordinatesFromLocations();
 		}
 
@@ -466,6 +475,9 @@ public abstract class AbstractCamera implements ICamera {
 			case SWT.ARROW_DOWN:
 				this.goesBackward = true;
 				break;
+			case SWT.SPACE:
+				resetPivot();
+				return;
 		}
 		switch (e.character) {
 			case '+':
@@ -474,9 +486,27 @@ public abstract class AbstractCamera implements ICamera {
 			case '-':
 				zoom(false);
 				return;
+			case '4':
+				quickLeftTurn();
+				return;
+			case '6':
+				quickRightTurn();
+				return;
+			case '8':
+				quickUpTurn();
+				return;
+			case '2':
+				quickDownTurn();
+				return;
 		}
 
 	}
+	
+	protected void resetPivot() {}
+	protected void quickLeftTurn() {}
+	protected void quickRightTurn() {}
+	protected void quickUpTurn() {}
+	protected void quickDownTurn() {}
 
 	/**
 	 * Method keyReleased()

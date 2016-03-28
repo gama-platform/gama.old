@@ -40,6 +40,7 @@ import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.*;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.*;
+import ummisco.gama.opengl.jts.JTSDrawer;
 import ummisco.gama.opengl.scene.*;
 import ummisco.gama.opengl.utils.GLUtilLight;
 
@@ -59,6 +60,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	public final SceneBuffer sceneBuffer;
 	public double currentZRotation = 0;
 	private boolean picking = false;
+	private boolean drawRotationHelper = false;
+	private GamaPoint rotationHelperPosition = null;
 	public int pickedObjectIndex = -1;
 	public AbstractObject currentPickedObject;
 	int[] viewport = new int[4];
@@ -73,7 +76,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
-	// Use to inverse y composaant
+	// Use to inverse y composant
 	public int yFlag;
 	private final GeometryCache geometryCache = new GeometryCache();
 	private final TextRenderersCache textRendererCache = new TextRenderersCache();
@@ -288,6 +291,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 			if ( ROIEnvelope != null ) {
 				drawROI(gl);
+			}
+			if ( drawRotationHelper ) {
+				drawRotationHelper(gl);
 			}
 
 		}
@@ -538,6 +544,20 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 			return rect;
 
+		}
+		
+		public void startDrawRotationHelper(GamaPoint pos) {
+			rotationHelperPosition = pos;
+			drawRotationHelper = true;
+		}
+		public void stopDrawRotationHelper() {
+			rotationHelperPosition = null;
+			drawRotationHelper = false;
+		}
+		
+		public void drawRotationHelper(final GL2 gl) {
+			JTSDrawer jtsDrawer = new JTSDrawer(this);
+			jtsDrawer.drawRotationHelper(gl, rotationHelperPosition);
 		}
 
 		/**
