@@ -61,11 +61,6 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 		}
 
 		@Override
-		public Cursor getCursor() {
-			return null;
-		}
-
-		@Override
 		public boolean canDraw() {
 			return false;
 		}

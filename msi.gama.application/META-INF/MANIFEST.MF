@@ -34,6 +34,5 @@ Export-Package: msi.gama.gui.displays.awt,
  msi.gama.gui.swt.swing,
  msi.gama.gui.views,
  msi.gama.gui.views.actions
-Bundle-ClassPath: .,
- gt-swt-13.4.jar
+Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
