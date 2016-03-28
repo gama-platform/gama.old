@@ -18,7 +18,7 @@ import msi.gama.runtime.GAMA;
  * @since 25 mars 2015
  *
  */
-public class SWTLayeredDisplayView extends LayeredDisplayView implements /* ControlListener, */MouseMoveListener {
+public class SWTLayeredDisplayView extends LayeredDisplayView implements /* ControlListener, */MouseMoveListener, KeyListener {
 
 	SWTOpenGLDisplaySurface surface;
 
@@ -29,6 +29,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 		surface = new SWTOpenGLDisplaySurface(parent, getOutput());
 		surfaceComposite = surface.renderer.getCanvas();
 		surfaceComposite.addMouseMoveListener(this);
+		surfaceComposite.addKeyListener(this);
 		surface.setSWTMenuManager(new DisplaySurfaceMenu(surface, surfaceComposite, this));
 		surface.outputReloaded();
 		return surfaceComposite;
@@ -84,6 +85,28 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 	@Override
 	public boolean zoomWhenScrolling() {
 		return true;
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		GAMA.getGui().asyncRun(new Runnable() {
+
+			@Override
+			public void run() {
+				overlay.update();
+			}
+		});
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		GAMA.getGui().asyncRun(new Runnable() {
+
+			@Override
+			public void run() {
+				overlay.update();
+			}
+		});
 	}
 
 }
