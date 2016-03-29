@@ -58,15 +58,15 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	int order;
 	static int index;
-	Object value;
-	Object initialValue;
-	IExpression min, max, among;
+	boolean isValued;
+	Object initialValue, currentValue;
+	IExpression min, max, among, init;
 	String tempVar;
 
 	public UserInputStatement(final IDescription desc) {
 		super(desc);
 		order = index++;
-		value = initialValue = getFacet(IKeyword.INIT).value(null);
+		init = getFacet(IKeyword.INIT);
 		min = getFacet(IKeyword.MIN);
 		max = getFacet(IKeyword.MAX);
 		among = getFacet(IKeyword.AMONG);
@@ -95,12 +95,17 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	@Override
 	public void setValue(final IScope scope, final Object value) {
-		this.value = value;
+		currentValue = value;
 	}
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		return value;
+		if (!isValued) {
+			if (init != null)
+				currentValue = initialValue = init.value(scope);
+			isValued = true;
+		}
+		return currentValue;
 	}
 
 	@Override
@@ -109,10 +114,10 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		if (type != Types.NO_TYPE) {
 			return type;
 		}
-		if (value == null) {
+		if (init == null) {
 			return Types.NO_TYPE;
 		}
-		return description.getModelDescription().getTypesManager().get(value.getClass());
+		return init.getType();
 	}
 
 	@Override
@@ -132,8 +137,8 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	@Override
 	protected Object privateExecuteIn(final IScope scope) {
-		scope.setVarValue(tempVar, value);
-		return value;
+		scope.setVarValue(tempVar, currentValue);
+		return currentValue;
 	}
 
 	public String getTempVarName() {
