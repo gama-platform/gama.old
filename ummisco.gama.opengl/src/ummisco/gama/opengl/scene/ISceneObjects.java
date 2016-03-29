@@ -19,6 +19,8 @@ public interface ISceneObjects<T extends AbstractObject> {
 	public abstract void clear(GL gl, int sizeLimit, boolean fading);
 
 	public abstract void add(T object);
+	
+	public abstract void remove(T object);
 
 	public abstract Iterable<T> getObjects();
 

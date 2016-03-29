@@ -506,6 +506,8 @@ public class GamaPreferences {
 	// .group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env", "Draw 3D referential", true, IType.BOOL)
 		.in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> DRAW_ROTATE_HELPER = create("core.draw_helper", "Draw rotation helper", true, IType.BOOL)
+			.in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
 	// public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Enable lighting", true, IType.BOOL)
 	// .in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Double> OPENGL_ZOOM =

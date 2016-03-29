@@ -26,6 +26,7 @@ import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
+import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -52,6 +53,8 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected double theta;
 	protected double phi;
+	protected boolean flipped=false;
+	protected double upVectorAngle;
 
 	private final double _keyboardSensivity = 4.0;
 	private final double _sensivity = 1;
@@ -68,6 +71,7 @@ public abstract class AbstractCamera implements ICamera {
 	public AbstractCamera(final JOGLRenderer renderer) {
 		setRenderer(renderer);
 		setMousePosition(new Point(0, 0));
+		upVectorAngle = 0.0;
 		upPosition(0.0, 1.0, 0.0);
 	}
 
@@ -87,17 +91,24 @@ public abstract class AbstractCamera implements ICamera {
 				lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
 			}
 			
-			if ( phi < 360 && phi > 180 ) {
-				upPosition(0, 0, -1);
-			} else {
-				upPosition(0,0,1);
-			}
+			if (flipped)
+				upPosition(-(-FastMath.cos(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad) - FastMath.sin(theta*Maths.toRad)*FastMath.sin(upVectorAngle*Maths.toRad)),
+						-(-FastMath.sin(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad + FastMath.cos(theta*Maths.toRad)*FastMath.sin(upVectorAngle*Maths.toRad))),
+						-(FastMath.sin(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad)));
+			else
+				upPosition(-FastMath.cos(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad) - FastMath.sin(theta*Maths.toRad)*FastMath.sin(upVectorAngle*Maths.toRad),
+						-FastMath.sin(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad + FastMath.cos(theta*Maths.toRad)*FastMath.sin(upVectorAngle*Maths.toRad)),
+						FastMath.sin(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad));
 			
 			updateSphericalCoordinatesFromLocations();
 			drawRotationHelper();
 		}
 
 	}
+	
+	protected void drawRotationHelper(){}
+	protected void Mouse_interaction(boolean value){}
+	protected void Keyboard_interaction(boolean value){}
 
 	public void updatePosition(final double xPos, final double yPos, final double zPos) {
 		position.setLocation(xPos, yPos, zPos);
@@ -109,10 +120,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	public void upPosition(final double xPos, final double yPos, final double zPos) {
 		upVector.setLocation(xPos, yPos, zPos);
-	}
-	
-	protected void drawRotationHelper() {
-		
 	}
 
 	/* -------Get commands--------- */
@@ -210,6 +217,7 @@ public abstract class AbstractCamera implements ICamera {
 		}
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
+		Mouse_interaction(ctrl(e));
 	}
 
 	/**
@@ -243,6 +251,7 @@ public abstract class AbstractCamera implements ICamera {
 			}
 			renderer.cancelROI();
 		}
+		Mouse_interaction(false);
 
 	}
 
@@ -460,6 +469,7 @@ public abstract class AbstractCamera implements ICamera {
 	public void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
 		this.shiftKeyDown = shift(e);
 		this.altKeyDown = alt(e);
+		Keyboard_interaction(shift(e));
 		switch (e.keyCode) {
 			case SWT.ARROW_LEFT:
 				this.strafeLeft = true;
@@ -496,6 +506,9 @@ public abstract class AbstractCamera implements ICamera {
 			case '2':
 				quickDownTurn();
 				return;
+			case 'f':
+				flipView();
+				return;
 		}
 
 	}
@@ -505,6 +518,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected void quickRightTurn() {}
 	protected void quickUpTurn() {}
 	protected void quickDownTurn() {}
+	protected void flipView() {flipped = !flipped;}
 
 	/**
 	 * Method keyReleased()
@@ -512,7 +526,11 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
-
+		this.shiftKeyDown = shift(e);
+		this.altKeyDown = alt(e);
+		Keyboard_interaction(shift(e));
+		if ( (SWTAccessor.isOSX && (SWT.COMMAND) != 0) || (SWT.CTRL != 0) )
+			Mouse_interaction(false);
 		switch (e.keyCode) {
 			case SWT.ARROW_LEFT: // player turns left (scene rotates right)
 				this.strafeLeft = false;
@@ -525,6 +543,9 @@ public abstract class AbstractCamera implements ICamera {
 				break;
 			case SWT.ARROW_DOWN:
 				this.goesBackward = false;
+				break;
+			case SWT.SHIFT:
+				Keyboard_interaction(false);
 				break;
 		}
 

@@ -276,5 +276,15 @@ public class ModelScene {
 			entry.getValue().preload(gl);
 		}
 	}
+	
+	public void startDrawRotationHelper(final GamaPoint pivotPoint) {
+		WordLayerObject worldLayer = (WordLayerObject)layers.get(ENV_KEY);
+		worldLayer.startDrawRotationHelper(pivotPoint);
+	}
+	
+	public void stopDrawRotationHelper() {
+		WordLayerObject worldLayer = (WordLayerObject)layers.get(ENV_KEY);
+		worldLayer.stopDrawRotationHelper();
+	}
 
 }

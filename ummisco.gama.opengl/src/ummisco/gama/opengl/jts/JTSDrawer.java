@@ -987,8 +987,10 @@ public class JTSDrawer {
 	// //////////////////////////////SPECIAL 3D SHAPE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
 	
-	public void drawRotationHelper(final GL2 gl, final GamaPoint pos) {
+	public void drawRotationHelper(final GL2 gl, final GamaPoint pos, final double distance) {
 		// TODO
+		if (gl == null) {return;}
+		
 		gl.glTranslated(pos.x,pos.y,pos.z);
 		
 		GLU glu = renderer.getGlu();
@@ -1006,7 +1008,19 @@ public class JTSDrawer {
 		final int slices = 16;
 		final int stacks = 16;
 
-		glu.gluSphere(quad, 10.0, slices, stacks);
+		 gl.glColor4d(30.0/256, 120.0/256, 70.0/256, 1.0);
+		 glu.gluSphere(quad, 5.0*(distance/300), slices, stacks);
+		 gl.glColor4d(1.0, 1.0, 1.0, 1.0);
+		 glu.gluCylinder(quad, 0.1*(distance/300), 0.1*(distance/300), 230.0*(distance/300), slices, stacks);
+		 gl.glRotated(180.0, 1.0, 0.0, 0.0);
+		 glu.gluCylinder(quad, 0.1*(distance/300), 0.1*(distance/300), 230.0*(distance/300), slices, stacks);
+		 gl.glColor4d(30.0/256, 120.0/256, 70.0/256, 0.5);
+//		 gl.glColor4d(1.0, 1.0, 1.0, 1.0);
+		 glu.gluSphere(quad, 50.0*(distance/300), slices, stacks);
+		 gl.glRotated(180.0, 1.0, 0.0, 0.0);
+		 float[] diffuseLight = { 1f,2f,1f,0f };  // multicolor diffuse 
+		 gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0); 
+		 // 230    85     90
 		
 		gl.glTranslated(-pos.x,-pos.y,-pos.z);
 	}

@@ -549,15 +549,22 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		public void startDrawRotationHelper(GamaPoint pos) {
 			rotationHelperPosition = pos;
 			drawRotationHelper = true;
+			if (currentScene != null)
+				currentScene.startDrawRotationHelper(pos);
 		}
 		public void stopDrawRotationHelper() {
 			rotationHelperPosition = null;
 			drawRotationHelper = false;
+			if (currentScene != null)
+				currentScene.stopDrawRotationHelper();
 		}
 		
 		public void drawRotationHelper(final GL2 gl) {
 			JTSDrawer jtsDrawer = new JTSDrawer(this);
-			jtsDrawer.drawRotationHelper(gl, rotationHelperPosition);
+			double distance = Math.sqrt( Math.pow(camera.getPosition().x-rotationHelperPosition.x,2) 
+					+ Math.pow(camera.getPosition().y-rotationHelperPosition.y,2)
+					+ Math.pow(camera.getPosition().z-rotationHelperPosition.z,2) );
+			jtsDrawer.drawRotationHelper(gl, rotationHelperPosition, distance);
 		}
 
 		/**
