@@ -245,6 +245,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void buildGroupContents(final Composite compo, final List<Entry> list) {
 
 		for ( final Entry e : list ) {

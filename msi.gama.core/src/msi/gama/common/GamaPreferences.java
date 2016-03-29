@@ -847,6 +847,7 @@ public class GamaPreferences {
 				continue;
 			}
 			modelValues.put(name, e.initial);
+			e.set(e.initial);
 		}
 
 	}
