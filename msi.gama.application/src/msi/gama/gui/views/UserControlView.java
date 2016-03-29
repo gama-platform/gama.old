@@ -12,20 +12,33 @@
 package msi.gama.gui.views;
 
 import java.util.List;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
-import msi.gama.runtime.*;
+import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.controls.FlatButton;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
-import msi.gaml.statements.*;
+import msi.gaml.statements.IStatement;
+import msi.gaml.statements.UserCommandStatement;
 
 public class UserControlView extends GamaViewPart {
 
@@ -51,7 +64,7 @@ public class UserControlView extends GamaViewPart {
 	}
 
 	private void deactivate(final Composite parent) {
-		for ( Control c : parent.getChildren() ) {
+		for ( final Control c : parent.getChildren() ) {
 			if ( c instanceof Composite ) {
 				deactivate((Composite) c);
 			} else {
@@ -78,19 +91,19 @@ public class UserControlView extends GamaViewPart {
 		body.setBackground(IGamaColors.WHITE.color());
 		for ( final IStatement c : userCommands ) {
 			if ( c instanceof UserCommandStatement ) {
-				Composite commandComposite = new Composite(body, SWT.BORDER);
-				GridData data = new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1);
+				final Composite commandComposite = new Composite(body, SWT.BORDER);
+				final GridData data = new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1);
 				commandComposite.setLayoutData(data);
 				layout = new GridLayout(3, false);
 				commandComposite.setLayout(layout);
 				commandComposite.setBackground(IGamaColors.WHITE.color());
-				List<UserInputStatement> inputs = ((UserCommandStatement) c).getInputs();
-				int nbLines = inputs.size() > 1 ? inputs.size() : 1;
-				int nbCol = inputs.size() > 0 ? 1 : 3;
-				FlatButton b = FlatButton.button(commandComposite, IGamaColors.BLUE, c.getName(),
+				final List<UserInputStatement> inputs = ((UserCommandStatement) c).getInputs();
+				final int nbLines = inputs.size() > 1 ? inputs.size() : 1;
+				final int nbCol = inputs.size() > 0 ? 1 : 3;
+				final FlatButton b = FlatButton.button(commandComposite, IGamaColors.BLUE, c.getName(),
 					GamaIcons.create("small.run").image());
 				b.setEnabled(((UserCommandStatement) c).isEnabled(scope));
-				GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, true, nbCol, nbLines);
+				final GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, true, nbCol, nbLines);
 				b.setLayoutData(gd);
 				b.addSelectionListener(new SelectionAdapter() {
 
@@ -103,7 +116,7 @@ public class UserControlView extends GamaViewPart {
 				});
 				for ( final UserInputStatement i : inputs ) {
 					scope.addVarWithValue(i.getTempVarName(), i.value(scope));
-					EditorFactory.create(commandComposite, i, new EditorListener() {
+					EditorFactory.create(scope, commandComposite, i, new EditorListener() {
 
 						@Override
 						public void valueModified(final Object newValue) throws GamaRuntimeException {

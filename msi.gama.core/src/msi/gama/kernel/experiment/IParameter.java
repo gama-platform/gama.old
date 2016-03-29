@@ -11,7 +11,9 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
@@ -30,7 +32,7 @@ public interface IParameter {
 
 	public abstract String getCategory();
 
-	public abstract String getUnitLabel();
+	public abstract String getUnitLabel(IScope scope);
 
 	public void setUnitLabel(String label);
 
@@ -42,21 +44,19 @@ public interface IParameter {
 
 	public abstract IType getType();
 
-	// public abstract IType getContentType();
-
 	public String serialize(boolean includingBuiltIn);
 
 	public abstract Object getInitialValue(IScope scope);
 
-	public abstract Number getMinValue();
+	public abstract Number getMinValue(IScope scope);
 
-	public abstract Number getMaxValue();
+	public abstract Number getMaxValue(IScope scope);
 
-	public abstract List getAmongValue();
+	public abstract List getAmongValue(IScope scope);
 
 	public abstract boolean isEditable();
 
-	public abstract Number getStepValue();
+	public abstract Number getStepValue(IScope scope);
 
 	public boolean isDefined();
 
@@ -68,7 +68,7 @@ public interface IParameter {
 
 		public void reinitRandomly(IScope scope);
 
-		public abstract Set<Object> neighbourValues() throws GamaRuntimeException;
+		public abstract Set<Object> neighbourValues(IScope scope) throws GamaRuntimeException;
 
 		public void setEditable(boolean b);
 

@@ -11,19 +11,26 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.MenuItem;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.commands.*;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.commands.GamaColorMenu.IColorRunnable;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
-import msi.gaml.types.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class ColorEditor extends AbstractEditor {
 
@@ -44,9 +51,9 @@ public class ColorEditor extends AbstractEditor {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			MenuItem i = (MenuItem) e.widget;
-			String color = i.getText().replace("#", "");
-			GamaColor c = GamaColor.colors.get(color);
+			final MenuItem i = (MenuItem) e.widget;
+			final String color = i.getText().replace("#", "");
+			final GamaColor c = GamaColor.colors.get(color);
 			if ( c == null ) { return; }
 			modifyAndDisplayValue(c);
 		}
@@ -55,21 +62,21 @@ public class ColorEditor extends AbstractEditor {
 
 	private FlatButton edit;
 
-	ColorEditor(final IParameter param) {
-		super(param);
+	ColorEditor(final IScope scope, final IParameter param) {
+		super(scope, param);
 	}
 
-	ColorEditor(final IAgent agent, final IParameter param, final EditorListener l) {
-		super(agent, param, l);
+	ColorEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+		super(scope, agent, param, l);
 	}
 
-	ColorEditor(final IAgent agent, final IParameter param) {
-		this(agent, param, null);
+	ColorEditor(final IScope scope, final IAgent agent, final IParameter param) {
+		this(scope, agent, param, null);
 	}
 
-	ColorEditor(final Composite parent, final String title, final Object value,
+	ColorEditor(final IScope scope, final Composite parent, final String title, final Object value,
 		final EditorListener<java.awt.Color> whenModified) {
-		super(new InputParameter(title, value), whenModified);
+		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
@@ -89,7 +96,8 @@ public class ColorEditor extends AbstractEditor {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		GamaUIColor color = GamaColors.get(currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue);
+		final GamaUIColor color =
+			GamaColors.get(currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue);
 		edit.setText(color.toString());
 		edit.setColor(color);
 		internalModification = false;
@@ -108,8 +116,8 @@ public class ColorEditor extends AbstractEditor {
 	@Override
 	protected void applyEdit() {
 		GamaColorMenu.getInstance();
-		java.awt.Color color = (java.awt.Color) currentValue;
-		RGB rgb = new RGB(color.getRed(), color.getGreen(), color.getBlue());
+		final java.awt.Color color = (java.awt.Color) currentValue;
+		final RGB rgb = new RGB(color.getRed(), color.getGreen(), color.getBlue());
 		GamaColorMenu.openView(runnable, rgb);
 	}
 

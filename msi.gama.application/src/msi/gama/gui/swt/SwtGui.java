@@ -12,47 +12,102 @@
 package msi.gama.gui.swt;
 
 import java.awt.Color;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.Map;
+import java.util.Set;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import gnu.trove.map.hash.THashMap;
-import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.Entry;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.common.IStatusMessage;
+import msi.gama.common.StatusMessage;
+import msi.gama.common.SubTaskMessage;
+import msi.gama.common.UserStatusMessage;
+import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IEditorFactory;
+import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.ISpeedDisplayer;
 import msi.gama.common.util.AbstractGui;
-import msi.gama.gui.navigator.*;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.navigator.FileMetaDataProvider;
+import msi.gama.gui.navigator.NavigatorBaseLighweightDecorator;
+import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.parameters.EditorsDialog;
+import msi.gama.gui.parameters.UserControlDialog;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.viewers.html.HtmlViewer;
-import msi.gama.gui.views.*;
-import msi.gama.kernel.experiment.*;
+import msi.gama.gui.views.ConsoleView;
+import msi.gama.gui.views.ErrorView;
+import msi.gama.gui.views.ExperimentParametersView;
+import msi.gama.gui.views.LayeredDisplayView;
+import msi.gama.gui.views.MonitorView;
+import msi.gama.gui.views.UserControlView;
+import msi.gama.kernel.experiment.IExperimentController;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.*;
-import msi.gama.runtime.*;
+import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.InspectDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.ISimulationStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaFont;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
@@ -162,7 +217,7 @@ public class SwtGui extends AbstractGui {
 
 			@Override
 			public void afterValueChange(final GamaFont newValue) {
-				FontData fd = SWTUtils.toSwtFontData(SwtGui.getDisplay(), newValue, true);
+				final FontData fd = SWTUtils.toSwtFontData(SwtGui.getDisplay(), newValue, true);
 				setLabelFont(new Font(getDisplay(), fd));
 			}
 		});
@@ -311,7 +366,7 @@ public class SwtGui extends AbstractGui {
 
 	private void clearErrors() {
 		debug("Closing Error View");
-		IViewReference ref = getPage().findViewReference(ErrorView.ID);
+		final IViewReference ref = getPage().findViewReference(ErrorView.ID);
 		if ( ref == null ) { return; }
 		final ErrorView v = (ErrorView) ref.getPart(false);
 
@@ -449,7 +504,7 @@ public class SwtGui extends AbstractGui {
 			@Override
 			public void run() {
 				try {
-					IWorkbenchPage page = getPage();
+					final IWorkbenchPage page = getPage();
 					if ( page != null ) {
 						page.zoomOut();
 						result[0] = page.showView(viewId, secondaryId, code);
@@ -502,17 +557,17 @@ public class SwtGui extends AbstractGui {
 		// if ( Platform.getOS().equals(Platform.OS_LINUX) || Platform.getWS().equals(Platform.WS_GTK) ) { return false; }
 
 		try {
-			URL url = new URL("http://gama-platform.org");
+			final URL url = new URL("http://gama-platform.org");
 			// open a connection to that source
-			HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
+			final HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
 			// trying to retrieve data from the source. If there
 			// is no connection, this line will fail
 			urlConnect.setConnectTimeout(2000);
-			Object objData = urlConnect.getContent();
-		} catch (UnknownHostException e) {
+			final Object objData = urlConnect.getContent();
+		} catch (final UnknownHostException e) {
 			e.printStackTrace();
 			return false;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -532,7 +587,7 @@ public class SwtGui extends AbstractGui {
 			public void run() {
 				try {
 					getPage().zoomOut();
-					IEditorPart p = getPage().findEditor(input);
+					final IEditorPart p = getPage().findEditor(input);
 					if ( p == null ) {
 						result[0] = getPage().openEditor(input, "msi.gama.application.browser", true);
 					} else {
@@ -544,7 +599,7 @@ public class SwtGui extends AbstractGui {
 			}
 		});
 		if ( result[0] instanceof HtmlViewer ) {
-			HtmlViewer be = (HtmlViewer) result[0];
+			final HtmlViewer be = (HtmlViewer) result[0];
 			if ( url != null ) {
 				be.setUrl(url);
 			} else if ( html != null ) {
@@ -631,7 +686,7 @@ public class SwtGui extends AbstractGui {
 		@Override
 		public void partOpened(final IWorkbenchPartReference partRef) {
 			if ( partRef.getPart(false) instanceof LayeredDisplayView ) {
-				LayeredDisplayView view = (LayeredDisplayView) partRef.getPart(false);
+				final LayeredDisplayView view = (LayeredDisplayView) partRef.getPart(false);
 				surfaces.add(view.getDisplaySurface());
 			}
 		}
@@ -665,10 +720,10 @@ public class SwtGui extends AbstractGui {
 
 	static void initFonts() {
 
-		GamaFont font = BASE_BUTTON_FONT.getValue();
+		final GamaFont font = BASE_BUTTON_FONT.getValue();
 		FontData fd = new FontData(font.getName(), font.getSize(), font.getStyle());
 		labelFont = new Font(getDisplay(), fd);
-		FontData fd2 = new FontData(fd.getName(), fd.getHeight(), SWT.BOLD);
+		final FontData fd2 = new FontData(fd.getName(), fd.getHeight(), SWT.BOLD);
 		expandFont = new Font(Display.getDefault(), fd2);
 		fd = new FontData(fd.getName(), fd.getHeight(), SWT.ITALIC);
 		unitFont = new Font(Display.getDefault(), fd);
@@ -793,13 +848,13 @@ public class SwtGui extends AbstractGui {
 
 		if ( currentDescriptor != null && currentDescriptor.equals(descriptor) ) { return true; }
 		if ( descriptor != null ) {
-			Runnable r = new Runnable() {
+			final Runnable r = new Runnable() {
 
 				@Override
 				public void run() {
 					try {
 						activePage.setPerspective(descriptor);
-					} catch (NullPointerException e) {
+					} catch (final NullPointerException e) {
 						System.err.println(
 							"NPE in WorkbenchPage.setPerspective(). See Issue #1602. Working around the bug in e4...");
 						activePage.setPerspective(descriptor);
@@ -858,9 +913,9 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public void runModel(final IModel model, final String exp) {
-		//		SimulationPerspective.setCurrentModelAndExperiment(model.getName(), exp);
+		// SimulationPerspective.setCurrentModelAndExperiment(model.getName(), exp);
 		GAMA.getGui().openSimulationPerspective(true);
-		//		getPage().resetPerspective();
+		// getPage().resetPerspective();
 		GAMA.runGuiExperiment(exp, model);
 	}
 
@@ -882,58 +937,58 @@ public class SwtGui extends AbstractGui {
 
 	public static GamaPreferences.Entry<String> COLOR_MENU_SORT =
 		GamaPreferences.create("menu.colors.sort", "Sort colors menu by", "RGB value", IType.STRING)
-		.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
-		.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
+			.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
+			.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
 
-			@Override
-			public boolean beforeValueChange(final String newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final String pref) {
-				if ( pref.equals(GamaColorMenu.SORT_NAMES[0]) ) {
-					GamaColorMenu.colorComp = GamaColorMenu.byRGB;
-				} else if ( pref.equals(GamaColorMenu.SORT_NAMES[1]) ) {
-					GamaColorMenu.colorComp = GamaColorMenu.byName;
-				} else if ( pref.equals(GamaColorMenu.SORT_NAMES[2]) ) {
-					GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
-				} else {
-					GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
+				@Override
+				public boolean beforeValueChange(final String newValue) {
+					return true;
 				}
-				GamaColorMenu.instance.reset();
-			}
-		});
+
+				@Override
+				public void afterValueChange(final String pref) {
+					if ( pref.equals(GamaColorMenu.SORT_NAMES[0]) ) {
+						GamaColorMenu.colorComp = GamaColorMenu.byRGB;
+					} else if ( pref.equals(GamaColorMenu.SORT_NAMES[1]) ) {
+						GamaColorMenu.colorComp = GamaColorMenu.byName;
+					} else if ( pref.equals(GamaColorMenu.SORT_NAMES[2]) ) {
+						GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
+					} else {
+						GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
+					}
+					GamaColorMenu.instance.reset();
+				}
+			});
 	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE =
 		GamaPreferences.create("menu.colors.reverse", "Reverse order", false, IType.BOOL).in(GamaPreferences.UI)
-		.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+			.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
+				@Override
+				public boolean beforeValueChange(final Boolean newValue) {
+					return true;
+				}
 
-			@Override
-			public void afterValueChange(final Boolean pref) {
-				GamaColorMenu.reverse = pref ? -1 : 1;
-				GamaColorMenu.instance.reset();
-			}
-		});
+				@Override
+				public void afterValueChange(final Boolean pref) {
+					GamaColorMenu.reverse = pref ? -1 : 1;
+					GamaColorMenu.instance.reset();
+				}
+			});
 	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP =
 		GamaPreferences.create("menu.colors.group", "Group colors", false, IType.BOOL).in(GamaPreferences.UI)
-		.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+			.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
+				@Override
+				public boolean beforeValueChange(final Boolean newValue) {
+					return true;
+				}
 
-			@Override
-			public void afterValueChange(final Boolean pref) {
-				GamaColorMenu.breakdown = pref;
-				GamaColorMenu.instance.reset();
-			}
-		});
+				@Override
+				public void afterValueChange(final Boolean pref) {
+					GamaColorMenu.breakdown = pref;
+					GamaColorMenu.instance.reset();
+				}
+			});
 	public static final Entry<Boolean> NAVIGATOR_METADATA = GamaPreferences
 		.create("navigator.metadata", "Display metadata of data and GAML files in navigator", true, IType.BOOL)
 		.in(GamaPreferences.UI).group("Navigator").addChangeListener(new IPreferenceChangeListener<Boolean>() {
@@ -945,10 +1000,10 @@ public class SwtGui extends AbstractGui {
 
 			@Override
 			public void afterValueChange(final Boolean newValue) {
-				IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+				final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
 				try {
 					mgr.setEnabled(NavigatorBaseLighweightDecorator.ID, newValue);
-				} catch (CoreException e) {
+				} catch (final CoreException e) {
 					e.printStackTrace();
 				}
 
@@ -990,7 +1045,7 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output) {
 		IDisplaySurface surface = null;
-		String keyword = output.getData().getDisplayType();
+		final String keyword = output.getData().getDisplayType();
 		final IDisplayCreator creator = DISPLAYS.get(keyword);
 		if ( creator != null ) {
 			surface = creator.create(output);
@@ -1002,14 +1057,14 @@ public class SwtGui extends AbstractGui {
 	}
 
 	@Override
-	public Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
-		final Map<String, IType> types) {
+	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
+		final Map<String, Object> initialValues, final Map<String, IType> types) {
 		final Map<String, Object> result = new THashMap();
 		run(new Runnable() {
 
 			@Override
 			public void run() {
-				final EditorsDialog dialog = new EditorsDialog(getShell(), initialValues, types, title);
+				final EditorsDialog dialog = new EditorsDialog(scope, getShell(), initialValues, types, title);
 				result.putAll(dialog.open() == Window.OK ? dialog.getValues() : initialValues);
 			}
 		});
@@ -1088,19 +1143,20 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void editModel(final Object eObject) {
 		if ( eObject instanceof String ) {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IFile file = workspace.getRoot().getFile(new Path((String) eObject));
+			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			final IFile file = workspace.getRoot().getFile(new Path((String) eObject));
 			editModel(file);
 		} else if ( eObject instanceof IFile ) {
-			IFile file = (IFile) eObject;
+			final IFile file = (IFile) eObject;
 			if ( !file.exists() ) {
 				debug("File " + file.getFullPath().toString() + " does not exist in the workspace");
 				return;
 			}
 			try {
-				IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
+				final IEditorDescriptor desc =
+					PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
 				getPage().openEditor(new FileEditorInput(file), desc.getId());
-			} catch (PartInitException e) {
+			} catch (final PartInitException e) {
 				e.printStackTrace();
 			}
 		}
@@ -1248,7 +1304,7 @@ public class SwtGui extends AbstractGui {
 				// if ( r == null ) {
 				if ( a == null ) { return; }
 				try {
-					InspectDisplayOutput output = new InspectDisplayOutput(a);
+					final InspectDisplayOutput output = new InspectDisplayOutput(a);
 					output.launch();
 				} catch (final GamaRuntimeException g) {
 					g.addContext("In opening the agent inspector");
@@ -1415,13 +1471,13 @@ public class SwtGui extends AbstractGui {
 	}
 
 	public static IEditorPart getActiveEditor() {
-		IWorkbenchPage page = getPage();
+		final IWorkbenchPage page = getPage();
 		if ( page != null ) { return page.getActiveEditor(); }
 		return null;
 	}
 
 	public static IWorkbenchPart getActivePart() {
-		IWorkbenchPage page = getPage();
+		final IWorkbenchPage page = getPage();
 		if ( page != null ) { return page.getActivePart(); }
 		return null;
 	}
@@ -1472,8 +1528,8 @@ public class SwtGui extends AbstractGui {
 	public void wipeExperiments() {
 		/* Close all views created in simulation perspective */
 
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		String idCurrentPerspective = window.getActivePage().getPerspective().getId();
+		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		final String idCurrentPerspective = window.getActivePage().getPerspective().getId();
 		try {
 			if ( idCurrentPerspective.equals(IGui.PERSPECTIVE_SIMULATION_ID) ) {
 				closeSimulationViews(true, true);
@@ -1481,7 +1537,7 @@ public class SwtGui extends AbstractGui {
 				window.getWorkbench().showPerspective(IGui.PERSPECTIVE_SIMULATION_ID, window);
 				closeSimulationViews(true, true);
 			}
-		} catch (WorkbenchException e) {
+		} catch (final WorkbenchException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1492,11 +1548,11 @@ public class SwtGui extends AbstractGui {
 
 			@Override
 			public void run() {
-				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				IViewReference[] views = page.getViewReferences();
+				final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				final IViewReference[] views = page.getViewReferences();
 
-				for ( IViewReference view : views ) {
-					IViewPart part = view.getView(false);
+				for ( final IViewReference view : views ) {
+					final IViewPart part = view.getView(false);
 					if ( part instanceof IGamaView ) {
 						((IGamaView) part).close();
 
@@ -1515,7 +1571,7 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public String getFrontmostSimulationState() {
-		IExperimentController controller = GAMA.getFrontmostController();
+		final IExperimentController controller = GAMA.getFrontmostController();
 		if ( controller == null ) {
 			return NONE;
 		} else if ( controller.getScheduler().paused ) { return PAUSED; }
@@ -1560,7 +1616,7 @@ public class SwtGui extends AbstractGui {
 	 */
 	@Override
 	public void registerView(final String modelName, final String expeName, final String viewName) {
-		String key = modelName + expeName;
+		final String key = modelName + expeName;
 		Set<String> ids = MODEL_VIEWS.get(key);
 		if ( ids == null ) {
 			ids = new HashSet<>();
@@ -1576,8 +1632,8 @@ public class SwtGui extends AbstractGui {
 	 */
 	@Override
 	public Set<String> getViews(final String modelName, final String expeName) {
-		String key = modelName + expeName;
-		Set<String> ids = MODEL_VIEWS.get(key);
+		final String key = modelName + expeName;
+		final Set<String> ids = MODEL_VIEWS.get(key);
 		return ids == null ? Collections.EMPTY_SET : ids;
 	}
 

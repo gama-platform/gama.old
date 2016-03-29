@@ -14,18 +14,31 @@ package msi.gama.gui.views;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import msi.gama.common.interfaces.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
+import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IValue;
+import msi.gama.common.interfaces.ItemList;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.outputs.*;
+import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.expressions.*;
+import msi.gama.util.GAML;
+import msi.gama.util.GamaColor;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.Types;
 
 /**
@@ -64,7 +77,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		if ( output != null ) {
 			createItem(parent, output, output.getValue() == null,
 				output.getColor() == null ? null : GamaColors.get(output.getColor()));
-			//getViewer().setSize(getViewer().computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+			// getViewer().setSize(getViewer().computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
 			return true;
 		}
 		return false;
@@ -73,17 +86,17 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	protected Composite createItemContentsFor(final MonitorOutput output) {
-		Composite compo = new Composite(getViewer(), SWT.NONE);
+		final Composite compo = new Composite(getViewer(), SWT.NONE);
 		compo.setBackground(IGamaColors.WHITE.color());
-		GridLayout layout = new GridLayout(2, false);
+		final GridLayout layout = new GridLayout(2, false);
 		// GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		// firstColData.widthHint = 60;
 		// GridData secondColData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		// secondColData.widthHint = 200;
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
-		final Text titleEditor =
-			(Text) EditorFactory.create(compo, "Title:", output.getName(), true, new EditorListener<String>() {
+		final Text titleEditor = (Text) EditorFactory
+			.create(output.getScope(), compo, "Title:", output.getName(), true, new EditorListener<String>() {
 
 				@Override
 				public void valueModified(final String newValue) throws GamaRuntimeException {
@@ -93,9 +106,10 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 			}).getEditor();
 
-		IExpression expr = GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulationScope());
+		final IExpression expr =
+			GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulationScope());
 
-		Text c = (Text) EditorFactory.createExpression(compo, "Expression:",
+		final Text c = (Text) EditorFactory.createExpression(output.getScope(), compo, "Expression:",
 			output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, new EditorListener<IExpression>() {
 
 				@Override
@@ -154,7 +168,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public String getItemDisplayName(final MonitorOutput o, final String previousName) {
-		Object v = o.getLastValue();
+		final Object v = o.getLastValue();
 		final StringBuilder sb = new StringBuilder(100);
 		sb.setLength(0);
 		sb.append(o.getName()).append(ItemList.SEPARATION_CODE)

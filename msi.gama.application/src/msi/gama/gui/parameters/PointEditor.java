@@ -11,20 +11,27 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.runtime.IScope;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class PointEditor extends AbstractEditor<ILocation> implements VerifyListener {
 
@@ -34,22 +41,22 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	private boolean allowVerification;
 	private boolean isReverting;
 
-	PointEditor(final IParameter param) {
-		super(param);
+	PointEditor(final IScope scope, final IParameter param) {
+		super(scope, param);
 	}
 
-	PointEditor(final IAgent agent, final IParameter param) {
-		this(agent, param, null);
+	PointEditor(final IScope scope, final IAgent agent, final IParameter param) {
+		this(scope, agent, param, null);
 	}
 
-	PointEditor(final IAgent agent, final IParameter param, final EditorListener l) {
-		super(agent, param, l);
+	PointEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+		super(scope, agent, param, l);
 	}
 
-	PointEditor(final Composite parent, final String title, final ILocation value,
-		final EditorListener<GamaPoint> whenModified) {
+	PointEditor(final IScope scope, final Composite parent, final String title, final ILocation value,
+		final EditorListener<ILocation> whenModified) {
 		// Convenience method
-		super(new InputParameter(title, value), whenModified);
+		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
@@ -94,7 +101,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	protected void hideToolbar() {
 		super.hideToolbar();
 		pointEditor.setBackground(getNormalBackground());
-		//pointEditor.setBackground(NORMAL_BACKGROUND);
+		// pointEditor.setBackground(NORMAL_BACKGROUND);
 	}
 
 	@Override
@@ -107,7 +114,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	public void verifyText(final VerifyEvent event) {
 		if ( internalModification ) { return; }
 		if ( !allowVerification ) { return; }
-		char myChar = event.character;
+		final char myChar = event.character;
 		if ( myChar == '\0' ) {
 
 		}
@@ -118,7 +125,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	@Override
 	protected void displayParameterValue() {
 		allowVerification = false;
-		GamaPoint p = (GamaPoint) currentValue;
+		final GamaPoint p = (GamaPoint) currentValue;
 		for ( int i = 0; i < 3; i++ ) {
 			if ( isReverting || !ordinates[i].isFocusControl() ) {
 				ordinates[i].setText(currentValue == null ? "0.0" : StringUtils.toGaml(p.getOrdinate(i), false));
@@ -132,14 +139,8 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	public void modifyText(final ModifyEvent me) {
 		if ( internalModification ) { return; }
 		if ( !allowVerification ) { return; }
-		GAMA.run(new InScope.Void() {
-
-			@Override
-			public void process(final IScope scope) {
-				modifyAndDisplayValue(new GamaPoint(Cast.asFloat(scope, ordinates[0].getText()), Cast.asFloat(scope,
-					ordinates[1].getText()), Cast.asFloat(scope, ordinates[1].getText())));
-			}
-		});
+		modifyAndDisplayValue(new GamaPoint(Cast.asFloat(getScope(), ordinates[0].getText()),
+			Cast.asFloat(getScope(), ordinates[1].getText()), Cast.asFloat(getScope(), ordinates[1].getText())));
 
 	}
 

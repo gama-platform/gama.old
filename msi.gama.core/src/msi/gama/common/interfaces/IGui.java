@@ -11,15 +11,21 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
+
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
-import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.*;
+import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -137,7 +143,8 @@ public interface IGui {
 
 	IDisplaySurface getDisplaySurfaceFor(LayeredDisplayOutput layerDisplayOutput);
 
-	Map<String, Object> openUserInputDialog(String title, Map<String, Object> initialValues, Map<String, IType> types);
+	Map<String, Object> openUserInputDialog(IScope scope, String title, Map<String, Object> initialValues,
+			Map<String, IType> types);
 
 	void openUserControlPanel(IScope scope, UserPanelStatement panel);
 
@@ -254,6 +261,5 @@ public interface IGui {
 	void registerView(String modelName, String expeName, String name);
 
 	Set<String> getViews(String modelName, String expeName);
-
 
 }

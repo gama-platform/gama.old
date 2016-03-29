@@ -11,25 +11,39 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.AbstractEditor;
+import msi.gama.gui.parameters.AgentAttributesEditorsList;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.*;
-import msi.gama.kernel.experiment.*;
+import msi.gama.gui.swt.controls.ParameterExpandBar;
+import msi.gama.gui.swt.controls.ParameterExpandItem;
+import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.IOutput;
+import msi.gama.outputs.InspectDisplayOutput;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.*;
+import msi.gaml.statements.IStatement;
+import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
@@ -47,14 +61,14 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 		}
 		// System.out.println("Adding output " + output.getName() + " to inspector");
 		if ( !(output instanceof InspectDisplayOutput) ) { return; }
-		InspectDisplayOutput out = (InspectDisplayOutput) output;
-		IAgent[] agents = out.getLastValue();
+		final InspectDisplayOutput out = (InspectDisplayOutput) output;
+		final IAgent[] agents = out.getLastValue();
 		if ( agents == null || agents.length == 0 ) {
 			reset();
 			return;
 		}
 
-		IAgent agent = agents[0];
+		final IAgent agent = agents[0];
 		if ( parent == null ) {
 			super.addOutput(out);
 		} else if ( editors == null || !editors.getCategories().containsKey(agent) ) {
@@ -68,9 +82,9 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 		// System.out.println("Inspector creating its own part control");
 		parent.setBackground(parent.getBackground());
 		if ( !outputs.isEmpty() ) {
-			IAgent[] init = getOutput().getLastValue();
+			final IAgent[] init = getOutput().getLastValue();
 			if ( init != null && init.length > 0 ) {
-				for ( IAgent a : init ) {
+				for ( final IAgent a : init ) {
 					addItem(a);
 				}
 			}
@@ -93,34 +107,30 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 		// add highlight in the expand bar ?
 
 		final Composite attributes = super.createItemContentsFor(agent);
-		final AbstractEditor ed = EditorFactory.create(attributes, new ParameterAdapter("highlight", IType.BOOL) {
+		final AbstractEditor ed =
+			EditorFactory.create(agent.getScope(), attributes, new ParameterAdapter("highlight", IType.BOOL) {
 
-			@Override
-			public void setValue(final IScope scope, final Object value) {
-				if ( (Boolean) value ) {
-					scope.getGui().setHighlightedAgent(agent);
-				} else {
-					scope.getGui().setHighlightedAgent(null);
+				@Override
+				public void setValue(final IScope scope, final Object value) {
+					if ( (Boolean) value ) {
+						scope.getGui().setHighlightedAgent(agent);
+					} else {
+						scope.getGui().setHighlightedAgent(null);
+					}
+					GAMA.getExperiment().refreshAllOutputs();
 				}
-				GAMA.getExperiment().refreshAllOutputs();
-			}
 
-			@Override
-			public Boolean value() {
-				return agent == agent.getScope().getGui().getHighlightedAgent();
-			}
+				@Override
+				public Boolean value() {
+					return agent == agent.getScope().getGui().getHighlightedAgent();
+				}
 
-			@Override
-			public boolean isEditable() {
-				return true;
-			}
+				@Override
+				public boolean isEditable() {
+					return true;
+				}
 
-			@Override
-			public Boolean value(final IScope iScope) throws GamaRuntimeException {
-				return value();
-			}
-
-		});
+			});
 		editors.getCategories().get(agent).put("highlight", ed);
 		final ISpecies species = agent.getSpecies();
 		final Collection<UserCommandStatement> userCommands = species.getUserCommands();
@@ -147,7 +157,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 
 						@Override
 						public Object run(final IScope scope) {
-							Object[] result = new Object[1];
+							final Object[] result = new Object[1];
 							scope.execute(command, agent, null, result);
 							return result[0];
 						}
@@ -173,7 +183,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 		if ( !editors.getCategories().containsKey(agent) ) {
 			editors.add(getParametersToInspect(agent), agent);
 			// System.out.println("Asking to create the item " + agent.getName() + " in inspector");
-			ParameterExpandItem item = createItem(parent, agent, true, null);
+			final ParameterExpandItem item = createItem(parent, agent, true, null);
 			if ( item == null ) { return false; }
 			return true;
 		}
@@ -203,9 +213,9 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 	@Override
 	public void removeItem(final IAgent a) {
 		InspectDisplayOutput found = null;
-		for ( IDisplayOutput out : outputs ) {
-			InspectDisplayOutput output = (InspectDisplayOutput) out;
-			IAgent[] agents = output.getLastValue();
+		for ( final IDisplayOutput out : outputs ) {
+			final InspectDisplayOutput output = (InspectDisplayOutput) out;
+			final IAgent[] agents = output.getLastValue();
 			if ( agents != null && agents.length > 0 && agents[0] == a ) {
 				found = output;
 				break;
@@ -220,13 +230,13 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 
 	public void updatePartName() {
 		if ( firstPartName == null ) {
-			InspectDisplayOutput out = getOutput();
+			final InspectDisplayOutput out = getOutput();
 			firstPartName = out == null ? "Inspect: " : out.getName();
 		}
-		Set<String> names = new LinkedHashSet();
-		for ( IOutput o : outputs ) {
-			InspectDisplayOutput out = (InspectDisplayOutput) o;
-			IAgent a = out.getLastValue()[0];
+		final Set<String> names = new LinkedHashSet();
+		for ( final IOutput o : outputs ) {
+			final InspectDisplayOutput out = (InspectDisplayOutput) o;
+			final IAgent a = out.getLastValue()[0];
 			if ( a != null ) {
 				names.add(a.getName());
 			}

@@ -6,19 +6,30 @@ package msi.gama.gui.displays.layers;
 
 import java.awt.Color;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import msi.gama.common.interfaces.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ILayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.SWTChartEditor;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.layers.*;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.outputs.layers.AgentLayerStatement;
+import msi.gama.outputs.layers.ChartLayerStatement;
+import msi.gama.outputs.layers.GridLayer;
+import msi.gama.outputs.layers.GridLayerStatement;
+import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.outputs.layers.ImageLayerStatement;
+import msi.gama.outputs.layers.SpeciesLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaFont;
+import msi.gama.util.file.IGamaFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.Types;
 
@@ -40,39 +51,43 @@ public class LayerSideControls {
 	}
 
 	public static void fill(final Composite compo, final IDisplaySurface container) {
-		EditorFactory.create(compo, "Antialias:", container.getData().isAntialias(), new EditorListener<Boolean>() {
+		EditorFactory.create(container.getDisplayScope(), compo, "Antialias:", container.getData().isAntialias(),
+			new EditorListener<Boolean>() {
 
-			@Override
-			public void valueModified(final Boolean newValue) throws GamaRuntimeException {
-				container.getData().setAntialias(newValue);
-				updateIfPaused(null, container);
-			}
-		});
-		EditorFactory.create(compo, "Background:", container.getData().getBackgroundColor(),
-			new EditorListener<Color>() {
-
-			@Override
-			public void valueModified(final Color newValue) {
-				container.getData().setBackgroundColor(newValue);
-				updateIfPaused(null, container);
-			}
-		});
-		EditorFactory.create(compo, "Highlight:", container.getData().getHighlightColor(), new EditorListener<Color>() {
-
-			@Override
-			public void valueModified(final Color newValue) {
-				container.getData().setHighlightColor(newValue);
-				updateIfPaused(null, container);
-			}
-		});
-		if(container.getOutput().isOpenGL() && container.getOutput().cameraFix){
-			EditorFactory.create(compo, "Camera Lock:", container.getData().isCameraLock(), new EditorListener<Boolean>() {
 				@Override
 				public void valueModified(final Boolean newValue) throws GamaRuntimeException {
-					container.getData().setCameraLock(newValue);
-						updateIfPaused(null, container);
+					container.getData().setAntialias(newValue);
+					updateIfPaused(null, container);
 				}
 			});
+		EditorFactory.create(container.getDisplayScope(), compo, "Background:",
+			container.getData().getBackgroundColor(), new EditorListener<Color>() {
+
+				@Override
+				public void valueModified(final Color newValue) {
+					container.getData().setBackgroundColor(newValue);
+					updateIfPaused(null, container);
+				}
+			});
+		EditorFactory.create(container.getDisplayScope(), compo, "Highlight:", container.getData().getHighlightColor(),
+			new EditorListener<Color>() {
+
+				@Override
+				public void valueModified(final Color newValue) {
+					container.getData().setHighlightColor(newValue);
+					updateIfPaused(null, container);
+				}
+			});
+		if ( container.getOutput().isOpenGL() && container.getOutput().cameraFix ) {
+			EditorFactory.create(container.getDisplayScope(), compo, "Camera Lock:", container.getData().isCameraLock(),
+				new EditorListener<Boolean>() {
+
+					@Override
+					public void valueModified(final Boolean newValue) throws GamaRuntimeException {
+						container.getData().setCameraLock(newValue);
+						updateIfPaused(null, container);
+					}
+				});
 		}
 
 	}
@@ -89,46 +104,48 @@ public class LayerSideControls {
 		// updateIfPaused(layer, container);
 		// }
 		// });
-		EditorFactory.create(compo, "Transparency:", definition.getTransparency(), 0.0, 1.0, 0.1, false,
-			new EditorListener<Double>() {
+		EditorFactory.create(container.getDisplayScope(), compo, "Transparency:", definition.getTransparency(), 0.0,
+			1.0, 0.1, false, new EditorListener<Double>() {
 
-			@Override
-			public void valueModified(final Double newValue) {
-				layer.setTransparency(1 - newValue);
-				updateIfPaused(layer, container);
-			}
+				@Override
+				public void valueModified(final Double newValue) {
+					layer.setTransparency(1 - newValue);
+					updateIfPaused(layer, container);
+				}
 
-		});
-		EditorFactory.create(compo, "Position:", definition.getBox().getPosition(), new EditorListener<GamaPoint>() {
+			});
+		EditorFactory.create(container.getDisplayScope(), compo, "Position:", definition.getBox().getPosition(),
+			new EditorListener<ILocation>() {
 
-			@Override
-			public void valueModified(final GamaPoint newValue) {
-				layer.setPosition(newValue);
-			}
+				@Override
+				public void valueModified(final ILocation newValue) {
+					layer.setPosition(newValue);
+				}
 
-		});
-		EditorFactory.create(compo, "Size:", definition.getBox().getSize(), new EditorListener<GamaPoint>() {
+			});
+		EditorFactory.create(container.getDisplayScope(), compo, "Size:", definition.getBox().getSize(),
+			new EditorListener<ILocation>() {
 
-			@Override
-			public void valueModified(final GamaPoint newValue) {
-				layer.setExtent(newValue);
-				updateIfPaused(layer, container);
-			}
+				@Override
+				public void valueModified(final ILocation newValue) {
+					layer.setExtent(newValue);
+					updateIfPaused(layer, container);
+				}
 
-		});
+			});
 
 		switch (definition.getType()) {
 
 			case ILayerStatement.GRID: {
-				EditorFactory.create(compo, "Draw grid:", ((GridLayerStatement) definition).drawLines(),
-					new EditorListener<Boolean>() {
+				EditorFactory.create(container.getDisplayScope(), compo, "Draw grid:",
+					((GridLayerStatement) definition).drawLines(), new EditorListener<Boolean>() {
 
-					@Override
-					public void valueModified(final Boolean newValue) throws GamaRuntimeException {
-						((GridLayer) layer).setDrawLines(newValue);
-						updateIfPaused(layer, container);
-					}
-				});
+						@Override
+						public void valueModified(final Boolean newValue) throws GamaRuntimeException {
+							((GridLayer) layer).setDrawLines(newValue);
+							updateIfPaused(layer, container);
+						}
+					});
 				break;
 			}
 			case ILayerStatement.AGENTS: {
@@ -137,86 +154,89 @@ public class LayerSideControls {
 					expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
 				}
 				if ( expr != null ) {
-					EditorFactory.createExpression(compo, "Agents:", expr, new EditorListener<IExpression>() {
+					EditorFactory.createExpression(container.getDisplayScope(), compo, "Agents:", expr,
+						new EditorListener<IExpression>() {
 
-						@Override
-						public void valueModified(final IExpression newValue) throws GamaRuntimeException {
-							((AgentLayerStatement) definition).setAgentsExpr(newValue);
-							updateIfPaused(layer, container);
-						}
-					}, Types.LIST);
+							@Override
+							public void valueModified(final IExpression newValue) throws GamaRuntimeException {
+								((AgentLayerStatement) definition).setAgentsExpr(newValue);
+								updateIfPaused(layer, container);
+							}
+						}, Types.LIST);
 				}
 				break;
 			}
 			case ILayerStatement.SPECIES: {
-				EditorFactory.choose(compo, "Aspect:", ((SpeciesLayerStatement) definition).getAspectName(), true,
+				EditorFactory.choose(container.getDisplayScope(), compo, "Aspect:",
+					((SpeciesLayerStatement) definition).getAspectName(), true,
 					((SpeciesLayerStatement) definition).getAspects(), new EditorListener<String>() {
-
-					@Override
-					public void valueModified(final String newValue) {
-						((SpeciesLayerStatement) definition).setAspect(newValue);
-						updateIfPaused(layer, container);
-					}
-				});
-				break;
-			}
-			case ILayerStatement.TEXT: {
-				EditorFactory.createExpression(compo, "Expression:", ((TextLayerStatement) definition).getTextExpr(),
-					new EditorListener<IExpression>() {
-
-					@Override
-					public void valueModified(final IExpression newValue) {
-						((TextLayerStatement) definition).setTextExpr(newValue);
-						updateIfPaused(layer, container);
-					}
-				}, Types.STRING);
-				EditorFactory.create(compo, "Color:", ((TextLayerStatement) definition).getColor(),
-					new EditorListener<Color>() {
-
-					@Override
-					public void valueModified(final Color newValue) {
-						((TextLayerStatement) definition).setColor(newValue);
-						updateIfPaused(layer, container);
-					}
-				});
-				EditorFactory.create(compo, "Font:", ((TextLayerStatement) definition).getFont(),
-					new EditorListener<GamaFont>() {
-
-					@Override
-					public void valueModified(final GamaFont newValue) {
-						((TextLayerStatement) definition).setFont(newValue);
-						updateIfPaused(layer, container);
-					}
-				});
-				break;
-			}
-			case ILayerStatement.IMAGE: {
-				if ( definition instanceof ImageLayerStatement ) {
-					EditorFactory.create(compo, "Image:", ((ImageLayerStatement) definition).getImageFileName(), false,
-						new EditorListener<String>() {
 
 						@Override
 						public void valueModified(final String newValue) {
-							((ImageLayerStatement) definition).setImageFileName(newValue);
+							((SpeciesLayerStatement) definition).setAspect(newValue);
 							updateIfPaused(layer, container);
 						}
-
 					});
+				break;
+			}
+			// case ILayerStatement.TEXT: {
+			// EditorFactory.createExpression(compo, "Expression:", ((TextLayerStatement) definition).getTextExpr(),
+			// new EditorListener<IExpression>() {
+			//
+			// @Override
+			// public void valueModified(final IExpression newValue) {
+			// ((TextLayerStatement) definition).setTextExpr(newValue);
+			// updateIfPaused(layer, container);
+			// }
+			// }, Types.STRING);
+			// EditorFactory.create(compo, "Color:", ((TextLayerStatement) definition).getColor(),
+			// new EditorListener<Color>() {
+			//
+			// @Override
+			// public void valueModified(final Color newValue) {
+			// ((TextLayerStatement) definition).setColor(newValue);
+			// updateIfPaused(layer, container);
+			// }
+			// });
+			// EditorFactory.create(compo, "Font:", ((TextLayerStatement) definition).getFont(),
+			// new EditorListener<GamaFont>() {
+			//
+			// @Override
+			// public void valueModified(final GamaFont newValue) {
+			// ((TextLayerStatement) definition).setFont(newValue);
+			// updateIfPaused(layer, container);
+			// }
+			// });
+			// break;
+			// }
+			case ILayerStatement.IMAGE: {
+				if ( definition instanceof ImageLayerStatement ) {
+					EditorFactory.create(container.getDisplayScope(), compo, "Image:",
+						((ImageLayerStatement) definition).getImageFileName(), false, new EditorListener<String>() {
+
+							@Override
+							public void valueModified(final String newValue) {
+								((ImageLayerStatement) definition).setImageFileName(newValue);
+								updateIfPaused(layer, container);
+							}
+
+						});
 				}
 				break;
 
 			}
 			case ILayerStatement.GIS: {
-				EditorFactory.createFile(compo, "Shapefile:", ((ImageLayerStatement) definition).getImageFileName(),
-					new EditorListener<String>() {
+				EditorFactory.createFile(container.getDisplayScope(), compo, "Shapefile:",
+					((ImageLayerStatement) definition).getImageFileName(), new EditorListener<IGamaFile>() {
 
-					@Override
-					public void valueModified(final String newValue) throws GamaRuntimeException {
-						((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(), newValue);
-						updateIfPaused(layer, container);
-					}
+						@Override
+						public void valueModified(final IGamaFile newValue) throws GamaRuntimeException {
+							((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(),
+								newValue.getName());
+							updateIfPaused(layer, container);
+						}
 
-				});
+					});
 				break;
 			}
 			case ILayerStatement.CHART: {
@@ -228,9 +248,9 @@ public class LayerSideControls {
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
 						// FIXME Editor not working for the moment
-						Point p = b.toDisplay(b.getLocation());
+						final Point p = b.toDisplay(b.getLocation());
 						p.y = p.y + 30;
-						SWTChartEditor editor =
+						final SWTChartEditor editor =
 							new SWTChartEditor(SwtGui.getDisplay(), ((ChartLayerStatement) definition).getChart(), p);
 						// TODO Revoir cet �diteur, tr�s laid !
 						editor.open();

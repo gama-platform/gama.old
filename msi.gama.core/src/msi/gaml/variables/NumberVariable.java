@@ -13,8 +13,11 @@ package msi.gaml.variables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -27,56 +30,27 @@ import msi.gaml.types.IType;
  * The Class IntVariable.
  */
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false, doc = @doc("The name of the attribute")),
-	@facet(name = IKeyword.TYPE,
-		type = IType.TYPE_ID,
-		optional = true,
-		doc = @doc("The type of the attribute, either 'int' or 'float'")),
-	@facet(name = IKeyword.INIT,
-		// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
-		type = { IType.INT, IType.FLOAT },
-		optional = true,
-		doc = @doc("The initial value of the attribute")),
-	@facet(name = IKeyword.VALUE,
-		type = { IType.INT, IType.FLOAT },
-		optional = true,
-		doc = @doc(value = "", deprecated = "Use 'update' instead")),
-	@facet(name = IKeyword.UPDATE,
-		type = { IType.INT, IType.FLOAT },
-		optional = true,
-		doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
-	@facet(name = IKeyword.FUNCTION,
-		type = { IType.INT, IType.FLOAT },
-		optional = true,
-		doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
-	@facet(name = IKeyword.CONST,
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc("Indicates whether this attribute can be subsequently modified or not")),
-	@facet(name = IKeyword.CATEGORY,
-		type = IType.LABEL,
-		optional = true,
-		doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
-	@facet(name = IKeyword.PARAMETER,
-		type = IType.LABEL,
-		optional = true,
-		doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
-	@facet(name = IKeyword.MIN,
-		type = { IType.INT, IType.FLOAT },
-		optional = true,
-		doc = @doc("The minimum value this attribute can take")),
-	@facet(name = IKeyword.MAX,
-		type = { IType.INT, IType.FLOAT },
-		optional = true,
-		doc = @doc("The maximum value this attribute can take. ")),
-	@facet(name = IKeyword.STEP, type = IType.INT, optional = true),
-	@facet(name = IKeyword.AMONG,
-		type = IType.LIST,
-		optional = true,
-		doc = @doc("A list of constant values among which the attribute can take its value")) },
-	omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false,
-concept = {})
+		@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false, doc = @doc("The name of the attribute")),
+		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("The type of the attribute, either 'int' or 'float'")),
+		@facet(name = IKeyword.INIT,
+				// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+				type = { IType.INT, IType.FLOAT }, optional = true, doc = @doc("The initial value of the attribute")),
+		@facet(name = IKeyword.VALUE, type = { IType.INT,
+				IType.FLOAT }, optional = true, doc = @doc(value = "", deprecated = "Use 'update' instead")),
+		@facet(name = IKeyword.UPDATE, type = { IType.INT,
+				IType.FLOAT }, optional = true, doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
+		@facet(name = IKeyword.FUNCTION, type = { IType.INT,
+				IType.FLOAT }, optional = true, doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
+		@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true, doc = @doc("Indicates whether this attribute can be subsequently modified or not")),
+		@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true, doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
+		@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true, doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
+		@facet(name = IKeyword.MIN, type = { IType.INT,
+				IType.FLOAT }, optional = true, doc = @doc("The minimum value this attribute can take")),
+		@facet(name = IKeyword.MAX, type = { IType.INT,
+				IType.FLOAT }, optional = true, doc = @doc("The maximum value this attribute can take. ")),
+		@facet(name = IKeyword.STEP, type = IType.INT, optional = true),
+		@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("A list of constant values among which the attribute can take its value")) }, omissible = IKeyword.NAME)
+@symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false, concept = {})
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @doc("Allows to declare an attribute of a species or experiment")
 public class NumberVariable extends Variable {
@@ -87,13 +61,13 @@ public class NumberVariable extends Variable {
 
 	public NumberVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
-		IScope scope = null;
+		final IScope scope = null;
 		// IScope scope = GAMA.obtainNewScope();
 		min = getFacet(IKeyword.MIN);
 		max = getFacet(IKeyword.MAX);
 		step = getFacet(IKeyword.STEP);
-		if ( min != null && min.isConst() ) {
-			if ( type.id() == IType.INT ) {
+		if (min != null && min.isConst()) {
+			if (type.id() == IType.INT) {
 				minVal = Cast.asInt(scope, min.value(scope));
 			} else {
 				minVal = Cast.asFloat(scope, min.value(scope));
@@ -101,8 +75,8 @@ public class NumberVariable extends Variable {
 		} else {
 			minVal = null;
 		}
-		if ( max != null && max.isConst() ) {
-			if ( type.id() == IType.INT ) {
+		if (max != null && max.isConst()) {
+			if (type.id() == IType.INT) {
 				maxVal = Cast.asInt(scope, max.value(scope));
 			} else {
 				maxVal = Cast.asFloat(scope, max.value(scope));
@@ -110,8 +84,8 @@ public class NumberVariable extends Variable {
 		} else {
 			maxVal = null;
 		}
-		if ( step != null && step.isConst() ) {
-			if ( type.id() == IType.INT ) {
+		if (step != null && step.isConst()) {
+			if (type.id() == IType.INT) {
 				stepVal = Cast.asInt(scope, step.value(scope));
 			} else {
 				stepVal = Cast.asFloat(scope, step.value(scope));
@@ -124,51 +98,59 @@ public class NumberVariable extends Variable {
 
 	@Override
 	public Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
-		Object val = super.coerce(agent, scope, v);
-		if ( type.id() == IType.INT ) {
-			Integer result = checkMinMax(agent, scope, (Integer) val);
+		final Object val = super.coerce(agent, scope, v);
+		if (type.id() == IType.INT) {
+			final Integer result = checkMinMax(agent, scope, (Integer) val);
 			return result;
 		}
-		Double result = checkMinMax(agent, scope, (Double) val);
+		final Double result = checkMinMax(agent, scope, (Double) val);
 		return result;
 	}
 
 	protected Integer checkMinMax(final IAgent agent, final IScope scope, final Integer f) throws GamaRuntimeException {
-		if ( min != null ) {
+		if (min != null) {
 			final Integer m = minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent)) : (Integer) minVal;
-			if ( f < m ) { return m; }
+			if (f < m) {
+				return m;
+			}
 		}
-		if ( max != null ) {
+		if (max != null) {
 			final Integer m = maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent)) : (Integer) maxVal;
-			if ( f > m ) { return m; }
+			if (f > m) {
+				return m;
+			}
 		}
 		return f;
 	}
 
 	protected Double checkMinMax(final IAgent agent, final IScope scope, final Double f) throws GamaRuntimeException {
-		if ( min != null ) {
+		if (min != null) {
 			final Double fmin = minVal == null ? Cast.asFloat(scope, scope.evaluate(min, agent)) : (Double) minVal;
-			if ( f < fmin ) { return fmin; }
+			if (f < fmin) {
+				return fmin;
+			}
 		}
-		if ( max != null ) {
+		if (max != null) {
 			final Double fmax = maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent)) : (Double) maxVal;
-			if ( f > fmax ) { return fmax; }
+			if (f > fmax) {
+				return fmax;
+			}
 		}
 		return f;
 	}
 
 	@Override
-	public Number getMinValue() {
+	public Number getMinValue(final IScope scope) {
 		return minVal;
 	}
 
 	@Override
-	public Number getMaxValue() {
+	public Number getMaxValue(final IScope scope) {
 		return maxVal;
 	}
 
 	@Override
-	public Number getStepValue() {
+	public Number getStepValue(final IScope scope) {
 		return stepVal;
 	}
 

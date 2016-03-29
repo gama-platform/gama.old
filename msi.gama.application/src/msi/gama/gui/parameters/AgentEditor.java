@@ -11,15 +11,19 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
 import msi.gaml.types.IType;
 
@@ -36,8 +40,8 @@ public class AgentEditor extends ExpressionBasedEditor {
 	// this(agent, param, null);
 	// }
 
-	AgentEditor(final IAgent agent, final IParameter param, final EditorListener l) {
-		super(agent, param, l);
+	AgentEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+		super(scope, agent, param, l);
 		species = param.getType().toString();
 	}
 
@@ -58,19 +62,19 @@ public class AgentEditor extends ExpressionBasedEditor {
 
 	@Override
 	public void applyChange() {
-		Menu old = items[CHANGE].getParent().getShell().getMenu();
+		final Menu old = items[CHANGE].getParent().getShell().getMenu();
 		items[CHANGE].getParent().getShell().setMenu(null);
 		if ( old != null ) {
 			old.dispose();
 		}
 		// FIXME Not adapted to multiple scales !
 
-		AgentsMenu.MenuAction action = new AgentsMenu.MenuAction(new SelectionAdapter() {
+		final AgentsMenu.MenuAction action = new AgentsMenu.MenuAction(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				MenuItem mi = (MenuItem) e.widget;
-				IAgent a = (IAgent) mi.getData("agent");
+				final MenuItem mi = (MenuItem) e.widget;
+				final IAgent a = (IAgent) mi.getData("agent");
 				if ( a != null && !a.dead() ) {
 					modifyAndDisplayValue(a);
 				}
@@ -78,10 +82,10 @@ public class AgentEditor extends ExpressionBasedEditor {
 
 		}, IGamaIcons.MENU_AGENT.image(), "Choose");
 
-		Menu dropMenu = new Menu(items[CHANGE].getParent().getShell());
+		final Menu dropMenu = new Menu(items[CHANGE].getParent().getShell());
 		AgentsMenu.fillPopulationSubMenu(dropMenu, GAMA.getSimulation().getMicroPopulation(species), null, action);
-		Rectangle rect = items[CHANGE].getBounds();
-		Point pt = items[CHANGE].getParent().toDisplay(new Point(rect.x, rect.y));
+		final Rectangle rect = items[CHANGE].getBounds();
+		final Point pt = items[CHANGE].getParent().toDisplay(new Point(rect.x, rect.y));
 		dropMenu.setLocation(pt.x, pt.y + rect.height);
 		dropMenu.setVisible(true);
 
@@ -117,9 +121,9 @@ public class AgentEditor extends ExpressionBasedEditor {
 	protected void applyInspect() {
 
 		if ( currentValue instanceof IAgent ) {
-			IAgent a = (IAgent) currentValue;
+			final IAgent a = (IAgent) currentValue;
 			if ( !a.dead() ) {
-				a.getScope().getGui().setSelectedAgent(a);
+				getScope().getGui().setSelectedAgent(a);
 			}
 		}
 

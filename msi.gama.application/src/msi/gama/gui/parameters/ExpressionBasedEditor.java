@@ -5,11 +5,14 @@
 package msi.gama.gui.parameters;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 
 /**
  * Class ExpressionBasedEditor.
@@ -22,20 +25,21 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 
 	protected ExpressionControl expression;
 
-	public ExpressionBasedEditor(final IParameter variable) {
-		super(variable);
+	public ExpressionBasedEditor(final IScope scope, final IParameter variable) {
+		super(scope, variable);
 	}
 
-	public ExpressionBasedEditor(final IParameter variable, final EditorListener l) {
-		super(variable, l);
+	public ExpressionBasedEditor(final IScope scope, final IParameter variable, final EditorListener l) {
+		super(scope, variable, l);
 	}
 
-	public ExpressionBasedEditor(final IAgent a, final IParameter variable) {
-		super(a, variable);
+	public ExpressionBasedEditor(final IScope scope, final IAgent a, final IParameter variable) {
+		super(scope, a, variable);
 	}
 
-	public ExpressionBasedEditor(final IAgent a, final IParameter variable, final EditorListener l) {
-		super(a, variable, l);
+	public ExpressionBasedEditor(final IScope scope, final IAgent a, final IParameter variable,
+		final EditorListener l) {
+		super(scope, a, variable, l);
 	}
 
 	@Override
@@ -46,8 +50,8 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
-		expression =
-			new ExpressionControl(compo, this, getAgent(), this.getExpectedType(), SWT.BORDER, evaluateExpression());
+		expression = new ExpressionControl(getScope(), compo, this, getAgent(), this.getExpectedType(), SWT.BORDER,
+			evaluateExpression());
 		return expression.getControl();
 	}
 

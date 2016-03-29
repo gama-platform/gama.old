@@ -11,10 +11,17 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import gnu.trove.map.hash.THashMap;
-import msi.gama.common.interfaces.*;
-import msi.gama.kernel.experiment.*;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.IParameterEditor;
+import msi.gama.common.interfaces.ItemList;
+import msi.gama.kernel.experiment.EditorsList;
+import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaColor;
 
@@ -29,8 +36,8 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	public String getItemDisplayName(final IAgent ag, final String name) {
 		if ( name == null ) { return AGENT_MARKER + ag.getName(); }
 		if ( ag.dead() && !name.contains(DEAD_MARKER) ) {
-			long cycle = ag.getScope().getClock().getCycle();
-			String result = AGENT_MARKER + ItemList.ERROR_CODE +
+			final long cycle = ag.getScope().getClock().getCycle();
+			final String result = AGENT_MARKER + ItemList.ERROR_CODE +
 				name.substring(name.indexOf(ItemList.SEPARATION_CODE) + 1) + DEAD_MARKER + cycle;
 			return result;
 		}
@@ -48,7 +55,8 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 			if ( !agent.dead() ) {
 				for ( final IParameter var : params ) {
 					if ( !HIDDEN.contains(var.getName()) ) {
-						IParameterEditor gp = EditorFactory.getInstance().create(agent, var, null);
+						final IParameterEditor gp =
+							EditorFactory.getInstance().create(agent.getScope(), agent, var, null);
 						categories.get(agent).put(gp.getParam().getName(), gp);
 					}
 				}
@@ -67,11 +75,11 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	@Override
 	public void updateItemValues() {
-		for ( Map.Entry<IAgent, Map<String, IParameterEditor>> entry : categories.entrySet() ) {
+		for ( final Map.Entry<IAgent, Map<String, IParameterEditor>> entry : categories.entrySet() ) {
 			if ( !entry.getKey().dead() ) {
-				for ( IParameterEditor gp : entry.getValue().values() ) {
+				for ( final IParameterEditor gp : entry.getValue().values() ) {
 					gp.updateValue();
-				};
+				} ;
 			}
 		}
 	}

@@ -11,17 +11,36 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.matrix.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.matrix.GamaObjectMatrix;
+import msi.gama.util.matrix.IMatrix;
 
 public class MatrixEditorDialog extends Dialog {
 
@@ -29,11 +48,13 @@ public class MatrixEditorDialog extends Dialog {
 
 	private Composite container = null;
 	private Table table = null;
+	private final IScope scope;
 
 	private final Color gray = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 
-	protected MatrixEditorDialog(final Shell parentShell, final IMatrix paramValue) {
+	protected MatrixEditorDialog(final IScope scope, final Shell parentShell, final IMatrix paramValue) {
 		super(parentShell);
+		this.scope = scope;
 		data = paramValue;
 	}
 
@@ -46,31 +67,26 @@ public class MatrixEditorDialog extends Dialog {
 		table.setHeaderVisible(false);
 
 		/** Creation of the index column */
-		TableColumn columnIndex = new TableColumn(table, SWT.CENTER);
+		final TableColumn columnIndex = new TableColumn(table, SWT.CENTER);
 		columnIndex.setWidth(30);
 
 		/** Creation of table columns */
-		GAMA.run(new InScope.Void() {
 
-			@Override
-			public void process(final IScope scope) {
-				int index = 0;
-				for ( int i = 0; i < data.getCols(scope); i++ ) {
-					TableColumn column = new TableColumn(table, SWT.CENTER);
-					column.setWidth(90);
-				}
-				/** Creation of table rows */
-				for ( int i = 0; i < data.getRows(scope); i++ ) {
-					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(0, String.valueOf(index));
-					item.setBackground(0, gray);
-					index++;
-					for ( int j = 0; j < data.getCols(scope); j++ ) {
-						item.setText(j + 1, "" + data.get(scope, j, i));
-					}
-				}
+		int index = 0;
+		for ( int i = 0; i < data.getCols(scope); i++ ) {
+			final TableColumn column = new TableColumn(table, SWT.CENTER);
+			column.setWidth(90);
+		}
+		/** Creation of table rows */
+		for ( int i = 0; i < data.getRows(scope); i++ ) {
+			final TableItem item = new TableItem(table, SWT.NONE);
+			item.setText(0, String.valueOf(index));
+			item.setBackground(0, gray);
+			index++;
+			for ( int j = 0; j < data.getCols(scope); j++ ) {
+				item.setText(j + 1, "" + data.get(scope, j, i));
 			}
-		});
+		}
 
 		/** Get the table editable */
 		final TableEditor editor = new TableEditor(table);
@@ -80,19 +96,19 @@ public class MatrixEditorDialog extends Dialog {
 
 			@Override
 			public void handleEvent(final Event event) {
-				Rectangle clientArea = table.getClientArea();
-				Point pt = new Point(event.x, event.y);
+				final Rectangle clientArea = table.getClientArea();
+				final Point pt = new Point(event.x, event.y);
 				int index = table.getTopIndex();
 				while (index < table.getItemCount()) {
 					boolean visible = false;
 					final TableItem item = table.getItem(index);
 					/** We don't want to have the first column editable so from i=1 */
 					for ( int i = 1; i < table.getColumnCount(); i++ ) {
-						Rectangle rect = item.getBounds(i);
+						final Rectangle rect = item.getBounds(i);
 						if ( rect.contains(pt) ) {
 							final int column = i;
 							final Text text = new Text(table, SWT.NONE);
-							Listener textListener = new Listener() {
+							final Listener textListener = new Listener() {
 
 								@Override
 								public void handleEvent(final Event e) {
@@ -135,7 +151,7 @@ public class MatrixEditorDialog extends Dialog {
 		/** Create and configure the "Add" button */
 		final Button add = new Button(parent, SWT.PUSH | SWT.CENTER);
 		add.setText("Add a row");
-		GridData gridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
+		final GridData gridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 		gridData.widthHint = 80;
 		add.setLayoutData(gridData);
 		add.addSelectionListener(new SelectionAdapter() {
@@ -190,7 +206,7 @@ public class MatrixEditorDialog extends Dialog {
 			/** Remove the selection and refresh the view */
 			@Override
 			public void handleEvent(final Event event) {
-				int nextIndex = table.getSelectionIndex();
+				final int nextIndex = table.getSelectionIndex();
 				table.remove(table.getSelectionIndices());
 				del.setEnabled(false);
 				add.setText("Add a row");
@@ -203,7 +219,7 @@ public class MatrixEditorDialog extends Dialog {
 			public void widgetDisposed(final DisposeEvent e) {
 				try {
 					data = getNewMatrix();
-				} catch (GamaRuntimeException e1) {
+				} catch (final GamaRuntimeException e1) {
 					GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 				}
 			}
@@ -225,33 +241,27 @@ public class MatrixEditorDialog extends Dialog {
 		final int rows = table.getItemCount();
 		final int cols = table.getColumnCount() - 1;
 
-		final IMatrix m = GAMA.run(new InScope<IMatrix>() {
+		final IMatrix m = createMatrix(rows, cols);
 
-			@Override
-			public IMatrix run(final IScope scope) {
-				if ( data instanceof GamaIntMatrix ) {
-					return new GamaIntMatrix(cols, rows);
-				} else if ( data instanceof GamaFloatMatrix ) {
-					return new GamaFloatMatrix(cols, rows);
-				} else {
-					return new GamaObjectMatrix(cols, rows, data.getType().getContentType());
-				}
+		for ( int r = 0; r < rows; r++ ) {
+			for ( int c = 1; c < cols + 1; c++ ) {
+				final TableItem item = table.getItem(r);
+				m.set(scope, c - 1, r, item.getText(c));
 			}
-		});
-		GAMA.run(new InScope.Void() {
-
-			@Override
-			public void process(final IScope scope) {
-				for ( int r = 0; r < rows; r++ ) {
-					for ( int c = 1; c < cols + 1; c++ ) {
-						final TableItem item = table.getItem(r);
-						m.set(scope, c - 1, r, item.getText(c));
-					}
-				}
-			}
-		});
+		}
 
 		return m;
+	}
+
+	private IMatrix createMatrix(final int rows, final int cols) {
+		if ( data instanceof GamaIntMatrix ) {
+			return new GamaIntMatrix(cols, rows);
+		} else if ( data instanceof GamaFloatMatrix ) {
+			return new GamaFloatMatrix(cols, rows);
+		} else {
+			return new GamaObjectMatrix(cols, rows, data.getType().getContentType());
+		}
+
 	}
 
 	public IMatrix getMatrix() {

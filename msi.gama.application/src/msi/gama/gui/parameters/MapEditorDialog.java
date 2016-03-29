@@ -11,16 +11,29 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import msi.gama.runtime.*;
-import msi.gama.util.*;
-import msi.gaml.types.Types;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import msi.gama.runtime.IScope;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
+import msi.gaml.types.Types;
 
 /**
  * The MapParameterDialog supply a window to help user to modify the map in the visual way.
@@ -41,9 +54,11 @@ public class MapEditorDialog extends Dialog {
 	private Button newElementButton = null;
 	private Button removeButton = null;
 	private List list = null;
+	private final IScope scope;
 
 	protected MapEditorDialog(final IScope scope, final Shell parentShell, final GamaMap list) {
 		super(parentShell);
+		this.scope = scope;
 		data = list;
 		// IList<GamaPair> l = list.getPairs();
 		// for ( GamaPair p : l ) {
@@ -124,21 +139,14 @@ public class MapEditorDialog extends Dialog {
 			public void mouseUp(final MouseEvent me) {
 				if ( !existKey(elementText1.getText()) ) {
 					list.add(elementText1.getText() + "::" + elementText2.getText());
-					GAMA.run(new GAMA.InScope.Void() {
-
-						@Override
-						public void process(final IScope scope) {
-							data.addValue(scope, new GamaPair(elementText1.getText(), elementText2.getText(),
-								Types.STRING, Types.STRING));
-
-						}
-					});
+					data.addValue(scope,
+						new GamaPair(elementText1.getText(), elementText2.getText(), Types.STRING, Types.STRING));
 					elementText1.setText("");
 					elementText2.setText("");
 					newElementButton.setEnabled(false);
 				} else {
 					/** Create the required Status object */
-					Status status = new Status(IStatus.ERROR, "GAMA", 0, "This key already exist", null);
+					final Status status = new Status(IStatus.ERROR, "GAMA", 0, "This key already exist", null);
 					/** Display the error dialog */
 					ErrorDialog.openError(Display.getCurrent().getActiveShell(), null, null, status);
 				}
@@ -222,15 +230,15 @@ public class MapEditorDialog extends Dialog {
 
 	public boolean existKey(final String elem) {
 		for ( final Object element : data.keySet() ) {
-			String tmp = element.toString();
+			final String tmp = element.toString();
 			if ( tmp.equals(elem) ) { return true; }
 		}
 		return false;
 	}
 
 	public GamaMap getMap() {
-		boolean isFirstElement = true;
-		Object first = null;
+		final boolean isFirstElement = true;
+		final Object first = null;
 		return data;
 	}
 

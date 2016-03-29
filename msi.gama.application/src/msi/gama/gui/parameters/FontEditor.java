@@ -11,35 +11,40 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FontDialog;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaFont;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 
 public class FontEditor extends AbstractEditor<GamaFont> {
 
 	private FlatButton edit;
 
-	FontEditor(final IParameter param) {
-		super(param);
+	FontEditor(final IScope scope, final IParameter param) {
+		super(scope, param);
 	}
 
-	FontEditor(final IAgent agent, final IParameter param, final EditorListener l) {
-		super(agent, param, l);
+	FontEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+		super(scope, agent, param, l);
 	}
 
-	FontEditor(final IAgent agent, final IParameter param) {
-		this(agent, param, null);
+	FontEditor(final IScope scope, final IAgent agent, final IParameter param) {
+		this(scope, agent, param, null);
 	}
 
-	FontEditor(final Composite parent, final String title, final Object value,
+	FontEditor(final IScope scope, final Composite parent, final String title, final Object value,
 		final EditorListener<GamaFont> whenModified) {
-		super(new InputParameter(title, value), whenModified);
+		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
@@ -54,7 +59,7 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		GamaFont data = currentValue != null ? currentValue : toGamaFont(SwtGui.getSmallFont().getFontData()[0]);
+		final GamaFont data = currentValue != null ? currentValue : toGamaFont(SwtGui.getSmallFont().getFontData()[0]);
 		edit.setText(data.toString());
 		edit.setFont(new Font(SwtGui.getDisplay(), toFontData(data)));
 		internalModification = false;
@@ -89,7 +94,7 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
-		FontDialog dialog = new FontDialog(SwtGui.getShell());
+		final FontDialog dialog = new FontDialog(SwtGui.getShell());
 		dialog.setEffectsVisible(false);
 		FontData data = toFontData(currentValue);
 		dialog.setFontList(new FontData[] { data });
