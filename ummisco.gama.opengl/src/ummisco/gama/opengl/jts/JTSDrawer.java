@@ -1008,15 +1008,16 @@ public class JTSDrawer {
 		final int slices = 16;
 		final int stacks = 16;
 
-		 gl.glColor4d(30.0/256, 120.0/256, 70.0/256, 1.0);
-		 glu.gluSphere(quad, 5.0*(distance/300), slices, stacks);
+//		 gl.glColor4d(30.0/256, 120.0/256, 70.0/256, 1.0);
+		 gl.glColor4d(0.5, 0.5, 0.5, 1.0);
+		 glu.gluSphere(quad, 5.0*(distance/500), slices, stacks);
 		 gl.glColor4d(1.0, 1.0, 1.0, 1.0);
-		 glu.gluCylinder(quad, 0.1*(distance/300), 0.1*(distance/300), 230.0*(distance/300), slices, stacks);
+		 glu.gluCylinder(quad, 0.1*(distance/500), 0.1*(distance/500), 230.0*(distance/500), slices, stacks);
 		 gl.glRotated(180.0, 1.0, 0.0, 0.0);
-		 glu.gluCylinder(quad, 0.1*(distance/300), 0.1*(distance/300), 230.0*(distance/300), slices, stacks);
-		 gl.glColor4d(30.0/256, 120.0/256, 70.0/256, 0.5);
+		 glu.gluCylinder(quad, 0.1*(distance/500), 0.1*(distance/500), 230.0*(distance/500), slices, stacks);
+		 gl.glColor4d(0.5, 0.5, 0.5, 0.5);
 //		 gl.glColor4d(1.0, 1.0, 1.0, 1.0);
-		 glu.gluSphere(quad, 50.0*(distance/300), slices, stacks);
+		 glu.gluSphere(quad, 50.0*(distance/500), slices, stacks);
 		 gl.glRotated(180.0, 1.0, 0.0, 0.0);
 		 float[] diffuseLight = { 1f,2f,1f,0f };  // multicolor diffuse 
 		 gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0); 
