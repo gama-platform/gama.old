@@ -15,6 +15,7 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
+import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -45,9 +46,15 @@ import msi.gaml.types.Types;
 public class System {
 
 	@operator(value = "dead", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM, IConcept.SPECIES })
-	@doc(value = "true if the agent is dead, false otherwise.", examples = @example(value = "dead(agent_A)", equals = "true or false", isExecutable = false))
+	@doc(value = "true if the agent is dead (or null), false otherwise.", examples = @example(value = "dead(agent_A)", equals = "true or false", isExecutable = false))
 	public static Boolean opDead(final IScope scope, final IAgent a) {
 		return a == null || a.dead();
+	}
+	
+	@operator(value = "is_null", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM })
+	@doc(value = "true if the object is null, false otherwise.", examples = @example(value = "is_null(agent_A)", equals = "true or false", isExecutable = false))
+	public static Boolean opIsNull(final IScope scope, final Object a) {
+		return a == null;
 	}
 
 	@operator(value = "every", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM, IConcept.CYCLE })
