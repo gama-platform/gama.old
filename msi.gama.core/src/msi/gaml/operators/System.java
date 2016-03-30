@@ -50,12 +50,6 @@ public class System {
 	public static Boolean opDead(final IScope scope, final IAgent a) {
 		return a == null || a.dead();
 	}
-	
-	@operator(value = "is_null", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM })
-	@doc(value = "true if the object is null, false otherwise.", examples = @example(value = "is_null(agent_A)", equals = "true or false", isExecutable = false))
-	public static Boolean opIsNull(final IScope scope, final Object a) {
-		return a == null;
-	}
 
 	@operator(value = "every", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM, IConcept.CYCLE })
 	@doc(value = "true every operand * cycle, false otherwise", comment = "the value of the every operator depends on the cycle. It can be used to do something every x cycle.", examples = {

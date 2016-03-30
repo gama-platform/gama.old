@@ -385,6 +385,24 @@ public abstract class Spatial {
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildRectangle(x, y, location);
 		}
+		
+		@operator(value = "rectangle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
+			@doc(value = "A rectangle geometry which upper-left and lower-right corners are defined as points.",
+			usages = { @usage(value = "returns nil if the operand is nil.") },
+			examples = { @example(value = "rectangle({2.0,6.0}, {6.0,20.0})",
+			equals = "a geometry as a rectangle with {2.0,6.0} as the upper-left corner, {6.0,20.0} as the lower-right corner.",
+			test = false) },
+			see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
+			"triangle" })
+			public static IShape rectangle(final IScope scope, final GamaPoint upperLeftCorner, final GamaPoint lowerRightCorner) {
+				ILocation location;
+				double width = Math.abs(upperLeftCorner.x-lowerRightCorner.x);
+				double height = Math.abs(upperLeftCorner.y-lowerRightCorner.y);
+				GamaPoint realTopLeftCorner = new GamaPoint( Math.min(upperLeftCorner.x, lowerRightCorner.x), Math.min(upperLeftCorner.y, lowerRightCorner.y) );
+				location = new GamaPoint(realTopLeftCorner.x+width/2,realTopLeftCorner.y+height/2);
+				return GamaGeometryType.buildRectangle(width, height, location);
+			}
 
 		@operator(value = "box",
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
