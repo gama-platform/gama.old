@@ -549,8 +549,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		public void startDrawRotationHelper(GamaPoint pos) {
 			rotationHelperPosition = pos;
 			drawRotationHelper = true;
+			double distance = Math.sqrt( Math.pow(camera.getPosition().x-rotationHelperPosition.x,2) 
+					+ Math.pow(camera.getPosition().y-rotationHelperPosition.y,2)
+					+ Math.pow(camera.getPosition().z-rotationHelperPosition.z,2) );
+			double size = distance / 15; // the size of the displayed axis
 			if (currentScene != null)
-				currentScene.startDrawRotationHelper(pos);
+				currentScene.startDrawRotationHelper(pos,size);
 		}
 		public void stopDrawRotationHelper() {
 			rotationHelperPosition = null;

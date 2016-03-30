@@ -107,8 +107,9 @@ public abstract class AbstractCamera implements ICamera {
 	}
 	
 	protected void drawRotationHelper(){}
-	protected void Mouse_interaction(boolean value){}
-	protected void Keyboard_interaction(boolean value){}
+	protected void Mouse_left_pressed(boolean value){}
+	protected void Ctrl_pressed(boolean value){}
+	protected void Shift_pressed(boolean value){}
 
 	public void updatePosition(final double xPos, final double yPos, final double zPos) {
 		position.setLocation(xPos, yPos, zPos);
@@ -206,7 +207,11 @@ public abstract class AbstractCamera implements ICamera {
 			this.isPickedPressed = true;
 			getRenderer().setPicking(true);
 			// myRenderer.drawPickableObjects();
-		} else {
+		}
+		else if (e.button == 2) { // mouse wheel
+			resetPivot();
+		}
+		else {
 			if ( shift(e) || alt(e) ) {
 				getMousePosition().x = e.x;
 				getMousePosition().y = e.y;
@@ -217,7 +222,9 @@ public abstract class AbstractCamera implements ICamera {
 		}
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
-		Mouse_interaction(ctrl(e));
+		
+		if (e.button == 1)
+			Mouse_left_pressed(true);
 	}
 
 	/**
@@ -251,8 +258,8 @@ public abstract class AbstractCamera implements ICamera {
 			}
 			renderer.cancelROI();
 		}
-		Mouse_interaction(false);
-
+		if (e.button == 1)
+			Mouse_left_pressed(false);
 	}
 
 	protected abstract void zoomRoi(Envelope3D env);
@@ -469,7 +476,6 @@ public abstract class AbstractCamera implements ICamera {
 	public void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
 		this.shiftKeyDown = shift(e);
 		this.altKeyDown = alt(e);
-		Keyboard_interaction(shift(e));
 		switch (e.keyCode) {
 			case SWT.ARROW_LEFT:
 				this.strafeLeft = true;
@@ -486,6 +492,15 @@ public abstract class AbstractCamera implements ICamera {
 			case SWT.SPACE:
 				resetPivot();
 				return;
+			case SWT.CTRL:
+				Ctrl_pressed(true);
+				break;
+			case SWT.COMMAND:
+				Ctrl_pressed(true);
+				break;
+			case SWT.SHIFT:
+				Shift_pressed(true);
+				break;
 		}
 		switch (e.character) {
 			case '+':
@@ -528,9 +543,6 @@ public abstract class AbstractCamera implements ICamera {
 	public void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
 		this.shiftKeyDown = shift(e);
 		this.altKeyDown = alt(e);
-		Keyboard_interaction(shift(e));
-		if ( (SWTAccessor.isOSX && (SWT.COMMAND) != 0) || (SWT.CTRL != 0) )
-			Mouse_interaction(false);
 		switch (e.keyCode) {
 			case SWT.ARROW_LEFT: // player turns left (scene rotates right)
 				this.strafeLeft = false;
@@ -544,8 +556,14 @@ public abstract class AbstractCamera implements ICamera {
 			case SWT.ARROW_DOWN:
 				this.goesBackward = false;
 				break;
+			case SWT.CTRL:
+				Ctrl_pressed(false);
+				break;
+			case SWT.COMMAND:
+				Ctrl_pressed(true);
+				break;
 			case SWT.SHIFT:
-				Keyboard_interaction(false);
+				Shift_pressed(false);
 				break;
 		}
 

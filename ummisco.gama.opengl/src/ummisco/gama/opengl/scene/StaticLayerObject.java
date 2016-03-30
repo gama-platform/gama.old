@@ -31,6 +31,7 @@ public class StaticLayerObject extends LayerObject {
 	static final Double WORLD_ALPHA = 1d;
 	
 	static GamaPoint pivotPoint = null;
+	static double axisSize = 0;
 	static List<GeometryObject> geomObjList = new ArrayList<GeometryObject>();
 	static List<StringObject> stringObjList = new ArrayList<StringObject>();
 
@@ -137,7 +138,6 @@ public class StaticLayerObject extends LayerObject {
 		}
 		
 		public void drawXYPlan(final double w, final double h) {
-			double size = (w > h ? w : h) / 10;
 			// add the world
 			GamaColor c = new GamaColor(150, 150, 150, 255);
 			GamaPoint origin = new GamaPoint();
@@ -166,6 +166,7 @@ public class StaticLayerObject extends LayerObject {
 			GamaPoint origin = new GamaPoint();
 			if (pivotPoint != null) {
 				origin = pivotPoint;
+				size = axisSize;
 			}
 
 			// build the lines
@@ -216,8 +217,9 @@ public class StaticLayerObject extends LayerObject {
 
 		}
 		
-		public void startDrawRotationHelper(final GamaPoint pivotPosition) {
+		public void startDrawRotationHelper(final GamaPoint pivotPosition, final double size) {
 			pivotPoint = pivotPosition;
+			axisSize = size;
 		}
 		
 		public void stopDrawRotationHelper() {

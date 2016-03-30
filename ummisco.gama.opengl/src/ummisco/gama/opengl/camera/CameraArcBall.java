@@ -26,8 +26,9 @@ public class CameraArcBall extends AbstractCamera {
 
 	private double radius;
 	
-	private boolean mouse_interaction = false;
-	private boolean keyboard_interaction = false;
+	private boolean mouse_left_pressed = false;
+	private boolean ctrl_pressed = false;
+	private boolean shift_pressed = false;
 	
 	private boolean isDrawingRotateHelper = GamaPreferences.DRAW_ROTATE_HELPER.getValue();
 
@@ -172,8 +173,6 @@ public class CameraArcBall extends AbstractCamera {
 				theta += 180;
 			}
 		}
-		
-		phi += 30;
 		updateCartesianCoordinatesFromAngles();
 	}
 
@@ -204,6 +203,7 @@ public class CameraArcBall extends AbstractCamera {
 		phi = threeD ? 135.0 : 0.0;
 		theta = -90.00;
 		upVectorAngle = 0.0;
+		flipped = false;
 		updateCartesianCoordinatesFromAngles();
 	}
 
@@ -214,8 +214,7 @@ public class CameraArcBall extends AbstractCamera {
 		// And we animate it if the keyboard is invoked
 		double translation = 2 * (FastMath.abs(position.z) + 1) / getRenderer().getHeight();
 		if ( isForward() ) {
-			if ( isShiftKeyDown() ) {
-				
+			if ( shift_pressed ) {
 				if (flipped) {
 					if (phi - get_keyboardSensivity() * get_sensivity() > 0)
 						phi -= get_keyboardSensivity() * get_sensivity();
@@ -234,12 +233,6 @@ public class CameraArcBall extends AbstractCamera {
 						theta += 180;
 					}
 				}
-				
-				
-//				if (flipped)
-//					phi = phi - get_keyboardSensivity() * get_sensivity();
-//				else
-//					phi = phi + get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				if (flipped)
@@ -250,9 +243,7 @@ public class CameraArcBall extends AbstractCamera {
 			}
 		}
 		if ( isBackward() ) {
-			if ( isShiftKeyDown() ) {
-				
-				
+			if ( shift_pressed ) {
 				if (flipped) {
 					if (phi + get_keyboardSensivity() * get_sensivity() < 180)
 						phi += get_keyboardSensivity() * get_sensivity();
@@ -271,12 +262,6 @@ public class CameraArcBall extends AbstractCamera {
 						theta += 180;
 					}
 				}
-				
-				
-//				if (flipped)
-//					phi = phi + get_keyboardSensivity() * get_sensivity();
-//				else
-//					phi = phi - get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				if (flipped)
@@ -286,7 +271,7 @@ public class CameraArcBall extends AbstractCamera {
 			}
 		}
 		if ( isStrafeLeft() ) {
-			if ( isShiftKeyDown() ) {
+			if ( shift_pressed ) {
 				if (flipped)
 					theta = theta + -get_keyboardSensivity() * get_sensivity();
 				else
@@ -305,7 +290,7 @@ public class CameraArcBall extends AbstractCamera {
 			}
 		}
 		if ( isStrafeRight() ) {
-			if ( isShiftKeyDown() ) {
+			if ( shift_pressed ) {
 				if (flipped)
 					theta = theta + get_keyboardSensivity() * get_sensivity();
 				else
@@ -371,10 +356,10 @@ public class CameraArcBall extends AbstractCamera {
 		if ( isArcBallOn(e) ) {
 			int horizMovement = e.x - lastMousePressedPosition.x;
 			int vertMovement = e.y - lastMousePressedPosition.y;
-			if (flipped) {
-				horizMovement = -horizMovement;
-				vertMovement = -vertMovement;
-			}
+//			if (flipped) {
+//				horizMovement = -horizMovement;
+//				vertMovement = -vertMovement;
+//			}
 			
 			double horizMovement_real = horizMovement*FastMath.cos(upVectorAngle*Maths.toRad) - vertMovement*FastMath.sin(upVectorAngle*Maths.toRad);
 			double vertMovement_real = vertMovement*FastMath.cos(upVectorAngle*Maths.toRad) + horizMovement*FastMath.sin(upVectorAngle*Maths.toRad);
@@ -382,27 +367,52 @@ public class CameraArcBall extends AbstractCamera {
 			lastMousePressedPosition = newPoint;
 			theta = theta - horizMovement_real * get_sensivity();
 			
-//			if (flipped) {
-//				if (phi + vertMovement_real * get_sensivity() < 180)
-//					phi += vertMovement_real * get_sensivity();
-//				else {
-//					phi = 360-phi - vertMovement_real * get_sensivity();
-//					flipped = false;
-//					theta += 180;
-//				}
-//			}
-//			else {
-//				if (phi - vertMovement_real * get_sensivity() > 0)
-//					phi -= vertMovement_real * get_sensivity();
-//				else {
-//					phi = - phi + vertMovement_real * get_sensivity();
-//					flipped = true;
-//					theta += 180;
-//				}
-//			}
+			if (flipped) {
+				if (vertMovement_real > 0) {
+					// down drag : phi increase
+					if (phi + vertMovement_real * get_sensivity() < 180)
+						phi += vertMovement_real * get_sensivity();
+					else {
+						phi = +360+phi - vertMovement_real * get_sensivity();
+						flipped = !flipped;
+						theta += 180;
+					}
+				}
+				else {
+					// up drag : phi decrease
+					if (phi - -vertMovement_real * get_sensivity() > 0)
+						phi -= -vertMovement_real * get_sensivity();		
+					else {
+						phi = - phi + -vertMovement_real * get_sensivity();
+						flipped = !flipped;
+						theta += 180;
+					}
+				}
+			}
+			else {
+				if (vertMovement_real > 0) {
+					// down drag : phi decrease
+					if (phi - vertMovement_real * get_sensivity() > 0)
+						phi -= vertMovement_real * get_sensivity();		
+					else {
+						phi = - phi + vertMovement_real * get_sensivity();
+						flipped = !flipped;
+						theta += 180;
+					}
+				}
+				else {
+					// up drag : phi increase
+					if (phi + -vertMovement_real * get_sensivity() < 180)
+						phi += -vertMovement_real * get_sensivity();
+					else {
+						phi = +360+phi - vertMovement_real * get_sensivity();
+						flipped = !flipped;
+						theta += 180;
+					}
+				}
+			}			
 			
-			
-			phi = phi - vertMovement_real * get_sensivity();
+			//phi = phi - vertMovement_real * get_sensivity();
 			updateCartesianCoordinatesFromAngles();
 		}
 		else if ( (shift(e) || alt(e)) && isViewIn2DPlan() ) {
@@ -435,21 +445,27 @@ public class CameraArcBall extends AbstractCamera {
 	}
 	
 	@Override
-	protected void Mouse_interaction(boolean value) {
-		mouse_interaction = value;
+	protected void Mouse_left_pressed(boolean value) {
+		mouse_left_pressed = value;
 		drawRotationHelper();
 	}
 	
 	@Override
-	protected void Keyboard_interaction(boolean value) {
-		keyboard_interaction = value;
+	protected void Ctrl_pressed(boolean value) {
+		ctrl_pressed = value;
+		drawRotationHelper();
+	}
+	
+	@Override
+	protected void Shift_pressed(boolean value) {
+		shift_pressed = value;
 		drawRotationHelper();
 	}
 	
 	@Override
 	protected void drawRotationHelper() {
 		if (isDrawingRotateHelper) {
-			if (mouse_interaction || keyboard_interaction) {
+			if ((ctrl_pressed) || (shift_pressed)) {
 				getRenderer().startDrawRotationHelper(target);
 			}
 			else {

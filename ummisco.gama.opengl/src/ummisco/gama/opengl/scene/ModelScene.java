@@ -277,9 +277,9 @@ public class ModelScene {
 		}
 	}
 	
-	public void startDrawRotationHelper(final GamaPoint pivotPoint) {
+	public void startDrawRotationHelper(final GamaPoint pivotPoint, final double size) {
 		WordLayerObject worldLayer = (WordLayerObject)layers.get(ENV_KEY);
-		worldLayer.startDrawRotationHelper(pivotPoint);
+		worldLayer.startDrawRotationHelper(pivotPoint,size);
 	}
 	
 	public void stopDrawRotationHelper() {
