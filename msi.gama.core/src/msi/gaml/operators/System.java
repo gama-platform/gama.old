@@ -15,7 +15,6 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;

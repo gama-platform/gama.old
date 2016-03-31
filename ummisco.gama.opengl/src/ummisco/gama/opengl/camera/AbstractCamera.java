@@ -560,7 +560,7 @@ public abstract class AbstractCamera implements ICamera {
 				Ctrl_pressed(false);
 				break;
 			case SWT.COMMAND:
-				Ctrl_pressed(true);
+				Ctrl_pressed(false);
 				break;
 			case SWT.SHIFT:
 				Shift_pressed(false);
