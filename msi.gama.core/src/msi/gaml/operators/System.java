@@ -70,7 +70,7 @@ public class System {
 		if (a == null) {
 			if (!scope.interrupted()) {
 				throw GamaRuntimeException
-						.warning("Cannot evaluate " + s.serialize(false) + " as the target agent is null");
+						.warning("Cannot evaluate " + s.serialize(false) + " as the target agent is nil", scope);
 			}
 			return null;
 		}
@@ -79,7 +79,7 @@ public class System {
 			if (!scope.interrupted()) {
 				// scope.getGui().debug("System.opGetValue error");
 				throw GamaRuntimeException
-						.warning("Cannot evaluate " + s.serialize(false) + " as the target agent is dead");
+						.warning("Cannot evaluate " + s.serialize(false) + " as the target agent is dead", scope);
 			}
 			return null;
 		}
