@@ -128,7 +128,7 @@
 	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-core-1.14.0.jar" sourcepath="jts 1.14/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jcommon-1.0.23.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jfreechart-1.0.19.jar" sourcepath="jfreechart 1.0.19/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="commons-math3 3.1.1/jars/commons-math3-3.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-math3 3.1.1/jars/commons-math3-3.1.1.jar" sourcepath="commons-math3 3.1.1/commons-math3-3.1.1-src.zip"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
