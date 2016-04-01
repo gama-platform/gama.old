@@ -832,7 +832,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@action(name = "get_current_intention",
 		doc = @doc(value = "returns the current intention (last entry of intention base).",
-			returns = "true if it is in the base.",
+			returns = "the current intention",
 			examples = { @example("") }))
 	public Predicate currentIntention(final IScope scope) throws GamaRuntimeException {
 		GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
