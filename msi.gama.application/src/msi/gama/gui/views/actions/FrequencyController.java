@@ -12,12 +12,14 @@
 package msi.gama.gui.views.actions;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.ToolItem;
+import msi.gama.common.GamaPreferences;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.outputs.*;
+import msi.gama.outputs.IOutput;
 
 /**
  * The class SnapshotItem.
@@ -34,14 +36,14 @@ public class FrequencyController {
 		this.view = view;
 	}
 
-	double getInit() {
-		// refresh every 1 = 1d ; refresh every 100 = 0d;
-		IDisplayOutput output = view.getOutput();
-		if ( output == null ) { return 1d; }
-		int refresh = output.getRefreshRate();
-		if ( refresh >= 100 || refresh == 0 ) { return 0d; }
-		return (100 - refresh) / 100d;
-	}
+	// double getInit() {
+	// // refresh every 1 = 1d ; refresh every 100 = 0d;
+	// IDisplayOutput output = view.getOutput();
+	// if ( output == null ) { return 1d; }
+	// int refresh = output.getRefreshRate();
+	// if ( refresh >= 100 || refresh == 0 ) { return 0d; }
+	// return (100 - refresh) / 100d;
+	// }
 
 	int getRefresh(final double slider) {
 		// slider = 0d, refresh = 100; slider= 1d = , refresh = 1
@@ -76,8 +78,8 @@ public class FrequencyController {
 	}
 
 	protected ToolItem createSynchronizeItem(final GamaToolbar2 tb) {
-		return tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC.getCode(), "Synchronize with simulation", "Synchronize",
-			new SelectionAdapter() {
+		final ToolItem ti = tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC.getCode(), "Synchronize with simulation",
+			"Synchronize", new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
@@ -86,7 +88,8 @@ public class FrequencyController {
 				}
 
 			}, SWT.RIGHT);
-
+		ti.setSelection(GamaPreferences.CORE_SYNC.getValue());
+		return ti;
 	}
 
 	/**
@@ -100,7 +103,7 @@ public class FrequencyController {
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
 
-					IOutput output = view.getOutput();
+					final IOutput output = view.getOutput();
 					if ( output != null ) {
 						if ( output.isPaused() ) {
 							// output.getScope().getExperiment().getSpecies().getController().userStart();
