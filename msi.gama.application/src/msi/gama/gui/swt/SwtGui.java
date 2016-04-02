@@ -126,7 +126,7 @@ public class SwtGui extends AbstractGui {
 	static {
 		if ( !GAMA.isInHeadLessMode() ) {
 			// GAMA.setGui(new SwtGui());
-			WorkaroundForIssue1358.install();
+			// WorkaroundForIssue1358.install();
 		} else {
 			System.out.println("Configuring HEADLESS MODE");
 		}
@@ -653,6 +653,7 @@ public class SwtGui extends AbstractGui {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
+			WorkaroundForIssue1353.fixViewLosingMouseTrackEvents();
 			// IWorkbenchPart part = partRef.getPart(false);
 			// if ( part instanceof IGamaView ) {
 			// ((IGamaView) part).showToolbar();
@@ -685,6 +686,7 @@ public class SwtGui extends AbstractGui {
 
 		@Override
 		public void partOpened(final IWorkbenchPartReference partRef) {
+			WorkaroundForIssue1353.fixViewLosingMouseTrackEvents();
 			if ( partRef.getPart(false) instanceof LayeredDisplayView ) {
 				final LayeredDisplayView view = (LayeredDisplayView) partRef.getPart(false);
 				surfaces.add(view.getDisplaySurface());

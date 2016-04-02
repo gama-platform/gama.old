@@ -14,12 +14,17 @@ package msi.gama.gui.views;
 import javax.swing.JComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.displays.awt.*;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.swing.*;
+import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
+import msi.gama.gui.displays.awt.Java2DDisplaySurface;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.WorkaroundForIssue1353;
+import msi.gama.gui.swt.swing.Platform;
+import msi.gama.gui.swt.swing.SwingControl;
 import msi.gama.runtime.GAMA;
 
 public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvider */ {
@@ -76,8 +81,8 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 			@Override
 			protected JComponent createSwingComponent() {
 				final JComponent component = getDisplaySurface();
-				if (component != null) // can happen if the view has not been realized yet
-				component.addMouseMotionListener(mlAwt2);
+				if ( component != null ) // can happen if the view has not been realized yet
+					component.addMouseMotionListener(mlAwt2);
 				return component;
 			}
 
@@ -103,15 +108,14 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
 					overlay.setVisible(true);
 				}
-				System.out.println("afterComponentCreatedSWTThread on " + AWTDisplayView.this.getPartName());
 				WorkaroundForIssue1353.installOn(surfaceComposite, AWTDisplayView.this);
-				
+
 			}
 
 			@Override
 			public void afterComponentCreatedAWTThread() {
-				if (getDisplaySurface() != null)
-				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
+				if ( getDisplaySurface() != null )
+					new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
 
@@ -153,7 +157,6 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 		return surfaceComposite;
 	}
 
-
 	/**
 	 * Method zoomWhenScrolling()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
@@ -173,18 +176,16 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 
 	@Override
 	public void waitToBeRealized() {
-		if ( Platform.isWin32() ) {
-			return;
-		}
-		long start = System.currentTimeMillis();
+		if ( Platform.isWin32() ) { return; }
+		final long start = System.currentTimeMillis();
 		boolean openable = false;
 		while (!openable) {
 			try {
 				Thread.sleep(50);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
-			long now = System.currentTimeMillis();
+			final long now = System.currentTimeMillis();
 			openable = now - start > REALIZATION_TIME_OUT || this.getDisplaySurface().isRealized();
 		}
 
