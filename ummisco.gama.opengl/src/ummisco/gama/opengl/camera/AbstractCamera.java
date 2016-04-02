@@ -257,7 +257,7 @@ public abstract class AbstractCamera implements ICamera {
 						}
 					});
 					// System.out.println("Envelope : " + env);
-
+					Alt_pressed(false);
 					renderer.getSurface().selectSeveralAgents(shapes);
 				}
 			} else if ( shift(e) ) {
