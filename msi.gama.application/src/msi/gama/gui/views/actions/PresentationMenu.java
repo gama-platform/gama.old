@@ -155,27 +155,6 @@ public class PresentationMenu {
 				});
 			}
 		});
-		if ( arcBall ) {
-			MenuItem drag = new MenuItem(menu, SWT.PUSH);
-			boolean dragable = view.getDisplaySurface().getData().isArcBallDragOn();
-			drag.setText(dragable ? "Use mouse to drag" : "Use mouse to rotate");
-			drag.setImage(IGamaIcons.DISPLAY_TOOLBAR_DRAG.image());
-			drag.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					view.getDisplaySurface().runAndUpdate(new Runnable() {
-
-						@Override
-						public void run() {
-							boolean old = view.getDisplaySurface().getData().isArcBallDragOn();
-							view.getDisplaySurface().getData().setArgBallDragOn(!old);
-						}
-					});
-				}
-			});
-
-		}
 		new MenuItem(menu, SWT.SEPARATOR);
 
 		MenuItem rotation = new MenuItem(menu, SWT.CHECK);

@@ -278,15 +278,10 @@ public class CameraArcBall extends AbstractCamera {
 					theta = theta - -get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				if ( isAltKeyDown() /*&& isViewIn2DPlan()*/ ) {
-//					upVectorAngle -= 2;
-					// do nothing for the moment.
-				} else {
-					if (flipped)
-						translateCameraFromScreenPlan(get_keyboardSensivity() * get_sensivity() /**radius/1000.0*/,0.0);
-					else
-						translateCameraFromScreenPlan(-get_keyboardSensivity() * get_sensivity() /**radius/1000.0*/,0.0);
-				}
+				if (flipped)
+					translateCameraFromScreenPlan(get_keyboardSensivity() * get_sensivity() /**radius/1000.0*/,0.0);
+				else
+					translateCameraFromScreenPlan(-get_keyboardSensivity() * get_sensivity() /**radius/1000.0*/,0.0);
 			}
 		}
 		if ( isStrafeRight() ) {
@@ -297,15 +292,10 @@ public class CameraArcBall extends AbstractCamera {
 					theta = theta - get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				if ( isAltKeyDown() /*&& isViewIn2DPlan()*/ ) {
-//					upVectorAngle += 2;
-					// do nothing for the moment.
-				} else {
-					if (flipped)
-						translateCameraFromScreenPlan(- get_keyboardSensivity() * get_sensivity() /**radius/1000.0*/,0.0);
-					else
-						translateCameraFromScreenPlan(get_keyboardSensivity() * get_sensivity() /**radius/1000.0*/,0.0);
-				}
+				if (flipped)
+					translateCameraFromScreenPlan(- get_keyboardSensivity() * get_sensivity() /**radius/1000.0*/,0.0);
+				else
+					translateCameraFromScreenPlan(get_keyboardSensivity() * get_sensivity() /**radius/1000.0*/,0.0);
 			}
 		}
 	}
