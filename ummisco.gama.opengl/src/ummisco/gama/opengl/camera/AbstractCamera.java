@@ -65,9 +65,9 @@ public abstract class AbstractCamera implements ICamera {
 	private boolean strafeLeft;
 	private boolean strafeRight;
 	// private final boolean ctrlKeyDown = false;
-	protected boolean shiftKeyDown = false;
-	protected boolean altKeyDown = false;
-	protected boolean ctrlKeyDown = false;
+//	protected boolean shiftKeyDown = false;
+//	protected boolean altKeyDown = false;
+//	protected boolean ctrlKeyDown = false;
 //	protected boolean mouseLeftClickPressed = false;
 
 	public AbstractCamera(final JOGLRenderer renderer) {
@@ -243,7 +243,7 @@ public abstract class AbstractCamera implements ICamera {
 	public void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
 		firsttimeMouseDown = true;
 		if ( canSelectOnRelease(e) && isViewInXYPlan() ) {
-			if ( alt(e) ) {
+			if ( shift(e) ) {
 				final Envelope3D env = renderer.getROIEnvelope();
 
 				if ( env != null ) {
@@ -260,7 +260,7 @@ public abstract class AbstractCamera implements ICamera {
 					Alt_pressed(false);
 					renderer.getSurface().selectSeveralAgents(shapes);
 				}
-			} else if ( shift(e) ) {
+			} else if ( alt(e) ) {
 				final Envelope3D env = renderer.getROIEnvelope();
 				zoomRoi(env);
 			}
@@ -441,13 +441,13 @@ public abstract class AbstractCamera implements ICamera {
 		return _sensivity;
 	}
 
-	protected boolean isShiftKeyDown() {
-		return shiftKeyDown;
-	}
+//	protected boolean isShiftKeyDown() {
+//		return shiftKeyDown;
+//	}
 
-	protected boolean isAltKeyDown() {
-		return altKeyDown;
-	}
+//	protected boolean isAltKeyDown() {
+//		return altKeyDown;
+//	}
 
 	protected boolean isForward() {
 		return goesForward;
@@ -481,9 +481,9 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
-		this.shiftKeyDown = shift(e);
-		this.altKeyDown = alt(e);
-		this.ctrlKeyDown = ctrl(e);
+//		this.shiftKeyDown = shift(e);
+//		this.altKeyDown = alt(e);
+//		this.ctrlKeyDown = ctrl(e);
 		switch (e.keyCode) {
 			case SWT.ARROW_LEFT:
 				this.strafeLeft = true;
@@ -552,9 +552,9 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
-		this.shiftKeyDown = shift(e);
-		this.altKeyDown = alt(e);
-		this.ctrlKeyDown = ctrl(e);
+//		this.shiftKeyDown = shift(e);
+//		this.altKeyDown = alt(e);
+//		this.ctrlKeyDown = ctrl(e);
 		switch (e.keyCode) {
 			case SWT.ARROW_LEFT: // player turns left (scene rotates right)
 				this.strafeLeft = false;

@@ -27,6 +27,8 @@ public class FreeFlyCamera extends AbstractCamera {
 	protected final GamaPoint forward = new GamaPoint(0, 0, 0);
 	private final GamaPoint left = new GamaPoint(0, 0, 0);
 	private final double speed = getRenderer().getMaxEnvDim()*0.0001;
+	
+	private boolean shift_pressed = false;
 
 	public FreeFlyCamera(final JOGLRenderer renderer) {
 		super(renderer);
@@ -53,7 +55,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	public void animate() {
 		super.animate();
 		if ( isForward() ) {
-			if ( isShiftKeyDown() ) {
+			if ( shift_pressed ) {
 				this.phi = phi - -get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
@@ -61,7 +63,7 @@ public class FreeFlyCamera extends AbstractCamera {
 			}
 		}
 		if ( isBackward() ) {
-			if ( isShiftKeyDown() ) {
+			if ( shift_pressed ) {
 				this.phi = phi - get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
@@ -69,7 +71,7 @@ public class FreeFlyCamera extends AbstractCamera {
 			}
 		}
 		if ( isStrafeLeft() ) {
-			if ( isShiftKeyDown() ) {
+			if ( shift_pressed ) {
 				this.theta = theta - -get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
@@ -77,7 +79,7 @@ public class FreeFlyCamera extends AbstractCamera {
 			}
 		}
 		if ( isStrafeRight() ) {
-			if ( isShiftKeyDown() ) {
+			if ( shift_pressed ) {
 				this.theta = theta - get_keyboardSensivity() * get_sensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
@@ -185,6 +187,12 @@ public class FreeFlyCamera extends AbstractCamera {
 	public boolean isViewInXYPlan() {
 		return phi >= -89 && phi < -85;
 
+	}
+	
+	@Override
+	protected void Shift_pressed(boolean value) {
+		shift_pressed = value;
+		drawRotationHelper();
 	}
 
 }
