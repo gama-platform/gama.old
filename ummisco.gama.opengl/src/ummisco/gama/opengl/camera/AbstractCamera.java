@@ -300,9 +300,7 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected boolean isArcBallOn(final org.eclipse.swt.events.MouseEvent e) {
-		if ( ctrl(e) && getRenderer().data.isArcBallDragOn() ) { return false; }
-		if ( ctrl(e) || getRenderer().data.isArcBallDragOn() ) { return true; }
-		return false;
+		return ctrl(e);
 	}
 
 	// Picking method

@@ -87,7 +87,6 @@ public class LayeredDisplayData {
 	private ILocation cameraLookPos = getNoChange();
 	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
 	private boolean isDrawingPolygons = true;
-	private boolean isDraggingWithArcBall;
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
 	private boolean isSplittingLayers;
@@ -476,17 +475,6 @@ public class LayeredDisplayData {
 
 	public void setAntialias(final boolean a) {
 		isAntialiasing = a;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isArcBallDragOn() {
-		return isDraggingWithArcBall;
-	}
-
-	public void setArgBallDragOn(final boolean a) {
-		isDraggingWithArcBall = a;
 	}
 
 	/**
