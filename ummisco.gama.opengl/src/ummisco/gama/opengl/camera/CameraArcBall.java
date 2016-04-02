@@ -13,7 +13,6 @@ package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
 import org.eclipse.swt.SWT;
-import org.geotools.arcsde.session.Commands.GetVersionCommand;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.*;
@@ -29,6 +28,7 @@ public class CameraArcBall extends AbstractCamera {
 	private boolean mouse_left_pressed = false;
 	private boolean ctrl_pressed = false;
 	private boolean shift_pressed = false;
+	private boolean alt_pressed = false;
 	
 	private boolean isDrawingRotateHelper = GamaPreferences.DRAW_ROTATE_HELPER.getValue();
 
@@ -214,7 +214,7 @@ public class CameraArcBall extends AbstractCamera {
 		// And we animate it if the keyboard is invoked
 		double translation = 2 * (FastMath.abs(position.z) + 1) / getRenderer().getHeight();
 		if ( isForward() ) {
-			if ( shift_pressed ) {
+			if ( ctrl_pressed ) {
 				if (flipped) {
 					if (phi - get_keyboardSensivity() * get_sensivity() > 0)
 						phi -= get_keyboardSensivity() * get_sensivity();
@@ -243,7 +243,7 @@ public class CameraArcBall extends AbstractCamera {
 			}
 		}
 		if ( isBackward() ) {
-			if ( shift_pressed ) {
+			if ( ctrl_pressed ) {
 				if (flipped) {
 					if (phi + get_keyboardSensivity() * get_sensivity() < 180)
 						phi += get_keyboardSensivity() * get_sensivity();
@@ -271,7 +271,7 @@ public class CameraArcBall extends AbstractCamera {
 			}
 		}
 		if ( isStrafeLeft() ) {
-			if ( shift_pressed ) {
+			if ( ctrl_pressed ) {
 				if (flipped)
 					theta = theta + -get_keyboardSensivity() * get_sensivity();
 				else
@@ -290,7 +290,7 @@ public class CameraArcBall extends AbstractCamera {
 			}
 		}
 		if ( isStrafeRight() ) {
-			if ( shift_pressed ) {
+			if ( ctrl_pressed ) {
 				if (flipped)
 					theta = theta + get_keyboardSensivity() * get_sensivity();
 				else
@@ -415,7 +415,7 @@ public class CameraArcBall extends AbstractCamera {
 			//phi = phi - vertMovement_real * get_sensivity();
 			updateCartesianCoordinatesFromAngles();
 		}
-		else if ( (shift(e) || alt(e)) && isViewIn2DPlan() ) {
+		else if ( (shift_pressed || alt_pressed ) && isViewInXYPlan() ) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
 			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
@@ -463,9 +463,15 @@ public class CameraArcBall extends AbstractCamera {
 	}
 	
 	@Override
+	protected void Alt_pressed(boolean value) {
+		alt_pressed = value;
+		drawRotationHelper();
+	}
+	
+	@Override
 	protected void drawRotationHelper() {
 		if (isDrawingRotateHelper) {
-			if ((ctrl_pressed) || (shift_pressed)) {
+			if (ctrl_pressed) {
 				getRenderer().startDrawRotationHelper(target);
 			}
 			else {

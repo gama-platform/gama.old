@@ -148,7 +148,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	public void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
 		super.mouseMove(e);
 		if ( (e.stateMask & SWT.BUTTON_MASK) == 0 ) { return; }
-		if ( (shift(e) || alt(e)) && isViewIn2DPlan() ) {
+		if ( (shift(e) || alt(e)) && isViewInXYPlan() ) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
 			// GL2 gl = GLContext.getCurrent().getGL().getGL2();
@@ -182,7 +182,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public boolean isViewIn2DPlan() {
+	public boolean isViewInXYPlan() {
 		return phi >= -89 && phi < -85;
 
 	}

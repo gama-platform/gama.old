@@ -65,8 +65,10 @@ public abstract class AbstractCamera implements ICamera {
 	private boolean strafeLeft;
 	private boolean strafeRight;
 	// private final boolean ctrlKeyDown = false;
-	private boolean shiftKeyDown = false;
-	private boolean altKeyDown = false;
+	protected boolean shiftKeyDown = false;
+	protected boolean altKeyDown = false;
+	protected boolean ctrlKeyDown = false;
+//	protected boolean mouseLeftClickPressed = false;
 
 	public AbstractCamera(final JOGLRenderer renderer) {
 		setRenderer(renderer);
@@ -110,6 +112,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected void Mouse_left_pressed(boolean value){}
 	protected void Ctrl_pressed(boolean value){}
 	protected void Shift_pressed(boolean value){}
+	protected void Alt_pressed(boolean value){}
 
 	public void updatePosition(final double xPos, final double yPos, final double zPos) {
 		position.setLocation(xPos, yPos, zPos);
@@ -207,12 +210,16 @@ public abstract class AbstractCamera implements ICamera {
 			this.isPickedPressed = true;
 			getRenderer().setPicking(true);
 			// myRenderer.drawPickableObjects();
+			Mouse_left_pressed(false);
+			Ctrl_pressed(false);
+			Alt_pressed(false);
+			Shift_pressed(false);
 		}
 		else if (e.button == 2) { // mouse wheel
 			resetPivot();
 		}
 		else {
-			if ( shift(e) || alt(e) ) {
+			if ( (shift(e) || alt(e)) && isViewInXYPlan() ) {
 				getMousePosition().x = e.x;
 				getMousePosition().y = e.y;
 				renderer.defineROI(firstMousePressedPosition, getMousePosition());
@@ -224,6 +231,7 @@ public abstract class AbstractCamera implements ICamera {
 		getMousePosition().y = e.y;
 		
 		if (e.button == 1)
+//			mouseLeftClickPressed = true;
 			Mouse_left_pressed(true);
 	}
 
@@ -234,7 +242,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
 		firsttimeMouseDown = true;
-		if ( canSelectOnRelease(e) && isViewIn2DPlan() ) {
+		if ( canSelectOnRelease(e) && isViewInXYPlan() ) {
 			if ( alt(e) ) {
 				final Envelope3D env = renderer.getROIEnvelope();
 
@@ -256,10 +264,11 @@ public abstract class AbstractCamera implements ICamera {
 				final Envelope3D env = renderer.getROIEnvelope();
 				zoomRoi(env);
 			}
-			renderer.cancelROI();
 		}
+		renderer.cancelROI();
 		if (e.button == 1)
 			Mouse_left_pressed(false);
+//			mouseLeftClickPressed = false;
 	}
 
 	protected abstract void zoomRoi(Envelope3D env);
@@ -416,8 +425,8 @@ public abstract class AbstractCamera implements ICamera {
 		this.mousePosition = mousePosition;
 	}
 
-	public boolean isViewIn2DPlan() {
-		return phi > 85 && phi < 95 && theta > -5 && theta < 5;
+	public boolean isViewInXYPlan() {
+		return phi > 170 || phi < 10;// && theta > -5 && theta < 5;
 	}
 
 
@@ -476,6 +485,7 @@ public abstract class AbstractCamera implements ICamera {
 	public void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
 		this.shiftKeyDown = shift(e);
 		this.altKeyDown = alt(e);
+		this.ctrlKeyDown = ctrl(e);
 		switch (e.keyCode) {
 			case SWT.ARROW_LEFT:
 				this.strafeLeft = true;
@@ -500,6 +510,9 @@ public abstract class AbstractCamera implements ICamera {
 				break;
 			case SWT.SHIFT:
 				Shift_pressed(true);
+				break;
+			case SWT.ALT:
+				Alt_pressed(true);
 				break;
 		}
 		switch (e.character) {
@@ -543,6 +556,7 @@ public abstract class AbstractCamera implements ICamera {
 	public void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
 		this.shiftKeyDown = shift(e);
 		this.altKeyDown = alt(e);
+		this.ctrlKeyDown = ctrl(e);
 		switch (e.keyCode) {
 			case SWT.ARROW_LEFT: // player turns left (scene rotates right)
 				this.strafeLeft = false;
@@ -565,8 +579,12 @@ public abstract class AbstractCamera implements ICamera {
 			case SWT.SHIFT:
 				Shift_pressed(false);
 				break;
+			case SWT.ALT:
+				Alt_pressed(false);
+				break;
 		}
 
 	}
 
 }
+
