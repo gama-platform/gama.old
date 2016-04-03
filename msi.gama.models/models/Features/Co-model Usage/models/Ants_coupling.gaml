@@ -7,21 +7,21 @@
 
 model Ants_coupling
 
-import "../../../Toy Models/Ants (Foraging and Sorting)/models/Ant Foraging (Complex).gaml" 
+import "../../../Toy Models/Ants (Foraging and Sorting)/models/Ant Foraging (Classic).gaml" 
 
 
-experiment Ants_coupling_exp type:gui  parent:Complex{
+
+experiment Ants_coupling_exp type:gui  parent:Ant{
 	
 	list<ant> getAnts{
 		return list(ant);
 	}
 	
-	
-	output{
-		display Ants2D type: java2D {
-			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
-			agents "agents" transparency: 0.7 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest)) ;
-			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;					
-		}
+	list<ant_grid> getAnt_grid{
+		return list(ant_grid);
 	}
+	
+//	output{
+//	
+//	}
 }
