@@ -32,9 +32,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	public FreeFlyCamera(final JOGLRenderer renderer) {
 		super(renderer);
-		upVector.setLocation(up);
-		this.phi = 0.0;
-		this.theta = 0.0;
+		reset();
 	}
 
 	protected void updateCartesianCoordinatesFromAngles() {
@@ -103,6 +101,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void reset() {
+		upVector.setLocation(up);
 		LayeredDisplayData data = getRenderer().data;
 		double envWidth = data.getEnvWidth();
 		double envHeight = data.getEnvHeight();

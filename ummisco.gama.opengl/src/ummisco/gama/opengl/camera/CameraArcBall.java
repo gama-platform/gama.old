@@ -25,7 +25,6 @@ public class CameraArcBall extends AbstractCamera {
 
 	private double radius;
 	
-	private boolean mouse_left_pressed = false;
 	private boolean ctrl_pressed = false;
 	private boolean shift_pressed = false;
 	private boolean alt_pressed = false;
@@ -34,10 +33,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	public CameraArcBall(final JOGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
-		phi = 0.00;
-		theta = -90.00;
-		upVectorAngle = 0.0;
-		updateCartesianCoordinatesFromAngles();
+		reset();
 	}
 
 	protected void updateCartesianCoordinatesFromAngles() {
@@ -432,12 +428,6 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	protected boolean canSelectOnRelease(final org.eclipse.swt.events.MouseEvent arg0) {
 		return true;
-	}
-	
-	@Override
-	protected void Mouse_left_pressed(boolean value) {
-		mouse_left_pressed = value;
-		drawRotationHelper();
 	}
 	
 	@Override
