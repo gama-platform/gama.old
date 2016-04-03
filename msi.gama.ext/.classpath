@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="jodatime 2.9/jars/joda-time-2.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="jodatime 2.9/jars/joda-time-2.9.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/jdom-1.1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/geodb-0.7-RC2.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/commons-dbcp-1.4.jar"/>
