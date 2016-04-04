@@ -148,7 +148,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 		for ( int i = 0; i < size; i++ ) {
 			final IShape g = gfile.get(scope, i);
-			gridValue[i] = (Double) g.getAttribute("grid_value");
+			Double val = (Double) g.getAttribute("grid_value");
+			if (val != null)
+				gridValue[i] = val;
 			if (nbBands > 1 &&  g.hasAttribute("bands"))
 				bands.add((IList<Double>) g.getAttribute("bands"));
 			// WARNING A bit overkill as we only use the GamaGisGeometry for its attribute...
