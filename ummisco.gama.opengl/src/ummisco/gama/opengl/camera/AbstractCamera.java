@@ -14,29 +14,34 @@ package ummisco.gama.opengl.camera;
 import java.awt.Point;
 import java.nio.IntBuffer;
 import java.util.Collection;
+
 import org.eclipse.swt.SWT;
+
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.nativewindow.swt.SWTAccessor;
-import com.jogamp.opengl.*;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
+
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayData;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.GAMA.InScope;
+import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
-// import java.awt.event.*;
-
 public abstract class AbstractCamera implements ICamera {
 
 	private JOGLRenderer renderer;
-	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);// will store information
+	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 
 	// picking
 	private boolean isPickedPressed = false;
@@ -53,7 +58,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected double theta;
 	protected double phi;
-	protected boolean flipped=false;
+	protected boolean flipped = false;
 	protected double upVectorAngle;
 
 	private final double _keyboardSensivity = 4.0;
@@ -64,11 +69,10 @@ public abstract class AbstractCamera implements ICamera {
 	private boolean goesBackward;
 	private boolean strafeLeft;
 	private boolean strafeRight;
-	// private final boolean ctrlKeyDown = false;
-//	protected boolean shiftKeyDown = false;
-//	protected boolean altKeyDown = false;
-//	protected boolean ctrlKeyDown = false;
-//	protected boolean mouseLeftClickPressed = false;
+
+	protected boolean ctrlPressed = false;
+	protected boolean shiftPressed = false;
+	protected boolean altPressed = false;
 
 	public AbstractCamera(final JOGLRenderer renderer) {
 		setRenderer(renderer);
@@ -82,37 +86,43 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void update() {
-		LayeredDisplayData data = renderer.data;
-		if ( data.isCameraLock() ) {
-			ILocation cameraPos = data.getCameraPos();
-			if ( cameraPos != LayeredDisplayData.getNoChange() ) {
+		final LayeredDisplayData data = renderer.data;
+		if (data.isCameraLock()) {
+			final ILocation cameraPos = data.getCameraPos();
+			if (cameraPos != LayeredDisplayData.getNoChange()) {
 				updatePosition(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
 			}
-			ILocation camLookPos = data.getCameraLookPos();
-			if ( camLookPos != LayeredDisplayData.getNoChange() ) {
+			final ILocation camLookPos = data.getCameraLookPos();
+			if (camLookPos != LayeredDisplayData.getNoChange()) {
 				lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
 			}
-			
+
 			if (flipped)
-				upPosition(-(-FastMath.cos(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad) - FastMath.sin(theta*Maths.toRad)*FastMath.sin(upVectorAngle*Maths.toRad)),
-						-(-FastMath.sin(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad + FastMath.cos(theta*Maths.toRad)*FastMath.sin(upVectorAngle*Maths.toRad))),
-						-(FastMath.sin(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad)));
+				upPosition(
+						-(-FastMath.cos(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
+								* FastMath.cos(upVectorAngle * Maths.toRad)
+								- FastMath.sin(theta * Maths.toRad) * FastMath.sin(upVectorAngle * Maths.toRad)),
+						-(-FastMath.sin(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
+								* FastMath.cos(upVectorAngle * Maths.toRad + FastMath.cos(theta * Maths.toRad)
+										* FastMath.sin(upVectorAngle * Maths.toRad))),
+						-(FastMath.sin(phi * Maths.toRad) * FastMath.cos(upVectorAngle * Maths.toRad)));
 			else
-				upPosition(-FastMath.cos(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad) - FastMath.sin(theta*Maths.toRad)*FastMath.sin(upVectorAngle*Maths.toRad),
-						-FastMath.sin(theta*Maths.toRad)*FastMath.cos(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad + FastMath.cos(theta*Maths.toRad)*FastMath.sin(upVectorAngle*Maths.toRad)),
-						FastMath.sin(phi*Maths.toRad)*FastMath.cos(upVectorAngle*Maths.toRad));
-			
+				upPosition(
+						-FastMath.cos(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
+								* FastMath.cos(upVectorAngle * Maths.toRad)
+								- FastMath.sin(theta * Maths.toRad) * FastMath.sin(upVectorAngle * Maths.toRad),
+						-FastMath.sin(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
+								* FastMath.cos(upVectorAngle * Maths.toRad + FastMath.cos(theta * Maths.toRad)
+										* FastMath.sin(upVectorAngle * Maths.toRad)),
+						FastMath.sin(phi * Maths.toRad) * FastMath.cos(upVectorAngle * Maths.toRad));
+
 			updateSphericalCoordinatesFromLocations();
 			drawRotationHelper();
 		}
 
 	}
-	
-	protected void drawRotationHelper(){}
-	protected void Mouse_left_pressed(boolean value){}
-	protected void Ctrl_pressed(boolean value){}
-	protected void Shift_pressed(boolean value){}
-	protected void Alt_pressed(boolean value){}
+
+	protected abstract void drawRotationHelper();
 
 	public void updatePosition(final double xPos, final double yPos, final double zPos) {
 		position.setLocation(xPos, yPos, zPos);
@@ -135,17 +145,35 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void animate() {
-		renderer.getGlu().gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.x, upVector.y,
-			upVector.z);
+		renderer.getGlu().gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.x,
+				upVector.y, upVector.z);
 	}
-
-
-
 
 	/*------------------ Events controls ---------------------*/
 
+	protected void setShiftPressed(final boolean value) {
+		shiftPressed = value;
+		drawRotationHelper();
+	}
+
+	protected void setCtrlPressed(final boolean value) {
+		ctrlPressed = value;
+		drawRotationHelper();
+	}
+
+	protected void setAltPressed(final boolean value) {
+		altPressed = value;
+		drawRotationHelper();
+	}
+
+	private void setMouseLeftPressed(final boolean b) {
+		// TODO Auto-generated method stub
+
+	}
+
 	/**
 	 * Method mouseScrolled()
+	 * 
 	 * @see org.eclipse.swt.events.MouseWheelListener#mouseScrolled(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
@@ -155,6 +183,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseMove()
+	 * 
 	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
@@ -165,27 +194,34 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseEnter()
+	 * 
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseEnter(final org.eclipse.swt.events.MouseEvent e) {}
+	public void mouseEnter(final org.eclipse.swt.events.MouseEvent e) {
+	}
 
 	/**
 	 * Method mouseExit()
+	 * 
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseExit(final org.eclipse.swt.events.MouseEvent e) {}
+	public void mouseExit(final org.eclipse.swt.events.MouseEvent e) {
+	}
 
 	/**
 	 * Method mouseHover()
+	 * 
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseHover(final org.eclipse.swt.events.MouseEvent e) {}
+	public void mouseHover(final org.eclipse.swt.events.MouseEvent e) {
+	}
 
 	/**
 	 * Method mouseDoubleClick()
+	 * 
 	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
@@ -196,30 +232,29 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseDown()
+	 * 
 	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
 	public void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
-		if ( firsttimeMouseDown ) {
+		if (firsttimeMouseDown) {
 			firstMousePressedPosition = new Point(e.x, e.y);
 			firsttimeMouseDown = false;
 		}
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
-		if ( e.button == 3 ) {
+		if (e.button == 3) {
 			this.isPickedPressed = true;
 			getRenderer().setPicking(true);
 			// myRenderer.drawPickableObjects();
-			Mouse_left_pressed(false);
-			Ctrl_pressed(false);
-			Alt_pressed(false);
-			Shift_pressed(false);
-		}
-		else if (e.button == 2) { // mouse wheel
+			setMouseLeftPressed(false);
+			setCtrlPressed(false);
+			setAltPressed(false);
+			setShiftPressed(false);
+		} else if (e.button == 2) { // mouse wheel
 			resetPivot();
-		}
-		else {
-			if ( (shift(e) || alt(e)) && isViewInXYPlan() ) {
+		} else {
+			if ((shift(e) || alt(e)) && isViewInXYPlan()) {
 				getMousePosition().x = e.x;
 				getMousePosition().y = e.y;
 				renderer.defineROI(firstMousePressedPosition, getMousePosition());
@@ -229,46 +264,45 @@ public abstract class AbstractCamera implements ICamera {
 		}
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
-		
+
 		if (e.button == 1)
-//			mouseLeftClickPressed = true;
-			Mouse_left_pressed(true);
+			setMouseLeftPressed(true);
 	}
 
 	/**
 	 * Method mouseUp()
+	 * 
 	 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
 	public void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
 		firsttimeMouseDown = true;
-		if ( canSelectOnRelease(e) && isViewInXYPlan() ) {
-			if ( shift(e) ) {
+		if (canSelectOnRelease(e) && isViewInXYPlan()) {
+			if (shift(e)) {
 				final Envelope3D env = renderer.getROIEnvelope();
 
-				if ( env != null ) {
+				if (env != null) {
 					env.init(env.getMinX(), env.getMaxX(), -env.getMinY(), -env.getMaxY());
-					Collection<IAgent> shapes = GAMA.run(new InScope<Collection<IAgent>>() {
+					final Collection<IAgent> shapes = GAMA.run(new InScope<Collection<IAgent>>() {
 
 						@Override
 						public Collection<IAgent> run(final IScope scope) {
 							return scope.getTopology().getSpatialIndex().allInEnvelope(scope, env.centre(), env,
-								new Different(), true);
+									new Different(), true);
 						}
 					});
 					// System.out.println("Envelope : " + env);
-					Alt_pressed(false);
+					setAltPressed(false);
 					renderer.getSurface().selectSeveralAgents(shapes);
 				}
-			} else if ( alt(e) ) {
+			} else if (alt(e)) {
 				final Envelope3D env = renderer.getROIEnvelope();
 				zoomRoi(env);
 			}
 		}
 		renderer.cancelROI();
 		if (e.button == 1)
-			Mouse_left_pressed(false);
-//			mouseLeftClickPressed = false;
+			setMouseLeftPressed(false);
 	}
 
 	protected abstract void zoomRoi(Envelope3D env);
@@ -306,37 +340,42 @@ public abstract class AbstractCamera implements ICamera {
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * First pass pepare select buffer for select mode by clearing it,
-	 * prepare openGL to select mode and tell it where should draw
-	 * object by using gluPickMatrix() method
+	 * First pass pepare select buffer for select mode by clearing it, prepare
+	 * openGL to select mode and tell it where should draw object by using
+	 * gluPickMatrix() method
+	 * 
 	 * @return if returned value is true that mean the picking is enabled
 	 */
 	@Override
 	public boolean beginPicking(final GL2 gl) {
-		if ( !isPickedPressed ) { return false; }
-		GLU glu = renderer.getGlu();
+		if (!isPickedPressed) {
+			return false;
+		}
+		final GLU glu = renderer.getGlu();
 
 		// 1. Selecting buffer
 		selectBuffer.clear(); // prepare buffer for new objects
-		gl.glSelectBuffer(selectBuffer.capacity(), selectBuffer);// add buffer to openGL
+		gl.glSelectBuffer(selectBuffer.capacity(), selectBuffer);// add buffer
+																	// to openGL
 
 		// Pass below is very similar to refresh method in GLrenderer
 		// 2. Take the viewport attributes,
-		int viewport[] = new int[4];
+		final int viewport[] = new int[4];
 		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 
-		int width = viewport[2]; // get width and
-		int height = viewport[3]; // height from viewport
+		final int width = viewport[2]; // get width and
+		final int height = viewport[3]; // height from viewport
 
 		// 3. Prepare openGL for rendering in select mode
 		gl.glRenderMode(GL2.GL_SELECT);
 
 		/*
-		 * The application must redefine the viewing volume so that it renders only a small
-		 * area around the place where the mouse was clicked. In order to do that it is
-		 * necessary to set the matrix mode to GL_PROJECTION. Afterwards, the application
-		 * should push the current matrix to save the normal rendering mode settings.
-		 * Next initialise the matrix
+		 * The application must redefine the viewing volume so that it renders
+		 * only a small area around the place where the mouse was clicked. In
+		 * order to do that it is necessary to set the matrix mode to
+		 * GL_PROJECTION. Afterwards, the application should push the current
+		 * matrix to save the normal rendering mode settings. Next initialise
+		 * the matrix
 		 */
 
 		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
@@ -344,18 +383,21 @@ public abstract class AbstractCamera implements ICamera {
 		gl.glLoadIdentity();
 
 		/*
-		 * Define the viewing volume so that rendering is done only in a small area around
-		 * the cursor. gluPickMatrix method restrict the area where openGL will drawing objects
+		 * Define the viewing volume so that rendering is done only in a small
+		 * area around the cursor. gluPickMatrix method restrict the area where
+		 * openGL will drawing objects
 		 *
-		 * OpenGL has a different origin for its window coordinates than the operation system.
-		 * The second parameter provides for the conversion between the two systems, i.e. it
-		 * transforms the origin from the upper left corner, into the bottom left corner
+		 * OpenGL has a different origin for its window coordinates than the
+		 * operation system. The second parameter provides for the conversion
+		 * between the two systems, i.e. it transforms the origin from the upper
+		 * left corner, into the bottom left corner
 		 */
 		glu.gluPickMatrix(getMousePosition().x, height - getMousePosition().y, 4, 4, viewport, 0);
 
 		// FIXME Why do we have to call updatePerspective() here ?
 		renderer.updatePerspective(gl);
-		// Comment GL_MODELVIEW to debug3D picking (redraw the model when clicking)
+		// Comment GL_MODELVIEW to debug3D picking (redraw the model when
+		// clicking)
 		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		// 4. After this pass you must draw Objects
 
@@ -364,17 +406,22 @@ public abstract class AbstractCamera implements ICamera {
 
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * After drawing we have to calculate which object was nearest screen and return its index
+	 * After drawing we have to calculate which object was nearest screen and
+	 * return its index
+	 * 
 	 * @return name of selected object
 	 */
 	@Override
 	public int endPicking(final GL2 gl) {
-		if ( !isPickedPressed ) { return -1; }
+		if (!isPickedPressed) {
+			return -1;
+		}
 		this.isPickedPressed = false;// no further iterations
 		int selectedIndex;
 
-		// 5. When you back to Render mode gl.glRenderMode() methods return number of hits
-		int howManyObjects = gl.glRenderMode(GL2.GL_RENDER);
+		// 5. When you back to Render mode gl.glRenderMode() methods return
+		// number of hits
+		final int howManyObjects = gl.glRenderMode(GL2.GL_RENDER);
 
 		// 6. Restore to normal settings
 		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
@@ -385,13 +432,13 @@ public abstract class AbstractCamera implements ICamera {
 
 		// code below derive which ocjects is nearest from monitor
 		//
-		if ( howManyObjects > 0 ) {
+		if (howManyObjects > 0) {
 			// simple searching algorithm
 			selectedIndex = selectBuffer.get(3);
 			int mindistance = CmnFastMath.abs(selectBuffer.get(1));
-			for ( int i = 0; i < howManyObjects; i++ ) {
+			for (int i = 0; i < howManyObjects; i++) {
 
-				if ( mindistance < CmnFastMath.abs(selectBuffer.get(1 + i * 4)) ) {
+				if (mindistance < CmnFastMath.abs(selectBuffer.get(1 + i * 4))) {
 
 					mindistance = CmnFastMath.abs(selectBuffer.get(1 + i * 4));
 					selectedIndex = selectBuffer.get(3 + i * 4);
@@ -427,7 +474,6 @@ public abstract class AbstractCamera implements ICamera {
 		return phi > 170 || phi < 10;// && theta > -5 && theta < 5;
 	}
 
-
 	@Override
 	public Point getLastMousePressedPosition() {
 		return lastMousePressedPosition;
@@ -440,14 +486,6 @@ public abstract class AbstractCamera implements ICamera {
 	protected double get_sensivity() {
 		return _sensivity;
 	}
-
-//	protected boolean isShiftKeyDown() {
-//		return shiftKeyDown;
-//	}
-
-//	protected boolean isAltKeyDown() {
-//		return altKeyDown;
-//	}
 
 	protected boolean isForward() {
 		return goesForward;
@@ -465,7 +503,6 @@ public abstract class AbstractCamera implements ICamera {
 		return strafeRight;
 	}
 
-
 	protected JOGLRenderer getRenderer() {
 		return renderer;
 	}
@@ -474,115 +511,124 @@ public abstract class AbstractCamera implements ICamera {
 		this.renderer = renderer;
 	}
 
-
 	/**
 	 * Method keyPressed()
+	 * 
 	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 	 */
 	@Override
 	public void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
-//		this.shiftKeyDown = shift(e);
-//		this.altKeyDown = alt(e);
-//		this.ctrlKeyDown = ctrl(e);
+		// this.shiftKeyDown = shift(e);
+		// this.altKeyDown = alt(e);
+		// this.ctrlKeyDown = ctrl(e);
 		switch (e.keyCode) {
-			case SWT.ARROW_LEFT:
-				this.strafeLeft = true;
-				break;
-			case SWT.ARROW_RIGHT:
-				this.strafeRight = true;
-				break;
-			case SWT.ARROW_UP:
-				this.goesForward = true;
-				break;
-			case SWT.ARROW_DOWN:
-				this.goesBackward = true;
-				break;
-			case SWT.SPACE:
-				resetPivot();
-				return;
-			case SWT.CTRL:
-				Ctrl_pressed(true);
-				break;
-			case SWT.COMMAND:
-				Ctrl_pressed(true);
-				break;
-			case SWT.SHIFT:
-				Shift_pressed(true);
-				break;
-			case SWT.ALT:
-				Alt_pressed(true);
-				break;
+		case SWT.ARROW_LEFT:
+			this.strafeLeft = true;
+			break;
+		case SWT.ARROW_RIGHT:
+			this.strafeRight = true;
+			break;
+		case SWT.ARROW_UP:
+			this.goesForward = true;
+			break;
+		case SWT.ARROW_DOWN:
+			this.goesBackward = true;
+			break;
+		case SWT.SPACE:
+			resetPivot();
+			return;
+		case SWT.CTRL:
+			setCtrlPressed(true);
+			break;
+		case SWT.COMMAND:
+			setCtrlPressed(true);
+			break;
+		case SWT.SHIFT:
+			setShiftPressed(true);
+			break;
+		case SWT.ALT:
+			setAltPressed(true);
+			break;
 		}
 		switch (e.character) {
-			case '+':
-				zoom(true);
-				return;
-			case '-':
-				zoom(false);
-				return;
-			case '4':
-				quickLeftTurn();
-				return;
-			case '6':
-				quickRightTurn();
-				return;
-			case '8':
-				quickUpTurn();
-				return;
-			case '2':
-				quickDownTurn();
-				return;
-			case 'f':
-				flipView();
-				return;
+		case '+':
+			zoom(true);
+			return;
+		case '-':
+			zoom(false);
+			return;
+		case '4':
+			quickLeftTurn();
+			return;
+		case '6':
+			quickRightTurn();
+			return;
+		case '8':
+			quickUpTurn();
+			return;
+		case '2':
+			quickDownTurn();
+			return;
+		case 'f':
+			flipView();
+			return;
 		}
 
 	}
-	
-	protected void resetPivot() {}
-	protected void quickLeftTurn() {}
-	protected void quickRightTurn() {}
-	protected void quickUpTurn() {}
-	protected void quickDownTurn() {}
-	protected void flipView() {flipped = !flipped;}
+
+	protected void resetPivot() {
+	}
+
+	protected void quickLeftTurn() {
+	}
+
+	protected void quickRightTurn() {
+	}
+
+	protected void quickUpTurn() {
+	}
+
+	protected void quickDownTurn() {
+	}
+
+	protected void flipView() {
+		flipped = !flipped;
+	}
 
 	/**
 	 * Method keyReleased()
+	 * 
 	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 	 */
 	@Override
 	public void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
-//		this.shiftKeyDown = shift(e);
-//		this.altKeyDown = alt(e);
-//		this.ctrlKeyDown = ctrl(e);
 		switch (e.keyCode) {
-			case SWT.ARROW_LEFT: // player turns left (scene rotates right)
-				this.strafeLeft = false;
-				break;
-			case SWT.ARROW_RIGHT: // player turns right (scene rotates left)
-				this.strafeRight = false;
-				break;
-			case SWT.ARROW_UP:
-				this.goesForward = false;
-				break;
-			case SWT.ARROW_DOWN:
-				this.goesBackward = false;
-				break;
-			case SWT.CTRL:
-				Ctrl_pressed(false);
-				break;
-			case SWT.COMMAND:
-				Ctrl_pressed(false);
-				break;
-			case SWT.SHIFT:
-				Shift_pressed(false);
-				break;
-			case SWT.ALT:
-				Alt_pressed(false);
-				break;
+		case SWT.ARROW_LEFT: // player turns left (scene rotates right)
+			this.strafeLeft = false;
+			break;
+		case SWT.ARROW_RIGHT: // player turns right (scene rotates left)
+			this.strafeRight = false;
+			break;
+		case SWT.ARROW_UP:
+			this.goesForward = false;
+			break;
+		case SWT.ARROW_DOWN:
+			this.goesBackward = false;
+			break;
+		case SWT.CTRL:
+			setCtrlPressed(false);
+			break;
+		case SWT.COMMAND:
+			setCtrlPressed(false);
+			break;
+		case SWT.SHIFT:
+			setShiftPressed(false);
+			break;
+		case SWT.ALT:
+			setAltPressed(false);
+			break;
 		}
 
 	}
 
 }
-
