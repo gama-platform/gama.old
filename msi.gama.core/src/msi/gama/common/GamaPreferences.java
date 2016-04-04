@@ -690,7 +690,8 @@ public class GamaPreferences {
 					.group("Spatial Operators");
 
 	private static void register(final Entry gp) {
-		System.out.println("+++ Registering preference " + gp.key + " in store");
+		// System.out.println("+++ Registering preference " + gp.key + " in
+		// store");
 		final IScope scope = null;
 		final String key = gp.key;
 		if (key == null) {

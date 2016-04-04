@@ -24,6 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Dates;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -74,7 +75,7 @@ public class GamaDate extends MutableDateTime implements IValue {
 	}
 	
 	public GamaDate(String dateStr) {
-		this(Strings.getSystemDateTimeFormat().parseDateTime(dateStr));
+		this(Dates.getSystemDateTimeFormat().parseDateTime(dateStr));
 	}
 
 	public GamaDate(int second, int minute, int hour, int day, int month, int year) {
@@ -123,17 +124,17 @@ public class GamaDate extends MutableDateTime implements IValue {
 	
 	@Override
 	public String toString() {
-		return Strings.asDate(this).replace("T", " ").split(Pattern.quote("+"))[0];
+		return Dates.asDate(this).replace("T", " ").split(Pattern.quote("+"))[0];
 	}
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "date (" +Strings.asDate(this)+ ")";
+		return "date (" +Dates.asDate(this)+ ")";
 	}
 
 	@Override
 	public String stringValue(final IScope scope) {
-		return Strings.asDate(this);
+		return Dates.asDate(this);
 	}
 
 	

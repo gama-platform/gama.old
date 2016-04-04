@@ -27,6 +27,7 @@ import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
+import msi.gaml.operators.Dates;
 import msi.gaml.operators.Strings;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
@@ -134,8 +135,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			clock = sim.getClock();
 
 			sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
-				clock.getStartingDate() == null ? Strings.asDate(clock.getTime(), null)
-					: Strings.asDate(clock.getStartingDate(), clock.getCurrentDate(), null)));
+				clock.getStartingDate() == null ? Dates.asDate(clock.getTime(), null)
+					: Dates.asDate(clock.getStartingDate(), clock.getCurrentDate(), null)));
 			sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 				(int) clock.getAverageDuration(), clock.getTotalDuration()));
 			result.put(GamaColors.get(sim.getColor()), sb.toString());
