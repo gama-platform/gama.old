@@ -30,7 +30,7 @@ import ummisco.gama.opengl.JOGLRenderer;
 public class FreeFlyCamera extends AbstractCamera {
 
 	private static final GamaPoint up = new GamaPoint(0.0f, 0.0f, 1.0f);
-	protected final GamaPoint forward = new GamaPoint(0, 0, 0);
+	private final GamaPoint forward = new GamaPoint(0, 0, 0);
 	private final GamaPoint left = new GamaPoint(0, 0, 0);
 	private final double speed = getRenderer().getMaxEnvDim() * 0.0001;
 
@@ -58,7 +58,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		super.animate();
 		if (isForward()) {
 			if (shiftPressed) {
-				this.phi = phi - -get_keyboardSensivity() * get_sensivity();
+				this.phi = phi - -getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				position.setLocation(position.plus(forward.times(speed * 200))); // go
@@ -67,7 +67,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		}
 		if (isBackward()) {
 			if (shiftPressed) {
-				this.phi = phi - get_keyboardSensivity() * get_sensivity();
+				this.phi = phi - getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				position.setLocation(position.minus(forward.times(speed * 200))); // go
@@ -76,7 +76,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		}
 		if (isStrafeLeft()) {
 			if (shiftPressed) {
-				this.theta = theta - -get_keyboardSensivity() * get_sensivity();
+				this.theta = theta - -getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				position.setLocation(position.plus(left.times(speed * 200))); // move
@@ -87,7 +87,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		}
 		if (isStrafeRight()) {
 			if (shiftPressed) {
-				this.theta = theta - get_keyboardSensivity() * get_sensivity();
+				this.theta = theta - getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				position.setLocation(position.minus(left.times(speed * 200))); // move
@@ -166,22 +166,16 @@ public class FreeFlyCamera extends AbstractCamera {
 		if ((shift(e) || alt(e)) && isViewInXYPlan()) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
-			// GL2 gl = GLContext.getCurrent().getGL().getGL2();
 			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
 		} else {
 			final int horizMovement = e.x - getLastMousePressedPosition().x;
 			final int vertMovement = e.y - getLastMousePressedPosition().y;
 			lastMousePressedPosition = new Point(e.x, e.y);
-			this.theta = theta - horizMovement * get_sensivity();
-			this.phi = phi - vertMovement * get_sensivity();
+			this.theta = theta - horizMovement * getSensivity();
+			this.phi = phi - vertMovement * getSensivity();
 			updateCartesianCoordinatesFromAngles();
 		}
 	}
-
-	// @Override
-	// protected boolean canSelectOnRelease(final MouseEvent arg0) {
-	// return arg0.isShiftDown() || arg0.isAltDown();
-	// }
 
 	@Override
 	protected boolean canSelectOnRelease(final org.eclipse.swt.events.MouseEvent arg0) {

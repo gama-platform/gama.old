@@ -151,22 +151,22 @@ public abstract class AbstractCamera implements ICamera {
 
 	/*------------------ Events controls ---------------------*/
 
-	protected void setShiftPressed(final boolean value) {
+	final void setShiftPressed(final boolean value) {
 		shiftPressed = value;
 		drawRotationHelper();
 	}
 
-	protected void setCtrlPressed(final boolean value) {
+	final void setCtrlPressed(final boolean value) {
 		ctrlPressed = value;
 		drawRotationHelper();
 	}
 
-	protected void setAltPressed(final boolean value) {
+	final void setAltPressed(final boolean value) {
 		altPressed = value;
 		drawRotationHelper();
 	}
 
-	private void setMouseLeftPressed(final boolean b) {
+	protected void setMouseLeftPressed(final boolean b) {
 		// TODO Auto-generated method stub
 
 	}
@@ -479,11 +479,11 @@ public abstract class AbstractCamera implements ICamera {
 		return lastMousePressedPosition;
 	}
 
-	protected double get_keyboardSensivity() {
+	protected double getKeyboardSensivity() {
 		return _keyboardSensivity;
 	}
 
-	protected double get_sensivity() {
+	protected double getSensivity() {
 		return _sensivity;
 	}
 

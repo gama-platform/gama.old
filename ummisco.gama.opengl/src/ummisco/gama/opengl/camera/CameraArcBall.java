@@ -221,18 +221,18 @@ public class CameraArcBall extends AbstractCamera {
 		if (isForward()) {
 			if (ctrlPressed) {
 				if (flipped) {
-					if (phi - get_keyboardSensivity() * get_sensivity() > 0)
-						phi -= get_keyboardSensivity() * get_sensivity();
+					if (phi - getKeyboardSensivity() * getSensivity() > 0)
+						phi -= getKeyboardSensivity() * getSensivity();
 					else {
-						phi = -phi + get_keyboardSensivity() * get_sensivity();
+						phi = -phi + getKeyboardSensivity() * getSensivity();
 						flipped = false;
 						theta += 180;
 					}
 				} else {
-					if (phi + get_keyboardSensivity() * get_sensivity() < 180)
-						phi += get_keyboardSensivity() * get_sensivity();
+					if (phi + getKeyboardSensivity() * getSensivity() < 180)
+						phi += getKeyboardSensivity() * getSensivity();
 					else {
-						phi = 360 - phi - get_keyboardSensivity() * get_sensivity();
+						phi = 360 - phi - getKeyboardSensivity() * getSensivity();
 						flipped = true;
 						theta += 180;
 					}
@@ -240,12 +240,12 @@ public class CameraArcBall extends AbstractCamera {
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				if (flipped)
-					translateCameraFromScreenPlan(0.0, get_keyboardSensivity()
-							* get_sensivity() /** radius/1000.0 */
+					translateCameraFromScreenPlan(0.0, getKeyboardSensivity()
+							* getSensivity() /** radius/1000.0 */
 					);
 				else
-					translateCameraFromScreenPlan(0.0, -get_keyboardSensivity()
-							* get_sensivity() /** radius/1000.0 */
+					translateCameraFromScreenPlan(0.0, -getKeyboardSensivity()
+							* getSensivity() /** radius/1000.0 */
 					);
 
 			}
@@ -253,18 +253,18 @@ public class CameraArcBall extends AbstractCamera {
 		if (isBackward()) {
 			if (ctrlPressed) {
 				if (flipped) {
-					if (phi + get_keyboardSensivity() * get_sensivity() < 180)
-						phi += get_keyboardSensivity() * get_sensivity();
+					if (phi + getKeyboardSensivity() * getSensivity() < 180)
+						phi += getKeyboardSensivity() * getSensivity();
 					else {
-						phi = 360 - phi - get_keyboardSensivity() * get_sensivity();
+						phi = 360 - phi - getKeyboardSensivity() * getSensivity();
 						flipped = false;
 						theta += 180;
 					}
 				} else {
-					if (phi - get_keyboardSensivity() * get_sensivity() > 0)
-						phi -= get_keyboardSensivity() * get_sensivity();
+					if (phi - getKeyboardSensivity() * getSensivity() > 0)
+						phi -= getKeyboardSensivity() * getSensivity();
 					else {
-						phi = -phi + get_keyboardSensivity() * get_sensivity();
+						phi = -phi + getKeyboardSensivity() * getSensivity();
 						flipped = true;
 						theta += 180;
 					}
@@ -272,52 +272,52 @@ public class CameraArcBall extends AbstractCamera {
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				if (flipped)
-					translateCameraFromScreenPlan(0.0, -get_keyboardSensivity()
-							* get_sensivity() /** radius/1000.0 */
+					translateCameraFromScreenPlan(0.0, -getKeyboardSensivity()
+							* getSensivity() /** radius/1000.0 */
 					);
 				else
-					translateCameraFromScreenPlan(0.0, get_keyboardSensivity()
-							* get_sensivity() /** radius/1000.0 */
+					translateCameraFromScreenPlan(0.0, getKeyboardSensivity()
+							* getSensivity() /** radius/1000.0 */
 					);
 			}
 		}
 		if (isStrafeLeft()) {
 			if (ctrlPressed) {
 				if (flipped)
-					theta = theta + -get_keyboardSensivity() * get_sensivity();
+					theta = theta + -getKeyboardSensivity() * getSensivity();
 				else
-					theta = theta - -get_keyboardSensivity() * get_sensivity();
+					theta = theta - -getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				if (flipped)
 					translateCameraFromScreenPlan(
-							get_keyboardSensivity()
-									* get_sensivity() /** radius/1000.0 */
+							getKeyboardSensivity()
+									* getSensivity() /** radius/1000.0 */
 							, 0.0);
 				else
 					translateCameraFromScreenPlan(
-							-get_keyboardSensivity()
-									* get_sensivity() /** radius/1000.0 */
+							-getKeyboardSensivity()
+									* getSensivity() /** radius/1000.0 */
 							, 0.0);
 			}
 		}
 		if (isStrafeRight()) {
 			if (ctrlPressed) {
 				if (flipped)
-					theta = theta + get_keyboardSensivity() * get_sensivity();
+					theta = theta + getKeyboardSensivity() * getSensivity();
 				else
-					theta = theta - get_keyboardSensivity() * get_sensivity();
+					theta = theta - getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
 				if (flipped)
 					translateCameraFromScreenPlan(
-							-get_keyboardSensivity()
-									* get_sensivity() /** radius/1000.0 */
+							-getKeyboardSensivity()
+									* getSensivity() /** radius/1000.0 */
 							, 0.0);
 				else
 					translateCameraFromScreenPlan(
-							get_keyboardSensivity()
-									* get_sensivity() /** radius/1000.0 */
+							getKeyboardSensivity()
+									* getSensivity() /** radius/1000.0 */
 							, 0.0);
 			}
 		}
@@ -382,24 +382,24 @@ public class CameraArcBall extends AbstractCamera {
 					+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
 
 			lastMousePressedPosition = newPoint;
-			theta = theta - horizMovement_real * get_sensivity();
+			theta = theta - horizMovement_real * getSensivity();
 
 			if (flipped) {
 				if (vertMovement_real > 0) {
 					// down drag : phi increase
-					if (phi + vertMovement_real * get_sensivity() < 180)
-						phi += vertMovement_real * get_sensivity();
+					if (phi + vertMovement_real * getSensivity() < 180)
+						phi += vertMovement_real * getSensivity();
 					else {
-						phi = +360 + phi - vertMovement_real * get_sensivity();
+						phi = +360 + phi - vertMovement_real * getSensivity();
 						flipped = !flipped;
 						theta += 180;
 					}
 				} else {
 					// up drag : phi decrease
-					if (phi - -vertMovement_real * get_sensivity() > 0)
-						phi -= -vertMovement_real * get_sensivity();
+					if (phi - -vertMovement_real * getSensivity() > 0)
+						phi -= -vertMovement_real * getSensivity();
 					else {
-						phi = -phi + -vertMovement_real * get_sensivity();
+						phi = -phi + -vertMovement_real * getSensivity();
 						flipped = !flipped;
 						theta += 180;
 					}
@@ -407,19 +407,19 @@ public class CameraArcBall extends AbstractCamera {
 			} else {
 				if (vertMovement_real > 0) {
 					// down drag : phi decrease
-					if (phi - vertMovement_real * get_sensivity() > 0)
-						phi -= vertMovement_real * get_sensivity();
+					if (phi - vertMovement_real * getSensivity() > 0)
+						phi -= vertMovement_real * getSensivity();
 					else {
-						phi = -phi + vertMovement_real * get_sensivity();
+						phi = -phi + vertMovement_real * getSensivity();
 						flipped = !flipped;
 						theta += 180;
 					}
 				} else {
 					// up drag : phi increase
-					if (phi + -vertMovement_real * get_sensivity() < 180)
-						phi += -vertMovement_real * get_sensivity();
+					if (phi + -vertMovement_real * getSensivity() < 180)
+						phi += -vertMovement_real * getSensivity();
 					else {
-						phi = +360 + phi - vertMovement_real * get_sensivity();
+						phi = +360 + phi - vertMovement_real * getSensivity();
 						flipped = !flipped;
 						theta += 180;
 					}
