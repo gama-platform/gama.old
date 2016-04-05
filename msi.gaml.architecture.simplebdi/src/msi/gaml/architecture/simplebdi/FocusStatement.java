@@ -22,7 +22,6 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -31,40 +30,39 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
-import msi.gaml.compilation.IDescriptionValidator.ValidNameValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
-@symbol(name = FocusStatement.FOCUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
-concept = { IConcept.BDI })
+@symbol(name = FocusStatement.FOCUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
+		IConcept.BDI })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the identifier of the focus")),	
-	@facet(name = FocusStatement.VAR, type = {IType.NONE,IType.LIST,IType.CONTAINER},optional = true, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
-	@facet(name = FocusStatement.EXPRESSION, type = IType.NONE,optional = true, doc = @doc("an expression that will be the value kept in the belief")),
-	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to focus only with a certain condition")),
-	@facet(name = FocusStatement.PRIORITY, type = {IType.FLOAT,IType.INT}, optional = true, doc = @doc("The priority of the created predicate"))}
-,omissible = IKeyword.NAME)
-@doc( value = "enables to directly add a belief from the variable of a perceived specie.",
-		examples={@example("focus var:speed /*where speed is a variable from a species that is being perceived*/ agent: myself")})
+		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the identifier of the focus")),
+		@facet(name = FocusStatement.VAR, type = { IType.NONE, IType.LIST,
+				IType.CONTAINER }, optional = true, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
+		@facet(name = FocusStatement.EXPRESSION, type = IType.NONE, optional = true, doc = @doc("an expression that will be the value kept in the belief")),
+		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to focus only with a certain condition")),
+		@facet(name = FocusStatement.PRIORITY, type = { IType.FLOAT,
+				IType.INT }, optional = true, doc = @doc("The priority of the created predicate")) }, omissible = IKeyword.NAME)
+@doc(value = "enables to directly add a belief from the variable of a perceived specie.", examples = {
+		@example("focus var:speed /*where speed is a variable from a species that is being perceived*/ agent: myself") })
 public class FocusStatement extends AbstractStatement {
 
 	public static final String FOCUS = "focus";
 	public static final String PRIORITY = "priority";
 	public static final String EXPRESSION = "expression";
 	public static final String VAR = "var";
-	
+
 	final IExpression name;
 	final IExpression variable;
 	final IExpression expression;
 	final IExpression when;
 	final IExpression priority;
-	
-	
-	public FocusStatement(IDescription desc) {
+
+	public FocusStatement(final IDescription desc) {
 		super(desc);
 		name = getFacet(IKeyword.NAME);
 		variable = getFacet(FocusStatement.VAR);
@@ -74,79 +72,86 @@ public class FocusStatement extends AbstractStatement {
 	}
 
 	@Override
-	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
-		if ( when == null || Cast.asBool(scope, when.value(scope)) ){
-			IAgent[] stack = scope.getAgentsStack(); 
-			final IAgent mySelfAgent = stack[stack.length-2];
+	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		if (when == null || Cast.asBool(scope, when.value(scope))) {
+			final IAgent[] stack = scope.getAgentsStack();
+			final IAgent mySelfAgent = stack[stack.length - 2];
 			IScope scopeMySelf = null;
-			if(mySelfAgent!=null){
-				scopeMySelf = mySelfAgent.getScope().copy();
+			if (mySelfAgent != null) {
+				scopeMySelf = mySelfAgent.getScope().copy("in FocusStatement");
 				scopeMySelf.push(mySelfAgent);
 			}
 			final Predicate tempPred;
-			if(variable!=null){
-				//Pour la liste, faire un truc générique dans un premier temps avec un nom des variables du genre test_i, sans chercher à récupérer le nom précis des variables.
-				if(variable.value(scope) instanceof IContainer){
+			if (variable != null) {
+				// Pour la liste, faire un truc générique dans un premier temps
+				// avec un nom des variables du genre test_i, sans chercher à
+				// récupérer le nom précis des variables.
+				if (variable.value(scope) instanceof IContainer) {
 					String namePred;
-					if(name!=null){
+					if (name != null) {
 						namePred = (String) name.value(scope);
-					}else{
-						namePred = variable.getName()+"_"+scope.getAgentScope().getSpeciesName();
+					} else {
+						namePred = variable.getName() + "_" + scope.getAgentScope().getSpeciesName();
 					}
 					String nameVarTemp;
-					Map<String,Object> tempValues = (Map<String, Object>) new GamaMap<String,Object>(1, null, null);
+					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
+							null);
 					final IList variablesTemp = ((IContainer) variable.value(scope)).listValue(scope, null, true);
-					for(int temp=0;temp<variablesTemp.length(scope);temp++){
-						Object temp2 = variablesTemp.get(temp);
-						nameVarTemp = "test"+temp;
+					for (int temp = 0; temp < variablesTemp.length(scope); temp++) {
+						final Object temp2 = variablesTemp.get(temp);
+						nameVarTemp = "test" + temp;
 						tempValues.put(nameVarTemp + "_value", Cast.asInt(scope, temp2));
 					}
-					tempPred = new Predicate(namePred,(Map<String, Object>) GamaMapFactory.createWithoutCasting(((GamaMap<String,Object>) tempValues).getType().getKeyType(), ((GamaMap<String,Object>) tempValues).getType().getContentType(), tempValues));
-					if(priority!=null){
+					tempPred = new Predicate(namePred,
+							(Map<String, Object>) GamaMapFactory.createWithoutCasting(
+									((GamaMap<String, Object>) tempValues).getType().getKeyType(),
+									((GamaMap<String, Object>) tempValues).getType().getContentType(), tempValues));
+					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 					}
-					if(!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)){
+					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
 						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
 					}
-				}
-				else{
+				} else {
 					String namePred;
-					if(name!=null){
+					if (name != null) {
 						namePred = (String) name.value(scope);
-					}else{
-						namePred = variable.getName()+"_"+scope.getAgentScope().getSpeciesName();
+					} else {
+						namePred = variable.getName() + "_" + scope.getAgentScope().getSpeciesName();
 					}
-					String nameVar = variable.getName();
-					Map<String,Object> tempValues = (Map<String, Object>) new GamaMap<String,Object>(1, null, null);
-					if(expression!=null){
+					final String nameVar = variable.getName();
+					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
+							null);
+					if (expression != null) {
 						tempValues.put(nameVar + "_value", expression.value(scope));
-					}else{
+					} else {
 						tempValues.put(nameVar + "_value", variable.value(scope));
 					}
-					tempPred = new Predicate(namePred,tempValues);
-					if(priority!=null){
+					tempPred = new Predicate(namePred, tempValues);
+					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 					}
-					if(!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)){
+					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
 						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
 					}
 				}
-			}else{
-				if(expression!=null){
+			} else {
+				if (expression != null) {
 					String namePred;
-					if(name!=null){
+					if (name != null) {
 						namePred = (String) name.value(scope);
-					}else{
-						namePred = "expression"+"_"+scope.getAgentScope().getSpeciesName();
+					} else {
+						namePred = "expression" + "_" + scope.getAgentScope().getSpeciesName();
 					}
-					String nameVar = "expression";
-					Map<String,Object> tempValues = (Map<String, Object>) new GamaMap<String,Object>(1, null, null);
+					final String nameVar = "expression";
+					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
+							null);
 					tempValues.put(nameVar + "_value", expression.value(scope));
-					tempPred = new Predicate(namePred,tempValues);
-					if(priority!=null){
+					tempPred = new Predicate(namePred, tempValues);
+					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 					}
-					if(!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)){
+					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
 						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
 					}
 				}

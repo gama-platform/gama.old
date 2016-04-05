@@ -11,7 +11,9 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.GamaHelper;
 
@@ -26,7 +28,7 @@ public class ActionExecuter {
 	protected final IScope scope;
 
 	public ActionExecuter(final IScope scope) {
-		this.scope = scope.copy();
+		this.scope = scope.copy("of ActionExecuter");
 	}
 
 	public void dispose() {
@@ -34,19 +36,25 @@ public class ActionExecuter {
 	}
 
 	public void removeAction(final GamaHelper haltAction) {
-		if ( actions == null ) { return; }
-		for ( final List<GamaHelper> list : actions ) {
-			if ( list != null && list.remove(haltAction) ) { return; }
+		if (actions == null) {
+			return;
+		}
+		for (final List<GamaHelper> list : actions) {
+			if (list != null && list.remove(haltAction)) {
+				return;
+			}
 		}
 	}
 
 	private GamaHelper insertAction(final GamaHelper action, final int type) {
 		List<GamaHelper> list = actions[type];
-		if ( list == null ) {
+		if (list == null) {
 			list = new ArrayList();
 			actions[type] = list;
 		}
-		if ( list.add(action) ) { return action; }
+		if (list.add(action)) {
+			return action;
+		}
 		return null;
 	}
 
@@ -63,7 +71,9 @@ public class ActionExecuter {
 	}
 
 	public void executeEndActions() {
-		if ( scope.interrupted() ) { return; }
+		if (scope.interrupted()) {
+			return;
+		}
 		executeActions(END);
 	}
 
@@ -72,24 +82,28 @@ public class ActionExecuter {
 	}
 
 	public void executeOneShotActions() {
-		if ( scope.interrupted() ) { return; }
+		if (scope.interrupted()) {
+			return;
+		}
 		executeActions(ONE_SHOT);
 		actions[ONE_SHOT] = null;
 	}
 
 	private void executeActions(final int type) {
-		if ( actions[type] == null || actions[type].isEmpty() ) { return; }
-		for ( GamaHelper action : actions[type] ) {
-			if ( !scope.interrupted() ) {
+		if (actions[type] == null || actions[type].isEmpty()) {
+			return;
+		}
+		for (final GamaHelper action : actions[type]) {
+			if (!scope.interrupted()) {
 				action.run(scope);
 			}
 		}
 	}
 
 	public synchronized void executeOneAction(final GamaHelper action) {
-		ExperimentScheduler sche =
-			scope.getSimulationScope().getExperiment().getSpecies().getController().getScheduler();
-		if ( sche.paused || sche.on_user_hold ) {
+		final ExperimentScheduler sche = scope.getSimulationScope().getExperiment().getSpecies().getController()
+				.getScheduler();
+		if (sche.paused || sche.on_user_hold) {
 			action.run(scope);
 		} else {
 			insertOneShotAction(action);
@@ -97,7 +111,9 @@ public class ActionExecuter {
 	}
 
 	public void executeBeginActions() {
-		if ( scope.interrupted() ) { return; }
+		if (scope.interrupted()) {
+			return;
+		}
 		executeActions(BEGIN);
 	}
 

@@ -154,8 +154,10 @@ public class Popup {
 		// int maxTextWidth = 0;
 		Control[] labels = popup.getChildren();
 		for ( Map.Entry<GamaUIColor, String> entry : s.entrySet() ) {
-			Label label = (Label) labels[index++];
-			label.setText(entry.getValue());
+			if(index+1<labels.length){				
+				Label label = (Label) labels[index++];
+				label.setText(entry.getValue());
+			}
 		}
 
 		// We fix the max. width to 400
