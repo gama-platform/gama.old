@@ -1256,6 +1256,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if ( dodesire ) {
 				getBase(scope, DESIRE_BASE).remove(predicateDirect);
 			}
+			if (predicateDirect.equals(currentIntention(scope))) 
+				scope.getAgentScope().setAttribute(CURRENT_PLAN, null);
 			for ( Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE) ) {
 				if ( ((Predicate) statement).getSubintentions() != null ) {
 					if ( ((Predicate) statement).getSubintentions().contains(predicateDirect) ) {
@@ -1273,6 +1275,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 			}
+			
 			return true;
 		}
 
@@ -1303,6 +1306,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			examples = { @example("") }))
 	public Boolean primClearIntention(final IScope scope) {
 		getBase(scope, INTENTION_BASE).clear();
+		scope.getAgentScope().setAttribute(CURRENT_PLAN, null);
 		return true;
 	}
 
