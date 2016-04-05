@@ -121,6 +121,7 @@ public interface IConcept {
 	public static final String SPATIAL_RELATION			= "spatial_relation";
 	public static final String SPATIAL_TRANSFORMATION	= "spatial_transformation";
 	public static final String SPECIES					= "species";
+	public static final String SPORT					= "sport";
 	public static final String STATISTIC				= "statistic";
 	public static final String STRING					= "string";
 	public static final String SURFACE_UNIT				= "surface_unit";

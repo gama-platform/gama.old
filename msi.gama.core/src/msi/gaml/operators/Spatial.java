@@ -2631,7 +2631,7 @@ public abstract class Spatial {
 			IType contentType = list.getType().getContentType();
 			if ( contentType.isAgentType() ) {
 				return _closest(scope, In.list(scope, list), source);
-			} else if ( contentType == Types.GEOMETRY ) { return geomClostestTo(scope, list, source); }
+			} else if ( list.getType().getContentType().isTranslatableInto(Types.GEOMETRY) ) { return geomClostestTo(scope, list, source); }
 			return null;
 		}
 
@@ -2655,7 +2655,7 @@ public abstract class Spatial {
 			IType contentType = list.getType().getContentType();
 			if ( contentType.isAgentType() ) {
 				return _farthest(scope, In.list(scope, list), source);
-			} else if ( contentType == Types.GEOMETRY ) { return geomFarthestTo(scope, list, source); }
+			} else if ( list.getType().getContentType().isTranslatableInto(Types.GEOMETRY) ) { return geomFarthestTo(scope, list, source); }
 			return null;
 		}
 
