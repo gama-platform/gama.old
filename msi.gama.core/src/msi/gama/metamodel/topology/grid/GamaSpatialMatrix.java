@@ -700,7 +700,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final IAgent endAg = matrix[targetplace].getAgent();
 		final IList<IAgent> nodes = GamaListFactory.create(Types.GEOMETRY);
 		final int[] dists = new int[this.getAgents().size()];
-		if ( startAg == endAg ) { return PathFactory.newInstance(scope, topo, nodes); }
+		if ( startAg == endAg ) { 
+			IList<IShape> nodesPt = GamaListFactory.create(Types.GEOMETRY);
+			nodesPt.add(source.getLocation());
+			nodesPt.add(target.getLocation());
+			return PathFactory.newInstance(scope, topo, nodesPt); }
 
 		for ( IAgent ag : this.getAgents() ) {
 			if ( on != null ) {
@@ -753,10 +757,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 							nodes.add(cel2);
 						}
 						nodes.remove(startAg);
+						
 						IList<IShape> nodesPt = GamaListFactory.create(Types.GEOMETRY);
+						nodesPt.add(target.getLocation());
 						for ( IAgent nd : nodes ) {
 							nodesPt.add(nd.getLocation());
 						}
+						nodesPt.add(source.getLocation());
 						Collections.reverse(nodesPt);
 						return PathFactory.newInstance(scope, topo, nodesPt);
 					}
