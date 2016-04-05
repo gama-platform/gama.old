@@ -11,18 +11,28 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.linking;
 
-import java.util.*;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.utils.EGaml;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.linking.impl.*;
+import org.eclipse.xtext.linking.impl.DefaultLinkingService;
+import org.eclipse.xtext.linking.impl.IllegalNodeException;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.scoping.IScope;
+
 import com.google.inject.Inject;
+
+import msi.gama.lang.gaml.gaml.GamlDefinition;
+import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.utils.EGaml;
 
 /**
  * The class GamlLinkingService.
@@ -55,11 +65,12 @@ public class GamlLinkingService extends DefaultLinkingService {
 
 	public List<EObject> addSymbol(final String name, final EClass clazz) {
 		List<EObject> list = stubbedRefs.get(name);
-		if ( list == null ) {
-			System.out.println("Adding stub reference to " + name + " as a " + clazz.getName());
-			System.out.println("****************************************************");
+		if (list == null) {
+			// System.out.println("Adding stub reference to " + name + " as a "
+			// + clazz.getName());
+			// System.out.println("****************************************************");
 
-			GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(clazz);
+			final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(clazz);
 			stub.setName(name);
 			getResource().getContents().add(stub);
 			list = Collections.singletonList((EObject) stub);
@@ -69,7 +80,7 @@ public class GamlLinkingService extends DefaultLinkingService {
 	}
 
 	private Resource getResource() {
-		if ( stubsResource == null ) {
+		if (stubsResource == null) {
 			stubsResource = resourceSet.createResource(URI.createURI("gaml:/newSymbols.xmi", false));
 		}
 		return stubsResource;
@@ -92,13 +103,16 @@ public class GamlLinkingService extends DefaultLinkingService {
 	 */
 	@Override
 	public List<EObject> getLinkedObjects(final EObject context, final EReference ref, final INode node)
-		throws IllegalNodeException {
-		List<EObject> result = super.getLinkedObjects(context, ref, node);
+			throws IllegalNodeException {
+		final List<EObject> result = super.getLinkedObjects(context, ref, node);
 		// If the default implementation resolved the link, return it
-		if ( null != result && !result.isEmpty() ) { return result; }
-		String name = getCrossRefNodeAsString(node);
-		if ( GamlPackage.eINSTANCE.getTypeDefinition().isSuperTypeOf(ref.getEReferenceType()) ) { return addSymbol(
-			name, ref.getEReferenceType()); }
+		if (null != result && !result.isEmpty()) {
+			return result;
+		}
+		final String name = getCrossRefNodeAsString(node);
+		if (GamlPackage.eINSTANCE.getTypeDefinition().isSuperTypeOf(ref.getEReferenceType())) {
+			return addSymbol(name, ref.getEReferenceType());
+		}
 		return Collections.EMPTY_LIST;
 	}
 }

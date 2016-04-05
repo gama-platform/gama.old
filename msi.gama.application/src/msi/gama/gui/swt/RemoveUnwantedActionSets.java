@@ -12,7 +12,11 @@
 package msi.gama.gui.swt;
 
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PerspectiveAdapter;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import msi.gama.runtime.GAMA;
 
@@ -22,10 +26,10 @@ public class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements I
 	String[] MENUS_TO_REMOVE = new String[] { "org.eclipse.ui.run", "window", "navigate", "project" };
 
 	public static void run() {
-		RemoveUnwantedActionSets remove = new RemoveUnwantedActionSets();
-		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+		final RemoveUnwantedActionSets remove = new RemoveUnwantedActionSets();
+		final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for ( int i = 0; i < windows.length; i++ ) {
-			IWorkbenchPage page = windows[i].getActivePage();
+			final IWorkbenchPage page = windows[i].getActivePage();
 			if ( page != null ) {
 				// Doing the initial cleanup on the default perspective (modeling)
 				remove.perspectiveActivated(page, null);
@@ -42,19 +46,19 @@ public class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements I
 			@Override
 			public void run() {
 				// RearrangeMenus.run();
-				IContributionItem[] items = w.getCoolBarManager2().getItems();
+				final IContributionItem[] items = w.getCoolBarManager2().getItems();
 				// We remove all contributions to the toolbar that do not relate to gama
-				for ( IContributionItem item : items ) {
+				for ( final IContributionItem item : items ) {
 
-					for ( String s : TOOLBAR_ACTION_SETS_TO_REMOVE ) {
+					for ( final String s : TOOLBAR_ACTION_SETS_TO_REMOVE ) {
 						if ( item.getId().contains(s) ) {
-							System.out.println("Removed perspective contribution to toolbar:" + item.getId());
+							// System.out.println("Removed perspective contribution to toolbar:" + item.getId());
 							w.getCoolBarManager2().remove(item);
 						}
 					}
 				}
 
-				for ( String s : MENUS_TO_REMOVE ) {
+				for ( final String s : MENUS_TO_REMOVE ) {
 					w.getMenuBarManager().remove(s);
 					w.getMenuManager().remove(s);
 				}

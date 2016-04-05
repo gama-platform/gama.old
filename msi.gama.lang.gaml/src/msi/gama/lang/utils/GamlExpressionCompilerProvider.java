@@ -11,7 +11,8 @@
  **********************************************************************************************/
 package msi.gama.lang.utils;
 
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.expressions.IExpressionCompilerProvider;
 
 /**
  * Class GamlExpressionCompilerProvider.
@@ -22,13 +23,15 @@ import msi.gaml.expressions.*;
  */
 public class GamlExpressionCompilerProvider implements IExpressionCompilerProvider {
 
-	private static int count = 0;
+	// private static int count = 0;
 
-	public GamlExpressionCompilerProvider() {}
+	public GamlExpressionCompilerProvider() {
+	}
 
 	@Override
 	public IExpressionCompiler newParser() {
-		System.out.println("Generation of expression compilers so far: " + count++);
+		// System.out.println("Generation of expression compilers so far: " +
+		// count++);
 		return new GamlExpressionCompiler();
 	}
 }
