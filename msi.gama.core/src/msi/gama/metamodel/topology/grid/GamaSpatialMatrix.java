@@ -249,7 +249,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			new GamaPoint(environmentFrame.getEnvelope().getMinX(), environmentFrame.getEnvelope().getMinY());
 
 		final IShape translatedReferenceFrame = Spatial.Transformations.translated_by(scope, environmentFrame, origin);
-
+		
+		
 		final double cmx = cellWidth / 2;
 		final double cmy = cellHeight / 2;
 		for ( int i = 0, n = numRows * numCols; i < n; i++ ) {
@@ -278,6 +279,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				actualNumberOfCells++;
 				lastCell = i;
 			}
+		}
+		if (!useIndividualShapes) {
+			scope.getSimulationScope().addSubAgents(actualNumberOfCells);
 		}
 	}
 
