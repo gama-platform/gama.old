@@ -11,15 +11,21 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
-import msi.gaml.descriptions.*;
-import msi.gaml.expressions.*;
+import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.Symbol;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
 
 /**
@@ -40,7 +46,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	public AbstractOutput(final IDescription desc) {
 		super(desc);
-		if ( hasFacet(IKeyword.REFRESH) ) {
+		if (hasFacet(IKeyword.REFRESH)) {
 			refresh = this.getFacet(IKeyword.REFRESH);
 		} else {
 			refresh = IExpressionFactory.TRUE_EXPR;
@@ -48,9 +54,9 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 		name = getLiteral(IKeyword.NAME);
 		originalName = name;
-		if ( name != null ) {
+		if (name != null) {
 			name = name.replace(':', '_').replace('/', '_').replace('\\', '_');
-			if ( name.length() == 0 ) {
+			if (name.length() == 0) {
 				name = "output";
 			}
 		}
@@ -73,9 +79,9 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public boolean init(final IScope scope) {
-		setScope(scope.copy());
+		setScope(scope.copy("of " + this));
 		final IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
-		if ( refresh != null ) {
+		if (refresh != null) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
 		}
 		return true;
@@ -104,9 +110,9 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	// @Override
 	boolean isRefreshable() {
-		IScope scope = getScope();
-		return Cast.asBool(scope, refresh.value(scope)) && refreshRate > 0 &&
-			scope.getClock().getCycle() % refreshRate == 0;
+		final IScope scope = getScope();
+		return Cast.asBool(scope, refresh.value(scope)) && refreshRate > 0
+				&& scope.getClock().getCycle() % refreshRate == 0;
 	}
 
 	@Override
@@ -145,21 +151,23 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	// @Override
 	String getId() {
-		if ( !this.getDescription().getModelDescription().getAlias().equals("") ) { return getName() + "#" +
-			this.getDescription().getModelDescription().getAlias() + "#" + getScope().getExperiment().getName(); }
+		if (!this.getDescription().getModelDescription().getAlias().equals("")) {
+			return getName() + "#" + this.getDescription().getModelDescription().getAlias() + "#"
+					+ getScope().getExperiment().getName();
+		}
 		return getName(); // by default
 	}
 
 	public void setScope(final IScope scope) {
-		if ( this.scope != null ) {
+		if (this.scope != null) {
 			GAMA.releaseScope(this.scope);
 		}
-		ModelDescription micro = this.getDescription().getModelDescription();
-		ModelDescription main = (ModelDescription) scope.getModel().getDescription();
-		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
-		if ( fromMicroModel ) {
-			ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
-				.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
+		final ModelDescription micro = this.getDescription().getModelDescription();
+		final ModelDescription main = (ModelDescription) scope.getModel().getDescription();
+		final Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
+		if (fromMicroModel) {
+			final ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
+					.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
 			this.scope = exp.getSimulation().getScope();
 		} else {
 			this.scope = scope;

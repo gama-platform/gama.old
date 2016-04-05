@@ -13,13 +13,18 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
-import com.jogamp.opengl.*;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.vividsolutions.jts.geom.Geometry;
+
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.util.file.*;
-import msi.gaml.statements.draw.*;
+import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.file.GamaImageFile;
+import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.FieldDrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 
 /**
@@ -95,14 +100,16 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void draw(final GL2 gl, final JOGLRenderer renderer, final boolean picking) {
-		if ( isInvalid() ) { return; }
-		if ( overlay ) {
+		if (isInvalid()) {
+			return;
+		}
+		if (overlay) {
 			gl.glDisable(GL.GL_DEPTH_TEST);
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
 			gl.glPushMatrix();
 			gl.glLoadIdentity();
 			gl.glOrtho(0.0, renderer.data.getEnvWidth(), renderer.data.getEnvHeight(), 0.0, -1.0,
-				renderer.getMaxEnvDim());
+					renderer.getMaxEnvDim());
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 			gl.glLoadIdentity();
 			// gl.glDisable(GL.GL_CULL_FACE);
@@ -111,8 +118,11 @@ public class LayerObject implements Iterable<GeometryObject> {
 		gl.glPushMatrix();
 		gl.glTranslated(offset.x, -offset.y, offset.z);
 		gl.glScaled(scale.x, scale.y, scale.z);
-		// NOTE: In the same layer if geometries and image are drawn images are drawn first and then the geometries.
-		// To be sure that the line of a grid is well displayed we decide to draw first the image that corresponds to the grid and then the line as geometries. (otherwise the lines are invisible)
+		// NOTE: In the same layer if geometries and image are drawn images are
+		// drawn first and then the geometries.
+		// To be sure that the line of a grid is well displayed we decide to
+		// draw first the image that corresponds to the grid and then the line
+		// as geometries. (otherwise the lines are invisible)
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		images.draw(gl, picking && isPickable());
 		gl.glDisable(GL.GL_TEXTURE_2D);
@@ -123,13 +133,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		// DEMS are treated apart for the moment, since they have a very special draw that already applies the scale
+		// DEMS are treated apart for the moment, since they have a very special
+		// draw that already applies the scale
 		// and offset...
 		// FIXME this needs to be changed
 		dems.draw(gl, picking && isPickable());
 
 		gl.glPopMatrix();
-		if ( overlay ) {
+		if (overlay) {
 			// Making sure we can render 3d again
 			gl.glEnable(GL.GL_DEPTH_TEST);
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
@@ -141,8 +152,10 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public boolean isStatic() {
-		if ( layer == null ) { return true; }
-		Boolean isDynamic = layer.isDynamic();
+		if (layer == null) {
+			return true;
+		}
+		final Boolean isDynamic = layer.isDynamic();
 		return isDynamic == null ? false : !isDynamic;
 	}
 
@@ -195,21 +208,25 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	private int getTrace() {
-		if ( layer == null ) { return 0; }
-		Integer trace = layer.getTrace();
+		if (layer == null) {
+			return 0;
+		}
+		final Integer trace = layer.getTrace();
 		return trace == null ? 0 : trace;
 	}
 
 	private boolean getFading() {
-		if ( layer == null ) { return false; }
-		Boolean fading = layer.getFading();
+		if (layer == null) {
+			return false;
+		}
+		final Boolean fading = layer.getFading();
 		return fading == null ? false : fading;
 	}
 
 	public void clear(final GL gl) {
-		int trace = getTrace();
+		final int trace = getTrace();
 		// int traceSize = trace == 0 ? requestedDisplayTraceSize : trace;
-		boolean fading = getFading();
+		final boolean fading = getFading();
 		geometries.clear(gl, trace, fading);
 		resources.clear(gl, trace, fading);
 		images.clear(gl, trace, fading);
@@ -219,6 +236,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	/**
 	 * Method iterator()
+	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override

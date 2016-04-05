@@ -7,7 +7,8 @@ package msi.gama.metamodel.agent;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.runtime.*;
+import msi.gama.runtime.AbstractScope;
+import msi.gama.runtime.IScope;
 
 public class SimulationScope extends AbstractScope {
 
@@ -15,6 +16,10 @@ public class SimulationScope extends AbstractScope {
 
 	public SimulationScope(final ITopLevelAgent agent) {
 		super(agent);
+	}
+
+	public SimulationScope(final ITopLevelAgent agent, final String additionalName) {
+		super(agent, additionalName);
 	}
 
 	@Override
@@ -28,17 +33,18 @@ public class SimulationScope extends AbstractScope {
 	}
 
 	@Override
-	public IScope copy() {
-		return new SimulationScope(getRoot());
+	public IScope copy(final String additionalName) {
+		return new SimulationScope(getRoot(), additionalName);
 	}
 
 	/**
 	 * Method getRandom()
+	 * 
 	 * @see msi.gama.runtime.IScope#getRandom()
 	 */
 	@Override
 	public RandomUtils getRandom() {
-		SimulationAgent a = this.getSimulationScope();
+		final SimulationAgent a = this.getSimulationScope();
 		return a == null ? null : a.getRandomGenerator();
 	}
 

@@ -120,7 +120,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected final Map<String, IParameter> parameters = new TOrderedHashMap();
 	protected final Map<String, IParameter.Batch> explorableParameters = new TOrderedHashMap();
 	protected ExperimentAgent agent;
-	protected final Scope scope = new Scope();
+	protected final Scope scope = new Scope("in ExperimentPlan");
 	protected IModel model;
 	protected IExploration exploration;
 	private FileOutput log;
@@ -466,8 +466,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		 */
 		private volatile boolean interrupted;
 
-		public Scope() {
-			super(null);
+		public Scope(final String additionalName) {
+			super(null, additionalName);
 		}
 
 		@Override
@@ -531,8 +531,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 
 		@Override
-		public IScope copy() {
-			return new Scope();
+		public IScope copy(final String additionalName) {
+			return new Scope(additionalName);
 		}
 
 		/**

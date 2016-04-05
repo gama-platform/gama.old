@@ -100,7 +100,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	public final static int EXPR = 3;
 	public static final List<String> DONT_INSPECT_BY_DEFAULT =
 		Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
-	// IScope scope;
+	private IScope scope;
 	volatile boolean locked;
 	// volatile boolean refreshing;
 	ToolItem populationMenu;
@@ -186,9 +186,12 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 			// that the output manager has already removed it (otherwise, this view would not have been
 			// activated).
 			getOutput().setPaused(true);
+			// we release the scope
+			GAMA.releaseScope(getScope());
 			outputs.clear();
 		}
 		outputs.add(output);
+		scope = output.getScope().copy("in PopulationInspectView");
 		selectedColumns.clear();
 		updateSpecies();
 		comparator = new AgentComparator();
@@ -587,8 +590,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private IScope getScope() {
-		if ( getOutput() == null ) { return null; }
-		return getOutput().getScope();
+		return scope;
 	}
 
 	public static class NaturalOrderComparator implements Comparator {
@@ -817,6 +819,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 			currentFont.dispose();
 		}
 		provider.dispose();
+		GAMA.releaseScope(scope);
+		scope = null;
 	}
 
 	/**
