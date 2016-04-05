@@ -756,7 +756,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		while (it.hasNext()) {
 			IShape s = it.next();
 			IAgent a = s.getAgent();
-			if ( a == null || a.getPopulation() != this || a.dead() ) {
+			if ( a == null || a.dead() || (a.getPopulation() != this && ((a.getPopulation().getType().getContentType() != this.getType().getContentType() ||! this.contains(a))))) {
 				it.remove();
 			}
 
