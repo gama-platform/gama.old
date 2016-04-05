@@ -126,7 +126,11 @@ public class ModelScene {
 		LayerObject[] array = layers.values().toArray(new LayerObject[0]);
 		for ( LayerObject layer : array ) {
 			if ( layer != null && !layer.isInvalid() ) {
+				try {
 				layer.draw(gl, renderer, picking);
+				} catch (RuntimeException r) {
+					System.err.println("Runtime error " + r.getMessage() + " in OpenGL loop");
+				}
 			}
 		}
 		rendered = true;

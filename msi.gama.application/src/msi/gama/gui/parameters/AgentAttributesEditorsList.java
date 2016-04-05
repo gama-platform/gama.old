@@ -56,7 +56,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 				for ( final IParameter var : params ) {
 					if ( !HIDDEN.contains(var.getName()) ) {
 						final IParameterEditor gp =
-							EditorFactory.getInstance().create(agent.getScope(), agent, var, null);
+							EditorFactory.getInstance().create(agent.getScope().copy("for " + agent.getName()), agent, var, null);
 						categories.get(agent).put(gp.getParam().getName(), gp);
 					}
 				}
