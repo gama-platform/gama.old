@@ -43,6 +43,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			d.widthHint = image.getBounds().width;
 			setLayoutData(d);
 		}
+		
+		public boolean forceFocus() {return true;}
 
 		@Override
 		public Rectangle getBounds() {

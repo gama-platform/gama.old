@@ -53,6 +53,7 @@ public class Popup {
 				@Override
 				public void run() {
 					open();
+					display();
 					isVisible = true;
 				}
 			});
@@ -135,7 +136,6 @@ public class Popup {
 	}
 
 	public void display() {
-
 		// We first verify that the popup is still ok
 		final Shell c = provider.getControllingShell();
 		if ( c == null || c.isDisposed() ) {

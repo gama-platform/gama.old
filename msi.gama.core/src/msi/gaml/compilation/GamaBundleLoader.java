@@ -144,11 +144,8 @@ public class GamaBundleLoader {
 			@Override
 			public void run() {
 				final long start = System.currentTimeMillis();
-				LocalDateTime.now();
-				Chronology c = Dates.getChronology();
-				GAMA.getGui().debug(
-						">> JodaTime (" + c + ") initialized in " + (System.currentTimeMillis() - start) + " ms.");
-
+				Dates.initializeAllFormats();
+				GAMA.getGui().debug(">> JodaTime initialized in " + (System.currentTimeMillis() - start) + " ms.");
 			}
 		}).start();
 

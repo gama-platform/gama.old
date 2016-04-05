@@ -9,6 +9,7 @@ import org.joda.time.Chronology;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.DurationFieldType;
+import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
 import org.joda.time.chrono.AssembledChronology;
@@ -533,6 +534,20 @@ public class Dates {
 			chronology = new GamaChronology(GregorianChronology.getInstanceUTC());
 		}
 		return chronology;
+	}
+	
+	public static void initializeAllFormats() {
+		LocalDateTime.now();
+		getCustomFormat();
+		getDateFormat();
+		getSystemDateFormat();
+		getSystemDateTimeFormat();
+		getSystemFormat();
+		getSystemTimeFormat();
+		getTimeFormat();
+		getChronology();
+		asDate(0);
+		asTime(0);
 	}
 	
 }
