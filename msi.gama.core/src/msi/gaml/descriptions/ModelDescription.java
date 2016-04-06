@@ -12,8 +12,14 @@
 package msi.gaml.descriptions;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
+
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -21,7 +27,9 @@ import msi.gama.util.TOrderedHashMap;
 import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+import msi.gaml.types.TypesManager;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
@@ -49,6 +57,7 @@ public class ModelDescription extends SpeciesDescription {
 	private Map<String, ModelDescription> MICRO_MODELS = new TOrderedHashMap<String, ModelDescription>();
 	private String alias = "";
 	boolean isStartingDateDefined = false;
+	private Set<String> importedModelNames;
 
 	public void setMicroModels(final Map<String, ModelDescription> mm) {
 		MICRO_MODELS = mm;
@@ -63,7 +72,9 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public ModelDescription getMicroModel(final String name) {
-		if ( MICRO_MODELS.size() > 0 ) { return MICRO_MODELS.get(name); }
+		if (MICRO_MODELS.size() > 0) {
+			return MICRO_MODELS.get(name);
+		}
 		return null;
 	}
 
@@ -82,22 +93,23 @@ public class ModelDescription extends SpeciesDescription {
 	// end-hqnghi
 
 	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
-		final SpeciesDescription parent, final Facets facets) {
+			final SpeciesDescription parent, final Facets facets) {
 		this(name, clazz, "", "", null, macro, parent, facets, ErrorCollector.BuiltIn, Collections.EMPTY_LIST);
 	}
 
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
-		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
-		final ErrorCollector collector, final List<String> imports) {
+			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
+			final ErrorCollector collector, final List<String> imports) {
 		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets, null);
 		types = new TypesManager(
-			parent instanceof ModelDescription ? ((ModelDescription) parent).types : Types.builtInTypes);
+				parent instanceof ModelDescription ? ((ModelDescription) parent).types : Types.builtInTypes);
 		modelFilePath = modelPath;
 		modelFolderPath = new File(modelPath).getParent();
 		modelProjectPath = projectPath;
 		collect = collector;
 		this.imports = imports;
-		// System.out.println("Model description created with file path " + modelFilePath + "; project path " +
+		// System.out.println("Model description created with file path " +
+		// modelFilePath + "; project path " +
 		// modelProjectPath);
 	}
 
@@ -133,7 +145,9 @@ public class ModelDescription extends SpeciesDescription {
 	// hqnghi does it need to verify parent of micro-model??
 	@Override
 	protected void verifyParent() {
-		if ( parent == ModelDescription.ROOT ) { return; }
+		if (parent == ModelDescription.ROOT) {
+			return;
+		}
 		super.verifyParent();
 	}
 
@@ -141,28 +155,31 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void markVariableRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
-		if ( newVar.isBuiltIn() ) { return; }
-		if ( existingVar.isBuiltIn() ) {
+		if (newVar.isBuiltIn()) {
+			return;
+		}
+		if (existingVar.isBuiltIn()) {
 			newVar.info(
-				"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
-				IGamlIssue.REDEFINES, NAME);
+					"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
+					IGamlIssue.REDEFINES, NAME);
 			return;
 		}
 
-		EObject newResource = newVar.getUnderlyingElement(null).eContainer();
-		EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
-		if ( newResource.equals(existingResource) ) {
+		final EObject newResource = newVar.getUnderlyingElement(null).eContainer();
+		final EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
+		if (newResource.equals(existingResource)) {
 			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
-				NAME);
+					NAME);
 			newVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION, NAME);
 			return;
 		}
-		newVar.info("This definition of " + newVar.getName() + " supersedes the one in imported file " +
-			existingResource.eResource().getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
+		newVar.info("This definition of " + newVar.getName() + " supersedes the one in imported file "
+				+ existingResource.eResource().getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
 	}
 
 	/**
 	 * Relocates the working path. The last segment must not end with a "/"
+	 * 
 	 * @param path
 	 */
 	public void setWorkingDirectory(final String path) {
@@ -176,13 +193,17 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public String toString() {
-		if ( modelFilePath == null || modelFilePath.isEmpty() ) { return "abstract model"; }
+		if (modelFilePath == null || modelFilePath.isEmpty()) {
+			return "abstract model";
+		}
 		return "description of " + modelFilePath.substring(modelFilePath.lastIndexOf(File.separator));
 	}
 
 	@Override
 	public void dispose() {
-		if ( /* isDisposed || */isBuiltIn() ) { return; }
+		if ( /* isDisposed || */isBuiltIn()) {
+			return;
+		}
 		experiments.clear();
 		titledExperiments.clear();
 		output = null;
@@ -223,10 +244,10 @@ public class ModelDescription extends SpeciesDescription {
 	 * Create types from the species descriptions
 	 */
 	public void buildTypes() {
-		for ( SpeciesDescription sd : this.getAllMicroSpecies() ) {
+		for (final SpeciesDescription sd : this.getAllMicroSpecies()) {
 			types.addSpeciesType(sd);
 		}
-		for ( IDescription ed : this.getExperiments() ) {
+		for (final IDescription ed : this.getExperiments()) {
 			types.addSpeciesType((ExperimentDescription) ed);
 		}
 		types.init();
@@ -239,19 +260,20 @@ public class ModelDescription extends SpeciesDescription {
 	@Override
 	public IDescription addChild(final IDescription child) {
 
-		if ( !child.isBuiltIn() && child.getName().equals(SimulationAgent.STARTING_DATE) ) {
+		if (!child.isBuiltIn() && child.getName().equals(SimulationAgent.STARTING_DATE)) {
 			isStartingDateDefined = true;
 		}
-		if ( child instanceof ExperimentDescription ) {
+		if (child instanceof ExperimentDescription) {
 			String s = child.getName();
 			experiments.put(s, (ExperimentDescription) child);
 			s = child.getFacets().getLabel(TITLE);
 			titledExperiments.put(s, (ExperimentDescription) child);
-			// scope.getGui().debug("Adding experiment" + s + " defined in " + child.getOriginName() + " to " + getName() +
+			// scope.getGui().debug("Adding experiment" + s + " defined in " +
+			// child.getOriginName() + " to " + getName() +
 			// "...");
 			// addSpeciesType((TypeDescription) child);
-		} else if ( child != null && child.getKeyword().equals(OUTPUT) ) {
-			if ( output == null ) {
+		} else if (child != null && child.getKeyword().equals(OUTPUT)) {
+			if (output == null) {
 				output = child;
 			} else {
 				output.addChildren(child.getChildren());
@@ -279,13 +301,20 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		if ( types == null ) { return null; }
+		if (isTheNameOfAnImportedModel(spec)) {
+			return this;
+		}
+		if (types == null) {
+			return null;
+		}
 		return (SpeciesDescription) types.getSpecies(spec);
 	}
 
 	@Override
 	public IType getTypeNamed(final String s) {
-		if ( types == null ) { return Types.NO_TYPE; }
+		if (types == null) {
+			return Types.NO_TYPE;
+		}
 		return types.get(s);
 	}
 
@@ -303,10 +332,10 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public Set<String> getExperimentTitles() {
-		Set<String> strings = new TLinkedHashSet();
-		for ( String s : titledExperiments.keySet() ) {
-			ExperimentDescription ed = titledExperiments.get(s);
-			if ( ed.getOriginName().equals(getName()) ) {
+		final Set<String> strings = new TLinkedHashSet();
+		for (final String s : titledExperiments.keySet()) {
+			final ExperimentDescription ed = titledExperiments.get(s);
+			if (ed.getOriginName().equals(getName())) {
 				strings.add(s);
 			}
 		}
@@ -320,7 +349,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	public ExperimentDescription getExperiment(final String name) {
 		ExperimentDescription desc = experiments.get(name);
-		if ( desc == null ) {
+		if (desc == null) {
 			desc = titledExperiments.get(name);
 		}
 		return desc;
@@ -328,7 +357,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public List<IDescription> getChildren() {
-		List<IDescription> result = super.getChildren();
+		final List<IDescription> result = super.getChildren();
 		result.addAll(experiments.values());
 		return result;
 	}
@@ -336,11 +365,11 @@ public class ModelDescription extends SpeciesDescription {
 	@Override
 	public void finalizeDescription() {
 		super.finalizeDescription();
-		for ( final StatementDescription action : actions.values() ) {
-			if ( action.isAbstract() &&
-				!action.getUnderlyingElement(null).eResource().equals(getUnderlyingElement(null).eResource()) ) {
-				this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName() +
-					", should be redefined.", IGamlIssue.MISSING_ACTION);
+		for (final StatementDescription action : actions.values()) {
+			if (action.isAbstract()
+					&& !action.getUnderlyingElement(null).eResource().equals(getUnderlyingElement(null).eResource())) {
+				this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName()
+						+ ", should be redefined.", IGamlIssue.MISSING_ACTION);
 			}
 		}
 	}
@@ -362,6 +391,14 @@ public class ModelDescription extends SpeciesDescription {
 	 */
 	public Collection<? extends IDescription> getExperiments() {
 		return experiments.values();
+	}
+
+	public void setImportedModelNames(final Set<String> allModelNames) {
+		importedModelNames = allModelNames;
+	}
+
+	public boolean isTheNameOfAnImportedModel(final String name) {
+		return importedModelNames != null && importedModelNames.contains(name);
 	}
 
 }
