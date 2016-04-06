@@ -341,6 +341,7 @@ public class CameraArcBall extends AbstractCamera {
 		final int width = (int) env.getWidth();
 		final int height = (int) env.getHeight();
 		radius = 1.5 * (width > height ? width : height);
+		// y is already negated
 		target.setLocation(env.centre());
 		updateCartesianCoordinatesFromAngles();
 	}
@@ -349,16 +350,14 @@ public class CameraArcBall extends AbstractCamera {
 	public void zoomFocus(final IShape shape) {
 		final ILocation p = shape.getLocation();
 		final double extent = shape.getEnvelope().maxExtent();
-		final double zPos;
 		if (extent == 0) {
-			zPos = p.getZ() + getRenderer().getMaxEnvDim() / 10;
+			radius = p.getZ() + getRenderer().getMaxEnvDim() / 10;
 		} else {
-			zPos = extent * 1.5;
+			radius = extent * 1.5;
 		}
-		radius = zPos;
+		// y is NOT negated in IShapes
+		target.setLocation(p.getCentroid().yNegated());
 		updateCartesianCoordinatesFromAngles();
-		updatePosition(p.getX(), -p.getY(), zPos);
-		lookPosition(p.getX(), -p.getY(), 0);
 	}
 
 	@Override
@@ -368,7 +367,7 @@ public class CameraArcBall extends AbstractCamera {
 			return;
 		}
 		final Point newPoint = new Point(e.x, e.y);
-		if (isArcBallOn(e)) {
+		if (ctrl(e)) {
 			final int horizMovement = e.x - lastMousePressedPosition.x;
 			final int vertMovement = e.y - lastMousePressedPosition.y;
 			// if (flipped) {

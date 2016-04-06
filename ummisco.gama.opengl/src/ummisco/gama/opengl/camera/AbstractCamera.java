@@ -333,10 +333,6 @@ public abstract class AbstractCamera implements ICamera {
 		return (e.stateMask & SWT.ALT) != 0;
 	}
 
-	protected boolean isArcBallOn(final org.eclipse.swt.events.MouseEvent e) {
-		return ctrl(e);
-	}
-
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
