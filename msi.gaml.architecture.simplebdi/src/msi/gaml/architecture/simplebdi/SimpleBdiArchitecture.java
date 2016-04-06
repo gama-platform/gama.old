@@ -1630,6 +1630,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return null;
 		}
 		
+	public static Boolean hasUncertainty(final IScope scope, final Predicate predicateDirect) {
+		return getBase(scope, UNCERTAINTY_BASE).contains(predicateDirect);
+	}
+	
 	@action(name = "has_uncertainty",
 			args = { 
 				@arg(name = PREDICATE, type = PredicateType.id, optional = true, doc = @doc("predicate to check") ) },
@@ -1640,7 +1644,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 			if ( predicateDirect != null ) { 
-				return getBase(scope, UNCERTAINTY_BASE).contains(predicateDirect);
+				return hasUncertainty(scope,predicateDirect);
 			}
 			return false;
 		}
