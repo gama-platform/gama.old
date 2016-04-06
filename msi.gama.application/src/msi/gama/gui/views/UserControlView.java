@@ -106,7 +106,7 @@ public class UserControlView extends GamaViewPart {
 				GamaUIColor color = GamaColors.get(c.getColor(scope));
 				if ( color == null )
 					color = IGamaColors.BLUE;
-				final Image image = GamaIcons.create(c.isContinue(scope) ? "small.batch" : "small.run").image();
+				final Image image = GamaIcons.create(c.isContinue(scope) ? "small.continue" : "small.run").image();
 				final FlatButton b = FlatButton.button(commandComposite, color, c.getName(), image);
 				b.setEnabled(c.isEnabled(scope));
 				final GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, true, nbCol, nbLines);
