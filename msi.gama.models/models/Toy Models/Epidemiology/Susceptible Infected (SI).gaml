@@ -1,29 +1,33 @@
 /**
- *  sis
+ *  Name : SI without ODE
  *  Author: 
- *  Description: A compartmental SI model 
+ *  Description: A simple SI model without Ordinary Differential Equations showing agents
+ * 	moving randomly among a grid and becoming infected
+ * Tags : grid
  */
 
 model si
 
 global { 
+	
     int number_S <- 495;  // The number of susceptible
     int number_I <- 5 ;	// The number of infected
     float survivalProbability <- 1/(70*365) ; // The survival probability
 	float beta <- 0.05 ; 	// The parameter Beta
 	float nu <- 0.001 ;	// The parameter Nu
-	int numberHosts <- number_S+number_I;
-	bool local_infection <- true ;
-	int neighbours_size <- 2 ;
-	int nb_infected <- number_I;
+	int numberHosts <- number_S+number_I; //Total number of hosts
+	bool local_infection <- true ; //Infection spread locally or not
+	int neighbours_size <- 2 ; //Size of the neighbourhood
 	geometry shape <- square(50);
 	init { 
+		//Creation of all the susceptible hosts
 		create Host number: number_S {
         	is_susceptible <- true;
         	is_infected <-  false;
             is_immune <-  false; 
             color <-  #green;
         }
+        //Creation of all the infected hosts
         create Host number: number_I {
             is_susceptible <-  false; 
             is_infected <-  true;
@@ -31,17 +35,20 @@ global {
             color <-  #red;  
        }
    }
+   //Reflex to update the number of infected hosts
    reflex compute_nb_infected {
-   		nb_infected <- Host count (each.is_infected);
+   		number_I <- Host count (each.is_infected);
    }  
 }
 
-
+//Grid to discretize space
 grid si_grid width: 50 height: 50 use_individual_shapes: false use_regular_agents: false frequency: 0{
 	rgb color <- #black;
 	list<si_grid> neighbours <- (self neighbors_at neighbours_size) ;       
 }
+//Species host which represent the possible hosts of a disease
 species Host  {
+	//Booleans to represent the state of the agent
 	bool is_susceptible <- true;
 	bool is_infected <- false;
     bool is_immune <- false;
@@ -49,15 +56,17 @@ species Host  {
     int sic_count <- 0;
     si_grid myPlace;
     
+    //The agent is placed randomly among the grid
     init {
     	myPlace <- one_of (si_grid as list);
     	location <- myPlace.location;
     }        
+    //Reflex to move the agents in its neighbourhood
     reflex basic_move {
     	myPlace <- one_of (myPlace.neighbours) ;
         location <- myPlace.location;
     }
-    
+    //Reflex to infect the agent if it is susceptible and according to the other infected agents
     reflex become_infected when: is_susceptible {
     	float rate <- 0.0;
     	if(local_infection) {
@@ -71,7 +80,7 @@ species Host  {
     		}
     		rate <- nb_hosts_infected / nb_hosts;
     	} else {
-    		rate <- nb_infected / numberHosts;
+    		rate <- number_I / numberHosts;
     	}
     	if (flip(beta * rate)) {
         	is_susceptible <-  false;
@@ -80,7 +89,7 @@ species Host  {
             color <-  #red;    
         }
     }
-    
+    //Reflex to kill the agent according to the death rate
     reflex shallDie when: flip(nu) {
 		create species(self) {
 			myPlace <- myself.myPlace ;
