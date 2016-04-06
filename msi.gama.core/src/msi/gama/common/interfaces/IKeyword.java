@@ -47,7 +47,9 @@ public interface IKeyword {
 	public static final String AXES = "axes";
 	public static final String BACKGROUND = "background";
 	public static final String BAR = "bar";
-	public static final String BOX_WHISKER = "box_whisker"; // new type of chart: box and whisker
+	public static final String BOX_WHISKER = "box_whisker"; // new type of
+															// chart: box and
+															// whisker
 	public final static String BATCH = "batch";
 	public static final String BEHAVIOR = "behavior";
 	public static final String BEHAVIORS = "behaviors";
@@ -84,6 +86,7 @@ public interface IKeyword {
 	public static final String CONTRIBUTE = "contribute";
 	public static final String CONTROL = "control";
 	public static final String CONVOLUTION = "convolution";
+	public static final String CONTINUE = "continue";
 	public static final String CREATE = "create";
 	public static final String CSV = "csv";
 	public static final String CURRENT_STATE = "currentState";
@@ -290,7 +293,9 @@ public interface IKeyword {
 	public static final String PATH = "path";
 	public static final String PAUSE_SOUND = "pause_sound";
 	public static final String PEERS = "peers";
-	public static final String PERMANENT = "permanent"; // "show" // "front_end" // "presentation" // "
+	public static final String PERMANENT = "permanent"; // "show" // "front_end"
+														// // "presentation" //
+														// "
 	public static final String PERSPECTIVE = "perspective";
 	public static final String PIE = "pie";
 	public static final String PITCH = "pitch";
@@ -372,7 +377,8 @@ public interface IKeyword {
 	public static final String THEIR = "their";
 	public static final String THREE_D = "3d";
 	public static final String TIMES = "times";
-	public static final String TIMEXSERIES = "timexseries"; // hqnghi facet timeXseries for
+	public static final String TIMEXSERIES = "timexseries"; // hqnghi facet
+															// timeXseries for
 	// continuous Chart
 	public static final String TABLE = "table";
 	public static final String TITLE = "title";
@@ -449,7 +455,9 @@ public interface IKeyword {
 	/*
 	 * files
 	 */
-	public static final String OPEN = "open"; // TODO "launch", or "open", or "sysopen" ? This opens a file with an
+	public static final String OPEN = "open"; // TODO "launch", or "open", or
+												// "sysopen" ? This opens a file
+												// with an
 	// external progam
 	public static final String ALPHA = "alpha";
 

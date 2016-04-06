@@ -28,7 +28,9 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.parameters.AbstractEditor;
 import msi.gama.gui.parameters.AgentAttributesEditorsList;
 import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.ParameterExpandBar;
 import msi.gama.gui.swt.controls.ParameterExpandItem;
@@ -42,7 +44,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
@@ -145,9 +146,13 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 		// buttons.setLayout(layout);
 		buttons.setLayout(new FillLayout());
 
-		for ( final IStatement command : userCommands ) {
+		for ( final UserCommandStatement command : userCommands ) {
 			final Button b = new Button(buttons, SWT.PUSH);
 			b.setText(command.getName());
+			GamaUIColor color = GamaColors.get(command.getColor(agent.getScope()));
+			if ( color == null )
+				color = IGamaColors.BLUE;
+			b.setBackground(color.color());
 			b.addSelectionListener(new SelectionAdapter() {
 
 				@Override
