@@ -409,7 +409,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			setPickedObjectIndex(camera.endPicking(gl));
 		}
 		// we draw the scene on screen
-		currentScene.draw(gl, currentPickedObject != null);
+		currentScene.draw(gl, picking);
 
 	}
 

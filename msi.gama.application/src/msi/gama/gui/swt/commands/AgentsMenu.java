@@ -337,14 +337,16 @@ public class AgentsMenu extends ContributionItem {
 		if ( subMenuSize < 2 ) {
 			subMenuSize = 2;
 		}
-		if ( !isSimulations ) {
-			separate(menu, "Actions");
-		}
-		browsePopulationMenuItem(menu, species, IGamaIcons.MENU_BROWSE.image());
-
 		final List<IAgent> agents = new ArrayList(species);
 		final int size = agents.size();
-		if ( size != 0 && !isSimulations ) {
+		if ( size > 1 && !isSimulations ) {
+			separate(menu, "Actions");
+		}
+
+		if ( size > 1 )
+			browsePopulationMenuItem(menu, species, IGamaIcons.MENU_BROWSE.image());
+
+		if ( size > 1 && !isSimulations ) {
 			separate(menu);
 			separate(menu, "Agents");
 		}
