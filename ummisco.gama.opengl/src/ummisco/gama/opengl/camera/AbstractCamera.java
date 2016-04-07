@@ -63,6 +63,8 @@ public abstract class AbstractCamera implements ICamera {
 	private boolean goesBackward;
 	private boolean strafeLeft;
 	private boolean strafeRight;
+	
+	private boolean ROICurrentlyDrawn = false;
 
 	protected boolean ctrlPressed = false;
 	protected boolean shiftPressed = false;
@@ -241,29 +243,22 @@ public abstract class AbstractCamera implements ICamera {
 			this.isPickedPressed = true;
 			getRenderer().setPicking(true);
 			// myRenderer.drawPickableObjects();
-			setMouseLeftPressed(false);
-			setCtrlPressed(false);
-			setAltPressed(false);
-			setShiftPressed(false);
 		} else if (e.button == 2) { // mouse wheel
 			resetPivot();
 		} else {
 			if ((shift(e) || alt(e)) && isViewInXYPlan()) {
-				getMousePosition().x = e.x;
-				getMousePosition().y = e.y;
-				renderer.defineROI(firstMousePressedPosition, getMousePosition());
+				startROI(e);
 			} else {
 				getRenderer().setPicking(false);
 			}
-			setShiftPressed(shift(e));
-			setAltPressed(alt(e));
-			setCtrlPressed(ctrl(e));
 		}
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
 
-		if (e.button == 1)
-			setMouseLeftPressed(true);
+		setMouseLeftPressed((e.button == 1) ? true : false);
+		setCtrlPressed((e.button == 1) ? ctrl(e) : false);
+		setAltPressed((e.button == 1) ? alt(e) : false);
+		setShiftPressed((e.button == 1) ? shift(e) : false);
 	}
 
 	/**
@@ -276,20 +271,39 @@ public abstract class AbstractCamera implements ICamera {
 		firsttimeMouseDown = true;
 		if (canSelectOnRelease(e) && isViewInXYPlan()) {
 			if (shift(e)) {
-				final Envelope3D env = renderer.getROIEnvelope();
-
-				if (env != null) {
-					setAltPressed(false);
-					renderer.getSurface().selectSeveralAgents(env);
-				}
+				finishROISelection();
 			} else if (alt(e)) {
-				final Envelope3D env = renderer.getROIEnvelope();
-				zoomRoi(env);
+				finishROIZoom();
 			}
 		}
-		renderer.cancelROI();
 		if (e.button == 1)
 			setMouseLeftPressed(false);
+	}
+	
+	private void startROI(final org.eclipse.swt.events.MouseEvent e) {
+		getMousePosition().x = e.x;
+		getMousePosition().y = e.y;
+		renderer.defineROI(firstMousePressedPosition, getMousePosition());
+		ROICurrentlyDrawn = true;
+	}
+	
+	private void finishROISelection() {
+		if (ROICurrentlyDrawn) {
+			final Envelope3D env = renderer.getROIEnvelope();
+			if (env != null) {
+				setAltPressed(false);
+				renderer.getSurface().selectSeveralAgents(env);
+			}
+			renderer.cancelROI();
+		}
+	}
+	
+	private void finishROIZoom() {
+		if (ROICurrentlyDrawn) {
+			final Envelope3D env = renderer.getROIEnvelope();
+			zoomRoi(env);
+			renderer.cancelROI();
+		}
 	}
 
 	protected abstract boolean canSelectOnRelease(org.eclipse.swt.events.MouseEvent arg0);
@@ -611,9 +625,11 @@ public abstract class AbstractCamera implements ICamera {
 			break;
 		case SWT.SHIFT:
 			setShiftPressed(false);
+			finishROISelection();
 			break;
 		case SWT.ALT:
 			setAltPressed(false);
+			finishROIZoom();
 			break;
 		}
 
