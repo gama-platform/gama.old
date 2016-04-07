@@ -255,6 +255,9 @@ public abstract class AbstractCamera implements ICamera {
 			} else {
 				getRenderer().setPicking(false);
 			}
+			setShiftPressed(shift(e));
+			setAltPressed(alt(e));
+			setCtrlPressed(ctrl(e));
 		}
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
@@ -500,6 +503,9 @@ public abstract class AbstractCamera implements ICamera {
 		// this.shiftKeyDown = shift(e);
 		// this.altKeyDown = alt(e);
 		// this.ctrlKeyDown = ctrl(e);
+//		setCtrlPressed(ctrl(e));
+//		setAltPressed(alt(e));
+//		setShiftPressed(shift(e));
 		switch (e.keyCode) {
 		case SWT.ARROW_LEFT:
 			this.strafeLeft = true;
@@ -581,6 +587,9 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
+//		setCtrlPressed(ctrl(e));
+//		setAltPressed(alt(e));
+//		setShiftPressed(shift(e));
 		switch (e.keyCode) {
 		case SWT.ARROW_LEFT: // player turns left (scene rotates right)
 			this.strafeLeft = false;

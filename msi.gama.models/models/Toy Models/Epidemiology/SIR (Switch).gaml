@@ -1,7 +1,10 @@
 /**
- *  SIR_switch.gaml
- *  Author: tri and nghi
- *  Description: A compartmental SI model 
+ *  Name : SIR_switch
+ *  Author: tri and hqnghi 
+ *  Description: A model which show how to implement ODE system, IBM model, and to switch
+ * 	from one to another using a threshold. Another interesting point seen in this model is the 
+ * 	the minimization of the execution time by reducing the number of agents to compute infections.
+ * Tags : ordinary_differential_equation, grid
  */
 model SIR_switch
 
@@ -18,9 +21,6 @@ global {
 	bool local_infection <- true ;
 	int neighbours_range <- 2 ;
 	bool local_random_walk <- true ; 
-	// true: agents new positions are determined according to a random walk process, 
-	// new position is in the neighbourhood;
-	// false: agents new position is selected randomly anywhere in the grid.
 	
 	
 	// Global variables
@@ -51,11 +51,12 @@ global {
 		write 'Switch will happen at population sizes around ' +switch_threshold;
 		write 'Basic Reproduction Number (R0): ' + string(beta / delta) + '\n';
 		
+		//Creation of the switch_model agent that will manage the switch between the mathematical and the individual based models
 		create switch_model {
 			threshold_to_IBM <- switch_threshold;
 			threshold_to_Maths <- switch_threshold;
 		}
-
+		//Creation of the model according to the one to begin with
 		if (first(switch_model).start_with_IBM) {
 		//		write 'Starting with IBM model';
 			create IBM_model;
@@ -65,16 +66,18 @@ global {
 			create Math_model;
 			current_model <- first(Math_model);
 		}
-
+		//Initialization of the Susceptible, Infected, Resistant and Total Compartiment
 		current_model.S <- float(initial_S);
 		current_model.I <- float(initial_I);
 		current_model.R <- float(initial_R);
 		current_model.N <- number_Hosts;
 		
+		//Ask to the model to initialize itself according to the value initialized
 		ask current_model {
 			do initialize;
 		}
-
+		
+		//Create the SIR maths with ODE to compare
 		create my_SIR_maths {
 			self.S <- float(myself.initial_S);
 			self.I <- float(myself.initial_I);
@@ -95,7 +98,7 @@ global {
 	}
 
 }
-
+//Grid which represent the discretized space for the host agents
 environment width: grid_size height: grid_size {
 	grid sir_grid width: grid_size height: grid_size {
 		rgb color <- #black;
@@ -104,15 +107,16 @@ environment width: grid_size height: grid_size {
 
 }
 
-
+//Species which allows the execution of only Host, IBM_model, Math_model and switch_model at each cycle
 species new_scheduler schedules: (Host + IBM_model + Math_model + switch_model) ;
 
+//Species which represent the manager between IBM and Math model
 species switch_model schedules: [] {
 	int threshold_to_IBM <- 45; // threshold under which the model swith to IBM
 	int threshold_to_Maths <- 50; // threshold under which the model swith to Maths model 
 	bool start_with_IBM function: { (initial_S < threshold_to_IBM or initial_I < threshold_to_IBM) };
 
-	// task switch_to_IBM weight:1 when: (current_model.model_type = 'Maths'){
+	//Switch the model used to IBM when the threshold is higher than the population
 	reflex switch_to_IBM when: (current_model.model_type = 'Maths') {
 		if (current_model.S < threshold_to_IBM or current_model.I < threshold_to_IBM) {
 			write 'Switch to IBM model at cycle ' + string(cycle);
@@ -132,7 +136,7 @@ species switch_model schedules: [] {
 		}
 
 	}
-
+	//Switch the model used to Maths when the threshold is lower than the population
 	reflex switch_to_Maths when: (current_model.model_type = 'IBM') {
 		if (current_model.S > threshold_to_Maths and current_model.I > threshold_to_Maths) {
 			write 'Switch to Maths model at cycle ' + cycle;
@@ -154,7 +158,7 @@ species switch_model schedules: [] {
 	}
 
 }
-
+//Species which represent the SIR model used by the IBM and the Math models 
 species SIR_model schedules: [] {
 	float S;
 	float I;
@@ -170,11 +174,15 @@ species SIR_model schedules: [] {
 
 }
 
+//Species IBM Model which represent the Individual based model, derivated from SIR_model
 species IBM_model schedules: [] parent: SIR_model {
 	string model_type <- 'IBM';
 	
+	//Action to initialize the Model with SIR compartiments
 	action initialize {
+		
 		write 'Initializing IBM model with S=' + round(S) + ', I=' + round(I) + ', R=' + round(R) + '\n';
+		//Creation of the host agents
 		create Host number: round(S) {
 			is_susceptible <- true;
 			is_infected <- false;
@@ -195,20 +203,19 @@ species IBM_model schedules: [] parent: SIR_model {
 			is_immune <- true;
 			color <- #yellow;
 		}
-		//force evaluation at first step;
 		do count;
 	}
 
 	reflex count {
 		do count;
 	}
-
+	//Action to update the different compartiments
 	action count {
 		S <- float(Host count (each.is_susceptible));
 		I <- float(Host count (each.is_infected));
 		R <- float(Host count (each.is_immune));
 	}
-
+	//Action to remove the model and kill all the agents it contains
 	action remove_model {
 		ask Host {
 			do die;
@@ -219,6 +226,7 @@ species IBM_model schedules: [] parent: SIR_model {
 
 }
 
+//Species Math Model which represent the mathematical Ordinary Differential Equations model, derivated from SIR_model
 species Math_model schedules: [] parent: SIR_model {
 	string model_type <- 'Maths';
 	float t;
@@ -235,7 +243,7 @@ species Math_model schedules: [] parent: SIR_model {
 
 	reflex solving {solve SIR method: "rk4" step: 0.01 ;}
 }
-
+//Species host used by the Individual Based Model which move from one cell to another
 species Host schedules: [] skills: [moving] {
 	bool is_susceptible <- true;
 	bool is_infected <- false;
@@ -253,6 +261,7 @@ species Host schedules: [] skills: [moving] {
 		location <- myPlace.location;
 	}
 
+	//Reflex to move the agents among the cells
 	reflex basic_move {
 		if (!local_random_walk) {
 		/* random walk among neighbours */
@@ -265,7 +274,7 @@ species Host schedules: [] skills: [moving] {
 		}
 
 	}
-
+	//Reflex to make the agent infected when the infection is computed from S for a better execution time
 	reflex become_infected when: (is_susceptible and computeInfectionFromS) {
 		if (flip(1 - (1 - beta) ^ (((self) neighbors_at (2)) of_species Host) count (each.is_infected))) {
 			set is_susceptible <- false;
@@ -275,7 +284,7 @@ species Host schedules: [] skills: [moving] {
 		}
 
 	}
-
+	//Reflex to make the agent infect others when the infection is not computed from S for a better execution time
 	reflex infecte_others when: (is_infected and not (computeInfectionFromS)) {
 		loop hst over: ((self) neighbors_at (2)) {
 			if (hst.is_susceptible) {
@@ -288,7 +297,7 @@ species Host schedules: [] skills: [moving] {
 			}
 		}
 	}
-
+	//Reflex to make the agent resistant
 	reflex become_immune when: (is_infected and flip(delta)) {
 		is_susceptible <- false;
 		is_infected <- false;
@@ -301,7 +310,7 @@ species Host schedules: [] skills: [moving] {
 	}
 
 }
-
+//Species which represent the SIR mathematical model 
 species my_SIR_maths {
 	float t;
 	float I <- float(iInit);

@@ -1,37 +1,50 @@
 /**
- *  comparison_ABM_EBM_SIR.gaml
- *  Author: Benoit Gaudou and 
+ *  Name : comparison_ABM_EBM_SIR
+ *  Author: Benoit Gaudou 
  *  Description: Comparison between an agent-based and an equation-based model of the SIR model.
+ * 	The ABM use a grid to place the agents, and each cell will be the location of an agent, while the EBM
+ * 	is only using a ODE System and no geographical representation.
+ *  Tags : ordinary_differential_equation, grid
  */
 model comparison_ABM_EBM_SIR
 
 global {
-	int number_S <- 499; // The number of susceptible
-	int number_I <- 1; // The number of infected
-	int number_R <- 0; // The number of removed
-	float beta <- 0.1; // The parameter Beta
-	float gamma <- 0.01; // The parameter Delta
+	//Number of susceptible individuals
+	int number_S <- 499; 
+	//Number of infectious individuals
+	int number_I <- 1; 
+	//Number of Resistant individuals
+	int number_R <- 0; 
+	//Beta parameter used for the infection of susceptible individuals
+	float beta <- 0.1; 
+	//Gamma parameter used for the resistance gained by the infectious individuals
+	float gamma <- 0.01;
+	//Size of the neighbours
 	int neighbours_size <- 2;
+	//Total number of individuals
 	int N <- number_S + number_I + number_R;
-	int nb_hosts <- number_S + number_I + number_R;
-	int nb_infected <- number_I;
+	//Number of hosts (for ABM)
+	int nb_hosts <- number_S + number_I + number_R update : length(Host);
+	//Number of infected hosts (for ABM)
+	int nb_infected <- number_I update :  Host count (each.is_infected);
 	float hKR4 <- 0.7;
 	geometry shape <- square(50);
 	init {
+		//Create the number of hosts susceptibles
 		create Host number: number_S {
 			is_susceptible <- true;
 			is_infected <- false;
 			is_immune <- false;
 			color <- #green;
 		}
-
+		//Create the number of hosts infectious
 		create Host number: number_I {
 			is_susceptible <- false;
 			is_infected <- true;
 			is_immune <- false;
 			color <- #red;
 		}
-
+		//Create the node agent for the SIR ODE System
 		create node_agent number: 1 {
 			S <- float(number_S);
 			I <- float(number_I);
@@ -39,37 +52,42 @@ global {
 		}
 	}
 
-	reflex compute_nb_infected_hosts {
-		nb_infected <- Host count (each.is_infected);
-		nb_hosts <- length(Host);
-	}
-
 }
-
+//Grid that will be used to discretize space
 grid sir_grid width: 50 height: 50 {
 		rgb color <- #black;
 		list<sir_grid> neighbours <- (self neighbors_at neighbours_size) of_species sir_grid;
 	}
+	
+//Species host which represents the host of the disease
 species Host {
+	
+	//Different booleans to know in which state is the host
 	bool is_susceptible <- true;
 	bool is_infected <- false;
 	bool is_immune <- false;
+	
+	//Color of the host
 	rgb color <- #green;
-	int sic_count <- 0;
+	
+	//Location of the agent among the grid
 	sir_grid myPlace;
+	//Count of neighbors infected 
     int ngb_infected_number function: {self neighbors_at(neighbours_size) count(each.is_infected)};
 	
 	init {
-		myPlace <- one_of(sir_grid as list);
+		//The location is chosen randomly
+		myPlace <- one_of(sir_grid);
 		location <- myPlace.location;
 	}
-
+	//Reflex to move the agent in the neighbours cells
 	reflex basic_move {
 		myPlace <- one_of(myPlace.neighbours);
 		location <- myPlace.location;
 	}
-
+	//Reflex to pass the agent to the state infected 
 	reflex become_infected when: is_susceptible {
+			//Probability of being infected according to the number of infected among the neighbours
     		if (flip(1 - (1 - beta)  ^ ngb_infected_number)) {
         		is_susceptible <-  false;
 	            	is_infected <-  true;
@@ -77,12 +95,12 @@ species Host {
 	            	color <-  #red;       			
 			}    				
 	}
-
+	//Reflex to pass the agent to the state immune
 	reflex become_immune when: (is_infected and flip(gamma)) {
 		is_susceptible <- false;
 		is_infected <- false;
 		is_immune <- true;
-		color <- #yellow;
+		color <- #blue;
 	} 
 	
 	aspect basic {
@@ -90,7 +108,7 @@ species Host {
 	}
 
 }
-
+//Species node agent that will represent the SIR Ordinary differential equations system
 species node_agent {
 	float t;
 	float I;

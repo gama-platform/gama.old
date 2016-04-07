@@ -436,7 +436,7 @@ public class modelLibraryGenerator {
 					fileOut.write(metaStruct.getMdHeader().getBytes());
 					
 					// write the input (if there are any)
-					List<String> inputFileList = searchInputList(gamlFile);
+					List<String> inputFileList = searchInputListRecursive(gamlFile, new ArrayList<String>());
 					if (inputFileList.size() > 0) {
 						if (inputFileList.size()>1) {
 							fileOut.write(new String("Imported models : \n\n").getBytes());
@@ -520,10 +520,8 @@ public class modelLibraryGenerator {
 		return result;
 	}
 	
-	private static ArrayList<String> searchInputList(File file) throws IOException {
-		// returns the header
-		ArrayList<String> result = new ArrayList<String>();
-		
+	private static ArrayList<String> searchInputListRecursive(File file, ArrayList<String> results) throws IOException {
+
 		FileInputStream fis = new FileInputStream(file);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 		
@@ -535,12 +533,13 @@ public class modelLibraryGenerator {
 		{
 			String regexMatch = Utils.findAndReturnRegex(line,"import \"(.*[^\"])\"");
 			if (regexMatch != "") {
-				result.add(file.getParentFile().getAbsolutePath().replace("\\","/")+"/"+regexMatch);
+				results.add(0,file.getParentFile().getAbsolutePath().replace("\\","/")+"/"+regexMatch);
+				results = searchInputListRecursive(new File(file.getParentFile().getAbsolutePath().replace("\\","/")+"/"+regexMatch),results);
 			}
 			line = br.readLine();
 		}
 		br.close();
-		return result;
+		return results;
 	}
 	
 	private static String getModelCode(File gamlFile) throws IOException {

@@ -1,12 +1,12 @@
 /**
- *  SIR_split_in_agents.gaml
- *  Author: tri and nghi
- *  Description: 
- *  This model illustrates the possibility to split an equation system into several agents. 
- *  All the equations are solve together thanks to the `simultaneously` facet of the equation statement. 
- *  We also compare the split model with the simple SIR one. 
+ *  Name : SIR_split_in_agents
+ *  Author: hqnghi 
+ *  Description: This model illustrates the possibility to split an equation system into several agents. 
+ *       All the equations are solve together thanks to the `simultaneously` facet of the equation statement. 
+ *        We also compare the split model with the simple SIR one. 
+ *  Tags : ordinary_differential_equation
  */
- 
+
 model SIR_split_in_agents
 
 global {
@@ -22,20 +22,23 @@ global {
 	float hKR4 <- 0.07 ;
 
 	init {
+		//Creation of the representation of the susceptible agents
 		create S_agt {
 			Ssize <- float(number_S) ;
 			self.beta <- myself.beta ;
 		}
+		//Creation of the representation of the infected agents
 		create I_agt {
 			Isize <- float(number_I) ;
 			self.beta <- myself.beta ;
 			self.delta <- myself.delta ;
 		}
+		//Creation of the representation of the recovered agents
 		create R_agt {
 			Rsize <- float(number_R) ;
 			self.delta <- myself.delta ;
 		}
-		        
+		//Creation of the representation of the SIR agent representing the non split system
 		create SIR_agt {
 			self.Sm <- float(number_S) ;
 			self.Im <- float(number_I) ;
@@ -47,13 +50,13 @@ global {
 	}
 }
 
-
+//Species which represent the susceptible agents compartiment
 species S_agt {
 	float t ;		
-	float Ssize ;
+	float Ssize ; //number of susceptible
 	
 	float beta ;
-	
+	//Equation that will be solved simultaneously with the two other equations systems
 	equation evol simultaneously: [  ( I_agt ) ,  ( R_agt ) ] {
 		diff ( first ( S_agt ) . Ssize , t ) = 
 			( - beta * first ( S_agt ) . Ssize * first (	I_agt ) . Isize / N ) ;
@@ -61,7 +64,7 @@ species S_agt {
 	
 	reflex solving {solve evol method : "rk4" step : 0.01 ;}
 }
-
+//Species which represent the infected agents compartiment
 species I_agt {
 	float t ;
 	float Isize ; // number of infected
@@ -69,25 +72,28 @@ species I_agt {
 	float beta ;
 	float delta ;
 
+	//Equation that will be solved simultaneously with the two other equations systems
 	equation evol simultaneously : [  ( S_agt ) ,  ( R_agt ) ] {
 		diff ( first ( I_agt ) . Isize , t ) = 
 			( beta * first ( S_agt ) . Ssize * first ( I_agt ) . Isize / N ) 
 			- ( delta * first ( I_agt ) . Isize ) ;
 	}
 }
-
+//Species which represent the resistant agents compartiment
 species R_agt {
 	float t ;		
-	float Rsize ;
+	float Rsize ; //number of resistant
 	
 	float delta ;
 
+	//Equation that will be solved simultaneously with the two other equations systems
 	equation evol simultaneously : [ ( S_agt ) + ( I_agt ) ] {
 		diff ( first ( R_agt ) . Rsize , t ) = 
 			( delta * first ( I_agt ) . Isize ) ;
 	}
 }
 
+//Species which represent the ordinary differential equations system
 species SIR_agt {
 	float t ;
 	float Im ;
