@@ -15,11 +15,14 @@ import java.awt.Point;
 import java.nio.IntBuffer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.nativewindow.swt.SWTAccessor;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLRunnable;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 
@@ -63,7 +66,7 @@ public abstract class AbstractCamera implements ICamera {
 	private boolean goesBackward;
 	private boolean strafeLeft;
 	private boolean strafeRight;
-	
+
 	private boolean ROICurrentlyDrawn = false;
 
 	protected boolean ctrlPressed = false;
@@ -173,7 +176,19 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseWheelListener#mouseScrolled(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseScrolled(final org.eclipse.swt.events.MouseEvent e) {
+	public final void mouseScrolled(final MouseEvent e) {
+		renderer.getDrawable().invoke(false, new GLRunnable() {
+
+			@Override
+			public boolean run(final GLAutoDrawable drawable) {
+				internalMouseScrolled(e);
+				return false;
+			}
+		});
+
+	}
+
+	protected void internalMouseScrolled(final MouseEvent e) {
 		zoom(e.count > 0);
 	}
 
@@ -183,9 +198,24 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
+	public final void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
+
+		renderer.getDrawable().invoke(false, new GLRunnable() {
+
+			@Override
+			public boolean run(final GLAutoDrawable drawable) {
+				internalMouseMove(e);
+				return false;
+			}
+
+		});
+
+	}
+
+	protected void internalMouseMove(final MouseEvent e) {
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
+
 	}
 
 	/**
@@ -194,7 +224,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseEnter(final org.eclipse.swt.events.MouseEvent e) {
+	public final void mouseEnter(final org.eclipse.swt.events.MouseEvent e) {
 	}
 
 	/**
@@ -203,7 +233,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseExit(final org.eclipse.swt.events.MouseEvent e) {
+	public final void mouseExit(final org.eclipse.swt.events.MouseEvent e) {
 	}
 
 	/**
@@ -212,7 +242,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseHover(final org.eclipse.swt.events.MouseEvent e) {
+	public final void mouseHover(final org.eclipse.swt.events.MouseEvent e) {
 	}
 
 	/**
@@ -221,7 +251,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseDoubleClick(final org.eclipse.swt.events.MouseEvent e) {
+	public final void mouseDoubleClick(final org.eclipse.swt.events.MouseEvent e) {
 		// Already taken in charge by the ZoomListener in the view
 		// getRenderer().displaySurface.zoomFit();
 	}
@@ -232,7 +262,20 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
+	public final void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
+		renderer.getDrawable().invoke(false, new GLRunnable() {
+
+			@Override
+			public boolean run(final GLAutoDrawable drawable) {
+				internalMouseDown(e);
+				return false;
+			}
+		});
+
+	}
+
+	protected void internalMouseDown(final MouseEvent e) {
+
 		if (firsttimeMouseDown) {
 			firstMousePressedPosition = new Point(e.x, e.y);
 			firsttimeMouseDown = false;
@@ -240,7 +283,7 @@ public abstract class AbstractCamera implements ICamera {
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
 		if (e.button == 3) {
-			this.isPickedPressed = true;
+			isPickedPressed = true;
 			getRenderer().setPicking(true);
 			// myRenderer.drawPickableObjects();
 		} else if (e.button == 2) { // mouse wheel
@@ -255,10 +298,11 @@ public abstract class AbstractCamera implements ICamera {
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
 
-		setMouseLeftPressed((e.button == 1) ? true : false);
-		setCtrlPressed((e.button == 1) ? ctrl(e) : false);
-		setAltPressed((e.button == 1) ? alt(e) : false);
-		setShiftPressed((e.button == 1) ? shift(e) : false);
+		setMouseLeftPressed(e.button == 1 ? true : false);
+		setCtrlPressed(e.button == 1 ? ctrl(e) : false);
+		setAltPressed(e.button == 1 ? alt(e) : false);
+		setShiftPressed(e.button == 1 ? shift(e) : false);
+
 	}
 
 	/**
@@ -267,7 +311,21 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
+	public final void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
+
+		renderer.getDrawable().invoke(false, new GLRunnable() {
+
+			@Override
+			public boolean run(final GLAutoDrawable drawable) {
+				internalMouseUp(e);
+				return false;
+			}
+		});
+
+	}
+
+	protected void internalMouseUp(final MouseEvent e) {
+
 		firsttimeMouseDown = true;
 		if (canSelectOnRelease(e) && isViewInXYPlan()) {
 			if (shift(e)) {
@@ -278,15 +336,16 @@ public abstract class AbstractCamera implements ICamera {
 		}
 		if (e.button == 1)
 			setMouseLeftPressed(false);
+
 	}
-	
+
 	private void startROI(final org.eclipse.swt.events.MouseEvent e) {
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
 		renderer.defineROI(firstMousePressedPosition, getMousePosition());
 		ROICurrentlyDrawn = true;
 	}
-	
+
 	private void finishROISelection() {
 		if (ROICurrentlyDrawn) {
 			final Envelope3D env = renderer.getROIEnvelope();
@@ -297,7 +356,7 @@ public abstract class AbstractCamera implements ICamera {
 			renderer.cancelROI();
 		}
 	}
-	
+
 	private void finishROIZoom() {
 		if (ROICurrentlyDrawn) {
 			final Envelope3D env = renderer.getROIEnvelope();
@@ -513,66 +572,72 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 	 */
 	@Override
-	public void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
-		// this.shiftKeyDown = shift(e);
-		// this.altKeyDown = alt(e);
-		// this.ctrlKeyDown = ctrl(e);
-//		setCtrlPressed(ctrl(e));
-//		setAltPressed(alt(e));
-//		setShiftPressed(shift(e));
-		switch (e.keyCode) {
-		case SWT.ARROW_LEFT:
-			this.strafeLeft = true;
-			break;
-		case SWT.ARROW_RIGHT:
-			this.strafeRight = true;
-			break;
-		case SWT.ARROW_UP:
-			this.goesForward = true;
-			break;
-		case SWT.ARROW_DOWN:
-			this.goesBackward = true;
-			break;
-		case SWT.SPACE:
-			resetPivot();
-			return;
-		case SWT.CTRL:
-			setCtrlPressed(true);
-			break;
-		case SWT.COMMAND:
-			setCtrlPressed(true);
-			break;
-		case SWT.SHIFT:
-			setShiftPressed(true);
-			break;
-		case SWT.ALT:
-			setAltPressed(true);
-			break;
-		}
-		switch (e.character) {
-		case '+':
-			zoom(true);
-			return;
-		case '-':
-			zoom(false);
-			return;
-		case '4':
-			quickLeftTurn();
-			return;
-		case '6':
-			quickRightTurn();
-			return;
-		case '8':
-			quickUpTurn();
-			return;
-		case '2':
-			quickDownTurn();
-			return;
-		case 'f':
-			flipView();
-			return;
-		}
+	public final void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
+		renderer.getDrawable().invoke(false, new GLRunnable() {
 
+			@Override
+			public boolean run(final GLAutoDrawable drawable) {
+
+				switch (e.keyCode) {
+				case SWT.ARROW_LEFT:
+					AbstractCamera.this.strafeLeft = true;
+					break;
+				case SWT.ARROW_RIGHT:
+					AbstractCamera.this.strafeRight = true;
+					break;
+				case SWT.ARROW_UP:
+					AbstractCamera.this.goesForward = true;
+					break;
+				case SWT.ARROW_DOWN:
+					AbstractCamera.this.goesBackward = true;
+					break;
+				case SWT.SPACE:
+					resetPivot();
+					break;
+				case SWT.CTRL:
+					setCtrlPressed(true);
+					break;
+				case SWT.COMMAND:
+					setCtrlPressed(true);
+					break;
+				case SWT.SHIFT:
+					setShiftPressed(true);
+					break;
+				case SWT.ALT:
+					setAltPressed(true);
+					break;
+				default:
+					return true;
+				}
+				switch (e.character) {
+				case '+':
+					zoom(true);
+					break;
+				case '-':
+					zoom(false);
+					break;
+				case '4':
+					quickLeftTurn();
+					break;
+				case '6':
+					quickRightTurn();
+					break;
+				case '8':
+					quickUpTurn();
+					break;
+				case '2':
+					quickDownTurn();
+					break;
+				case 'f':
+					flipView();
+					break;
+				default:
+					return true;
+				}
+
+				return false;
+			}
+		});
 	}
 
 	protected void resetPivot() {
@@ -600,38 +665,45 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 	 */
 	@Override
-	public void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
-//		setCtrlPressed(ctrl(e));
-//		setAltPressed(alt(e));
-//		setShiftPressed(shift(e));
-		switch (e.keyCode) {
-		case SWT.ARROW_LEFT: // player turns left (scene rotates right)
-			this.strafeLeft = false;
-			break;
-		case SWT.ARROW_RIGHT: // player turns right (scene rotates left)
-			this.strafeRight = false;
-			break;
-		case SWT.ARROW_UP:
-			this.goesForward = false;
-			break;
-		case SWT.ARROW_DOWN:
-			this.goesBackward = false;
-			break;
-		case SWT.CTRL:
-			setCtrlPressed(false);
-			break;
-		case SWT.COMMAND:
-			setCtrlPressed(false);
-			break;
-		case SWT.SHIFT:
-			setShiftPressed(false);
-			finishROISelection();
-			break;
-		case SWT.ALT:
-			setAltPressed(false);
-			finishROIZoom();
-			break;
-		}
+	public final void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
+
+		renderer.getDrawable().invoke(false, new GLRunnable() {
+
+			@Override
+			public boolean run(final GLAutoDrawable drawable) {
+				switch (e.keyCode) {
+				case SWT.ARROW_LEFT: // player turns left (scene rotates right)
+					strafeLeft = false;
+					break;
+				case SWT.ARROW_RIGHT: // player turns right (scene rotates left)
+					strafeRight = false;
+					break;
+				case SWT.ARROW_UP:
+					goesForward = false;
+					break;
+				case SWT.ARROW_DOWN:
+					goesBackward = false;
+					break;
+				case SWT.CTRL:
+					setCtrlPressed(false);
+					break;
+				case SWT.COMMAND:
+					setCtrlPressed(false);
+					break;
+				case SWT.SHIFT:
+					setShiftPressed(false);
+					finishROISelection();
+					break;
+				case SWT.ALT:
+					setAltPressed(false);
+					finishROIZoom();
+					break;
+				default:
+					return true;
+				}
+				return false;
+			}
+		});
 
 	}
 

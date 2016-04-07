@@ -158,8 +158,8 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
-		super.mouseMove(e);
+	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
+		super.internalMouseMove(e);
 		if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
 			return;
 		}

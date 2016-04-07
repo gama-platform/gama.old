@@ -15,6 +15,9 @@ import java.awt.Point;
 
 import org.eclipse.swt.SWT;
 
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLRunnable;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.ILocation;
@@ -330,10 +333,19 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void zoom(final boolean in) {
-		final double step = radius != 0d ? radius / 10d * GamaPreferences.OPENGL_ZOOM.getValue() : 0.1d;
-		radius = radius + (in ? -step : step);
-		getRenderer().data.setZoomLevel(zoomLevel());
-		updateCartesianCoordinatesFromAngles();
+
+		getRenderer().getDrawable().invoke(false, new GLRunnable() {
+
+			@Override
+			public boolean run(final GLAutoDrawable drawable) {
+				final double step = radius != 0d ? radius / 10d * GamaPreferences.OPENGL_ZOOM.getValue() : 0.1d;
+				radius = radius + (in ? -step : step);
+				getRenderer().data.setZoomLevel(zoomLevel());
+				updateCartesianCoordinatesFromAngles();
+				return false;
+			}
+		});
+
 	}
 
 	@Override
@@ -361,8 +373,9 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
-		super.mouseMove(e);
+	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
+
+		super.internalMouseMove(e);
 		if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
 			return;
 		}
