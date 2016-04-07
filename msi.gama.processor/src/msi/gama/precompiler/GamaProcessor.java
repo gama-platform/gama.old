@@ -43,6 +43,8 @@ import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -83,6 +85,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 
+@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class GamaProcessor extends AbstractProcessor {
 
 	class Pair {
@@ -98,7 +101,7 @@ public class GamaProcessor extends AbstractProcessor {
 	private GamlProperties gp;
 	// JavaAgentBaseWriter jabw;
 
-	boolean alwaysDoc = true;
+	boolean alwaysDoc = false;
 	GamlDocProcessor docProc;
 
 	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
@@ -122,8 +125,9 @@ public class GamaProcessor extends AbstractProcessor {
 		} catch (final Exception e) {
 			gp = new GamlProperties();
 		}
-		// jabw = new JavaAgentBaseWriter(processingEnv);
-		docProc = new GamlDocProcessor(processingEnv);
+		if ("true".equals(pe.getOptions().get("doc")) || alwaysDoc) {
+			docProc = new GamlDocProcessor(processingEnv);
+		}
 	}
 
 	@Override
@@ -134,68 +138,51 @@ public class GamaProcessor extends AbstractProcessor {
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
 		if (!env.processingOver()) {
-			write(env, factory.class, GamlProperties.FACTORIES);
-			processFactories(env);
-			processTypes(env);
-			processSpecies(env);
-			processSkills(env);
-			processOperators(env);
-			processActions(env);
-			processSymbols(env);
-			processVars(env);
-			processDisplays(env);
-			processFiles(env);
-			processConstants(env);
-			processPopulationsLinkers(env);
+			try {
+				write(env, factory.class, GamlProperties.FACTORIES);
+				processFactories(env);
+				processTypes(env);
+				processSpecies(env);
+				processSkills(env);
+				processOperators(env);
+				processActions(env);
+				processSymbols(env);
+				processVars(env);
+				processDisplays(env);
+				processFiles(env);
+				processConstants(env);
+				processPopulationsLinkers(env);
+			} catch (final Exception e) {
+				processingEnv.getMessager().printMessage(Kind.ERROR,
+						"An exception occured in the parsing of GAML annotations" + e.getMessage());
+				throw e;
+			}
 
 			gp.store(createWriter(GAML));
 			final Writer source = createSourceWriter();
-			// Writer doc = createDocSourceWriter();
-			if (source != null /* && doc != null */ ) {
-				// try {
+			if (source != null) {
 				try {
 					final StringBuilder sourceBuilder = new StringBuilder();
-					// StringBuilder docBuilder = new StringBuilder();
 					new JavaWriter().write("gaml.additions", gp, sourceBuilder/* , docBuilder */);
 					source.append(sourceBuilder);
-					// doc.append(docBuilder);
-				} catch (final IOException e) {
-					e.printStackTrace();
+				} catch (final Exception e) {
+					processingEnv.getMessager().printMessage(Kind.ERROR,
+							"An exception occured in the generation of Java files" + e.getMessage());
 				}
-				// w.flush();
 				try {
 					source.close();
-					// doc.close();
 				} catch (final IOException e) {
 					e.printStackTrace();
 				}
-				// } catch (Exception e) {
-				// processingEnv.getMessager().printMessage(Kind.ERROR,
-				// "Exception while generating GamlAdditions file ");
-				// }
 			}
-			if ("true".equals(processingEnv.getOptions().get("doc")) || alwaysDoc) {
-				// new XMLWriter(processingEnv).write(createWriter("doc.xml"),
-				// gp);
+			if (docProc != null) {
+
 				if (docProc.firstParsing) {
 					docProc.processDocXML(env, createWriter("docGAMA.xml"));
 					docProc.firstParsing = false;
-				} else {
-					// processingEnv.getMessager().printMessage(Kind.NOTE,
-					// "Documentation file has already been produced");
 				}
 			}
 
-			// Writer w2 = createAgentBaseSourceWriter();
-			// if ( w2 != null ) {
-			// try {
-			// w2.append(jabw.write("gaml.additions", gp));
-			// w2.flush();
-			// w2.close();
-			// } catch (IOException e) {
-			// e.printStackTrace();
-			// }
-			// }
 		}
 		return true;
 	}
@@ -586,27 +573,7 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 		final StringBuilder sb = new StringBuilder();
 		sb.append(doc.value()).append(DOC_SEP);
-		sb.append(doc.deprecated())/* .append(DOC_SEP) */;
-		// sb.append(doc.returns()).append(DOC_SEP);
-		// sb.append(doc.comment()).append(DOC_SEP);
-		// String[] cases = doc.special_cases();
-		// sb.append(cases.length).append(DOC_SEP);
-		// for ( int i = 0; i < cases.length; i++ ) {
-		// sb.append(cases[i]).append(DOC_SEP);
-		// }
-		// TODO: check Ben modif
-		// String[] examples = doc.examples();
-		// example[] examples = doc.examples();
-		// sb.append(examples.length).append(DOC_SEP);
-		// for ( int i = 0; i < examples.length; i++ ) {
-		// sb.append(examples[i]).append(DOC_SEP);
-		// }
-		// String[] see = doc.see();
-		// sb.append(see.length).append(DOC_SEP);
-		// for ( int i = 0; i < see.length; i++ ) {
-		// sb.append(see[i]).append(DOC_SEP);
-		// }
-		// sb.setLength(sb.length() - 1);
+		sb.append(doc.deprecated());
 		return sb.toString();
 	}
 
@@ -641,19 +608,6 @@ public class GamaProcessor extends AbstractProcessor {
 		sb.append(docToString(facet.doc()));
 		return sb.toString();
 	}
-
-	// private String combinationsFacetsToString(final facets facets) {
-	// StringBuilder sb = new StringBuilder();
-	// if ( facets.combinations() != null ) {
-	// for ( combination cf : facets.combinations() ) {
-	// sb.append(arrayToString(cf.value())).append(SEP);
-	// }
-	// // if ( facets.combinations().length > 0 ) {
-	// // sb.setLength(sb.length() - 1);
-	// // }
-	// }
-	// return sb.toString();
-	// }
 
 	private String arrayToString(final int[] array) {
 		if (array.length == 0) {
@@ -690,7 +644,6 @@ public class GamaProcessor extends AbstractProcessor {
 		for (final Element e : factories) {
 			final factory factory = e.getAnnotation(factory.class);
 			final int[] hKinds = factory.handles();
-			// int[] uKinds = factory.uses();
 			final StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(FACTORY_PREFIX);
@@ -701,13 +654,6 @@ public class GamaProcessor extends AbstractProcessor {
 			for (int i = 1; i < hKinds.length; i++) {
 				sb.append(',').append(String.valueOf(hKinds[i]));
 			}
-			// uses
-			// if ( uKinds.length > 0 ) {
-			// sb.append(SEP).append(String.valueOf(uKinds[0]));
-			// for ( int i = 1; i < uKinds.length; i++ ) {
-			// sb.append(',').append(String.valueOf(uKinds[i]));
-			// }
-			// }
 			gp.put(sb.toString(), ""); /* doc ? */
 		}
 	}
@@ -798,8 +744,6 @@ public class GamaProcessor extends AbstractProcessor {
 						"GAML: skill '" + skill.name() + "' is not documented", e);
 			}
 
-			// processingEnv.getMessager().printMessage(Kind.NOTE, "Skill
-			// processed: " + rawNameOf(e));
 			gp.put(sb.toString(), "" /* docToString(skill.doc()) */); /* doc */
 		}
 	}
@@ -1139,17 +1083,5 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 		return null;
 	}
-
-	// private Writer createDocSourceWriter() {
-	// try {
-	// return
-	// processingEnv.getFiler().createSourceFile("gaml.additions.GamlDocumentation",
-	// (Element[]) null)
-	// .openWriter();
-	// } catch (Exception e) {
-	// processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
-	// }
-	// return null;
-	// }
 
 }
