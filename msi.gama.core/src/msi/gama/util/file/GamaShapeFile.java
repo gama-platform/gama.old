@@ -11,45 +11,59 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import static org.apache.commons.lang.StringUtils.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import org.geotools.data.*;
+import static org.apache.commons.lang.StringUtils.join;
+import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveAllTokens;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.geotools.data.FeatureReader;
+import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.simple.*;
-import org.geotools.feature.*;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.*;
-import org.opengis.feature.type.*;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import com.vividsolutions.jts.geom.*;
-import msi.gama.metamodel.shape.*;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+
+import msi.gama.metamodel.shape.GamaGisGeometry;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gaml.operators.Strings;
 import msi.gaml.operators.fastmaths.FastMath;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
- * Written by drogoul
- * Modified on 13 nov. 2011
+ * Written by drogoul Modified on 13 nov. 2011
  *
  * @todo Description
  *
  */
-@file(name = "shape",
-extensions = { "shp" },
-buffer_type = IType.LIST,
-buffer_content = IType.GEOMETRY,
-buffer_index = IType.INT,
-concept = { IConcept.SHAPEFILE, IConcept.FILE })
+@file(name = "shape", extensions = {
+		"shp" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
+				IConcept.SHAPEFILE, IConcept.FILE })
 public class GamaShapeFile extends GamaGisFile {
 
 	public static class ShapeInfo extends GamaFileMetaData {
@@ -68,33 +82,33 @@ public class GamaShapeFile extends GamaGisFile {
 			int number = 0;
 			try {
 				store = new ShapefileDataStore(url);
-				SimpleFeatureSource source = store.getFeatureSource();
-				SimpleFeatureCollection features = source.getFeatures();
+				final SimpleFeatureSource source = store.getFeatureSource();
+				final SimpleFeatureCollection features = source.getFeatures();
 				try {
 					crs1 = source.getInfo().getCRS();
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					System.out.println("Ignored exception in ShapeInfo getCRS:" + e.getMessage());
 				}
 				env = source.getBounds();
-				if ( crs1 != null ) {
+				if (crs1 != null) {
 					try {
 						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						throw e;
 					}
 				}
 				number = features.size();
-				java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
-				for ( AttributeDescriptor desc : att_list ) {
+				final java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
+				for (final AttributeDescriptor desc : att_list) {
 					String type;
-					if ( desc.getType() instanceof GeometryType ) {
+					if (desc.getType() instanceof GeometryType) {
 						type = "geometry";
 					} else {
 						type = Types.get(desc.getType().getBinding()).toString();
 					}
 					attributes.put(desc.getName().getLocalPart(), type);
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.out.println("Error in reading metadata of " + url);
 				e.printStackTrace();
 
@@ -103,7 +117,7 @@ public class GamaShapeFile extends GamaGisFile {
 				height = env.getHeight();
 				itemNumber = number;
 				this.crs = crs1;
-				if ( store != null ) {
+				if (store != null) {
 					store.dispose();
 				}
 			}
@@ -116,26 +130,26 @@ public class GamaShapeFile extends GamaGisFile {
 
 		public ShapeInfo(final String propertiesString) {
 			super(propertiesString);
-			String[] segments = split(propertiesString);
+			final String[] segments = split(propertiesString);
 			itemNumber = Integer.valueOf(segments[1]);
-			String crsString = segments[2];
+			final String crsString = segments[2];
 			CoordinateReferenceSystem theCRS;
-			if ( "null".equals(crsString) || crsString.startsWith("Unknown") ) {
+			if ("null".equals(crsString) || crsString.startsWith("Unknown")) {
 				theCRS = null;
 			} else {
 				try {
 					theCRS = CRS.parseWKT(crsString);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					theCRS = null;
 				}
 			}
 			crs = theCRS;
 			width = Double.valueOf(segments[3]);
 			height = Double.valueOf(segments[4]);
-			if ( segments.length > 5 ) {
-				String[] names = splitByWholeSeparatorPreserveAllTokens(segments[5], SUB_DELIMITER);
-				String[] types = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
-				for ( int i = 0; i < names.length; i++ ) {
+			if (segments.length > 5) {
+				final String[] names = splitByWholeSeparatorPreserveAllTokens(segments[5], SUB_DELIMITER);
+				final String[] types = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
+				for (int i = 0; i < names.length; i++) {
 					attributes.put(names[i], types[i]);
 				}
 			}
@@ -143,27 +157,28 @@ public class GamaShapeFile extends GamaGisFile {
 
 		/**
 		 * Method getSuffix()
+		 * 
 		 * @see msi.gama.util.file.GamaFileMetaInformation#getSuffix()
 		 */
 		@Override
 		public String getSuffix() {
-			String CRS = crs == null ? "Unknown CRS" : crs.getName().getCode();
-			return "" + itemNumber + " objects | " + CRS + " | " + FastMath.round(width) + "m x " +
-			FastMath.round(height) + "m";
+			final String CRS = crs == null ? "Unknown CRS" : crs.getName().getCode();
+			return "" + itemNumber + " objects | " + CRS + " | " + FastMath.round(width) + "m x "
+					+ FastMath.round(height) + "m";
 		}
 
 		@Override
 		public String getDocumentation() {
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			sb.append("Shapefile").append(Strings.LN);
 			sb.append(itemNumber).append(" objects").append(Strings.LN);
 			sb.append("Dimensions: ").append(FastMath.round(width) + "m x " + FastMath.round(height) + "m")
-			.append(Strings.LN);
+					.append(Strings.LN);
 			sb.append("Coordinate Reference System: ").append(crs == null ? "Unknown CRS" : crs.getName().getCode())
-			.append(Strings.LN);
-			if ( !attributes.isEmpty() ) {
+					.append(Strings.LN);
+			if (!attributes.isEmpty()) {
 				sb.append("Attributes: ").append(Strings.LN);
-				for ( Map.Entry<String, String> entry : attributes.entrySet() ) {
+				for (final Map.Entry<String, String> entry : attributes.entrySet()) {
 					sb.append("<li>").append(entry.getKey()).append(" (" + entry.getValue() + ")").append("</li>");
 				}
 			}
@@ -176,24 +191,24 @@ public class GamaShapeFile extends GamaGisFile {
 
 		@Override
 		public String toPropertyString() {
-			// See Issue #1603: .toWKT() && pa can sometimes cause problem with certain projections.
+			// See Issue #1603: .toWKT() && pa can sometimes cause problem with
+			// certain projections.
 			String system = crs == null ? "Unknown projection" : crs.toWKT();
 			try {
-				CoordinateReferenceSystem trial = CRS.parseWKT(system);
-			} catch (Exception e) {
+				final CoordinateReferenceSystem trial = CRS.parseWKT(system);
+			} catch (final Exception e) {
 				// The toWKT()/parseWKT() pair has a problem
 				String srs = CRS.toSRS(crs);
-				if ( srs == null && crs != null ) {
+				if (srs == null && crs != null) {
 					srs = crs.getName().getCode();
 				}
 				system = "Unknown projection " + srs;
 
 			}
-			String attributeNames = join(attributes.keySet(), SUB_DELIMITER);
-			String types = join(attributes.values(), SUB_DELIMITER);
-			Object[] toSave =
-				new Object[] { super.toPropertyString(), itemNumber, system,
-					width, height, attributeNames, types };
+			final String attributeNames = join(attributes.keySet(), SUB_DELIMITER);
+			final String types = join(attributes.values(), SUB_DELIMITER);
+			final Object[] toSave = new Object[] { super.toPropertyString(), itemNumber, system, width, height,
+					attributeNames, types };
 			return join(toSave, DELIMITER);
 		}
 	}
@@ -220,7 +235,9 @@ public class GamaShapeFile extends GamaGisFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( getBuffer() != null ) { return; }
+		if (getBuffer() != null) {
+			return;
+		}
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		readShapes(scope);
 	}
@@ -228,13 +245,13 @@ public class GamaShapeFile extends GamaGisFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		ShapeInfo s;
-		IFileMetaDataProvider p = scope.getGui().getMetaDataProvider();
-		if ( p != null ) {
+		final IFileMetaDataProvider p = scope.getGui().getMetaDataProvider();
+		if (p != null) {
 			s = (ShapeInfo) p.getMetaData(getFile(), false, true);
 		} else {
 			try {
 				s = new ShapeInfo(getFile().toURI().toURL(), 0);
-			} catch (MalformedURLException e) {
+			} catch (final MalformedURLException e) {
 				return GamaListFactory.EMPTY_LIST;
 			}
 		}
@@ -248,8 +265,10 @@ public class GamaShapeFile extends GamaGisFile {
 	 */
 	@Override
 	protected void flushBuffer() throws GamaRuntimeException {
-		// TODO Regarder ce qu'il y a dans la commande "save" pour sauvegarder les fichiers.
-		// Merger progressivement save et le syst�me de fichiers afin de ne plus d�pendre de �a.
+		// TODO Regarder ce qu'il y a dans la commande "save" pour sauvegarder
+		// les fichiers.
+		// Merger progressivement save et le syst�me de fichiers afin de ne plus
+		// d�pendre de �a.
 
 	}
 
@@ -259,10 +278,10 @@ public class GamaShapeFile extends GamaGisFile {
 		try {
 			store = new ShapefileDataStore(getFile().toURI().toURL());
 			return store.getFeatureSource().getInfo().getCRS();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			return null;
 		} finally {
-			if ( store != null ) {
+			if (store != null) {
 				store.dispose();
 			}
 		}
@@ -272,59 +291,58 @@ public class GamaShapeFile extends GamaGisFile {
 		scope.getGui().beginSubStatus("Reading file" + getName());
 		ShapefileDataStore store = null;
 		FeatureReader reader = null;
-		File file = getFile();
-		IList list = getBuffer();
+		final File file = getFile();
+		final IList list = getBuffer();
 		int size = 0;
 		try {
 			store = new ShapefileDataStore(file.toURI().toURL());
-			Envelope env = store.getFeatureSource().getBounds();
+			final Envelope env = store.getFeatureSource().getBounds();
 			size = store.getFeatureSource().getCount(Query.ALL);
 			int index = 0;
 			computeProjection(scope, env);
 			reader = store.getFeatureReader();
-			
+
 			while (reader.hasNext()) {
 				scope.getGui().setSubStatusCompletion(index++ / size);
-				Feature feature = reader.next();
+				final Feature feature = reader.next();
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
-				if ( g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
+				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 					g = gis.transform(g);
 					list.add(new GamaGisGeometry(g, feature));
 				} else {
 					// See Issue 725
 					GAMA.reportError(scope,
-						GamaRuntimeException.warning(
-							"GamaShapeFile.fillBuffer; geometry could not be added : " + feature.getIdentifier(),
-							scope),
-						false);
+							GamaRuntimeException
+									.warning(
+											"GamaShapeFile.fillBuffer; geometry could not be added  as it is "
+													+ (g == null ? "nil: " : "empty: ") + feature.getIdentifier(),
+											scope),
+							false);
 				}
 			}
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			if ( reader != null ) {
+			if (reader != null) {
 				try {
 					reader.close();
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if ( store != null ) {
+			if (store != null) {
 				store.dispose();
 			}
 			scope.getGui().endSubStatus("Reading file " + getName());
 		}
 		if (size > list.size()) {
-			GAMA.reportError(scope,
-					GamaRuntimeException.warning(
-						"Problem with file " + getFile() +": only " +  list.size() +" of the " + size+ " geometries could be added",
-						scope),
-					false);
+			GAMA.reportError(scope, GamaRuntimeException.warning("Problem with file " + getFile() + ": only "
+					+ list.size() + " of the " + size + " geometries could be added", scope), false);
 		}
 	}
 
 	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
-		File file = getFile();
+		final File file = getFile();
 		ShapefileDataStore store = null;
 		FeatureIterator<SimpleFeature> it = null;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = null;
@@ -332,12 +350,13 @@ public class GamaShapeFile extends GamaGisFile {
 			scope.getGui().beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName());
 			store = new ShapefileDataStore(file.toURI().toURL());
 			features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
-			Envelope env = store.getFeatureSource().getBounds();
-			// ShapefileFileResourceInfo info = new ShapefileFileResourceInfo(store);
+			final Envelope env = store.getFeatureSource().getBounds();
+			// ShapefileFileResourceInfo info = new
+			// ShapefileFileResourceInfo(store);
 			// Envelope env = info.getBounds();
 			computeProjection(scope, env);
-			if ( features != null && returnIt ) {
-				double size = features.size();
+			if (features != null && returnIt) {
+				final double size = features.size();
 				it = features.features();
 				// return returnIt ? features.features() : null;
 				int i = 0;
@@ -345,16 +364,17 @@ public class GamaShapeFile extends GamaGisFile {
 					scope.getGui().setSubStatusCompletion(i++ / size);
 					final SimpleFeature feature = it.next();
 					Geometry g = (Geometry) feature.getDefaultGeometry();
-					if ( g != null && !g.isEmpty() /* Fix for Issue 725 */ ) {
+					if (g != null && !g.isEmpty() /* Fix for Issue 725 */ ) {
 						// Fix for Issue 677
 						g = gis.transform(g);
 						((IList) getBuffer()).add(new GamaGisGeometry(g, feature));
 					} else {
 						// See Issue 725
 						GAMA.reportError(scope,
-							GamaRuntimeException.warning(
-								"GamaShapeFile.fillBuffer; geometry could not be added : " + feature.getID(), scope),
-							false);
+								GamaRuntimeException
+										.warning("GamaShapeFile.fillBuffer; geometry could not be added  as it is "
+												+ (g == null ? "nil :" : "empty :") + feature.getID(), scope),
+								false);
 					}
 				}
 			} else {
@@ -363,10 +383,10 @@ public class GamaShapeFile extends GamaGisFile {
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			if ( it != null ) {
+			if (it != null) {
 				it.close();
 			}
-			if ( store != null ) {
+			if (store != null) {
 				store.dispose();
 			}
 			scope.getGui().endSubStatus("Opening file " + getName());
@@ -375,16 +395,16 @@ public class GamaShapeFile extends GamaGisFile {
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		if ( gis == null ) {
+		if (gis == null) {
 			ShapefileDataStore store = null;
 			try {
 				store = new ShapefileDataStore(getFile().toURI().toURL());
-				Envelope env = store.getFeatureSource().getBounds();
+				final Envelope env = store.getFeatureSource().getBounds();
 				computeProjection(scope, env);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				return new Envelope();
 			} finally {
-				if ( store != null ) {
+				if (store != null) {
 					store.dispose();
 				}
 			}
