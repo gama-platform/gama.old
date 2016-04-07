@@ -11,37 +11,62 @@
  **********************************************************************************************/
 package ummisco.gama.opengl;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.BufferOverflowException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.fixedfunc.*;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.fixedfunc.GLLightingFunc;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.*;
-import msi.gama.metamodel.shape.*;
+import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.ILayer;
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.*;
+import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.fastmaths.FastMath;
-import msi.gaml.statements.draw.*;
+import msi.gaml.statements.draw.FieldDrawingAttributes;
+import msi.gaml.statements.draw.FileDrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.opengl.camera.*;
+import ummisco.gama.opengl.camera.CameraArcBall;
+import ummisco.gama.opengl.camera.FreeFlyCamera;
+import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.jts.JTSDrawer;
-import ummisco.gama.opengl.scene.*;
+import ummisco.gama.opengl.scene.AbstractObject;
+import ummisco.gama.opengl.scene.ModelScene;
+import ummisco.gama.opengl.scene.SceneBuffer;
 import ummisco.gama.opengl.utils.GLUtilLight;
 
 /**
@@ -92,9 +117,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public GLAutoDrawable createDrawable(final Composite parent) {
-		boolean useSharedContext = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue();
-		GLProfile profile = useSharedContext ? TextureCache.getSharedContext().getGLProfile() : GLProfile.getDefault();
-		GLCapabilities cap = new GLCapabilities(profile);
+		final boolean useSharedContext = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue();
+		final GLProfile profile = useSharedContext ? TextureCache.getSharedContext().getGLProfile()
+				: GLProfile.getDefault();
+		final GLCapabilities cap = new GLCapabilities(profile);
 		cap.setStencilBits(8);
 		cap.setDoubleBuffered(true);
 		cap.setHardwareAccelerated(true);
@@ -113,8 +139,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public void defineROI(final Point start, final Point end) {
-		GamaPoint startInWorld = getRealWorldPointFromWindowPoint(start);
-		GamaPoint endInWorld = getRealWorldPointFromWindowPoint(end);
+		final GamaPoint startInWorld = getRealWorldPointFromWindowPoint(start);
+		final GamaPoint endInWorld = getRealWorldPointFromWindowPoint(end);
 		ROIEnvelope = new Envelope3D(new Envelope(startInWorld.x, endInWorld.x, startInWorld.y, endInWorld.y));
 	}
 
@@ -156,7 +182,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		// https://jogamp.org/deployment/v2.1.1/javadoc/jogl/javadoc/javax/media/opengl/glu/gl2/GLUgl2.html
 		// GLU objects are NOT thread safe...
 		glu = new GLU();
-		GL2 gl = drawable.getContext().getGL().getGL2();
+		final GL2 gl = drawable.getContext().getGL().getGL2();
 		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
 
 		// GL2 gl = GLContext.getCurrentGL().getGL2();
@@ -225,7 +251,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		if (currentScene == null) {
 			return;
 		}
-		GL2 gl = drawable.getContext().getGL().getGL2();
+		final GL2 gl = drawable.getContext().getGL().getGL2();
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
 
@@ -235,7 +261,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		gl.glGetDoublev(GLMatrixFunc.GL_MODELVIEW_MATRIX, mvmatrix, 0);
 		gl.glGetDoublev(GLMatrixFunc.GL_PROJECTION_MATRIX, projmatrix, 0);
 		gl.glClearDepth(1.0f);
-		Color background = data.getBackgroundColor();
+		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
 				1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
@@ -255,12 +281,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(), data.getAmbientLightColor());
 		GLUtilLight.UpdateDiffuseLightValue(gl, getGlu(), data.getDiffuseLightColor());
 
-		float[] light0Position = new float[4];
+		final float[] light0Position = new float[4];
 		ILocation p1 = data.getDiffuseLightPosition();
 		if (p1.equals(LayeredDisplayData.noChange)) {
 			p1 = new GamaPoint(data.getEnvWidth() / 2, data.getEnvHeight() / 2, data.getEnvWidth() * 2);
 		}
-		ILocation p = p1;
+		final ILocation p = p1;
 		light0Position[0] = (float) p.getX();
 		light0Position[1] = -(float) p.getY();
 		light0Position[2] = (float) p.getZ();
@@ -313,7 +339,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		if (width <= 0 || height <= 0) {
 			return;
 		}
-		GL2 gl = drawable.getContext().getGL().getGL2();
+		final GL2 gl = drawable.getContext().getGL().getGL2();
 		// Set the viewport (display area) to cover the entire window
 		gl.glViewport(0, 0, width, height);
 		// Enable the model view - any new transformations will affect the
@@ -329,16 +355,16 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public final void updatePerspective(final GL2 gl) {
-		int height = getDrawable().getSurfaceHeight();
-		double aspect = (double) getDrawable().getSurfaceWidth() / (double) (height == 0 ? 1 : height);
+		final int height = getDrawable().getSurfaceHeight();
+		final double aspect = (double) getDrawable().getSurfaceWidth() / (double) (height == 0 ? 1 : height);
 
-		double maxDim = getMaxEnvDim();
+		final double maxDim = getMaxEnvDim();
 
 		if (!data.isOrtho()) {
 			try {
-				double zNear = maxDim / 1000;
+				final double zNear = maxDim / 1000;
 				double fW, fH;
-				double fovY = 45.0d;
+				final double fovY = 45.0d;
 				if (aspect > 1.0) {
 					fH = FastMath.tan(fovY / 360 * Math.PI) * zNear;
 					fW = fH * aspect;
@@ -347,7 +373,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 					fH = fW / aspect;
 				}
 				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 10);
-			} catch (BufferOverflowException e) {
+			} catch (final BufferOverflowException e) {
 				System.out.println("Buffer overflow exception");
 			}
 		} else {
@@ -365,8 +391,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	public double getMaxEnvDim() {
 		// built dynamically to prepare for the changes in size of the
 		// environment
-		double env_width = data.getEnvWidth();
-		double env_height = data.getEnvHeight();
+		final double env_width = data.getEnvWidth();
+		final double env_height = data.getEnvHeight();
 		return env_width > env_height ? env_width : env_height;
 	}
 
@@ -452,8 +478,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			currentZRotation++;
 		}
 		if (currentZRotation != 0) {
-			double env_width = data.getEnvWidth();
-			double env_height = data.getEnvHeight();
+			final double env_width = data.getEnvWidth();
+			final double env_height = data.getEnvHeight();
 			gl.glTranslated(env_width / 2, -env_height / 2, 0);
 			gl.glRotated(currentZRotation, 0, 0, 1);
 			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
@@ -461,51 +487,60 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public void drawROI(final GL2 gl) {
-		double x1 = ROIEnvelope.getMinX();
-		double y1 = -ROIEnvelope.getMinY();
-		double x2 = ROIEnvelope.getMaxX();
-		double y2 = -ROIEnvelope.getMaxY();
-
-		Double distance = FastMath.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-		gl.glRasterPos3d(x2, -y1, 0.1);
-		gl.glColor3d(0.0, 0.0, 0.0);
-		glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "  d: " + distance.toString());
-		if (this.data.isZ_fighting()) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
-			// Draw on top of everything
-			gl.glPolygonOffset(0.0f, (float) -this.getMaxEnvDim());
-			gl.glBegin(GL2.GL_POLYGON);
-
-			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glVertex3d(x2, -y1, 0.0f);
-
-			gl.glVertex3d(x2, -y1, 0.0f);
-			gl.glVertex3d(x2, -y2, 0.0f);
-
-			gl.glVertex3d(x2, -y2, 0.0f);
-			gl.glVertex3d(x1, -y2, 0.0f);
-
-			gl.glVertex3d(x1, -y2, 0.0f);
-			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glEnd();
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-		} else {
-			gl.glBegin(GL.GL_LINES);
-
-			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glVertex3d(x2, -y1, 0.0f);
-
-			gl.glVertex3d(x2, -y1, 0.0f);
-			gl.glVertex3d(x2, -y2, 0.0f);
-
-			gl.glVertex3d(x2, -y2, 0.0f);
-			gl.glVertex3d(x1, -y2, 0.0f);
-
-			gl.glVertex3d(x1, -y2, 0.0f);
-			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glEnd();
-		}
+		final JTSDrawer drawer = new JTSDrawer(this); // move the method from
+														// this class
+		drawer.drawROIHelper(gl, ROIEnvelope);
+		//
+		//
+		//
+		// final double x1 = ROIEnvelope.getMinX();
+		// final double y1 = -ROIEnvelope.getMinY();
+		// final double x2 = ROIEnvelope.getMaxX();
+		// final double y2 = -ROIEnvelope.getMaxY();
+		//
+		// // Double distance = FastMath.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1)
+		// *
+		// // (y2 - y1));
+		// // gl.glRasterPos3d(x2, -y1, 0.1);
+		// gl.glColor3d(0.0, 0.0, 0.0);
+		// // glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, " d: " +
+		// // distance.toString());
+		// if (this.data.isZ_fighting()) {
+		// gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+		// gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
+		// // Draw on top of everything
+		// gl.glPolygonOffset(0.0f, (float) -this.getMaxEnvDim());
+		// gl.glBegin(GL2.GL_POLYGON);
+		//
+		// gl.glVertex3d(x1, -y1, 0.0f);
+		// gl.glVertex3d(x2, -y1, 0.0f);
+		//
+		// gl.glVertex3d(x2, -y1, 0.0f);
+		// gl.glVertex3d(x2, -y2, 0.0f);
+		//
+		// gl.glVertex3d(x2, -y2, 0.0f);
+		// gl.glVertex3d(x1, -y2, 0.0f);
+		//
+		// gl.glVertex3d(x1, -y2, 0.0f);
+		// gl.glVertex3d(x1, -y1, 0.0f);
+		// gl.glEnd();
+		// gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+		// } else {
+		// gl.glBegin(GL.GL_LINES);
+		//
+		// gl.glVertex3d(x1, -y1, 0.0f);
+		// gl.glVertex3d(x2, -y1, 0.0f);
+		//
+		// gl.glVertex3d(x2, -y1, 0.0f);
+		// gl.glVertex3d(x2, -y2, 0.0f);
+		//
+		// gl.glVertex3d(x2, -y2, 0.0f);
+		// gl.glVertex3d(x1, -y2, 0.0f);
+		//
+		// gl.glVertex3d(x1, -y2, 0.0f);
+		// gl.glVertex3d(x1, -y1, 0.0f);
+		// gl.glEnd();
+		// }
 	}
 
 	public Envelope3D getROIEnvelope() {
@@ -528,7 +563,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	// @Override
 	public void initScene() {
 		if (sceneBuffer != null) {
-			ModelScene scene = sceneBuffer.getSceneToRender();
+			final ModelScene scene = sceneBuffer.getSceneToRender();
 			if (scene != null) {
 				scene.reload();
 			}
@@ -557,13 +592,13 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	}
 
-	public void startDrawRotationHelper(GamaPoint pos) {
+	public void startDrawRotationHelper(final GamaPoint pos) {
 		rotationHelperPosition = pos;
 		drawRotationHelper = true;
-		double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
+		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
 				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
 				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
-		double size = distance / 15; // the size of the displayed axis
+		final double size = distance / 15; // the size of the displayed axis
 		if (currentScene != null)
 			currentScene.startDrawRotationHelper(pos, size);
 	}
@@ -576,8 +611,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public void drawRotationHelper(final GL2 gl) {
-		JTSDrawer jtsDrawer = new JTSDrawer(this);
-		double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
+		final JTSDrawer jtsDrawer = new JTSDrawer(this);
+		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
 				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
 				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
 		jtsDrawer.drawRotationHelper(gl, rotationHelperPosition, distance);
@@ -639,10 +674,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			return;
 		}
 		double stepX, stepY;
-		double cellWidth = this.data.getEnvWidth() / dimensions.x;
-		double cellHeight = this.data.getEnvHeight() / dimensions.y;
-		GamaColor color = GamaColor.getInt(lineColor.getRGB());
-		ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
+		final double cellWidth = this.data.getEnvWidth() / dimensions.x;
+		final double cellHeight = this.data.getEnvHeight() / dimensions.y;
+		final GamaColor color = GamaColor.getInt(lineColor.getRGB());
+		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
 		for (double i = 0; i < dimensions.x; i++) {
 			for (double j = 0; j < dimensions.y; j++) {
 				stepX = i + 0.5;
@@ -662,7 +697,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			return null;
 		}
 		if (string.contains("\n")) {
-			for (String s : string.split("\n")) {
+			for (final String s : string.split("\n")) {
 				attributes.location.setY(attributes.location.getY()
 						+ attributes.font.getSize() * this.getyRatioBetweenPixelsAndModelUnits());
 				drawString(s, attributes);
@@ -687,7 +722,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		while (!inited) {
 			try {
 				Thread.sleep(10);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				return;
 			}
 		}
@@ -705,7 +740,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		super.beginDrawingLayer(layer);
 		GamaPoint currentOffset, currentScale;
 		if (!(layer instanceof OverlayLayer)) {
-			double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
+			final double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
 
 			// get the value of the z scale if positive otherwise set it to 1.
 			double z_scale;
@@ -722,7 +757,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			currentOffset = new GamaPoint(getXOffsetInPixels(), getYOffsetInPixels());
 			currentScale = new GamaPoint(1, 1, 1);
 		}
-		ModelScene scene = sceneBuffer.getSceneToUpdate();
+		final ModelScene scene = sceneBuffer.getSceneToUpdate();
 		if (scene != null) {
 			scene.beginDrawingLayer(layer, currentOffset, currentScale, currentAlpha);
 		}
@@ -774,7 +809,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public GamaPoint getIntWorldPointFromWindowPoint(final Point windowPoint) {
-		GamaPoint p = getRealWorldPointFromWindowPoint(windowPoint);
+		final GamaPoint p = getRealWorldPointFromWindowPoint(windowPoint);
 		return new GamaPoint((int) p.x, (int) p.y);
 	}
 
@@ -783,21 +818,22 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			return null;
 		}
 		int realy = 0;// GL y coord pos
-		double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
+		final double[] wcoord = new double[4];// wx, wy, wz;// returned xyz
+												// coords
 
-		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
+		final int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
 
 		realy = viewport[3] - y;
 		glu.gluUnProject(x, realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
+		final GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
 		glu.gluUnProject(x, realy, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
+		final GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
-		GamaPoint v3 = v2.minus(v1).normalized();
-		float distance = (float) (camera.getPosition().getZ()
+		final GamaPoint v3 = v2.minus(v1).normalized();
+		final float distance = (float) (camera.getPosition().getZ()
 				/ GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3));
-		GamaPoint worldCoordinates = camera.getPosition().plus(v3.times(distance));
+		final GamaPoint worldCoordinates = camera.getPosition().plus(v3.times(distance));
 
 		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
@@ -858,7 +894,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	 */
 	@Override
 	public void beginOverlay(final OverlayLayer layer) {
-		ModelScene scene = sceneBuffer.getSceneToUpdate();
+		final ModelScene scene = sceneBuffer.getSceneToUpdate();
 		if (scene != null) {
 			scene.beginOverlay();
 		}

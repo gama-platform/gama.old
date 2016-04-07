@@ -58,6 +58,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import gnu.trove.map.hash.THashMap;
@@ -861,8 +862,8 @@ public class SwtGui extends AbstractGui {
 							"NPE in WorkbenchPage.setPerspective(). See Issue #1602. Working around the bug in e4...");
 						activePage.setPerspective(descriptor);
 					}
-					// activateAutoSave(withAutoSave);
-					debug("Perspective " + perspectiveId + " open ");
+					activateAutoSave(withAutoSave);
+					// debug("Perspective " + perspectiveId + " open ");
 				}
 			};
 			if ( immediately ) {
@@ -927,11 +928,11 @@ public class SwtGui extends AbstractGui {
 
 	}
 
-	// public static void activateAutoSave(final boolean activate) {
-	// System.out.println("auto-save activated: " + activate);
-	// Workbench.getInstance().setEnableAutoSave(activate);
-	// // ApplicationWorkbenchAdvisor.CONFIGURER.setSaveAndRestore(activate);
-	// }
+	public static void activateAutoSave(final boolean activate) {
+		System.out.println("auto-save activated: " + activate);
+		Workbench.getInstance().setEnableAutoSave(activate);
+		// ApplicationWorkbenchAdvisor.CONFIGURER.setSaveAndRestore(activate);
+	}
 
 	public final boolean openBatchPerspective(final boolean immediately) {
 		return openPerspective(PERSPECTIVE_HPC_ID, immediately, false);

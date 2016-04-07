@@ -13,7 +13,6 @@ package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
 import java.nio.IntBuffer;
-import java.util.Collection;
 
 import org.eclipse.swt.SWT;
 
@@ -24,15 +23,10 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayData;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.GAMA.InScope;
-import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -282,18 +276,8 @@ public abstract class AbstractCamera implements ICamera {
 				final Envelope3D env = renderer.getROIEnvelope();
 
 				if (env != null) {
-					env.init(env.getMinX(), env.getMaxX(), -env.getMinY(), -env.getMaxY());
-					final Collection<IAgent> shapes = GAMA.run(new InScope<Collection<IAgent>>() {
-
-						@Override
-						public Collection<IAgent> run(final IScope scope) {
-							return scope.getTopology().getSpatialIndex().allInEnvelope(scope, env.centre(), env,
-									new Different(), true);
-						}
-					});
-					// System.out.println("Envelope : " + env);
 					setAltPressed(false);
-					renderer.getSurface().selectSeveralAgents(shapes);
+					renderer.getSurface().selectSeveralAgents(env);
 				}
 			} else if (alt(e)) {
 				final Envelope3D env = renderer.getROIEnvelope();
@@ -304,8 +288,6 @@ public abstract class AbstractCamera implements ICamera {
 		if (e.button == 1)
 			setMouseLeftPressed(false);
 	}
-
-	protected abstract void zoomRoi(Envelope3D env);
 
 	protected abstract boolean canSelectOnRelease(org.eclipse.swt.events.MouseEvent arg0);
 
@@ -467,7 +449,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	public boolean isViewInXYPlan() {
-		return phi > 170 || phi < 10;// && theta > -5 && theta < 5;
+		return true;
+		// return phi > 170 || phi < 10;// && theta > -5 && theta < 5;
 	}
 
 	@Override

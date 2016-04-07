@@ -14,12 +14,17 @@ package msi.gama.common.interfaces;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 // import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.*;
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.runtime.IScope;
 
@@ -29,7 +34,8 @@ import msi.gama.runtime.IScope;
  * @todo Description
  *
  */
-public interface IDisplaySurface extends DisplayDataListener /* extends IPerspectiveListener, IPartListener */ {
+public interface IDisplaySurface extends
+		DisplayDataListener /* extends IPerspectiveListener, IPartListener */ {
 
 	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
 	static final double MIN_ZOOM_FACTOR = 0.1;
@@ -42,11 +48,13 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 		 */
 		ILocation getCameraPosition();
 
+		Envelope3D getROIDimensions();
+
 		void setPaused(boolean flag);
 
 		void selectAgent(IAgent agent);
 
-		void selectSeveralAgents(Collection<IAgent> shapes);
+		void selectSeveralAgents(Envelope3D env);
 
 	}
 
@@ -57,7 +65,10 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 
 	void dispose();
 
-	/** Asks the surface to update its display, optionnaly forcing it to do so (if it is paused, for instance) **/
+	/**
+	 * Asks the surface to update its display, optionnaly forcing it to do so
+	 * (if it is paused, for instance)
+	 **/
 	void updateDisplay(boolean force);
 
 	/**
@@ -107,7 +118,7 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	public ILocation getModelCoordinates();
 
 	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
-		final Point positionInPixels);
+			final Point positionInPixels);
 
 	public Collection<IAgent> selectAgent(final int x, final int y);
 
@@ -139,12 +150,14 @@ public interface IDisplaySurface extends DisplayDataListener /* extends IPerspec
 	int getFPS();
 
 	/**
-	 * @return true if the surface is considered as "realized" (i.e. displayed on the UI)
+	 * @return true if the surface is considered as "realized" (i.e. displayed
+	 *         on the UI)
 	 */
 	boolean isRealized();
 
 	/**
-	 * @return true if the surface has been "rendered" (i.e. all the layers have been displayed)
+	 * @return true if the surface has been "rendered" (i.e. all the layers have
+	 *         been displayed)
 	 */
 	boolean isRendered();
 

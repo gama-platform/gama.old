@@ -337,7 +337,7 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	protected void zoomRoi(final Envelope3D env) {
+	public void zoomRoi(final Envelope3D env) {
 		final int width = (int) env.getWidth();
 		final int height = (int) env.getHeight();
 		radius = 1.5 * (width > height ? width : height);

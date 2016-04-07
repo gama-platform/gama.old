@@ -139,7 +139,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	protected void zoomRoi(final Envelope3D env) {
+	public void zoomRoi(final Envelope3D env) {
 		final int width = (int) env.getWidth();
 		final int height = (int) env.getHeight();
 		final double maxDim = width > height ? width : height;

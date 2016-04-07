@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MenuEvent;
@@ -19,9 +20,12 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.MenuItem;
 
 import com.jogamp.opengl.FPSCounter;
 import com.jogamp.opengl.GLAnimatorControl;
@@ -35,8 +39,10 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
@@ -643,7 +649,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 *      int)
 	 */
 	@Override
-	public void selectSeveralAgents(final Collection<IAgent> agents) {
+	public void selectSeveralAgents(final Envelope3D env) {
+
+		final Envelope3D envInWorld = Envelope3D.withYNegated(env);
+		final Collection<IAgent> agents = scope.getTopology().getSpatialIndex().allInEnvelope(scope,
+				envInWorld.centre(), envInWorld, new Different(), true);
 
 		scope.getGui().asyncRun(new Runnable() {
 
@@ -659,6 +669,23 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				menu.setData(IKeyword.USER_LOCATION, getModelCoordinates());
 				menu.setLocation(swtControl.toDisplay(renderer.camera.getMousePosition().x,
 						renderer.camera.getMousePosition().y));
+				final MenuItem mu = new MenuItem(menu, SWT.PUSH, 0);
+				mu.setText("Focus on region...");
+				mu.addSelectionListener(new SelectionListener() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						renderer.camera.zoomRoi(env);
+					}
+
+					@Override
+					public void widgetDefaultSelected(final SelectionEvent e) {
+						widgetSelected(e);
+
+					}
+				});
+				mu.setImage(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT.image());
+				new MenuItem(menu, SWT.SEPARATOR, 1);
 				menu.addMenuListener(new MenuListener() {
 
 					@Override
@@ -832,6 +859,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public boolean isDisposed() {
 		return disposed;
+	}
+
+	@Override
+	public Envelope3D getROIDimensions() {
+		return renderer.getROIEnvelope();
 	}
 
 }

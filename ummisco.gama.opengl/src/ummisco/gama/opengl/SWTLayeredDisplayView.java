@@ -4,8 +4,12 @@
  */
 package ummisco.gama.opengl;
 
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.widgets.Composite;
+
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.views.LayeredDisplayView;
@@ -18,7 +22,8 @@ import msi.gama.runtime.GAMA;
  * @since 25 mars 2015
  *
  */
-public class SWTLayeredDisplayView extends LayeredDisplayView implements /* ControlListener, */MouseMoveListener, KeyListener {
+public class SWTLayeredDisplayView extends LayeredDisplayView
+		implements /* ControlListener, */MouseMoveListener, KeyListener {
 
 	SWTOpenGLDisplaySurface surface;
 
@@ -37,7 +42,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 
 	@Override
 	public void setFocus() {
-		if ( surfaceComposite != null ) {
+		if (surfaceComposite != null) {
 			surfaceComposite.setFocus();
 		}
 	}
@@ -50,7 +55,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 			@Override
 			public void run() {
 				try {
-					if ( surface != null ) {
+					if (surface != null) {
 						surface.dispose();
 					}
 					getSite().getPage().hideView(SWTLayeredDisplayView.this);
@@ -62,12 +67,25 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 
 	}
 
+	boolean isOverlayTemporaryVisible;
+
 	@Override
 	public void mouseMove(final MouseEvent e) {
 		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
+				if (surface.getROIDimensions() != null) {
+					if (!overlay.isVisible()) {
+						isOverlayTemporaryVisible = true;
+						overlay.setVisible(true);
+					}
+				} else {
+					if (isOverlayTemporaryVisible) {
+						isOverlayTemporaryVisible = false;
+						overlay.setVisible(false);
+					}
+				}
 				overlay.update();
 			}
 		});
@@ -80,6 +98,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 
 	/**
 	 * Method zoomWhenScrolling()
+	 * 
 	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
 	 */
 	@Override
@@ -88,7 +107,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
+	public void keyPressed(final KeyEvent e) {
 		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
@@ -99,7 +118,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView implements /* Cont
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
+	public void keyReleased(final KeyEvent e) {
 		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
