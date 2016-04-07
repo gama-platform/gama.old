@@ -1,44 +1,69 @@
+/**
+ *  Name : segregationGIS
+ *  Author : 
+ *  Description: A model showing the segregation of the people just by putting a similarity wanted parameter using agents
+ * 	to represent the individuals and GIS file for the places
+ *  Tags : gis, shapefile
+ */
 model segregation
 
+//Import the model Common Schelling Segregation
 import "../include/Common Schelling Segregation.gaml" 
 global {
+	//List of all the free places
 	list<space> free_places <- [] ;  
+	//List of all the places
 	list<space> all_places <- [] ;
+	//Neighbours distance for the perception of an agent
 	int neighbours_distance <- 50 min: 1 parameter: "Distance of perception:" category: "Population" max: 1000;
+	//Shapefile to load
 	file shape_file_name <- file("../gis/nha2.shp") parameter: "Shapefile to load:" category: "GIS specific";
+	//Shape of the environment
 	geometry shape <- envelope(shape_file_name);
+	//Square meters per people in m2
 	int square_meters_per_people <- 200 parameter: "Occupancy of people (in m2):" category: "GIS specific";
-	int dimensions;
+	
+	//Action to initialize people agents
 	action initialize_people { 
+		//Create all the places with a surface given within the shapefile
 		create space from: shape_file_name with: [surface :: float(read("AREA"))];
 		all_places  <- shuffle(space);
+		//Compute the number of people to create considering the density of people
 		number_of_people <- int( density_of_people * sum (all_places collect (each.capacity))); 
 		create people number: number_of_people;  
 	    all_people <- people as list ; 
+	    //Move all the people to a new place
 		ask people  {  
 			do move_to_new_place;       
 		}   
 	}      
-	
+	//Action to initialize the places
 	action initialize_places {}   
 	
 } 
-    
-species people parent: base {   
-	const size type: float <- 2.0;  
+
+//Species people representing the people
+species people parent: base { 
+	//Size of the people agent
+	const size type: float <- 2.0;
+	//Color of the people agent  
 	const color type: rgb <- colors at (rnd (number_of_groups - 1)); 
 	const red type: int <- (color as list) at 0; 
 	const green type: int <- (color as list) at 1;  
 	const blue type: int <- (color as list) at 2;  
+	//Building in which the agent lives
 	space current_building <- nil;
+	//List of all the neighbour people agents
 	list<people> my_neighbours -> {people at_distance neighbours_distance}; 
-
+	
+	//Action to move to a new place
 	action move_to_new_place {  
 		current_building <- (shuffle(all_places) first_with (((each).capacity) > 0));
 		ask current_building {
 			do accept one_people: myself;   
 		}
 	}
+	//Reflex to migrate to another place if the agent isn't happy
 	reflex migrate when: !is_happy {
 		if current_building != nil {
 			ask current_building { 
@@ -52,16 +77,24 @@ species people parent: base {
 		draw circle(5) color: color;
 	}
 }
+
+//Species space representing a space for a people agent to live in
 species space {	
+	//List of all the people agents living within
 	list<people> insiders <- [];
 	rgb color <- rgb(255, 255, 255); 
+	//Surface of the place
 	float surface;
-	int capacity  <- 1 + int(surface / square_meters_per_people);  
+	//Capacity of the place
+	int capacity  <- 1 + int(surface / square_meters_per_people);
+	
+	//Action to accept a people agent  
 	action accept (people one_people) {
 		add one_people to: insiders;
 		location of one_people <- any_location_in(shape);
 		capacity <- capacity - 1;
 	}
+	//Action to remove a people agent
 	action remove_one (people one_people){
 		remove one_people from: insiders;
 		capacity <- capacity + 1;
