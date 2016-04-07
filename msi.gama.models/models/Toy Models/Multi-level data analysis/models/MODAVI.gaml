@@ -1,43 +1,51 @@
 /**
- *  modavi
- * 
- *  Author: Arnaud Grignard
- * 
- *  Description: Multi-level Online Data Analysis, Visualization and Interaction
- * 
- *  From a reference model with node of a given class, a spatial graph is created 
+ *  Name : Modavi
+ *  Author : Arnaud Grignard
+ *  Description: From a reference model with node of a given class, a spatial graph is created 
  *  (or a barabasi graph if spatialGraph is set to false) in the advanced view to 
  *  represent the interaction in the reference model.
  *  An abstract view/controller is created to summarize the interaction in the advanced view
  *  in a macro graph and control the reference model by defining an action (user_command) 
  *  for each macroNode and macroEdge.
+ *  Tags : 3d, graph, gui
  */
-
 
 model modavi
  
 global {
-	
+	//Graph of the agents
 	graph<node_agent,edge_agent> my_graph ;
 	
+	//Number of agents to create
 	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
+	//Number of value per class
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
+	//Boolean to know if we display a spatial graph or not
 	bool spatialGraph parameter: 'Spatial Graph' <- true category: 'Model';
+	//Distance to link two node agents
 	float distance parameter: 'Distance' min: 1.0<- 10.0 category: 'Model';
+	//Threshold
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
 
-		
+	//Size of a node agent
 	int nodeSize parameter: 'Node size' min: 1 <- 1 category: 'Aspect';
+	//Size of a macro node agent
 	int macroNodeSize parameter: 'Macro Node size' min: 1 <- 2 category: 'Aspect';
 	
+	//Number of type of class
 	int nbTypeOfClass <-1;
 	
+	//Zoom factor
 	int zoomFactor <- nbTypeOfClass;
 
+	//List of the different interaction matrices
 	list<matrix<int>> interactionMatrix <-list_with(nbTypeOfClass,matrix([0]));
+	//Number maximum of edges
     int nbEdgeMax;
     
+    //Reflex to update the interaction matrix list
     reflex updateInteractionMatrix{
+    	//Ask for each edge agent to update it sources and destination to create the matrix
     	ask edge_agent{
 			loop i from:0 to: nbTypeOfClass-1{															
 				set src <- my_graph source_of(self);
@@ -48,8 +56,11 @@ global {
 		}
 	}
 	
+	//Reflex to compute te maximum number of edges
 	reflex computeNbEdgeMax{
+		//Number maximum of edges
 		nbEdgeMax <-1;
+		//Ask for each macro edge its aggregated link list number
 		ask macroEdge{
 			if(nbAggregatedLinkList[0] > nbEdgeMax){
 				nbEdgeMax <-nbAggregatedLinkList[0];
@@ -57,11 +68,11 @@ global {
 		}
 	}
 
-	
+	//Initialization of the model
 	init {
-		
+		//Initialization of the matrix
 		do InitInteractionMatrix;
-		
+		//If we want a spatial graph in that case we create a graph according to their distance, else we create a barabasi albert graph
 		if(spatialGraph){
 			create node_agent number:nbAgent;
 			my_graph <- graph<node_agent, edge_agent>(as_distance_graph(node_agent, (["distance"::distance, "species"::edge_agent])));
@@ -71,7 +82,7 @@ global {
           my_graph <- graph<node_agent, edge_agent>(generate_barabasi_albert(node_agent,edge_agent,nbAgent,2,true));	
         }
         
-
+		//For each node agent, we compute its class value
 		ask node_agent as list{
 			loop i from:0 to:nbTypeOfClass-1{
 				classVector[i] <- rnd(nbValuePerClass-1)+1;
@@ -79,6 +90,7 @@ global {
 		}
 
 		int i<-1;
+		//Creation of the macronode according to the number of value per class
 		create macroNode number: nbValuePerClass{	 
 			class <-i;
 			location <- {(cos (((class-1)/nbValuePerClass)*360)*50 +50),(sin (((class-1)/nbValuePerClass)*360)*50+50),0};
@@ -86,10 +98,10 @@ global {
 			do updatemyNodes;
 			set i<-i+1;	
 		}
-			
+		//We finally create the macroGraph
 		create macroGraph;
 	 }
-	 
+	 //Action to initialize the interaction Matrix according to the number of type of classes
 	 action InitInteractionMatrix{
 		 loop i from:0 to:nbTypeOfClass-1{
 				interactionMatrix[i] <- 0 as_matrix({nbValuePerClass,nbValuePerClass});
@@ -98,15 +110,18 @@ global {
 }
 
 
-
+	//Species to represent the node_agent
 	species node_agent  {
-		
+		//Color of the node agent
 		rgb color;
-		
+		//List of the class
 		list<int> classVector <- list_with (nbTypeOfClass,0);
+		//List of the position
 		list<point> posVector <- list_with (nbTypeOfClass,{0,0});
+		//List of the color
 		list<rgb> colorList <- list_with (nbTypeOfClass, rgb(0,0,0));
 								
+		//Shuffle the classes of the node_agent
 		reflex shuffleClass{
 			loop i from:0 to: nbTypeOfClass-1{
 				classVector[i] <- rnd(nbValuePerClass-1)+1;
@@ -127,10 +142,12 @@ global {
 	
 	}
 	
-
+	//Species edge_agent to represent the edge of the graph
 	species edge_agent { 
 		rgb color;
+		//Source of the edge
 		node_agent src;
+		//Target of the edge
 		node_agent dest;
 			 
 		aspect base {
@@ -145,16 +162,20 @@ global {
 			}
 		}
 	}
-	
+	//Species representing the macro node agents
 	species macroNode{
 		rgb color;
 		int class;
+		//List of all the aggregated nodes
 		list<int> nbAggregatedNodes <- list_with(nbTypeOfClass,0);
+		//List of all the position
 		list<point> posVector <-list_with(nbTypeOfClass,{0,0});
 		 
+		//Update the nodes of the agents
 		reflex update{
 			do updatemyNodes;
 		}
+		//For each classes, find all the nodes with the same classes
 		action updatemyNodes{
 			loop i from:0 to: nbTypeOfClass-1{			
 				nbAggregatedNodes[i]<-0;
@@ -190,11 +211,14 @@ global {
 		user_command "Remove all micro node" action: removeMicroNode;
 	}
 	
-	
+	//Species macroEdge representing the macro edges agents
 	species macroEdge  { 
 		rgb color <- #black;
+		//Source of the macroedge
 		macroNode src;
+		//Destination of the macroedge
 		macroNode dest;
+		//List of all the aggregated links
 		list<int> nbAggregatedLinkList <- list_with(nbTypeOfClass,0);
 		
 		aspect base {
@@ -205,6 +229,7 @@ global {
 			}
 		}
 		
+		//Action to remove a micro edge
 		action removeMicroEdge{
 			ask edge_agent as list{
 				  if	((self.src.classVector[0] =  myself.src.class) and (self.dest.classVector[0] =  myself.dest.class)) {
@@ -216,10 +241,11 @@ global {
 		user_command "Remove all micro edge" action: removeMicroEdge;	
 	}
 	
+	//Species macroGraph representing the macro graph composed of macroNode and macroEdge
 	species macroGraph {
 		
 
-  	
+  	//Reflex to update the graph by killing all the previous edges first 
    reflex updateAllMacroEdge {	
 	 	ask macroEdge as list{
 	 		do die;
@@ -241,7 +267,7 @@ global {
 		    }
 	    }
   	}
-  	
+  	//Reflex to initialize the matrix
   	reflex initMatrix{
   		loop i from:0 to:nbTypeOfClass-1{
   		  interactionMatrix[i] <- 0 as_matrix({nbValuePerClass,nbValuePerClass});	

@@ -1,30 +1,41 @@
+/**
+ *  Name : SpatialGraph3d
+ *  Author : Arnaud Grignard
+ *  Description: From the reference model "bug.gaml" a spatial graph is created. 
+ *  We create a species node that mirrors the species bug and then a spatial graph is creating 
+ *  using as_distance_graph operator. The species node should then 
+ *  define its own related_to method to decide wether or not a node is related to another one.  
+ *  Tags : graph, mirror_species, 3d
+ */
+
+
 model Graph
 
+//Import the model Common Bug Species model
 import '../includes/Common Bug Species.gaml'
 
-/**
- *  SpatialGraph
- *  Author: Arnaud Grignard
- *  Description: From the reference model "bug.gaml" a spatial graph is created. 
- *  We create a species node that mirrors the species bug and then a spatial graph is creating.
- *  The spatial graph is created by making node inherit from graph_node; The species node should then 
- *  define its own related_to method to decide wether or not a node is related to another one.  
- */
 global {
+	//Distance to link two bugs
 	int distance parameter: 'Distance' min: 1 <- 25 category: 'Model';
+	//variable to start the animation of the model
 	int startAnimation parameter: 'Start Animation ' min: 1 <- 25 category: 'Animation View';
+	//Variable to save the time animation
 	int timeAnim <- 0;
-	reflex updateAnimation {
-		if (time > startAnimation) {
+	//Reflex to update the time of animation
+	reflex updateAnimation 
+	{
+		if (time > startAnimation) 
+		{
 			timeAnim <- int(time - startAnimation);
 		}
-
 	}
-
 }
-
+//Species node_agent mirroring the bug species, represented as graph node
 species node_agent mirrors: list(bug) parent: graph_node edge_species: edge_agent {
+	//Their location is the one of the target location
 	point location <- target.location update: target.location;
+	
+	//Action to know if an agent is related to another agent considering their distance
 	bool related_to (node_agent other) {
 		using topology(target) {
 			return (target.location distance_to other.target.location) < distance;
@@ -42,13 +53,13 @@ species node_agent mirrors: list(bug) parent: graph_node edge_species: edge_agen
 	}
 
 }
-
+//Species edge to represent the edges of the graph
 species edge_agent parent: base_edge {
 	rgb color;
 	aspect base {
 		draw shape color: #green;
 	}
-
+	
 	aspect dynamic {
 		shape <- line([{ self.source.location.x, self.source.location.y, self.source.location.z }, { self.target.location.x, self.target.location.y, self.target.location.z }]);
 		float val <- 255.0 * (shape.perimeter / distance);
