@@ -163,7 +163,8 @@ public class FreeFlyCamera extends AbstractCamera {
 		if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
 			return;
 		}
-		if ((shift(e) || alt(e)) && isViewInXYPlan()) {
+		if (shift(e) /** || alt(e)) */
+				&& isViewInXYPlan()) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
 			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
@@ -179,7 +180,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	protected boolean canSelectOnRelease(final org.eclipse.swt.events.MouseEvent arg0) {
-		return shift(arg0) || alt(arg0);
+		return shift(arg0) /* || alt(arg0) */;
 	}
 
 	@Override

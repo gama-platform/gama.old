@@ -54,7 +54,7 @@ public interface IDisplaySurface extends
 
 		void selectAgent(IAgent agent);
 
-		void selectSeveralAgents(Envelope3D env);
+		void selectionIn(Envelope3D env);
 
 	}
 

@@ -71,7 +71,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected boolean ctrlPressed = false;
 	protected boolean shiftPressed = false;
-	protected boolean altPressed = false;
+	// protected boolean altPressed = false;
 
 	public AbstractCamera(final JOGLRenderer renderer) {
 		setRenderer(renderer);
@@ -160,10 +160,10 @@ public abstract class AbstractCamera implements ICamera {
 		drawRotationHelper();
 	}
 
-	final void setAltPressed(final boolean value) {
-		altPressed = value;
-		drawRotationHelper();
-	}
+	// final void setAltPressed(final boolean value) {
+	// altPressed = value;
+	// drawRotationHelper();
+	// }
 
 	protected void setMouseLeftPressed(final boolean b) {
 		// TODO Auto-generated method stub
@@ -289,7 +289,7 @@ public abstract class AbstractCamera implements ICamera {
 		} else if (e.button == 2) { // mouse wheel
 			resetPivot();
 		} else {
-			if ((shift(e) || alt(e)) && isViewInXYPlan()) {
+			if (shift(e) /* || alt(e)) */ && isViewInXYPlan()) {
 				startROI(e);
 			} else {
 				getRenderer().setPicking(false);
@@ -300,7 +300,7 @@ public abstract class AbstractCamera implements ICamera {
 
 		setMouseLeftPressed(e.button == 1 ? true : false);
 		setCtrlPressed(e.button == 1 ? ctrl(e) : false);
-		setAltPressed(e.button == 1 ? alt(e) : false);
+		// setAltPressed(e.button == 1 ? alt(e) : false);
 		setShiftPressed(e.button == 1 ? shift(e) : false);
 
 	}
@@ -330,9 +330,10 @@ public abstract class AbstractCamera implements ICamera {
 		if (canSelectOnRelease(e) && isViewInXYPlan()) {
 			if (shift(e)) {
 				finishROISelection();
-			} else if (alt(e)) {
-				finishROIZoom();
 			}
+			// else if (alt(e)) {
+			// finishROIZoom();
+			// }
 		}
 		if (e.button == 1)
 			setMouseLeftPressed(false);
@@ -350,20 +351,20 @@ public abstract class AbstractCamera implements ICamera {
 		if (ROICurrentlyDrawn) {
 			final Envelope3D env = renderer.getROIEnvelope();
 			if (env != null) {
-				setAltPressed(false);
-				renderer.getSurface().selectSeveralAgents(env);
+				// setAltPressed(false);
+				renderer.getSurface().selectionIn(env);
 			}
-			renderer.cancelROI();
+			// renderer.cancelROI();
 		}
 	}
 
-	private void finishROIZoom() {
-		if (ROICurrentlyDrawn) {
-			final Envelope3D env = renderer.getROIEnvelope();
-			zoomRoi(env);
-			renderer.cancelROI();
-		}
-	}
+	// private void finishROIZoom() {
+	// if (ROICurrentlyDrawn) {
+	// final Envelope3D env = renderer.getROIEnvelope();
+	// zoomRoi(env);
+	// renderer.cancelROI();
+	// }
+	// }
 
 	protected abstract boolean canSelectOnRelease(org.eclipse.swt.events.MouseEvent arg0);
 
@@ -383,13 +384,13 @@ public abstract class AbstractCamera implements ICamera {
 		return (e.stateMask & SWT.SHIFT) != 0;
 	}
 
-	protected static boolean alt(final org.eclipse.swt.events.MouseEvent e) {
-		return (e.stateMask & SWT.ALT) != 0;
-	}
+	// protected static boolean alt(final org.eclipse.swt.events.MouseEvent e) {
+	// return (e.stateMask & SWT.ALT) != 0;
+	// }
 
-	protected static boolean alt(final org.eclipse.swt.events.KeyEvent e) {
-		return (e.stateMask & SWT.ALT) != 0;
-	}
+	// protected static boolean alt(final org.eclipse.swt.events.KeyEvent e) {
+	// return (e.stateMask & SWT.ALT) != 0;
+	// }
 
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
@@ -603,9 +604,9 @@ public abstract class AbstractCamera implements ICamera {
 				case SWT.SHIFT:
 					setShiftPressed(true);
 					break;
-				case SWT.ALT:
-					setAltPressed(true);
-					break;
+				// case SWT.ALT:
+				// setAltPressed(true);
+				// break;
 				default:
 					return true;
 				}
@@ -694,10 +695,10 @@ public abstract class AbstractCamera implements ICamera {
 					setShiftPressed(false);
 					finishROISelection();
 					break;
-				case SWT.ALT:
-					setAltPressed(false);
-					finishROIZoom();
-					break;
+				// case SWT.ALT:
+				// setAltPressed(false);
+				// finishROIZoom();
+				// break;
 				default:
 					return true;
 				}

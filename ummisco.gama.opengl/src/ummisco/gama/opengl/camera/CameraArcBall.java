@@ -356,6 +356,7 @@ public class CameraArcBall extends AbstractCamera {
 		// y is already negated
 		target.setLocation(env.centre());
 		updateCartesianCoordinatesFromAngles();
+		getRenderer().cancelROI();
 	}
 
 	@Override
@@ -440,7 +441,7 @@ public class CameraArcBall extends AbstractCamera {
 
 			// phi = phi - vertMovement_real * get_sensivity();
 			updateCartesianCoordinatesFromAngles();
-		} else if ((shiftPressed || altPressed) && isViewInXYPlan()) {
+		} else if (shiftPressed /* || altPressed ) */ && isViewInXYPlan()) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
 			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());

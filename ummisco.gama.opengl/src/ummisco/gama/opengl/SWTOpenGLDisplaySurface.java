@@ -649,7 +649,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 *      int)
 	 */
 	@Override
-	public void selectSeveralAgents(final Envelope3D env) {
+	public void selectionIn(final Envelope3D env) {
 
 		final Envelope3D envInWorld = Envelope3D.withYNegated(env);
 		final Collection<IAgent> agents = scope.getTopology().getSpatialIndex().allInEnvelope(scope,
@@ -690,6 +690,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 					@Override
 					public void menuHidden(final MenuEvent e) {
+
+						renderer.cancelROI();
 						animator.resume();
 					}
 
