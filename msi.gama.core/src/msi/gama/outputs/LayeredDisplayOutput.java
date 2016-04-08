@@ -398,7 +398,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
 		if ( cameraUp != null ) {
 			ILocation location = Cast.asPoint(getScope(), cameraUp.value(getScope()));
-			location.setY(-location.getY());
+			location.setY(-location.getY()); // y component need to be reverted
 			this.data.setCameraUpVector(location);
 			cameraFix = true;
 		}

@@ -365,96 +365,94 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
-		if (cameraInteraction) 
-		{
-			super.mouseMove(e);
-			if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
-				return;
-			}
-			final Point newPoint = new Point(e.x, e.y);
-			if (ctrl(e)) {
-				final int horizMovement = e.x - lastMousePressedPosition.x;
-				final int vertMovement = e.y - lastMousePressedPosition.y;
-				// if (flipped) {
-				// horizMovement = -horizMovement;
-				// vertMovement = -vertMovement;
-				// }
-	
-				final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-						- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-				final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-						+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-	
-				lastMousePressedPosition = newPoint;
-				theta = theta - horizMovement_real * getSensivity();
-	
-				if (flipped) {
-					if (vertMovement_real > 0) {
-						// down drag : phi increase
-						if (phi + vertMovement_real * getSensivity() < 180)
-							phi += vertMovement_real * getSensivity();
-						else {
-							phi = +360 + phi - vertMovement_real * getSensivity();
-							flipped = !flipped;
-							theta += 180;
-						}
-					} else {
-						// up drag : phi decrease
-						if (phi - -vertMovement_real * getSensivity() > 0)
-							phi -= -vertMovement_real * getSensivity();
-						else {
-							phi = -phi + -vertMovement_real * getSensivity();
-							flipped = !flipped;
-							theta += 180;
-						}
+	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
+
+		super.internalMouseMove(e);
+		if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
+			return;
+		}
+		final Point newPoint = new Point(e.x, e.y);
+		if (ctrl(e)) {
+			final int horizMovement = e.x - lastMousePressedPosition.x;
+			final int vertMovement = e.y - lastMousePressedPosition.y;
+			// if (flipped) {
+			// horizMovement = -horizMovement;
+			// vertMovement = -vertMovement;
+			// }
+
+			final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
+					- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+			final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
+					+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+
+			lastMousePressedPosition = newPoint;
+			theta = theta - horizMovement_real * getSensivity();
+
+			if (flipped) {
+				if (vertMovement_real > 0) {
+					// down drag : phi increase
+					if (phi + vertMovement_real * getSensivity() < 180)
+						phi += vertMovement_real * getSensivity();
+					else {
+						phi = +360 + phi - vertMovement_real * getSensivity();
+						flipped = !flipped;
+						theta += 180;
 					}
 				} else {
-					if (vertMovement_real > 0) {
-						// down drag : phi decrease
-						if (phi - vertMovement_real * getSensivity() > 0)
-							phi -= vertMovement_real * getSensivity();
-						else {
-							phi = -phi + vertMovement_real * getSensivity();
-							flipped = !flipped;
-							theta += 180;
-						}
-					} else {
-						// up drag : phi increase
-						if (phi + -vertMovement_real * getSensivity() < 180)
-							phi += -vertMovement_real * getSensivity();
-						else {
-							phi = +360 + phi - vertMovement_real * getSensivity();
-							flipped = !flipped;
-							theta += 180;
-						}
+					// up drag : phi decrease
+					if (phi - -vertMovement_real * getSensivity() > 0)
+						phi -= -vertMovement_real * getSensivity();
+					else {
+						phi = -phi + -vertMovement_real * getSensivity();
+						flipped = !flipped;
+						theta += 180;
 					}
 				}
-	
-				// phi = phi - vertMovement_real * get_sensivity();
-				updateCartesianCoordinatesFromAngles();
-			} else if (shiftPressed && isViewInXYPlan()) {
-				getMousePosition().x = e.x;
-				getMousePosition().y = e.y;
-				getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
 			} else {
-	
-				int horizMovement = e.x - lastMousePressedPosition.x;
-				int vertMovement = e.y - lastMousePressedPosition.y;
-				if (flipped) {
-					horizMovement = -horizMovement;
-					vertMovement = -vertMovement;
+				if (vertMovement_real > 0) {
+					// down drag : phi decrease
+					if (phi - vertMovement_real * getSensivity() > 0)
+						phi -= vertMovement_real * getSensivity();
+					else {
+						phi = -phi + vertMovement_real * getSensivity();
+						flipped = !flipped;
+						theta += 180;
+					}
+				} else {
+					// up drag : phi increase
+					if (phi + -vertMovement_real * getSensivity() < 180)
+						phi += -vertMovement_real * getSensivity();
+					else {
+						phi = +360 + phi - vertMovement_real * getSensivity();
+						flipped = !flipped;
+						theta += 180;
+					}
 				}
-	
-				final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-						- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-				final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-						+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-	
-				translateCameraFromScreenPlan(horizMovement_real, vertMovement_real);
-	
-				lastMousePressedPosition = newPoint;
 			}
+
+			// phi = phi - vertMovement_real * get_sensivity();
+			updateCartesianCoordinatesFromAngles();
+		} else if (shiftPressed && isViewInXYPlan()) {
+			getMousePosition().x = e.x;
+			getMousePosition().y = e.y;
+			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
+		} else {
+
+			int horizMovement = e.x - lastMousePressedPosition.x;
+			int vertMovement = e.y - lastMousePressedPosition.y;
+			if (flipped) {
+				horizMovement = -horizMovement;
+				vertMovement = -vertMovement;
+			}
+
+			final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
+					- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+			final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
+					+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+
+			translateCameraFromScreenPlan(horizMovement_real, vertMovement_real);
+
+			lastMousePressedPosition = newPoint;
 		}
 
 	}
