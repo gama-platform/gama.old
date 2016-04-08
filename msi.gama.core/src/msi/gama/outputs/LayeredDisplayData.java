@@ -78,6 +78,7 @@ public class LayeredDisplayData {
 	public boolean isComputingNormals = true;
 	private boolean isDisplayingAsACube = false; // GamaPreferences.CORE_CUBEDISPLAY.getValue();
 	private boolean ortho = false;
+	private boolean disableCameraInteraction = false; // "fixed_camera" facet of the display
 	private boolean isShowingFPS = false; // GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean isDrawingEnvironment = GamaPreferences.CORE_DRAW_ENV.getValue();
 	private boolean isDrawingDiffuseLight = false;
@@ -292,6 +293,14 @@ public class LayeredDisplayData {
 	 */
 	public void setDrawDiffLight(final boolean drawDiffLight) {
 		this.isDrawingDiffuseLight = drawDiffLight;
+	}
+	
+	public void disableCameraInteractions(final boolean disableCamInteract) {
+		this.disableCameraInteraction = disableCamInteract;
+	}
+	
+	public boolean cameraInteractionDisabled() {
+		return disableCameraInteraction;
 	}
 
 	/**

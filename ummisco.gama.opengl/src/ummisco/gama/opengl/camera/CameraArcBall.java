@@ -15,9 +15,6 @@ import java.awt.Point;
 
 import org.eclipse.swt.SWT;
 
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLRunnable;
-
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.ILocation;
@@ -219,109 +216,112 @@ public class CameraArcBall extends AbstractCamera {
 	public void animate() {
 		// First we position the camera ???
 		super.animate();
-		// And we animate it if the keyboard is invoked
-		final double translation = 2 * (FastMath.abs(position.z) + 1) / getRenderer().getHeight();
-		if (isForward()) {
-			if (ctrlPressed) {
-				if (flipped) {
-					if (phi - getKeyboardSensivity() * getSensivity() > 0)
-						phi -= getKeyboardSensivity() * getSensivity();
-					else {
-						phi = -phi + getKeyboardSensivity() * getSensivity();
-						flipped = false;
-						theta += 180;
+			if (cameraInteraction) 
+			{
+			// And we animate it if the keyboard is invoked
+			final double translation = 2 * (FastMath.abs(position.z) + 1) / getRenderer().getHeight();
+			if (isForward()) {
+				if (ctrlPressed) {
+					if (flipped) {
+						if (phi - getKeyboardSensivity() * getSensivity() > 0)
+							phi -= getKeyboardSensivity() * getSensivity();
+						else {
+							phi = -phi + getKeyboardSensivity() * getSensivity();
+							flipped = false;
+							theta += 180;
+						}
+					} else {
+						if (phi + getKeyboardSensivity() * getSensivity() < 180)
+							phi += getKeyboardSensivity() * getSensivity();
+						else {
+							phi = 360 - phi - getKeyboardSensivity() * getSensivity();
+							flipped = true;
+							theta += 180;
+						}
 					}
+					updateCartesianCoordinatesFromAngles();
 				} else {
-					if (phi + getKeyboardSensivity() * getSensivity() < 180)
-						phi += getKeyboardSensivity() * getSensivity();
-					else {
-						phi = 360 - phi - getKeyboardSensivity() * getSensivity();
-						flipped = true;
-						theta += 180;
-					}
+					if (flipped)
+						translateCameraFromScreenPlan(0.0, getKeyboardSensivity()
+								* getSensivity() /** radius/1000.0 */
+						);
+					else
+						translateCameraFromScreenPlan(0.0, -getKeyboardSensivity()
+								* getSensivity() /** radius/1000.0 */
+						);
+	
 				}
-				updateCartesianCoordinatesFromAngles();
-			} else {
-				if (flipped)
-					translateCameraFromScreenPlan(0.0, getKeyboardSensivity()
-							* getSensivity() /** radius/1000.0 */
-					);
-				else
-					translateCameraFromScreenPlan(0.0, -getKeyboardSensivity()
-							* getSensivity() /** radius/1000.0 */
-					);
-
 			}
-		}
-		if (isBackward()) {
-			if (ctrlPressed) {
-				if (flipped) {
-					if (phi + getKeyboardSensivity() * getSensivity() < 180)
-						phi += getKeyboardSensivity() * getSensivity();
-					else {
-						phi = 360 - phi - getKeyboardSensivity() * getSensivity();
-						flipped = false;
-						theta += 180;
+			if (isBackward()) {
+				if (ctrlPressed) {
+					if (flipped) {
+						if (phi + getKeyboardSensivity() * getSensivity() < 180)
+							phi += getKeyboardSensivity() * getSensivity();
+						else {
+							phi = 360 - phi - getKeyboardSensivity() * getSensivity();
+							flipped = false;
+							theta += 180;
+						}
+					} else {
+						if (phi - getKeyboardSensivity() * getSensivity() > 0)
+							phi -= getKeyboardSensivity() * getSensivity();
+						else {
+							phi = -phi + getKeyboardSensivity() * getSensivity();
+							flipped = true;
+							theta += 180;
+						}
 					}
+					updateCartesianCoordinatesFromAngles();
 				} else {
-					if (phi - getKeyboardSensivity() * getSensivity() > 0)
-						phi -= getKeyboardSensivity() * getSensivity();
-					else {
-						phi = -phi + getKeyboardSensivity() * getSensivity();
-						flipped = true;
-						theta += 180;
-					}
+					if (flipped)
+						translateCameraFromScreenPlan(0.0, -getKeyboardSensivity()
+								* getSensivity() /** radius/1000.0 */
+						);
+					else
+						translateCameraFromScreenPlan(0.0, getKeyboardSensivity()
+								* getSensivity() /** radius/1000.0 */
+						);
 				}
-				updateCartesianCoordinatesFromAngles();
-			} else {
-				if (flipped)
-					translateCameraFromScreenPlan(0.0, -getKeyboardSensivity()
-							* getSensivity() /** radius/1000.0 */
-					);
-				else
-					translateCameraFromScreenPlan(0.0, getKeyboardSensivity()
-							* getSensivity() /** radius/1000.0 */
-					);
 			}
-		}
-		if (isStrafeLeft()) {
-			if (ctrlPressed) {
-				if (flipped)
-					theta = theta + -getKeyboardSensivity() * getSensivity();
-				else
-					theta = theta - -getKeyboardSensivity() * getSensivity();
-				updateCartesianCoordinatesFromAngles();
-			} else {
-				if (flipped)
-					translateCameraFromScreenPlan(
-							getKeyboardSensivity()
-									* getSensivity() /** radius/1000.0 */
-							, 0.0);
-				else
-					translateCameraFromScreenPlan(
-							-getKeyboardSensivity()
-									* getSensivity() /** radius/1000.0 */
-							, 0.0);
+			if (isStrafeLeft()) {
+				if (ctrlPressed) {
+					if (flipped)
+						theta = theta + -getKeyboardSensivity() * getSensivity();
+					else
+						theta = theta - -getKeyboardSensivity() * getSensivity();
+					updateCartesianCoordinatesFromAngles();
+				} else {
+					if (flipped)
+						translateCameraFromScreenPlan(
+								getKeyboardSensivity()
+										* getSensivity() /** radius/1000.0 */
+								, 0.0);
+					else
+						translateCameraFromScreenPlan(
+								-getKeyboardSensivity()
+										* getSensivity() /** radius/1000.0 */
+								, 0.0);
+				}
 			}
-		}
-		if (isStrafeRight()) {
-			if (ctrlPressed) {
-				if (flipped)
-					theta = theta + getKeyboardSensivity() * getSensivity();
-				else
-					theta = theta - getKeyboardSensivity() * getSensivity();
-				updateCartesianCoordinatesFromAngles();
-			} else {
-				if (flipped)
-					translateCameraFromScreenPlan(
-							-getKeyboardSensivity()
-									* getSensivity() /** radius/1000.0 */
-							, 0.0);
-				else
-					translateCameraFromScreenPlan(
-							getKeyboardSensivity()
-									* getSensivity() /** radius/1000.0 */
-							, 0.0);
+			if (isStrafeRight()) {
+				if (ctrlPressed) {
+					if (flipped)
+						theta = theta + getKeyboardSensivity() * getSensivity();
+					else
+						theta = theta - getKeyboardSensivity() * getSensivity();
+					updateCartesianCoordinatesFromAngles();
+				} else {
+					if (flipped)
+						translateCameraFromScreenPlan(
+								-getKeyboardSensivity()
+										* getSensivity() /** radius/1000.0 */
+								, 0.0);
+					else
+						translateCameraFromScreenPlan(
+								getKeyboardSensivity()
+										* getSensivity() /** radius/1000.0 */
+								, 0.0);
+				}
 			}
 		}
 	}
@@ -333,19 +333,10 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void zoom(final boolean in) {
-
-		getRenderer().getDrawable().invoke(false, new GLRunnable() {
-
-			@Override
-			public boolean run(final GLAutoDrawable drawable) {
-				final double step = radius != 0d ? radius / 10d * GamaPreferences.OPENGL_ZOOM.getValue() : 0.1d;
-				radius = radius + (in ? -step : step);
-				getRenderer().data.setZoomLevel(zoomLevel());
-				updateCartesianCoordinatesFromAngles();
-				return false;
-			}
-		});
-
+		final double step = radius != 0d ? radius / 10d * GamaPreferences.OPENGL_ZOOM.getValue() : 0.1d;
+		radius = radius + (in ? -step : step);
+		getRenderer().data.setZoomLevel(zoomLevel());
+		updateCartesianCoordinatesFromAngles();
 	}
 
 	@Override
@@ -374,94 +365,96 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
-
-		super.internalMouseMove(e);
-		if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
-			return;
-		}
-		final Point newPoint = new Point(e.x, e.y);
-		if (ctrl(e)) {
-			final int horizMovement = e.x - lastMousePressedPosition.x;
-			final int vertMovement = e.y - lastMousePressedPosition.y;
-			// if (flipped) {
-			// horizMovement = -horizMovement;
-			// vertMovement = -vertMovement;
-			// }
-
-			final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-					- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-			final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-					+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-
-			lastMousePressedPosition = newPoint;
-			theta = theta - horizMovement_real * getSensivity();
-
-			if (flipped) {
-				if (vertMovement_real > 0) {
-					// down drag : phi increase
-					if (phi + vertMovement_real * getSensivity() < 180)
-						phi += vertMovement_real * getSensivity();
-					else {
-						phi = +360 + phi - vertMovement_real * getSensivity();
-						flipped = !flipped;
-						theta += 180;
+	public void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
+		if (cameraInteraction) 
+		{
+			super.mouseMove(e);
+			if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
+				return;
+			}
+			final Point newPoint = new Point(e.x, e.y);
+			if (ctrl(e)) {
+				final int horizMovement = e.x - lastMousePressedPosition.x;
+				final int vertMovement = e.y - lastMousePressedPosition.y;
+				// if (flipped) {
+				// horizMovement = -horizMovement;
+				// vertMovement = -vertMovement;
+				// }
+	
+				final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
+						- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+				final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
+						+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+	
+				lastMousePressedPosition = newPoint;
+				theta = theta - horizMovement_real * getSensivity();
+	
+				if (flipped) {
+					if (vertMovement_real > 0) {
+						// down drag : phi increase
+						if (phi + vertMovement_real * getSensivity() < 180)
+							phi += vertMovement_real * getSensivity();
+						else {
+							phi = +360 + phi - vertMovement_real * getSensivity();
+							flipped = !flipped;
+							theta += 180;
+						}
+					} else {
+						// up drag : phi decrease
+						if (phi - -vertMovement_real * getSensivity() > 0)
+							phi -= -vertMovement_real * getSensivity();
+						else {
+							phi = -phi + -vertMovement_real * getSensivity();
+							flipped = !flipped;
+							theta += 180;
+						}
 					}
 				} else {
-					// up drag : phi decrease
-					if (phi - -vertMovement_real * getSensivity() > 0)
-						phi -= -vertMovement_real * getSensivity();
-					else {
-						phi = -phi + -vertMovement_real * getSensivity();
-						flipped = !flipped;
-						theta += 180;
+					if (vertMovement_real > 0) {
+						// down drag : phi decrease
+						if (phi - vertMovement_real * getSensivity() > 0)
+							phi -= vertMovement_real * getSensivity();
+						else {
+							phi = -phi + vertMovement_real * getSensivity();
+							flipped = !flipped;
+							theta += 180;
+						}
+					} else {
+						// up drag : phi increase
+						if (phi + -vertMovement_real * getSensivity() < 180)
+							phi += -vertMovement_real * getSensivity();
+						else {
+							phi = +360 + phi - vertMovement_real * getSensivity();
+							flipped = !flipped;
+							theta += 180;
+						}
 					}
 				}
+	
+				// phi = phi - vertMovement_real * get_sensivity();
+				updateCartesianCoordinatesFromAngles();
+			} else if (shiftPressed && isViewInXYPlan()) {
+				getMousePosition().x = e.x;
+				getMousePosition().y = e.y;
+				getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
 			} else {
-				if (vertMovement_real > 0) {
-					// down drag : phi decrease
-					if (phi - vertMovement_real * getSensivity() > 0)
-						phi -= vertMovement_real * getSensivity();
-					else {
-						phi = -phi + vertMovement_real * getSensivity();
-						flipped = !flipped;
-						theta += 180;
-					}
-				} else {
-					// up drag : phi increase
-					if (phi + -vertMovement_real * getSensivity() < 180)
-						phi += -vertMovement_real * getSensivity();
-					else {
-						phi = +360 + phi - vertMovement_real * getSensivity();
-						flipped = !flipped;
-						theta += 180;
-					}
+	
+				int horizMovement = e.x - lastMousePressedPosition.x;
+				int vertMovement = e.y - lastMousePressedPosition.y;
+				if (flipped) {
+					horizMovement = -horizMovement;
+					vertMovement = -vertMovement;
 				}
+	
+				final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
+						- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+				final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
+						+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+	
+				translateCameraFromScreenPlan(horizMovement_real, vertMovement_real);
+	
+				lastMousePressedPosition = newPoint;
 			}
-
-			// phi = phi - vertMovement_real * get_sensivity();
-			updateCartesianCoordinatesFromAngles();
-		} else if (shiftPressed /* || altPressed ) */ && isViewInXYPlan()) {
-			getMousePosition().x = e.x;
-			getMousePosition().y = e.y;
-			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
-		} else {
-
-			int horizMovement = e.x - lastMousePressedPosition.x;
-			int vertMovement = e.y - lastMousePressedPosition.y;
-			if (flipped) {
-				horizMovement = -horizMovement;
-				vertMovement = -vertMovement;
-			}
-
-			final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-					- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-			final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-					+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-
-			translateCameraFromScreenPlan(horizMovement_real, vertMovement_real);
-
-			lastMousePressedPosition = newPoint;
 		}
 
 	}
