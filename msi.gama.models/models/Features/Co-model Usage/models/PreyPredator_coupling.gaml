@@ -1,9 +1,3 @@
-/**
-* Name: Comodel_SIR_Switch
-* Author: Lô
-* Description: The coupling of  model m1.  
-* Tags: Tag1, Tag2, TagN
-*/
 model PreyPredator_coupling
 import "PreyPredator.gaml"
 

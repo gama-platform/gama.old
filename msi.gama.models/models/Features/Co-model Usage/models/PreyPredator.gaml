@@ -1,18 +1,18 @@
-model PreyPredator //Model 9 of the predator/prey tutorial
+model PreyPredator
  global
 {
 	geometry shape <- square(100);
-	float perceipt_radius <- 20;
+	float perceipt_radius <- 20.0;
 	int preyinit <- 500;
 	int predatorinit <- 3;
-	list<agent> lstPredator <- predator;
-	list<agent> lstPrey <- prey;
+	list<agent> lstPredator <- list<agent>(predator);
+	list<agent> lstPrey <- list<agent>(prey);
 	init
 	{
 		create prey number: preyinit;
 		create predator number: predatorinit;
-		lstPredator <- predator;
-		lstPrey <- prey;
+		lstPredator <- list<agent>(predator);
+		lstPrey <- list<agent>(prey);
 	}
 
 }
@@ -125,18 +125,13 @@ species predator parent: generic_species
 			}
 
 			goal <- nil;
-			speed <- 1;
+			speed <- 1.0;
 		}
 
 	}
 
 	aspect default
 	{
-//		if (goal != nil)
-//		{
-//			draw line([self.location, goal]) color: # red;
-//		}
-
 		draw circle(perceipt_radius) color: # pink empty: true;
 		draw shape color: color rotate: 90 + my heading;
 	}
@@ -147,7 +142,7 @@ experiment prey_predator_exp type: gui
 {
 	output
 	{
-		display main_display //type: opengl
+		display main_display
 
 		{
 			species prey;
