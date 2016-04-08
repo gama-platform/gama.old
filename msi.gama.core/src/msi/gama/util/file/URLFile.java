@@ -21,7 +21,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
 
-@file(name = "URL", extensions = { "txt" }, buffer_type = IType.LIST, buffer_content = IType.STRING, concept = { IConcept.TEXT, IConcept.FILE })
+@file(name = "URL", extensions = { "url" }, buffer_type = IType.LIST, buffer_content = IType.STRING, concept = { IConcept.TEXT, IConcept.FILE })
 public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	private final String URL;
