@@ -14,6 +14,8 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -72,7 +74,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	final JOGLRenderer renderer;
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
-	Map<IEventLayerListener, OwnMouseListener> mouseListeners = new HashMap();
+	Map<IEventLayerListener, GamaEventListener> eventListeners = new HashMap();
 	final LayeredDisplayOutput output;
 	final LayerManager manager;
 	protected DisplaySurfaceMenu menuManager;
@@ -194,13 +196,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public double getDisplayWidth() {
 		return renderer.getCanvas().getSurfaceWidth() * getZoomLevel();
-		// return viewPort.width;
 	}
 
 	@Override
 	public double getDisplayHeight() {
 		return renderer.getCanvas().getSurfaceHeight() * getZoomLevel();
-		// return viewPort.height;
 	}
 
 	/**
@@ -319,13 +319,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 	}
 
-	private class OwnMouseListener extends MouseAdapter
-			implements MouseTrackListener, MouseMoveListener, FocusListener {
+	private class GamaEventListener extends MouseAdapter
+			implements MouseTrackListener, MouseMoveListener, FocusListener, KeyListener {
 
 		final IEventLayerListener listener;
 		int down_x, down_y;
 
-		OwnMouseListener(final IEventLayerListener listener) {
+		GamaEventListener(final IEventLayerListener listener) {
 			this.listener = listener;
 		}
 
@@ -387,6 +387,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			listener.mouseExit(0, 0);
 		}
 
+		@Override
+		public void keyPressed(final KeyEvent e) {
+			listener.keyPressed(String.valueOf(e.character));
+		}
+
+		@Override
+		public void keyReleased(final KeyEvent e) {
+		}
+
 	}
 
 	/**
@@ -396,14 +405,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void addListener(final IEventLayerListener listener) {
-		if (mouseListeners.containsKey(listener)) {
+		if (eventListeners.containsKey(listener)) {
 			return;
 		}
-		final OwnMouseListener l = new OwnMouseListener(listener);
-		mouseListeners.put(listener, l);
+		final GamaEventListener l = new GamaEventListener(listener);
+		eventListeners.put(listener, l);
 		renderer.canvas.addMouseListener(l);
 		renderer.canvas.addMouseMoveListener(l);
 		renderer.canvas.addFocusListener(l);
+		renderer.canvas.addKeyListener(l);
 
 	}
 
@@ -414,11 +424,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void removeListener(final IEventLayerListener listener) {
-		final OwnMouseListener l = mouseListeners.get(listener);
+		final GamaEventListener l = eventListeners.get(listener);
 		if (l == null) {
 			return;
 		}
-		mouseListeners.remove(listener);
+		eventListeners.remove(listener);
 		GAMA.getGui().run(new Runnable() {
 
 			@Override
@@ -427,6 +437,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					renderer.canvas.removeMouseListener(l);
 					renderer.canvas.removeMouseMoveListener(l);
 					renderer.canvas.removeFocusListener(l);
+					renderer.canvas.removeKeyListener(l);
 				}
 			}
 		});
@@ -435,7 +446,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public Collection<IEventLayerListener> getLayerListeners() {
-		return mouseListeners.keySet();
+		return eventListeners.keySet();
 	}
 
 	/**
@@ -731,7 +742,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 
 		this.menuManager = null;
-		this.mouseListeners.clear();
+		this.eventListeners.clear();
 
 		GAMA.releaseScope(getDisplayScope());
 		setDisplayScope(null);
