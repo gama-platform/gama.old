@@ -6,44 +6,53 @@
 */
 model comodel_mix_behaviors
 
-import "PreyPredator_coupling.gaml" as myP
+import "PreyPredator_coupling.gaml" as myPreyPredator
 import "Ants_coupling.gaml" as myAnt
 
 
 global
 {
+	//set the shape of environment: square 100 
 	geometry shape <- square(100);
+	// the variable that refer to the ants population in micro-model 
 	list<agent> theAnts;
+	// the variable that refer to the prey population in micro-model
 	list<prey> thePreys;
-	int n <- 0;
+	
 	init
 	{
+		//create the Ants micro-model with the size of grid is 100 and the population have 500 ants.
 		create myAnt.Ants_coupling_exp with: [gridsize::100,ants_number::500];
-		create myP.PreyPredator_coupling_exp with: [shape::square(100), preyinit::myAnt.Ants_coupling_exp[0].simulation.ants_number, predatorinit::3]  
+		//create the PreyPredator micro-model with the parameters and the number of the prey is equal with the size of ants population
+		create myPreyPredator.PreyPredator_coupling_exp with: [shape::square(100), preyinit::myAnt.Ants_coupling_exp[0].simulation.ants_number, predatorinit::3]  
 		{
+			// set the size of micro-model PreyPredator equal with the size of the grid of myAnt
 			shape <- square(100);
 		}
 
-		list<agent> lstpredator0 <- myP.PreyPredator_coupling_exp[0].getPredator();
-		list<agent> lstprey0 <- myP.PreyPredator_coupling_exp[0].getPrey() + myAnt.Ants_coupling_exp accumulate each.getAnts();
+		// save the original population of the Ants and the Preys
 		theAnts <- myAnt.Ants_coupling_exp accumulate each.getAnts();
-		thePreys <- list<prey>(myP.PreyPredator_coupling_exp accumulate each.getPrey());
+		thePreys <- list<prey>(myPreyPredator.PreyPredator_coupling_exp accumulate each.getPrey());
 
 
 	}
 
 	reflex simulate_micro_models
 	{
+		// ask myAnt do a step
 		ask (myAnt.Ants_coupling_exp collect each.simulation)
 		{
 			do _step_;
 		}
-
-		ask (myP.PreyPredator_coupling_exp collect each.simulation)
+		// ask myPreyPredator do a step, too
+		ask (myPreyPredator.PreyPredator_coupling_exp collect each.simulation)
 		{
 			do _step_;
 		}
 
+		//check if a Prey is chased, set the position of that agent to the location of prey 
+		//if not, set ant's location to agent location.
+		// if the agent (prey) died, then tell the ant do die
 		loop i from: 0 to: length(theAnts) - 1
 		{
 			if (!dead(thePreys at i) and !dead(theAnts at i))
@@ -78,8 +87,8 @@ experiment comodel_mix_behaviors_exp type: gui
 		display "comodel"
 		{
 			agents "ant_grid" value: myAnt.Ants_coupling_exp accumulate each.getAnt_grid() transparency: 0.7;
-			agents "agentprey" value: (myP.PreyPredator_coupling_exp accumulate each.getPrey());
-			agents "agentpredator" value: (myP.PreyPredator_coupling_exp accumulate each.getPredator());
+			agents "agentprey" value: (myPreyPredator.PreyPredator_coupling_exp accumulate each.getPrey());
+			agents "agentpredator" value: (myPreyPredator.PreyPredator_coupling_exp accumulate each.getPredator());
 		}
 
 	}
