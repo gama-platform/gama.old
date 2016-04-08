@@ -34,8 +34,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -241,7 +243,7 @@ public class GamaProcessor extends AbstractProcessor {
 	 * @param env
 	 */
 	private void processVars(final RoundEnvironment env) {
-		final Set<? extends Element> elements = env.getElementsAnnotatedWith(vars.class);
+		final List<? extends Element> elements = sortElements(env, vars.class);
 		for (final Element e : elements) {
 			boolean isField;
 			final TypeMirror clazz = e.asType();
@@ -362,7 +364,7 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	public void processFiles(final RoundEnvironment env) {
-		for (final Element e : env.getElementsAnnotatedWith(file.class)) {
+		for (final Element e : sortElements(env, file.class)) {
 			final file f = e.getAnnotation(file.class);
 			final doc[] docs = f.doc();
 			doc doc;
@@ -426,7 +428,7 @@ public class GamaProcessor extends AbstractProcessor {
 	 * @param env
 	 */
 	private void processSymbols(final RoundEnvironment env) {
-		final Set<? extends Element> symbols = env.getElementsAnnotatedWith(symbol.class);
+		final List<? extends Element> symbols = sortElements(env, symbol.class);
 		for (final Element e : symbols) {
 			final StringBuilder sb = new StringBuilder();
 			final symbol symbol = e.getAnnotation(symbol.class);
@@ -634,14 +636,37 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
+	 * Introduced to handle issue #1671
+	 * 
+	 * @param env
+	 * @param annotationClass
+	 * @return
+	 */
+	private List<? extends Element> sortElements(final RoundEnvironment env,
+			final Class<? extends Annotation> annotationClass) {
+		final Set<? extends Element> elements = env.getElementsAnnotatedWith(annotationClass);
+		final List<? extends Element> result = new ArrayList(elements);
+		Collections.sort(result, new Comparator<Element>() {
+
+			@Override
+			public int compare(final Element o1, final Element o2) {
+				return o1.toString().compareTo(o2.toString());
+			}
+		});
+		return result;
+	}
+
+	/**
 	 * Format : prefix 0.class 1.[handles,]* 2.[uses,]* Format :
 	 * ]class$handles*$uses*
 	 * 
 	 * @param env
 	 */
 	private void processFactories(final RoundEnvironment env) {
-		final Set<? extends Element> factories = env.getElementsAnnotatedWith(factory.class);
+		final List<? extends Element> factories = sortElements(env, factory.class);
+
 		for (final Element e : factories) {
+
 			final factory factory = e.getAnnotation(factory.class);
 			final int[] hKinds = factory.handles();
 			final StringBuilder sb = new StringBuilder();
@@ -664,7 +689,7 @@ public class GamaProcessor extends AbstractProcessor {
 	 * @param env
 	 */
 	private void processSpecies(final RoundEnvironment env) {
-		final Set<? extends Element> species = env.getElementsAnnotatedWith(species.class);
+		final List<? extends Element> species = sortElements(env, species.class);
 		for (final Element e : species) {
 			final species spec = e.getAnnotation(species.class);
 			final StringBuilder sb = new StringBuilder();
@@ -696,7 +721,7 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	private void processDisplays(final RoundEnvironment env) {
-		final Set<? extends Element> displays = env.getElementsAnnotatedWith(display.class);
+		final List<? extends Element> displays = sortElements(env, display.class);
 		for (final Element e : displays) {
 			final display spec = e.getAnnotation(display.class);
 			final StringBuilder sb = new StringBuilder();
@@ -718,7 +743,7 @@ public class GamaProcessor extends AbstractProcessor {
 	 * @param env
 	 */
 	private void processSkills(final RoundEnvironment env) {
-		final Set<? extends Element> skills = env.getElementsAnnotatedWith(skill.class);
+		final List<? extends Element> skills = sortElements(env, skill.class);
 		for (final Element e : skills) {
 			final skill skill = e.getAnnotation(skill.class);
 			final StringBuilder sb = new StringBuilder();
@@ -754,7 +779,7 @@ public class GamaProcessor extends AbstractProcessor {
 	 * @param env
 	 */
 	private void processTypes(final RoundEnvironment env) {
-		final Set<? extends Element> types = env.getElementsAnnotatedWith(type.class);
+		final List<? extends Element> types = sortElements(env, type.class);
 		for (final Element e : types) {
 			final type t = e.getAnnotation(type.class);
 
@@ -809,7 +834,7 @@ public class GamaProcessor extends AbstractProcessor {
 	 */
 
 	public void processOperators(final RoundEnvironment env) {
-		for (final Element e : env.getElementsAnnotatedWith(operator.class)) {
+		for (final Element e : sortElements(env, operator.class)) {
 			final ExecutableElement ex = (ExecutableElement) e;
 			final operator op = ex.getAnnotation(operator.class);
 			doc documentation = ex.getAnnotation(doc.class);
@@ -902,7 +927,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	// Format: prefix 0.method 1.declClass 2.retClass 3.name 4.nbArgs 5.[arg]*
 	void processActions(final RoundEnvironment env) {
-		for (final Element e : env.getElementsAnnotatedWith(action.class)) {
+		for (final Element e : sortElements(env, action.class)) {
 			final action action = e.getAnnotation(action.class);
 			final ExecutableElement ex = (ExecutableElement) e;
 			// note("Action processed: " + ex.getSimpleName());
@@ -980,7 +1005,7 @@ public class GamaProcessor extends AbstractProcessor {
 	// }
 
 	public void processConstants(final RoundEnvironment env) {
-		for (final Element e : env.getElementsAnnotatedWith(constant.class)) {
+		for (final Element e : sortElements(env, constant.class)) {
 			final VariableElement ve = (VariableElement) e;
 			final TypeMirror tm = ve.asType();
 			boolean ok = tm instanceof PrimitiveType || tm instanceof ArrayType;
@@ -1030,7 +1055,7 @@ public class GamaProcessor extends AbstractProcessor {
 	 * @param env
 	 */
 	private void processPopulationsLinkers(final RoundEnvironment env) {
-		final Set<? extends Element> populationsLinkers = env.getElementsAnnotatedWith(populations_linker.class);
+		final List<? extends Element> populationsLinkers = sortElements(env, populations_linker.class);
 		for (final Element e : populationsLinkers) {
 			final populations_linker pLinker = e.getAnnotation(populations_linker.class);
 			final StringBuilder sb = new StringBuilder();
@@ -1048,7 +1073,7 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	void write(final RoundEnvironment r, final Class<? extends Annotation> c, final String s) {
-		for (final Element e : r.getElementsAnnotatedWith(c)) {
+		for (final Element e : sortElements(r, c)) {
 			gp.put(s, name((TypeElement) (e instanceof TypeElement ? e : e.getEnclosingElement())));
 		}
 	}
