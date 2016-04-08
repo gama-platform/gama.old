@@ -1,10 +1,10 @@
 /**
- *  Name : Voronoi
- *  Author : 
- *  Description: A model showing how to clusterize space using the closest center as the kernel of our cluster. The space
- * 	 is discretized using a grid, each cell computing its distance from a center to know in which cluster it is. 
- *  Tags : skill, agent_movement, grid
- */
+* Name: Voronoi
+* Author: 
+* Description: A model showing how to clusterize space using the closest center as the kernel of our cluster. The space
+* 	 is discretized using a grid, each cell computing its distance from a center to know in which cluster it is. 
+* Tags: skill, agent_movement, grid
+*/
 
 model voronoi
  

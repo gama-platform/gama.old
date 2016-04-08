@@ -1,14 +1,14 @@
 /**
- *  Name : Modavi
- *  Author : Arnaud Grignard
- *  Description: From a reference model with node of a given class, a spatial graph is created 
- *  (or a barabasi graph if spatialGraph is set to false) in the advanced view to 
- *  represent the interaction in the reference model.
- *  An abstract view/controller is created to summarize the interaction in the advanced view
- *  in a macro graph and control the reference model by defining an action (user_command) 
- *  for each macroNode and macroEdge.
- *  Tags : 3d, graph, gui
- */
+* Name: Modavi
+* Author: Arnaud Grignard
+* Description: From a reference model with node of a given class, a spatial graph is created 
+*  (or a barabasi graph if spatialGraph is set to false) in the advanced view to 
+*  represent the interaction in the reference model.
+*  An abstract view/controller is created to summarize the interaction in the advanced view
+*  in a macro graph and control the reference model by defining an action (user_command) 
+*  for each macroNode and macroEdge.
+* Tags: 3d, graph, gui
+*/
 
 model modavi
  

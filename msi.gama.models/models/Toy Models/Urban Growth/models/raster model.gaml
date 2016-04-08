@@ -1,11 +1,11 @@
 /**
- *  Name : Cellular Automaton Based Urban Growth
- *  Author : Truong Chi Quang, Patrick Taillandier, Benoit Gaudou & Alexis Drogoul
- *  Description: model based on the one proposed by (Raimbault et al., 2014): 
- * At each simulation step the nb_plots_to_build empty plots with the highest constructability are built 
- * The constructability is computed from 3 criteria: the density of construction in the neighborhood, the distance to a road, the distance to the city center (using the road network). 
- *  Tags : gis, shapefile, grid, graph
- */
+* Name: Cellular Automaton Based Urban Growth
+* Author: Truong Chi Quang, Patrick Taillandier, Benoit Gaudou & Alexis Drogoul
+* Description: model based on the one proposed by (Raimbault et al., 2014): 
+* At each simulation step the nb_plots_to_build empty plots with the highest constructability are built 
+* The constructability is computed from 3 criteria: the density of construction in the neighborhood, the distance to a road, the distance to the city center (using the road network). 
+* Tags: gis, shapefile, grid, graph
+*/
 
 model raster3
 

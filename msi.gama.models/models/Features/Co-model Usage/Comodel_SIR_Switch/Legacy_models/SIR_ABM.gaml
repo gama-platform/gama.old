@@ -1,9 +1,3 @@
-/**
- *  simple_ODE_SIR.gaml
- *  Author: hqnghi
- *  Description: A simple example of ODE use into agents with the example of the SIR equation system.
- */
- 
 model SIR_ABM 
 
 global{

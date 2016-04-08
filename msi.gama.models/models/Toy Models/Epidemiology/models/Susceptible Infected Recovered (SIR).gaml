@@ -1,10 +1,10 @@
 /**
- *  Name : SIR without ODE
- *  Author: 
- *  Description: A simple SIR model without Ordinary Differential Equations showing agents
- * 	moving randomly among a grid and becoming infected then resistant to a disease
- * Tags : grid
- */
+* Name: SIR without ODE
+* Author: 
+* Description: A simple SIR model without Ordinary Differential Equations showing agents
+* 	moving randomly among a grid and becoming infected then resistant to a disease
+* Tags: grid
+*/
 
 model si
 

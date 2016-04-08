@@ -1,9 +1,9 @@
 /**
- *  Name : vote
- *  Author : MAPS TEAM (Frederic Amblard, Thomas Louail, Romain Reulier, Paul Salze et Patrick Taillandier) 
- *  Description: Modeling of an election
- *  Tags : gui
- */
+* Name: vote
+* Author: MAPS TEAM (Frederic Amblard, Thomas Louail, Romain Reulier, Paul Salze et Patrick Taillandier) 
+* Description: Modeling of an election
+* Tags: gui
+*/
  
 model vote
 

@@ -1,10 +1,10 @@
 /**
- *  Name : SI without ODE
- *  Author: 
- *  Description: A simple SI model without Ordinary Differential Equations showing agents
- * 	moving randomly among a grid and becoming infected
- * Tags : grid
- */
+* Name: SI without ODE
+* Author: 
+* Description: A simple SI model without Ordinary Differential Equations showing agents
+* 	moving randomly among a grid and becoming infected
+* Tags: grid
+*/
 
 model si
 

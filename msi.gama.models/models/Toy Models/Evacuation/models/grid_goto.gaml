@@ -1,10 +1,10 @@
 /**
- *  Name : evacuationgoto
- * Author : Patrick Taillandier
- *  Description: A 3D model with walls and exit, and people agents trying to evacuate
- * 	from the area to a exit location, avoiding the walls with a discretized space by a grid
- *  Tags : 3d, shapefile, gis, agent_movement, skill, grid
- */
+* Name: evacuationgoto
+* Author: Patrick Taillandier
+* Description: A 3D model with walls and exit, and people agents trying to evacuate
+* 	from the area to a exit location, avoiding the walls with a discretized space by a grid
+* Tags: 3d, shapefile, gis, agent_movement, skill, grid
+*/
 
 model evacuationgoto
 

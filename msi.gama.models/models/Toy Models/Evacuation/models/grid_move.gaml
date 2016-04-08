@@ -1,12 +1,12 @@
 /**
- *  Name : grid_move
- * Author : 
- *  Description: A 3D model which show how to represent an evacuation system with
- * 	obstacles, cohesion factor and velocity. The people are placed randomly and have
- * 	to escape by going to a target point, within a discretized space by a grid. The agents
- * 	don't use the skill moving to move.
- *  Tags : 3d, shapefile, gis, agent_movement, grid
- */
+* Name: grid_move
+* Author: 
+* Description: A 3D model which show how to represent an evacuation system with
+* 	obstacles, cohesion factor and velocity. The people are placed randomly and have
+* 	to escape by going to a target point, within a discretized space by a grid. The agents
+* 	don't use the skill moving to move.
+* Tags: 3d, shapefile, gis, agent_movement, grid
+*/
 model grid_move
 
 global {

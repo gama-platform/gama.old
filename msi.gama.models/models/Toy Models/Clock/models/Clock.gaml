@@ -1,10 +1,10 @@
 /**
- *  Name : Clock
- *  Author: JD 
- *  Description: This model supports defining a clock whose minutes corresponds to the tick of the simulation
- *  	By default 1000 milliseconds correspond to 1 cycle. 
- *  Tags : date
- */
+* Name: Clock
+* Author: JD 
+*  Description: This model supports defining a clock whose minutes corresponds to the tick of the simulation
+*  	By default 1000 milliseconds correspond to 1 cycle. 
+*  Tags: date
+*/
 model Clock
 
 global {

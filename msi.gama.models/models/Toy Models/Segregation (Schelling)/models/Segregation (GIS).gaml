@@ -1,10 +1,10 @@
 /**
- *  Name : segregationGIS
- *  Author : 
- *  Description: A model showing the segregation of the people just by putting a similarity wanted parameter using agents
- * 	to represent the individuals and GIS file for the places
- *  Tags : gis, shapefile
- */
+* Name: segregationGIS
+* Author: 
+* Description: A model showing the segregation of the people just by putting a similarity wanted parameter using agents
+* 	to represent the individuals and GIS file for the places
+* Tags: gis, shapefile
+*/
 model segregation
 
 //Import the model Common Schelling Segregation

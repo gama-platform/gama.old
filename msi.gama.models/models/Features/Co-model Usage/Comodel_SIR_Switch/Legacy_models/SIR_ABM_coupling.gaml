@@ -1,8 +1,3 @@
-/**
- *  Comodel
- *  Author: Quang and Nghi
- *  Description: 
- */
 model SIR_ABM_coupling
 
 import "SIR_ABM.gaml"

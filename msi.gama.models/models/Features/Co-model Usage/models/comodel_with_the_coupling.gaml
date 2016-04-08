@@ -4,7 +4,6 @@
 * Description: This is a simple comodel serve to demonstrate the importation and instatiation of micro-model  using the couplings  
 * Tags: Tag1, Tag2, TagN
 */ model comodel_with_the_coupling //import the micro-model with an alias name
-//import "m1_coupling.gaml" as micro_model_1
 import "PreyPredator_coupling.gaml" as myP
 
 

@@ -60,6 +60,7 @@ public class modelLibraryGenerator {
 			}
 		}
 		ArrayList<File> gamlFiles = Utils.filterFilesByExtension(listFiles,"gaml");
+		System.out.println(gamlFiles);
 		
 		// read modelScreenshot.xml
 		System.out.println("----- Start to load the file "+inputModelScreenshot+" -----");
@@ -457,6 +458,9 @@ public class modelLibraryGenerator {
 					fileOut.close();
 				}
 			}
+			else {
+				System.out.println("WARNING : Impossible to get a name for the file "+gamlFile.getName());
+			}
 		}
 	}
 	
@@ -514,9 +518,11 @@ public class modelLibraryGenerator {
 		}
 		else {
 			br.close();
-			System.out.println("WARNING : file "+file.getName()+" has no header !");
 		}
 		br.close();
+		if (result == "") {
+			System.out.println("WARNING : Impossible to extract a header from the file "+file.getName());
+		}
 		return result;
 	}
 	

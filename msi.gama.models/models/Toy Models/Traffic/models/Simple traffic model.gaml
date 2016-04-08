@@ -1,11 +1,11 @@
 /**
- *  Name : trafic
- *  Author : Patrick Taillandier
- *  Description: A simple road network model: the speed on a road depends on the number of people on this road (the highest, the slowest)
- *  Tags : gis, shapefile, graph, skill
- */
+* Name: Traffic
+* Author: Patrick Taillandier
+* Description: A simple road network model: the speed on a road depends on the number of people on this road (the highest, the slowest)
+* Tags: gis, shapefile, graph, skill, transport
+*/
 
-model trafic
+model traffic
 
 global {
 	//Shapefile of the buildings

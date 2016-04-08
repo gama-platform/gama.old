@@ -1,11 +1,11 @@
 /**
- *  Name : Life
- *  Author : 
- *  Description: A model using a cellular automata to represent the Game of Life, the most famous
- * 	example of cellular automata. Each cell will see if the number of living neighbours meets the 
- * 	condition to emerge or to live.
- *  Tags : grid
- */
+* Name: Life
+* Author: 
+* Description: A model using a cellular automata to represent the Game of Life, the most famous
+* 	example of cellular automata. Each cell will see if the number of living neighbours meets the 
+* 	condition to emerge or to live.
+* Tags: grid
+*/
 model life
 
 //Declare the world as a torus or not torus environment

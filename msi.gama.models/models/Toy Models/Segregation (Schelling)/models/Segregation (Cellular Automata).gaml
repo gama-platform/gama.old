@@ -1,10 +1,10 @@
 /**
- *  Name : segregationGrid
- *  Author : 
- *  Description: A model showing the segregation of the people just by putting a similarity wanted parameter using cells
- * 	to represent the individuals
- *  Tags : grid
- */
+* Name: segregationGrid
+* Author: 
+*  Description: A model showing the segregation of the people just by putting a similarity wanted parameter using cells
+* 	to represent the individuals
+* Tags: grid
+*/
 model segregation
 
 //Importation of the Common Schelling Segregation model

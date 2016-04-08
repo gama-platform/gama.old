@@ -6,7 +6,6 @@
  */
 model comodelBoidsVoronoi
 import "Boids_coupling.gaml" as myBoids
-//import "Evacuation_coupling.gaml" as myEvacuation
 import "Voronoi_coupling.gaml" as myVoronoi
 
 
