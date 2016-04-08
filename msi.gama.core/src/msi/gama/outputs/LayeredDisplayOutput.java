@@ -383,14 +383,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if ( camera != null ) {
-			this.data.setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
+			ILocation location = Cast.asPoint(getScope(), camera.value(getScope()));
+			location.setY(-location.getY()); // y component need to be reverted
+			this.data.setCameraPos(location);
 			constantCamera = camera.isConst();
 			cameraFix = true;
 		}
 
 		final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 		if ( cameraLook != null ) {
-			this.data.setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
+			ILocation location = Cast.asPoint(getScope(), cameraLook.value(getScope()));
+			location.setY(-location.getY()); // y component need to be reverted
+			this.data.setCameraLookPos(location);
 			constantCameraLook = cameraLook.isConst();
 			cameraFix = true;
 		}
@@ -509,7 +513,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantCamera ) {
 			final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 			if ( camera != null ) {
-				this.data.setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
+				ILocation location = Cast.asPoint(getScope(), camera.value(getScope()));
+				location.setY(-location.getY()); // y component need to be reverted
+				this.data.setCameraPos(location);
 			}
 			// graphics.setCameraPosition(getCameraPos());
 		}
@@ -517,7 +523,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantCameraLook ) {
 			final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 			if ( cameraLook != null ) {
-				this.data.setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
+				ILocation location = Cast.asPoint(getScope(), cameraLook.value(getScope()));
+				location.setY(-location.getY()); // y component need to be reverted
+				this.data.setCameraLookPos(location);
 			}
 		}
 		// computeTrace(getScope());

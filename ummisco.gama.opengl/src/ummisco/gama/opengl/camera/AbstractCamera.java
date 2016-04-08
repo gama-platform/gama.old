@@ -158,12 +158,10 @@ public abstract class AbstractCamera implements ICamera {
 
 	final void setShiftPressed(final boolean value) {
 		shiftPressed = value;
-		drawRotationHelper();
 	}
 
 	final void setCtrlPressed(final boolean value) {
 		ctrlPressed = value;
-		drawRotationHelper();
 	}
 
 	protected void setMouseLeftPressed(final boolean b) {
@@ -272,7 +270,9 @@ public abstract class AbstractCamera implements ICamera {
 
 			@Override
 			public boolean run(final GLAutoDrawable drawable) {
-				internalMouseDown(e);
+				if (cameraInteraction) {
+					internalMouseDown(e);
+				}
 				return false;
 			}
 		});
@@ -321,7 +321,9 @@ public abstract class AbstractCamera implements ICamera {
 
 			@Override
 			public boolean run(final GLAutoDrawable drawable) {
-				internalMouseUp(e);
+				if (cameraInteraction) {
+					internalMouseUp(e);
+				}
 				return false;
 			}
 		});

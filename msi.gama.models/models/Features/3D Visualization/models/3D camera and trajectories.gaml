@@ -80,8 +80,8 @@ experiment MultipleView type: gui {
 			species boids  aspect: image transparency:0.2 position:{0,0,0.24};		
 		}
 		//The facet camera_pos is the position of the camera in the 3D display and the facet camera_look_pos is the position where the camera is looking
-		display ThirdPersonn  type:opengl camera_pos:{int(first(boids).location.x),-int(first(boids).location.y),250} 
-		camera_look_pos:{int(first(boids).location.x),-(first(boids).location.y),0} {
+		display ThirdPersonn  type:opengl camera_interaction:false camera_pos:{int(first(boids).location.x),int(first(boids).location.y),250} 
+		camera_look_pos:{int(first(boids).location.x),(first(boids).location.y),0} camera_up_vector:{0.0,-1.0,0.0} {
 		
 			image name:'background' file:'../images/sky.jpg';
 			species obstacle;
@@ -94,8 +94,10 @@ experiment MultipleView type: gui {
 		}
 		
 		//The facet camera_up_vector allows the definition of the vector on which the top of the camera point at, it has to be perpendicular to the look vector
-		display FirstPerson  type:opengl ambient_light:100 camera_pos:{int(first(boids).location.x),-int(first(boids).location.y),10} 
-		camera_look_pos:{cos(first(boids).heading)*world.shape.width,-sin(first(boids).heading)*world.shape.height,0} camera_up_vector:{0.0,0.0,1.0} {	
+		display FirstPerson  type:opengl camera_interaction:false ambient_light:100 camera_pos:{int(first(boids).location.x),int(first(boids).location.y),10} 
+			camera_look_pos:{cos(first(boids).heading)*first(boids).speed+int(first(boids).location.x),
+			sin(first(boids).heading)*first(boids).speed+int(first(boids).location.y),10} 
+			camera_up_vector:{0.0,0.0,1.0} {	
 			image name:'background' file:'../images/sky.jpg';
 			species obstacle ;
 			species boids{
