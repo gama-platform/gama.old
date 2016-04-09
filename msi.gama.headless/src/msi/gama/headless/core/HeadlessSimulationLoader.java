@@ -65,7 +65,7 @@ public class HeadlessSimulationLoader {
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(fileName + " Model is loading...");
 		try {
 			List<GamlCompilationError> errors = new ArrayList();
-			IModel model = GAML.getModelFactory().compile(URI.createURI("file://" + fileName, false), errors);
+			IModel model = GAML.getModelFactory().compile(URI.createFileURI(fileName), errors);
 			if ( model == null ) {
 				System.err.println("GAMA cannot build model " + fileName);
 				for ( GamlCompilationError d : errors ) {
