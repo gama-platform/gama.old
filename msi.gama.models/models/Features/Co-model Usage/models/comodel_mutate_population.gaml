@@ -3,7 +3,8 @@
 * Author: HUYNH Quang Nghi
 * Description: This is a simple comodel serve to demonstrate the importation and instatiation of micro-model  using the couplings  with the mutation the population of micro-model. A population can be a collection from itself and from other mircro-model
 * Tags: comodel
-*/ model comodel_with_the_coupling
+*/ 
+model comodel_with_the_coupling
 
 import "PreyPredator_coupling.gaml" as myP
 
