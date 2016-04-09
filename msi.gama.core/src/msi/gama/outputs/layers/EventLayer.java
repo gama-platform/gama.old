@@ -21,6 +21,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -220,13 +221,19 @@ public class EventLayer extends AbstractLayer {
 					args.put(listArg, ConstantExpressionDescription.create(agentset));
 				}
 			}
-
 			surface.runAndUpdate(new Runnable() {
 
 				@Override
 				public void run() {
-					executer.setRuntimeArgs(args);
-					executer.executeOn(scope);
+					scope.getExperiment().getActionExecuter().executeOneAction(new GamaHelper() {
+
+						@Override
+						public Object run(final IScope scope) {
+							executer.setRuntimeArgs(args);
+							executer.executeOn(scope);
+							return null;
+						}
+					});
 				}
 			});
 
