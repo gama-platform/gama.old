@@ -32,6 +32,7 @@ species Switch
 	int R <- 0;
 	reflex request_from_micro_model
 	{
+		//if the size of S population and I population are bigger than a threshold, use the EBM
 		if (S > threshold_to_Maths and I > threshold_to_Maths)
 		{
 			ask world
@@ -53,7 +54,8 @@ species Switch
 			}
 
 		}
-
+		
+		//if the size of S population or  I population are smaller  than a threshold, use the ABM
 		if (I < threshold_to_IBM or S < threshold_to_IBM)
 		{
 			ask world
