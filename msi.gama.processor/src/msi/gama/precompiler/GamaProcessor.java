@@ -90,34 +90,22 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class GamaProcessor extends AbstractProcessor {
 
-	class Pair {
-
-		String key, value;
-
-		Pair(final String s1, final String s2) {
-			key = s1;
-			value = s2;
-		}
-	}
-
 	private GamlProperties gp;
-	// JavaAgentBaseWriter jabw;
-
-	boolean alwaysDoc = false;
-	GamlDocProcessor docProc;
-
-	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
-
-	static final Class[] classes = new Class[] { symbol.class, factory.class, species.class, skill.class, getter.class,
-			constant.class, setter.class, action.class, type.class, operator.class, vars.class, display.class };
-
-	final static Set<String> annotNames = new HashSet();
-
-	static {
-		for (final Class c : classes) {
-			annotNames.add(c.getCanonicalName());
+	private final boolean alwaysDoc = false;
+	private GamlDocProcessor docProc;
+	private TypeMirror iSkill, iAgent;
+	private static final Charset CHARSET = Charset.forName("UTF-8");
+	private static final String ADDITIONS = "gaml.additions.GamlAdditions";
+	private static final StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
+	final static Set<String> ANNOTATIONS = new HashSet() {
+		{
+			for (final Class c : Arrays.asList(symbol.class, factory.class, species.class, skill.class, getter.class,
+					constant.class, setter.class, action.class, type.class, operator.class, vars.class,
+					display.class)) {
+				add(c.getCanonicalName());
+			}
 		}
-	}
+	};
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment pe) {
@@ -134,7 +122,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
-		return annotNames;
+		return ANNOTATIONS;
 	}
 
 	@Override
@@ -156,7 +144,7 @@ public class GamaProcessor extends AbstractProcessor {
 				processPopulationsLinkers(env);
 			} catch (final Exception e) {
 				processingEnv.getMessager().printMessage(Kind.ERROR,
-						"An exception occured in the parsing of GAML annotations" + e.getMessage());
+						"An exception occured in the parsing of GAML annotations: " + e.getMessage());
 				throw e;
 			}
 
@@ -169,7 +157,7 @@ public class GamaProcessor extends AbstractProcessor {
 					source.append(sourceBuilder);
 				} catch (final Exception e) {
 					processingEnv.getMessager().printMessage(Kind.ERROR,
-							"An exception occured in the generation of Java files" + e.getMessage());
+							"An exception occured in the generation of Java files: " + e.getMessage());
 				}
 				try {
 					source.close();
@@ -188,8 +176,6 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 		return true;
 	}
-
-	TypeMirror iSkill, iAgent;
 
 	TypeMirror getISkill() {
 		if (iSkill == null) {
@@ -872,12 +858,6 @@ public class GamaProcessor extends AbstractProcessor {
 					classes[begin + i] = args[i + shift];
 				}
 			} catch (final Exception e1) {
-				// processingEnv.getMessager().printMessage(Kind.ERROR,
-				// "Error in processing operator " + declClass + " " +
-				// methodName + " " + Arrays.toString(args) +
-				// "; number of Java parameters: " + n + "; number of Gaml
-				// parameters:" + actual_args_number +
-				// "; begin: " + begin + "; shift: " + shift);
 			}
 
 			final String ret = rawNameOf(ex.getReturnType());
@@ -993,16 +973,9 @@ public class GamaProcessor extends AbstractProcessor {
 					}
 				}
 			}
-			// processingEnv.getMessager().printMessage(Kind.NOTE, "Adding
-			// action " + action.name() + ", implemented by " +
-			// rawNameOf(ex.getEnclosingElement()) + " " + ex.getSimpleName());
 			gp.put(sb.toString(), ""/* docToString(action.doc()) */); /* doc */
 		}
 	}
-
-	// private void note(final String s) {
-	// processingEnv.getMessager().printMessage(Kind.NOTE, s);
-	// }
 
 	public void processConstants(final RoundEnvironment env) {
 		for (final Element e : sortElements(env, constant.class)) {
@@ -1066,8 +1039,6 @@ public class GamaProcessor extends AbstractProcessor {
 			// class
 			sb.append(rawNameOf(e));
 
-			// processingEnv.getMessager().printMessage(Kind.NOTE, "Populations
-			// Linker processed: " + rawNameOf(e));
 			gp.put(sb.toString(), docToString(pLinker.doc())); /* doc */
 		}
 	}
@@ -1099,9 +1070,9 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createSourceWriter() {
 		try {
-			final OutputStream output = processingEnv.getFiler()
-					.createSourceFile("gaml.additions.GamlAdditions", (Element[]) null).openOutputStream();
-			final Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
+			final OutputStream output = processingEnv.getFiler().createSourceFile(ADDITIONS, (Element[]) null)
+					.openOutputStream();
+			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
