@@ -15,13 +15,21 @@
  */
 package msi.gama.gui.viewers.csv.model;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import msi.gama.gui.navigator.FileMetaDataProvider;
-import msi.gama.util.file.*;
+import msi.gama.util.file.CsvReader;
+import msi.gama.util.file.CsvWriter;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
+import msi.gama.util.file.IGamaFileMetaData;
 
 /**
  *
@@ -55,7 +63,7 @@ public class CSVModel implements IRowChangesListener {
 	}
 
 	public void setFirstLineHeader(final boolean header) {
-		CSVInfo info = getInfo();
+		final CSVInfo info = getInfo();
 		if ( info.header != header ) {
 			info.header = header;
 			saveMetaData();
@@ -72,7 +80,7 @@ public class CSVModel implements IRowChangesListener {
 	}
 
 	public void setCustomDelimiter(final char c) {
-		CSVInfo info = getInfo();
+		final CSVInfo info = getInfo();
 		if ( c == info.delimiter ) { return; }
 		info.delimiter = c;
 		saveMetaData();
@@ -85,7 +93,7 @@ public class CSVModel implements IRowChangesListener {
 	 *
 	 */
 	public char getCommentChar() {
-		char result = Character.UNASSIGNED;
+		final char result = Character.UNASSIGNED;
 		return result;
 	}
 
@@ -94,7 +102,7 @@ public class CSVModel implements IRowChangesListener {
 	 * @return the text qualifier character to use as a text qualifier in the data
 	 */
 	public char getTextQualifier() {
-		char result = Character.UNASSIGNED;
+		final char result = Character.UNASSIGNED;
 		return result;
 	}
 
@@ -125,12 +133,12 @@ public class CSVModel implements IRowChangesListener {
 	 * @return
 	 */
 	protected CsvReader initializeReader(final Reader reader) {
-		CsvReader csvReader = new CsvReader(reader);
+		final CsvReader csvReader = new CsvReader(reader);
 
-		char customDelimiter = getCustomDelimiter();
+		final char customDelimiter = getCustomDelimiter();
 		csvReader.setDelimiter(customDelimiter);
 
-		char commentChar = getCommentChar();
+		final char commentChar = getCommentChar();
 		if ( commentChar != Character.UNASSIGNED ) {
 			csvReader.setComment(commentChar);
 			// prevent loss of comment in csv source file
@@ -152,11 +160,11 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	protected void readLines(final Reader reader) {
 		rows.clear();
-		CSVInfo info = getInfo();
+		final CSVInfo info = getInfo();
 		info.cols = 0;
 
 		try {
-			CsvReader csvReader = initializeReader(reader);
+			final CsvReader csvReader = initializeReader(reader);
 			// case when the first line is the encoding
 			if ( !displayFirstLine ) {
 				csvReader.skipLine();
@@ -164,11 +172,11 @@ public class CSVModel implements IRowChangesListener {
 
 			boolean setHeader = false;
 			while (csvReader.readRecord()) {
-				String[] rowValues = csvReader.getValues();
+				final String[] rowValues = csvReader.getValues();
 				if ( rowValues.length > info.cols ) {
 					info.cols = rowValues.length;
 				}
-				CSVRow csvRow = new CSVRow(rowValues, this);
+				final CSVRow csvRow = new CSVRow(rowValues, this);
 				if ( !rowValues[0].startsWith(String.valueOf(getCommentChar())) ) {
 					if ( info.header && !setHeader ) {
 						setHeader = true;
@@ -191,7 +199,7 @@ public class CSVModel implements IRowChangesListener {
 			}
 
 			csvReader.close();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println("exception in readLines " + e);
 			e.printStackTrace();
 		}
@@ -236,7 +244,7 @@ public class CSVModel implements IRowChangesListener {
 	 *
 	 */
 	public void addRow() {
-		CSVRow row = CSVRow.createEmptyLine(getInfo().cols, this);
+		final CSVRow row = CSVRow.createEmptyLine(getInfo().cols, this);
 		addRow(row);
 	}
 
@@ -245,7 +253,7 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public void addRow(final CSVRow row) {
 		rows.add(row);
-		CSVInfo info = getInfo();
+		final CSVInfo info = getInfo();
 		info.rows++;
 		saveMetaData();
 
@@ -255,9 +263,9 @@ public class CSVModel implements IRowChangesListener {
 	 * @param row
 	 */
 	public void addRowAfterElement(final CSVRow row) {
-		CSVInfo info = getInfo();
-		CSVRow newRow = CSVRow.createEmptyLine(info.cols, this);
-		int indexRow = findRow(row);
+		final CSVInfo info = getInfo();
+		final CSVRow newRow = CSVRow.createEmptyLine(info.cols, this);
+		final int indexRow = findRow(row);
 
 		if ( indexRow != -1 ) {
 			rows.add(indexRow, newRow);
@@ -274,7 +282,7 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public int findRow(final CSVRow findRow) {
 		for ( int i = 0; i <= getArrayRows(true).length; i++ ) {
-			CSVRow row = getRowAt(i);
+			final CSVRow row = getRowAt(i);
 			if ( row.equals(findRow) ) { return i; }
 		}
 		return -1;
@@ -292,8 +300,8 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public Object[] getArrayRows(final boolean includeCommentLine) {
 		// filter header and comment rows
-		ArrayList<CSVRow> myrows = new ArrayList<>();
-		for ( CSVRow row : rows ) {
+		final ArrayList<CSVRow> myrows = new ArrayList<>();
+		for ( final CSVRow row : rows ) {
 			// should we return the comment line
 			if ( row.isCommentLine() ) {
 				if ( includeCommentLine ) {
@@ -321,7 +329,7 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	@Override
 	public void rowChanged(final CSVRow row, final int rowIndex) {
-		for ( ICsvFileModelListener l : listeners ) {
+		for ( final ICsvFileModelListener l : listeners ) {
 			l.entryChanged(row, rowIndex);
 		}
 	}
@@ -340,7 +348,7 @@ public class CSVModel implements IRowChangesListener {
 		if ( !rows.remove(row) ) { return;
 		// TODO return error message
 		}
-		CSVInfo info = getInfo();
+		final CSVInfo info = getInfo();
 		info.rows--;
 		saveMetaData();
 	}
@@ -353,11 +361,11 @@ public class CSVModel implements IRowChangesListener {
 	 * @param colName
 	 */
 	public void addColumn(final String colName) {
-		CSVInfo info = getInfo();
+		final CSVInfo info = getInfo();
 		info.cols++;
 		info.headers = Arrays.copyOf(info.headers, info.headers.length + 1);
 		info.headers[info.headers.length - 1] = colName;
-		for ( CSVRow row : rows ) {
+		for ( final CSVRow row : rows ) {
 			row.addElement("");
 		}
 		saveMetaData();
@@ -377,14 +385,14 @@ public class CSVModel implements IRowChangesListener {
 	 * @param colIndex
 	 */
 	public void removeColumn(final int colIndex) {
-		CSVInfo info = getInfo();
+		final CSVInfo info = getInfo();
 		if ( info.header ) {
-			ArrayList<String> cols = new ArrayList(Arrays.asList(info.headers));
+			final ArrayList<String> cols = new ArrayList(Arrays.asList(info.headers));
 			cols.remove(colIndex);
 			info.headers = cols.toArray(new String[cols.size()]);
 		}
 		info.cols--;
-		for ( CSVRow row : rows ) {
+		for ( final CSVRow row : rows ) {
 			if ( !row.isCommentLine() ) {
 				System.out.println("remove elmt:[" + colIndex + "] in row [" + row + "]");
 				row.removeElementAt(colIndex);
@@ -400,8 +408,8 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public void removeColumn(final String columnName) {
 		if ( columnName == null ) { return; }
-		List<String> cols = Arrays.asList(getInfo().headers);
-		int colIndex = cols.indexOf(columnName);
+		final List<String> cols = Arrays.asList(getInfo().headers);
+		final int colIndex = cols.indexOf(columnName);
 		removeColumn(colIndex);
 	}
 
@@ -427,8 +435,8 @@ public class CSVModel implements IRowChangesListener {
 	 * @return
 	 */
 	protected CsvWriter initializeWriter(final Writer writer) {
-		char delimiter = getCustomDelimiter();
-		CsvWriter csvWriter = new CsvWriter(writer, delimiter);
+		final char delimiter = getCustomDelimiter();
+		final CsvWriter csvWriter = new CsvWriter(writer, delimiter);
 		csvWriter.setTextQualifier(getTextQualifier());
 		csvWriter.setForceQualifier(useQualifier());
 		csvWriter.setComment(getCommentChar());
@@ -440,11 +448,11 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public String getTextRepresentation() {
 
-		StringWriter sw = new StringWriter();
+		final StringWriter sw = new StringWriter();
 		try {
-			CsvWriter clw = initializeWriter(sw);
+			final CsvWriter clw = initializeWriter(sw);
 
-			for ( CSVRow row : rows ) {
+			for ( final CSVRow row : rows ) {
 				if ( row.isCommentLine() ) {
 					clw.writeComment(row.getComment());
 				} else {
@@ -453,7 +461,7 @@ public class CSVModel implements IRowChangesListener {
 			}
 			clw.close();
 			sw.close();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println("cannot write csv file");
 			e.printStackTrace();
 		} finally {}
@@ -476,7 +484,7 @@ public class CSVModel implements IRowChangesListener {
 	public void reload() {
 		try {
 			readLines(new InputStreamReader(file.getContents()));
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
 	}
@@ -486,7 +494,13 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public CSVInfo getInfo() {
 		if ( currentInfo == null ) {
-			currentInfo = (CSVInfo) FileMetaDataProvider.getInstance().getMetaData(file, false, true);
+			final IGamaFileMetaData metaData = FileMetaDataProvider.getInstance().getMetaData(file, false, true);
+			if ( metaData instanceof CSVInfo ) {
+				currentInfo = (CSVInfo) metaData;
+			} else {
+				FileMetaDataProvider.storeMetadata(file, null, true);
+				currentInfo = (CSVInfo) FileMetaDataProvider.getInstance().getMetaData(file, false, true);
+			}
 		}
 		return currentInfo;
 	}

@@ -11,21 +11,25 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Envelope;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
-@file(name = "text",
-	extensions = { "txt", "data", "csv", "text", "tsv", "xml" },
-	buffer_type = IType.LIST,
-	buffer_content = IType.STRING,
-	buffer_index = IType.INT,
-	concept = { IConcept.FILE, IConcept.TEXT, IConcept.CSV, IConcept.XML })
+@file(name = "text", extensions = { "txt", "data",
+		"text" }, buffer_type = IType.LIST, buffer_content = IType.STRING, buffer_index = IType.INT, concept = {
+				IConcept.FILE, IConcept.TEXT, IConcept.CSV, IConcept.XML })
 public class GamaTextFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -44,9 +48,10 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 	@Override
 	public String _stringValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		StringBuilder sb = new StringBuilder(getBuffer().length(scope) * 200);
-		for ( String s : getBuffer().iterable(scope) ) {
-			sb.append(s).append("\n"); // TODO Factorize the different calls to "new line" ...
+		final StringBuilder sb = new StringBuilder(getBuffer().length(scope) * 200);
+		for (final String s : getBuffer().iterable(scope)) {
+			sb.append(s).append("\n"); // TODO Factorize the different calls to
+										// "new line" ...
 		}
 		sb.setLength(sb.length() - 1);
 		return sb.toString();
@@ -59,7 +64,9 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( getBuffer() != null ) { return; }
+		if (getBuffer() != null) {
+			return;
+		}
 		try {
 			final BufferedReader in = new BufferedReader(new FileReader(getFile()));
 			final IList<String> allLines = GamaListFactory.create(Types.STRING);

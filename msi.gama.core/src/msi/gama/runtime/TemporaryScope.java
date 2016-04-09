@@ -207,7 +207,7 @@ class TemporaryScope implements IScope {
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		return Types.get(type).cast(this, vars.get(string), null, Types.NO_TYPE, Types.NO_TYPE, false);
+		return Types.get(type).cast(this, vars.get(string), null, false);
 	}
 
 	/**

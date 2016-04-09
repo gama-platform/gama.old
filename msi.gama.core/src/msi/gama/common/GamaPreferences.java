@@ -12,6 +12,9 @@
 package msi.gama.common;
 
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -28,11 +31,15 @@ import com.vividsolutions.jts.geom.Envelope;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.IGamaFile;
@@ -139,6 +146,10 @@ public class GamaPreferences {
 			super(null, pathName);
 		}
 
+		public GenericFile(final IScope scope, final String pathName) throws GamaRuntimeException {
+			super(scope, pathName);
+		}
+
 		@Override
 		public IContainerType getType() {
 			return Types.FILE;
@@ -151,6 +162,29 @@ public class GamaPreferences {
 
 		@Override
 		protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
+			if (getBuffer() != null) {
+				return;
+			}
+			if (FileUtils.isBinaryFile(scope, getFile())) {
+				GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException
+						.warning("Problem identifying the contents of " + getFile().getAbsolutePath(), scope), false);
+				setBuffer(GamaListFactory.create());
+			}
+			try {
+				final BufferedReader in = new BufferedReader(new FileReader(getFile()));
+				final IList<String> allLines = GamaListFactory.create(Types.STRING);
+				String str;
+				str = in.readLine();
+				while (str != null) {
+					allLines.add(str);
+					str = in.readLine();
+				}
+				in.close();
+				setBuffer(allLines);
+			} catch (final IOException e) {
+				throw GamaRuntimeException.create(e, scope);
+			}
+
 		}
 
 		@Override

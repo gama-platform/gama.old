@@ -11,14 +11,26 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.util.file.GAMLFile;
+import msi.gama.util.file.IGamaFileMetaData;
 
 public class NavigatorContentProvider extends WorkbenchContentProvider {
 
@@ -37,13 +49,13 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 	public Object getParent(final Object element) {
 		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getParent(); }
 		if ( element instanceof IProject ) {
-			for ( TopLevelFolder folder : virtualFolders ) {
+			for ( final TopLevelFolder folder : virtualFolders ) {
 				if ( folder.accepts((IProject) element) ) { return folder; }
 			}
 		}
 		if ( element instanceof IFile && FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID
 			.equals(FileMetaDataProvider.getContentTypeId((IFile) element)) ) {
-			IResource r = FileMetaDataProvider.shapeFileSupportedBy((IFile) element);
+			final IResource r = FileMetaDataProvider.shapeFileSupportedBy((IFile) element);
 			if ( r != null ) { return r; }
 		}
 		return super.getParent(element);
@@ -59,35 +71,38 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 		}
 		if ( p instanceof VirtualContent ) { return ((VirtualContent) p).getNavigatorChildren(); }
 		if ( p instanceof IFile ) {
-			String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
+			final String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
 			if ( ctid.equals(FileMetaDataProvider.GAML_CT_ID) ) {
-				GAMLFile.GamlInfo info =
-					(GAMLFile.GamlInfo) FileMetaDataProvider.getInstance().getMetaData(p, false, true);
-				if ( info == null ) { return VirtualContent.EMPTY; }
-				List l = new ArrayList();
-				for ( String s : info.experiments ) {
-					l.add(new WrappedExperiment((IFile) p, s));
+				final IGamaFileMetaData metaData = FileMetaDataProvider.getInstance().getMetaData(p, false, true);
+				if ( metaData instanceof GAMLFile.GamlInfo ) {
+					final GAMLFile.GamlInfo info = (GAMLFile.GamlInfo) metaData;
+
+					final List l = new ArrayList();
+					for ( final String s : info.experiments ) {
+						l.add(new WrappedExperiment((IFile) p, s));
+					}
+					if ( !info.imports.isEmpty() ) {
+						l.add(new WrappedFolder((IFile) p, info.imports, "Imports"));
+					}
+					if ( !info.uses.isEmpty() ) {
+						l.add(new WrappedFolder((IFile) p, info.uses, "Uses"));
+					}
+					addPluginsTo((IFile) p, l);
+					return l.toArray();
 				}
-				if ( !info.imports.isEmpty() ) {
-					l.add(new WrappedFolder((IFile) p, info.imports, "Imports"));
-				}
-				if ( !info.uses.isEmpty() ) {
-					l.add(new WrappedFolder((IFile) p, info.uses, "Uses"));
-				}
-				addPluginsTo((IFile) p, l);
-				return l.toArray();
+				return VirtualContent.EMPTY;
 
 			} else if ( ctid.equals(FileMetaDataProvider.SHAPEFILE_CT_ID) ) {
 				try {
-					IContainer folder = ((IFile) p).getParent();
-					List<IResource> sub = new ArrayList();
-					for ( IResource r : folder.members() ) {
+					final IContainer folder = ((IFile) p).getParent();
+					final List<IResource> sub = new ArrayList();
+					for ( final IResource r : folder.members() ) {
 						if ( r instanceof IFile && FileMetaDataProvider.isSupport((IFile) p, (IFile) r) ) {
 							sub.add(r);
 						}
 					}
 					return sub.toArray();
-				} catch (CoreException e) {
+				} catch (final CoreException e) {
 					e.printStackTrace();
 					return super.getChildren(p);
 				}
@@ -102,22 +117,22 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 	 * @param l
 	 */
 	private void addPluginsTo(final IFile f, final List l) {
-		IProject p = f.getProject();
+		final IProject p = f.getProject();
 		IPath path = f.getProjectRelativePath();
-		String s = ".metadata/" + path.toPortableString() + ".meta";
+		final String s = ".metadata/" + path.toPortableString() + ".meta";
 		path = Path.fromPortableString(s);
-		IResource r = p.findMember(path);
+		final IResource r = p.findMember(path);
 		if ( r == null || !(r instanceof IFile) ) { return; }
-		IFile m = (IFile) r;
+		final IFile m = (IFile) r;
 		try {
-			InputStream is = m.getContents();
-			BufferedReader in = new BufferedReader(new InputStreamReader(is));
-			GamlProperties props = new GamlProperties(in);
-			Set<String> contents = props.get(GamlProperties.PLUGINS);
+			final InputStream is = m.getContents();
+			final BufferedReader in = new BufferedReader(new InputStreamReader(is));
+			final GamlProperties props = new GamlProperties(in);
+			final Set<String> contents = props.get(GamlProperties.PLUGINS);
 
 			if ( contents == null || contents.isEmpty() ) { return; }
 			l.add(new WrappedPlugins(f, contents, "Requires"));
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
 	}
@@ -127,7 +142,7 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).hasChildren(); }
 		if ( element instanceof NavigatorRoot ) { return true; }
 		if ( element instanceof IFile ) {
-			String ext = FileMetaDataProvider.getContentTypeId((IFile) element);
+			final String ext = FileMetaDataProvider.getContentTypeId((IFile) element);
 			return (FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext)) &&
 				getChildren(element).length > 0;
 		}

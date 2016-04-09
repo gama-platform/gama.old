@@ -11,28 +11,38 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
+
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul Modified on 25 aout 2010
  *
- * The superclass of all types descriptions in GAMA. Provides convenience methods, as well as some
- * basic definitions. Types allow to manipulate any Java class as a type in GAML. To be recognized
- * by GAML, subclasses must be annotated with the @type annotation (see GamlAnnotations).
+ * The superclass of all types descriptions in GAMA. Provides convenience
+ * methods, as well as some basic definitions. Types allow to manipulate any
+ * Java class as a type in GAML. To be recognized by GAML, subclasses must be
+ * annotated with the @type annotation (see GamlAnnotations).
  *
- * Types are primarily used for conversions between values. They are also intended to support the
- * operators specific to the objects they encompass (but this is not mandatory, as these operators
- * need to be defined as static ones (and thus can be defined anywhere)
+ * Types are primarily used for conversions between values. They are also
+ * intended to support the operators specific to the objects they encompass (but
+ * this is not mandatory, as these operators need to be defined as static ones
+ * (and thus can be defined anywhere)
  *
- * Primary (simple) types also serve as the basis of parametric types (see ParametricType).
+ * Primary (simple) types also serve as the basis of parametric types (see
+ * ParametricType).
  *
  */
 
@@ -78,7 +88,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public void init(final int varKind, final int id, final String name, final Class ... supports) {
+	public void init(final int varKind, final int id, final String name, final Class... supports) {
 		this.varKind = varKind;
 		this.id = id;
 		this.name = name;
@@ -109,15 +119,18 @@ public abstract class GamaType<Support> implements IType<Support> {
 	@Override
 	public void setFieldGetters(final Map<String, OperatorProto> map) {
 		getters = map;
-		// AD 20/09/13 Added the initialization of the type containing the fields
-		for ( OperatorProto t : map.values() ) {
+		// AD 20/09/13 Added the initialization of the type containing the
+		// fields
+		for (final OperatorProto t : map.values()) {
 			t.setSignature(this);
 		}
 	}
 
 	@Override
 	public OperatorProto getGetter(final String field) {
-		if ( getters == null ) { return null; }
+		if (getters == null) {
+			return null;
+		}
 		return getters.get(field);
 	}
 
@@ -128,18 +141,19 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	//
 	// @Override
-	// public Map<String, ? extends IGamlDescription> getFieldDescriptions(final ModelDescription desc) {
+	// public Map<String, ? extends IGamlDescription> getFieldDescriptions(final
+	// ModelDescription desc) {
 	// if ( getters == null ) { return Collections.EMPTY_MAP; }
 	// return getters;
 	// }
 
 	@Override
 	public abstract Support cast(IScope scope, final Object obj, final Object param, boolean copy)
-		throws GamaRuntimeException;
+			throws GamaRuntimeException;
 
 	@Override
 	public Support cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentType, final boolean copy) throws GamaRuntimeException {
+			final IType contentType, final boolean copy) throws GamaRuntimeException {
 		// by default
 		return cast(scope, obj, param, copy);
 	}
@@ -156,7 +170,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public boolean equals(final Object c) {
-		if ( c instanceof IType ) { return ((IType) c).id() == id; }
+		if (c instanceof IType) {
+			return ((IType) c).id() == id;
+		}
 		return false;
 	}
 
@@ -167,7 +183,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public String asPattern() {
-		boolean vowel = StringUtils.startsWithAny(name, vowels);
+		final boolean vowel = StringUtils.startsWithAny(name, vowels);
 		return "${" + (vowel ? "an_" : "a_") + name + "}";
 	}
 
@@ -215,13 +231,17 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	protected boolean isSuperTypeOf(final IType type) {
-		if ( type == null ) { return false; }
-		if ( parented && type.isParented() ) {
+		if (type == null) {
+			return false;
+		}
+		if (parented && type.isParented()) {
 			return type == this || isSuperTypeOf(type.getParent());
 		}
-		Class remote = type.toClass();
-		for ( Class support : supports ) {
-			if ( support.isAssignableFrom(remote) ) { return true; }
+		final Class remote = type.toClass();
+		for (final Class support : supports) {
+			if (support.isAssignableFrom(remote)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -238,9 +258,13 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object c) {
-		if ( c == null ) { return acceptNullInstances(); }
-		for ( Class support : supports ) {
-			if ( support.isAssignableFrom(c.getClass()) ) { return true; }
+		if (c == null) {
+			return acceptNullInstances();
+		}
+		for (final Class support : supports) {
+			if (support.isAssignableFrom(c.getClass())) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -270,23 +294,41 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public int distanceTo(final IType type) {
-		if ( type == this ) { return 0; }
-		if ( type == null ) { return Integer.MAX_VALUE; }
-		if ( parented ) {
-			if ( isSuperTypeOf(type) ) { return 1 + distanceTo(type.getParent()); }
+		if (type == this) {
+			return 0;
+		}
+		if (type == null) {
+			return Integer.MAX_VALUE;
+		}
+		if (parented) {
+			if (isSuperTypeOf(type)) {
+				return 1 + distanceTo(type.getParent());
+			}
 			return 1 + getParent().distanceTo(type);
 		}
-		if ( isTranslatableInto(type) ) { return 1; }
-		if ( isAssignableFrom(type) ) { return 1; }
+		if (isTranslatableInto(type)) {
+			return 1;
+		}
+		if (isAssignableFrom(type)) {
+			return 1;
+		}
 		return Integer.MAX_VALUE;
 	}
 
 	@Override
 	public IType findCommonSupertypeWith(final IType type) {
-		if ( type == this ) { return this; }
-		if ( type == Types.NO_TYPE ) { return getDefault() == null ? this : type; }
-		if ( type.isTranslatableInto(this) ) { return this; }
-		if ( this.isTranslatableInto(type) ) { return type; }
+		if (type == this) {
+			return this;
+		}
+		if (type == Types.NO_TYPE) {
+			return getDefault() == null ? this : type;
+		}
+		if (type.isTranslatableInto(this)) {
+			return this;
+		}
+		if (this.isTranslatableInto(type)) {
+			return type;
+		}
 		return getParent().findCommonSupertypeWith(type.getParent());
 	}
 
@@ -306,8 +348,10 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	public static Object toType(final IScope scope, final Object value, final IType type, final boolean copy) {
-		if ( type == null || type.id() == IType.NONE ) { return value; }
-		return type.cast(scope, value, null, Types.NO_TYPE, Types.NO_TYPE, copy);
+		if (type == null || type.id() == IType.NONE) {
+			return value;
+		}
+		return type.cast(scope, value, null, copy);
 	}
 
 	public IType keyTypeIfCasting(final IExpression exp) {
@@ -333,16 +377,19 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	public static IContainerType from(final IContainerType t, final IType keyType, final IType contentType) {
-		if ( keyType == Types.NO_TYPE && contentType == Types.NO_TYPE ) { return t; }
-		IType kt = keyType == Types.NO_TYPE ? t.getType().getKeyType() : keyType;
-		IType ct = contentType == Types.NO_TYPE ? t.getType().getContentType() : contentType;
+		if (keyType == Types.NO_TYPE && contentType == Types.NO_TYPE) {
+			return t;
+		}
+		final IType kt = keyType == Types.NO_TYPE ? t.getType().getKeyType() : keyType;
+		final IType ct = contentType == Types.NO_TYPE ? t.getType().getContentType() : contentType;
 		return new ParametricType(t.getType(), kt, ct);
 	}
 
 	public static IType from(final IType t, final IType keyType, final IType contentType) {
-		if ( t instanceof IContainerType ) {
-			if ( contentType.isAssignableFrom(t.getContentType()) &&
-				keyType.isAssignableFrom(t.getKeyType()) ) { return t; }
+		if (t instanceof IContainerType) {
+			if (contentType.isAssignableFrom(t.getContentType()) && keyType.isAssignableFrom(t.getKeyType())) {
+				return t;
+			}
 			return from((IContainerType) t, keyType, contentType);
 		}
 		return t;
@@ -353,31 +400,38 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public static final int KEY = 2;
 
 	public static IType findCommonType(final IExpression[] elements, final int kind) {
-		IType result = Types.NO_TYPE;
-		if ( elements.length == 0 ) { return result; }
+		final IType result = Types.NO_TYPE;
+		if (elements.length == 0) {
+			return result;
+		}
 		final Set<IType> types = new TLinkedHashSet();
-		for ( final IExpression e : elements ) {
-			// TODO Indicates a previous error in compiling expressions. Maybe we should cut this
+		for (final IExpression e : elements) {
+			// TODO Indicates a previous error in compiling expressions. Maybe
+			// we should cut this
 			// part
-			if ( e == null ) {
+			if (e == null) {
 				continue;
 			}
-			IType eType = e.getType();
+			final IType eType = e.getType();
 			types.add(kind == TYPE ? eType : kind == CONTENT ? eType.getContentType() : eType.getKeyType());
 		}
 		final IType[] array = types.toArray(new IType[types.size()]);
 		return findCommonType(array);
 	}
 
-	public static IType findCommonType(final IType ... types) {
+	public static IType findCommonType(final IType... types) {
 		IType result = Types.NO_TYPE;
-		if ( types.length == 0 ) { return result; }
+		if (types.length == 0) {
+			return result;
+		}
 		result = types[0];
-		if ( types.length == 1 ) { return result; }
-		for ( int i = 1; i < types.length; i++ ) {
-			IType currentType = types[i];
-			if ( currentType == Types.NO_TYPE ) {
-				if ( result.getDefault() != null ) {
+		if (types.length == 1) {
+			return result;
+		}
+		for (int i = 1; i < types.length; i++) {
+			final IType currentType = types[i];
+			if (currentType == Types.NO_TYPE) {
+				if (result.getDefault() != null) {
 					result = Types.NO_TYPE;
 				}
 			} else {
@@ -389,13 +443,20 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	/**
 	 * Return the type of the object passed in parameter
+	 * 
 	 * @param obj
 	 * @return
 	 */
 	public static IType of(final Object obj) {
-		if ( obj instanceof IValue ) { return ((IValue) obj).getType(); }
-		if ( obj instanceof IExpression ) { return ((IExpression) obj).getType(); }
-		if ( obj == null ) { return Types.NO_TYPE; }
+		if (obj instanceof IValue) {
+			return ((IValue) obj).getType();
+		}
+		if (obj instanceof IExpression) {
+			return ((IExpression) obj).getType();
+		}
+		if (obj == null) {
+			return Types.NO_TYPE;
+		}
 		return Types.get(obj.getClass());
 	}
 
@@ -407,8 +468,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	public static boolean requiresCasting(final IType castingType, final IType originalType) {
-		if ( castingType == null || castingType == Types.NO_TYPE ||
-			castingType.isAssignableFrom(originalType) ) { return false; }
+		if (castingType == null || castingType == Types.NO_TYPE || castingType.isAssignableFrom(originalType)) {
+			return false;
+		}
 		return true;
 	}
 
@@ -419,7 +481,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		if ( plugin != null ) {
+		if (plugin != null) {
 			meta.put(GamlProperties.PLUGINS, this.plugin);
 			meta.put(GamlProperties.TYPES, this.name);
 		}

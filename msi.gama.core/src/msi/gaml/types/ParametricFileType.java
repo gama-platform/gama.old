@@ -6,9 +6,13 @@ package msi.gaml.types;
 import msi.gama.common.GamaPreferences.GenericFile;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
-import msi.gama.util.file.*;
+import msi.gama.util.IContainer;
+import msi.gama.util.IModifiableContainer;
+import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.file.IGamaFile;
 import msi.gaml.compilation.GamaHelper;
+import msi.gaml.expressions.IExpression;
 
 /**
  * @author drogoul
@@ -26,8 +30,7 @@ public class ParametricFileType extends ParametricType {
 	static ParametricFileType genericInstance;
 
 	protected ParametricFileType(final String name, final Class<IGamaFile> fileClass,
-		final GamaHelper<IGamaFile> helper,
-		final IType buffer, final IType kt, final IType ct) {
+			final GamaHelper<IGamaFile> helper, final IType buffer, final IType kt, final IType ct) {
 		super(Types.FILE, kt, ct);
 		support = fileClass;
 		bufferType = (IContainerType) buffer;
@@ -45,35 +48,44 @@ public class ParametricFileType extends ParametricType {
 	}
 
 	@Override
-	public void init(final int kind, final int index, final String name, final Class ... supports) {
+	public void init(final int kind, final int index, final String name, final Class... supports) {
 		this.id = index;
 		this.varKind = kind;
 	}
 
 	@Override
 	public IGamaFile cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentType, final boolean copy) {
-		if ( obj == null ) { return null; }
-		if ( obj instanceof IGamaFile && support.isInstance(obj) ) { return (IGamaFile) obj; }
-		if ( obj instanceof String ) {
-			if ( param == null ) { return createFile(scope, (String) obj, null); }
-			if ( param instanceof IContainer.Modifiable ) { return createFile(scope, (String) obj,
-				(IModifiableContainer) param); }
+			final IType contentType, final boolean copy) {
+		if (obj == null) {
+			return null;
+		}
+		if (obj instanceof IGamaFile) {
+			if (support.isInstance(obj))
+				return (IGamaFile) obj;
+			else {
+				return cast(scope, ((IGamaFile) obj).getPath(), param, keyType, contentType, copy);
+			}
+		}
+		if (obj instanceof String) {
+			if (param == null) {
+				return createFile(scope, (String) obj, null);
+			}
+			if (param instanceof IContainer.Modifiable) {
+				return createFile(scope, (String) obj, (IModifiableContainer) param);
+			}
 		}
 		return null;
 	}
 
 	public static ParametricFileType getGenericInstance() {
-		if ( genericInstance == null ) {
-			genericInstance = new ParametricFileType("generic", IGamaFile.class, new GamaHelper<IGamaFile>() {
+		if (genericInstance == null) {
+			genericInstance = new ParametricFileType("generic_file", IGamaFile.class, new GamaHelper<IGamaFile>() {
 
 				@Override
-				public IGamaFile run(final IScope s, final Object ... o) {
-					return new GenericFile((String) o[0]);
+				public IGamaFile run(final IScope s, final Object... o) {
+					return new GenericFile(s, (String) o[0]);
 				}
-			},
-				Types.LIST,
-				Types.NO_TYPE, Types.NO_TYPE);
+			}, Types.LIST, Types.NO_TYPE, Types.NO_TYPE);
 		}
 		return genericInstance;
 	}
@@ -110,17 +122,15 @@ public class ParametricFileType extends ParametricType {
 
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		if ( plugin != null ) {
+		if (plugin != null) {
 			meta.put(GamlProperties.PLUGINS, this.plugin);
 			meta.put(GamlProperties.TYPES, this.getName());
 		}
 	}
 
-
-
 	public IGamaFile createFile(final IScope scope, final String path, final IModifiableContainer contents) {
-		IGamaFile file = builder.run(scope, path);
-		if ( contents != null ) {
+		final IGamaFile file = builder.run(scope, path);
+		if (contents != null) {
 			file.setWritable(true);
 			file.setContents(contents);
 		}
@@ -135,6 +145,12 @@ public class ParametricFileType extends ParametricType {
 	@Override
 	public boolean isAssignableFrom(final IType l) {
 		return l == this;
+	}
+
+	@Override
+	public IContainerType typeIfCasting(final IExpression exp) {
+
+		return this;
 	}
 
 }

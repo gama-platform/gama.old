@@ -42,7 +42,6 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	public static Map<String, ParametricFileType> extensionsToFullType = new THashMap();
 	static Map<String, ParametricFileType> aliasesToFullType = new THashMap();
 	static Map<String, Set<String>> aliasesToExtensions = new THashMap();
-	// static Map<Class, Set<String>> classToExtensions = new THashMap();
 	static int currentFileTypeIndex = 1000;
 
 	/**
