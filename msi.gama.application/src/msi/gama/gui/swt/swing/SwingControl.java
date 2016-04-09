@@ -11,15 +11,35 @@
  *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.FocusTraversalPolicy;
+import java.awt.Frame;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import javax.swing.*;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.JApplet;
+import javax.swing.JComponent;
+import javax.swing.JRootPane;
+import javax.swing.LayoutFocusTraversalPolicy;
+import javax.swing.RootPaneContainer;
+import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
@@ -28,10 +48,13 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Widget;
 
 public abstract class SwingControl extends Composite {
 
@@ -142,7 +165,7 @@ public abstract class SwingControl extends Composite {
 				@Override
 				public Rectangle getClientArea() {
 					assert Display.getCurrent() != null; // On SWT event thread
-					Rectangle rect = super.getClientArea();
+					final Rectangle rect = super.getClientArea();
 					SwingControl.this.assignInitialClientArea(rect);
 					return rect;
 				}
@@ -181,7 +204,7 @@ public abstract class SwingControl extends Composite {
 
 						@Override
 						public void run() {
-							boolean success = isDisposed() ? false : superSetFocus();
+							final boolean success = isDisposed() ? false : superSetFocus();
 							setResult(new Boolean(success));
 						}
 					});
@@ -295,7 +318,7 @@ public abstract class SwingControl extends Composite {
 				// the Eclipse workbench code itself uses DefaultFocusManager (see
 				// org.eclipse.ui.internal.handlers.WidgetMethodHandler).
 				// TODO: can this be queried from the L&F?
-				KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+				final KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 				if ( kfm.getDefaultFocusTraversalPolicy().getClass()
 					.getName() == "javax.swing.LegacyGlueFocusTraversalPolicy" ) {
 					kfm.setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
@@ -345,7 +368,7 @@ public abstract class SwingControl extends Composite {
 							afterComponentCreatedSWTThread();
 						}
 					});
-				} catch (SWTException e) {
+				} catch (final SWTException e) {
 					if ( e.code == SWT.ERROR_WIDGET_DISPOSED ) {
 						return;
 					} else {
@@ -393,7 +416,7 @@ public abstract class SwingControl extends Composite {
 		// only single component that satisfies all the above. This does not imply that
 		// we have a true applet; in particular, there is no notion of an applet lifecycle in this
 		// context.
-		JApplet applet = new ToplevelPanel();
+		final JApplet applet = new ToplevelPanel();
 
 		if ( Platform.isWin32() ) {
 			// Avoid stack overflows by ensuring correct focus traversal policy
@@ -413,7 +436,7 @@ public abstract class SwingControl extends Composite {
 		// Overridden from JApplet.
 		@Override
 		protected JRootPane createRootPane() {
-			JRootPane rootPane = new ToplevelRootPane();
+			final JRootPane rootPane = new ToplevelRootPane();
 			rootPane.setOpaque(true);
 			return rootPane;
 		}
@@ -558,7 +581,7 @@ public abstract class SwingControl extends Composite {
 		checkWidget();
 
 		assert Display.getCurrent() != null; // On SWT event thread
-		Rectangle rect = super.getClientArea();
+		final Rectangle rect = super.getClientArea();
 		if ( borderlessChild == this ) {
 			assignInitialClientArea(rect);
 		}
@@ -578,9 +601,9 @@ public abstract class SwingControl extends Composite {
 			}
 			// We don't want to clobber arbitrary Rectangle objects, only the
 			// one use by the SWT_AWT inner class.
-			Exception e = new Exception();
+			final Exception e = new Exception();
 			e.fillInStackTrace();
-			StackTraceElement[] stack = e.getStackTrace();
+			final StackTraceElement[] stack = e.getStackTrace();
 			if ( stack.length >= 3 && stack[2].getClassName().startsWith("org.eclipse.swt.awt.SWT_AWT$") ) {
 				initialClientArea = rect;
 			}
@@ -686,13 +709,13 @@ public abstract class SwingControl extends Composite {
 							onBehalfAWTTimes.put(Thread.currentThread(), new Integer(onBehalfAWTTime));
 							// Augment the three sizes by 2*borderWidth, avoiding
 							// integer overflow.
-							Point minSize =
+							final Point minSize =
 								new Point(Math.min(min.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
 									Math.min(min.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
-							Point prefSize =
+							final Point prefSize =
 								new Point(Math.min(pref.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
 									Math.min(pref.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
-							Point maxSize =
+							final Point maxSize =
 								new Point(Math.min(max.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
 									Math.min(max.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
 							// Augment the three sizes, avoiding integer overflow.
@@ -784,11 +807,11 @@ public abstract class SwingControl extends Composite {
 			if ( processing ) {
 				onBehalfAWTTime = null;
 			}
-			boolean wasPending = this.pending;
+			final boolean wasPending = this.pending;
 			// Shortcut to avoid posting a Runnable that has no effect.
 			// (lastValidatedAWTTime can only increase until the Runnable is
 			// actually run.)
-			boolean effective = onBehalfAWTTime == null || lastValidatedAWTTime - onBehalfAWTTime.intValue() < 0;
+			final boolean effective = onBehalfAWTTime == null || lastValidatedAWTTime - onBehalfAWTTime.intValue() < 0;
 			if ( wasPending || effective ) {
 				// Use the last specified size.
 				this.width = width;
@@ -834,7 +857,7 @@ public abstract class SwingControl extends Composite {
 			assert EventQueue.isDispatchThread(); // On AWT event thread
 			assert !processing;
 			for ( ;; ) {
-				Dimension size = dequeue();
+				final Dimension size = dequeue();
 				if ( size == null ) {
 					break;
 				}
@@ -931,10 +954,10 @@ public abstract class SwingControl extends Composite {
 	public Point computeSize(final int widthHint, final int heightHint, final boolean changed) {
 		checkWidget();
 
-		Dimension min = new Dimension();
-		Dimension pref = new Dimension();
-		Dimension max = new Dimension();
-		boolean initialized = getCachedAWTSizes(min, pref, max);
+		final Dimension min = new Dimension();
+		final Dimension pref = new Dimension();
+		final Dimension max = new Dimension();
+		final boolean initialized = getCachedAWTSizes(min, pref, max);
 
 		if ( !initialized ) {
 			if ( verboseSizeLayout ) {
@@ -1012,7 +1035,7 @@ public abstract class SwingControl extends Composite {
 	 *            AWT, plus the border width on each side.
 	 */
 	protected void preferredSizeChanged(final Point minSize, final Point prefSize, final Point maxSize) {
-		Composite ancestor = getLayoutAncestor();
+		final Composite ancestor = getLayoutAncestor();
 		if ( ancestor != null ) {
 			// Not just ancestor.layout().
 			// It is important to tell the Layout that the preferences have
@@ -1131,7 +1154,7 @@ public abstract class SwingControl extends Composite {
 	private void updateDefaultFont(final Font swtFont, final FontData[] swtFontData) {
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		java.awt.Font awtFont = LookAndFeelHandler.getInstance().propagateSwtFont(swtFont, swtFontData);
+		final java.awt.Font awtFont = LookAndFeelHandler.getInstance().propagateSwtFont(swtFont, swtFontData);
 		if ( awtFont == null ) { return; }
 
 		// Allow subclasses to react to font change if necessary.
@@ -1140,7 +1163,7 @@ public abstract class SwingControl extends Composite {
 		if ( swingComponent != null ) {
 			// Allow components to update their UI based on new font
 			// TODO: should the update method be called on the root pane instead?
-			Container contentPane = swingComponent.getRootPane().getContentPane();
+			final Container contentPane = swingComponent.getRootPane().getContentPane();
 			SwingUtilities.updateComponentTreeUI(contentPane);
 		}
 	}
@@ -1148,14 +1171,14 @@ public abstract class SwingControl extends Composite {
 	protected void setComponentFont(final Font swtFont, final FontData[] swtFontData, final boolean preserveDefaults) {
 		assert EventQueue.isDispatchThread();
 
-		ResourceConverter converter = ResourceConverter.getInstance();
-		java.awt.Font awtFont = converter.convertFont(swtFont, swtFontData);
+		final ResourceConverter converter = ResourceConverter.getInstance();
+		final java.awt.Font awtFont = converter.convertFont(swtFont, swtFontData);
 
 		// Allow subclasses to react to font change if necessary.
 		updateAwtFont(awtFont);
 
 		if ( rootPaneContainer != null ) {
-			Container contentPane = rootPaneContainer.getContentPane();
+			final Container contentPane = rootPaneContainer.getContentPane();
 			if ( !contentPane.getFont().equals(awtFont) || !preserveDefaults ) {
 				contentPane.setFont(awtFont);
 			}
@@ -1270,7 +1293,7 @@ public abstract class SwingControl extends Composite {
 		assert frame != null;
 		assert Display.getCurrent() != null; // On SWT event thread
 
-		GlobalFocusHandler handler = AwtEnvironment.getInstance(display).getGlobalFocusHandler();
+		final GlobalFocusHandler handler = AwtEnvironment.getInstance(display).getGlobalFocusHandler();
 		focusHandler = new FocusHandler(this, handler, borderlessChild, frame);
 	}
 
@@ -1357,7 +1380,7 @@ public abstract class SwingControl extends Composite {
 
 				@Override
 				public void run() {
-					boolean success = isDisposed() ? false : superSetFocus();
+					final boolean success = isDisposed() ? false : superSetFocus();
 					setResult(new Boolean(success));
 				}
 			});
@@ -1505,9 +1528,9 @@ public abstract class SwingControl extends Composite {
 
 	protected void firePreferredSizeChangedEvent(final Point minSize, final Point prefSize, final Point maxSize) {
 		assert Display.getCurrent() != null; // On SWT event thread
-		SizeEvent event = new SizeEvent(this, minSize, prefSize, maxSize);
-		for ( Iterator iterator = sizeListeners.iterator(); iterator.hasNext(); ) {
-			SizeListener listener = (SizeListener) iterator.next();
+		final SizeEvent event = new SizeEvent(this, minSize, prefSize, maxSize);
+		for ( final Iterator iterator = sizeListeners.iterator(); iterator.hasNext(); ) {
+			final SizeListener listener = (SizeListener) iterator.next();
 			listener.preferredSizeChanged(event);
 		}
 	}
@@ -1633,7 +1656,7 @@ public abstract class SwingControl extends Composite {
 
 	protected void handleKeyEvent(final int type, final KeyEvent e) {
 		assert Display.getCurrent() != null; // On SWT event thread
-		SwtKeystroke key = new SwtKeystroke(type, e);
+		final SwtKeystroke key = new SwtKeystroke(type, e);
 		if ( consumedKeystrokes.contains(key) ) {
 			// System.err.println("Capturing key " + key);
 			e.doit = false;
@@ -1706,17 +1729,17 @@ public abstract class SwingControl extends Composite {
 	// when they are focused.
 	protected void scrollTextFields(final Component c) {
 		if ( c instanceof JTextComponent ) {
-			JTextComponent tc = (JTextComponent) c;
+			final JTextComponent tc = (JTextComponent) c;
 			if ( tc.getDocument() != null && tc.getDocument().getLength() > 0 ) {
 				// Reset the caret position to force a scroll of
 				// the text component to the proper place
-				int position = tc.getCaretPosition();
-				int tempPosition = position > 0 ? 0 : 1;
+				final int position = tc.getCaretPosition();
+				final int tempPosition = position > 0 ? 0 : 1;
 				tc.setCaretPosition(tempPosition);
 				tc.setCaretPosition(position);
 			}
 		} else if ( c instanceof Container ) {
-			Component[] children = ((Container) c).getComponents();
+			final Component[] children = ((Container) c).getComponents();
 			for ( int i = 0; i < children.length; i++ ) {
 				scrollTextFields(children[i]);
 			}

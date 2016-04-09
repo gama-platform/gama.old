@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.JComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -73,9 +75,6 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 			}
 		};
 
-		// final String outputName = getOutput().getName();
-
-		// OutputSynchronizer.incInitializingViews(outputName, getOutput().isPermanent()); // incremented in the SWT thread
 		surfaceComposite = new SwingControl(parent, SWT.NONE) {
 
 			@Override
@@ -83,6 +82,24 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 				final JComponent component = getDisplaySurface();
 				if ( component != null ) // can happen if the view has not been realized yet
 					component.addMouseMotionListener(mlAwt2);
+				component.addKeyListener(new KeyListener() {
+
+					@Override
+					public void keyTyped(final KeyEvent e) {
+						System.out.println("Key typed " + e);
+					}
+
+					@Override
+					public void keyReleased(final KeyEvent e) {
+
+					}
+
+					@Override
+					public void keyPressed(final KeyEvent e) {
+						System.out.println("Key pressed" + e);
+					}
+
+				});
 				return component;
 			}
 

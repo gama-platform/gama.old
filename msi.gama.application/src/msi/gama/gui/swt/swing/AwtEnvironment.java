@@ -255,7 +255,7 @@ public final class AwtEnvironment {
 				@Override
 				public void run() {
 					// AD CHANGED
-					// display.addFilter(SWT.Show, menuListener);
+					display.addFilter(SWT.Show, menuListener);
 				}
 			});
 		}

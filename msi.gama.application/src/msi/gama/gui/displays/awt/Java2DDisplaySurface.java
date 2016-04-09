@@ -21,6 +21,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -65,6 +69,8 @@ import msi.gaml.operators.fastmaths.FastMath;
 @display("java2D")
 public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
+	private static final long serialVersionUID = 1L;
+
 	static {
 		GamaPreferences.DISPLAY_NO_ACCELERATION.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
@@ -106,15 +112,98 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	int frames;
 	private volatile boolean realized = false;
 	private volatile boolean rendered = false;
-	Map<IEventLayerListener, MouseAdapter> listeners = new HashMap();
+	Map<IEventLayerListener, GamaEventListener> listeners = new HashMap();
 
 	// private boolean alreadyZooming = false;
+
+	private class GamaEventListener extends MouseAdapter implements FocusListener, KeyListener {
+
+		final IEventLayerListener listener;
+		int down_x, down_y;
+
+		GamaEventListener(final IEventLayerListener listener) {
+			this.listener = listener;
+		}
+
+		@Override
+		public void mouseMoved(final MouseEvent e) {
+			if ( e.getButton() > MouseEvent.NOBUTTON ) { return; }
+			listener.mouseMove(e.getX(), e.getY());
+		}
+
+		@Override
+		public void mouseExited(final MouseEvent e) {
+			if ( e.getButton() > MouseEvent.NOBUTTON ) { return; }
+			listener.mouseExit(e.getX(), e.getY());
+		}
+
+		@Override
+		public void mouseEntered(final MouseEvent e) {
+			if ( e.getButton() > 0 ) { return; }
+			listener.mouseEnter(e.getX(), e.getY());
+		}
+
+		// @Override
+		// public void mouseHover(final MouseEvent e) {
+		// if ( e.getButton() > 0 ) { return; }
+		// listener.mouseMove(e.getX(), e.getY());
+		// }
+
+		@Override
+		public void mouseClicked(final MouseEvent e) {
+			mousePressed(e);
+			mouseReleased(e);
+		}
+
+		@Override
+		public void mousePressed(final MouseEvent e) {
+			down_x = e.getX();
+			down_y = e.getY();
+			listener.mouseDown(e.getX(), e.getY(), e.getButton());
+		}
+
+		@Override
+		public void mouseReleased(final MouseEvent e) {
+			if ( e.getX() == down_x && e.getY() == down_y ) {
+				listener.mouseClicked(e.getX(), e.getY(), e.getButton());
+			} else {
+				listener.mouseUp(e.getX(), e.getY(), e.getButton());
+			}
+		}
+
+		@Override
+		public void focusGained(final FocusEvent e) {
+			listener.mouseEnter(0, 0);
+		}
+
+		@Override
+		public void focusLost(final FocusEvent e) {
+			listener.mouseExit(0, 0);
+		}
+
+		@Override
+		public void keyPressed(final KeyEvent e) {
+			System.out.println("Key pressed");
+		}
+
+		@Override
+		public void keyReleased(final KeyEvent e) {
+			System.out.println("Key released");
+		}
+
+		@Override
+		public void keyTyped(final KeyEvent e) {
+			listener.keyPressed(String.valueOf(e.getKeyChar()));
+		}
+
+	}
 
 	public Java2DDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy("in Java2DDisplaySurface"));
 		// data = output.getData();
+		setFocusable(true);
 		output.getData().addListener(this);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 		// setOpaque(true);
@@ -545,55 +634,23 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void addListener(final IEventLayerListener ell) {
 		if ( listeners.containsKey(ell) ) { return; }
-
-		final MouseAdapter l = new MouseAdapter() {
-
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-				ell.mouseClicked(e.getX(), e.getY(), e.getButton());
-			}
-
-			@Override
-			public void mousePressed(final MouseEvent e) {
-				ell.mouseDown(e.getX(), e.getY(), e.getButton());
-			}
-
-			@Override
-			public void mouseReleased(final MouseEvent e) {
-				ell.mouseUp(e.getX(), e.getY(), e.getButton());
-			}
-
-			@Override
-			public void mouseMoved(final MouseEvent e) {
-				if ( e.getButton() > 0 ) { return; }
-				ell.mouseMove(e.getX(), e.getY());
-			}
-
-			@Override
-			public void mouseEntered(final MouseEvent e) {
-				if ( e.getButton() > 0 ) { return; }
-				ell.mouseEnter(e.getX(), e.getY());
-			}
-
-			@Override
-			public void mouseExited(final MouseEvent e) {
-				if ( e.getButton() > 0 ) { return; }
-				ell.mouseExit(e.getX(), e.getY());
-			}
-
-		};
+		final GamaEventListener l = new GamaEventListener(ell);
 		listeners.put(ell, l);
 		addMouseListener(l);
 		addMouseMotionListener(l);
+		addKeyListener(l);
+		addFocusListener(l);
 	}
 
 	@Override
 	public void removeListener(final IEventLayerListener ell) {
-		final MouseAdapter l = listeners.get(ell);
+		final GamaEventListener l = listeners.get(ell);
 		if ( l == null ) { return; }
 		listeners.remove(ell);
 		super.removeMouseListener(l);
 		super.removeMouseMotionListener(l);
+		super.removeKeyListener(l);
+		super.removeFocusListener(l);
 	}
 
 	@Override
@@ -610,7 +667,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void setBounds(final int arg0, final int arg1, final int arg2, final int arg3) {
-		// scope.getGui().debug("Set bounds called with " + arg2 + " " + arg3);
 		if ( arg2 == 0 && arg3 == 0 ) { return; }
 		super.setBounds(arg0, arg1, arg2, arg3);
 	}

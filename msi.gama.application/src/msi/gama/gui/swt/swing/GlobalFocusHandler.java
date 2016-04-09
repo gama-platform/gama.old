@@ -31,9 +31,9 @@ public class GlobalFocusHandler {
 		this.display = display;
 		swtEventFilter = new SwtEventFilter();
 		// AD CHANGED
-		// display.addFilter(SWT.Activate, swtEventFilter);
-		// display.addFilter(SWT.Deactivate, swtEventFilter);
-		// display.addFilter(SWT.Traverse, swtEventFilter);
+		display.addFilter(SWT.Activate, swtEventFilter);
+		display.addFilter(SWT.Deactivate, swtEventFilter);
+		display.addFilter(SWT.Traverse, swtEventFilter);
 	}
 
 	public int getCurrentSwtTraversal() {
@@ -77,11 +77,11 @@ public class GlobalFocusHandler {
 	}
 
 	public void addEventFilter(final Listener filter) {
-		// listeners.add(filter);
+		listeners.add(filter);
 	}
 
 	public void removeEventFilter(final Listener filter) {
-		// listeners.remove(filter);
+		listeners.remove(filter);
 	}
 
 	protected void fireEvent(final Event event) {
@@ -92,9 +92,9 @@ public class GlobalFocusHandler {
 	}
 
 	public void dispose() {
-		// display.removeFilter(SWT.Activate, swtEventFilter);
-		// display.removeFilter(SWT.Deactivate, swtEventFilter);
-		// display.removeFilter(SWT.Traverse, swtEventFilter);
+		display.removeFilter(SWT.Activate, swtEventFilter);
+		display.removeFilter(SWT.Deactivate, swtEventFilter);
+		display.removeFilter(SWT.Traverse, swtEventFilter);
 	}
 
 	protected boolean isBorderlessSwingControl(final Widget widget) {
