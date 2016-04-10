@@ -29,7 +29,10 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 	 */
 	@Override
 	public boolean acceptSource(final Object source) {
-
+		// THIS CONDITION MUST BE CHECKED : bypass a condition that belong to the case createFromDatabase
+		if( source instanceof IList && ((IList) source).get(0) instanceof IList){
+			return false;
+		}
 		return source instanceof IList && ((IList) source).getType().getContentType().isAssignableFrom(Types.GEOMETRY)
 
 			|| source instanceof GamaGeometryFile;
