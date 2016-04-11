@@ -5,7 +5,7 @@
 * Tags: comodel
 */
 model Comodel_simple
-//import the micro-model with an alias name
+
 import "m1.gaml" as micro_model_1
 import "m2.gaml" as micro_model_2
 
@@ -45,9 +45,7 @@ global
 		{
 			do _step_;
 		}
-
 	}
-
 }
 
 experiment Comodel_simple_exp type: gui

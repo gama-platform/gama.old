@@ -1,9 +1,3 @@
-/**
-* Name: The coupling of SIR_ABM model
-* Author:  HUYNH Quang Nghi
-* Description:  This is the coupling that manipulate the elements inside SIR_ABM  model and propose the function would be used outside.
-* Tags: comodel
-*/
 model SIR_ABM_coupling
 
 import "SIR_ABM.gaml"

@@ -1,10 +1,3 @@
-/**
-* Name: The simple ABM model of SIR
-* Author:  HUYNH Quang Nghi
-* Description:  A simple example of SIR that use the agents to represent the spreading of disease..
-* Tags: comodel
-*/
- 
 model SIR_ABM 
 
 global{

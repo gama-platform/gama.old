@@ -1,13 +1,13 @@
 /**
 * Name: comodel_with_the_coupling
 * Author: HUYNH Quang Nghi
-* Description: This is a simple comodel serve to demonstrate the importation and instatiation of micro-model without using the couplings  
+* Description: This is a simple comodel serve to demonstrate the importation and instatiation of micro-model using the couplings  
 * Tags: comodel
-*/model comodel_with_the_coupling
-//import the micro-model with an alias name
+*/
+model comodel_with_the_coupling
+
 import "m1_coupling.gaml" as micro_model_1
 import "m2_coupling.gaml" as micro_model_2
-
 
 global
 {
@@ -19,19 +19,15 @@ global
 	}
 	reflex simulate_micro_models{
 		
-		
 		//tell all experiments of micro_model_1 do 1 step;
 		ask (micro_model_1.M1_coupling_exp collect each.simulation){
 			do _step_;
 		}
 		
-		
 		//tell the first experiment of micro_model_2 do 1 step;
 		ask (micro_model_2.M2_coupling_exp collect each.simulation){
 			do _step_;
 		}
-		
-		
 	}
 }
 

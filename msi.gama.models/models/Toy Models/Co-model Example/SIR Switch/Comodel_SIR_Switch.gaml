@@ -1,8 +1,11 @@
 /**
 * Name: Comodel SIR Switch
 * Author: HUYNH Quang Nghi
-* Description: This is a comodel that implement the dynamic of SIR_switch: it will use the EBM when the density of population is big and ABM when the density of population is low. It demonstrate the capability of using dynamically the legacy models  
-* Tags: comodel
+* Description: This is a comodel that implement the dynamic of SIR_switch: it will use the EBM when the density of population is big and ABM when 
+* the density of population is low. It demonstrate the capability of using dynamically the legacy models.
+* SIR_ABM_coupling is the coupling that manipulates the elements inside SIR_ABM model and proposes the function would be used from outside. SIR_ABM is a simple example of SIR that use the agents to represent the spreading of disease..
+* SIR_EBM_coupling is the coupling that manipulates the elements inside SIR_EBM model and proposes the function would be used from outside. SIR_EBM is a simple example of ODE use into agents with the example of the SIR equation system.
+* Tags: comodel, math, equation
 */
 model Comodel_SIR_Switch
 
