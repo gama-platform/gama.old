@@ -591,8 +591,6 @@ public abstract class AbstractCamera implements ICamera {
 					case SWT.SHIFT:
 						setShiftPressed(true);
 						break;
-					default:
-						return true;
 					}
 					switch (e.character) {
 					case '+':

@@ -395,6 +395,14 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		final double env_height = data.getEnvHeight();
 		return env_width > env_height ? env_width : env_height;
 	}
+	
+	public double getEnvWidth() {
+		return data.getEnvWidth();
+	}
+	
+	public double getEnvHeight() {
+		return data.getEnvHeight();
+	}
 
 	public void drawScene(final GL2 gl) {
 		currentScene = sceneBuffer.getSceneToRender();
