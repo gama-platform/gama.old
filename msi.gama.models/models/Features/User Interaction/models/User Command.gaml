@@ -1,8 +1,8 @@
 /**
 * Name: User Command
 * Author: Patrick Taillandier
-* Description: Model which shows how to use the user commands in order to create agents in the display. The user has two possibilities :
-* 	create one agent, or create a number of agents, with the possibility to change their shape and a pink color. The user also has the possibility
+* Description: Model which shows how to use the user commands in order to create agents in the display. The user has two possibilities : 
+* 	create one agent, or create a number of agents, with the possibility to change their shape and a pink color. The user also has the possibility 
 * 	to change the color and the shapes of the agents.
 * Tags: gui
  */

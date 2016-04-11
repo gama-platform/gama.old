@@ -2,7 +2,7 @@
 * Name: Generate diffusion matrix with parameters
 * Author: Julien Mazars
 * Description: This model shows how to create a diffusion matrix by using the 4 parameters variation, proportion, radius and min-value. 
-*     Manipulate the parameters to see in real time the result. The number displayed in each cells are the ratio of the initial signal
+*     Manipulate the parameters to see in real time the result. The number displayed in each cells are the ratio of the initial signal 
 *     diffused at the end of a step.
 * Tags: diffusion, math, matrix
 */

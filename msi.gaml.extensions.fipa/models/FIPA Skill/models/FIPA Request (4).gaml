@@ -1,17 +1,17 @@
 /**
  * Name: FIPA Request (4)
  * Author:
- * Description: This model demontrates a usecase of the FIPA Request interaction protocol.
+ * Description: This model demontrates a usecase of the FIPA Request interaction protocol. 
  * (Please see http://www.fipa.org/specs/fipa00026/index.html for the detail description of this protocol).
  * 
  * 
  * The Initiator agent begins the 'fipa-request' conversation/intaction protocol by sending a 'request' 
  * message to the Participant agent with 'go sleeping' as content.
  * 
- * On receiving a 'request' message, the Participant agent replies with an 'inform' message.
+ * On receiving a 'request' message, the Participant agent replies with an 'inform' message. 
  * According to the specification of the FIPA Requestion interaction protocol, the next possible messages 
- * after receiving a 'request' message are either 'refuse' message or 'agree' message.
- * Hence replying with an 'inform' message upon receiving a 'request' message violates the protocol specification.
+ * after receiving a 'request' message are either 'refuse' message or 'agree' message. 
+ * Hence replying with an 'inform' message upon receiving a 'request' message violates the protocol specification. 
  * GAMA will hence raise a GamaRuntimeException. 
  * A conversation is automatically ended in case of GamaRuntimeException raised. Hence this conversation ends.
  * Tags: fipa

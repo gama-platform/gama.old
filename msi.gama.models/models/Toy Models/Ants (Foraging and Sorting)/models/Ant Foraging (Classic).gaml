@@ -1,8 +1,8 @@
 /**
 * Name: Ant Foraging (Classic)
 * Author: 
-* Description: Toy Model ant using the question of how ants search food and use pheromons to return to their
-* 	nest once they did find food. This model is considered as the classic one.
+* Description: Toy Model ant using the question of how ants search food and use pheromons to return to their 
+* nest once they did find food. This model is considered as the classic one.
 * Tags: gui, skill, grid, diffusion
 */
 model ants

@@ -2,13 +2,15 @@
 * Name:  Agents to Database in MySQL
 * Author: Truong Minh Thai
 * Description:   init: Select data from table vnm_adm2 (Created via QGis software)  and create  agents
- * 	    savetosql: Save data of agent into MySQL. 
- * 					transform= true because you need to transform geometry data from Absolute(GAMA) to Gis
- * 
- *  NOTE: You should have imported the database (spatial_DB.sql) into the MySQL server 
- *        in order that the model can run properly.
+* 
+* savetosql: Save data of agent into MySQL. 
+* 
+* transform= true because you need to transform geometry data from Absolute(GAMA) to Gis
+* 
+* NOTE: You should have imported the database (spatial_DB.sql) into the MySQL server 
+*  in order that the model can run properly.
 * Tags: database
-  */
+*/
 
 model agent2DB_MySQL 
   

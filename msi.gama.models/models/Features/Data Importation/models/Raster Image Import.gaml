@@ -1,9 +1,9 @@
 /**
 * Name: Raster File in a Grid of cells
 * Author: Maroussia Vavasseur and Benoit Gaudou
-* Description: Model which shows how to import a Raster file in GAMA and use it to initialize the color attributes of a grid of cells.
-* 	This model represents a grid with a cell, each cell has a color, and this color is used for animals (izards) to be placed on a cell
-* 	that verifies some conditions. The izards do not move once they have been placed. 
+* Description: Model which shows how to import a Raster file in GAMA and use it to initialize the color attributes of a grid of cells. 
+* This model represents a grid with a cell, each cell has a color, and this color is used for animals (izards) to be placed on a cell 
+* that verifies some conditions. The izards do not move once they have been placed. 
 * Tags:  load_file, gis, raster
 */
 

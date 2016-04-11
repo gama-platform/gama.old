@@ -1,8 +1,8 @@
 /**
 * Name: continuous_move
 * Author: Patrick Taillandier
-* Description: A 3D model which show how to represent an evacuation system with
-* 	obstacles, cohesion factor and velocity. The people are placed randomly and have
+* Description: A 3D model which show how to represent an evacuation system with 
+* 	obstacles, cohesion factor and velocity. The people are placed randomly and have 
 * 	to escape by going to a target point
 * Tags: 3d, shapefile, gis, agent_movement, skill
 */

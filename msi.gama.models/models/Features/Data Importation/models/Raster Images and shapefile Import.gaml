@@ -1,9 +1,9 @@
 /**
 * Name: Raster File and Shapefiles Import
 * Author: Maroussia Vavasseur and Benoit Gaudou
-* Description: Model which imports data from a raster file and two shapefiles to initilalize a grid and two species. The roaster file initialize a grid attribute for the cells
-*	and the shapefiles a river species just with the same shape, and the managementUnit species with a link between the columns of the shapefile and the attributes
-* 	of the species. 
+* Description: Model which imports data from a raster file and two shapefiles to initilalize a grid and two species. The roaster file initialize a grid attribute for the cells 
+* and the shapefiles a river species just with the same shape, and the managementUnit species with a link between the columns of the shapefile and the attributes 
+* of the species. 
 * Tags:  load_file, gis, shapefile, raster
 */
 

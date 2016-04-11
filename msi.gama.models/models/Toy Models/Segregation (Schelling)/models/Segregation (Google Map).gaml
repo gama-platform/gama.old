@@ -1,7 +1,7 @@
 /**
 * Name: segregationGoogleMap
 * Author: 
-* Description: A model showing the segregation of the people just by putting a similarity wanted parameter using agents
+* Description: A model showing the segregation of the people just by putting a similarity wanted parameter using agents 
 * 	to represent the individuals and a grid to discretize space. Use the colors of the image to know if it is a possible space or not
 * Tags: grid
 */

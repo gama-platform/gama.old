@@ -1,7 +1,7 @@
 /**
 * Name: segregationGIS
 * Author: 
-* Description: A model showing the segregation of the people just by putting a similarity wanted parameter using agents
+* Description: A model showing the segregation of the people just by putting a similarity wanted parameter using agents 
 * 	to represent the individuals and GIS file for the places
 * Tags: gis, shapefile
 */

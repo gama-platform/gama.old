@@ -1,7 +1,7 @@
 /**
 * Name: Prima 1
 * Author: 
-* Description: This model shows how to create agent and make them move randomly in the world.
+* Description: This model shows how to create agent and make them move randomly in the world. 
 * 	Some agents are infected, and others can gain the infection if they are in a certain range.
 * Tags: skill
 */

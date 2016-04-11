@@ -1,7 +1,7 @@
 /**
 * Name: Blend color in a cuve
 * Author: Julien Mazars
-* Description: This model is used to show how we can diffuse several variables in the same grid. At the cycle 0, 3 different pheromons are emited in 3 of the 4 corners of the cuve
+* Description: This model is used to show how we can diffuse several variables in the same grid. At the cycle 0, 3 different pheromons are emited in 3 of the 4 corners of the cuve 
 *     (each one associated to a color). Thanks to the diffusion mechanism, all the 3 colors will blend each other. The process is accelerated by using the facet "cycle_length". 
 *     The "avoid_mask" facet is used in order to have a constant sum of pheromon. 
 * Tags: diffusion, matrix, math, color, elevation

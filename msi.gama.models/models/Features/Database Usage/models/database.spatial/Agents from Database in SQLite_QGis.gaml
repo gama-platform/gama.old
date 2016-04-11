@@ -2,10 +2,11 @@
 * Name:  Agents from Database in SQLite QGIS
 * Author: Truong Minh Thai
 * Description:  This model loads data from vnm_adm2 that is created by QGis.
- * 	    In this case we do not need using AsBinary() to convert blob data to WKB format.  
- *      
- * 		In other case, if we load Geometry data that is created by using libspatialite library then we must use Asbinary()
- *      to convert geometry to WKB format (see SQLite_libspatialite model)
+* 
+ * In this case we do not need using AsBinary() to convert blob data to WKB format.  
+ * 
+ * In other case, if we load Geometry data that is created by using libspatialite library then we must use Asbinary() 
+ * to convert geometry to WKB format (see SQLite_libspatialite model)
 * Tags: database
   */
 

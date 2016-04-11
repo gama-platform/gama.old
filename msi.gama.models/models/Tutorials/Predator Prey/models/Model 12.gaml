@@ -2,7 +2,7 @@
 * Name: Image loading (raster data)
 * Author:
 * Description: 12th part of the tutorial: Predator Prey
-* Tags: file; raster
+* Tags: file, raster
 */
 
 model prey_predator

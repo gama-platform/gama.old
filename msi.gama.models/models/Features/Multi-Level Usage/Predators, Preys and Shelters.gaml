@@ -1,10 +1,10 @@
 /**
 * Name: Multi-Level Architecture with Preys and Predators
 * Author: 
-* Description: This model shows how to use multi-level architecture. In this model, prey and predators agents move randomly
-*	 in the environment. When a prey agent perceive a predator, it flees trying to go to the closest shelters while the predator
-* 	 agent chases it. The shelters capture the prey agents fleeing, changing them into prey_in_shelter species, that predator
-* 	can't chase during a certain time. They are released after that time in an invisible state so that they can wander in the 
+* Description: This model shows how to use multi-level architecture. In this model, prey and predators agents move randomly 
+*	 in the environment. When a prey agent perceive a predator, it flees trying to go to the closest shelters while the predator 
+* 	 agent chases it. The shelters capture the prey agents fleeing, changing them into prey_in_shelter species, that predator 
+* 	can't chase during a certain time. They are released after that time in an invisible state so that they can wander in the  
 * 	environment without being chase by the predator, but also, for a certain time.
 * Tags: multi_level, agent_movement
 */

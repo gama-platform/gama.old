@@ -1,7 +1,7 @@
 /**
 * Name: Anisotropic diffusion (Toroidal)
 * Author: Benoit Gaudou
-* Description: This model is used to show how to construct an anisotropic diffusion through a grid. The cell at the center of the grid emit a pheromon at each step, which is spread
+* Description: This model is used to show how to construct an anisotropic diffusion through a grid. The cell at the center of the grid emit a pheromon at each step, which is spread 
 *     through the grid thanks to the diffusion mechanism, using a particular matrix of diffusion, in a toroidal world.
 * Tags: diffusion, matrix, math, elevation
 */

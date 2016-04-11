@@ -1,8 +1,8 @@
 /**
 * Name: OSM file to Agents
 * Author:  Patrick Taillandier
-* Description: Model which shows how to import a OSM File in GAMA and use it to create Agents. In this model, a filter is done to take only into account the roads
-*        and the buildings contained in the file. 
+* Description: Model which shows how to import a OSM File in GAMA and use it to create Agents. In this model, a filter is done to take only into account the roads 
+* and the buildings contained in the file. 
 * Tags:  load_file, osm, gis
 */
 

@@ -1,7 +1,7 @@
 /**
 * Name: Contour Lines Import
 * Author: Patrick Taillandier
-* Description: Model which imports a shapefile of contour lines, build triangles from these contour lines, compute their elevation by using
+* Description: Model which imports a shapefile of contour lines, build triangles from these contour lines, compute their elevation by using 
 * 	the elevation attribute of the contour lines which had been linked to the elevation column of the shapefile. 
 * Tags:  load_file, gis, shapefile
 */

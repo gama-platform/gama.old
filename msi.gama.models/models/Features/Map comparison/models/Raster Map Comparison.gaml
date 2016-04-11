@@ -2,9 +2,12 @@
 * Name: Raster Map Comparison
 * Author: Patrick Taillandier
 * Description: This model shows how to use different comparators to know the accuracy of a prediction model. Four comparators are used :
-* 	kappa, comparing the map observed and the map simulation ; kappa simulation comparing the initial map, the map observed and the map simulation;
-* 	fuzzy kappa, comparing the map observed and the map simulation but being more permissive by using fuzzy logic;
-* 	fuzzy kappa simulation, comparing the map observed, the map simulation and the map initial but being more permissive by using fuzzy logic
+* 
+* - kappa, comparing the map observed and the map simulation ; kappa simulation comparing the initial map, the map observed and the map simulation;
+* 
+* - fuzzy kappa, comparing the map observed and the map simulation but being more permissive by using fuzzy logic;
+* 
+* - fuzzy kappa simulation, comparing the map observed, the map simulation and the map initial but being more permissive by using fuzzy logic
 * Tags: grid, comparison, raster, statistic
 */
 

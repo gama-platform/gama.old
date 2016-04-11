@@ -1,11 +1,11 @@
 /**
 * Name: FIPA Query (2)
 * Author:
-* Description: This model demontrates a usecase of the FIPA Query interaction protocol.
+* Description: This model demontrates a usecase of the FIPA Query interaction protocol. 
 * (Please see http://www.fipa.org/specs/fipa00027/SC00027H.html for the detail description of this protocol).
 * 
 * 
-* The Intiator agent begins the 'fipa-query' conversation/interaction protocol by sending a 'query'
+* The Intiator agent begins the 'fipa-query' conversation/interaction protocol by sending a 'query' 
 * message to the Participant agent with 'your name?' as content.
 * 
 * On receiving the 'query' message, the Participant agent replies with a 'refuse' message indicating that its name is a secret!

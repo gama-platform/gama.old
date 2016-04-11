@@ -1,7 +1,7 @@
 /**
 * Name: Ville 2
 * Author: 
-* Description: Creation of buildings and roads thanks to a shape file. The color of the building depends on the type of the building,
+* Description: Creation of buildings and roads thanks to a shape file. The color of the building depends on the type of the building, 
 * 	while the color of a house depend on its income. 
 * Tags: gui, shapefile
 */

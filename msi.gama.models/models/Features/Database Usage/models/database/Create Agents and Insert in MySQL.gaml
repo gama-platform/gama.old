@@ -1,11 +1,15 @@
 /**
 * Name:  create_agents_Insert_result_MySQL
 * Author: Benoit Gaudou
-* Description: This model illustrates the use of the MySQL DBMS to:
+* Description: This model illustrates the use of the MySQL DBMS to: 
+* 
  *     - create agents from a database
+ * 
  *     - store every cycle some results into a database
  * 
+ * 
  *  Note: this model could be used with any DBMS just by changing the PARAMS variable.
+ * 
  * 
  *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (meteo_DB here) AND IMPORTED THE FILE (../../includes/meteo_DB_dump.sql)
  *        IN ORDER THAT THE MODEL CAN RUN PROPERLY.

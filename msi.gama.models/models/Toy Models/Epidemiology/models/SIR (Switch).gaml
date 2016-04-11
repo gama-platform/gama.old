@@ -1,7 +1,7 @@
 /**
 * Name: SIR_switch
 * Author: tri and hqnghi 
-* Description: A model which show how to implement ODE system, IBM model, and to switch
+* Description: A model which show how to implement ODE system, IBM model, and to switch 
 * 	from one to another using a threshold. Another interesting point seen in this model is the 
 * 	the minimization of the execution time by reducing the number of agents to compute infections.
 * Tags: equation, math, grid

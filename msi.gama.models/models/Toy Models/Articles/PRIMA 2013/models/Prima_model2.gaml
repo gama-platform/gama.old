@@ -1,9 +1,9 @@
 /**
 * Name: Prima 2
 * Author: 
-* Description: This model shows how to create agent and make them move randomly in the world.
+* Description: This model shows how to create agent and make them move randomly in the world. 
 * 	Some agents are infected, and others can gain the infection if they are in a certain range. The 
-* 	people are now placed in buildings at the initial state. Those buildings are created thanks to
+* 	people are now placed in buildings at the initial state. Those buildings are created thanks to 
 * 	a shapefile. Roads are also created thanks to an other shapefile.
 * Tags: skill, shapefile
 */

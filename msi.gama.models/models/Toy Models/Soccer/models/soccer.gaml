@@ -2,8 +2,10 @@
 * Name: Soccer Game
 * Author: Julien
 * Description: This model shows how can we make an easy simulation of collective games, such as soccer. 
+* 
 * Each player have an offensive and a defensive position, and a behavior associated. Each player of the defensive team 
 * can either search to catch the ball or mark an other player (offensive player) according to his defensive position.
+* 
 * Each player of the offensive team can either run to its offensive place (when he does not have the ball), run with the balloon / 
 * pass the ball / try to score a goal (when he has the ball). By changing the different parameters, you can see the concequences 
 * in real time. 

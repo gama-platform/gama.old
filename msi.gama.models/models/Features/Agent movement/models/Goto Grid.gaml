@@ -1,7 +1,7 @@
 /**
 * Name:  Movement on a Grid of Cells
 * Author:  Patrick Taillandier
-* Description: Model to represent how the agents move from one point to a target agent on a grid of cells with obstacles, following the shortest path and coloring
+* Description: Model to represent how the agents move from one point to a target agent on a grid of cells with obstacles, following the shortest path and coloring 
 * 	in magenta the cells intersecting the path of an agent
 * Tags: grid, agent_movement, skill, obstacle, shortest_path
 */

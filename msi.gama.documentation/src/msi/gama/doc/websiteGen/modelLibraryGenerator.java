@@ -459,7 +459,7 @@ public class modelLibraryGenerator {
 				}
 			}
 			else {
-				System.out.println("WARNING : Impossible to get a name for the file "+gamlFile.getName());
+				System.out.println("WARNING : The model contained in the file "+gamlFile.getName()+" has not been created because impossible to read the name or the header.");
 			}
 		}
 	}
@@ -520,9 +520,6 @@ public class modelLibraryGenerator {
 			br.close();
 		}
 		br.close();
-		if (result == "") {
-			System.out.println("WARNING : Impossible to extract a header from the file "+file.getName());
-		}
 		return result;
 	}
 	

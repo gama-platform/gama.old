@@ -1,7 +1,7 @@
 /**
 * Name: sugarscape
 * Author: 
-* Description: A model with animal moving on a grid to find sugar. The animal agents
+* Description: A model with animal moving on a grid to find sugar. The animal agents 
 * 	have a life duration and die if it is reached or if they don't have anymore sugar.
 * Tags: grid
 */

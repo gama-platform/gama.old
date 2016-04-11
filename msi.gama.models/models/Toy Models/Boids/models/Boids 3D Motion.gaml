@@ -1,8 +1,8 @@
 /**
 * Name: Boids 3D Motion
 * Author: 
-* Description: This model shows the movement of boids following a goal, and creating
-* 	without their own volonty, a flock .  The goal agent and the boids will move within the
+* Description: This model shows the movement of boids following a goal, and creating 
+* 	without their own volonty, a flock .  The goal agent and the boids will move within the 
 * 	3D space.
 * Tags: gui, skill, 3d
 */

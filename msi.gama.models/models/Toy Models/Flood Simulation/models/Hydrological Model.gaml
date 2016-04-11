@@ -1,9 +1,9 @@
 /**
 * Name: Hydrological Model
 * Author: Patrick Taillandier
-* Description: A model showing how to represent a flooding system with dykes and buildings. It uses
-* 	a grid to discretize space, and has a 3D display. The water can flow from one cell to another considering
-* 	the height of the cells, and the water pressure. It is also possible to delete dyke by clicking on one of them
+* Description: A model showing how to represent a flooding system with dykes and buildings. It uses 
+* 	a grid to discretize space, and has a 3D display. The water can flow from one cell to another considering 
+* 	the height of the cells, and the water pressure. It is also possible to delete dyke by clicking on one of them 
 * 	in the display.
 * Tags: shapefile, gis, grid, 3d, gui, hydrology
 */
