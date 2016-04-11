@@ -1,5 +1,7 @@
 /**
- * This model demontrates a usecase of the FIPA Request interaction protocol.
+ * Name: FIPA Request (4)
+ * Author:
+ * Description: This model demontrates a usecase of the FIPA Request interaction protocol.
  * (Please see http://www.fipa.org/specs/fipa00026/index.html for the detail description of this protocol).
  * 
  * 
@@ -12,6 +14,7 @@
  * Hence replying with an 'inform' message upon receiving a 'request' message violates the protocol specification.
  * GAMA will hence raise a GamaRuntimeException. 
  * A conversation is automatically ended in case of GamaRuntimeException raised. Hence this conversation ends.
+ * Tags: fipa
  */
 model fipa_request_4
 

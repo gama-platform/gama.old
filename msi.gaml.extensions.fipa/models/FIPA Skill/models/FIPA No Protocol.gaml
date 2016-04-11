@@ -1,10 +1,13 @@
 /**
- * This model demonstrates a usecase of 'no-protocol' interaction protocol.
- * 
- * 'no-protocol' is a freestyle intecraction protocol in which the modeller
- * 		(1) can send whatever type of message (i.e., message performative) in the corresponding conversation
- * 		(2) is responsible for marking the end of the conversation by sending a message with 'end_conversation' performative. 
- */
+* Name: FIPA no protocol
+* Author:
+* Description: This model demonstrates a usecase of 'no-protocol' interaction protocol.
+* 
+* 'no-protocol' is a freestyle intecraction protocol in which the modeller
+* 		(1) can send whatever type of message (i.e., message performative) in the corresponding conversation
+* 		(2) is responsible for marking the end of the conversation by sending a message with 'end_conversation' performative. 
+* Tags: fipa
+*/
 model no_protocol_1
 
 global {

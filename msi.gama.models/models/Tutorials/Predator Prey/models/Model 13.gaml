@@ -1,5 +1,11 @@
+/**
+* Name: Exploration (batch)
+* Author:
+* Description: 13th part of the tutorial: Predator Prey
+* Tags: batch
+*/
+
 model prey_predator
-//Model 13 of the predator/prey tutorial
 
 
 global {

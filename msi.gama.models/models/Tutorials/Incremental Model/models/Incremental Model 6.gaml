@@ -1,7 +1,10 @@
 /**
- *  model6
- *  This model illustrates multi-level modeling
- */
+* Name: Multi-level
+* Author:
+* Description: 6th part of the tutorial : Incremental Model
+* Tags: multi_level
+*/
+
 model model6 
  
 global  {

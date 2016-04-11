@@ -1,5 +1,11 @@
+/**
+* Name: Dynamic of the vegetation (grid)
+* Author:
+* Description: Second part of the tutorial : Predator Prey
+* Tags: grid
+*/
+
 model prey_predator
-//Model 2 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

@@ -4,7 +4,7 @@
 * Description: From the reference model "bug.gaml" a spatial graph is created. 
 *  We create a species node that mirrors the species bug and then a spatial graph is creating 
 *  using as_distance_graph operator.
-* Tags: graph, mirror_species, 3d
+* Tags: graph, mirror, 3d
 */
 
 model SpatialGraph

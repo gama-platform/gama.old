@@ -1,8 +1,9 @@
 /**
- *  simple_ODE_SIR.gaml
- *  Author: hqnghi
- *  Description: A simple example of ODE use into agents with the example of the SIR equation system.
- */
+* Name: SIR (Simple)
+* Author: hqnghi
+* Description: A simple example of ODE use into agents with the example of the SIR equation system.
+* Tags: equation, math
+*/
 
 model simple_ODE_SIR
 

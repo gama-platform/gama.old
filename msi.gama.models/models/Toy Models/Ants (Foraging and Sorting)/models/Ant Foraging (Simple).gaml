@@ -3,7 +3,7 @@
 * Author: 
 * Description: Toy Model ant using the question of how ants search food and use pheromons to return to their
 * 	nest once they did find food. This model is the simple one.
-* Tags: gui, skill, grid, batch, diffusion, user interaction
+* Tags: gui, skill, grid, batch, diffusion
 */
 model ants
 

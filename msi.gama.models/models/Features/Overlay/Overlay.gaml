@@ -2,7 +2,7 @@
 * Name: Overlay
 * Author: Alexis Drogoul and Patrick Taillandier
 * Description: Model to show how to use overlay layers in a display
-* Tags: overlay
+* Tags: overlay, display, graphic
 */
 
 model Overlay

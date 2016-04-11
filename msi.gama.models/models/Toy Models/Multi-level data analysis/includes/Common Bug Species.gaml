@@ -1,10 +1,3 @@
-/**
- *  Name : Common Bug Species
- *  Author : Arnaud Grignard
- *  Description: This model is a reference model creating bug and their attribute (their class)
- *  Tags : skill
- */
- 
 model Bug
 
 global {

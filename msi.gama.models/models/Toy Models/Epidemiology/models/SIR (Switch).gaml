@@ -4,7 +4,7 @@
 * Description: A model which show how to implement ODE system, IBM model, and to switch
 * 	from one to another using a threshold. Another interesting point seen in this model is the 
 * 	the minimization of the execution time by reducing the number of agents to compute infections.
-* Tags: ordinary_differential_equation, grid
+* Tags: equation, math, grid
 */
 model SIR_switch
 

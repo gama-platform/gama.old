@@ -4,7 +4,7 @@
 * Description: This model illustrates the possibility to split an equation system into several agents. 
 *       All the equations are solve together thanks to the `simultaneously` facet of the equation statement. 
 *        We also compare the split model with the simple SIR one. 
-* Tags: ordinary_differential_equation
+* Tags: equation, math
 */
 
 model SIR_split_in_agents

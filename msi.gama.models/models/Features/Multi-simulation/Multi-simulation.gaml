@@ -2,7 +2,7 @@
 * Name: Multi Simulation
 * Author: Patrick Taillandier
 * Description: Model to show how to use multi-simulation, i.e. to run several times the same GUI experiment with potentially different parameter sets 
-* Tags: multi-simulation
+* Tags: multi_simulation
 */
 
 model multi_simulation

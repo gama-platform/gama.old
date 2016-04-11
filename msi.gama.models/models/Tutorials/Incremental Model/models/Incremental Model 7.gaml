@@ -1,7 +1,10 @@
 /**
- *  model7
- *  This model illustrates how to use differential equations
- */
+* Name: Differential Equation
+* Author:
+* Description: 7th part of the tutorial : Incremental Model
+* Tags: equation
+*/
+
 model model7 
 global  {
 	int nb_people <- 500;

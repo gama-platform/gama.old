@@ -1,9 +1,11 @@
 /**
- * This model demonstrates a use-case of the FIPA Contract Net interaction protocol. 
- * 		
- * One initiator sends a 'cfp' message to other participants.
- * All participants reply with a 'refuse' messages which end the interaction protocol.
- */
+* Name: FIPA Contract Net
+* Author:
+* Description: This model demonstrates a use-case of the FIPA Contract Net interaction protocol.
+* One initiator sends a 'cfp' message to other participants.
+* All participants reply with a 'refuse' messages which end the interaction protocol.
+* Tags: fipa
+*/
 
 model cfp_cfp_1
 

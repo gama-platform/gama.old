@@ -1,9 +1,3 @@
-/**
- *  Name : segregation_base
- *  Author : 
- *  Description: A reference model showing the segregation of the people just by putting a similarity wanted parameter
- *  Tags : 
- */
 model segregation_base
 
 global {

@@ -1,3 +1,10 @@
+/**
+* Name: Definition of people agents
+* Author:
+* Description: second part of the tutorial: Road Traffic
+* Tags: gis
+*/
+
 model tutorial_gis_city_traffic
 
 global {

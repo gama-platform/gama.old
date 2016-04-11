@@ -1,5 +1,11 @@
+/**
+* Name: Adding of a stopping condition
+* Author:
+* Description: 9th part of the tutorial: Predator Prey
+* Tags:
+*/
+
 model prey_predator
-//Model 9 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

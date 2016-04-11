@@ -1,5 +1,11 @@
+/**
+* Name: Complex behaviors for the preys and predators
+* Author:
+* Description: 8th part of the tutorial: Predator Prey
+* Tags: 
+*/
+
 model prey_predator
-//Model 8 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

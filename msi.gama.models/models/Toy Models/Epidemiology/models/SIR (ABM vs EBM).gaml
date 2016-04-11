@@ -4,7 +4,7 @@
 * Description: Comparison between an agent-based and an equation-based model of the SIR model.
 * 	The ABM use a grid to place the agents, and each cell will be the location of an agent, while the EBM
 * 	is only using a ODE System and no geographical representation.
-* Tags: ordinary_differential_equation, grid
+* Tags: equation, math, grid
 */
 model comparison_ABM_EBM_SIR
 

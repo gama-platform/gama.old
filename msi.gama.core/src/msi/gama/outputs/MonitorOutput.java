@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
  *
  * @author drogoul
  */
-@symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false, concept = { IConcept.INSPECTOR })
+@symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false, concept = { IConcept.MONITOR })
 @facets(value = {
 		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the monitor")),
 		@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc(value = "Allows to refresh the monitor every n time steps (default is 1)", deprecated = "Use refresh: every(n) instead")),

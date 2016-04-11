@@ -2,7 +2,7 @@
 * Name: simple_ODE_SIR_Predefined
 * Author: hqnghi 
 * Description: A simple example of ODE use into agents with the example of the SIR equation system.
-* Tags: ordinary_differential_equation
+* Tags: math, equation
 */
  
 model simple_ODE_SIR_Predefined

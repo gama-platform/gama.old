@@ -1,5 +1,11 @@
+/**
+* Name: Writing files
+* Author:
+* Description: 11th part of the tutorial: Predator Prey
+* Tags: file
+*/
+
 model prey_predator
-//Model 11 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

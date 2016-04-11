@@ -1,3 +1,10 @@
+/**
+* Name: Definition of a chart display
+* Author:
+* Description: 6th part of the tutorial: Road Traffic
+* Tags: chart
+*/
+
 model tutorial_gis_city_traffic
 
 global {

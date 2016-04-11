@@ -1,5 +1,11 @@
+/**
+* Name: Basic model
+* Author: Arnaud Grignard
+* Description: First part of the tutorial : Tuto3D
+* Tags:
+*/
+
 model Tuto3D
-//Model 1 of the 3D tutorial   
 
 global {
   int nb_cells <-100;	
