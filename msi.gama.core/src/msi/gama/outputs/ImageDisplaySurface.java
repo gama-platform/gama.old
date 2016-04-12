@@ -170,6 +170,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		buffImage = ImageUtils.createCompatibleImage(width, height);
 		g2 = (Graphics2D) buffImage.getGraphics();
 		displayGraphics = new AWTDisplayGraphics(this, (Graphics2D) buffImage.getGraphics());
+		( (AWTDisplayGraphics) displayGraphics).setGraphics2D((Graphics2D)  buffImage.getGraphics());
+		((AWTDisplayGraphics) displayGraphics).setUntranslatedGraphics2D((Graphics2D)  buffImage.getGraphics());
 	}
 
 	private void paint() {
