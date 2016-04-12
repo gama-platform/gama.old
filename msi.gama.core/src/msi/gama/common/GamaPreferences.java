@@ -484,6 +484,9 @@ public class GamaPreferences {
 	 */
 	public static final Entry<Boolean> CORE_SHOW_PAGE = create("core.show_page", "Display Welcome page at startup",
 			true, IType.BOOL).in(UI).group("Startup");
+
+	public static final Entry<Boolean> CORE_SHOW_MAXIMIZED = create("core.show_maximized", "Maximize GAMA windows at startup",
+			true, IType.BOOL).in(UI).group("Startup");
 	/**
 	 * Runtime
 	 */
