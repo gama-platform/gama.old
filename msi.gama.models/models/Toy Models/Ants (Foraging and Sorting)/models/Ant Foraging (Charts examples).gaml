@@ -272,8 +272,8 @@ experiment Ant type: gui {
 	
 	}
 	
-	//Experiment with only two display : the grid and the ants, and a chart
-	experiment AntOneDisp type: gui {
+//Experiment with only two display : the grid and the ants, and a chart
+experiment AntOneDisp type: gui {
 	parameter 'Number of ants:' var: ants_number category: 'Model' ;
 	parameter 'Evaporation of the signal unit/cycle):' var: evaporation_per_cycle category: 'Model' ;
 	parameter 'Rate of diffusion of the signal (%/cycle):' var: diffusion_rate category: 'Model' ;
@@ -304,7 +304,6 @@ experiment Ant type: gui {
 				}
 			add nl to:nbantsbydist;
 			}
-//			add length((list(world.ant) collect (each.next_place distance_to each.location)) where (each=x)) to:nbants;
 		}
 		write("nbants"+nbants);
 		write("nbantsbydist"+nbantsbydist);
