@@ -300,7 +300,7 @@ public class ExperimentJob implements IExperimentJob{
 		String fileFullName = Globals.IMAGES_PATH + "/" + fileName;
 		if (outputPath != "" && outputPath != null) {
 			// a specific output path has been specified with the "output_path" keyword in the xml
-			fileFullName = outputPath;
+			fileFullName = outputPath + "-" + step + ".png";
 		}
 		try {
 			ImageIO.write(img, "png", new File(fileFullName));
