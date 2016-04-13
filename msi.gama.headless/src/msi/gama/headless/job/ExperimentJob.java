@@ -57,11 +57,13 @@ public class ExperimentJob implements IExperimentJob{
 		OutputType type;
 		Object value;
 		long step;
+		String path;
 
-		public ListenedVariable(final String name, final int frameRate, final OutputType type) {
+		public ListenedVariable(final String name, final int frameRate, final OutputType type, final String outputPath) {
 			this.name = name;
 			this.frameRate = frameRate;
 			this.type = type;
+			this.path = outputPath;
 		}
 
 		public String getName() {
@@ -79,6 +81,10 @@ public class ExperimentJob implements IExperimentJob{
 
 		public OutputType getType() {
 			return type;
+		}
+		
+		public String getPath() {
+			return path;
 		}
 	}
 
@@ -192,7 +198,7 @@ public class ExperimentJob implements IExperimentJob{
 		for ( int i = 0; i < outputs.size(); i++ ) {
 			Output temp = outputs.get(i);
 			this.listenedVariables[i] =
-				new ListenedVariable(temp.getName(), temp.getFrameRate(), simulator.getTypeOf(temp.getName()));
+				new ListenedVariable(temp.getName(), temp.getFrameRate(), simulator.getTypeOf(temp.getName()), temp.getOutputPath());
 		}
 
 	}
@@ -260,7 +266,7 @@ public class ExperimentJob implements IExperimentJob{
 				}
 				else if(out.getValue() instanceof BufferedImage)
 				{
-					v.setValue(writeImageInFile((BufferedImage)out.getValue(), v.getName()),step);
+					v.setValue(writeImageInFile((BufferedImage)out.getValue(), v.getName(), v.getPath()),step);
 				}
 				else
 				{
@@ -289,9 +295,13 @@ public class ExperimentJob implements IExperimentJob{
 		return step;
 	}
 	
-	private Display2D writeImageInFile(final BufferedImage img, final String name) {
+	private Display2D writeImageInFile(final BufferedImage img, final String name, final String outputPath) {
 		String fileName = name + this.getExperimentID() + "-" + step + ".png";
 		String fileFullName = Globals.IMAGES_PATH + "/" + fileName;
+		if (outputPath != "" && outputPath != null) {
+			// a specific output path has been specified with the "output_path" keyword in the xml
+			fileFullName = outputPath;
+		}
 		try {
 			ImageIO.write(img, "png", new File(fileFullName));
 		} catch (IOException e) {

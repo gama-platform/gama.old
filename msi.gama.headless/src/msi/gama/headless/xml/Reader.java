@@ -63,8 +63,9 @@ public class Reader {
 	private Output readOutput(final Element e) {
 		String name = e.getAttribute(XmlTAG.NAME_TAG);
 		String id = e.getAttribute(XmlTAG.ID_TAG);
+		String path = e.getAttribute(XmlTAG.OUTPUT_PATH);
 		int framerate = Integer.valueOf(e.getAttribute(XmlTAG.FRAMERATE_TAG));;
-		return new Output(name, framerate, id);
+		return new Output(name, framerate, id, path);
 	}
 
 	private void readParameter(final ExperimentJob s, final Element docEle) {
