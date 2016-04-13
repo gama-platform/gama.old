@@ -31,7 +31,9 @@ import msi.gaml.types.IType;
 		@facet(name = EmotionalContagion.RECEPTIVITY, type = IType.FLOAT, optional = true, doc = @doc("The receptivity value of the current agent (between 0 and 1)")) },
 	omissible = IKeyword.NAME)
 @doc(value = "enables to make conscious or unconscious emotional contagion", examples = {
-		@example("") })
+		@example("emotional_contagion emotion_detected:fearConfirmed;"),
+		@example("emotional_contagion emotion_detected:fear emotion_created:fearConfirmed;"),
+		@example("emotional_contagion emotion_detected:fear emotion_created:fearConfirmed charisma: 0.5 receptivity: 0.5;")})
 
 
 public class EmotionalContagion extends AbstractStatement {

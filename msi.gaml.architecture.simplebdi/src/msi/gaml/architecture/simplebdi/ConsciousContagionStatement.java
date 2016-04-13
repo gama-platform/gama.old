@@ -29,8 +29,9 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to get the emotion only with a certain condition")),
 		@facet(name = ConsciousContagionStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("The threshold value to make the contagion")),
 		@facet(name = ConsciousContagionStatement.RECEPTIVITY, type = IType.FLOAT, optional = true, doc = @doc("The receptivity value of the current agent (between 0 and 1)")) }, omissible = IKeyword.NAME)
-@doc(value = "enables to directly add a belief from the variable of a perceived specie.", examples = {
-		@example("focus var:speed /*where speed is a variable from a species that is being perceived*/ agent: myself") })
+@doc(value = "enables to directly add an emotion of a perceived specie if the perceived agent ges a patricular emotion.", examples = {
+		@example("conscious_contagion emotion_detected:fear emotion_created:fearConfirmed;"),
+		@example("conscious_contagion emotion_detected:fear emotion_created:fearConfirmed charisma: 0.5 receptivity: 0.5;")})
 
 public class ConsciousContagionStatement extends AbstractStatement {
 
