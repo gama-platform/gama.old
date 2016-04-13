@@ -301,6 +301,9 @@ public class ExperimentJob implements IExperimentJob{
 		if (outputPath != "" && outputPath != null) {
 			// a specific output path has been specified with the "output_path" keyword in the xml
 			fileFullName = outputPath + "-" + step + ".png";
+			// check if the folder exists, create a new one if it does not
+			File tmp = new File(fileFullName);
+			tmp.getParentFile().mkdirs();
 		}
 		try {
 			ImageIO.write(img, "png", new File(fileFullName));
@@ -319,7 +322,7 @@ public class ExperimentJob implements IExperimentJob{
 	public long getSeed() {
 		return this.seed;
 	}
-	
+
 	public Element asXMLDocument(Document doc)
 	{
 		Element simulation = doc.createElement(XmlTAG.SIMULATION_TAG);
