@@ -48,7 +48,7 @@ public class LayeredDisplayData {
 	 * Colors
 	 */
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
-	private Color ambientColor = new GamaColor(40, 40, 40, 255);
+	private Color ambientColor = new GamaColor(40, 40, 40, 255); // 40 because it is the value with which the colors are displayed as for java2D display.
 	private Color diffuseColor = new GamaColor(125, 125, 125, 255);
 	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	/**
