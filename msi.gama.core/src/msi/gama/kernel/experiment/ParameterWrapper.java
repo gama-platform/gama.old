@@ -12,13 +12,14 @@
 package msi.gama.kernel.experiment;
 
 import java.util.List;
+
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 
 /**
- * Class ParameterWrapper. Wraps entirely another parameter, allowing to redefine some of its methods in anonymous
- * subclasses
+ * Class ParameterWrapper. Wraps entirely another parameter, allowing to
+ * redefine some of its methods in anonymous subclasses
  * 
  * @author drogoul
  * @since 2 sept. 2013
@@ -48,8 +49,8 @@ public abstract class ParameterWrapper implements IParameter {
 	}
 
 	@Override
-	public String getUnitLabel() {
-		return wrapped.getUnitLabel();
+	public String getUnitLabel(final IScope scope) {
+		return wrapped.getUnitLabel(scope);
 	}
 
 	@Override
@@ -94,18 +95,18 @@ public abstract class ParameterWrapper implements IParameter {
 	}
 
 	@Override
-	public Number getMinValue() {
-		return wrapped.getMinValue();
+	public Number getMinValue(final IScope scope) {
+		return wrapped.getMinValue(scope);
 	}
 
 	@Override
-	public Number getMaxValue() {
-		return wrapped.getMaxValue();
+	public Number getMaxValue(final IScope scope) {
+		return wrapped.getMaxValue(scope);
 	}
 
 	@Override
-	public List getAmongValue() {
-		return wrapped.getAmongValue();
+	public List getAmongValue(final IScope scope) {
+		return wrapped.getAmongValue(scope);
 	}
 
 	@Override
@@ -114,8 +115,8 @@ public abstract class ParameterWrapper implements IParameter {
 	}
 
 	@Override
-	public Number getStepValue() {
-		return wrapped.getStepValue();
+	public Number getStepValue(final IScope scope) {
+		return wrapped.getStepValue(scope);
 	}
 
 	@Override

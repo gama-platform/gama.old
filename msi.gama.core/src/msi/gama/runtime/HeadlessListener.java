@@ -12,17 +12,28 @@
 package msi.gama.runtime;
 
 import java.awt.Color;
-import java.util.*;
-import java.util.logging.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 import org.eclipse.core.runtime.CoreException;
-import msi.gama.common.interfaces.*;
+
+import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IEditorFactory;
+import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.util.AbstractGui;
-import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.*;
+import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -36,9 +47,9 @@ public class HeadlessListener extends AbstractGui {
 
 	static {
 
-		if ( GAMA.isInHeadLessMode() ) {
+		if (GAMA.isInHeadLessMode()) {
 
-			for ( Handler h : LOGGER.getHandlers() ) {
+			for (final Handler h : LOGGER.getHandlers()) {
 				h.setLevel(Level.ALL);
 			}
 			LOGGER.setLevel(Level.ALL);
@@ -53,16 +64,18 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
-		final Map<String, IType> types) {
+	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
+			final Map<String, Object> initialValues, final Map<String, IType> types) {
 		return null;
 	}
 
 	@Override
-	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {}
+	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {
+	}
 
 	@Override
-	public void closeDialogs() {}
+	public void closeDialogs() {
+	}
 
 	@Override
 	public IAgent getHighlightedAgent() {
@@ -70,10 +83,12 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void setHighlightedAgent(final IAgent a) {}
+	public void setHighlightedAgent(final IAgent a) {
+	}
 
 	@Override
-	public void setStatus(final String error, final int code) {}
+	public void setStatus(final String error, final int code) {
+	}
 
 	@Override
 	public void run(final Runnable block) {
@@ -110,7 +125,8 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void showParameterView(final IExperimentPlan exp) {}
+	public void showParameterView(final IExperimentPlan exp) {
+	}
 
 	@Override
 	public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
@@ -155,13 +171,16 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void prepareForExperiment(final IExperimentPlan exp) {}
+	public void prepareForExperiment(final IExperimentPlan exp) {
+	}
 
 	@Override
-	public void showConsoleView() {}
+	public void showConsoleView() {
+	}
 
 	@Override
-	public void setWorkbenchWindowTitle(final String string) {}
+	public void setWorkbenchWindowTitle(final String string) {
+	}
 
 	//
 	// @Override
@@ -188,7 +207,8 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void togglePerspective(final boolean immediately) {}
+	public void togglePerspective(final boolean immediately) {
+	}
 
 	@Override
 	public boolean openSimulationPerspective(final boolean immediately) {
@@ -202,40 +222,48 @@ public class HeadlessListener extends AbstractGui {
 
 		IDisplaySurface surface = null;
 		final IDisplayCreator creator = DISPLAYS.get("image");
-		if ( creator != null ) {
+		if (creator != null) {
 			surface = creator.create(output);
 			surface.outputReloaded();
 		} else {
 			return new NullDisplaySurface();
-			// throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", scope);
+			// throw GamaRuntimeException.error("Display " + keyword + " is not
+			// defined anywhere.", scope);
 		}
 		return surface;
 	}
 
 	@Override
-	public void editModel(final Object eObject) {}
+	public void editModel(final Object eObject) {
+	}
 
 	@Override
-	public void updateParameterView(final IExperimentPlan exp) {}
+	public void updateParameterView(final IExperimentPlan exp) {
+	}
 
 	//
 	// @Override
 	// public void cycleDisplayViews(final Set<String> names) {}
 
 	@Override
-	public void setSelectedAgent(final IAgent a) {}
+	public void setSelectedAgent(final IAgent a) {
+	}
 
 	@Override
-	public void cleanAfterExperiment(final IExperimentPlan exp) {}
+	public void cleanAfterExperiment(final IExperimentPlan exp) {
+	}
 
 	@Override
-	public void prepareForSimulation(final SimulationAgent agent) {}
+	public void prepareForSimulation(final SimulationAgent agent) {
+	}
 
 	@Override
-	public void cleanAfterSimulation() {}
+	public void cleanAfterSimulation() {
+	}
 
 	@Override
-	public void waitForViewsToBeInitialized() {}
+	public void waitForViewsToBeInitialized() {
+	}
 
 	@Override
 	public void debug(final Exception e) {
@@ -243,18 +271,23 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void runModel(final Object object, final String exp) throws CoreException {}
+	public void runModel(final Object object, final String exp) throws CoreException {
+	}
 
 	/**
 	 * Method updateSpeedDisplay()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
 	 */
 	@Override
-	public void updateSpeedDisplay(final Double d, final boolean notify) {}
+	public void updateSpeedDisplay(final Double d, final boolean notify) {
+	}
 
 	/**
 	 * Method showWebEditor()
-	 * @see msi.gama.common.interfaces.IGui#showWebEditor(java.lang.String, java.lang.String)
+	 * 
+	 * @see msi.gama.common.interfaces.IGui#showWebEditor(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
 	public Object showWebEditor(final String url, final String html) {
@@ -263,27 +296,34 @@ public class HeadlessListener extends AbstractGui {
 
 	/**
 	 * Method beginSubStatus()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#beginSubStatus(java.lang.String)
 	 */
 	@Override
-	public void beginSubStatus(final String name) {}
+	public void beginSubStatus(final String name) {
+	}
 
 	/**
 	 * Method endSubStatus()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#endSubStatus(java.lang.String)
 	 */
 	@Override
-	public void endSubStatus(final String name) {}
+	public void endSubStatus(final String name) {
+	}
 
 	/**
 	 * Method setSubStatusCompletion()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#setSubStatusCompletion(double)
 	 */
 	@Override
-	public void setSubStatusCompletion(final double status) {}
+	public void setSubStatusCompletion(final double status) {
+	}
 
 	/**
 	 * Method getName()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#getName()
 	 */
 	@Override
@@ -293,7 +333,9 @@ public class HeadlessListener extends AbstractGui {
 
 	/**
 	 * Method setStatus()
-	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String, msi.gama.util.GamaColor)
+	 * 
+	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String,
+	 *      msi.gama.util.GamaColor)
 	 */
 	@Override
 	public void setStatusInternal(final String msg, final GamaColor color) {
@@ -302,13 +344,16 @@ public class HeadlessListener extends AbstractGui {
 
 	/**
 	 * Method resumeStatus()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#resumeStatus()
 	 */
 	@Override
-	public void resumeStatus() {}
+	public void resumeStatus() {
+	}
 
 	/**
 	 * Method findView()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#findView(msi.gama.outputs.IDisplayOutput)
 	 */
 	@Override
@@ -318,6 +363,7 @@ public class HeadlessListener extends AbstractGui {
 
 	/**
 	 * Method getMetaDataProvider()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#getMetaDataProvider()
 	 */
 	@Override
@@ -327,20 +373,25 @@ public class HeadlessListener extends AbstractGui {
 
 	/**
 	 * Method wipeExperiments()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#wipeExperiments()
 	 */
 	@Override
-	public void wipeExperiments() {}
+	public void wipeExperiments() {
+	}
 
 	/**
 	 * Method closeSimulationViews()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#closeSimulationViews(boolean)
 	 */
 	@Override
-	public void closeSimulationViews(final boolean andOpenModelingPerspective, final boolean immediately) {}
+	public void closeSimulationViews(final boolean andOpenModelingPerspective, final boolean immediately) {
+	}
 
 	/**
 	 * Method getDisplayDescriptionFor()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#getDisplayDescriptionFor(java.lang.String)
 	 */
 	@Override
@@ -350,6 +401,7 @@ public class HeadlessListener extends AbstractGui {
 
 	/**
 	 * Method getFrontmostSimulationState()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#getFrontmostSimulationState()
 	 */
 	@Override
@@ -359,35 +411,46 @@ public class HeadlessListener extends AbstractGui {
 
 	/**
 	 * Method updateSimulationState()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#updateSimulationState(java.lang.String)
 	 */
 	@Override
-	public void updateSimulationState(final String state) {}
+	public void updateSimulationState(final String state) {
+	}
 
 	/**
 	 * Method updateSimulationState()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#updateSimulationState()
 	 */
 	@Override
-	public void updateSimulationState() {}
+	public void updateSimulationState() {
+	}
 
 	/**
 	 * Method runModel()
-	 * @see msi.gama.common.interfaces.IGui#runModel(msi.gama.kernel.model.IModel, java.lang.String)
+	 * 
+	 * @see msi.gama.common.interfaces.IGui#runModel(msi.gama.kernel.model.IModel,
+	 *      java.lang.String)
 	 */
 	@Override
-	public void runModel(final IModel object, final String exp) {}
+	public void runModel(final IModel object, final String exp) {
+	}
 
 	/**
 	 * Method eraseConsole()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#eraseConsole(boolean)
 	 */
 	@Override
-	public void eraseConsole(final boolean b) {}
+	public void eraseConsole(final boolean b) {
+	}
 
 	/**
 	 * Method debugConsole()
-	 * @see msi.gama.common.interfaces.IGui#debugConsole(int, java.lang.String, msi.gama.metamodel.agent.IMacroAgent, msi.gama.util.GamaColor)
+	 * 
+	 * @see msi.gama.common.interfaces.IGui#debugConsole(int, java.lang.String,
+	 *      msi.gama.metamodel.agent.IMacroAgent, msi.gama.util.GamaColor)
 	 */
 	@Override
 	public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
@@ -396,7 +459,9 @@ public class HeadlessListener extends AbstractGui {
 
 	/**
 	 * Method informConsole()
-	 * @see msi.gama.common.interfaces.IGui#informConsole(java.lang.String, msi.gama.metamodel.agent.IMacroAgent, msi.gama.util.GamaColor)
+	 * 
+	 * @see msi.gama.common.interfaces.IGui#informConsole(java.lang.String,
+	 *      msi.gama.metamodel.agent.IMacroAgent, msi.gama.util.GamaColor)
 	 */
 	@Override
 	public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
@@ -405,6 +470,7 @@ public class HeadlessListener extends AbstractGui {
 
 	/**
 	 * Method getColorForSimulationNumber()
+	 * 
 	 * @see msi.gama.common.interfaces.IGui#getColorForSimulationNumber(int)
 	 */
 	@Override
@@ -415,7 +481,8 @@ public class HeadlessListener extends AbstractGui {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.common.interfaces.IGui#setStatusInternal(java.lang.String, msi.gama.util.GamaColor, java.lang.String)
+	 * @see msi.gama.common.interfaces.IGui#setStatusInternal(java.lang.String,
+	 * msi.gama.util.GamaColor, java.lang.String)
 	 */
 	@Override
 	public void setStatusInternal(final String msg, final GamaColor color, final String icon) {
@@ -425,7 +492,8 @@ public class HeadlessListener extends AbstractGui {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String, java.lang.String)
+	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	public void setStatus(final String msg, final String icon) {
@@ -435,15 +503,18 @@ public class HeadlessListener extends AbstractGui {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.common.interfaces.IGui#registerView(java.lang.String, java.lang.String, java.lang.String)
+	 * @see msi.gama.common.interfaces.IGui#registerView(java.lang.String,
+	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void registerView(final String modelName, final String expeName, final String name) {}
+	public void registerView(final String modelName, final String expeName, final String name) {
+	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.gama.common.interfaces.IGui#getViews(java.lang.String, java.lang.String)
+	 * @see msi.gama.common.interfaces.IGui#getViews(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	public Set<String> getViews(final String modelName, final String expeName) {

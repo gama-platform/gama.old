@@ -11,23 +11,36 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.gui.swt.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.interfaces.IParameterEditor;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.dialogs.AbstractDetailsDialog;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
-import msi.gaml.statements.*;
+import msi.gaml.statements.IStatement;
+import msi.gaml.statements.UserCommandStatement;
 
 /**
  * The class EditorsDialog.
@@ -96,7 +109,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 
 	@Override
 	protected Control createContents(final Composite parent) {
-		Composite composite = (Composite) super.createContents(parent);
+		final Composite composite = (Composite) super.createContents(parent);
 		if ( previous != null && previous.name.equals(title) && previous.toggled ) {
 			detailsArea = createDetailsArea(composite);
 		}
@@ -115,8 +128,8 @@ public class UserControlDialog extends AbstractDetailsDialog {
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
-		GridLayout layout = (GridLayout) composite.getLayout();
+		final Composite composite = (Composite) super.createDialogArea(parent);
+		final GridLayout layout = (GridLayout) composite.getLayout();
 		layout.numColumns = 3;
 		// Label text = new Label(composite, SWT.None);
 		// text.setBackground(SwtGui.COLOR_OK);
@@ -130,13 +143,13 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		// sep.setLayoutData(data);
 		for ( final IStatement c : userCommands ) {
 			if ( c instanceof UserCommandStatement ) {
-				List<UserInputStatement> inputs = ((UserCommandStatement) c).getInputs();
-				int nbLines = inputs.size() > 1 ? inputs.size() : 1;
-				int nbCol = inputs.size() > 0 ? 1 : 3;
-				Button b = new Button(composite, SWT.PUSH);
+				final List<UserInputStatement> inputs = ((UserCommandStatement) c).getInputs();
+				final int nbLines = inputs.size() > 1 ? inputs.size() : 1;
+				final int nbCol = inputs.size() > 0 ? 1 : 3;
+				final Button b = new Button(composite, SWT.PUSH);
 				b.setText(c.getName());
 				b.setEnabled(((UserCommandStatement) c).isEnabled(scope));
-				GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, true, nbCol, nbLines);
+				final GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, true, nbCol, nbLines);
 				b.setLayoutData(gd);
 				b.addSelectionListener(new SelectionAdapter() {
 
@@ -150,7 +163,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 				for ( final UserInputStatement i : inputs ) {
 
 					scope.addVarWithValue(i.getTempVarName(), i.value(scope));
-					EditorFactory.create(composite, i, new EditorListener() {
+					EditorFactory.create(scope, composite, i, new EditorListener() {
 
 						@Override
 						public void valueModified(final Object newValue) throws GamaRuntimeException {
@@ -161,8 +174,8 @@ public class UserControlDialog extends AbstractDetailsDialog {
 					}, false);
 				}
 
-				Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-				GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+				final Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+				final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 				sep.setLayoutData(data);
 			}
 		}
@@ -222,19 +235,19 @@ public class UserControlDialog extends AbstractDetailsDialog {
 
 	@Override
 	protected Control createDetailsArea(final Composite parent) {
-		Composite compo = new Composite(parent, SWT.BORDER | SWT.SHADOW_IN);
+		final Composite compo = new Composite(parent, SWT.BORDER | SWT.SHADOW_IN);
 		compo.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-		GridLayout layout = new GridLayout(2, false);
+		final GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 0;
 		compo.setLayout(layout);
-		IAgent agent = scope.getAgentScope();
-		AgentAttributesEditorsList editors = new AgentAttributesEditorsList();
+		final IAgent agent = scope.getAgentScope();
+		final AgentAttributesEditorsList editors = new AgentAttributesEditorsList();
 		editors.add(new ArrayList<IParameter>(agent.getSpecies().getVars()), agent);
-		Map<String, IParameterEditor> parameters = editors.getCategories().get(agent);
+		final Map<String, IParameterEditor> parameters = editors.getCategories().get(agent);
 		if ( parameters != null ) {
-			List<AbstractEditor> list = new ArrayList(parameters.values());
+			final List<AbstractEditor> list = new ArrayList(parameters.values());
 			Collections.sort(list);
-			for ( AbstractEditor gpParam : list ) {
+			for ( final AbstractEditor gpParam : list ) {
 				gpParam.createComposite(compo);
 			}
 		}

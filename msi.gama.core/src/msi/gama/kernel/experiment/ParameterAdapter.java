@@ -11,17 +11,18 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public abstract class ParameterAdapter implements IParameter.Batch {
 
 	protected boolean editable;
-	// protected boolean tooltip;
-	// protected boolean label;
 	protected String title;
 	protected final IType type;
 	protected String category;
@@ -85,7 +86,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public String getUnitLabel() {
+	public String getUnitLabel(final IScope scope) {
 		return unitLabel;
 	}
 
@@ -95,7 +96,8 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public void setValue(final IScope scope, final Object value) {}
+	public void setValue(final IScope scope, final Object value) {
+	}
 
 	@Override
 	public Object value(final IScope iScope) throws GamaRuntimeException {
@@ -119,21 +121,21 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 
 	@Override
 	public Object getInitialValue(final IScope scope) {
-		return value();
+		return value(scope);
 	}
 
 	@Override
-	public Number getMinValue() {
+	public Number getMinValue(final IScope scope) {
 		return null;
 	}
 
 	@Override
-	public Number getMaxValue() {
+	public Number getMaxValue(final IScope scope) {
 		return null;
 	}
 
 	@Override
-	public List getAmongValue() {
+	public List getAmongValue(final IScope scope) {
 		return null;
 	}
 
@@ -141,19 +143,20 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	public abstract Object value();
 
 	@Override
-	public void reinitRandomly(final IScope scope) {}
+	public void reinitRandomly(final IScope scope) {
+	}
 
 	//
 	// @Override
 	// public void tryToInit(IScope scope) {}
 
 	@Override
-	public Set<Object> neighbourValues() throws GamaRuntimeException {
+	public Set<Object> neighbourValues(final IScope scope) throws GamaRuntimeException {
 		return null;
 	}
 
 	@Override
-	public Number getStepValue() {
+	public Number getStepValue(final IScope scope) {
 		return null;
 	}
 
@@ -164,6 +167,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 
 	/**
 	 * Method setUnitLabel()
+	 * 
 	 * @see msi.gama.kernel.experiment.IParameter#setUnitLabel(java.lang.String)
 	 */
 	@Override
@@ -177,6 +181,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public void setDefined(final boolean defined) {}
+	public void setDefined(final boolean defined) {
+	}
 
 }

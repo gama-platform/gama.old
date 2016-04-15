@@ -1,7 +1,7 @@
 /**
 * Name: Circle
 * Author: 
-* Description: This model shows the movement of cells trying to do a circle shape with themselves
+* Description: This model shows the movement of cells trying to do a circle shape with themselves 
 * 	considering the other cells. The second experiment shows a bigger circle using more cell agents.
 * Tags: skill
 */

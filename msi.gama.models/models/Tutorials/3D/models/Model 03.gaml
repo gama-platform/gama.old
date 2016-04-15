@@ -1,5 +1,11 @@
-model Tuto3D   
-//Model 3 of the 3D tutorial  
+/**
+* Name: Moving cells with neighbors
+* Author: Arnaud Grignard
+* Description: Third part of the tutorial : Tuto3D
+* Tags: 3d, light, grid, neighbors
+*/
+
+model Tuto3D
 
 global {
 	geometry shape <- cube(100);
@@ -12,20 +18,20 @@ global {
     
 species cells skills: [moving3D] {  
 	rgb color;
-	list<cells> neighbours;
+	list<cells> neighbors;
 	int offset;
 	
 	reflex move {
       do wander;	
 	}	
 	
-	reflex computeNeighbours {
-      neighbours <- cells select ((each distance_to self) < 10);
+	reflex computeNeighbors {
+      neighbors <- cells select ((each distance_to self) < 10);
     }
 		
 	aspect default {
 		draw sphere(10) color:#orange;
-		loop pp over: neighbours {
+		loop pp over: neighbors {
 			draw line([self.location,pp.location]);
 		}	
     }

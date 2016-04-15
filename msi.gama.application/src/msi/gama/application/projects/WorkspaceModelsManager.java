@@ -11,17 +11,41 @@
  **********************************************************************************************/
 package msi.gama.application.projects;
 
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.*;
+import java.net.URL;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.equinox.internal.app.CommandLineArgs;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 import msi.gama.runtime.GAMA;
@@ -71,10 +95,10 @@ public class WorkspaceModelsManager {
 		public void catchUp(final Display display) {
 			if ( filesToOpen.isEmpty() ) { return; }
 
-			String[] filePaths = filesToOpen.toArray(new String[filesToOpen.size()]);
+			final String[] filePaths = filesToOpen.toArray(new String[filesToOpen.size()]);
 			filesToOpen.clear();
 
-			for ( String path : filePaths ) {
+			for ( final String path : filePaths ) {
 				instance.openModelPassedAsArgument(path);
 			}
 		}
@@ -94,7 +118,7 @@ public class WorkspaceModelsManager {
 		String filePath = modelPath;
 		String expName = null;
 		if ( filePath.contains("#") ) {
-			String[] segments = filePath.split("#");
+			final String[] segments = filePath.split("#");
 			if ( segments.length != 2 ) {
 				System.out.println("Wrong definition of model and experiment in argument '" + filePath + "'");
 				return;
@@ -102,13 +126,13 @@ public class WorkspaceModelsManager {
 			filePath = segments[0];
 			expName = segments[1];
 		}
-		IFile file = findAndLoadIFile(filePath);
+		final IFile file = findAndLoadIFile(filePath);
 		if ( file != null ) {
 			try {
 				// Force the project to rebuild itself in order to load the various XText plugins.
 				file.touch(null);
 				file.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				System.out.println("File " + file.getFullPath() + " cannot be built");
 				return;
 			}
@@ -117,7 +141,7 @@ public class WorkspaceModelsManager {
 			} else {
 				try {
 					GAMA.getGui().runModel(file, expName);
-				} catch (CoreException e) {
+				} catch (final CoreException e) {
 					e.printStackTrace();
 				}
 			}
@@ -132,9 +156,8 @@ public class WorkspaceModelsManager {
 		GAMA.getGui().debug("WorkspaceModelsManager.findAndLoadIFile " + filePath);
 		// No error in case of an empty argument
 		if ( filePath == null || filePath.isEmpty() || StringUtils.isWhitespace(filePath) ) { return null; }
-		IPath path = new Path(filePath);
-		
-		System.out.println("padfdsqfsq dfsqf fsdqqs " + filePath);
+		final IPath path = new Path(filePath);
+
 		// 1st case: the path can be identified as a file residing in the workspace
 		IFile result = findInWorkspace(path);
 		if ( result != null ) { return result; }
@@ -153,13 +176,13 @@ public class WorkspaceModelsManager {
 	 */
 	private IFile findInWorkspace(final IPath originalPath) {
 		GAMA.getGui().debug("WorkspaceModelsManager.findInWorkspace  " + originalPath);
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IPath workspacePath = new Path(Platform.getInstanceLocation().getURL().getPath());
-		IPath filePath = originalPath.makeRelativeTo(workspacePath);
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final IPath workspacePath = new Path(Platform.getInstanceLocation().getURL().getPath());
+		final IPath filePath = originalPath.makeRelativeTo(workspacePath);
 		IFile file = null;
 		try {
 			file = workspace.getRoot().getFile(filePath);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return null;
 		}
 		if ( !file.exists() ) { return null; }
@@ -179,7 +202,7 @@ public class WorkspaceModelsManager {
 			projectFileBean = projectFileBean.getParentFile();
 			if ( projectFileBean != null ) {
 				/* parcours des fils pour trouver le dot file et creer le lien vers le projet */
-				File[] children = projectFileBean.listFiles();
+				final File[] children = projectFileBean.listFiles();
 				for ( int i = 0; i < children.length; i++ ) {
 					if ( children[i].getName().equals(".project") ) {
 						dotFile = children[i];
@@ -203,7 +226,7 @@ public class WorkspaceModelsManager {
 			// We load the project description.
 			final IProjectDescription description = workspace.loadProjectDescription(location);
 			if ( description != null ) {
-				WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+				final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 					@Override
 					protected void execute(final IProgressMonitor monitor)
@@ -213,9 +236,9 @@ public class WorkspaceModelsManager {
 						// If it does not exist, we create it
 						if ( !proj.exists() ) {
 							// If a project with the same name exists
-							IProject[] projects = workspace.getRoot().getProjects();
-							String name = description.getName();
-							for ( IProject p : projects ) {
+							final IProject[] projects = workspace.getRoot().getProjects();
+							final String name = description.getName();
+							for ( final IProject p : projects ) {
 								if ( p.getName().equals(name) ) {
 									GAMA.getGui().tell(
 										"A project with the same name already exists in the workspace. The model '" +
@@ -252,15 +275,15 @@ public class WorkspaceModelsManager {
 
 				});
 			}
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			return null;
-		} catch (InvocationTargetException e) {
+		} catch (final InvocationTargetException e) {
 			return null;
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			GAMA.getGui().error("Error wien importing project: " + e.getMessage());
 		}
-		IProject project = workspace.getRoot().getProject(pathToProject);
-		String relativePathToModel =
+		final IProject project = workspace.getRoot().getProject(pathToProject);
+		final String relativePathToModel =
 			project.getName() + modelFile.getAbsolutePath().replace(projectFileBean.getPath(), "");
 		return findInWorkspace(new Path(relativePathToModel));
 	}
@@ -272,17 +295,17 @@ public class WorkspaceModelsManager {
 	public static String UNCLASSIFIED_MODELS = "Unclassified Models";
 
 	private IFile createUnclassifiedModelsProjectAndAdd(final IPath location) {
-		IProject project = createOrUpdateProject(UNCLASSIFIED_MODELS);
+		final IProject project = createOrUpdateProject(UNCLASSIFIED_MODELS);
 		IFile iFile = null;
 		try {
-			IFolder modelFolder = project.getFolder(new Path("models"));
+			final IFolder modelFolder = project.getFolder(new Path("models"));
 			if ( !modelFolder.exists() ) {
 				modelFolder.create(true, true, null);
 			}
 			iFile = modelFolder.getFile(location.lastSegment());
 			if ( iFile.exists() ) {
 				if ( iFile.isLinked() ) {
-					IPath path = iFile.getLocation();
+					final IPath path = iFile.getLocation();
 					if ( path.equals(location) ) {
 						// First case, this is a linked resource to the same location. In that case, we simply return
 						// its name.
@@ -301,7 +324,7 @@ public class WorkspaceModelsManager {
 			iFile.createLink(location, IResource.NONE, null);
 			// RefreshHandler.run();
 			return iFile;
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			e.printStackTrace();
 			GAMA.getGui()
 				.tell("The file " + (iFile == null ? location.lastSegment() : iFile.getFullPath().lastSegment()) +
@@ -320,10 +343,10 @@ public class WorkspaceModelsManager {
 			modelFolder.getFullPath());
 		IFile file = originalFile;
 		while (file.exists()) {
-			IPath path = file.getLocation();
+			final IPath path = file.getLocation();
 			String fName = path.lastSegment();
-			Pattern p = Pattern.compile("(.*?)(\\d+)?(\\..*)?");
-			Matcher m = p.matcher(fName);
+			final Pattern p = Pattern.compile("(.*?)(\\d+)?(\\..*)?");
+			final Matcher m = p.matcher(fName);
 			if ( m.matches() ) {// group 1 is the prefix, group 2 is the number, group 3 is the suffix
 				fName = m.group(1) + (m.group(2) == null ? 1 : Integer.parseInt(m.group(2)) + 1) +
 					(m.group(3) == null ? "" : m.group(3));
@@ -335,7 +358,7 @@ public class WorkspaceModelsManager {
 	}
 
 	private static void linkPluginsModelsToWorkspace() {
-		for ( String plugin : GamaBundleLoader.getPluginsWithModels().keySet() ) {
+		for ( final String plugin : GamaBundleLoader.getPluginsWithModels().keySet() ) {
 			linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithModels().get(plugin), false);
 		}
 	}
@@ -351,31 +374,33 @@ public class WorkspaceModelsManager {
 
 	private static void linkModelsToWorkspace(final String plugin, final String path, final boolean core) {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		URL urlRep = null;
+		final URL urlRep = null;
 		File modelsRep = null;
 		try {
-			String ext = path == "." ? "/" : "/" + path + "/";
-			//urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + plugin + ext));
-			//urlRep = urlRep.toURI().normalize().toURL();
-			
-			//urlRep = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
-			
-			URL new_url = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
-			String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
-			java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-			//urlRep = normalizedPath.toUri().toURL();
+			final String ext = path == "." ? "/" : "/" + path + "/";
+			// urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + plugin + ext));
+			// urlRep = urlRep.toURI().normalize().toURL();
+
+			// urlRep = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
+
+			final URL new_url = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
+			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
+			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
+			// urlRep = normalizedPath.toUri().toURL();
 			modelsRep = normalizedPath.toFile();
-			
-		} catch (IOException e) {
+
+		} catch (final IOException e) {
 			e.printStackTrace();
 			return;
-		} /*catch (URISyntaxException e) {
-			e.printStackTrace();
-		}*/
+		} /*
+			 * catch (URISyntaxException e) {
+			 * e.printStackTrace();
+			 * }
+			 */
 
-		//File modelsRep = new File(urlRep.getPath());
-		System.out.println("chargemen" + modelsRep.getAbsolutePath() );
-		Map<File, IPath> foundProjects = new HashMap();
+		// File modelsRep = new File(urlRep.getPath());
+		System.out.println("chargemen" + modelsRep.getAbsolutePath());
+		final Map<File, IPath> foundProjects = new HashMap();
 		findProjects(modelsRep, foundProjects);
 		importBuiltInProjects(plugin, core, workspace, foundProjects);
 
@@ -394,10 +419,10 @@ public class WorkspaceModelsManager {
 
 	private static void findProjects(final File folder, final Map<File, IPath> found) {
 		if ( folder == null ) { return; }
-		File[] dotFile = folder.listFiles(isDotFile);
+		final File[] dotFile = folder.listFiles(isDotFile);
 		if ( dotFile == null ) { return; } // not a directory
 		if ( dotFile.length == 0 ) { // no .project file
-			for ( File f : folder.listFiles() ) {
+			for ( final File f : folder.listFiles() ) {
 				findProjects(f, found);
 			}
 			return;
@@ -415,10 +440,10 @@ public class WorkspaceModelsManager {
 	private static void importBuiltInProjects(final String plugin, final boolean core, final IWorkspace workspace,
 		final Map<File, IPath> projects) {
 
-		for ( Map.Entry<File, IPath> entry : projects.entrySet() ) {
+		for ( final Map.Entry<File, IPath> entry : projects.entrySet() ) {
 			final File project = entry.getKey();
 			final IPath location = entry.getValue();
-			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+			final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 				@Override
 				protected void execute(final IProgressMonitor monitor)
@@ -440,9 +465,9 @@ public class WorkspaceModelsManager {
 			};
 			try {
 				operation.run(null);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
-			} catch (InvocationTargetException e) {
+			} catch (final InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		}
@@ -452,17 +477,17 @@ public class WorkspaceModelsManager {
 	static private IProject createOrUpdateProject(final String name) {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final IProject[] projectHandle = new IProject[] { null };
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+		final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 
 			@Override
 			protected void execute(final IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask("Creating or updating " + name, 2000);
-				IProject project = ws.getRoot().getProject(name);
+				final IProject project = ws.getRoot().getProject(name);
 				// IProjectDescription desc = null;
 				if ( !project.exists() ) {
 					// desc = project.getDescription();
 					// } else {
-					IProjectDescription desc = ws.newProjectDescription(name);
+					final IProjectDescription desc = ws.newProjectDescription(name);
 					project.create(desc, new SubProgressMonitor(monitor, 1000));
 				}
 				if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }
@@ -473,9 +498,9 @@ public class WorkspaceModelsManager {
 		};
 		try {
 			op.run(null);
-		} catch (InvocationTargetException e) {
+		} catch (final InvocationTargetException e) {
 			e.printStackTrace();
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
 		return projectHandle[0];
@@ -489,7 +514,7 @@ public class WorkspaceModelsManager {
 			desc = proj.getDescription();
 			/* Automatically associate GamaNature and Xtext nature to the project */
 			// String[] ids = desc.getNatureIds();
-			String[] newIds = new String[builtin ? 3 : 2];
+			final String[] newIds = new String[builtin ? 3 : 2];
 			// System.arraycopy(ids, 0, newIds, 0, ids.length);
 			newIds[1] = GAMA_NATURE;
 			newIds[0] = XTEXT_NATURE;
@@ -508,7 +533,7 @@ public class WorkspaceModelsManager {
 			if ( builtin ) {
 				proj.setPersistentProperty(BUILTIN_PROPERTY, BUILTIN_VERSION);
 			}
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
 	}
@@ -523,24 +548,25 @@ public class WorkspaceModelsManager {
 	public static void stampWorkspaceFromModels() {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		try {
-			String stamp = getCurrentGamaStampString();
-			IWorkspaceRoot root = workspace.getRoot();
-			String oldStamp = root.getPersistentProperty(BUILTIN_PROPERTY);
+			final String stamp = getCurrentGamaStampString();
+			final IWorkspaceRoot root = workspace.getRoot();
+			final String oldStamp = root.getPersistentProperty(BUILTIN_PROPERTY);
 			if ( oldStamp != null ) {
-				File stampFile =
+				final File stampFile =
 					new File(new Path(root.getLocation().toOSString() + File.separator + oldStamp).toOSString());
 				if ( stampFile.exists() ) {
 					stampFile.delete();
 				}
 			}
 			root.setPersistentProperty(BUILTIN_PROPERTY, stamp);
-			File stampFile = new File(new Path(root.getLocation().toOSString() + File.separator + stamp).toOSString());
+			final File stampFile =
+				new File(new Path(root.getLocation().toOSString() + File.separator + stamp).toOSString());
 			if ( !stampFile.exists() ) {
 				stampFile.createNewFile();
 			}
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -548,20 +574,20 @@ public class WorkspaceModelsManager {
 	public static String getCurrentGamaStampString() {
 		String gamaStamp = null;
 		try {
-			URL tmpURL = new URL("platform:/plugin/msi.gama.models/models/");
-			URL new_url = FileLocator.resolve(tmpURL);
-			String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
-			java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-			File modelsRep = normalizedPath.toFile();
-			
-			//loading file from URL Path is not a good idea. There are some bugs
-			//File modelsRep = new File(urlRep.getPath());
+			final URL tmpURL = new URL("platform:/plugin/msi.gama.models/models/");
+			final URL new_url = FileLocator.resolve(tmpURL);
+			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
+			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
+			final File modelsRep = normalizedPath.toFile();
 
-			long time = modelsRep.lastModified();
+			// loading file from URL Path is not a good idea. There are some bugs
+			// File modelsRep = new File(urlRep.getPath());
+
+			final long time = modelsRep.lastModified();
 			gamaStamp = ".built_in_models_" + time;
-			
+
 			System.out.println("Version of the models in GAMA = " + gamaStamp);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		return gamaStamp;

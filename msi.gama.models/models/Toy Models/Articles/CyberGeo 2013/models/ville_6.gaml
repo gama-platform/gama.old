@@ -1,10 +1,10 @@
 /**
 * Name: Ville 6
 * Author: 
-* Description: Creation of buildings and roads thanks to a shape file. The color of the building depends on the type of the building,
-* 	while the color of a house depend on its income. People among the world will try to find the best building according to the
-* 	mean income of their neighbors and their own income, but also to their working place. This model add a new display showing
-* 	the "color" of each building according to the mean income of its residents. The buildings also have a z location given thanks to
+* Description: Creation of buildings and roads thanks to a shape file. The color of the building depends on the type of the building, 
+* 	while the color of a house depend on its income. People among the world will try to find the best building according to the 
+* 	mean income of their neighbors and their own income, but also to their working place. This model add a new display showing 
+* 	the "color" of each building according to the mean income of its residents. The buildings also have a z location given thanks to 
 * 	a mnt file.
 * Tags: gui, shapefile, graph, 3d
 */

@@ -1,9 +1,10 @@
 /**
- *  SIR_split_in_agents_multiple_strains.gaml
- *  Author: tri and nghi
- *  Description: This model is an extension of the model SIR_split_in_agents.gaml.
- *  It creates several agents of one compartment type (here typically several I_agt).
- */
+* Name: SIR (Split in Agents, Multiple Strains)
+* Author: tri and nghi
+* Description: This model is an extension of the model SIR_split_in_agents.gaml. 
+* It creates several agents of one compartment type (here typically several I_agt).
+* Tags: equation, math
+*/
 model SIR_split_in_agents_multiple_strains
 
 global {

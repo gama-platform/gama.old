@@ -12,20 +12,33 @@
  *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.KeyboardFocusManager;
+import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import javax.swing.*;
+import java.util.Map;
+import javax.swing.JPopupMenu;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * An environment to enable the proper display of AWT/Swing windows within a SWT or RCP
@@ -114,7 +127,7 @@ public final class AwtEnvironment {
 
 	static private void removeInstance(final Display display) {
 		synchronized (environmentMap) {
-			AwtEnvironment instance = (AwtEnvironment) environmentMap.remove(display);
+			final AwtEnvironment instance = (AwtEnvironment) environmentMap.remove(display);
 			if ( instance != null ) {
 				instance.dispose();
 			}
@@ -175,9 +188,9 @@ public final class AwtEnvironment {
 					}
 				}
 			});
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			SWT.error(SWT.ERROR_FAILED_EXEC, e);
-		} catch (InvocationTargetException e) {
+		} catch (final InvocationTargetException e) {
 			SWT.error(SWT.ERROR_FAILED_EXEC, e.getTargetException());
 		}
 
@@ -211,13 +224,13 @@ public final class AwtEnvironment {
 			isLookAndFeelInitialized = true;
 			try {
 				LookAndFeelHandler.getInstance().setLookAndFeel();
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
-			} catch (InstantiationException e) {
+			} catch (final InstantiationException e) {
 				SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
-			} catch (IllegalAccessException e) {
+			} catch (final IllegalAccessException e) {
 				SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
-			} catch (UnsupportedLookAndFeelException e) {
+			} catch (final UnsupportedLookAndFeelException e) {
 				SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
 			}
 		}
@@ -241,6 +254,7 @@ public final class AwtEnvironment {
 
 				@Override
 				public void run() {
+					// AD CHANGED
 					display.addFilter(SWT.Show, menuListener);
 				}
 			});
@@ -266,10 +280,10 @@ public final class AwtEnvironment {
 	// Returns true if any popup has been hidden
 	protected boolean hidePopups() {
 		boolean result = false;
-		List popups = new ArrayList();
+		final List popups = new ArrayList();
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		Window window = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow();
+		final Window window = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow();
 		if ( window == null ) { return false; }
 
 		// Look for popups inside the frame's component hierarchy.
@@ -281,8 +295,8 @@ public final class AwtEnvironment {
 		findOwnedPopups(window, popups);
 
 		// System.err.println("Hiding popups, count=" + popups.size());
-		for ( Iterator iter = popups.iterator(); iter.hasNext(); ) {
-			Component popup = (Component) iter.next();
+		for ( final Iterator iter = popups.iterator(); iter.hasNext(); ) {
+			final Component popup = (Component) iter.next();
 			if ( popup.isVisible() ) {
 				result = true;
 				popup.setVisible(false);
@@ -295,7 +309,7 @@ public final class AwtEnvironment {
 		assert window != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		Window[] ownedWindows = window.getOwnedWindows();
+		final Window[] ownedWindows = window.getOwnedWindows();
 		for ( int i = 0; i < ownedWindows.length; i++ ) {
 			findContainedPopups(ownedWindows[i], popups);
 			findOwnedPopups(ownedWindows[i], popups);
@@ -307,9 +321,9 @@ public final class AwtEnvironment {
 		assert popups != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		Component[] components = container.getComponents();
+		final Component[] components = container.getComponents();
 		for ( int i = 0; i < components.length; i++ ) {
-			Component c = components[i];
+			final Component c = components[i];
 			// JPopupMenu is a container, so check for it first
 			if ( c instanceof JPopupMenu ) {
 				popups.add(c);
@@ -416,7 +430,7 @@ public final class AwtEnvironment {
 		if ( !display.equals(Display.getCurrent()) ) {
 			SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
 		}
-		Shell parent = display.getActiveShell();
+		final Shell parent = display.getActiveShell();
 		if ( parent == null ) { throw new IllegalStateException("No Active Shell"); //$NON-NLS-1$
 		}
 		return createDialogParentFrame(parent);
@@ -466,8 +480,8 @@ public final class AwtEnvironment {
 		// other dialogs, so it has been removed.
 		final Shell shell = new Shell(parent, SWT.NO_TRIM | SWT.APPLICATION_MODAL);
 
-		Composite composite = new Composite(shell, SWT.EMBEDDED);
-		Frame frame = SWT_AWT.new_Frame(composite);
+		final Composite composite = new Composite(shell, SWT.EMBEDDED);
+		final Frame frame = SWT_AWT.new_Frame(composite);
 
 		// Position and size the shell and embedded composite. This ensures that
 		// any child dialogs will be shown in the proper position, relative to the

@@ -1,3 +1,10 @@
+/**
+* Name: Definition of weight for the road network
+* Author:
+* Description: 4th part of the tutorial: Road Traffic
+* Tags: graph
+*/
+
 model tutorial_gis_city_traffic
 
 global {

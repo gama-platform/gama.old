@@ -1,3 +1,10 @@
+/**
+* Name: Automatic repair of roads
+* Author:
+* Description: 7th part of the tutorial: Road Traffic
+* Tags: transport
+*/
+
 model tutorial_gis_city_traffic
 
 global {

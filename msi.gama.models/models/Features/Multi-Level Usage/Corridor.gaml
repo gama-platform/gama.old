@@ -1,7 +1,7 @@
 /**
 * Name: Corridor Multi-Level Architecture
 * Author: 
-* Description: This model shows how to use multi-level architecture. A corridor can capture pedestrians going from left to right side if
+* Description: This model shows how to use multi-level architecture. A corridor can capture pedestrians going from left to right side if 
 *	they are inside the corridor. This will result in changing their species from pedestrian to captured_pedestrian which will not be 
 *	displayed. Once they pass enought time to consider they reach the exit of the corridor, they will be released by the corridor agent 
 *	as pedestrians, letting them been displayed and going to their target. 

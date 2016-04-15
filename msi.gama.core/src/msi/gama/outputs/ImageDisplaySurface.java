@@ -11,24 +11,40 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
 import javax.imageio.ImageIO;
+
 import com.vividsolutions.jts.geom.Envelope;
-import msi.gama.common.interfaces.*;
+
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData.Changes;
-import msi.gama.outputs.display.*;
+import msi.gama.outputs.display.AWTDisplayGraphics;
+import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gaml.operators.Files;
 import msi.gaml.types.Types;
 
@@ -46,20 +62,21 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	protected IScope scope;
 	private final LayeredDisplayData data;
 
-	public ImageDisplaySurface(final Object ... args) {
+	public ImageDisplaySurface(final Object... args) {
 		output = (LayeredDisplayOutput) args[0];
 		data = output.getData();
 
 	}
 
 	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
+	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double,
+	 *      double, msi.gama.outputs.IDisplayOutput)
 	 */
 	@Override
 	public void outputReloaded() {
-		this.scope = output.getScope().copy();
+		this.scope = output.getScope().copy("in ImageDisplaySurface");
 		scope.disableErrorReporting();
-		if ( manager == null ) {
+		if (manager == null) {
 			manager = new LayerManager(this, output);
 		} else {
 			manager.outputChanged();
@@ -74,6 +91,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Save this surface into an image passed as a parameter
+	 * 
 	 * @param scope
 	 * @param image
 	 */
@@ -87,8 +105,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			return;
 		}
 
-		final String file =
-			snapshotFolder + "/" + GAMA.getModel().getName() + "_display_" + scope.getClock().getCycle() + ".png";
+		final String file = snapshotFolder + "/" + GAMA.getModel().getName() + "_display_" + scope.getClock().getCycle()
+				+ ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));
@@ -99,7 +117,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			GAMA.reportError(getDisplayScope(), e, false);
 		} finally {
 			try {
-				if ( os != null ) {
+				if (os != null) {
 					os.close();
 				}
 			} catch (final Exception ex) {
@@ -117,12 +135,14 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public boolean resizeImage(final int newWidth, final int newHeight, final boolean force) {
-		if ( !force && width == newWidth && height == newHeight ) { return false; }
+		if (!force && width == newWidth && height == newHeight) {
+			return false;
+		}
 		this.width = newWidth;
 		this.height = newHeight;
 		final Image copy = buffImage;
 		createBuffImage();
-		if ( GAMA.isPaused() ) {
+		if (GAMA.isPaused()) {
 			updateDisplay(true);
 		} else {
 			g2.drawImage(copy, 0, 0, newWidth, newHeight, null);
@@ -139,7 +159,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	private void drawAllDisplays() {
-		if ( displayGraphics == null ) { return; }
+		if (displayGraphics == null) {
+			return;
+		}
 		displayGraphics.fillBackground(data.getBackgroundColor(), 1);
 		manager.drawLayersOn(displayGraphics);
 	}
@@ -148,10 +170,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		buffImage = ImageUtils.createCompatibleImage(width, height);
 		g2 = (Graphics2D) buffImage.getGraphics();
 		displayGraphics = new AWTDisplayGraphics(this, (Graphics2D) buffImage.getGraphics());
+		( (AWTDisplayGraphics) displayGraphics).setGraphics2D((Graphics2D)  buffImage.getGraphics());
+		((AWTDisplayGraphics) displayGraphics).setUntranslatedGraphics2D((Graphics2D)  buffImage.getGraphics());
 	}
 
 	private void paint() {
-		if ( buffImage == null ) {
+		if (buffImage == null) {
 			createBuffImage();
 		}
 		drawAllDisplays();
@@ -160,10 +184,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void dispose() {
-		if ( g2 != null ) {
+		if (g2 != null) {
 			g2.dispose();
 		}
-		if ( manager != null ) {
+		if (manager != null) {
 			manager.dispose();
 		}
 		GAMA.releaseScope(scope);
@@ -178,7 +202,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.gui.graphics.IDisplaySurface#zoomIn(msi.gama.gui.views.IGamaView)
+	 * @see msi.gama.gui.graphics.IDisplaySurface#zoomIn(msi.gama.gui.views.
+	 * IGamaView)
 	 */
 	@Override
 	public void zoomIn() {
@@ -189,7 +214,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.gui.graphics.IDisplaySurface#zoomOut(msi.gama.gui.views.IGamaView)
+	 * @see msi.gama.gui.graphics.IDisplaySurface#zoomOut(msi.gama.gui.views.
+	 * IGamaView)
 	 */
 	@Override
 	public void zoomOut() {
@@ -200,7 +226,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.gui.graphics.IDisplaySurface#zoomFit(msi.gama.gui.views.IGamaView)
+	 * @see msi.gama.gui.graphics.IDisplaySurface#zoomFit(msi.gama.gui.views.
+	 * IGamaView)
 	 */
 	@Override
 	public void zoomFit() {
@@ -211,7 +238,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.gui.graphics.IDisplaySurface#fireSelectionChanged(java.lang.Object)
+	 * @see
+	 * msi.gama.gui.graphics.IDisplaySurface#fireSelectionChanged(java.lang.
+	 * Object)
 	 */
 	// @Override
 	// public void fireSelectionChanged(final Object a) {
@@ -222,7 +251,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.gui.graphics.IDisplaySurface#focusOn(msi.gama.util.GamaGeometry,
+	 * @see
+	 * msi.gama.gui.graphics.IDisplaySurface#focusOn(msi.gama.util.GamaGeometry,
 	 * msi.gama.gui.displays.IDisplay)
 	 */
 	@Override
@@ -286,7 +316,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	// }
 
 	@Override
-	public void addListener(final IEventLayerListener e) {}
+	public void addListener(final IEventLayerListener e) {
+	}
 
 	@Override
 	public double getEnvWidth() {
@@ -313,6 +344,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	//
 	/**
 	 * Method getModelCoordinates()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
 	 */
 	@Override
@@ -322,13 +354,16 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method followAgent()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public void followAgent(final IAgent a) {}
+	public void followAgent(final IAgent a) {
+	}
 
 	/**
 	 * Method getZoomLevel()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getZoomLevel()
 	 */
 	@Override
@@ -338,6 +373,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method setSize()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setSize(int, int)
 	 */
 	@Override
@@ -347,10 +383,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method removeMouseListener()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
-	public void removeListener(final IEventLayerListener e) {}
+	public void removeListener(final IEventLayerListener e) {
+	}
 
 	@Override
 	public Collection<IEventLayerListener> getLayerListeners() {
@@ -359,7 +397,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
-		final Point positionInPixels) {
+			final Point positionInPixels) {
 		final double xScale = sizeInPixels.x / getEnvWidth();
 		final double yScale = sizeInPixels.y / getEnvHeight();
 		final int xInDisplay = xOnScreen - positionInPixels.x;
@@ -371,12 +409,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public IList<IAgent> selectAgent(final int xc, final int yc) {
-		IList<IAgent> result = GamaListFactory.create(Types.AGENT);
+		final IList<IAgent> result = GamaListFactory.create(Types.AGENT);
 		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
-		for ( ILayer layer : layers ) {
-			if ( layer.isSelectable() ) {
-				Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
-				if ( !agents.isEmpty() ) {
+		for (final ILayer layer : layers) {
+			if (layer.isSelectable()) {
+				final Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
+				if (!agents.isEmpty()) {
 					result.addAll(agents);
 				}
 			}
@@ -386,6 +424,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getOutput()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
 	 */
 	@Override
@@ -395,6 +434,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method waitForUpdateAndRun()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#waitForUpdateAndRun(java.lang.Runnable)
 	 */
 	@Override
@@ -404,6 +444,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getData()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getData()
 	 */
 	@Override
@@ -413,27 +454,35 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method setSWTMenuManager()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(java.lang.Object)
 	 */
 	@Override
-	public void setSWTMenuManager(final Object displaySurfaceMenu) {}
+	public void setSWTMenuManager(final Object displaySurfaceMenu) {
+	}
 
 	/**
 	 * Method layersChanged()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#layersChanged()
 	 */
 	@Override
-	public void layersChanged() {}
+	public void layersChanged() {
+	}
 
 	/**
 	 * Method changed()
-	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(msi.gama.outputs.LayeredDisplayData.Changes, boolean)
+	 * 
+	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(msi.gama.outputs.LayeredDisplayData.Changes,
+	 *      boolean)
 	 */
 	@Override
-	public void changed(final Changes property, final boolean value) {}
+	public void changed(final Changes property, final boolean value) {
+	}
 
 	/**
 	 * Method getVisibleRegionForLayer()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getVisibleRegionForLayer(msi.gama.common.interfaces.ILayer)
 	 */
 	@Override
@@ -443,6 +492,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getFPS()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getFPS()
 	 */
 	@Override
@@ -457,6 +507,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method isRendered()
+	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#isRendered()
 	 */
 	@Override

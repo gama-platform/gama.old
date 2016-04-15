@@ -37,6 +37,8 @@ import msi.gaml.types.*;
 		doc = @doc("intention persistence")),
 	@var(name = SimpleBdiArchitecture.PROBABILISTIC_CHOICE, type = IType.BOOL, init = "false"),
 	@var(name = SimpleBdiArchitecture.USE_EMOTIONS_ARCHITECTURE, type = IType.BOOL, init = "false"),
+	@var(name = SimpleBdiArchitecture.CHARISMA, type = IType.FLOAT, init = "1.0"),
+	@var(name = SimpleBdiArchitecture.RECEPTIVITY, type = IType.FLOAT, init = "1.0"),
 	@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.LAST_THOUGHTS, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.INTENTION_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
@@ -56,6 +58,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String PERSISTENCE_COEFFICIENT_PLANS = "plan_persistence";
 	public static final String PERSISTENCE_COEFFICIENT_INTENTIONS = "intention_persistence";
 	public static final String USE_EMOTIONS_ARCHITECTURE = "use_emotions_architecture";
+	public static final String CHARISMA = "charisma";
+	public static final String RECEPTIVITY = "receptivity";
 
 	// TODO: Not implemented yet
 
@@ -832,7 +836,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@action(name = "get_current_intention",
 		doc = @doc(value = "returns the current intention (last entry of intention base).",
-			returns = "true if it is in the base.",
+			returns = "the current intention",
 			examples = { @example("") }))
 	public Predicate currentIntention(final IScope scope) throws GamaRuntimeException {
 		GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
@@ -1256,6 +1260,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if ( dodesire ) {
 				getBase(scope, DESIRE_BASE).remove(predicateDirect);
 			}
+			if (predicateDirect.equals(currentIntention(scope))) 
+				scope.getAgentScope().setAttribute(CURRENT_PLAN, null);
 			for ( Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE) ) {
 				if ( ((Predicate) statement).getSubintentions() != null ) {
 					if ( ((Predicate) statement).getSubintentions().contains(predicateDirect) ) {
@@ -1273,6 +1279,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 			}
+			
 			return true;
 		}
 
@@ -1303,6 +1310,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			examples = { @example("") }))
 	public Boolean primClearIntention(final IScope scope) {
 		getBase(scope, INTENTION_BASE).clear();
+		scope.getAgentScope().setAttribute(CURRENT_PLAN, null);
 		return true;
 	}
 
@@ -1626,6 +1634,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return null;
 		}
 		
+	public static Boolean hasUncertainty(final IScope scope, final Predicate predicateDirect) {
+		return getBase(scope, UNCERTAINTY_BASE).contains(predicateDirect);
+	}
+	
 	@action(name = "has_uncertainty",
 			args = { 
 				@arg(name = PREDICATE, type = PredicateType.id, optional = true, doc = @doc("predicate to check") ) },
@@ -1636,7 +1648,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 			if ( predicateDirect != null ) { 
-				return getBase(scope, UNCERTAINTY_BASE).contains(predicateDirect);
+				return hasUncertainty(scope,predicateDirect);
 			}
 			return false;
 		}

@@ -126,7 +126,11 @@ public class ModelScene {
 		LayerObject[] array = layers.values().toArray(new LayerObject[0]);
 		for ( LayerObject layer : array ) {
 			if ( layer != null && !layer.isInvalid() ) {
+				try {
 				layer.draw(gl, renderer, picking);
+				} catch (RuntimeException r) {
+					System.err.println("Runtime error " + r.getMessage() + " in OpenGL loop");
+				}
 			}
 		}
 		rendered = true;
@@ -275,6 +279,16 @@ public class ModelScene {
 		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
 			entry.getValue().preload(gl);
 		}
+	}
+	
+	public void startDrawRotationHelper(final GamaPoint pivotPoint, final double size) {
+		WordLayerObject worldLayer = (WordLayerObject)layers.get(ENV_KEY);
+		worldLayer.startDrawRotationHelper(pivotPoint,size);
+	}
+	
+	public void stopDrawRotationHelper() {
+		WordLayerObject worldLayer = (WordLayerObject)layers.get(ENV_KEY);
+		worldLayer.stopDrawRotationHelper();
 	}
 
 }

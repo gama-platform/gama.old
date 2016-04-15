@@ -12,11 +12,15 @@
 package msi.gama.gui.parameters;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.GamaIcons;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public abstract class NumberEditor<T extends Number> extends ExpressionBasedEditor<T> {
@@ -24,21 +28,22 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 	Number stepValue;
 	static final String UNDEFINED_LABEL = "-- Undefined --";
 
-	public NumberEditor(final IParameter param, final boolean canBeNull) {
-		super(param);
+	public NumberEditor(final IScope scope, final IParameter param, final boolean canBeNull) {
+		super(scope, param);
 		computeStepValue();
 		acceptNull = canBeNull;
 	}
 
-	public NumberEditor(final InputParameter supportParameter, final EditorListener whenModified,
+	public NumberEditor(final IScope scope, final InputParameter supportParameter, final EditorListener whenModified,
 		final boolean canBeNull) {
-		super(supportParameter, whenModified);
+		super(scope, supportParameter, whenModified);
 		computeStepValue();
 		acceptNull = canBeNull;
 	}
 
-	public NumberEditor(final IAgent a, final IParameter p, final EditorListener l, final boolean canBeNull) {
-		super(a, p, l);
+	public NumberEditor(final IScope scope, final IAgent a, final IParameter p, final EditorListener l,
+		final boolean canBeNull) {
+		super(scope, a, p, l);
 		computeStepValue();
 		acceptNull = canBeNull;
 	}
@@ -56,7 +61,7 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 	@Override
 	protected void checkButtons() {
 		super.checkButtons();
-		ToolItem t = items[DEFINE];
+		final ToolItem t = items[DEFINE];
 		if ( t == null || t.isDisposed() ) { return; }
 		if ( param.isDefined() ) {
 			t.setToolTipText("Set the parameter to undefined");
@@ -88,8 +93,8 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 
 	@Override
 	protected ToolItem createPlusItem(final ToolBar t) {
-		ToolItem item = super.createPlusItem(t);
-		ToolItem unitItem = new ToolItem(t, SWT.READ_ONLY | SWT.FLAT);
+		final ToolItem item = super.createPlusItem(t);
+		final ToolItem unitItem = new ToolItem(t, SWT.READ_ONLY | SWT.FLAT);
 		unitItem.setText(String.valueOf(stepValue));
 		unitItem.setEnabled(false);
 		return item;

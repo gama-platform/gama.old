@@ -1,7 +1,10 @@
 /**
- *  model5
- *  This model illustrates 3D visualization
- */
+* Name: 3D visualization
+* Author:
+* Description: 5th part of the tutorial : Incremental Model
+* Tags: 3d, light
+*/
+
 model model5 
  
 global {

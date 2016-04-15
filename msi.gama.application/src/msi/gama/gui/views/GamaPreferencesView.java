@@ -11,23 +11,39 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import org.eclipse.jface.preference.*;
+import java.util.Map;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.*;
+import msi.gama.common.GamaPreferences.Entry;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IParameterEditor;
-import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.parameters.AbstractEditor;
+import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.ParameterExpandBar;
+import msi.gama.gui.swt.controls.ParameterExpandItem;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 
@@ -50,7 +66,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		if ( instance == null || instance.shell == null || instance.shell.isDisposed() ) {
 			instance = new GamaPreferencesView(SwtGui.getShell());
 		}
-		for ( IParameterEditor ed : instance.editors.values() ) {
+		for ( final IParameterEditor ed : instance.editors.values() ) {
 			if ( ed.getParam() instanceof GamaPreferences.Entry ) {
 				if ( ((GamaPreferences.Entry) ed.getParam()).getKey().equals("editor.info.enabled") ) {
 					System.out.println("editor.info.enabled");
@@ -91,12 +107,12 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		gridLayout.marginWidth = gridLayout.marginHeight = 5;
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
 		shell.setLayout(gridLayout);
-		PreferenceManager preferenceManager = PlatformUI.getWorkbench().getPreferenceManager();
+		final PreferenceManager preferenceManager = PlatformUI.getWorkbench().getPreferenceManager();
 
 		// We clean the default preference manager to remove useless preferences
-		for ( Object elem : preferenceManager.getElements(PreferenceManager.POST_ORDER) ) {
+		for ( final Object elem : preferenceManager.getElements(PreferenceManager.POST_ORDER) ) {
 			if ( elem instanceof IPreferenceNode ) {
-				String id = ((IPreferenceNode) elem).getId();
+				final String id = ((IPreferenceNode) elem).getId();
 				if ( preferenceNames.containsKey(id) ) {
 					preferencePages.put(preferenceNames.get(id), (IPreferenceNode) elem);
 				}
@@ -115,12 +131,14 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	private void buildContents() {
 		tabFolder = new CTabFolder(shell, SWT.TOP | SWT.NO_TRIM);
 		tabFolder.addSelectionListener(new SelectionAdapter() {
-			  public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
-			   tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true)); 
-			   tabFolder.layout(true);
-			   tabFolder.update();
-			  }
-			});
+
+			@Override
+			public void widgetSelected(final org.eclipse.swt.events.SelectionEvent event) {
+				tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+				tabFolder.layout(true);
+				tabFolder.update();
+			}
+		});
 		tabFolder.setBorderVisible(true);
 		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setMRUVisible(true);
@@ -128,9 +146,9 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		final Label sep = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
-		Map<String, Map<String, List<Entry>>> prefs = GamaPreferences.organizePrefs();
-		for ( String tabName : prefs.keySet() ) {
-			CTabItem item = new CTabItem(tabFolder, SWT.NONE);
+		final Map<String, Map<String, List<Entry>>> prefs = GamaPreferences.organizePrefs();
+		for ( final String tabName : prefs.keySet() ) {
+			final CTabItem item = new CTabItem(tabFolder, SWT.NONE);
 			item.setFont(SwtGui.getNavigHeaderFont());
 			item.setText(tabName);
 			item.setImage(prefs_images.get(tabName));
@@ -166,20 +184,20 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	}
 
 	private void buildContentsFor(final CTabItem tab, final Map<String, List<Entry>> entries) {
-		ParameterExpandBar viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		final ParameterExpandBar viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
+		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		viewer.setLayoutData(data);
 		// ?
 		viewer.computeSize(tab.getBounds().x, SWT.DEFAULT);
 		//
 		viewer.setSpacing(10);
 		tab.setControl(viewer);
-		for ( String groupName : entries.keySet() ) {
-			ParameterExpandItem item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
+		for ( final String groupName : entries.keySet() ) {
+			final ParameterExpandItem item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
 			item.setColor(new GamaColor(230, 230, 230, 255));
-			Composite compo = new Composite(viewer, SWT.NONE);
-			GridLayout layout = new GridLayout(2, false);
+			final Composite compo = new Composite(viewer, SWT.NONE);
+			final GridLayout layout = new GridLayout(2, false);
 			layout.marginHeight = 0;
 			layout.verticalSpacing = 0;
 			compo.setLayout(layout);
@@ -191,15 +209,15 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			// item.setImage(GamaIcons.menu_action);
 			item.setExpanded(true);
 		}
-		
+
 	}
 
 	final Map<String, Boolean> activations = new HashMap();
 
 	private void checkActivables(final Entry e, final Object value) {
 		if ( e.getActivable() != null ) {
-			for ( String activable : e.getActivable() ) {
-				IParameterEditor ed = editors.get(activable);
+			for ( final String activable : e.getActivable() ) {
+				final IParameterEditor ed = editors.get(activable);
 				if ( ed == null ) {
 					if ( value instanceof Boolean ) {
 						activations.put(activable, (Boolean) value);
@@ -216,8 +234,8 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			}
 		}
 		if ( e.getDeactivable() != null && value instanceof Boolean ) {
-			for ( String deactivable : e.getDeactivable() ) {
-				IParameterEditor ed = editors.get(deactivable);
+			for ( final String deactivable : e.getDeactivable() ) {
+				final IParameterEditor ed = editors.get(deactivable);
 				if ( ed == null ) {
 					activations.put(deactivable, !(Boolean) value);
 				} else {
@@ -227,6 +245,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void buildGroupContents(final Composite compo, final List<Entry> list) {
 
 		for ( final Entry e : list ) {
@@ -251,16 +270,16 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 				}
 			});
-			boolean isSubParameter = activations.containsKey(e.getKey());
+			final boolean isSubParameter = activations.containsKey(e.getKey());
 
-			AbstractEditor ed = EditorFactory.create(compo, e, isSubParameter);
+			final AbstractEditor ed = EditorFactory.create(null, compo, e, isSubParameter);
 			// ed.acceptPopup(false);
 			editors.put(e.getKey(), ed);
 		}
 
 		// Initial activations of editors
-		for ( String s : activations.keySet() ) {
-			IParameterEditor ed = editors.get(s);
+		for ( final String s : activations.keySet() ) {
+			final IParameterEditor ed = editors.get(s);
 			if ( ed != null ) {
 				ed.setActive(activations.get(s));
 			}
@@ -279,7 +298,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	}
 
 	private void buildButtons() {
-		Composite group1 = new Composite(shell, SWT.NONE);
+		final Composite group1 = new Composite(shell, SWT.NONE);
 		group1.setLayout(new FillLayout());
 		final GridData gridDataGroup1 = new GridData(GridData.BEGINNING, GridData.END, true, false);
 		gridDataGroup1.widthHint = 300;
@@ -294,7 +313,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		buttonAdvanced.setText("Advanced...");
 		buttonAdvanced.setToolTipText("Access to advanced preferences");
 
-		Composite group2 = new Composite(shell, SWT.NONE);
+		final Composite group2 = new Composite(shell, SWT.NONE);
 		group2.setLayout(new FillLayout());
 		final GridData gridDataGroup2 = new GridData(GridData.END, GridData.END, true, false);
 		gridDataGroup2.widthHint = 200;
@@ -335,7 +354,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				GamaPreferences.revertToDefaultValues(modelValues);
-				for ( IParameterEditor ed : editors.values() ) {
+				for ( final IParameterEditor ed : editors.values() ) {
 					ed.updateValue();
 				}
 			}
@@ -355,7 +374,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 					@Override
 					public void run() {
-						PreferenceDialog pd = WorkbenchPreferenceDialog.createDialogOn(parentShell, null);
+						final PreferenceDialog pd = WorkbenchPreferenceDialog.createDialogOn(parentShell, null);
 						pd.open();
 						shell.setVisible(true);
 					}

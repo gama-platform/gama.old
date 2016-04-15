@@ -42,7 +42,8 @@ public class ZoomController {
 
 		@Override
 		public void mouseDoubleClick(final MouseEvent e) {
-			view.zoomFit();
+			if (e.button == 1)
+				view.zoomFit();
 		}
 	};
 

@@ -8,7 +8,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,13 +38,19 @@ public class modelLibraryGenerator {
 			"F:/Gama/GamaSource/msi.gaml.extensions.fipa/models",
 			"F:/Gama/GamaSource/simtools.gaml.extensions.physics/models"};
 	static String outputPathToModelLibrary = "F:/gama_doc_17.wiki/References/ModelLibrary";
+	static String modelLibraryImagesPath = "F:/gama_doc_17.wiki/resources/images/modelLibraryScreenshots";
 	static String inputFileForHeadlessExecution = "F:/gama_doc_17.wiki/tempInputForHeadless.xml";
 	static String inputModelScreenshot = "F:/gama_doc_17.wiki/modelScreenshot.xml";
+	static String headlessBatPath = "F:/gama_doc_17.wiki/headless.bat";
+	
+	static String[] listNonScreenshot = {"Database Usage","Unit Test","Syntax"};
+	static String tempOutputFolder = "F:/outputHeadless/snapshot";
 	
 	static HashMap<String,ScreenshotStructure> mapModelScreenshot;
 	static HashMap<String,String> mainKeywordsMap; // the key is the name of the model, the value is the metadata formated which contains all the important keywords of the model.
 	static List<String> expeUsedFromTheXML = new ArrayList<String>(); // this variable is just here to verify if the modelScreenshot.xml is well formed, and if all
 	// the experiments have been used.
+	static List<Path> imagesCreatedPath = new ArrayList<Path>();
 
 	public static void main(String[] args) throws IOException {
 		
@@ -60,6 +68,7 @@ public class modelLibraryGenerator {
 			}
 		}
 		ArrayList<File> gamlFiles = Utils.filterFilesByExtension(listFiles,"gaml");
+		System.out.println(gamlFiles);
 		
 		// read modelScreenshot.xml
 		System.out.println("----- Start to load the file "+inputModelScreenshot+" -----");
@@ -76,14 +85,31 @@ public class modelLibraryGenerator {
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		System.out.println("----- Execute the headless -----");
-		System.out.println("----> NOT IMPLEMENTED YET");
-		
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		// copy-paste all the generated images in the write folder, with the right names
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		
-		System.out.println("----- Move the generated images to the write folder, with the right name -----");
-		System.out.println("----> NOT IMPLEMENTED YET");
+		try {
+			  Runtime runTime = Runtime.getRuntime();
+		      Process p = runTime.exec("cmd /c start "+headlessBatPath);
+		      BufferedReader stdInput = new BufferedReader(new 
+		    		     InputStreamReader(p.getInputStream()));
+		      BufferedReader stdError = new BufferedReader(new 
+		    		     InputStreamReader(p.getErrorStream()));
+		      
+		      // read the output from the command
+		      System.out.println("Here is the standard output of the command:\n");
+		      String s = null;
+		      while ((s = stdInput.readLine()) != null) {
+		          System.out.println(s);
+		      }
+
+		      // read any errors from the attempted command
+		      System.out.println("Here is the standard error of the command (if any):\n");
+		      while ((s = stdError.readLine()) != null) {
+		          System.out.println(s);
+		      }
+		      p.destroy();
+		    }
+		    catch (java.io.IOException ex) {
+		      System.err.println("ERROR while trying to execute the headless");
+		}
 		
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		// read all the metadatas of the model files, and extract only the GAML keywords "important".
@@ -257,6 +283,9 @@ public class modelLibraryGenerator {
         fileOut.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
         fileOut.write("<Experiment_plan>\n".getBytes());
         
+        int simIdx = 0;
+        int outputIdx = 0;
+        
         // browse all the model files
 		for (int idx = 0 ; idx < files.size(); idx++) {
 			String modelName = "";
@@ -267,37 +296,58 @@ public class modelLibraryGenerator {
 			modelName = Utils.getModelName(modelFile);
 			expeNames = Utils.getExpeNames(modelFile);
 			
-			// browse all the experiments
-			for (int expeIdx = 0; expeIdx < expeNames.size(); expeIdx++) {
-				String experiment = expeNames.get(expeIdx);
-				
-				displayNames = getDisplayNamesByExpe(files.get(idx),experiment);
-				
-				String formatedFileName = modelFile.getName().replace(".gaml", "");
-				
-		        String expeId = formatedFileName + " " + modelName + " " + experiment;
-		        if (mapModelScreenshot.containsKey(expeId)) {
-		        	expeUsedFromTheXML.add(expeId);
-		        	if (mapModelScreenshot.get(expeId).checkDisplayName(displayNames)) {
-		        		fileOut.write(mapModelScreenshot.get(expeId).getXMLContent(Integer.toString(idx*1000+expeIdx),modelFile.getAbsolutePath(),experiment).getBytes());
-		        	}
-		        }
-		        else {
-			        fileOut.write(new String("  <Simulation id=\""+expeIdx+"\" sourcePath=\""+modelFile.getAbsoluteFile()+"\" finalStep=\"100\" experiment=\""+experiment+"\">\n").getBytes());
-			        fileOut.write("    <Outputs>\n".getBytes());
+	        boolean stop = false;
+	        for (String str : listNonScreenshot) {
+	        	if (modelFile.getAbsolutePath().contains(str)) {
+	        		stop = true;
+	        	}
+	        }
+	        
+	        if (!stop) 
+	        {
+				// browse all the experiments
+				for (int expeIdx = 0; expeIdx < expeNames.size(); expeIdx++) {
+					String experiment = expeNames.get(expeIdx);
+					
+					displayNames = getDisplayNamesByExpe(files.get(idx),experiment);
+					
+					String formatedFileName = modelFile.getName().replace(".gaml", "");
+					
+			        String expeId = formatedFileName + " " + modelName + " " + experiment;
 			        
-			        // browse all the displays
-			        for (int displayIdx = 0 ; displayIdx < displayNames.size() ; displayIdx++) {
-			        	String display = displayNames.get(displayIdx);
-			        	fileOut.write(new String("      <Output id=\""+idx+1+"\" name=\""+display+"\" framerate=\"10\" />\n").getBytes());
+			        if (mapModelScreenshot.containsKey(expeId)) {
+			        	expeUsedFromTheXML.add(expeId);
+			        	if (mapModelScreenshot.get(expeId).checkDisplayName(displayNames)) {
+			        		fileOut.write(mapModelScreenshot.get(expeId).getXMLContent(Integer.toString(idx*1000+expeIdx),modelFile.getAbsolutePath(),experiment).getBytes());
+			        	}
 			        }
-			        
-			        fileOut.write("    <\\Outputs>\n".getBytes());
-			        fileOut.write("  <\\Simulation>\n".getBytes());
+			        else {
+			        	String buffer = "";
+			        	boolean writeInFile = false;
+			        	buffer += "  <Simulation id=\""+simIdx+"\" sourcePath=\"/"+modelFile.getAbsoluteFile()+"\" finalStep=\"11\" experiment=\""+experiment+"\">\n";
+				        simIdx++;
+				        buffer += "    <Outputs>\n";
+				        
+				        // browse all the displays
+				        for (int displayIdx = 0 ; displayIdx < displayNames.size() ; displayIdx++) {
+				        	writeInFile = true; // the simulation contains output, turn the flag to true
+				        	String display = displayNames.get(displayIdx);
+				        	String outputPath = modelFile.getAbsolutePath().replace(".gaml", "") + "/" + display;
+				        	buffer += "      <Output id=\""+outputIdx+"\" name=\""+display+"\" output_path=\""+outputPath+"\" framerate=\"10\" />\n";
+				        	outputIdx++;
+				        }
+				        
+				        buffer += "    </Outputs>\n";
+				        buffer += "  </Simulation>\n";
+				        
+				        if (writeInFile) { // if the simulations contains outputs
+				        	fileOut.write(buffer.getBytes());
+				        }
+			        }
 		        }
-			}
+	        }
 		}
-        fileOut.write("<\\Experiment_plan>\n".getBytes());
+        fileOut.write("</Experiment_plan>\n".getBytes());
         fileOut.close();
         
         // check if all the experiment id from the modelScreenshot have been used.
@@ -341,20 +391,23 @@ public class modelLibraryGenerator {
 		
 		while ((line = br.readLine()) != null) {
 			if (inTheRightExperiment) {
-				if (Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment (\\w+)") != "") {
+				if (line.startsWith("experiment") && (line.contains("type: gui") || line.contains("type:gui"))) {
+//				if (Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment (\\w+)") != "") {
 					// we are out of the right experiment. Return the result.
 					br.close();
 					return result;
 				}
-				displayName = Utils.findAndReturnRegex(line,"[\\t,\\s]+display (\\w+)");
+				displayName = Utils.findAndReturnRegex(line,"^[\\t,\\s]+display (\\w+)");
 				if (displayName != "") {
 					result.add(displayName);
 					displayName = "";
 				}
 			}
-			if (expeName.compareTo(Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment (\\w+)")) == 0) {
+			if (line.startsWith("experiment "+expeName) && (line.contains("type: gui") || line.contains("type:gui"))) {
+//			if (expeName.compareTo(Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment (\\w+)")) == 0) {
 				inTheRightExperiment = true;
 			}
+			
 		}
 		br.close();
 		
@@ -382,6 +435,9 @@ public class modelLibraryGenerator {
 			MetadataStructure metaStruct = new MetadataStructure(header);
 				
 			if (metaStruct.getName() != "") {
+				// search if there are some images linked
+				ArrayList<File> listScreenshot = new ArrayList<File>();
+				Utils.getFilesFromFolder(gamlFile.getAbsolutePath().replace(".gaml", ""), listScreenshot);
 				
 				// prepare the output file
 				String fileName = "";
@@ -407,12 +463,29 @@ public class modelLibraryGenerator {
 					fileName = fileName.replace(".gaml", "");
 					fileName = fileName.replace("/models", "");
 					
+					ArrayList<String> listPathToScreenshots = new ArrayList<String> ();		
+					
+					if (listScreenshot != null) {
+						for (File f : listScreenshot) {
+							if (f.getName().contains("-0.png")) { // we don't need the screenshot of the step 0.
+								f.delete();
+							}
+							else {
+								File tmp = new File(modelLibraryImagesPath+ "/" + fileName + "/" + f.getName());
+								tmp.getParentFile().mkdirs();
+								Files.move(f.toPath(), tmp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+								listPathToScreenshots.add(tmp.toPath().toString());
+							}
+						}
+						if (listScreenshot.size() != 0) listScreenshot.get(0).getParentFile().delete(); // delete the folder
+					}
+					
 					// manipulate section and subsection files
 					// case of "sub-section" (ex : 3D Visualization, Agent movement...)
 					if (!subSectionName.equals(newSubSectionName)) {
 						createSubSectionFile(outputPathToModelLibrary + "/" + newSectionName + "/" + newSubSectionName + ".md");
 					}
-					addModel(outputPathToModelLibrary + "/" + newSectionName + "/" + newSubSectionName + ".md",modelName,modelFileName.replace(".gaml", ""));
+					addModel(outputPathToModelLibrary + "/" + newSectionName + "/" + newSubSectionName + ".md",modelName,modelFileName.replace(".gaml", ""),listPathToScreenshots);
 					// case of "section" (ex : Features, Toy Models...)
 					if (!sectionName.equals(newSectionName)) {
 						createSectionFile(outputPathToModelLibrary + "/" + newSectionName + ".md");
@@ -435,8 +508,13 @@ public class modelLibraryGenerator {
 					fileOut.write(mainKeywordsMap.get(gamlFile.getAbsolutePath().replace("\\", "/")).getBytes());
 					fileOut.write(metaStruct.getMdHeader().getBytes());
 					
+					// show the images (if there are some)
+					for (String imagePath : listPathToScreenshots) {
+						fileOut.write(new String("!["+imagePath+"]("+imagePath+")\n\n").getBytes());
+					}
+					
 					// write the input (if there are any)
-					List<String> inputFileList = searchInputList(gamlFile);
+					List<String> inputFileList = searchInputListRecursive(gamlFile, new ArrayList<String>());
 					if (inputFileList.size() > 0) {
 						if (inputFileList.size()>1) {
 							fileOut.write(new String("Imported models : \n\n").getBytes());
@@ -456,6 +534,9 @@ public class modelLibraryGenerator {
 					fileOut.write(getModelCode(gamlFile).getBytes());
 					fileOut.close();
 				}
+			}
+			else {
+				System.out.println("WARNING : The model contained in the file "+gamlFile.getName()+" has not been created because impossible to read the name or the header.");
 			}
 		}
 	}
@@ -488,9 +569,13 @@ public class modelLibraryGenerator {
 		Files.write(Paths.get(pathToSectionFile), new String("* ["+subSectionName+"](references#"+urlToSubSection+")\n\n").getBytes(), StandardOpenOption.APPEND);
 	}
 	
-	private static void addModel(String pathToSubSectionFile, String modelName, String modelFileName) throws IOException {
+	private static void addModel(String pathToSubSectionFile, String modelName, String modelFileName, List<String> screenshotPathList) throws IOException {
 		String urlToModel = modelFileName.replace(" ", "");
 		Files.write(Paths.get(pathToSubSectionFile), new String("* ["+modelName+"](references#"+urlToModel+")\n\n").getBytes(), StandardOpenOption.APPEND);
+		// show the images (if there are some)
+		for (String imagePath : screenshotPathList) {
+			Files.write(Paths.get(pathToSubSectionFile), new String("!["+imagePath+"]("+imagePath+")\n\n").getBytes(), StandardOpenOption.APPEND);
+		}
 	}
 	
 	private static String extractHeader(File file) throws IOException {
@@ -514,16 +599,13 @@ public class modelLibraryGenerator {
 		}
 		else {
 			br.close();
-			System.out.println("WARNING : file "+file.getName()+" has no header !");
 		}
 		br.close();
 		return result;
 	}
 	
-	private static ArrayList<String> searchInputList(File file) throws IOException {
-		// returns the header
-		ArrayList<String> result = new ArrayList<String>();
-		
+	private static ArrayList<String> searchInputListRecursive(File file, ArrayList<String> results) throws IOException {
+
 		FileInputStream fis = new FileInputStream(file);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 		
@@ -535,12 +617,13 @@ public class modelLibraryGenerator {
 		{
 			String regexMatch = Utils.findAndReturnRegex(line,"import \"(.*[^\"])\"");
 			if (regexMatch != "") {
-				result.add(file.getParentFile().getAbsolutePath().replace("\\","/")+"/"+regexMatch);
+				results.add(0,file.getParentFile().getAbsolutePath().replace("\\","/")+"/"+regexMatch);
+				results = searchInputListRecursive(new File(file.getParentFile().getAbsolutePath().replace("\\","/")+"/"+regexMatch),results);
 			}
 			line = br.readLine();
 		}
 		br.close();
-		return result;
+		return results;
 	}
 	
 	private static String getModelCode(File gamlFile) throws IOException {

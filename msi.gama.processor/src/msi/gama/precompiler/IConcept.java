@@ -83,10 +83,13 @@ public interface IConcept {
 	public static final String MAP						= "map";
 	public static final String MIRROR					= "mirror";
 	public static final String MODEL					= "model";
+	public static final String MONITOR					= "monitor";
 	public static final String MULTI_LEVEL				= "multi_level";
 	public static final String MULTI_CRITERIA			= "multi_criteria";
+	public static final String MULTI_SIMULATION			= "multi_simulation";
 	public static final String NEIGHBORS				= "neighbors";
 	public static final String NETWORK					= "network";
+	public static final String NIL						= "nil";
 	public static final String NODE						= "node";
 	public static final String OBJ						= "obj";
 	public static final String OBSTACLE					= "obstacle";
@@ -95,6 +98,7 @@ public interface IConcept {
 	public static final String OPTIMIZATION				= "optimization";
 	public static final String OSM						= "osm";
 	public static final String OUTPUT					= "output";
+	public static final String OVERLAY					= "overlay";
 	public static final String PARAMETER				= "parameter";
 	public static final String PAUSE					= "pause";
 	public static final String PERMANENT				= "permanent";
@@ -121,6 +125,7 @@ public interface IConcept {
 	public static final String SPATIAL_RELATION			= "spatial_relation";
 	public static final String SPATIAL_TRANSFORMATION	= "spatial_transformation";
 	public static final String SPECIES					= "species";
+	public static final String SPORT					= "sport";
 	public static final String STATISTIC				= "statistic";
 	public static final String STRING					= "string";
 	public static final String SURFACE_UNIT				= "surface_unit";

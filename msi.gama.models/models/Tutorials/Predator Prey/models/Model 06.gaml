@@ -1,5 +1,11 @@
+/**
+* Name: Breeding of prey and predator agents
+* Author:
+* Description: 6th part of the tutorial : Predator Prey
+* Tags: 
+*/
+
 model prey_predator
-//Model 6 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

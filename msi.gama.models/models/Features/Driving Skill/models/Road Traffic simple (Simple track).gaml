@@ -2,7 +2,7 @@
 * Name: Easy Road Network 
 * Author: Patrick Taillandier
 * Description: Model using shapefiles to create roads using shapefiles with people driving on these roads. The model take into account 
-* 	the number of lanes of the roads.
+* the number of lanes of the roads.
 * Tags: shapefile, graph, agent_movement, skill, transport
 */
   

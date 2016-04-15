@@ -1,8 +1,8 @@
 /**
 * Name: Water Tank
 * Author: Arnaud Grignard
-* Description: This is a model that shows how the physics engine works using a tank, with a floor and 4 walls, and balls
-* 	falling into it. The floor doesn't have any mass, 
+* Description: This is a model that shows how the physics engine works using a tank, with a floor and 4 walls, and balls 
+* falling into it. The floor doesn't have any mass, 
 * Tags: physics_engine, skill, 3d, spatial_computation
 */
 model Tank

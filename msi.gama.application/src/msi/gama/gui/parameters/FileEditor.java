@@ -11,39 +11,43 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
+import msi.gama.runtime.IScope;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.operators.Files;
-import msi.gaml.types.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class FileEditor extends AbstractEditor<IGamaFile> {
 
 	private FlatButton textBox;
 
-	FileEditor(final IParameter param) {
-		super(param);
+	FileEditor(final IScope scope, final IParameter param) {
+		super(scope, param);
 	}
 
-	FileEditor(final IAgent agent, final IParameter param) {
-		this(agent, param, null);
+	FileEditor(final IScope scope, final IAgent agent, final IParameter param) {
+		this(scope, agent, param, null);
 	}
 
-	FileEditor(final IAgent agent, final IParameter param, final EditorListener l) {
-		super(agent, param, l);
+	FileEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+		super(scope, agent, param, l);
 	}
 
-	FileEditor(final Composite parent, final String title, final String value, final EditorListener<String> whenModified) {
+	FileEditor(final IScope scope, final Composite parent, final String title, final String value,
+		final EditorListener<IGamaFile> whenModified) {
 		// Convenience method
-		super(new InputParameter(title, value), whenModified);
+		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
@@ -59,20 +63,13 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
-		FileDialog dialog = new FileDialog(Display.getCurrent().getActiveShell(), SWT.NULL);
+		final FileDialog dialog = new FileDialog(Display.getCurrent().getActiveShell(), SWT.NULL);
 		IGamaFile file = currentValue;
 		dialog.setFileName(file.getPath());
 		dialog.setText("Choose a file for parameter '" + param.getTitle() + "'");
 		final String path = dialog.open();
 		if ( path != null ) {
-			file = GAMA.run(new InScope<IGamaFile>() {
-
-				@Override
-				public IGamaFile run(final IScope scope) {
-					return Files.from(scope, path);
-				}
-
-			});
+			file = Files.from(getScope(), path);
 			modifyAndDisplayValue(file);
 		}
 	}
@@ -83,7 +80,7 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 		if ( currentValue == null ) {
 			textBox.setText("No file");
 		} else {
-			IGamaFile file = currentValue;
+			final IGamaFile file = currentValue;
 			textBox.setToolTipText(file.getPath());
 			textBox.setText(file.getPath());
 		}

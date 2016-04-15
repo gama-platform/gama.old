@@ -21,6 +21,7 @@ import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayOutput.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.*;
@@ -93,7 +94,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.AMBIENT_LIGHT,
 	type = { IType.INT, IType.COLOR },
 	optional = true,
-	doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(125,125,125)")),
+	doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(40,40,40)")),
 	@facet(name = IKeyword.DIFFUSE_LIGHT,
 	type = { IType.INT, IType.COLOR },
 	optional = true,
@@ -122,6 +123,10 @@ import msi.gaml.types.*;
 	type = IType.POINT,
 	optional = true,
 	doc = @doc("Allows to define the orientation of the camera")),
+	@facet(name = IKeyword.CAMERA_INTERACTION,
+	type = IType.BOOL,
+	optional = true,
+	doc = @doc("If false, the user will not be able to modify the position and the orientation of the camera, and neither using the ROI. Default is true.")),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.AUTOSAVE,
 	type = { IType.BOOL, IType.POINT },
@@ -337,6 +342,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( ddiff != null ) {
 			this.data.setDrawDiffLight(Cast.asBool(getScope(), ddiff.value(getScope())));
 		}
+		
+		final IExpression fixed_cam = getFacet(IKeyword.CAMERA_INTERACTION);
+		if ( fixed_cam != null ) {
+			this.data.disableCameraInteractions(!Cast.asBool(getScope(), fixed_cam.value(getScope())));
+		}
 
 		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);
 		if ( lightOn != null ) {
@@ -373,21 +383,27 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if ( camera != null ) {
-			this.data.setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
+			ILocation location = Cast.asPoint(getScope(), camera.value(getScope()));
+			location.setY(-location.getY()); // y component need to be reverted
+			this.data.setCameraPos(location);
 			constantCamera = camera.isConst();
 			cameraFix = true;
 		}
 
 		final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 		if ( cameraLook != null ) {
-			this.data.setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
+			ILocation location = Cast.asPoint(getScope(), cameraLook.value(getScope()));
+			location.setY(-location.getY()); // y component need to be reverted
+			this.data.setCameraLookPos(location);
 			constantCameraLook = cameraLook.isConst();
 			cameraFix = true;
 		}
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
 		if ( cameraUp != null ) {
-			this.data.setCameraUpVector(Cast.asPoint(getScope(), cameraUp.value(getScope())));
+			ILocation location = Cast.asPoint(getScope(), cameraUp.value(getScope()));
+			location.setY(-location.getY()); // y component need to be reverted
+			this.data.setCameraUpVector(location);
 			cameraFix = true;
 		}
 
@@ -497,7 +513,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantCamera ) {
 			final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 			if ( camera != null ) {
-				this.data.setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
+				ILocation location = Cast.asPoint(getScope(), camera.value(getScope()));
+				location.setY(-location.getY()); // y component need to be reverted
+				this.data.setCameraPos(location);
 			}
 			// graphics.setCameraPosition(getCameraPos());
 		}
@@ -505,7 +523,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantCameraLook ) {
 			final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 			if ( cameraLook != null ) {
-				this.data.setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
+				ILocation location = Cast.asPoint(getScope(), cameraLook.value(getScope()));
+				location.setY(-location.getY()); // y component need to be reverted
+				this.data.setCameraLookPos(location);
 			}
 		}
 		// computeTrace(getScope());

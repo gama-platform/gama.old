@@ -1,10 +1,10 @@
 /**
 * Name: Boids 3D Analysis
 * Author: 
-* Description:  This model shows the movement of boids following a goal, and creating
-* 	without their own volonty, a flock . Four experiments are proposed : start is the 3D display of the boids like a real world, trajectory_analysis
-* 	like the name means is about the analysis of the trajectory of the boids, Space Time Cube adds two
-* 	display to see the movement of the boids using the time as the z-axis, and the last one represents the
+* Description:  This model shows the movement of boids following a goal, and creating 
+* 	without their own volonty, a flock . Four experiments are proposed : start is the 3D display of the boids like a real world, trajectory_analysis 
+* 	like the name means is about the analysis of the trajectory of the boids, Space Time Cube adds two 
+* 	display to see the movement of the boids using the time as the z-axis, and the last one represents the 
 * 	differents camera available in GAMA.
 * Tags: gui, skill, 3d, camera, multi_level
 */
@@ -431,8 +431,9 @@ experiment MultipleView type: gui {
 			species boids  aspect: dynamicColor transparency:0.2 position:{0,0,0.24};		
 		}
 		
-		display ThirdPersonn  type:opengl camera_pos:{int(first(boids).location.x),-int(first(boids).location.y),250} 
-		camera_look_pos:{int(first(boids).location.x),-(first(boids).location.y),0} {
+		display ThirdPersonn  type:opengl camera_interaction:false camera_pos:{int(first(boids).location.x),int(first(boids).location.y),250} 
+		camera_look_pos:{int(first(boids).location.x),first(boids).location.y,0} 
+		camera_up_vector:{0.0,-1.0,0.0} {
 		
 			image name:'background' file:file_path_to_ocean;
 			species obstacle;
@@ -441,8 +442,10 @@ experiment MultipleView type: gui {
 		}
 		
 			
-		display FirstPerson  type:opengl ambient_light:100 camera_pos:{int(first(boids).location.x),-int(first(boids).location.y),10} 
-		camera_look_pos:{cos(first(boids).heading)*world.shape.width,-sin(first(boids).heading)*world.shape.height,0} camera_up_vector:{0.0,0.0,1.0} {	
+		display FirstPerson  type:opengl camera_interaction:false ambient_light:100 camera_pos:{int(first(boids).location.x),int(first(boids).location.y),10} 
+			camera_look_pos:{cos(first(boids).heading)*first(boids).speed+int(first(boids).location.x),
+			sin(first(boids).heading)*first(boids).speed+int(first(boids).location.y),10} 
+			camera_up_vector:{0.0,0.0,1.0} {	
 			image name:'background' file:file_path_to_ocean;
 			species obstacle ;
 			species boids  aspect: dynamicColor transparency:0.2 ;

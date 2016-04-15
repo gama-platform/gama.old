@@ -11,47 +11,61 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
 /**
  *
- * Class MinimalAgent. An abstract class that tries to minimize the number of attributes manipulated by agents. In
- * particular, it declares no Geometry (leaving the programmer the possibility to redeclare getGeometry(), for example
- * in a dynamic fashion), no Population (leaving the programmer the possibility to redeclare getPopulation(), for
- * example in a dynamic fashion, etc.)
+ * Class MinimalAgent. An abstract class that tries to minimize the number of
+ * attributes manipulated by agents. In particular, it declares no Geometry
+ * (leaving the programmer the possibility to redeclare getGeometry(), for
+ * example in a dynamic fashion), no Population (leaving the programmer the
+ * possibility to redeclare getPopulation(), for example in a dynamic fashion,
+ * etc.)
  *
- * These agents have no sub-population by default (but subclasses can be declared by implementing IMacroAgent, and the
- * appropriate methods can be redefined). Their name is fixed by construction (but subclasses can always implement a
- * name).
+ * These agents have no sub-population by default (but subclasses can be
+ * declared by implementing IMacroAgent, and the appropriate methods can be
+ * redefined). Their name is fixed by construction (but subclasses can always
+ * implement a name).
  *
- * From a functional point of view, this class delegates most of its methods to either the geometry (by calling
- * getGeometry()) or the population (by calling getPopulation()).
+ * From a functional point of view, this class delegates most of its methods to
+ * either the geometry (by calling getGeometry()) or the population (by calling
+ * getPopulation()).
  *
- * Furthermore, and contrary to GamlAgent, this class does not delegate its step() and init() behaviors to GAML actions
- * (_init_ and _step_).
+ * Furthermore, and contrary to GamlAgent, this class does not delegate its
+ * step() and init() behaviors to GAML actions (_init_ and _step_).
  *
- * Most of the methods observe a "fail-fast" pattern. That is, if either the population or the geometry of the agent is
- * null, it throws an exception and does not attempt to return guessed values.
+ * Most of the methods observe a "fail-fast" pattern. That is, if either the
+ * population or the geometry of the agent is null, it throws an exception and
+ * does not attempt to return guessed values.
  *
- * Abstract methods to override:
- * - getGeometry()
- * - getPopulation()
+ * Abstract methods to override: - getGeometry() - getPopulation()
  *
  * @author drogoul
  * @since 18 mai 2013
@@ -73,9 +87,12 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * AD 02/16: The geometry is now never null
-	 * @return the geometry of the agent if it not null, otherwise throws a runtime exeception.
-	 * @note If checking for a null value in geometry imposes too much overhead in cases where the geometry is sure not
-	 *       to be nil, this method can be safely overriden with a direct call to getGeometry()
+	 * 
+	 * @return the geometry of the agent if it not null, otherwise throws a
+	 *         runtime exeception.
+	 * @note If checking for a null value in geometry imposes too much overhead
+	 *       in cases where the geometry is sure not to be nil, this method can
+	 *       be safely overriden with a direct call to getGeometry()
 	 */
 	// protected IShape checkedGeometry() {
 	// return getGeometry();
@@ -87,7 +104,8 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public void setAgent(final IAgent agent) {}
+	public void setAgent(final IAgent agent) {
+	}
 
 	@Override
 	public boolean isPoint() {
@@ -108,7 +126,9 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	/**
-	 * Returns the envelope of the geometry of the agent, or null if the geometry has not yet been defined
+	 * Returns the envelope of the geometry of the agent, or null if the
+	 * geometry has not yet been defined
+	 * 
 	 * @see msi.gama.interfaces.IGeometry#getEnvelope()
 	 */
 	@Override
@@ -169,18 +189,21 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void dispose() {
-		if ( dead() ) { return; }
+		if (dead()) {
+			return;
+		}
 		// acquireLock();
 		try {
-			// scope.getGui().debug(this.getClass().getSimpleName() + " " + getName() + " .dispose (in MinimalAgent)");
+			// scope.getGui().debug(this.getClass().getSimpleName() + " " +
+			// getName() + " .dispose (in MinimalAgent)");
 			dead = true;
 			final IPopulation p = getPopulation();
-			if ( p != null ) {
+			if (p != null) {
 				p.removeValue(null, this);
 			}
 
 			final IShape s = getGeometry();
-			if ( s != null ) {
+			if (s != null) {
 				s.dispose();
 			}
 			// if ( attributes != null ) {
@@ -206,7 +229,7 @@ public abstract class AbstractAgent implements IAgent {
 	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(30);
 		sb.append(getSpeciesName()).append('(').append(getIndex()).append(')');
-		if ( dead() ) {
+		if (dead()) {
 			sb.append(" /* dead */");
 		}
 		return sb.toString();
@@ -219,7 +242,9 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void setExtraAttributes(final Map<Object, Object> map) {
-		if ( map == null ) { return; }
+		if (map == null) {
+			return;
+		}
 		getOrCreateAttributes().putAll(map);
 	}
 
@@ -267,8 +292,8 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
-		if ( scope.update(this) ) {
-			Object[] result = new Object[1];
+		if (scope.update(this)) {
+			final Object[] result = new Object[1];
 			return scope.execute(getSpecies().getArchitecture(), this, null, result);
 		}
 		return false;
@@ -287,10 +312,10 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
 		final IPopulation pop = getHost().getPopulationFor(this.getSpecies());
-		if ( pop != null ) {
-			IScope scope = getScope();
-			final IList<IAgent> retVal = GamaListFactory
-				.<IAgent> createWithoutCasting(scope.getModelContext().getTypeNamed(getSpeciesName()), pop.toArray());
+		if (pop != null) {
+			final IScope scope = getScope();
+			final IList<IAgent> retVal = GamaListFactory.<IAgent> createWithoutCasting(
+					scope.getModelContext().getTypeNamed(getSpeciesName()), pop.toArray());
 			retVal.remove(this);
 			return retVal;
 		}
@@ -303,7 +328,8 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public void setName(final String name) {}
+	public void setName(final String name) {
+	}
 
 	@Override
 	public ILocation getLocation() {
@@ -331,12 +357,13 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public void setHost(final IMacroAgent macroAgent) {}
+	public void setHost(final IMacroAgent macroAgent) {
+	}
 
 	@Override
 	public void schedule(final IScope scope) {
 		// public void scheduleAndExecute(final RemoteSequence sequence) {
-		if ( !dead() ) {
+		if (!dead()) {
 			scope.init(this);
 			// getScheduler().insertAgentToInit(getScope(), this, sequence);
 		}
@@ -364,20 +391,28 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
-		ISpecies species = getSpecies();
-		if ( species == s ) { return true; }
-		if ( !direct ) { return species.extendsSpecies(s); }
+		final ISpecies species = getSpecies();
+		if (species == s) {
+			return true;
+		}
+		if (!direct) {
+			return species.extendsSpecies(s);
+		}
 		return false;
 	}
 
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
 		final IVariable var = getPopulation().getVar(this, n);
-		if ( var != null ) { return var.value(scope, this); }
+		if (var != null) {
+			return var.value(scope, this);
+		}
 		final IMacroAgent host = this.getHost();
-		if ( host != null ) {
+		if (host != null) {
 			final IVariable varOfHost = host.getPopulation().getVar(host, n);
-			if ( varOfHost != null ) { return varOfHost.value(scope, host); }
+			if (varOfHost != null) {
+				return varOfHost.value(scope, host);
+			}
 		}
 		return null;
 	}
@@ -385,13 +420,13 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public void setDirectVarValue(final IScope scope, final String s, final Object v) throws GamaRuntimeException {
 		final IVariable var = getPopulation().getVar(this, s);
-		if ( var != null ) {
+		if (var != null) {
 			var.setVal(scope, this, v);
 		} else {
 			final IAgent host = this.getHost();
-			if ( host != null ) {
+			if (host != null) {
 				final IVariable varOfHost = host.getPopulation().getVar(host, s);
-				if ( varOfHost != null ) {
+				if (varOfHost != null) {
 					varOfHost.setVal(scope, host, v);
 				}
 			}
@@ -413,7 +448,9 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public IModel getModel() {
 		final IMacroAgent a = getHost();
-		if ( a == null ) { return GAMA.getModel(); }
+		if (a == null) {
+			return GAMA.getModel();
+		}
 		return a.getModel();
 	}
 
@@ -425,7 +462,9 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public IScope getScope() {
 		final IMacroAgent a = getHost();
-		if ( a == null ) { return null; }
+		if (a == null) {
+			return null;
+		}
 		return a.getScope();
 	}
 
@@ -436,6 +475,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Method getPopulationFor()
+	 * 
 	 * @see msi.gama.metamodel.agent.IAgent#getPopulationFor(msi.gaml.species.ISpecies)
 	 */
 	@Override
@@ -445,12 +485,15 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Method getPopulationFor()
+	 * 
 	 * @see msi.gama.metamodel.agent.IAgent#getPopulationFor(java.lang.String)
 	 */
 	@Override
 	public IPopulation getPopulationFor(final String speciesName) {
 		final IMacroAgent a = getHost();
-		if ( a == null ) { return null; }
+		if (a == null) {
+			return null;
+		}
 		return getHost().getPopulationFor(speciesName);
 	}
 
@@ -458,17 +501,18 @@ public abstract class AbstractAgent implements IAgent {
 	 * GAML actions
 	 */
 
-	@action(name = "debug")
-	@args(names = { "message" })
+	@action(name = "debug", args = {
+			@arg(name = "message", type = IType.STRING, doc = @doc("The message to display")) })
 	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
 		final String m = (String) scope.getArg("message", IType.STRING);
 		scope.getGui().debugConsole(scope.getClock().getCycle(), m + "\nsender: " + Cast.asMap(scope, this, false),
-			scope.getRoot());
+				scope.getRoot());
 		return m;
 	}
 
-	@action(name = "write", doc = { @doc(value = "", deprecated = "Use the 'write' statement instead") })
-	@args(names = { "message" })
+	@action(name = "write", args = {
+			@arg(name = "message", type = IType.STRING, doc = @doc("The message to write")) }, doc = {
+					@doc(value = "", deprecated = "Use the 'write' statement instead") })
 	@Deprecated
 	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
 		final String s = (String) scope.getArg("message", IType.STRING);
@@ -476,16 +520,15 @@ public abstract class AbstractAgent implements IAgent {
 		return s;
 	}
 
-	@action(name = IKeyword.ERROR)
-	@args(names = { "message" })
+	@action(name = IKeyword.ERROR, args = {
+			@arg(name = "message", type = IType.STRING, doc = @doc("The message to display")) })
 	public final Object primError(final IScope scope) throws GamaRuntimeException {
 		final String error = (String) scope.getArg("message", IType.STRING);
 		scope.getGui().error(error);
 		return error;
 	}
 
-	@action(name = "tell")
-	@args(names = { "message" })
+	@action(name = "tell", args = { @arg(name = "message", type = IType.STRING, doc = @doc("The message to display")) })
 	public final Object primTell(final IScope scope) throws GamaRuntimeException {
 		final String s = getName() + " says : " + scope.getArg("message", IType.STRING);
 		scope.getGui().tell(s);
@@ -494,8 +537,9 @@ public abstract class AbstractAgent implements IAgent {
 
 	@action(name = "die")
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		IMacroAgent currentMacro = this.getHost();
-		if (currentMacro != null) currentMacro.removeAgent();
+		final IMacroAgent currentMacro = this.getHost();
+		if (currentMacro != null)
+			currentMacro.removeAgent();
 		scope.interruptAgent();
 		dispose();
 		return null;
@@ -513,11 +557,13 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Method get()
-	 * @see msi.gama.util.IContainer.Addressable#get(msi.gama.runtime.IScope, java.lang.Object)
+	 * 
+	 * @see msi.gama.util.IContainer.Addressable#get(msi.gama.runtime.IScope,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public Object get(final IScope scope, final String index) throws GamaRuntimeException {
-		if ( getPopulation().hasVar(index) ) {
+		if (getPopulation().hasVar(index)) {
 			return scope.getAgentVarValue(this, index);
 		} else {
 			return getAttribute(index);
@@ -527,29 +573,39 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Method getFromIndicesList()
-	 * @see msi.gama.util.IContainer.Addressable#getFromIndicesList(msi.gama.runtime.IScope, msi.gama.util.IList)
+	 * 
+	 * @see msi.gama.util.IContainer.Addressable#getFromIndicesList(msi.gama.runtime.IScope,
+	 *      msi.gama.util.IList)
 	 */
 	@Override
 	public Object getFromIndicesList(final IScope scope, final IList<String> indices) throws GamaRuntimeException {
-		if ( indices == null || indices.isEmpty() ) { return null; }
+		if (indices == null || indices.isEmpty()) {
+			return null;
+		}
 		return get(scope, indices.firstValue(scope));
 	}
 
-	public void setDefiningPlugin(final String plugin) {}
+	public void setDefiningPlugin(final String plugin) {
+	}
 
 	/**
 	 * Method getPoints()
+	 * 
 	 * @see msi.gama.metamodel.shape.IShape#getPoints()
 	 */
 	@Override
 	public IList<? extends ILocation> getPoints() {
-		if ( getGeometry() == null ) { return GamaListFactory.EMPTY_LIST; }
+		if (getGeometry() == null) {
+			return GamaListFactory.EMPTY_LIST;
+		}
 		return getGeometry().getPoints();
 	}
 
 	@Override
 	public void setDepth(final double depth) {
-		if ( getGeometry() == null ) { return; }
+		if (getGeometry() == null) {
+			return;
+		}
 		getGeometry().setDepth(depth);
 	}
 

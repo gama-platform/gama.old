@@ -11,36 +11,68 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Robot;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import javax.imageio.ImageIO;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.interfaces.ILayerManager;
+import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerSideControls;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
-import msi.gama.gui.views.actions.*;
+import msi.gama.gui.swt.GamaColors;
+import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.DisplayOverlay;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.swt.controls.ParameterExpandBar;
+import msi.gama.gui.swt.controls.ParameterExpandItem;
+import msi.gama.gui.views.actions.DisplayedAgentsMenu;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gama.gui.views.actions.PresentationMenu;
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.outputs.*;
-import msi.gama.outputs.LayeredDisplayData.*;
+import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.LayeredDisplayData;
+import msi.gama.outputs.LayeredDisplayData.Changes;
+import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.AbstractLayer;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Files;
+import msi.gaml.operators.Maths;
 
 public abstract class LayeredDisplayView extends GamaViewPart implements DisplayDataListener, IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable {
 
@@ -69,11 +101,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public void addOutput(final IDisplayOutput out) {
 		super.addOutput(out);
 		if ( out != null ) {
-			IScope scope = out.getScope();
+			final IScope scope = out.getScope();
 
 			if ( scope != null && scope.getSimulationScope() != null ) {
-				ITopLevelAgent root = scope.getRoot();
-				Color color = root.getColor();
+				final ITopLevelAgent root = scope.getRoot();
+				final Color color = root.getColor();
 				// String name = root.getClass().getSimpleName() + root.getIndex();
 				this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));
 			}
@@ -109,7 +141,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		form.setSashWidth(3);
 
 		layersPanel = new Composite(form, SWT.NONE);
-		GridLayout layout = new GridLayout(1, true);
+		final GridLayout layout = new GridLayout(1, true);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
@@ -118,7 +150,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		layersPanel.setBackground(IGamaColors.WHITE.color());
 
 		parent = new Composite(form, SWT.NONE);
-		GridLayout gl = new GridLayout(1, false);
+		final GridLayout gl = new GridLayout(1, false);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
@@ -130,7 +162,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 			@Override
 			public void controlResized(final ControlEvent e) {
-				Rectangle r = Display.getCurrent().map(surfaceComposite, null, surfaceComposite.getBounds());
+				final Rectangle r = Display.getCurrent().map(surfaceComposite, null, surfaceComposite.getBounds());
 				surfaceCompositeBounds.setBounds(r.x, r.y, r.width, r.height);
 			}
 		});
@@ -162,7 +194,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		// }
 		//
 		// });
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = 0;
 		gd.verticalIndent = 0;
 		surfaceComposite.setLayoutData(gd);
@@ -174,7 +206,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			overlay.update();
 		}
 		// parent.setLayoutDeferred(false);
-
 
 		// Create after the surface composite
 
@@ -211,7 +242,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	public IDisplaySurface getDisplaySurface() {
-		LayeredDisplayOutput out = getOutput();
+		final LayeredDisplayOutput out = getOutput();
 		if ( out != null ) { return out.getSurface(); }
 		return null;
 	}
@@ -227,7 +258,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( surfaceComposite != null ) {
 			surfaceComposite.dispose();
 		}
-		IDisplaySurface s = getDisplaySurface();
+		final IDisplaySurface s = getDisplaySurface();
 		if ( s != null ) {
 			releaseLock();
 		}
@@ -281,14 +312,13 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	 */
 	public int getZoomLevel() {
 		if ( getOutput() == null ) { return 0; }
-		Double dataZoom = getOutput().getData().getZoomLevel();
+		final Double dataZoom = getOutput().getData().getZoomLevel();
 		if ( dataZoom == null ) {
 			return 1;
 		} else {
 			return (int) (dataZoom * 100);
 		}
 	}
-
 
 	@Override
 	public void pauseChanged() {
@@ -301,35 +331,40 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	public double getValueOfOnePixelInModelUnits() {
-		IDisplaySurface s = getDisplaySurface();
+		final IDisplaySurface s = getDisplaySurface();
 		if ( s == null ) { return 1; }
-		double displayWidth = s.getDisplayWidth();
-		double envWidth = s.getEnvWidth();
+		final double displayWidth = s.getDisplayWidth();
+		final double envWidth = s.getEnvWidth();
 		return envWidth / displayWidth;
 	}
 
 	public String getOverlayCoordInfo() {
-		IDisplayOutput output = getOutput();
+		final IDisplayOutput output = getOutput();
 		if ( output == null ) { return ""; }
-		boolean paused = output.isPaused();
-		boolean synced = getOutput().getData().isSynchronized();
-		IDisplaySurface surface = getDisplaySurface();
-		String point = surface == null ? null : surface.getModelCoordinatesInfo();
+		final boolean paused = output.isPaused();
+		final boolean synced = getOutput().getData().isSynchronized();
+		final IDisplaySurface surface = getDisplaySurface();
+		final String point = surface == null ? null : surface.getModelCoordinatesInfo();
 		return point + (paused ? " | Paused" : "") + (synced ? " | Synchronized" : "");
 	}
 
 	public String getOverlayZoomInfo() {
-		IDisplaySurface surface = getDisplaySurface();
+		final IDisplaySurface surface = getDisplaySurface();
 		if ( surface == null ) { return ""; }
-		boolean openGL = isOpenGL();
-		String result = GamaPreferences.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
+		final boolean openGL = isOpenGL();
+		if ( openGL ) {
+			final Envelope3D roi = ((IDisplaySurface.OpenGL) surface).getROIDimensions();
+			if ( roi != null ) { return "" + Maths.round(roi.getWidth(), 2) + " x " + Maths.round(roi.getHeight(), 2); }
+		}
+		final String result =
+			GamaPreferences.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
 		if ( !openGL ) {
 			return result + "Zoom " + getZoomLevel() + "%";
 		} else {
-			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
-			ILocation camera = ds.getCameraPosition();
+			final IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
+			final ILocation camera = ds.getCameraPosition();
 			return result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
-				camera.getY(), camera.getZ());
+				camera.getY(), camera.getZ()/* , camera.getTheta(), camera.getPhi() */);
 		}
 	}
 
@@ -375,12 +410,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT.getCode(), "Take a snapshot", "Take a snapshot",
 			new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				doSnapshot();
-			}
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					doSnapshot();
+				}
 
-		}, SWT.RIGHT);
+			}, SWT.RIGHT);
 	}
 
 	@Override
@@ -437,7 +472,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 					while (!disposed) {
 						acquireLock();
 						if ( s != null && s.isRealized() && !s.isDisposed() && !disposed ) {
-							if (  s.getData().isAutosave() ) {
+							if ( s.getData().isAutosave() ) {
 								doSnapshot();
 							}
 							s.updateDisplay(false);
@@ -456,7 +491,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			while (!s.isRendered() && !s.isDisposed() && !disposed) {
 				try {
 					Thread.sleep(10);
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
 
@@ -468,9 +503,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	void doSnapshot() {
-		LayeredDisplayData data = getOutput().getData();
-		int w = (int) data.getImageDimension().getX();
-		int h = (int) data.getImageDimension().getY();
+		final LayeredDisplayData data = getOutput().getData();
+		final int w = (int) data.getImageDimension().getX();
+		final int h = (int) data.getImageDimension().getY();
 		final int previousWidth = getDisplaySurface().getWidth();
 		final int previousHeight = getDisplaySurface().getHeight();
 		final int width = w == -1 ? previousWidth : w;
@@ -478,10 +513,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		BufferedImage snapshot = null;
 		if ( GamaPreferences.DISPLAY_FAST_SNAPSHOT.getValue() ) {
 			try {
-				Robot robot = new Robot();
+				final Robot robot = new Robot();
 				snapshot = robot.createScreenCapture(surfaceCompositeBounds);
 				snapshot = ImageUtils.resize(snapshot, width, height);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -502,24 +537,24 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( image == null ) { return; }
 		try {
 			Files.newFolder(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME);
-		} catch (GamaRuntimeException e1) {
+		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + IDisplaySurface.SNAPSHOT_FOLDER_NAME);
 			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 			e1.printStackTrace();
 			return;
 		}
-		String snapshotFile = FileUtils.constructAbsoluteFilePath(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME + "/" +
-			GAMA.getModel().getName() + "_display_" + getOutput().getName(), false);
+		final String snapshotFile = FileUtils.constructAbsoluteFilePath(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME +
+			"/" + GAMA.getModel().getName() + "_display_" + getOutput().getName(), false);
 
-		String file = snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
+		final String file = snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
 			scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));
 			ImageIO.write(image, "png", os);
 			image.flush();
-		} catch (java.io.IOException ex) {
-			GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
+		} catch (final java.io.IOException ex) {
+			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 			e.addContext("Unable to create output stream for snapshot image");
 			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
 		} finally {
@@ -527,8 +562,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				if ( os != null ) {
 					os.close();
 				}
-			} catch (Exception ex) {
-				GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
+			} catch (final Exception ex) {
+				final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 				e.addContext("Unable to close output stream for snapshot image");
 				GAMA.reportError(GAMA.getRuntimeScope(), e, false);
 			}
@@ -570,14 +605,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		content.setLayoutData(data);
 		content.setLayout(new GridLayout());
-		ItemList<ILayer> list = getDisplayManager();
-		ParameterExpandBar viewer = new ParameterExpandBar(content, SWT.V_SCROLL, false, false, true, true, list);
+		final ItemList<ILayer> list = getDisplayManager();
+		final ParameterExpandBar viewer = new ParameterExpandBar(content, SWT.V_SCROLL, false, false, true, true, list);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		viewer.setLayoutData(data);
 		viewer.setSpacing(5);
 
-		for ( ILayer layer : list.getItems() ) {
-			String name = "Layer " + layer.getName();
+		for ( final ILayer layer : list.getItems() ) {
+			final String name = "Layer " + layer.getName();
 			compo = new Composite(viewer, SWT.NONE);
 			compo.setBackground(IGamaColors.WHITE.color());
 			layout = new GridLayout(2, false);
@@ -586,8 +621,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			if ( layer instanceof AbstractLayer ) {
 				LayerSideControls.fill(compo, layer, getDisplaySurface());
 			}
-			Composite control = compo;
-			ParameterExpandItem i = new ParameterExpandItem(viewer, layer, SWT.None, null);
+			final Composite control = compo;
+			final ParameterExpandItem i = new ParameterExpandItem(viewer, layer, SWT.None, null);
 			i.setText(name);
 			control.pack(true);
 			control.layout();

@@ -48,7 +48,7 @@ public class LayeredDisplayData {
 	 * Colors
 	 */
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
-	private Color ambientColor = new GamaColor(100, 100, 100, 255);
+	private Color ambientColor = new GamaColor(40, 40, 40, 255); // 40 because it is the value with which the colors are displayed as for java2D display.
 	private Color diffuseColor = new GamaColor(125, 125, 125, 255);
 	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	/**
@@ -78,6 +78,7 @@ public class LayeredDisplayData {
 	public boolean isComputingNormals = true;
 	private boolean isDisplayingAsACube = false; // GamaPreferences.CORE_CUBEDISPLAY.getValue();
 	private boolean ortho = false;
+	private boolean disableCameraInteraction = false; // "fixed_camera" facet of the display
 	private boolean isShowingFPS = false; // GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean isDrawingEnvironment = GamaPreferences.CORE_DRAW_ENV.getValue();
 	private boolean isDrawingDiffuseLight = false;
@@ -87,7 +88,6 @@ public class LayeredDisplayData {
 	private ILocation cameraLookPos = getNoChange();
 	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
 	private boolean isDrawingPolygons = true;
-	private boolean isDraggingWithArcBall;
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
 	private boolean isSplittingLayers;
@@ -294,6 +294,14 @@ public class LayeredDisplayData {
 	public void setDrawDiffLight(final boolean drawDiffLight) {
 		this.isDrawingDiffuseLight = drawDiffLight;
 	}
+	
+	public void disableCameraInteractions(final boolean disableCamInteract) {
+		this.disableCameraInteraction = disableCamInteract;
+	}
+	
+	public boolean cameraInteractionDisabled() {
+		return disableCameraInteraction;
+	}
 
 	/**
 	 * @return the ambientLightColor
@@ -476,17 +484,6 @@ public class LayeredDisplayData {
 
 	public void setAntialias(final boolean a) {
 		isAntialiasing = a;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isArcBallDragOn() {
-		return isDraggingWithArcBall;
-	}
-
-	public void setArgBallDragOn(final boolean a) {
-		isDraggingWithArcBall = a;
 	}
 
 	/**

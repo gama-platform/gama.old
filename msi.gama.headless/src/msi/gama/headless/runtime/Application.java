@@ -201,7 +201,7 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		SystemLogger.removeDisplay();
+//		SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
 		if(containHelpParameter(args))

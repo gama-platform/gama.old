@@ -2,19 +2,34 @@
 * Name:  Simple Species MySql
 * Author: Truong Minh Thai
 * Description:  This model illustrates the use of the AgentDB species (instead of the SQLSKILL), and in particular following actions:
+* 
  *    - testConection
+ * 
  *    - isConnected
+ * 
  *    - close 
+ * 
  *    - executeUpdate
+ * 
  *    - insert
+ * 
  *    - select
+ * 
  *    - getParameter 
+ * 
+ * 
  *  This model does SQl query commands:
- * 		- Create table 
- * 		- Insert data
- *      - Select data
- * 	    - Delete data
- *      - Drop table 
+ * 
+ * - Create table 
+ * 
+ * - Insert data
+ * 
+ * - Select data
+ * 
+ * - Delete data
+ * 
+ * - Drop table 
+ * 
  * 
  *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (meteo_DB here) AND IMPORTED THE FILE (../../includes/meteo_DB_dump.sql)
  *        IN ORDER THAT THE MODEL CAN RUN PROPERLY.

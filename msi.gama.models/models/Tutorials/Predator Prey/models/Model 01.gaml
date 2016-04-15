@@ -1,5 +1,11 @@
+/**
+* Name: Basic model (prey agents)
+* Author:
+* Description: First part of the tutorial : Predator Prey
+* Tags:
+*/
+
 model prey_predator
-//Model 1 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

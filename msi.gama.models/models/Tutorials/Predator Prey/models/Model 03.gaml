@@ -1,5 +1,11 @@
+/**
+* Name: Behavior of the prey agent
+* Author:
+* Description: Third part of the tutorial : Predator Prey
+* Tags:
+*/
+
 model prey_predator
-//Model 3 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

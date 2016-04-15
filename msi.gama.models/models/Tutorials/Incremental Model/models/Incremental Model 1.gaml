@@ -1,7 +1,9 @@
 /**
- *  model1
- *  This model illustrates how to create simple agent and make them move in their environment.
- */
+* Name: Simple SI Model
+* Author:
+* Description: First part of the tutorial : Incremental Model
+* Tags:
+*/
 
 model SI_city
 

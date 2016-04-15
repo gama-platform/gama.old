@@ -1,7 +1,7 @@
 /**
 * Name:  Clustering of agents by their distance 
 * Author:  Patrick Taillandier
-* Description: A model to show how to use clustering operators with simple_clustering_by_distance to take into account the distances
+* Description: A model to show how to use clustering operators with simple_clustering_by_distance to take into account the distances 
 *        between agents or between cells to create the clusters,  and showing the relations between the people from the same cluster. 
 * Tags: clustering, statistic, grid
 */

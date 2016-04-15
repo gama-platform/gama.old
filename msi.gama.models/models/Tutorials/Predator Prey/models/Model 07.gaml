@@ -1,5 +1,11 @@
+/**
+* Name: Agent display (aspect)
+* Author:
+* Description: 6th part of the tutorial: Predator Prey
+* Tags: display
+*/
+
 model prey_predator
-//Model 7 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

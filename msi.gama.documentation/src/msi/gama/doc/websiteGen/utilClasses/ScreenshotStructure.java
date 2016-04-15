@@ -47,7 +47,7 @@ public class ScreenshotStructure {
 	public String getXMLContent(String simNumber, String modelPath, String experiment) {
 		String result = "";
 		
-		result += "  <Simulation id=\""+simNumber+"\" sourcePath=\""+modelPath+"\" finalStep=\""+getFinalStep()+"\" experiment=\""+experiment+"\">\n";
+		result += "  <Simulation id=\""+simNumber+"\" sourcePath=\"/"+modelPath+"\" finalStep=\""+getFinalStep()+"\" experiment=\""+experiment+"\">\n";
         result += "    <Outputs>\n";
         
         // browse all the displays
@@ -56,8 +56,8 @@ public class ScreenshotStructure {
         	result += "      <Output id=\""+displayIdx+1+"\" name=\""+display+"\" framerate=\""+displayParameters.get(displayIdx).CycleNumber+"\" />\n";
         }
         
-        result += "    <\\Outputs>\n";
-        result += "  <\\Simulation>\n";
+        result += "    </Outputs>\n";
+        result += "  </Simulation>\n";
 		
 		return result;
 	}

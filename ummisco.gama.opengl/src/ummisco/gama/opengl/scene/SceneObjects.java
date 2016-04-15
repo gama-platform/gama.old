@@ -82,6 +82,11 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	public void add(final T object) {
 		currentList.add(object);
 	}
+	
+	@Override
+	public void remove(final T object) {
+		currentList.remove(object);
+	}
 
 	@Override
 	public Iterable<T> getObjects() {

@@ -1,17 +1,34 @@
+/**
+* Name: segregationGrid
+* Author: 
+*  Description: A model showing the segregation of the people just by putting a similarity wanted parameter using cells 
+* 	to represent the individuals
+* Tags: grid
+*/
 model segregation
 
+//Importation of the Common Schelling Segregation model
 import "../include/Common Schelling Segregation.gaml"
+
+//Define the environment as torus
 global torus: true{
+	//List of all the free places
 	list<space> free_places <- [] ;
+	//List of all the places
 	list<space> all_places <- [] ;
+	//List of all the people
 	list<space> all_people <- [];
+	//Shape of the environment
 	geometry shape <- square(dimensions);
+	
+	//Action to initialize the places
 	action initialize_places {
 		set all_places <- shuffle(space);
 		set free_places <- shuffle(all_places);
 	}
-
+	//Action to initialize the people agents
 	action initialize_people {
+		//Place all the people agent in the cellular automata
 		loop i from: 0 to: number_of_people - 1 {
 			space pp <- all_places at i;
 			remove pp from: free_places;
@@ -20,7 +37,7 @@ global torus: true{
 		}
 
 	}
-
+	//Reflex to migrate all the people agents
 	reflex migrate {
 		ask copy(all_people) {
 			do migrate;
@@ -30,12 +47,15 @@ global torus: true{
 
 }
 
-
+//Grid species representing the places and the people in each cell
 grid space parent: base width: dimensions height: dimensions neighbors: 8  {
 	rgb color <- black;
+	//List of the neighbours of the places
 	list<space> my_neighbours <- self neighbors_at neighbours_distance;
+	//Action to migrate the agent in another cell if it is not happy
 	action migrate {
 		if !is_happy {
+			//Change the space of the agent to a free space
 			space pp <- any(my_neighbours where (each.color = black));
 			if (pp != nil) {
 				free_places <+ self;

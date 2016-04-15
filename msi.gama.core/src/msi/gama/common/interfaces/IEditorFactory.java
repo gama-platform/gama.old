@@ -13,6 +13,7 @@ package msi.gama.common.interfaces;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 
 /**
  * The class IEditorFactory.
@@ -23,6 +24,6 @@ import msi.gama.metamodel.agent.IAgent;
  */
 public interface IEditorFactory {
 
-	IParameterEditor create(IAgent agent, IParameter var, EditorListener l);
+	IParameterEditor create(IScope scope, IAgent agent, IParameter var, EditorListener l);
 
 }

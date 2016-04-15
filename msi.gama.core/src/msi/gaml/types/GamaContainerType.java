@@ -13,40 +13,37 @@ package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.expressions.IExpression;
 
 /**
- * Written by drogoul
- * Modified on 11 nov. 2011
+ * Written by drogoul Modified on 11 nov. 2011
  * 
  * A generic type for containers. Tentative.
  * 
  */
-@type(name = IKeyword.CONTAINER,
-	id = IType.CONTAINER,
-	wraps = { IContainer.class },
-	kind = ISymbolKind.Variable.CONTAINER,
-	concept = { IConcept.TYPE, IConcept.CONTAINER })
+@type(name = IKeyword.CONTAINER, id = IType.CONTAINER, wraps = {
+		IContainer.class }, kind = ISymbolKind.Variable.CONTAINER, concept = { IConcept.TYPE, IConcept.CONTAINER })
 public class GamaContainerType<T extends IContainer> extends GamaType<T> implements IContainerType<T> {
 
 	@Override
 	public T cast(final IScope scope, final Object obj, final Object param, final boolean copy)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		return cast(scope, obj, param, getKeyType(), getContentType(), copy);
-		// return (T) (obj instanceof IContainer ? (IContainer) obj : Types.get(LIST).cast(scope, obj, null,
+		// return (T) (obj instanceof IContainer ? (IContainer) obj :
+		// Types.get(LIST).cast(scope, obj, null,
 		// Types.NO_TYPE, Types.NO_TYPE));
 	}
 
 	@Override
 	public T cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentType, final boolean copy) throws GamaRuntimeException {
+			final IType contentType, final boolean copy) throws GamaRuntimeException {
 		// by default
-		return (T) (obj instanceof IContainer ? (IContainer) obj : Types.get(LIST).cast(scope, obj, null,
-			Types.NO_TYPE, Types.NO_TYPE, copy));
+		return (T) (obj instanceof IContainer ? (IContainer) obj : Types.get(LIST).cast(scope, obj, null, copy));
 	}
 
 	@Override
@@ -71,8 +68,10 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 
 	@Override
 	public IType contentsTypeIfCasting(final IExpression exp) {
-		IType itemType = exp.getType();
-		if ( itemType.isContainer() || itemType.isAgentType() ) { return itemType.getContentType(); }
+		final IType itemType = exp.getType();
+		if (itemType.isContainer() || itemType.isAgentType()) {
+			return itemType.getContentType();
+		}
 		return itemType;
 	}
 
@@ -87,15 +86,19 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 	}
 
 	@Override
-	public IContainerType of(final IType ... subs) {
-		if ( subs.length == 0 ) { return this; }
+	public IContainerType of(final IType... subs) {
+		if (subs.length == 0) {
+			return this;
+		}
 		IType kt = subs.length == 1 ? getKeyType() : subs[0];
 		IType ct = subs.length == 1 ? subs[0] : subs[1];
-		if ( ct == Types.NO_TYPE ) {
-			if ( kt == Types.NO_TYPE ) { return this; }
+		if (ct == Types.NO_TYPE) {
+			if (kt == Types.NO_TYPE) {
+				return this;
+			}
 			ct = getContentType();
 		}
-		if ( kt == Types.NO_TYPE ) {
+		if (kt == Types.NO_TYPE) {
 			kt = getKeyType();
 		}
 		return new ParametricType(this, kt, ct);

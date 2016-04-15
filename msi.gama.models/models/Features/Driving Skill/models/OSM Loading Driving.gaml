@@ -1,8 +1,8 @@
 /**
 * Name: OSM Loading Driving
 * Author: Patrick Taillandier
-* Description: Model to show how to import OSM Files, using them to create agents for a road network, and saving the different agents in shapefiles.
-* 	The first goal of this model is to prepare data for the driving skill models.
+* Description: Model to show how to import OSM Files, using them to create agents for a road network, and saving the different agents in shapefiles. 
+* The first goal of this model is to prepare data for the driving skill models.
 * Tags:  load_file, gis, shapefile, save_file, osm
 */
 

@@ -11,16 +11,25 @@
  **********************************************************************************************/
 package msi.gama.gui.displays.awt;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import msi.gama.common.interfaces.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ILayer;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.swing.Platform;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.GAMA;
 
 public class DisplaySurfaceMenu {
@@ -35,8 +44,8 @@ public class DisplaySurfaceMenu {
 		this.view = view;
 		swtControl = c;
 		menuBuilder = new DisplayedAgentsMenu();
-		if (s != null)
-		s.setSWTMenuManager(this);
+		if ( s != null )
+			s.setSWTMenuManager(this);
 
 	}
 
@@ -47,8 +56,9 @@ public class DisplaySurfaceMenu {
 		if ( displays.isEmpty() ) { return; }
 		if ( menu != null && !menu.isDisposed() ) {
 			menu.dispose();
+			menu = null;
 		}
-		Set<IAgent> all = new LinkedHashSet();
+		final Set<IAgent> all = new LinkedHashSet();
 		for ( final ILayer display : displays ) {
 			if ( display.isSelectable() ) {
 				final Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
@@ -62,7 +72,7 @@ public class DisplaySurfaceMenu {
 	}
 
 	public void buildMenu(final int mousex, final int mousey, final IAgent agent) {
-		GamaPoint modelCoordinates = agent == null ? null : (GamaPoint) agent.getLocation();
+		final GamaPoint modelCoordinates = agent == null ? null : (GamaPoint) agent.getLocation();
 		buildMenu(false, mousex, mousey, modelCoordinates,
 			agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent));
 	}
@@ -91,6 +101,8 @@ public class DisplaySurfaceMenu {
 	static int MAX_RETRIES = 10;
 
 	private void retryVisible(final Menu menu, final int retriesRemaining) {
+		if ( !Platform.isGtk() )
+			return;
 		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
@@ -98,7 +110,7 @@ public class DisplaySurfaceMenu {
 				if ( !menu.isVisible() && retriesRemaining > 0 ) {
 					menu.setVisible(false);
 					{
-						Shell shell = new Shell(SwtGui.getDisplay(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
+						final Shell shell = new Shell(SwtGui.getDisplay(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
 						shell.setSize(10, 10); // big enough to avoid errors from the gtk layer
 						shell.setLocation(menu.getShell().getLocation());
 						shell.setText("Not visible");

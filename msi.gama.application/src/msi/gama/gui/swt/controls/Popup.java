@@ -13,12 +13,21 @@ package msi.gama.gui.swt.controls;
 
 import java.util.Map;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import msi.gama.gui.swt.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TypedListener;
+import org.eclipse.swt.widgets.Widget;
+import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.runtime.GAMA;
 
 /**
@@ -49,10 +58,10 @@ public class Popup {
 		public void mouseEnter(final MouseEvent e) {
 			GAMA.getGui().asyncRun(new Runnable() {
 
-
 				@Override
 				public void run() {
-					open();
+					// open();
+					display();
 					isVisible = true;
 				}
 			});
@@ -105,37 +114,36 @@ public class Popup {
 		}
 	}
 
-	public void open() {
-		// We first verify that the popup is still ok
-		final Shell c = provider.getControllingShell();
-		if ( c == null || c.isDisposed() ) {
-			hide();
-			return;
-		}
-
-		// We then remove all existing controls if any
-		for ( Control control : popup.getChildren() ) {
-			control.dispose();
-		}
-
-		Map<GamaUIColor, String> s = provider.getPopupText();
-		if ( s == null || s.isEmpty() ) {
-			hide();
-			return;
-		}
-
-		// We create text controls in accordance to the text
-		for ( Map.Entry<GamaUIColor, String> entry : s.entrySet() ) {
-			Label label = new Label(popup, SWT.None);
-			label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			label.setBackground(entry.getKey().color());
-			label.setForeground(GamaColors.getTextColorForBackground(entry.getKey()).color());
-			label.setText(entry.getValue());
-		}
-	}
+	// public void open() {
+	// // We first verify that the popup is still ok
+	// final Shell c = provider.getControllingShell();
+	// if ( c == null || c.isDisposed() ) {
+	// hide();
+	// return;
+	// }
+	//
+	// // We then remove all existing controls if any
+	// for ( final Control control : popup.getChildren() ) {
+	// control.dispose();
+	// }
+	//
+	// final Map<GamaUIColor, String> s = provider.getPopupText();
+	// if ( s == null || s.isEmpty() ) {
+	// hide();
+	// return;
+	// }
+	//
+	// // We create text controls in accordance to the text
+	// for ( final Map.Entry<GamaUIColor, String> entry : s.entrySet() ) {
+	// final Label label = new Label(popup, SWT.None);
+	// label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+	// label.setBackground(entry.getKey().color());
+	// label.setForeground(GamaColors.getTextColorForBackground(entry.getKey()).color());
+	// label.setText(entry.getValue());
+	// }
+	// }
 
 	public void display() {
-
 		// We first verify that the popup is still ok
 		final Shell c = provider.getControllingShell();
 		if ( c == null || c.isDisposed() ) {
@@ -144,7 +152,7 @@ public class Popup {
 		}
 
 		// We then grab the text and hide if it is null or empty
-		Map<GamaUIColor, String> s = provider.getPopupText();
+		final Map<GamaUIColor, String> s = provider.getPopupText();
 		if ( s == null || s.isEmpty() ) {
 			hide();
 			return;
@@ -153,8 +161,22 @@ public class Popup {
 		int index = 0;
 		// int maxTextWidth = 0;
 		Control[] labels = popup.getChildren();
-		for ( Map.Entry<GamaUIColor, String> entry : s.entrySet() ) {
-			Label label = (Label) labels[index++];
+		if ( labels.length != s.size() ) {
+			for ( final Control control : labels ) {
+				control.dispose();
+			}
+			labels = new Control[s.size()];
+			int i = 0;
+			for ( final Map.Entry<GamaUIColor, String> entry : s.entrySet() ) {
+				final Label label = new Label(popup, SWT.None);
+				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+				label.setBackground(entry.getKey().color());
+				label.setForeground(GamaColors.getTextColorForBackground(entry.getKey()).color());
+				label.setText(entry.getValue());
+				labels[i++] = label;
+			}
+		} else for ( final Map.Entry<GamaUIColor, String> entry : s.entrySet() ) {
+			final Label label = (Label) labels[index++];
 			label.setText(entry.getValue());
 		}
 

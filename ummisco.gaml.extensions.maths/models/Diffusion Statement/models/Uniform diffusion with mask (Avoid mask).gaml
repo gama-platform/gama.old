@@ -1,8 +1,8 @@
 /**
 * Name: Uniform diffusion with mask (Avoid mask)
 * Author: Julien Mazars
-* Description: This model is used to show how a uniform diffusion can be used with a mask. The cell at the center of the grid emit a pheromon at each step, which is spread
-*     through the grid thanks to the diffusion mechanism. A mask is used to restrict the diffusion to a "corridor" (the white part of the bmp image). The first display shows a
+* Description: This model is used to show how a uniform diffusion can be used with a mask. The cell at the center of the grid emit a pheromon at each step, which is spread 
+*     through the grid thanks to the diffusion mechanism. A mask is used to restrict the diffusion to a "corridor" (the white part of the bmp image). The first display shows a 
 *     diffusion avoiding the masked cells (the value is redistributed to the neighboring cells, to have a constant number of pheromon), the second display shows a diffusion 
 *     without avoiding the masked cells (the value is diffused in the masked cell, and never rediffused again).
 * Tags: diffusion, matrix, math, obstacle, elevation

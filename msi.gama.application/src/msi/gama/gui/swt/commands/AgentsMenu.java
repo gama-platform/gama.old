@@ -11,26 +11,42 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.*;
-import msi.gama.gui.swt.*;
-import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.*;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.gui.swt.GamaColors;
+import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.SimulationPopulation;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.InspectDisplayOutput;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.statements.*;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IStatement;
+import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.Types;
 
 public class AgentsMenu extends ContributionItem {
@@ -40,7 +56,7 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	public static MenuItem separate(final Menu parent, final String s) {
-		MenuItem string = new MenuItem(parent, SWT.PUSH);
+		final MenuItem string = new MenuItem(parent, SWT.PUSH);
 		string.setEnabled(false);
 		string.setText(s);
 		return string;
@@ -48,17 +64,17 @@ public class AgentsMenu extends ContributionItem {
 
 	public static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final ILocation userLocation,
 		final String title, final MenuAction ... actions) {
-		MenuItem result = new MenuItem(parent, SWT.CASCADE);
+		final MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText(title);
 		Image image;
 		if ( agent instanceof SimulationAgent ) {
-			SimulationAgent sim = (SimulationAgent) agent;
+			final SimulationAgent sim = (SimulationAgent) agent;
 			image = GamaIcons.createTempRoundColorIcon(GamaColors.get(sim.getColor()));
 		} else {
 			image = IGamaIcons.MENU_AGENT.image();
 		}
 		result.setImage(image);
-		Menu agentMenu = new Menu(result);
+		final Menu agentMenu = new Menu(result);
 		result.setMenu(agentMenu);
 		createMenuForAgent(agentMenu, agent, userLocation, false, actions);
 		return result;
@@ -66,7 +82,7 @@ public class AgentsMenu extends ContributionItem {
 
 	private static MenuItem actionAgentMenuItem(final Menu parent, final IAgent agent, final SelectionListener listener,
 		final Image image, final String prefix) {
-		MenuItem result = new MenuItem(parent, SWT.PUSH);
+		final MenuItem result = new MenuItem(parent, SWT.PUSH);
 		result.setText(prefix /* + " " + agent.getName() */);
 		result.addSelectionListener(listener);
 		result.setImage(image);
@@ -76,7 +92,7 @@ public class AgentsMenu extends ContributionItem {
 
 	private static MenuItem browsePopulationMenuItem(final Menu parent, final Collection<IAgent> pop,
 		final Image image) {
-		MenuItem result = new MenuItem(parent, SWT.PUSH);
+		final MenuItem result = new MenuItem(parent, SWT.PUSH);
 		if ( pop instanceof IPopulation ) {
 			if ( pop instanceof SimulationPopulation ) {
 				result.setText("Browse simulations...");
@@ -105,14 +121,14 @@ public class AgentsMenu extends ContributionItem {
 			fillPopulationSubMenu(parent, population, userLocation);
 			return null;
 		}
-		MenuItem result = new MenuItem(parent, SWT.CASCADE);
+		final MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		// if ( population instanceof SimulationPopulation ) {
 		// result.setText("Simulations");
 		// } else {
 		result.setText("Population of " + population.getName());
 		// }
 		result.setImage(image);
-		Menu agentsMenu = new Menu(result);
+		final Menu agentsMenu = new Menu(result);
 		result.setMenu(agentsMenu);
 		fillPopulationSubMenu(agentsMenu, population, userLocation);
 		return result;
@@ -120,7 +136,7 @@ public class AgentsMenu extends ContributionItem {
 
 	private static MenuItem actionAgentMenuItem(final Menu parent, final IAgent agent, final IStatement command,
 		final ILocation point, final String prefix) {
-		MenuItem result = new MenuItem(parent, SWT.PUSH);
+		final MenuItem result = new MenuItem(parent, SWT.PUSH);
 		result.setText(prefix + " " + command.getName());
 		result.setImage(IGamaIcons.MENU_RUN_ACTION.image());
 		result.addSelectionListener(runner);
@@ -176,7 +192,9 @@ public class AgentsMenu extends ContributionItem {
 			if ( surface == null ) { return; }
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
-			if ( a != null && !a.dead() ) {
+			if ( a instanceof ITopLevelAgent ) {
+				surface.zoomFit();
+			} else if ( a != null && !a.dead() ) {
 				surface.focusOn(a);
 				GAMA.getExperiment().refreshAllOutputs();
 			}
@@ -226,8 +244,8 @@ public class AgentsMenu extends ContributionItem {
 						// if ( p != null ) {
 						// scope.addVarWithValue(IKeyword.USER_LOCATION, p);
 						// }
-						Object[] result = new Object[1];
-						Arguments args = new Arguments();
+						final Object[] result = new Object[1];
+						final Arguments args = new Arguments();
 						if ( p != null ) {
 							args.put(IKeyword.USER_LOCATION, GAML.getExpressionFactory().createConst(p, Types.POINT));
 						}
@@ -279,7 +297,7 @@ public class AgentsMenu extends ContributionItem {
 			}
 		}
 		if ( actions != null ) {
-			for ( MenuAction ma : actions ) {
+			for ( final MenuAction ma : actions ) {
 				actionAgentMenuItem(menu, agent, ma.listener, ma.image, ma.text);
 			}
 		}
@@ -314,19 +332,21 @@ public class AgentsMenu extends ContributionItem {
 
 	public static void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species,
 		final ILocation userLocation, final MenuAction ... actions) {
-		boolean isSimulations = species instanceof SimulationPopulation;
+		final boolean isSimulations = species instanceof SimulationPopulation;
 		int subMenuSize = GamaPreferences.CORE_MENU_SIZE.getValue();
 		if ( subMenuSize < 2 ) {
 			subMenuSize = 2;
 		}
-		if ( !isSimulations ) {
-			separate(menu, "Actions");
-		}
-		browsePopulationMenuItem(menu, species, IGamaIcons.MENU_BROWSE.image());
-
 		final List<IAgent> agents = new ArrayList(species);
 		final int size = agents.size();
-		if ( size != 0 && !isSimulations ) {
+		if ( size > 1 && !isSimulations ) {
+			separate(menu, "Actions");
+		}
+
+		if ( size > 1 )
+			browsePopulationMenuItem(menu, species, IGamaIcons.MENU_BROWSE.image());
+
+		if ( size > 1 && !isSimulations ) {
 			separate(menu);
 			separate(menu, "Agents");
 		}
@@ -352,12 +372,12 @@ public class AgentsMenu extends ContributionItem {
 					@Override
 					public void handleEvent(final Event e) {
 						if ( !menu.isVisible() ) { return; }
-						MenuItem[] items = rangeMenu.getItems();
-						for ( MenuItem item : items ) {
+						final MenuItem[] items = rangeMenu.getItems();
+						for ( final MenuItem item : items ) {
 							item.dispose();
 						}
 						for ( int j = begin; j < end; j++ ) {
-							IAgent ag = agents.get(j);
+							final IAgent ag = agents.get(j);
 							if ( ag != null && !ag.dead() ) {
 								cascadingAgentMenuItem(rangeMenu, ag, userLocation, ag.getName(), actions);
 							}

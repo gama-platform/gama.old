@@ -1,8 +1,8 @@
 /**
 * Name: Color defined by choosing a Color Brewer
 * Author:  Arnaud Grignard & Patrick Taillandier
-* Description: A model to show how to use color brewer. In this model, two experiments are presents : one just to show the different colors present
-* 	in some selected brewer, and a second one to show in a grid the different colors of brewler having at least a minimal number of colors passed
+* Description: A model to show how to use color brewer. In this model, two experiments are presents : one just to show the different colors present 
+* 	in some selected brewer, and a second one to show in a grid the different colors of brewler having at least a minimal number of colors passed 
 * 	in parameter.
 * Tags: color
 */

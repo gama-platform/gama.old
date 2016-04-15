@@ -86,7 +86,7 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 	type = IType.BOOL,
 	optional = true,
 	doc = @doc("if true, the value will not be diffused in the masked cells, but will "
-			+ "be restitute to the neighboring cells, multiplied by the variation value (no signal lost)."
+			+ "be restitute to the neighboring cells, multiplied by the proportion value (no signal lost)."
 			+ " If false, the value will be diffused in the masked cells, but masked cells "
 			+ "won't diffuse the value afterward (lost of signal). (default value : false)")) },
 	omissible = IKeyword.VAR)
@@ -408,7 +408,8 @@ public class DiffusionStatement extends AbstractStatement {
 				nb_neighbors = Cast.asInt(scope, nb.value(scope));
 			}
 			mat_diffu = computeDiffusionMatrix(scope, nb_neighbors, is_gradient);
-		} else if ( cLen != 1 ) {
+		} 
+		if ( cLen != 1 ) {
 			// the cycle length is already computed in "computeDiffusionMatrix" if no diffusion matrix is defined
 			mat_diffu = computeMatrix(mat_diffu, cLen, is_gradient);
 		}

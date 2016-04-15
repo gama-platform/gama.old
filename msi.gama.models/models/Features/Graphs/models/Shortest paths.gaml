@@ -1,8 +1,8 @@
 /**
 * Name: ShortestPath
 * Author: Patrick Taillandier
-* Description: This model shows how get the shortest path from one point to another on a graph. The experiment proposes two displays :
-* 	one to show the shortest path, an other to show the first k shortest paths. 
+* Description: This model shows how get the shortest path from one point to another on a graph. The experiment proposes two displays : 
+* one to show the shortest path, an other to show the first k shortest paths. 
 * Tags: graph, load_file, shortest_path, save_file
 */
 

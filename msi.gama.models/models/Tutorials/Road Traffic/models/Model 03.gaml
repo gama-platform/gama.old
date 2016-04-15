@@ -1,3 +1,10 @@
+/**
+* Name: Movement of the people agents
+* Author:
+* Description: third part of the tutorial: Road Traffic
+* Tags: agent_movement
+*/
+
 model tutorial_gis_city_traffic
 
 global {

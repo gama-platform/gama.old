@@ -1,3 +1,10 @@
+/**
+* Name: Loading of GIS data (buildings and roads)
+* Author:
+* Description: first part of the tutorial: Road Traffic
+* Tags: gis
+*/
+
 model tutorial_gis_city_traffic
 
 global {

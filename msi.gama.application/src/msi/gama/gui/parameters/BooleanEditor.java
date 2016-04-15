@@ -11,37 +11,40 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.controls.SwitchButton;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gaml.types.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.*;
+import msi.gama.runtime.IScope;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class BooleanEditor extends AbstractEditor {
 
 	private SwitchButton button;
 
-	BooleanEditor(final IParameter param) {
-		super(param);
+	BooleanEditor(final IScope scope, final IParameter param) {
+		super(scope, param);
 		acceptNull = false;
 	}
 
-	BooleanEditor(final Composite parent, final String title, final boolean value,
+	BooleanEditor(final IScope scope, final Composite parent, final String title, final boolean value,
 		final EditorListener<Boolean> whenModified) {
-		super(new InputParameter(title, value), whenModified);
+		super(scope, new InputParameter(title, value), whenModified);
 		acceptNull = false;
 		this.createComposite(parent);
 	}
 
-	BooleanEditor(final IAgent agent, final IParameter param) {
-		this(agent, param, null);
+	BooleanEditor(final IScope scope, final IAgent agent, final IParameter param) {
+		this(scope, agent, param, null);
 	}
 
-	BooleanEditor(final IAgent agent, final IParameter param, final EditorListener l) {
-		super(agent, param, l);
+	BooleanEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+		super(scope, agent, param, l);
 		acceptNull = false;
 	}
 

@@ -1,8 +1,8 @@
 /**
 * Name: Boids
 * Author: 
-* Description: This model shows the movement of boids following a goal, and creating
-* 	without their own volonty, a flock. The experiment proposes to display in a 3D view
+* Description: This model shows the movement of boids following a goal, and creating 
+* 	without their own volonty, a flock. The experiment proposes to display in a 3D view 
 * 	the different boids and allows the user to move the goal to see the behaviour of boids.
 * Tags: gui, skill
 */

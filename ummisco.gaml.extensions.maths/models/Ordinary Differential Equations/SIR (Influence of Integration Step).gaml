@@ -1,8 +1,9 @@
 /**
- *  SIR_influence_of_integration_step.gaml
- *  Author: hqnghi
- *  Description: A SIR model to illustrate the impact of the change of the integration parameters. 
- */
+* Name: SIR (Influence of Integration Step).gaml
+* Author: hqnghi
+* Description: A SIR model to illustrate the impact of the change of the integration parameters.
+* Tags: equation, math
+*/
 
 model SIR_influence_of_integration_step
 

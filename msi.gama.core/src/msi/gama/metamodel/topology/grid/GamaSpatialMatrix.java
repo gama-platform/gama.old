@@ -148,7 +148,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 		for ( int i = 0; i < size; i++ ) {
 			final IShape g = gfile.get(scope, i);
-			gridValue[i] = (Double) g.getAttribute("grid_value");
+			Double val = (Double) g.getAttribute("grid_value");
+			if (val != null)
+				gridValue[i] = val;
 			if (nbBands > 1 &&  g.hasAttribute("bands"))
 				bands.add((IList<Double>) g.getAttribute("bands"));
 			// WARNING A bit overkill as we only use the GamaGisGeometry for its attribute...
@@ -247,7 +249,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			new GamaPoint(environmentFrame.getEnvelope().getMinX(), environmentFrame.getEnvelope().getMinY());
 
 		final IShape translatedReferenceFrame = Spatial.Transformations.translated_by(scope, environmentFrame, origin);
-
+		
+		
 		final double cmx = cellWidth / 2;
 		final double cmy = cellHeight / 2;
 		for ( int i = 0, n = numRows * numCols; i < n; i++ ) {
@@ -276,6 +279,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				actualNumberOfCells++;
 				lastCell = i;
 			}
+		}
+		if (!useIndividualShapes) {
+			scope.getSimulationScope().addSubAgents(actualNumberOfCells);
 		}
 	}
 
@@ -698,7 +704,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final IAgent endAg = matrix[targetplace].getAgent();
 		final IList<IAgent> nodes = GamaListFactory.create(Types.GEOMETRY);
 		final int[] dists = new int[this.getAgents().size()];
-		if ( startAg == endAg ) { return PathFactory.newInstance(scope, topo, nodes); }
+		if ( startAg == endAg ) { 
+			IList<IShape> nodesPt = GamaListFactory.create(Types.GEOMETRY);
+			nodesPt.add(source.getLocation());
+			nodesPt.add(target.getLocation());
+			return PathFactory.newInstance(scope, topo, nodesPt); }
 
 		for ( IAgent ag : this.getAgents() ) {
 			if ( on != null ) {
@@ -751,10 +761,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 							nodes.add(cel2);
 						}
 						nodes.remove(startAg);
+						
 						IList<IShape> nodesPt = GamaListFactory.create(Types.GEOMETRY);
+						nodesPt.add(target.getLocation());
 						for ( IAgent nd : nodes ) {
 							nodesPt.add(nd.getLocation());
 						}
+						nodesPt.add(source.getLocation());
 						Collections.reverse(nodesPt);
 						return PathFactory.newInstance(scope, topo, nodesPt);
 					}

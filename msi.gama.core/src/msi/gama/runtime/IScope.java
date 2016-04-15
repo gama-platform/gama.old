@@ -12,18 +12,25 @@
 package msi.gama.runtime;
 
 import java.util.Map;
-import msi.gama.common.interfaces.*;
+
+import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IStepable;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.*;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IExecutable;
+import msi.gaml.statements.IStatement;
 
 /**
  * Written by drogoul Modified on 18 janv. 2011
@@ -40,6 +47,7 @@ public interface IScope {
 
 	/**
 	 * Make the agent the current agent in the scope
+	 * 
 	 * @param agent
 	 * @see getAgentScope()
 	 */
@@ -47,6 +55,7 @@ public interface IScope {
 
 	/**
 	 * Makes the statement the current statement in the scope
+	 * 
 	 * @param statement
 	 */
 
@@ -54,31 +63,35 @@ public interface IScope {
 
 	/**
 	 * Removes the current agent
+	 * 
 	 * @param agent
 	 */
 	// public abstract void pop(IAgent agent);
 
 	/**
 	 * Removes the current statement
+	 * 
 	 * @param statement
 	 */
 
 	public abstract void pop(IStatement statement);
 
 	/**
-	 * Executes the statement on this agent. Equivalent to:
-	 * scope.push(agent); statement.executeOn(scope); scope.pop(agent);
+	 * Executes the statement on this agent. Equivalent to: scope.push(agent);
+	 * statement.executeOn(scope); scope.pop(agent);
+	 * 
 	 * @param statement
 	 * @param agent
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
 	public abstract boolean execute(final IExecutable executable, final IAgent agent, final Arguments args,
-		Object[] result);
+			Object[] result);
 
 	/**
-	 * Evaluates the expression on the agent. Equivalent to:
-	 * scope.push(agent); expr.value(scope); scope.pop(agent);
+	 * Evaluates the expression on the agent. Equivalent to: scope.push(agent);
+	 * expr.value(scope); scope.pop(agent);
+	 * 
 	 * @param expr
 	 * @param agent
 	 * @return
@@ -119,9 +132,11 @@ public interface IScope {
 
 	public abstract Object getAgentVarValue(IAgent agent, String name) throws GamaRuntimeException;
 
-	// public abstract Object getAgentVarValue(String name) throws GamaRuntimeException;
+	// public abstract Object getAgentVarValue(String name) throws
+	// GamaRuntimeException;
 
-	// public abstract void setAgentVarValue(String name, Object v) throws GamaRuntimeException;
+	// public abstract void setAgentVarValue(String name, Object v) throws
+	// GamaRuntimeException;
 
 	public abstract void setAgentVarValue(IAgent agent, String name, Object v) throws GamaRuntimeException;
 
@@ -140,49 +155,56 @@ public interface IScope {
 	public abstract Object getName();
 
 	/**
-	 * CONTEXT METHODS
-	 * Used to gather contextual information about the current simulation and
-	 * execution context
+	 * CONTEXT METHODS Used to gather contextual information about the current
+	 * simulation and execution context
 	 */
 
 	/**
-	 * Returns the current topology to use in this scope. Either it has been set (and not unset) or
-	 * the scope uses the current agent to compute it.
+	 * Returns the current topology to use in this scope. Either it has been set
+	 * (and not unset) or the scope uses the current agent to compute it.
+	 * 
 	 * @return the topology to use in the current scope
 	 */
 	public ITopology getTopology();
 
 	/**
 	 * Sets a new topological context and returns the previous one.
-	 * @param topology, the new topology to set
+	 * 
+	 * @param topology,
+	 *            the new topology to set
 	 * @return the previous topology used
 	 */
 	public ITopology setTopology(ITopology topology);
 
 	/**
-	 * Used to setup a "graphical context" in which the execution can take place. Called by the
-	 * update procedures of displays.
-	 * @param val, an instance of IGraphics
+	 * Used to setup a "graphical context" in which the execution can take
+	 * place. Called by the update procedures of displays.
+	 * 
+	 * @param val,
+	 *            an instance of IGraphics
 	 */
 
 	public abstract void setGraphics(IGraphics val);
 
 	/**
 	 * Returns the instance of IGraphics currently set, or null if none.
+	 * 
 	 * @return
 	 */
 	public abstract IGraphics getGraphics();
 
 	/**
 	 * Returns the current agent being executed.
+	 * 
 	 * @return
 	 */
 	public abstract IAgent getAgentScope();
 
 	/**
 	 * Returns the current simulation in which this scope is defined.
-	 * @return the current simulation or null if none is defined (unlikely as the scope is created
-	 *         by a simulation)
+	 * 
+	 * @return the current simulation or null if none is defined (unlikely as
+	 *         the scope is created by a simulation)
 	 */
 
 	public ITopLevelAgent getRoot();
@@ -199,15 +221,17 @@ public interface IScope {
 
 	public abstract SimulationClock getClock();
 
-	public abstract IScope copy();
+	public abstract IScope copy(String additionalName);
 
 	/**
-	 * Indicates that a loop is finishing : should clear any _loop_halted status present
+	 * Indicates that a loop is finishing : should clear any _loop_halted status
+	 * present
 	 */
 	public abstract void popLoop();
 
 	/**
-	 * Indicates that an action is finishing : should clear any _action_halted status present
+	 * Indicates that an action is finishing : should clear any _action_halted
+	 * status present
 	 */
 	public abstract void popAction();
 
@@ -266,7 +290,9 @@ public interface IScope {
 	public IAgent[] getAgentsStack();
 
 	/**
-	 * Used to store the attributes read from shape files, etc. It involves a distinct stack.
+	 * Used to store the attributes read from shape files, etc. It involves a
+	 * distinct stack.
+	 * 
 	 * @param values
 	 */
 	public abstract void pushReadAttributes(Map values);

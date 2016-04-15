@@ -14,7 +14,8 @@ package msi.gama.gui.parameters;
 import java.util.List;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.runtime.IScope;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class InputParameter extends ParameterAdapter {
 
@@ -58,17 +59,17 @@ public class InputParameter extends ParameterAdapter {
 	}
 
 	@Override
-	public Number getMinValue() {
+	public Number getMinValue(final IScope scope) {
 		return min;
 	}
 
 	@Override
-	public Number getMaxValue() {
+	public Number getMaxValue(final IScope scope) {
 		return max;
 	}
 
 	@Override
-	public List getAmongValue() {
+	public List getAmongValue(final IScope scope) {
 		return among;
 	}
 

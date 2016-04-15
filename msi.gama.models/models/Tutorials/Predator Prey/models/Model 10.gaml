@@ -1,5 +1,11 @@
+/**
+* Name: Definition of charts
+* Author:
+* Description: 10th part of the tutorial: Predator Prey
+* Tags: chart
+*/
+
 model prey_predator
-//Model 10 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

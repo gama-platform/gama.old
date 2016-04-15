@@ -1,5 +1,11 @@
+/**
+* Name: Image loading (raster data)
+* Author:
+* Description: 12th part of the tutorial: Predator Prey
+* Tags: file, raster
+*/
+
 model prey_predator
-//Model 12 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200;

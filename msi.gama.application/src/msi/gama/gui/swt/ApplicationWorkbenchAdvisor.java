@@ -55,7 +55,16 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			e.printStackTrace();
 		}
 		/* Early build of the contributions made by plugins to GAMA */
-		GamaBundleLoader.preBuildContributions();
+		new Thread(new Runnable() {
+			
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				GamaBundleLoader.preBuildContributions();
+			}
+		}).start();
+	
 		/* Linking the stock models with the workspace if they are not already */
 		if ( checkCopyOfBuiltInModels() ) {
 			WorkspaceModelsManager.linkSampleModelsToWorkspace();

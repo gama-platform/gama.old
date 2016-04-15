@@ -10,25 +10,50 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import msi.gama.common.interfaces.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.*;
-import msi.gama.kernel.experiment.*;
+import msi.gama.gui.swt.GamaColors;
+import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
-public abstract class AbstractEditor<T> implements SelectionListener, ModifyListener, Comparable<AbstractEditor>, IParameterEditor<T> {
+public abstract class AbstractEditor<T> implements SelectionListener, ModifyListener, Comparable<AbstractEditor<T>>, IParameterEditor<T> {
 
 	private class ItemSelectionListener extends SelectionAdapter {
 
@@ -77,6 +102,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	private static int ORDER;
 	private final Integer order = ORDER++;
 	private final IAgent agent;
+	private final IScope scope;
 	private final String name;
 	protected Label titleLabel = null;
 	protected final IParameter param;
@@ -90,15 +116,13 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	private Combo combo;
 	private CLabel fixedValue;
 	protected volatile boolean internalModification;
-	private final EditorListener listener;
-	// private final boolean acceptPopup = true;
+	private final EditorListener<T> listener;
 	private Composite composite;
-	// protected ToolItem editor;
 	protected final ToolItem[] items = new ToolItem[8];
 	boolean isSubParameter;
 	Composite parent;
 	protected ToolBar toolbar;
-	protected Set<Control> controlsThatShowHideToolbars = new HashSet();
+	protected Set<Control> controlsThatShowHideToolbars = new HashSet<Control>();
 	private final MouseTrackListener hideShowToolbarListener = new MouseTrackListener() {
 
 		@Override
@@ -117,26 +141,35 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 	};
 
-	public AbstractEditor(final IParameter variable) {
-		this(null, variable, null);
+	public AbstractEditor(final IScope scope, final IParameter variable) {
+		this(scope, null, variable, null);
 	}
 
-	public AbstractEditor(final IParameter variable, final EditorListener l) {
-		this(null, variable, l);
+	public AbstractEditor(final IScope scope, final IParameter variable, final EditorListener<T> l) {
+		this(scope, null, variable, l);
 	}
 
-	public AbstractEditor(final IAgent a, final IParameter variable) {
-		this(a, variable, null);
+	public AbstractEditor(final IScope scope, final IAgent a, final IParameter variable) {
+		this(scope, a, variable, null);
 	}
 
-	public AbstractEditor(final IAgent a, final IParameter variable, final EditorListener l) {
+	public IScope getScope() {
+		if ( scope != null )
+			return scope;
+		if ( agent != null )
+			return agent.getScope();
+		return GAMA.getRuntimeScope();
+	}
+
+	public AbstractEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<T> l) {
+		this.scope = scope;
 		param = variable;
 		agent = a;
-		isCombo = param.getAmongValue() != null;
+		isCombo = param.getAmongValue(getScope()) != null;
 		isEditable = param.isEditable();
 		name = param.getTitle();
-		minValue = param.getMinValue();
-		maxValue = param.getMaxValue();
+		minValue = param.getMinValue(getScope());
+		maxValue = param.getMaxValue(getScope());
 		listener = l;
 	}
 
@@ -157,7 +190,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 			titleLabel.setForeground(active ? IGamaColors.BLACK.color() : GamaColors.system(SWT.COLOR_GRAY));
 		}
 		if ( !active ) {
-			for ( ToolItem t : items ) {
+			for ( final ToolItem t : items ) {
 				if ( t == null ) {
 					continue;
 				}
@@ -172,7 +205,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	private final void valueModified(final Object newValue) throws GamaRuntimeException {
 		IAgent a = agent;
 		if ( a == null ) {
-			IExperimentPlan exp = GAMA.getExperiment();
+			final IExperimentPlan exp = GAMA.getExperiment();
 			if ( exp != null ) {
 				a = exp.getAgent();
 			}
@@ -184,7 +217,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	}
 
 	@Override
-	public IType getExpectedType() {
+	public IType<?> getExpectedType() {
 		return Types.NO_TYPE;
 	}
 
@@ -194,7 +227,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	}
 
 	@Override
-	public int compareTo(final AbstractEditor e) {
+	public int compareTo(final AbstractEditor<T> e) {
 		return order.compareTo(e.order);
 	}
 
@@ -219,7 +252,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 			return null;
 		}
 
-		GridData data = getParameterGridData();
+		final GridData data = getParameterGridData();
 		paramControl.setLayoutData(data);
 		paramControl.setBackground(composite.getBackground());
 		addToolbarHiders(paramControl);
@@ -233,7 +266,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE | SWT.WRAP);
 		label.setBackground(parent.getBackground());
-		GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
+		final GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
 		label.setLayoutData(d);
 		label.setFont(SwtGui.getLabelfont());
 		label.setText(title);
@@ -246,7 +279,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		if ( !isSubParameter ) {
 			titleLabel = createLeftLabel(parent, name);
 		} else {
-			Label l = createLeftLabel(parent, " ");
+			final Label l = createLeftLabel(parent, " ");
 		}
 		try {
 			setOriginalValue(getParameterValue());
@@ -270,7 +303,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		if ( isSubParameter ) {
 			titleLabel = createLeftLabel(composite, name);
 			titleLabel.setFont(SwtGui.getNavigFolderFont());
-			GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			final GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			d.grabExcessHorizontalSpace = false;
 			titleLabel.setLayoutData(d);
 		}
@@ -310,7 +343,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	}
 
 	protected void hideToolbar() {
-		GridData d = (GridData) toolbar.getLayoutData();
+		final GridData d = (GridData) toolbar.getLayoutData();
 		if ( d.exclude ) { return; }
 		d.exclude = true;
 		toolbar.setVisible(false);
@@ -319,7 +352,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	}
 
 	protected void showToolbar() {
-		GridData d = (GridData) toolbar.getLayoutData();
+		final GridData d = (GridData) toolbar.getLayoutData();
 		if ( !d.exclude ) { return; }
 		d.exclude = false;
 		toolbar.setVisible(true);
@@ -340,7 +373,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	private String computeUnitLabel() {
 		String s = typeToDisplay();
 		if ( minValue != null ) {
-			String min = StringUtils.toGaml(minValue, false);
+			final String min = StringUtils.toGaml(minValue, false);
 			if ( maxValue != null ) {
 				s += " [" + min + ".." + StringUtils.toGaml(maxValue, false) + "]";
 			} else {
@@ -351,7 +384,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 				s += "<=" + StringUtils.toGaml(maxValue, false);
 			}
 		}
-		String u = param.getUnitLabel();
+		final String u = param.getUnitLabel(getScope());
 		if ( u != null ) {
 			s += " " + u;
 		}
@@ -363,18 +396,18 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	}
 
 	private ToolBar createToolbar() {
-		ToolBar t = new ToolBar(composite, SWT.FLAT | SWT.RIGHT | SWT.HORIZONTAL | SWT.WRAP);
-		GridData d = this.getParameterGridData();
+		final ToolBar t = new ToolBar(composite, SWT.FLAT | SWT.RIGHT | SWT.HORIZONTAL | SWT.WRAP);
+		final GridData d = this.getParameterGridData();
 		d.grabExcessHorizontalSpace = false;
 		t.setLayoutData(d);
-		String unitText = computeUnitLabel();
+		final String unitText = computeUnitLabel();
 		if ( !unitText.isEmpty() ) {
-			ToolItem unitItem = new ToolItem(t, SWT.READ_ONLY | SWT.FLAT);
+			final ToolItem unitItem = new ToolItem(t, SWT.READ_ONLY | SWT.FLAT);
 			unitItem.setText(unitText);
 			unitItem.setEnabled(false);
 		}
-		int[] codes = this.getToolItems();
-		for ( int i : codes ) {
+		final int[] codes = this.getToolItems();
+		for ( final int i : codes ) {
 			ToolItem item = null;
 			switch (i) {
 				case REVERT:
@@ -413,7 +446,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	}
 
 	protected ToolItem createPlusItem(final ToolBar t) {
-		ToolItem item = createItem(t, "Increment the parameter", IGamaIcons.SMALL_PLUS.image());
+		final ToolItem item = createItem(t, "Increment the parameter", IGamaIcons.SMALL_PLUS.image());
 		return item;
 	}
 
@@ -422,30 +455,24 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	 * @param image
 	 */
 	private ToolItem createItem(final ToolBar t, final String string, final Image image) {
-		ToolItem i = new ToolItem(t, SWT.FLAT | SWT.PUSH);
+		final ToolItem i = new ToolItem(t, SWT.FLAT | SWT.PUSH);
 		i.setToolTipText(string);
 		i.setImage(image);
 		return i;
 	}
 
 	protected T getParameterValue() throws GamaRuntimeException {
-		return GAMA.run(new InScope<T>() {
-
-			@Override
-			public T run(final IScope scope) {
-				Object result;
-				if ( agent == null ) {
-					result = param.value(scope);
-				} else {
-					result = scope.getAgentVarValue(getAgent(), param.getName());
-				}
-				return (T) getExpectedType().cast(scope, result, null, false);
-			}
-		});
+		Object result;
+		if ( agent == null ) {
+			result = param.value(scope);
+		} else {
+			result = scope.getAgentVarValue(getAgent(), param.getName());
+		}
+		return (T) getExpectedType().cast(scope, result, null, false);
 
 	}
 
-	protected void setParameterValue(final Object val) {
+	protected void setParameterValue(final T val) {
 		// if ( listener == null ) { return; }
 		GAMA.getGui().run(new Runnable() {
 
@@ -487,7 +514,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	}
 
 	protected Control createComboParameterControl(final Composite composite) {
-		possibleValues = new ArrayList(param.getAmongValue());
+		possibleValues = new ArrayList<T>(param.getAmongValue(getScope()));
 		final String[] valuesAsString = new String[possibleValues.size()];
 		for ( int i = 0; i < possibleValues.size(); i++ ) {
 			// if ( param.isLabel() ) {
@@ -525,7 +552,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	protected abstract void displayParameterValue();
 
 	protected void checkButtons() {
-		ToolItem revert = items[REVERT];
+		final ToolItem revert = items[REVERT];
 		if ( revert == null || revert.isDisposed() ) { return; }
 		revert.setEnabled(currentValue == null ? originalValue != null : !currentValue.equals(originalValue));
 	}
@@ -611,14 +638,10 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 	protected IAgent getAgent() {
 		if ( agent != null ) { return agent; }
-		return GAMA.run(new InScope<IAgent>() {
+		if ( scope == null )
+			return null;
+		return scope.getSimulationScope();
 
-			@Override
-			public IAgent run(final IScope scope) {
-				if ( scope == null ) { return null; }
-				return scope.getSimulationScope();
-			}
-		});
 	}
 
 	@Override

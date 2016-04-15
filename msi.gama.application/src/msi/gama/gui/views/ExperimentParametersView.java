@@ -11,19 +11,29 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.kernel.experiment.*;
-import msi.gama.runtime.*;
+import msi.gama.kernel.experiment.EditorsList;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.statements.*;
+import msi.gaml.statements.UserCommandStatement;
 
 public class ExperimentParametersView extends AttributesEditorsView<String> {
 
@@ -51,7 +61,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 			reset();
 			editors = (EditorsList<String>) exp.getParametersEditors();
 			if ( editors == null && exp.getUserCommands().isEmpty() ) { return; }
-			String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / " +
+			final String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / " +
 				StringUtils.capitalize(experiment.getDescription().getTitle());
 			this.setPartName(expInfo);
 			displayItems();
@@ -79,8 +89,11 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		// StringUtils.capitalize(experiment.getDescription().getTitle());
 		// toolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL, SWT.LEFT);
 		// toolbar.sep(2, SWT.LEFT);
-		for ( final IStatement command : userCommands ) {
-			ToolItem f = toolbar.button(IGamaColors.BLUE, command.getName(), new SelectionAdapter() {
+		for ( final UserCommandStatement command : userCommands ) {
+			GamaUIColor color = GamaColors.get(command.getColor(GAMA.getRuntimeScope()));
+			if ( color == null )
+				color = IGamaColors.BLUE;
+			final ToolItem f = toolbar.button(color, command.getName(), new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
@@ -111,7 +124,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					EditorsList eds = (EditorsList) GAMA.getExperiment().getParametersEditors();
+					final EditorsList eds = (EditorsList) GAMA.getExperiment().getParametersEditors();
 					if ( eds != null ) {
 						eds.revertToDefaultValue();
 					}

@@ -1,3 +1,10 @@
+/**
+* Name: Dynamic update of the road network
+* Author:
+* Description: 5th part of the tutorial: Road Traffic
+* Tags: graph
+*/
+
 model tutorial_gis_city_traffic
 
 global {

@@ -12,9 +12,17 @@
 package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
-import org.eclipse.swt.events.*;
+
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.MouseWheelListener;
+
 import com.jogamp.opengl.GL2;
-import msi.gama.metamodel.shape.*;
+
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
 
 /**
  * Class ICamera.
@@ -23,7 +31,8 @@ import msi.gama.metamodel.shape.*;
  * @since 5 sept. 2013
  *
  */
-public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListener, MouseMoveListener, MouseTrackListener, MouseWheelListener {
+public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListener, MouseMoveListener,
+		MouseTrackListener, MouseWheelListener {
 
 	public final static double INIT_Z_FACTOR = 1.5;
 
@@ -56,5 +65,7 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 	public abstract void zoomFocus(IShape shape);
 
 	public abstract void zoom(boolean in);
+
+	public abstract void zoomRoi(Envelope3D env);
 
 }

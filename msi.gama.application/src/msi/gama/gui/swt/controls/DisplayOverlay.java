@@ -11,17 +11,43 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
-import java.util.*;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Path;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.*;
-import msi.gama.gui.swt.*;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IOverlayProvider;
+import msi.gama.common.interfaces.IUpdaterTarget;
+import msi.gama.gui.swt.GamaColors;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.runtime.GAMA;
@@ -87,21 +113,19 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	public DisplayOverlay(final LayeredDisplayView view, final Composite c, final IOverlayProvider provider) {
 		this.createExtraInfo = provider != null;
 		this.view = view;
-		IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+		final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 		ps.addPartListener(pl2);
 		referenceComposite = c;
 		parentShell = c.getShell();
 		popup = new Shell(parentShell, SWT.NO_TRIM | SWT.NO_FOCUS);
 
 		popup.setAlpha(140);
-		FillLayout layout = new FillLayout();
+		final FillLayout layout = new FillLayout();
 		layout.type = SWT.VERTICAL;
 		layout.spacing = 10;
 		popup.setLayout(layout);
 		popup.setBackground(IGamaColors.BLACK.color());
 		createPopupControl();
-		// Control control = createControl();
-		// control.setLayoutData(null);
 		popup.setAlpha(140);
 		popup.layout();
 		parentShell.addShellListener(listener);
@@ -116,7 +140,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	}
 
 	private Label label(final Composite c, final int horizontalAlign) {
-		Label l = new Label(c, SWT.None);
+		final Label l = new Label(c, SWT.None);
 		l.setForeground(IGamaColors.WHITE.color());
 		l.setBackground(IGamaColors.BLACK.color());
 		l.setText(" ");
@@ -126,7 +150,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	}
 
 	private GridData infoData(final int horizontalAlign) {
-		GridData data = new GridData(horizontalAlign, SWT.CENTER, true, false);
+		final GridData data = new GridData(horizontalAlign, SWT.CENTER, true, false);
 		data.minimumHeight = 24;
 		data.heightHint = 24;
 		return data;
@@ -134,8 +158,8 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	protected void createPopupControl() {
 		// overall panel
-		Shell top = getPopup();
-		GridLayout layout = new GridLayout(3, true);
+		final Shell top = getPopup();
+		final GridLayout layout = new GridLayout(3, true);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginWidth = 5;
@@ -157,7 +181,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		// scalebar overlay info
 		scalebar = new Canvas(top, SWT.None);
 		scalebar.setVisible(getView().getOutput().shouldDisplayScale());
-		GridData scaleData = new GridData(SWT.RIGHT, SWT.CENTER, true, false);
+		final GridData scaleData = new GridData(SWT.RIGHT, SWT.CENTER, true, false);
 		scaleData.minimumWidth = 140;
 		scaleData.widthHint = 140;
 		scaleData.minimumHeight = 24;
@@ -178,17 +202,17 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	void paintScale(final GC gc) {
 		gc.setBackground(IGamaColors.BLACK.color());
-		int BAR_WIDTH = 1;
-		int BAR_HEIGHT = 8;
-		int x = 0;
-		int y = 0;
-		int margin = 20;
-		int width = scalebar.getBounds().width - 2 * margin;
-		int height = scalebar.getBounds().height;
-		int barStartX = x + 1 + BAR_WIDTH / 2 + margin;
-		int barStartY = y + height - BAR_HEIGHT / 2;
+		final int BAR_WIDTH = 1;
+		final int BAR_HEIGHT = 8;
+		final int x = 0;
+		final int y = 0;
+		final int margin = 20;
+		final int width = scalebar.getBounds().width - 2 * margin;
+		final int height = scalebar.getBounds().height;
+		final int barStartX = x + 1 + BAR_WIDTH / 2 + margin;
+		final int barStartY = y + height - BAR_HEIGHT / 2;
 
-		Path path = new Path(SwtGui.getDisplay());
+		final Path path = new Path(SwtGui.getDisplay());
 		path.moveTo(barStartX, barStartY - BAR_HEIGHT + 2);
 		path.lineTo(barStartX, barStartY + 2);
 		path.moveTo(barStartX, barStartY - BAR_HEIGHT / 2 + 2);
@@ -207,7 +231,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	}
 
 	private String getScaleRight() {
-		double real = getView().getValueOfOnePixelInModelUnits() * 100;
+		final double real = getView().getValueOfOnePixelInModelUnits() * 100;
 		// System.out.println("GetScaleRight " + real);
 		if ( real > 1000 ) {
 			return String.format("%.1fkm", real / 1000d);
@@ -239,7 +263,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
 
-			IWorkbenchPart part = partRef.getPart(false);
+			final IWorkbenchPart part = partRef.getPart(false);
 			if ( view.equals(part) ) {
 				run(doDisplay);
 			}
@@ -250,7 +274,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 		@Override
 		public void partClosed(final IWorkbenchPartReference partRef) {
-			IWorkbenchPart part = partRef.getPart(false);
+			final IWorkbenchPart part = partRef.getPart(false);
 			if ( view.equals(part) ) {
 				close();
 			}
@@ -258,7 +282,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 		@Override
 		public void partDeactivated(final IWorkbenchPartReference partRef) {
-			IWorkbenchPart part = partRef.getPart(false);
+			final IWorkbenchPart part = partRef.getPart(false);
 			if ( view.equals(part) && !referenceComposite.isVisible() ) {
 				run(doHide);
 			}
@@ -269,7 +293,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 		@Override
 		public void partHidden(final IWorkbenchPartReference partRef) {
-			IWorkbenchPart part = partRef.getPart(false);
+			final IWorkbenchPart part = partRef.getPart(false);
 			if ( view.equals(part) ) {
 				run(doHide);
 			}
@@ -277,7 +301,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 		@Override
 		public void partVisible(final IWorkbenchPartReference partRef) {
-			IWorkbenchPart part = partRef.getPart(false);
+			final IWorkbenchPart part = partRef.getPart(false);
 			if ( view.equals(part) ) {
 				run(doDisplay);
 			}
@@ -308,14 +332,14 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			if ( !coord.isDisposed() ) {
 				try {
 					coord.setText(getView().getOverlayCoordInfo());
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					coord.setText("Not initialized yet");
 				}
 			}
 			if ( !zoom.isDisposed() ) {
 				try {
 					zoom.setText(getView().getOverlayZoomInfo());
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					GAMA.getGui().debug("Error in updating overlay: " + e.getMessage());
 					zoom.setText("Not initialized yet");
 				}
@@ -331,22 +355,22 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	}
 
 	protected Point getLocation() {
-		Rectangle r = referenceComposite.getClientArea();
-		Point p = referenceComposite.toDisplay(r.x, r.y);
-		int x = p.x;
-		int y = p.y + r.height - (createExtraInfo ? 56 : 32);
+		final Rectangle r = referenceComposite.getClientArea();
+		final Point p = referenceComposite.toDisplay(r.x, r.y);
+		final int x = p.x;
+		final int y = p.y + r.height - (createExtraInfo ? 56 : 32);
 		return new Point(x, y);
 	}
 
 	protected Point getSize() {
-		Point s = referenceComposite.getSize();
+		final Point s = referenceComposite.getSize();
 		return new Point(s.x, -1);
 	}
 
 	private void drawStringCentered(final GC gc, final String string, final int xCenter, final int yBase,
 		final boolean filled) {
-		Point extent = gc.textExtent(string);
-		int xx = xCenter - extent.x / 2;
+		final Point extent = gc.textExtent(string);
+		final int xx = xCenter - extent.x / 2;
 		gc.drawText(string, xx, yBase - extent.y, !filled);
 	}
 
@@ -360,7 +384,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	 */
 	private void setForeground(final Label label, final Color color) {
 		if ( label == null || label.isDisposed() ) { return; }
-		Color c = label.getForeground();
+		final Color c = label.getForeground();
 		label.setForeground(color);
 		if ( c != IGamaColors.WHITE.color() && c != color ) {
 			c.dispose();
@@ -373,8 +397,8 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	 */
 	@Override
 	public void updateWith(final OverlayInfo m) {
-		String[] infos = m.infos;
-		List<int[]> colors = m.colors;
+		final String[] infos = m.infos;
+		final List<int[]> colors = m.colors;
 		if ( infos[0] != null ) {
 			left.setText(infos[0]);
 			if ( colors != null ) {
@@ -471,7 +495,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			if ( referenceComposite != null && !referenceComposite.isDisposed() ) {
 				referenceComposite.removeControlListener(listener);
 			}
-			IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+			final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 			if ( ps != null ) {
 				ps.removePartListener(pl2);
 			}
@@ -497,11 +521,11 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 			@Override
 			public void run() {
-				IWorkbenchPartSite site = view.getSite();
+				final IWorkbenchPartSite site = view.getSite();
 				if ( site == null ) { return; }
-				Shell shell = site.getShell();
+				final Shell shell = site.getShell();
 				if ( shell == null ) { return; }
-				String text = shell.getText();
+				final String text = shell.getText();
 				result[0] = text == null || text.isEmpty();
 			}
 		});

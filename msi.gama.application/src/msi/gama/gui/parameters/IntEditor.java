@@ -11,35 +11,39 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolItem;
 // TODO Passer le FloatEditor et le IntEditor au m�me layout.
-
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
-import org.eclipse.swt.widgets.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class IntEditor extends NumberEditor<Integer> {
 
-	IntEditor(final IAgent agent, final IParameter param, final boolean canBeNull) {
-		this(agent, param, canBeNull, null);
+	IntEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull) {
+		this(scope, agent, param, canBeNull, null);
 	}
 
-	IntEditor(final IAgent agent, final IParameter param, final boolean canBeNull, final EditorListener l) {
-		super(agent, param, l, canBeNull);
+	IntEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull,
+		final EditorListener l) {
+		super(scope, agent, param, l, canBeNull);
 	}
 
-	IntEditor(final Composite parent, final String title, final String unit, final Integer value, final Integer min,
-		final Integer max, final Integer step, final EditorListener<Integer> whenModified, final boolean canBeNull) {
-		super(new InputParameter(title, unit, value, min, max), whenModified, canBeNull);
+	IntEditor(final IScope scope, final Composite parent, final String title, final String unit, final Integer value,
+		final Integer min, final Integer max, final Integer step, final EditorListener<Integer> whenModified,
+		final boolean canBeNull) {
+		super(scope, new InputParameter(title, unit, value, min, max), whenModified, canBeNull);
 		createComposite(parent);
 	}
 
 	@Override
 	protected void computeStepValue() {
-		stepValue = param.getStepValue();
+		stepValue = param.getStepValue(getScope());
 		if ( stepValue == null ) {
 			stepValue = 1;
 		}
@@ -48,37 +52,37 @@ public class IntEditor extends NumberEditor<Integer> {
 	@Override
 	protected Integer applyPlus() {
 		if ( currentValue == null ) { return 0; }
-		Integer i = currentValue;
-		Integer newVal = i + stepValue.intValue();
+		final Integer i = currentValue;
+		final Integer newVal = i + stepValue.intValue();
 		return newVal;
 	}
 
 	@Override
 	protected Integer applyMinus() {
 		if ( currentValue == null ) { return 0; }
-		Integer i = currentValue;
-		Integer newVal = i - stepValue.intValue();
+		final Integer i = currentValue;
+		final Integer newVal = i - stepValue.intValue();
 		return newVal;
 	}
 
 	@Override
 	protected void modifyValue(final Integer val) throws GamaRuntimeException {
-		Integer i = Cast.as(val, Integer.class, false);
-		if ( minValue != null && i < minValue.intValue() ) { throw GamaRuntimeException.error("Value " + i +
-			" should be greater than " + minValue); }
-		if ( maxValue != null && i > maxValue.intValue() ) { throw GamaRuntimeException.error("Value " + i +
-			" should be smaller than " + maxValue); }
+		final Integer i = Cast.as(val, Integer.class, false);
+		if ( minValue != null && i < minValue.intValue() ) { throw GamaRuntimeException
+			.error("Value " + i + " should be greater than " + minValue); }
+		if ( maxValue != null && i > maxValue.intValue() ) { throw GamaRuntimeException
+			.error("Value " + i + " should be smaller than " + maxValue); }
 		super.modifyValue(i);
 	}
 
 	@Override
 	protected void checkButtons() {
 		super.checkButtons();
-		ToolItem plus = items[PLUS];
+		final ToolItem plus = items[PLUS];
 		if ( plus != null && !plus.isDisposed() ) {
 			plus.setEnabled(param.isDefined() && (maxValue == null || applyPlus() < maxValue.intValue()));
 		}
-		ToolItem minus = items[MINUS];
+		final ToolItem minus = items[MINUS];
 		if ( minus != null && !minus.isDisposed() ) {
 			minus.setEnabled(param.isDefined() && (minValue == null || applyMinus() > minValue.intValue()));
 		}
@@ -86,7 +90,8 @@ public class IntEditor extends NumberEditor<Integer> {
 
 	@Override
 	protected Integer normalizeValues() throws GamaRuntimeException {
-		Integer valueToConsider = getOriginalValue() == null ? 0 : Cast.as(getOriginalValue(), Integer.class, false);
+		final Integer valueToConsider =
+			getOriginalValue() == null ? 0 : Cast.as(getOriginalValue(), Integer.class, false);
 		currentValue = getOriginalValue() == null ? null : valueToConsider;
 		minValue = minValue == null ? null : minValue.intValue();
 		maxValue = maxValue == null ? null : maxValue.intValue();

@@ -12,6 +12,9 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Geometry;
@@ -26,6 +29,11 @@ public class StaticLayerObject extends LayerObject {
 	static final GamaPoint WORLD_OFFSET = new GamaPoint();
 	static final GamaPoint WORLD_SCALE = new GamaPoint(1, 1, 1);
 	static final Double WORLD_ALPHA = 1d;
+	
+	static GamaPoint pivotPoint = null;
+	static double axisSize = 0;
+	static List<GeometryObject> geomObjList = new ArrayList<GeometryObject>();
+	static List<StringObject> stringObjList = new ArrayList<StringObject>();
 
 	public StaticLayerObject(final JOGLRenderer renderer) {
 		super(renderer, null);
@@ -42,7 +50,8 @@ public class StaticLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void clear(final GL gl) {}
+	public void clear(final GL gl) {
+	}
 
 	public static class WaitingLayerObject extends StaticLayerObject {
 
@@ -78,6 +87,7 @@ public class StaticLayerObject extends LayerObject {
 		private double previousTime = 0;
 		public float fps = 00.00f;
 		public boolean axesDrawn = false;
+		public boolean planDrawn = false;
 
 		public WordLayerObject(final JOGLRenderer renderer) {
 			super(renderer);
@@ -101,9 +111,14 @@ public class StaticLayerObject extends LayerObject {
 		@Override
 		public void draw(final GL2 gl, final JOGLRenderer renderer, final boolean picking) {
 			super.draw(gl, renderer, picking);
-			if ( renderer.data.isDrawEnv() && !axesDrawn ) {
+			if ( renderer.data.isDrawEnv() && !planDrawn ) {
+				drawXYPlan(renderer.data.getEnvWidth(), renderer.data.getEnvHeight());
+				planDrawn = true;
+			}
+			if ( renderer.data.isDrawEnv() && (!axesDrawn || pivotPoint!=null) ) {
 				drawAxes(renderer.data.getEnvWidth(), renderer.data.getEnvHeight());
-				axesDrawn = true;
+				if (pivotPoint==null)
+					axesDrawn = true;
 			}
 			// GL2 gl = GLContext.getCurrentGL().getGL2();
 
@@ -121,12 +136,12 @@ public class StaticLayerObject extends LayerObject {
 			}
 			gl.glColor4d(1, 1, 1, 1);
 		}
-
-		public void drawAxes(final double w, final double h) {
-			double size = (w > h ? w : h) / 10;
+		
+		public void drawXYPlan(final double w, final double h) {
 			// add the world
 			GamaColor c = new GamaColor(150, 150, 150, 255);
 			GamaPoint origin = new GamaPoint();
+
 			IShape g = GamaGeometryType.buildLine(origin, new GamaPoint(w, 0));
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 			g = GamaGeometryType.buildLine(new GamaPoint(w, 0), new GamaPoint(w, h));
@@ -135,33 +150,81 @@ public class StaticLayerObject extends LayerObject {
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 			g = GamaGeometryType.buildLine(new GamaPoint(0, h), origin);
 			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
+		}
+
+		public void drawAxes(final double w, final double h) {
+			for (GeometryObject geomObj : geomObjList) {
+				geometries.remove(geomObj);
+			}
+			for (StringObject strObj : stringObjList) {
+				strings.remove(strObj);
+			}
+//			geometries.clear(gl, getTrace(), false);
+			double size = (w > h ? w : h) / 10;
+			// add the world
+			GamaColor c = new GamaColor(150, 150, 150, 255);
+			GamaPoint origin = new GamaPoint();
+			if (pivotPoint != null) {
+				origin = pivotPoint;
+				size = axisSize;
+			}
 
 			// build the lines
 			c = GamaColor.getInt(Color.red.getRGB());
-			g = GamaGeometryType.buildLine(origin, new GamaPoint(size, 0, 0));
-			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
+			IShape g = GamaGeometryType.buildLine(new GamaPoint(origin.x,-origin.y,origin.z), new GamaPoint(size+origin.x, 0-origin.y, 0+origin.z));
+			GeometryObject geomObj = new GeometryObject(g, c, IShape.Type.LINESTRING, this);
+			geomObjList.add(geomObj);
+			geometries.add(geomObj);
 			c = GamaColor.getInt(Color.green.getRGB());
-			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, size, 0));
-			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
+			g = GamaGeometryType.buildLine(new GamaPoint(origin.x,-origin.y,origin.z), new GamaPoint(0+origin.x, size-origin.y, 0+origin.z));
+			geomObj = new GeometryObject(g, c, IShape.Type.LINESTRING, this);
+			geomObjList.add(geomObj);
+			geometries.add(geomObj);
 			c = GamaColor.getInt(Color.blue.getRGB());
-			g = GamaGeometryType.buildLine(origin, new GamaPoint(0, 0, size));
-			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
+			g = GamaGeometryType.buildLine(new GamaPoint(origin.x,-origin.y,origin.z), new GamaPoint(0+origin.x, 0-origin.y, size+origin.z));
+			geomObj = new GeometryObject(g, c, IShape.Type.LINESTRING, this);
+			geomObjList.add(geomObj);
+			geometries.add(geomObj);
+			
 			// add the legends
-			strings.add(new StringObject("X", new GamaPoint(1.2f * size, 0.0d, 0.0d), this));
-			strings.add(new StringObject("Y", new GamaPoint(0.0d, -1.2f * size, 0.0d), this));
-			strings.add(new StringObject("Z", new GamaPoint(0.0d, 0.0d, 1.2f * size), this));
+			StringObject strObj = new StringObject("X", new GamaPoint((1.2f) * size +origin.x, 0.0d+origin.y, 0.0d+origin.z), this);
+			stringObjList.add(strObj);
+			strings.add(strObj);
+			strObj = new StringObject("Y", new GamaPoint((0.0d+origin.x), -(1.2f) * size +origin.y, 0.0+origin.z), this);
+			stringObjList.add(strObj);
+			strings.add(strObj);
+			strObj = new StringObject("Z", new GamaPoint((0.0d+origin.x), 0.0d+origin.y, (1.2f) * size +origin.z) , this);
+			stringObjList.add(strObj);
+			strings.add(strObj);
+			
 			// add the triangles
 			c = GamaColor.getInt(Color.red.getRGB());
-			g = GamaGeometryType.buildArrow(origin, new GamaPoint(size + size / 10, 0, 0), size / 6, size / 6, true);
-			geometries.add(new GeometryObject(g, c, IShape.Type.POLYGON, this));
+			g = GamaGeometryType.buildArrow(new GamaPoint(origin.x,-origin.y,origin.z), new GamaPoint(size + size / 10 + origin.x, 0 - origin.y, 0 + origin.z), size / 6, size / 6, true);
+			geomObj = new GeometryObject(g, c, IShape.Type.POLYGON, this);
+			geomObjList.add(geomObj);
+			geometries.add(geomObj);
 			c = GamaColor.getInt(Color.green.getRGB());
-			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, size + size / 10, 0), size / 6, size / 6, true);
-			geometries.add(new GeometryObject(g, c, IShape.Type.POLYGON, this));
+			g = GamaGeometryType.buildArrow(new GamaPoint(origin.x,-origin.y,origin.z), new GamaPoint(0 + origin.x, size + size / 10 - origin.y, 0 + origin.z), size / 6, size / 6, true);
+			geomObj = new GeometryObject(g, c, IShape.Type.POLYGON, this);
+			geomObjList.add(geomObj);
+			geometries.add(geomObj);
 			c = GamaColor.getInt(Color.blue.getRGB());
-			g = GamaGeometryType.buildArrow(origin, new GamaPoint(0, 0, size + size / 10), size / 6, size / 6, true);
+			g = GamaGeometryType.buildArrow(new GamaPoint(origin.x,-origin.y,origin.z), new GamaPoint(0 + origin.x, 0 - origin.y, size + size / 10 + origin.z), size / 6, size / 6, true);
 			// FIXME See Issue 832: depth cannot be applied here.
-			geometries.add(new GeometryObject(g, c, IShape.Type.POLYGON, this));
+			geomObj = new GeometryObject(g, c, IShape.Type.POLYGON, this);
+			geomObjList.add(geomObj);
+			geometries.add(geomObj);
 
+		}
+		
+		public void startDrawRotationHelper(final GamaPoint pivotPosition, final double size) {
+			pivotPoint = pivotPosition;
+			axisSize = size;
+		}
+		
+		public void stopDrawRotationHelper() {
+			pivotPoint = null;
+			axesDrawn = false;
 		}
 	}
 

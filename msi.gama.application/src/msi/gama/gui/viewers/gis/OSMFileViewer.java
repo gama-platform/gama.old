@@ -20,6 +20,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.*;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
+import org.geotools.swt.MapLayerComposite;
 import org.geotools.swt.SwtMapPane;
 import org.geotools.swt.utils.Utils;
 import org.opengis.feature.simple.*;
@@ -37,14 +38,14 @@ public class OSMFileViewer extends GISFileViewer {
 
 	Map<String, String> attributes;
 	GamaOsmFile osmfile;
-	CustomMapLayerComposite mapLayerTable;
+	MapLayerComposite mapLayerTable;
 
 	@Override
 	public void createPartControl(final Composite composite) {
 		Composite parent = GamaToolbarFactory.createToolbars(this, composite);
 		SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL | SWT.NULL);
 		displayInfoString();
-		mapLayerTable = new CustomMapLayerComposite(sashForm, SWT.BORDER);
+		mapLayerTable = new MapLayerComposite(sashForm, SWT.BORDER);
 		pane = new SwtMapPane(sashForm, SWT.BORDER | SWT.NO_BACKGROUND, new StreamingRenderer(), content);
 		pane.setBackground(GamaColors.system(SWT.COLOR_WHITE));
 		pane.setCursorTool(newDragTool());

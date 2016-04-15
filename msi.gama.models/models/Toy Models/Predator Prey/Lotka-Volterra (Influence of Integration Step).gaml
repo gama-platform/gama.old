@@ -1,8 +1,9 @@
 /**
- *  ODE_LotkaVolterra
- *  Author: Huynh Quang Nghi & Nathalie Corson
- *  Description: Lotka Volterra Predator Prey Model - ODE solved with Runge-Kutta 4 method with different integration time step
- */
+* Name: ODE_LotkaVolterra
+* Author: Huynh Quang Nghi & Nathalie Corson
+*  Description: Lotka Volterra Predator Prey Model - ODE solved with Runge-Kutta 4 method with different integration time step
+* Tags: equation, math
+*/
 
 model ODE_LotkaVolterra_InfluenceTimeStep
 

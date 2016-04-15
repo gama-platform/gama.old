@@ -1,20 +1,33 @@
 /**
- * This model demonstrates a use-case of the FIPA Contract Net interaction protocol. 
- * 		
- * One initiator sends a 'cfp' message to 5 participants.
- * 
- * The first participants (participant0) replies with a refuse message.
- * Four participants (parcicipant1, parcicipant2, parcicipant3, parcicipant4) reply with four propose messages.
- * 
- * When the initiator receives the propose messages, it proceeds as follows:
- * The initiator replies the participant1 with a reject_proposal message.
- * The initiator replies participant2, participant3, participant4 with three accept_proposal messages respectively.
- * 
- * When participant2, participant3 and participant4 receive the accept_proposal messages from the initiator, they proceed as follows:
- * Participant2 replies with a failure message.
- * Participant3 replies with an inform_done message.
- * Participant4 replies with an inform_result message.
- */
+* Name: FIPA Contract Net (2)
+* Author:
+* Description: This model demonstrates a use-case of the FIPA Contract Net interaction protocol. 
+* 
+* 
+* One initiator sends a 'cfp' message to 5 participants.
+* 
+* The first participants (participant0) replies with a refuse message.
+* 
+* Four participants (participant1, participant2, participant3, participant4) reply with four propose messages.
+* 
+* 
+* When the initiator receives the propose messages, it proceeds as follows:
+* 
+* The initiator replies the participant1 with a reject_proposal message.
+* 
+* The initiator replies participant2, participant3, participant4 with three accept_proposal messages respectively.
+* 
+* 
+* When participant2, participant3 and participant4 receive the accept_proposal messages from the initiator, they proceed as follows:
+* 
+* Participant2 replies with a failure message.
+* 
+* Participant3 replies with an inform_done message.
+* 
+* Participant4 replies with an inform_result message.
+* Tags: fipa
+*/
+
 model cfp_cfp_2
 
 global {

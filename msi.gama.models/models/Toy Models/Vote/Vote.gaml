@@ -1,35 +1,53 @@
 /**
- *  vote
- *  Author: MAPS TEAM (Frederic Amblard, Thomas Louail, Romain Reulier, Paul Salze et Patrick Taillandier)
- *  Description: Modeling of an election
- */
-
+* Name: vote
+* Author: MAPS TEAM (Frederic Amblard, Thomas Louail, Romain Reulier, Paul Salze et Patrick Taillandier) 
+* Description: Modeling of an election
+* Tags: gui
+*/
+ 
 model vote
 
 global {
+	//Shape of the environment
 	geometry shape <- rectangle({200, 200});
 	
+	//Number of electors
 	int nb_electors <- 1500;
+	//Number of candidates
 	int nb_candidates <- 7;
+	//Weight of each candidates
 	int weight_candidates <- 50;
+	//Threshold for the attraction candidates
 	int threshold_attraction_candidates <- 80;
+	//Threshold for the repulsion candidates
 	int threshold_repulsion_candidates <- 200;
+	//Threshold for the attraction electors
 	int threshold_attraction_electors <- 20;
 	
+	//Distance traveled
 	float distance_traveled <- 7.0;
+	//Distribution of the electors
 	string distribution_electors <- "Uniform" among: ["Uniform", "Normal"];
+	//Distribution of candidates
 	string distribution_candidates <- "Polygon" among: ["Random", "Polygon", "Line", "Diagonal"];
+	//Strategy of the candidates
 	string strategy_candidates <- "No strategy" among: ["No strategy", "Search electors", "Distinction", "Group", "Go closer to the best","Random" ];
+	//Count of max group
 	int cpt_Group_max <- 5;
+	//Count  of group
 	int cpt_Group <- cpt_Group_max;
+	
 	float entropy;
+	
+	//List of all the active candidates
 	list<candidate> active_candidates ;
 	
 	init {
+		//Creation of the elector
 		create elector number: nb_electors;
 		do creation_candidates;
 	}
-	
+	//Action to create the candidates according to the distribution of candidates
 	action creation_candidates {
 		switch distribution_candidates { 
 			match "Polygon" {
@@ -62,22 +80,28 @@ global {
 				}
 			}
 		}
+		//Initialization of all the active candidates as the list of candidates
 		active_candidates <- list(copy(candidate));	
 	}
-	
+	//Reflex representing the dynamics of the models
 	reflex dynamique {
+		//For each elector, ask to move
 		ask elector {
 			do moving;
 		}
+		//For each candidate, ask to move
 		ask active_candidates{
 			do moving;
 			my_electors <- [];
 		}
+		//For each elector, do its definition
 		ask elector {
 			do definition_candidate;
 		}
 		int nb_electors_max <- 0;
 		candidate candidat_elected <- nil; 
+		
+		//Ask to all the active candidates to compute their percentage of vote and set the number of maximum electors to know which candidate is elected
 		ask active_candidates{ 
 			int nb_el <- length(my_electors) ;
 			percentage_vote <- (nb_el/nb_electors * 100) with_precision 2;
@@ -86,6 +110,7 @@ global {
 			 	candidat_elected <- self;
 			}
 		}
+		//update of the state of the candidate
 		ask candidate {
 			is_elected <- false; 
 		}
@@ -93,18 +118,22 @@ global {
 			is_elected <- true; 
 		}
 	}
-	
+	//Reflex to show the final results
 	reflex resultats_finaux when: time = 72 {
 		candidate elected <- active_candidates with_max_of (each.percentage_vote);
+		//Display a window telling who is the winner and halt the model
 		do tell message: "The winner is " + elected.name; 
 		do halt;
 	}
 	
+	//Reflex to compute the creation of group when one candidate chooses this strategy
 	reflex creation_Group when: (strategy_candidates in ["Group", "Random"]) {
 		 if (cpt_Group = cpt_Group_max) {
+		 	//Kill all the group of electors
 		 	ask Group_electors as list {
 		 		do die;
 		 	}
+		 	//Compute the list of elector according to their distance
 			list<list<elector>> Groups<- [];
 			geometry geoms <- union(elector collect ((each.shape) buffer (["distance"::float(threshold_attraction_electors) , "quadrantSegments"::4, "endCapStyle"::1])));
 			loop geom over: geoms.geometries { 
@@ -113,7 +142,7 @@ global {
 					add els to: Groups;
 				}
 			}
-			
+			//Create new groups of electors according to the list of electors
 			loop gp over: Groups {
 			 	create Group_electors {
 					 effectif <- length(gp);
@@ -125,13 +154,15 @@ global {
 		cpt_Group <- cpt_Group - 1;
 		if (cpt_Group = 0) { cpt_Group <- cpt_Group_max;}	
 	}
-	
+	//Reflex to compute the entropy
 	reflex calcule_entropy {
 		entropy <- 0.0;
+		//Compute the abstinence rate
 		float abst <- (nb_electors - sum (active_candidates  collect (length(each.my_electors)))) / nb_electors;
 		if (abst > 0) {
 			entropy <- entropy - (abst * ln(abst));
 		}
+		//Ask to all the active candidates their number of electors to compute the entropy
 		ask active_candidates {
 			float p <- length(my_electors) / nb_electors;
 			if (p > 0) {
@@ -144,19 +175,21 @@ global {
 
 
 
-	
+//Species representing a group of electors
 species Group_electors {
 	int effectif <- 0;
+	//List of all the elector agents in the group
 	list<elector> electors_dans_Group ;
 	aspect default {
 		draw square(2) color: #orange;
 	} 
 	
 }
-
+//Species representing the elector moving 
 species elector skills: [moving]{
 	
 	init {
+		//At initialization, place the elector in a certain place according to the distribution of electors
 		if (distribution_electors = "Normal") {
 			float x_cord <- max([0.0, min([200.0, gauss ({100, 35})])]);
 			float y_cord <- max([0.0, min([200.0, gauss ({100, 35})])]);
@@ -164,12 +197,15 @@ species elector skills: [moving]{
 		}
 	}
 	rgb color <- #white;
+	//Candidate chosen by the elector
 	candidate my_candidate;  
 	
 	aspect base {
 		draw triangle(2) color: color ;
 	} 
+	//Action to define the candidate
 	action definition_candidate {
+		//The candidate chosen is the one closest to the elector in the attraction range
 		my_candidate <- active_candidates with_min_of (self distance_to each);
 		my_candidate <- (self distance_to my_candidate < threshold_attraction_candidates) ? my_candidate : nil;
 		if (my_candidate != nil) {
@@ -177,13 +213,16 @@ species elector skills: [moving]{
 			color <- my_candidate.color;
 		}
 	}
+	//Action to move the elector
 	action moving {
+		//Make the agent move closer to another elector, representing the influence of this one
 		if ( rnd(100) > (weight_candidates)) {
 			elector my_elector <- shuffle(elector) first_with ((self distance_to each) < threshold_attraction_electors);
 			if (my_elector != nil) {
 				do goto target:my_elector speed: distance_traveled;
 			} 
 		} else {
+			//Move the elector closer to one of the candidate to represent its repulsion or attraction
 			candidate the_candidate <- one_of(candidate) ;
 			if (the_candidate != nil) {
 				float dist <- self distance_to the_candidate;
@@ -198,12 +237,16 @@ species elector skills: [moving]{
 	} 
 	
 }
-
+//Species candidate using the skill moving
 species candidate skills:[moving]{
 	rgb color <- rgb([100 + rnd(155),100 + rnd(155),100 + rnd(155)]);
+	//Boolean to know if the candidate is active
 	bool active <- true;
+	//Float representing the percentage of vote for the candidate
 	float percentage_vote; 
+	//List of all the electors of the candidate
 	list my_electors of: elector;
+	//Boolean to know if the candidate is elected
 	bool is_elected <- false;
 	aspect default {
 		draw circle(3) color: color;
@@ -220,7 +263,7 @@ species candidate skills:[moving]{
 			draw string(percentage_vote) size: 5 color: #white;
 		}
 	}
-	
+	//Action to move the candidate according to its strategy
 	action moving {
 		switch strategy_candidates {
 			match "No strategy" {}

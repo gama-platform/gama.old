@@ -1,7 +1,10 @@
 /**
- *  model4
- *  This model illustrates how to use spatial operator
- */ 
+* Name: Movement on Graph
+* Author:
+* Description: 4th part of the tutorial : Incremental Model
+* Tags: graph
+*/
+ 
 model model4 
  
 global {

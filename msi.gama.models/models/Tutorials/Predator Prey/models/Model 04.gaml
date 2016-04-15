@@ -1,5 +1,11 @@
+/**
+* Name: Use of Inspectors/monitors
+* Author:
+* Description: 4th part of the tutorial : Predator Prey
+* Tags: inspector, monitor
+*/
+
 model prey_predator
-//Model 4 of the predator/prey tutorial
 
 global {
 	int nb_preys_init <- 200 ;

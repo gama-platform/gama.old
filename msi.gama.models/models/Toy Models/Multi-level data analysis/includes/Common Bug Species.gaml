@@ -1,7 +1,3 @@
-/*
- * 
- */
-
 model Bug
 
 global {

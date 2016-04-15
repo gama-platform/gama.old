@@ -2,8 +2,10 @@
 * Name: 3D Display model and Height of Building using shapefiles
 * Author: Arnaud Grignard
 * Description: Model presenting a 3D display of people and buildings moving on a road network imported thanks to shapefiles. 
-*       Three experiments are proposed : one showing people represented by a yellow sphere moving from a living 3D building to a working 3D building and coming back
-* 	using a road network (road_traffic). The second experiment distinguish the species by using different layers for species (road_traffic_multi_layer). The last one increases
+* 
+* 
+*       Three experiments are proposed : one showing people represented by a yellow sphere moving from a living 3D building to a working 3D building and coming back 
+* 	using a road network (road_traffic). The second experiment distinguish the species by using different layers for species (road_traffic_multi_layer). The last one increases 
 * 	the Z location of the buildings and the people according to the time simulated (road_traffic_flying_off).
 * Tags: 3d, shapefile, gis
 */

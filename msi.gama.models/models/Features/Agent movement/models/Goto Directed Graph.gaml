@@ -1,7 +1,7 @@
 /**
 * Name:  Directed Graph Model
 * Author:  Patrick Taillandier
-* Description: Model representing how to directed graph using GIS Data for the road networks : the GIS contains a column defining the direction of the roads  
+* Description: Model representing how to directed graph using GIS Data for the road networks : the GIS contains a column defining the direction of the roads 
 * 	and people moving from one random point to another on this graph
 * Tags: graph, agent_movement, skill 
 */

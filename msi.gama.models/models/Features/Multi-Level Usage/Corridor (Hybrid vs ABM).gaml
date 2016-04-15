@@ -1,8 +1,8 @@
 /**
 * Name: Corridor Multi-Level Architecture with Mathematics Model and Agent Based Model
 * Author: 
-* Description: This model shows how to use multi-level architecture. Two corridors are presented : one which can capture the pedestrians
-* 	going through it and computing for them the time before releasing them at the end of the corridor, and an other doing nothing, letting
+* Description: This model shows how to use multi-level architecture. Two corridors are presented : one which can capture the pedestrians 
+* 	going through it and computing for them the time before releasing them at the end of the corridor, and an other doing nothing, letting 
 * 	the pedestrians moving by themselves in the corridor. 
 * Tags: multi_level, agent_movement
 */

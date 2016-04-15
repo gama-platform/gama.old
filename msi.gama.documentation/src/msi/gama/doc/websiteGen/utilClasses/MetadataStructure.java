@@ -39,8 +39,9 @@ public class MetadataStructure {
 	private void computeMetadata(String metadata) throws IllegalArgumentException, IllegalAccessException {
 		String name = findAndReturnRegex(metadata,NAME_REGEX);
 		String author = findAndReturnRegex(metadata,AUTHOR_REGEX);
-		String description = findAndReturnRegex(metadata,DESCRIPTION_REGEX);
-		description = description.replaceAll("(\\n\\*(\\s|\\t)+)", " ");
+		String metadata_computed = metadata.replace("* \n", "\n");
+		String description = findAndReturnRegex(metadata_computed,DESCRIPTION_REGEX);
+		description = description.replaceAll("(\\n\\*(\\s|\\t)+)", ""); // replace "* " by ""
 		String rawTags = findAndReturnRegex(metadata,TAGS_REGEX);
 		// remove space character
 		rawTags = rawTags.replace(" ", "");

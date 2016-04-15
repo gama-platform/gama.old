@@ -1,7 +1,7 @@
 /**
 * Name: Creating color and sort cubes by color
 * Author:  Arnaud Grignard
-* Description: A model to show how to create color by using the rgb operator, the color depending on the position of cube in the xyz space.
+* Description: A model to show how to create color by using the rgb operator, the color depending on the position of cube in the xyz space. 
 * 	The cubes are randomly mixed to finally be sorted according to the color of each vertix of the whole big cube, using the bubble sort 
 *        algorithm (https://en.wikipedia.org/wiki/Bubble_sort). 
 * Tags: color, 3d

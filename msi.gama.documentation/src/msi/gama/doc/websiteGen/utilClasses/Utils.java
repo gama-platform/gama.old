@@ -14,12 +14,15 @@ public class Utils {
 	public static void getFilesFromFolder(String folderPath, ArrayList<File> files) {
 		File folder = new File(folderPath);
 	    File[] fList = folder.listFiles();
-	    for (File file : fList) {
-	        if (file.isFile()) {
-	        	files.add(file);
-	        } else if (file.isDirectory()) {
-	        	getFilesFromFolder(file.getAbsolutePath(), files);
-	        }
+	    if (fList != null)
+	    {
+		    for (File file : fList) {
+		        if (file.isFile()) {
+		        	files.add(file);
+		        } else if (file.isDirectory()) {
+		        	getFilesFromFolder(file.getAbsolutePath(), files);
+		        }
+		    }
 	    }
 	}
 	
@@ -64,7 +67,7 @@ public class Utils {
 		String line = null;
 		
 		while ((line = br.readLine()) != null) {
-			expeName = Utils.findAndReturnRegex(line,"experiment (\\w+)");
+			expeName = Utils.findAndReturnRegex(line,"^experiment (\\w+)");
 			if (expeName != "") {
 				result.add(expeName);
 				expeName = "";

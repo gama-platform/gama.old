@@ -11,18 +11,20 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import msi.gama.common.interfaces.EditorListener;
+import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
-import org.eclipse.swt.widgets.*;
 
 public class ExpressionEditor extends GenericEditor<IExpression> {
 
 	private String expressionText;
 
-	ExpressionEditor(final Composite parent, final String title, final IExpression value,
+	ExpressionEditor(final IScope scope, final Composite parent, final String title, final IExpression value,
 		final EditorListener<IExpression> whenModified, final IType expectedType) {
-		super(parent, title, value, whenModified);
+		super(scope, parent, title, value, whenModified);
 		this.expectedType = expectedType;
 	}
 
@@ -41,8 +43,9 @@ public class ExpressionEditor extends GenericEditor<IExpression> {
 		getEditorControl().setText(expressionText);
 	}
 
+	@Override
 	public IExpression getParameterValue() {
-		return (IExpression) param.value(null);
+		return (IExpression) param.value(getScope());
 	}
 
 	@Override

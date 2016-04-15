@@ -1,17 +1,23 @@
 /**
- * This model demontrates a usecase of the FIPA Query interaction protocol.
- * (Please see http://www.fipa.org/specs/fipa00027/SC00027H.html for the detail description of this protocol).
- * 
- * 
- * The Initiator agent begins the 'fipa-query' conversation/interaction protocol by sending a 'query'
- * message to the Participant agent with 'your name?' as content.
- * 
- * On receiving the 'query' message, the Participant agent replies with two consecutive messages :
- * 	(1) an 'agree' message indicating that the Participant agent accepts to execute the query of the Initiator agent,
- *  (2) an 'inform' message informing the Initiation agent of Participant agent's name.
- * 
- * After the Initiator agent read the 'inform' message from the Participant agent, the conversation ends.
- */
+* Name: FIPA Query
+* Author:
+* Description: This model demontrates a usecase of the FIPA Query interaction protocol. 
+* (Please see http://www.fipa.org/specs/fipa00027/SC00027H.html for the detail description of this protocol).
+* 
+* 
+* The Initiator agent begins the 'fipa-query' conversation/interaction protocol by sending a 'query' 
+* message to the Participant agent with 'your name?' as content.
+* 
+* On receiving the 'query' message, the Participant agent replies with two consecutive messages :
+* 
+*  (1) an 'agree' message indicating that the Participant agent accepts to execute the query of the Initiator agent,
+* 
+*  (2) an 'inform' message informing the Initiation agent of Participant agent's name.
+* 
+* 
+* After the Initiator agent read the 'inform' message from the Participant agent, the conversation ends.
+* Tags: fipa
+*/
 model fipa_query_1
 
 global {

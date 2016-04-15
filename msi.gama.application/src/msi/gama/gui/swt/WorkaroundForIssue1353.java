@@ -4,7 +4,14 @@
  */
 package msi.gama.gui.swt;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import msi.gama.gui.swt.swing.Platform;
 import msi.gama.gui.views.LayeredDisplayView;
 
 /**
@@ -16,94 +23,124 @@ import msi.gama.gui.views.LayeredDisplayView;
  */
 public class WorkaroundForIssue1353 {
 
-	// private static Shell invisibleShell;
-	// private static MouseTrackListener displayExitEnterTracker, editorExitEnterTracker;
-	// private static boolean exitedOnce = false;
-	//
-	// private static Shell getShell() {
-	// if ( invisibleShell == null ) {
-	// invisibleShell = new Shell(SwtGui.getShell(), SWT.APPLICATION_MODAL);
-	// }
-	// invisibleShell.setAlpha(0);
-	// return invisibleShell;
-	// }
+	private static Shell shell;
+	private static MouseTrackListener displayExitEnterTracker, editorExitEnterTracker;
+	private static boolean exitedOnce = false;
 
-	// private static void manipulateShell() {
-	// // System.out.println("Manipulating Shell");
-	// if ( !getShell().isFocusControl() ) {
-	// getShell().open();
-	// }
-	// getShell().setSize(20, 20);
-	// getShell().setVisible(false);
-	// }
+	private static void manipulateShell() {
+		if ( shell == null ) {
+			shell = new Shell(SwtGui.getDisplay(), SWT.APPLICATION_MODAL);
+			shell.setSize(5, 5);
+			shell.setAlpha(0);
+			// shell.setLocation(SwtGui.getDisplay().getCursorLocation().x - 10,
+			// SwtGui.getDisplay().getCursorLocation().y - 10);
+			shell.setBackground(IGamaColors.BLACK.active);
+		}
 
-	// private static MouseTrackListener getDisplayListener() {
-	// if ( displayExitEnterTracker == null ) {
-	// displayExitEnterTracker = new MouseTrackListener() {
-	//
-	// @Override
-	// public void mouseHover(final MouseEvent e) {}
-	//
-	// @Override
-	// public void mouseExit(final MouseEvent e) {
-	// exitedOnce = true;
-	// manipulateShell();
-	// }
-	//
-	// @Override
-	// public void mouseEnter(final MouseEvent e) {}
-	// };
-	// }
-	// return displayExitEnterTracker;
-	// }
+		// shell.setText("Not visible");
+		// shell.forceActive();
+		shell.open();
+		shell.setVisible(false);
 
-	// private static MouseTrackListener getEditorListener() {
-	// if ( editorExitEnterTracker == null ) {
-	// editorExitEnterTracker = new MouseTrackListener() {
-	//
-	// @Override
-	// public void mouseHover(final MouseEvent e) {}
-	//
-	// @Override
-	// public void mouseExit(final MouseEvent e) {
-	// if ( exitedOnce ) {
-	// manipulateShell();
-	// }
-	// }
-	//
-	// @Override
-	// public void mouseEnter(final MouseEvent e) {}
-	// };
-	// }
-	// return editorExitEnterTracker;
-	// }
-
-	public static void installOn(final Composite control, final LayeredDisplayView view) {
-		if ( true ) { return; }
-		// if ( !Platform.isCocoa() ) { return; }
-		// control.addMouseTrackListener(getDisplayListener());
-		// control.addDisposeListener(new DisposeListener() {
-		//
-		// @Override
-		// public void widgetDisposed(final DisposeEvent e) {
-		// control.removeMouseTrackListener(getDisplayListener());
-		// control.removeDisposeListener(this);
-		// }
-		// });
+		// shell.dispose();
+		// SwtGui.getShell().forceActive();
 	}
 
+	public static void fixViewLosingMouseTrackEvents() {
+		if ( shell == null ) // The fix has not been installed
+			return;
+		manipulateShell();
+	}
+
+	private static MouseTrackListener getDisplayListener() {
+		if ( displayExitEnterTracker == null ) {
+			displayExitEnterTracker = new MouseTrackListener() {
+
+				@Override
+				public void mouseHover(final MouseEvent e) {}
+
+				@Override
+				public void mouseExit(final MouseEvent e) {
+					// System.out.println("Opening/closing shell");
+					manipulateShell();
+				}
+
+				@Override
+				public void mouseEnter(final MouseEvent e) {}
+			};
+		}
+		return displayExitEnterTracker;
+	}
+
+	private static MouseTrackListener getEditorListener(final Composite control) {
+		if ( editorExitEnterTracker == null ) {
+			editorExitEnterTracker = new MouseTrackListener() {
+
+				@Override
+				public void mouseHover(final MouseEvent e) {}
+
+				@Override
+				public void mouseExit(final MouseEvent e) {
+					System.out.println("Leaving editor");
+					// if ( exitedOnce ) {
+					// manipulateShell();
+					// }
+				}
+
+				@Override
+				public void mouseEnter(final MouseEvent e) {
+					System.out.println("Entering editor");
+					// shellCreated = true;
+					// manipulateShell();
+					// control.getShell().forceActive();
+					// control.setFocus();
+				}
+			};
+		}
+		return editorExitEnterTracker;
+	}
+
+	public static void installOn(final Composite control, final LayeredDisplayView view) {
+		if ( !Platform.isCocoa() ) { return; }
+		final MouseTrackListener mlt = getDisplayListener();
+		control.addMouseTrackListener(mlt);
+		control.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(final DisposeEvent e) {
+				control.removeMouseTrackListener(mlt);
+				control.removeDisposeListener(this);
+			}
+		});
+	}
+
+	static boolean filterInstalled = false;
+
 	public static void installOn(final Composite control) {
-		if ( true ) { return; }
-		// if ( !Platform.isCocoa() ) { return; }
-		// control.addMouseTrackListener(getEditorListener());
+		if ( !Platform.isCocoa() ) { return; }
+		// final MouseTrackListener mlt = getEditorListener(control);
+		// control.addMouseTrackListener(mlt);
 		// control.addDisposeListener(new DisposeListener() {
 		//
 		// @Override
 		// public void widgetDisposed(final DisposeEvent e) {
-		// control.removeMouseTrackListener(getEditorListener());
+		// control.removeMouseTrackListener(mlt);
 		// control.removeDisposeListener(this);
 		// }
 		// });
+		// if ( !filterInstalled ) {
+		// filterInstalled = true;
+		// final Listener listener = new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event event) {
+		// System.out.println("Mouse exit from: " + event.widget + "at location" + event.x + " " + event.y);
+		// }
+		// };
+		//
+		// SwtGui.getDisplay().addFilter(SWT.MouseExit, listener);
+		// }
+		// }
 	}
 
 }

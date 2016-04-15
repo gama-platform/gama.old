@@ -11,40 +11,44 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
-import msi.gaml.types.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.widgets.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class ListEditor extends ExpressionBasedEditor<java.util.List> {
 
-	ListEditor(final IParameter param) {
-		super(param);
+	ListEditor(final IScope scope, final IParameter param) {
+		super(scope, param);
 	}
 
-	ListEditor(final IAgent agent, final IParameter param) {
-		this(agent, param, null);
+	ListEditor(final IScope scope, final IAgent agent, final IParameter param) {
+		this(scope, agent, param, null);
 	}
 
-	ListEditor(final IAgent agent, final IParameter param, final EditorListener l) {
-		super(agent, param, l);
+	ListEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+		super(scope, agent, param, l);
 	}
 
-	ListEditor(final Composite parent, final String title, final Object value,
+	ListEditor(final IScope scope, final Composite parent, final String title, final Object value,
 		final EditorListener<java.util.List> whenModified) {
 		// Convenience method
-		super(new InputParameter(title, value), whenModified);
+		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
 	@Override
 	public void applyEdit() {
 		if ( currentValue instanceof GamaList ) {
-			ListEditorDialog d = new ListEditorDialog(SwtGui.getShell(), (GamaList) currentValue, param.getName());
+			final ListEditorDialog d =
+				new ListEditorDialog(SwtGui.getShell(), (GamaList) currentValue, param.getName());
 			if ( d.open() == IDialogConstants.OK_ID ) {
 				modifyAndDisplayValue(d.getList(ListEditor.this));
 			}
@@ -53,7 +57,7 @@ public class ListEditor extends ExpressionBasedEditor<java.util.List> {
 
 	@Override
 	protected void checkButtons() {
-		ToolItem edit = items[EDIT];
+		final ToolItem edit = items[EDIT];
 		if ( edit != null && !edit.isDisposed() ) {
 			edit.setEnabled(currentValue instanceof GamaList);
 		}

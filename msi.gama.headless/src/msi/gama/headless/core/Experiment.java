@@ -71,7 +71,15 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public long step() {
-		currentExperiment.getAgent().getSimulation().step(this.getScope());
+		if (currentExperiment.isBatch()) {
+			//Currently, the batch have the own way to control their simulations so we call the experiment to do step instead of demand simulation
+			//MUST BE RE-ORGANIZE [ THE MULTI-SIMULATION + HEADLESS SIMULATION + BATCH SIMULATION ]
+			currentExperiment.getAgent().getSimulation().removeAgent();
+			currentExperiment.getController().getScheduler().paused = false;
+			currentExperiment.getAgent().step(currentExperiment.getAgent().getScope());
+		} else {
+			currentExperiment.getAgent().getSimulation().step(this.getScope());
+		}
 		return currentStep++;
 
 	}

@@ -12,39 +12,42 @@
 package msi.gama.gui.parameters;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
 
-	MatrixEditor(final IParameter param) {
-		super(param);
+	MatrixEditor(final IScope scope, final IParameter param) {
+		super(scope, param);
 	}
 
-	MatrixEditor(final IAgent agent, final IParameter param) {
-		this(agent, param, null);
+	MatrixEditor(final IScope scope, final IAgent agent, final IParameter param) {
+		this(scope, agent, param, null);
 	}
 
-	MatrixEditor(final IAgent agent, final IParameter param, final EditorListener l) {
-		super(agent, param, l);
+	MatrixEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+		super(scope, agent, param, l);
 	}
 
-	MatrixEditor(final Composite parent, final String title, final IMatrix value,
+	MatrixEditor(final IScope scope, final Composite parent, final String title, final IMatrix value,
 		final EditorListener<IMatrix> whenModified) {
 		// Convenience method
-		super(new InputParameter(title, value), whenModified);
+		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
 	@Override
 	public void applyEdit() {
 
-		MatrixEditorDialog d = new MatrixEditorDialog(SwtGui.getShell(), currentValue);
+		final MatrixEditorDialog d = new MatrixEditorDialog(getScope(), SwtGui.getShell(), currentValue);
 		if ( d.open() == IDialogConstants.OK_ID ) {
 			modifyValue(d.getMatrix());
 		}
@@ -53,7 +56,7 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
 
 	@Override
 	protected void checkButtons() {
-		ToolItem edit = items[EDIT];
+		final ToolItem edit = items[EDIT];
 		if ( edit != null && !edit.isDisposed() ) {
 			edit.setEnabled(true);
 		}

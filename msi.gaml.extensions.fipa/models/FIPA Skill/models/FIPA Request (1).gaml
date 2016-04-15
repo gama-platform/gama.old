@@ -1,15 +1,18 @@
 /**
- * This model demontrates a usecase of the FIPA Request interaction protocol.
- * (Please see http://www.fipa.org/specs/fipa00026/index.html for the detail description of this protocol).
- * 
- * 
- * The Initiator agent begins the 'fipa-request' conversation/interaction protocol by sending a 'request'
- * message to the Participant agent with 'go sleeping' as content.
- * 
- * On receiving the 'request' message, the Participant agent replies with a 'refuse' message.
- * 
- * After the Initiator reads the 'refuse' message, the 'fipa-request' conversation ends.
- */
+* Name: FIPA Request
+* Author:
+* Description: This model demontrates a usecase of the FIPA Request interaction protocol. 
+* (Please see http://www.fipa.org/specs/fipa00026/index.html for the detail description of this protocol).
+* 
+* 
+* The Initiator agent begins the 'fipa-request' conversation/interaction protocol by sending a 'request' 
+* message to the Participant agent with 'go sleeping' as content.
+* 
+* On receiving the 'request' message, the Participant agent replies with a 'refuse' message.
+* 
+* After the Initiator reads the 'refuse' message, the 'fipa-request' conversation ends.
+* Tags: fipa
+*/
 model fipa_request_1
 
 global {

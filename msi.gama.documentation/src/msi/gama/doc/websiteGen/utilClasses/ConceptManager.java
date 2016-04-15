@@ -29,6 +29,7 @@ public class ConceptManager {
 		IConcept.PSEUDO_VARIABLE,
 		IConcept.REFLEX,
 		IConcept.REFRESH,
+		IConcept.SPORT,
 		IConcept.TORUS,
 		IConcept.UPDATE,
 		IConcept.WRITE,

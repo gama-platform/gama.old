@@ -163,7 +163,9 @@ public class GamaGridFile extends GamaGisFile {
 				final double cmx = cellWidth / 2;
 				final double cmy = cellHeight / 2;
 				boolean doubleValues = false;
+				boolean floatValues = false;
 				boolean intValues = false;
+				boolean longValues = false;
 				boolean byteValues = false;
 				for ( int i = 0, n = numRows * numCols; i < n; i++ ) {
 					scope.getGui().setSubStatusCompletion(i / (double) n);
@@ -179,6 +181,8 @@ public class GamaGridFile extends GamaGisFile {
 						doubleValues = vals instanceof double[];
 						intValues = vals instanceof int[];
 						byteValues = vals instanceof byte[];
+						longValues = vals instanceof long[];
+						floatValues = vals instanceof float[];
 					}
 					if ( gis == null ) {
 						rect = new GamaShape(rect.getInnerGeometry());
@@ -197,7 +201,18 @@ public class GamaGridFile extends GamaGisFile {
 						double v = Double.valueOf(vi[0]);
 						rect.getAttributes().put("grid_value", v);
 						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
-						
+					} else if ( longValues ) {
+						long[] vi = ((long[]) vals);
+						if (i == 0) nbBands = vi.length;
+						double v = Double.valueOf(vi[0]);
+						rect.getAttributes().put("grid_value", v);
+						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
+					} else if ( floatValues ) {
+						float[] vi = ((float[]) vals);
+						if (i == 0) nbBands = vi.length;
+						double v = Double.valueOf(vi[0]);
+						rect.getAttributes().put("grid_value", v);
+						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if ( byteValues ) {
 						byte[] bv = (byte[]) vals;
 						if (i == 0) nbBands = bv.length;

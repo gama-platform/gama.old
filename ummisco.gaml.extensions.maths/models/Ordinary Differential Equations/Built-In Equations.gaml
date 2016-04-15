@@ -1,9 +1,10 @@
 /**
- *  all_predefined_equations.gaml
- *  Author: Benoit Gaudou
- *  Description: Presentation of all the predefined equation systems.
- *  Comparaison with hand-written systems to test them.
- */
+* Name: Predefined equestions
+* Author: Benoit Gaudou
+* Description: Presentation of all the predefined equation systems.
+* Comparaison with hand-written systems to test them.
+* Tags: equation, math
+*/
 model all_predefined_equations
 
 global {

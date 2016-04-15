@@ -11,8 +11,17 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.IGamaColors;
@@ -20,8 +29,7 @@ import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
@@ -37,6 +45,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	protected Exception currentException;
 	final boolean evaluateExpression;
 	private final IAgent hostAgent;
+	private final IScope scope;
 	private final IType expectedType;
 	MouseTrackListener tooltipListener = new MouseTrackAdapter() {
 
@@ -46,8 +55,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		}
 	};
 
-	public ExpressionControl(final Composite comp, final ExpressionBasedEditor ed, final IAgent agent,
-		final IType expectedType, final int controlStyle, final boolean evaluate) {
+	public ExpressionControl(final IScope scope, final Composite comp, final ExpressionBasedEditor ed,
+		final IAgent agent, final IType expectedType, final int controlStyle, final boolean evaluate) {
+		this.scope = scope;
 		editor = ed;
 		evaluateExpression = evaluate;
 		hostAgent = agent;
@@ -71,11 +81,11 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	}
 
 	protected void displayTooltip() {
-		String s = getPopupText();
+		final String s = getPopupText();
 		if ( s == null || s.isEmpty() ) {
 			removeTooltip();
 		} else {
-			ITooltipDisplayer displayer = GamaToolbarFactory.findTooltipDisplayer(text);
+			final ITooltipDisplayer displayer = GamaToolbarFactory.findTooltipDisplayer(text);
 			if ( displayer != null ) {
 				displayer.displayTooltip(s, background);
 			}
@@ -86,7 +96,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	}
 
 	protected void removeTooltip() {
-		ITooltipDisplayer displayer = GamaToolbarFactory.findTooltipDisplayer(text);
+		final ITooltipDisplayer displayer = GamaToolbarFactory.findTooltipDisplayer(text);
 		if ( displayer != null ) {
 			displayer.stopDisplayingTooltips();
 		}
@@ -115,7 +125,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			IAgent agent = getHostAgent();
 			// AD: fix for SWT Issue in Eclipse 4.4
 			if ( text == null || text.isDisposed() ) { return null; }
-			String s = text.getText();
+			final String s = text.getText();
 			// AD: Fix for Issue 1042
 			if ( agent != null && agent.getScope().interrupted() && agent instanceof SimulationAgent ) {
 				agent = getHostAgent().getExperiment();
@@ -147,20 +157,13 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		}
 		if ( editor != null ) {
 			try {
-				GAMA.run(new InScope() {
 
-					@Override
-					public Object run(final IScope scope) {
-						if ( editor.acceptNull && value == null ) {
-							editor.modifyValue(null);
-						} else {
-							editor.modifyValue(
-								evaluateExpression ? expectedType.cast(scope, value, false, false) : value);
-						}
-						editor.checkButtons();
-						return null;
-					}
-				});
+				if ( editor.acceptNull && value == null ) {
+					editor.modifyValue(null);
+				} else {
+					editor.modifyValue(evaluateExpression ? expectedType.cast(scope, value, false, false) : value);
+				}
+				editor.checkButtons();
 
 			} catch (final GamaRuntimeException e) {
 				setCurrentValue(oldValue);
@@ -253,19 +256,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			background = IGamaColors.ERROR;
 			result += currentException.getMessage();
 		} else {
-			if ( GAMA.run(new InScope<Boolean>() {
-
-				@Override
-				public Boolean run(final IScope scope) {
-					if ( evaluateExpression ) {
-						return expectedType.canBeTypeOf(scope, value);
-					} else if ( value instanceof IExpression ) {
-						return expectedType.isAssignableFrom(((IExpression) value).getType());
-					} else {
-						return false;
-					}
-				}
-			}) ) {
+			if ( isOK(value) ) {
 				background = IGamaColors.OK;
 			} else {
 				background = IGamaColors.WARNING;
@@ -273,6 +264,16 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			}
 		}
 		return result;
+	}
+
+	private Boolean isOK(final Object value) {
+		if ( evaluateExpression ) {
+			return expectedType.canBeTypeOf(scope, value);
+		} else if ( value instanceof IExpression ) {
+			return expectedType.isAssignableFrom(((IExpression) value).getType());
+		} else {
+			return false;
+		}
 	}
 
 	IAgent getHostAgent() {
@@ -297,16 +298,8 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	 * @param currentValue2
 	 */
 	public void displayValue(final Object currentValue2) {
-		GAMA.run(new InScope() {
-
-			@Override
-			public Object run(final IScope scope) {
-				setCurrentValue(
-					evaluateExpression ? expectedType.cast(scope, currentValue2, null, false) : currentValue2);
-				text.setText(StringUtils.toGaml(currentValue2, false));
-				return null;
-			}
-		});
+		setCurrentValue(evaluateExpression ? expectedType.cast(scope, currentValue2, null, false) : currentValue2);
+		text.setText(StringUtils.toGaml(currentValue2, false));
 	}
 
 }

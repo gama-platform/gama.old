@@ -12,41 +12,44 @@
 package msi.gama.gui.parameters;
 
 import java.util.List;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gaml.types.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.widgets.*;
+import msi.gama.runtime.IScope;
+import msi.gaml.types.Types;
 
-public class LabelEditor extends AbstractEditor {
+public class LabelEditor extends AbstractEditor<String> {
 
 	private Text textBox;
 
-	LabelEditor(final IParameter param) {
-		super(param);
+	LabelEditor(final IScope scope, final IParameter param) {
+		super(scope, param);
 	}
 
-	LabelEditor(final IAgent agent, final IParameter param) {
-		this(agent, param, null);
+	LabelEditor(final IScope scope, final IAgent agent, final IParameter param) {
+		this(scope, agent, param, null);
 	}
 
-	LabelEditor(final IAgent agent, final IParameter param, final EditorListener l) {
-		super(agent, param, l);
+	LabelEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<String> l) {
+		super(scope, agent, param, l);
 	}
 
-	LabelEditor(final Composite parent, final String title, final Object value,
+	LabelEditor(final IScope scope, final Composite parent, final String title, final Object value,
 		final EditorListener<String> whenModified) {
 		// Convenience method
-		super(new InputParameter(title, value), whenModified);
+		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 
 	}
 
-	LabelEditor(final Composite parent, final String title, final String value, final List<String> among,
-		final EditorListener<String> whenModified) {
-		super(new InputParameter(title, value, Types.STRING, among), whenModified);
+	LabelEditor(final IScope scope, final Composite parent, final String title, final String value,
+		final List<String> among, final EditorListener<String> whenModified) {
+		super(scope, new InputParameter(title, value, Types.STRING, among), whenModified);
 		this.createComposite(parent);
 	}
 
@@ -65,7 +68,7 @@ public class LabelEditor extends AbstractEditor {
 
 	@Override
 	protected void displayParameterValue() {
-		String s = (String) currentValue;
+		String s = currentValue;
 		if ( s == null ) {
 			s = "";
 		}
@@ -76,11 +79,6 @@ public class LabelEditor extends AbstractEditor {
 	public Control getEditorControl() {
 		return textBox;
 	}
-
-	// @Override
-	// public IType getExpectedType() {
-	// return Types.STRING;
-	// }
 
 	@Override
 	protected int[] getToolItems() {

@@ -11,22 +11,38 @@
  **********************************************************************************************/
 package msi.gama.runtime;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
-import msi.gama.common.interfaces.*;
-import msi.gama.kernel.experiment.*;
+import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IStepable;
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.*;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Strings;
-import msi.gaml.statements.*;
-import msi.gaml.types.*;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IExecutable;
+import msi.gaml.statements.IStatement;
+import msi.gaml.statements.RemoteSequence;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Class TrialScope.
@@ -36,11 +52,14 @@ import msi.gaml.types.*;
  *
  */
 
-// TODO : PEUT ETRE FAIRE L'INVERSE : A CHAQUE FOIS QUE L'AGENT MEURT ("die"), QU'UNE BOUCLE EST INTERROMPUE ("break")
-// OU QU'UNE ACTION AUSSI ("return"), CALCULER LA VALEUR DE INTERRUPTED AU LIEU DE L'EVALUER TOUT LE TEMPS ICI.
+// TODO : PEUT ETRE FAIRE L'INVERSE : A CHAQUE FOIS QUE L'AGENT MEURT ("die"),
+// QU'UNE BOUCLE EST INTERROMPUE ("break")
+// OU QU'UNE ACTION AUSSI ("return"), CALCULER LA VALEUR DE INTERRUPTED AU LIEU
+// DE L'EVALUER TOUT LE TEMPS ICI.
 public abstract class AbstractScope implements IScope {
 
 	private static int ScopeNumber = 0;
+	private final String name;
 	private final Deque<IAgent> agents = new ArrayDeque(3);
 	private final Deque<IRecord> statements = new ArrayDeque();
 	private IGraphics graphics;
@@ -55,29 +74,51 @@ public abstract class AbstractScope implements IScope {
 	private boolean trace;
 	public Deque<Map> readAttributes = new LinkedList();
 
-	// Allows to disable error reporting for this scope (the value will be read by the error reporting mechnanism).
+	// Allows to disable error reporting for this scope (the value will be read
+	// by the error reporting mechnanism).
 	private boolean reportErrors = true;
 
-	// Allows (for debugging purposes) to trace how the agents are popped and pushed to the scope
+	// Allows (for debugging purposes) to trace how the agents are popped and
+	// pushed to the scope
 	public boolean traceAgents = false;
 
 	public AbstractScope(final ITopLevelAgent root) {
 		this.root = root;
-		if ( root != null ) {
+		if (root != null) {
 			agents.push(root);
 			IMacroAgent a = root;
 			while (!(a instanceof SimulationAgent) && a != null) {
 				a = root.getHost();
 			}
 			simulation = (SimulationAgent) a;
+			name = "Scope of " + root + " #" + number;
 		} else {
 			simulation = null;
+			name = "Scope without root #" + number;
+		}
+		statements.push(new NullRecord());
+	}
+
+	public AbstractScope(final ITopLevelAgent root, final String otherName) {
+		this.root = root;
+		if (root != null) {
+			agents.push(root);
+			IMacroAgent a = root;
+			while (!(a instanceof SimulationAgent) && a != null) {
+				a = root.getHost();
+			}
+			simulation = (SimulationAgent) a;
+			name = "Scope of " + root + " (" + otherName + ") #" + number;
+		} else {
+			simulation = null;
+			name = "Scope without root (" + otherName + ") #" + number;
 		}
 		statements.push(new NullRecord());
 	}
 
 	/**
 	 * Method clear()
+	 * 
 	 * @see msi.gama.runtime.IScope#clear()
 	 */
 	@Override
@@ -114,7 +155,8 @@ public abstract class AbstractScope implements IScope {
 	final static class NullRecord implements IRecord {
 
 		@Override
-		public void setVar(final String name, final Object value) {}
+		public void setVar(final String name, final Object value) {
+		}
 
 		@Override
 		public Object getVar(final String name) {
@@ -142,7 +184,8 @@ public abstract class AbstractScope implements IScope {
 		}
 
 		@Override
-		public void clear() {}
+		public void clear() {
+		}
 
 		@Override
 		public Map<? extends String, ? extends Object> getMap() {
@@ -155,6 +198,7 @@ public abstract class AbstractScope implements IScope {
 
 		/**
 		 * Adds this variable to the record
+		 * 
 		 * @param name
 		 * @param value
 		 * @return
@@ -162,14 +206,18 @@ public abstract class AbstractScope implements IScope {
 		Object put(final String name, final Object value);
 
 		/**
-		 * Allows to set either a local variable or a variable belonging to the previous record
+		 * Allows to set either a local variable or a variable belonging to the
+		 * previous record
+		 * 
 		 * @param name
 		 * @param value
 		 */
 		void setVar(final String name, final Object value);
 
 		/**
-		 * Allows to get the value of a local variable or a variable belonging to the previous record
+		 * Allows to get the value of a local variable or a variable belonging
+		 * to the previous record
+		 * 
 		 * @param name
 		 * @return
 		 */
@@ -177,13 +225,16 @@ public abstract class AbstractScope implements IScope {
 
 		/**
 		 * Gets the value of a local var. Null if not found.
+		 * 
 		 * @param name
 		 * @return
 		 */
 		Object get(final Object name);
 
 		/**
-		 * Checks if this record or a previous record has a variable of this name
+		 * Checks if this record or a previous record has a variable of this
+		 * name
+		 * 
 		 * @param name
 		 * @return
 		 */
@@ -191,6 +242,7 @@ public abstract class AbstractScope implements IScope {
 
 		/**
 		 * Checks if this record has a variable of this name
+		 * 
 		 * @param name
 		 * @return
 		 */
@@ -203,6 +255,7 @@ public abstract class AbstractScope implements IScope {
 
 		/**
 		 * Returns the backing map
+		 * 
 		 * @return
 		 */
 		Map<? extends String, ? extends Object> getMap();
@@ -219,16 +272,20 @@ public abstract class AbstractScope implements IScope {
 
 		@Override
 		public boolean equals(final Object other) {
-			if ( !(other instanceof Record) ) { return false; }
-			Record that = (Record) other;
-			if ( this == that ) { return true; }
+			if (!(other instanceof Record)) {
+				return false;
+			}
+			final Record that = (Record) other;
+			if (this == that) {
+				return true;
+			}
 			return super.equals(other);
 		}
 
 		@Override
 		public void setVar(final String name, final Object value) {
-			int i = index(name);
-			if ( i == -1 ) {
+			final int i = index(name);
+			if (i == -1) {
 				previous.setVar(name, value);
 			} else {
 				_values[i] = value;
@@ -237,8 +294,10 @@ public abstract class AbstractScope implements IScope {
 
 		@Override
 		public Object getVar(final String name) {
-			int i = index(name);
-			if ( i < 0 ) { return previous.getVar(name); }
+			final int i = index(name);
+			if (i < 0) {
+				return previous.getVar(name);
+			}
 			return _values[i];
 		}
 
@@ -256,7 +315,9 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 *
-	 * Method interrupted(). Returns true if the scope is currently marked as interrupted.
+	 * Method interrupted(). Returns true if the scope is currently marked as
+	 * interrupted.
+	 * 
 	 * @see msi.gama.runtime.IScope#interrupted()
 	 */
 	@Override
@@ -282,25 +343,28 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	/**
-	 * @return true if the root agent of the scope is marked as interrupted (i.e. dead)
+	 * @return true if the root agent of the scope is marked as interrupted
+	 *         (i.e. dead)
 	 */
 	protected abstract boolean _root_interrupted();
 
-
 	/**
 	 * Method push()
+	 * 
 	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent)
 	 */
 	// @Override
 	@Override
-	public boolean push(final IAgent agent) {
+	public synchronized boolean push(final IAgent agent) {
 		final IAgent a = agents.peek();
-		if ( a != null && a.equals(agent) ) { return false; }
-		if ( traceAgents ) {
-			for ( int i = 0; i < agents.size(); i++ ) {
+		if (a != null && a.equals(agent)) {
+			return false;
+		}
+		if (traceAgents) {
+			for (int i = 0; i < agents.size(); i++) {
 				System.out.print("\t");
 			}
-			System.out.println("" + agent + " pushed to " + this);
+			System.out.println("" + agent + " pushed to " + this + " / " + Thread.currentThread().getName());
 		}
 		agents.push(agent);
 		return true;
@@ -308,24 +372,28 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method pop()
+	 * 
 	 * @see msi.gama.runtime.IScope#pop(msi.gama.metamodel.agent.IAgent)
 	 */
 	// @Override
 	@Override
 	public void pop(final IAgent agent) {
 		try {
-			IAgent a = agents.pop();
-			if ( !a.equals(agent) ) {
-				System.out
-				.println("Problem with the scope. Trying to pop  " + agent + " but " + a + " was in the stack...");
+			final IAgent a = agents.pop();
+			if (a != null && !a.equals(agent)) {
+				System.out.println(
+						"Problem with the scope. Trying to pop  " + agent + " but " + a + " was in the stack...");
+				// Thread.dumpStack();
 			}
-			if ( traceAgents ) {
-				for ( int i = 0; i < agents.size(); i++ ) {
+			if (traceAgents) {
+				for (int i = 0; i < agents.size(); i++) {
 					System.out.print("\t");
 				}
-				System.out.println("" + a + " popped from " + this);
+				System.out.println("" + a + " popped from " + this + " / " + Thread.currentThread().getName());
+
 			}
-		} catch (NoSuchElementException e) {
+		} catch (final NoSuchElementException e) {
+			System.out.println("Problem with the scope. Trying to pop " + agent + " but the scope is empty");
 			return;
 		}
 
@@ -334,6 +402,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method push()
+	 * 
 	 * @see msi.gama.runtime.IScope#push(msi.gaml.statements.IStatement)
 	 */
 	@Override
@@ -346,7 +415,7 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void setStatement(final IStatement statement) {
 		currentStatement = statement;
-		if ( trace ) {
+		if (trace) {
 			writeTrace();
 		}
 	}
@@ -355,8 +424,8 @@ public abstract class AbstractScope implements IScope {
 	 *
 	 */
 	private void writeTrace() {
-		StringBuilder sb = new StringBuilder();
-		for ( int i = 0; i < tabLevel; i++ ) {
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < tabLevel; i++) {
 			sb.append(Strings.TAB);
 		}
 		sb.append(currentStatement.getTrace(this));
@@ -375,16 +444,17 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method pop()
+	 * 
 	 * @see msi.gama.runtime.IScope#pop(msi.gaml.statements.IStatement)
 	 */
 	@Override
 	public void pop(final IStatement statement) {
 		try {
 			statements.pop();
-		} catch (NoSuchElementException e) {
+		} catch (final NoSuchElementException e) {
 			return;
 		}
-		if ( trace ) {
+		if (trace) {
 			tabLevel--;
 		}
 	}
@@ -395,25 +465,34 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	/**
-	 * Method execute(). Asks the scope to manage the execution of a statement on an agent, taking care of pushing the
-	 * agent on the stack, verifying the runtime state, etc. This method accepts optional arguments (which can be null)
-	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
+	 * Method execute(). Asks the scope to manage the execution of a statement
+	 * on an agent, taking care of pushing the agent on the stack, verifying the
+	 * runtime state, etc. This method accepts optional arguments (which can be
+	 * null)
+	 * 
+	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement,
+	 *      msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
 	public boolean execute(final IExecutable statement, final IAgent agent, final Arguments args,
-		final Object[] result) {
-		// If the statement or the agent is null, we act as if the scope had been marked as INTERRUPTED
-		// IScope scope = agent == null ? this :(statement instanceof RemoteSequence ? this : agent.getScope());
-		IAgent caller = this.getAgentScope();
-		if ( statement == null || agent == null || interrupted() || agent.dead() ) { return false; }
+			final Object[] result) {
+		// If the statement or the agent is null, we act as if the scope had
+		// been marked as INTERRUPTED
+		// IScope scope = agent == null ? this :(statement instanceof
+		// RemoteSequence ? this : agent.getScope());
+		final IAgent caller = this.getAgentScope();
+		if (statement == null || agent == null || interrupted() || agent.dead()) {
+			return false;
+		}
 		// We then try to push the agent on the stack
 		final boolean pushed = push(agent);
 		try {
-			// Otherwise we compute the result of the statement, pushing the arguments if the statement expects them
-			if ( args != null && statement instanceof IStatement.WithArgs ) {
+			// Otherwise we compute the result of the statement, pushing the
+			// arguments if the statement expects them
+			if (args != null && statement instanceof IStatement.WithArgs) {
 				args.setCaller(caller);
 				((IStatement.WithArgs) statement).setRuntimeArgs(args);
-			} else if ( statement instanceof RemoteSequence ) {
+			} else if (statement instanceof RemoteSequence) {
 				((RemoteSequence) statement).setMyself(caller);
 				// We delegate to the remote scope
 				result[0] = statement.executeOn(this);
@@ -421,12 +500,14 @@ public abstract class AbstractScope implements IScope {
 			}
 			result[0] = statement.executeOn(this);
 		} catch (final GamaRuntimeException g) {
-			// If an exception occurs, we throw it and return false (could be INTERRUPTED as well)
+			// If an exception occurs, we throw it and return false (could be
+			// INTERRUPTED as well)
 			// g.addAgent(agent.getName());
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
-			// Whatever the outcome, we pop the agent from the stack if it has been previously pushed
-			if ( pushed ) {
+			// Whatever the outcome, we pop the agent from the stack if it has
+			// been previously pushed
+			if (pushed) {
 				pop(agent);
 			}
 		}
@@ -437,9 +518,11 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void stackArguments(final Arguments actualArgs) {
 		boolean callerPushed = false;
-		if ( actualArgs == null ) { return; }
+		if (actualArgs == null) {
+			return;
+		}
 		final IAgent caller = actualArgs.getCaller();
-		if ( caller != null ) {
+		if (caller != null) {
 			callerPushed = push(caller);
 		}
 		try {
@@ -448,7 +531,7 @@ public abstract class AbstractScope implements IScope {
 				@Override
 				public boolean execute(final String a, final IExpressionDescription b) {
 					final IExpression e = b.getExpression();
-					if ( e != null ) {
+					if (e != null) {
 						addVarWithValue(a, e.value(AbstractScope.this));
 					}
 					return true;
@@ -456,7 +539,7 @@ public abstract class AbstractScope implements IScope {
 			});
 
 		} finally {
-			if ( callerPushed ) {
+			if (callerPushed) {
 				pop(caller);
 			}
 		}
@@ -464,11 +547,15 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method evaluate()
-	 * @see msi.gama.runtime.IScope#evaluate(msi.gaml.expressions.IExpression, msi.gama.metamodel.agent.IAgent)
+	 * 
+	 * @see msi.gama.runtime.IScope#evaluate(msi.gaml.expressions.IExpression,
+	 *      msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
 	public Object evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
-		if ( agent == null || interrupted() || agent.dead() ) { return null; }
+		if (agent == null || interrupted() || agent.dead()) {
+			return null;
+		}
 		final boolean pushed = push(agent);
 		try {
 			return expr.value(this);
@@ -477,7 +564,7 @@ public abstract class AbstractScope implements IScope {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 			return null;
 		} finally {
-			if ( pushed ) {
+			if (pushed) {
 				pop(agent);
 			}
 		}
@@ -487,15 +574,17 @@ public abstract class AbstractScope implements IScope {
 	public boolean step(final IStepable agent) {
 		boolean result = false;
 		final boolean isAgent = agent instanceof IAgent;
-		if ( agent == null || interrupted() || isAgent && ((IAgent) agent).dead() ) { return false; }
+		if (agent == null || interrupted() || isAgent && ((IAgent) agent).dead()) {
+			return false;
+		}
 		final boolean pushed = isAgent && push((IAgent) agent);
 		try {
 			result = agent.step(this);
 		} catch (final Exception ex) {
-			GamaRuntimeException g = GamaRuntimeException.create(ex, this);
+			final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
-			if ( pushed ) {
+			if (pushed) {
 				pop((IAgent) agent);
 			}
 		}
@@ -506,14 +595,16 @@ public abstract class AbstractScope implements IScope {
 	public boolean init(final IStepable agent) {
 		boolean result = false;
 		final boolean isAgent = agent instanceof IAgent;
-		if ( agent == null || interrupted() || isAgent && ((IAgent) agent).dead() ) { return false; }
+		if (agent == null || interrupted() || isAgent && ((IAgent) agent).dead()) {
+			return false;
+		}
 		final boolean pushed = isAgent && push((IAgent) agent);
 		try {
 			result = agent.init(this);
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
-			if ( pushed ) {
+			if (pushed) {
 				pop((IAgent) agent);
 			}
 		}
@@ -522,6 +613,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getVarValue()
+	 * 
 	 * @see msi.gama.runtime.IScope#getVarValue(java.lang.String)
 	 */
 	@Override
@@ -531,7 +623,9 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method setVarValue()
-	 * @see msi.gama.runtime.IScope#setVarValue(java.lang.String, java.lang.Object)
+	 * 
+	 * @see msi.gama.runtime.IScope#setVarValue(java.lang.String,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public void setVarValue(final String varName, final Object val) {
@@ -540,6 +634,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method saveAllVarValuesIn()
+	 * 
 	 * @see msi.gama.runtime.IScope#saveAllVarValuesIn(java.util.Map)
 	 */
 	@Override
@@ -550,6 +645,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method removeAllVars()
+	 * 
 	 * @see msi.gama.runtime.IScope#removeAllVars()
 	 */
 	@Override
@@ -561,7 +657,9 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method addVarWithValue()
-	 * @see msi.gama.runtime.IScope#addVarWithValue(java.lang.String, java.lang.Object)
+	 * 
+	 * @see msi.gama.runtime.IScope#addVarWithValue(java.lang.String,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public void addVarWithValue(final String varName, final Object val) {
@@ -570,6 +668,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method setEach()
+	 * 
 	 * @see msi.gama.runtime.IScope#setEach(java.lang.Object)
 	 */
 	@Override
@@ -579,6 +678,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getEach()
+	 * 
 	 * @see msi.gama.runtime.IScope#getEach()
 	 */
 	@Override
@@ -588,11 +688,12 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getArg()
+	 * 
 	 * @see msi.gama.runtime.IScope#getArg(java.lang.String, int)
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		return Types.get(type).cast(this, statements.peek().get(string), null, Types.NO_TYPE, Types.NO_TYPE, false);
+		return Types.get(type).cast(this, statements.peek().get(string), null, false);
 	}
 
 	@Override
@@ -622,6 +723,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method hasArg()
+	 * 
 	 * @see msi.gama.runtime.IScope#hasArg(java.lang.String)
 	 */
 	@Override
@@ -631,6 +733,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method hasVar()
+	 * 
 	 * @see msi.gama.runtime.IScope#hasVar(java.lang.String)
 	 */
 	@Override
@@ -640,18 +743,22 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getAgentVarValue()
-	 * @see msi.gama.runtime.IScope#getAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String)
+	 * 
+	 * @see msi.gama.runtime.IScope#getAgentVarValue(msi.gama.metamodel.agent.IAgent,
+	 *      java.lang.String)
 	 */
 	@Override
 	public Object getAgentVarValue(final IAgent agent, final String name) throws GamaRuntimeException {
-		if ( agent == null || agent.dead() || interrupted() ) { return null; } // TODO Interrupted ?
+		if (agent == null || agent.dead() || interrupted()) {
+			return null;
+		} // TODO Interrupted ?
 		Object result = null;
 		final boolean pushed = push(agent);
 		try {
 			result = agent.getDirectVarValue(this, name);
 			// result = getAgentVarValue(name);
 		} finally {
-			if ( pushed ) {
+			if (pushed) {
 				pop(agent);
 			}
 		}
@@ -660,20 +767,25 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getAgentVarValue()
+	 * 
 	 * @see msi.gama.runtime.IScope#getAgentVarValue(java.lang.String)
 	 */
 	// @Override
-	// public Object getAgentVarValue(final String name) throws GamaRuntimeException {
+	// public Object getAgentVarValue(final String name) throws
+	// GamaRuntimeException {
 	// if ( interrupted() ) { return null; } // TODO INTERRUPTED ?
 	// return agents.peek().getDirectVarValue(this, name);
 	// }
 
 	/**
 	 * Method setAgentVarValue()
-	 * @see msi.gama.runtime.IScope#setAgentVarValue(java.lang.String, java.lang.Object)
+	 * 
+	 * @see msi.gama.runtime.IScope#setAgentVarValue(java.lang.String,
+	 *      java.lang.Object)
 	 */
 	// @Override
-	// public void setAgentVarValue(final String name, final Object v) throws GamaRuntimeException {
+	// public void setAgentVarValue(final String name, final Object v) throws
+	// GamaRuntimeException {
 	// if ( !interrupted() ) {
 	// agents.peek().setDirectVarValue(this, name, v);
 	// }
@@ -681,17 +793,21 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method setAgentVarValue()
-	 * @see msi.gama.runtime.IScope#setAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String, java.lang.Object)
+	 * 
+	 * @see msi.gama.runtime.IScope#setAgentVarValue(msi.gama.metamodel.agent.IAgent,
+	 *      java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public void setAgentVarValue(final IAgent agent, final String name, final Object v) {
-		if ( agent == null || agent.dead() || interrupted() ) { return; }
+		if (agent == null || agent.dead() || interrupted()) {
+			return;
+		}
 		final boolean pushed = push(agent);
 		try {
 			agent.setDirectVarValue(this, name, v);
 			// setAgentVarValue(name, v);
 		} finally {
-			if ( pushed ) {
+			if (pushed) {
 				pop(agent);
 			}
 		}
@@ -699,12 +815,14 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public boolean update(final IAgent a) {
-		if ( a == null || a.dead() || interrupted() ) { return false; }
+		if (a == null || a.dead() || interrupted()) {
+			return false;
+		}
 		final boolean pushed = push(a);
 		try {
 			a.getPopulation().updateVariables(this, a);
 		} finally {
-			if ( pushed ) {
+			if (pushed) {
 				pop(a);
 			}
 		}
@@ -713,6 +831,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getGlobalVarValue()
+	 * 
 	 * @see msi.gama.runtime.IScope#getGlobalVarValue(java.lang.String)
 	 */
 	@Override
@@ -722,7 +841,9 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method setGlobalVarValue()
-	 * @see msi.gama.runtime.IScope#setGlobalVarValue(java.lang.String, java.lang.Object)
+	 * 
+	 * @see msi.gama.runtime.IScope#setGlobalVarValue(java.lang.String,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
@@ -731,12 +852,13 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getName()
+	 * 
 	 * @see msi.gama.runtime.IScope#getName()
 	 */
 
 	@Override
 	public String getName() {
-		return "SimulationScope #" + number + " of " + root;
+		return name;
 	}
 
 	@Override
@@ -746,6 +868,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getTopology()
+	 * 
 	 * @see msi.gama.runtime.IScope#getTopology()
 	 */
 	@Override
@@ -755,6 +878,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method setTopology()
+	 * 
 	 * @see msi.gama.runtime.IScope#setTopology(msi.gama.metamodel.topology.ITopology)
 	 */
 	@Override
@@ -766,6 +890,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method setGraphics()
+	 * 
 	 * @see msi.gama.runtime.IScope#setGraphics(msi.gama.common.interfaces.IGraphics)
 	 */
 	@Override
@@ -775,6 +900,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getGraphics()
+	 * 
 	 * @see msi.gama.runtime.IScope#getGraphics()
 	 */
 	@Override
@@ -784,6 +910,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getAgentScope()
+	 * 
 	 * @see msi.gama.runtime.IScope#getAgentScope()
 	 */
 	@Override
@@ -793,6 +920,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getSimulationScope()
+	 * 
 	 * @see msi.gama.runtime.IScope#getSimulationScope()
 	 */
 	@Override
@@ -807,6 +935,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getModel()
+	 * 
 	 * @see msi.gama.runtime.IScope#getModel()
 	 */
 	@Override
@@ -816,45 +945,55 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method getExperimentContext()
+	 * 
 	 * @see msi.gama.runtime.IScope#getExperimentContext()
 	 */
 	@Override
 	public IDescription getExperimentContext() {
-		IExperimentAgent a = getExperiment();
-		if ( a == null ) { return null; }
+		final IExperimentAgent a = getExperiment();
+		if (a == null) {
+			return null;
+		}
 		return a.getSpecies().getDescription();
 	}
 
 	/**
 	 * Method getModelContext()
+	 * 
 	 * @see msi.gama.runtime.IScope#getModelContext()
 	 */
 	@Override
 	public IDescription getModelContext() {
-		IModel model = getModel();
-		if ( model == null ) { return null; }
+		final IModel model = getModel();
+		if (model == null) {
+			return null;
+		}
 		return model.getDescription();
 	}
 
 	/**
 	 * Method getClock()
+	 * 
 	 * @see msi.gama.runtime.IScope#getClock()
 	 */
 	@Override
 	public SimulationClock getClock() {
-		if ( root == null ) { return null; }
+		if (root == null) {
+			return null;
+		}
 		// if ( root == null ) { return new SimulationClock(); }
 		return root.getClock();
 	}
 
 	@Override
 	public IAgent[] getAgentsStack() {
-		IAgent[] result = new IAgent[agents.size()];
+		final IAgent[] result = new IAgent[agents.size()];
 		return agents.toArray(result);
 	}
 
 	/**
 	 * Method pushReadAttributes()
+	 * 
 	 * @see msi.gama.runtime.IScope#pushReadAttributes(java.util.Map)
 	 */
 	@Override
@@ -864,6 +1003,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method popReadAttributes()
+	 * 
 	 * @see msi.gama.runtime.IScope#popReadAttributes()
 	 */
 	@Override
@@ -878,9 +1018,11 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public IGui getGui() {
-		IExperimentAgent experiment = getExperiment();
-		if ( experiment == null ) { return GAMA.getGui(); }
-		if ( experiment.getSpecies().isHeadless() ) {
+		final IExperimentAgent experiment = getExperiment();
+		if (experiment == null) {
+			return GAMA.getGui();
+		}
+		if (experiment.getSpecies().isHeadless()) {
 			return GAMA.getHeadlessGui();
 		} else {
 			return GAMA.getRegularGui();

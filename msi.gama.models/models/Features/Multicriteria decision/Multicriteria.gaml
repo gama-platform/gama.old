@@ -1,9 +1,9 @@
 /**
 * Name: Multicriteria
 * Author: Patrick Taillandier
-* Description: This model show how to use different methods of multicriteria analysis to look for the best house. Four methods are used :
-* 	the Weighted_Means method , the Electre method , the Promethee method  an the Evidence Theory method. Each method uses
-* 	different criteria with different weights according to the methods used. 
+* Description: This model show how to use different methods of multicriteria analysis to look for the best house. Four methods are used : 
+* the Weighted_Means method , the Electre method , the Promethee method  an the Evidence Theory method. Each method uses 
+* different criteria with different weights according to the methods used. 
 * Tags: multi_criteria
 */
 

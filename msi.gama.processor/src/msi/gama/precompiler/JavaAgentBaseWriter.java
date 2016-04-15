@@ -16,13 +16,14 @@ import java.util.Map;
 public class JavaAgentBaseWriter extends JavaWriter {
 
 	public String write(final String packageName, final GamlProperties props) {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		writeHeader(sb, packageName);
 
-		for ( Map.Entry<String, String> entry : props.filterFirst(OPERATOR_PREFIX).entrySet() ) {
+		for (final Map.Entry<String, String> entry : props.filterFirst(OPERATOR_PREFIX).entrySet()) {
 			writeOperatorAddition(sb, entry.getKey(), entry.getValue());
 		}
-		// for ( Map.Entry<String, String> entry : props.filterFirst(ACTION_PREFIX).entrySet() ) {
+		// for ( Map.Entry<String, String> entry :
+		// props.filterFirst(ACTION_PREFIX).entrySet() ) {
 		// writeActionAddition(sb, entry.getKey(), entry.getValue());
 		// }
 
@@ -30,27 +31,30 @@ public class JavaAgentBaseWriter extends JavaWriter {
 		return sb.toString();
 	}
 
+	@Override
 	protected void writeOperatorAddition(final StringBuilder sb, final String s, final String helper) {
 		boolean isUnary = true;
-		String[] segments = s.split("\\$");
-		String leftClass = segments[1];
-		String keyword = segments[0];
+		final String[] segments = s.split("\\$");
+		final String leftClass = segments[1];
+		final String keyword = segments[0];
 		// TEST
-		if ( keyword.length() < 4 ) { return; }
+		if (keyword.length() < 4) {
+			return;
+		}
 		// TEST
 		String rightClass;
-		if ( segments[2].equals("") ) {
+		if (segments[2].equals("")) {
 			rightClass = "null";
 		} else {
 			rightClass = segments[2];
 			isUnary = false;
 		}
-		String returnClass = segments[8];
+		final String returnClass = segments[8];
 
-		if ( isUnary ) {
+		if (isUnary) {
 			sb.append(ln).append(tab).append(tab);
-			sb.append("protected ").append(returnClass).append(" _op_").append(keyword)
-				.append("(final ").append(leftClass).append(" target) {");
+			sb.append("protected ").append(returnClass).append(" _op_").append(keyword).append("(final ")
+					.append(leftClass).append(" target) {");
 			sb.append(ln);
 			sb.append(tab).append(tab).append(tab);
 			sb.append("IScope scope = getScope();");
@@ -63,9 +67,8 @@ public class JavaAgentBaseWriter extends JavaWriter {
 			sb.append(ln);
 		} else {
 			sb.append(ln).append(tab).append(tab);
-			sb.append("protected ").append(returnClass).append(" _op_").append(keyword)
-				.append("(final ").append(leftClass).append(" left, ").append(rightClass)
-				.append(" right) {");
+			sb.append("protected ").append(returnClass).append(" _op_").append(keyword).append("(final ")
+					.append(leftClass).append(" left, ").append(rightClass).append(" right) {");
 			sb.append(ln);
 			sb.append(tab).append(tab).append(tab);
 			sb.append("IScope scope = getScope();");
@@ -90,11 +93,6 @@ public class JavaAgentBaseWriter extends JavaWriter {
 	@Override
 	protected String classDefinition() {
 		return "public class JavaBasedAgent extends GamlAgent";
-	}
-
-	@Override
-	protected String simpleClassName() {
-		return "JavaBasedAgent";
 	}
 
 	@Override

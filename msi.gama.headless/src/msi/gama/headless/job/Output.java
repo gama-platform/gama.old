@@ -22,6 +22,7 @@ public class Output {
 	public String name;
 	public int frameRate;
 	public String	id;
+	public String path;
 	
 	public Output(Output o)
 	{
@@ -44,16 +45,16 @@ public class Output {
     {
         String name = exp.getFacets().get(IKeyword.NAME).getExpression().literalValue();
         @SuppressWarnings("rawtypes")
-        Output res = new Output(name,DEFAULT_FRAME_RATE, new Integer(OUTPUT_ID).toString());
+        Output res = new Output(name,DEFAULT_FRAME_RATE, new Integer(OUTPUT_ID).toString(),null);
         return res;
     }
-
 	
-	public Output(String name, int frameRate, String id) {
+	public Output(String name, int frameRate, String id, String path) {
 		super();
 		this.name = name;
 		this.frameRate = frameRate;
 		this.id = id;
+		this.path = path;
 	}
 	
 	public String getName() {
@@ -73,6 +74,9 @@ public class Output {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getOutputPath() {
+		return this.path;
 	}
 	
 }

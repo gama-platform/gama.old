@@ -15,6 +15,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
+import msi.gama.common.GamaPreferences;
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.runtime.GAMA;
 
@@ -88,7 +89,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	@Override
 	public void postWindowCreate() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		window.getShell().setMaximized(true);
+		window.getShell().setMaximized(GamaPreferences.CORE_SHOW_MAXIMIZED.getValue());
 		RemoveUnwantedWizards.run();
 		RemoveUnwantedActionSets.run();
 

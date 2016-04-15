@@ -1,11 +1,19 @@
 package msi.gama.gui.swt.swing;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.KeyboardFocusManager;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 
 // Handler for global focus events. Maintains global state information like current and
 // previous active widgets. When actions based on global state need to be done, they are
@@ -22,6 +30,7 @@ public class GlobalFocusHandler {
 	public GlobalFocusHandler(final Display display) {
 		this.display = display;
 		swtEventFilter = new SwtEventFilter();
+		// AD CHANGED
 		display.addFilter(SWT.Activate, swtEventFilter);
 		display.addFilter(SWT.Deactivate, swtEventFilter);
 		display.addFilter(SWT.Traverse, swtEventFilter);
@@ -76,8 +85,8 @@ public class GlobalFocusHandler {
 	}
 
 	protected void fireEvent(final Event event) {
-		for ( Iterator iterator = listeners.iterator(); iterator.hasNext(); ) {
-			Listener listener = (Listener) iterator.next();
+		for ( final Iterator iterator = listeners.iterator(); iterator.hasNext(); ) {
+			final Listener listener = (Listener) iterator.next();
 			listener.handleEvent(event);
 		}
 	}
@@ -112,7 +121,7 @@ public class GlobalFocusHandler {
 					// the drawback of a brief visual movement of the cursor (or other
 					// focus indicator), so it is good to avoid it whenever possible, as
 					// we do here.
-					KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+					final KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 					if ( owner == kfm.getFocusOwner() ) {
 						if ( verboseFocusEvents ) {
 							trace("clearing focus thru kfm: " + owner);
@@ -181,7 +190,7 @@ public class GlobalFocusHandler {
 
 		@Override
 		public void handleEvent(final Event event) {
-			Widget widget = event.widget;
+			final Widget widget = event.widget;
 			switch (event.type) {
 				case SWT.Activate:
 					activeWidget = widget;

@@ -1,8 +1,8 @@
 /**
 * Name: Ant Foraging (Complex)
 * Author: 
-* Description: Toy Model ant using the question of how ants search food and use pheromons to return to their
-* 	nest once they did find food. Two experiments are proposed to show how to use batch : Batch and Genetic.
+* Description: Toy Model ant using the question of how ants search food and use pheromons to return to their 
+* nest once they did find food. Two experiments are proposed to show how to use batch : Batch and Genetic.
 * Tags: gui, skill, grid, batch, diffusion
 */
 model ants
