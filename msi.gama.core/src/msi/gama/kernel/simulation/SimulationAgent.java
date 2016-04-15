@@ -163,20 +163,23 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 		// System.out.println("Stepping simulation " + getIndex() + " at cycle "
 		// + clock.getCycle());
+		
+		//hqnghi check the on_user_hold in case that micro-model use an user_panel
+		if (!scope.getExperiment().getSpecies().getController().getScheduler().on_user_hold) {
+			clock.beginCycle();
+			// A simulation always runs in its own scope
+			try {
+				getActionExecuter().executeBeginActions();
+				super._step_(this.scope);
+				getActionExecuter().executeEndActions();
+				getActionExecuter().executeOneShotActions();
 
-		clock.beginCycle();
-		// A simulation always runs in its own scope
-		try {
-			getActionExecuter().executeBeginActions();
-			super._step_(this.scope);
-			getActionExecuter().executeEndActions();
-			getActionExecuter().executeOneShotActions();
-
-			if (outputs != null) {
-				outputs.step(this.scope);
+				if (outputs != null) {
+					outputs.step(this.scope);
+				}
+			} finally {
+				clock.step(this.scope);
 			}
-		} finally {
-			clock.step(this.scope);
 		}
 		return this;
 	}
