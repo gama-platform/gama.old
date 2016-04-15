@@ -94,7 +94,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.AMBIENT_LIGHT,
 	type = { IType.INT, IType.COLOR },
 	optional = true,
-	doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(125,125,125)")),
+	doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(40,40,40)")),
 	@facet(name = IKeyword.DIFFUSE_LIGHT,
 	type = { IType.INT, IType.COLOR },
 	optional = true,
