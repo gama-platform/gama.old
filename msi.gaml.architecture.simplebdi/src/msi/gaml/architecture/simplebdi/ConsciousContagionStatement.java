@@ -78,10 +78,10 @@ public class ConsciousContagionStatement extends AbstractStatement {
 				if (SimpleBdiArchitecture.hasEmotion(scope, (Emotion) emotionDetected.value(scope))) {
 					if (charisma != null) {
 						charismaValue = (Double) charisma.value(scope);
-					}
+					}else{charismaValue = (Double) scope.getAgentScope().getAttribute(CHARISMA);}
 					if (receptivity != null) {
 						receptivityValue = (Double) receptivity.value(scopeMySelf);
-					}
+					}else{receptivityValue = (Double) mySelfAgent.getAttribute(RECEPTIVITY);}
 					if (threshold != null) {
 						thresholdValue = (Double) threshold.value(scopeMySelf);
 					}

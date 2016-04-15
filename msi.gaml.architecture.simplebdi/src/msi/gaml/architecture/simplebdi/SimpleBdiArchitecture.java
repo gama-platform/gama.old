@@ -37,6 +37,8 @@ import msi.gaml.types.*;
 		doc = @doc("intention persistence")),
 	@var(name = SimpleBdiArchitecture.PROBABILISTIC_CHOICE, type = IType.BOOL, init = "false"),
 	@var(name = SimpleBdiArchitecture.USE_EMOTIONS_ARCHITECTURE, type = IType.BOOL, init = "false"),
+	@var(name = SimpleBdiArchitecture.CHARISMA, type = IType.FLOAT, init = "1.0"),
+	@var(name = SimpleBdiArchitecture.RECEPTIVITY, type = IType.FLOAT, init = "1.0"),
 	@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 	@var(name = SimpleBdiArchitecture.LAST_THOUGHTS, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.INTENTION_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
@@ -56,6 +58,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String PERSISTENCE_COEFFICIENT_PLANS = "plan_persistence";
 	public static final String PERSISTENCE_COEFFICIENT_INTENTIONS = "intention_persistence";
 	public static final String USE_EMOTIONS_ARCHITECTURE = "use_emotions_architecture";
+	public static final String CHARISMA = "charisma";
+	public static final String RECEPTIVITY = "receptivity";
 
 	// TODO: Not implemented yet
 
