@@ -36,11 +36,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.interfaces.ItemList;
@@ -78,15 +81,28 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	protected SashForm form;
 	protected Composite surfaceComposite;
-	protected Composite layersPanel;
+	protected Composite sidePanel;
 	protected IPerspectiveListener perspectiveListener;
 	public DisplayOverlay overlay;
 	protected volatile boolean disposed;
 	protected volatile boolean realized = false;
 	protected ToolItem overlayItem;
 	protected final java.awt.Rectangle surfaceCompositeBounds = new java.awt.Rectangle();
+	protected LayeredDisplayMultiListener keyAndMouseListener;
 
-	// private LayeredDisplayKeyboardListener globalKeyboardListener;
+	protected Runnable displayOverlay = new Runnable() {
+
+		@Override
+		public void run() {
+			if ( overlay == null ) { return; }
+			updateOverlay();
+		}
+	};
+
+	protected void updateOverlay() {
+		if ( overlay.isVisible() )
+			overlay.update();
+	}
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -132,6 +148,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	@Override
 	public void ownCreatePartControl(final Composite c) {
 		if ( getOutput() == null ) { return; }
+		c.setData("NAME", "Parent of Sash Form");
 
 		// First create the sashform
 
@@ -139,24 +156,33 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		form.setLayout(new FillLayout());
 		form.setBackground(IGamaColors.WHITE.color());
 		form.setSashWidth(3);
+		form.setData("NAME", "Sash form");
 
-		layersPanel = new Composite(form, SWT.NONE);
+		sidePanel = new Composite(form, SWT.NONE);
 		final GridLayout layout = new GridLayout(1, true);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		layersPanel.setLayout(layout);
-		layersPanel.setBackground(IGamaColors.WHITE.color());
+		sidePanel.setLayout(layout);
+		sidePanel.setBackground(IGamaColors.WHITE.color());
+		sidePanel.setData("NAME", "Side panel");
 
-		parent = new Composite(form, SWT.NONE);
-		final GridLayout gl = new GridLayout(1, false);
+		parent = new Composite(form, SWT.BORDER) {
+
+			@Override
+			public boolean setFocus() {
+				return forceFocus();
+			}
+
+		};
+		final GridLayout gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
 		gl.verticalSpacing = 0;
 		parent.setLayout(gl);
-		createSurfaceComposite();
+		createSurfaceComposite(parent);
 
 		surfaceComposite.addControlListener(new ControlAdapter() {
 
@@ -167,33 +193,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			}
 		});
 
-		// surfaceComposite.addFocusListener(new FocusAdapter() {
-		//
-		// /**
-		// * Method focusGained()
-		// * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
-		// */
-		// @Override
-		// public void focusGained(final FocusEvent e) {
-		// System.out.println("Focus gained for display. Attaching a listener ");
-		// SwtGui.getDisplay().addFilter(SWT.KeyUp, getGlobalKeyboardListener());
-		// SwtGui.getDisplay().addFilter(SWT.KeyDown, getGlobalKeyboardListener());
-		// super.focusGained(e);
-		// }
-		//
-		// /**
-		// * Method focusLost()
-		// * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
-		// */
-		// @Override
-		// public void focusLost(final FocusEvent e) {
-		// System.out.println("Focus lost for display");
-		// SwtGui.getDisplay().removeFilter(SWT.KeyUp, getGlobalKeyboardListener());
-		// SwtGui.getDisplay().removeFilter(SWT.KeyDown, getGlobalKeyboardListener());
-		// super.focusLost(e);
-		// }
-		//
-		// });
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = 0;
 		gd.verticalIndent = 0;
@@ -205,36 +204,58 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( overlay.isVisible() ) {
 			overlay.update();
 		}
-		// parent.setLayoutDeferred(false);
-
 		// Create after the surface composite
-
-		fillLayerSideControls(layersPanel);
+		fillLayerSideControls(sidePanel);
 
 		// form.setWeights(new int[] { 30, 70 });
 		form.setMaximizedControl(parent);
 		c.layout();
 
-		// c.setCursor(null);
-		// cr.dispose();
+		perspectiveListener = new IPerspectiveListener() {
 
+			boolean previousState = false;
+
+			@Override
+			public void perspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective,
+				final String changeId) {}
+
+			@Override
+			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
+				if ( perspective.getId().equals(IGui.PERSPECTIVE_MODELING_ID) ) {
+					if ( getOutput() != null && getDisplaySurface() != null ) {
+						if ( !GamaPreferences.CORE_DISPLAY_PERSPECTIVE.getValue() ) {
+							previousState = getOutput().isPaused();
+							getOutput().setPaused(true);
+						}
+					}
+					if ( overlay != null ) {
+						overlay.hide();
+					}
+				} else {
+					if ( !GamaPreferences.CORE_DISPLAY_PERSPECTIVE.getValue() ) {
+						if ( getOutput() != null && getDisplaySurface() != null ) {
+							getOutput().setPaused(previousState);
+						}
+					}
+					if ( overlay != null ) {
+						overlay.update();
+					}
+				}
+			}
+		};
+
+		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
+		keyAndMouseListener = new LayeredDisplayMultiListener(this);
 	}
-
-	// LayeredDisplayKeyboardListener getGlobalKeyboardListener() {
-	// if ( globalKeyboardListener == null && getDisplaySurface() != null ) {
-	// globalKeyboardListener = new LayeredDisplayKeyboardListener(getDisplaySurface());
-	// }
-	// return globalKeyboardListener;
-	// }
 
 	@Override
 	public void setFocus() {
-		if ( surfaceComposite != null ) {
-			surfaceComposite.setFocus();
+		if ( parent != null && !parent.isFocusControl() ) {
+			parent.forceFocus();
 		}
 	}
 
-	protected abstract Composite createSurfaceComposite();
+	protected abstract Composite createSurfaceComposite(Composite parent);
 
 	@Override
 	public LayeredDisplayOutput getOutput() {
@@ -253,6 +274,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( disposed ) { return; }
 		if ( getOutput() != null ) {
 			getOutput().getData().removeListener(this);
+		}
+		if ( keyAndMouseListener != null ) {
+			keyAndMouseListener.dispose();
 		}
 		disposed = true;
 		if ( surfaceComposite != null ) {
@@ -274,6 +298,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( overlay != null ) {
 			overlay.close();
 		}
+
 		super.dispose();
 	}
 
@@ -339,10 +364,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	public String getOverlayCoordInfo() {
-		final IDisplayOutput output = getOutput();
+		final LayeredDisplayOutput output = getOutput();
 		if ( output == null ) { return ""; }
 		final boolean paused = output.isPaused();
-		final boolean synced = getOutput().getData().isSynchronized();
+		final boolean synced = output.getData().isSynchronized();
 		final IDisplaySurface surface = getDisplaySurface();
 		final String point = surface == null ? null : surface.getModelCoordinatesInfo();
 		return point + (paused ? " | Paused" : "") + (synced ? " | Synchronized" : "");
@@ -352,19 +377,19 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		final IDisplaySurface surface = getDisplaySurface();
 		if ( surface == null ) { return ""; }
 		final boolean openGL = isOpenGL();
-		if ( openGL ) {
-			final Envelope3D roi = ((IDisplaySurface.OpenGL) surface).getROIDimensions();
-			if ( roi != null ) { return "" + Maths.round(roi.getWidth(), 2) + " x " + Maths.round(roi.getHeight(), 2); }
-		}
-		final String result =
-			GamaPreferences.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
+		String result = GamaPreferences.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
 		if ( !openGL ) {
 			return result + "Zoom " + getZoomLevel() + "%";
 		} else {
+			final Envelope3D roi = ((IDisplaySurface.OpenGL) surface).getROIDimensions();
 			final IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
 			final ILocation camera = ds.getCameraPosition();
-			return result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
+			result = result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
 				camera.getY(), camera.getZ()/* , camera.getTheta(), camera.getPhi() */);
+			if ( roi != null ) {
+				result = result + "[" + Maths.round(roi.getWidth(), 2) + " x " + Maths.round(roi.getHeight(), 2) + "]";
+			}
+			return result;
 		}
 	}
 
@@ -435,7 +460,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	@Override
 	public Control[] getZoomableControls() {
-		return new Control[] { surfaceComposite };
+		return new Control[] { parent };
 	}
 
 	@Override

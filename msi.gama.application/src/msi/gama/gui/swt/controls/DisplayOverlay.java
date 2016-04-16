@@ -118,7 +118,6 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		referenceComposite = c;
 		parentShell = c.getShell();
 		popup = new Shell(parentShell, SWT.NO_TRIM | SWT.NO_FOCUS);
-
 		popup.setAlpha(140);
 		final FillLayout layout = new FillLayout();
 		layout.type = SWT.VERTICAL;
@@ -326,6 +325,8 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	}
 
 	public void update() {
+		if ( isBusy )
+			return;
 		isBusy = true;
 		try {
 			if ( getPopup().isDisposed() ) { return; }

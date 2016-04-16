@@ -170,8 +170,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		buffImage = ImageUtils.createCompatibleImage(width, height);
 		g2 = (Graphics2D) buffImage.getGraphics();
 		displayGraphics = new AWTDisplayGraphics(this, (Graphics2D) buffImage.getGraphics());
-		( (AWTDisplayGraphics) displayGraphics).setGraphics2D((Graphics2D)  buffImage.getGraphics());
-		((AWTDisplayGraphics) displayGraphics).setUntranslatedGraphics2D((Graphics2D)  buffImage.getGraphics());
+		((AWTDisplayGraphics) displayGraphics).setGraphics2D((Graphics2D) buffImage.getGraphics());
+		((AWTDisplayGraphics) displayGraphics).setUntranslatedGraphics2D((Graphics2D) buffImage.getGraphics());
 	}
 
 	private void paint() {
@@ -528,6 +528,36 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public String getModelCoordinatesInfo() {
 		return null;
+	}
+
+	@Override
+	public void dispatchKeyEvent(final char character) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void dispatchMouseEvent(final int swtEventType) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setMousePosition(final int x, final int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void draggedTo(final int x, final int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void selectAgentsAroundMouse() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

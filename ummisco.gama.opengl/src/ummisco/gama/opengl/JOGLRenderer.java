@@ -107,8 +107,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	private final TextureCache textureCache = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()
 			? TextureCache.getSharedInstance() : new TextureCache();
 
-	// private final GLModel chairModel = null;
-
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		super(d);
 		camera = new CameraArcBall(this);
@@ -124,7 +122,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		cap.setStencilBits(8);
 		cap.setDoubleBuffered(true);
 		cap.setHardwareAccelerated(true);
-		canvas = new GLCanvas(parent, SWT.NONE, cap, null);
+		canvas = new GLCanvas(parent, SWT.BORDER, cap, null);
 		if (useSharedContext) {
 			canvas.setSharedAutoDrawable(TextureCache.getSharedContext());
 		}
@@ -184,8 +182,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		glu = new GLU();
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
-
-		// GL2 gl = GLContext.getCurrentGL().getGL2();
 
 		initializeCanvasListeners();
 		getCanvas().setVisible(true);
@@ -395,11 +391,11 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		final double env_height = data.getEnvHeight();
 		return env_width > env_height ? env_width : env_height;
 	}
-	
+
 	public double getEnvWidth() {
 		return data.getEnvWidth();
 	}
-	
+
 	public double getEnvHeight() {
 		return data.getEnvHeight();
 	}

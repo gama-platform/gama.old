@@ -4,11 +4,8 @@
  */
 package ummisco.gama.opengl;
 
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
@@ -22,28 +19,30 @@ import msi.gama.runtime.GAMA;
  * @since 25 mars 2015
  *
  */
-public class SWTLayeredDisplayView extends LayeredDisplayView
-		implements /* ControlListener, */MouseMoveListener, KeyListener {
+public class SWTLayeredDisplayView extends LayeredDisplayView {
 
 	SWTOpenGLDisplaySurface surface;
 
 	public static String ID = "msi.gama.application.view.OpenGLDisplayView";
 
 	@Override
-	protected Composite createSurfaceComposite() {
+	protected Composite createSurfaceComposite(final Composite parent) {
 		surface = new SWTOpenGLDisplaySurface(parent, getOutput());
 		surfaceComposite = surface.renderer.getCanvas();
-		surfaceComposite.addMouseMoveListener(this);
-		surfaceComposite.addKeyListener(this);
 		surface.setSWTMenuManager(new DisplaySurfaceMenu(surface, surfaceComposite, this));
 		surface.outputReloaded();
 		return surfaceComposite;
 	}
 
 	@Override
+	public Control[] getZoomableControls() {
+		return new Control[] { surfaceComposite };
+	}
+
+	@Override
 	public void setFocus() {
-		if (surfaceComposite != null) {
-			surfaceComposite.setFocus();
+		if (surfaceComposite != null && !surfaceComposite.isFocusControl()) {
+			surfaceComposite.forceFocus();
 		}
 	}
 
@@ -67,65 +66,32 @@ public class SWTLayeredDisplayView extends LayeredDisplayView
 
 	}
 
-	boolean isOverlayTemporaryVisible;
-
 	@Override
-	public void mouseMove(final MouseEvent e) {
-		GAMA.getGui().asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				if (surface.getROIDimensions() != null) {
-					if (!overlay.isVisible()) {
-						isOverlayTemporaryVisible = true;
-						overlay.setVisible(true);
-					}
-				} else {
-					if (isOverlayTemporaryVisible) {
-						isOverlayTemporaryVisible = false;
-						overlay.setVisible(false);
-					}
-				}
-				overlay.update();
+	protected void updateOverlay() {
+		if (surface.getROIDimensions() != null) {
+			if (!overlay.isVisible()) {
+				isOverlayTemporaryVisible = true;
+				overlay.setVisible(true);
 			}
-		});
+		} else {
+			if (isOverlayTemporaryVisible) {
+				isOverlayTemporaryVisible = false;
+				overlay.setVisible(false);
+			}
+		}
+		overlay.update();
 	}
+
+	boolean isOverlayTemporaryVisible;
 
 	@Override
 	public IDisplaySurface getDisplaySurface() {
 		return surface;
 	}
 
-	/**
-	 * Method zoomWhenScrolling()
-	 * 
-	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
-	 */
 	@Override
 	public boolean zoomWhenScrolling() {
 		return true;
-	}
-
-	@Override
-	public void keyPressed(final KeyEvent e) {
-		GAMA.getGui().asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				overlay.update();
-			}
-		});
-	}
-
-	@Override
-	public void keyReleased(final KeyEvent e) {
-		GAMA.getGui().asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				overlay.update();
-			}
-		});
 	}
 
 }

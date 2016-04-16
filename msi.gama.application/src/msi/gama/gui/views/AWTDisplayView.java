@@ -11,23 +11,16 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import javax.swing.JComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.IWorkbenchPage;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.displays.awt.Java2DDisplaySurface;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.WorkaroundForIssue1353;
 import msi.gama.gui.swt.swing.Platform;
 import msi.gama.gui.swt.swing.SwingControl;
-import msi.gama.runtime.GAMA;
 
 public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvider */ {
 
@@ -38,76 +31,22 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 		return (Java2DDisplaySurface) super.getDisplaySurface();
 	}
 
-	// protected Composite createSurfaceCompositeSimple() {
-	// if ( getOutput() == null ) { return null; }
-	// surfaceComposite = new Composite(parent, SWT.EMBEDDED | SWT.NO_BACKGROUND);
-	// Frame frame = SWT_AWT.new_Frame(surfaceComposite);
-	// frame.setVisible(true);
-	// frame.add(getDisplaySurface());
-	// return surfaceComposite;
-	// }
-
-	// @Override
 	@Override
-	protected Composite createSurfaceComposite() {
+	protected Composite createSurfaceComposite(final Composite parent) {
+		parent.setData("NAME", "Parent");
 		if ( getOutput() == null ) { return null; }
 
-		final Runnable displayOverlay = new Runnable() {
-
-			@Override
-			public void run() {
-				if ( !overlay.isVisible() ) { return; }
-				overlay.update();
-			}
-		};
-
-		final java.awt.event.MouseMotionListener mlAwt2 = new java.awt.event.MouseMotionAdapter() {
-
-			@Override
-			public void mouseMoved(final java.awt.event.MouseEvent e) {
-				// System.out.println("We move inside the AWT component");
-				GAMA.getGui().asyncRun(displayOverlay);
-			}
-
-			@Override
-			public void mouseDragged(final java.awt.event.MouseEvent e) {
-				GAMA.getGui().asyncRun(displayOverlay);
-			}
-		};
-
-		surfaceComposite = new SwingControl(parent, SWT.NONE) {
+		surfaceComposite = new SwingControl(parent, SWT.NO_FOCUS) {
 
 			@Override
 			protected JComponent createSwingComponent() {
-				final JComponent component = getDisplaySurface();
-				if ( component != null ) // can happen if the view has not been realized yet
-					component.addMouseMotionListener(mlAwt2);
-				component.addKeyListener(new KeyListener() {
-
-					@Override
-					public void keyTyped(final KeyEvent e) {
-						System.out.println("Key typed " + e);
-					}
-
-					@Override
-					public void keyReleased(final KeyEvent e) {
-
-					}
-
-					@Override
-					public void keyPressed(final KeyEvent e) {
-						System.out.println("Key pressed" + e);
-					}
-
-				});
-				return component;
+				return getDisplaySurface();
 			}
 
 			@Override
 			public Composite getLayoutAncestor() {
 				// AD 02/16 Seems necessary to return null for displays to show up and correctly initialize their graphics environment
 				return null;
-				// return parent;
 			}
 
 			@Override
@@ -116,17 +55,11 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 			}
 
 			@Override
-			public boolean isAWTPermanentFocusLossForced() {
-				return true;
-			}
-
-			@Override
 			public void afterComponentCreatedSWTThread() {
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
 					overlay.setVisible(true);
 				}
-				WorkaroundForIssue1353.installOn(surfaceComposite, AWTDisplayView.this);
-
+				WorkaroundForIssue1353.installOn(parent, AWTDisplayView.this);
 			}
 
 			@Override
@@ -135,42 +68,9 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 					new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
-
-		perspectiveListener = new IPerspectiveListener() {
-
-			boolean previousState = false;
-
-			@Override
-			public void perspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective,
-				final String changeId) {}
-
-			@Override
-			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-				if ( perspective.getId().equals(IGui.PERSPECTIVE_MODELING_ID) ) {
-					if ( getOutput() != null && getDisplaySurface() != null ) {
-						if ( !GamaPreferences.CORE_DISPLAY_PERSPECTIVE.getValue() ) {
-							previousState = getOutput().isPaused();
-							getOutput().setPaused(true);
-						}
-					}
-					if ( overlay != null ) {
-						overlay.hide();
-					}
-				} else {
-					if ( !GamaPreferences.CORE_DISPLAY_PERSPECTIVE.getValue() ) {
-						if ( getOutput() != null && getDisplaySurface() != null ) {
-							getOutput().setPaused(previousState);
-						}
-					}
-					if ( overlay != null ) {
-						overlay.update();
-					}
-				}
-			}
-		};
-
-		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
+		surfaceComposite.setEnabled(false);
 		WorkaroundForIssue1594.installOn(AWTDisplayView.this, parent, surfaceComposite, getDisplaySurface());
+
 		return surfaceComposite;
 	}
 
@@ -184,7 +84,7 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 	}
 
 	/**
-	 * Wait for the AWT environment is completely initialized, preventing a thread lock when two views want to open at the same time. Must not be called in neither the AWT or the SWT thread. A
+	 * Wait for the AWT environment is initialized, preventing a thread lock when two views want to open at the same time. Must not be called in neither the AWT or the SWT thread. A
 	 * configurable timeout is applied, so that other views are not blocked. It remains to be seen what to do if this times out, as we should normally cancel the view.
 	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
 	 */
@@ -207,4 +107,5 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 		}
 
 	}
+
 }

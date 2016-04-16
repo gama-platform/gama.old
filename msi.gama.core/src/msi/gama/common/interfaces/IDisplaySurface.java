@@ -171,4 +171,14 @@ public interface IDisplaySurface extends
 	 */
 	String getModelCoordinatesInfo();
 
+	void dispatchKeyEvent(char character);
+
+	void dispatchMouseEvent(int swtEventType);
+
+	void setMousePosition(int x, int y);
+
+	void draggedTo(int x, int y);
+
+	void selectAgentsAroundMouse();
+
 }

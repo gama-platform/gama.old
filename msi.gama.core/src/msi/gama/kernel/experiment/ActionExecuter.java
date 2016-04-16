@@ -90,10 +90,14 @@ public class ActionExecuter {
 	}
 
 	private void executeActions(final int type) {
-		if (actions[type] == null || actions[type].isEmpty()) {
+		if (actions[type] == null) {
 			return;
 		}
-		for (final GamaHelper action : actions[type]) {
+		final int size = actions[type].size();
+		if (size == 0)
+			return;
+		final GamaHelper[] array = actions[type].toArray(new GamaHelper[size]);
+		for (final GamaHelper action : array) {
 			if (!scope.interrupted()) {
 				action.run(scope);
 			}

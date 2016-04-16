@@ -11,26 +11,36 @@
  *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.AWTKeyStroke;
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
-import java.lang.reflect.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Set;
 import javax.swing.text.Caret;
 import javax.swing.text.JTextComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 public class FocusHandler {
 
 	// =========================== Static variables ===========================
 
 	// Whether to print debugging information regarding focus events.
-	public static final boolean verboseFocusEvents = false;
+	public static final boolean verboseFocusEvents = true;
 	public static final boolean verboseKFHEvents = false;
 	public static final boolean verboseTraverseOut = false;
 
@@ -80,7 +90,7 @@ public class FocusHandler {
 		globalHandler.addEventFilter(swtEventFilter);
 
 		frame.addWindowFocusListener(awtWindowFocusListener);
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
+		// KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
 
 		borderless.addFocusListener(swtFocusListener);
 
@@ -101,9 +111,9 @@ public class FocusHandler {
 	protected void hideTextSelection() {
 		assert EventQueue.isDispatchThread();
 
-		Component focusOwner = frame.getMostRecentFocusOwner();
+		final Component focusOwner = frame.getMostRecentFocusOwner();
 		if ( focusOwner instanceof JTextComponent ) {
-			Caret caret = ((JTextComponent) focusOwner).getCaret();
+			final Caret caret = ((JTextComponent) focusOwner).getCaret();
 			if ( caret != null ) {
 				caret.setSelectionVisible(false);
 			}
@@ -119,9 +129,9 @@ public class FocusHandler {
 
 		// Ignore events outside this frame
 		if ( frame.isFocused() ) {
-			Set traverseForwardKeys = frame.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS);
-			Set traverseBackwardKeys = frame.getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS);
-			AWTKeyStroke key = AWTKeyStroke.getAWTKeyStrokeForEvent(e);
+			final Set traverseForwardKeys = frame.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS);
+			final Set traverseBackwardKeys = frame.getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS);
+			final AWTKeyStroke key = AWTKeyStroke.getAWTKeyStrokeForEvent(e);
 
 			if ( !pendingTraverseOut ) {
 				// We haven't started to traverse out yet. Check to see if the traversal key has been
@@ -189,7 +199,7 @@ public class FocusHandler {
 			if ( verboseTraverseOut ) {
 				trace("Processing typeahead traversals, count=" + extraTabCount);
 			}
-			int direction = extraTabCount > 0 ? SWT.TRAVERSE_TAB_NEXT : SWT.TRAVERSE_TAB_PREVIOUS;
+			final int direction = extraTabCount > 0 ? SWT.TRAVERSE_TAB_NEXT : SWT.TRAVERSE_TAB_PREVIOUS;
 			swtTraverse(direction, Math.abs(extraTabCount), true);
 		}
 		pendingTraverseOut = false;
@@ -219,7 +229,7 @@ public class FocusHandler {
 		if ( verboseTraverseOut ) {
 			trace("SWT: traversing, control=" + focusControl);
 		}
-		SwingControl activeBorderless = globalHandler.getActiveEmbedded();
+		final SwingControl activeBorderless = globalHandler.getActiveEmbedded();
 		if ( focusControl == null && activeBorderless != null ) {
 			focusControl = activeBorderless;
 			if ( verboseTraverseOut ) {
@@ -227,9 +237,9 @@ public class FocusHandler {
 			}
 		}
 		if ( focusControl != null ) {
-			boolean traverse = focusControl.traverse(direction);
+			final boolean traverse = focusControl.traverse(direction);
 
-			Control newFocusControl = display.getFocusControl();
+			final Control newFocusControl = display.getFocusControl();
 			if ( traverse && newFocusControl == focusControl && newFocusControl == activeBorderless ) {
 				// We were unable to traverse anywhere else.
 				if ( verboseTraverseOut ) {
@@ -313,9 +323,9 @@ public class FocusHandler {
 							}
 							synthesizeMethod.invoke(frame, new Object[] { new Boolean(activate) });
 						}
-					} catch (IllegalAccessException e) {
+					} catch (final IllegalAccessException e) {
 						handleSynthesizeException(e);
-					} catch (InvocationTargetException e) {
+					} catch (final InvocationTargetException e) {
 						handleSynthesizeException(e);
 					}
 				} else {
@@ -336,7 +346,7 @@ public class FocusHandler {
 			synthesizeMethodInitialized = true;
 			try {
 				synthesizeMethod = clazz.getMethod("synthesizeWindowActivation", new Class[] { boolean.class });
-			} catch (NoSuchMethodException e) {
+			} catch (final NoSuchMethodException e) {
 				handleSynthesizeException(e);
 			}
 		}
@@ -406,8 +416,8 @@ public class FocusHandler {
 	public void activateEmbeddedFrame() {
 		assert Display.getCurrent() != null;
 
-		Shell activeShell = globalHandler.getActiveShell();
-		SwingControl activeBorderless = globalHandler.getActiveEmbedded();
+		final Shell activeShell = globalHandler.getActiveShell();
+		final SwingControl activeBorderless = globalHandler.getActiveEmbedded();
 
 		if ( !borderless.isDisposed() &&
 
@@ -430,7 +440,7 @@ public class FocusHandler {
 					// is to request focus on the result of getMostRecentFocusOwner
 					// which will preserve any existing focus, or otherwise use the initial
 					// component.
-					Component component = frame.getMostRecentFocusOwner();
+					final Component component = frame.getMostRecentFocusOwner();
 					if ( component != null ) {
 						if ( verboseFocusEvents ) {
 							trace("Manually activating: " + frame + ", focus component=" + component);

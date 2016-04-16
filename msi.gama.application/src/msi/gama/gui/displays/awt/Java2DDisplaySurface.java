@@ -21,23 +21,17 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.swing.JPanel;
+import org.eclipse.swt.SWT;
 import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
@@ -108,118 +102,93 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	protected boolean disposed;
 
 	private IScope scope;
-	final DisplayMouseListener listener;
+	// final DisplayMouseListener listener;
 	int frames;
 	private volatile boolean realized = false;
 	private volatile boolean rendered = false;
-	Map<IEventLayerListener, GamaEventListener> listeners = new HashMap();
+	Set<IEventLayerListener> listeners = new HashSet();
+	Point mousePosition;
 
 	// private boolean alreadyZooming = false;
 
-	private class GamaEventListener extends MouseAdapter implements FocusListener, KeyListener {
-
-		final IEventLayerListener listener;
-		int down_x, down_y;
-
-		GamaEventListener(final IEventLayerListener listener) {
-			this.listener = listener;
-		}
-
-		@Override
-		public void mouseMoved(final MouseEvent e) {
-			if ( e.getButton() > MouseEvent.NOBUTTON ) { return; }
-			listener.mouseMove(e.getX(), e.getY());
-		}
-
-		@Override
-		public void mouseExited(final MouseEvent e) {
-			if ( e.getButton() > MouseEvent.NOBUTTON ) { return; }
-			listener.mouseExit(e.getX(), e.getY());
-		}
-
-		@Override
-		public void mouseEntered(final MouseEvent e) {
-			if ( e.getButton() > 0 ) { return; }
-			listener.mouseEnter(e.getX(), e.getY());
-		}
-
-		// @Override
-		// public void mouseHover(final MouseEvent e) {
-		// if ( e.getButton() > 0 ) { return; }
-		// listener.mouseMove(e.getX(), e.getY());
-		// }
-
-		@Override
-		public void mouseClicked(final MouseEvent e) {
-			mousePressed(e);
-			mouseReleased(e);
-		}
-
-		@Override
-		public void mousePressed(final MouseEvent e) {
-			down_x = e.getX();
-			down_y = e.getY();
-			listener.mouseDown(e.getX(), e.getY(), e.getButton());
-		}
-
-		@Override
-		public void mouseReleased(final MouseEvent e) {
-			if ( e.getX() == down_x && e.getY() == down_y ) {
-				listener.mouseClicked(e.getX(), e.getY(), e.getButton());
-			} else {
-				listener.mouseUp(e.getX(), e.getY(), e.getButton());
-			}
-		}
-
-		@Override
-		public void focusGained(final FocusEvent e) {
-			listener.mouseEnter(0, 0);
-		}
-
-		@Override
-		public void focusLost(final FocusEvent e) {
-			listener.mouseExit(0, 0);
-		}
-
-		@Override
-		public void keyPressed(final KeyEvent e) {
-			System.out.println("Key pressed");
-		}
-
-		@Override
-		public void keyReleased(final KeyEvent e) {
-			System.out.println("Key released");
-		}
-
-		@Override
-		public void keyTyped(final KeyEvent e) {
-			listener.keyPressed(String.valueOf(e.getKeyChar()));
-		}
-
-	}
+	// private class GamaEventListener extends MouseAdapter implements FocusListener {
+	//
+	// final IEventLayerListener listener;
+	// int down_x, down_y;
+	//
+	// GamaEventListener(final IEventLayerListener listener) {
+	// this.listener = listener;
+	// }
+	//
+	// @Override
+	// public void mouseMoved(final MouseEvent e) {
+	// if ( e.getButton() > MouseEvent.NOBUTTON ) { return; }
+	// listener.mouseMove(e.getX(), e.getY());
+	// }
+	//
+	// @Override
+	// public void mouseExited(final MouseEvent e) {
+	// if ( e.getButton() > MouseEvent.NOBUTTON ) { return; }
+	// listener.mouseExit(e.getX(), e.getY());
+	// }
+	//
+	// @Override
+	// public void mouseEntered(final MouseEvent e) {
+	// if ( e.getButton() > 0 ) { return; }
+	// listener.mouseEnter(e.getX(), e.getY());
+	// }
+	//
+	// @Override
+	// public void mouseClicked(final MouseEvent e) {
+	// mousePressed(e);
+	// mouseReleased(e);
+	// }
+	//
+	// @Override
+	// public void mousePressed(final MouseEvent e) {
+	// down_x = e.getX();
+	// down_y = e.getY();
+	// listener.mouseDown(e.getX(), e.getY(), e.getButton());
+	// }
+	//
+	// @Override
+	// public void mouseReleased(final MouseEvent e) {
+	// if ( e.getX() == down_x && e.getY() == down_y ) {
+	// listener.mouseClicked(e.getX(), e.getY(), e.getButton());
+	// } else {
+	// listener.mouseUp(e.getX(), e.getY(), e.getButton());
+	// }
+	// }
+	//
+	// @Override
+	// public void focusGained(final FocusEvent e) {
+	// listener.mouseEnter(0, 0);
+	// }
+	//
+	// @Override
+	// public void focusLost(final FocusEvent e) {
+	// listener.mouseExit(0, 0);
+	// }
+	//
+	// public void keyTyped(final char e) {
+	// System.out.println("KeyTyped in SWT :" + e);
+	// listener.keyPressed(String.valueOf(e));
+	// }
+	//
+	// }
 
 	public Java2DDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy("in Java2DDisplaySurface"));
-		// data = output.getData();
-		setFocusable(true);
 		output.getData().addListener(this);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
-		// setOpaque(true);
 		setDoubleBuffered(true);
 		setIgnoreRepaint(true);
-
-		//
-
 		setLayout(new BorderLayout());
 		setBackground(output.getData().getBackgroundColor());
 		setName(output.getName());
 		manager = new LayerManager(this, output);
-		listener = new DisplayMouseListener(this);
-		addMouseListener(listener);
-		addMouseMotionListener(listener);
-		addMouseWheelListener(listener);
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
@@ -247,6 +216,64 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int result = frames;
 		frames = 0;
 		return result;
+	}
+
+	@Override
+	public void dispatchKeyEvent(final char e) {
+		for ( final IEventLayerListener gl : listeners ) {
+			gl.keyPressed(String.valueOf(e));
+		}
+	}
+
+	@Override
+	public void setMousePosition(final int x, final int y) {
+		if ( mousePosition == null )
+			mousePosition = new Point(x, y);
+		else {
+			mousePosition.setLocation(x, y);
+		}
+	}
+
+	@Override
+	public void draggedTo(final int x, final int y) {
+		final Point origin = getOrigin();
+		setOrigin(origin.x + x - getMousePosition().x, origin.y + y - getMousePosition().y);
+		setMousePosition(x, y);
+		updateDisplay(true);
+	}
+
+	public void setMousePosition(final Point point) {
+		mousePosition = point;
+
+	}
+
+	@Override
+	public Point getMousePosition() {
+		return mousePosition;
+	}
+
+	@Override
+	public void dispatchMouseEvent(final int swtMouseEvent) {
+		final int x = mousePosition.x;
+		final int y = mousePosition.y;
+		for ( final IEventLayerListener gl : listeners )
+			switch (swtMouseEvent) {
+				case SWT.MouseDown:
+					gl.mouseDown(x, y, 1);
+					break;
+				case SWT.MouseUp:
+					gl.mouseUp(x, y, 1);
+					break;
+				case SWT.MouseMove:
+					gl.mouseMove(x, y);
+					break;
+				case SWT.MouseEnter:
+					gl.mouseEnter(x, y);
+					break;
+				case SWT.MouseExit:
+					gl.mouseExit(x, y);
+					break;
+			}
 	}
 
 	@Override
@@ -375,32 +402,30 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		updateDisplay(true);
 	}
 
-	@Override
-	public void zoomIn() {
-		// if ( alreadyZooming ) { return; }
-		// alreadyZooming = true;
+	private void zoom(final boolean in) {
 		final Point origin = getOrigin();
-		listener.setMousePosition(new Point(getWidth() / 2, getHeight() / 2));
-		final double zoomFactor = applyZoom(1.0 + zoomIncrement);
-		final double newx = FastMath.round(zoomFactor * (getWidth() / 2 - origin.x));
-		final double newy = FastMath.round(zoomFactor * (getHeight() / 2 - origin.y));
+		final Point p = getMousePosition();
+		int x = p.x;
+		int y = p.y;
+		if ( x == -1 && y == -1 ) {
+			x = getWidth() / 2;
+			y = getHeight() / 2;
+		}
+		final double zoomFactor = applyZoom(1.0 + (in ? 1 : -1) * zoomIncrement);
+		final double newx = FastMath.round(zoomFactor * (x - origin.x) - x + getWidth() / 2d);
+		final double newy = FastMath.round(zoomFactor * (y - origin.y) - y + getHeight() / 2d);
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
 		updateDisplay(true);
-		// alreadyZooming = false;
+	}
+
+	@Override
+	public void zoomIn() {
+		zoom(true);
 	}
 
 	@Override
 	public void zoomOut() {
-		// if ( alreadyZooming ) { return; }
-		// alreadyZooming = true;
-		final Point origin = getOrigin();
-		listener.setMousePosition(new Point(getWidth() / 2, getHeight() / 2));
-		final double zoomFactor = applyZoom(1.0 - zoomIncrement);
-		final double newx = FastMath.round(zoomFactor * (getWidth() / 2 - origin.x));
-		final double newy = FastMath.round(zoomFactor * (getHeight() / 2 - origin.y));
-		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
-		updateDisplay(true);
-		// alreadyZooming = false;
+		zoom(false);
 	}
 
 	// Used when the image is resized.
@@ -456,7 +481,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public ILocation getModelCoordinates() {
 		final Point origin = getOrigin();
-		final Point mouse = listener.getMousePosition();
+		final Point mouse = getMousePosition();
 		if ( mouse == null ) { return null; }
 		final int xc = mouse.x - origin.x;
 		final int yc = mouse.y - origin.y;
@@ -470,7 +495,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public String getModelCoordinatesInfo() {
 		final Point origin = getOrigin();
-		final Point mouse = listener.getMousePosition();
+		final Point mouse = getMousePosition();
 		if ( mouse == null ) { return null; }
 		final int xc = mouse.x - origin.x;
 		final int yc = mouse.y - origin.y;
@@ -533,7 +558,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void zoomFit() {
-		listener.setMousePosition(new Point(getWidth() / 2, getHeight() / 2));
+		setMousePosition(new Point(getWidth() / 2, getHeight() / 2));
 		if ( resizeImage(getWidth(), getHeight(), false) ) {
 			newZoomLevel(1d);
 			zoomFit = true;
@@ -582,21 +607,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		return e;
 	}
 
-	@Override
-	public Collection<IAgent> selectAgent(final int x, final int y) {
-		final int xc = x - getOriginX();
-		final int yc = y - getOriginY();
-		final List<IAgent> result = new ArrayList();
-		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
-		for ( final ILayer layer : layers ) {
-			final Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
-			if ( !agents.isEmpty() ) {
-				result.addAll(agents);
-			}
-		}
-		return result;
-	}
-
 	protected void setDisplayScope(final IScope scope) {
 		if ( this.scope != null ) {
 			GAMA.releaseScope(this.scope);
@@ -633,29 +643,17 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void addListener(final IEventLayerListener ell) {
-		if ( listeners.containsKey(ell) ) { return; }
-		final GamaEventListener l = new GamaEventListener(ell);
-		listeners.put(ell, l);
-		addMouseListener(l);
-		addMouseMotionListener(l);
-		addKeyListener(l);
-		addFocusListener(l);
+		listeners.add(ell);
 	}
 
 	@Override
 	public void removeListener(final IEventLayerListener ell) {
-		final GamaEventListener l = listeners.get(ell);
-		if ( l == null ) { return; }
 		listeners.remove(ell);
-		super.removeMouseListener(l);
-		super.removeMouseMotionListener(l);
-		super.removeKeyListener(l);
-		super.removeFocusListener(l);
 	}
 
 	@Override
 	public Collection<IEventLayerListener> getLayerListeners() {
-		return listeners.keySet();
+		return listeners;
 	}
 
 	/**
@@ -711,7 +709,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		centerOnViewCoordinates(new Point(p.x + origin.x, p.y + origin.y));
 	}
 
-	void selectAgents(final int mousex, final int mousey) {
+	@Override
+	public void selectAgentsAroundMouse() {
+		final int mousex = getMousePosition().x;
+		final int mousey = getMousePosition().y;
 		final Point origin = getOrigin();
 		final int xc = mousex - origin.x;
 		final int yc = mousey - origin.y;
@@ -725,6 +726,21 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 				menuManager.buildMenu(mousex, mousey, xc, yc, modelCoordinates, layers);
 			}
 		});
+	}
+
+	@Override
+	public Collection<IAgent> selectAgent(final int x, final int y) {
+		final int xc = x - getOriginX();
+		final int yc = y - getOriginY();
+		final List<IAgent> result = new ArrayList();
+		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
+		for ( final ILayer layer : layers ) {
+			final Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
+			if ( !agents.isEmpty() ) {
+				result.addAll(agents);
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -768,39 +784,5 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public boolean isDisposed() {
 		return disposed;
 	}
-
-	// Code to use a BufferStrategy instead. Problem is it needs a Canvas, which is difficult to obtain. One possibility could be to directly use SWT_AWT to obtain a Frame and build a Canvas on top of
-	// it, bypassing all the problems raised by the Swing components.
-	// public BufferStrategy getBufferStrategy() {
-	// if ( bs == null ) {
-	// canvas.createBufferStrategy(3);
-	// bs = canvas.getBufferStrategy();
-	// }
-	// return bs;
-	// }
-	//
-	// void draw() {
-	// if ( iGraphics == null ) { return; }
-	// if ( output.getData().isAutosave() ) {
-	// snapshot();
-	// }
-	//
-	// // Method which prepares the screen for drawing
-	// bs = getBufferStrategy(); // Gets the buffer strategy our canvas is currently using
-	//
-	// Graphics g = bs.getDrawGraphics(); // Get the graphics from our buffer strategy (which is connected to our canvas)
-	//
-	// Graphics2D g2d =
-	// (Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) getDisplayWidth(), (int) getDisplayHeight());
-	//
-	// ((AWTDisplayGraphics) iGraphics).setGraphics2D(g2d);
-	// manager.drawLayersOn(iGraphics);
-	// g2d.dispose();
-	//
-	// g.dispose(); // Dispose of our graphics object because it is no longer needed, and unnecessarily taking up memory
-	// bs.show(); // Show the buffer strategy, flip it if necessary (make back buffer the visible buffer and vice versa)
-	// frames++;
-	//
-	// }
 
 }

@@ -91,6 +91,8 @@ public class EventLayer extends AbstractLayer {
 	// We explicitly translate by the origin of the surface
 	@Override
 	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+		if (xOnScreen == -1 && yOnScreen == -1)
+			return new GamaPoint(0, 0);
 		return g.getModelCoordinates();
 	}
 
@@ -228,8 +230,11 @@ public class EventLayer extends AbstractLayer {
 					scope.getExperiment().getActionExecuter().executeOneAction(new GamaHelper() {
 
 						@Override
-						public Object run(final IScope scope) {
+						public Object run(final IScope experiment_scope) {
 							executer.setRuntimeArgs(args);
+							// We do NOT use the scope provided by the
+							// experiment, but instead the one of the layer
+							// (which is contextualized)
 							executer.executeOn(scope);
 							return null;
 						}

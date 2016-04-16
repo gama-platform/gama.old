@@ -345,6 +345,7 @@ public abstract class SwingControl extends Composite {
 
 					rootPaneContainer.getRootPane().getContentPane().add(swingComponent);
 					swingComponent.putClientProperty(SWT_PARENT_PROPERTY_KEY, SwingControl.this);
+					// frame.setFocusable(true);
 				}
 
 				// Invoke hooks, for use by the application.
@@ -356,7 +357,9 @@ public abstract class SwingControl extends Composite {
 						public void run() {
 
 							// Propagate focus to Swing, if necesssary
-							focusHandler.activateEmbeddedFrame();
+							if ( focusHandler != null ) {
+								focusHandler.activateEmbeddedFrame();
+							}
 
 							// Now that the preferred size is known, enable
 							// the layout on the layoutable ancestor.
@@ -1293,8 +1296,8 @@ public abstract class SwingControl extends Composite {
 		assert frame != null;
 		assert Display.getCurrent() != null; // On SWT event thread
 
-		final GlobalFocusHandler handler = AwtEnvironment.getInstance(display).getGlobalFocusHandler();
-		focusHandler = new FocusHandler(this, handler, borderlessChild, frame);
+		// final GlobalFocusHandler handler = AwtEnvironment.getInstance(display).getGlobalFocusHandler();
+		// focusHandler = new FocusHandler(this, handler, borderlessChild, frame);
 	}
 
 	/**

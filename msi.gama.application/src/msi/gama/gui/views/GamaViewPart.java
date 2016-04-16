@@ -11,24 +11,31 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentController;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.outputs.*;
+import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.GAMA;
 
 /**
@@ -50,7 +57,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 		public GamaUIJob() {
 			super("Updating " + getPartName());
-			UpdatePriority p = jobPriority();
+			final UpdatePriority p = jobPriority();
 			switch (p) {
 				case HIGHEST:
 					setPriority(INTERACTIVE);
@@ -89,27 +96,27 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		IPartService ps = site.getService(IPartService.class);
+		final IPartService ps = site.getService(IPartService.class);
 		ps.addPartListener(SwtGui.getPartListener());
 		final String s_id = site.getSecondaryId();
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
 
-		IExperimentPlan experiment = GAMA.getExperiment();
+		final IExperimentPlan experiment = GAMA.getExperiment();
 
 		if ( GAMA.getExperiment() != null ) {
 			// hqnghi in case of multi-controller
 			if ( out == null ) {
-				for ( IExperimentController fec : GAMA.getControllers() ) {
-					List<IOutputManager> mm = fec.getExperiment().getAllSimulationOutputs();
-					for ( IOutputManager manager : mm ) {
+				for ( final IExperimentController fec : GAMA.getControllers() ) {
+					final List<IOutputManager> mm = fec.getExperiment().getAllSimulationOutputs();
+					for ( final IOutputManager manager : mm ) {
 						if ( manager != null ) {
 							out = (IDisplayOutput) manager.getOutput(id);
 						}
 
 					}
 					if ( out == null ) {
-						IOutputManager manager = fec.getExperiment().getExperimentOutputs();
+						final IOutputManager manager = fec.getExperiment().getExperimentOutputs();
 						if ( manager != null ) {
 							out = (IDisplayOutput) manager.getOutput(id);
 						}
@@ -119,16 +126,16 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 			// hqngh in case of micro-model
 			if ( out == null ) {
-				SimulationAgent sim = GAMA.getExperiment().getCurrentSimulation();
+				final SimulationAgent sim = GAMA.getExperiment().getCurrentSimulation();
 				if ( sim != null ) {
-					String[] stemp = id.split("#");
+					final String[] stemp = id.split("#");
 					if ( stemp.length > 1 ) {
-						IPopulation externPop = sim.getExternMicroPopulationFor(stemp[2]);
+						final IPopulation externPop = sim.getExternMicroPopulationFor(stemp[2]);
 						if ( externPop != null ) {
-							for ( IAgent expAgent : externPop ) {
-								SimulationAgent spec = ((ExperimentAgent) expAgent).getSimulation();
+							for ( final IAgent expAgent : externPop ) {
+								final SimulationAgent spec = ((ExperimentAgent) expAgent).getSimulation();
 								if ( spec != null ) {
-									IOutputManager manager = spec.getOutputManager();
+									final IOutputManager manager = spec.getOutputManager();
 									if ( manager != null ) {
 										out = (IDisplayOutput) manager.getOutput(s_id);
 									}
@@ -195,7 +202,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 	@Override
 	public void update(final IDisplayOutput output) {
-		GamaUIJob job = getUpdateJob();
+		final GamaUIJob job = getUpdateJob();
 		if ( job != null ) {
 			if ( output.isSynchronized() ) {
 				job.runSynchronized();
@@ -230,18 +237,17 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void setFocus() {}
 
-
 	@Override
 	public void dispose() {
 		toolbar = null;
 		outputs.clear();
-		IWorkbenchPartSite s = getSite();
-		if ( s != null ) {
-			IPartService ps = s.getService(IPartService.class);
-			if ( ps != null ) {
-				ps.removePartListener(SwtGui.getPartListener());
-			}
-		}
+		// final IWorkbenchPartSite s = getSite();
+		// if ( s != null ) {
+		// final IPartService ps = s.getService(IPartService.class);
+		// if ( ps != null ) {
+		// ps.removePartListener(SwtGui.getPartListener());
+		// }
+		// }
 		super.dispose();
 	}
 

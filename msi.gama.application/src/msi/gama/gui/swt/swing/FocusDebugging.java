@@ -11,9 +11,19 @@
  *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.logging.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.KeyboardFocusManager;
+import java.awt.Window;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 
@@ -59,12 +69,12 @@ public class FocusDebugging {
 
 		@Override
 		public void focusGained(final org.eclipse.swt.events.FocusEvent event) {
-			System.err.println("@" + System.currentTimeMillis() + " SWT focus gained " + event.getSource().hashCode());
+			System.err.println("@" + System.currentTimeMillis() + " SWT focus gained " + event.getSource());
 		}
 
 		@Override
 		public void focusLost(final org.eclipse.swt.events.FocusEvent event) {
-			System.err.println("@" + System.currentTimeMillis() + " SWT focus lost " + event.getSource().hashCode());
+			System.err.println("@" + System.currentTimeMillis() + " SWT focus lost " + event.getSource());
 		}
 	}
 
@@ -88,8 +98,7 @@ public class FocusDebugging {
 					name = "Activate";
 					break;
 			}
-			System.err.println(
-				"@" + System.currentTimeMillis() + " SWT Event: " + name + " " + System.identityHashCode(event.widget));
+			System.err.println("@" + System.currentTimeMillis() + " SWT Event: " + name + " on " + event.widget);
 		}
 	}
 
@@ -101,7 +110,7 @@ public class FocusDebugging {
 	private static class AWTWindowFocusListener implements WindowFocusListener {
 
 		private void showKFMStatus(final Window window) {
-			KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+			final KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 			System.err.println("               permanentFocusOwner: " + kfm.getPermanentFocusOwner());
 			System.err.println("               focusOwner:          " + kfm.getFocusOwner());
 			System.err.println("               window's focusOwner: " + window.getFocusOwner());
@@ -162,11 +171,11 @@ public class FocusDebugging {
 	static void addFocusListenerToTree(final Component comp) {
 		comp.addFocusListener(_AWTFocusListener);
 		if ( comp instanceof Container ) {
-			Container cont = (Container) comp;
+			final Container cont = (Container) comp;
 			// Remember to add the listener to child components that are added later.
 			cont.addContainerListener(_AWTContainerListener);
 			// Recurse across all child components that are already in the tree now.
-			int n = cont.getComponentCount();
+			final int n = cont.getComponentCount();
 			for ( int i = 0; i < n; i++ ) {
 				addFocusListenerToTree(cont.getComponent(i));
 			}
@@ -177,9 +186,9 @@ public class FocusDebugging {
 		// The exact opposite of addFocusListenerToTree.
 		comp.removeFocusListener(_AWTFocusListener);
 		if ( comp instanceof Container ) {
-			Container cont = (Container) comp;
+			final Container cont = (Container) comp;
 			cont.removeContainerListener(_AWTContainerListener);
-			int n = cont.getComponentCount();
+			final int n = cont.getComponentCount();
 			for ( int i = 0; i < n; i++ ) {
 				removeFocusListenerFromTree(cont.getComponent(i));
 			}
@@ -198,9 +207,9 @@ public class FocusDebugging {
 	}
 
 	private static void enableFinest(final String name) {
-		Logger logger = Logger.getLogger(name);
+		final Logger logger = Logger.getLogger(name);
 		logger.setLevel(Level.FINEST);
-		ConsoleHandler handler = new ConsoleHandler();
+		final ConsoleHandler handler = new ConsoleHandler();
 		handler.setLevel(Level.FINEST);
 		logger.addHandler(handler);
 	}

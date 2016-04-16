@@ -7,15 +7,13 @@ package ummisco.gama.opengl;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -74,7 +72,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	final JOGLRenderer renderer;
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
-	Map<IEventLayerListener, GamaEventListener> eventListeners = new HashMap();
+	Set<IEventLayerListener> listeners = new HashSet();
 	final LayeredDisplayOutput output;
 	final LayerManager manager;
 	protected DisplaySurfaceMenu menuManager;
@@ -320,7 +318,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	private class GamaEventListener extends MouseAdapter
-			implements MouseTrackListener, MouseMoveListener, FocusListener, KeyListener {
+			implements MouseTrackListener, MouseMoveListener, FocusListener {
 
 		final IEventLayerListener listener;
 		int down_x, down_y;
@@ -387,13 +385,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			listener.mouseExit(0, 0);
 		}
 
-		@Override
-		public void keyPressed(final KeyEvent e) {
-			listener.keyPressed(String.valueOf(e.character));
-		}
+		public void keyTyped(final char e) {
+			listener.keyPressed(String.valueOf(e));
 
-		@Override
-		public void keyReleased(final KeyEvent e) {
 		}
 
 	}
@@ -405,16 +399,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void addListener(final IEventLayerListener listener) {
-		if (eventListeners.containsKey(listener)) {
-			return;
-		}
-		final GamaEventListener l = new GamaEventListener(listener);
-		eventListeners.put(listener, l);
-		renderer.canvas.addMouseListener(l);
-		renderer.canvas.addMouseMoveListener(l);
-		renderer.canvas.addFocusListener(l);
-		renderer.canvas.addKeyListener(l);
-
+		listeners.add(listener);
 	}
 
 	/**
@@ -424,29 +409,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void removeListener(final IEventLayerListener listener) {
-		final GamaEventListener l = eventListeners.get(listener);
-		if (l == null) {
-			return;
-		}
-		eventListeners.remove(listener);
-		GAMA.getGui().run(new Runnable() {
-
-			@Override
-			public void run() {
-				if (renderer.canvas != null && !renderer.canvas.isDisposed()) {
-					renderer.canvas.removeMouseListener(l);
-					renderer.canvas.removeMouseMoveListener(l);
-					renderer.canvas.removeFocusListener(l);
-					renderer.canvas.removeKeyListener(l);
-				}
-			}
-		});
+		listeners.remove(listener);
 
 	}
 
 	@Override
 	public Collection<IEventLayerListener> getLayerListeners() {
-		return eventListeners.keySet();
+		return listeners;
 	}
 
 	/**
@@ -742,7 +711,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 
 		this.menuManager = null;
-		this.eventListeners.clear();
+		this.listeners.clear();
 
 		GAMA.releaseScope(getDisplayScope());
 		setDisplayScope(null);
@@ -877,6 +846,55 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public Envelope3D getROIDimensions() {
 		return renderer.getROIEnvelope();
+	}
+
+	@Override
+	public void dispatchKeyEvent(final char e) {
+		for (final IEventLayerListener gl : listeners) {
+			gl.keyPressed(String.valueOf(e));
+		}
+	}
+
+	@Override
+	public void dispatchMouseEvent(final int swtMouseEvent) {
+		final Point p = renderer.camera.getMousePosition();
+		final int x = p.x;
+		final int y = p.y;
+		for (final IEventLayerListener gl : listeners)
+			switch (swtMouseEvent) {
+			case SWT.MouseDown:
+				gl.mouseDown(x, y, 1);
+				break;
+			case SWT.MouseUp:
+				gl.mouseUp(x, y, 1);
+				break;
+			case SWT.MouseMove:
+				gl.mouseMove(x, y);
+				break;
+			case SWT.MouseEnter:
+				gl.mouseEnter(x, y);
+				break;
+			case SWT.MouseExit:
+				gl.mouseExit(x, y);
+				break;
+			}
+	}
+
+	@Override
+	public void setMousePosition(final int x, final int y) {
+		// Nothing to do (taken in charge by the camera)
+
+	}
+
+	@Override
+	public void selectAgentsAroundMouse() {
+		// Nothing to do (taken in charge by the picking process)
+	}
+
+	@Override
+	public void draggedTo(final int x, final int y) {
+		// Nothing to do (taken in charge by the camera
+
 	}
 
 }
