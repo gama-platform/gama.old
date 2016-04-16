@@ -5,13 +5,18 @@
 package msi.gaml.statements.draw;
 
 import java.awt.geom.Rectangle2D;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.*;
+import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
@@ -25,20 +30,24 @@ class FileExecuter extends DrawExecuter {
 	}
 
 	@Override
-		Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingData data)
-			throws GamaRuntimeException {
+	Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingData data) throws GamaRuntimeException {
 		final GamaFile file = constImg == null ? (GamaFile) item.value(scope) : constImg;
-		if ( file == null ) { return null; }
-		FileDrawingAttributes attributes = computeAttributes(scope, data, file instanceof GamaImageFile);
+		if (file == null) {
+			return null;
+		}
+		final FileDrawingAttributes attributes = computeAttributes(scope, data, file instanceof GamaImageFile);
 
 		// XXX EXPERIMENTAL See Issue #1521
-		if ( GamaPreferences.DISPLAY_ONLY_VISIBLE.getValue() ) {
-			if ( attributes.size != null ) {
+		if (GamaPreferences.DISPLAY_ONLY_VISIBLE.getValue() && !GAMA.isInHeadLessMode()) {
+			if (attributes.size != null) {
 				// if a size is provided
-				Envelope3D expected = Envelope3D.of(attributes.location);
+				final Envelope3D expected = Envelope3D.of(attributes.location);
 				expected.expandBy(attributes.size.x / 2, attributes.size.y / 2);
-				Envelope visible = g.getVisibleRegion();
-				if ( !visible.intersects(expected) ) { return null; }
+				final Envelope visible = g.getVisibleRegion();
+				if (visible != null)
+					if (!visible.intersects(expected)) {
+						return null;
+					}
 			}
 			// XXX EXPERIMENTAL
 		}
@@ -47,13 +56,13 @@ class FileExecuter extends DrawExecuter {
 	}
 
 	FileDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile) {
-		FileDrawingAttributes attributes = new FileDrawingAttributes(data.currentSize, data.currentRotation,
-			data.currentLocation, data.currentColor, imageFile ? null : data.currentBorder, scope.getAgentScope());
+		final FileDrawingAttributes attributes = new FileDrawingAttributes(data.currentSize, data.currentRotation,
+				data.currentLocation, data.currentColor, imageFile ? null : data.currentBorder, scope.getAgentScope());
 		// We push the location of the agent if none has been provided
 		attributes.setLocationIfAbsent(new GamaPoint(attributes.agent.getLocation()));
-		if ( imageFile ) {
+		if (imageFile) {
 			// If the size is provided, we automatically center the file
-			if ( attributes.size != null ) {
+			if (attributes.size != null) {
 				final GamaPoint location = attributes.location;
 				final double displayWidth = attributes.size.x;
 				final double displayHeight = attributes.size.y;
