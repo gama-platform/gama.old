@@ -393,7 +393,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			result = result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
 				camera.getY(), camera.getZ()/* , camera.getTheta(), camera.getPhi() */);
 			if ( roi != null ) {
-				result = result + "[" + Maths.round(roi.getWidth(), 2) + " x " + Maths.round(roi.getHeight(), 2) + "]";
+				result =
+					result + " ROI [" + Maths.round(roi.getWidth(), 2) + " x " + Maths.round(roi.getHeight(), 2) + "]";
 			}
 			return result;
 		}

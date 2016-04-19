@@ -130,10 +130,6 @@ public class DisplaySurfaceMenu {
 			agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent));
 	}
 
-	public Menu buildMenu(final Collection<IAgent> agents, final ILocation modelCoordinates) {
-		return fill(new Menu(swtControl), -1, true, true, agents, modelCoordinates);
-	}
-
 	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final ILocation modelCoordinates,
 		final Collection<IAgent> agents) {
 		GAMA.getGui().asyncRun(new Runnable() {
@@ -193,9 +189,12 @@ public class DisplaySurfaceMenu {
 		// AgentsMenu.MenuAction follow =
 		// new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
 		if ( withWorld ) {
-			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), userLocation, "World");
+			AgentsMenu.cascadingAgentMenuItem(menu, surface.getDisplayScope().getSimulationScope(), userLocation,
+				"World");
 			if ( filteredList != null && !filteredList.isEmpty() ) {
 				AgentsMenu.separate(menu);
+			} else {
+				return menu;
 			}
 			if ( byLayer ) {
 				AgentsMenu.separate(menu, "Layers");
@@ -205,7 +204,8 @@ public class DisplaySurfaceMenu {
 			// If the list is null or empty, no need to display anything more
 			if ( filteredList == null || filteredList.isEmpty() ) { return menu; }
 			// If only the world is selected, no need to display anything more
-			if ( filteredList.size() == 1 && filteredList.contains(GAMA.getSimulation()) ) { return menu; }
+			if ( filteredList.size() == 1 &&
+				filteredList.contains(surface.getDisplayScope().getSimulationScope()) ) { return menu; }
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
 			final AgentsMenu.MenuAction focus =
 				new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus");
@@ -234,6 +234,9 @@ public class DisplaySurfaceMenu {
 					if ( filteredList != null ) {
 						pop.retainAll(filteredList);
 					}
+					if ( pop.isEmpty() ) {
+						continue;
+					}
 					final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
 					layerMenu.setText(layerName);
 					layerMenu.setImage(layer_images.get(layer.getClass()));
@@ -248,40 +251,34 @@ public class DisplaySurfaceMenu {
 
 	public Menu buildROIMenu(final int x, final int y, final Collection<IAgent> agents,
 		final ILocation modelCoordinates, final Map<String, Runnable> actions, final Map<String, Image> images) {
-		final IDisplaySurface.OpenGL surf = (IDisplaySurface.OpenGL) surface;
-		GAMA.getGui().run(new Runnable() {
 
-			@Override
-			public void run() {
-				if ( menu != null && !menu.isDisposed() ) {
-					menu.dispose();
-				}
-				menu = buildMenu(agents, modelCoordinates);
-				menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
-				menu.setLocation(swtControl.toDisplay(x, y));
-				int i = 0;
-				for ( final String s : actions.keySet() ) {
-					final MenuItem mu = new MenuItem(menu, SWT.PUSH, i++);
-					mu.setText(s);
-					mu.setImage(images.get(s));
-					mu.addSelectionListener(new SelectionListener() {
+		if ( menu != null && !menu.isDisposed() ) {
+			menu.dispose();
+		}
+		menu = fill(new Menu(swtControl), -1, false, true, agents, modelCoordinates);
+		menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
+		menu.setLocation(swtControl.toDisplay(x, y));
+		int i = 0;
+		for ( final String s : actions.keySet() ) {
+			final MenuItem mu = new MenuItem(menu, SWT.PUSH, i++);
+			mu.setText(s);
+			mu.setImage(images.get(s));
+			mu.addSelectionListener(new SelectionListener() {
 
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							actions.get(s).run();
-						}
-
-						@Override
-						public void widgetDefaultSelected(final SelectionEvent e) {
-							widgetSelected(e);
-						}
-					});
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					actions.get(s).run();
 				}
 
-				new MenuItem(menu, SWT.SEPARATOR, i);
+				@Override
+				public void widgetDefaultSelected(final SelectionEvent e) {
+					widgetSelected(e);
+				}
+			});
+		}
 
-			}
-		});
+		new MenuItem(menu, SWT.SEPARATOR, i);
+
 		return menu;
 	}
 

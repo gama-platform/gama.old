@@ -577,23 +577,37 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				renderer.camera.zoomRoi(env);
 			}
 		});
-		final Menu menu = menuManager.buildROIMenu(renderer.camera.getMousePosition().x,
-				renderer.camera.getMousePosition().y, agents, getModelCoordinates(), actions, images);
-		menu.addMenuListener(new MenuListener() {
+		GAMA.getGui().run(new Runnable() {
 
 			@Override
-			public void menuHidden(final MenuEvent e) {
-				animator.resume();
-				renderer.cancelROI();
-			}
+			public void run() {
+				final Menu menu = menuManager.buildROIMenu(renderer.camera.getMousePosition().x,
+						renderer.camera.getMousePosition().y, agents, getModelCoordinates(), actions, images);
+				menu.addMenuListener(new MenuListener() {
 
-			@Override
-			public void menuShown(final MenuEvent e) {
-				animator.pause();
+					@Override
+					public void menuHidden(final MenuEvent e) {
+						animator.resume();
+						// Will be run after the selection
+						GAMA.getGui().asyncRun(new Runnable() {
+
+							@Override
+							public void run() {
+								renderer.cancelROI();
+							}
+						});
+
+					}
+
+					@Override
+					public void menuShown(final MenuEvent e) {
+						animator.pause();
+					}
+				});
+
+				menu.setVisible(true);
 			}
 		});
-
-		menu.setVisible(true);
 
 	}
 

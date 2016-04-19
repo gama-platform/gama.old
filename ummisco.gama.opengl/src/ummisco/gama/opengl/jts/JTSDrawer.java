@@ -1046,104 +1046,40 @@ public class JTSDrawer {
 		if (gl == null) {
 			return;
 		}
-
+		final int slices = 32;
+		final int stacks = 32;
+		final GLUT glut = new GLUT();
+		gl.glPushMatrix();
 		gl.glTranslated(pos.x, pos.y, pos.z);
-
-		final GLU glu = renderer.getGlu();
-
-		final GLUquadric quad = glu.gluNewQuadric();
-
-		if (!renderer.data.isTriangulation()) {
-
-			glu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
-		} else {
-			glu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
-		}
-		glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
-
-		final int slices = 16;
-		final int stacks = 16;
-
 		gl.glColor4d(0.5, 0.5, 0.5, 1.0);
-		glu.gluSphere(quad, 5.0 * (distance / 500), slices, stacks);
-		gl.glColor4d(0.5, 0.5, 0.5, 0.2);
-		glu.gluSphere(quad, 50.0 * (distance / 500), slices, stacks);
-		gl.glRotated(180.0, 1.0, 0.0, 0.0);
-		final float[] diffuseLight = { 1f, 2f, 1f, 0f };
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0);
-
-		gl.glTranslated(-pos.x, -pos.y, -pos.z);
+		glut.glutSolidSphere(5.0 * (distance / 500), slices, stacks);
+		gl.glColor4d(0.5, 0.5, 0.5, 0.1);
+		glut.glutSolidSphere(49.0 * (distance / 500), slices, stacks);
+		gl.glColor4d(0.5, 0.5, 0.5, 1);
+		glut.glutWireSphere(50.0 * (distance / 500), slices / 2, stacks / 2);
+		gl.glPopMatrix();
 	}
 
 	public void drawROIHelper(final GL2 gl, final Envelope3D envelope) {
+		final GLUT glut = new GLUT();
 		if (envelope == null)
 			return;
 		final GamaPoint pos = envelope.centre();
 		final double width = envelope.getWidth();
 		final double height = envelope.getHeight();
+		final double z = Math.max(2, renderer.getMaxEnvDim() / 100);
 		// TODO
 		if (gl == null) {
 			return;
 		}
-
+		gl.glPushMatrix();
 		gl.glTranslated(pos.x, pos.y, pos.z);
-		final GLU glu = renderer.getGlu();
-		final GLUquadric quad = glu.gluNewQuadric();
-		if (!renderer.data.isTriangulation()) {
-			glu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
-		} else {
-			glu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
-		}
-		glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
-		gl.glColor4d(0, 0.5, 0, 0.2);
-		final double x = width / 2;
-		final double y = height / 2;
-		final double z = Math.max(2, renderer.getMaxEnvDim() / 100);
-		gl.glBegin(GL2.GL_POLYGON); // draw using quads
-		gl.glVertex3d(-x, y, -z);
-		gl.glVertex3d(x, y, -z);
-		gl.glVertex3d(x, -y, -z);
-		gl.glVertex3d(-x, -y, -z);
-		gl.glEnd();
-		//
-		gl.glBegin(GL2.GL_POLYGON); // draw using quads
-		gl.glVertex3d(-x, y, -z);
-		gl.glVertex3d(-x, y, z);
-		gl.glVertex3d(x, y, z);
-		gl.glVertex3d(x, y, -z);
-		gl.glEnd();
-		//
-		gl.glBegin(GL2.GL_POLYGON); // draw using quads
-		gl.glVertex3d(-x, y, -z);
-		gl.glVertex3d(-x, y, z);
-		gl.glVertex3d(-x, -y, z);
-		gl.glVertex3d(-x, -y, -z);
-		gl.glEnd();
-		//
-		gl.glBegin(GL2.GL_POLYGON); // draw using quads
-		gl.glVertex3d(x, -y, -z);
-		gl.glVertex3d(x, -y, z);
-		gl.glVertex3d(x, y, z);
-		gl.glVertex3d(x, y, -z);
-		gl.glEnd();
-		//
-		gl.glBegin(GL2.GL_POLYGON); // draw using quads
-		gl.glVertex3d(x, -y, -z);
-		gl.glVertex3d(x, -y, z);
-		gl.glVertex3d(-x, -y, z);
-		gl.glVertex3d(-x, -y, -z);
-		gl.glEnd();
-		//
-		gl.glBegin(GL2.GL_POLYGON); // draw using quads
-		gl.glVertex3d(-x, y, z);
-		gl.glVertex3d(x, y, z);
-		gl.glVertex3d(x, -y, z);
-		gl.glVertex3d(-x, -y, z);
-		gl.glEnd();
-		final float[] diffuseLight = { 1f, 2f, 1f, 0f };
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0);
-
-		gl.glTranslated(-pos.x, -pos.y, -pos.z);
+		gl.glScaled(width, height, z);
+		gl.glColor4d(0, 0.5, 0, 0.15);
+		glut.glutSolidCube(0.99f);
+		gl.glColor4d(0.5, 0.5, 0.5, 1);
+		glut.glutWireCube(1f);
+		gl.glPopMatrix();
 	}
 
 	public void drawSphere(final GL2 gl, final GeometryObject g) {

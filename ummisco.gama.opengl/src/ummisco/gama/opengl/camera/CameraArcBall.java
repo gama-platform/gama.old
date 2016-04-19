@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
@@ -435,6 +436,11 @@ public class CameraArcBall extends AbstractCamera {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
 			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
+		} else if (getRenderer().mouseInROI(getMousePosition())) {
+			GamaPoint p = getRenderer().getRealWorldPointFromWindowPoint(getMousePosition());
+			p = p.minus(getRenderer().getROIEnvelope().centre());
+			getRenderer().getROIEnvelope().translate(p.x, p.y);
+
 		} else {
 
 			int horizMovement = e.x - lastMousePressedPosition.x;

@@ -299,8 +299,7 @@ public abstract class AbstractCamera implements ICamera {
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
 		if (e.button == 3) {
-			if (renderer.getROIEnvelope() != null && renderer.getROIEnvelope()
-					.contains(renderer.getRealWorldPointFromWindowPoint(lastMousePressedPosition))) {
+			if (renderer.mouseInROI(lastMousePressedPosition)) {
 				renderer.getSurface().selectionIn(renderer.getROIEnvelope());
 			} else {
 				isPickedPressed = true;
@@ -378,11 +377,11 @@ public abstract class AbstractCamera implements ICamera {
 	protected abstract boolean canSelectOnRelease(org.eclipse.swt.events.MouseEvent arg0);
 
 	protected static boolean ctrl(final org.eclipse.swt.events.MouseEvent e) {
-		return SWTAccessor.isOSX && (e.stateMask & SWT.COMMAND) != 0 || (e.stateMask & SWT.CTRL) != 0;
+		return SWTAccessor.isOSX ? (e.stateMask & SWT.COMMAND) != 0 : (e.stateMask & SWT.CTRL) != 0;
 	}
 
 	protected static boolean ctrl(final org.eclipse.swt.events.KeyEvent e) {
-		return SWTAccessor.isOSX && (e.stateMask & SWT.COMMAND) != 0 || (e.stateMask & SWT.CTRL) != 0;
+		return SWTAccessor.isOSX ? (e.stateMask & SWT.COMMAND) != 0 : (e.stateMask & SWT.CTRL) != 0;
 	}
 
 	protected static boolean shift(final org.eclipse.swt.events.MouseEvent e) {

@@ -920,4 +920,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		return textureCache;
 	}
 
+	public boolean mouseInROI(final Point mousePosition) {
+		final Envelope3D env = getROIEnvelope();
+		if (env == null)
+			return false;
+		final GamaPoint p = getRealWorldPointFromWindowPoint(mousePosition);
+		return env.contains(p);
+	}
+
 }
