@@ -128,11 +128,11 @@ Note that due to the fact that actions are written by modelers, the general func
 		<xsl:for-each select="/doc/operators/operator"> 
 			<xsl:sort select="@name" />
 				<xsl:variable name="nameOp" select="@name"/>
-			
+				<xsl:variable name="alphabetOrderOp" select="@alphabetOrder"/>			
 			<xsl:for-each select="operatorCategories/category">
 				<xsl:variable name="catItem" select="@id"/>
 				<xsl:if test="$catItem = $categoryGlobal "> 
-					<xsl:text>[</xsl:text><xsl:value-of select="$nameOp"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="@alphabetOrder = $ak"><xsl:value-of select="$fileAK"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileLZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate($nameOp, $uppercase, $smallcase)"/><xsl:text>), </xsl:text> 
+					<xsl:text>[</xsl:text><xsl:value-of select="$nameOp"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="$alphabetOrderOp = $ak"><xsl:value-of select="$fileAK"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileLZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate($nameOp, $uppercase, $smallcase)"/><xsl:text>), </xsl:text> 
 				</xsl:if>			
 			</xsl:for-each>
 		</xsl:for-each>    	
