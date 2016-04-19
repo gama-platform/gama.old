@@ -216,8 +216,7 @@ public class CameraArcBall extends AbstractCamera {
 	public void animate() {
 		// First we position the camera ???
 		super.animate();
-			if (cameraInteraction) 
-			{
+		if (cameraInteraction) {
 			// And we animate it if the keyboard is invoked
 			final double translation = 2 * (FastMath.abs(position.z) + 1) / getRenderer().getHeight();
 			if (isForward()) {
@@ -249,7 +248,7 @@ public class CameraArcBall extends AbstractCamera {
 						translateCameraFromScreenPlan(0.0, -getKeyboardSensivity()
 								* getSensivity() /** radius/1000.0 */
 						);
-	
+
 				}
 			}
 			if (isBackward()) {
@@ -347,7 +346,7 @@ public class CameraArcBall extends AbstractCamera {
 		// y is already negated
 		target.setLocation(env.centre());
 		updateCartesianCoordinatesFromAngles();
-		getRenderer().cancelROI();
+		// getRenderer().cancelROI();
 	}
 
 	@Override

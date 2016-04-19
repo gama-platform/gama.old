@@ -1,18 +1,34 @@
 package msi.gama.lang.gaml.ui.editor;
 
-import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandEvent;
+import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.GestureEvent;
+import org.eclipse.swt.events.GestureListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.SwtGui;
@@ -48,10 +64,10 @@ public class EditToolbar {
 	}
 
 	public static void visitToolbars(final IToolbarVisitor visitor) {
-		IEditorReference[] eds = SwtGui.getPage().getEditorReferences();
-		for ( IEditorReference ed : eds ) {
-			IEditorPart e = ed.getEditor(false);
-			if ( e instanceof GamlEditor ) {
+		final IEditorReference[] eds = SwtGui.getPage().getEditorReferences();
+		for (final IEditorReference ed : eds) {
+			final IEditorPart e = ed.getEditor(false);
+			if (e instanceof GamlEditor) {
 				visitor.visit(((GamlEditor) e).getEditToolbar());
 			}
 		}
@@ -64,20 +80,48 @@ public class EditToolbar {
 	}
 
 	public void installGesturesFor(final GamlEditor editor) {
-		StyledText text = editor.getInternalSourceViewer().getTextWidget();
-		if ( text != null ) {
+		final StyledText text = editor.getInternalSourceViewer().getTextWidget();
+		if (text != null) {
+			// text.addFocusListener(new FocusListener() {
+			//
+			// @Override
+			// public void focusLost(final FocusEvent e) {
+			// // System.out.println("The editor has lost focus");
+			// }
+			//
+			// @Override
+			// public void focusGained(final FocusEvent e) {
+			// // System.out.println("The editor has gained focus");
+			// }
+			// });
+			// text.addMouseListener(new MouseListener() {
+			//
+			// @Override
+			// public void mouseUp(final MouseEvent e) {
+			// // System.out.println("The editor has had a click");
+			// WorkaroundForIssue1353.showShell();
+			// }
+			//
+			// @Override
+			// public void mouseDown(final MouseEvent e) {
+			// }
+			//
+			// @Override
+			// public void mouseDoubleClick(final MouseEvent e) {
+			// }
+			// });
 			text.addGestureListener(new GestureListener() {
 
 				@Override
 				public void gesture(final GestureEvent ge) {
-					if ( ge.detail == SWT.GESTURE_BEGIN ) {
+					if (ge.detail == SWT.GESTURE_BEGIN) {
 
 					} else
 
-					if ( ge.detail == SWT.GESTURE_MAGNIFY ) {
-						if ( ge.magnification > 1.0 ) {
+					if (ge.detail == SWT.GESTURE_MAGNIFY) {
+						if (ge.magnification > 1.0) {
 							setFontAndCheckButtons(1);
-						} else if ( ge.magnification < 1.0 ) {
+						} else if (ge.magnification < 1.0) {
 							setFontAndCheckButtons(-1);
 						}
 					}
@@ -95,10 +139,9 @@ public class EditToolbar {
 
 	public void createToolbar(final Composite parentComposite) {
 		toolbar = new GamaToolbarSimple(parentComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.FILL | SWT.BORDER)
-			./*
-				 * color(
-				 * IGamaColors.WHITE.color()).
-				 */width(parentComposite);
+				./*
+					 * color( IGamaColors.WHITE.color()).
+					 */width(parentComposite);
 		editGridData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		editGridData.verticalIndent = 0;
 		editGridData.horizontalAlignment = SWT.LEFT;
@@ -139,7 +182,7 @@ public class EditToolbar {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				boolean selection = ((ToolItem) e.widget).getSelection();
+				final boolean selection = ((ToolItem) e.widget).getSelection();
 				editor.setDecorationEnabled(selection);
 				editor.decorate(selection);
 			}
@@ -173,13 +216,13 @@ public class EditToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try {
-					ICommandService service = editor.getSite().getService(ICommandService.class);
-					Command c = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
-					if ( c.isEnabled() ) {
-						IHandlerService handlerService = editor.getSite().getService(IHandlerService.class);
+					final ICommandService service = editor.getSite().getService(ICommandService.class);
+					final Command c = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
+					if (c.isEnabled()) {
+						final IHandlerService handlerService = editor.getSite().getService(IHandlerService.class);
 						handlerService.executeCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY, null);
 					}
-				} catch (Exception e1) {
+				} catch (final Exception e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -190,20 +233,21 @@ public class EditToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try {
-					ICommandService service = editor.getSite().getService(ICommandService.class);
-					Command c = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
-					if ( c.isEnabled() ) {
-						IHandlerService handlerService = editor.getSite().getService(IHandlerService.class);
+					final ICommandService service = editor.getSite().getService(ICommandService.class);
+					final Command c = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
+					if (c.isEnabled()) {
+						final IHandlerService handlerService = editor.getSite().getService(IHandlerService.class);
 						handlerService.executeCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY, null);
 					}
-				} catch (Exception e1) {
+				} catch (final Exception e1) {
 					e1.printStackTrace();
 				}
 			}
 		});
 
-		// Attaching listeners to the global commands in order to enable/disable the toolbar items
-		ICommandService service = editor.getSite().getService(ICommandService.class);
+		// Attaching listeners to the global commands in order to enable/disable
+		// the toolbar items
+		final ICommandService service = editor.getSite().getService(ICommandService.class);
 		final Command nextCommand = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
 		nextEdit.setEnabled(nextCommand.isEnabled());
 		final ICommandListener nextListener = new ICommandListener() {
@@ -225,7 +269,8 @@ public class EditToolbar {
 		};
 		lastEdit.setEnabled(lastCommand.isEnabled());
 		lastCommand.addCommandListener(lastListener);
-		// Attaching dispose listeners to the toolItems so that they remove the command listeners properly
+		// Attaching dispose listeners to the toolItems so that they remove the
+		// command listeners properly
 		lastEdit.addDisposeListener(new DisposeListener() {
 
 			@Override
@@ -245,10 +290,10 @@ public class EditToolbar {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				if ( e.detail != SWT.ARROW ) {
+				if (e.detail != SWT.ARROW) {
 					try {
 						SwtGui.getPage().showView("msi.gama.application.outline", null, IWorkbenchPage.VIEW_VISIBLE);
-					} catch (PartInitException ex) {
+					} catch (final PartInitException ex) {
 						ex.printStackTrace();
 					}
 					return;
@@ -286,23 +331,27 @@ public class EditToolbar {
 		});
 
 		/**
-		 * Serialization : commented because a bit too experimental for the moment
+		 * Serialization : commented because a bit too experimental for the
+		 * moment
 		 */
-		// toolbar.button("editor.serialize2", null, "Re-serialize the model (warning: removes all comments)",
+		// toolbar.button("editor.serialize2", null, "Re-serialize the model
+		// (warning: removes all comments)",
 		// new SelectionAdapter() {
 		//
 		// @Override
 		// public void widgetSelected(final SelectionEvent e) {
 		// editor.getInternalSourceViewer().setSelectedRange(0,
 		// editor.getInternalSourceViewer().getTextWidget().getCharCount());
-		// String result = editor.getDocument().modify(new IUnitOfWork<String, XtextResource>() {
+		// String result = editor.getDocument().modify(new IUnitOfWork<String,
+		// XtextResource>() {
 		//
 		// @Override
 		// public String exec(final XtextResource state) throws Exception {
 		// if ( state.getErrors().isEmpty() ) {
 		// java.util.List<GamlCompilationError> list = new ArrayList();
 		// ModelDescription md =
-		// DescriptionFactory.getModelFactory().buildModelDescription(state.getURI(), list);
+		// DescriptionFactory.getModelFactory().buildModelDescription(state.getURI(),
+		// list);
 		// if ( md != null ) {
 		// md = (ModelDescription) md.validate();
 		// if ( !state.getErrors().isEmpty() ) { return null; }
@@ -375,12 +424,16 @@ public class EditToolbar {
 	}
 
 	private void setFontAndCheckButtons(final int deltaToApply) {
-		StyledText text = editor.getInternalSourceViewer().getTextWidget();
-		FontData data = text.getFont().getFontData()[0];
+		final StyledText text = editor.getInternalSourceViewer().getTextWidget();
+		final FontData data = text.getFont().getFontData()[0];
 		data.height += deltaToApply;
-		if ( data.height < 6 ) { return; }
-		if ( font != null ) {
-			if ( data.equals(font.getFontData()[0]) ) { return; }
+		if (data.height < 6) {
+			return;
+		}
+		if (font != null) {
+			if (data.equals(font.getFontData()[0])) {
+				return;
+			}
 		}
 		// if ( font != null && !font.isDisposed() ) {
 		// font.dispose();
@@ -402,7 +455,9 @@ public class EditToolbar {
 	}
 
 	private void registerListeners() {
-		if ( listenersRegistered ) { return; }
+		if (listenersRegistered) {
+			return;
+		}
 		listenersRegistered = true;
 		// Listening to "Mark occurrences..."
 		final GamaPreferences.Entry<Boolean> pref = GamaPreferences.get("editor.mark.occurrences", Boolean.class);
@@ -426,14 +481,14 @@ public class EditToolbar {
 		};
 		pref.addChangeListener(change);
 		// Listening to "Line number"
-		IPreferenceStore store = editor.getAdvancedPreferenceStore();
+		final IPreferenceStore store = editor.getAdvancedPreferenceStore();
 		store.addPropertyChangeListener(new IPropertyChangeListener() {
 
 			@Override
 			public void propertyChange(final PropertyChangeEvent event) {
-				String id = event.getProperty();
+				final String id = event.getProperty();
 				IToolbarVisitor visitor = null;
-				if ( id.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER) ) {
+				if (id.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER)) {
 					visitor = new IToolbarVisitor() {
 
 						@Override
@@ -442,7 +497,7 @@ public class EditToolbar {
 						}
 					};
 				}
-				if ( visitor != null ) {
+				if (visitor != null) {
 					visitToolbars(visitor);
 				}
 			}
@@ -453,15 +508,15 @@ public class EditToolbar {
 	 *
 	 */
 	public void resetColorMenu() {
-		EditToolbarMenu menu = EditToolbarMenuFactory.getInstance().getColorMenu();
-		if ( menu != null ) {
+		final EditToolbarMenu menu = EditToolbarMenuFactory.getInstance().getColorMenu();
+		if (menu != null) {
 			menu.reset();
 		}
 	}
 
 	public void resetOperatorsMenu() {
-		EditToolbarMenu menu = EditToolbarMenuFactory.getInstance().getOperatorsMenu();
-		if ( menu != null ) {
+		final EditToolbarMenu menu = EditToolbarMenuFactory.getInstance().getOperatorsMenu();
+		if (menu != null) {
 			menu.reset();
 		}
 	}

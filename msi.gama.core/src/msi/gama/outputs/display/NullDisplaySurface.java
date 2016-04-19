@@ -328,9 +328,9 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(java.lang.Object)
 	 */
-	@Override
-	public void setSWTMenuManager(final Object displaySurfaceMenu) {
-	}
+	// @Override
+	// public void setSWTMenuManager(final Object displaySurfaceMenu) {
+	// }
 
 	/**
 	 * Method layersChanged()
@@ -437,6 +437,12 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void draggedTo(final int x, final int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setMenuManager(final Object displaySurfaceMenu) {
 		// TODO Auto-generated method stub
 
 	}

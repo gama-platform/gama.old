@@ -8,7 +8,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.runtime.GAMA;
 
@@ -29,7 +28,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	protected Composite createSurfaceComposite(final Composite parent) {
 		surface = new SWTOpenGLDisplaySurface(parent, getOutput());
 		surfaceComposite = surface.renderer.getCanvas();
-		surface.setSWTMenuManager(new DisplaySurfaceMenu(surface, surfaceComposite, this));
+		// new DisplaySurfaceMenu(surface, surfaceComposite, this);
 		surface.outputReloaded();
 		return surfaceComposite;
 	}

@@ -12,19 +12,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import com.jogamp.opengl.FPSCounter;
@@ -40,7 +35,6 @@ import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -74,7 +68,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected boolean zoomFit = true;
 	Set<IEventLayerListener> listeners = new HashSet();
 	final LayeredDisplayOutput output;
-	final LayerManager manager;
+	final LayerManager layerManager;
 	protected DisplaySurfaceMenu menuManager;
 	protected IExpression temp_focus;
 	IScope scope;
@@ -85,7 +79,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	// NEVER USED
 	public SWTOpenGLDisplaySurface(final Object... objects) {
 		parent = null;
-		manager = null;
+		layerManager = null;
 		output = null;
 		animator = null;
 		renderer = null;
@@ -105,10 +99,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		renderer = createRenderer();
 		animator = createAnimator();
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
-		manager = new LayerManager(this, output);
+		layerManager = new LayerManager(this, output);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 
 		animator.start();
+	}
+
+	@Override
+	public void setMenuManager(final Object menuManager) {
+		this.menuManager = (DisplaySurfaceMenu) menuManager;
 	}
 
 	/**
@@ -159,7 +158,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			if (force) {
 				animator.resume();
 			}
-			manager.drawLayersOn(renderer);
+			layerManager.drawLayersOn(renderer);
 
 			// EXPERIMENTAL
 
@@ -242,7 +241,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public ILayerManager getManager() {
-		return manager;
+		return layerManager;
 	}
 
 	/**
@@ -309,87 +308,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySurface"));
 		getDisplayScope().disableErrorReporting();
 		renderer.initScene();
-		manager.outputChanged();
+		layerManager.outputChanged();
 
 		// resizeImage(getWidth(), getHeight(), true);
 		if (zoomFit) {
 			zoomFit();
 		}
-	}
-
-	private class GamaEventListener extends MouseAdapter
-			implements MouseTrackListener, MouseMoveListener, FocusListener {
-
-		final IEventLayerListener listener;
-		int down_x, down_y;
-
-		GamaEventListener(final IEventLayerListener listener) {
-			this.listener = listener;
-		}
-
-		@Override
-		public void mouseMove(final MouseEvent e) {
-			if (e.button > 0) {
-				return;
-			}
-			listener.mouseMove(e.x, e.y);
-		}
-
-		@Override
-		public void mouseExit(final MouseEvent e) {
-			if (e.button > 0) {
-				return;
-			}
-			listener.mouseExit(e.x, e.y);
-		}
-
-		@Override
-		public void mouseEnter(final MouseEvent e) {
-			if (e.button > 0) {
-				return;
-			}
-			listener.mouseEnter(e.x, e.y);
-		}
-
-		@Override
-		public void mouseHover(final MouseEvent e) {
-			if (e.button > 0) {
-				return;
-			}
-			listener.mouseMove(e.x, e.y);
-		}
-
-		@Override
-		public void mouseDown(final MouseEvent e) {
-			down_x = e.x;
-			down_y = e.y;
-			listener.mouseDown(e.x, e.y, e.button);
-		}
-
-		@Override
-		public void mouseUp(final MouseEvent e) {
-			if (e.x == down_x && e.y == down_y) {
-				listener.mouseClicked(e.x, e.y, e.button);
-			} else {
-				listener.mouseUp(e.x, e.y, e.button);
-			}
-		}
-
-		@Override
-		public void focusGained(final FocusEvent e) {
-			listener.mouseEnter(0, 0);
-		}
-
-		@Override
-		public void focusLost(final FocusEvent e) {
-			listener.mouseExit(0, 0);
-		}
-
-		public void keyTyped(final char e) {
-			listener.keyPressed(String.valueOf(e));
-
-		}
-
 	}
 
 	/**
@@ -620,7 +544,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agent);
 	}
 
-	org.eclipse.swt.widgets.Menu menu;
+	// org.eclipse.swt.widgets.Menu menu;
 
 	/**
 	 * Method selectSeveralAgents()
@@ -639,17 +563,38 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 			@Override
 			public void run() {
-				if (menu != null && !menu.isDisposed()) {
-					menu.dispose();
-				}
+				// if (menu != null && !menu.isDisposed()) {
+				// menu.dispose();
+				// }
 				final Control swtControl = renderer.getCanvas();
-				final DisplayedAgentsMenu menuBuilder = new DisplayedAgentsMenu();
-				menu = menuBuilder.getMenu(SWTOpenGLDisplaySurface.this, swtControl, true, true, agents,
-						getModelCoordinates(), true);
+				final Menu menu = menuManager.buildMenu(agents, getModelCoordinates());
+				// final DisplayedAgentsMenu menuBuilder = new
+				// DisplayedAgentsMenu();
+				// final Menu menu =
+				// menuBuilder.getMenu(SWTOpenGLDisplaySurface.this, swtControl,
+				// true, true, agents,
+				// getModelCoordinates(), true);
 				menu.setData(IKeyword.USER_LOCATION, getModelCoordinates());
 				menu.setLocation(swtControl.toDisplay(renderer.camera.getMousePosition().x,
 						renderer.camera.getMousePosition().y));
-				final MenuItem mu = new MenuItem(menu, SWT.PUSH, 0);
+				final MenuItem ms = new MenuItem(menu, SWT.CHECK, 0);
+				ms.setText("Keep region visible");
+				ms.setSelection(renderer.camera.isROISticky());
+				ms.addSelectionListener(new SelectionListener() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						renderer.camera.toggleStickyROI();
+					}
+
+					@Override
+					public void widgetDefaultSelected(final SelectionEvent e) {
+						widgetSelected(e);
+
+					}
+				});
+				ms.setImage(IGamaIcons.MENU_FOLLOW.image());
+				final MenuItem mu = new MenuItem(menu, SWT.PUSH, 1);
 				mu.setText("Focus on region...");
 				mu.addSelectionListener(new SelectionListener() {
 
@@ -665,14 +610,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					}
 				});
 				mu.setImage(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT.image());
-				new MenuItem(menu, SWT.SEPARATOR, 1);
+				new MenuItem(menu, SWT.SEPARATOR, 2);
 				menu.addMenuListener(new MenuListener() {
 
 					@Override
 					public void menuHidden(final MenuEvent e) {
-
-						renderer.cancelROI();
 						animator.resume();
+						renderer.cancelROI();
+						if (!menu.isDisposed())
+							menu.dispose();
 					}
 
 					@Override
@@ -699,16 +645,16 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			return;
 		}
 		disposed = true;
-		if (manager != null) {
-			manager.dispose();
+		if (layerManager != null) {
+			layerManager.dispose();
 		}
 		if (animator != null && animator.isStarted()) {
 			animator.stop();
 		}
-		if (this.menu != null && !menu.isDisposed()) {
-			menu.dispose();
-			this.menu = null;
-		}
+		// if (this.menu != null && !menu.isDisposed()) {
+		// menu.dispose();
+		// this.menu = null;
+		// }
 
 		this.menuManager = null;
 		this.listeners.clear();
@@ -780,16 +726,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return parent;
 	}
 
-	/**
-	 * Method setSWTMenuManager()
-	 * 
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(java.lang.Object)
-	 */
-	@Override
-	public void setSWTMenuManager(final Object displaySurfaceMenu) {
-		menuManager = (DisplaySurfaceMenu) displaySurfaceMenu;
-	}
-
 	private JOGLRenderer createRenderer() {
 		return new JOGLRenderer(this);
 	}
@@ -806,7 +742,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	public void invalidateVisibleRegions() {
-		for (final ILayer layer : manager.getItems()) {
+		for (final ILayer layer : layerManager.getItems()) {
 			layer.setVisibleRegion(null);
 		}
 	}

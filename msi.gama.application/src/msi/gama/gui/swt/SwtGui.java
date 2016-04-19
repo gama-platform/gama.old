@@ -53,7 +53,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -133,23 +132,6 @@ public class SwtGui extends AbstractGui {
 		}
 	}
 
-	// protected SwtGui() {
-	// getDisplay().addFilter(SWT.MouseDown, new Listener() {
-	//
-	// @Override
-	// public void handleEvent(final Event event) {
-	// MOUSE_DOWN = true;
-	// }
-	// });
-	// getDisplay().addFilter(SWT.MouseUp, new Listener() {
-	//
-	// @Override
-	// public void handleEvent(final Event event) {
-	// MOUSE_DOWN = false;
-	// }
-	// });
-	// }
-
 	// Needed by RCP for displaying the simulation state
 	public static ISimulationStateProvider state = null;
 
@@ -225,32 +207,6 @@ public class SwtGui extends AbstractGui {
 
 	static final QualifiedName updateProperty = new QualifiedName("msi.gama.application", "update");
 
-	// private class Views {
-	//
-	// void close(final IDisplayOutput out) {
-	// final IGamaView view = findView(out);
-	// if ( view == null ) { return; }
-	// run(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// view.close();
-	// }
-	// });
-	//
-	// }
-	//
-	// void update(final IDisplayOutput out) {
-	// final IGamaView view = findView(out);
-	// if ( view == null ) { return; }
-	// view.update(out);
-	// }
-	//
-	// // void refresh(final IDisplayOutput out, final int rate) {
-	// // new ViewAction(out, rate).schedule();
-	// // }
-	// }
-
 	class Tell implements Runnable {
 
 		String message;
@@ -312,7 +268,7 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
-		debug("ASKING THE USER ABOUT CHANGING");
+		// debug("ASKING THE USER ABOUT CHANGING");
 		if ( !GamaPreferences.CORE_ASK_CLOSING.getValue() ) { return true; }
 		return MessageDialog.openQuestion(getShell(), "Close simulation confirmation",
 			"Do you want to close experiment '" + exp.getName() + "' of model '" + exp.getModel().getName() + "' ?");
@@ -366,7 +322,7 @@ public class SwtGui extends AbstractGui {
 	}
 
 	private void clearErrors() {
-		debug("Closing Error View");
+		// debug("Closing Error View");
 		final IViewReference ref = getPage().findViewReference(ErrorView.ID);
 		if ( ref == null ) { return; }
 		final ErrorView v = (ErrorView) ref.getPart(false);
@@ -626,13 +582,6 @@ public class SwtGui extends AbstractGui {
 		return null;
 	}
 
-	public static IPartListener2 getPartListener() {
-		if ( partListener == null ) {
-			partListener = new GamaPartListener();
-		}
-		return partListener;
-	}
-
 	public void hideMonitorView() {
 		final MonitorView m = (MonitorView) hideView(MonitorView.ID);
 		if ( m != null ) {
@@ -643,82 +592,10 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void showConsoleView() {
 		console = (ConsoleView) showView(CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-		// eraseConsole(false);
 		if ( consoleBuffer.length() > 0 ) {
 			console.append(consoleBuffer.toString(), null, null);
 			consoleBuffer.setLength(0);
 		}
-	}
-
-	public static class GamaPartListener implements IPartListener2 {
-
-		@Override
-		public void partActivated(final IWorkbenchPartReference partRef) {
-			WorkaroundForIssue1353.fixViewLosingMouseTrackEvents();
-			// IWorkbenchPart part = partRef.getPart(false);
-			// if ( part instanceof IGamaView ) {
-			// ((IGamaView) part).showToolbar();
-			// }
-		}
-
-		@Override
-		public void partClosed(final IWorkbenchPartReference partRef) {
-			// if ( partRef.getPart(false) instanceof IGamaView ) {
-			// final IExperimentPlan s = GAMA.getExperiment();
-			// if ( s == null ) { return; }
-			// final List<IOutputManager> m = s.getAllSimulationOutputs();
-			// if ( !m.isEmpty() ) {
-			// for ( IOutputManager manager : m ) {
-			// manager.removeOutput(((IGamaView) partRef.getPart(false)).getOutput());
-			// }
-			// }
-			// }
-		}
-
-		@Override
-		public void partDeactivated(final IWorkbenchPartReference partRef) {
-			// IWorkbenchPart part = partRef.getPart(false);
-			// if ( part instanceof IGamaView ) {
-			// ((IGamaView) part).hideToolbar();
-			// }
-			// // }
-
-		}
-
-		@Override
-		public void partOpened(final IWorkbenchPartReference partRef) {
-			WorkaroundForIssue1353.fixViewLosingMouseTrackEvents();
-			if ( partRef.getPart(false) instanceof LayeredDisplayView ) {
-				final LayeredDisplayView view = (LayeredDisplayView) partRef.getPart(false);
-				surfaces.add(view.getDisplaySurface());
-			}
-		}
-
-		@Override
-		public void partBroughtToTop(final IWorkbenchPartReference part) {}
-
-		/**
-		 * Method partHidden()
-		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-		 */
-		@Override
-		public void partHidden(final IWorkbenchPartReference partRef) {}
-
-		/**
-		 * Method partVisible()
-		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-		 */
-		@Override
-		public void partVisible(final IWorkbenchPartReference partRef) {
-
-		}
-
-		/**
-		 * Method partInputChanged()
-		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-		 */
-		@Override
-		public void partInputChanged(final IWorkbenchPartReference partRef) {}
 	}
 
 	static void initFonts() {
@@ -1385,7 +1262,6 @@ public class SwtGui extends AbstractGui {
 	public void cleanAfterSimulation() {
 		setSelectedAgent(null);
 		setHighlightedAgent(null);
-		surfaces.clear();
 		status.resume();
 		// AD: Fix for issue #1342 -- verify that it does not break something else in the dynamics of closing/opening
 		closeDialogs();
@@ -1410,9 +1286,14 @@ public class SwtGui extends AbstractGui {
 	 * @see msi.gama.common.interfaces.IGui#getFirstDisplaySurface()
 	 */
 	public static IDisplaySurface getFirstDisplaySurface() {
-		if ( surfaces.isEmpty() ) { return null; }
-		if ( surfaces.size() > 1 ) { return null; }
-		return surfaces.get(0);
+		final IViewReference[] viewRefs = getPage().getViewReferences();
+		for ( final IViewReference ref : viewRefs ) {
+			final IWorkbenchPart part = ref.getPart(false);
+			if ( part instanceof LayeredDisplayView ) {
+
+			return ((LayeredDisplayView) part).getDisplaySurface(); }
+		}
+		return null;
 	}
 
 	public static void setSpeedControl(final ISpeedDisplayer d) {

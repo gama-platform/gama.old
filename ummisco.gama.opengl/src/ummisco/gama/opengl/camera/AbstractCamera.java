@@ -15,11 +15,14 @@ import java.awt.Point;
 import java.nio.IntBuffer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.nativewindow.swt.SWTAccessor;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLRunnable;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 
@@ -31,11 +34,6 @@ import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
-
-import org.eclipse.swt.events.MouseEvent;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLRunnable;
-
 
 public abstract class AbstractCamera implements ICamera {
 
@@ -69,8 +67,9 @@ public abstract class AbstractCamera implements ICamera {
 	private boolean goesBackward;
 	private boolean strafeLeft;
 	private boolean strafeRight;
-	
-	private boolean ROICurrentlyDrawn = false;
+
+	private volatile boolean ROICurrentlyDrawn = false;
+	private volatile boolean isROISticky = false;
 
 	protected boolean ctrlPressed = false;
 	protected boolean shiftPressed = false;
@@ -83,6 +82,16 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	public void updateSphericalCoordinatesFromLocations() {
+	}
+
+	@Override
+	public void toggleStickyROI() {
+		isROISticky = !isROISticky;
+	}
+
+	@Override
+	public boolean isROISticky() {
+		return isROISticky;
 	}
 
 	@Override
@@ -102,7 +111,9 @@ public abstract class AbstractCamera implements ICamera {
 			if (camLookUpVector != LayeredDisplayData.getNoChange()) {
 				upPosition(camLookUpVector.getX(), camLookUpVector.getY(), camLookUpVector.getZ());
 			}
-			if (cameraInteraction) { // cameraInteractionDisabled is true when the camera_interaction facet is turned to false.
+			if (cameraInteraction) { // cameraInteractionDisabled is true when
+										// the camera_interaction facet is
+										// turned to false.
 				if (flipped)
 					upPosition(
 							-(-FastMath.cos(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
@@ -214,7 +225,7 @@ public abstract class AbstractCamera implements ICamera {
 		});
 
 	}
-	
+
 	protected void internalMouseMove(final MouseEvent e) {
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
@@ -280,7 +291,7 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected void internalMouseDown(final MouseEvent e) {
-
+		// System.out.println("Detecting mouse down in camera");
 		if (firsttimeMouseDown) {
 			firstMousePressedPosition = new Point(e.x, e.y);
 			firsttimeMouseDown = false;
@@ -288,9 +299,14 @@ public abstract class AbstractCamera implements ICamera {
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
 		if (e.button == 3) {
-			isPickedPressed = true;
-			getRenderer().setPicking(true);
-			// myRenderer.drawPickableObjects();
+			if (renderer.getROIEnvelope() != null && renderer.getROIEnvelope()
+					.contains(renderer.getRealWorldPointFromWindowPoint(lastMousePressedPosition))) {
+				renderer.getSurface().selectionIn(renderer.getROIEnvelope());
+			} else {
+				isPickedPressed = true;
+				getRenderer().setPicking(true);
+			}
+
 		} else if (e.button == 2) { // mouse wheel
 			resetPivot();
 		} else {
@@ -342,21 +358,20 @@ public abstract class AbstractCamera implements ICamera {
 			setMouseLeftPressed(false);
 
 	}
-	
+
 	private void startROI(final org.eclipse.swt.events.MouseEvent e) {
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
 		renderer.defineROI(firstMousePressedPosition, getMousePosition());
 		ROICurrentlyDrawn = true;
 	}
-	
+
 	private void finishROISelection() {
 		if (ROICurrentlyDrawn) {
 			final Envelope3D env = renderer.getROIEnvelope();
 			if (env != null) {
 				renderer.getSurface().selectionIn(env);
 			}
-			renderer.cancelROI();
 		}
 	}
 
@@ -560,9 +575,9 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public final void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
-		
+
 		renderer.getDrawable().invoke(false, new GLRunnable() {
-			
+
 			@Override
 			public boolean run(final GLAutoDrawable drawable) {
 				if (cameraInteraction) {
@@ -649,17 +664,19 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public final void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
-		
+
 		renderer.getDrawable().invoke(false, new GLRunnable() {
 
 			@Override
 			public boolean run(final GLAutoDrawable drawable) {
 				if (cameraInteraction) {
 					switch (e.keyCode) {
-					case SWT.ARROW_LEFT: // player turns left (scene rotates right)
+					case SWT.ARROW_LEFT: // player turns left (scene rotates
+											// right)
 						strafeLeft = false;
 						break;
-					case SWT.ARROW_RIGHT: // player turns right (scene rotates left)
+					case SWT.ARROW_RIGHT: // player turns right (scene rotates
+											// left)
 						strafeRight = false;
 						break;
 					case SWT.ARROW_UP:

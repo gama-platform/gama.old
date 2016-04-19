@@ -457,9 +457,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(java.lang.Object)
 	 */
-	@Override
-	public void setSWTMenuManager(final Object displaySurfaceMenu) {
-	}
+	// @Override
+	// public void setSWTMenuManager(final Object displaySurfaceMenu) {
+	// }
 
 	/**
 	 * Method layersChanged()
@@ -556,6 +556,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void selectAgentsAroundMouse() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setMenuManager(final Object displaySurfaceMenu) {
 		// TODO Auto-generated method stub
 
 	}

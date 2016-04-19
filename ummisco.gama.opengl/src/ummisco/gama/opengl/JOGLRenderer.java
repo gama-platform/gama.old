@@ -36,7 +36,6 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.awt.TextRenderer;
-import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -93,7 +92,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
 	private GLU glu;
-	private final GLUT glut = new GLUT();
+	// private final GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
 	private volatile boolean inited;
@@ -143,6 +142,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public void cancelROI() {
+		if (camera.isROISticky())
+			return;
 		ROIEnvelope = null;
 	}
 

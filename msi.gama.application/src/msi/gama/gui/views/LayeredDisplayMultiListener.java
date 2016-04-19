@@ -23,7 +23,10 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	final LayeredDisplayView view;
 	final Control control;
-	boolean mouseIsDown;
+	volatile boolean mouseIsDown;
+	volatile boolean inMenu;
+	long lastEnterTime;
+	Point lastEnterPosition = new Point(0, 0);
 
 	public LayeredDisplayMultiListener(final LayeredDisplayView view) {
 		this.view = view;
@@ -33,7 +36,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		control.addMenuDetectListener(this);
 		control.addDragDetectListener(this);
 		control.addMouseTrackListener(this);
-		control.addMouseWheelListener(this);
+		// control.addMouseWheelListener(this);
 		control.addMouseMoveListener(this);
 		control.addFocusListener(this);
 	}
@@ -46,22 +49,19 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		control.removeMenuDetectListener(this);
 		control.removeDragDetectListener(this);
 		control.removeMouseTrackListener(this);
-		control.removeMouseWheelListener(this);
+		// control.removeMouseWheelListener(this);
 		control.removeMouseMoveListener(this);
 		control.removeFocusListener(this);
 	}
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		// System.out.println("Control " + control.getData("NAME") + " has received key: " + e.character);
 		view.getDisplaySurface().dispatchKeyEvent(e.character);
 		GAMA.getGui().asyncRun(view.displayOverlay);
 	}
 
 	@Override
-	public void keyReleased(final KeyEvent e) {
-		// System.out.println("Control " + control.getData("NAME") + " has released key: " + e.character);
-	}
+	public void keyReleased(final KeyEvent e) {}
 
 	@Override
 	public void mouseScrolled(final MouseEvent e) {}
@@ -73,24 +73,30 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		view.getDisplaySurface().setMousePosition(e.x, e.y);
 		if ( e.button > 0 )
 			return;
+		lastEnterTime = System.currentTimeMillis();
+		lastEnterPosition = new Point(e.x, e.y);
+		// System.out.println("Mouse entering " + e);
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseEnter);
 	}
 
 	@Override
 	public void mouseExit(final MouseEvent e) {
+		final long currentTime = System.currentTimeMillis();
+		if ( currentTime - lastEnterTime < 100 && lastEnterPosition.x == e.x && lastEnterPosition.y == e.y ) { return; }
 		view.getDisplaySurface().setMousePosition(-1, -1);
 		if ( e.button > 0 )
 			return;
-
+		// System.out.println("Mouse exiting " + e);
+		WorkaroundForIssue1353.showShell();
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseExit);
-		WorkaroundForIssue1353.fixViewLosingMouseTrackEvents();
-
 	}
 
 	@Override
 	public void mouseHover(final MouseEvent e) {
+
 		if ( e.button > 0 )
 			return;
+		// System.out.println("Mouse hovering on " + view.getPartName());
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseHover);
 	}
 
@@ -116,27 +122,39 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	@Override
 	public void mouseDown(final MouseEvent e) {
 		view.getDisplaySurface().setMousePosition(e.x, e.y);
+		if ( inMenu ) {
+			inMenu = false;
+			return;
+		}
 		if ( (e.stateMask & SWT.MODIFIER_MASK) != 0 )
 			return;
 		mouseIsDown = true;
+		// System.out.println("Mouse down on " + view.getPartName());
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseDown);
 	}
 
 	@Override
 	public void mouseUp(final MouseEvent e) {
+		// In case the mouse has moved (for example on a menu)
+		if ( !mouseIsDown )
+			return;
+		view.getDisplaySurface().setMousePosition(e.x, e.y);
 		if ( (e.stateMask & SWT.MODIFIER_MASK) != 0 )
 			return;
-		// In case the mouse has moved (for example on a menu)
-		view.getDisplaySurface().setMousePosition(e.x, e.y);
 		mouseIsDown = false;
+		// System.out.println("Mouse up on " + view.getPartName());
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseUp);
 	}
 
 	@Override
 	public void menuDetected(final MenuDetectEvent e) {
+		if ( inMenu ) // In case a double event is sent
+			return;
+		// System.out.println("Menu detected on " + view.getPartName());
 		final Point p = control.toControl(e.x, e.y);
 		final int x = p.x;
 		final int y = p.y;
+		inMenu = true;
 		view.getDisplaySurface().setMousePosition(x, y);
 		view.getDisplaySurface().selectAgentsAroundMouse();
 	}
@@ -148,14 +166,15 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void focusGained(final FocusEvent e) {
-		// System.out.println("Control " + control.getData("NAME") + " has gained focus");
+		// System.out.println("Control has gained focus");
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseEnter);
+		// Thread.dumpStack();
 	}
 
 	@Override
 	public void focusLost(final FocusEvent e) {
-		// System.out.println("Control " + control.getData("NAME") + " has lost focus");
-
+		// System.out.println("Control has lost focus");
+		// Thread.dumpStack();
 	}
 
 }

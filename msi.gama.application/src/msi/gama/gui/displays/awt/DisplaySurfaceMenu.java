@@ -11,41 +11,93 @@
  **********************************************************************************************/
 package msi.gama.gui.displays.awt;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.commands.AgentsMenu;
+import msi.gama.gui.swt.commands.AgentsMenu.MenuAction;
 import msi.gama.gui.swt.swing.Platform;
 import msi.gama.gui.views.LayeredDisplayView;
-import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.outputs.layers.AgentLayer;
+import msi.gama.outputs.layers.ChartLayer;
+import msi.gama.outputs.layers.GraphicLayer;
+import msi.gama.outputs.layers.GridLayer;
+import msi.gama.outputs.layers.ImageLayer;
+import msi.gama.outputs.layers.SpeciesLayer;
+import msi.gama.outputs.layers.TextLayer;
 import msi.gama.runtime.GAMA;
 
 public class DisplaySurfaceMenu {
 
+	public static Map<Class, Image> layer_images = new LinkedHashMap();
+
+	static {
+		layer_images.put(GridLayer.class, IGamaIcons.LAYER_GRID.image());
+		layer_images.put(AgentLayer.class, IGamaIcons.LAYER_AGENTS.image());
+		layer_images.put(ImageLayer.class, IGamaIcons.LAYER_IMAGE.image());
+		layer_images.put(TextLayer.class, IGamaIcons.LAYER_TEXT.image());
+		layer_images.put(SpeciesLayer.class, IGamaIcons.LAYER_SPECIES.image());
+		layer_images.put(ChartLayer.class, IGamaIcons.LAYER_CHART.image());
+		layer_images.put(GraphicLayer.class, IGamaIcons.LAYER_GRAPHICS.image());
+	}
+
+	private static class FocusOnSelection extends SelectionAdapter {
+
+		IDisplaySurface surface;
+
+		FocusOnSelection(final IDisplaySurface surface) {
+			this.surface = surface;
+		}
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			final MenuItem mi = (MenuItem) e.widget;
+			final IAgent a = (IAgent) mi.getData("agent");
+			if ( a != null && !a.dead() ) {
+				surface.runAndUpdate(new Runnable() {
+
+					@Override
+					public void run() {
+						if ( !a.dead() ) {
+							surface.focusOn(a);
+						}
+					}
+				});
+			}
+		}
+	}
+
 	private final IDisplaySurface surface;
 	private final Control swtControl;
-	private final DisplayedAgentsMenu menuBuilder;
 	private final LayeredDisplayView view;
 
 	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final LayeredDisplayView view) {
 		surface = s;
 		this.view = view;
 		swtControl = c;
-		menuBuilder = new DisplayedAgentsMenu();
 		if ( s != null )
-			s.setSWTMenuManager(this);
+			s.setMenuManager(this);
 
 	}
 
@@ -77,6 +129,10 @@ public class DisplaySurfaceMenu {
 			agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent));
 	}
 
+	public Menu buildMenu(final Collection<IAgent> agents, final ILocation modelCoordinates) {
+		return fill(new Menu(swtControl), -1, true, true, agents, modelCoordinates);
+	}
+
 	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final ILocation modelCoordinates,
 		final Collection<IAgent> agents) {
 		GAMA.getGui().asyncRun(new Runnable() {
@@ -86,8 +142,7 @@ public class DisplaySurfaceMenu {
 				if ( menu != null && !menu.isDisposed() ) {
 					menu.dispose();
 				}
-				menu = menuBuilder.getMenu(view.getDisplaySurface(), swtControl, true, byLayer, agents,
-					modelCoordinates, view.isOpenGL());
+				menu = fill(new Menu(swtControl), -1, true, byLayer, agents, modelCoordinates);
 				menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
 				menu.setLocation(swtControl.toDisplay(mousex, mousey));
 				menu.setVisible(true);
@@ -96,6 +151,10 @@ public class DisplaySurfaceMenu {
 				retryVisible(menu, MAX_RETRIES);
 			}
 		});
+	}
+
+	public void buildToolbarMenu(final Menu menu) {
+		fill(menu, -1, false, true, null, null);
 	}
 
 	static int MAX_RETRIES = 10;
@@ -124,6 +183,66 @@ public class DisplaySurfaceMenu {
 				}
 			}
 		});
+	}
+
+	private Menu fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
+		final Collection<IAgent> filteredList, final ILocation userLocation) {
+		// final LayeredDisplayView view2 = (LayeredDisplayView) view;
+		// final IDisplaySurface displaySurface = view2.getDisplaySurface();
+		// AgentsMenu.MenuAction follow =
+		// new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
+		if ( withWorld ) {
+			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), userLocation, "World");
+			if ( filteredList != null && !filteredList.isEmpty() ) {
+				AgentsMenu.separate(menu);
+			}
+			if ( byLayer ) {
+				AgentsMenu.separate(menu, "Layers");
+			}
+		}
+		if ( !byLayer ) {
+			// If the list is null or empty, no need to display anything more
+			if ( filteredList == null || filteredList.isEmpty() ) { return menu; }
+			// If only the world is selected, no need to display anything more
+			if ( filteredList.size() == 1 && filteredList.contains(GAMA.getSimulation()) ) { return menu; }
+			final FocusOnSelection adapter = new FocusOnSelection(surface);
+			final AgentsMenu.MenuAction focus =
+				new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus");
+			if ( view.isOpenGL() ) {
+				// FIXME: 18/03/2014 a.g the follow item has been temporaly removed from opengl because not yet
+				// implemented but should be available in 1.7
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus /* , follow */);
+			} else {
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus);
+			}
+		} else {
+
+			for ( final ILayer layer : surface.getManager().getItems() ) {
+				if ( layer.isSelectable() ) {
+					Collection<IAgent> pop = layer.getAgentsForMenu(surface.getDisplayScope());
+					pop = new ArrayList(pop);
+					if ( pop.isEmpty() ) {
+						continue;
+					}
+					final String layerName = layer.getType() + ": " + layer.getName();
+					final FocusOnSelection adapter = new FocusOnSelection(surface);
+					final AgentsMenu.MenuAction focus =
+						new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
+					final MenuAction[] actions = { focus };
+
+					if ( filteredList != null ) {
+						pop.retainAll(filteredList);
+					}
+					final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
+					layerMenu.setText(layerName);
+					layerMenu.setImage(layer_images.get(layer.getClass()));
+					final Menu submenu = new Menu(layerMenu);
+					layerMenu.setMenu(submenu);
+					AgentsMenu.fillPopulationSubMenu(submenu, pop, userLocation, actions);
+				}
+			}
+		}
+		return menu;
 	}
 
 }

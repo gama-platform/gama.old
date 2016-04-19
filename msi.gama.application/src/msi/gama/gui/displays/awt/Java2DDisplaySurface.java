@@ -90,7 +90,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	final LayeredDisplayOutput output;
 	protected final Rectangle viewPort = new Rectangle();
 	protected final AffineTransform translation = new AffineTransform();
-	protected final ILayerManager manager;
+	protected final ILayerManager layerManager;
 	protected IGraphics iGraphics;
 
 	protected DisplaySurfaceMenu menuManager;
@@ -102,80 +102,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	protected boolean disposed;
 
 	private IScope scope;
-	// final DisplayMouseListener listener;
 	int frames;
 	private volatile boolean realized = false;
 	private volatile boolean rendered = false;
 	Set<IEventLayerListener> listeners = new HashSet();
 	Point mousePosition;
-
-	// private boolean alreadyZooming = false;
-
-	// private class GamaEventListener extends MouseAdapter implements FocusListener {
-	//
-	// final IEventLayerListener listener;
-	// int down_x, down_y;
-	//
-	// GamaEventListener(final IEventLayerListener listener) {
-	// this.listener = listener;
-	// }
-	//
-	// @Override
-	// public void mouseMoved(final MouseEvent e) {
-	// if ( e.getButton() > MouseEvent.NOBUTTON ) { return; }
-	// listener.mouseMove(e.getX(), e.getY());
-	// }
-	//
-	// @Override
-	// public void mouseExited(final MouseEvent e) {
-	// if ( e.getButton() > MouseEvent.NOBUTTON ) { return; }
-	// listener.mouseExit(e.getX(), e.getY());
-	// }
-	//
-	// @Override
-	// public void mouseEntered(final MouseEvent e) {
-	// if ( e.getButton() > 0 ) { return; }
-	// listener.mouseEnter(e.getX(), e.getY());
-	// }
-	//
-	// @Override
-	// public void mouseClicked(final MouseEvent e) {
-	// mousePressed(e);
-	// mouseReleased(e);
-	// }
-	//
-	// @Override
-	// public void mousePressed(final MouseEvent e) {
-	// down_x = e.getX();
-	// down_y = e.getY();
-	// listener.mouseDown(e.getX(), e.getY(), e.getButton());
-	// }
-	//
-	// @Override
-	// public void mouseReleased(final MouseEvent e) {
-	// if ( e.getX() == down_x && e.getY() == down_y ) {
-	// listener.mouseClicked(e.getX(), e.getY(), e.getButton());
-	// } else {
-	// listener.mouseUp(e.getX(), e.getY(), e.getButton());
-	// }
-	// }
-	//
-	// @Override
-	// public void focusGained(final FocusEvent e) {
-	// listener.mouseEnter(0, 0);
-	// }
-	//
-	// @Override
-	// public void focusLost(final FocusEvent e) {
-	// listener.mouseExit(0, 0);
-	// }
-	//
-	// public void keyTyped(final char e) {
-	// System.out.println("KeyTyped in SWT :" + e);
-	// listener.keyPressed(String.valueOf(e));
-	// }
-	//
-	// }
 
 	public Java2DDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
@@ -188,7 +119,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		setLayout(new BorderLayout());
 		setBackground(output.getData().getBackgroundColor());
 		setName(output.getName());
-		manager = new LayerManager(this, output);
+		layerManager = new LayerManager(this, output);
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
@@ -209,6 +140,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			}
 		});
 
+	}
+
+	@Override
+	public void setMenuManager(final Object menuManager) {
+		this.menuManager = (DisplaySurfaceMenu) menuManager;
 	}
 
 	@Override
@@ -283,7 +219,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		// We disable error reporting
 		getDisplayScope().disableErrorReporting();
 
-		manager.outputChanged();
+		layerManager.outputChanged();
 
 		resizeImage(getWidth(), getHeight(), true);
 		if ( zoomFit ) {
@@ -297,15 +233,9 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		return scope;
 	}
 
-	// FIXME Ugly code. The hack must be better written
-	@Override
-	public void setSWTMenuManager(final Object manager) {
-		menuManager = (DisplaySurfaceMenu) manager;
-	}
-
 	@Override
 	public ILayerManager getManager() {
-		return manager;
+		return layerManager;
 	}
 
 	Point getOrigin() {
@@ -468,7 +398,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			(Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) getDisplayWidth(), (int) getDisplayHeight());
 		getIGraphics().setGraphics2D(g2d);
 		getIGraphics().setUntranslatedGraphics2D((Graphics2D) g);
-		manager.drawLayersOn(iGraphics);
+		layerManager.drawLayersOn(iGraphics);
 		g2d.dispose();
 		frames++;
 		rendered = true;
@@ -485,7 +415,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if ( mouse == null ) { return null; }
 		final int xc = mouse.x - origin.x;
 		final int yc = mouse.y - origin.y;
-		final List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
+		final List<ILayer> layers = layerManager.getLayersIntersecting(xc, yc);
 		for ( final ILayer layer : layers ) {
 			if ( layer.isProvidingWorldCoordinates() ) { return layer.getModelCoordinatesFrom(xc, yc, this); }
 		}
@@ -499,7 +429,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if ( mouse == null ) { return null; }
 		final int xc = mouse.x - origin.x;
 		final int yc = mouse.y - origin.y;
-		final List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
+		final List<ILayer> layers = layerManager.getLayersIntersecting(xc, yc);
 		for ( final ILayer layer : layers ) {
 			if ( layer.isProvidingCoordinates() ) { return layer.getModelCoordinatesInfo(xc, yc, this); }
 		}
@@ -568,7 +498,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	private int[] computeBoundsFrom(final int vwidth, final int vheight) {
-		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
+		if ( !layerManager.stayProportional() ) { return new int[] { vwidth, vheight }; }
 		final int[] dim = new int[2];
 		final double widthHeightConstraint = getEnvHeight() / getEnvWidth();
 		if ( widthHeightConstraint < 1 ) {
@@ -633,8 +563,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		getData().removeListener(this);
 		if ( disposed ) { return; }
 		disposed = true;
-		if ( manager != null ) {
-			manager.dispose();
+		if ( layerManager != null ) {
+			layerManager.dispose();
 		}
 
 		GAMA.releaseScope(getDisplayScope());
@@ -716,7 +646,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final Point origin = getOrigin();
 		final int xc = mousex - origin.x;
 		final int yc = mousey - origin.y;
-		final List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
+		final List<ILayer> layers = layerManager.getLayersIntersecting(xc, yc);
 		if ( layers.isEmpty() ) { return; }
 		final ILocation modelCoordinates = layers.get(0).getModelCoordinatesFrom(xc, yc, this);
 		scope.getGui().run(new Runnable() {

@@ -74,7 +74,7 @@ public interface IDisplaySurface extends
 	/**
 	 * @param displaySurfaceMenu
 	 */
-	void setSWTMenuManager(Object displaySurfaceMenu);
+	void setMenuManager(Object displaySurfaceMenu);
 
 	boolean resizeImage(int width, int height, boolean force);
 
@@ -162,7 +162,7 @@ public interface IDisplaySurface extends
 	boolean isRendered();
 
 	/**
-	 * @return
+	 * @return true if the surface has been 'disposed' by SWT
 	 */
 	boolean isDisposed();
 

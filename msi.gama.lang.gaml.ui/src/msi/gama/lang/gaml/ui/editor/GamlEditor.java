@@ -90,7 +90,6 @@ import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.WorkaroundForIssue1353;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.swt.controls.ITooltipDisplayer;
@@ -290,16 +289,17 @@ public class GamlEditor extends XtextEditor
 		super.createPartControl(editor);
 		toolbarParent.layout();
 		installGestures();
-		WorkaroundForIssue1353.installOn(getStyledText());
-		// WorkaroundForIssue1353.installOn(editor);
+
 	}
+
 	//
-	// @Override
-	// public void setFocus() {
-	// if (getSourceViewer() != null && getSourceViewer().getTextWidget() !=
-	// null)
-	// getSourceViewer().getTextWidget().setFocus();
-	// }
+	@Override
+	public void setFocus() {
+		if (getSourceViewer() != null && getSourceViewer().getTextWidget() != null
+				&& !getSourceViewer().getTextWidget().isFocusControl()) {
+			getSourceViewer().getTextWidget().forceFocus();
+		}
+	}
 
 	private void installGestures() {
 		editToolbar.installGesturesFor(this);

@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextService;
@@ -24,7 +23,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
@@ -96,15 +94,14 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		final IPartService ps = site.getService(IPartService.class);
-		ps.addPartListener(SwtGui.getPartListener());
+		// final IPartService ps = site.getService(IPartService.class);
 		final String s_id = site.getSecondaryId();
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
 
 		final IExperimentPlan experiment = GAMA.getExperiment();
 
-		if ( GAMA.getExperiment() != null ) {
+		if ( experiment != null ) {
 			// hqnghi in case of multi-controller
 			if ( out == null ) {
 				for ( final IExperimentController fec : GAMA.getControllers() ) {

@@ -14,6 +14,7 @@ global
 	point target;
 	geometry zone <- circle(100);
 	bool can_drop;
+	geometry occupied <- geometry(being - moved_agents) update: geometry(being - moved_agents);
 	init
 	{
 		create being number: 100;
@@ -66,7 +67,7 @@ global
 		ask moved_agents
 		{
 			location <- mouse - difference;
-			if (geometry(being - moved_agents) intersects self)
+			if (occupied intersects self)
 			{
 				color <- # red;
 				can_drop <- false;
@@ -97,7 +98,7 @@ species being skills: [moving]
 
 	aspect default
 	{
-		draw shape color: color;
+		draw shape color: color at: location;
 	}
 
 }
@@ -107,7 +108,7 @@ experiment "Click and Move" type: gui
 	font regular <- font("Helvetica", 14, # bold);
 	output
 	{
-		display "Click and Move" type: java2D
+		display "Click and Move" type: opengl ambient_light: 0 diffuse_light: 110
 		{
 			graphics "Empty target" 
 			{
@@ -139,6 +140,8 @@ experiment "Click and Move" type: gui
 			}
 
 		}
+		
+		
 		
 	}
 

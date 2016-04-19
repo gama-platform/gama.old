@@ -68,4 +68,8 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 
 	public abstract void zoomRoi(Envelope3D env);
 
+	public abstract void toggleStickyROI();
+
+	public abstract boolean isROISticky();
+
 }

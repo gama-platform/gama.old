@@ -16,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.displays.awt.Java2DDisplaySurface;
 import msi.gama.gui.swt.WorkaroundForIssue1353;
 import msi.gama.gui.swt.swing.Platform;
@@ -59,13 +58,13 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
 					overlay.setVisible(true);
 				}
-				WorkaroundForIssue1353.installOn(parent, AWTDisplayView.this);
+				WorkaroundForIssue1353.install();
 			}
 
 			@Override
 			public void afterComponentCreatedAWTThread() {
-				if ( getDisplaySurface() != null )
-					new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
+				// if ( getDisplaySurface() != null )
+				// new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
 		surfaceComposite.setEnabled(false);

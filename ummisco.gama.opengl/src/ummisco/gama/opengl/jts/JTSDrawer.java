@@ -1066,7 +1066,7 @@ public class JTSDrawer {
 
 		gl.glColor4d(0.5, 0.5, 0.5, 1.0);
 		glu.gluSphere(quad, 5.0 * (distance / 500), slices, stacks);
-		gl.glColor4d(0.5, 0.5, 0.5, 0.5);
+		gl.glColor4d(0.5, 0.5, 0.5, 0.2);
 		glu.gluSphere(quad, 50.0 * (distance / 500), slices, stacks);
 		gl.glRotated(180.0, 1.0, 0.0, 0.0);
 		final float[] diffuseLight = { 1f, 2f, 1f, 0f };
@@ -1095,7 +1095,7 @@ public class JTSDrawer {
 			glu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
 		}
 		glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
-		gl.glColor4d(0, 0.5, 0, 0.5);
+		gl.glColor4d(0, 0.5, 0, 0.2);
 		final double x = width / 2;
 		final double y = height / 2;
 		final double z = Math.max(2, renderer.getMaxEnvDim() / 100);

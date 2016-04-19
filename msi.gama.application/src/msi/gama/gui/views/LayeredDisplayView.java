@@ -26,6 +26,7 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -35,6 +36,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -49,6 +52,7 @@ import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.ImageUtils;
+import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.displays.layers.LayerSideControls;
 import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.GamaIcons;
@@ -59,7 +63,6 @@ import msi.gama.gui.swt.controls.DisplayOverlay;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.swt.controls.ParameterExpandBar;
 import msi.gama.gui.swt.controls.ParameterExpandItem;
-import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.gui.views.actions.PresentationMenu;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -89,6 +92,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected ToolItem overlayItem;
 	protected final java.awt.Rectangle surfaceCompositeBounds = new java.awt.Rectangle();
 	protected LayeredDisplayMultiListener keyAndMouseListener;
+	protected DisplaySurfaceMenu menuManager;
 
 	protected Runnable displayOverlay = new Runnable() {
 
@@ -110,7 +114,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( getOutput() != null ) {
 			setPartName(getOutput().getName());
 		}
-
 	}
 
 	@Override
@@ -246,6 +249,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
 		keyAndMouseListener = new LayeredDisplayMultiListener(this);
+		menuManager = new DisplaySurfaceMenu(getDisplaySurface(), parent, this);
 	}
 
 	@Override
@@ -298,6 +302,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( overlay != null ) {
 			overlay.close();
 		}
+
+		menuManager = null;
 
 		super.dispose();
 	}
@@ -427,7 +433,30 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		}, SWT.LEFT);
 		overlayItem.setSelection(GamaPreferences.CORE_OVERLAY.getValue());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
-		new DisplayedAgentsMenu().createItem(tb, getDisplaySurface(), isOpenGL());
+
+		tb.menu(IGamaIcons.MENU_POPULATION.getCode(), "Browse displayed agents by layers",
+			"Browse through all displayed agents", new SelectionAdapter() {
+
+				Menu menu;
+
+				@Override
+				public void widgetSelected(final SelectionEvent trigger) {
+					// final boolean asMenu = trigger.detail == SWT.ARROW;
+					final ToolItem target = (ToolItem) trigger.widget;
+					final ToolBar toolBar = target.getParent();
+					if ( menu != null ) {
+						menu.dispose();
+					}
+					menu = new Menu(toolBar.getShell(), SWT.POP_UP);
+					menuManager.buildToolbarMenu(menu);
+					final Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
+					menu.setLocation(point.x, point.y);
+					menu.setVisible(true);
+
+				}
+			}, SWT.LEFT);
+
+		// menuManager.createItem(tb, getDisplaySurface(), isOpenGL());
 		if ( isOpenGL() ) {
 			new PresentationMenu().createItem(tb, this);
 		}
