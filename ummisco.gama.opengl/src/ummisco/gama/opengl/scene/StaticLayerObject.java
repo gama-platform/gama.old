@@ -29,11 +29,6 @@ public class StaticLayerObject extends LayerObject {
 	static final GamaPoint WORLD_OFFSET = new GamaPoint();
 	static final GamaPoint WORLD_SCALE = new GamaPoint(1, 1, 1);
 	static final Double WORLD_ALPHA = 1d;
-	
-	static GamaPoint pivotPoint = null;
-	static double axisSize = 0;
-	static List<GeometryObject> geomObjList = new ArrayList<GeometryObject>();
-	static List<StringObject> stringObjList = new ArrayList<StringObject>();
 
 	public StaticLayerObject(final JOGLRenderer renderer) {
 		super(renderer, null);
@@ -88,6 +83,11 @@ public class StaticLayerObject extends LayerObject {
 		public float fps = 00.00f;
 		public boolean axesDrawn = false;
 		public boolean planDrawn = false;
+		
+		protected GamaPoint pivotPoint = null;
+		protected double axisSize = 0;
+		protected List<GeometryObject> geomObjList = new ArrayList<GeometryObject>();
+		protected List<StringObject> stringObjList = new ArrayList<StringObject>();
 
 		public WordLayerObject(final JOGLRenderer renderer) {
 			super(renderer);
