@@ -3,12 +3,13 @@
 <xsl:import href="docGama-utils-xml2md.xsl"/>
 
 
-<xsl:variable name="fileOperators" select="'G__Operators'"/>
-<xsl:variable name="fileStatements" select="'G__Statements'"/>
-<xsl:variable name="fileUnitsConstants" select="'G__UnitsAndConstants'"/>
-<xsl:variable name="fileControl" select="'G__BuiltInControlArchitectures'"/>
-<xsl:variable name="fileSpecies" select="'G__BuiltInSpecies'"/>
-<xsl:variable name="fileSkills" select="'G__BuiltInSkills'"/>
+<xsl:variable name="fileOperatorsAK" select="'OperatorsAK'"/>
+<xsl:variable name="fileOperatorsLZ" select="'OperatorsLZ'"/>
+<xsl:variable name="fileStatements" select="'Statements'"/>
+<xsl:variable name="fileUnitsConstants" select="'UnitsAndConstants'"/>
+<xsl:variable name="fileControl" select="'BuiltInControlArchitectures'"/>
+<xsl:variable name="fileSpecies" select="'BuiltInSpecies'"/>
+<xsl:variable name="fileSkills" select="'BuiltInSkills'"/>
 
 
 <xsl:template match="/">
@@ -23,7 +24,7 @@
 ## Operators
 <xsl:for-each select="/doc/operators/operator"> 
 			<xsl:sort select="@name" />
-			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:value-of select="$fileOperators"/><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
+			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:choose><xsl:when test="@alphabetOrder = 'ak'"><xsl:value-of select="$fileOperatorsAK"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileOperatorsLZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
 	</xsl:for-each>
 			  	
 ----
@@ -67,7 +68,7 @@
     	<xsl:sort select="@name" />
 		<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:value-of select="$fileSpecies"/><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
    	</xsl:for-each>
-   	[world](G__BuiltInSpecies#model )
+   	[world](BuiltInSpecies#model )
 
 ----
 
@@ -100,31 +101,31 @@
 
 ## Pseudo-Variables
 
-[self](G__PseudoVariables#self ), [myself](G__PseudoVariables#myself ), [each](G__PseudoVariables#each)
+[self](PseudoVariables#self ), [myself](PseudoVariables#myself ), [each](PseudoVariables#each)
 
 ----
 
 ## Types
-[bool](G__DataTypes#bool), [float](G__DataTypes#float), [int](G__DataTypes#int), [string](G__DataTypes#string), [agent](G__DataTypes#agent), [container](G__DataTypes#container)
-, [file](G__DataTypes#file), [geometry](G__DataTypes#geometry), [graph](G__DataTypes#graph), [list](G__DataTypes#list), [map](G__DataTypes#map), [matrix](G__DataTypes#matrix)
-, [pair](G__DataTypes#pair), [path](G__DataTypes#path), [point](G__DataTypes#point), [rgb](G__DataTypes#rgb), [color](G__DataTypes#rgb), [species](G__DataTypes#species), [topology](G__DataTypes#topology)
+[bool](DataTypes#bool), [float](DataTypes#float), [int](DataTypes#int), [string](DataTypes#string), [agent](DataTypes#agent), [container](DataTypes#container)
+, [file](DataTypes#file), [geometry](DataTypes#geometry), [graph](DataTypes#graph), [list](DataTypes#list), [map](DataTypes#map), [matrix](DataTypes#matrix)
+, [pair](DataTypes#pair), [path](DataTypes#path), [point](DataTypes#point), [rgb](DataTypes#rgb), [color](DataTypes#rgb), [species](DataTypes#species), [topology](DataTypes#topology)
 
 ----
 
-## [the world](G__GlobalSpecies)
-[torus](G__GlobalSpecies), [Environment Size](G__GlobalSpecies#Environment_Size), [world](G__GlobalSpecies#world), [time](G__GlobalSpecies#time)
-[cycle](G__GlobalSpecies#cycle ), [step](G__GlobalSpecies#step), [time](G__GlobalSpecies#time), [duration](G__GlobalSpecies#duration), [total_duration](G__GlobalSpecies#total_duration)
-[average_duration](G__GlobalSpecies#average_duration), [machine_time](G__GlobalSpecies#machine_time), [agents](G__GlobalSpecies#agents), [stop](G__GlobalSpecies#halt), [halt](G__GlobalSpecies#halt), [pause](G__GlobalSpecies#pause), [scheduling](G__GlobalSpecies#scheduling)
+## [the world](GlobalSpecies)
+[torus](GlobalSpecies), [Environment Size](GlobalSpecies#Environment_Size), [world](GlobalSpecies#world), [time](GlobalSpecies#time)
+[cycle](GlobalSpecies#cycle ), [step](GlobalSpecies#step), [time](GlobalSpecies#time), [duration](GlobalSpecies#duration), [total_duration](GlobalSpecies#total_duration)
+[average_duration](GlobalSpecies#average_duration), [machine_time](GlobalSpecies#machine_time), [agents](GlobalSpecies#agents), [stop](GlobalSpecies#halt), [halt](GlobalSpecies#halt), [pause](GlobalSpecies#pause), [scheduling](GlobalSpecies#scheduling)
 
 ----
 
 ## Grid
-[grid_x](G__GridSpecies#grid_x), [grid_y](G__GridSpecies#grid_y), [agents](G__GridSpecies#agents), [color](G__GridSpecies#color), [grid_value](G__GridSpecies#grid_value) 
+[grid_x](GridSpecies#grid_x), [grid_y](GridSpecies#grid_y), [agents](GridSpecies#agents), [color](GridSpecies#color), [grid_value](GridSpecies#grid_value) 
 
 ----
 
 ## Other concepts
-[scheduling](G__RuntimeConcepts#Scheduling_of_Agents ), [step](G__RuntimeConcepts#Agents_Step), [Key concepts](G__KeyConcepts), [G__KeyConcepts#Vocabulary_correspondance_with_the_agent-based_paradigm_as_in_Ne correspondance GAMA Netlogo], [operators statements type species](G__KeyConcepts#Translation_into_a_concrete_syntax)
+[scheduling](RuntimeConcepts#Scheduling_of_Agents ), [step](RuntimeConcepts#Agents_Step), [Key concepts](KeyConcepts), [KeyConcepts#Vocabulary_correspondance_with_the_agent-based_paradigm_as_in_Ne correspondance GAMA Netlogo], [operators statements type species](KeyConcepts#Translation_into_a_concrete_syntax)
 
 </xsl:template>
 

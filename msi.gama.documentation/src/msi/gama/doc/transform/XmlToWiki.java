@@ -46,6 +46,12 @@ public class XmlToWiki {
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2md.xsl",
 				Constants.XML2WIKI_FOLDER + File.separator + "Operators"+suffix+".md");
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAK-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsAK"+suffix+".md");
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsLZ-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsLZ"+suffix+".md");
 		System.out.println("Done");			
 		//
 		System.out.print("Creation of the wiki page for Statements.....");		
@@ -63,7 +69,7 @@ public class XmlToWiki {
 		System.out.print("Creation of the wiki page for the Index.......");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Index-xml2md.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "Index"+suffix+".md");	
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "Index"+suffix+".md");	
 		System.out.println("Done");	
 		
 		

@@ -35,6 +35,7 @@ public class Constants {
 
 	// Generation folders
 	public static String WIKI_FOLDER_REF = WIKI_FOLDER + File.separator + "References" + File.separator + "GAMLReferences";
+	public static String WIKI_FOLDER_WIKI_ONLY = WIKI_FOLDER + File.separator + "WikiOnly";
 	public static String WIKI_FOLDER_EXT = WIKI_FOLDER + File.separator + "References";
 	public static String WIKI_FOLDER_EXT_PLUGIN = WIKI_FOLDER_EXT + File.separator + "PluginDocumentation";
 	
