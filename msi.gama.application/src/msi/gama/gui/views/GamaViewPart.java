@@ -238,13 +238,6 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	public void dispose() {
 		toolbar = null;
 		outputs.clear();
-		// final IWorkbenchPartSite s = getSite();
-		// if ( s != null ) {
-		// final IPartService ps = s.getService(IPartService.class);
-		// if ( ps != null ) {
-		// ps.removePartListener(SwtGui.getPartListener());
-		// }
-		// }
 		super.dispose();
 	}
 

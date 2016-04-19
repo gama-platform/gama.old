@@ -12,22 +12,33 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
-import com.jogamp.opengl.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
+
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.util.file.*;
-import msi.gaml.statements.draw.*;
-import ummisco.gama.opengl.*;
+import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.file.GamaImageFile;
+import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.FieldDrawingAttributes;
+import msi.gaml.statements.draw.FileDrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.TextureCache;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
 
 /**
  *
- * The class ModelScene. A repository for all the objects that constitute the scene of a model : strings, images,
- * shapes...
- * 04/03/14: Now organized by layers to address the issue of z depth
+ * The class ModelScene. A repository for all the objects that constitute the
+ * scene of a model : strings, images, shapes... 04/03/14: Now organized by
+ * layers to address the issue of z depth
  *
  * @author drogoul
  * @since 3 mai 2013
@@ -48,7 +59,7 @@ public class ModelScene {
 	public ModelScene(final JOGLRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
 		this.id = number++;
-		if ( withWorld ) {
+		if (withWorld) {
 			initWorld();
 		}
 	}
@@ -64,25 +75,28 @@ public class ModelScene {
 
 	/**
 	 * @param context
-	 *            Called every new iteration when updateDisplay() is called on the surface
+	 *            Called every new iteration when updateDisplay() is called on
+	 *            the surface
 	 */
 	public void wipe(final GL gl) {
-		// The display is cleared every iteration if not in a trace display mode or when reloading a simulation
+		// The display is cleared every iteration if not in a trace display mode
+		// or when reloading a simulation
 		// int traceSize = FastMath.max(requestedTraceSize, 0);
 
-		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
-			LayerObject obj = entry.getValue();
-			if ( obj != null && (!obj.isStatic() || obj.isInvalid()) ) {
+		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
+			final LayerObject obj = entry.getValue();
+			if (obj != null && (!obj.isStatic() || obj.isInvalid())) {
 				obj.clear(gl);
 			}
 		}
-		// Wipe the textures. However, might be necessary to know what to do for the trace...
-		int size = localVolatileTextures.size();
-		if ( size != 0 ) {
-			int[] textureIdsToDestroy = new int[size];
+		// Wipe the textures. However, might be necessary to know what to do for
+		// the trace...
+		final int size = localVolatileTextures.size();
+		if (size != 0) {
+			final int[] textureIdsToDestroy = new int[size];
 			int index = 0;
-			for ( Map.Entry<BufferedImage, Texture> entry : localVolatileTextures.entrySet() ) {
-				Texture t = entry.getValue();
+			for (final Map.Entry<BufferedImage, Texture> entry : localVolatileTextures.entrySet()) {
+				final Texture t = entry.getValue();
 				textureIdsToDestroy[index++] = t == null ? 0 : t.getTextureObject();
 			}
 			gl.glDeleteTextures(textureIdsToDestroy.length, textureIdsToDestroy, 0);
@@ -92,15 +106,17 @@ public class ModelScene {
 	}
 
 	public Texture getTexture(final GL gl, final BufferedImage image) {
-		if ( image == null ) { return null; }
+		if (image == null) {
+			return null;
+		}
 		Texture texture = localVolatileTextures.get(image);
-		if ( texture == null ) {
+		if (texture == null) {
 			texture = TextureCache.buildTexture(gl, image);
 			image.flush();
 			localVolatileTextures.put(image, texture);
 		}
-		if ( texture != null ) {
-			boolean antiAlias = renderer.data.isAntialias();
+		if (texture != null) {
+			final boolean antiAlias = renderer.data.isAntialias();
 			// Apply antialas to the texture based on the current preferences
 			texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
 			texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
@@ -110,10 +126,12 @@ public class ModelScene {
 
 	// Must have been stored before
 	public Texture getTexture(final GL gl, final GamaImageFile file) {
-		if ( file == null ) { return null; }
-		Texture texture = renderer.getSharedTextureCache().get(gl, file);
-		if ( texture != null ) {
-			boolean antiAlias = renderer.data.isAntialias();
+		if (file == null) {
+			return null;
+		}
+		final Texture texture = renderer.getSharedTextureCache().get(gl, file);
+		if (texture != null) {
+			final boolean antiAlias = renderer.data.isAntialias();
 			// Apply antialas to the texture based on the current preferences
 			texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
 			texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
@@ -123,13 +141,14 @@ public class ModelScene {
 
 	public void draw(final GL2 gl, final boolean picking) {
 		// System.out.println("Beginning rendering Model front scene #" + id);
-		LayerObject[] array = layers.values().toArray(new LayerObject[0]);
-		for ( LayerObject layer : array ) {
-			if ( layer != null && !layer.isInvalid() ) {
+		final LayerObject[] array = layers.values().toArray(new LayerObject[0]);
+		for (final LayerObject layer : array) {
+			if (layer != null && !layer.isInvalid()) {
 				try {
-				layer.draw(gl, renderer, picking);
-				} catch (RuntimeException r) {
+					layer.draw(gl, renderer, picking);
+				} catch (final RuntimeException r) {
 					System.err.println("Runtime error " + r.getMessage() + " in OpenGL loop");
+					r.printStackTrace();
 				}
 			}
 		}
@@ -137,51 +156,38 @@ public class ModelScene {
 	}
 
 	public void addString(final String string, final DrawingAttributes attributes) {
-		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
+		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+			return;
+		}
 		currentLayer.addString(string, attributes);
 	}
 
 	public void addFile(final GamaFile file, final FileDrawingAttributes attributes) {
-		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		if ( file instanceof GamaImageFile ) {
+		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+			return;
+		}
+		if (file instanceof GamaImageFile) {
 			renderer.getSharedTextureCache().initializeStaticTexture((GamaImageFile) file);
-			// if ( attributes.depth != null && attributes.textures != null ) {
-			// // We deal here with an image representing a DEM (with a depth = z_factor) and a texture.
-			// for ( Object img : attributes.textures ) {
-			// if ( img instanceof GamaImageFile ) {
-			// TextureCache.initializeStaticTexture((GamaImageFile) img);
-			// }
-			// }
-			// currentLayer.addDEM(null, (GamaImageFile) attributes.textures.get(0), (GamaImageFile) file, null,
-			// false, false, false, true, new Envelope3D(0, renderer.data.getEnvWidth(), 0,
-			// renderer.data.getEnvHeight(), 0, attributes.depth),
-			// new Envelope3D(0, 1, 0, 1, 0, 1), null, null);
-			// } else {
 			currentLayer.addImage((GamaImageFile) file, attributes);
-			// }
-		} else if ( file instanceof GamaGeometryFile ) {
+		} else if (file instanceof GamaGeometryFile) {
 			currentLayer.addFile((GamaGeometryFile) file, attributes);
 		}
 	}
 
 	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
-		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
+		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+			return;
+		}
 		currentLayer.addImage(img, attributes);
 	}
-	//
-	// public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent,
-	// final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final Envelope3D env,
-	// final Envelope3D cellSize, final String name, final GamaColor lineColor) {
-	// if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-	// currentLayer.addDEM(dem, demTexture, null, agent, isTriangulated, isGrayScaled, isShowText, false, env,
-	// cellSize, name, lineColor);
-	// }
 
 	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
-		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		if ( attributes.textures != null && !attributes.textures.isEmpty() ) {
-			for ( Object img : attributes.textures ) {
-				if ( img instanceof GamaImageFile ) {
+		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+			return;
+		}
+		if (attributes.textures != null && !attributes.textures.isEmpty()) {
+			for (final Object img : attributes.textures) {
+				if (img instanceof GamaImageFile) {
 					renderer.getSharedTextureCache().initializeStaticTexture((GamaImageFile) img);
 				}
 			}
@@ -190,10 +196,12 @@ public class ModelScene {
 	}
 
 	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		if ( attributes.textures != null && !attributes.textures.isEmpty() ) {
-			for ( Object img : attributes.textures ) {
-				if ( img instanceof GamaImageFile ) {
+		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+			return;
+		}
+		if (attributes.textures != null && !attributes.textures.isEmpty()) {
+			for (final Object img : attributes.textures) {
+				if (img instanceof GamaImageFile) {
 					renderer.getSharedTextureCache().initializeStaticTexture((GamaImageFile) img);
 				}
 			}
@@ -207,13 +215,10 @@ public class ModelScene {
 	}
 
 	public void beginDrawingLayers() {
-		// completed = false;
-		// System.out.println("Beginning update of Model back scene #" + id);
 	}
 
 	public void endDrawingLayers() {
 		staticObjectsAreLocked = true;
-		// System.out.println("End of update of Model back scene #" + id);
 	}
 
 	public boolean rendered() {
@@ -221,7 +226,6 @@ public class ModelScene {
 	}
 
 	public void reload() {
-		// System.out.println("ModelScene " + id + " reloaded");
 		staticObjectsAreLocked = false;
 		dispose();
 		initWorld();
@@ -232,13 +236,12 @@ public class ModelScene {
 	}
 
 	public void beginDrawingLayer(final ILayer layer, final GamaPoint offset, final GamaPoint scale,
-		final Double alpha) {
-		int id = layer.getOrder();
-		String key = layer.getName() + id;
+			final Double alpha) {
+		final int id = layer.getOrder();
+		final String key = layer.getName() + id;
 		currentLayer = layers.get(key);
-		if ( currentLayer == null ) {
+		if (currentLayer == null) {
 			currentLayer = new LayerObject(renderer, layer);
-			// System.out.println("Adding layer " + key + " to scene " + this.id);
 			layers.put(key, currentLayer);
 		}
 		currentLayer.setOffset(offset.plus(new GamaPoint(0, 0, id * 0.1f)));
@@ -254,9 +257,9 @@ public class ModelScene {
 	 * @return
 	 */
 	public ModelScene copyStatic() {
-		ModelScene newScene = new ModelScene(renderer, false);
-		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
-			if ( (entry.getValue().isStatic() || entry.getValue().hasTrace()) && !entry.getValue().isInvalid() ) {
+		final ModelScene newScene = new ModelScene(renderer, false);
+		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
+			if ((entry.getValue().isStatic() || entry.getValue().hasTrace()) && !entry.getValue().isInvalid()) {
 				newScene.layers.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -267,7 +270,7 @@ public class ModelScene {
 	 *
 	 */
 	public void invalidateLayers() {
-		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
+		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
 			entry.getValue().invalidate();
 		}
 	}
@@ -276,18 +279,18 @@ public class ModelScene {
 	 * @param gl
 	 */
 	public void preload(final GL2 gl) {
-		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
+		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
 			entry.getValue().preload(gl);
 		}
 	}
-	
+
 	public void startDrawRotationHelper(final GamaPoint pivotPoint, final double size) {
-		WordLayerObject worldLayer = (WordLayerObject)layers.get(ENV_KEY);
-		worldLayer.startDrawRotationHelper(pivotPoint,size);
+		final WordLayerObject worldLayer = (WordLayerObject) layers.get(ENV_KEY);
+		worldLayer.startDrawRotationHelper(pivotPoint, size);
 	}
-	
+
 	public void stopDrawRotationHelper() {
-		WordLayerObject worldLayer = (WordLayerObject)layers.get(ENV_KEY);
+		final WordLayerObject worldLayer = (WordLayerObject) layers.get(ENV_KEY);
 		worldLayer.stopDrawRotationHelper();
 	}
 

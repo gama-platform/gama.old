@@ -7,7 +7,7 @@ package ummisco.gama.opengl;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.runtime.GAMA;
 
@@ -20,15 +20,19 @@ import msi.gama.runtime.GAMA;
  */
 public class SWTLayeredDisplayView extends LayeredDisplayView {
 
-	SWTOpenGLDisplaySurface surface;
+	boolean isOverlayTemporaryVisible;
 
 	public static String ID = "msi.gama.application.view.OpenGLDisplayView";
 
 	@Override
+	public SWTOpenGLDisplaySurface getDisplaySurface() {
+		return (SWTOpenGLDisplaySurface) super.getDisplaySurface();
+	}
+
+	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
-		surface = new SWTOpenGLDisplaySurface(parent, getOutput());
+		final SWTOpenGLDisplaySurface surface = new SWTOpenGLDisplaySurface(parent, getOutput());
 		surfaceComposite = surface.renderer.getCanvas();
-		// new DisplaySurfaceMenu(surface, surfaceComposite, this);
 		surface.outputReloaded();
 		return surfaceComposite;
 	}
@@ -53,8 +57,8 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 			@Override
 			public void run() {
 				try {
-					if (surface != null) {
-						surface.dispose();
+					if (getDisplaySurface() != null) {
+						getDisplaySurface().dispose();
 					}
 					getSite().getPage().hideView(SWTLayeredDisplayView.this);
 				} catch (final Exception e) {
@@ -67,7 +71,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 
 	@Override
 	protected void updateOverlay() {
-		if (surface.getROIDimensions() != null) {
+		if (getDisplaySurface().getROIDimensions() != null) {
 			if (!overlay.isVisible()) {
 				isOverlayTemporaryVisible = true;
 				overlay.setVisible(true);
@@ -81,16 +85,27 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 		overlay.update();
 	}
 
-	boolean isOverlayTemporaryVisible;
+	/**
+	 * Wait for the OpenGL environment to be initialized, preventing a wait when
+	 * two or more views are open at the same time. Should be called in the SWT
+	 * thread. On MacOS X, for example, it seems necessary to show the view,
+	 * even briefly, to make the JOGL Canvas "realized"
+	 * 
+	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
+	 */
 
 	@Override
-	public IDisplaySurface getDisplaySurface() {
-		return surface;
-	}
+	public void waitToBeRealized() {
+		// if (!Platform.isCocoa()) {
+		// return;
+		// }
+		GAMA.getGui().asyncRun(new Runnable() {
 
-	@Override
-	public boolean zoomWhenScrolling() {
-		return true;
-	}
+			@Override
+			public void run() {
+				SwtGui.getPage().bringToTop(SWTLayeredDisplayView.this);
 
+			}
+		});
+	}
 }

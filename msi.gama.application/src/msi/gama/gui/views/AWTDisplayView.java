@@ -24,6 +24,7 @@ import msi.gama.gui.swt.swing.SwingControl;
 public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvider */ {
 
 	public static final String ID = IGui.LAYER_VIEW_ID;
+	public static long REALIZATION_TIME_OUT = 2000;
 
 	@Override
 	public Java2DDisplaySurface getDisplaySurface() {
@@ -74,21 +75,10 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 	}
 
 	/**
-	 * Method zoomWhenScrolling()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
-	 */
-	@Override
-	public boolean zoomWhenScrolling() {
-		return true;
-	}
-
-	/**
-	 * Wait for the AWT environment is initialized, preventing a thread lock when two views want to open at the same time. Must not be called in neither the AWT or the SWT thread. A
+	 * Wait for the AWT environment to be initialized, preventing a thread lock when two views want to open at the same time. Must not be called in neither the AWT or the SWT thread. A
 	 * configurable timeout is applied, so that other views are not blocked. It remains to be seen what to do if this times out, as we should normally cancel the view.
 	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
 	 */
-
-	public static long REALIZATION_TIME_OUT = 2000;
 
 	@Override
 	public void waitToBeRealized() {

@@ -714,4 +714,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		overlayItem.setSelection(overlay.isVisible());
 	}
 
+	@Override
+	public boolean zoomWhenScrolling() {
+		return true;
+	}
+
 }

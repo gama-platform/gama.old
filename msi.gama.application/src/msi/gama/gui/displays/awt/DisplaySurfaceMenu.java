@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -242,6 +243,45 @@ public class DisplaySurfaceMenu {
 				}
 			}
 		}
+		return menu;
+	}
+
+	public Menu buildROIMenu(final int x, final int y, final Collection<IAgent> agents,
+		final ILocation modelCoordinates, final Map<String, Runnable> actions, final Map<String, Image> images) {
+		final IDisplaySurface.OpenGL surf = (IDisplaySurface.OpenGL) surface;
+		GAMA.getGui().run(new Runnable() {
+
+			@Override
+			public void run() {
+				if ( menu != null && !menu.isDisposed() ) {
+					menu.dispose();
+				}
+				menu = buildMenu(agents, modelCoordinates);
+				menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
+				menu.setLocation(swtControl.toDisplay(x, y));
+				int i = 0;
+				for ( final String s : actions.keySet() ) {
+					final MenuItem mu = new MenuItem(menu, SWT.PUSH, i++);
+					mu.setText(s);
+					mu.setImage(images.get(s));
+					mu.addSelectionListener(new SelectionListener() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							actions.get(s).run();
+						}
+
+						@Override
+						public void widgetDefaultSelected(final SelectionEvent e) {
+							widgetSelected(e);
+						}
+					});
+				}
+
+				new MenuItem(menu, SWT.SEPARATOR, i);
+
+			}
+		});
 		return menu;
 	}
 

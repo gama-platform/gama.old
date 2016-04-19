@@ -7,20 +7,20 @@ package ummisco.gama.opengl;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 
 import com.jogamp.opengl.FPSCounter;
 import com.jogamp.opengl.GLAnimatorControl;
@@ -558,77 +558,42 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final Envelope3D envInWorld = Envelope3D.withYNegated(env);
 		final Collection<IAgent> agents = scope.getTopology().getSpatialIndex().allInEnvelope(scope,
 				envInWorld.centre(), envInWorld, new Different(), true);
-
-		scope.getGui().asyncRun(new Runnable() {
+		final Map<String, Runnable> actions = new LinkedHashMap();
+		final Map<String, Image> images = new HashMap();
+		images.put(renderer.camera.isROISticky() ? "Hide region" : "Keep region visible",
+				IGamaIcons.MENU_FOLLOW.image());
+		images.put("Focus on region", IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT.image());
+		actions.put(renderer.camera.isROISticky() ? "Hide region" : "Keep region visible", new Runnable() {
 
 			@Override
 			public void run() {
-				// if (menu != null && !menu.isDisposed()) {
-				// menu.dispose();
-				// }
-				final Control swtControl = renderer.getCanvas();
-				final Menu menu = menuManager.buildMenu(agents, getModelCoordinates());
-				// final DisplayedAgentsMenu menuBuilder = new
-				// DisplayedAgentsMenu();
-				// final Menu menu =
-				// menuBuilder.getMenu(SWTOpenGLDisplaySurface.this, swtControl,
-				// true, true, agents,
-				// getModelCoordinates(), true);
-				menu.setData(IKeyword.USER_LOCATION, getModelCoordinates());
-				menu.setLocation(swtControl.toDisplay(renderer.camera.getMousePosition().x,
-						renderer.camera.getMousePosition().y));
-				final MenuItem ms = new MenuItem(menu, SWT.CHECK, 0);
-				ms.setText("Keep region visible");
-				ms.setSelection(renderer.camera.isROISticky());
-				ms.addSelectionListener(new SelectionListener() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						renderer.camera.toggleStickyROI();
-					}
-
-					@Override
-					public void widgetDefaultSelected(final SelectionEvent e) {
-						widgetSelected(e);
-
-					}
-				});
-				ms.setImage(IGamaIcons.MENU_FOLLOW.image());
-				final MenuItem mu = new MenuItem(menu, SWT.PUSH, 1);
-				mu.setText("Focus on region...");
-				mu.addSelectionListener(new SelectionListener() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						renderer.camera.zoomRoi(env);
-					}
-
-					@Override
-					public void widgetDefaultSelected(final SelectionEvent e) {
-						widgetSelected(e);
-
-					}
-				});
-				mu.setImage(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT.image());
-				new MenuItem(menu, SWT.SEPARATOR, 2);
-				menu.addMenuListener(new MenuListener() {
-
-					@Override
-					public void menuHidden(final MenuEvent e) {
-						animator.resume();
-						renderer.cancelROI();
-						if (!menu.isDisposed())
-							menu.dispose();
-					}
-
-					@Override
-					public void menuShown(final MenuEvent e) {
-						animator.pause();
-					}
-				});
-				menu.setVisible(true);
+				renderer.camera.toggleStickyROI();
 			}
 		});
+		actions.put("Focus on region", new Runnable() {
+
+			@Override
+			public void run() {
+				renderer.camera.zoomRoi(env);
+			}
+		});
+		final Menu menu = menuManager.buildROIMenu(renderer.camera.getMousePosition().x,
+				renderer.camera.getMousePosition().y, agents, getModelCoordinates(), actions, images);
+		menu.addMenuListener(new MenuListener() {
+
+			@Override
+			public void menuHidden(final MenuEvent e) {
+				animator.resume();
+				renderer.cancelROI();
+			}
+
+			@Override
+			public void menuShown(final MenuEvent e) {
+				animator.pause();
+			}
+		});
+
+		menu.setVisible(true);
 
 	}
 
