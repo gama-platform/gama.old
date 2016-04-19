@@ -56,18 +56,28 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
+		if ( !ok() )
+			return;
 		view.getDisplaySurface().dispatchKeyEvent(e.character);
 		GAMA.getGui().asyncRun(view.displayOverlay);
 	}
 
 	@Override
-	public void keyReleased(final KeyEvent e) {}
+	public void keyReleased(final KeyEvent e) {
+		if ( !ok() )
+			return;
+	}
 
 	@Override
-	public void mouseScrolled(final MouseEvent e) {}
+	public void mouseScrolled(final MouseEvent e) {
+		if ( !ok() )
+			return;
+	}
 
 	@Override
 	public void mouseEnter(final MouseEvent e) {
+		if ( !ok() )
+			return;
 		if ( (e.stateMask & SWT.MODIFIER_MASK) != 0 )
 			return;
 		view.getDisplaySurface().setMousePosition(e.x, e.y);
@@ -81,6 +91,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void mouseExit(final MouseEvent e) {
+		if ( !ok() )
+			return;
 		final long currentTime = System.currentTimeMillis();
 		if ( currentTime - lastEnterTime < 100 && lastEnterPosition.x == e.x && lastEnterPosition.y == e.y ) { return; }
 		view.getDisplaySurface().setMousePosition(-1, -1);
@@ -93,7 +105,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void mouseHover(final MouseEvent e) {
-
+		if ( !ok() )
+			return;
 		if ( e.button > 0 )
 			return;
 		// System.out.println("Mouse hovering on " + view.getPartName());
@@ -102,6 +115,9 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void mouseMove(final MouseEvent e) {
+		if ( !ok() )
+			return;
+		GAMA.getGui().asyncRun(view.displayOverlay);
 		if ( (e.stateMask & SWT.MODIFIER_MASK) != 0 )
 			return;
 		// System.out.println("Mouse moving on " + view.getPartName());
@@ -112,15 +128,19 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 			view.getDisplaySurface().setMousePosition(e.x, e.y);
 			view.getDisplaySurface().dispatchMouseEvent(SWT.MouseMove);
 		}
-		GAMA.getGui().asyncRun(view.displayOverlay);
 
 	}
 
 	@Override
-	public void mouseDoubleClick(final MouseEvent e) {}
+	public void mouseDoubleClick(final MouseEvent e) {
+		if ( !ok() )
+			return;
+	}
 
 	@Override
 	public void mouseDown(final MouseEvent e) {
+		if ( !ok() )
+			return;
 		view.getDisplaySurface().setMousePosition(e.x, e.y);
 		if ( inMenu ) {
 			inMenu = false;
@@ -135,6 +155,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void mouseUp(final MouseEvent e) {
+		if ( !ok() )
+			return;
 		// In case the mouse has moved (for example on a menu)
 		if ( !mouseIsDown )
 			return;
@@ -148,6 +170,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void menuDetected(final MenuDetectEvent e) {
+		if ( !ok() )
+			return;
 		if ( inMenu ) // In case a double event is sent
 			return;
 		// System.out.println("Menu detected on " + view.getPartName());
@@ -161,11 +185,15 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void dragDetected(final DragDetectEvent e) {
+		if ( !ok() )
+			return;
 		view.getDisplaySurface().dispatchMouseEvent(SWT.DragDetect);
 	}
 
 	@Override
 	public void focusGained(final FocusEvent e) {
+		if ( !ok() )
+			return;
 		// System.out.println("Control has gained focus");
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseEnter);
 		// Thread.dumpStack();
@@ -173,8 +201,21 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void focusLost(final FocusEvent e) {
+		if ( !ok() )
+			return;
 		// System.out.println("Control has lost focus");
 		// Thread.dumpStack();
+	}
+
+	private boolean ok() {
+		final boolean viewOk = view != null && !view.disposed;
+		if ( !viewOk )
+			return false;
+		final boolean controlOk = control != null && !control.isDisposed();
+		if ( !controlOk )
+			return false;
+		final boolean surfaceOk = view.getDisplaySurface() != null && !view.getDisplaySurface().isDisposed();
+		return surfaceOk;
 	}
 
 }
