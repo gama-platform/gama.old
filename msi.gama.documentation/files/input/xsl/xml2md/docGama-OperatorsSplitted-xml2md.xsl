@@ -140,7 +140,7 @@ Note that due to the fact that actions are written by modelers, the general func
 </xsl:template>
     
  <xsl:template name="buildOperators"> 
-    <xsl:for-each select="doc/operators/operator">
+    <xsl:for-each select="doc/operators/operator[@alphabetOrder = $alphabetID or $alphabetID = '*']">
     	<xsl:sort select="@name" />
     	<xsl:variable name="operatorName" select="@name"/>
     	
