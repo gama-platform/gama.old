@@ -90,6 +90,11 @@ public class ModelDescription extends SpeciesDescription {
 		return alias;
 	}
 
+	@Override
+	public boolean isModel() {
+		return true;
+	}
+
 	// end-hqnghi
 
 	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
