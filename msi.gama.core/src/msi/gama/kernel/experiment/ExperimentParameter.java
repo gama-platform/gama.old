@@ -266,17 +266,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public Set<Object> neighbourValues(final IScope scope) throws GamaRuntimeException {
-		final Set<Object> neighbourValues = new HashSet<Object>();
+	public Set<Object> neighborValues(final IScope scope) throws GamaRuntimeException {
+		final Set<Object> neighborValues = new HashSet<Object>();
 		if (getAmongValue(scope) != null && !getAmongValue(scope).isEmpty()) {
 			final int index = getAmongValue(scope).indexOf(this.value(scope));
 			if (index > 0) {
-				neighbourValues.add(getAmongValue(scope).get(index - 1));
+				neighborValues.add(getAmongValue(scope).get(index - 1));
 			}
 			if (index < getAmongValue(scope).size() - 1) {
-				neighbourValues.add(getAmongValue(scope).get(index + 1));
+				neighborValues.add(getAmongValue(scope).get(index + 1));
 			}
-			return neighbourValues;
+			return neighborValues;
 		}
 		final double step = stepValue == null ? 1.0 : stepValue.doubleValue();
 		if (type.id() == IType.INT) {
@@ -284,10 +284,10 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			final int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
 			final int val = Cast.as(value(scope), Integer.class, false);
 			if (val >= min + (int) step) {
-				neighbourValues.add(val - (int) step);
+				neighborValues.add(val - (int) step);
 			}
 			if (val <= max - (int) step) {
-				neighbourValues.add(val + (int) step);
+				neighborValues.add(val + (int) step);
 			}
 		} else if (type.id() == IType.FLOAT) {
 			final double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
@@ -296,14 +296,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			final double val = Cast.asFloat(null, value(scope));
 			if (val >= min + step) {
 				final double valLow = FastMath.round((val - step) * removeZ) / removeZ;
-				neighbourValues.add(valLow);
+				neighborValues.add(valLow);
 			}
 			if (val <= max - step) {
 				final double valHigh = FastMath.round((val + step) * removeZ) / removeZ;
-				neighbourValues.add(valHigh);
+				neighborValues.add(valHigh);
 			}
 		}
-		return neighbourValues;
+		return neighborValues;
 	}
 
 	@Override

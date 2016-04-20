@@ -392,12 +392,12 @@ public class MapComparison {
 		double xs = 0.0;
 		double[] XaXs = new double[2];
 		double sizeNorm = FastMath.sqrt(agent.getEnvelope().getArea());
-		List<IAgent> neighbours = distance == 0 || filter == null ? new ArrayList<IAgent>()
-			: new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, agent, distance, filter));
+		List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<IAgent>()
+			: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, agent, distance, filter));
 
 		Map<IAgent, Double> distancesCoeff = new TOrderedHashMap<IAgent, Double>();
 		distancesCoeff.put(agent, 1.0);
-		for ( IAgent ag : neighbours ) {
+		for ( IAgent ag : neighbors ) {
 			double euclidDist = agent.getLocation().euclidianDistanceTo(ag.getLocation());
 			distancesCoeff.put(ag, 1 / (1.0 + euclidDist / sizeNorm));
 		}
@@ -445,13 +445,13 @@ public class MapComparison {
 		ILocation centralLoc = (ILocation) Stats.getMean(scope, locs);
 		if ( filter != null ) {
 			IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
-			List<IAgent> neighbours = distance == 0 ? new ArrayList<IAgent>()
-				: new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, centralAg, distance, filter));
+			List<IAgent> neighbors = distance == 0 ? new ArrayList<IAgent>()
+				: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));
 			double sizeNorm = FastMath.sqrt(centralAg.getEnvelope().getArea());
 
 			Map<IAgent, Double> distancesCoeff = new TOrderedHashMap<IAgent, Double>();
 			distancesCoeff.put(centralAg, 1.0);
-			for ( IAgent ag : neighbours ) {
+			for ( IAgent ag : neighbors ) {
 				double euclidDist = centralAg.getLocation().euclidianDistanceTo(ag.getLocation());
 				double dist = 1 / (1.0 + euclidDist / sizeNorm);
 				distancesCoeff.put(ag, dist);
@@ -568,19 +568,19 @@ public class MapComparison {
 				IAgent agent = agents.get(scope, i);
 				// double sizeNorm = agent.getPerimeter() / 4.0;
 				double sizeNorm = FastMath.sqrt(agent.getEnvelope().getArea());
-				List<IAgent> neighbours = distance == 0 || filter == null ? new ArrayList<IAgent>()
-					: new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, agent, distance, filter));
+				List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<IAgent>()
+					: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, agent, distance, filter));
 
 				Map<IAgent, Double> distancesCoeff = new TOrderedHashMap<IAgent, Double>();
 				distancesCoeff.put(agent, 1.0);
-				for ( IAgent ag : neighbours ) {
+				for ( IAgent ag : neighbors ) {
 					double euclidDist = agent.getLocation().euclidianDistanceTo(ag.getLocation());
 					distancesCoeff.put(ag, 1 / (1.0 + euclidDist / sizeNorm));
 				}
 				for ( int j = 0; j < nbCat; j++ ) {
 					double max1 = 0.0;
 					double max2 = 0.0;
-					for ( IAgent ag : neighbours ) {
+					for ( IAgent ag : neighbors ) {
 						int id = agsId.get(ag);
 						double val1 = crispVector1[id][j] * distancesCoeff.get(ag);
 						double val2 = crispVector2[id][j] * distancesCoeff.get(ag);
@@ -669,10 +669,10 @@ public class MapComparison {
 		}
 		ILocation centralLoc = (ILocation) Stats.getMean(scope, locs);
 		IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
-		List<IAgent> neighbours = distance == 0 || filter == null ? new ArrayList<IAgent>()
-			: new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, centralAg, distance, filter));
+		List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<IAgent>()
+			: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));
 
-		for ( IAgent ag : neighbours ) {
+		for ( IAgent ag : neighbors ) {
 			double dist = centralLoc.euclidianDistanceTo(ag.getLocation());
 			if ( dist == 0 ) {
 				continue;

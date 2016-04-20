@@ -98,26 +98,26 @@ public class HumanMovingSkill extends MovingSkill {
 		// backgroundAgent = (LocalizedEntity) background;
 		// }
 
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, agent, detectingRange, Different.with());
+		final GamaList<IAgent> neighbors =
+			(GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope, agent, detectingRange, Different.with());
 		if ( backgroundAgent != null ) {
-			neighbours.remove(backgroundAgent);
+			neighbors.remove(backgroundAgent);
 		}
 		final Object ignore = scope.getArg("ignore_type", IType.AGENT);
 		final IAgent ignoreAgent = (IAgent) ignore;
 		// final Object ignore = args.value("ignore_type");
 		// LocalizedEntity ignoreAgent = (LocalizedEntity) ignore;
-		for ( int i = 0; i < neighbours.size(); i++ ) {
-			final IAgent entity = neighbours.get(i);
+		for ( int i = 0; i < neighbors.size(); i++ ) {
+			final IAgent entity = neighbors.get(i);
 			if ( ignoreAgent != null && entity.getSpeciesName().equals(ignoreAgent.getSpeciesName()) ) {
-				neighbours.remove(i);
+				neighbors.remove(i);
 			}
 		}
 
 		final GamaPoint startingPoint = (GamaPoint) agent.getLocation();
 		final Geometry point0 =
 			((Geometry) GeometryUtils.FACTORY.createPoint(startingPoint.getLocation())).buffer(agentSize);
-		if ( !isExteriorOfAgents(neighbours, point0) ) {
+		if ( !isExteriorOfAgents(neighbors, point0) ) {
 			dist = 2 * agentSize;
 		}
 
@@ -137,9 +137,9 @@ public class HumanMovingSkill extends MovingSkill {
 		boolean isFoundNextPoint = false;
 		if ( backgroundAgent != null ) {
 			isFoundNextPoint =
-				isExteriorOfAgents(neighbours, point) && backgroundAgent.getInnerGeometry().contains(point);
+				isExteriorOfAgents(neighbors, point) && backgroundAgent.getInnerGeometry().contains(point);
 		} else {
-			isFoundNextPoint = isExteriorOfAgents(neighbours, point);
+			isFoundNextPoint = isExteriorOfAgents(neighbors, point);
 		}
 
 		if ( !isFoundNextPoint ) {
@@ -222,10 +222,10 @@ public class HumanMovingSkill extends MovingSkill {
 		// boolean isFoundNextPoint = false;
 		// if ( isInBackgroundAgent ) {
 		// isFoundNextPoint =
-		// isExteriorOfAgents(neighbours, point) &&
+		// isExteriorOfAgents(neighbors, point) &&
 		// backgroundAgent.getBody().getGeometry().contains(point);
 		// } else {
-		// boolean isFoundNextPoint = isExteriorOfAgents(neighbours, point);
+		// boolean isFoundNextPoint = isExteriorOfAgents(neighbors, point);
 		// }
 
 		// if ( px == null ) {
@@ -305,26 +305,26 @@ public class HumanMovingSkill extends MovingSkill {
 		final GamaPoint startingPoint = (GamaPoint) getCurrentAgent(scope).getLocation();
 
 		final double detectingRange = agentSize + maxDist;
-		final GamaList<IAgent> neighbours = (GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope,
+		final GamaList<IAgent> neighbors = (GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope,
 			getCurrentAgent(scope), detectingRange, Different.with());
 		if ( backgroundAgent != null ) {
-			neighbours.remove(backgroundAgent);
+			neighbors.remove(backgroundAgent);
 		}
-		// neighbours.remove(body);
-		for ( int i = 0; i < neighbours.size(); i++ ) {
-			final IAgent entity = neighbours.get(i);
+		// neighbors.remove(body);
+		for ( int i = 0; i < neighbors.size(); i++ ) {
+			final IAgent entity = neighbors.get(i);
 			if ( entity.getSpeciesName().equals(targetAgent.getSpeciesName()) ) {
-				neighbours.remove(i);
+				neighbors.remove(i);
 			}
 
 		}
 
 		// int ii=0;
-		// while (ii<neighbours.size()){
+		// while (ii<neighbors.size()){
 		// try{
-		// LocalizedEntity entity = neighbours.get(ii);
+		// LocalizedEntity entity = neighbors.get(ii);
 		// if (entity.getSpecies() == targetAgent.getSpecies()){
-		// neighbours.remove(ii);
+		// neighbors.remove(ii);
 		// }
 		// else{
 		// ii++;
@@ -358,14 +358,14 @@ public class HumanMovingSkill extends MovingSkill {
 			// Geometry point =
 			// ModelFactory.getGeometryFactory().createPoint(candidatePoint[(i+index)%8].toCoordinate()).buffer(agentSize);
 			if ( backgroundAgent != null ) {
-				if ( isExteriorOfAgents(neighbours, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
+				if ( isExteriorOfAgents(neighbors, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
 					{
 						isFoundNextPoint = true;
 						nextPoint = candidatePoint[(i + index) % 8];
 						// body.getAgent().setVal("heading", GamaMath.checkHeading((i+index)%8));
 						break;
 					}
-				} // else if ( !isExteriorOfAgents(neighbours, point) ) {
+				} // else if ( !isExteriorOfAgents(neighbors, point) ) {
 					// isFreeZone = false;
 					// break;
 					// }
@@ -455,9 +455,9 @@ public class HumanMovingSkill extends MovingSkill {
 		}
 		// GamaPoint targetPoint = (GamaPoint) target;
 		final GamaPoint startingPoint = (GamaPoint) agent.getLocation();
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, agent, detectingRange, Different.with());
-		neighbours.remove(backgroundAgent);
+		final GamaList<IAgent> neighbors =
+			(GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope, agent, detectingRange, Different.with());
+		neighbors.remove(backgroundAgent);
 		// *****
 		boolean isFoundNextPoint = false;
 		GamaPoint nextPoint = null;
@@ -494,7 +494,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 			final PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal) geomCand);
 			freeSpace = true;
-			for ( final IAgent ag : neighbours ) {
+			for ( final IAgent ag : neighbors ) {
 				if ( !geomCandOpt.disjoint(ag.getInnerGeometry()) ) {
 					freeSpace = false;
 					break;
@@ -597,16 +597,16 @@ public class HumanMovingSkill extends MovingSkill {
 		final GamaPoint startingPoint = (GamaPoint) agent.getLocation();
 
 		final double detectingRange = agentSize + maxDist;
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, agent, detectingRange, Different.with());
+		final GamaList<IAgent> neighbors =
+			(GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope, agent, detectingRange, Different.with());
 		if ( isInBackgroundAgent ) {
-			neighbours.remove(backgroundAgent);
+			neighbors.remove(backgroundAgent);
 		}
-		// neighbours.remove(body);
-		for ( int i = 0; i < neighbours.size(); i++ ) {
-			final IAgent entity = neighbours.get(i);
+		// neighbors.remove(body);
+		for ( int i = 0; i < neighbors.size(); i++ ) {
+			final IAgent entity = neighbors.get(i);
 			if ( entity.getSpeciesName().equals(targetAgent.getSpeciesName()) ) {
-				neighbours.remove(i);
+				neighbors.remove(i);
 			}
 
 		}
@@ -634,7 +634,7 @@ public class HumanMovingSkill extends MovingSkill {
 				GeometryUtils.FACTORY.createPoint(candidatePoint[i].toCoordinate()).buffer(agentSize);
 
 			if ( isInBackgroundAgent ) {
-				if ( isExteriorOfAgents(neighbours, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
+				if ( isExteriorOfAgents(neighbors, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
 					count++;
 					ok[i] = true;
 				}
@@ -740,9 +740,9 @@ public class HumanMovingSkill extends MovingSkill {
 		}
 		// GamaPoint targetPoint = (GamaPoint) target;
 		final GamaPoint startingPoint = (GamaPoint) agent.getLocation();
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, agent, detectingRange, Different.with());
-		neighbours.remove(backgroundAgent);
+		final GamaList<IAgent> neighbors =
+			(GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope, agent, detectingRange, Different.with());
+		neighbors.remove(backgroundAgent);
 		// *****
 		boolean isFoundNextPoint = false;
 		GamaPoint nextPoint = null;
@@ -780,7 +780,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 			final PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal) geomCand);
 			freeSpace = true;
-			for ( final IAgent ag : neighbours ) {
+			for ( final IAgent ag : neighbors ) {
 				if ( !geomCandOpt.disjoint(ag.getInnerGeometry()) ) {
 					freeSpace = false;
 					break;
@@ -961,16 +961,16 @@ public class HumanMovingSkill extends MovingSkill {
 		}
 
 		final double detectingRange = agentSize + maxDist;
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, agent, detectingRange, Different.with());
+		final GamaList<IAgent> neighbors =
+			(GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope, agent, detectingRange, Different.with());
 		if ( isInBackgroundAgent ) {
-			neighbours.remove(backgroundAgent);
+			neighbors.remove(backgroundAgent);
 		}
-		// neighbours.remove(body);
-		for ( int i = 0; i < neighbours.size(); i++ ) {
-			final IAgent entity = neighbours.get(i);
+		// neighbors.remove(body);
+		for ( int i = 0; i < neighbors.size(); i++ ) {
+			final IAgent entity = neighbors.get(i);
 			if ( entity.getSpeciesName().equals(targetAgent.getSpeciesName()) ) {
-				neighbours.remove(i);
+				neighbors.remove(i);
 			}
 
 		}
@@ -999,7 +999,7 @@ public class HumanMovingSkill extends MovingSkill {
 				GeometryUtils.FACTORY.createPoint(candidatePoint[i].toCoordinate()).buffer(agentSize);
 
 			if ( isInBackgroundAgent ) {
-				if ( isExteriorOfAgents(neighbours, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
+				if ( isExteriorOfAgents(neighbors, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
 					count++;
 					ok[i] = true;
 				}
@@ -1088,7 +1088,7 @@ public class HumanMovingSkill extends MovingSkill {
 					GeometryUtils.FACTORY.createPoint(candidatePoint[i].toCoordinate()).buffer(agentSize);
 
 				if ( isInBackgroundAgent ) {
-					if ( isExteriorOfAgents(neighbours, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
+					if ( isExteriorOfAgents(neighbors, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
 						count++;
 						ok[i] = true;
 					}
@@ -1247,9 +1247,9 @@ public class HumanMovingSkill extends MovingSkill {
 		}
 
 		final double detectingRange = agentSize + maxDist;
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, agent, detectingRange, Different.with());
-		neighbours.remove(backgroundAgent);
+		final GamaList<IAgent> neighbors =
+			(GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope, agent, detectingRange, Different.with());
+		neighbors.remove(backgroundAgent);
 
 		boolean isFoundNextPoint = false;
 		GamaPoint nextPoint = null;
@@ -1287,7 +1287,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 			final PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal) geomCand);
 			freeSpace = true;
-			for ( final IAgent ag : neighbours ) {
+			for ( final IAgent ag : neighbors ) {
 				if ( !geomCandOpt.disjoint(ag.getInnerGeometry()) ) {
 					freeSpace = false;
 					break;
@@ -1391,7 +1391,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 *
 		 * PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal)geomCand);
 		 * freeSpace = true;
-		 * for (IAgent ag : neighbours) {
+		 * for (IAgent ag : neighbors) {
 		 * if (! geomCandOpt.disjoint(ag.getInnerGeometry())) {
 		 * freeSpace = false;
 		 * break;
@@ -1552,25 +1552,25 @@ public class HumanMovingSkill extends MovingSkill {
 		final GamaPoint targetPoint = (GamaPoint) targetAgent.getLocation();
 		// OutputManager.debug("Target " + targetPoint.x + " : " + targetPoint.y);
 		// OutputManager.debug("Detecting range : "+ detectingRange);
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, agent, detectingRange, Different.with());
+		final GamaList<IAgent> neighbors =
+			(GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope, agent, detectingRange, Different.with());
 		if ( isInBackgroundAgent ) {
-			neighbours.remove(backgroundAgent);
+			neighbors.remove(backgroundAgent);
 		}
-		// neighbours.remove(body);
-		for ( int i = 0; i < neighbours.size(); i++ ) {
-			final IAgent entity = neighbours.get(i);
+		// neighbors.remove(body);
+		for ( int i = 0; i < neighbors.size(); i++ ) {
+			final IAgent entity = neighbors.get(i);
 			if ( entity.getSpeciesName().equals(targetAgent.getSpeciesName()) ) {
-				neighbours.remove(i);
+				neighbors.remove(i);
 			}
 
 		}
 		/**
-		 * for ( int i = 0; i < neighbours.size(); i++ ) {
+		 * for ( int i = 0; i < neighbors.size(); i++ ) {
 		 * try {
-		 * LocalizedEntity entity = neighbours.get(i);
+		 * LocalizedEntity entity = neighbors.get(i);
 		 * if ( entity.getSpecies() == targetAgent.getSpecies() ) {
-		 * neighbours.remove(i);
+		 * neighbors.remove(i);
 		 * }
 		 * } catch (Exception e) {
 		 * OutputManager.debug(e.getMessage());
@@ -1592,7 +1592,7 @@ public class HumanMovingSkill extends MovingSkill {
 			GamaPoint px = new GamaPoint(x, y1);
 			Geometry point = GeometryUtils.FACTORY.createPoint(px.toCoordinate()).buffer(agentSize);
 			if ( isInBackgroundAgent ) {
-				if ( isExteriorOfAgents(neighbours, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
+				if ( isExteriorOfAgents(neighbors, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
 					isFoundNextPoint = true;
 					final double d = getDoubleDistance(px, targetPoint);
 					if ( d < mininalDoubleDistance ) {
@@ -1600,7 +1600,7 @@ public class HumanMovingSkill extends MovingSkill {
 						nextPoint = px;
 					}
 				}
-			} else if ( isExteriorOfAgents(neighbours, point) ) {
+			} else if ( isExteriorOfAgents(neighbors, point) ) {
 				isFoundNextPoint = true;
 				final double d = getDoubleDistance(px, targetPoint);
 				if ( d < mininalDoubleDistance ) {
@@ -1612,7 +1612,7 @@ public class HumanMovingSkill extends MovingSkill {
 			px = new GamaPoint(x, y2);
 			point = GeometryUtils.FACTORY.createPoint(px.toCoordinate()).buffer(agentSize);
 			if ( isInBackgroundAgent ) {
-				if ( isExteriorOfAgents(neighbours, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
+				if ( isExteriorOfAgents(neighbors, point) && backgroundAgent.getInnerGeometry().contains(point) ) {
 					isFoundNextPoint = true;
 					final double d = getDoubleDistance(px, targetPoint);
 					if ( d < mininalDoubleDistance ) {
@@ -1620,7 +1620,7 @@ public class HumanMovingSkill extends MovingSkill {
 						nextPoint = px;
 					}
 				}
-			} else if ( isExteriorOfAgents(neighbours, point) ) {
+			} else if ( isExteriorOfAgents(neighbors, point) ) {
 				isFoundNextPoint = true;
 				final double d = getDoubleDistance(px, targetPoint);
 				if ( d < mininalDoubleDistance ) {
@@ -1750,35 +1750,35 @@ public class HumanMovingSkill extends MovingSkill {
 		final GamaPoint targetPoint = (GamaPoint) targetAgent.getLocation();
 		// OutputManager.debug("Target " + targetPoint.x + " : " + targetPoint.y);
 		// OutputManager.debug("Detecting range : "+ detectingRange);
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, agent, detectingRange, Different.with());
-		// if (neighbours.contains())
-		// neighbours.remove("metro0");
+		final GamaList<IAgent> neighbors =
+			(GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope, agent, detectingRange, Different.with());
+		// if (neighbors.contains())
+		// neighbors.remove("metro0");
 		// if ( isInBackgroundAgent ) {
-		// ;// neighbours.remove(backgroundAgent);
+		// ;// neighbors.remove(backgroundAgent);
 		// }
-		// neighbours.remove(body);
+		// neighbors.remove(body);
 		/*
-		 * for ( int i = 0; i < neighbours.size(); i++ ) {
-		 * IAgent entity = neighbours.get(i);
+		 * for ( int i = 0; i < neighbors.size(); i++ ) {
+		 * IAgent entity = neighbors.get(i);
 		 * if ( entity.getSpeciesName().equals(targetAgent.getSpeciesName()) ) {
-		 * neighbours.remove(i);
+		 * neighbors.remove(i);
 		 * }
 		 *
 		 * if (entity.getSpeciesName().equals("metro")) {
-		 * metro = neighbours.get(i);
-		 * neighbours.remove(i);
+		 * metro = neighbors.get(i);
+		 * neighbors.remove(i);
 		 * }
 		 *
 		 * }
 		 */
-		neighbours.remove(backgroundAgent);
+		neighbors.remove(backgroundAgent);
 		/**
-		 * for ( int i = 0; i < neighbours.size(); i++ ) {
+		 * for ( int i = 0; i < neighbors.size(); i++ ) {
 		 * try {
-		 * LocalizedEntity entity = neighbours.get(i);
+		 * LocalizedEntity entity = neighbors.get(i);
 		 * if ( entity.getSpecies() == targetAgent.getSpecies() ) {
-		 * neighbours.remove(i);
+		 * neighbors.remove(i);
 		 * }
 		 * } catch (Exception e) {
 		 * OutputManager.debug(e.getMessage());
@@ -1835,11 +1835,11 @@ public class HumanMovingSkill extends MovingSkill {
 			final Geometry point = GeometryUtils.FACTORY.createPoint(candidatePoint[i]).buffer(agentSize);
 			if ( isInBackgroundAgent ) {
 				final String ss = point.toString();
-				if ( !isExteriorOfAgents(neighbours, point) || !backgroundAgent.getInnerGeometry().contains(point) ) {
+				if ( !isExteriorOfAgents(neighbors, point) || !backgroundAgent.getInnerGeometry().contains(point) ) {
 					isFreeZone = false;
 					break;
 				}
-			} // else if ( !isExteriorOfAgents(neighbours, point) ) {
+			} // else if ( !isExteriorOfAgents(neighbors, point) ) {
 				// isFreeZone = false;
 				// break;
 				// }
@@ -1936,7 +1936,7 @@ public class HumanMovingSkill extends MovingSkill {
 				final Geometry point =
 					GeometryUtils.FACTORY.createPoint(candidatePoint[i].toCoordinate()).buffer(agentSize);
 				if ( isInBackgroundAgent ) {
-					if ( isExteriorOfAgents(neighbours, point) /*
+					if ( isExteriorOfAgents(neighbors, point) /*
 																 * &&
 																 * backgroundAgent.getInnerGeometry()
 																 * .contains(point)
@@ -1945,7 +1945,7 @@ public class HumanMovingSkill extends MovingSkill {
 						nextPoint = candidatePoint[i];
 						break;
 					}
-				} else if ( isExteriorOfAgents(neighbours, point) ) {
+				} else if ( isExteriorOfAgents(neighbors, point) ) {
 					isFoundNextPoint = true;
 					nextPoint = candidatePoint[i];
 					break;
@@ -1981,7 +1981,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 * Geometry point =
 		 * ModelFactory.getGeometryFactory().createPoint(px.toCoordinate()).buffer(agentSize);
 		 * if ( isInBackgroundAgent ) {
-		 * if ( isExteriorOfAgents(neighbours, point) &&
+		 * if ( isExteriorOfAgents(neighbors, point) &&
 		 * backgroundAgent.getBody().getGeometry().contains(point) ) {
 		 * isFoundNextPoint = true;
 		 * double d = getDoubleDistance(px, targetPoint);
@@ -1990,7 +1990,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 * nextPoint = px;
 		 * }
 		 * }
-		 * } else if ( isExteriorOfAgents(neighbours, point) ) {
+		 * } else if ( isExteriorOfAgents(neighbors, point) ) {
 		 * isFoundNextPoint = true;
 		 * double d = getDoubleDistance(px, targetPoint);
 		 * if ( d < mininalDoubleDistance ) {
@@ -2019,7 +2019,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 * Geometry point =
 		 * ModelFactory.getGeometryFactory().createPoint(px.toCoordinate()).buffer(agentSize);
 		 * if ( isInBackgroundAgent ) {
-		 * if ( isExteriorOfAgents(neighbours, point) &&
+		 * if ( isExteriorOfAgents(neighbors, point) &&
 		 * backgroundAgent.getBody().getGeometry().contains(point) ) {
 		 * isFoundNextPoint = true;
 		 * double d = getDoubleDistance(px, targetPoint);
@@ -2028,7 +2028,7 @@ public class HumanMovingSkill extends MovingSkill {
 		 * nextPoint = px;
 		 * }
 		 * }
-		 * } else if ( isExteriorOfAgents(neighbours, point) ) {
+		 * } else if ( isExteriorOfAgents(neighbors, point) ) {
 		 * isFoundNextPoint = true;
 		 * double d = getDoubleDistance(px, targetPoint);
 		 * if ( d < mininalDoubleDistance ) {
@@ -2129,9 +2129,9 @@ public class HumanMovingSkill extends MovingSkill {
 		}
 		final GamaPoint targetPoint = (GamaPoint) target;
 		final GamaPoint startingPoint = (GamaPoint) agent.getLocation();
-		final GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(scope, agent, detectingRange, Different.with());
-		neighbours.remove(backgroundAgent);
+		final GamaList<IAgent> neighbors =
+			(GamaList<IAgent>) scope.getTopology().getNeighborsOf(scope, agent, detectingRange, Different.with());
+		neighbors.remove(backgroundAgent);
 		final GamaPoint candidatePoint[] = new GamaPoint[9];
 		final double distanceToTarget =
 			Math.sqrt((targetPoint.y - startingPoint.y) * (targetPoint.y - startingPoint.y) +
@@ -2189,7 +2189,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 			final PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal) geomCand);
 			freeSpace = true;
-			for ( final IAgent ag : neighbours ) {
+			for ( final IAgent ag : neighbors ) {
 				if ( !geomCandOpt.disjoint(ag.getInnerGeometry()) ) {
 					freeSpace = false;
 					break;
@@ -2218,9 +2218,9 @@ public class HumanMovingSkill extends MovingSkill {
 					 * }
 					 * targetPoint = (GamaPoint) target;
 					 * startingPoint = (GamaPoint) agent.getLocation();
-					 * neighbours = (GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent,
+					 * neighbors = (GamaList<IAgent>) agent.getTopology().getNeighborsOf(agent,
 					 * detectingRange, Different.with());
-					 * neighbours.remove(backgroundAgent);
+					 * neighbors.remove(backgroundAgent);
 					 * candidatePoint = new GamaPoint[9];
 					 * distanceToTarget = FastMath.sqrt((targetPoint.y - startingPoint.y) *
 					 * (targetPoint.y - startingPoint.y) +

@@ -10,34 +10,34 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 
-public class NoCacheNeighbourhood implements INeighbourhood {
+public class NoCacheNeighborhood implements INeighborhood {
 
 	/**
 	 * 
 	 */
 	private final GamaSpatialMatrix matrix;
 
-	public NoCacheNeighbourhood(GamaSpatialMatrix gamaSpatialMatrix) {
+	public NoCacheNeighborhood(GamaSpatialMatrix gamaSpatialMatrix) {
 		matrix = gamaSpatialMatrix;}
 
 	@Override
 	public void clear() {}
 
 	/**
-	 * Method getNeighboursIn()
-	 * @see msi.gama.metamodel.topology.grid.INeighbourhood#getNeighboursIn(int, int)
+	 * Method getNeighborsIn()
+	 * @see msi.gama.metamodel.topology.grid.INeighborhood#getNeighborsIn(int, int)
 	 */
 	@Override
-	public Set<IAgent> getNeighboursIn(final IScope scope, final int placeIndex, final int radius) {
-		return computeNeighboursFrom(scope, placeIndex, 1, radius);
+	public Set<IAgent> getNeighborsIn(final IScope scope, final int placeIndex, final int radius) {
+		return computeNeighborsFrom(scope, placeIndex, 1, radius);
 	}
 
-	private Set<IAgent> computeNeighboursFrom(final IScope scope, final int placeIndex, final int begin,
+	private Set<IAgent> computeNeighborsFrom(final IScope scope, final int placeIndex, final int begin,
 		final int end) {
 		Set<IAgent> result = new TLinkedHashSet();
 		for ( int i = begin; i <= end; i++ ) {
-			for ( Integer index : matrix.usesVN ? get4NeighboursAtRadius(placeIndex, i)
-				: get8NeighboursAtRadius(placeIndex, i) ) {
+			for ( Integer index : matrix.usesVN ? get4NeighborsAtRadius(placeIndex, i)
+				: get8NeighborsAtRadius(placeIndex, i) ) {
 				result.add(matrix.matrix[index].getAgent());
 			}
 		}
@@ -46,7 +46,7 @@ public class NoCacheNeighbourhood implements INeighbourhood {
 		return result;
 	}
 
-	protected List<Integer> get8NeighboursAtRadius(final int placeIndex, final int radius) {
+	protected List<Integer> get8NeighborsAtRadius(final int placeIndex, final int radius) {
 		final int y = placeIndex / matrix.numCols;
 		final int x = placeIndex - y * matrix.numCols;
 		final List<Integer> v = new ArrayList<Integer>(radius + 1 * radius + 1);
@@ -74,7 +74,7 @@ public class NoCacheNeighbourhood implements INeighbourhood {
 		return v;
 	}
 
-	protected List<Integer> get4NeighboursAtRadius(final int placeIndex, final int radius) {
+	protected List<Integer> get4NeighborsAtRadius(final int placeIndex, final int radius) {
 		final int y = placeIndex / matrix.numCols;
 		final int x = placeIndex - y * matrix.numCols;
 
@@ -95,7 +95,7 @@ public class NoCacheNeighbourhood implements INeighbourhood {
 
 	/**
 	 * Method isVN()
-	 * @see msi.gama.metamodel.topology.grid.INeighbourhood#isVN()
+	 * @see msi.gama.metamodel.topology.grid.INeighborhood#isVN()
 	 */
 	@Override
 	public boolean isVN() {
@@ -103,22 +103,22 @@ public class NoCacheNeighbourhood implements INeighbourhood {
 	}
 
 	/**
-	 * Method getRawNeighboursIncluding()
-	 * @see msi.gama.metamodel.topology.grid.INeighbourhood#getRawNeighboursIncluding(int, int)
+	 * Method getRawNeighborsIncluding()
+	 * @see msi.gama.metamodel.topology.grid.INeighborhood#getRawNeighborsIncluding(int, int)
 	 */
 	@Override
-	public int[] getRawNeighboursIncluding(final IScope scope, final int placeIndex, final int range) {
-		throw GamaRuntimeException.warning("The diffusion of signals must rely on a neighbours cache in the grid",
+	public int[] getRawNeighborsIncluding(final IScope scope, final int placeIndex, final int range) {
+		throw GamaRuntimeException.warning("The diffusion of signals must rely on a neighbors cache in the grid",
 			scope);
 	}
 
 	/**
-	 * Method neighboursIndexOf()
-	 * @see msi.gama.metamodel.topology.grid.INeighbourhood#neighboursIndexOf(int, int)
+	 * Method neighborsIndexOf()
+	 * @see msi.gama.metamodel.topology.grid.INeighborhood#neighborsIndexOf(int, int)
 	 */
 	@Override
-	public int neighboursIndexOf(final IScope scope, final int placeIndex, final int n) {
-		throw GamaRuntimeException.warning("The diffusion of signals must rely on a neighbours cache in the grid",
+	public int neighborsIndexOf(final IScope scope, final int placeIndex, final int n) {
+		throw GamaRuntimeException.warning("The diffusion of signals must rely on a neighbors cache in the grid",
 			scope);
 	}
 

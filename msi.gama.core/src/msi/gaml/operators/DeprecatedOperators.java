@@ -69,7 +69,7 @@ public class DeprecatedOperators {
 	test = false) },
 	see = { "neighbors_of" })
 	public static IList neighbours_of_deprecated(final IScope scope, final ITopology t, final IAgent agent) {
-		return Spatial.Queries.neighbours_of(scope, t, agent);
+		return Spatial.Queries.neighbors_of(scope, t, agent);
 	}
 
 	@Deprecated
@@ -101,7 +101,7 @@ public class DeprecatedOperators {
 		test = false) }) )
 	public static IList neighbours_of_deprecated(final IScope scope, final ITopology t, final IShape agent,
 		final Double distance) {
-		return Spatial.Queries.neighbours_of(scope, t, agent, distance);
+		return Spatial.Queries.neighbors_of(scope, t, agent, distance);
 	}
 
 	@Deprecated
@@ -116,7 +116,7 @@ public class DeprecatedOperators {
 	test = false) },
 	see = { "neighbors_at" })
 	public static IList neighbours_at_deprecated(final IScope scope, final IShape agent, final Double distance) {
-		return Spatial.Queries.neighbours_at(scope, agent, distance);
+		return Spatial.Queries.neighbors_at(scope, agent, distance);
 	}
 
 	@Deprecated
@@ -385,7 +385,7 @@ public class DeprecatedOperators {
 	public static IList neighbours_of(final IScope scope, final ITopology t, final GamaPair pair) {
 		if ( pair == null ) { return GamaListFactory.EMPTY_LIST; }
 		Object agent = pair.key;
-		return Spatial.Queries._neighbours(scope,
+		return Spatial.Queries._neighbors(scope,
 			agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation()) : Different.with(), agent,
 				pair.value, t);
 		// TODO We could compute a filter based on the population if it is an agent
@@ -508,7 +508,7 @@ public class DeprecatedOperators {
 		isExecutable = false) },
 	see = { "neighbors_of" })
 	public static IList neighboursOf_deprecated(final IScope scope, final IGraph graph, final Object vertex) {
-		return Graphs.neighboursOf(scope, graph, vertex);
+		return Graphs.neighborsOf(scope, graph, vertex);
 	}
 
 	@operator(value = "R_compute",

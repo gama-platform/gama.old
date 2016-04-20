@@ -806,7 +806,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 	
 	@Override
-	public Collection<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+	public Collection<IAgent> getNeighborsOf(final IScope scope, final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
 		final ISpatialGraph graph = this.getPlaces();
 		boolean searchEdges = false;
@@ -835,11 +835,11 @@ public class GraphTopology extends AbstractTopology {
 			searchVertices = filter.getSpecies() == graph.getVertexSpecies();
 		}
 		if (searchEdges) {
-			Set<IShape> edgs = getNeighboursOfRec(scope, realS,true,distance, graph,new THashSet<IShape>());
+			Set<IShape> edgs = getNeighborsOfRec(scope, realS,true,distance, graph,new THashSet<IShape>());
 			for (IShape ed : edgs ) agents.add(ed.getAgent());
 			return agents; 
 		} else if (searchVertices) {
-			Set<IShape> nds =  getNeighboursOfRec(scope, realS,false,distance, graph,new THashSet<IShape>());
+			Set<IShape> nds =  getNeighborsOfRec(scope, realS,false,distance, graph,new THashSet<IShape>());
 			for (IShape nd : nds ) agents.add(nd.getAgent());
 			return agents;
 		}
@@ -848,7 +848,7 @@ public class GraphTopology extends AbstractTopology {
 			agentsTotest = filter.getSpecies().getAgents(scope);
 		else 
 			agentsTotest = scope.getSimulationScope().getAgents(scope);
-		final Set<IShape> edges = getNeighboursOfRec(scope, realS,true,distance, graph, new THashSet<IShape>());	
+		final Set<IShape> edges = getNeighborsOfRec(scope, realS,true,distance, graph, new THashSet<IShape>());	
 		for (Object ob : agentsTotest.iterable(scope)) {
 			IShape ag = (IShape) ob;
 			if (filter.accept(scope, source, ag)) {
@@ -876,7 +876,7 @@ public class GraphTopology extends AbstractTopology {
 
 	}
 	
-	public Set<IShape> getNeighboursOfRec(final IScope scope, final IShape currentSource, 
+	public Set<IShape> getNeighborsOfRec(final IScope scope, final IShape currentSource, 
 		final boolean edge, double currentDist,ISpatialGraph graph, Set<IShape> alr) throws GamaRuntimeException {
 		final Set<IShape> edges = new THashSet<IShape>();
 		Set<IShape> eds = (graph.isDirected()) ? graph.outgoingEdgesOf(currentSource) : graph.edgesOf(currentSource);
@@ -890,7 +890,7 @@ public class GraphTopology extends AbstractTopology {
 				IShape nextNode = null;
 				if (graph.isDirected()) nextNode = graph.getEdgeTarget(ed);
 				else nextNode = (currentSource == graph.getEdgeTarget(ed)) ? graph.getEdgeSource(ed) : graph.getEdgeTarget(ed);
-				edges.addAll(getNeighboursOfRec(scope, nextNode,edge,currentDist - dist, graph,alr));
+				edges.addAll(getNeighborsOfRec(scope, nextNode,edge,currentDist - dist, graph,alr));
 			}
 		}
 		return edges;

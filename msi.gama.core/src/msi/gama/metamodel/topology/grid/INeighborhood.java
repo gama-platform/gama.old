@@ -1,7 +1,7 @@
 /*********************************************************************************************
  *
  *
- * 'INeighbourhood.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'INeighborhood.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
@@ -16,15 +16,15 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 
 /**
- * Class INeighbourhood.
+ * Class INeighborhood.
  *
  * @author drogoul
  * @since 19 mai 2013
  *
  */
-public interface INeighbourhood {
+public interface INeighborhood {
 
-	public abstract Set<IAgent> getNeighboursIn(IScope scope, final int placeIndex, final int radius);
+	public abstract Set<IAgent> getNeighborsIn(IScope scope, final int placeIndex, final int radius);
 
 	public abstract boolean isVN();
 
@@ -33,14 +33,14 @@ public interface INeighbourhood {
 	 * @param range
 	 * @return
 	 */
-	public abstract int[] getRawNeighboursIncluding(IScope scope, int placeIndex, int range);
+	public abstract int[] getRawNeighborsIncluding(IScope scope, int placeIndex, int range);
 
 	/**
 	 * @param placeIndex
 	 * @param n
 	 * @return
 	 */
-	public abstract int neighboursIndexOf(IScope scope, int placeIndex, int n);
+	public abstract int neighborsIndexOf(IScope scope, int placeIndex, int n);
 
 	/**
 	 *

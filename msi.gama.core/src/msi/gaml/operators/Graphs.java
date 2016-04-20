@@ -65,16 +65,16 @@ public class Graphs {
 		}
 	};
 
-	private static class GridNeighboursRelation implements VertexRelationship<IShape> {
+	private static class GridNeighborsRelation implements VertexRelationship<IShape> {
 
-		GridNeighboursRelation() {}
+		GridNeighborsRelation() {}
 
 		@Override
 		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
 			if ( !(p1 instanceof GamlGridAgent) ) { return false; }
 			GridTopology topo = (GridTopology) ((GamlGridAgent) p1).getTopology();
 			// ITopology topo = (((IAgent)p1).getScope().getTopology());
-			return topo.getNeighboursOf(scope, p1, 1.0, In.list(scope, ((IAgent) p2).getSpecies())).contains(p2);
+			return topo.getNeighborsOf(scope, p1, 1.0, In.list(scope, ((IAgent) p2).getSpecies())).contains(p2);
 		}
 
 		@Override
@@ -531,14 +531,14 @@ public class Graphs {
 		category = { IOperatorCategory.GRAPH },
 		concept = { IConcept.GRAPH, IConcept.NODE, IConcept.NEIGHBORS })
 	@doc(
-		value = "returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)",
+		value = "returns the list of neighbors of the given vertex (right-hand operand) in the given graph (left-hand operand)",
 		examples = {
 			@example(value = "graphEpidemio neighbors_of (node(3))", equals = "[node0,node2]", isExecutable = false),
 			@example(value = "graphFromMap neighbors_of node({12,45})",
 			equals = "[{1.0,5.0},{34.0,56.0}]",
 			isExecutable = false) },
 		see = { "predecessors_of", "successors_of" })
-	public static IList neighboursOf(final IScope scope, final IGraph graph, final Object vertex) {
+	public static IList neighborsOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the neighbors_of operator, the graph should not be null!", scope); }
 		if ( graph.containsVertex(vertex) ) { return GamaListFactory.create(scope, graph.getType().getKeyType(),
@@ -687,13 +687,13 @@ public class Graphs {
 		index_type = ITypeProvider.FIRST_CONTENT_TYPE,
 		category = { IOperatorCategory.GRAPH },
 		concept = { IConcept.GRAPH, IConcept.GRID, IConcept.CAST, IConcept.NEIGHBORS })
-	@doc(value = "creates a graph from a list of cells (operand). An edge is created between neighbours.",
+	@doc(value = "creates a graph from a list of cells (operand). An edge is created between neighbors.",
 	masterDoc = true,
 	comment = "",
 	examples = @example(value = "my_cell_graph<-grid_cells_to_graph(cells_list)", isExecutable = false) ,
 	see = {})
 	public static IGraph gridCellsToGraph(final IScope scope, final IContainer vertices) {
-		IGraph graph = new GamaSpatialGraph(vertices, false, false, new GridNeighboursRelation(), null, scope,
+		IGraph graph = new GamaSpatialGraph(vertices, false, false, new GridNeighborsRelation(), null, scope,
 			vertices.getType().getContentType(), Types.GEOMETRY);
 		for ( Object e : graph.edgeSet() ) {
 			graph.setEdgeWeight(e, ((IShape) e).getPerimeter());

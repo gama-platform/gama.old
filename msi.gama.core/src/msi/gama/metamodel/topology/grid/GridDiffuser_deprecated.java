@@ -56,11 +56,11 @@ class GridDiffuser_deprecated {
 		}
 	}
 
-	private final int neighboursSize;
+	private final int neighborsSize;
 
 	public GridDiffuser_deprecated(final GamaSpatialMatrix gamaSpatialMatrix) {
 		matrix = gamaSpatialMatrix;
-		neighboursSize = matrix.getNeighbourhood().isVN() ? 4 : 8;
+		neighborsSize = matrix.getNeighborhood().isVN() ? 4 : 8;
 	}
 
 	protected final Map<String, GridDiffusion_deprecated> diffusions_deprecated = new THashMap();
@@ -110,7 +110,7 @@ class GridDiffuser_deprecated {
 
 	private void spreadDiffusion(final IScope scope, final String v, final GridDiffusion_deprecated gridDiffusion)
 		throws GamaRuntimeException {
-		int[] neighbours;
+		int[] neighbors;
 		IAgent p;
 		final double proportion = gridDiffusion.proportion;
 		final double variation = gridDiffusion.variation;
@@ -122,7 +122,7 @@ class GridDiffuser_deprecated {
 
 		int n;
 		double r0, rn;
-		final double prop = proportion / neighboursSize;
+		final double prop = proportion / neighborsSize;
 		final double propInit = 1 - proportion;
 		for ( int i = 0, halt = gridDiffusion.places.length; i < halt; i++ ) {
 			p = gridDiffusion.places[i].getAgent();
@@ -145,19 +145,19 @@ class GridDiffuser_deprecated {
 			}
 			range = CmnFastMath.min(range, max_range);
 			try {
-				neighbours = matrix.neighbourhood.getRawNeighboursIncluding(scope, placeIndex, range);
+				neighbors = matrix.neighborhood.getRawNeighborsIncluding(scope, placeIndex, range);
 			} catch (final GamaRuntimeException e) {
-				// We change the neighbourhood to a cached version dynamically
+				// We change the neighborhood to a cached version dynamically
 				GAMA.reportError(scope, e, false);
-				matrix.useNeighboursCache = true;
-				matrix.neighbourhood = null;
-				neighbours = matrix.getNeighbourhood().getRawNeighboursIncluding(scope, placeIndex, range);
+				matrix.useNeighborsCache = true;
+				matrix.neighborhood = null;
+				neighbors = matrix.getNeighborhood().getRawNeighborsIncluding(scope, placeIndex, range);
 			}
 			for ( n = 1; n <= range; n++ ) {
-				final int begin = matrix.neighbourhood.neighboursIndexOf(scope, placeIndex, n);
-				final int end = matrix.neighbourhood.neighboursIndexOf(scope, placeIndex, n + 1);
+				final int begin = matrix.neighborhood.neighborsIndexOf(scope, placeIndex, n);
+				final int end = matrix.neighborhood.neighborsIndexOf(scope, placeIndex, n + 1);
 				for ( int k = begin; k < end; k++ ) {
-					final IAgent z = matrix.matrix[neighbours[k]].getAgent();
+					final IAgent z = matrix.matrix[neighbors[k]].getAgent();
 					if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z) ) {
 						continue;
 					}
@@ -175,7 +175,7 @@ class GridDiffuser_deprecated {
 
 	private void spreadGradient(final IScope scope, final String v, final GridDiffusion_deprecated gridDiffusion)
 		throws GamaRuntimeException {
-		int[] neighbours;
+		int[] neighbors;
 		IAgent p;
 		final double proportion = gridDiffusion.proportion;
 		final double variation = gridDiffusion.variation;
@@ -205,21 +205,21 @@ class GridDiffuser_deprecated {
 			}
 			range = CmnFastMath.min(range, max_range);
 			try {
-				neighbours = matrix.neighbourhood.getRawNeighboursIncluding(scope, placeIndex, range);
+				neighbors = matrix.neighborhood.getRawNeighborsIncluding(scope, placeIndex, range);
 			} catch (final GamaRuntimeException e) {
-				// We change the neighbourhood to a cached version dynamically
+				// We change the neighborhood to a cached version dynamically
 				GAMA.reportError(scope, e, false);
-				matrix.useNeighboursCache = true;
-				matrix.neighbourhood = null;
-				neighbours = matrix.getNeighbourhood().getRawNeighboursIncluding(scope, placeIndex, range);
+				matrix.useNeighborsCache = true;
+				matrix.neighborhood = null;
+				neighbors = matrix.getNeighborhood().getRawNeighborsIncluding(scope, placeIndex, range);
 			}
 			boolean cont = true;
 			for ( n = 1; n <= range; n++ ) {
-				final int begin = matrix.neighbourhood.neighboursIndexOf(scope, placeIndex, n);
-				final int end = matrix.neighbourhood.neighboursIndexOf(scope, placeIndex, n + 1);
+				final int begin = matrix.neighborhood.neighborsIndexOf(scope, placeIndex, n);
+				final int end = matrix.neighborhood.neighborsIndexOf(scope, placeIndex, n + 1);
 				cont = false;
 				for ( int k = begin; k < end; k++ ) {
-					final IAgent z = matrix.matrix[neighbours[k]].getAgent();
+					final IAgent z = matrix.matrix[neighbors[k]].getAgent();
 					if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z) ) {
 						continue;
 					}

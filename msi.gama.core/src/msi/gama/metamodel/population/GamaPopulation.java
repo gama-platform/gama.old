@@ -484,8 +484,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		boolean isTorus = host.getPopulation().getTopology().isTorus();
 		exp = species.getFacet("use_individual_shapes");
 		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
-		exp = species.getFacet("use_neighbours_cache");
-		final boolean useNeighboursCache = exp == null || Cast.asBool(scope, exp.value(scope));
+		exp = species.getFacet("use_neighbors_cache");
+		final boolean useNeighborsCache = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.NEIGHBORS);
 		if ( exp == null ) {
 			exp = species.getFacet(IKeyword.NEIGHBOURS);
@@ -495,8 +495,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		exp = species.getFacet(IKeyword.FILE);
 		final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
 		if ( file == null ) { return new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon,
-			useIndividualShapes, useNeighboursCache); }
-		return new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighboursCache);
+			useIndividualShapes, useNeighborsCache); }
+		return new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache);
 	}
 
 	@Override

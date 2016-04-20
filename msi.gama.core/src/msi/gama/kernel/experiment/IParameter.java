@@ -68,7 +68,7 @@ public interface IParameter {
 
 		public void reinitRandomly(IScope scope);
 
-		public abstract Set<Object> neighbourValues(IScope scope) throws GamaRuntimeException;
+		public abstract Set<Object> neighborValues(IScope scope) throws GamaRuntimeException;
 
 		public void setEditable(boolean b);
 

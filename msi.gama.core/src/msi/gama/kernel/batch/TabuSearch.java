@@ -113,7 +113,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
-				// scope.getGui().debug("TabuSearch.findBestSolution neighbourFitness = " + neighborFitness +
+				// scope.getGui().debug("TabuSearch.findBestSolution neighborFitness = " + neighborFitness +
 				// " bestFitnessAlgo = " + bestFitnessAlgo + " bestFitness = " + getBestFitness() +
 				// " current fitness = " + currentFitness);
 				boolean neighFitnessGreaterThanBest = neighborFitness > bestFitnessAlgo;

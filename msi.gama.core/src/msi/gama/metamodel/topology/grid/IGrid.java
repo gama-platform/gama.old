@@ -57,11 +57,11 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	public abstract GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source,
 		final IShape target, final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException;
 
-	// public abstract Iterator<IAgent> getNeighboursOf(final IScope scope, final ILocation shape, final Double
+	// public abstract Iterator<IAgent> getNeighborsOf(final IScope scope, final ILocation shape, final Double
 	// distance,
 	// IAgentFilter filter);
 
-	public abstract Set<IAgent> getNeighboursOf(final IScope scope, final IShape shape, final Double distance,
+	public abstract Set<IAgent> getNeighborsOf(final IScope scope, final IShape shape, final Double distance,
 		IAgentFilter filter);
 
 	public abstract int manhattanDistanceBetween(final IShape g1, final IShape g2);
@@ -82,7 +82,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 
 	public abstract boolean isTorus();
 
-	public abstract INeighbourhood getNeighbourhood();
+	public abstract INeighborhood getNeighborhood();
 
 	public abstract IShape getEnvironmentFrame();
 
@@ -97,7 +97,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	/**
 	 * @return
 	 */
-	public abstract boolean usesNeighboursCache();
+	public abstract boolean usesNeighborsCache();
 
 	/**
 	 * @return

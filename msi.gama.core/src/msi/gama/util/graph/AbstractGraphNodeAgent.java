@@ -30,7 +30,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 
-// FIXME: Add all the necessary variables (degree, neighbours, edges)
+// FIXME: Add all the necessary variables (degree, neighbors, edges)
 @species(name = "graph_node", concept = { IConcept.GRAPH, IConcept.NODE })
 @vars({ @var(name = IKeyword.MYGRAPH, type = IType.GRAPH) })
 public class AbstractGraphNodeAgent extends GamlAgent {

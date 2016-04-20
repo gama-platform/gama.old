@@ -51,14 +51,14 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.HEIGHT, type = IType.INT, optional = true, doc = @doc("(grid only),  the height of the grid (in terms of agent number)")),
 		@facet(name = IKeyword.CELL_WIDTH, type = IType.FLOAT, optional = true, doc = @doc("(grid only), the width of the cells of the grid")),
 		@facet(name = IKeyword.CELL_HEIGHT, type = IType.FLOAT, optional = true, doc = @doc("(grid only), the height of the cells of the grid")),
-		@facet(name = IKeyword.NEIGHBOURS, type = IType.INT, optional = true, doc = @doc(value = "(grid only), the chosen neighbourhood (4, 6 or 8)", deprecated = "use neighbors instead")),
-		@facet(name = IKeyword.NEIGHBORS, type = IType.INT, optional = true, doc = @doc("(grid only), the chosen neighbourhood (4, 6 or 8)")),
+		@facet(name = IKeyword.NEIGHBOURS, type = IType.INT, optional = true, doc = @doc(value = "(grid only), the chosen neighborhood (4, 6 or 8)", deprecated = "use neighbors instead")),
+		@facet(name = IKeyword.NEIGHBORS, type = IType.INT, optional = true, doc = @doc("(grid only), the chosen neighborhood (4, 6 or 8)")),
 		@facet(name = "use_individual_shapes", type = IType.BOOL, optional = true, doc = {
 				@doc(value = "(grid only),(true by default). Allows to specify whether or not the agents of the grid will have distinct geometries. If set to false, they will all have simpler proxy geometries", see = "use_regular_agents", comment = "This facet, when set to true, allows to save memory by generating only one reference geometry and proxy geometries for the agents") }),
 		@facet(name = "use_regular_agents", type = IType.BOOL, optional = true, doc = {
 				@doc(value = "(grid only),(true by default). Allows to specify if the agents of the grid are regular agents (like those of any other species) or minimal ones (which can't have sub-populations, can't inherit from a regular species, etc.)") }),
-		@facet(name = "use_neighbours_cache", type = IType.BOOL, optional = true, doc = {
-				@doc(value = "(grid only),(true by default). Allows to turn on or off the use of the neighbours cache used for grids. Note that if a diffusion of variable occurs, GAMA will emit a warning and automatically switch to a caching version") }),
+		@facet(name = "use_neighbors_cache", type = IType.BOOL, optional = true, doc = {
+				@doc(value = "(grid only),(true by default). Allows to turn on or off the use of the neighbors cache used for grids. Note that if a diffusion of variable occurs, GAMA will emit a warning and automatically switch to a caching version") }),
 		@facet(name = IKeyword.FILE, type = IType.FILE, optional = true, doc = @doc("(grid only), a bitmap file that will be loaded at runtime so that the value of each pixel  can be assigned to the attribute 'grid_value'")),
 		@facet(name = IKeyword.TORUS, type = IType.BOOL, optional = true, doc = @doc("is the topology toric (defaut: false). Needs to be defined on the global species.")),
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the species")),
@@ -82,9 +82,9 @@ import msi.gaml.types.IType;
 				@usage(value = "In the case of a species aiming at mirroring another one:", examples = {
 						@example(value = "species node_agent mirrors: list(bug) parent: graph_node edge_species: edge_agent {", isExecutable = false) }),
 				@usage(value = "The definition of the single grid of a model will automatically create gridwidth x gridheight agents:", examples = {
-						@example(value = "grid ant_grid width: gridwidth height: gridheight file: grid_file neighbours: 8 use_regular_agents: false { ", isExecutable = false) }),
+						@example(value = "grid ant_grid width: gridwidth height: gridheight file: grid_file neighbors: 8 use_regular_agents: false { ", isExecutable = false) }),
 				@usage(value = "Using a file to initialize the grid can replace width/height facets:", examples = {
-						@example(value = "grid ant_grid file: grid_file neighbours: 8 use_regular_agents: false { ", isExecutable = false) }) })
+						@example(value = "grid ant_grid file: grid_file neighbors: 8 use_regular_agents: false { ", isExecutable = false) }) })
 @validator(SpeciesValidator.class)
 public class GamlSpecies extends AbstractSpecies {
 

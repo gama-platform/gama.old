@@ -11,15 +11,15 @@ import gnu.trove.set.hash.TIntHashSet;
  * @todo Description
  *
  */
-public class GridMooreNeighbourhood extends GridNeighbourhood {
+public class GridMooreNeighborhood extends GridNeighborhood {
 
 
-	public GridMooreNeighbourhood(final GamaSpatialMatrix gamaSpatialMatrix) {
+	public GridMooreNeighborhood(final GamaSpatialMatrix gamaSpatialMatrix) {
 		super(gamaSpatialMatrix);
 	}
 
 	@Override
-	protected TIntHashSet getNeighboursAtRadius(final int placeIndex, final int radius) {
+	protected TIntHashSet getNeighborsAtRadius(final int placeIndex, final int radius) {
 		final int y = placeIndex / this.matrix.numCols;
 		final int x = placeIndex - y * this.matrix.numCols;
 		final TIntHashSet v = new TIntHashSet(radius + 1 * radius + 1);
@@ -55,7 +55,7 @@ public class GridMooreNeighbourhood extends GridNeighbourhood {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.metamodel.topology.grid.INeighbourhood#clear()
+	 * @see msi.gama.metamodel.topology.grid.INeighborhood#clear()
 	 */
 	@Override
 	public void clear() {}

@@ -224,10 +224,10 @@ public class DrivingSkill2d extends MovingSkill {
 		final GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
-		final Collection<IAgent> neighbours =
-			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
+		final Collection<IAgent> neighbors =
+			agent.getTopology().getNeighborsOf(scope, currentLocation, maxDist + consideringRange, Different.with());
 		final IList<IAgent> obstacleAgents = GamaListFactory.create(Types.AGENT);
-		for ( IAgent ia : neighbours ) {
+		for ( IAgent ia : neighbors ) {
 			if ( obsSpecies.contains(ia.getSpecies()) ) {
 				obstacleAgents.add(ia);
 			}
@@ -445,10 +445,10 @@ public class DrivingSkill2d extends MovingSkill {
 		final GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
-		final Collection<IAgent> neighbours =
-			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
+		final Collection<IAgent> neighbors =
+			agent.getTopology().getNeighborsOf(scope, currentLocation, maxDist + consideringRange, Different.with());
 		final IList<IAgent> obstacleAgents = GamaListFactory.create(Types.AGENT);
-		for ( IAgent ia : neighbours ) {
+		for ( IAgent ia : neighbors ) {
 			if ( obsSpecies.contains(ia.getSpecies()) ) {
 				obstacleAgents.add(ia);
 			}

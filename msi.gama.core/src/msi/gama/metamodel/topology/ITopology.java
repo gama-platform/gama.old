@@ -75,10 +75,10 @@ public interface ITopology extends IValue {
 
 	// public abstract IAgent getAgentClosestTo(IScope scope, final ILocation source, IAgentFilter filter);
 
-	public abstract Collection<IAgent> getNeighboursOf(IScope scope, final IShape source, final Double distance,
+	public abstract Collection<IAgent> getNeighborsOf(IScope scope, final IShape source, final Double distance,
 		IAgentFilter filter) throws GamaRuntimeException;
 
-	// public abstract Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, IAgentFilter
+	// public abstract Iterator<IAgent> getNeighborsOf(final ILocation source, final Double distance, IAgentFilter
 	// filter)
 	// throws GamaRuntimeException;
 

@@ -1800,9 +1800,9 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS, IOperatorCategory.GRID },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.GRID })
 		@doc(
-			value = "A matrix of square geometries (grid with 8-neighbourhood) with dimension given by the right-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
+			value = "A matrix of square geometries (grid with 8-neighborhood) with dimension given by the right-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
 			examples = { @example(value = "self as_grid {10, 5}",
-			equals = "a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
+			equals = "a matrix of square geometries (grid with 8-neighborhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
 			test = false) },
 			see = { "as_4_grid", "as_hexagonal_grid" })
 		public static IMatrix as_grid(final IScope scope, final IShape g, final GamaPoint dim)
@@ -1816,9 +1816,9 @@ public abstract class Spatial {
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS, IOperatorCategory.GRID },
 			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION, IConcept.GRID })
 		@doc(
-			value = "A matrix of square geometries (grid with 4-neighbourhood) with dimension given by the right-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
+			value = "A matrix of square geometries (grid with 4-neighborhood) with dimension given by the right-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
 			examples = { @example(value = "self as_4_grid {10, 5}",
-			equals = "the matrix of square geometries (grid with 4-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
+			equals = "the matrix of square geometries (grid with 4-neighborhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
 			test = false) },
 			see = { "as_grid", "as_hexagonal_grid" })
 		public static IMatrix as_4_grid(final IScope scope, final IShape g, final GamaPoint dim)
@@ -2458,8 +2458,8 @@ public abstract class Spatial {
 			test = false) },
 			see = { "neighbors_at", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 			"agent_closest_to" })
-		public static IList neighbours_of(final IScope scope, final ITopology t, final IAgent agent) {
-			return _neighbours(scope, In.list(scope, agent.getPopulation()), agent, 1.0, t);
+		public static IList neighbors_of(final IScope scope, final ITopology t, final IAgent agent) {
+			return _neighbors(scope, In.list(scope, agent.getPopulation()), agent, 1.0, t);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
@@ -2473,9 +2473,9 @@ public abstract class Spatial {
 			examples = { @example(value = "neighbors_of (topology(self), self,10)",
 			equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
 			test = false) }))
-		public static IList neighbours_of(final IScope scope, final ITopology t, final IShape agent,
+		public static IList neighbors_of(final IScope scope, final ITopology t, final IShape agent,
 			final Double distance) {
-			return _neighbours(scope,
+			return _neighbors(scope,
 				agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation()) : Different.with(), agent,
 					distance, t);
 			// TODO We could compute a filter based on the population if it is an agent
@@ -2493,8 +2493,8 @@ public abstract class Spatial {
 			test = false) },
 			see = { "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 				"agent_closest_to", "at_distance" })
-		public static IList neighbours_at(final IScope scope, final IShape agent, final Double distance) {
-			return _neighbours(scope,
+		public static IList neighbors_at(final IScope scope, final IShape agent, final Double distance) {
+			return _neighbors(scope,
 				agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation()) : Different.with(), agent,
 					distance);
 		}
@@ -2525,7 +2525,7 @@ public abstract class Spatial {
 			}
 			IType contentType = list.getType().getContentType();
 			if ( contentType.isAgentType() ) {
-				return _neighbours(scope, In.list(scope, list), scope.getAgentScope(), distance);
+				return _neighbors(scope, In.list(scope, list), scope.getAgentScope(), distance);
 			} else if ( contentType == Types.GEOMETRY ) { return geomAtDistance(scope, list, distance); }
 			return GamaListFactory.EMPTY_LIST;
 		}
@@ -2762,7 +2762,7 @@ public abstract class Spatial {
 		see = { "neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 			"overlapping", "at_distance" })
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
-			return _neighbours(scope, Different.with(), scope.getAgentScope(), distance);
+			return _neighbors(scope, Different.with(), scope.getAgentScope(), distance);
 		}
 
 		// Support methods used by the different queries
@@ -2786,18 +2786,18 @@ public abstract class Spatial {
 			return scope.getTopology().getAgentFarthestTo(scope, Cast.asGeometry(scope, source, false), filter);
 		}
 
-		private static IList<IAgent> _neighbours(final IScope scope, final IAgentFilter filter, final Object source,
+		private static IList<IAgent> _neighbors(final IScope scope, final IAgentFilter filter, final Object source,
 			final Object distance) {
-			return _neighbours(scope, filter, source, distance, scope.getTopology());
+			return _neighbors(scope, filter, source, distance, scope.getTopology());
 		}
 
-		static IList<IAgent> _neighbours(final IScope scope, final IAgentFilter filter, final Object source,
+		static IList<IAgent> _neighbors(final IScope scope, final IAgentFilter filter, final Object source,
 			final Object distance, final ITopology t) {
 			if ( filter == null || source == null ) { return GamaListFactory.EMPTY_LIST; }
 			IType type = filter.getSpecies() == null ? Types.AGENT
 				: scope.getModelContext().getTypeNamed(filter.getSpecies().getName());
 			return GamaListFactory.createWithoutCasting(type,
-				t.getNeighboursOf(scope, Cast.asGeometry(scope, source, false), Cast.asFloat(scope, distance), filter));
+				t.getNeighborsOf(scope, Cast.asGeometry(scope, source, false), Cast.asFloat(scope, distance), filter));
 		}
 
 	}
@@ -2832,7 +2832,7 @@ public abstract class Spatial {
 			final Double distance, final Set<IAgent> clusteredAgs, final IAgent currentAg) {
 			IList<IAgent> group = GamaListFactory.create(Types.AGENT);
 			List<IAgent> ags =
-				new ArrayList<IAgent>(scope.getTopology().getNeighboursOf(scope, currentAg, distance, filter));
+				new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, currentAg, distance, filter));
 			clusteredAgs.add(currentAg);
 			group.add(currentAg);
 			for ( IAgent ag : ags ) {

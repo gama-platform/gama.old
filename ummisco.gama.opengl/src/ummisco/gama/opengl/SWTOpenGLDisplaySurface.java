@@ -440,7 +440,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public Collection<IAgent> selectAgent(final int x, final int y) {
 		final ILocation pp = getModelCoordinatesFrom(x, y, null, null);
-		return scope.getRoot().getPopulation().getTopology().getNeighboursOf(scope, new GamaPoint(pp.getX(), pp.getY()),
+		return scope.getRoot().getPopulation().getTopology().getNeighborsOf(scope, new GamaPoint(pp.getX(), pp.getY()),
 				renderer.getMaxEnvDim() / 100, Different.with());
 	}
 

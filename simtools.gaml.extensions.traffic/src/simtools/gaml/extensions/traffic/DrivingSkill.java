@@ -321,7 +321,7 @@ public class DrivingSkill extends MovingSkill {
 		IList<IAgent> result = GamaListFactory.create(Types.AGENT);
 		for ( ISpecies species : obsSpecies ) {
 			// final IPopulation pop = agent.getPopulationFor(species);
-			result.addAll(scope.getTopology().getNeighboursOf(scope, new GamaShape(basicLine), tolerance, species));
+			result.addAll(scope.getTopology().getNeighborsOf(scope, new GamaShape(basicLine), tolerance, species));
 		}
 		for ( IAgent ia : result ) {
 			if ( ia == agent || ia.intersects(currentLocation) ) {
@@ -335,7 +335,7 @@ public class DrivingSkill extends MovingSkill {
 				// currentDistance = currentLocation.euclidianDistanceTo(ia) - livingSpace;
 				IAgentFilter filter = In.list(scope, result);
 				final Collection<IAgent> ns = filter == null ? Collections.EMPTY_LIST
-					: scope.getTopology().getNeighboursOf(scope, ia, livingSpace / 2.0, filter);
+					: scope.getTopology().getNeighborsOf(scope, ia, livingSpace / 2.0, filter);
 				int nbAg = 1;
 				for ( IAgent ag : ns ) {
 					if ( ag != agent ) {

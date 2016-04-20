@@ -50,14 +50,14 @@ public class GridTopology extends AbstractTopology {
 
 	public GridTopology(final IScope scope, final IShape environment, final int rows, final int columns,
 		final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean useIndividualShapes,
-		final boolean useNeighboursCache) throws GamaRuntimeException {
+		final boolean useNeighborsCache) throws GamaRuntimeException {
 		super(scope, environment, null);
 		if ( isHexagon ) {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon,
-				useIndividualShapes, useNeighboursCache);
+				useIndividualShapes, useNeighborsCache);
 		} else {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, useIndividualShapes,
-				useNeighboursCache);
+				useNeighborsCache);
 		}
 		// FIXME Not sure it needs to be set
 		// root.setTorus(isTorus);
@@ -65,10 +65,10 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final GamaGridFile file, final boolean isTorus,
-		final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighboursCache)
+		final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache)
 		throws GamaRuntimeException {
 		super(scope, environment, null);
-		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN, useIndividualShapes, useNeighboursCache);
+		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache);
 		// FIXME Not sure it needs to be set
 
 		// root.setTorus(isTorus);
@@ -114,7 +114,7 @@ public class GridTopology extends AbstractTopology {
 	protected ITopology _copy(final IScope scope) throws GamaRuntimeException {
 		final IGrid grid = (IGrid) places;
 		return new GridTopology(scope, environment, grid.getRows(scope), grid.getCols(scope), grid.isTorus(),
-			grid.getNeighbourhood().isVN(), grid.isHexagon(), grid.usesIndiviualShapes(), grid.usesNeighboursCache());
+			grid.getNeighborhood().isVN(), grid.isHexagon(), grid.usesIndiviualShapes(), grid.usesNeighborsCache());
 	}
 
 	@Override
@@ -193,12 +193,12 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Collection<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+	public Collection<IAgent> getNeighborsOf(final IScope scope, final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
-		// We compute the neighbouring cells of the "source" shape
+		// We compute the neighboring cells of the "source" shape
 
 		Set<IAgent> placesConcerned =
-			getPlaces().getNeighboursOf(scope, source, distance, getPlaces().getCellSpecies());
+			getPlaces().getNeighborsOf(scope, source, distance, getPlaces().getCellSpecies());
 		// If we only accept cells from this topology, no need to look for other agents
 		if ( filter.getSpecies() == getPlaces().getCellSpecies() ) { return placesConcerned; }
 		// Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the
@@ -216,10 +216,10 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	// @Override
-	// public Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
+	// public Iterator<IAgent> getNeighborsOf(final ILocation source, final Double distance, final IAgentFilter filter)
 	// throws GamaRuntimeException {
-	// // We compute the neighbouring cells of the "source" location
-	// Iterator<IAgent> placesConcerned = getPlaces().getNeighboursOf(scope, source, distance, filter);
+	// // We compute the neighboring cells of the "source" location
+	// Iterator<IAgent> placesConcerned = getPlaces().getNeighborsOf(scope, source, distance, filter);
 	// // If we only accept cells from this topology, no need to look for other agents
 	// if ( filter.filterSpecies(getPlaces().getCellSpecies()) ) { return placesConcerned; }
 	// // Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the

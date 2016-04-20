@@ -31,8 +31,8 @@ public class Neighborhood1Var extends Neighborhood {
 		final List<ParametersSet> neighbors = new ArrayList<ParametersSet>();
 		for (final IParameter.Batch var : variables) {
 			var.setValue(scope, solution.get(var.getName()));
-			final Set<Object> neighbourValues = var.neighbourValues(scope);
-			for (final Object val : neighbourValues) {
+			final Set<Object> neighborValues = var.neighborValues(scope);
+			for (final Object val : neighborValues) {
 				final ParametersSet newSol = new ParametersSet(solution);
 				newSol.put(var.getName(), val);
 				neighbors.add(newSol);

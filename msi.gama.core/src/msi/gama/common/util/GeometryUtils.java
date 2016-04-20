@@ -660,7 +660,7 @@ public class GeometryUtils {
 		final Collection<GamaShape> nodes = graph.vertexSet();
 		for ( final GamaShape node : nodes ) {
 			final Coordinate[] coordsArr =
-				GeometryUtils.extractPoints(node, new HashSet(Graphs.neighboursOf(scope, graph, node)));
+				GeometryUtils.extractPoints(node, new HashSet(Graphs.neighborsOf(scope, graph, node)));
 			if ( coordsArr != null ) {
 				network.add(FACTORY.createLineString(coordsArr));
 			}

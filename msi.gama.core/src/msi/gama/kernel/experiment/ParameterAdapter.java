@@ -151,7 +151,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	// public void tryToInit(IScope scope) {}
 
 	@Override
-	public Set<Object> neighbourValues(final IScope scope) throws GamaRuntimeException {
+	public Set<Object> neighborValues(final IScope scope) throws GamaRuntimeException {
 		return null;
 	}
 

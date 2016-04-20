@@ -12,18 +12,18 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
  * @todo Description
  *
  */
-public class GridVonNeumannNeighbourhood extends GridNeighbourhood {
+public class GridVonNeumannNeighborhood extends GridNeighborhood {
 
 
 	/**
 	 * @param gamaSpatialMatrix
 	 */
-	GridVonNeumannNeighbourhood(final GamaSpatialMatrix matrix) {
+	GridVonNeumannNeighborhood(final GamaSpatialMatrix matrix) {
 		super(matrix);
 	}
 
 	@Override
-	protected TIntHashSet getNeighboursAtRadius(final int placeIndex, final int radius) {
+	protected TIntHashSet getNeighborsAtRadius(final int placeIndex, final int radius) {
 		final int y = placeIndex / matrix.numCols;
 		final int x = placeIndex - y * matrix.numCols;
 
@@ -50,7 +50,7 @@ public class GridVonNeumannNeighbourhood extends GridNeighbourhood {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.metamodel.topology.grid.INeighbourhood#clear()
+	 * @see msi.gama.metamodel.topology.grid.INeighborhood#clear()
 	 */
 	@Override
 	public void clear() {}

@@ -83,7 +83,7 @@ import msi.gaml.types.IType;
 					value = "    reflex when: energy > 500 { // executed when the energy is above the given threshold",
 					isExecutable = false),
 				@example(
-					value = "         list<animal> others <- (animal at_distance 5); // find all the neighbouring animals in a radius of 5 meters",
+					value = "         list<animal> others <- (animal at_distance 5); // find all the neighboring animals in a radius of 5 meters",
 					isExecutable = false),
 				@example(
 					value = "         float shared_energy  <- (energy - 500) / length (others); // compute the amount of energy to share with each of them",
