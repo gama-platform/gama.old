@@ -1049,6 +1049,7 @@ public class JTSDrawer {
 		final int slices = 32;
 		final int stacks = 32;
 		final GLUT glut = new GLUT();
+		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glPushMatrix();
 		gl.glTranslated(pos.x, pos.y, pos.z);
 		gl.glColor4d(0.5, 0.5, 0.5, 1.0);
@@ -1058,6 +1059,7 @@ public class JTSDrawer {
 		gl.glColor4d(0.5, 0.5, 0.5, 1);
 		glut.glutWireSphere(50.0 * (distance / 500), slices / 2, stacks / 2);
 		gl.glPopMatrix();
+		gl.glEnable(GL2.GL_LIGHTING);
 	}
 
 	public void drawROIHelper(final GL2 gl, final Envelope3D envelope) {
