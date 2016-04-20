@@ -66,8 +66,7 @@ import msi.gaml.types.Types;
  *
  */
 @species(name = IKeyword.EXPERIMENT)
-@vars({
-
+@vars({ @var(name = IKeyword.SIMULATIONS, type = IType.LIST, of = ITypeProvider.MODEL_TYPE, doc = @doc(value = "contains the list of currently running simulations")),
 		@var(name = IKeyword.SIMULATION, type = ITypeProvider.MODEL_TYPE, doc = @doc(value = "contains a reference to the current simulation being run by this experiment", comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
 		// @var(name = GAMA._FATAL, type = IType.BOOL),
 		@var(name = GAMA._WARNINGS, type = IType.BOOL),
@@ -434,6 +433,16 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			}
 		}
 		return populationOfSimulations;
+	}
+
+	@getter(IKeyword.SIMULATIONS)
+	public IList<IAgent> getSimulations() {
+		return getSimulationPopulation().copy(scope);
+	}
+
+	@setter(IKeyword.SIMULATIONS)
+	public void setSimulations(final IList<IAgent> simulations) {
+		// Forbidden
 	}
 
 	@getter(IKeyword.SIMULATION)

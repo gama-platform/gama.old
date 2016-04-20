@@ -150,7 +150,7 @@ experiment "4 Simulations" type: gui {
 	permanent {
 		display Comparison background: #white {
 			chart "Food Gathered" type: series {
-				loop s over: ants_model {
+				loop s over: simulations {
 					data "Food " + int(s) value: s.food_gathered color: s.color marker: false style: line ;
 				}
 			}

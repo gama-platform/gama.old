@@ -351,6 +351,7 @@ public interface IKeyword {
 	public static final String SHOWFPS = "show_fps";
 	public static final String SIGNAL = "signal";
 	public static final String SIMULATION = "simulation";
+	public static final String SIMULATIONS = "simulations";
 	public static final String SIZE = "size";
 	public static final String SKILL = "skill";
 	public static final String SKILLS = "skills";
