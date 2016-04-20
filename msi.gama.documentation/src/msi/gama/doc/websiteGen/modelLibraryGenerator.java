@@ -33,18 +33,18 @@ import msi.gama.doc.websiteGen.utilClasses.Utils;
 public class modelLibraryGenerator {
 	
 	// inputs / outputs
-	static String[] inputPathToModelLibrary = {"F:/Gama/GamaSource/msi.gama.models/models/",
-			"F:/Gama/GamaSource/ummisco.gaml.extensions.maths/models",
-			"F:/Gama/GamaSource/msi.gaml.extensions.fipa/models",
-			"F:/Gama/GamaSource/simtools.gaml.extensions.physics/models"};
-	static String outputPathToModelLibrary = "F:/gama_doc_17.wiki/References/ModelLibrary";
-	static String modelLibraryImagesPath = "F:/gama_doc_17.wiki/resources/images/modelLibraryScreenshots";
-	static String inputFileForHeadlessExecution = "F:/gama_doc_17.wiki/tempInputForHeadless.xml";
-	static String inputModelScreenshot = "F:/gama_doc_17.wiki/modelScreenshot.xml";
-	static String headlessBatPath = "F:/gama_doc_17.wiki/headless.bat";
+	static String wikiFolder = "F:/Gama/GamaWiki/";
+	static String[] inputPathToModelLibrary = {"../msi.gama.models/models/",
+			"../ummisco.gaml.extensions.maths/models",
+			"../msi.gaml.extensions.fipa/models",
+			"../simtools.gaml.extensions.physics/models"};
+	static String outputPathToModelLibrary = wikiFolder + "References/ModelLibrary";
+	static String modelLibraryImagesPath = wikiFolder + "resources/images/modelLibraryScreenshots";
+	static String inputFileForHeadlessExecution = wikiFolder + "tempInputForHeadless.xml";
+	static String inputModelScreenshot = wikiFolder + "modelScreenshot.xml";
+	static String headlessBatPath = wikiFolder + "headless.bat";
 	
 	static String[] listNonScreenshot = {"Database Usage","Unit Test","Syntax"};
-	static String tempOutputFolder = "F:/outputHeadless/snapshot";
 	
 	static HashMap<String,ScreenshotStructure> mapModelScreenshot;
 	static HashMap<String,String> mainKeywordsMap; // the key is the name of the model, the value is the metadata formated which contains all the important keywords of the model.

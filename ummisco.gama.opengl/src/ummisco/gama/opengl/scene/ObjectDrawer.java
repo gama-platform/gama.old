@@ -35,7 +35,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	}
 
 	void setPolygonOffset(final T object, final GL2 gl) {
-		if ( !object.isFilled() ) {
+		if ( !object.isFilled() || renderer.data.isTriangulation() ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);

@@ -110,6 +110,7 @@ public class StaticLayerObject extends LayerObject {
 
 		@Override
 		public void draw(final GL2 gl, final JOGLRenderer renderer, final boolean picking) {
+			gl.glDisable(GL2.GL_LIGHTING);
 			super.draw(gl, renderer, picking);
 			if ( renderer.data.isDrawEnv() && !planDrawn ) {
 				drawXYPlan(renderer.data.getEnvWidth(), renderer.data.getEnvHeight());
@@ -135,6 +136,7 @@ public class StaticLayerObject extends LayerObject {
 				gl.glEnable(GL.GL_BLEND);
 			}
 			gl.glColor4d(1, 1, 1, 1);
+			gl.glEnable(GL2.GL_LIGHTING);
 		}
 		
 		public void drawXYPlan(final double w, final double h) {
