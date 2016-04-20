@@ -11,12 +11,19 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
-import java.util.*;
-import com.google.common.collect.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 import msi.gama.common.GamaPreferences;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -46,31 +53,39 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public IOutput getOutputWithName(final String name) {
-		for ( final IOutput output : outputs.values() ) {
-			if ( output.getName().equals(name) ) { return output; }
+		for (final IOutput output : outputs.values()) {
+			if (output.getName().equals(name)) {
+				return output;
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public IOutput getOutputWithOriginalName(final String name) {
-		for ( final IOutput output : outputs.values() ) {
-			if ( output.getOriginalName().equals(name) ) { return output; }
+		for (final IOutput output : outputs.values()) {
+			if (output.getOriginalName().equals(name)) {
+				return output;
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public void addOutput(final IOutput output) {
-		if ( !(output instanceof AbstractOutput) ) { return; } // || outputs.containsValue(output) ) { return; }
-		AbstractOutput aout = (AbstractOutput) output;
+		if (!(output instanceof AbstractOutput)) {
+			return;
+		} // || outputs.containsValue(output) ) { return; }
+		final AbstractOutput aout = (AbstractOutput) output;
 		outputs.put(aout.getId(), aout);
 	}
 
 	// hqnghi add output with alias name from micro-model
 	@Override
 	public void addOutput(final String name, final IOutput output) {
-		if ( !(output instanceof AbstractOutput) ) { return; } // || outputs.containsValue(output) ) { return; }
+		if (!(output instanceof AbstractOutput)) {
+			return;
+		} // || outputs.containsValue(output) ) { return; }
 		outputs.put(name, (AbstractOutput) output);
 	}
 
@@ -79,8 +94,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public synchronized void dispose() {
 		super.dispose();
 		try {
-			// AD: explicit addition of an ArrayList to prevent dispose errors (when outputs remove themselves from the list)
-			for ( final IOutput output : new ArrayList<IOutput>(outputs.values()) ) {
+			// AD: explicit addition of an ArrayList to prevent dispose errors
+			// (when outputs remove themselves from the list)
+			for (final IOutput output : new ArrayList<IOutput>(outputs.values())) {
 				output.dispose();
 			}
 			outputs.clear();
@@ -91,15 +107,18 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	// hqnghi
-	// for instant, multi-simulation cannot have their owns outputs display at same time.
+	// for instant, multi-simulation cannot have their owns outputs display at
+	// same time.
 	public void removeAllOutput() {
 		outputs.clear();
 	}
 
 	@Override
 	public void removeOutput(final IOutput o) {
-		if ( !(o instanceof AbstractOutput) ) { return; }
-		if ( ((AbstractOutput) o).isUserCreated() ) {
+		if (!(o instanceof AbstractOutput)) {
+			return;
+		}
+		if (((AbstractOutput) o).isUserCreated()) {
 			o.dispose();
 			outputs.values().remove(o);
 		} else {
@@ -109,9 +128,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		for ( final ISymbol s : commands ) {
-			if ( s instanceof AbstractOutput ) {
-				AbstractOutput o = (AbstractOutput) s;
+		for (final ISymbol s : commands) {
+			if (s instanceof AbstractOutput) {
+				final AbstractOutput o = (AbstractOutput) s;
 				addOutput(o);
 				o.setUserCreated(false);
 			}
@@ -120,7 +139,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void forceUpdateOutputs() {
-		for ( final IDisplayOutput o : getDisplayOutputs() ) {
+		for (final IDisplayOutput o : getDisplayOutputs()) {
 			o.update();
 		}
 	}
@@ -131,17 +150,17 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean init(final IScope scope) {
-		List<IOutput> list = new ArrayList(outputs.values());
+		final List<IOutput> list = new ArrayList(outputs.values());
 
-		for ( final IOutput output : list ) {
+		for (final IOutput output : list) {
 
-			if ( scope.init(output) ) {
+			if (scope.init(output)) {
 				output.setPaused(false);
-				if ( initialStep(scope, output) ) {
+				if (initialStep(scope, output)) {
 					try {
 						output.open();
 						output.update();
-					} catch (RuntimeException e) {
+					} catch (final RuntimeException e) {
 						e.printStackTrace();
 						return false;
 					}
@@ -150,7 +169,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 		}
 		scope.getGui().waitForViewsToBeInitialized();
-		if ( GamaPreferences.CORE_AUTO_RUN.getValue() ) {
+		if (GamaPreferences.CORE_AUTO_RUN.getValue()) {
 			GAMA.startFrontmostExperiment();
 		}
 		return true;
@@ -166,20 +185,20 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean step(final IScope scope) {
-		List<AbstractOutput> out = ImmutableList.copyOf(outputs.values());
-		boolean[] update = new boolean[out.size()];
+		final List<AbstractOutput> out = ImmutableList.copyOf(outputs.values());
+		final boolean[] update = new boolean[out.size()];
 		int i = 0;
-		for ( final AbstractOutput o : out ) {
-			if ( !o.isPaused() && o.isOpen() && o.isRefreshable() ) {
+		for (final AbstractOutput o : out) {
+			if (!o.isPaused() && o.isOpen() && o.isRefreshable()) {
 				update[i++] = o.getScope().step(o);
 			}
 		}
 		i = 0;
-		for ( final AbstractOutput o : out ) {
-			if ( update[i++] ) {
+		for (final AbstractOutput o : out) {
+			if (update[i++]) {
 				try {
 					o.update();
-				} catch (RuntimeException e) {
+				} catch (final RuntimeException e) {
 					e.printStackTrace();
 					continue;
 				}

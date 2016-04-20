@@ -12,7 +12,8 @@
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 
@@ -29,16 +30,19 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	protected boolean disposed = false;
 	protected boolean synchro = false;
+	protected boolean inInitPhase = true;
 	protected IGamaView view;
 
 	final Runnable opener = new Runnable() {
 
 		@Override
 		public void run() {
-			if ( view == null ) {
+			if (view == null) {
 				view = getScope().getGui().showView(getViewId(), isUnique() ? null : getName(), 3); // IWorkbenchPage.VIEW_CREATE
 			}
-			if ( view == null ) { return; }
+			if (view == null) {
+				return;
+			}
 			view.addOutput(AbstractDisplayOutput.this);
 		}
 
@@ -61,21 +65,23 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public void dispose() {
-		if ( disposed ) { return; }
+		if (disposed) {
+			return;
+		}
 		disposed = true;
-		if ( view != null ) {
+		if (view != null) {
 			view.removeOutput(this);
 			view = null;
 		}
 		// scope.getGui().closeViewOf(this);
-		if ( getScope() != null ) {
+		if (getScope() != null) {
 			GAMA.releaseScope(getScope());
 		}
 	}
 
 	@Override
 	public void update() throws GamaRuntimeException {
-		if ( view != null ) {
+		if (view != null) {
 			view.update(this);
 		}
 	}
@@ -100,10 +106,20 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public String getId() {
-		String cName = ((AbstractOutput) this).getDescription().getModelDescription().getAlias();
-		if ( !cName.equals("") &&
-			!getName().contains("#") ) { return isUnique() ? getViewId() : getViewId() + getName() + "#" + cName; }
+		final String cName = ((AbstractOutput) this).getDescription().getModelDescription().getAlias();
+		if (!cName.equals("") && !getName().contains("#")) {
+			return isUnique() ? getViewId() : getViewId() + getName() + "#" + cName;
+		}
 		return isUnique() ? getViewId() : getViewId() + getName();
 	}
 
+	@Override
+	public boolean isInInitPhase() {
+		return inInitPhase;
+	}
+
+	@Override
+	public void setInInitPhase(final boolean state) {
+		inInitPhase = state;
+	}
 }

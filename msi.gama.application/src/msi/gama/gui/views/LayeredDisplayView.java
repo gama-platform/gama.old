@@ -516,6 +516,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	@Override
 	public void update(final IDisplayOutput output) {
 		final IDisplaySurface s = getDisplaySurface();
+		// Fix for issue #1693
+		final boolean oldSync = output.isSynchronized();
+		if ( output.isInInitPhase() )
+			output.setSynchronized(false);
+		// end fix
 		if ( updateThread == null ) {
 			updateThread = new Thread(new Runnable() {
 
@@ -531,6 +536,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 								doSnapshot();
 							}
 							s.updateDisplay(false);
+							// Fix for issue #1693
+							if ( output.isInInitPhase() ) {
+								output.setInInitPhase(false);
+								output.setSynchronized(oldSync);
+								// end fix
+							}
 						}
 					}
 				}
