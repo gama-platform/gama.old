@@ -750,6 +750,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public boolean isRendered() {
+		if (renderer == null || renderer.sceneBuffer == null || renderer.sceneBuffer.getSceneToRender() == null)
+			return false;
 		return renderer.sceneBuffer.getSceneToRender().rendered();
 	}
 

@@ -98,6 +98,7 @@ public class ModelScene {
 			for (final Map.Entry<BufferedImage, Texture> entry : localVolatileTextures.entrySet()) {
 				final Texture t = entry.getValue();
 				textureIdsToDestroy[index++] = t == null ? 0 : t.getTextureObject();
+				// entry.getKey().flush();
 			}
 			gl.glDeleteTextures(textureIdsToDestroy.length, textureIdsToDestroy, 0);
 			localVolatileTextures.clear();
@@ -112,7 +113,7 @@ public class ModelScene {
 		Texture texture = localVolatileTextures.get(image);
 		if (texture == null) {
 			texture = TextureCache.buildTexture(gl, image);
-			image.flush();
+			// image.flush();
 			localVolatileTextures.put(image, texture);
 		}
 		if (texture != null) {
