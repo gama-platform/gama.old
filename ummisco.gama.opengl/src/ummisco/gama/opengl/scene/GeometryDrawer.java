@@ -57,7 +57,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		switch (type) {
 			case MULTIPOLYGON:
 				jtsDrawer.drawMultiPolygon(gl, (MultiPolygon) geometry.geometry, color, geometry.getAlpha(),
-					geometry.isFilled(), border, geometry, height, geometry.getZ_fighting_id());
+					(geometry.isFilled() || renderer.data.isTriangulation()), border, geometry, height, geometry.getZ_fighting_id());
 				break;
 			case SPHERE:
 				jtsDrawer.drawSphere(gl, geometry);
