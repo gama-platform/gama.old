@@ -11,14 +11,21 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import static com.google.common.collect.Iterables.*;
-import gnu.trove.set.hash.TLinkedHashSet;
-import java.util.*;
-import msi.gama.common.GamaPreferences;
-import msi.gaml.compilation.GamlCompilationError;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.limit;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+
+import gnu.trove.set.hash.TLinkedHashSet;
+import msi.gama.common.GamaPreferences;
+import msi.gama.util.TOrderedHashMap;
+import msi.gaml.compilation.GamlCompilationError;
 
 public class ErrorCollector implements Iterable<GamlCompilationError> {
 
@@ -45,19 +52,23 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 	}
 
 	public void add(final GamlCompilationError error) {
-		if ( error.isWarning() ) {
-			if ( !GamaPreferences.WARNINGS_ENABLED.getValue() ) { return; }
-		} else if ( error.isInfo() ) {
-			if ( !GamaPreferences.INFO_ENABLED.getValue() ) { return; }
+		if (error.isWarning()) {
+			if (!GamaPreferences.WARNINGS_ENABLED.getValue()) {
+				return;
+			}
+		} else if (error.isInfo()) {
+			if (!GamaPreferences.INFO_ENABLED.getValue()) {
+				return;
+			}
 		}
-		EObject object = error.getStatement();
-		boolean sameResource = object == null || object.eResource().getURI().equals(resourceURI);
-		if ( sameResource && error.isInfo() ) {
+		final EObject object = error.getStatement();
+		final boolean sameResource = object == null || object.eResource().getURI().equals(resourceURI);
+		if (sameResource && error.isInfo()) {
 			infos.add(error);
-		} else if ( sameResource && error.isWarning() ) {
+		} else if (sameResource && error.isWarning()) {
 			warnings.add(error);
-		} else if ( error.isError() ) {
-			if ( sameResource ) {
+		} else if (error.isError()) {
+			if (sameResource) {
 				internalErrors.add(error);
 			} else {
 				importedErrors.add(error);
@@ -107,11 +118,22 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 
 	/**
 	 * Method iterator()
+	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
 	public Iterator<GamlCompilationError> iterator() {
 		return limit(concat(getInternalErrors(), getImportedErrors(), getWarnings(), getInfos()), MAX_SIZE).iterator();
+	}
+
+	public Map<String, URI> getImportedErrorsAsStrings() {
+		final Map<String, URI> result = new TOrderedHashMap();
+		for (final GamlCompilationError error : importedErrors) {
+			final EObject object = error.getStatement();
+			final String resource = object == null ? "imported files" : object.eResource().getURI().lastSegment();
+			result.put(error.toString() + " (" + resource + ")", object == null ? null : object.eResource().getURI());
+		}
+		return result;
 	}
 
 }

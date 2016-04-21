@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -90,6 +91,7 @@ import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.commands.GamaMenu;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.swt.controls.ITooltipDisplayer;
@@ -403,10 +405,46 @@ public class GamlEditor extends XtextEditor
 					if (toolbar == null || toolbar.isDisposed()) {
 						return;
 					}
+
 					final GamaUIColor c = state.getColor();
 					final String msg = state.getStatus();
 					if (msg != null) {
-						toolbar.status((Image) null, msg, c, SWT.LEFT);
+						toolbar.wipe(SWT.LEFT, true);
+						final ToolItem t = toolbar.button(c, msg, new SelectionListener() {
+
+							@Override
+							public void widgetSelected(final SelectionEvent e) {
+
+								final GamaMenu menu = new GamaMenu() {
+
+									@Override
+									protected void fillMenu() {
+										final Map<String, URI> msgs = newState.getImportedErrors();
+										for (final String s : msgs.keySet()) {
+											action(s, new SelectionAdapter() {
+
+												@Override
+												public void widgetSelected(final SelectionEvent e1) {
+													GAMA.getGui().editModel(msgs.get(s));
+												}
+
+											}, null);
+										}
+
+									}
+								};
+								menu.open(toolbar.getToolbar(SWT.LEFT), e);
+
+							}
+
+							@Override
+							public void widgetDefaultSelected(final SelectionEvent e) {
+								widgetSelected(e);
+							}
+						}, SWT.LEFT);
+						// For Issue #1697
+						if (!state.getImportedErrors().isEmpty())
+							((FlatButton) t.getControl()).setImage(GamaIcons.create("small.dropdown").image());
 						// without the 2 following lines, the display of the
 						// text "msg" is not updated
 						// correctly (at least for Windows OS)
