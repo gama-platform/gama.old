@@ -590,10 +590,10 @@ public class SwtGui extends AbstractGui {
 	}
 
 	@Override
-	public void showConsoleView() {
+	public void showConsoleView(final ITopLevelAgent agent) {
 		console = (ConsoleView) showView(CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		if ( consoleBuffer.length() > 0 ) {
-			console.append(consoleBuffer.toString(), null, null);
+			console.append(consoleBuffer.toString(), agent, null);
 			consoleBuffer.setLength(0);
 		}
 	}
@@ -1206,11 +1206,11 @@ public class SwtGui extends AbstractGui {
 	public void prepareForSimulation(final SimulationAgent agent) {
 		clearErrors();
 		if ( !agent.getExperiment().getSpecies().isBatch() ) {
-			showConsoleView();
+			showConsoleView(agent);
 			// resetMonitorView();
 		} else {
 			if ( console == null ) {
-				showConsoleView();
+				showConsoleView(agent);
 			}
 		}
 	}

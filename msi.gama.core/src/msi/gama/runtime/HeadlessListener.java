@@ -175,7 +175,7 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void showConsoleView() {
+	public void showConsoleView(final ITopLevelAgent agent) {
 	}
 
 	@Override

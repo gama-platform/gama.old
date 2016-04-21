@@ -121,7 +121,7 @@ public interface IGui {
 
 	boolean confirmClose(IExperimentPlan experiment);
 
-	void showConsoleView();
+	void showConsoleView(ITopLevelAgent agent);
 
 	void setWorkbenchWindowTitle(String string);
 
