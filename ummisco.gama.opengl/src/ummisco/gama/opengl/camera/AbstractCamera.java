@@ -596,15 +596,15 @@ public abstract class AbstractCamera implements ICamera {
 					case SWT.SPACE:
 						resetPivot();
 						break;
-					case SWT.CTRL:
-						setCtrlPressed(true);
-						break;
-					case SWT.COMMAND:
-						setCtrlPressed(true);
-						break;
-					case SWT.SHIFT:
-						setShiftPressed(true);
-						break;
+					// case SWT.CTRL:
+					// setCtrlPressed(true);
+					// break;
+					// case SWT.COMMAND:
+					// setCtrlPressed(true);
+					// break;
+					// case SWT.SHIFT:
+					// setShiftPressed(true);
+					// break;
 					}
 					switch (e.character) {
 					case '+':
