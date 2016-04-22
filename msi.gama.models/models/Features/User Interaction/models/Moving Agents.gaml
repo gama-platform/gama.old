@@ -14,7 +14,6 @@ global
 	point target;
 	geometry zone <- circle(100);
 	bool can_drop;
-	geometry occupied <- geometry(being - moved_agents) update: geometry(being - moved_agents);
 	init
 	{
 		create being number: 100;
@@ -64,6 +63,8 @@ global
 	{
 		can_drop <- true;
 		target <- mouse;
+		list<being> other_agents <- (being inside (zone at_location mouse)) - moved_agents;
+		geometry occupied <- geometry(other_agents);
 		ask moved_agents
 		{
 			location <- mouse - difference;
