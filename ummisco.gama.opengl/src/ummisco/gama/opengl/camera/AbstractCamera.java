@@ -45,7 +45,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	// Mouse
 	private Point mousePosition;
-	protected Point lastMousePressedPosition;
+	protected Point lastMousePressedPosition = new Point(0,0);
 	protected Point firstMousePressedPosition;
 	protected boolean firsttimeMouseDown = true;
 	protected boolean cameraInteraction = true;
