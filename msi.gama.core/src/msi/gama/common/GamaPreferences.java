@@ -485,8 +485,8 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_SHOW_PAGE = create("core.show_page", "Display Welcome page at startup",
 			true, IType.BOOL).in(UI).group("Startup");
 
-	public static final Entry<Boolean> CORE_SHOW_MAXIMIZED = create("core.show_maximized", "Maximize GAMA windows at startup",
-			true, IType.BOOL).in(UI).group("Startup");
+	public static final Entry<Boolean> CORE_SHOW_MAXIMIZED = create("core.show_maximized",
+			"Maximize GAMA windows at startup", true, IType.BOOL).in(UI).group("Startup");
 	/**
 	 * Runtime
 	 */
@@ -697,7 +697,7 @@ public class GamaPreferences {
 	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE = create("core.display_visible",
 			"Only process for display the agents that are visible", false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("core.shared_context",
-			"Enable OpenGL background loading of textures (disable it if you have problems with Intel graphics cards on Linux)",
+			"Enable OpenGL background loading of textures (can cause problems with some graphics cards on Linux and Windows)",
 			true, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> DISPLAY_FAST_SNAPSHOT = create("core.fast_snapshot",
 			"Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)",
