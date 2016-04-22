@@ -21,11 +21,11 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
-import msi.gaml.compilation.GamaHelper;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.Types;
 
@@ -227,14 +227,12 @@ public class EventLayer extends AbstractLayer {
 
 				@Override
 				public void run() {
-					scope.getExperiment().getActionExecuter().executeOneAction(new GamaHelper() {
+
+					scope.getSimulationScope().executeAction(new IExecutable() {
 
 						@Override
-						public Object run(final IScope experiment_scope) {
+						public Object executeOn(final IScope scope) {
 							executer.setRuntimeArgs(args);
-							// We do NOT use the scope provided by the
-							// experiment, but instead the one of the layer
-							// (which is contextualized)
 							executer.executeOn(scope);
 							return null;
 						}

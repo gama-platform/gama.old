@@ -52,6 +52,7 @@ import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -100,6 +101,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected String ownModelPath;
 	protected SimulationPopulation populationOfSimulations;
 	private Boolean scheduled = false;
+	private volatile boolean isOnUserHold = false;
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
@@ -462,6 +464,16 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
+	public boolean isOnUserHold() {
+		return isOnUserHold;
+	}
+
+	@Override
+	public void setOnUserHold(final boolean state) {
+		isOnUserHold = state;
+	}
+
+	@Override
 	public IPopulation getPopulationFor(final ISpecies species) {
 		// TODO Auto-generated method stub
 		if (species == getModel()) {
@@ -477,10 +489,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		boolean result;
 		// An experiment always runs in its own scope
 		try {
-			getActionExecuter().executeBeginActions();
+			executer.executeBeginActions();
 			result = super.step(this.scope);
-			getActionExecuter().executeEndActions();
-			getActionExecuter().executeOneShotActions();
+			executer.executeEndActions();
+			executer.executeOneShotActions();
 			final IOutputManager outputs = getSpecies().getExperimentOutputs();
 			if (outputs != null) {
 				outputs.step(scope);
@@ -631,14 +643,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	/**
-	 * @return
-	 */
-	@Override
-	public ActionExecuter getActionExecuter() {
-		return executer;
-	}
-
-	/**
 	 * Method closeSimulation()
 	 * 
 	 * @see msi.gama.kernel.experiment.IExperimentAgent#closeSimulation(msi.gama.kernel.simulation.SimulationAgent)
@@ -661,6 +665,30 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public IOutputManager getOutputManager() {
 		return getSpecies().getExperimentOutputs();
+	}
+
+	@Override
+	public void postEndAction(final IExecutable executable) {
+		executer.insertEndAction(executable);
+
+	}
+
+	@Override
+	public void postDisposeAction(final IExecutable executable) {
+		executer.insertDisposeAction(executable);
+
+	}
+
+	@Override
+	public void postOneShotAction(final IExecutable executable) {
+		executer.insertOneShotAction(executable);
+
+	}
+
+	@Override
+	public void executeAction(final IExecutable executable) {
+		executer.executeOneAction(executable);
+
 	}
 
 }

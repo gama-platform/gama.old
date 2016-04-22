@@ -34,6 +34,7 @@ import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
@@ -185,9 +186,9 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		return o.getColor();
 	}
 
-	public static void createNewMonitor() {
+	public static void createNewMonitor(final IScope scope) {
 		// TODO ADD the possibility to do it in several simulations
-		new MonitorOutput("monitor" + count++, "");
+		new MonitorOutput(scope, "monitor" + count++, "");
 	}
 
 	// @Override
@@ -242,8 +243,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-
-				createNewMonitor();
+				createNewMonitor(getOutput().getScope());
 			}
 
 		}, SWT.RIGHT);

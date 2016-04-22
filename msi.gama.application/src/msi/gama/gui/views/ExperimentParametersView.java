@@ -32,7 +32,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gaml.compilation.GamaHelper;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.UserCommandStatement;
 
 public class ExperimentParametersView extends AttributesEditorsView<String> {
@@ -97,10 +97,11 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					GAMA.getExperiment().getAgent().getActionExecuter().executeOneAction(new GamaHelper() {
+
+					GAMA.getExperiment().getAgent().executeAction(new IExecutable() {
 
 						@Override
-						public Object run(final IScope scope) {
+						public Object executeOn(final IScope scope) {
 							final Object result = command.executeOn(scope);
 							GAMA.getExperiment().refreshAllOutputs();
 							return result;

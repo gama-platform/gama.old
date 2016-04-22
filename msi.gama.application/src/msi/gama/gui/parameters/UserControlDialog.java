@@ -88,7 +88,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	public boolean close() {
 		previous = new PreviousDialog(this);
 		current = null;
-		GAMA.getFrontmostController().getScheduler().setUserHold(false);
+		scope.setOnUserHold(false);
 		return super.close();
 	}
 

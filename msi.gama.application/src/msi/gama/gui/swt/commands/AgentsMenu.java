@@ -42,9 +42,9 @@ import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
-import msi.gaml.compilation.GamaHelper;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.Types;
@@ -236,14 +236,15 @@ public class AgentsMenu extends ContributionItem {
 			final IAgent a = (IAgent) source.getData("agent");
 			final IStatement c = (IStatement) source.getData("command");
 			final ILocation p = (ILocation) source.getData("location");
+
+			// We run into the scope provided by the simulation to which this agent belongs
+
 			if ( c != null && a != null && !a.dead() ) {
-				final GamaHelper action = new GamaHelper() {
+				final IScope runningScope = a.getScope();
+				runningScope.getSimulationScope().executeAction(new IExecutable() {
 
 					@Override
-					public Object run(final IScope scope) {
-						// if ( p != null ) {
-						// scope.addVarWithValue(IKeyword.USER_LOCATION, p);
-						// }
+					public Object executeOn(final IScope scope) {
 						final Object[] result = new Object[1];
 						final Arguments args = new Arguments();
 						if ( p != null ) {
@@ -254,8 +255,8 @@ public class AgentsMenu extends ContributionItem {
 						return result[0];
 					}
 
-				};
-				GAMA.getExperiment().getAgent().getActionExecuter().executeOneAction(action);
+				});
+
 			}
 		}
 	};

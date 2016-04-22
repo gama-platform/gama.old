@@ -92,7 +92,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	/**
 	 * Save this surface into an image passed as a parameter
 	 * 
-	 * @param scope
+	 * @param actionScope
 	 * @param image
 	 */
 	public void save(final RenderedImage image) {
@@ -142,7 +142,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		this.height = newHeight;
 		final Image copy = buffImage;
 		createBuffImage();
-		if (GAMA.isPaused()) {
+		if (getDisplayScope().isPaused()) {
 			updateDisplay(true);
 		} else {
 			g2.drawImage(copy, 0, 0, newWidth, newHeight, null);

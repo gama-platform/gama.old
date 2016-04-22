@@ -42,8 +42,8 @@ import msi.gama.outputs.IOutput;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gaml.compilation.GamaHelper;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
@@ -158,10 +158,12 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
 					if ( agent.dead() ) { return; }
-					GAMA.getExperiment().getAgent().getActionExecuter().executeOneAction(new GamaHelper() {
+					// We run into the scope provided by the agent
+					final IScope runningScope = agent.getScope();
+					runningScope.getSimulationScope().executeAction(new IExecutable() {
 
 						@Override
-						public Object run(final IScope scope) {
+						public Object executeOn(final IScope scope) {
 							final Object[] result = new Object[1];
 							scope.execute(command, agent, null, result);
 							return result[0];

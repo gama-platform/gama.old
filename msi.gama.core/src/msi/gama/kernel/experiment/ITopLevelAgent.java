@@ -9,6 +9,7 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.util.GamaColor;
+import msi.gaml.statements.IExecutable;
 
 /**
  * Class ITopLevelAgent.
@@ -25,8 +26,18 @@ public interface ITopLevelAgent extends IMacroAgent {
 
 	public RandomUtils getRandomGenerator();
 
-	public ActionExecuter getActionExecuter();
-
 	public IOutputManager getOutputManager();
+
+	public void postEndAction(IExecutable executable);
+
+	public void postDisposeAction(IExecutable executable);
+
+	public void postOneShotAction(IExecutable executable);
+
+	public void executeAction(IExecutable executable);
+
+	public boolean isOnUserHold();
+
+	public void setOnUserHold(boolean state);
 
 }

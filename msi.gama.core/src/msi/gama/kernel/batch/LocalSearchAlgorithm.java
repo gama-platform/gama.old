@@ -12,7 +12,10 @@
 package msi.gama.kernel.batch;
 
 import java.util.List;
-import msi.gama.kernel.experiment.*;
+
+import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -29,9 +32,9 @@ public abstract class LocalSearchAlgorithm extends ParamSpaceExploAlgorithm {
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
-		List<IParameter.Batch> v = agent.getParametersToExplore();
+		final List<IParameter.Batch> v = agent.getParametersToExplore();
 		neighborhood = new Neighborhood1Var(v);
-		solutionInit = new ParametersSet(v, true);
+		solutionInit = new ParametersSet(scope, v, true);
 	}
 
 }

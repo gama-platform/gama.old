@@ -59,7 +59,6 @@ import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.PathFactory;
-import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
@@ -67,6 +66,7 @@ import msi.gaml.operators.Spatial;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IContainerType;
@@ -663,9 +663,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	/**
 	 * Returns the cells making up the neighborhood of a geometrical shape.
-	 * First, the cells covered by this shape are computed, then their
-	 * neighbors are collated (excluding the previous ones). A special case is
-	 * made for point geometries and for agents contained in this matrix.
+	 * First, the cells covered by this shape are computed, then their neighbors
+	 * are collated (excluding the previous ones). A special case is made for
+	 * point geometries and for agents contained in this matrix.
 	 * 
 	 * @param source
 	 * @param distance
@@ -892,10 +892,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return diffuser_deprecated;
 		}
 		diffuser_deprecated = new GridDiffuser_deprecated(this);
-		scope.getExperiment().getActionExecuter().insertEndAction(new GamaHelper() {
+		scope.getSimulationScope().postEndAction(new IExecutable() {
 
 			@Override
-			public Object run(final IScope s) throws GamaRuntimeException {
+			public Object executeOn(final IScope s) throws GamaRuntimeException {
 				diffuse_deprecated(s);
 				return null;
 			}
@@ -909,10 +909,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return diffuser;
 		}
 		diffuser = new GridDiffuser();
-		scope.getExperiment().getActionExecuter().insertEndAction(new GamaHelper() {
+		scope.getSimulationScope().postEndAction(new IExecutable() {
 
 			@Override
-			public Object run(final IScope s) throws GamaRuntimeException {
+			public Object executeOn(final IScope s) throws GamaRuntimeException {
 				if (diffuser != null) {
 					diffuse(s);
 				}

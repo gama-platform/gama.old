@@ -11,21 +11,26 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
+
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IStepable;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
 
 public class ExperimentScheduler implements Runnable {
 
 	public volatile boolean alive = true;
-	// Flag indicating that the experiment is set to pause (it should be alive unless the application is shutting down)
+	// Flag indicating that the experiment is set to pause (it should be alive
+	// unless the application is shutting down)
 	public volatile boolean paused = true;
-	// Flag indicating that the thread is set to be on hold, waiting for a user input
-	public volatile boolean on_user_hold = false;
+	// Flag indicating that the thread is set to be on hold, waiting for a user
+	// input
+	// public volatile boolean on_user_hold = false;
 	/* The stepables that need to be stepped */
 	private final Map<IStepable, IScope> toStep = new TOrderedHashMap();
 	private volatile Set<IStepable> toStop = new THashSet();
@@ -35,7 +40,7 @@ public class ExperimentScheduler implements Runnable {
 
 	ExperimentScheduler(final IExperimentPlan experiment) {
 		this.experiment = experiment;
-		if ( !experiment.isHeadless() ) {
+		if (!experiment.isHeadless()) {
 			executionThread = new Thread(null, this, "Front end scheduler");
 			try {
 				lock.acquire();
@@ -49,14 +54,14 @@ public class ExperimentScheduler implements Runnable {
 	}
 
 	private void startThread() {
-		if ( executionThread == null ) {
+		if (executionThread == null) {
 			step();
-		} else if ( !executionThread.isAlive() ) {
+		} else if (!executionThread.isAlive()) {
 			try {
 				executionThread.start();
 			} catch (final Exception e) {
 				e.printStackTrace();
-				GamaRuntimeException ee = GamaRuntimeException.create(e, experiment.getExperimentScope());
+				final GamaRuntimeException ee = GamaRuntimeException.create(e, experiment.getExperimentScope());
 				ee.addContext("Error in front end scheduler. Reloading thread, but it would be safer to reload GAMA");
 				experiment.getExperimentScope().getGui().raise(ee);
 				executionThread = new Thread(null, this, "Front end scheduler");
@@ -69,7 +74,7 @@ public class ExperimentScheduler implements Runnable {
 	private IScope[] scopes = null;
 
 	public void step() {
-		if ( !experiment.isHeadless() && paused ) {
+		if (!experiment.isHeadless() && paused) {
 			try {
 				lock.acquire();
 			} catch (final InterruptedException e) {
@@ -81,12 +86,14 @@ public class ExperimentScheduler implements Runnable {
 		// GAMA.getGui().debug("ExperimentScheduler.step");
 		stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
 		scopes = toStep.values().toArray(new IScope[toStep.size()]);
-		for ( int i = 0; i < stepables.length; i++ ) {
+		for (int i = 0; i < stepables.length; i++) {
 			final IScope scope = scopes[i];
 			try {
-				// GAMA.getGui().debug("ExperimentScheduler.step : stepping " + stepables[i]);
-				if ( !scope.step(stepables[i]) ) {
-					// GAMA.getGui().debug("ExperimentScheduler.step : removal of " + stepables[i]);
+				// GAMA.getGui().debug("ExperimentScheduler.step : stepping " +
+				// stepables[i]);
+				if (!scope.step(stepables[i])) {
+					// GAMA.getGui().debug("ExperimentScheduler.step : removal
+					// of " + stepables[i]);
 					toStop.add(stepables[i]);
 				}
 			} catch (final Exception e) {
@@ -96,19 +103,23 @@ public class ExperimentScheduler implements Runnable {
 	}
 
 	private void clean() {
-		if ( toStop.isEmpty() ) { return; }
+		if (toStop.isEmpty()) {
+			return;
+		}
 		synchronized (toStop) {
-			for ( final IStepable s : toStop ) {
+			for (final IStepable s : toStop) {
 				final IScope scope = toStep.get(s);
-				if ( scope != null && !scope.interrupted() ) {
-					// scope.getGui().debug("ExperimentScheduler.clean : Interrupting " + scope);
+				if (scope != null && !scope.interrupted()) {
+					// scope.getGui().debug("ExperimentScheduler.clean :
+					// Interrupting " + scope);
 					scope.setInterrupted(true);
 				}
 				toStep.remove(s);
-				// scope.getGui().debug("ExperimentScheduler.clean : Removed " + s);
+				// scope.getGui().debug("ExperimentScheduler.clean : Removed " +
+				// s);
 				// s.dispose();
 			}
-			if ( toStep.isEmpty() ) {
+			if (toStep.isEmpty()) {
 				this.pause();
 			}
 			toStop.clear();
@@ -123,9 +134,9 @@ public class ExperimentScheduler implements Runnable {
 		}
 	}
 
-	public void setUserHold(final boolean hold) {
-		on_user_hold = hold;
-	}
+	// public void setUserHold(final boolean hold) {
+	// on_user_hold = hold;
+	// }
 
 	public void stepByStep() {
 		paused = true;
@@ -144,18 +155,18 @@ public class ExperimentScheduler implements Runnable {
 	}
 
 	public void schedule(final IStepable stepable, final IScope scope) {
-		if ( toStep.containsKey(stepable) ) {
+		if (toStep.containsKey(stepable)) {
 			toStep.remove(stepable);
 		}
 		toStep.put(stepable, scope);
 		// We first init the stepable before it is scheduled
 		// GAMA.getGui().debug("ExperimentScheduler.schedule " + stepable);
 		try {
-			if ( !scope.init(stepable) ) {
+			if (!scope.init(stepable)) {
 				toStop.add(stepable);
 			}
 		} catch (final Exception e) {
-			if ( scope != null && scope.interrupted() ) {
+			if (scope != null && scope.interrupted()) {
 				toStop.add(stepable);
 			} else {
 				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
@@ -181,26 +192,26 @@ public class ExperimentScheduler implements Runnable {
 
 	public void removeStepable(final String s) {
 
-		Set<IStepable> beRemoved = new THashSet();
-		for ( IStepable ss : toStep.keySet() ) {
-			if ( ss.toString().contains(s) ) {
+		final Set<IStepable> beRemoved = new THashSet();
+		for (final IStepable ss : toStep.keySet()) {
+			if (ss.toString().contains(s)) {
 
 				final IScope scope = toStep.get(ss);
-				if ( !scope.interrupted() ) {
+				if (!scope.interrupted()) {
 					scope.setInterrupted(true);
 				}
 				beRemoved.add(ss);
 			}
 
 		}
-		for ( IStepable ss : beRemoved ) {
+		for (final IStepable ss : beRemoved) {
 			toStep.remove(ss);
 			toStop.remove(ss);
 		}
 	}
 
 	public void unschedule(final IStepable scheduler) {
-		if ( toStep.containsKey(scheduler) ) {
+		if (toStep.containsKey(scheduler)) {
 			toStep.get(scheduler).setInterrupted(true);
 		}
 	}

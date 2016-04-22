@@ -551,7 +551,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			@Override
 			public void run() {
 				r.run();
-				if ( output.isPaused() || GAMA.isPaused() ) {
+				if ( output.isPaused() || getDisplayScope().isPaused() ) {
 					updateDisplay(true);
 				}
 			}

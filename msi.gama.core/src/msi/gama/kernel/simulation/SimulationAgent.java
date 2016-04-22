@@ -52,6 +52,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
 
 /**
@@ -90,6 +91,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public static final String TIME = "time";
 	public static final String CURRENT_DATE = "current_date";
 	public static final String STARTING_DATE = "starting_date";
+	public static final String PAUSED = "paused";
 
 	final SimulationClock clock;
 	GamaColor color;
@@ -98,6 +100,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	IOutputManager outputs;
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
+	private volatile boolean isOnUserHold;
 	private final RandomUtils random;
 	private final ActionExecuter executer;
 
@@ -142,16 +145,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the
 		// init of the simulation
-		// try {
 		this.prepareGuiForSimulation(scope);
-		// scope.getGui().prepareForSimulation(this);
 		super.schedule(this.scope);
-
-		// } finally {
-		// scope.getGui().informStatus("Simulation ready");
-		// scope.getGui().updateSimulationState();
-		// }
-
 	}
 
 	@Override
@@ -161,26 +156,27 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	// time + step;). The outputs will not be stepped neither
 	public Object _step_(final IScope scope) {
 
-		// System.out.println("Stepping simulation " + getIndex() + " at cycle "
-		// + clock.getCycle());
-		
-		//hqnghi check the on_user_hold in case that micro-model use an user_panel
-		if (!scope.getExperiment().getSpecies().getController().getScheduler().on_user_hold) {
-			clock.beginCycle();
-			// A simulation always runs in its own scope
-			try {
-				getActionExecuter().executeBeginActions();
-				super._step_(this.scope);
-				getActionExecuter().executeEndActions();
-				getActionExecuter().executeOneShotActions();
+		// hqnghi check the on_user_hold in case that micro-model use an
+		// user_panel
+		// AD: removing the fix by Nghi temporarily. But it needs to be checked
+		// more
+		// carefully
+		// if (!scope.isOnUserHold()) {
+		clock.beginCycle();
+		// A simulation always runs in its own scope
+		try {
+			executer.executeBeginActions();
+			super._step_(this.scope);
+			executer.executeEndActions();
+			executer.executeOneShotActions();
 
-				if (outputs != null) {
-					outputs.step(this.scope);
-				}
-			} finally {
-				clock.step(this.scope);
+			if (outputs != null) {
+				outputs.step(this.scope);
 			}
+		} finally {
+			clock.step(this.scope);
 		}
+		// }
 		return this;
 	}
 
@@ -238,9 +234,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		}
 
 		GAMA.releaseScope(scope);
-		// end-hqnghi
-		// projectionFactory
-		// System.out.println("SimulationAgent.dipose END");
 	}
 
 	@Override
@@ -257,13 +250,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void setGeometry(final IShape geom) {
-		// if ( geometry != null ) {
-		// GAMA.reportError(scope,
-		// GamaRuntimeException.warning(
-		// "Changing the shape of the world after its creation can have
-		// unexpected consequences", scope),
-		// false);
-		// }
 		// FIXME : AD 5/15 Revert the commit by PT:
 		// getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
@@ -306,6 +292,36 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			return clock.getCycle();
 		}
 		return 0;
+	}
+
+	@getter(PAUSED)
+	public boolean isPaused(final IScope scope) {
+		// The second case is mostly useless for the moment as it corresponds
+		// to the global pause of the experiment...
+		return getScope().isPaused();
+	}
+
+	@setter(PAUSED)
+	public void setPaused(final IScope scope, final boolean state) {
+		// Not used for the moment, but it might allow to set this state
+		// explicitly (ie pause a simulation without pausing the experiment)
+		// For that, however, we need to check the condition in the step of the
+		// simulation and maybe skip it (or put the thread on sleep ?) when its
+		// scope is on user hold... The question of what to do with the
+		// experiment
+		// is also important: should the experiment continue stepping while its
+		// simulations are paused ?
+		// getScope().setOnUserHold(state);
+	}
+
+	@Override
+	public boolean isOnUserHold() {
+		return isOnUserHold;
+	}
+
+	@Override
+	public void setOnUserHold(final boolean state) {
+		isOnUserHold = state;
 	}
 
 	@getter(IKeyword.STEP)
@@ -498,16 +514,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return random;
 	}
 
-	/**
-	 * Method getActionExecuter()
-	 * 
-	 * @see msi.gama.kernel.experiment.ITopLevelAgent#getActionExecuter()
-	 */
-	@Override
-	public ActionExecuter getActionExecuter() {
-		return executer;
-	}
-
 	public void prepareGuiForSimulation(final IScope s) {
 		s.getGui().prepareForSimulation(this);
 	}
@@ -516,6 +522,30 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		if (outputs != null) {
 			outputs.init(this.scope);
 		}
+	}
+
+	@Override
+	public void postEndAction(final IExecutable executable) {
+		executer.insertEndAction(executable);
+
+	}
+
+	@Override
+	public void postDisposeAction(final IExecutable executable) {
+		executer.insertDisposeAction(executable);
+
+	}
+
+	@Override
+	public void postOneShotAction(final IExecutable executable) {
+		executer.insertOneShotAction(executable);
+
+	}
+
+	@Override
+	public void executeAction(final IExecutable executable) {
+		executer.executeOneAction(executable);
+
 	}
 
 }

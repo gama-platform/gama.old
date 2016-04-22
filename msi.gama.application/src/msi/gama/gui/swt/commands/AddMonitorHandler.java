@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
  *
- * 'AddMonitorHandler.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 'AddMonitorHandler.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,14 +11,17 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import msi.gama.gui.views.MonitorView;
-import org.eclipse.core.commands.*;
+import msi.gama.runtime.GAMA;
 
 public class AddMonitorHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		MonitorView.createNewMonitor();
+		MonitorView.createNewMonitor(GAMA.getRuntimeScope());
 		return null;
 	}
 

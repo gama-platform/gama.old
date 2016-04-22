@@ -695,4 +695,22 @@ class TemporaryScope implements IScope {
 		return null;
 	}
 
+	@Override
+	public void setOnUserHold(final boolean b) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isOnUserHold() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isPaused() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

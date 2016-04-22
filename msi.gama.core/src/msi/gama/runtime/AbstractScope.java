@@ -328,6 +328,16 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
+	public boolean isOnUserHold() {
+		return root.isOnUserHold();
+	}
+
+	@Override
+	public void setOnUserHold(final boolean state) {
+		root.setOnUserHold(state);
+	}
+
+	@Override
 	public final void interruptAction() {
 		_action_halted = true;
 	}
@@ -1032,6 +1042,11 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public ITopLevelAgent getRoot() {
 		return root;
+	}
+
+	@Override
+	public boolean isPaused() {
+		return getExperiment().getSpecies().getController().getScheduler().paused || isOnUserHold();
 	}
 
 }

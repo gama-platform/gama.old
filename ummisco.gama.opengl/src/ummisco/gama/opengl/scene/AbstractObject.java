@@ -14,12 +14,16 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import com.jogamp.opengl.*;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.GAMA.InScope;
+import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -48,20 +52,25 @@ public abstract class AbstractObject {
 	}
 
 	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
-		if ( textures == null ) { return null; }
-		if ( order < 0 || order > textures.length - 1 ) { return null; }
-		if ( textures[order] == null ) {
+		if (textures == null) {
+			return null;
+		}
+		if (order < 0 || order > textures.length - 1) {
+			return null;
+		}
+		if (textures[order] == null) {
 			textures[order] = computeTexture(gl, renderer, order);
 		}
 		return textures[order];
 	}
 
 	private Texture computeTexture(final GL gl, final JOGLRenderer renderer, final int order) {
-		Object obj = attributes.getTextures().get(order);
-		if ( obj instanceof BufferedImage ) {
+		final Object obj = attributes.getTextures().get(order);
+		if (obj instanceof BufferedImage) {
 			return renderer.getCurrentScene().getTexture(gl, (BufferedImage) obj);
-		} else if ( obj instanceof GamaImageFile ) { return renderer.getCurrentScene().getTexture(gl,
-			(GamaImageFile) obj); }
+		} else if (obj instanceof GamaImageFile) {
+			return renderer.getCurrentScene().getTexture(gl, (GamaImageFile) obj);
+		}
 		return null;
 	}
 
@@ -74,24 +83,24 @@ public abstract class AbstractObject {
 	}
 
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
-		if ( picking ) {
-			JOGLRenderer renderer = drawer.renderer;
+		if (picking) {
+			final JOGLRenderer renderer = drawer.renderer;
 			gl.glPushMatrix();
 			gl.glLoadName(pickingIndex);
-			if ( renderer.pickedObjectIndex == pickingIndex ) {
+			if (renderer.pickedObjectIndex == pickingIndex) {
 				renderer.setPicking(false);
 				pick();
 				renderer.currentPickedObject = this;
-				if ( attributes.getSpeciesName() != null ) {
+				if (attributes.getSpeciesName() != null) {
 					// The picked image is a grid or an image of a grid
-					final GamaPoint pickedPoint =
-						renderer.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
-					IAgent ag = GAMA.run(new InScope<IAgent>() {
+					final GamaPoint pickedPoint = renderer
+							.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
+					final IAgent ag = GAMA.run(new InScope<IAgent>() {
 
 						@Override
 						public IAgent run(final IScope scope) {
 							return scope.getRoot().getPopulationFor(attributes.getSpeciesName()).getAgent(scope,
-								new GamaPoint(pickedPoint.x, -pickedPoint.y));
+									new GamaPoint(pickedPoint.x, -pickedPoint.y));
 						}
 					});
 					renderer.getSurface().selectAgent(ag);
@@ -116,7 +125,9 @@ public abstract class AbstractObject {
 	}
 
 	public Color getColor() {
-		if ( picked ) { return pickedColor; }
+		if (picked) {
+			return pickedColor;
+		}
 		return attributes.color;
 	}
 
@@ -136,7 +147,8 @@ public abstract class AbstractObject {
 		this.alpha = alpha;
 	}
 
-	public void preload(final GL2 gl, final JOGLRenderer renderer) {}
+	public void preload(final GL2 gl, final JOGLRenderer renderer) {
+	}
 
 	public boolean isFilled() {
 		return !attributes.isEmpty();
@@ -167,7 +179,9 @@ public abstract class AbstractObject {
 	}
 
 	public double getRotationAngle() {
-		if ( attributes.rotation == null || attributes.rotation.key == null ) { return 0; }
+		if (attributes.rotation == null || attributes.rotation.key == null) {
+			return 0;
+		}
 		// AD Change to a negative rotation to fix Issue #1514
 		return -attributes.rotation.key;
 	}

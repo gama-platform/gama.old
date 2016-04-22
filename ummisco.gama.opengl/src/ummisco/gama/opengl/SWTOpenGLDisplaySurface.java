@@ -267,7 +267,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void runAndUpdate(final Runnable r) {
 		r.run();
-		if (GAMA.isPaused()) {
+		if (getDisplayScope().isPaused()) {
 			updateDisplay(true);
 		}
 		if (animator.isPaused()) {

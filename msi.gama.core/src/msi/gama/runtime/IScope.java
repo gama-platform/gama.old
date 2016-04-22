@@ -317,4 +317,10 @@ public interface IScope {
 	 */
 	public abstract boolean push(IAgent iAgent);
 
+	public abstract void setOnUserHold(boolean b);
+
+	public abstract boolean isOnUserHold();
+
+	public abstract boolean isPaused();
+
 }

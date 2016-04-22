@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.runtime.IScope;
-import msi.gaml.compilation.GamaHelper;
+import msi.gaml.statements.IExecutable;
 
 public class ActionExecuter {
 
@@ -24,7 +24,7 @@ public class ActionExecuter {
 	private static final int DISPOSE = 2;
 	private static final int ONE_SHOT = 3;
 
-	final List<GamaHelper>[] actions = new List[4];
+	final List<IExecutable>[] actions = new List[4];
 	protected final IScope scope;
 
 	public ActionExecuter(final IScope scope) {
@@ -35,19 +35,19 @@ public class ActionExecuter {
 		executeActions(DISPOSE);
 	}
 
-	public void removeAction(final GamaHelper haltAction) {
+	public void removeAction(final IExecutable haltAction) {
 		if (actions == null) {
 			return;
 		}
-		for (final List<GamaHelper> list : actions) {
+		for (final List<IExecutable> list : actions) {
 			if (list != null && list.remove(haltAction)) {
 				return;
 			}
 		}
 	}
 
-	private GamaHelper insertAction(final GamaHelper action, final int type) {
-		List<GamaHelper> list = actions[type];
+	private IExecutable insertAction(final IExecutable action, final int type) {
+		List<IExecutable> list = actions[type];
 		if (list == null) {
 			list = new ArrayList();
 			actions[type] = list;
@@ -58,15 +58,15 @@ public class ActionExecuter {
 		return null;
 	}
 
-	public GamaHelper insertDisposeAction(final GamaHelper action) {
+	public IExecutable insertDisposeAction(final IExecutable action) {
 		return insertAction(action, DISPOSE);
 	}
 
-	public GamaHelper insertEndAction(final GamaHelper action) {
+	public IExecutable insertEndAction(final IExecutable action) {
 		return insertAction(action, END);
 	}
 
-	public GamaHelper insertOneShotAction(final GamaHelper action) {
+	public IExecutable insertOneShotAction(final IExecutable action) {
 		return insertAction(action, ONE_SHOT);
 	}
 
@@ -96,19 +96,18 @@ public class ActionExecuter {
 		final int size = actions[type].size();
 		if (size == 0)
 			return;
-		final GamaHelper[] array = actions[type].toArray(new GamaHelper[size]);
-		for (final GamaHelper action : array) {
+		final IExecutable[] array = actions[type].toArray(new IExecutable[size]);
+		for (final IExecutable action : array) {
 			if (!scope.interrupted()) {
-				action.run(scope);
+				action.executeOn(scope);
 			}
 		}
 	}
 
-	public synchronized void executeOneAction(final GamaHelper action) {
-		final ExperimentScheduler sche = scope.getSimulationScope().getExperiment().getSpecies().getController()
-				.getScheduler();
-		if (sche.paused || sche.on_user_hold) {
-			action.run(scope);
+	public synchronized void executeOneAction(final IExecutable action) {
+		final boolean paused = scope.isPaused();
+		if (paused) {
+			action.executeOn(scope);
 		} else {
 			insertOneShotAction(action);
 		}

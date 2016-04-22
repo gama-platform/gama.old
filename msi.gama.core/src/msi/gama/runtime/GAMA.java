@@ -365,7 +365,7 @@ public class GAMA {
 	}
 
 	public static <T> T run(final InScope<T> r) {
-		final IScope scope = obtainNewScope("in temporary scope block");
+		final IScope scope = obtainNewScope(" in temporary scope block");
 		try {
 			final T result = r.run(scope);
 			return result;

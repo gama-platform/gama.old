@@ -977,10 +977,10 @@ public class SwtGui extends AbstractGui {
 					e.printStackTrace();
 				}
 				if ( part != null ) {
-					part.initFor(scope, panel.getUserCommands(),
-						"[" + scope.getAgentScope().getName() + "] " + panel.getName());
+					part.initFor(scope, panel.getUserCommands(), "[" + scope.getAgentScope().getName() + " in " +
+						scope.getSimulationScope().getName() + "] " + panel.getName());
 				}
-				GAMA.getFrontmostController().getScheduler().setUserHold(true);
+				scope.setOnUserHold(true);
 				try {
 					getPage().showView(UserControlView.ID);
 				} catch (final PartInitException e) {
@@ -1185,7 +1185,7 @@ public class SwtGui extends AbstractGui {
 				if ( a == null ) { return; }
 				try {
 					final InspectDisplayOutput output = new InspectDisplayOutput(a);
-					output.launch();
+					output.launch(a.getScope());
 				} catch (final GamaRuntimeException g) {
 					g.addContext("In opening the agent inspector");
 					GAMA.reportError(GAMA.getRuntimeScope(), g, false);

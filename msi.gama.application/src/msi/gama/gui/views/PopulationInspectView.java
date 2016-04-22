@@ -481,7 +481,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 				final int dir = comparator.getDirection();
 				viewer.getTable().setSortDirection(dir);
 				viewer.getTable().setSortColumn(column);
-				if ( GAMA.isPaused() || getOutput().isPaused() ) {
+				if ( getScope().isPaused() || getOutput().isPaused() ) {
 					Arrays.sort(elements, comparator);
 				}
 				viewer.refresh();

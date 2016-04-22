@@ -141,7 +141,7 @@ public class UserControlView extends GamaViewPart {
 	}
 
 	protected void doContinue() {
-		GAMA.getFrontmostController().getScheduler().setUserHold(false);
+		scope.setOnUserHold(false);
 		deactivate(parent);
 		scope.getGui().hideView(ID);
 	}

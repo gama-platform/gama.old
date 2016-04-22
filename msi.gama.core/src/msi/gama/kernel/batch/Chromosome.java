@@ -85,8 +85,9 @@ public class Chromosome implements Comparable<Chromosome> {
 		}
 	}
 
-	public ParametersSet convertToSolution(final Collection<IParameter.Batch> variables) throws GamaRuntimeException {
-		final ParametersSet sol = new ParametersSet(variables, true);
+	public ParametersSet convertToSolution(final IScope scope, final Collection<IParameter.Batch> variables)
+			throws GamaRuntimeException {
+		final ParametersSet sol = new ParametersSet(scope, variables, true);
 		// TODO or false ???
 		for (int i = 0; i < phenotype.length; i++) {
 			sol.put(phenotype[i], genes[i]);

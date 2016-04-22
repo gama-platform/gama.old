@@ -24,8 +24,6 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -77,18 +75,10 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		}
 	}
 
-	public MonitorOutput(final String name, final String expr) {
+	public MonitorOutput(final IScope scope, final String name, final String expr) {
 		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME,
 				name == null ? expr : name));
-		GAMA.run(new InScope() {
-
-			@Override
-			public Object run(final IScope scope) {
-				setScope(scope.copy("in monitor '" + expr + "'"));
-				return null;
-			}
-		});
-		// setUserCreated(true);
+		setScope(scope.copy("in monitor '" + expr + "'"));
 		setNewExpressionText(expr);
 		if (getScope().init(this)) {
 			getScope().getSimulationScope().addOutput(this);

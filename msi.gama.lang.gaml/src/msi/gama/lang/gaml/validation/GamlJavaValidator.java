@@ -11,60 +11,63 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
-import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.util.Arrays;
-import org.eclipse.xtext.validation.*;
-import msi.gama.lang.gaml.gaml.*;
+import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.ValidationMessageAcceptor;
+
+import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.Model;
+import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
-import msi.gama.lang.gaml.resource.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.lang.gaml.resource.GamlModelBuilder;
+import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ErrorCollector;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
-	// private GamlResource currentResource;
-	//
-	// public void setCurrentResource(final GamlResource resource) {
-	// currentResource = resource;
-	// }
-	//
 	@Check()
 	public void validate(final Model model) {
-		GamlResource newResource = (GamlResource) model.eResource();
-		if ( newResource.isValidating() ) { return; }
-		ErrorCollector errors = /* GamlModelBuilder.getInstance() */new GamlModelBuilder().validate(newResource);
-		if ( !errors.hasInternalSyntaxErrors() ) {
-			if ( errors.hasInternalErrors() ) {
-				GAMA.getGui().debug("GamlJavaValidator.validate");
-			}
-			for ( GamlCompilationError error : errors ) {
+		final GamlResource newResource = (GamlResource) model.eResource();
+		if (newResource.isValidating()) {
+			return;
+		}
+		final ErrorCollector errors = /* GamlModelBuilder.getInstance() */new GamlModelBuilder().validate(newResource);
+		if (!errors.hasInternalSyntaxErrors()) {
+			for (final GamlCompilationError error : errors) {
 				manageCompilationIssue(error);
 			}
 		}
 	}
 
 	private GamlResource getCurrentResource() {
-		EObject object = this.getCurrentObject();
-		if ( object == null ) { return null; }
+		final EObject object = this.getCurrentObject();
+		if (object == null) {
+			return null;
+		}
 		return (GamlResource) object.eResource();
 
 	}
 
 	private boolean sameResource(final EObject object) {
-		if ( object == null ) { return false; }
+		if (object == null) {
+			return false;
+		}
 		return object.eResource() == getCurrentResource();
 	}
 
 	private void manageCompilationIssue(final GamlCompilationError e) {
 		final EObject object = e.getStatement();
-		if ( object == null ) {
+		if (object == null) {
 			System.err.println("*** Internal compilation problem : " + e.toString());
 			return;
-		} else if ( object.eResource() == null ) { throw new RuntimeException(
-			"Error detected in a syntethic object. Please debug to understand the cause"); }
+		} else if (object.eResource() == null) {
+			throw new RuntimeException("Error detected in a syntethic object. Please debug to understand the cause");
+		}
 
-		if ( !sameResource(object) ) {
+		if (!sameResource(object)) {
 			// if ( e.isError() ) {
 			// URI uri = object.eResource().getURI();
 			// final EObject imp = getCurrentResource().findImport(uri);
@@ -78,34 +81,36 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			//
 			// } else {
 			// warningContainer = getCurrentObject();
-			// msg = "Errors detected in indirectly imported file " + uri + ": " + e.toString();
+			// msg = "Errors detected in indirectly imported file " + uri + ": "
+			// + e.toString();
 			// feature = GamlPackage.Literals.GAML_DEFINITION__NAME;
 			// }
-			// acceptWarning(msg, warningContainer, feature, ValidationMessageAcceptor.INSIGNIFICANT_INDEX,
+			// acceptWarning(msg, warningContainer, feature,
+			// ValidationMessageAcceptor.INSIGNIFICANT_INDEX,
 			// IGamlIssue.IMPORT_ERROR, uri.toString());
 			// }
 			return;
 		}
 		EStructuralFeature feature = null;
-		if ( object instanceof Statement ) {
-			StatementImpl s = (StatementImpl) object;
-			if ( s.eIsSet(GamlPackage.Literals.STATEMENT__KEY) ) {
+		if (object instanceof Statement) {
+			final StatementImpl s = (StatementImpl) object;
+			if (s.eIsSet(GamlPackage.Literals.STATEMENT__KEY)) {
 				feature = GamlPackage.Literals.STATEMENT__KEY;
-			} else if ( s.eIsSet(GamlPackage.Literals.SDEFINITION__TKEY) ) {
+			} else if (s.eIsSet(GamlPackage.Literals.SDEFINITION__TKEY)) {
 				feature = GamlPackage.Literals.SDEFINITION__TKEY;
 			}
-		} else if ( object instanceof Model ) {
+		} else if (object instanceof Model) {
 			feature = GamlPackage.Literals.GAML_DEFINITION__NAME;
 		}
-		if ( !Arrays.contains(e.getData(), null) ) {
-			int index = ValidationMessageAcceptor.INSIGNIFICANT_INDEX;
-			if ( e.isInfo() ) {
+		if (!Arrays.contains(e.getData(), null)) {
+			final int index = ValidationMessageAcceptor.INSIGNIFICANT_INDEX;
+			if (e.isInfo()) {
 				acceptInfo(e.toString(), object, feature, index, e.getCode(), e.getData());
-			} else if ( e.isWarning() ) {
+			} else if (e.isWarning()) {
 				acceptWarning(e.toString(), object, feature, index, e.getCode(), e.getData());
 			} else {
-				System.out.println(
-					"One compilation error accepted: " + e.toString() + " thread: " + Thread.currentThread().getName());
+				System.out.println("One compilation error accepted: " + e.toString() + " thread: "
+						+ Thread.currentThread().getName());
 				acceptError(e.toString(), object, feature, index, e.getCode(), e.getData());
 			}
 		}
