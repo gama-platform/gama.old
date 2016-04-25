@@ -115,6 +115,21 @@ public abstract class Spatial {
 			if ( radius <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildCircle(radius, location);
 		}
+		
+		@operator(value = "circle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+		@doc(value = "A circle geometry which radius is equal to the first operand, and the center has the location equal to the second operand.",
+		usages = { @usage(value = "returns a point if the operand is lower or equal to 0.") },
+		examples = {
+			@example(value = "circle(10,{80,30})", equals = "a geometry as a circle of radius 10, the center will be in the location {80,30}.", test = false) },
+		see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+		"triangle" })
+		public static IShape circle(final IScope scope, final Double radius, final GamaPoint position) {
+			ILocation location;
+			location = position;
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildCircle(radius, location);
+		}
 
 		@operator(value = "ellipse", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 			concept = { IConcept.SHAPE, IConcept.GEOMETRY })
