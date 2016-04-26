@@ -25,7 +25,7 @@ species gis_3d_object {
 experiment display_shape type: gui {
 
 	output {
-		display city_display type: opengl ambient_light: 100 draw_env:false{
+		display city_display type: opengl draw_env:false{
 			species gis_3d_object aspect: base;
 		}
 

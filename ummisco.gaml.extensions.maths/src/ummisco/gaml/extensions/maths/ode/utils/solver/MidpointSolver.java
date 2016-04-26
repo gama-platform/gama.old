@@ -1,7 +1,7 @@
 /*********************************************************************************************
  *
  *
- * 'Rk4Solver.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the
+ * 'MidpointSolver.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
