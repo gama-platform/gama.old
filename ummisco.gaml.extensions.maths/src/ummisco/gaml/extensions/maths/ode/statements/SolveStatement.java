@@ -113,15 +113,15 @@ public class SolveStatement extends AbstractStatement {
 		}
 	}
 
-	final static List<String>	Fixed_Step_Integrators			= Arrays
+	final static List<String> Fixed_Step_Integrators = Arrays
 			.asList(new String[] { "Euler", "ThreeEighthes", "Midpoint", "Gill", "Luther", "rk4" });
-	final static List<String>	Adaptive_Stepsize_Integrators	= Arrays.asList(new String[] { "dp853",
-			"AdamsBashforth", "AdamsMoulton", "DormandPrince54", "GraggBulirschStoer", "HighamHall54" });
+	final static List<String> Adaptive_Stepsize_Integrators = Arrays.asList(new String[] { "dp853", "AdamsBashforth",
+			"AdamsMoulton", "DormandPrince54", "GraggBulirschStoer", "HighamHall54" });
 
-	final String				equationName, solverName;
-	SystemOfEquationsStatement	systemOfEquations;
-	final IExpression			stepExp, cycleExp, discretExp, nStepsExp, minStepExp, maxStepExp, absTolerExp,
-			relTolerExp, timeInitExp, timeFinalExp, integrationTimesExp, integratedValuesExp;
+	final String equationName, solverName;
+	SystemOfEquationsStatement systemOfEquations;
+	final IExpression stepExp, cycleExp, discretExp, nStepsExp, minStepExp, maxStepExp, absTolerExp, relTolerExp,
+			timeInitExp, timeFinalExp, integrationTimesExp, integratedValuesExp;
 
 	public SolveStatement(final IDescription desc) {
 		super(desc);
@@ -220,19 +220,19 @@ public class SolveStatement extends AbstractStatement {
 		}
 
 		switch (solverName) {
-			case "euler":
+			case "Euler":
 				return new EulerSolver(step, discret, integrationTimes, integratedValues);
 
-			case "threeeighthes":
+			case "ThreeEighthes":
 				return new ThreeEighthesSolver(step, discret, integrationTimes, integratedValues);
 
-			case "midpoint":
+			case "Midpoint":
 				return new MidpointSolver(step, discret, integrationTimes, integratedValues);
 
-			case "gill":
+			case "Gill":
 				return new GillSolver(step, discret, integrationTimes, integratedValues);
 
-			case "luther":
+			case "Luther":
 				return new LutherSolver(step, discret, integrationTimes, integratedValues);
 
 			case "rk4":
