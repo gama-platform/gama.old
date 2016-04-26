@@ -502,7 +502,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			final int nbThreads = this.getSimulationPopulation().getNumberOfActiveThreads();
 
 			if (!getSpecies().isBatch()) {
-				scope.getGui().informStatus(clock.getInfo() + (nbThreads > 1 ? " (" + nbThreads + " threads)" : ""));
+				scope.getGui().informStatus(getSimulation().getClock().getInfo() + (nbThreads > 1 ? " (" + nbThreads + " threads)" : ""));
 			}
 		}
 		return result;

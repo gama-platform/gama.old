@@ -89,6 +89,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				ExperimentAgent exp = GAMA.getExperiment().getAgent();
 				if ( exp == null ) { return; }
 				exp.getClock().toggleDisplay();
+				exp.getSimulation().getClock().toggleDisplay();
 			}
 		});
 		popup = new Popup(this, label);
