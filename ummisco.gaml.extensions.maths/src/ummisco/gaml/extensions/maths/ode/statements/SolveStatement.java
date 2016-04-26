@@ -99,13 +99,13 @@ public class SolveStatement extends AbstractStatement {
 						}
 					} else if (!Fixed_Step_Integrators.contains(methodName)) {
 						desc.error(
-								"The method facet must have for value either \"euler\", \"threeeighthes\", \"midpoint\", \"gill\", \"luther\", \"rk4\" or \"dp853\",\"AdamsBashforth\", \"AdamsMoulton\", "
+								"The method facet must have for value either \"Euler\", \"ThreeEighthes\", \"Midpoint\", \"Gill\", \"Luther\", \"rk4\" or \"dp853\",\"AdamsBashforth\", \"AdamsMoulton\", "
 										+ "\"DormandPrince54\", \"GraggBulirschStoer\",  \"HighamHall54\"",
 								IGamlIssue.GENERAL);
 					}
 				} else {
 					desc.error(
-							"The method facet must have for value either \"euler\", \"threeeighthes\", \"midpoint\", \"gill\", \"luther\", \"rk4\" or \"dp853\", \"AdamsBashforth\", \"AdamsMoulton\", "
+							"The method facet must have for value either \"Euler\", \"ThreeEighthes\", \"Midpoint\", \"Gill\", \"Luther\", \"rk4\" or \"dp853\", \"AdamsBashforth\", \"AdamsMoulton\", "
 									+ "\"DormandPrince54\", \"GraggBulirschStoer\",  \"HighamHall54\"",
 							IGamlIssue.GENERAL);
 				}
@@ -114,7 +114,7 @@ public class SolveStatement extends AbstractStatement {
 	}
 
 	final static List<String>	Fixed_Step_Integrators			= Arrays
-			.asList(new String[] { "euler", "threeeighthes", "midpoint", "gill", "luther", "rk4" });
+			.asList(new String[] { "Euler", "ThreeEighthes", "Midpoint", "Gill", "Luther", "rk4" });
 	final static List<String>	Adaptive_Stepsize_Integrators	= Arrays.asList(new String[] { "dp853",
 			"AdamsBashforth", "AdamsMoulton", "DormandPrince54", "GraggBulirschStoer", "HighamHall54" });
 
