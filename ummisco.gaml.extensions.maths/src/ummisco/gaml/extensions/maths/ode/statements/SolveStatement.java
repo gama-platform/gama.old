@@ -14,7 +14,6 @@ package ummisco.gaml.extensions.maths.ode.statements;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -30,8 +29,6 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.ConstantExpression;
@@ -42,19 +39,27 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.ode.statements.SolveStatement.SolveValidator;
+import ummisco.gaml.extensions.maths.ode.utils.solver.AdamsBashforthSolver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.AdamsMoultonSolver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.DormandPrince54Solver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.DormandPrince853Solver;
-import ummisco.gaml.extensions.maths.ode.utils.solver.Rk4Solver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.EulerSolver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.GillSolver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.GraggBulirschStoerSolver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.HighamHall54Solver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.LutherSolver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.MidpointSolver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.Rk4Solver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.Solver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 
 @facets(value = {
 		@facet(name = IKeyword.EQUATION, type = IType.ID, optional = false, doc = @doc("the equation system identifier to be numerically solved")),
-		@facet(name = IKeyword.METHOD, type = IType.ID /* CHANGE */, optional = true, values = { "euler", "threeeighthes", "midpoint", "gill", "luther", "rk4", "dp853" }, 
-				doc = @doc(value = "integrate method (can be only \"euler\", \"threeeighthes\", \"midpoint\", \"gill\", \"luther\", \"rk4\" or \"dp853\") (default value: \"rk4\")")),
+		@facet(name = IKeyword.METHOD, type = IType.ID /* CHANGE */, optional = true, values = { "Euler",
+				"ThreeEighthes", "Midpoint", "Gill", "Luther", "rk4", "dp853", "AdamsBashforth", "AdamsMoulton",
+				"DormandPrince54", "GraggBulirschStoer",
+				"HighamHall54" }, doc = @doc(value = "integrate method (can be only \"Euler\", \"ThreeEighthes\", \"Midpoint\", \"Gill\", \"Luther\", \"rk4\" or \"dp853\", \"AdamsBashforth\", \"AdamsMoulton\", "
+						+ "\"DormandPrince54\", \"GraggBulirschStoer\",  \"HighamHall54\") (default value: \"rk4\")")),
 		@facet(name = "integrated_times", type = IType.LIST, optional = true, doc = @doc(value = "time interval inside integration process")),
 		@facet(name = "integrated_values", type = IType.LIST, optional = true, doc = @doc(value = "list of variables's value inside integration process")),
 		@facet(name = "discretizing_step", type = IType.INT, optional = true, doc = @doc(value = "number of discrete between 2 steps of simulation (default value: 0)")),
@@ -82,35 +87,41 @@ public class SolveStatement extends AbstractStatement {
 			final IExpression method = desc.getFacets().getExpr(IKeyword.METHOD);
 			if (method != null) {
 				final String methodName = method.literalValue();
-				String[] availableMethod = { "euler", "threeeighthes", "midpoint", "gill", "luther", "rk4", "dp853" };
-				List<String> wordList = Arrays.asList(availableMethod);
+
 				if (methodName != null) {
-					if ("dp853".equals(methodName)) {
+					if (Adaptive_Stepsize_Integrators.contains(methodName)) {
 						if (!desc.getFacets().containsKey("min_step") || !desc.getFacets().containsKey("max_step")
 								|| !desc.getFacets().containsKey("scalAbsoluteTolerance")
 								|| !desc.getFacets().containsKey("scalRelativeTolerance")) {
 							desc.error(
-									"For method dp853, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined",
+									"For Adaptive Stepsize Integrators, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined. Example: min_step:0.01 max_step:0.1 scalAbsoluteTolerance:0.0001 scalRelativeTolerance:0.0001",
 									IGamlIssue.GENERAL);
 						}
-					} else if (!wordList.contains(methodName)) {
+					} else if (!Fixed_Step_Integrators.contains(methodName)) {
 						desc.error(
-								"The method facet must have for value either \"euler\", \"threeeighthes\", \"midpoint\", \"gill\", \"luther\", \"rk4\" or \"dp853\"",
+								"The method facet must have for value either \"euler\", \"threeeighthes\", \"midpoint\", \"gill\", \"luther\", \"rk4\" or \"dp853\",\"AdamsBashforth\", \"AdamsMoulton\", "
+										+ "\"DormandPrince54\", \"GraggBulirschStoer\",  \"HighamHall54\"",
 								IGamlIssue.GENERAL);
 					}
 				} else {
 					desc.error(
-							"The method facet must have for value either \"euler\", \"threeeighthes\", \"midpoint\", \"gill\", \"luther\", \"rk4\" or \"dp853\"",
+							"The method facet must have for value either \"euler\", \"threeeighthes\", \"midpoint\", \"gill\", \"luther\", \"rk4\" or \"dp853\", \"AdamsBashforth\", \"AdamsMoulton\", "
+									+ "\"DormandPrince54\", \"GraggBulirschStoer\",  \"HighamHall54\"",
 							IGamlIssue.GENERAL);
 				}
 			}
 		}
 	}
 
+	final static List<String>	Fixed_Step_Integrators			= Arrays
+			.asList(new String[] { "euler", "threeeighthes", "midpoint", "gill", "luther", "rk4" });
+	final static List<String>	Adaptive_Stepsize_Integrators	= Arrays.asList(new String[] { "dp853",
+			"AdamsBashforth", "AdamsMoulton", "DormandPrince54", "GraggBulirschStoer", "HighamHall54" });
+
 	final String				equationName, solverName;
 	SystemOfEquationsStatement	systemOfEquations;
-	final IExpression			stepExp, cycleExp, discretExp, minStepExp, maxStepExp, absTolerExp, relTolerExp,
-			timeInitExp, timeFinalExp, integrationTimesExp, integratedValuesExp;
+	final IExpression			stepExp, cycleExp, discretExp, nStepsExp, minStepExp, maxStepExp, absTolerExp,
+			relTolerExp, timeInitExp, timeFinalExp, integrationTimesExp, integratedValuesExp;
 
 	public SolveStatement(final IDescription desc) {
 		super(desc);
@@ -123,6 +134,7 @@ public class SolveStatement extends AbstractStatement {
 		cycleExp = sn == null ? new ConstantExpression(1d) : sn;
 		sn = getFacet("discretizing_step");
 		discretExp = sn == null ? new ConstantExpression(0) : sn;
+		nStepsExp = getFacet("nSteps");
 		minStepExp = getFacet("min_step");
 		maxStepExp = getFacet("max_step");
 		absTolerExp = getFacet("scalAbsoluteTolerance");
@@ -190,31 +202,66 @@ public class SolveStatement extends AbstractStatement {
 		final int discret = Math.max(0, Cast.asInt(scope, discretExp.value(scope)));
 		final List<List<Double>> integratedValues = getIntegratedValues(scope);
 		final List<Double> integrationTimes = getIntegrationTimes(scope);
+		int nSteps = 2;
+		double minStep = 0.1, maxStep = 0.1, scalAbsoluteTolerance = 0.1, scalRelativeTolerance = 0.1;
+
+		if (Adaptive_Stepsize_Integrators.contains(solverName)) {
+			minStep = Cast.asFloat(scope, minStepExp.value(scope));
+			maxStep = Cast.asFloat(scope, maxStepExp.value(scope));
+			if (cycleLength > 1.0) {
+				minStep /= cycleLength;
+				maxStep /= cycleLength;
+			}
+			scalAbsoluteTolerance = Cast.asFloat(scope, absTolerExp.value(scope));
+			scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
+			if (nStepsExp != null) {
+				nSteps = Cast.asInt(scope, nStepsExp.value(scope));
+			}
+		}
 
 		switch (solverName) {
 			case "euler":
 				return new EulerSolver(step, discret, integrationTimes, integratedValues);
+
 			case "threeeighthes":
 				return new ThreeEighthesSolver(step, discret, integrationTimes, integratedValues);
+
 			case "midpoint":
 				return new MidpointSolver(step, discret, integrationTimes, integratedValues);
+
 			case "gill":
 				return new GillSolver(step, discret, integrationTimes, integratedValues);
+
 			case "luther":
 				return new LutherSolver(step, discret, integrationTimes, integratedValues);
+
 			case "rk4":
 				return new Rk4Solver(step, discret, integrationTimes, integratedValues);
+
 			case "dp853":
-				double minStep = Cast.asFloat(scope, minStepExp.value(scope));
-				double maxStep = Cast.asFloat(scope, maxStepExp.value(scope));
-				if (cycleLength > 1.0) {
-					minStep /= cycleLength;
-					maxStep /= cycleLength;
-				}
-				final double scalAbsoluteTolerance = Cast.asFloat(scope, absTolerExp.value(scope));
-				final double scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
 				return new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
 						discret, integrationTimes, integratedValues);
+
+			case "DormandPrince54":
+				return new DormandPrince54Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+						discret, integrationTimes, integratedValues);
+
+			case "GraggBulirschStoer":
+				return new GraggBulirschStoerSolver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+						discret, integrationTimes, integratedValues);
+
+			case "HighamHall54":
+				return new HighamHall54Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, discret,
+						integrationTimes, integratedValues);
+
+			case "AdamsBashforth":
+				return new AdamsBashforthSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+						discret, integrationTimes, integratedValues);
+
+			case "AdamsMoulton":
+				return new AdamsMoultonSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+						discret, integrationTimes, integratedValues);
+
 			default:
 				return new Rk4Solver(step, discret, integrationTimes, integratedValues);
 		}
