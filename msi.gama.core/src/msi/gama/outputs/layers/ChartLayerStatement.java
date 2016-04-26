@@ -107,7 +107,7 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true, doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
 		@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true, doc = @doc("extent of the layer in the screen from its position. Coordinates in [0,1[ are treated as percentages of the total surface, while coordinates > 1 are treated as absolute sizes in model units (i.e. considering the model occupies the entire view). Like in 'position', an elevation can be provided with the z coordinate, allowing to scale the layer in the 3 directions ")),
 		@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("the background color")),
-		@facet(name = IKeyword.TIMEXSERIES, type = IType.LIST, optional = true, doc = @doc("for series charts, change the default time serie (simulation cycle) for an other value.")),
+		@facet(name = IKeyword.TIME_SERIES, type = IType.LIST, optional = true, doc = @doc("for series charts, change the default time serie (simulation cycle) for an other value.")),
 		@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true, doc = @doc("the axis color")),
 		@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM,
 				IKeyword.SERIES, IKeyword.PIE,
@@ -230,7 +230,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	List<ChartDataList> datalists;
 	final Map<String, Double> lastValues;
 	Long lastComputeCycle;
-	ChartDataStatement timeSeriesXData = null;
+	ChartDataStatement timeSeriesData = null;
 	DataDeclarationSequence dataDeclaration = new DataDeclarationSequence(null);
 
 	public JFreeChart getChart() {
@@ -272,19 +272,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		domainAxis.setLabelFont(getLabelFont());
 		if (isTimeSeries) {
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-			if (timeSeriesXData == null) {
-				timeSeriesXData = (ChartDataStatement) DescriptionFactory.create(IKeyword.DATA, description,
+			if (timeSeriesData == null) {
+				timeSeriesData = (ChartDataStatement) DescriptionFactory.create(IKeyword.DATA, description,
 						IKeyword.LEGEND, xAxisName, IKeyword.VALUE, SimulationAgent.CYCLE).compile();
-				if (getFacet(IKeyword.TIMEXSERIES) != null) {
-					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
-							.setExpression(getFacet(IKeyword.TIMEXSERIES));
+				if (getFacet(IKeyword.TIME_SERIES) != null) {
+					timeSeriesData.getDescription().getFacets().get(IKeyword.VALUE)
+							.setExpression(getFacet(IKeyword.TIME_SERIES));
 				}
 			}
 
 			// FIXME: datas can NOT contain timeSeriesXData (a
 			// ChartDataStatement and not a ChartData)
-			if (!datas.contains(timeSeriesXData)) {
-				datas.add(0, timeSeriesXData.createData(scope));
+			if (!datas.contains(timeSeriesData)) {
+				datas.add(0, timeSeriesData.createData(scope));
 			}
 		}
 		IExpression expr = getFacet(XRANGE);

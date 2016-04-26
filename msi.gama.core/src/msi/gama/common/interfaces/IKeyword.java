@@ -379,9 +379,7 @@ public interface IKeyword {
 	public static final String THEIR = "their";
 	public static final String THREE_D = "3d";
 	public static final String TIMES = "times";
-	public static final String TIMEXSERIES = "timexseries"; // hqnghi facet
-															// timeXseries for
-	// continuous Chart
+	public static final String TIME_SERIES = "time_series"; // hqnghi facet for continuous Chart
 	public static final String TABLE = "table";
 	public static final String TITLE = "title";
 	public static final String TO = "to";
