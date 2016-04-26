@@ -901,7 +901,9 @@ public class GraphTopology extends AbstractTopology {
 		//A better solution is required !!! this solution is just here to ensure the consistency of the closest operator on graph !
 		
 		List<IAgent> listAgents  = null;
-		if (filter.getSpecies() != null) {
+		if (filter instanceof GamaSpatialGraph) {
+			listAgents = new ArrayList<IAgent>(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
+		} else 	if (filter.getSpecies() != null) {
 			listAgents = new ArrayList<IAgent>(filter.getSpecies().getAgents(scope).listValue(scope, Types.AGENT, false));
 		} else if (filter instanceof In) {
 			listAgents = new ArrayList<IAgent>(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
