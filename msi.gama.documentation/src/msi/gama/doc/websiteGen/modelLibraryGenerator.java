@@ -451,11 +451,11 @@ public class modelLibraryGenerator {
 						fileName = fileName.split(path)[1];
 					}
 				}
-				if (!fileName.contains("include")) {
+				String modelName = metaStruct.getName();
+				if (!fileName.contains("include") || !modelName.startsWith("_")) {
 					String newSubSectionName = fileName.split("/")[1];
 					String newSectionName = fileName.split("/")[0];
 					String modelFileName = newSubSectionName+" "+fileName.split("/")[fileName.split("/").length-1];
-					String modelName = metaStruct.getName();
 					if (isAdditionnalPlugin) {
 						newSectionName = "Additionnal Plugins";
 					}

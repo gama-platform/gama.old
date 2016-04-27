@@ -1,8 +1,8 @@
 /**
-* Name: soccerbase
+* Name: _soccerbase
 * Author: Julien
-* Description: 
-* Tags: Tag1, Tag2, TagN
+* Description: This model contains the parent classes of the model
+* Tags:
 */
 
 model soccerbase
@@ -60,7 +60,7 @@ species base_player skills:[moving] {
 	goal_sp own_goal <- nil update:first(goal_sp where (each.position = team.position));
 	goal_sp ennemy_goal <- nil update:first(goal_sp where (each.position != team.position));
 	// ratio of avancement of the ball (from the point of view of the current team)
-	float ball_advancement <- 0.0 update:(team.position = "back") ? ball.location.y / 120 : 120 - ball.location.y / 120;
+	float ball_advancement <- 0.0 update:(team.position = "back") ? ball.location.y / 120 : 1 - ball.location.y / 120;
 	
 	bool possess_ball;
 	point init_pos;
@@ -96,8 +96,8 @@ species base_player skills:[moving] {
 		init_pos <- location;
 		previous_pos <- location;
 		possess_ball <- false;
-		speed_with_ball <- 0.6;
-		speed_without_ball <- 0.8;
+		speed_with_ball <- 0.4;
+		speed_without_ball <- 0.5;
 	}
 	
 	// ACTIONS ////////////////////////////////////////////////////
@@ -119,25 +119,28 @@ species base_player skills:[moving] {
 	
 	// action to run to the ball
 	action run_to_ball {
-		status <- "run to ball";
-		do run_to(ball.location);
+		point targetPos;
+		if (ball.ball_direction intersects circle(1)) {
+			targetPos <- ball.location;
+		}
+		else {
+			targetPos <- (ball.ball_direction closest_points_with self) at 0;
+		}
+		do run_to(targetPos);
 	}
 	
 	// action to run to the ennemy goal
 	action run_to_ennemy_goal {
-		status <- "run to ennemy goal";
 		do run_to( ennemy_goal.location );
 	}
 	
 	// action to run to its own goal
 	action run_to_own_goal {
-		status <- "run to own goal";
 		do run_to( own_goal.location );
 	}
 	
 	// action to mark a player
 	action mark_player (base_player player) {
-		status <- "mark player "+player;
 		float rnd_area <- 4.0; // the player will choose a position in a square of rnd_area m.
 		point pos <- (team.position = "front") ? {player.location.x,player.location.y-rnd_area/2} : {player.location.x,player.location.y+rnd_area/2};
 		do run_to( {pos.x-rnd_area/2+rnd(rnd_area),pos.y-rnd_area/2+rnd(rnd_area)} );
@@ -145,19 +148,28 @@ species base_player skills:[moving] {
 	
 	// action ot shoot the ball to the ennemy goal
 	action shoot {
-		status <- "shoot the ball";
 		do loose_ball;
 		ask ball {
-			do shooted speed_atr:4.0 target_position:myself.ennemy_goal.location;
+			do shooted speed_atr:3.0 target_position:myself.ennemy_goal.location;
 		}
 	}
 	
 	// action to pass the ball to an ally
 	action pass_the_ball (base_player target_player) {
-		status <- "pass the ball to "+target_player;
 		do loose_ball;
 		ask ball {
-			do shooted target_position:target_player.location speed_atr:target_player.distance_to_ball/8;
+			do shooted target_position:target_player.location speed_atr:target_player.distance_to_ball/15;
+		}
+		team.called_player <- target_player;
+	}
+	
+	// action to pass the ball to an ally
+	action pass_the_ball_ahead (base_player target_player,float number_of_meter_ahead) {
+		do loose_ball;
+		ask ball {
+			float offset <- ((myself.team.position = "back") ? number_of_meter_ahead : -number_of_meter_ahead);
+			point target_point <- {target_player.location.x,target_player.location.y+offset};
+			do shooted target_position:target_point speed_atr:target_player.distance_to_ball/15;
 		}
 		team.called_player <- target_player;
 	}
@@ -182,9 +194,6 @@ species base_player skills:[moving] {
 		else if (ennemy_team.possess_ball) {
 			// try to catch the ball from the other player
 			if flip(recuperation_ability) {
-				ask ennemy_team.player_with_ball {
-					do loose_ball;
-				}
 				do take_ball;
 			}
 		}
@@ -192,24 +201,31 @@ species base_player skills:[moving] {
 	
 	// action of taking the ball
 	action take_ball {
+		if (ennemy_team.possess_ball) {
+			ask ennemy_team.player_with_ball {
+				do loose_ball;
+			}
+		}
 		possess_ball <- true;
 		ball.speed <- 0.0;
 		ball.destination <- ball.location;
 		team.called_player <- nil;
-		ennemy_team.called_player <- nil;
+		team.player_with_ball <- self;
+		team.possess_ball <- true;
 		game.team_possession <- team;
-		write "ball possessed by the team "+game.team_possession;
 	}
 	
 	// action of loosing the ball
 	action loose_ball {
 		possess_ball <- false;
+		team.player_with_ball <- nil;
+		team.possess_ball <- false;
 	}
 	
 	// apply the inertia
 	action apply_inertia {
 		point prev_pos <- location;
-		point inertia_vect <- {(location.x-previous_pos.x)*0.8,(location.y-previous_pos.y)*0.8};
+		point inertia_vect <- {(location.x-previous_pos.x)*0.7,(location.y-previous_pos.y)*0.7};
 		float max_inertia <- current_speed;
 		if (norm(inertia_vect) > max_inertia) {
 			float inertia_x <-  sqrt(abs(max_inertia*max_inertia-inertia_vect.y*inertia_vect.y));
@@ -251,21 +267,21 @@ species base_player skills:[moving] {
 	
 	// The update function, calls the adequate behavior
 	reflex update when:cycle>1 {
-//		do apply_inertia;
+		do apply_inertia;
 		// verify if it is a non-offside position
-		if ( ((team.position = "back") and (location.y > team.offside_pos) and (!possess_ball))
-			or ((team.position = "front") and (location.y < team.offside_pos and (!possess_ball)))
+		if ( (((team.position = "back") and (location.y > team.offside_pos))
+			or ((team.position = "front") and (location.y < team.offside_pos))) 
+			and (!possess_ball) and (self != team.called_player)
 		) {
 			// offside position, go back to a correct position
 			point target_pos <- {location.x,(team.position = "back") ? location.y-current_speed:location.y+current_speed};
 			do run_to(target_pos);
 			status <- "offside position !";
-			return;
 		}
-		if (distance_to_ball < 2) {
+		else if ((distance_to_ball < 2) and !possess_ball) {
 			do try_to_take_ball;
 		}
-		if ((game.team_possession = nil) or (game.team_possession = team)) {
+		else if (game.team_possession = team) {
 			do offensive_behavior;
 		}
 		else {
@@ -313,8 +329,8 @@ species base_team {
 	
 	base_player closest_player_to_ball <- first(players) update: first( players where (each distance_to each.ball = min (players collect (each distance_to each.ball) ) ) );
 	base_player called_player;
-	bool possess_ball <- false update: ! empty ( players where (each.possess_ball=true) );
-	base_player player_with_ball <- nil update: first(players where (each.possess_ball = true));
+	bool possess_ball <- false;// update: ! empty ( players where (each.possess_ball=true) );
+	base_player player_with_ball <- nil;// update: first(players where (each.possess_ball = true));
 	
 	// ATTRIBUTES WICH CAN BE CHANGED FROM THE TEAM STRATEGY FILE
 	list<point> player_init_position;
@@ -325,7 +341,7 @@ species ball_sp skills:[moving] {
 	float speed <- 0.0;
 	geometry ball_direction; // the direction of the ball is used to be followed by the player
 	reflex update {
-		speed <- speed*0.9;
+		speed <- speed*0.95;
 		float future_speed <- speed;
 		point tmpPos<-location;
 		loop i from:0 to:10 {
@@ -363,7 +379,43 @@ species ball_sp skills:[moving] {
 species goal_sp {
 	string position; // can be "front" or "back".
 	
+	init {
+		create goal_keeper with:[position::position];
+	}
+	
 	aspect goal {
 		draw rectangle(7.32,1.0) color:#black;
+	}
+}
+
+species goal_keeper {
+	// the goal has a basic behavior : he tries to catch the ball when it is close enough, and when 
+	string position; // can be "front" or "back".
+	ball_sp ball <- nil update:first(ball_sp);
+	
+	reflex update when:cycle>0 {
+		location <- {ball.location.x/90*12+(90-12)/2,location.y};
+		if (ball distance_to self < 2) {
+			if (flip(1/(1+2*ball.speed))) {
+				first(soccer_game).team_possession <- first(first(soccer_game).teams where (each.position = position));
+				ask ball {
+					do shooted ({30+rnd(30),60},5.0);
+				}
+			}
+		}
+	}
+	
+	init {
+		location <- {45,(position="front") ? 117 : 3};
+	}
+	
+	action offensive_behavior {
+	}
+	
+	action defensive_behavior {
+	}
+	
+	aspect goal_keeper {
+		draw circle(1) color:(position = "back") ? first(soccer_game).back_color_team : first(soccer_game).front_color_team;
 	}
 }
