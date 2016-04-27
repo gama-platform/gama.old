@@ -337,11 +337,6 @@ public class GamaPreferences {
 			return getValue();
 		}
 
-		// @Override
-		// public IType getContentType() {
-		// return Types.NO_TYPE;
-		// }
-
 		@Override
 		public String serialize(final boolean includingBuiltIn) {
 			return StringUtils.toGaml(value, includingBuiltIn);
@@ -443,6 +438,8 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_PERSPECTIVE = create("core.perspective",
 			"Automatically switch to modeling perspective when editing a model", false, IType.BOOL).in(EDITOR)
 					.group("Options");
+	public static final Entry<Boolean> CORE_SIMULATION_NAME = create("core.simulation_name",
+			"Append the name of the simulation to the title of its outputs", false, IType.BOOL).in(UI).group("Options");
 
 	/**
 	 * Validation

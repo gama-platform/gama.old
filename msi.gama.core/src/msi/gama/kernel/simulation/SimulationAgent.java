@@ -420,8 +420,11 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return null;
 	}
 
-	public String getUserFriendlyName() {
-		return "Simulation " + getIndex() + " of " + getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, "");
+	public String getUserFriendlyPostfixName() {
+		if (!GamaPreferences.CORE_SIMULATION_NAME.getValue())
+			return "";
+		return " (Simulation " + getIndex() + " of " + getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, "")
+				+ ")";
 	}
 
 	public void setOutputs(final IOutputManager iOutputManager) {
@@ -446,7 +449,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 							+ this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
 					newOutputName = keyName;
 				} else {
-					final String postfix = " (" + getUserFriendlyName() + ")";
+					final String postfix = getUserFriendlyPostfixName();
 					keyName = entry.getKey() + postfix;
 					newOutputName = output.getName() + postfix;
 				}
