@@ -158,7 +158,7 @@ public class JTSDrawer {
 		} else {
 			final Texture texture = object.getTexture(gl, renderer, 0);
 			if (texture != null) {
-				drawTexturedPolygon(gl, p, texture);
+				drawTexturedPolygon(gl, p, texture, norm_dir);
 			}
 			if (drawPolygonContour == true) {
 				drawPolygonContour(gl, p, border, alpha, z_fighting_value);
@@ -256,7 +256,7 @@ public class JTSDrawer {
 		GLU.gluTessEndPolygon(tobj);
 	}
 
-	public void drawTexturedPolygon(final GL2 gl, final Polygon p, final Texture texture) {
+	public void drawTexturedPolygon(final GL2 gl, final Polygon p, final Texture texture, final int norm_dir) {
 
 		gl.glColor3d(1.0, 1.0, 1.0);
 		if (texture != null) {
@@ -268,9 +268,10 @@ public class JTSDrawer {
 			drawTriangulatedPolygon(gl, p, false, texture);
 
 		} else {
+			
 			if (renderer.getComputeNormal()) {
 				final Vertex[] vertices = this.getExteriorRingVertices(p);
-				GLUtilNormal.HandleNormal(vertices, null, 0, 1, renderer);
+				GLUtilNormal.HandleNormal(vertices, null, 0, norm_dir, renderer);
 			}
 			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
 										// and texture mixture
@@ -538,7 +539,7 @@ public class JTSDrawer {
 			final double height, /* final Integer angle, */final boolean drawPolygonContour, final Color border,
 			final GeometryObject object, final Double z_fighting_value) {
 
-		int p_norm_dir = 1;
+		int p_norm_dir = -1;
 		int face_norm_dir = -1;
 		boolean polyCW = true;
 		if (renderer.getComputeNormal()) {
@@ -546,7 +547,7 @@ public class JTSDrawer {
 			polyCW = isClockwise(vertices);
 			if (polyCW) {
 				face_norm_dir = 1;
-				p_norm_dir = 1;
+				p_norm_dir = -1;
 			} else {
 				face_norm_dir = 1;
 				p_norm_dir = 1;
@@ -554,13 +555,13 @@ public class JTSDrawer {
 
 		}
 
-		drawPolygon(gl, p, c, alpha, fill, border, object, drawPolygonContour, z_fighting_value, -p_norm_dir);
+		drawPolygon(gl, p, c, alpha, fill, border, object, drawPolygonContour, z_fighting_value, p_norm_dir);
 		// gl.glTranslated(0, 0, height);
 		final double[] vectorNormal = calculatePolygonNormal(p, polyCW);
 
 		gl.glTranslated(-vectorNormal[0] * height, -vectorNormal[1] * height, -vectorNormal[2] * height);
 		drawPolygon(gl, p, c, alpha, fill, border, object/* ,angle */, drawPolygonContour, z_fighting_value,
-				p_norm_dir);
+				-p_norm_dir);
 		// gl.glTranslated(0, 0, -height);
 		// gl.glTranslated(-vectorNormal[0]*height, -vectorNormal[1]*height,
 		// vectorNormal[2]*height);
@@ -1124,11 +1125,7 @@ public class JTSDrawer {
 			glu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
 		}
 		glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
-		if (g.isTextured()) {
-			glu.gluQuadricOrientation(quad, GLU.GLU_INSIDE);
-		} else {
-			glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
-		}
+		glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
 
 		final int slices = 16;
 		final int stacks = 16;
@@ -1206,10 +1203,10 @@ public class JTSDrawer {
 				setColor(gl, g.getBorder(), g.getAlpha());
 			}
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
-			gl.glPolygonOffset(0.0f, -(float) 1.1);
+//			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
+//			gl.glPolygonOffset(0.0f, -(float) 1.1);
 			pyramidSkeleton(gl, p, g.getHeight(), g.getBorder(), g.getAlpha(), g);
-			gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
+//			gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 			if (!renderer.data.isTriangulation()) {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 			}
@@ -1301,7 +1298,7 @@ public class JTSDrawer {
 
 	}
 
-	public Vertex[] getPyramidfaceVertices(final Polygon p, final int i, final int j, final double size, final int x,
+	public Vertex[] getPyramidfaceVertices(final Polygon p, int i, int j, final double size, final int x,
 			final int y) {
 		final Vertex[] vertices = new Vertex[3];
 		for (int i1 = 0; i1 < 3; i1++) {
@@ -1325,10 +1322,19 @@ public class JTSDrawer {
 	public void pyramidSkeleton(final GL2 gl, final Polygon p, final double size, final Color c, final double alpha,
 			final GeometryObject g) {
 		Vertex[] vertices;
-
+		
+		int p_norm_dir = 1;
+		
 		if (renderer.getComputeNormal()) {
 			vertices = getExteriorRingVertices(p);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, 1, renderer);
+			
+			if (isClockwise(vertices)) {
+				p_norm_dir = -1;
+			} else {
+				p_norm_dir = 1;
+			}
+			
+			GLUtilNormal.HandleNormal(vertices, c, alpha, p_norm_dir, renderer);
 		}
 		final Coordinate coords[] = p.getExteriorRing().getCoordinates();
 
@@ -1342,6 +1348,9 @@ public class JTSDrawer {
 			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
 										// and texture mixture
 		}
+		
+		gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
+		gl.glPolygonOffset(0.0f, (float) 1.1);
 
 		gl.glBegin(GL2ES3.GL_QUADS);
 		gl.glTexCoord2f(0.0f, 1.0f);
@@ -1356,13 +1365,15 @@ public class JTSDrawer {
 
 		if (renderer.getComputeNormal()) {
 			vertices = getPyramidfaceVertices(p, 0, 1, size, 1, -1);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, -1, renderer);
+			GLUtilNormal.HandleNormal(vertices, c, alpha, -p_norm_dir, renderer);
 		}
 
 		final double[] norm = calculatePolygonNormal(p, null);
 		norm[0] = norm[0] * size + p.getCentroid().getX();
 		norm[1] = norm[1] * size + renderer.yFlag * p.getCentroid().getY();
 		norm[2] = norm[2] * size + p.getCentroid().getCoordinate().z;
+		
+		gl.glPolygonOffset(0.0f, -(float) 1.1);
 
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);
@@ -1375,7 +1386,7 @@ public class JTSDrawer {
 
 		if (renderer.getComputeNormal()) {
 			vertices = getPyramidfaceVertices(p, 1, 2, size, -1, -1);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, -1, renderer);
+			GLUtilNormal.HandleNormal(vertices, c, alpha, -p_norm_dir, renderer);
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
@@ -1389,7 +1400,7 @@ public class JTSDrawer {
 
 		if (renderer.getComputeNormal()) {
 			vertices = getPyramidfaceVertices(p, 2, 3, size, -1, 1);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, -1, renderer);
+			GLUtilNormal.HandleNormal(vertices, c, alpha, -p_norm_dir, renderer);
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
@@ -1403,7 +1414,7 @@ public class JTSDrawer {
 
 		if (renderer.getComputeNormal()) {
 			vertices = getPyramidfaceVertices(p, 3, 0, size, 1, 1);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, -1, renderer);
+			GLUtilNormal.HandleNormal(vertices, c, alpha, -p_norm_dir, renderer);
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
@@ -1414,6 +1425,8 @@ public class JTSDrawer {
 		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
+		
+		gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 
 		if (g.isTextured()) {
 			final Texture texture = g.getTexture(gl, renderer, 0);
