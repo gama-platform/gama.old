@@ -67,7 +67,7 @@ species building {
 
 experiment load_OSM type: gui {
 	output {
-		display map type: opengl ambient_light: 100{
+		display map type: opengl {
 			species building refresh: false;
 			species road refresh: false  ;
 			species node_agent refresh: false ;

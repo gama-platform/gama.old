@@ -59,7 +59,7 @@ global torus: torus_environment {
 
 //Grid species representing a cellular automata
 grid life_cell width: environment_width height: environment_height neighbors: 8  use_individual_shapes: false use_regular_agents: false frequency: 0
-use_neighbours_cache: false {
+use_neighbors_cache: false {
 	//Boolean to know if it is the new state of the cell
 	bool new_state;
 	//List of all the neighbours

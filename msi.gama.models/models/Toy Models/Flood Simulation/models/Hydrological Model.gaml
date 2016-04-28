@@ -202,7 +202,7 @@ global {
       user_command "Destroy dyke" action: break; 
    }
    //Grid cell to discretize space, initialized using the dem file
-   grid cell file: dem_file neighbors: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbours_cache: false {
+   grid cell file: dem_file neighbors: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbors_cache: false {
       //Altitude of the cell
       float altitude;
       //Height of the water in the cell
@@ -280,7 +280,7 @@ experiment main_gui type: gui {
    parameter "Height of the dykes" var:dyke_height category:"Obstacles";
    parameter "Diffusion rate" var:diffusion_rate category:"Water dynamic";
    output { 
-      display map type: opengl ambient_light: 100{
+      display map type: opengl {
          grid cell triangulation: true;
          species buildings aspect: geometry;
          species dyke aspect: geometry ;

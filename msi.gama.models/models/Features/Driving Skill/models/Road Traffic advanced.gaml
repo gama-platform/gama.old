@@ -244,7 +244,7 @@ experiment experiment_2D type: gui {
 experiment experiment_3D type: gui {
 	parameter "if true, simple data (simple track), if false complex one (Manhattan):" var: simple_data category: "GIS" ;
 	output {
-		display carte_principale type: opengl ambient_light: 100{
+		display carte_principale type: opengl {
 			species road aspect: base3D refresh: true;
 			species intersection aspect: base3D;
 			species people aspect: base3D ; 

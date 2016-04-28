@@ -71,7 +71,7 @@ experiment Display type: gui {
 	parameter 'alarm Minutes' var: alarm_minutes;
 	parameter 'alarm Seconds' var: alarm_seconds;
 	output {
-		display ClockView type: opengl ambient_light:50 diffuse_light:100 { 
+		display ClockView type: opengl { 
 			graphics "c" refresh: false {draw clock_normal size: 10*zoom at:{world.shape.width/5,world.shape.height/5} ;}
 			species clock ;
 		}

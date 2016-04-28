@@ -107,7 +107,7 @@ grid cell width: 150 height: 150  neighbors: 8 frequency: 0 {
 experiment main type: gui {
 	parameter "nb people" var: nb_people min: 1 max: 1000;
 	output {
-		display map type: opengl ambient_light: 150 camera_pos: {world.location.x,-world.shape.height*1.5,70}
+		display map type: opengl camera_pos: {world.location.x,-world.shape.height*1.5,70}
                         camera_look_pos:{world.location.x,0,0}    {
 			image '../images/soil.jpg';
 			species building refresh: false;

@@ -279,7 +279,7 @@ global {
 
 experiment MODAVI type: gui {
 	output {			
-		display MODAVI type:opengl ambient_light: 10 diffuse_light:100 draw_env:false {
+		display MODAVI type:opengl draw_env:false {
 			graphics 'ReferenceModel'{
 				draw "Reference model" at:{200,50,0} size:5 color: #black perspective:false;
 			}

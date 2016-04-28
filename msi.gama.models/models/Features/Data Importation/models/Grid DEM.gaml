@@ -52,17 +52,17 @@ experiment DEM type: gui {
 	output {
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
-		display gridWithElevationTriangulated type: opengl ambient_light: 100 autosave: true{ 
+		display gridWithElevationTriangulated type: opengl autosave: true{ 
 			grid cell elevation: true triangulation: true ;
 		}
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255
-		display gridGrayScaledTriangulated type: opengl ambient_light: 100 { 
+		display gridGrayScaledTriangulated type: opengl { 
 			grid cell elevation: true grayscale: true triangulation: true;
 		}
 
 		//Display the textured grid in 3D with the cell altitude corresponding to its grid_value.				
-		display gridTextured type: opengl ambient_light: 100 { 
+		display gridTextured type: opengl { 
 			grid cell texture: texture text: false triangulation: true elevation: true;
 		}
 	}
@@ -73,36 +73,36 @@ experiment GridDEMComplete type: gui {
 	output {
 
 	//Display the grid on a plan with cell color (if defined otherwise in black)
-		display grid type: opengl ambient_light: 100 { //Same as in java2D
+		display grid type: opengl { //Same as in java2D
 			grid cell;
 		}
 
 		//Display the grid in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
-		display gridWithElevation type: opengl ambient_light: 100 { 
+		display gridWithElevation type: opengl { 
 			grid cell elevation: true;
 		}
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
-		display gridWithElevationTriangulated type: opengl ambient_light: 100 { 
+		display gridWithElevationTriangulated type: opengl { 
 			grid cell elevation: true triangulation: true ;
 		}
 
 		//Display the grid in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255
-		display gridGrayScaled type: opengl ambient_light: 100 { 
+		display gridGrayScaled type: opengl { 
 			grid cell elevation: true grayscale: true;
 		}
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255
-		display gridGrayScaledTriangulated type: opengl ambient_light: 100 { 
+		display gridGrayScaledTriangulated type: opengl { 
 			grid cell elevation: true grayscale: true triangulation: true;
 		}
 
 		//Display the textured grid in 3D with the cell altitude corresponding to its grid_value.				
-		display gridTextured type: opengl ambient_light: 100 { 
+		display gridTextured type: opengl { 
 			grid cell texture: texture text: false triangulation: false elevation: true;
 		}
 
 		//Display the textured triangulated grid in 3D with the cell altitude corresponding to its grid_value.
-		display gridTexturedTriangulated type: opengl ambient_light: 100 { 
+		display gridTexturedTriangulated type: opengl { 
 			grid cell texture: texture text: false triangulation: true elevation: true;
 		}
 		display gridWithText type: opengl { 
@@ -114,22 +114,22 @@ experiment GridDEMComplete type: gui {
 
 experiment GraphicDEMComplete type: gui {
 	output {
-		display VulcanoTexturedScaled type: opengl ambient_light: 255 draw_env: false { 
+		display VulcanoTexturedScaled type: opengl draw_env: false { 
 			graphics 'GraphicPrimitive' {
 				draw dem(dem, texture, 0.1);
 			}
 		} 
-		display VulcanoDEMScaled type: opengl ambient_light: 255 draw_env: false { 
+		display VulcanoDEMScaled type: opengl draw_env: false { 
 			graphics 'GraphicPrimitive' {
 				draw dem(dem, 0.1);
 			}
 		} 
-		display VulcanoTextured type: opengl ambient_light: 255 draw_env: false { 
+		display VulcanoTextured type: opengl draw_env: false { 
 			graphics 'GraphicPrimitive' {
 				draw dem(dem, texture);
 			}
 		} 
-		display VulcanoDEM type: opengl ambient_light: 255 draw_env: false { 
+		display VulcanoDEM type: opengl draw_env: false { 
 			graphics 'GraphicPrimitive' {
 				draw dem(dem);
 			}

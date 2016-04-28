@@ -1,12 +1,13 @@
 /**
 * Name: MovingAgents
 * Author: drogoul
-* Description: Shows how to move agents using two event layers
-* Tags: Tag1, Tag2, TagN
+* Description: Shows how to move agents using two event layers : 
+* 
+* Click to grab an group of agents, click again to drop them. Press the keys "k" to kill the agents in the selection, and "d" to duplicate them.
+* Tags: gui
 */
 model MovingAgents
 
-/* Insert your model definition here */
 global
 {
 	list<being> moved_agents <- [];
@@ -19,7 +20,7 @@ global
 		create being number: 100;
 	}
 
-	action kill
+	action kill (list<agent> selectedAgent, point mousePosition)
 	{
 		ask moved_agents
 		{
@@ -29,21 +30,21 @@ global
 		moved_agents <- [];
 	}
 
-	action duplicate
+	action duplicate (list<agent> selectedAgent, point mousePosition)
 	{
 		geometry available_space <- (zone at_location target) - (union(moved_agents) + 10);
 		create being number: length(moved_agents) with: (location: any_location_in(available_space));
 	}
 
-	action click (point mouse)
+	action click (list<agent> selectedAgent, point mousePosition)
 	{
 		if (empty(moved_agents))
 		{
-			list<being> selected_agents <- being inside (zone at_location mouse);
+			list<being> selected_agents <- being inside (zone at_location mousePosition);
 			moved_agents <- selected_agents;
 			ask selected_agents
 			{
-				difference <- mouse - location;
+				difference <- mousePosition - location;
 				color <- # olive;
 			}
 
@@ -59,15 +60,15 @@ global
 
 	}
 
-	action move (point mouse)
+	action move (list<agent> selectedAgent, point mousePosition)
 	{
 		can_drop <- true;
-		target <- mouse;
-		list<being> other_agents <- (being inside (zone at_location mouse)) - moved_agents;
+		target <- mousePosition;
+		list<being> other_agents <- (being inside (zone at_location mousePosition)) - moved_agents;
 		geometry occupied <- geometry(other_agents);
 		ask moved_agents
 		{
-			location <- mouse - difference;
+			location <- mousePosition - difference;
 			if (occupied intersects self)
 			{
 				color <- # red;
@@ -109,7 +110,7 @@ experiment "Click and Move" type: gui
 	font regular <- font("Helvetica", 14, # bold);
 	output
 	{
-		display "Click and Move" type: opengl ambient_light: 0 diffuse_light: 110
+		display "Click and Move" type: opengl
 		{
 			graphics "Empty target" 
 			{

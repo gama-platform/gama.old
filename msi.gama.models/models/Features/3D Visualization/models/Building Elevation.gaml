@@ -127,13 +127,13 @@ experiment road_traffic type: gui {
 	parameter 'minimal speed' var: min_speed category: 'People';
 	parameter 'maximal speed' var: max_speed category: 'People';
 	output {
-		display city_display type: opengl ambient_light: 100{
+		display city_display type: opengl {
 			species building aspect: base;
 			species road aspect: base;
 			species people aspect: base;
 		}
 		
-		display city_display2 ambient_light: 100{
+		display city_display2 {
 			species building aspect: base;
 			species road aspect: base;
 			species people aspect: base;
@@ -153,7 +153,7 @@ experiment road_traffic_multi_layer type: gui {
 	parameter 'minimal speed' var: min_speed category: 'People';
 	parameter 'maximal speed' var: max_speed category: 'People';
 	output {
-		display city_display type: opengl ambient_light: 100 {
+		display city_display type: opengl {
 			species road aspect: base;
 			species building aspect: base position:{0,0,0.25};
 			species people aspect: base position:{0,0,0.5};
@@ -164,7 +164,7 @@ experiment road_traffic_multi_layer type: gui {
 
 experiment road_traffic_flying_off type: gui {
 	output {
-		display flyingOffAgents type: opengl ambient_light: 100 {
+		display flyingOffAgents type: opengl {
 			species road aspect: base;
 			species building aspect: base position: { 0, 0, (time * 2)/1000 };
 			species people aspect: base position: { 0, 0, (time * 4)/1000 };

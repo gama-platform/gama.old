@@ -71,7 +71,7 @@ species edge_agent parent: base_edge {
 
 experiment AdvancedView type: gui {
 	output {
-		display graph_plus_bug_layered type: opengl ambient_light: 10 diffuse_light:100{ 
+		display graph_plus_bug_layered type: opengl { 
 		  species bug aspect: base;
 		  species node_agent aspect: base position: { 0, 0, 0.2 };
 		  species edge_agent aspect: base position: { 0, 0, 0.2 };

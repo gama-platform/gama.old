@@ -359,7 +359,7 @@ species obstacle skills: [moving] {
 
 experiment start type: gui {
 	output {
-		display RealBoids  type:opengl ambient_light:255 z_fighting:false {
+		display RealBoids  type:opengl z_fighting:false {
 			image name:'background' file:file_path_to_ocean;
 			species boids aspect: dynamicColor  position:{0,0,0.1} trace: 30;
 			species boids_goal transparency:0.2 position:{0,0,0.1};
@@ -371,7 +371,7 @@ experiment start type: gui {
 experiment trajectory_analysis type: gui {
 	output {
 		
-		display RealBoids  type:opengl ambient_light:100{
+		display RealBoids  type:opengl {
 			image name:'background' file:file_path_to_ocean;
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids aspect: image transparency:0.5 position:{0,0,0.11};
@@ -379,7 +379,7 @@ experiment trajectory_analysis type: gui {
 			species obstacle position:{0,0,0.1}; 		
 		}
 				
-		display AggregatedBoidsTrajectory  ambient_light:50 diffuse_light:100 type:opengl  {
+		display AggregatedBoidsTrajectory  type:opengl  {
 			image name:'background' file:file_path_to_ocean;
 			species aggregatedboids  aspect: base trace:100 fading: true ;
 			species boids_goal aspect:sphere;		
@@ -389,7 +389,7 @@ experiment trajectory_analysis type: gui {
 
 experiment SpaceTimeCube type: gui {
 	output {
-		display RealBoids  type:opengl ambient_light:50 diffuse_light:100{
+		display RealBoids  type:opengl {
 			image name:'background' file:file_path_to_ocean;
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids aspect: image transparency:0.5 position:{0,0,0.11};
@@ -397,7 +397,7 @@ experiment SpaceTimeCube type: gui {
 			species obstacle position:{0,0,0.1}; 		
 		}
 		
-		display SpaceTimeCubeAll  type:opengl ambient_light:50 diffuse_light:100{
+		display SpaceTimeCubeAll  type:opengl {
 			image name:'background' file:file_path_to_ocean;
 			species boids trace:true{
 			    draw triangle(20) size: 15 rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) border:hsb (float(heading)/360.0,1.0,1.0) depth:5 at: {location.x ,location.y,location.z+time};	
@@ -407,7 +407,7 @@ experiment SpaceTimeCube type: gui {
 			}	
 		}
 				
-		display SpaceTimeCubeAggregated  type:opengl ambient_light:50 diffuse_light:100{
+		display SpaceTimeCubeAggregated  type:opengl {
 			image name:'background' file:file_path_to_ocean;
 			species aggregatedboids trace:true{
 			    draw sphere(10) color: rgb('red') at: {location.x ,location.y,location.z+time};	
@@ -423,7 +423,7 @@ experiment MultipleView type: gui {
 	output {
 
 
-		display RealBoids   type:opengl ambient_light:255 {
+		display RealBoids   type:opengl {
 			image name:'background' file:file_path_to_ocean;
 			species boids aspect: image  transparency:0.5 position:{0,0,0.25};
 			species boids_goal transparency:0.2 position:{0,0,0.25};
@@ -442,7 +442,7 @@ experiment MultipleView type: gui {
 		}
 		
 			
-		display FirstPerson  type:opengl camera_interaction:false ambient_light:100 camera_pos:{int(first(boids).location.x),int(first(boids).location.y),10} 
+		display FirstPerson  type:opengl camera_interaction:false camera_pos:{int(first(boids).location.x),int(first(boids).location.y),10} 
 			camera_look_pos:{cos(first(boids).heading)*first(boids).speed+int(first(boids).location.x),
 			sin(first(boids).heading)*first(boids).speed+int(first(boids).location.y),10} 
 			camera_up_vector:{0.0,0.0,1.0} {	

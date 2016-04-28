@@ -123,7 +123,7 @@ experiment main_experiment type:gui{
 	output {
 		monitor "Current hour" value: current_hour;
 		monitor "Infected people rate" value: infected_rate;
-		display map_3D type: opengl ambient_light: is_night ? 30 : 120{
+		display map_3D type: opengl ambient_light: is_night ? 30 : 100 diffuse_light: is_night ? 60 : 110 {
 			image "../includes/soil.jpg";
 			species road aspect:geom;
 			species people aspect:sphere3D;			

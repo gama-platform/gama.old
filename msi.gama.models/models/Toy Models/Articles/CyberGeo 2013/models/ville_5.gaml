@@ -86,12 +86,12 @@ species route {
 }
 experiment ville type: gui {
 	output {
-		display carte_principale type: java2D ambient_light: 100{
+		display carte_principale type: java2D {
 			species batiment aspect: geometrie;
 			species route aspect: geometrie;
 			species foyer aspect: revenu;
 		}
-		display carte_batiment type: opengl ambient_light: 100{
+		display carte_batiment type: opengl {
 			species batiment aspect: information_foyer;
 		}
 	}

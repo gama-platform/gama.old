@@ -54,14 +54,14 @@ species Building{
 
 experiment DisplayTextured  type: gui {
 	output {
-	  display City type:opengl ambient_light:100  background:rgb(10,40,55){
+	  display City type:opengl background:rgb(10,40,55){
 			species Building aspect:textured;							
 		}
 	}
 }
 experiment DisplayWithDynamicDiffuseLight  type: gui {
 	output {
-	  display City type:opengl ambient_light:50 draw_diffuse_light:true diffuse_light:hsb((time mod 255) /255,1.0 ,0.5)  diffuse_light_pos:{world.shape.width*0.5+ world.shape.width*1.5*sin(time*2),world.shape.width*0.5,world.shape.width*cos(time*2)} background:rgb(10,40,55){
+	  display City type:opengl draw_diffuse_light:true diffuse_light:hsb((time mod 255) /255,1.0 ,0.5)  diffuse_light_pos:{world.shape.width*0.5+ world.shape.width*1.5*sin(time*2),world.shape.width*0.5,world.shape.width*cos(time*2)} background:rgb(10,40,55){
 			species Building aspect:base;									
 		}
 	}

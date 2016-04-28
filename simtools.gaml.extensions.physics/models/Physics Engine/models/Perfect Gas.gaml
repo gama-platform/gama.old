@@ -139,7 +139,7 @@ experiment perfect_gas type: gui {
 		minimum_cycle_duration <-0.001;
 	}
 	output {
-		display Cube type:opengl ambient_light:100 background:rgb(20,79,127) draw_env:false{
+		display Cube type:opengl background:rgb(20,79,127) draw_env:false{
 			species ground transparency:0.5;
 			species wall transparency:0.5;
 	    	species ball aspect:sphere;			

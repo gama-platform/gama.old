@@ -78,7 +78,7 @@ species buildings {
 experiment main_experiment type:gui{
 	output {
 		//Type opengl to display in 3D
-		display map type: opengl ambient_light: 150{
+		display map type: opengl {
 			species roads aspect:geom;
 			species buildings aspect:geom;
 			species people aspect:circle;			
