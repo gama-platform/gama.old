@@ -11,16 +11,30 @@
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
-import com.google.common.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology.RootTopology;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.runtime.IScope;
@@ -35,7 +49,7 @@ import msi.gaml.variables.IVariable;
 public class SimulationPopulation extends GamaPopulation {
 
 	final ThreadFactory factory = new ThreadFactoryBuilder().setThreadFactory(Executors.defaultThreadFactory())
-		.setNameFormat("Simulation thread #%d of experiment " + getSpecies().getName()).build();
+			.setNameFormat("Simulation thread #%d of experiment " + getSpecies().getName()).build();
 	ExecutorService executor;
 	Map<SimulationAgent, Callable> runnables = new LinkedHashMap();
 	private int activeThreads;
@@ -46,24 +60,23 @@ public class SimulationPopulation extends GamaPopulation {
 	}
 
 	protected ExecutorService getExecutorService() {
-		if ( executor == null ) {
-			boolean isMultiThreaded = getHost().getSpecies().isMulticore();
-			int numberOfThreads = GamaPreferences.NUMBERS_OF_THREADS.getValue();
-			executor = isMultiThreaded
-				? new ThreadPoolExecutor(1, numberOfThreads, 100L, TimeUnit.MILLISECONDS,
-					new SynchronousQueue<Runnable>())
-					: MoreExecutors.sameThreadExecutor();
-				if ( executor instanceof ThreadPoolExecutor ) {
-					ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
-					tpe.setRejectedExecutionHandler(new CallerRunsPolicy());
-					tpe.allowCoreThreadTimeOut(true);
-				}
+		if (executor == null) {
+			final boolean isMultiThreaded = getHost().getSpecies().isMulticore();
+			final int numberOfThreads = GamaPreferences.NUMBERS_OF_THREADS.getValue();
+			executor = isMultiThreaded ? new ThreadPoolExecutor(1, numberOfThreads, 100L, TimeUnit.MILLISECONDS,
+					new SynchronousQueue<Runnable>()) : MoreExecutors.sameThreadExecutor();
+			if (executor instanceof ThreadPoolExecutor) {
+				final ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
+				tpe.setRejectedExecutionHandler(new CallerRunsPolicy());
+				tpe.allowCoreThreadTimeOut(true);
+			}
 		}
 		return executor;
 	}
 
 	/**
 	 * Method fireAgentRemoved()
+	 * 
 	 * @see msi.gama.metamodel.population.GamaPopulation#fireAgentRemoved(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
@@ -80,11 +93,11 @@ public class SimulationPopulation extends GamaPopulation {
 
 	@Override
 	public void dispose() {
-		if ( executor != null ) {
+		if (executor != null) {
 			executor.shutdown();
 			try {
 				executor.awaitTermination(1, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 			executor = null;
@@ -99,20 +112,23 @@ public class SimulationPopulation extends GamaPopulation {
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled) throws GamaRuntimeException {
+			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)
+			throws GamaRuntimeException {
 		scope.getGui().waitStatus("Initializing simulation");
 		final SimulationAgent world = new SimulationAgent(this);
 		world.setIndex(currentAgentIndex++);
 		world.setScheduled(toBeScheduled);
-		world.setName("Simulation #" + world.getIndex() + " of model " +
-			getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, ""));
+		world.setName("Simulation #" + world.getIndex() + " of model "
+				+ getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, ""));
 		add(world);
 		getHost().setSimulation(world);
-		if ( scope.interrupted() ) { return null; }
+		if (scope.interrupted()) {
+			return null;
+		}
 		scope.getGui().waitStatus("Instantiating agents");
 		createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
-		if ( toBeScheduled ) {
-			if(isRestored){
+		if (toBeScheduled) {
+			if (isRestored) {
 				world.prepareGuiForSimulation(scope);
 				world.initOutputs();
 			} else {
@@ -122,7 +138,7 @@ public class SimulationPopulation extends GamaPopulation {
 
 				@Override
 				public Object call() {
-					return world._step_(scope);
+					return world.step(scope);
 
 				}
 			});
@@ -133,11 +149,11 @@ public class SimulationPopulation extends GamaPopulation {
 	@Override
 	protected boolean allowVarInitToBeOverridenByExternalInit(final IVariable var) {
 		switch (var.getName()) {
-			case IKeyword.SEED:
-			case IKeyword.RNG:
-				return !var.hasFacet(IKeyword.INIT);
-			default:
-				return true;
+		case IKeyword.SEED:
+		case IKeyword.RNG:
+			return !var.hasFacet(IKeyword.INIT);
+		default:
+			return true;
 		}
 	}
 
@@ -156,7 +172,7 @@ public class SimulationPopulation extends GamaPopulation {
 	}
 
 	public void setTopology(final IScope scope, final IShape shape) {
-		IExpression expr = species.getFacet(IKeyword.TORUS);
+		final IExpression expr = species.getFacet(IKeyword.TORUS);
 		final boolean torus = expr == null ? false : Cast.as(expr.value(scope), Boolean.class, false);
 		topology = new RootTopology(scope, shape, torus);
 	}
@@ -171,13 +187,13 @@ public class SimulationPopulation extends GamaPopulation {
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		try {
 			getExecutorService().invokeAll((Collection<? extends Callable<Object>>) runnables.values());
-			if ( getExecutorService() instanceof ThreadPoolExecutor ) {
-				ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
+			if (getExecutorService() instanceof ThreadPoolExecutor) {
+				final ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
 				activeThreads = e.getPoolSize();
 			} else {
 				activeThreads = 1;
 			}
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
 
@@ -185,7 +201,9 @@ public class SimulationPopulation extends GamaPopulation {
 	}
 
 	/**
-	 * This method can be called by the batch experiments to temporarily stop (unschedule) a simulation
+	 * This method can be called by the batch experiments to temporarily stop
+	 * (unschedule) a simulation
+	 * 
 	 * @param sim
 	 */
 	public void unscheduleSimulation(final SimulationAgent sim) {
