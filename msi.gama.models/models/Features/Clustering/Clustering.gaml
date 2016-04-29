@@ -53,8 +53,8 @@ global {
 }
 
 species dummy {
-	rgb color_dbscan <- #white;
-	rgb color_kmeans <- #white;
+	rgb color_dbscan <- #grey;
+	rgb color_kmeans <- #grey;
 	aspect dbscan_aspect {
 		draw circle(2) color: color_dbscan;
 	}
