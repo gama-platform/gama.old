@@ -117,7 +117,7 @@ public class Projection implements IProjection {
 		MathTransform crsTransformation = null;
 		// ProjectionFactory.computeTargetCRS(longitude, latitude);
 		try {
-			crsTransformation = CRS.findMathTransform(initialCRS, getTargetCRS());
+			crsTransformation = CRS.findMathTransform(initialCRS, getTargetCRS(), true);
 		} catch (FactoryException e) {
 			e.printStackTrace();
 			return null;
