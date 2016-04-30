@@ -45,7 +45,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	// Mouse
 	private Point mousePosition;
-	protected Point lastMousePressedPosition = new Point(0,0);
+	protected Point lastMousePressedPosition = new Point(0, 0);
 	protected Point firstMousePressedPosition;
 	protected boolean firsttimeMouseDown = true;
 	protected boolean cameraInteraction = true;
@@ -229,7 +229,8 @@ public abstract class AbstractCamera implements ICamera {
 	protected void internalMouseMove(final MouseEvent e) {
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
-
+		setCtrlPressed(ctrl(e));
+		setShiftPressed(shift(e));
 	}
 
 	/**
@@ -582,26 +583,30 @@ public abstract class AbstractCamera implements ICamera {
 				if (cameraInteraction) {
 					switch (e.keyCode) {
 					case SWT.ARROW_LEFT:
+						setCtrlPressed(ctrl(e));
 						AbstractCamera.this.strafeLeft = true;
 						break;
 					case SWT.ARROW_RIGHT:
+						setCtrlPressed(ctrl(e));
 						AbstractCamera.this.strafeRight = true;
 						break;
 					case SWT.ARROW_UP:
+						setCtrlPressed(ctrl(e));
 						AbstractCamera.this.goesForward = true;
 						break;
 					case SWT.ARROW_DOWN:
+						setCtrlPressed(ctrl(e));
 						AbstractCamera.this.goesBackward = true;
 						break;
 					case SWT.SPACE:
 						resetPivot();
 						break;
-					// case SWT.CTRL:
-					// setCtrlPressed(true);
-					// break;
-					// case SWT.COMMAND:
-					// setCtrlPressed(true);
-					// break;
+					case SWT.CTRL:
+						setCtrlPressed(!firsttimeMouseDown);
+						break;
+					case SWT.COMMAND:
+						setCtrlPressed(!firsttimeMouseDown);
+						break;
 					// case SWT.SHIFT:
 					// setShiftPressed(true);
 					// break;
