@@ -177,15 +177,27 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
+		GAMA.getGui().run(new Runnable() {
+
+			@Override
+			public void run() {
+				getCanvas().setVisible(visible);
+
+			}
+		});
+
 		// see
 		// https://jogamp.org/deployment/v2.1.1/javadoc/jogl/javadoc/javax/media/opengl/glu/gl2/GLUgl2.html
 		// GLU objects are NOT thread safe...
 		glu = new GLU();
 		final GL2 gl = drawable.getContext().getGL().getGL2();
+		final Color background = data.getBackgroundColor();
+		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
+				1.0f);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
 
 		initializeCanvasListeners();
-		getCanvas().setVisible(true);
 
 		updateCameraPosition();
 
@@ -238,8 +250,11 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		return data.isComputingNormals;
 	}
 
+	private boolean visible;
+
 	@Override
 	public void display(final GLAutoDrawable drawable) {
+
 		// fail fast
 		if (GAMA.getSimulation() == null) {
 			return;
@@ -325,6 +340,19 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		}
 		if (drawRotationHelper) {
 			drawRotationHelper(gl);
+		}
+		if (!visible) {
+			// We make the canvas visible only after a first display has occured
+			visible = true;
+			GAMA.getGui().run(new Runnable() {
+
+				@Override
+				public void run() {
+					getCanvas().setVisible(true);
+
+				}
+			});
+
 		}
 
 	}
