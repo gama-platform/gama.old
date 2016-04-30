@@ -596,9 +596,9 @@ public class Graphs {
 	@doc(value = "creates a graph from the list/map of edges given as operand",
 	masterDoc = true,
 	usages = @usage(
-		value = "if the operand is a list, the graph will be built with elements of the list as vertices",
-		examples = { @example(value = "as_edge_graph([{1,5},{12,45},{34,56}])",
-		equals = "a graph with these three vertices and reflexive links on each vertices",
+		value = "if the operand is a list, the graph will be built with elements of the list as edges",
+		examples = { @example(value = "as_edge_graph([line([{1,5},{12,45}]),line([{12,45},{34,56}])])",
+		equals = "a graph with two edges and three vertices",
 		test = false) }) ,
 	see = { "as_intersection_graph", "as_distance_graph" })
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
@@ -611,6 +611,32 @@ public class Graphs {
 
 		return createdGraph;
 	}
+
+	@operator(value = "as_edge_graph",
+			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			index_type = IType.GEOMETRY,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.CAST, IConcept.MAP, IConcept.LIST, IConcept.EDGE })
+		@doc(
+			usages = @usage(
+				value = "if the operand is a list and a tolerance (max distance in meters to consider that 2 points are the same node) is given, "
+						+ "the graph will be built with elements of the list as edges and two edges will be connected by a node if the distance between their "
+						+ "extremity (first or last points) are at distance lower or equal to the tolerance",
+				examples = { @example(value = "as_edge_graph([line([{1,5},{12,45}]),line([{13,45},{34,56}])],1);",
+				equals = "a graph with two edges and three vertices",
+				test = false) }) ,
+		see = { "as_intersection_graph", "as_distance_graph" })
+		public static IGraph spatialFromEdges(final IScope scope, final IContainer edges, final Double tolerance) {
+
+		GamaSpatialGraph createdGraph = new GamaSpatialGraph(edges, true, false, null, null, scope, Types.GEOMETRY,
+				edges.getType().getContentType(), tolerance);
+			
+			if ( Types.AGENT.equals(edges.getType().getContentType()) ) {
+				GraphFromAgentContainerSynchronizer.synchronize(scope, null, edges, createdGraph);
+			}
+
+			return createdGraph;
+		}
 
 	// @operator(value = "graph_from_edges")
 	// public static IGraph fromEdges(final IScope scope, final GamaMap edges) {
@@ -632,7 +658,8 @@ public class Graphs {
 
 		return GamaGraphType.from(scope, edges, true);
 	}
-
+	
+	
 	// @operator(value = "graph_from_vertices")
 	// public static IGraph fromVertices(final IScope scope, final GamaList vertices) {
 	// return new GamaGraph(vertices, false, false);

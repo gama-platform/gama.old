@@ -57,6 +57,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 	 * modification of the graph.
 	 */
 	private ITopology topology;
+	private double tolerance = 0;
 	private final TIntObjectHashMap<IShape> verticesBuilt; // only used for
 															// optimization
 															// purpose of
@@ -91,6 +92,13 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 			final IType edgeType) {
 		this(scope, nodeType, edgeType);
 		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
+	}
+	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
+			final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope, final IType nodeType,
+			final IType edgeType, Double tolerance) {
+		this(scope, nodeType, edgeType);
+		this.tolerance = tolerance;
+		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies, tolerance);
 	}
 
 	public GamaSpatialGraph(final IContainer edges, final IContainer vertices, final IScope scope) {
@@ -272,7 +280,16 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 	}
 
 	public IShape getBuiltVertex(final Coordinate vertex) {
-		return verticesBuilt.get(vertex.hashCode());
+		if (tolerance == 0)
+			return verticesBuilt.get(vertex.hashCode());
+		IShape sh = verticesBuilt.get(vertex.hashCode());
+		if (sh != null) return sh;
+		for (Object v : verticesBuilt.values()) {
+			if (vertex.distance3D(((IShape) v).getLocation().toCoordinate()) <= tolerance) {
+				return (IShape) v;
+			}
+		}
+		return null;
 	}
 
 	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
@@ -380,5 +397,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 			}
 		}
 	}
+	public double getTolerance() {
+		return tolerance;
+	}
+	public void setTolerance(double tolerance) {
+		this.tolerance = tolerance;
+	}
+	
 
 }

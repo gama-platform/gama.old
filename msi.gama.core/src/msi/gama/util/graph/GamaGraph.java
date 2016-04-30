@@ -118,6 +118,22 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		}
 		version = 1;
 	}
+	
+	protected void init(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge,
+			final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies, final Double tolerance) {
+			this.directed = directed;
+			edgeBased = byEdge;
+			vertexRelation = rel;
+			edgeSpecies = edgesSpecies;
+			agentEdge = edgesSpecies != null ||
+				byEdge && edgesOrVertices != null && edgesOrVertices.firstValue(scope) instanceof IAgent;
+			if ( byEdge ) {
+				buildByEdge(scope, edgesOrVertices, tolerance);
+			} else {
+				buildByVertices(scope, edgesOrVertices);
+			}
+			version = 1;
+		}
 
 	@Override
 	public IContainerType getType() {
@@ -172,7 +188,20 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		}
 	}
 
-	protected void buildByEdge(final IScope scope, final IContainer vertices) {
+	protected void buildByEdge(final IScope scope, final IContainer edges) {
+		for ( final Object p : edges.iterable(scope) ) {
+			addEdge(p);
+			Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
+			if ( p2 instanceof IShape ) {
+				_Edge ed = getEdge(p2);
+				if ( ed != null ) {
+					ed.setWeight(((IShape) p2).getPerimeter());
+				}
+			}
+		}
+	}
+	
+	protected void buildByEdge(final IScope scope, final IContainer vertices, final Double tolerance) {
 		for ( final Object p : vertices.iterable(scope) ) {
 			addEdge(p);
 			Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
@@ -186,6 +215,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	protected void buildByEdge(final IScope scope, final IContainer edges, final IContainer vertices) {}
+
 
 	public _Edge<V, E> getEdge(final Object e) {
 		return edgeMap.get(e);
