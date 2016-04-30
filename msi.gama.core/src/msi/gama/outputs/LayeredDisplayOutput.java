@@ -493,8 +493,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 			if (camera != null) {
 				final ILocation location = Cast.asPoint(getScope(), camera.value(getScope()));
-				location.setY(-location.getY()); // y component need to be
-													// reverted
+				if (location != null)
+					location.setY(-location.getY()); // y component need to be
+														// reverted
 				this.data.setCameraPos(location);
 			}
 			// graphics.setCameraPosition(getCameraPos());
@@ -504,8 +505,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 			if (cameraLook != null) {
 				final ILocation location = Cast.asPoint(getScope(), cameraLook.value(getScope()));
-				location.setY(-location.getY()); // y component need to be
-													// reverted
+				if (location != null)
+					location.setY(-location.getY()); // y component need to be
+														// reverted
 				this.data.setCameraLookPos(location);
 			}
 		}

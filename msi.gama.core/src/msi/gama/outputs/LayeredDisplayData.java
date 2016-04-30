@@ -5,9 +5,12 @@
 package msi.gama.outputs;
 
 import java.awt.Color;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+
 import msi.gama.common.GamaPreferences;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaColor;
 
 /**
@@ -39,7 +42,7 @@ public class LayeredDisplayData {
 	}
 
 	public void notifyListeners(final Changes property, final boolean value) {
-		for ( DisplayDataListener listener : listeners ) {
+		for (final DisplayDataListener listener : listeners) {
 			listener.changed(property, value);
 		}
 	}
@@ -48,8 +51,26 @@ public class LayeredDisplayData {
 	 * Colors
 	 */
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
-	private Color ambientColor = new GamaColor(50, 50, 50, 255); // (0.2,0.2,0.2,1) is the default value.
-	private Color diffuseColor = new GamaColor(110, 110, 110, 255); // 110 because it is the value with which the colors are displayed as for java2D display with an ambient light set to 50.
+	private Color ambientColor = new GamaColor(50, 50, 50, 255); // (0.2,0.2,0.2,1)
+																	// is the
+																	// default
+																	// value.
+	private Color diffuseColor = new GamaColor(110, 110, 110, 255); // 110
+																	// because
+																	// it is the
+																	// value
+																	// with
+																	// which the
+																	// colors
+																	// are
+																	// displayed
+																	// as for
+																	// java2D
+																	// display
+																	// with an
+																	// ambient
+																	// light set
+																	// to 50.
 	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	/**
 	 * Properties
@@ -78,7 +99,8 @@ public class LayeredDisplayData {
 	public boolean isComputingNormals = true;
 	private boolean isDisplayingAsACube = false; // GamaPreferences.CORE_CUBEDISPLAY.getValue();
 	private boolean ortho = false;
-	private boolean disableCameraInteraction = false; // "fixed_camera" facet of the display
+	private boolean disableCameraInteraction = false; // "fixed_camera" facet of
+														// the display
 	private boolean isShowingFPS = false; // GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean isDrawingEnvironment = GamaPreferences.CORE_DRAW_ENV.getValue();
 	private boolean isDrawingDiffuseLight = false;
@@ -111,7 +133,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param backgroundColor the backgroundColor to set
+	 * @param backgroundColor
+	 *            the backgroundColor to set
 	 */
 	public void setBackgroundColor(final Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
@@ -126,7 +149,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param autosave the autosave to set
+	 * @param autosave
+	 *            the autosave to set
 	 */
 	public void setAutosave(final boolean autosave) {
 		this.isAutosaving = autosave;
@@ -148,7 +172,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param output3d the output3D to set
+	 * @param output3d
+	 *            the output3D to set
 	 */
 	public void setOutput3D(final boolean output3d) {
 		isOutputtingIn3D = output3d;
@@ -163,7 +188,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param tesselation the tesselation to set
+	 * @param tesselation
+	 *            the tesselation to set
 	 */
 	public void setTesselation(final boolean tesselation) {
 		this.isTesselating = tesselation;
@@ -177,7 +203,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param z_fighting the z_fighting to set
+	 * @param z_fighting
+	 *            the z_fighting to set
 	 */
 	public void setZ_fighting(final boolean z_fighting) {
 		this.isZFighting = z_fighting;
@@ -191,7 +218,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param draw_norm the draw_norm to set
+	 * @param draw_norm
+	 *            the draw_norm to set
 	 */
 	public void setDraw_norm(final boolean draw_norm) {
 		this.isDrawingNormals = draw_norm;
@@ -205,7 +233,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param cubeDisplay the cubeDisplay to set
+	 * @param cubeDisplay
+	 *            the cubeDisplay to set
 	 */
 	public void setCubeDisplay(final boolean cubeDisplay) {
 		this.isDisplayingAsACube = cubeDisplay;
@@ -219,7 +248,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param ortho the ortho to set
+	 * @param ortho
+	 *            the ortho to set
 	 */
 	public void setOrtho(final boolean ortho) {
 		this.ortho = ortho;
@@ -233,7 +263,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param displayScale the displayScale to set
+	 * @param displayScale
+	 *            the displayScale to set
 	 */
 	public void setDisplayScale(final boolean displayScale) {
 		this.isDisplayingScale = displayScale;
@@ -247,7 +278,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param showfps the showfps to set
+	 * @param showfps
+	 *            the showfps to set
 	 */
 	public void setShowfps(final boolean showfps) {
 		this.isShowingFPS = showfps;
@@ -261,7 +293,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param drawEnv the drawEnv to set
+	 * @param drawEnv
+	 *            the drawEnv to set
 	 */
 	public void setDrawEnv(final boolean drawEnv) {
 		this.isDrawingEnvironment = drawEnv;
@@ -275,7 +308,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param isLightOn the isLightOn to set
+	 * @param isLightOn
+	 *            the isLightOn to set
 	 */
 	public void setLightOn(final boolean isLightOn) {
 		this.isLightOn = isLightOn;
@@ -289,16 +323,17 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param drawDiffLight the drawDiffLight to set
+	 * @param drawDiffLight
+	 *            the drawDiffLight to set
 	 */
 	public void setDrawDiffLight(final boolean drawDiffLight) {
 		this.isDrawingDiffuseLight = drawDiffLight;
 	}
-	
+
 	public void disableCameraInteractions(final boolean disableCamInteract) {
 		this.disableCameraInteraction = disableCamInteract;
 	}
-	
+
 	public boolean cameraInteractionDisabled() {
 		return disableCameraInteraction;
 	}
@@ -311,7 +346,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param ambientLightColor the ambientLightColor to set
+	 * @param ambientLightColor
+	 *            the ambientLightColor to set
 	 */
 	public void setAmbientLightColor(final Color ambientLightColor) {
 		this.ambientColor = ambientLightColor;
@@ -325,7 +361,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param diffuseLightColor the diffuseLightColor to set
+	 * @param diffuseLightColor
+	 *            the diffuseLightColor to set
 	 */
 	public void setDiffuseLightColor(final Color diffuseLightColor) {
 		this.diffuseColor = diffuseLightColor;
@@ -339,7 +376,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param diffuseLightPosition the diffuseLightPosition to set
+	 * @param diffuseLightPosition
+	 *            the diffuseLightPosition to set
 	 */
 	public void setDiffuseLightPosition(final ILocation diffuseLightPosition) {
 		this.diffuseLightPosition = diffuseLightPosition;
@@ -353,11 +391,12 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param cameraPos the cameraPos to set
+	 * @param cameraPos
+	 *            the cameraPos to set
 	 */
 	public void setCameraPos(final ILocation cameraPos) {
-		if ( !this.cameraPos.equals(cameraPos) ) {
-			this.cameraPos = cameraPos;
+		if (!this.cameraPos.equals(cameraPos)) {
+			this.cameraPos = cameraPos == null ? getNoChange() : cameraPos;
 			notifyListeners(Changes.CAMERA_POS, true);
 		}
 	}
@@ -370,11 +409,12 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param cameraLookPos the cameraLookPos to set
+	 * @param cameraLookPos
+	 *            the cameraLookPos to set
 	 */
 	public void setCameraLookPos(final ILocation cameraLookPos) {
-		if ( !this.cameraLookPos.equals(cameraLookPos) ) {
-			this.cameraLookPos = cameraLookPos;
+		if (!this.cameraLookPos.equals(cameraLookPos)) {
+			this.cameraLookPos = cameraLookPos == null ? getNoChange() : cameraLookPos;
 			notifyListeners(Changes.CAMERA_POS, true);
 		}
 	}
@@ -387,11 +427,12 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param cameraUpVector the cameraUpVector to set
+	 * @param cameraUpVector
+	 *            the cameraUpVector to set
 	 */
 	public void setCameraUpVector(final ILocation cameraUpVector) {
-		if ( !this.cameraUpVector.equals(cameraUpVector) ) {
-			this.cameraUpVector = cameraUpVector;
+		if (!this.cameraUpVector.equals(cameraUpVector)) {
+			this.cameraUpVector = cameraUpVector == null ? new GamaPoint(0, 1, 0) : cameraUpVector;
 			notifyListeners(Changes.CAMERA_POS, true);
 		}
 	}
@@ -404,7 +445,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param polygonMode the polygonMode to set
+	 * @param polygonMode
+	 *            the polygonMode to set
 	 */
 	public void setPolygonMode(final boolean polygonMode) {
 		this.isDrawingPolygons = polygonMode;
@@ -418,7 +460,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param displayType the displayType to set
+	 * @param displayType
+	 *            the displayType to set
 	 */
 	public void setDisplayType(final String displayType) {
 		this.displayType = displayType;
@@ -432,7 +475,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param imageDimension the imageDimension to set
+	 * @param imageDimension
+	 *            the imageDimension to set
 	 */
 	public void setImageDimension(final ILocation imageDimension) {
 		this.imageDimension = imageDimension;
@@ -446,7 +490,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param envWidth the envWidth to set
+	 * @param envWidth
+	 *            the envWidth to set
 	 */
 	public void setEnvWidth(final double envWidth) {
 		this.envWidth = envWidth;
@@ -460,7 +505,8 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param envHeight the envHeight to set
+	 * @param envHeight
+	 *            the envHeight to set
 	 */
 	public void setEnvHeight(final double envHeight) {
 		this.envHeight = envHeight;
@@ -552,10 +598,13 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @param zoomLevel the zoomLevel to set
+	 * @param zoomLevel
+	 *            the zoomLevel to set
 	 */
 	public void setZoomLevel(final Double zoomLevel) {
-		if ( this.zoomLevel != null && this.zoomLevel.equals(zoomLevel) ) { return; }
+		if (this.zoomLevel != null && this.zoomLevel.equals(zoomLevel)) {
+			return;
+		}
 		this.zoomLevel = zoomLevel;
 		notifyListeners(Changes.ZOOM, true);
 	}

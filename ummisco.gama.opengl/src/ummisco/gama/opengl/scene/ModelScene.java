@@ -292,7 +292,8 @@ public class ModelScene {
 
 	public void stopDrawRotationHelper() {
 		final WordLayerObject worldLayer = (WordLayerObject) layers.get(ENV_KEY);
-		worldLayer.stopDrawRotationHelper();
+		if (worldLayer != null)
+			worldLayer.stopDrawRotationHelper();
 	}
 
 }
