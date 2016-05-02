@@ -76,6 +76,7 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true, doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
 		@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc(value = "Allows to refresh the display every n time steps (default is 1)", deprecated = "Use refresh: every(n) instead")),
 		@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true, doc = @doc("Indicates the condition under which this output should be refreshed (default is true)")),
+		@facet(name = IKeyword.FULLSCREEN, type = IType.BOOL, optional = true, doc = @doc("Indicates whether or not the display should cover the whole screen (default is false")),
 		@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
 		@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true, doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
 		@facet(name = IKeyword.TRACE, type = { IType.BOOL,
@@ -397,6 +398,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				this.data.setOutput3D(Cast.asBool(getScope(), out3D.value(getScope())));
 			}
 		}
+
+		final IExpression fs = getFacet(IKeyword.FULLSCREEN);
+		if (fs != null) {
+			this.data.setFullScreen(Cast.asBool(scope, fs.value(scope)));
+		}
+
 		SimulationAgent sim = getScope().getSimulationScope();
 		// hqnghi if layer come from micro-model
 		final ModelDescription micro = this.getDescription().getModelDescription();

@@ -120,6 +120,7 @@ public class LayeredDisplayData {
 	 */
 
 	private boolean isDisplayingScale = GamaPreferences.CORE_SCALE.getValue();
+	private boolean isFullScreen = false;
 
 	/**
 	 *
@@ -607,6 +608,14 @@ public class LayeredDisplayData {
 		}
 		this.zoomLevel = zoomLevel;
 		notifyListeners(Changes.ZOOM, true);
+	}
+
+	public boolean isFullScreen() {
+		return isFullScreen;
+	}
+
+	public void setFullScreen(final boolean fs) {
+		isFullScreen = fs;
 	}
 
 }
