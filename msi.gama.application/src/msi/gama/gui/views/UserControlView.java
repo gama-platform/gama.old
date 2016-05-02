@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -147,6 +148,12 @@ public class UserControlView extends GamaViewPart {
 	}
 
 	@Override
+	public void widgetDisposed(final DisposeEvent e) {
+		scope.setOnUserHold(false);
+		super.widgetDisposed(e);
+	}
+
+	@Override
 	protected GamaUIJob createUpdateJob() {
 		return new GamaUIJob() {
 
@@ -195,6 +202,11 @@ public class UserControlView extends GamaViewPart {
 		}, SWT.RIGHT);
 		continueItem.setEnabled(false);
 
+	}
+
+	@Override
+	protected boolean needsOutput() {
+		return false;
 	}
 
 }

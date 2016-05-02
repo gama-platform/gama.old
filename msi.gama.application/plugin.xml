@@ -680,6 +680,16 @@
                   name="msi.gama.application.window.views"
                   visible="true">
             </separator>
+            <command
+                  commandId="msi.gama.application.perspective.load"
+                  label="Load Perspective"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.window.savePerspective"
+                  label="Save Perspective"
+                  style="push">
+            </command>
             <menu
                   icon="icons/menu.open.perspective2.png"
                   label="Open Perspective">
@@ -1459,6 +1469,15 @@
             name="In Search Text Field">
       </context>
    </extension>
+    <extension point="org.eclipse.core.expressions.propertyTesters">
+    <propertyTester 
+          class="msi.gama.gui.swt.perspectives.PerspectiveNamePropertyTester"
+          id="msi.gama.application.PerspectiveNamePropertyTester"
+          namespace="msi.gama"
+          properties="containsString"
+          type="java.lang.Object">
+    </propertyTester>
+ </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
@@ -1483,9 +1502,10 @@
             id="isInSimulationPerspective">
          <with
                variable="activeWorkbenchWindow.activePerspective">
-            <equals
-                  value="msi.gama.application.perspectives.SimulationPerspective">
-            </equals>
+            <test
+                  property="msi.gama.containsString"
+                  value="Simulation">
+            </test>
          </with>
       </definition>
       <definition
@@ -1725,6 +1745,11 @@
             defaultHandler="msi.gama.gui.swt.commands.FileOpen"
             id="msi.gama.application.commands.OpenFile"
             name="Open File">
+      </command>
+      <command
+            defaultHandler="msi.gama.gui.swt.commands.LoadPerspectiveHandler"
+            id="msi.gama.application.perspective.load"
+            name="Load Perspective">
       </command>
    </extension> <extension
          point="org.eclipse.ui.newWizards">

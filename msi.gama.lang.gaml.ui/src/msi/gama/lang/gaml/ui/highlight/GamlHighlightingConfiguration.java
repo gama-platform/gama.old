@@ -21,8 +21,10 @@ package msi.gama.lang.gaml.ui.highlight;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcceptor;
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
+
 import msi.gama.gui.swt.SwtGui;
 
 public class GamlHighlightingConfiguration extends DefaultHighlightingConfiguration {
@@ -38,6 +40,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	public static final String ASSIGN_ID = "assignment";
 	public static final String UNIT_ID = "unit";
 	public static final String TASK_ID = "task";
+	public static final String PRAGMA_ID = "pragma";
 
 	@Override
 	public void configure(final IHighlightingConfigurationAcceptor acceptor) {
@@ -56,51 +59,59 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 		acceptor.acceptDefaultHighlighting(ASSIGN_ID, "Assignment signs", assignTextStyle());
 		acceptor.acceptDefaultHighlighting(UNIT_ID, "Unit names", unitTextStyle());
 		acceptor.acceptDefaultHighlighting(TASK_ID, "Tasks", taskTextStyle());
+		acceptor.acceptDefaultHighlighting(PRAGMA_ID, "Pragma", pragmaTextStyle());
 	}
 
 	public TextStyle facetTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
 		textStyle.setColor(new RGB(154, 72, 71));
 		return textStyle;
 	}
 
+	public TextStyle pragmaTextStyle() {
+		final TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setStyle(SWT.ITALIC);
+		textStyle.setColor(new RGB(122, 122, 122));
+		return textStyle;
+	}
+
 	public TextStyle typeTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
 		textStyle.setColor(new RGB(0, 79, 116));
 		return textStyle;
 	}
 
 	public TextStyle assignTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
 		textStyle.setColor(new RGB(50, 50, 50));
 		return textStyle;
 	}
 
 	public TextStyle variableTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
 		textStyle.setColor(new RGB(28, 125, 180));
 		return textStyle;
 	}
 
 	public TextStyle fieldTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(125, 125, 0));
 		return textStyle;
 	}
 
 	public TextStyle operatorTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
 		textStyle.setColor(new RGB(46, 93, 78));
 		return textStyle;
 	}
 
 	public TextStyle reservedTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.ITALIC);
 		textStyle.setColor(new RGB(0, 0, 0));
 		return textStyle;
@@ -108,26 +119,26 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 
 	@Override
 	public TextStyle errorTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		return textStyle;
 	}
 
 	public TextStyle unitTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.ITALIC);
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle numberTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(125, 125, 125));
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle keywordTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(127, 0, 85));
 		textStyle.setStyle(SWT.NONE);
 		return textStyle;
@@ -135,19 +146,19 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 
 	@Override
 	public TextStyle punctuationTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle stringTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(116, 167, 251));
 		return textStyle;
 	}
 
 	public TextStyle varDefTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.NONE);
 		textStyle.setColor(new RGB(0, 0, 153));
 		return textStyle;
@@ -155,7 +166,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 
 	@Override
 	public TextStyle taskTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setFontData(SwtGui.getNavigHeaderFont().getFontData());
 		textStyle.setColor(new RGB(150, 132, 106));
 		textStyle.setStyle(SWT.ITALIC | SWT.BOLD);
@@ -164,7 +175,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 
 	@Override
 	public TextStyle commentTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
+		final TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setFontData(SwtGui.getNavigFolderFont().getFontData());
 		textStyle.setColor(new RGB(63, 127, 95));
 		return textStyle;

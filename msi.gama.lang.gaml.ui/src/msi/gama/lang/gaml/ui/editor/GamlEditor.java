@@ -508,7 +508,8 @@ public class GamlEditor extends XtextEditor
 		final SourceViewer sv = (SourceViewer) getInternalSourceViewer();
 		final Point p = sv.getSelectedRange();
 		sv.setSelectedRange(0, sv.getDocument().getLength());
-		sv.doOperation(ISourceViewer.FORMAT);
+		if (sv.canDoOperation(SourceViewer.FORMAT))
+			sv.doOperation(ISourceViewer.FORMAT);
 		sv.setSelectedRange(p.x, p.y);
 	}
 

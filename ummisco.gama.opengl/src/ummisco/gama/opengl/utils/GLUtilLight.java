@@ -821,9 +821,11 @@ public class GLUtilLight {
 	// }
 
 	public static void setLineWidth(final GL gl, final float size, final boolean smooth) {
+		// smooth should be set to false always, as it creates jagged lines
 		gl.glLineWidth(size);
 		if (smooth) {
 			gl.glEnable(GL.GL_LINE_SMOOTH);
+			// gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
 		} else {
 			gl.glDisable(GL.GL_LINE_SMOOTH);
 		}

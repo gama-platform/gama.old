@@ -12,16 +12,22 @@
 package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.AbstractGui;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.statements.*;
+import msi.gaml.statements.AspectStatement;
+import msi.gaml.statements.IExecutable;
 
 /**
  * Written by drogoul Modified on 23 août 2008
@@ -47,47 +53,47 @@ public class AgentLayer extends AbstractLayer {
 		shapes.clear();
 		// performance issue
 		String aspectName = IKeyword.DEFAULT;
-		if ( definition instanceof AgentLayerStatement ) {
+		if (definition instanceof AgentLayerStatement) {
 			aspectName = ((AgentLayerStatement) definition).getAspectName();
 
-			for ( final IAgent a : getAgentsToDisplay() ) {
+			for (final IAgent a : getAgentsToDisplay()) {
 				IExecutable aspect = null;
-				if ( a != null/* && !scope.interrupted() */ ) {
-					if ( a == scope.getGui().getHighlightedAgent() ) {
+				if (a != null/* && !scope.interrupted() */ ) {
+					if (a == scope.getGui().getHighlightedAgent()) {
 						aspect = a.getSpecies().getAspect("highlighted");
 						// if ( aspect == null ) {
 						// aspect = AspectStatement.HIGHLIGHTED_ASPECT;
 						// }
 					} else {
 						aspect = ((AgentLayerStatement) definition).getAspect();
-						if ( aspect == null ) {
+						if (aspect == null) {
 							aspect = a.getSpecies().getAspect(aspectName);
 						}
 					}
-					if ( aspect == null ) {
+					if (aspect == null) {
 						aspect = AspectStatement.DEFAULT_ASPECT;
 					}
 
-					Object[] result = new Object[1];
+					final Object[] result = new Object[1];
 					scope.execute(aspect, a, null, result);
 					final Rectangle2D r = (Rectangle2D) result[0];
 					// final Rectangle2D r = aspect.draw(scope, a);
-					if ( r != null ) {
+					if (r != null) {
 						shapes.put(a, r);
 					}
 				}
 			}
-		} else if ( definition instanceof GridLayerStatement ) {
+		} else if (definition instanceof GridLayerStatement) {
 
-			for ( final IAgent a : getAgentsToDisplay() ) {
-				if ( a != null/* && !scope.interrupted() */ ) {
-					IExecutable aspect = AspectStatement.DEFAULT_ASPECT;
+			for (final IAgent a : getAgentsToDisplay()) {
+				if (a != null/* && !scope.interrupted() */ ) {
+					final IExecutable aspect = AspectStatement.DEFAULT_ASPECT;
 
-					Object[] result = new Object[1];
+					final Object[] result = new Object[1];
 					scope.execute(aspect, a, null, result);
 					final Rectangle2D r = (Rectangle2D) result[0];
 					// final Rectangle2D r = aspect.draw(scope, a);
-					if ( r != null ) {
+					if (r != null) {
 						shapes.put(a, r);
 					}
 				}
@@ -97,15 +103,18 @@ public class AgentLayer extends AbstractLayer {
 
 	@Override
 	public Collection<IAgent> getAgentsForMenu(final IScope scope) {
-		if ( shapes.isEmpty() ) { return getAgentsToDisplay(); }
+		if (shapes.isEmpty()) {
+			return getAgentsToDisplay();
+		}
 		// Avoid recalculating the agents
 		return shapes.keySet();
 	}
 
 	public Collection<IAgent> getAgentsToDisplay() {
 		// return agents;
-		if ( definition instanceof AgentLayerStatement ) { return ((AgentLayerStatement) definition)
-			.getAgentsToDisplay(); }
+		if (definition instanceof AgentLayerStatement) {
+			return ((AgentLayerStatement) definition).getAgentsToDisplay();
+		}
 		return ((GridLayerStatement) definition).getAgentsToDisplay();
 	}
 
@@ -114,9 +123,10 @@ public class AgentLayer extends AbstractLayer {
 		final Set<IAgent> selectedAgents = new THashSet();
 		final Rectangle2D selection = new Rectangle2D.Double();
 		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
-			y + IDisplaySurface.SELECTION_SIZE / 2);
-		for ( final Map.Entry<IAgent, Rectangle2D> entry : shapes.entrySet() ) {
-			if ( entry.getValue().intersects(selection) ) {
+				y + IDisplaySurface.SELECTION_SIZE / 2);
+		for (final Map.Entry<IAgent, Rectangle2D> entry : new ArrayList<Map.Entry<IAgent, Rectangle2D>>(
+				shapes.entrySet())) {
+			if (entry.getValue().intersects(selection)) {
 				selectedAgents.add(entry.getKey());
 			}
 		}

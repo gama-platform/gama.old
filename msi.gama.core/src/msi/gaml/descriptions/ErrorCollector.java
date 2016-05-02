@@ -37,6 +37,7 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 	final TLinkedHashSet<GamlCompilationError> internalErrors = new TLinkedHashSet();
 	final TLinkedHashSet<GamlCompilationError> warnings = new TLinkedHashSet();
 	final TLinkedHashSet<GamlCompilationError> infos = new TLinkedHashSet();
+	private boolean noWarning, noInfo;
 
 	public ErrorCollector() {
 		this(null);
@@ -53,11 +54,11 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 
 	public void add(final GamlCompilationError error) {
 		if (error.isWarning()) {
-			if (!GamaPreferences.WARNINGS_ENABLED.getValue()) {
+			if (!GamaPreferences.WARNINGS_ENABLED.getValue() || noWarning) {
 				return;
 			}
 		} else if (error.isInfo()) {
-			if (!GamaPreferences.INFO_ENABLED.getValue()) {
+			if (!GamaPreferences.INFO_ENABLED.getValue() || noInfo) {
 				return;
 			}
 		}
@@ -134,6 +135,21 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 			result.put(error.toString() + " (" + resource + ")", object == null ? null : object.eResource().getURI());
 		}
 		return result;
+	}
+
+	public void setNoWarning() {
+		noWarning = true;
+
+	}
+
+	public void setNoInfo() {
+		noInfo = true;
+	}
+
+	public void resetInfoAndWarning() {
+		noInfo = false;
+		noWarning = false;
+
 	}
 
 }

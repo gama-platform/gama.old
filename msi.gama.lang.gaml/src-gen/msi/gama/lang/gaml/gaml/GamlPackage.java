@@ -160,13 +160,22 @@ public interface GamlPackage extends EPackage
   int MODEL__NAME = ENTRY_FEATURE_COUNT + 0;
 
   /**
+   * The feature id for the '<em><b>Pragmas</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL__PRAGMAS = ENTRY_FEATURE_COUNT + 1;
+
+  /**
    * The feature id for the '<em><b>Imports</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL__IMPORTS = ENTRY_FEATURE_COUNT + 1;
+  int MODEL__IMPORTS = ENTRY_FEATURE_COUNT + 2;
 
   /**
    * The feature id for the '<em><b>Block</b></em>' containment reference.
@@ -175,7 +184,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL__BLOCK = ENTRY_FEATURE_COUNT + 2;
+  int MODEL__BLOCK = ENTRY_FEATURE_COUNT + 3;
 
   /**
    * The number of structural features of the '<em>Model</em>' class.
@@ -184,7 +193,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_FEATURE_COUNT = ENTRY_FEATURE_COUNT + 3;
+  int MODEL_FEATURE_COUNT = ENTRY_FEATURE_COUNT + 4;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.BlockImpl <em>Block</em>}' class.
@@ -231,7 +240,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getGamlDefinition()
    * @generated
    */
-  int GAML_DEFINITION = 38;
+  int GAML_DEFINITION = 39;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -259,7 +268,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getVarDefinition()
    * @generated
    */
-  int VAR_DEFINITION = 41;
+  int VAR_DEFINITION = 42;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -317,6 +326,34 @@ public interface GamlPackage extends EPackage
   int IMPORT_FEATURE_COUNT = VAR_DEFINITION_FEATURE_COUNT + 1;
 
   /**
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.PragmaImpl <em>Pragma</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see msi.gama.lang.gaml.gaml.impl.PragmaImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPragma()
+   * @generated
+   */
+  int PRAGMA = 6;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRAGMA__NAME = 0;
+
+  /**
+   * The number of structural features of the '<em>Pragma</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRAGMA_FEATURE_COUNT = 1;
+
+  /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.StatementImpl <em>Statement</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -324,7 +361,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getStatement()
    * @generated
    */
-  int STATEMENT = 6;
+  int STATEMENT = 7;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -388,7 +425,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Global()
    * @generated
    */
-  int SGLOBAL = 7;
+  int SGLOBAL = 8;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -452,7 +489,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Entities()
    * @generated
    */
-  int SENTITIES = 8;
+  int SENTITIES = 9;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -516,7 +553,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Environment()
    * @generated
    */
-  int SENVIRONMENT = 9;
+  int SENVIRONMENT = 10;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -580,7 +617,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Species()
    * @generated
    */
-  int SSPECIES = 10;
+  int SSPECIES = 11;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -653,7 +690,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Experiment()
    * @generated
    */
-  int SEXPERIMENT = 11;
+  int SEXPERIMENT = 12;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -726,7 +763,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Do()
    * @generated
    */
-  int SDO = 12;
+  int SDO = 13;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -790,7 +827,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Declaration()
    * @generated
    */
-  int SDECLARATION = 17;
+  int SDECLARATION = 18;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -863,7 +900,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Loop()
    * @generated
    */
-  int SLOOP = 13;
+  int SLOOP = 14;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -936,7 +973,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_If()
    * @generated
    */
-  int SIF = 14;
+  int SIF = 15;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1009,7 +1046,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Other()
    * @generated
    */
-  int SOTHER = 15;
+  int SOTHER = 16;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1073,7 +1110,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Return()
    * @generated
    */
-  int SRETURN = 16;
+  int SRETURN = 17;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1137,7 +1174,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Reflex()
    * @generated
    */
-  int SREFLEX = 18;
+  int SREFLEX = 19;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1210,7 +1247,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Definition()
    * @generated
    */
-  int SDEFINITION = 19;
+  int SDEFINITION = 20;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1301,7 +1338,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Assignment()
    * @generated
    */
-  int SASSIGNMENT = 20;
+  int SASSIGNMENT = 21;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1374,7 +1411,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_DirectAssignment()
    * @generated
    */
-  int SDIRECT_ASSIGNMENT = 21;
+  int SDIRECT_ASSIGNMENT = 22;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1447,7 +1484,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Set()
    * @generated
    */
-  int SSET = 22;
+  int SSET = 23;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1520,7 +1557,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Equations()
    * @generated
    */
-  int SEQUATIONS = 23;
+  int SEQUATIONS = 24;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1602,7 +1639,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Solve()
    * @generated
    */
-  int SSOLVE = 24;
+  int SSOLVE = 25;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1666,7 +1703,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Monitor()
    * @generated
    */
-  int SMONITOR = 25;
+  int SMONITOR = 26;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1721,7 +1758,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Display()
    * @generated
    */
-  int SDISPLAY = 26;
+  int SDISPLAY = 27;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1794,7 +1831,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getspeciesOrGridDisplayStatement()
    * @generated
    */
-  int SPECIES_OR_GRID_DISPLAY_STATEMENT = 27;
+  int SPECIES_OR_GRID_DISPLAY_STATEMENT = 28;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1858,7 +1895,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getExpression()
    * @generated
    */
-  int EXPRESSION = 32;
+  int EXPRESSION = 33;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1904,7 +1941,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getParameters()
    * @generated
    */
-  int PARAMETERS = 28;
+  int PARAMETERS = 29;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1959,7 +1996,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getActionArguments()
    * @generated
    */
-  int ACTION_ARGUMENTS = 29;
+  int ACTION_ARGUMENTS = 30;
 
   /**
    * The feature id for the '<em><b>Args</b></em>' containment reference list.
@@ -1987,7 +2024,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArgumentDefinition()
    * @generated
    */
-  int ARGUMENT_DEFINITION = 30;
+  int ARGUMENT_DEFINITION = 31;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2033,7 +2070,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFacet()
    * @generated
    */
-  int FACET = 31;
+  int FACET = 32;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2079,7 +2116,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArgumentPair()
    * @generated
    */
-  int ARGUMENT_PAIR = 33;
+  int ARGUMENT_PAIR = 34;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2125,7 +2162,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 34;
+  int FUNCTION = 35;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2207,7 +2244,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getExpressionList()
    * @generated
    */
-  int EXPRESSION_LIST = 35;
+  int EXPRESSION_LIST = 36;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2262,7 +2299,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getVariableRef()
    * @generated
    */
-  int VARIABLE_REF = 36;
+  int VARIABLE_REF = 37;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2317,7 +2354,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getTypeInfo()
    * @generated
    */
-  int TYPE_INFO = 37;
+  int TYPE_INFO = 38;
 
   /**
    * The feature id for the '<em><b>First</b></em>' containment reference.
@@ -2354,7 +2391,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getEquationDefinition()
    * @generated
    */
-  int EQUATION_DEFINITION = 39;
+  int EQUATION_DEFINITION = 40;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2382,7 +2419,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getTypeDefinition()
    * @generated
    */
-  int TYPE_DEFINITION = 40;
+  int TYPE_DEFINITION = 41;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2410,7 +2447,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getActionDefinition()
    * @generated
    */
-  int ACTION_DEFINITION = 42;
+  int ACTION_DEFINITION = 43;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2438,7 +2475,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getUnitFakeDefinition()
    * @generated
    */
-  int UNIT_FAKE_DEFINITION = 43;
+  int UNIT_FAKE_DEFINITION = 44;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2466,7 +2503,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getTypeFakeDefinition()
    * @generated
    */
-  int TYPE_FAKE_DEFINITION = 44;
+  int TYPE_FAKE_DEFINITION = 45;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2494,7 +2531,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getActionFakeDefinition()
    * @generated
    */
-  int ACTION_FAKE_DEFINITION = 45;
+  int ACTION_FAKE_DEFINITION = 46;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2522,7 +2559,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getSkillFakeDefinition()
    * @generated
    */
-  int SKILL_FAKE_DEFINITION = 46;
+  int SKILL_FAKE_DEFINITION = 47;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2550,7 +2587,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getVarFakeDefinition()
    * @generated
    */
-  int VAR_FAKE_DEFINITION = 47;
+  int VAR_FAKE_DEFINITION = 48;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2578,7 +2615,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getEquationFakeDefinition()
    * @generated
    */
-  int EQUATION_FAKE_DEFINITION = 48;
+  int EQUATION_FAKE_DEFINITION = 49;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2606,7 +2643,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getTerminalExpression()
    * @generated
    */
-  int TERMINAL_EXPRESSION = 49;
+  int TERMINAL_EXPRESSION = 50;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2652,7 +2689,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Action()
    * @generated
    */
-  int SACTION = 50;
+  int SACTION = 51;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -2743,7 +2780,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Var()
    * @generated
    */
-  int SVAR = 51;
+  int SVAR = 52;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -2834,7 +2871,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPair()
    * @generated
    */
-  int PAIR = 52;
+  int PAIR = 53;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2880,7 +2917,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getIf()
    * @generated
    */
-  int IF = 53;
+  int IF = 54;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2935,7 +2972,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getCast()
    * @generated
    */
-  int CAST = 54;
+  int CAST = 55;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2981,7 +3018,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getBinary()
    * @generated
    */
-  int BINARY = 55;
+  int BINARY = 56;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3027,7 +3064,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 56;
+  int UNIT = 57;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3073,7 +3110,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getUnary()
    * @generated
    */
-  int UNARY = 57;
+  int UNARY = 58;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3119,7 +3156,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getAccess()
    * @generated
    */
-  int ACCESS = 58;
+  int ACCESS = 59;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3174,7 +3211,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArray()
    * @generated
    */
-  int ARRAY = 59;
+  int ARRAY = 60;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3229,7 +3266,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPoint()
    * @generated
    */
-  int POINT = 60;
+  int POINT = 61;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3284,7 +3321,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getParameter()
    * @generated
    */
-  int PARAMETER = 61;
+  int PARAMETER = 62;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3339,7 +3376,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getUnitName()
    * @generated
    */
-  int UNIT_NAME = 62;
+  int UNIT_NAME = 63;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3394,7 +3431,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getTypeRef()
    * @generated
    */
-  int TYPE_REF = 63;
+  int TYPE_REF = 64;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3458,7 +3495,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getSkillRef()
    * @generated
    */
-  int SKILL_REF = 64;
+  int SKILL_REF = 65;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3513,7 +3550,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getActionRef()
    * @generated
    */
-  int ACTION_REF = 65;
+  int ACTION_REF = 66;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3568,7 +3605,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getEquationRef()
    * @generated
    */
-  int EQUATION_REF = 66;
+  int EQUATION_REF = 67;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3623,7 +3660,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getIntLiteral()
    * @generated
    */
-  int INT_LITERAL = 67;
+  int INT_LITERAL = 68;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3669,7 +3706,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getDoubleLiteral()
    * @generated
    */
-  int DOUBLE_LITERAL = 68;
+  int DOUBLE_LITERAL = 69;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3715,7 +3752,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getColorLiteral()
    * @generated
    */
-  int COLOR_LITERAL = 69;
+  int COLOR_LITERAL = 70;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3761,7 +3798,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getStringLiteral()
    * @generated
    */
-  int STRING_LITERAL = 70;
+  int STRING_LITERAL = 71;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3807,7 +3844,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getBooleanLiteral()
    * @generated
    */
-  int BOOLEAN_LITERAL = 71;
+  int BOOLEAN_LITERAL = 72;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3853,7 +3890,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getReservedLiteral()
    * @generated
    */
-  int RESERVED_LITERAL = 72;
+  int RESERVED_LITERAL = 73;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3966,6 +4003,17 @@ public interface GamlPackage extends EPackage
   EClass getModel();
 
   /**
+   * Returns the meta object for the containment reference list '{@link msi.gama.lang.gaml.gaml.Model#getPragmas <em>Pragmas</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Pragmas</em>'.
+   * @see msi.gama.lang.gaml.gaml.Model#getPragmas()
+   * @see #getModel()
+   * @generated
+   */
+  EReference getModel_Pragmas();
+
+  /**
    * Returns the meta object for the containment reference list '{@link msi.gama.lang.gaml.gaml.Model#getImports <em>Imports</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4039,6 +4087,27 @@ public interface GamlPackage extends EPackage
    * @generated
    */
   EAttribute getImport_ImportURI();
+
+  /**
+   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Pragma <em>Pragma</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Pragma</em>'.
+   * @see msi.gama.lang.gaml.gaml.Pragma
+   * @generated
+   */
+  EClass getPragma();
+
+  /**
+   * Returns the meta object for the attribute '{@link msi.gama.lang.gaml.gaml.Pragma#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see msi.gama.lang.gaml.gaml.Pragma#getName()
+   * @see #getPragma()
+   * @generated
+   */
+  EAttribute getPragma_Name();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Statement <em>Statement</em>}'.
@@ -5282,6 +5351,14 @@ public interface GamlPackage extends EPackage
     EClass MODEL = eINSTANCE.getModel();
 
     /**
+     * The meta object literal for the '<em><b>Pragmas</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MODEL__PRAGMAS = eINSTANCE.getModel_Pragmas();
+
+    /**
      * The meta object literal for the '<em><b>Imports</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5340,6 +5417,24 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EAttribute IMPORT__IMPORT_URI = eINSTANCE.getImport_ImportURI();
+
+    /**
+     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.PragmaImpl <em>Pragma</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see msi.gama.lang.gaml.gaml.impl.PragmaImpl
+     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPragma()
+     * @generated
+     */
+    EClass PRAGMA = eINSTANCE.getPragma();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PRAGMA__NAME = eINSTANCE.getPragma_Name();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.StatementImpl <em>Statement</em>}' class.

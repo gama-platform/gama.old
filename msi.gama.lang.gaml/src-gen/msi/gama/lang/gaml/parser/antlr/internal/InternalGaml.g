@@ -232,15 +232,33 @@ ruleModel returns [EObject current=null]
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
-(	otherlv_0='model' 
+((
+(
+		{ 
+	        newCompositeNode(grammarAccess.getModelAccess().getPragmasPragmaParserRuleCall_0_0()); 
+	    }
+		lv_pragmas_0_0=rulePragma		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getModelRule());
+	        }
+       		add(
+       			$current, 
+       			"pragmas",
+        		lv_pragmas_0_0, 
+        		"msi.gama.lang.gaml.Gaml.Pragma");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)*	otherlv_1='model' 
     {
-    	newLeafNode(otherlv_0, grammarAccess.getModelAccess().getModelKeyword_0());
+    	newLeafNode(otherlv_1, grammarAccess.getModelAccess().getModelKeyword_1());
     }
 (
 (
-		lv_name_1_0=RULE_ID
+		lv_name_2_0=RULE_ID
 		{
-			newLeafNode(lv_name_1_0, grammarAccess.getModelAccess().getNameIDTerminalRuleCall_1_0()); 
+			newLeafNode(lv_name_2_0, grammarAccess.getModelAccess().getNameIDTerminalRuleCall_2_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -249,7 +267,7 @@ ruleModel returns [EObject current=null]
        		setWithLastConsumed(
        			$current, 
        			"name",
-        		lv_name_1_0, 
+        		lv_name_2_0, 
         		"msi.gama.lang.gaml.Gaml.ID");
 	    }
 
@@ -257,16 +275,16 @@ ruleModel returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getModelAccess().getImportsImportParserRuleCall_2_0()); 
+	        newCompositeNode(grammarAccess.getModelAccess().getImportsImportParserRuleCall_3_0()); 
 	    }
-		lv_imports_2_0=ruleImport		{
+		lv_imports_3_0=ruleImport		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getModelRule());
 	        }
        		add(
        			$current, 
        			"imports",
-        		lv_imports_2_0, 
+        		lv_imports_3_0, 
         		"msi.gama.lang.gaml.Gaml.Import");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -275,16 +293,16 @@ ruleModel returns [EObject current=null]
 )*(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getModelAccess().getBlockModelBlockParserRuleCall_3_0()); 
+	        newCompositeNode(grammarAccess.getModelAccess().getBlockModelBlockParserRuleCall_4_0()); 
 	    }
-		lv_block_3_0=ruleModelBlock		{
+		lv_block_4_0=ruleModelBlock		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getModelRule());
 	        }
        		set(
        			$current, 
        			"block",
-        		lv_block_3_0, 
+        		lv_block_4_0, 
         		"msi.gama.lang.gaml.Gaml.ModelBlock");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -401,6 +419,49 @@ ruleImport returns [EObject current=null]
 
 )
 ))?)
+;
+
+
+
+
+
+// Entry rule entryRulePragma
+entryRulePragma returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getPragmaRule()); }
+	 iv_rulePragma=rulePragma 
+	 { $current=$iv_rulePragma.current; } 
+	 EOF 
+;
+
+// Rule Pragma
+rulePragma returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(	otherlv_0='@' 
+    {
+    	newLeafNode(otherlv_0, grammarAccess.getPragmaAccess().getCommercialAtKeyword_0());
+    }
+(
+(
+		lv_name_1_0=RULE_ID
+		{
+			newLeafNode(lv_name_1_0, grammarAccess.getPragmaAccess().getNameIDTerminalRuleCall_1_0()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getPragmaRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"name",
+        		lv_name_1_0, 
+        		"msi.gama.lang.gaml.Gaml.ID");
+	    }
+
+)
+))
 ;
 
 

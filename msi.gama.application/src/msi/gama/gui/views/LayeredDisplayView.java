@@ -24,6 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -273,8 +274,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	@Override
-	public void dispose() {
-		// FIXME Should not be redefined, but we should add a DisposeListener instead
+	public void widgetDisposed(final DisposeEvent e) {
 		if ( disposed ) { return; }
 		if ( getOutput() != null ) {
 			getOutput().getData().removeListener(this);
@@ -305,7 +305,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 		menuManager = null;
 
-		super.dispose();
+		super.widgetDisposed(e);
 	}
 
 	@Override

@@ -121,6 +121,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		cap.setStencilBits(8);
 		cap.setDoubleBuffered(true);
 		cap.setHardwareAccelerated(true);
+		cap.setSampleBuffers(true);
+		cap.setAlphaBits(4);
+		cap.setNumSamples(4);
 		canvas = new GLCanvas(parent, SWT.NONE, cap, null);
 		if (useSharedContext) {
 			canvas.setSharedAutoDrawable(TextureCache.getSharedContext());

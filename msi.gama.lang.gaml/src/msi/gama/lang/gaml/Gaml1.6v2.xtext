@@ -6,6 +6,8 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 Entry:
 	Model | StringEvaluator | ActionEditor;
 
+
+
 StringEvaluator:
 	toto=ID "<-" expr=Expression;
 
@@ -14,7 +16,7 @@ ActionEditor:
 
 
 Model:
-	'model' name=ID (imports+=Import)* block=ModelBlock;
+	(pragmas +=Pragma)* 'model' name=ID  (imports+=Import)* block=ModelBlock;
 
 ModelBlock returns Block:
 	{Block} (statements+=(S_Section))*
@@ -22,6 +24,10 @@ ModelBlock returns Block:
 
 Import:
 	'import' importURI=STRING ("as" name=Valid_ID)?; // must be named importURI
+	
+Pragma:
+	'@' name=ID
+;
 
 /**
  * Global statements

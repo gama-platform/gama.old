@@ -70,6 +70,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.MODEL: return createModel();
       case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.IMPORT: return createImport();
+      case GamlPackage.PRAGMA: return createPragma();
       case GamlPackage.STATEMENT: return createStatement();
       case GamlPackage.SGLOBAL: return createS_Global();
       case GamlPackage.SENTITIES: return createS_Entities();
@@ -206,6 +207,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     ImportImpl import_ = new ImportImpl();
     return import_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Pragma createPragma()
+  {
+    PragmaImpl pragma = new PragmaImpl();
+    return pragma;
   }
 
   /**

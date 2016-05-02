@@ -12,13 +12,19 @@
 package msi.gama.gui.swt;
 
 import java.util.Arrays;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IDecoratorManager;
-import org.eclipse.ui.application.*;
+import org.eclipse.ui.application.IWorkbenchConfigurer;
+import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
-import org.eclipse.ui.statushandlers.*;
+import org.eclipse.ui.statushandlers.AbstractStatusHandler;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 import msi.gama.application.projects.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
@@ -44,27 +50,26 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		IDE.registerAdapters();
 		configurer.setSaveAndRestore(true);
 		try {
-			IDecoratorManager dm = configurer.getWorkbench().getDecoratorManager();
+			final IDecoratorManager dm = configurer.getWorkbench().getDecoratorManager();
 			dm.setEnabled("org.eclipse.pde.ui.binaryProjectDecorator", false);
 			dm.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", false);
 			dm.setEnabled("msi.gama.application.decorator", true);
 			dm.setEnabled("org.eclipse.ui.LinkedResourceDecorator", false);
 			dm.setEnabled("org.eclipse.ui.VirtualResourceDecorator", false);
 			dm.setEnabled("org.eclipse.xtext.builder.nature.overlay", false);
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
 		/* Early build of the contributions made by plugins to GAMA */
 		new Thread(new Runnable() {
-			
-			
+
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				GamaBundleLoader.preBuildContributions();
 			}
 		}).start();
-	
+
 		/* Linking the stock models with the workspace if they are not already */
 		if ( checkCopyOfBuiltInModels() ) {
 			WorkspaceModelsManager.linkSampleModelsToWorkspace();
@@ -75,7 +80,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public void postStartup() {
 		super.postStartup();
-		String[] args = Platform.getApplicationArgs();
+		final String[] args = Platform.getApplicationArgs();
 		System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
 		if ( args.length >= 1 ) {
 			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
@@ -84,7 +89,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	protected boolean checkCopyOfBuiltInModels() {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject[] projects = workspace.getRoot().getProjects();
+		final IProject[] projects = workspace.getRoot().getProjects();
 		// If no projects are registered at all, we are facing a fresh new workspace
 		if ( projects.length == 0 ) { return true; }
 		return false;
@@ -163,8 +168,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	public boolean preShutdown() {
 		try {
 			GAMA.closeAllExperiments(true, true);
-			// end-hqnghi
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -182,9 +186,9 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 			@Override
 			public void handle(final StatusAdapter statusAdapter, final int style) {
-				Throwable e = statusAdapter.getStatus().getException();
-				System.err.println("GAMA Caught a workbench message : " + statusAdapter.getStatus().getMessage() + " " +
-					e);
+				final Throwable e = statusAdapter.getStatus().getException();
+				System.err
+					.println("GAMA Caught a workbench message : " + statusAdapter.getStatus().getMessage() + " " + e);
 				if ( e != null ) {
 					e.printStackTrace();
 				}

@@ -181,6 +181,11 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		return null;
 	}
 
+	@Override
+	protected boolean needsOutput() {
+		return false;
+	}
+
 	/**
 	 * Method handleMenu()
 	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)

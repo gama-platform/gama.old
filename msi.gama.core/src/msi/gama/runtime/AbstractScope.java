@@ -335,6 +335,10 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void setOnUserHold(final boolean state) {
 		root.setOnUserHold(state);
+		// if (state)
+		// getGui().updateSimulationState(IGui.ONUSERHOLD);
+		// else
+		// getGui().updateSimulationState();
 	}
 
 	@Override

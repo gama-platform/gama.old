@@ -271,6 +271,8 @@ public interface IKeyword {
 	public static final String NEIGHBOURS = "neighbours";
 	public static final String NEIGHBORS = "neighbors";
 	public static final String NODE = "node";
+	public static final String NO_INFO = "no_info";
+	public static final String NO_WARNING = "no_warning";
 	public static final String NULL = "nil";
 	public static final String NUMBER = "number";
 	public static final String NB_COLS = "nb_cols";
@@ -305,6 +307,7 @@ public interface IKeyword {
 	public final static String POLYGONMODE = "polygonmode";
 	public final static String POPULATION = "display_population";
 	public static final String POSITION = "position";
+	public static final String PRAGMA = "pragma";
 	public static final String PRIMITIVE = "primitive";
 	public static final String PRIORITY = "priority";
 	public static final String PROPAGATION = "propagation";
@@ -379,7 +382,8 @@ public interface IKeyword {
 	public static final String THEIR = "their";
 	public static final String THREE_D = "3d";
 	public static final String TIMES = "times";
-	public static final String TIME_SERIES = "time_series"; // hqnghi facet for continuous Chart
+	public static final String TIME_SERIES = "time_series"; // hqnghi facet for
+															// continuous Chart
 	public static final String TABLE = "table";
 	public static final String TITLE = "title";
 	public static final String TO = "to";

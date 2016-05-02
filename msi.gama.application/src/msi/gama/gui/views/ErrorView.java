@@ -11,19 +11,31 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.*;
-import msi.gama.gui.swt.*;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.ItemList;
+import msi.gama.gui.swt.GamaColors;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -228,7 +240,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 
 	public void clearErrors() {
 		this.reset();
-		for ( GamaRuntimeException exception : new ArrayList<GamaRuntimeException>(exceptions) ) {
+		for ( final GamaRuntimeException exception : new ArrayList<GamaRuntimeException>(exceptions) ) {
 			if ( exception.isInvalid() ) {
 				exceptions.remove(exception);
 			}
@@ -243,13 +255,13 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final GamaRuntimeException item, final int x, final int y) {
-		Map<String, Runnable> result = new HashMap();
+		final Map<String, Runnable> result = new HashMap();
 		result.put("Copy text", new Runnable() {
 
 			@Override
 			public void run() {
-				Clipboard clipboard = new Clipboard(parent.getDisplay());
-				String data = item.getAllText();
+				final Clipboard clipboard = new Clipboard(parent.getDisplay());
+				final String data = item.getAllText();
 				clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
 				clipboard.dispose();
 			}
@@ -262,6 +274,11 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 			}
 		});
 		return result;
+	}
+
+	@Override
+	protected boolean needsOutput() {
+		return false;
 	}
 
 }

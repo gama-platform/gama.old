@@ -211,7 +211,7 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public boolean openSimulationPerspective(final boolean immediately) {
+	public boolean openSimulationPerspective(final IModel model, final String id, final boolean immediately) {
 		return true;
 	}
 
@@ -260,10 +260,10 @@ public class HeadlessListener extends AbstractGui {
 	@Override
 	public void cleanAfterSimulation() {
 	}
-
-	@Override
-	public void waitForViewsToBeInitialized() {
-	}
+	//
+	// @Override
+	// public void waitForViewsToBeInitialized() {
+	// }
 
 	@Override
 	public void debug(final Exception e) {
@@ -369,15 +369,6 @@ public class HeadlessListener extends AbstractGui {
 	@Override
 	public IFileMetaDataProvider getMetaDataProvider() {
 		return null;
-	}
-
-	/**
-	 * Method wipeExperiments()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#wipeExperiments()
-	 */
-	@Override
-	public void wipeExperiments() {
 	}
 
 	/**
@@ -519,5 +510,11 @@ public class HeadlessListener extends AbstractGui {
 	@Override
 	public Set<String> getViews(final String modelName, final String expeName) {
 		return null;
+	}
+
+	@Override
+	public boolean openSimulationPerspective(final boolean immediately) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

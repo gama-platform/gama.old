@@ -16,6 +16,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//ActionEditor/action"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Model">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/pragmas"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/imports"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/block"/>
     </genClasses>
@@ -25,6 +26,9 @@
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Import">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Import/importURI"/>
+    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//Pragma">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Pragma/name"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Statement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/key"/>

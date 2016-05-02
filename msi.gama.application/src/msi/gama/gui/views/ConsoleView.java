@@ -11,18 +11,27 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.console.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -63,10 +72,10 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	}
 
 	private BufferedWriter getWriterFor(final ITopLevelAgent root, final GamaUIColor color) {
-		Color c = color == null ? getColorFor(root) : color.color();
+		final Color c = color == null ? getColorFor(root) : color.color();
 		BufferedWriter writer = writers.get(c);
 		if ( writer == null ) {
-			IOConsoleOutputStream stream = msgConsole.newOutputStream();
+			final IOConsoleOutputStream stream = msgConsole.newOutputStream();
 			stream.setColor(c);
 			stream.setActivateOnWrite(false);
 			writer = new BufferedWriter(new OutputStreamWriter(stream));
@@ -93,14 +102,14 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	public void append(final String text, final ITopLevelAgent root, final GamaUIColor color) {
 
 		if ( !paused ) {
-			BufferedWriter writer = getWriterFor(root, color);
+			final BufferedWriter writer = getWriterFor(root, color);
 			try {
 				writer.append(text);
 				writer.flush();
-			} catch (IOException e) {}
+			} catch (final IOException e) {}
 		} else {
 			int maxMemorized = GamaPreferences.CORE_CONSOLE_BUFFER.getValue();
-			int maxDisplayed = GamaPreferences.CORE_CONSOLE_SIZE.getValue();
+			final int maxDisplayed = GamaPreferences.CORE_CONSOLE_SIZE.getValue();
 			if ( maxDisplayed > -1 ) {
 				// we limit the size of the buffer to the size of the displayed characters, as there is no need to buffer more than what can be displayed
 				if ( maxMemorized == -1 ) {
@@ -135,9 +144,9 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	}
 
 	@Override
-	public void dispose() {
+	public void widgetDisposed(final DisposeEvent e) {
 		clearText();
-		super.dispose();
+		super.widgetDisposed(e);
 	}
 
 	@Override
@@ -209,6 +218,11 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	 */
 	@Override
 	protected boolean shouldBeClosedWhenNoExperiments() {
+		return false;
+	}
+
+	@Override
+	protected boolean needsOutput() {
 		return false;
 	}
 

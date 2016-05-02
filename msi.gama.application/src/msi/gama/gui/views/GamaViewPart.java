@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -39,13 +41,14 @@ import msi.gama.runtime.GAMA;
 /**
  * @author drogoul
  */
-public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
+public abstract class GamaViewPart extends ViewPart implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
 	protected final List<IDisplayOutput> outputs = new ArrayList();
 	protected Composite parent;
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
 	Action toggle;
+	private Composite rootComposite;
 
 	enum UpdatePriority {
 		HIGH, LOW, HIGHEST, LOWEST;
@@ -94,7 +97,6 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		// final IPartService ps = site.getService(IPartService.class);
 		final String s_id = site.getSecondaryId();
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
@@ -169,10 +171,18 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 	@Override
 	public final void createPartControl(final Composite composite) {
+		this.rootComposite = composite;
+		rootComposite.addDisposeListener(this);
+		if ( needsOutput() && getOutput() == null )
+			return;
 		this.parent = GamaToolbarFactory.createToolbars(this, composite);
 		ownCreatePartControl(parent);
 		activateContext();
 		// toggle.run();
+	}
+
+	protected boolean needsOutput() {
+		return true;
 	}
 
 	public abstract void ownCreatePartControl(Composite parent);
@@ -235,9 +245,14 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	public void setFocus() {}
 
 	@Override
-	public void dispose() {
+	public void widgetDisposed(final DisposeEvent e) {
 		toolbar = null;
 		outputs.clear();
+	}
+
+	@Override
+	public void dispose() {
+		System.err.println("+++ Part " + this.getPartName() + " is being disposed");
 		super.dispose();
 	}
 

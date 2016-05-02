@@ -80,10 +80,20 @@ public class ModelAssembler {
 		final ISyntacticElement source = models.get(0);
 		final Facets globalFacets = new Facets();
 		final List<ISyntacticElement> otherNodes = new ArrayList();
+		if (source.hasFacet(IKeyword.PRAGMA)) {
+			final Facets facets = source.copyFacets(null);
+			final List<String> pragmas = (List<String>) facets.get(IKeyword.PRAGMA).getExpression().value(null);
+			collector.resetInfoAndWarning();
+			if (pragmas != null) {
+				if (pragmas.contains(IKeyword.NO_INFO))
+					collector.setNoInfo();
+				if (pragmas.contains(IKeyword.NO_WARNING))
+					collector.setNoWarning();
+			}
 
+		}
 		final Map<String, SpeciesDescription> tempSpeciesCache = new THashMap();
 
-		ISyntacticElement lastGlobalNode = source;
 		for (int n = models.size(), i = n - 1; i >= 0; i--) {
 			final ISyntacticElement currentModel = models.get(i);
 			if (currentModel != null) {
@@ -98,7 +108,6 @@ public class ModelAssembler {
 							} else if (ge.isExperiment()) {
 								addExperimentNode(ge, currentModel.getName(), experimentNodes, collector);
 							} else {
-								lastGlobalNode = ge;
 								globalNodes.addChild(ge);
 							}
 						}

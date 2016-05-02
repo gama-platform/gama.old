@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -29,6 +30,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.Dialog;
@@ -48,6 +50,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -59,6 +62,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.part.FileEditorInput;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.GamaPreferences;
@@ -136,7 +142,6 @@ public class SwtGui extends AbstractGui {
 	public static ISimulationStateProvider state = null;
 
 	private static Font expandFont;
-	// private static Font bigFont;
 	private static Font smallFont;
 	private static Font smallNavigFont;
 	private static Font smallNavigLinkFont;
@@ -268,8 +273,8 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
-		// debug("ASKING THE USER ABOUT CHANGING");
-		if ( !GamaPreferences.CORE_ASK_CLOSING.getValue() ) { return true; }
+		if ( exp == null || !GamaPreferences.CORE_ASK_CLOSING.getValue() ) { return true; }
+		openSimulationPerspective(true);
 		return MessageDialog.openQuestion(getShell(), "Close simulation confirmation",
 			"Do you want to close experiment '" + exp.getName() + "' of model '" + exp.getModel().getName() + "' ?");
 	}
@@ -642,10 +647,6 @@ public class SwtGui extends AbstractGui {
 		}
 	}
 
-	public static IPerspectiveDescriptor getCurrentPerspective() {
-		return getPage(null).getPerspective();
-	}
-
 	public static Display getDisplay() {
 		return PlatformUI.getWorkbench().getDisplay();
 	}
@@ -705,12 +706,16 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public boolean isModelingPerspective() {
-		return getCurrentPerspective().getId().equals(PERSPECTIVE_MODELING_ID);
+		return currentPerspectiveId.equals(PERSPECTIVE_MODELING_ID);
 	}
 
 	@Override
 	public boolean isSimulationPerspective() {
-		return getCurrentPerspective().getId().equals(PERSPECTIVE_SIMULATION_ID);
+		return isSimulationPerspective(currentPerspectiveId);
+	}
+
+	private boolean isSimulationPerspective(final String perspectiveId) {
+		return perspectiveId.contains(PERSPECTIVE_SIMULATION_FRAGMENT);
 	}
 
 	@Override
@@ -718,39 +723,138 @@ public class SwtGui extends AbstractGui {
 		return openPerspective(PERSPECTIVE_MODELING_ID, immediately, true);
 	}
 
-	public final boolean openPerspective(final String perspectiveId, final boolean immediately,
-		final boolean withAutoSave) {
-		// loadPerspectives();
-		final IWorkbenchPage activePage = getPage(perspectiveId);
+	private void cleanPerspectives() {
 		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
-		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
-
-		if ( currentDescriptor != null && currentDescriptor.equals(descriptor) ) { return true; }
-		if ( descriptor != null ) {
-			final Runnable r = new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						activePage.setPerspective(descriptor);
-					} catch (final NullPointerException e) {
-						System.err.println(
-							"NPE in WorkbenchPage.setPerspective(). See Issue #1602. Working around the bug in e4...");
-						activePage.setPerspective(descriptor);
-					}
-					activateAutoSave(withAutoSave);
-					// debug("Perspective " + perspectiveId + " open ");
-				}
-			};
-			if ( immediately ) {
-				run(r);
-			} else {
-				asyncRun(r);
+		for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
+			if ( desc.getId().contains(PERSPECTIVE_SIMULATION_FRAGMENT) &&
+				!desc.getId().equals(PERSPECTIVE_SIMULATION_ID) ) {
+				reg.deletePerspective(desc);
 			}
+		}
+	}
+
+	public static PerspectiveRegistry getPerspectiveRegistry() {
+		return (PerspectiveRegistry) PlatformUI.getWorkbench().getPerspectiveRegistry();
+	}
+
+	static PerspectiveDescriptor getSimulationDescriptor() {
+		return (PerspectiveDescriptor) getPerspectiveRegistry().findPerspectiveWithId(PERSPECTIVE_SIMULATION_ID);
+	}
+
+	static void dirtySavePerspective(final SimulationPerspectiveDescriptor sp) {
+		try {
+			final Field descField = PerspectiveRegistry.class.getDeclaredField("descriptors");
+			descField.setAccessible(true);
+			final Map m = (Map) descField.get(getPerspectiveRegistry());
+			m.put(sp.getId(), sp);
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private class SimulationPerspectiveDescriptor extends PerspectiveDescriptor {
+
+		SimulationPerspectiveDescriptor(final String id) {
+			super(id, id, getSimulationDescriptor());
+			dirtySavePerspective(this);
+		}
+
+		@Override
+		public IPerspectiveFactory createFactory() {
+			try {
+				return (IPerspectiveFactory) getSimulationDescriptor().getConfigElement()
+					.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
+			} catch (final CoreException e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public boolean hasCustomDefinition() {
 			return true;
 		}
-		return false;
+
+		@Override
+		public boolean isPredefined() {
+			return true;
+		}
+
+		@Override
+		public IConfigurationElement getConfigElement() {
+			return getSimulationDescriptor().getConfigElement();
+		}
+
+		@Override
+		public String getDescription() {
+			return "Perspective for " + getId();
+		}
+
+		@Override
+		public String getOriginalId() {
+			return getId();
+		}
+
+		// @Override
+		// public String getLabel() {
+		// return getSimulationDescriptor().getLabel();
+		// }
+
+		@Override
+		public String getPluginId() {
+			return getSimulationDescriptor().getPluginId();
+		}
+
+	}
+
+	private String currentPerspectiveId = IGui.PERSPECTIVE_MODELING_ID;
+
+	private IPerspectiveDescriptor findOrBuildPerspectiveWithId(final String id) {
+		IPerspectiveDescriptor tempDescriptor = getPerspectiveRegistry().findPerspectiveWithId(id);
+		if ( tempDescriptor == null ) {
+			tempDescriptor = new SimulationPerspectiveDescriptor(id);
+		}
+		return tempDescriptor;
+	}
+
+	private final boolean openPerspective(final String perspectiveId, final boolean immediately,
+		final boolean withAutoSave) {
+		if ( perspectiveId.equals(currentPerspectiveId) )
+			return true;
+		System.out.println("Trying to open perspective " + perspectiveId + " ");
+
+		// System.out.println("Cleaning perspectives");
+		// cleanPerspectives();
+		final IWorkbenchPage activePage = getPage(perspectiveId);
+		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
+		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
+
+		final Runnable r = new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					activePage.setPerspective(descriptor);
+				} catch (final NullPointerException e) {
+					System.err.println(
+						"NPE in WorkbenchPage.setPerspective(). See Issue #1602. Working around the bug in e4...");
+					activePage.setPerspective(descriptor);
+				}
+				activateAutoSave(withAutoSave);
+				if ( isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId) ) {
+					activePage.closePerspective(oldDescriptor, false, false);
+				}
+				currentPerspectiveId = perspectiveId;
+				System.out.println("Perspective " + perspectiveId + " opened ");
+			}
+		};
+		if ( immediately ) {
+			run(r);
+		} else {
+			asyncRun(r);
+		}
+		return true;
 	}
 
 	public final static IPerspectiveDescriptor getActivePerspective() {
@@ -765,43 +869,32 @@ public class SwtGui extends AbstractGui {
 
 	}
 
-	// static final Map<String, Class> perspectiveClasses = new THashMap();
-	//
-	// public final boolean loadPerspectives() {
-	// if ( !perspectiveClasses.isEmpty() ) { return true; }
-	//
-	// final IConfigurationElement[] config =
-	// Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.perspectives");
-	// for ( final IConfigurationElement e : config ) {
-	// final String pluginID = e.getAttribute("id");
-	// final String pluginClass = e.getAttribute("class");
-	// final String pluginName = e.getContributor().getName();
-	// // Check if is a gama perspective...
-	// if ( pluginID.contains("msi.gama") ) {
-	// final ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-	// try {
-	// perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
-	// } catch (final ClassNotFoundException e1) {
-	// e1.printStackTrace();
-	// }
-	// System.out.println("Gama perspective " + pluginID + " is loaded");
-	// }
-	// }
-	//
-	// return false; // openPerspective(I);
-	// }
-
 	@Override
 	public void runModel(final IModel model, final String exp) {
-		// SimulationPerspective.setCurrentModelAndExperiment(model.getName(), exp);
-		GAMA.getGui().openSimulationPerspective(true);
-		// getPage().resetPerspective();
 		GAMA.runGuiExperiment(exp, model);
 	}
 
 	@Override
 	public final boolean openSimulationPerspective(final boolean immediately) {
-		return openPerspective(PERSPECTIVE_SIMULATION_ID, immediately, false);
+		final IModel model = GAMA.getModel();
+		if ( model == null )
+			return false;
+		final IExperimentPlan p = GAMA.getExperiment();
+		if ( p == null )
+			return false;
+		final String id = p.getName();
+		return openSimulationPerspective(model, id, immediately);
+	}
+
+	@Override
+	public final boolean openSimulationPerspective(final IModel model, final String experimentName,
+		final boolean immediately) {
+		if ( model == null )
+			return false;
+		// If we can load a perspective saved alongside the model, we do it.
+		msi.gama.gui.swt.perspectives.LoadPerspectiveHandler.execute(model, experimentName);
+		final String name = getNewPerspectiveName(model, experimentName);
+		return openPerspective(name, immediately, false);
 
 	}
 
@@ -898,12 +991,15 @@ public class SwtGui extends AbstractGui {
 		}
 	}
 
+	public static String getNewPerspectiveName(final IModel model, final String experiment) {
+		return PERSPECTIVE_SIMULATION_FRAGMENT + ":" + model.getName() + ":" + experiment;
+	}
+
 	@Override
 	public void togglePerspective(final boolean immediately) {
+		System.out.println("Toggling perspective immediately" + immediately);
 		if ( isSimulationPerspective() ) {
 			openModelingPerspective(immediately);
-			// } else if ( isModelingPerspective() ) {
-			// openHeadlessPerspective();
 		} else {
 			openSimulationPerspective(immediately);
 		}
@@ -980,6 +1076,7 @@ public class SwtGui extends AbstractGui {
 					part.initFor(scope, panel.getUserCommands(), "[" + scope.getAgentScope().getName() + " in " +
 						scope.getSimulationScope().getName() + "] " + panel.getName());
 				}
+				System.out.println("Setting " + scope.getName() + " on user hold");
 				scope.setOnUserHold(true);
 				try {
 					getPage().showView(UserControlView.ID);
@@ -1271,10 +1368,10 @@ public class SwtGui extends AbstractGui {
 	 * Method waitForViewsToBeInitialized()
 	 * @see msi.gama.common.interfaces.IGui#waitForViewsToBeInitialized()
 	 */
-	@Override
-	public void waitForViewsToBeInitialized() {
-		// OutputSynchronizer.waitForViewsToBeInitialized();
-	}
+	// @Override
+	// public void waitForViewsToBeInitialized() {
+	// // OutputSynchronizer.waitForViewsToBeInitialized();
+	// }
 
 	@Override
 	public void runModel(final Object object, final String exp) throws CoreException {
@@ -1402,28 +1499,6 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public IFileMetaDataProvider getMetaDataProvider() {
 		return FileMetaDataProvider.getInstance();
-	}
-
-	/**
-	 * Method wipeExperiments()
-	 * @see msi.gama.common.interfaces.IGui#wipeExperiments()
-	 */
-	@Override
-	public void wipeExperiments() {
-		/* Close all views created in simulation perspective */
-
-		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		final String idCurrentPerspective = window.getActivePage().getPerspective().getId();
-		try {
-			if ( idCurrentPerspective.equals(IGui.PERSPECTIVE_SIMULATION_ID) ) {
-				closeSimulationViews(true, true);
-			} else {
-				window.getWorkbench().showPerspective(IGui.PERSPECTIVE_SIMULATION_ID, window);
-				closeSimulationViews(true, true);
-			}
-		} catch (final WorkbenchException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override

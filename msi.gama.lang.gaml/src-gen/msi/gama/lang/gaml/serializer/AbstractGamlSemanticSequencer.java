@@ -33,6 +33,7 @@ import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Pair;
 import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Point;
+import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.ReservedLiteral;
 import msi.gama.lang.gaml.gaml.S_Action;
 import msi.gama.lang.gaml.gaml.S_Assignment;
@@ -367,6 +368,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				else break;
 			case GamlPackage.POINT:
 				sequence_Primary(context, (Point) semanticObject); 
+				return; 
+			case GamlPackage.PRAGMA:
+				sequence_Pragma(context, (Pragma) semanticObject); 
 				return; 
 			case GamlPackage.RESERVED_LITERAL:
 				sequence_TerminalExpression(context, (ReservedLiteral) semanticObject); 
@@ -1176,7 +1180,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     VarDefinition returns Model
 	 *
 	 * Constraint:
-	 *     (name=ID imports+=Import* block=ModelBlock)
+	 *     (pragmas+=Pragma* name=ID imports+=Import* block=ModelBlock)
 	 */
 	protected void sequence_Model(ISerializationContext context, Model semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1251,6 +1255,24 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 */
 	protected void sequence_Parameters(ISerializationContext context, Parameters semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Pragma returns Pragma
+	 *
+	 * Constraint:
+	 *     name=ID
+	 */
+	protected void sequence_Pragma(ISerializationContext context, Pragma semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.PRAGMA__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.PRAGMA__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getPragmaAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
+		feeder.finish();
 	}
 	
 	

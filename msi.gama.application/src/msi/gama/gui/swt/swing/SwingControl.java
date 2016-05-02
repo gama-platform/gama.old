@@ -1428,6 +1428,11 @@ public abstract class SwingControl extends Composite {
 
 	}
 
+	@Override
+	public boolean isFocusControl() {
+		return false;
+	}
+
 	/**
 	 * Postprocess the super.forceFocus() result.
 	 */

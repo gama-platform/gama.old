@@ -63,6 +63,11 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 			}
 
 			@Override
+			public void checkWidget() {
+
+			}
+
+			@Override
 			public void afterComponentCreatedAWTThread() {
 				// if ( getDisplaySurface() != null )
 				// new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);

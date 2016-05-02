@@ -501,8 +501,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			clock.step(this.scope);
 			final int nbThreads = this.getSimulationPopulation().getNumberOfActiveThreads();
 
-			if (!getSpecies().isBatch()) {
-				scope.getGui().informStatus(getSimulation().getClock().getInfo() + (nbThreads > 1 ? " (" + nbThreads + " threads)" : ""));
+			if (!getSpecies().isBatch() && getSimulation() != null) {
+				scope.getGui().informStatus(
+						getSimulation().getClock().getInfo() + (nbThreads > 1 ? " (" + nbThreads + " threads)" : ""));
 			}
 		}
 		return result;

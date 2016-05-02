@@ -36,6 +36,7 @@ import msi.gama.lang.gaml.gaml.Pair;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Point;
+import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.ReservedLiteral;
 import msi.gama.lang.gaml.gaml.S_Action;
 import msi.gama.lang.gaml.gaml.S_Assignment;
@@ -134,6 +135,13 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass importEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass pragmaEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -742,7 +750,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getModel_Imports()
+  public EReference getModel_Pragmas()
   {
     return (EReference)modelEClass.getEStructuralFeatures().get(0);
   }
@@ -752,9 +760,19 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getModel_Block()
+  public EReference getModel_Imports()
   {
     return (EReference)modelEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getModel_Block()
+  {
+    return (EReference)modelEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -805,6 +823,26 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EAttribute getImport_ImportURI()
   {
     return (EAttribute)importEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getPragma()
+  {
+    return pragmaEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getPragma_Name()
+  {
+    return (EAttribute)pragmaEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1957,6 +1995,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     createEReference(actionEditorEClass, ACTION_EDITOR__ACTION);
 
     modelEClass = createEClass(MODEL);
+    createEReference(modelEClass, MODEL__PRAGMAS);
     createEReference(modelEClass, MODEL__IMPORTS);
     createEReference(modelEClass, MODEL__BLOCK);
 
@@ -1966,6 +2005,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     importEClass = createEClass(IMPORT);
     createEAttribute(importEClass, IMPORT__IMPORT_URI);
+
+    pragmaEClass = createEClass(PRAGMA);
+    createEAttribute(pragmaEClass, PRAGMA__NAME);
 
     statementEClass = createEClass(STATEMENT);
     createEAttribute(statementEClass, STATEMENT__KEY);
@@ -2260,6 +2302,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEReference(getActionEditor_Action(), this.getS_Definition(), null, "action", null, 0, 1, ActionEditor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getModel_Pragmas(), this.getPragma(), null, "pragmas", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_Imports(), this.getImport(), null, "imports", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_Block(), this.getBlock(), null, "block", null, 0, 1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -2269,6 +2312,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(importEClass, Import.class, "Import", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getImport_ImportURI(), ecorePackage.getEString(), "importURI", null, 0, 1, Import.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(pragmaEClass, Pragma.class, "Pragma", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getPragma_Name(), ecorePackage.getEString(), "name", null, 0, 1, Pragma.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStatement_Key(), ecorePackage.getEString(), "key", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

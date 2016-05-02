@@ -9,6 +9,7 @@ import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
+import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -33,6 +34,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getName <em>Name</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getPragmas <em>Pragmas</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getImports <em>Imports</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getBlock <em>Block</em>}</li>
  * </ul>
@@ -60,6 +62,16 @@ public class ModelImpl extends EntryImpl implements Model
    * @ordered
    */
   protected String name = NAME_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getPragmas() <em>Pragmas</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getPragmas()
+   * @generated
+   * @ordered
+   */
+  protected EList<Pragma> pragmas;
 
   /**
    * The cached value of the '{@link #getImports() <em>Imports</em>}' containment reference list.
@@ -123,6 +135,20 @@ public class ModelImpl extends EntryImpl implements Model
     name = newName;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.MODEL__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<Pragma> getPragmas()
+  {
+    if (pragmas == null)
+    {
+      pragmas = new EObjectContainmentEList<Pragma>(Pragma.class, this, GamlPackage.MODEL__PRAGMAS);
+    }
+    return pragmas;
   }
 
   /**
@@ -197,6 +223,8 @@ public class ModelImpl extends EntryImpl implements Model
   {
     switch (featureID)
     {
+      case GamlPackage.MODEL__PRAGMAS:
+        return ((InternalEList<?>)getPragmas()).basicRemove(otherEnd, msgs);
       case GamlPackage.MODEL__IMPORTS:
         return ((InternalEList<?>)getImports()).basicRemove(otherEnd, msgs);
       case GamlPackage.MODEL__BLOCK:
@@ -217,6 +245,8 @@ public class ModelImpl extends EntryImpl implements Model
     {
       case GamlPackage.MODEL__NAME:
         return getName();
+      case GamlPackage.MODEL__PRAGMAS:
+        return getPragmas();
       case GamlPackage.MODEL__IMPORTS:
         return getImports();
       case GamlPackage.MODEL__BLOCK:
@@ -238,6 +268,10 @@ public class ModelImpl extends EntryImpl implements Model
     {
       case GamlPackage.MODEL__NAME:
         setName((String)newValue);
+        return;
+      case GamlPackage.MODEL__PRAGMAS:
+        getPragmas().clear();
+        getPragmas().addAll((Collection<? extends Pragma>)newValue);
         return;
       case GamlPackage.MODEL__IMPORTS:
         getImports().clear();
@@ -263,6 +297,9 @@ public class ModelImpl extends EntryImpl implements Model
       case GamlPackage.MODEL__NAME:
         setName(NAME_EDEFAULT);
         return;
+      case GamlPackage.MODEL__PRAGMAS:
+        getPragmas().clear();
+        return;
       case GamlPackage.MODEL__IMPORTS:
         getImports().clear();
         return;
@@ -285,6 +322,8 @@ public class ModelImpl extends EntryImpl implements Model
     {
       case GamlPackage.MODEL__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case GamlPackage.MODEL__PRAGMAS:
+        return pragmas != null && !pragmas.isEmpty();
       case GamlPackage.MODEL__IMPORTS:
         return imports != null && !imports.isEmpty();
       case GamlPackage.MODEL__BLOCK:

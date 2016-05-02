@@ -77,6 +77,15 @@ public interface GamlFactory extends EFactory
   Import createImport();
 
   /**
+   * Returns a new object of class '<em>Pragma</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Pragma</em>'.
+   * @generated
+   */
+  Pragma createPragma();
+
+  /**
    * Returns a new object of class '<em>Statement</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

@@ -12,13 +12,18 @@
 package msi.gama.gui.views;
 
 import java.util.List;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.ParameterExpandBar;
+import msi.gama.gui.swt.controls.ParameterExpandItem;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 
@@ -39,9 +44,9 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		if ( viewer == null ) {
 			viewer = new ParameterExpandBar(parent, SWT.V_SCROLL, areItemsClosable(), areItemsPausable(), false, false,
 				this);
-			Object layout = parent.getLayout();
+			final Object layout = parent.getLayout();
 			if ( layout instanceof GridLayout ) {
-				GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+				final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 				viewer.setLayoutData(data);
 			}
 			viewer.computeSize(parent.getSize().x, SWT.DEFAULT);
@@ -65,7 +70,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
 		final Composite control, final ParameterExpandBar bar, final boolean expanded, final GamaUIColor color) {
 		// System.out.println("ExpandItem created for name " + name);
-		ParameterExpandItem i = buildConcreteItem(bar, data, color);
+		final ParameterExpandItem i = buildConcreteItem(bar, data, color);
 		if ( name != null ) {
 			i.setText(name);
 		}
@@ -95,7 +100,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		final GamaUIColor color) {
 		createViewer(parent);
 		if ( viewer == null ) { return null; }
-		Composite control = createItemContentsFor(data);
+		final Composite control = createItemContentsFor(data);
 		if ( control == null ) { return null; }
 		return createItem(parent, data, control, expanded, color);
 	}
@@ -115,16 +120,16 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 
 				viewer = null;
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void dispose() {
+	public void widgetDisposed(final DisposeEvent e) {
 		reset();
 		isOpen = false;
-		super.dispose();
+		super.widgetDisposed(e);
 	}
 
 	public void reset() {
@@ -167,8 +172,8 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	}
 
 	public void displayItems() {
-		List<T> items = getItems();
-		for ( T obj : items ) {
+		final List<T> items = getItems();
+		for ( final T obj : items ) {
 			addItem(obj);
 		}
 	}

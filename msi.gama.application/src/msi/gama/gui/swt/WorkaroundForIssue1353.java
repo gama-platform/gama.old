@@ -62,7 +62,6 @@ public class WorkaroundForIssue1353 {
 				@Override
 				public void run() {
 					// System.out.println("Displaying invisible shell");
-
 					shell.open();
 					shell.setVisible(false);
 

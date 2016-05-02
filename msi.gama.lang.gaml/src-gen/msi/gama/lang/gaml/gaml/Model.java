@@ -13,6 +13,7 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Model#getPragmas <em>Pragmas</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Model#getImports <em>Imports</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Model#getBlock <em>Block</em>}</li>
  * </ul>
@@ -23,6 +24,22 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface Model extends Entry, VarDefinition
 {
+  /**
+   * Returns the value of the '<em><b>Pragmas</b></em>' containment reference list.
+   * The list contents are of type {@link msi.gama.lang.gaml.gaml.Pragma}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Pragmas</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Pragmas</em>' containment reference list.
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getModel_Pragmas()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Pragma> getPragmas();
+
   /**
    * Returns the value of the '<em><b>Imports</b></em>' containment reference list.
    * The list contents are of type {@link msi.gama.lang.gaml.gaml.Import}.

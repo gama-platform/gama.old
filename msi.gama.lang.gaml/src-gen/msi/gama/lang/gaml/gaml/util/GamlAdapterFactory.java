@@ -105,6 +105,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createImportAdapter();
       }
       @Override
+      public Adapter casePragma(Pragma object)
+      {
+        return createPragmaAdapter();
+      }
+      @Override
       public Adapter caseStatement(Statement object)
       {
         return createStatementAdapter();
@@ -547,6 +552,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createImportAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Pragma <em>Pragma</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.Pragma
+   * @generated
+   */
+  public Adapter createPragmaAdapter()
   {
     return null;
   }

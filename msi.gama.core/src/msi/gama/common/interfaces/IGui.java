@@ -53,6 +53,7 @@ public interface IGui {
 	public static final Map<String, IDisplayCreator> DISPLAYS = new THashMap();
 	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
+	public static final String PERSPECTIVE_SIMULATION_FRAGMENT = "Simulation";
 	public static final String PERSPECTIVE_HPC_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 	public static final String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
@@ -73,6 +74,7 @@ public interface IGui {
 	public final static String PAUSED = "STOPPED";
 	public final static String RUNNING = "RUNNING";
 	public final static String NOTREADY = "NOTREADY";
+	public final static String ONUSERHOLD = "ONUSERHOLD";
 	public final static String NONE = "NONE";
 
 	void setSubStatusCompletion(double status);
@@ -141,6 +143,8 @@ public interface IGui {
 
 	boolean openSimulationPerspective(boolean immediately);
 
+	boolean openSimulationPerspective(IModel model, String experimentId, boolean immediately);
+
 	IDisplaySurface getDisplaySurfaceFor(LayeredDisplayOutput layerDisplayOutput);
 
 	Map<String, Object> openUserInputDialog(IScope scope, String title, Map<String, Object> initialValues,
@@ -166,7 +170,7 @@ public interface IGui {
 
 	void cleanAfterSimulation();
 
-	void waitForViewsToBeInitialized();
+	// void waitForViewsToBeInitialized();
 
 	void debug(Exception e);
 
@@ -196,11 +200,6 @@ public interface IGui {
 	void resumeStatus();
 
 	IFileMetaDataProvider getMetaDataProvider();
-
-	/**
-	 *
-	 */
-	void wipeExperiments();
 
 	/**
 	 *

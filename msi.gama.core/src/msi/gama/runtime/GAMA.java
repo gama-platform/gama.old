@@ -85,11 +85,13 @@ public class GAMA {
 			closeAllExperiments(false, false);
 		}
 
-		getGui().openSimulationPerspective(true);
-
-		controllers.add(controller);
-
-		controller.userOpen();
+		if (getGui().openSimulationPerspective(model, id, true)) {
+			controllers.add(controller);
+			controller.userOpen();
+		} else {
+			// we are unable to launch the perspective.
+			getGui().openModelingPerspective(true);
+		}
 
 	}
 
@@ -134,7 +136,6 @@ public class GAMA {
 		currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
 
 		controllers.add(currentExperiment.getController());
-		/// FIXME ADD IT SOMEWHERE
 		return currentExperiment;
 
 	}

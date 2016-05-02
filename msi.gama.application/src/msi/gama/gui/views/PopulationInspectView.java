@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -807,7 +808,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	@Override
-	public void dispose() {
+	public void widgetDisposed(final DisposeEvent e) {
 		super.dispose();
 		if ( viewer != null && viewer.getTable() != null && !viewer.getTable().isDisposed() ) {
 			viewer.getTable().dispose();
