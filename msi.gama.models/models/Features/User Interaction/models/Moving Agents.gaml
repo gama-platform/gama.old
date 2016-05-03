@@ -110,7 +110,40 @@ experiment "Click and Move" type: gui
 	font regular <- font("Helvetica", 14, # bold);
 	output
 	{
-		display "Click and Move" type: opengl
+		display "Click and Move (OPENGL)" type: opengl
+		{
+			graphics "Empty target" 
+			{
+				if (empty(moved_agents))
+				{
+					draw zone at: target empty: false border: false color: #wheat;
+				}
+
+			}
+
+			species being;
+			event mouse_move action: move;
+			event mouse_up action: click;
+			event 'k' action: kill;
+			event 'c' action: duplicate;
+			graphics "Full target" 
+			{
+				int size <- length(moved_agents);
+				if (size > 0)
+				{
+					rgb c1 <- rgb(#darkseagreen, 120);
+					rgb c2 <- rgb(#firebrick, 120);
+					draw zone at: target empty: false border: false color: (can_drop ? c1 : c2);
+					draw string(size) at: target + { -30, -30 } font: regular color: # white;
+					draw "'k': kill" at: target + { -30, 0 } font: regular color: # white;
+					draw "'c': copy" at: target + { -30, 30 } font: regular color: # white;
+				}
+
+			}
+
+		}
+		
+		display "Click and Move (JAVA2D)" type: opengl
 		{
 			graphics "Empty target" 
 			{

@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -94,6 +95,52 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected final java.awt.Rectangle surfaceCompositeBounds = new java.awt.Rectangle();
 	protected LayeredDisplayMultiListener keyAndMouseListener;
 	protected DisplaySurfaceMenu menuManager;
+	protected Composite normalParentOfFullScreenControl;
+	protected Composite controlToSetFullScreen;
+	protected Shell fullScreenShell;
+
+	public void toggleFullScreen() {
+		final boolean isFullScreen = fullScreenShell != null;
+		if ( isFullScreen ) {
+			controlToSetFullScreen.setParent(normalParentOfFullScreenControl);
+			overlay.relocateOverlay(normalParentOfFullScreenControl.getShell());
+			normalParentOfFullScreenControl.layout(true, true);
+			destroyFullScreenShell();
+			this.setFocus();
+
+		} else {
+			createFullScreenShell();
+			normalParentOfFullScreenControl = controlToSetFullScreen.getParent();
+			controlToSetFullScreen.setParent(fullScreenShell);
+			overlay.relocateOverlay(fullScreenShell);
+			fullScreenShell.layout(true, true);
+			fullScreenShell.setVisible(true);
+			getZoomableControls()[0].forceFocus();
+		}
+	}
+
+	private void createFullScreenShell() {
+		if ( fullScreenShell != null )
+			return;
+		fullScreenShell = new Shell(SwtGui.getDisplay(), SWT.ON_TOP | SWT.APPLICATION_MODAL);
+		fullScreenShell.setBounds(SwtGui.getDisplay().getBounds());
+		final GridLayout gl = new GridLayout(1, true);
+		gl.horizontalSpacing = 0;
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		gl.verticalSpacing = 0;
+		fullScreenShell.setLayout(gl);
+		// fullScreenShell.setAlpha(200);
+		// fullScreenShell.setFullScreen(true);
+	}
+
+	private void destroyFullScreenShell() {
+		if ( fullScreenShell == null )
+			return;
+		fullScreenShell.close();
+		fullScreenShell.dispose();
+		fullScreenShell = null;
+	}
 
 	protected Runnable displayOverlay = new Runnable() {
 
@@ -171,8 +218,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		sidePanel.setLayout(layout);
 		sidePanel.setBackground(IGamaColors.WHITE.color());
 		sidePanel.setData("NAME", "Side panel");
-
-		parent = new Composite(form, SWT.BORDER) {
+		final Composite centralPanel = new Composite(form, SWT.NONE);
+		GridLayout gl = new GridLayout(1, true);
+		gl.horizontalSpacing = 0;
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		gl.verticalSpacing = 0;
+		centralPanel.setLayout(gl);
+		parent = new Composite(centralPanel, SWT.BORDER) {
 
 			@Override
 			public boolean setFocus() {
@@ -180,7 +233,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			}
 
 		};
-		final GridLayout gl = new GridLayout(1, true);
+		controlToSetFullScreen = parent;
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
@@ -201,7 +256,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		gd.horizontalIndent = 0;
 		gd.verticalIndent = 0;
 		surfaceComposite.setLayoutData(gd);
-		overlay = new DisplayOverlay(this, parent, getOutput().getOverlayProvider());
+		overlay = new DisplayOverlay(this, surfaceComposite, getOutput().getOverlayProvider());
 		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
 		getOutput().getData().addListener(this);
 		overlay.setVisible(GamaPreferences.CORE_OVERLAY.getValue());
@@ -212,7 +267,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		fillLayerSideControls(sidePanel);
 
 		// form.setWeights(new int[] { 30, 70 });
-		form.setMaximizedControl(parent);
+		form.setMaximizedControl(centralPanel);
 		c.layout();
 
 		perspectiveListener = new IPerspectiveListener() {
@@ -255,7 +310,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	@Override
 	public void setFocus() {
-		if ( parent != null && !parent.isFocusControl() ) {
+		if ( parent != null && !parent.isDisposed() && !parent.isFocusControl() ) {
 			parent.forceFocus();
 		}
 	}
@@ -414,7 +469,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			public void widgetSelected(final SelectionEvent e) {
 				if ( visible ) {
 					weights = form.getWeights();
-					form.setMaximizedControl(parent);
+					form.setMaximizedControl(parent.getParent());
 					visible = false;
 				} else {
 					form.setWeights(weights);

@@ -113,16 +113,9 @@ public class ModelScene {
 		Texture texture = localVolatileTextures.get(image);
 		if (texture == null) {
 			texture = TextureCache.buildTexture(gl, image);
-			// image.flush();
 			localVolatileTextures.put(image, texture);
 		}
-		if (texture != null) {
-			final boolean antiAlias = renderer.data.isAntialias();
-			// Apply antialas to the texture based on the current preferences
-			texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
-			texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
-		}
-		return texture;
+		return antiAliasTexture(gl, texture);
 	}
 
 	// Must have been stored before
@@ -131,6 +124,10 @@ public class ModelScene {
 			return null;
 		}
 		final Texture texture = renderer.getSharedTextureCache().get(gl, file);
+		return antiAliasTexture(gl, texture);
+	}
+
+	private Texture antiAliasTexture(final GL gl, final Texture texture) {
 		if (texture != null) {
 			final boolean antiAlias = renderer.data.isAntialias();
 			// Apply antialas to the texture based on the current preferences

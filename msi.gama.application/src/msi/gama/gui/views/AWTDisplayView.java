@@ -74,7 +74,7 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 			}
 		};
 		surfaceComposite.setEnabled(false);
-		WorkaroundForIssue1594.installOn(AWTDisplayView.this, parent, surfaceComposite, getDisplaySurface());
+		// WorkaroundForIssue1594.installOn(AWTDisplayView.this, parent, surfaceComposite, getDisplaySurface());
 
 		return surfaceComposite;
 	}

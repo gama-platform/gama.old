@@ -39,6 +39,16 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		// control.addMouseWheelListener(this);
 		control.addMouseMoveListener(this);
 		control.addFocusListener(this);
+		// SwtGui.getDisplay().addFilter(SWT.MouseMove, new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event event) {
+		// if ( control.isDisposed() )
+		// SwtGui.getDisplay().removeFilter(SWT.MouseMove, this);
+		// else System.out.println("CURRENT FOCUS: " + control.getDisplay().getFocusControl());
+		//
+		// }
+		// });
 	}
 
 	public void dispose() {
@@ -66,6 +76,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	public void keyReleased(final KeyEvent e) {
 		if ( !ok() )
 			return;
+		if ( e.character == SWT.ESC )
+			view.toggleFullScreen();
 	}
 
 	@Override
@@ -201,8 +213,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void focusLost(final FocusEvent e) {
-		if ( !ok() )
-			return;
+		// if ( !ok() )
+		// return;
 		// System.out.println("Control has lost focus");
 		// Thread.dumpStack();
 	}
@@ -215,6 +227,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		if ( !controlOk )
 			return false;
 		final boolean surfaceOk = view.getDisplaySurface() != null && !view.getDisplaySurface().isDisposed();
+		if ( !control.isFocusControl() )
+			control.forceFocus();
 		return surfaceOk;
 	}
 

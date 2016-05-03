@@ -4,13 +4,8 @@
  */
 package ummisco.gama.opengl;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
@@ -26,8 +21,6 @@ import msi.gama.runtime.GAMA;
 public class SWTLayeredDisplayView extends LayeredDisplayView {
 
 	boolean isOverlayTemporaryVisible;
-	Composite parentOfSurfaceComposite;
-	Shell fullScreenShell;
 
 	public static String ID = "msi.gama.application.view.OpenGLDisplayView";
 
@@ -36,68 +29,11 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 		return (SWTOpenGLDisplaySurface) super.getDisplaySurface();
 	}
 
-	public void toggleFullScreen() {
-		final boolean isFullScreen = fullScreenShell != null;
-		if (isFullScreen) {
-			surfaceComposite.setParent(parentOfSurfaceComposite);
-			parentOfSurfaceComposite.layout(true, true);
-			destroyFullScreenShell();
-			surfaceComposite.setFocus();
-
-		} else {
-			createFullScreenShell();
-			surfaceComposite.setParent(fullScreenShell);
-			fullScreenShell.layout(true, true);
-			fullScreenShell.setVisible(true);
-			surfaceComposite.setFocus();
-		}
-	}
-
-	private void createFullScreenShell() {
-		if (fullScreenShell != null)
-			return;
-		fullScreenShell = new Shell(SwtGui.getDisplay(), SWT.ON_TOP | SWT.APPLICATION_MODAL);
-		fullScreenShell.setBounds(SwtGui.getDisplay().getBounds());
-		final GridLayout gl = new GridLayout(1, true);
-		gl.horizontalSpacing = 0;
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		gl.verticalSpacing = 0;
-		fullScreenShell.setLayout(gl);
-		// fullScreenShell.setAlpha(100);
-		// fullScreenShell.setFullScreen(true);
-	}
-
-	private void destroyFullScreenShell() {
-		if (fullScreenShell == null)
-			return;
-		fullScreenShell.close();
-		fullScreenShell.dispose();
-		fullScreenShell = null;
-	}
-
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
-		parentOfSurfaceComposite = parent;
+
 		final SWTOpenGLDisplaySurface surface = new SWTOpenGLDisplaySurface(parent, getOutput());
 		surfaceComposite = surface.renderer.getCanvas();
-		surfaceComposite.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyReleased(final KeyEvent e) {
-				if (e.character == SWT.ESC) {
-					toggleFullScreen();
-				}
-
-			}
-
-			@Override
-			public void keyPressed(final KeyEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
 		surface.outputReloaded();
 		return surfaceComposite;
 	}
@@ -117,7 +53,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 
 	@Override
 	public void setFocus() {
-		if (surfaceComposite != null && !surfaceComposite.isFocusControl()) {
+		if (surfaceComposite != null && !surfaceComposite.isDisposed() && !surfaceComposite.isFocusControl()) {
 			surfaceComposite.forceFocus();
 		}
 	}

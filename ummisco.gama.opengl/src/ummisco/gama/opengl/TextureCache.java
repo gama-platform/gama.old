@@ -150,7 +150,6 @@ public class TextureCache {
 			// data.setHaveGL12(true);
 			final Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(),
 					correctImage(image, !JOGLRenderer.isNonPowerOf2TexturesAvailable), true);
-
 			return texture;
 		} catch (final GLException e) {
 			e.printStackTrace();

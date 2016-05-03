@@ -1395,23 +1395,18 @@
       <key
             commandId="msi.gama.application.commands.PlaySimulation"
             contextId="msi.gama.application.simulation.context"
-            schemeId="msi.gama.application.scheme"
-            sequence="M1+P">
-      </key>
-      <key
-            commandId="msi.gama.application.commands.RunModel"
-            schemeId="msi.gama.application.scheme"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+R">
       </key>
       <key
             commandId="msi.gama.application.commands.SwitchPerspective"
-            schemeId="msi.gama.application.scheme"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="F6">
       </key>
       <key
             commandId="msi.gama.application.commands.StepByStepSimulation"
             contextId="msi.gama.application.simulation.context"
-            schemeId="msi.gama.application.scheme"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+P">
       </key>
       <key
@@ -1636,10 +1631,6 @@
 
    <extension
          point="org.eclipse.ui.commands">
-      <command
-            id="msi.gama.application.commands.RunModel"
-            name="Run Model">
-      </command>
       <command
             defaultHandler="msi.gama.gui.swt.commands.PlayPauseSimulationHandler"
             id="msi.gama.application.commands.PlaySimulation"

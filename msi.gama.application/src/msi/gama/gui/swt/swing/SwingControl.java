@@ -1430,7 +1430,9 @@ public abstract class SwingControl extends Composite {
 
 	@Override
 	public boolean isFocusControl() {
-		return false;
+		if ( isDisposed() )
+			return false;
+		return display.getFocusControl() == this;
 	}
 
 	/**

@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
@@ -46,7 +46,7 @@ public class AgentLayer extends AbstractLayer {
 		return shapes.get(geometry);
 	}
 
-	protected final Map<IAgent, Rectangle2D> shapes = new THashMap();
+	protected final Map<IAgent, Rectangle2D> shapes = new ConcurrentHashMap();
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {

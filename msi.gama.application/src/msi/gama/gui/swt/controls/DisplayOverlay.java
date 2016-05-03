@@ -68,7 +68,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	private boolean visible = false;
 	private final LayeredDisplayView view;
 	protected final Composite referenceComposite;
-	private final Shell parentShell;
+	// private final Shell parentShell;
 	final boolean createExtraInfo;
 	Timer timer = new Timer();
 
@@ -116,8 +116,8 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 		ps.addPartListener(pl2);
 		referenceComposite = c;
-		parentShell = c.getShell();
-		popup = new Shell(parentShell, SWT.NO_TRIM | SWT.NO_FOCUS);
+		// parentShell = c.getShell();
+		popup = new Shell(c.getShell(), SWT.NO_TRIM | SWT.NO_FOCUS);
 		popup.setAlpha(140);
 		final FillLayout layout = new FillLayout();
 		layout.type = SWT.VERTICAL;
@@ -127,8 +127,8 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		createPopupControl();
 		popup.setAlpha(140);
 		popup.layout();
-		parentShell.addShellListener(listener);
-		parentShell.addControlListener(listener);
+		c.getShell().addShellListener(listener);
+		// parentShell.addControlListener(listener);
 		c.addControlListener(listener);
 		if ( provider != null ) {
 			provider.setTarget(new ThreadedOverlayUpdater(this), view.getDisplaySurface());
@@ -136,6 +136,11 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		if ( GamaPreferences.CORE_SHOW_FPS.getValue() ) {
 			timer.schedule(new FPSTask(), 0, 1000);
 		}
+	}
+
+	public void relocateOverlay(final Shell newShell) {
+		if ( popup.setParent(newShell) )
+			popup.moveAbove(newShell);
 	}
 
 	private Label label(final Composite c, final int horizontalAlign) {
@@ -500,9 +505,9 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			if ( ps != null ) {
 				ps.removePartListener(pl2);
 			}
-			if ( !parentShell.isDisposed() ) {
-				parentShell.removeControlListener(listener);
-				parentShell.removeShellListener(listener);
+			if ( !popup.getParent().isDisposed() ) {
+				popup.getParent().removeControlListener(listener);
+				popup.getParent().getShell().removeShellListener(listener);
 			}
 			timer.cancel();
 			popup.dispose();

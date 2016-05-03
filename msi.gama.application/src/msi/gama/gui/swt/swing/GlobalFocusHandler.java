@@ -31,9 +31,9 @@ public class GlobalFocusHandler {
 		this.display = display;
 		swtEventFilter = new SwtEventFilter();
 		// AD CHANGED
-		display.addFilter(SWT.Activate, swtEventFilter);
-		display.addFilter(SWT.Deactivate, swtEventFilter);
-		display.addFilter(SWT.Traverse, swtEventFilter);
+		// display.addFilter(SWT.Activate, swtEventFilter);
+		// display.addFilter(SWT.Deactivate, swtEventFilter);
+		// display.addFilter(SWT.Traverse, swtEventFilter);
 	}
 
 	public int getCurrentSwtTraversal() {
