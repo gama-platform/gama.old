@@ -1,5 +1,8 @@
 package msi.gama.gui.views;
 
+import java.awt.AWTEvent;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.DragDetectListener;
@@ -16,6 +19,7 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.WorkaroundForIssue1353;
 import msi.gama.runtime.GAMA;
 
@@ -39,6 +43,14 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		// control.addMouseWheelListener(this);
 		control.addMouseMoveListener(this);
 		control.addFocusListener(this);
+		Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+
+			@Override
+			public void eventDispatched(final AWTEvent event) {
+				System.out.println("AWTEvent:" + event.toString());
+
+			}
+		}, AWTEvent.MOUSE_MOTION_EVENT_MASK);
 		// SwtGui.getDisplay().addFilter(SWT.MouseMove, new Listener() {
 		//
 		// @Override
@@ -92,6 +104,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 			return;
 		if ( (e.stateMask & SWT.MODIFIER_MASK) != 0 )
 			return;
+
 		view.getDisplaySurface().setMousePosition(e.x, e.y);
 		if ( e.button > 0 )
 			return;
@@ -169,6 +182,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	public void mouseUp(final MouseEvent e) {
 		if ( !ok() )
 			return;
+
 		// In case the mouse has moved (for example on a menu)
 		if ( !mouseIsDown )
 			return;
@@ -177,6 +191,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 			return;
 		mouseIsDown = false;
 		// System.out.println("Mouse up on " + view.getPartName());
+		WorkaroundForIssue1353.showShell();
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseUp);
 	}
 
@@ -229,6 +244,9 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		final boolean surfaceOk = view.getDisplaySurface() != null && !view.getDisplaySurface().isDisposed();
 		if ( !control.isFocusControl() )
 			control.forceFocus();
+		if ( SwtGui.getActivePart() != view ) {
+			SwtGui.getPage().activate(view);
+		}
 		return surfaceOk;
 	}
 

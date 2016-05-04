@@ -138,7 +138,7 @@ public final class AwtEnvironment {
 
 	private final Display display;
 	private final AwtDialogListener dialogListener;
-	private final GlobalFocusHandler globalFocusHandler;
+	// private final GlobalFocusHandler globalFocusHandler;
 
 	// Private constructor - clients use getInstance() to obtain instances
 	private AwtEnvironment(final Display display) {
@@ -200,7 +200,7 @@ public final class AwtEnvironment {
 		// Dismiss AWT popups when SWT menus are shown
 		initSwingPopupsDismissal();
 
-		globalFocusHandler = new GlobalFocusHandler(display);
+		// globalFocusHandler = new GlobalFocusHandler(display);
 	}
 
 	void dispose() {
@@ -209,7 +209,7 @@ public final class AwtEnvironment {
 			popupParent.setVisible(false);
 			popupParent.dispose();
 		}
-		globalFocusHandler.dispose();
+		// globalFocusHandler.dispose();
 	}
 
 	// ======================= Look&Feel initialization =======================
@@ -366,45 +366,45 @@ public final class AwtEnvironment {
 	 *                SWT event thread
 	 *                </ul>
 	 */
-	public void invokeAndBlockSwt(final Runnable runnable) {
-		assert display != null;
-
-		/*
-		 * This code snippet is based on the following thread on
-		 * news.eclipse.platform.swt:
-		 * http://dev.eclipse.org/newslists/news.eclipse.platform.swt/msg24234.html
-		 */
-		if ( runnable == null ) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		if ( !display.equals(Display.getCurrent()) ) {
-			SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
-		}
-
-		// Switch to the AWT thread...
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					// do swing work...
-					runnable.run();
-				} finally {
-					ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
-
-						@Override
-						public void run() {
-							// Unblock SWT
-							SwtInputBlocker.unblock();
-						}
-					});
-				}
-			}
-		});
-
-		// Prevent user input on SWT components
-		SwtInputBlocker.block(dialogListener);
-	}
+	// public void invokeAndBlockSwt(final Runnable runnable) {
+	// assert display != null;
+	//
+	// /*
+	// * This code snippet is based on the following thread on
+	// * news.eclipse.platform.swt:
+	// * http://dev.eclipse.org/newslists/news.eclipse.platform.swt/msg24234.html
+	// */
+	// if ( runnable == null ) {
+	// SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	// }
+	// if ( !display.equals(Display.getCurrent()) ) {
+	// SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
+	// }
+	//
+	// // Switch to the AWT thread...
+	// EventQueue.invokeLater(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// try {
+	// // do swing work...
+	// runnable.run();
+	// } finally {
+	// ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// // Unblock SWT
+	// SwtInputBlocker.unblock();
+	// }
+	// });
+	// }
+	// }
+	// });
+	//
+	// // Prevent user input on SWT components
+	// SwtInputBlocker.block(dialogListener);
+	// }
 
 	/**
 	 * Creates an AWT frame suitable as a parent for AWT/Swing dialogs.
@@ -555,8 +555,8 @@ public final class AwtEnvironment {
 
 	// ----------------------- Focus Handling ------------------------------------------
 
-	protected GlobalFocusHandler getGlobalFocusHandler() {
-		return globalFocusHandler;
-	}
+	// protected GlobalFocusHandler getGlobalFocusHandler() {
+	// return globalFocusHandler;
+	// }
 
 }
