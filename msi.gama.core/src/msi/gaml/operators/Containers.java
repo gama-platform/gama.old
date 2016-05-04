@@ -115,7 +115,7 @@ public class Containers {
 					throw GamaRuntimeException.error("Negative step would result in an infinite range", scope);
 				}
 			} else {
-				if (step < 0) {
+				if (step > 0) {
 					throw GamaRuntimeException.error("Positive step would result in an infinite range", scope);
 				}
 			}
@@ -124,6 +124,38 @@ public class Containers {
 				list.add(i);
 			}
 			return list;
+		}
+
+		@operator(value = "every", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
+				IOperatorCategory.CONTAINER }, can_be_const = true)
+		@doc(value = "Retrieves elements from the first argument every `step` (second argument) elements. Raises an error if the step is negative or equal to zero")
+		public static IList every(final IScope scope, final IList source, final Integer step) {
+			if (step <= 0)
+				throw GamaRuntimeException.error("The step value in `every` should be strictly positive", scope);
+			final IList list = GamaListFactory.create(nullCheck(scope, source).getType().getContentType());
+			for (int i = 0; i < source.length(scope); i += step) {
+				list.add(source.get(scope, i));
+			}
+			return list;
+		}
+
+		@operator(value = {
+				"copy_between" /* , "copy" */ }, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
+						IOperatorCategory.LIST }, concept = { IConcept.CONTAINER, IConcept.LIST })
+		@doc(value = "Returns a copy of the first operand between the indexes determined by the second (inclusive) and third operands (exclusive)", examples = {
+				@example(value = " copy_between ([4, 1, 6, 9 ,7], 1, 3)", equals = "[1, 6]") }, usages = {
+						@usage("If the first operand is empty, returns an empty object of the same type"),
+						@usage("If the second operand is greater than or equal to the third operand, return an empty object of the same type"),
+						@usage("If the first operand is nil, raises an error") })
+		public static IList copy_between(final IScope scope, final IList l1, final Integer begin, final Integer end) {
+			final int beginIndex = begin < 0 ? 0 : begin;
+			final int size = nullCheck(scope, l1).size();
+			final int endIndex = end > size ? size : end;
+			if (beginIndex >= endIndex) {
+				return GamaListFactory.create(l1.getType().getContentType());
+			}
+			return GamaListFactory.createWithoutCasting(l1.getType().getContentType(),
+					l1.subList(beginIndex, endIndex));
 		}
 
 	}
@@ -212,24 +244,6 @@ public class Containers {
 							"contains_all" })
 	public static Boolean contains_any(final IScope scope, final IContainer c, final IContainer l) {
 		return Iterables.any(nullCheck(scope, c).iterable(scope), Guava.inContainer(scope, l));
-	}
-
-	@operator(value = {
-			"copy_between" /* , "copy" */ }, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-					IOperatorCategory.LIST }, concept = { IConcept.CONTAINER, IConcept.LIST })
-	@doc(value = "Returns a copy of the first operand between the indexes determined by the second (inclusive) and third operands (exclusive)", examples = {
-			@example(value = " copy_between ([4, 1, 6, 9 ,7], 1, 3)", equals = "[1, 6]") }, usages = {
-					@usage("If the first operand is empty, returns an empty object of the same type"),
-					@usage("If the second operand is greater than or equal to the third operand, return an empty object of the same type"),
-					@usage("If the first operand is nil, raises an error") })
-	public static IList copy_between(final IScope scope, final IList l1, final Integer begin, final Integer end) {
-		final int beginIndex = begin < 0 ? 0 : begin;
-		final int size = nullCheck(scope, l1).size();
-		final int endIndex = end > size ? size : end;
-		if (beginIndex >= endIndex) {
-			return GamaListFactory.create(l1.getType().getContentType());
-		}
-		return GamaListFactory.createWithoutCasting(l1.getType().getContentType(), l1.subList(beginIndex, endIndex));
 	}
 
 	@operator(value = { "first" }, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE, category = {
