@@ -19,7 +19,7 @@ global {
 	//Zoom to take in consideration the zoom in the display, to better write the cycle values
 	int zoom <- 4 min:1 max:100;
 	//Time value for a cycle
-	float step<-3600000.0 min : 1.0 max: 3600000.0;
+	float step<-3600000.0#ms min : 1.0 max: 3600000.0;
 	
 	//Alarm parameters
 	int alarm_days <- 0 min:0 max:365;
@@ -41,8 +41,8 @@ global {
 }
 //Species that will represent the clock
 species  clock { 
-		float nb_minutes<-0.0 update : ((timeElapsed mod 3600000))/60000; //Mod with 60 minutes or 1 hour, then divided by one minute value to get the number of minutes
-		float nb_hours<-0.0 update:((timeElapsed mod 43200000))/3600000;
+		float nb_minutes<-0.0 update : ((timeElapsed mod 3600000#ms))/60000#ms; //Mod with 60 minutes or 1 hour, then divided by one minute value to get the number of minutes
+		float nb_hours<-0.0 update:((timeElapsed mod 43200000#ms))/3600000#ms;
 		reflex update {
 			write string(nb_hours)+" : "+nb_minutes;
 			if (cycle = alarmCycle) 
