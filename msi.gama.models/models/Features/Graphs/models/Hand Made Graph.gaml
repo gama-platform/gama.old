@@ -6,6 +6,8 @@
 * the first graph created from the list of edges, an other for the graph creating by adding the nodes and edges manually using add operator.
 * Tags: graph, node, edge
 */
+
+@no_warning
 model handMadeGraph
 
 global {
