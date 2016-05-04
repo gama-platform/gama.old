@@ -15,11 +15,13 @@ import java.util.List;
 
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
+
 public class EulerSolver extends Solver {
 
-	public EulerSolver(final double step, final int discretizing_step, final List<Double> integrated_time,
-			final List<List<Double>> integrated_val) {
-		super(step, new EulerIntegrator(step), discretizing_step, integrated_time, integrated_val);
+	public EulerSolver(final double step, final GamaMap<String, IList<Double>> integrated_val) {
+		super(step, new EulerIntegrator(step), integrated_val);
 	}
 
 }

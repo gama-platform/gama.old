@@ -16,16 +16,17 @@ import java.util.List;
 import org.apache.commons.math3.ode.nonstiff.GraggBulirschStoerIntegrator;
 import org.apache.commons.math3.ode.sampling.StepHandler;
 
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
+
 public class GraggBulirschStoerSolver extends Solver {
 
 	public StepHandler stepHandler;
 
 	public GraggBulirschStoerSolver(final double minStep, final double maxStep, final double scalAbsoluteTolerance,
-			final double scalRelativeTolerance, final int discretizing_step, final List<Double> integrated_time,
-			final List<List<Double>> integrated_val) {
+			final double scalRelativeTolerance,  final GamaMap<String, IList<Double>> integrated_val) {
 		super((minStep + maxStep) / 2,
-				new GraggBulirschStoerIntegrator(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance),
-				discretizing_step, integrated_time, integrated_val);
+				new GraggBulirschStoerIntegrator(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance), integrated_val);
 	}
 
 }

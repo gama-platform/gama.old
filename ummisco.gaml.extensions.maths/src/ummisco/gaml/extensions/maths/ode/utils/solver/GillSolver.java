@@ -15,11 +15,13 @@ import java.util.List;
 
 import org.apache.commons.math3.ode.nonstiff.GillIntegrator;
 
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
+
 public class GillSolver extends Solver {
 
-	public GillSolver(final double step, final int discretizing_step, final List<Double> integrated_time,
-			final List<List<Double>> integrated_val) {
-		super(step, new GillIntegrator(step), discretizing_step, integrated_time, integrated_val);
+	public GillSolver(final double step, final GamaMap<String, IList<Double>> integrated_val) {
+		super(step, new GillIntegrator(step), integrated_val);
 	}
 
 }

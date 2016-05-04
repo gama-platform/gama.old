@@ -15,11 +15,13 @@ import java.util.List;
 
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
+
 public class Rk4Solver extends Solver {
 
-	public Rk4Solver(final double step, final int discretizing_step, final List<Double> integrated_time,
-			final List<List<Double>> integrated_val) {
-		super(step, new ClassicalRungeKuttaIntegrator(step), discretizing_step, integrated_time, integrated_val);
+	public Rk4Solver(final double step, GamaMap<String, IList<Double>> integrated_val) {
+		super(step, new ClassicalRungeKuttaIntegrator(step), integrated_val);
 	}
 
 }

@@ -669,6 +669,30 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 
 		IExpression indices = factory.createList(result);
+		
+		List<IDescription> lst =null;
+		IExpression varDiff = container;
+		if(container instanceof AgentVariableExpression)				
+		{			
+			lst =((AgentVariableExpression) varDiff).getDefinitionDescription().getSpeciesContext().getChildren();
+		}
+		if (container instanceof BinaryOperator && ((BinaryOperator)container).arg(1) instanceof AgentVariableExpression)
+		{
+			varDiff = ((BinaryOperator)container).arg(1);
+			lst =((AgentVariableExpression) varDiff).getDefinitionDescription().getSpeciesContext().getChildren();
+		}
+		if(lst != null){
+			for(IDescription L :lst){
+				if(L.getKeyword().equals("equation"))
+					for(IDescription L1:L.getChildren()){						
+						if(L1.getFacets().getLabel("left").contains(varDiff.toString())){
+							ConstantExpression varname=factory.createConst(varDiff.getName(), Types.STRING); 
+							ConstantExpression soeName=factory.createConst(L.getName(), Types.STRING); 
+							return factory.createOperator("internal_integrated_value", getContext(), object, varname, soeName);
+						}						
+					}
+			}
+		}
 		return factory.createOperator("internal_at", getContext(), object, container, indices);
 	}
 

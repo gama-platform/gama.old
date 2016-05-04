@@ -15,11 +15,13 @@ import java.util.List;
 
 import org.apache.commons.math3.ode.nonstiff.MidpointIntegrator;
 
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
+
 public class MidpointSolver extends Solver {
 
-	public MidpointSolver(final double step, final int discretizing_step, final List<Double> integrated_time,
-			final List<List<Double>> integrated_val) {
-		super(step, new MidpointIntegrator(step), discretizing_step, integrated_time, integrated_val);
+	public MidpointSolver(final double step, final GamaMap<String, IList<Double>> integrated_val) {
+		super(step, new MidpointIntegrator(step), integrated_val);
 	}
 
 }

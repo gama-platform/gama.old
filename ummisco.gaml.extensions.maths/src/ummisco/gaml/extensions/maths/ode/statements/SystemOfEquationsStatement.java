@@ -31,10 +31,12 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -129,6 +131,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		simultan = getFacet(IKeyword.SIMULTANEOUSLY);
 
 	}
+
 
 	/**
 	 * This method separates regular statements and equations.
