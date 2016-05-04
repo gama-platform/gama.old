@@ -86,11 +86,19 @@ experiment Simple type:gui {
 // This experiment runs the simulation 5 times.
 // At the end of each simulation, the people agents are saved in a shapefile
 experiment 'Run 5 simulations' type: batch repeat: 5 keep_seed: true until: ( time > 1000 ) {
-	int cpt <- 0;
-	action _step_ {
-		save people type:"shp" to:"people_shape" + cpt + ".shp" with: [is_infected::"INFECTED",is_immune::"IMMUNE"];
-		cpt <- cpt + 1;
+	
+
+	action _step_
+	{
+		int cpt <- 0;
+		ask simulations
+		{
+			save people type: "shp" to: "people_shape" + cpt + ".shp" with: [is_infected::"INFECTED", is_immune::"IMMUNE"];
+			cpt <- cpt + 1;
+		}
+
 	}
+
 }
 
 // This experiment explores two parameters with an exhaustive strategy,
