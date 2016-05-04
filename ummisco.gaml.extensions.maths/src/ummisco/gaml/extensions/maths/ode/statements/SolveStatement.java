@@ -166,9 +166,9 @@ public class SolveStatement extends AbstractStatement {
 		if (solver == null)
 			return null;
 
-		double timeInit = timeInitExp == null ? scope.getClock().getCycle()
+		double timeInit = timeInitExp == null ? scope.getSimulationScope().getClock().getTime()
 				: Cast.asFloat(scope, timeInitExp.value(scope));
-		double timeFinal = timeFinalExp == null ? scope.getClock().getCycle() + scope.getClock().getStep()
+		double timeFinal = timeFinalExp == null ? scope.getSimulationScope().getClock().getTime() + scope.getSimulationScope().getClock().getStep()
 				: Cast.asFloat(scope, timeFinalExp.value(scope));
 		if (cycleLength > 1.0) {
 			timeInit /= cycleLength;

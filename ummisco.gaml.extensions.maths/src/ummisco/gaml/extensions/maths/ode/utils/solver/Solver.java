@@ -48,9 +48,7 @@ public abstract class Solver {
 					final double time = interpolator.getCurrentTime();
 					final double[] y = interpolator.getInterpolatedState();
 					count++;
-					if (count / (1 / step / discretizing_step) % 1 <= 0.0001 && count < (int) (1 / step)) {
-						storeValues(time, integrationTimes, y, integratedValues);
-					}
+					storeValues(time, integrationTimes, y, integratedValues);
 				}
 			});
 	}
