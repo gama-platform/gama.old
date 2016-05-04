@@ -233,24 +233,6 @@ public class SpeciesDescription extends TypeDescription {
 		return skill;
 	}
 
-	// private void buildSharedSkills() {
-	// // Necessary in order to prevent concurrentModificationExceptions
-	// final Set<Class<? extends ISkill>> classes = new
-	// THashSet(skills.keySet());
-	// for ( final Class c : classes ) {
-	// Class clazz = c;
-	// if ( IArchitecture.class.isAssignableFrom(clazz) && control != null ) {
-	// while (clazz != AbstractArchitecture.class) {
-	// skills.put(clazz, control);
-	// clazz = clazz.getSuperclass();
-	// }
-	// }
-	// // else {
-	// // skills.put(clazz, AbstractGamlAdditions.getSkillInstanceFor(c));
-	// // }
-	// }
-	// }
-
 	public String getParentName() {
 		return facets.getLabel(PARENT);
 	}
@@ -293,10 +275,6 @@ public class SpeciesDescription extends TypeDescription {
 			if (!isModel() && ((SpeciesDescription) desc).isGrid()) {
 				desc.error("For the moment, grids cannot be defined as micro-species anywhere else than in the model");
 			}
-			// final ModelDescription md = getModelDescription();
-			// if ( md != null ) {
-			// md.addSpeciesType((TypeDescription) desc);
-			// }
 			getMicroSpecies().put(desc.getName(), (SpeciesDescription) desc);
 		}
 		return desc;
@@ -344,22 +322,10 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public StatementDescription getAspect(final String aName) {
-		// if ( aspects != null && aspects.containsKey(aName) ) { return
-		// aspects.get(aName); }
-		// return parent == null ? null : ((SpeciesDescription)
-		// parent).getAspect(aName);
 		return aspects == null ? null : aspects.get(aName);
 	}
 
 	public Collection<String> getAspectNames() {
-		// Set<String> names = new HashSet();
-		// if ( aspects != null ) {
-		// names.addAll(aspects.keySet());
-		// }
-		// if ( parent != null ) {
-		// names.addAll(((SpeciesDescription) parent).getAspectNames());
-		// }
-		// return names;
 		return aspects == null ? Collections.EMPTY_LIST : aspects.keySet();
 	}
 
@@ -391,8 +357,6 @@ public class SpeciesDescription extends TypeDescription {
 	@Override
 	public boolean hasAspect(final String a) {
 		return aspects != null && aspects.containsKey(a);
-
-		// || parent != null && parent.hasAspect(a);
 	}
 
 	@Override

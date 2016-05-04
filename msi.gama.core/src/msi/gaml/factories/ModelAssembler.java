@@ -8,6 +8,7 @@ import static msi.gama.common.interfaces.IKeyword.BOUNDS;
 import static msi.gama.common.interfaces.IKeyword.DEPENDS_ON;
 import static msi.gama.common.interfaces.IKeyword.ENVIRONMENT;
 import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
+import static msi.gama.common.interfaces.IKeyword.FREQUENCY;
 import static msi.gama.common.interfaces.IKeyword.GEOMETRY;
 import static msi.gama.common.interfaces.IKeyword.GLOBAL;
 import static msi.gama.common.interfaces.IKeyword.GRID;
@@ -15,7 +16,9 @@ import static msi.gama.common.interfaces.IKeyword.HEIGHT;
 import static msi.gama.common.interfaces.IKeyword.INIT;
 import static msi.gama.common.interfaces.IKeyword.NAME;
 import static msi.gama.common.interfaces.IKeyword.POINT;
+import static msi.gama.common.interfaces.IKeyword.SCHEDULES;
 import static msi.gama.common.interfaces.IKeyword.SHAPE;
+import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword.TORUS;
 import static msi.gama.common.interfaces.IKeyword.WIDTH;
 
@@ -230,6 +233,11 @@ public class ModelAssembler {
 			}
 		}
 
+		// Issue #1708 (put before the finalization)
+		if (model.getFacets().contains(SCHEDULES) || model.getFacets().contains(FREQUENCY)) {
+			createSchedulerSpecies(model);
+		}
+
 		model.finalizeDescription();
 
 		// We now can safely put the model inside "experiment"
@@ -269,6 +277,27 @@ public class ModelAssembler {
 		}
 		return model;
 
+	}
+
+	private void createSchedulerSpecies(final ModelDescription model) {
+		final SpeciesDescription sd = (SpeciesDescription) DescriptionFactory.create(SPECIES, model, NAME,
+				"_internal_global_scheduler");
+		sd.finalizeDescription();
+		if (model.getFacets().contains(SCHEDULES)) {
+			model.warning(
+					"'schedules' is deprecated in global. Define a dedicated species instead and add the facet to it",
+					IGamlIssue.DEPRECATED, NAME);
+			sd.getFacets().put(SCHEDULES, model.getFacets().get(SCHEDULES));
+			model.getFacets().remove(SCHEDULES);
+		}
+		if (model.getFacets().contains(FREQUENCY)) {
+			model.warning(
+					"'frequency' is deprecated in global. Define a dedicated species instead and add the facet to it",
+					IGamlIssue.DEPRECATED, NAME);
+			sd.getFacets().put(FREQUENCY, model.getFacets().get(FREQUENCY));
+			model.getFacets().remove(FREQUENCY);
+		}
+		model.addChild(sd);
 	}
 
 	void addExperiment(final String origin, final ModelDescription model, final ISyntacticElement experiment,
@@ -320,6 +349,7 @@ public class ModelAssembler {
 			if (speciesNode.isSpecies() || speciesNode.isExperiment()) {
 				// forces the micro-species to be created
 				macro.getMicroSpecies();
+				break;
 			}
 		}
 		// Add it to its macro-species

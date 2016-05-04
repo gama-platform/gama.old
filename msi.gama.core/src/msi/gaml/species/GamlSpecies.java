@@ -129,6 +129,14 @@ public class GamlSpecies extends AbstractSpecies {
 				return;
 			}
 
+			if (cellHeight != null || cellWidth != null || width != null || height != null || neighbors != null
+					|| neighbours != null) {
+				if (!desc.getKeyword().equals(IKeyword.GRID)) {
+					sd.warning("Facets related to dimensions and neighboring can only be defined in 'grids' definition",
+							IGamlIssue.CONFLICTING_FACETS);
+				}
+			}
+
 			final IExpression file = desc.getFacets().getExpr(FILE);
 
 			if (file != null && (height != null || width != null || cellWidth != null || cellHeight != null)) {
@@ -152,6 +160,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 				}
 			}
+
 			// If torus is declared on a species other than "global", emit a
 			// warning
 			final IExpression torus = desc.getFacets().getExpr(TORUS);
