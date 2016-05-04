@@ -143,7 +143,7 @@ experiment "Click and Move" type: gui
 
 		}
 		
-		display "Click and Move (JAVA2D)" type: opengl
+		display "Click and Move (JAVA2D)" type: java2D
 		{
 			graphics "Empty target" 
 			{
