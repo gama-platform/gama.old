@@ -19,7 +19,7 @@ global {
 	//Zoom to take in consideration the zoom in the display, to better write the cycle values
 	int zoom <- 4 min:1 max:100;
 	//Time value for a cycle
-	float step<-1000.0 min : 1.0 max: 3600000.0;
+	float step<-3600000.0 min : 1.0 max: 3600000.0;
 	
 	//Alarm parameters
 	int alarm_days <- 0 min:0 max:365;
@@ -41,8 +41,10 @@ global {
 }
 //Species that will represent the clock
 species  clock { 
+		float nb_minutes<-0.0 update : ((timeElapsed mod 3600000))/60000; //Mod with 60 minutes or 1 hour, then divided by one minute value to get the number of minutes
+		float nb_hours<-0.0 update:((timeElapsed mod 43200000))/3600000;
 		reflex update {
-			write ""+timeElapsed+ " "+step;
+			write string(nb_hours)+" : "+nb_minutes;
 			if (cycle = alarmCycle) 
 			{
 				 write "Time to leave" ; 
@@ -54,8 +56,8 @@ species  clock {
 		}
 		aspect default {
 			draw string("#cycles: " + cycle + " cycles")  size:zoom/2 font:"times" color:°black at:{world.shape.width/3,0};
-			draw clock_big_hand rotate:   (timeElapsed/10000 + 90) size: {7 * zoom, 2};
-			draw clock_small_hand rotate: (timeElapsed/120000 + 90) size:{5*zoom, 2} ;			
+			draw clock_big_hand rotate: nb_minutes*(360/60)  + 90  size: {7 * zoom, 2}; //Modulo with the representation of a minute in ms and divided by 10000 to get the degree of rotation
+			draw clock_small_hand rotate: nb_hours*(360/12)  + 90  size:{5*zoom, 2} ;			
 			draw clock_alarm rotate:      (alarmCycle/12000)  size: zoom/3 ; // Alarm time
 		}
  
