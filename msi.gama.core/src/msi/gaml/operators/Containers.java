@@ -94,7 +94,7 @@ public class Containers {
 			return range(scope, 0, end);
 		}
 
-		@operator(value = "range", content_type = IType.INT, category = {
+		@operator(value = { "range", "to" }, content_type = IType.INT, category = {
 				IOperatorCategory.CONTAINER }, can_be_const = true)
 		@doc(value = "Allows to build a list of int representing all contiguous values from the first to the second argument. The range can be increasing or decreasing. Passing the same value for both will return a singleton list with this value")
 		public static IList range(final IScope scope, final Integer start, final Integer end) {
@@ -120,7 +120,7 @@ public class Containers {
 				}
 			}
 			final IList list = GamaListFactory.create(Types.INT);
-			for (int i = start; step > 0 ? i < end : i > end; i += step) {
+			for (int i = start; step > 0 ? i <= end : i >= end; i += step) {
 				list.add(i);
 			}
 			return list;
