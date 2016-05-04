@@ -87,18 +87,18 @@ experiment Simple type:gui {
 // At the end of each simulation, the people agents are saved in a shapefile
 experiment 'Run 5 simulations' type: batch repeat: 5 keep_seed: true until: ( time > 1000 ) {
 	
-
-	action _step_
+	// the reflex will be activated at the end of each run; in this experiment a run consists of the execution of 5 simulations (repeat: 5)
+	reflex end_of_runs
 	{
 		int cpt <- 0;
+		// each simulation of the run is an agent; it is possible to access to the list of these agents by using the variable "simulations" of the experiment
+		//in this example, we ask all the simulation agents of the run to save (at the end of the simulation) the people population in a shapefile with their is_infected and is_immune attributes 
 		ask simulations
 		{
 			save people type: "shp" to: "people_shape" + cpt + ".shp" with: [is_infected::"INFECTED", is_immune::"IMMUNE"];
 			cpt <- cpt + 1;
 		}
-
 	}
-
 }
 
 // This experiment explores two parameters with an exhaustive strategy,
