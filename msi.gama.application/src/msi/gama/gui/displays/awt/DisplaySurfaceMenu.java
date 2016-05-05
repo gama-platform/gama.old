@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -121,17 +123,18 @@ public class DisplaySurfaceMenu {
 				all.addAll(agents);
 			}
 		}
-		buildMenu(true, mousex, mousey, modelCoordinates, all);
+		buildMenu(true, mousex, mousey, modelCoordinates, all, null);
 	}
 
-	public void buildMenu(final int mousex, final int mousey, final IAgent agent) {
+	public void buildMenu(final int mousex, final int mousey, final IAgent agent, final Runnable cleanup) {
+		// cleanup is an optional runnable to do whatever is necessary after the menu has disappeared
 		final GamaPoint modelCoordinates = agent == null ? null : (GamaPoint) agent.getLocation();
 		buildMenu(false, mousex, mousey, modelCoordinates,
-			agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent));
+			agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent), cleanup);
 	}
 
 	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final ILocation modelCoordinates,
-		final Collection<IAgent> agents) {
+		final Collection<IAgent> agents, final Runnable cleanup) {
 		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override
@@ -146,6 +149,18 @@ public class DisplaySurfaceMenu {
 				// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :
 				// http://www.eclipse.org/forums/index.php/t/208284/
 				retryVisible(menu, MAX_RETRIES);
+				if ( cleanup != null )
+					menu.addMenuListener(new MenuListener() {
+
+						@Override
+						public void menuShown(final MenuEvent e) {}
+
+						@Override
+						public void menuHidden(final MenuEvent e) {
+							cleanup.run();
+							menu.removeMenuListener(this);
+						}
+					});
 			}
 		});
 	}

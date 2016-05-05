@@ -12,8 +12,8 @@
 package ummisco.gama.opengl.scene;
 
 import com.jogamp.opengl.GL2;
+
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.jts.JTSDrawer;
 
 /**
  *
@@ -25,15 +25,12 @@ import ummisco.gama.opengl.jts.JTSDrawer;
  */
 public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 
-	JTSDrawer jtsDrawer;
-
 	public ResourceDrawer(final JOGLRenderer r) {
 		super(r);
-		jtsDrawer = new JTSDrawer(r);
 	}
 
 	@Override
 	protected void _draw(final GL2 gl, final ResourceObject object) {
-		jtsDrawer.drawGeometryCached(gl, object.file);
+		renderer.getJTSDrawer().drawGeometryCached(gl, object.file);
 	}
 }

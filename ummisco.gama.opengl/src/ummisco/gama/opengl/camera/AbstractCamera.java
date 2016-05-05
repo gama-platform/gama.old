@@ -12,36 +12,28 @@
 package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
-import java.nio.IntBuffer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 
-import com.jogamp.common.nio.Buffers;
 import com.jogamp.nativewindow.swt.SWTAccessor;
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLRunnable;
-import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
-import com.jogamp.opengl.glu.GLU;
 
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public abstract class AbstractCamera implements ICamera {
 
 	private JOGLRenderer renderer;
-	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 
 	// picking
-	private boolean isPickedPressed = false;
+	// private boolean isPickedPressed = false;
 
 	// Mouse
 	private Point mousePosition;
@@ -299,22 +291,24 @@ public abstract class AbstractCamera implements ICamera {
 		}
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
-		if (e.button == 3) {
-			if (renderer.mouseInROI(lastMousePressedPosition)) {
-				renderer.getSurface().selectionIn(renderer.getROIEnvelope());
-			} else {
-				isPickedPressed = true;
-				getRenderer().setPicking(true);
-			}
+		// if (e.button == 3) {
+		// if (renderer.mouseInROI(lastMousePressedPosition)) {
+		// renderer.getSurface().selectionIn(renderer.getROIEnvelope());
+		// }
+		// else {
+		// renderer.getPickingState().setPicking(true);
+		// }
 
-		} else if (e.button == 2) { // mouse wheel
+		// } else
+		if (e.button == 2) { // mouse wheel
 			resetPivot();
 		} else {
 			if (shift(e) && isViewInXYPlan()) {
 				startROI(e);
-			} else {
-				getRenderer().setPicking(false);
 			}
+			// else {
+			// renderer.getPickingState().setPicking(false);
+			// }
 		}
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
@@ -391,123 +385,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected static boolean shift(final org.eclipse.swt.events.KeyEvent e) {
 		return (e.stateMask & SWT.SHIFT) != 0;
-	}
-
-	// Picking method
-	// //////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * First pass pepare select buffer for select mode by clearing it, prepare
-	 * openGL to select mode and tell it where should draw object by using
-	 * gluPickMatrix() method
-	 * 
-	 * @return if returned value is true that mean the picking is enabled
-	 */
-	@Override
-	public boolean beginPicking(final GL2 gl) {
-		if (!isPickedPressed) {
-			return false;
-		}
-		final GLU glu = renderer.getGlu();
-
-		// 1. Selecting buffer
-		selectBuffer.clear(); // prepare buffer for new objects
-		gl.glSelectBuffer(selectBuffer.capacity(), selectBuffer);// add buffer
-																	// to openGL
-
-		// Pass below is very similar to refresh method in GLrenderer
-		// 2. Take the viewport attributes,
-		final int viewport[] = new int[4];
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-
-		final int width = viewport[2]; // get width and
-		final int height = viewport[3]; // height from viewport
-
-		// 3. Prepare openGL for rendering in select mode
-		gl.glRenderMode(GL2.GL_SELECT);
-
-		/*
-		 * The application must redefine the viewing volume so that it renders
-		 * only a small area around the place where the mouse was clicked. In
-		 * order to do that it is necessary to set the matrix mode to
-		 * GL_PROJECTION. Afterwards, the application should push the current
-		 * matrix to save the normal rendering mode settings. Next initialise
-		 * the matrix
-		 */
-
-		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-		gl.glPushMatrix();
-		gl.glLoadIdentity();
-
-		/*
-		 * Define the viewing volume so that rendering is done only in a small
-		 * area around the cursor. gluPickMatrix method restrict the area where
-		 * openGL will drawing objects
-		 *
-		 * OpenGL has a different origin for its window coordinates than the
-		 * operation system. The second parameter provides for the conversion
-		 * between the two systems, i.e. it transforms the origin from the upper
-		 * left corner, into the bottom left corner
-		 */
-		glu.gluPickMatrix(getMousePosition().x, height - getMousePosition().y, 4, 4, viewport, 0);
-
-		// FIXME Why do we have to call updatePerspective() here ?
-		renderer.updatePerspective(gl);
-		// Comment GL_MODELVIEW to debug3D picking (redraw the model when
-		// clicking)
-		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-		// 4. After this pass you must draw Objects
-
-		return true;
-	}
-
-	// //////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * After drawing we have to calculate which object was nearest screen and
-	 * return its index
-	 * 
-	 * @return name of selected object
-	 */
-	@Override
-	public int endPicking(final GL2 gl) {
-		if (!isPickedPressed) {
-			return -1;
-		}
-		this.isPickedPressed = false;// no further iterations
-		int selectedIndex;
-
-		// 5. When you back to Render mode gl.glRenderMode() methods return
-		// number of hits
-		final int howManyObjects = gl.glRenderMode(GL2.GL_RENDER);
-
-		// 6. Restore to normal settings
-		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-		gl.glPopMatrix();
-		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-
-		// 7. Seach the select buffer to find the nearest object
-
-		// code below derive which ocjects is nearest from monitor
-		//
-		if (howManyObjects > 0) {
-			// simple searching algorithm
-			selectedIndex = selectBuffer.get(3);
-			int mindistance = CmnFastMath.abs(selectBuffer.get(1));
-			for (int i = 0; i < howManyObjects; i++) {
-
-				if (mindistance < CmnFastMath.abs(selectBuffer.get(1 + i * 4))) {
-
-					mindistance = CmnFastMath.abs(selectBuffer.get(1 + i * 4));
-					selectedIndex = selectBuffer.get(3 + i * 4);
-
-				}
-
-			}
-			// end of searching
-		} else {
-			selectedIndex = -2;// return -2 of there was no hits
-		}
-
-		return selectedIndex;
 	}
 
 	protected void dump() {

@@ -27,6 +27,7 @@ import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.runtime.IScope;
+import msi.gaml.statements.draw.DrawingAttributes;
 
 /**
  * Written by drogoul Modified on 26 nov. 2009
@@ -52,7 +53,7 @@ public interface IDisplaySurface extends
 
 		void setPaused(boolean flag);
 
-		void selectAgent(IAgent agent);
+		void selectAgent(DrawingAttributes attributes);
 
 		void selectionIn(Envelope3D env);
 

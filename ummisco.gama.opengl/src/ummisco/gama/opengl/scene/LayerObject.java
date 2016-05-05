@@ -51,12 +51,12 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
 		this.layer = layer;
-		geometries = buildSceneObjects(new GeometryDrawer(renderer), true, false);
-		resources = buildSceneObjects(new ResourceDrawer(renderer), true, false);
+		geometries = buildSceneObjects(new GeometryDrawer(renderer));
+		resources = buildSceneObjects(new ResourceDrawer(renderer));
 		// TODO AD True or False for strings ??
-		strings = buildSceneObjects(new StringDrawer(renderer), true, false);
-		images = buildSceneObjects(new ImageDrawer(renderer), true, false);
-		dems = buildSceneObjects(new FieldDrawer(renderer), true, false);
+		strings = buildSceneObjects(new StringDrawer(renderer));
+		images = buildSceneObjects(new ImageDrawer(renderer));
+		dems = buildSceneObjects(new FieldDrawer(renderer));
 	}
 
 	protected ISceneObjects<GeometryObject> getGeometries() {
@@ -91,15 +91,15 @@ public class LayerObject implements Iterable<GeometryObject> {
 		return resources;
 	}
 
-	protected ISceneObjects buildSceneObjects(final ObjectDrawer drawer, final boolean asList, final boolean asVBO) {
-		return new SceneObjects(drawer, asList, asVBO);
+	protected ISceneObjects buildSceneObjects(final ObjectDrawer drawer) {
+		return new SceneObjects(drawer);
 	}
 
 	private boolean isPickable() {
 		return layer == null ? false : layer.isSelectable();
 	}
 
-	public void draw(final GL2 gl, final JOGLRenderer renderer, final boolean picking) {
+	public void draw(final GL2 gl, final JOGLRenderer renderer) {
 		if (isInvalid()) {
 			return;
 		}
@@ -124,12 +124,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 		// draw first the image that corresponds to the grid and then the line
 		// as geometries. (otherwise the lines are invisible)
 		gl.glEnable(GL.GL_TEXTURE_2D);
-		images.draw(gl, picking && isPickable());
+		final boolean picking = renderer.getPickingState().isPicking() && isPickable();
+
+		images.draw(gl, picking);
 		gl.glDisable(GL.GL_TEXTURE_2D);
-		resources.draw(gl, picking && isPickable());
-		geometries.draw(gl, picking && isPickable());
+		resources.draw(gl, picking);
+		geometries.draw(gl, picking);
 		//
-		strings.draw(gl, picking && isPickable());
+		strings.draw(gl, picking);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
@@ -137,7 +139,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		// draw that already applies the scale
 		// and offset...
 		// FIXME this needs to be changed
-		dems.draw(gl, picking && isPickable());
+		dems.draw(gl, picking);
 
 		gl.glPopMatrix();
 		if (overlay) {

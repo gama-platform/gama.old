@@ -51,6 +51,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.draw.DrawingAttributes;
 
 /**
  * Class OpenGLSWTDisplaySurface.
@@ -534,14 +535,42 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 	}
 
+	final Runnable cleanup = new Runnable() {
+
+		@Override
+		public void run() {
+			GAMA.getGui().asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					renderer.getPickingState().setPicking(false);
+
+				}
+			});
+
+		}
+
+	};
+
 	/**
 	 * Method selectAgents()
 	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface.OpenGL#selectAgents(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public void selectAgent(final IAgent agent) {
-		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agent);
+	public void selectAgent(final DrawingAttributes attributes) {
+		IAgent ag = null;
+		if (attributes != null)
+			if (attributes.getSpeciesName() != null) {
+				// The picked image is a grid or an image of a grid
+				final GamaPoint pickedPoint = renderer
+						.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
+				ag = scope.getRoot().getPopulationFor(attributes.getSpeciesName()).getAgent(scope,
+						new GamaPoint(pickedPoint.x, -pickedPoint.y));
+			} else {
+				ag = attributes.getAgent();
+			}
+		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag, cleanup);
 	}
 
 	// org.eclipse.swt.widgets.Menu menu;
@@ -805,7 +834,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public void selectAgentsAroundMouse() {
-		// Nothing to do (taken in charge by the picking process)
+		final Point position = renderer.camera.getLastMousePressedPosition();
+		if (renderer.mouseInROI(position)) {
+			renderer.getSurface().selectionIn(renderer.getROIEnvelope());
+		} else
+			renderer.getPickingState().setPicking(true);
 	}
 
 	@Override

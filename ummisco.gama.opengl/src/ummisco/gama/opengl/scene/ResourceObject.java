@@ -13,9 +13,13 @@ package ummisco.gama.opengl.scene;
 
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Envelope;
-import msi.gama.metamodel.shape.*;
+
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaPair;
-import msi.gama.util.file.*;
+import msi.gama.util.file.Gama3DGeometryFile;
+import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -30,37 +34,39 @@ public class ResourceObject extends AbstractObject {
 	}
 
 	@Override
-	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
+	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean isPicking) {
 
-		JOGLRenderer renderer = drawer.renderer;
-		// We first push the matrix so that all translations, etc. are done locally
+		final JOGLRenderer renderer = drawer.renderer;
+		// We first push the matrix so that all translations, etc. are done
+		// locally
 
 		gl.glPushMatrix();
-		Envelope env = JOGLRenderer.getEnvelopeFor(file.getPath());
-		// If a location is provided we use it otherwise we use that of the agent if it exists
-		if ( attributes.location != null ) {
+		final Envelope env = JOGLRenderer.getEnvelopeFor(file.getPath());
+		// If a location is provided we use it otherwise we use that of the
+		// agent if it exists
+		if (attributes.location != null) {
 			gl.glTranslated(attributes.location.x, renderer.yFlag * attributes.location.y, attributes.location.z);
-		} else if ( attributes.getAgent() != null ) {
-			ILocation loc = attributes.getAgent().getLocation();
+		} else if (attributes.getAgent() != null) {
+			final ILocation loc = attributes.getAgent().getLocation();
 			gl.glTranslated(loc.getX(), renderer.yFlag * loc.getY(), loc.getZ());
 		}
 
-		GamaPoint size = getDimensions();
+		final GamaPoint size = getDimensions();
 
 		// If there is a rotation we apply it
-		if ( attributes.rotation != null ) {
+		if (attributes.rotation != null) {
 			// AD Change to a negative rotation to fix Issue #1514
-			Double rot = -attributes.rotation.key;
-			GamaPoint axis = attributes.rotation.value;
+			final Double rot = -attributes.rotation.key;
+			final GamaPoint axis = attributes.rotation.value;
 			gl.glRotated(rot, axis.x, axis.y, axis.z);
 		}
 
-		GamaPair<Double, GamaPoint> initRotation = file.getInitRotation();
+		final GamaPair<Double, GamaPoint> initRotation = file.getInitRotation();
 		// we also apply the initial rotation if there is any
-		if ( initRotation != null ) {
+		if (initRotation != null) {
 			// AD Change to a negative rotation to fix Issue #1514
-			Double rot = -initRotation.key;
-			GamaPoint axis = initRotation.value;
+			final Double rot = -initRotation.key;
+			final GamaPoint axis = initRotation.value;
 			gl.glRotated(rot, axis.x, axis.y, axis.z);
 		}
 
@@ -69,28 +75,28 @@ public class ResourceObject extends AbstractObject {
 		//
 		// if ( size != null ) {
 		// gl.glTranslated(-size.x / 2, renderer.yFlag * size.y / 2, 0);
-		if ( size == null && env != null ) {
+		if (size == null && env != null) {
 			gl.glTranslated(-env.getWidth() / 2, -renderer.yFlag * env.getHeight() / 2, 0);
 		}
 
 		// We then compute the scaling factor to apply
 		double factor = 0.0;
-		if ( size != null && env != null ) {
-			if ( !(file instanceof Gama3DGeometryFile) || size.z == 0d ) {
+		if (size != null && env != null) {
+			if (!(file instanceof Gama3DGeometryFile) || size.z == 0d) {
 				factor = FastMath.min(size.x / env.getWidth(), size.y / env.getHeight());
 			} else {
-				double min_xy = FastMath.min(size.x / env.getWidth(), size.y / env.getHeight());
+				final double min_xy = FastMath.min(size.x / env.getWidth(), size.y / env.getHeight());
 				factor = FastMath.min(min_xy, size.z / ((Envelope3D) env).getDepth());
 			}
 			gl.glScaled(factor, factor, factor);
 		}
 		// And apply its color if any
-		if ( getColor() != null ) { // does not work for obj files
+		if (getColor() != null) { // does not work for obj files
 			gl.glColor4d(getColor().getRed() / 255.0, getColor().getGreen() / 255.0, getColor().getBlue() / 255.0,
-				getAlpha() * getColor().getAlpha() / 255.0);
+					getAlpha() * getColor().getAlpha() / 255.0);
 		}
 		// Then we draw the geometry itself
-		super.draw(gl, drawer, picking);
+		super.draw(gl, drawer, isPicking);
 
 		// and we pop the matrix
 		gl.glPopMatrix();

@@ -137,13 +137,13 @@ public class ModelScene {
 		return texture;
 	}
 
-	public void draw(final GL2 gl, final boolean picking) {
+	public void draw(final GL2 gl) {
 		// System.out.println("Beginning rendering Model front scene #" + id);
 		final LayerObject[] array = layers.values().toArray(new LayerObject[0]);
 		for (final LayerObject layer : array) {
 			if (layer != null && !layer.isInvalid()) {
 				try {
-					layer.draw(gl, renderer, picking);
+					layer.draw(gl, renderer);
 				} catch (final RuntimeException r) {
 					System.err.println("Runtime error " + r.getMessage() + " in OpenGL loop");
 					r.printStackTrace();

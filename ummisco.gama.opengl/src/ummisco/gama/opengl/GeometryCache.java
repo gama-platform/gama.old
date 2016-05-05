@@ -15,8 +15,12 @@ import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 import com.jogamp.opengl.GL2;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Polygon;
+
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.file.GamaGeometryFile;
@@ -27,7 +31,6 @@ public class GeometryCache {
 
 	private final Map<String, Integer> cache;
 
-
 	public GeometryCache() {
 		cache = new ConcurrentHashMap<>(100, 0.75f, 4);
 
@@ -36,10 +39,10 @@ public class GeometryCache {
 
 	public Integer get(final GL2 gl, final JOGLRenderer renderer, final GamaGeometryFile file) {
 		Integer index = cache.get(file.getPath());
-		if ( index == null ) {
+		if (index == null) {
 			try {
 				index = buildList(gl, renderer, file);
-			} catch (FileNotFoundException e) {
+			} catch (final FileNotFoundException e) {
 				e.printStackTrace();
 			}
 			cache.put(file.getPath(), index);
@@ -48,21 +51,23 @@ public class GeometryCache {
 	}
 
 	private Integer buildList(final GL2 gl, final JOGLRenderer renderer, final GamaGeometryFile file)
-		throws FileNotFoundException {
-		String extension = file.getExtension();
+			throws FileNotFoundException {
+		final String extension = file.getExtension();
 		// We generate the list first
-		Integer index = gl.glGenLists(1);
+		final Integer index = gl.glGenLists(1);
 		gl.glNewList(index, GL2.GL_COMPILE);
 		// We push the matrix
 		gl.glPushMatrix();
 		// We draw the file in the list
-		if ( extension.equals("obj") ) {
+		if (extension.equals("obj")) {
 			((GamaObjFile) file).drawToOpenGL(gl);
 		} else {
-			IDisplaySurface surface = renderer.getSurface();
-			IShape shape = file.getGeometry(surface.getDisplayScope());
-			if ( shape == null ) { return index; }
-			Geometry g = shape.getInnerGeometry();
+			final IDisplaySurface surface = renderer.getSurface();
+			final IShape shape = file.getGeometry(surface.getDisplayScope());
+			if (shape == null) {
+				return index;
+			}
+			final Geometry g = shape.getInnerGeometry();
 			drawSimpleGeometry(gl, renderer, g);
 		}
 		// We then pop the matrix
@@ -76,16 +81,16 @@ public class GeometryCache {
 	private final Color defaultColor = new Color(0, 0, 0);
 
 	void drawSimpleGeometry(final GL2 gl, final JOGLRenderer renderer, final Geometry g) {
-		if ( g.getNumGeometries() > 1 ) {
-			for ( int i = 0; i < g.getNumGeometries(); i++ ) {
-				Geometry jts = g.getGeometryN(i);
+		if (g.getNumGeometries() > 1) {
+			for (int i = 0; i < g.getNumGeometries(); i++) {
+				final Geometry jts = g.getGeometryN(i);
 				drawSimpleGeometry(gl, renderer, jts);
 			}
 		} else {
-			JTSDrawer drawer = new JTSDrawer(renderer);
-			if ( g instanceof Polygon ) {
+			final JTSDrawer drawer = renderer.getJTSDrawer();
+			if (g instanceof Polygon) {
 				drawer.drawTesselatedPolygon(gl, (Polygon) g, 1, defaultColor, 1);
-			} else if ( g instanceof LineString ) {
+			} else if (g instanceof LineString) {
 				drawer.drawLineString(gl, (LineString) g, 0, JOGLRenderer.getLineWidth(), defaultColor, 1);
 			}
 		}
@@ -95,7 +100,7 @@ public class GeometryCache {
 	 * @param gl
 	 */
 	public void dispose(final GL2 gl) {
-		for ( Integer i : cache.values() ) {
+		for (final Integer i : cache.values()) {
 			gl.glDeleteLists(i, 1);
 		}
 		cache.clear();

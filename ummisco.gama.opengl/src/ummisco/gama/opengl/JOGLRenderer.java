@@ -17,12 +17,14 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.BufferOverflowException;
+import java.nio.IntBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
@@ -36,6 +38,7 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -53,6 +56,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
@@ -63,7 +67,6 @@ import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.jts.JTSDrawer;
-import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.SceneBuffer;
 import ummisco.gama.opengl.utils.GLUtilLight;
@@ -77,40 +80,92 @@ import ummisco.gama.opengl.utils.GLUtilLight;
  */
 public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, GLEventListener {
 
+	public class PickingState {
+
+		final static int NONE = -2;
+		final static int WORLD = -1;
+
+		volatile boolean isPicking;
+		volatile boolean isMenuOn;
+		volatile int pickedIndex = NONE;
+
+		public void setPicking(final boolean isPicking) {
+			this.isPicking = isPicking;
+			if (!isPicking) {
+				pickedIndex = NONE;
+				isMenuOn = false;
+			}
+		}
+
+		public void setMenuOn(final boolean isMenuOn) {
+			this.isMenuOn = isMenuOn;
+		}
+
+		public void setPickedIndex(final int pickedIndex) {
+			this.pickedIndex = pickedIndex;
+			System.out.println("Picked object = " + pickedIndex);
+			if (pickedIndex == WORLD && !isMenuOn) {
+				// Selection occured, but no object have been selected
+				isMenuOn = true;
+				getSurface().selectAgent(null);
+			}
+		}
+
+		public boolean isPicked(final int objectIndex) {
+			return pickedIndex == objectIndex;
+		}
+
+		public boolean isBeginningPicking() {
+			return isPicking && pickedIndex == NONE;
+		}
+
+		public boolean isMenuOn() {
+			return isMenuOn;
+		}
+
+		public boolean isPicking() {
+			return isPicking;
+		}
+
+	}
+
 	private static boolean BLENDING_ENABLED; // blending on/off
 	GLCanvas canvas;
 	public ICamera camera;
 	public final SceneBuffer sceneBuffer;
 	public double currentZRotation = 0;
-	private boolean picking = false;
+	private final PickingState pickingState = new PickingState();
 	private boolean drawRotationHelper = false;
 	private GamaPoint rotationHelperPosition = null;
-	public int pickedObjectIndex = -1;
-	public AbstractObject currentPickedObject;
+	// private Integer pickedObjectIndex = null;
+	// private AbstractObject currentPickedObject;
 	int[] viewport = new int[4];
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
 	private GLU glu;
-	// private final GLUT glut = new GLUT();
+	private final GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
 	private volatile boolean inited;
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
+	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 	// Use to inverse y composant
 	public int yFlag;
 	private final GeometryCache geometryCache = new GeometryCache();
 	private final TextRenderersCache textRendererCache = new TextRenderersCache();
 	private final TextureCache textureCache = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()
 			? TextureCache.getSharedInstance() : new TextureCache();
+	private final JTSDrawer jtsDrawer;
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		super(d);
 		camera = new CameraArcBall(this);
 		sceneBuffer = new SceneBuffer(this);
 		yFlag = -1;
+		jtsDrawer = new JTSDrawer(this);
 	}
 
 	public GLAutoDrawable createDrawable(final Composite parent) {
@@ -440,13 +495,124 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		// Do some garbage collecting in model scenes
 		sceneBuffer.garbageCollect(gl);
 		// if picking, we draw a first pass to pick the color
-		if (picking && camera.beginPicking(gl)) {
-			currentScene.draw(gl, true);
-			setPickedObjectIndex(camera.endPicking(gl));
+		if (pickingState.isBeginningPicking()) {
+			beginPicking(gl);
+			currentScene.draw(gl);
+			endPicking(gl);
 		}
 		// we draw the scene on screen
-		currentScene.draw(gl, picking);
+		currentScene.draw(gl);
 
+	}
+
+	// Picking method
+	// //////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * First pass pepare select buffer for select mode by clearing it, prepare
+	 * openGL to select mode and tell it where should draw object by using
+	 * gluPickMatrix() method
+	 * 
+	 * @return if returned value is true that mean the picking is enabled
+	 */
+	public void beginPicking(final GL2 gl) {
+
+		final GLU glu = getGlu();
+
+		// 1. Selecting buffer
+		selectBuffer.clear(); // prepare buffer for new objects
+		gl.glSelectBuffer(selectBuffer.capacity(), selectBuffer);// add buffer
+																	// to openGL
+
+		// Pass below is very similar to refresh method in GLrenderer
+		// 2. Take the viewport attributes,
+		final int viewport[] = new int[4];
+		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+
+		// final int width = viewport[2]; // get width and
+		// final int height = viewport[3]; // height from viewport
+
+		// 3. Prepare openGL for rendering in select mode
+		gl.glRenderMode(GL2.GL_SELECT);
+
+		/*
+		 * The application must redefine the viewing volume so that it renders
+		 * only a small area around the place where the mouse was clicked. In
+		 * order to do that it is necessary to set the matrix mode to
+		 * GL_PROJECTION. Afterwards, the application should push the current
+		 * matrix to save the normal rendering mode settings. Next initialise
+		 * the matrix
+		 */
+
+		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+
+		/*
+		 * Define the viewing volume so that rendering is done only in a small
+		 * area around the cursor. gluPickMatrix method restrict the area where
+		 * openGL will drawing objects
+		 *
+		 * OpenGL has a different origin for its window coordinates than the
+		 * operation system. The second parameter provides for the conversion
+		 * between the two systems, i.e. it transforms the origin from the upper
+		 * left corner, into the bottom left corner
+		 */
+		glu.gluPickMatrix(camera.getMousePosition().x, viewport[3] - camera.getMousePosition().y, 4, 4, viewport, 0);
+
+		// FIXME Why do we have to call updatePerspective() here ?
+		updatePerspective(gl);
+		// Comment GL_MODELVIEW to debug3D picking (redraw the model when
+		// clicking)
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+		// 4. After this pass you must draw Objects
+
+	}
+
+	// //////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * After drawing we have to calculate which object was nearest screen and
+	 * return its index
+	 * 
+	 * @return name of selected object
+	 */
+	public void endPicking(final GL2 gl) {
+
+		// this.setPickedPressed(false);// no further iterations
+		int selectedIndex = PickingState.NONE;
+
+		// 5. When you back to Render mode gl.glRenderMode() methods return
+		// number of hits
+		final int howManyObjects = gl.glRenderMode(GL2.GL_RENDER);
+
+		// 6. Restore to normal settings
+		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+		gl.glPopMatrix();
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+
+		// 7. Seach the select buffer to find the nearest object
+
+		// code below derive which ocjects is nearest from monitor
+		//
+		if (howManyObjects > 0) {
+			// simple searching algorithm
+			selectedIndex = selectBuffer.get(3);
+			int mindistance = CmnFastMath.abs(selectBuffer.get(1));
+			for (int i = 0; i < howManyObjects; i++) {
+
+				if (mindistance < CmnFastMath.abs(selectBuffer.get(1 + i * 4))) {
+
+					mindistance = CmnFastMath.abs(selectBuffer.get(1 + i * 4));
+					selectedIndex = selectBuffer.get(3 + i * 4);
+
+				}
+
+			}
+			// end of searching
+		} else {
+			selectedIndex = PickingState.WORLD;// return -2 of there was no hits
+		}
+
+		pickingState.setPickedIndex(selectedIndex);
 	}
 
 	public void switchCamera() {
@@ -485,16 +651,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		camera.update();
 	}
 
-	public void setPickedObjectIndex(final int pickedObjectIndex) {
-		this.pickedObjectIndex = pickedObjectIndex;
-		if (pickedObjectIndex == -1) {
-			setPicking(false);
-		} else if (pickedObjectIndex == -2) {
-			getSurface().selectAgent(null);
-			setPicking(false);
-		}
-	}
-
 	@Override
 	public void dispose(final GLAutoDrawable drawable) {
 		sceneBuffer.dispose();
@@ -504,7 +660,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		this.canvas = null;
 		this.camera = null;
 		this.currentLayer = null;
-		this.currentPickedObject = null;
+		// this.setCurrentPickedObject(null);
 		this.currentScene = null;
 	}
 
@@ -523,75 +679,15 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public void drawROI(final GL2 gl) {
-		final JTSDrawer drawer = new JTSDrawer(this); // move the method from
-														// this class
-		drawer.drawROIHelper(gl, ROIEnvelope);
-		//
-		//
-		//
-		// final double x1 = ROIEnvelope.getMinX();
-		// final double y1 = -ROIEnvelope.getMinY();
-		// final double x2 = ROIEnvelope.getMaxX();
-		// final double y2 = -ROIEnvelope.getMaxY();
-		//
-		// // Double distance = FastMath.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1)
-		// *
-		// // (y2 - y1));
-		// // gl.glRasterPos3d(x2, -y1, 0.1);
-		// gl.glColor3d(0.0, 0.0, 0.0);
-		// // glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, " d: " +
-		// // distance.toString());
-		// if (this.data.isZ_fighting()) {
-		// gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-		// gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
-		// // Draw on top of everything
-		// gl.glPolygonOffset(0.0f, (float) -this.getMaxEnvDim());
-		// gl.glBegin(GL2.GL_POLYGON);
-		//
-		// gl.glVertex3d(x1, -y1, 0.0f);
-		// gl.glVertex3d(x2, -y1, 0.0f);
-		//
-		// gl.glVertex3d(x2, -y1, 0.0f);
-		// gl.glVertex3d(x2, -y2, 0.0f);
-		//
-		// gl.glVertex3d(x2, -y2, 0.0f);
-		// gl.glVertex3d(x1, -y2, 0.0f);
-		//
-		// gl.glVertex3d(x1, -y2, 0.0f);
-		// gl.glVertex3d(x1, -y1, 0.0f);
-		// gl.glEnd();
-		// gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-		// } else {
-		// gl.glBegin(GL.GL_LINES);
-		//
-		// gl.glVertex3d(x1, -y1, 0.0f);
-		// gl.glVertex3d(x2, -y1, 0.0f);
-		//
-		// gl.glVertex3d(x2, -y1, 0.0f);
-		// gl.glVertex3d(x2, -y2, 0.0f);
-		//
-		// gl.glVertex3d(x2, -y2, 0.0f);
-		// gl.glVertex3d(x1, -y2, 0.0f);
-		//
-		// gl.glVertex3d(x1, -y2, 0.0f);
-		// gl.glVertex3d(x1, -y1, 0.0f);
-		// gl.glEnd();
-		// }
+		jtsDrawer.drawROIHelper(gl, ROIEnvelope);
 	}
 
 	public Envelope3D getROIEnvelope() {
 		return ROIEnvelope;
 	}
 
-	public void setPicking(final boolean value) {
-		picking = value;
-		if (!value) {
-			if (currentPickedObject != null) {
-				currentPickedObject.unpick();
-				currentPickedObject = null;
-			}
-			pickedObjectIndex = -1;
-		}
+	public PickingState getPickingState() {
+		return pickingState;
 	}
 
 	// This method is normally called either when the graphics is created or
@@ -647,7 +743,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	}
 
 	public void drawRotationHelper(final GL2 gl) {
-		final JTSDrawer jtsDrawer = new JTSDrawer(this);
 		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
 				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
 				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
@@ -957,6 +1052,14 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			return false;
 		final GamaPoint p = getRealWorldPointFromWindowPoint(mousePosition);
 		return env.contains(p);
+	}
+
+	public JTSDrawer getJTSDrawer() {
+		return jtsDrawer;
+	}
+
+	public GLUT getGlut() {
+		return glut;
 	}
 
 }

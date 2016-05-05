@@ -18,8 +18,6 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 
-import com.jogamp.opengl.GL2;
-
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -54,9 +52,9 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 
 	// Picking
 
-	public abstract boolean beginPicking(final GL2 gl);
+	// public abstract boolean beginPicking(final GL2 gl);
 
-	public abstract int endPicking(final GL2 gl);
+	// public abstract int endPicking(final GL2 gl);
 
 	// Zoom
 

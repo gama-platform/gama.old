@@ -11,14 +11,15 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2GL3;
+
 import ummisco.gama.opengl.JOGLRenderer;
 
 public abstract class ObjectDrawer<T extends AbstractObject> {
 
 	final JOGLRenderer renderer;
-	final GLUT glut = new GLUT();
 
 	public ObjectDrawer(final JOGLRenderer r) {
 		renderer = r;
@@ -27,7 +28,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	// Better to subclass _draw than this one
 	void draw(final GL2 gl, final T object) {
 		gl.glPushMatrix();
-		if ( renderer.data.isZ_fighting() ) {
+		if (renderer.data.isZ_fighting()) {
 			setPolygonOffset(object, gl);
 		}
 		_draw(gl, object);
@@ -35,7 +36,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	}
 
 	void setPolygonOffset(final T object, final GL2 gl) {
-		if ( !object.isFilled() || renderer.data.isTriangulation() ) {
+		if (!object.isFilled() || renderer.data.isTriangulation()) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
@@ -50,7 +51,8 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 
 	protected abstract void _draw(GL2 gl, T object);
 
-	public void dispose() {}
+	public void dispose() {
+	}
 
 	public JOGLRenderer getRenderer() {
 		return renderer;

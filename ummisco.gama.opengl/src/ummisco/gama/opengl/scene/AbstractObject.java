@@ -21,9 +21,6 @@ import com.jogamp.opengl.util.texture.Texture;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.GAMA.InScope;
-import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -36,8 +33,8 @@ public abstract class AbstractObject {
 	protected final DrawingAttributes attributes;
 	private final LayerObject layer;
 	protected Double alpha;
-	public int pickingIndex = index++;
-	public boolean picked = false;
+	public final int pickingIndex = index++;
+	private boolean picked = false;
 	protected final Texture[] textures;
 
 	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer, final Texture[] textures) {
@@ -82,46 +79,17 @@ public abstract class AbstractObject {
 		return textures != null && textures.length > 0;
 	}
 
-	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean picking) {
-		if (picking) {
-			final JOGLRenderer renderer = drawer.renderer;
-			gl.glPushMatrix();
+	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean isPicking) {
+		final JOGLRenderer renderer = drawer.renderer;
+		picked = renderer.getPickingState().isPicked(pickingIndex);
+		if (isPicking)
 			gl.glLoadName(pickingIndex);
-			if (renderer.pickedObjectIndex == pickingIndex) {
-				renderer.setPicking(false);
-				pick();
-				renderer.currentPickedObject = this;
-				if (attributes.getSpeciesName() != null) {
-					// The picked image is a grid or an image of a grid
-					final GamaPoint pickedPoint = renderer
-							.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
-					final IAgent ag = GAMA.run(new InScope<IAgent>() {
-
-						@Override
-						public IAgent run(final IScope scope) {
-							return scope.getRoot().getPopulationFor(attributes.getSpeciesName()).getAgent(scope,
-									new GamaPoint(pickedPoint.x, -pickedPoint.y));
-						}
-					});
-					renderer.getSurface().selectAgent(ag);
-				} else {
-					renderer.getSurface().selectAgent(attributes.getAgent());
-				}
-
-			}
-			drawer.draw(gl, this);
-			gl.glPopMatrix();
-		} else {
-			drawer.draw(gl, this);
+		drawer.draw(gl, this);
+		if (picked && !renderer.getPickingState().isMenuOn()) {
+			renderer.getPickingState().setMenuOn(true);
+			System.out.println("Object " + pickingIndex + " showing menu");
+			renderer.getSurface().selectAgent(attributes);
 		}
-	}
-
-	public void unpick() {
-		picked = false;
-	}
-
-	public void pick() {
-		picked = true;
 	}
 
 	public Color getColor() {
@@ -152,10 +120,6 @@ public abstract class AbstractObject {
 
 	public boolean isFilled() {
 		return !attributes.isEmpty();
-	}
-
-	public boolean isPicked() {
-		return picked;
 	}
 
 	public GamaPoint getLocation() {
