@@ -20,14 +20,11 @@ import org.apache.commons.math3.ode.sampling.StepInterpolator;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
-import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.Types;
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 public abstract class Solver {
@@ -36,10 +33,11 @@ public abstract class Solver {
 	int count;
 	final double step;
 
-	Solver(final double step, final FirstOrderIntegrator integrator, final GamaMap<String,IList<Double>> integratedValues) {
+	Solver(final double step, final FirstOrderIntegrator integrator,
+			final GamaMap<String, IList<Double>> integratedValues) {
 		this.step = step;
 		this.integrator = integrator;
-		if  (integratedValues != null)
+		if (integratedValues != null)
 			integrator.addStepHandler(new StepHandler() {
 
 				@Override
@@ -59,7 +57,7 @@ public abstract class Solver {
 	// Call the integrator, which should call computeDerivatives on the system
 	// of equations;
 	public void solve(final IScope scope, final SystemOfEquationsStatement eq, final double initialTime,
-			final double finalTime, final GamaMap<String,IList<Double>> integrationValues) {
+			final double finalTime, final GamaMap<String, IList<Double>> integrationValues) {
 
 		eq.executeInScope(scope, new Runnable() {
 
@@ -76,8 +74,8 @@ public abstract class Solver {
 				final double[] y = new double[eq.variables_diff.size()];
 				final List<IExpression> equationValues = new ArrayList(eq.variables_diff.values());
 				for (int i = 0, n = equationValues.size(); i < n; i++) {
-					if (integrationValues.size()<n) {
-						integrationValues.put(equationValues.get(i).getName(), GamaListFactory.create(Types.FLOAT));
+					if (integrationValues.size() < n) {
+						integrationValues.put(equationValues.get(i).getName(), GamaListFactory.create(Double.class));
 					}
 					final IAgent a = equationAgents.get(i);
 					if (!a.dead()) {
@@ -94,7 +92,7 @@ public abstract class Solver {
 					}
 
 				}
-				integrationValues.put("t", GamaListFactory.create(Types.FLOAT));
+				integrationValues.put("t", GamaListFactory.create(Double.class));
 
 				if (scope.getClock().getCycle() == 0) {
 					storeValues(initialTime, y, integrationValues);
@@ -114,9 +112,9 @@ public abstract class Solver {
 	}
 
 	private void storeValues(final double time, final double[] y,
-			final GamaMap<String,IList<Double>> integrationValues) {
-//		if (integrationTimes != null)
-//			integrationTimes.add(time);
+			final GamaMap<String, IList<Double>> integrationValues) {
+		// if (integrationTimes != null)
+		// integrationTimes.add(time);
 		if (integrationValues != null)
 			for (int i = 0; i < y.length; i++) {
 				integrationValues.getValues().get(i).add(y[i]);
