@@ -45,6 +45,14 @@ global
 		{
 			do _step_;
 		}
+		
+		//kill simulation  of micro_model and recreate then
+		ask  (micro_model_2.M2_exp collect each.simulation){
+			do die;
+		}
+		ask (micro_model_2.M2_exp){
+			create simulation{do _init_;}
+		}
 	}
 }
 
