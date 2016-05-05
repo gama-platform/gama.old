@@ -4,11 +4,16 @@
  */
 package msi.gama.gui.swt;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.wizards.AbstractExtensionWizardRegistry;
-import org.eclipse.ui.wizards.*;
+import org.eclipse.ui.wizards.IWizardCategory;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * Class RemoveUnwantedWizards.
@@ -19,30 +24,27 @@ import org.eclipse.ui.wizards.*;
  */
 public class RemoveUnwantedWizards {
 
-	private static List<String> CATEGORIES_TO_REMOVE = Arrays.asList(new String[] { "org.eclipse.jdt.debug.ui.java",
-		"org.eclipse.jdt.junit", "org.eclipse.pde.PDE", /* "org.eclipse.ui.Basic", */
-		"org.eclipse.emf.codegen.ecore.ui.wizardCategory", "org.eclipse.jdt.ui.java" });
+	private static Set<String> CATEGORIES_TO_REMOVE = new HashSet(
+		Arrays.asList(new String[] { "org.eclipse.pde.PDE", "org.eclipse.emf.codegen.ecore.ui.wizardCategory" }));
+
+	private static Set<String> IDS_TO_REMOVE = new HashSet(
+		Arrays.asList(new String[] { "org.eclipse.ui.wizards.new.project", "org.eclipse.equinox.p2.replication.import",
+			"org.eclipse.equinox.p2.replication.importfrominstallation", "org.eclipse.team.ui.ProjectSetImportWizard",
+			"org.eclipse.equinox.p2.replication.export", "org.eclipse.team.ui.ProjectSetExportWizard" }));
 
 	static void run() {
+		final List<IWizardCategory> cats = new ArrayList();
 		AbstractExtensionWizardRegistry r =
 			(AbstractExtensionWizardRegistry) PlatformUI.getWorkbench().getNewWizardRegistry();
-		IWizardCategory[] categories = r.getRootCategory().getCategories();
-		for ( final IWizardDescriptor wizard : getAllWizards(categories) ) {
-			final String id = wizard.getCategory().getId();
-			// System.out.println("Wizard " + wizard.getId());
-			if ( CATEGORIES_TO_REMOVE.contains(id) ) {
-				System.out.println("Removing 'new' wizard " + wizard.getId() + " in category " + id);
-				final WorkbenchWizardElement element = (WorkbenchWizardElement) wizard;
-				r.removeExtension(element.getConfigurationElement().getDeclaringExtension(), new Object[] { element });
-			}
-		}
+		cats.addAll(Arrays.asList(r.getRootCategory().getCategories()));
 		r = (AbstractExtensionWizardRegistry) PlatformUI.getWorkbench().getImportWizardRegistry();
-		categories = r.getRootCategory().getCategories();
-		for ( final IWizardDescriptor wizard : getAllWizards(categories) ) {
+		cats.addAll(Arrays.asList(r.getRootCategory().getCategories()));
+		r = (AbstractExtensionWizardRegistry) PlatformUI.getWorkbench().getExportWizardRegistry();
+		cats.addAll(Arrays.asList(r.getRootCategory().getCategories()));
+		for ( final IWizardDescriptor wizard : getAllWizards(cats.toArray(new IWizardCategory[0])) ) {
 			final String id = wizard.getCategory().getId();
-			// System.out.println("Wizard " + wizard.getId());
-			if ( CATEGORIES_TO_REMOVE.contains(id) ) {
-				System.out.println("Removing 'import' wizard " + wizard.getId() + " in category " + id);
+			if ( CATEGORIES_TO_REMOVE.contains(id) || IDS_TO_REMOVE.contains(wizard.getId()) ) {
+				System.out.println("Removing wizard " + wizard.getId() + " in category " + id);
 				final WorkbenchWizardElement element = (WorkbenchWizardElement) wizard;
 				r.removeExtension(element.getConfigurationElement().getDeclaringExtension(), new Object[] { element });
 			}

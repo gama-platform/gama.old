@@ -20,7 +20,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import msi.gama.common.interfaces.IGamaView;
@@ -48,7 +47,7 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
 	Action toggle;
-	private Composite rootComposite;
+	// private Composite rootComposite;
 
 	enum UpdatePriority {
 		HIGH, LOW, HIGHEST, LOWEST;
@@ -171,13 +170,13 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 
 	@Override
 	public final void createPartControl(final Composite composite) {
-		this.rootComposite = composite;
-		rootComposite.addDisposeListener(this);
+		// this.rootComposite = composite;
+		composite.addDisposeListener(this);
 		if ( needsOutput() && getOutput() == null )
 			return;
 		this.parent = GamaToolbarFactory.createToolbars(this, composite);
 		ownCreatePartControl(parent);
-		activateContext();
+		// activateContext();
 		// toggle.run();
 	}
 
@@ -187,10 +186,10 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 
 	public abstract void ownCreatePartControl(Composite parent);
 
-	private void activateContext() {
-		final IContextService contextService = getSite().getService(IContextService.class);
-		contextService.activateContext("msi.gama.application.simulation.context");
-	}
+	// private void activateContext() {
+	// final IContextService contextService = getSite().getService(IContextService.class);
+	// contextService.activateContext("msi.gama.application.simulation.context");
+	// }
 
 	// @Override
 	// public void pauseChanged() {}

@@ -115,7 +115,7 @@ public class GridLayer extends ImageLayer {
 		attributes.depth = 1.0;
 		if (textureFile != null) {
 			attributes.textures = Arrays.asList(textureFile);
-		} else {
+		} else if (image != null) {
 
 			final int[] data = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 			System.arraycopy(g.getEnvironment().getDisplayData(), 0, data, 0, data.length);

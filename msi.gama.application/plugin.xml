@@ -357,6 +357,9 @@
             icon="icons/perspective.simulation2.png"
             id="msi.gama.application.perspectives.SimulationPerspective"
             name="Simulation">
+         <description>
+            The base perspective definition for simulation perspectives
+         </description>
       </perspective>
    </extension>
    <extension
@@ -415,8 +418,6 @@
                relative="org.eclipse.ui.editorss"
                visible="true">
          </view>
-            <newWizardShortcut id="msi.gama.gui.wizards.newProjectWizard">
-</newWizardShortcut>
          <view
                closeable="true"
                id="msi.gama.application.outline"
@@ -425,7 +426,7 @@
                ratio="0.70"
                relationship="bottom"
                relative="msi.gama.gui.view.GamaNavigator"
-               visible="true">
+               visible="false">
          </view>
          <view
                closeable="true"
@@ -434,7 +435,7 @@
                moveable="true"
                relationship="stack"
                relative="msi.gama.application.outline"
-               visible="true">
+               visible="false">
          </view>
          <viewShortcut
                id="msi.gama.application.outline">
@@ -496,6 +497,15 @@
       </perspectiveExtension>
       <perspectiveExtension
             targetID="msi.gama.application.perspectives.SimulationPerspective">
+         <viewShortcut
+               id="msi.gama.application.view.ConsoleView">
+         </viewShortcut>
+         <viewShortcut
+               id="msi.gama.application.view.ErrorView">
+         </viewShortcut>
+         <viewShortcut
+               id="msi.gama.application.view.ParameterView">
+         </viewShortcut>
          <perspectiveShortcut
                id="msi.gama.application.perspectives.ModelingPerspective">
          </perspectiveShortcut>
@@ -517,7 +527,7 @@
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
                   icon="icons/menu.run4.png"
-                  label="Run"
+                  label="Run Experiment"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -529,7 +539,8 @@
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
                   icon="icons/menu.pause4.png"
-                  label="Pause"
+                  label="Pause Experiment"
+                  mnemonic="M1+P"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -541,8 +552,9 @@
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
                   icon="icons/menu.step4.png"
-                  label="Step by step"
-                  style="push">
+                  label="Step Experiment"
+                  style="push"
+                  tooltip="Advance the experiment step by step">
             </command>
             <separator
                   name="msi.gama.application.separator1"
@@ -551,8 +563,9 @@
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
                   icon="icons/menu.reload4.png"
-                  label="Reload "
-                  style="pulldown">
+                  label="Reload Experiment"
+                  mnemonic="M1+M2+R"
+                  style="push">
             </command>
             <separator
                   name="msi.gama.application.separator2"
@@ -583,9 +596,9 @@
             <command
                   commandId="msi.gama.application.commands.Cancel"
                   icon="icons/toolbar.stop2.png"
-                  label="Force interrupt"
+                  label="Close Experiment"
                   style="push"
-                  tooltip="Interrupt the experiment and dispose of it. Use with extreme caution.">
+                  tooltip="Stops the current experiment and dispose of it.">
                <visibleWhen
                      checkEnabled="false">
                   <and>
@@ -773,8 +786,9 @@
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
                   icon="icons/menu.run4.png"
-                  label="Run"
-                  style="push">
+                  label="Run Experiment"
+                  style="push"
+                  tooltip="Run the currently opened experiment">
                <visibleWhen
                      checkEnabled="false">
                   <reference
@@ -785,8 +799,9 @@
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
                   icon="icons/menu.pause4.png"
-                  label="Pause"
-                  style="push">
+                  label="Pause Experiment"
+                  style="push"
+                  tooltip="Pause the currently opened experiment">
                <visibleWhen
                      checkEnabled="false">
                   <reference
@@ -797,8 +812,9 @@
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
                   icon="icons/menu.step4.png"
-                  label="Step"
-                  style="push">
+                  label="Step Experiment"
+                  style="push"
+                  tooltip="Advance the experiment step by step">
                <visibleWhen
                      checkEnabled="false">
                   <reference
@@ -839,9 +855,9 @@
             <command
                   commandId="msi.gama.application.commands.Cancel"
                   icon="icons/toolbar.stop2.png"
-                  label="Force interrupt"
+                  label="Close Experiment"
                   style="push"
-                  tooltip="Interrupt the experiment and dispose of it. Use with extreme caution.">
+                  tooltip="Stops the currently opened experiment and closes its perspective">
                <visibleWhen
                      checkEnabled="false">
                   <and>
@@ -1062,7 +1078,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="msi.gama.application.submenu.new">
+            locationURI="menu:new?after=new">
          <command
                commandId="org.eclipse.ui.newWizard"
                icon="icons/navigator/new.project2.png"
@@ -1394,9 +1410,13 @@
          point="org.eclipse.ui.bindings">
       <key
             commandId="msi.gama.application.commands.PlaySimulation"
-            contextId="msi.gama.application.simulation.context"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+R">
+      </key>
+      <key
+            commandId="msi.gama.application.commands.PauseSimulation"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+P">
       </key>
       <key
             commandId="msi.gama.application.commands.SwitchPerspective"
@@ -1405,63 +1425,21 @@
       </key>
       <key
             commandId="msi.gama.application.commands.StepByStepSimulation"
-            contextId="msi.gama.application.simulation.context"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+P">
       </key>
       <key
             commandId="msi.gama.application.commands.ReloadSimulation"
-            contextId="msi.gama.application.simulation.context"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+R">
-      </key>
-      <key
-            commandId="org.eclipse.ui.file.exit"
-            contextId="msi.gama.application.simulation.context"
-            schemeId="msi.gama.application.scheme"
-            sequence="M1+Q">
-      </key>
-      <scheme
-            id="msi.gama.application.scheme"
-            name="Removal of copy/paste operations"
-            parentId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </scheme>
-      <key
-            contextId="SearchText"
-            schemeId="msi.gama.application.scheme"
-            sequence="M1+C">
-      </key>
-      <key
-            contextId="SearchText"
-            schemeId="msi.gama.application.scheme"
-            sequence="M1+V">
-      </key>
-      <key
-            contextId="SearchText"
-            schemeId="msi.gama.application.scheme"
-            sequence="M1+X">
       </key>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
       <context
             id="msi.gama.application.simulation.context"
-            name="Simulation"
-            parentId="org.eclipse.ui.contexts.window">
-      </context>
-      <context
-            id="msi.gama.application.display.context"
-            name="Display"
-            parentId="msi.gama.application.simulation.context">
-      </context>
-      <context
-            id="msi.gama.application.modeling.gaml.context"
-            name="Modeling (GAML)"
-            parentId="org.eclipse.xtext.ui.XtextEditorScope">
-      </context>
-      <context
-            id="SearchText"
-            name="In Search Text Field">
+            name="In Experiments"
+            parentId="org.eclipse.ui.contexts.dialogAndWindow">
       </context>
    </extension>
     <extension point="org.eclipse.core.expressions.propertyTesters">
@@ -1599,93 +1577,78 @@
             </with>
          </and>
       </definition>
-      <definition
-            id="isSimulationBatch">
-         <and>
-            <reference
-                  definitionId="isInSimulationPerspective">
-            </reference>
-            <with
-                  variable="msi.gama.application.commands.SimulationType">
-               <equals
-                     value="RUNNING">
-               </equals>
-            </with>
-         </and>
-      </definition>
-      <definition
-            id="isSimulationBatch">
-         <and>
-            <reference
-                  definitionId="isInSimulationPerspective">
-            </reference>
-            <with
-                  variable="msi.gama.application.commands.SimulationRunningState">
-               <equals
-                     value="RUNNING">
-               </equals>
-            </with>
-         </and>
-      </definition>
    </extension>
 
    <extension
          point="org.eclipse.ui.commands">
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.swt.commands.PlayPauseSimulationHandler"
             id="msi.gama.application.commands.PlaySimulation"
             name="Play Experiment">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.swt.commands.PlayPauseSimulationHandler"
             id="msi.gama.application.commands.PauseSimulation"
             name="Pause Simulation">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.commands.StepByStepSimulation"
             name="Next Step">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.swt.commands.ReloadSimulationHandler"
             id="msi.gama.application.commands.ReloadSimulation"
             name="Reload Simulation">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.commands.SwitchPerspective"
             name="Switch Perspective">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.commands.ShareProject"
             name="Share Project">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.swt.commands.ShowHideParametersViewHandler"
             id="msi.gama.application.commands.ShowHideParametersView"
             name="Show parameters">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.swt.commands.SwitchWorkspaceHandler"
             id="org.eclipse.ui.file.switchWorkspace"
             name="Switch Workspace">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.commands.AddMonitor"
             name="Add a monitor">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.commands.ShowHideConsoleView"
             name="Show console">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.commands.Cancel"
             name="Cancel">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.navigator.commands.RefreshHandler"
             id="msi.gama.gui.gamaNavigator.commands.Refresh"
             name="Refresh">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.navigator.commands.CopyProjectToWorkspaceHandler"
             id="msi.gama.application.commands.CopyProjectToWorkspace"
             name="Copy to Workspace">
@@ -1699,49 +1662,63 @@
             name="Show Headless Chart View">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.commands.PauseAndEdit"
             name="Pause at first error">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.commands.WarningsAsErrors"
             name="Treat warnings like errors">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.ShowErrors"
             name="Display errors and warnings">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.preferences"
             name="Preferences">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.goto.modeling"
             name="Switch to modeling perspective">
       </command>
       <command
+            categoryId="msi.gama.category"
             id="msi.gama.application.goto.simulation"
             name="Switch to simulation perspective">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.navigator.commands.UpdateBuiltInModelsHandler"
             id="msi.gama.application.commands.UpdateBuiltInModelsCommand"
             name="Update Built-In Models">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.swt.commands.OpenGamaWebsiteHandler"
             id="msi.gama.application.command.web"
             name="Welcome page">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.swt.commands.FileOpen"
             id="msi.gama.application.commands.OpenFile"
             name="Open File">
       </command>
       <command
+            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.swt.commands.LoadPerspectiveHandler"
             id="msi.gama.application.perspective.load"
             name="Load Perspective">
       </command>
+      <category
+            id="msi.gama.category"
+            name="Specific to GAMA">
+      </category>
    </extension> <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -1910,7 +1887,7 @@
       <extension
             point="gama.display">
          <implementation
-               class="msi.gama.gui.displays.awt.AWTJava2DDisplaySurface"
+               class="msi.gama.gui.displays.awt.Java2DDisplaySurface"
                keyword="java2D">
          </implementation>
       </extension>

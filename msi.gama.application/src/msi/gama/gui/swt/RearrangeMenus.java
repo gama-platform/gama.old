@@ -4,12 +4,20 @@
  */
 package msi.gama.gui.swt;
 
-import java.util.*;
-import org.eclipse.jface.action.*;
+import java.util.HashMap;
+import java.util.Map;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.menus.*;
+import org.eclipse.ui.actions.NewWizardMenu;
+import org.eclipse.ui.internal.ActionSetContributionItem;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 
 /**
  * Class RemoveUnwantedMenus.
@@ -48,10 +56,11 @@ public class RearrangeMenus {
 	public static void run() {
 
 		final IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
-		ActionFactory.REFRESH.create(window).setImageDescriptor(GamaIcons.create("navigator/navigator.refresh2").descriptor());
+		ActionFactory.REFRESH.create(window)
+			.setImageDescriptor(GamaIcons.create("navigator/navigator.refresh2").descriptor());
 		if ( window instanceof WorkbenchWindow ) {
 			final IMenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
-			for ( IContributionItem item : menuManager.getItems() ) {
+			for ( final IContributionItem item : menuManager.getItems() ) {
 				IMenuManager menu = null;
 				if ( item instanceof MenuManager ) {
 					menu = (MenuManager) item;
@@ -82,8 +91,22 @@ public class RearrangeMenus {
 	// }
 
 	private static void removeUnwantedItems(final IMenuManager menu) {
-		for ( String name : MENU_ITEMS_TO_REMOVE ) {
-			IContributionItem item = menu.find(name);
+		if ( menu.getId().equals("file") ) {
+			final IContributionItem item = menu.find("new");
+			if ( item instanceof MenuManager ) {
+				final MenuManager newMenu = (MenuManager) item;
+				for ( final IContributionItem subItem : newMenu.getItems() ) {
+					if ( subItem instanceof NewWizardMenu ) {
+						final NewWizardMenu nw = (NewWizardMenu) subItem;
+						newMenu.remove(subItem);
+						subItem.dispose();
+					}
+				}
+
+			}
+		}
+		for ( final String name : MENU_ITEMS_TO_REMOVE ) {
+			final IContributionItem item = menu.find(name);
 			if ( item != null ) {
 				menu.remove(item);
 				item.dispose();
@@ -92,8 +115,8 @@ public class RearrangeMenus {
 	}
 
 	private static void changeFileIcons(final IMenuManager menu) {
-		for ( String name : MENU_IMAGES.keySet() ) {
-			IContributionItem item = menu.find(name);
+		for ( final String name : MENU_IMAGES.keySet() ) {
+			final IContributionItem item = menu.find(name);
 			if ( item != null ) {
 				changeIcon(menu, item);
 			}
@@ -101,17 +124,17 @@ public class RearrangeMenus {
 	}
 
 	private static void changeIcon(final IMenuManager menu, final IContributionItem item) {
-		String name = item.getId();
+		final String name = item.getId();
 
 		if ( item instanceof ActionContributionItem ) {
-			((ActionContributionItem) item).getAction().setImageDescriptor(
-				GamaIcons.create(MENU_IMAGES.get(name)).descriptor());
+			((ActionContributionItem) item).getAction()
+				.setImageDescriptor(GamaIcons.create(MENU_IMAGES.get(name)).descriptor());
 		} else if ( item instanceof CommandContributionItem ) {
-			CommandContributionItemParameter data = ((CommandContributionItem) item).getData();
+			final CommandContributionItemParameter data = ((CommandContributionItem) item).getData();
 			data.commandId = ((CommandContributionItem) item).getCommand().getId();
 			// int index = menu.iindexOf(name);
 			data.icon = GamaIcons.create(MENU_IMAGES.get(name)).descriptor();
-			CommandContributionItem newItem = new CommandContributionItem(data);
+			final CommandContributionItem newItem = new CommandContributionItem(data);
 			newItem.setId(name);
 			menu.insertAfter(name, newItem);
 			menu.remove(item);

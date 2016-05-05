@@ -845,6 +845,10 @@ public class SwtGui extends AbstractGui {
 				if ( isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId) ) {
 					activePage.closePerspective(oldDescriptor, false, false);
 				}
+				// if ( isSimulationPerspective(currentPerspectiveId) ) {
+				// final IContextService contextService = getWindow().getService(IContextService.class);
+				// contextService.activateContext("msi.gama.application.simulation.context", expression, true);
+				// }
 				currentPerspectiveId = perspectiveId;
 				System.out.println("Perspective " + perspectiveId + " opened ");
 			}
@@ -856,6 +860,23 @@ public class SwtGui extends AbstractGui {
 		}
 		return true;
 	}
+
+	// Expression expression = new PerspectiveExpression();
+	//
+	// private class PerspectiveExpression extends Expression {
+	//
+	// @Override
+	// public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
+	// return EvaluationResult.TRUE;
+	// }
+	//
+	// @Override
+	// public void collectExpressionInfo(final ExpressionInfo info) {
+	// super.collectExpressionInfo(info);
+	// info.markDefaultVariableAccessed();
+	// }
+	//
+	// }
 
 	public final static IPerspectiveDescriptor getActivePerspective() {
 		final IWorkbenchPage activePage = getPage();
