@@ -32,5 +32,9 @@ public interface IVarExpression extends IExpression {
 	public abstract void setVal(IScope scope, Object v, boolean create);
 
 	public abstract boolean isNotModifiable();
+	
+	public abstract IExpression getOwner();
+	
+	public VariableExpression getVar();
 
 }

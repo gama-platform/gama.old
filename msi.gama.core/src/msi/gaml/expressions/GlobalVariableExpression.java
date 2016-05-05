@@ -39,6 +39,11 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		final IDescription world) {
 		super(n, type, notModifiable, world);
 	}
+	
+	public IExpression getOwner() {
+		return new WorldExpression("world", this.getDefinitionDescription().getModelDescription().getType(),
+				this.getDefinitionDescription().getModelDescription());
+	}
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {

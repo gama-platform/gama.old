@@ -102,6 +102,14 @@ public class BinaryOperator extends NAryOperator {
 			if ( agent == null || agent.dead() ) { return; }
 			scope.setAgentVarValue(agent, exprs[1].literalValue(), v);
 		}
+		
+		public IExpression getOwner(){
+			return exprs[0];
+		}
+		
+		public VariableExpression getVar(){
+			return (VariableExpression) exprs[1];
+		}
 
 		@Override
 		public boolean isNotModifiable() {

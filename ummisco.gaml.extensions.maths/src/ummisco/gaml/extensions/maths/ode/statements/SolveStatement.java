@@ -17,6 +17,7 @@ import java.util.List;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -39,6 +40,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
+import msi.gaml.expressions.SpeciesConstantExpression;
 import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
@@ -159,15 +161,18 @@ public class SolveStatement extends AbstractStatement {
 		return systemOfEquations != null;
 	}
 
-	@operator(value = { "internal_integrated_value" }, content_type = IType.LIST, category = { IOperatorCategory.CONTAINER }, concept = { IConcept.SPECIES })
+	@operator(value = { "internal_integrated_value" }, content_type = IType.FLOAT, category = { IOperatorCategory.CONTAINER }, concept = { IConcept.EQUATION })
 	@doc("For internal use only. Corresponds to the implementation, for agents, of the access to containers with [index]")
-	public static Object internal_integrated_value(final IScope scope, final String varname, final String SysOfEq)
+	public static IList internal_integrated_value(final IScope scope,final IExpression agent, final IExpression var)
 		throws GamaRuntimeException {
-		GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) scope.getAgentScope().getAttribute("__integrated_values");
+		// if agent not null
+		IAgent a = Cast.asAgent(scope, agent.value(scope));
+		// if a not null
+		GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) a.getAttribute("__integrated_values");
 		if(result!=null){			
-			return result.get(varname);
+			return result.get(var.getName());
 		}
-		return GamaListFactory.create(scope, Types.FLOAT, 0);
+		return GamaListFactory.EMPTY_LIST;
 	}
 	
 	@Override
@@ -175,11 +180,11 @@ public class SolveStatement extends AbstractStatement {
 		if (!initSystemOfEquations(scope))
 			return null;
 
-		final double cycleLength = Cast.asFloat(scope, cycleExp.value(scope));
+//		final double cycleLength = Cast.asFloat(scope, cycleExp.value(scope));
 		double step = Cast.asFloat(scope, stepExp.value(scope));
-		step = cycleLength > 1.0 ? step / cycleLength : step;
+//		step = cycleLength > 1.0 ? step / cycleLength : step;
 
-		final Solver solver = createSolver(scope, step, cycleLength);
+		final Solver solver = createSolver(scope, step);
 		if (solver == null)
 			return null;
 
@@ -187,13 +192,12 @@ public class SolveStatement extends AbstractStatement {
 				: Cast.asFloat(scope, timeInitExp.value(scope));
 		double timeFinal = timeFinalExp == null ? scope.getSimulationScope().getClock().getTime() + scope.getSimulationScope().getClock().getStep()
 				: Cast.asFloat(scope, timeFinalExp.value(scope));
-		if (cycleLength > 1.0) {
-			timeInit /= cycleLength;
-			timeFinal /= cycleLength;
-		}
+//		if (cycleLength > 1.0) {
+//			timeInit /= cycleLength;
+//			timeFinal /= cycleLength;
+//		}
 
-		solver.solve(scope, systemOfEquations, timeInit, timeFinal, cycleLength, getIntegrationTimes(scope),
-				getIntegratedValues(scope));
+		solver.solve(scope, systemOfEquations, timeInit, timeFinal, getIntegratedValues(scope));
 
 //		if (integrationTimesExp != null) {
 //			final List<Double> integrationTimes = getIntegrationTimes(scope);
@@ -215,20 +219,20 @@ public class SolveStatement extends AbstractStatement {
 		return null;
 	}
 
-	private Solver createSolver(final IScope scope, final double step, final double cycleLength) {
+	private Solver createSolver(final IScope scope, final double step) {
 //		final int discret = Math.max(0, Cast.asInt(scope, discretExp.value(scope)));
 		final GamaMap<String, IList<Double>> integratedValues = getIntegratedValues(scope);
-		final List<Double> integrationTimes = getIntegrationTimes(scope);
+//		final List<Double> integrationTimes = getIntegrationTimes(scope);
 		int nSteps = 2;
 		double minStep = 0.1, maxStep = 0.1, scalAbsoluteTolerance = 0.1, scalRelativeTolerance = 0.1;
 
 		if (Adaptive_Stepsize_Integrators.contains(solverName)) {
 			minStep = Cast.asFloat(scope, minStepExp.value(scope));
 			maxStep = Cast.asFloat(scope, maxStepExp.value(scope));
-			if (cycleLength > 1.0) {
-				minStep /= cycleLength;
-				maxStep /= cycleLength;
-			}
+//			if (cycleLength > 1.0) {
+//				minStep /= cycleLength;
+//				maxStep /= cycleLength;
+//			}
 			scalAbsoluteTolerance = Cast.asFloat(scope, absTolerExp.value(scope));
 			scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
 			if (nStepsExp != null) {
@@ -290,15 +294,15 @@ public class SolveStatement extends AbstractStatement {
 		return result;
 	}
 
-	private List<Double> getIntegrationTimes(final IScope scope) {
-//		if (integrationTimesExp == null)
-//			return null;
-		List<Double> result = (List<Double>) scope.getAgentScope().getAttribute("__integrated_times");
-		if (result == null) {
-			result = new ArrayList<>();
-			scope.getAgentScope().setAttribute("__integrated_times", result);
-		}
-		return result;
-	}
+//	private List<Double> getIntegrationTimes(final IScope scope) {
+////		if (integrationTimesExp == null)
+////			return null;
+//		List<Double> result = (List<Double>) scope.getAgentScope().getAttribute("__integrated_times");
+//		if (result == null) {
+//			result = new ArrayList<>();
+//			scope.getAgentScope().setAttribute("__integrated_times", result);
+//		}
+//		return result;
+//	}
 
 }

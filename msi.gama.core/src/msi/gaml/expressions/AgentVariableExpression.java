@@ -23,6 +23,10 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 		final IDescription def) {
 		super(n, type, notModifiable, def);
 	}
+	
+	public IExpression getOwner() {
+		return new SelfExpression(this.getDefinitionDescription().getSpeciesContext().getType());
+	}
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {

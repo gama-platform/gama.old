@@ -59,8 +59,7 @@ public abstract class Solver {
 	// Call the integrator, which should call computeDerivatives on the system
 	// of equations;
 	public void solve(final IScope scope, final SystemOfEquationsStatement eq, final double initialTime,
-			final double finalTime, final double cycleLength, final List<Double> integrationTimes,
-			final GamaMap<String,IList<Double>> integrationValues) {
+			final double finalTime, final GamaMap<String,IList<Double>> integrationValues) {
 
 		eq.executeInScope(scope, new Runnable() {
 

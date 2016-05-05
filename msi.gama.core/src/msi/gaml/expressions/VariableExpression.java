@@ -29,6 +29,14 @@ public abstract class VariableExpression extends AbstractExpression implements I
 		isNotModifiable = notModifiable;
 		this.definitionDescription = definitionDescription;
 	}
+	
+	public IExpression getOwner() {
+		return null;
+	}
+	
+	public VariableExpression getVar(){
+		return this;
+	}
 
 	@Override
 	public abstract Object value(final IScope scope) throws GamaRuntimeException;
