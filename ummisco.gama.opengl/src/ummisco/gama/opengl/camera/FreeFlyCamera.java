@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 
 import com.jogamp.opengl.glu.GLU;
 
+import msi.gama.gui.swt.GamaKeyBindings;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -163,7 +164,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
 			return;
 		}
-		if (shift(e) /** || alt(e)) */
+		if (GamaKeyBindings.shift(e) /** || alt(e)) */
 				&& isViewInXYPlan()) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
@@ -180,7 +181,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	protected boolean canSelectOnRelease(final org.eclipse.swt.events.MouseEvent arg0) {
-		return shift(arg0) /* || alt(arg0) */;
+		return GamaKeyBindings.shift(arg0) /* || alt(arg0) */;
 	}
 
 	@Override

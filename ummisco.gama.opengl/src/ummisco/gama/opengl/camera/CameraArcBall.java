@@ -16,6 +16,7 @@ import java.awt.Point;
 import org.eclipse.swt.SWT;
 
 import msi.gama.common.GamaPreferences;
+import msi.gama.gui.swt.GamaKeyBindings;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -372,7 +373,7 @@ public class CameraArcBall extends AbstractCamera {
 			return;
 		}
 		final Point newPoint = new Point(e.x, e.y);
-		if (ctrl(e)) {
+		if (GamaKeyBindings.ctrl(e)) {
 			final int horizMovement = e.x - lastMousePressedPosition.x;
 			final int vertMovement = e.y - lastMousePressedPosition.y;
 			// if (flipped) {

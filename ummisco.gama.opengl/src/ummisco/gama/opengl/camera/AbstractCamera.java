@@ -16,10 +16,10 @@ import java.awt.Point;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 
-import com.jogamp.nativewindow.swt.SWTAccessor;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLRunnable;
 
+import msi.gama.gui.swt.GamaKeyBindings;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -221,8 +221,8 @@ public abstract class AbstractCamera implements ICamera {
 	protected void internalMouseMove(final MouseEvent e) {
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
-		setCtrlPressed(ctrl(e));
-		setShiftPressed(shift(e));
+		setCtrlPressed(GamaKeyBindings.ctrl(e));
+		setShiftPressed(GamaKeyBindings.shift(e));
 	}
 
 	/**
@@ -303,7 +303,7 @@ public abstract class AbstractCamera implements ICamera {
 		if (e.button == 2) { // mouse wheel
 			resetPivot();
 		} else {
-			if (shift(e) && isViewInXYPlan()) {
+			if (GamaKeyBindings.shift(e) && isViewInXYPlan()) {
 				startROI(e);
 			}
 			// else {
@@ -314,8 +314,8 @@ public abstract class AbstractCamera implements ICamera {
 		getMousePosition().y = e.y;
 
 		setMouseLeftPressed(e.button == 1 ? true : false);
-		setCtrlPressed(e.button == 1 ? ctrl(e) : false);
-		setShiftPressed(e.button == 1 ? shift(e) : false);
+		setCtrlPressed(e.button == 1 ? GamaKeyBindings.ctrl(e) : false);
+		setShiftPressed(e.button == 1 ? GamaKeyBindings.shift(e) : false);
 
 	}
 
@@ -344,7 +344,7 @@ public abstract class AbstractCamera implements ICamera {
 
 		firsttimeMouseDown = true;
 		if (canSelectOnRelease(e) && isViewInXYPlan()) {
-			if (shift(e)) {
+			if (GamaKeyBindings.shift(e)) {
 				finishROISelection();
 			}
 		}
@@ -370,22 +370,6 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected abstract boolean canSelectOnRelease(org.eclipse.swt.events.MouseEvent arg0);
-
-	protected static boolean ctrl(final org.eclipse.swt.events.MouseEvent e) {
-		return SWTAccessor.isOSX ? (e.stateMask & SWT.COMMAND) != 0 : (e.stateMask & SWT.CTRL) != 0;
-	}
-
-	protected static boolean ctrl(final org.eclipse.swt.events.KeyEvent e) {
-		return SWTAccessor.isOSX ? (e.stateMask & SWT.COMMAND) != 0 : (e.stateMask & SWT.CTRL) != 0;
-	}
-
-	protected static boolean shift(final org.eclipse.swt.events.MouseEvent e) {
-		return (e.stateMask & SWT.SHIFT) != 0;
-	}
-
-	protected static boolean shift(final org.eclipse.swt.events.KeyEvent e) {
-		return (e.stateMask & SWT.SHIFT) != 0;
-	}
 
 	protected void dump() {
 		System.out.println("xPos:" + position.x + " yPos:" + position.y + " zPos:" + position.z);
@@ -460,19 +444,19 @@ public abstract class AbstractCamera implements ICamera {
 				if (cameraInteraction) {
 					switch (e.keyCode) {
 					case SWT.ARROW_LEFT:
-						setCtrlPressed(ctrl(e));
+						setCtrlPressed(GamaKeyBindings.ctrl(e));
 						AbstractCamera.this.strafeLeft = true;
 						break;
 					case SWT.ARROW_RIGHT:
-						setCtrlPressed(ctrl(e));
+						setCtrlPressed(GamaKeyBindings.ctrl(e));
 						AbstractCamera.this.strafeRight = true;
 						break;
 					case SWT.ARROW_UP:
-						setCtrlPressed(ctrl(e));
+						setCtrlPressed(GamaKeyBindings.ctrl(e));
 						AbstractCamera.this.goesForward = true;
 						break;
 					case SWT.ARROW_DOWN:
-						setCtrlPressed(ctrl(e));
+						setCtrlPressed(GamaKeyBindings.ctrl(e));
 						AbstractCamera.this.goesBackward = true;
 						break;
 					case SWT.SPACE:
