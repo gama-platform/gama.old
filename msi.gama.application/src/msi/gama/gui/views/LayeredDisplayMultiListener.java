@@ -42,10 +42,20 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 				case SWT.ESC:
 					view.toggleFullScreen();
 					break;
+				case '':
+					if ( GamaKeyBindings.ctrl(e) ) {
+						view.toggleOverlay();
+					}
+				break;
 				case 'o':
 					if ( GamaKeyBindings.ctrl(e) ) {
 						view.toggleOverlay();
 					}
+					break;
+				case '':
+					if ( GamaKeyBindings.ctrl(e) ) {
+						view.toggleSideControls();
+					}	
 					break;
 				case 'l':
 					if ( GamaKeyBindings.ctrl(e) ) {

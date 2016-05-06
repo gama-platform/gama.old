@@ -60,7 +60,15 @@ public class GamaKeyBindings implements Listener {
 					consume(event);
 					GAMA.closeAllExperiments(true, false);
 				}
+				break;		
+			// Handles CLOSE , on windows 
+			case '':
+				if ( shift(event) ) {
+					consume(event);
+					GAMA.closeAllExperiments(true, false);
+				}
 				break;
+				
 			// Handles CLOSE
 			case 'X':
 				consume(event);
