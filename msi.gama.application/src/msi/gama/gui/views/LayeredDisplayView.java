@@ -29,7 +29,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -98,12 +97,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected LayeredDisplayMultiListener keyAndMouseListener;
 	protected DisplaySurfaceMenu menuManager;
 	protected Composite normalParentOfFullScreenControl;
-	protected Composite controlToSetFullScreen;
+	// protected Composite controlToSetFullScreen;
 	protected Shell fullScreenShell;
 
 	public void toggleFullScreen() {
 		if ( isFullScreen() ) {
-			controlToSetFullScreen.setParent(normalParentOfFullScreenControl);
+			controlToSetFullScreen().setParent(normalParentOfFullScreenControl);
 			createOverlay();
 			normalParentOfFullScreenControl.layout(true, true);
 			destroyFullScreenShell();
@@ -111,13 +110,17 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 		} else {
 			createFullScreenShell();
-			normalParentOfFullScreenControl = controlToSetFullScreen.getParent();
-			controlToSetFullScreen.setParent(fullScreenShell);
+			normalParentOfFullScreenControl = controlToSetFullScreen().getParent();
+			controlToSetFullScreen().setParent(fullScreenShell);
 			createOverlay();
 			fullScreenShell.layout(true, true);
 			fullScreenShell.setVisible(true);
 			getZoomableControls()[0].forceFocus();
 		}
+	}
+
+	public Control controlToSetFullScreen() {
+		return form;
 	}
 
 	public void createOverlay() {
@@ -228,15 +231,20 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	@Override
 	public void ownCreatePartControl(final Composite c) {
 		if ( getOutput() == null ) { return; }
-		c.setData("NAME", "Parent of Sash Form");
+
+		final GridLayout ll = new GridLayout(1, true);
+		ll.horizontalSpacing = 0;
+		ll.verticalSpacing = 0;
+		ll.marginHeight = 0;
+		ll.marginWidth = 0;
+		c.setLayout(ll);
 
 		// First create the sashform
 
 		form = new SashForm(c, SWT.HORIZONTAL);
-		form.setLayout(new FillLayout());
+		form.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		form.setBackground(IGamaColors.WHITE.color());
 		form.setSashWidth(3);
-		form.setData("NAME", "Sash form");
 
 		sidePanel = new Composite(form, SWT.NONE);
 		final GridLayout layout = new GridLayout(1, true);
@@ -262,7 +270,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			}
 
 		};
-		controlToSetFullScreen = parent;
+
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
