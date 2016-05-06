@@ -104,7 +104,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public void toggleFullScreen() {
 		if ( isFullScreen() ) {
 			controlToSetFullScreen.setParent(normalParentOfFullScreenControl);
-			overlay.relocateOverlay(normalParentOfFullScreenControl.getShell());
+			createOverlay();
 			normalParentOfFullScreenControl.layout(true, true);
 			destroyFullScreenShell();
 			this.setFocus();
@@ -113,11 +113,22 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			createFullScreenShell();
 			normalParentOfFullScreenControl = controlToSetFullScreen.getParent();
 			controlToSetFullScreen.setParent(fullScreenShell);
-			overlay.relocateOverlay(fullScreenShell);
+			createOverlay();
 			fullScreenShell.layout(true, true);
 			fullScreenShell.setVisible(true);
 			getZoomableControls()[0].forceFocus();
 		}
+	}
+
+	public void createOverlay() {
+		boolean wasVisible = false;
+		if ( overlay != null ) {
+			wasVisible = overlay.isVisible();
+			overlay.dispose();
+		}
+		overlay = new DisplayOverlay(this, surfaceComposite, getOutput().getOverlayProvider());
+		if ( wasVisible )
+			overlay.setVisible(true);
 	}
 
 	public boolean isFullScreen() {
@@ -274,7 +285,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		gd.horizontalIndent = 0;
 		gd.verticalIndent = 0;
 		surfaceComposite.setLayoutData(gd);
-		overlay = new DisplayOverlay(this, surfaceComposite, getOutput().getOverlayProvider());
+		createOverlay();
 		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
 		getOutput().getData().addListener(this);
 		overlay.setVisible(GamaPreferences.CORE_OVERLAY.getValue());
