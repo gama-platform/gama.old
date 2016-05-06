@@ -114,34 +114,36 @@ public class SimulationPopulation extends GamaPopulation {
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)
 			throws GamaRuntimeException {
-		scope.getGui().waitStatus("Initializing simulation");
-		final SimulationAgent world = new SimulationAgent(this);
-		world.setIndex(currentAgentIndex++);
-		world.setScheduled(toBeScheduled);
-		world.setName("Simulation #" + world.getIndex() + " of model "
-				+ getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, ""));
-		add(world);
-		getHost().setSimulation(world);
-		if (scope.interrupted()) {
-			return null;
-		}
-		scope.getGui().waitStatus("Instantiating agents");
-		createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
-		if (toBeScheduled) {
-			if (isRestored) {
-				world.prepareGuiForSimulation(scope);
-				world.initOutputs();
-			} else {
-				world.schedule(scope);
+		for (int i = 0; i < number; i++) {
+			scope.getGui().waitStatus("Initializing simulation");
+			final SimulationAgent world = new SimulationAgent(this);
+			world.setIndex(currentAgentIndex++);
+			world.setScheduled(toBeScheduled);
+			world.setName("Simulation #" + world.getIndex() + " of model "
+					+ getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, ""));
+			add(world);
+			getHost().setSimulation(world);
+			if (scope.interrupted()) {
+				return null;
 			}
-			runnables.put(world, new Callable<Object>() {
-
-				@Override
-				public Object call() {
-					return world.step(scope);
-
+			scope.getGui().waitStatus("Instantiating agents");
+			createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
+			if (toBeScheduled) {
+				if (isRestored) {
+					world.prepareGuiForSimulation(scope);
+					world.initOutputs();
+				} else {
+					world.schedule(scope);
 				}
-			});
+				runnables.put(world, new Callable<Object>() {
+
+					@Override
+					public Object call() {
+						return world.step(scope);
+
+					}
+				});
+			}
 		}
 		return this;
 	}
