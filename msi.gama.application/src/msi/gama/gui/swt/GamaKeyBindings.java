@@ -23,51 +23,56 @@ public class GamaKeyBindings implements Listener {
 			return;
 		if ( !ctrl(event) )
 			return;
-		boolean handled = false;
 		switch (event.character) {
 			// Handles START & RELOAD
 			case 'r':
-				handled = true;
 				if ( shift(event) ) {
+					consume(event);
 					GAMA.reloadFrontmostExperiment();
 				} else {
+					consume(event);
 					GAMA.startFrontmostExperiment();
 				}
 				break;
 			// Handles RELOAD
 			case 'R':
-				handled = true;
+				consume(event);
 				GAMA.reloadFrontmostExperiment();
 				break;
 			// Handles STEP
 			case 'P':
-				handled = true;
+				consume(event);
 				GAMA.stepFrontmostExperiment();
 				break;
 			// Handles PAUSE & STEP
 			case 'p':
-				handled = true;
 				if ( shift(event) ) {
+					consume(event);
 					GAMA.stepFrontmostExperiment();
 				} else {
+					consume(event);
 					GAMA.pauseFrontmostExperiment();
 				}
 				break;
+			// Handles CLOSE
 			case 'x':
 				if ( shift(event) ) {
-					handled = true;
+					consume(event);
 					GAMA.closeAllExperiments(true, false);
 				}
 				break;
+			// Handles CLOSE
 			case 'X':
-				handled = true;
+				consume(event);
 				GAMA.closeAllExperiments(true, false);
 
 		}
-		if ( handled ) {
-			event.type = SWT.None;
-		}
 
+	}
+
+	private void consume(final Event event) {
+		event.doit = false;
+		event.type = SWT.None;
 	}
 
 	private final static GamaKeyBindings BINDINGS = new GamaKeyBindings();
