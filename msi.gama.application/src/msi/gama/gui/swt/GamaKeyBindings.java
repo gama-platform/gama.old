@@ -23,7 +23,7 @@ public class GamaKeyBindings implements Listener {
 			return;
 		if ( !ctrl(event) )
 			return;
-		switch (event.character) {
+		switch (event.keyCode) {
 			// Handles START & RELOAD
 			case 'r':
 				if ( shift(event) ) {
@@ -33,17 +33,7 @@ public class GamaKeyBindings implements Listener {
 					consume(event);
 					GAMA.startFrontmostExperiment();
 				}
-				break;
-			// Handles RELOAD
-			case 'R':
-				consume(event);
-				GAMA.reloadFrontmostExperiment();
-				break;
-			// Handles STEP
-			case 'P':
-				consume(event);
-				GAMA.stepFrontmostExperiment();
-				break;
+				break;		
 			// Handles PAUSE & STEP
 			case 'p':
 				if ( shift(event) ) {
@@ -60,20 +50,6 @@ public class GamaKeyBindings implements Listener {
 					consume(event);
 					GAMA.closeAllExperiments(true, false);
 				}
-				break;		
-			// Handles CLOSE , on windows 
-			case '':
-				if ( shift(event) ) {
-					consume(event);
-					GAMA.closeAllExperiments(true, false);
-				}
-				break;
-				
-			// Handles CLOSE
-			case 'X':
-				consume(event);
-				GAMA.closeAllExperiments(true, false);
-
 		}
 
 	}

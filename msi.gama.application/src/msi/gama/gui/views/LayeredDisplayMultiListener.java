@@ -38,24 +38,14 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 		@Override
 		public void keyReleased(final KeyEvent e) {
-			switch (e.character) {
+			switch (e.keyCode) {
 				case SWT.ESC:
 					view.toggleFullScreen();
-					break;
-				case '':
-					if ( GamaKeyBindings.ctrl(e) ) {
-						view.toggleOverlay();
-					}
-				break;
+					break;				
 				case 'o':
 					if ( GamaKeyBindings.ctrl(e) ) {
 						view.toggleOverlay();
 					}
-					break;
-				case '':
-					if ( GamaKeyBindings.ctrl(e) ) {
-						view.toggleSideControls();
-					}	
 					break;
 				case 'l':
 					if ( GamaKeyBindings.ctrl(e) ) {
