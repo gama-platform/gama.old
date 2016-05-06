@@ -912,8 +912,6 @@ public class SwtGui extends AbstractGui {
 		final boolean immediately) {
 		if ( model == null )
 			return false;
-		// If we can load a perspective saved alongside the model, we do it.
-		msi.gama.gui.swt.perspectives.LoadPerspectiveHandler.execute(model, experimentName);
 		final String name = getNewPerspectiveName(model, experimentName);
 		return openPerspective(name, immediately, false);
 

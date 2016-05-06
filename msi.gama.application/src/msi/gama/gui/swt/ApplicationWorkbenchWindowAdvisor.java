@@ -16,7 +16,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.Workbench;
@@ -32,7 +31,6 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	// .findPerspectiveWithId("msi.gama.application.perspectives.SimulationPerspective");
 	// IPerspectiveDescriptor model = Workbench.getInstance().getPerspectiveRegistry()
 	// .findPerspectiveWithId("msi.gama.application.perspectives.ModelingPerspective");
-
 
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 		final IWorkbenchWindowConfigurer configurer) {
@@ -100,6 +98,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		window.getShell().setMaximized(GamaPreferences.CORE_SHOW_MAXIMIZED.getValue());
 		RemoveUnwantedWizards.run();
 		RemoveUnwantedActionSets.run();
+		InstallKeyBindings.run();
 
 	}
 

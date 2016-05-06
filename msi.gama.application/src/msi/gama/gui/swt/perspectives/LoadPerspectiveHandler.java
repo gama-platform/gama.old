@@ -3,10 +3,8 @@ package msi.gama.gui.swt.perspectives;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -23,7 +21,7 @@ public class LoadPerspectiveHandler {
 
 	@Execute
 	public static boolean execute(final IModel model, final String experiment) {
-		final IEclipseContext context = E4Workbench.getServiceContext();
+		final IEclipseContext context = SwtGui.getWindow().getService(IEclipseContext.class);
 		final WorkbenchPage wp = (WorkbenchPage) SwtGui.getPage();
 		final MWindow window = wp.getWindowModel();
 		final EModelService modelService = context.get(EModelService.class);
@@ -59,11 +57,11 @@ public class LoadPerspectiveHandler {
 
 				// remove the current perspective, which should be replaced by
 				// the loaded one
-				final List<MPerspective> alreadyPresentPerspective =
-					modelService.findElements(window, loadedPerspective.getElementId(), MPerspective.class, null);
-				for ( final MPerspective perspective : alreadyPresentPerspective ) {
-					modelService.removePerspectiveModel(perspective, window);
-				}
+				// final List<MPerspective> alreadyPresentPerspective =
+				// modelService.findElements(window, loadedPerspective.getElementId(), MPerspective.class, null);
+				// for ( final MPerspective perspective : alreadyPresentPerspective ) {
+				// modelService.removePerspectiveModel(perspective, window);
+				// }
 
 				// add the loaded perspective and switch to it
 				perspectiveParent.getChildren().add(loadedPerspective);

@@ -100,8 +100,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected Shell fullScreenShell;
 
 	public void toggleFullScreen() {
-		final boolean isFullScreen = fullScreenShell != null;
-		if ( isFullScreen ) {
+		if ( isFullScreen() ) {
 			controlToSetFullScreen.setParent(normalParentOfFullScreenControl);
 			overlay.relocateOverlay(normalParentOfFullScreenControl.getShell());
 			normalParentOfFullScreenControl.layout(true, true);
@@ -117,6 +116,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			fullScreenShell.setVisible(true);
 			getZoomableControls()[0].forceFocus();
 		}
+	}
+
+	public boolean isFullScreen() {
+		return fullScreenShell != null;
 	}
 
 	private void createFullScreenShell() {
@@ -784,6 +787,28 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	@Override
 	public boolean zoomWhenScrolling() {
 		return true;
+	}
+
+	@Override
+	public void removeOutput(final IDisplayOutput output) {
+		if ( output == null )
+			return;
+		if ( output == getOutput() ) {
+			if ( isFullScreen() ) {
+				GAMA.getGui().run(new Runnable() {
+
+					@Override
+					public void run() {
+						toggleFullScreen();
+
+					}
+				});
+			}
+		}
+		outputs.remove(output);
+		if ( outputs.isEmpty() ) {
+			close();
+		}
 	}
 
 }
