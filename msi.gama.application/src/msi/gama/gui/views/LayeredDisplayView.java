@@ -478,8 +478,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		super.createToolItems(tb);
 		// { LAYER_CONTROLS, INSPECT_AGENTS, OPENGL, SEP, SNAPSHOT };
 
-		sideControlsItem =
-			tb.check("display.layers2", "Toggle layers controls", "Toggle layers controls", new SelectionAdapter() {
+		sideControlsItem = tb.check("display.layers2", "Toggle layers controls",
+			"Toggle layers controls (CTRL+L or COMMAND+L)", new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
@@ -487,14 +487,15 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				}
 
 			}, SWT.LEFT);
-		overlayItem = tb.check("display.overlay2", "Toggle overlay", "Toggle overlay", new SelectionAdapter() {
+		overlayItem = tb.check("display.overlay2", "Toggle overlay", "Toggle bottom overlay (CTRL+O or COMMAND+O)",
+			new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				overlay.setVisible(overlayItem.getSelection());
-			}
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					overlay.setVisible(overlayItem.getSelection());
+				}
 
-		}, SWT.LEFT);
+			}, SWT.LEFT);
 		overlayItem.setSelection(GamaPreferences.CORE_OVERLAY.getValue());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
 
