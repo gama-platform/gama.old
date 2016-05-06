@@ -98,7 +98,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		window.getShell().setMaximized(GamaPreferences.CORE_SHOW_MAXIMIZED.getValue());
 		RemoveUnwantedWizards.run();
 		RemoveUnwantedActionSets.run();
-		InstallKeyBindings.run();
+		GamaKeyBindings.install();
 
 	}
 

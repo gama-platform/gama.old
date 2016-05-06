@@ -1,8 +1,5 @@
 package msi.gama.gui.views;
 
-import java.awt.AWTEvent;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.DragDetectListener;
@@ -19,6 +16,7 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import msi.gama.gui.swt.GamaKeyBindings;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.WorkaroundForIssue1353;
 import msi.gama.runtime.GAMA;
@@ -31,6 +29,33 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	volatile boolean inMenu;
 	long lastEnterTime;
 	Point lastEnterPosition = new Point(0, 0);
+	final DisplayKeyListener delegate = new DisplayKeyListener();
+
+	private class DisplayKeyListener implements KeyListener {
+
+		@Override
+		public void keyPressed(final KeyEvent e) {}
+
+		@Override
+		public void keyReleased(final KeyEvent e) {
+			switch (e.character) {
+				case SWT.ESC:
+					view.toggleFullScreen();
+					break;
+				case 'o':
+					if ( GamaKeyBindings.ctrl(e) ) {
+						view.toggleOverlay();
+					}
+					break;
+				case 'l':
+					if ( GamaKeyBindings.ctrl(e) ) {
+						view.toggleSideControls();
+					}
+			}
+
+		}
+
+	}
 
 	public LayeredDisplayMultiListener(final LayeredDisplayView view) {
 		this.view = view;
@@ -40,27 +65,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		control.addMenuDetectListener(this);
 		control.addDragDetectListener(this);
 		control.addMouseTrackListener(this);
-		// control.addMouseWheelListener(this);
 		control.addMouseMoveListener(this);
 		control.addFocusListener(this);
-		Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-
-			@Override
-			public void eventDispatched(final AWTEvent event) {
-				System.out.println("AWTEvent:" + event.toString());
-
-			}
-		}, AWTEvent.MOUSE_MOTION_EVENT_MASK);
-		// SwtGui.getDisplay().addFilter(SWT.MouseMove, new Listener() {
-		//
-		// @Override
-		// public void handleEvent(final Event event) {
-		// if ( control.isDisposed() )
-		// SwtGui.getDisplay().removeFilter(SWT.MouseMove, this);
-		// else System.out.println("CURRENT FOCUS: " + control.getDisplay().getFocusControl());
-		//
-		// }
-		// });
 	}
 
 	public void dispose() {
@@ -88,8 +94,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	public void keyReleased(final KeyEvent e) {
 		if ( !ok() )
 			return;
-		if ( e.character == SWT.ESC )
-			view.toggleFullScreen();
+		delegate.keyReleased(e);
 	}
 
 	@Override

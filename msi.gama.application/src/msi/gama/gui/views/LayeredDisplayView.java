@@ -91,7 +91,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public DisplayOverlay overlay;
 	protected volatile boolean disposed;
 	protected volatile boolean realized = false;
-	protected ToolItem overlayItem;
+	protected ToolItem overlayItem, sideControlsItem;
+	boolean sideControlsVisible = false; // TODO Make it a preference
+	int[] sideControlWeights = new int[] { 30, 70 };
 	protected final java.awt.Rectangle surfaceCompositeBounds = new java.awt.Rectangle();
 	protected LayeredDisplayMultiListener keyAndMouseListener;
 	protected DisplaySurfaceMenu menuManager;
@@ -191,8 +193,21 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		return getDisplaySurface().getManager();
 	}
 
-	public DisplayOverlay getOverlay() {
-		return overlay;
+	public void toggleOverlay() {
+		overlay.setVisible(!overlay.isVisible());
+	}
+
+	public void toggleSideControls() {
+		if ( sideControlsVisible ) {
+			sideControlWeights = form.getWeights();
+			form.setMaximizedControl(parent.getParent());
+			sideControlsVisible = false;
+		} else {
+			form.setWeights(sideControlWeights);
+			form.setMaximizedControl(null);
+			sideControlsVisible = true;
+		}
+		sideControlsItem.setSelection(sideControlsVisible);
 	}
 
 	public Composite getSurfaceComposite() {
@@ -463,25 +478,15 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		super.createToolItems(tb);
 		// { LAYER_CONTROLS, INSPECT_AGENTS, OPENGL, SEP, SNAPSHOT };
 
-		tb.check("display.layers2", "Toggle layers controls", "Toggle layers controls", new SelectionAdapter() {
+		sideControlsItem =
+			tb.check("display.layers2", "Toggle layers controls", "Toggle layers controls", new SelectionAdapter() {
 
-			int[] weights = new int[] { 30, 70 };
-			boolean visible = false; // TODO Make it a preference
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				if ( visible ) {
-					weights = form.getWeights();
-					form.setMaximizedControl(parent.getParent());
-					visible = false;
-				} else {
-					form.setWeights(weights);
-					form.setMaximizedControl(null);
-					visible = true;
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					toggleSideControls();
 				}
-			}
 
-		}, SWT.LEFT);
+			}, SWT.LEFT);
 		overlayItem = tb.check("display.overlay2", "Toggle overlay", "Toggle overlay", new SelectionAdapter() {
 
 			@Override
