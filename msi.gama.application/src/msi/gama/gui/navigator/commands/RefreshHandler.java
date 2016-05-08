@@ -15,6 +15,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -31,8 +32,10 @@ public class RefreshHandler extends AbstractHandler {
 	}
 
 	public static void run(final IResource resource) {
-
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		final Display d = PlatformUI.getWorkbench().getDisplay();
+		if ( d.isDisposed() )
+			return;
+		d.asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
