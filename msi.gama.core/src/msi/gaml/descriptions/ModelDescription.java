@@ -52,7 +52,7 @@ public class ModelDescription extends SpeciesDescription {
 	private final List<String> imports;
 	private boolean isTorus = false;
 	private final ErrorCollector collect;
-	protected boolean document;
+	protected volatile boolean document;
 	// hqnghi new attribute manipulate micro-models
 	private Map<String, ModelDescription> MICRO_MODELS = new TOrderedHashMap<String, ModelDescription>();
 	private String alias = "";
@@ -387,7 +387,6 @@ public class ModelDescription extends SpeciesDescription {
 	public IDescription validate(final boolean document) {
 		isDocumenting(document);
 		super.validate();
-		// System.out.println(toGaml());
 		return this;
 	}
 
