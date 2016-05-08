@@ -33,16 +33,13 @@ public class GamlReconciler extends XtextReconciler {
 
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
-		System.out.println("Reconcile job beginning");
+		// System.out.println("Reconcile job beginning");
 		final IStatus status = super.run(monitor);
 		if (status == Status.CANCEL_STATUS)
 			return status;
-		try {
-			System.out.println("Documenting job beginning");
-			GamlResourceDocManager.DocumentationJob.join();
-		} catch (final InterruptedException e) {
-			e.printStackTrace();
-		}
+		// System.out.println("Documenting job beginning");
+		GamlResourceDocManager.DocumentationJob.schedule();
+
 		return status;
 	}
 

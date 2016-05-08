@@ -49,7 +49,7 @@ public class GamlResourceDocManager implements IDocManager {
 	public static final Job DocumentationJob = new Job("Documentation") {
 		{
 			setUser(false);
-			setSystem(true);
+			// setSystem(true);
 		}
 
 		@Override
@@ -59,9 +59,10 @@ public class GamlResourceDocManager implements IDocManager {
 				task.process();
 				task = DocumentationQueue.poll();
 			}
-			final Runnable r = CleanupTasks.poll();
+			Runnable r = CleanupTasks.poll();
 			while (r != null) {
 				r.run();
+				r = CleanupTasks.poll();
 			}
 			return Status.OK_STATUS;
 		}
