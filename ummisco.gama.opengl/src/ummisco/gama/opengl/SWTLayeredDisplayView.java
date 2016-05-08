@@ -31,19 +31,10 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
-
 		final SWTOpenGLDisplaySurface surface = new SWTOpenGLDisplaySurface(parent, getOutput());
 		surfaceComposite = surface.renderer.getCanvas();
 		surface.outputReloaded();
 		return surfaceComposite;
-	}
-
-	@Override
-	public void ownCreatePartControl(final Composite c) {
-		super.ownCreatePartControl(c);
-		if (getOutput().getData().isFullScreen()) {
-			toggleFullScreen();
-		}
 	}
 
 	@Override
@@ -105,9 +96,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 
 	@Override
 	public void waitToBeRealized() {
-		// if (!Platform.isCocoa()) {
-		// return;
-		// }
+
 		GAMA.getGui().asyncRun(new Runnable() {
 
 			@Override

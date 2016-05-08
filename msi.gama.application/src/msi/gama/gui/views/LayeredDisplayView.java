@@ -343,6 +343,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
 		keyAndMouseListener = new LayeredDisplayMultiListener(this);
 		menuManager = new DisplaySurfaceMenu(getDisplaySurface(), parent, this);
+		if ( getOutput().getData().isFullScreen() ) {
+			toggleFullScreen();
+		}
 	}
 
 	@Override
