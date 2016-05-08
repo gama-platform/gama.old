@@ -28,18 +28,28 @@ import msi.gaml.descriptions.ErrorCollector;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
+	// volatile boolean isValidating;
+
 	@Check()
 	public void validate(final Model model) {
+		// if (isValidating)
+		// return;
+
+		// try {
+		// isValidating = true;
 		final GamlResource newResource = (GamlResource) model.eResource();
 		if (newResource.isValidating()) {
 			return;
 		}
-		final ErrorCollector errors = /* GamlModelBuilder.getInstance() */new GamlModelBuilder().validate(newResource);
+		final ErrorCollector errors = new GamlModelBuilder().validate(newResource);
 		if (!errors.hasInternalSyntaxErrors()) {
 			for (final GamlCompilationError error : errors) {
 				manageCompilationIssue(error);
 			}
 		}
+		// } finally {
+		// isValidating = false;
+		// }
 	}
 
 	private GamlResource getCurrentResource() {
@@ -109,8 +119,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			} else if (e.isWarning()) {
 				acceptWarning(e.toString(), object, feature, index, e.getCode(), e.getData());
 			} else {
-				System.out.println("One compilation error accepted: " + e.toString() + " thread: "
-						+ Thread.currentThread().getName());
+				// System.out.println("One compilation error accepted: " +
+				// e.toString() + " thread: "
+				// + Thread.currentThread().getName());
 				acceptError(e.toString(), object, feature, index, e.getCode(), e.getData());
 			}
 		}

@@ -52,6 +52,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
@@ -150,7 +151,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	// private static boolean synthetic;
 
 	static {
-		IExpressionCompiler.OPERATORS.put(MY, new TOrderedHashMap());
+		IExpressionCompiler.OPERATORS.put(MY, new THashMap());
 	}
 
 	public GamlExpressionCompiler() {
@@ -204,16 +205,18 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IExpression compile(final EObject s) {
 		if (s == null) {
 			// No error, since the null expressions come from previous (more
-			// focused)
-			// errors and not from the parser itself.
+			// focused) errors and not from the parser itself.
 			return null;
 		}
+
 		final IExpression expr = doSwitch(s);
-		// if ( !synthetic ) {
-		if (context != null && context.isDocumenting()) {
+		// System.out.println("Compiling " + expr + " in context " + context + "
+		// documenting:"
+		// + (context == null ? false : context.isDocumenting()));
+		if (expr != null && context != null && context.isDocumenting()) {
+			// System.out.println("Document expression " + expr);
 			DescriptionFactory.setGamlDocumentation(s, expr);
 		}
-		// }
 		return expr;
 	}
 

@@ -12,38 +12,58 @@
 package msi.gama.lang.gaml;
 
 import org.eclipse.emf.ecore.util.Diagnostician;
-import org.eclipse.xtext.generator.*;
+import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.linking.ILinkingService;
-import org.eclipse.xtext.naming.*;
-import org.eclipse.xtext.parser.*;
-import org.eclipse.xtext.resource.*;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.parser.IEncodingProvider;
+import org.eclipse.xtext.parser.IParser;
+import org.eclipse.xtext.resource.IContainer;
+import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
+import org.eclipse.xtext.resource.IResourceDescription;
+import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
 import org.eclipse.xtext.scoping.impl.ImportUriGlobalScopeProvider;
-import org.eclipse.xtext.service.*;
+import org.eclipse.xtext.service.DispatchingProvider;
+import org.eclipse.xtext.service.SingletonBinding;
+
 import com.google.inject.Binder;
-import msi.gama.lang.gaml.generator.*;
-import msi.gama.lang.gaml.linking.*;
+
+import msi.gama.lang.gaml.generator.GamlGenerator;
+import msi.gama.lang.gaml.generator.GamlOutputConfigurationProvider;
+import msi.gama.lang.gaml.linking.GamlLinkingService;
+import msi.gama.lang.gaml.linking.GamlNameConverter;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser;
-import msi.gama.lang.gaml.resource.*;
+import msi.gama.lang.gaml.resource.GamlModelBuilder;
+import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.resource.GamlResourceDescriptionManager;
+import msi.gama.lang.gaml.resource.GamlResourceDescriptionStrategy;
+import msi.gama.lang.gaml.resource.GamlResourceDocManager;
 import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.AllImportUriGlobalScopeProvider;
 import msi.gama.lang.gaml.scoping.GamlQualifiedNameProvider;
-import msi.gama.lang.gaml.validation.*;
-import msi.gama.lang.utils.*;
+import msi.gama.lang.gaml.validation.GamlDiagnostician;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.lang.utils.GamlEncodingProvider;
+import msi.gama.lang.utils.GamlExpressionCompiler;
+import msi.gama.lang.utils.GamlExpressionCompilerProvider;
 import msi.gaml.compilation.IModelBuilder;
-import msi.gaml.expressions.*;
-import msi.gaml.factories.*;
+import msi.gaml.expressions.GamlExpressionFactory;
+import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.ModelFactory;
 import msi.gaml.factories.ModelFactory.IModelBuilderProvider;
 
 /**
- * Use this class to register components to be used at runtime / without the Equinox extension
- * registry.
+ * Use this class to register components to be used at runtime / without the
+ * Equinox extension registry.
  */
 public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeModule {
 
 	private static boolean initialized;
 
 	public static void staticInitialize() {
-		if ( !initialized ) {
+		if (!initialized) {
 			System.out.println(">> Registering GAML expression compiler.");
 			GamlExpressionFactory.registerParserProvider(new GamlExpressionCompilerProvider());
 			ModelFactory.registerModelBuilderProvider(new IModelBuilderProvider() {
@@ -79,7 +99,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	}
 
 	@Override
-	// @SingletonBinding(eager = true)
+	@SingletonBinding(eager = true)
 	public Class<? extends GamlJavaValidator> bindGamlJavaValidator() {
 		return GamlJavaValidator.class;
 	}
@@ -127,7 +147,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@Override
 	public void configureRuntimeEncodingProvider(final Binder binder) {
 		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Runtime.class)
-			.to(GamlEncodingProvider.class);
+				.to(GamlEncodingProvider.class);
 	}
 
 	// public Class<? extends IEncodingProvider> bindIEncodingProvider() {
@@ -145,7 +165,8 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	// { return SimpleResourceSetProvider.class; }
 
 	// @Override
-	// public Class<? extends IResourceForEditorInputFactory> bindIResourceForEditorInputFactory() {
+	// public Class<? extends IResourceForEditorInputFactory>
+	// bindIResourceForEditorInputFactory() {
 	// return ResourceForIEditorInputFactory.class;
 	// }
 }

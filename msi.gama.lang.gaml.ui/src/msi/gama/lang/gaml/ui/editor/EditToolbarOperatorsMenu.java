@@ -4,17 +4,24 @@
  */
 package msi.gama.lang.gaml.ui.editor;
 
-import java.util.*;
-import msi.gama.common.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Menu;
+
+import gnu.trove.map.hash.THashMap;
 import msi.gama.gui.swt.commands.GamaMenuItem;
 import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
-import msi.gaml.types.*;
-import org.eclipse.jface.text.templates.Template;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.Menu;
+import msi.gaml.types.Signature;
 
 /**
  * The class EditToolbarTemplateMenu.
@@ -29,10 +36,10 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 
 	@Override
 	protected void fillMenu() {
-		if ( byName == null ) {
+		if (byName == null) {
 			byName = XtextGui.OPERATORS_MENU_SORT.getValue().equals("Name");
 		}
-		Menu sub = sub("Sort by...");
+		final Menu sub = sub("Sort by...");
 		sep();
 		check(sub, "Name", byName, new SelectionAdapter() {
 
@@ -50,7 +57,7 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 				reset();
 			}
 		});
-		if ( byName ) {
+		if (byName) {
 			fillMenuByName();
 		} else {
 			fillMenuByCategory();
@@ -58,25 +65,24 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 	}
 
 	protected void fillMenuByName() {
-		Map<String, Map<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
-		List<String> nn = new ArrayList(operators.keySet());
+		final Map<String, THashMap<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
+		final List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
-		for ( String name : nn ) {
-			List<OperatorProto> protos = new ArrayList();
-			for ( Signature sig : operators.get(name).keySet() ) {
-				OperatorProto proto = operators.get(name).get(sig);
-				if ( proto.getDeprecated() == null ) {
+		for (final String name : nn) {
+			final List<OperatorProto> protos = new ArrayList();
+			for (final Signature sig : operators.get(name).keySet()) {
+				final OperatorProto proto = operators.get(name).get(sig);
+				if (proto.getDeprecated() == null) {
 					protos.add(proto);
 				}
 			}
-			if ( protos.isEmpty() ) {
+			if (protos.isEmpty()) {
 				continue;
 			}
-			Menu name_menu = sub(name);
-			for ( final OperatorProto proto : protos ) {
+			final Menu name_menu = sub(name);
+			for (final OperatorProto proto : protos) {
 				final Template t = GamlTemplateFactory.from(proto);
-				GamaMenuItem item =
-					action(name_menu,
+				final GamaMenuItem item = action(name_menu,
 						"(" + proto.signature.asPattern(false) + ") -> " + proto.returnType.serialize(true),
 						new SelectionAdapter() {
 
@@ -91,45 +97,44 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 	}
 
 	protected void fillMenuByCategory() {
-		Map<String, Map<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
+		final Map<String, THashMap<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
 		final Map<String, Map<String, Map<OperatorProto, Template>>> categories = new LinkedHashMap();
-		List<String> nn = new ArrayList(operators.keySet());
+		final List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
-		for ( String name : nn ) {
-			Map<Signature, OperatorProto> ops = operators.get(name);
-			for ( Signature sig : ops.keySet() ) {
-				OperatorProto proto = ops.get(sig);
-				if ( proto.getDeprecated() != null ) {
+		for (final String name : nn) {
+			final Map<Signature, OperatorProto> ops = operators.get(name);
+			for (final Signature sig : ops.keySet()) {
+				final OperatorProto proto = ops.get(sig);
+				if (proto.getDeprecated() != null) {
 					continue;
 				}
-				String category = proto.getCategory().replace("-related", "");
+				final String category = proto.getCategory().replace("-related", "");
 				Map<String, Map<OperatorProto, Template>> names = categories.get(category);
-				if ( names == null ) {
+				if (names == null) {
 					names = new LinkedHashMap();
 					categories.put(category, names);
 				}
 				Map<OperatorProto, Template> templates = names.get(name);
-				if ( templates == null ) {
+				if (templates == null) {
 					templates = new LinkedHashMap();
 					names.put(name, templates);
 				}
 				templates.put(proto, GamlTemplateFactory.from(proto));
 			}
 		}
-		List<String> cc = new ArrayList(categories.keySet());
+		final List<String> cc = new ArrayList(categories.keySet());
 		Collections.sort(cc, IGNORE_CASE);
-		for ( final String category : cc ) {
-			Menu category_menu = sub(category);
-			List<String> nn2 = new ArrayList(categories.get(category).keySet());
+		for (final String category : cc) {
+			final Menu category_menu = sub(category);
+			final List<String> nn2 = new ArrayList(categories.get(category).keySet());
 			Collections.sort(nn2, IGNORE_CASE);
-			for ( final String name : nn2 ) {
-				List<OperatorProto> protos = new ArrayList(categories.get(category).get(name).keySet());
+			for (final String name : nn2) {
+				final List<OperatorProto> protos = new ArrayList(categories.get(category).get(name).keySet());
 				//
-				Menu name_menu = sub(category_menu, name);
-				for ( final OperatorProto proto : protos ) {
+				final Menu name_menu = sub(category_menu, name);
+				for (final OperatorProto proto : protos) {
 					final Template t = categories.get(category).get(name).get(proto);
-					GamaMenuItem item =
-						action(name_menu,
+					final GamaMenuItem item = action(name_menu,
 							"(" + proto.signature.asPattern(false) + ") -> " + proto.returnType.serialize(true),
 							new SelectionAdapter() {
 
@@ -147,6 +152,7 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 	}
 
 	@Override
-	protected void openView() {}
+	protected void openView() {
+	}
 
 }

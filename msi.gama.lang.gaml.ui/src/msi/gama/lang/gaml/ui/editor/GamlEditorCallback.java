@@ -105,17 +105,21 @@ public class GamlEditorCallback extends ValidatingEditorCallback {
 		super.beforeDispose(editor);
 	}
 
+	public static final int DELAY = 500;
+
 	@Override
 	public void afterSave(final XtextEditor editor) {
 		if (editor.isEditable()) {
-			final ValidationJob validationJob = newValidationJob(editor);
+			final GamlValidationJob validationJob = newValidationJob(editor);
 			validationJob.setName("Validating " + editor.getPartName());
 			validationJob.setUser(false);
-			validationJob.schedule();
+			validationJob.schedule(DELAY);
 		}
+
 	}
 
-	private ValidationJob newValidationJob(final XtextEditor editor) {
+	private GamlValidationJob newValidationJob(final XtextEditor editor) {
+
 		IValidationIssueProcessor issueProcessor;
 		if (editor.getResource() == null) {
 			issueProcessor = new AnnotationIssueProcessor(editor.getDocument(),
@@ -123,7 +127,7 @@ public class GamlEditorCallback extends ValidatingEditorCallback {
 		} else {
 			issueProcessor = new MarkerIssueProcessor(editor.getResource(), markerCreator, markerTypeProvider);
 		}
-		final ValidationJob validationJob = new GamlValidationJob(resourceValidator, editor.getDocument(),
+		final GamlValidationJob validationJob = new GamlValidationJob(resourceValidator, editor.getDocument(),
 				issueProcessor, CheckMode.NORMAL_AND_FAST);
 		return validationJob;
 	}

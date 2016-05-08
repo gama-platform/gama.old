@@ -11,14 +11,23 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.emf.ecore.EObject;
+
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.types.Signature;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 28 d�c. 2010
@@ -31,17 +40,17 @@ public interface IExpressionCompiler<T> {
 	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
 
 	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE,
-		IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER, IKeyword.THEIR, IKeyword.ITS,
-		IKeyword.USER_LOCATION);
+			IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER, IKeyword.THEIR, IKeyword.ITS,
+			IKeyword.USER_LOCATION);
 	public static final List<String> IGNORED = Arrays.asList(IKeyword.THE, IKeyword.THEIR, IKeyword.HIS, IKeyword.ITS,
-		IKeyword.HER);
-	public static final Map<String, Map<Signature, OperatorProto>> OPERATORS = new THashMap();
+			IKeyword.HER);
+	public static final THashMap<String, THashMap<Signature, OperatorProto>> OPERATORS = new THashMap();
 	public static final Set<String> ITERATORS = new THashSet();
 
 	public abstract IExpression compile(final IExpressionDescription s, final IDescription parsingContext);
 
 	Map<String, IExpressionDescription> parseArguments(StatementDescription action, EObject eObject,
-		IDescription context, boolean compileArgValues);
+			IDescription context, boolean compileArgValues);
 
 	// hqnghi 11/Oct/13 two method for compiling models directly from files
 	public abstract ModelDescription createModelDescriptionFromFile(String filepath);

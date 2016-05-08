@@ -4,14 +4,23 @@
  */
 package msi.gama.lang.gaml.ui.editor;
 
-import java.util.*;
-import msi.gama.gui.swt.SwtGui;
-import msi.gaml.operators.Strings;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.jface.text.templates.Template;
-import org.eclipse.jface.text.templates.persistence.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PartInitException;
+
+import msi.gama.gui.swt.SwtGui;
+import msi.gaml.operators.Strings;
 
 /**
  * The class EditToolbarTemplateMenu.
@@ -62,8 +71,10 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 		@Override
 		String getPath() {
-			String s = parent.getPath();
-			if ( s.isEmpty() ) { return "" + rank; }
+			final String s = parent.getPath();
+			if (s.isEmpty()) {
+				return "" + rank;
+			}
 			return s + "." + rank;
 		}
 
@@ -74,7 +85,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 		@Override
 		void fillMenu(final Menu m) {
-			Menu sub = sub(m, name, desc);
+			final Menu sub = sub(m, name, desc);
 			action(sub, "Insert", new SelectionAdapter() {
 
 				@Override
@@ -115,27 +126,29 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 		}
 
 		void add(final TemplatePersistenceData t) {
-			String id = t.getId();
-			List<String> path = new ArrayList(Arrays.asList(id.split("\\.")));
+			final String id = t.getId();
+			final List<String> path = new ArrayList(Arrays.asList(id.split("\\.")));
 			add(t, path);
 		}
 
 		Node childWithName(final String s) {
-			for ( Node n : getChildren() ) {
-				if ( n.getName().equals(s) ) { return n; }
+			for (final Node n : getChildren()) {
+				if (n.getName().equals(s)) {
+					return n;
+				}
 			}
 			return null;
 		}
 
 		void add(final TemplatePersistenceData t, final List<String> path) {
-			if ( path.size() == 0 ) {
+			if (path.size() == 0) {
 				children.add(new TemplateNode(this, t, 1));
-			} else if ( path.size() == 1 && Strings.isGamaNumber(path.get(0)) ) {
+			} else if (path.size() == 1 && Strings.isGamaNumber(path.get(0))) {
 				children.add(new TemplateNode(this, t, Integer.decode(path.get(0))));
 			} else {
-				String name = path.remove(0);
+				final String name = path.remove(0);
 				Node node = childWithName(name);
-				if ( node == null ) {
+				if (node == null) {
 					node = new TemplateTree(this, name);
 					children.add(node);
 				}
@@ -146,8 +159,8 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 		@Override
 		void fillMenu(final Menu parent) {
-			Menu menu = sub(parent, getName());
-			for ( Node node : children ) {
+			final Menu menu = sub(parent, getName());
+			for (final Node node : children) {
 				node.fillMenu(menu);
 			}
 			sep(menu);
@@ -155,7 +168,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					String id = getEditor().getNewTemplateId(getPath());
+					final String id = getEditor().getNewTemplateId(getPath());
 					editTemplate(id);
 				}
 
@@ -169,8 +182,10 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 		@Override
 		String getPath() {
-			String s = parent.getPath();
-			if ( s.isEmpty() ) { return getName(); }
+			final String s = parent.getPath();
+			if (s.isEmpty()) {
+				return getName();
+			}
 			return s + "." + getName();
 		}
 
@@ -189,7 +204,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 		@Override
 		void fillMenu(final Menu parent) {
-			for ( Node node : children ) {
+			for (final Node node : children) {
 				node.fillMenu(parent);
 			}
 		}
@@ -210,11 +225,11 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 	@Override
 	protected void fillMenu() {
-		if ( tree == null || tree.getChildren().isEmpty() ) {
+		if (tree == null || tree.getChildren().isEmpty()) {
 			tree = new TemplateRoot();
 			store = getEditor().getTemplateStore();
-			TemplatePersistenceData[] templates = store.getTemplateData(false);
-			for ( final TemplatePersistenceData t : templates ) {
+			final TemplatePersistenceData[] templates = store.getTemplateData(false);
+			for (final TemplatePersistenceData t : templates) {
 				tree.add(t);
 			}
 		}
@@ -230,15 +245,15 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 	public void editTemplate(final String dataId) {
 		TemplatePersistenceData data = store.getTemplateData(dataId);
-		boolean edit = data != null;
-		GamlEditor editor = getEditor();
-		if ( data == null ) {
-			data =
-				new TemplatePersistenceData(new Template("", "", "msi.gama.lang.gaml.Gaml.Model",
-					editor.getSelectedText(), true), true, dataId);
+		final boolean edit = data != null;
+		final GamlEditor editor = getEditor();
+		if (data == null) {
+			data = new TemplatePersistenceData(
+					new Template("", "", "msi.gama.lang.gaml.Gaml.Model", editor.getSelectedText(), true), true,
+					dataId);
 		}
-		boolean succeed = editor.openEditTemplateDialog(data, edit);
-		if ( succeed ) {
+		final boolean succeed = editor.openEditTemplateDialog(data, edit);
+		if (succeed) {
 			reset();
 		}
 
@@ -251,7 +266,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 	protected void openView() {
 		try {
 			SwtGui.getPage().showView("msi.gama.lang.gaml.ui.templates");
-		} catch (PartInitException e) {
+		} catch (final PartInitException e) {
 			e.printStackTrace();
 		}
 	}

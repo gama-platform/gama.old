@@ -432,4 +432,10 @@ public class GAMA {
 		isInHeadlessMode = true;
 	}
 
+	public static void relaunchFrontmostExperiment() {
+		// Needs to be done: recompile the model and runs the previous
+		// experiment if any
+
+	}
+
 }

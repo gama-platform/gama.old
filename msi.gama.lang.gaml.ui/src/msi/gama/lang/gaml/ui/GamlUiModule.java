@@ -12,6 +12,7 @@
 package msi.gama.lang.gaml.ui;
 
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -55,6 +56,7 @@ import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.lang.gaml.ui.editor.GamlMarkOccurrenceActionContributor;
 import msi.gama.lang.gaml.ui.editor.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration;
+import msi.gama.lang.gaml.ui.highlight.GamlReconciler;
 import msi.gama.lang.gaml.ui.highlight.GamlSemanticHighlightingCalculator;
 import msi.gama.lang.gaml.ui.hover.GamlDocumentationProvider;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider;
@@ -242,6 +244,16 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	@SingletonBinding
 	public Class<? extends TemplateStore> bindTemplateStore() {
 		return GamlTemplateStore.class;
+	}
+	//
+	// public Class<? extends XtextDocumentReconcileStrategy>
+	// bindXtextDocumentReconcileStrategy() {
+	//
+	// }
+
+	@Override
+	public Class<? extends IReconciler> bindIReconciler() {
+		return GamlReconciler.class;
 	}
 
 	// contributed by org.eclipse.xtext.generator.generator.GeneratorFragment
