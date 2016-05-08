@@ -5,9 +5,15 @@
 package msi.gaml.descriptions;
 
 import java.lang.reflect.AnnotatedElement;
-import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import msi.gama.common.interfaces.IGamlable;
+import msi.gama.common.interfaces.INamed;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlProperties;
 
 /**
@@ -22,6 +28,7 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 	protected String name;
 	protected String plugin;
 	protected AnnotatedElement support;
+	protected String deprecated;
 
 	protected AbstractProto(final String name, final AnnotatedElement support, final String plugin) {
 		this.name = name;
@@ -31,16 +38,21 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 
 	@Override
 	public String getDocumentation() {
-		doc d = getDocAnnotation();
-		if ( d == null ) { return ""; }
-		StringBuilder sb = new StringBuilder(200);
+		final doc d = getDocAnnotation();
+		if (d == null) {
+			return "";
+		}
+		final StringBuilder sb = new StringBuilder(200);
 		String s = d.value(); /* AbstractGamlDocumentation.getMain(getDoc()); */
-		if ( s != null && !s.isEmpty() ) {
+		if (s != null && !s.isEmpty()) {
 			sb.append(s);
 			sb.append("<br/>");
 		}
-		s = d.deprecated(); /* AbstractGamlDocumentation.getDeprecated(getDoc()); */
-		if ( s != null && !s.isEmpty() ) {
+		s = d.deprecated(); /*
+							 * AbstractGamlDocumentation.getDeprecated(getDoc())
+							 * ;
+							 */
+		if (s != null && !s.isEmpty()) {
 			sb.append("<b>Deprecated</b>: ");
 			sb.append("<i>");
 			sb.append(s);
@@ -51,18 +63,28 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 	}
 
 	public String getDeprecated() {
-		doc d = getDocAnnotation();
-		if ( d == null ) { return null; }
-		String s = d.deprecated();
-		if ( s.isEmpty() ) { return null; }
-		return s;
+		if (deprecated != null)
+			return deprecated.isEmpty() ? null : deprecated;
+		final doc d = getDocAnnotation();
+		if (d == null) {
+			return null;
+		}
+		deprecated = d.deprecated();
+		if (deprecated.isEmpty()) {
+			return null;
+		}
+		return deprecated;
 	}
 
 	public String getMainDoc() {
-		doc d = getDocAnnotation();
-		if ( d == null ) { return null; }
-		String s = d.value();
-		if ( s.isEmpty() ) { return null; }
+		final doc d = getDocAnnotation();
+		if (d == null) {
+			return null;
+		}
+		final String s = d.value();
+		if (s.isEmpty()) {
+			return null;
+		}
 		return s;
 	}
 
@@ -73,6 +95,7 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 
 	/**
 	 * Method getTitle()
+	 * 
 	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
 	 */
 	@Override
@@ -82,16 +105,20 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 
 	/**
 	 * Method setName()
+	 * 
 	 * @see msi.gama.common.interfaces.INamed#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(final String newName) {}
+	public void setName(final String newName) {
+	}
 
 	public List<usage> getUsages() {
-		doc d = getDocAnnotation();
-		if ( d != null ) {
-			usage[] tt = d.usages();
-			if ( tt.length > 0 ) { return new ArrayList(Arrays.asList(tt)); }
+		final doc d = getDocAnnotation();
+		if (d != null) {
+			final usage[] tt = d.usages();
+			if (tt.length > 0) {
+				return new ArrayList(Arrays.asList(tt));
+			}
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -116,7 +143,7 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 
 	public doc getDocAnnotation() {
 		doc d = null;
-		if ( support != null && support.isAnnotationPresent(doc.class) ) {
+		if (support != null && support.isAnnotationPresent(doc.class)) {
 			d = support.getAnnotation(doc.class);
 		}
 		return d;
