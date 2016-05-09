@@ -227,7 +227,7 @@ public class GeometryUtils {
 
 	public static GamaPoint pointInGeom(final Geometry geom, final RandomUtils rand) {
 		// WARNING Only in 2D !
-		if ( geom instanceof Point ) { return new GamaPoint(geom.getCoordinate()); }
+		if ( geom instanceof Point || geom.getCoordinates().length < 2) { return new GamaPoint(geom.getCoordinate()); }
 		if ( geom instanceof LineString ) {
 			final int i = rand.between(0, geom.getCoordinates().length - 2);
 			final Coordinate source = geom.getCoordinates()[i];

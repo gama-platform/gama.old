@@ -16,6 +16,8 @@ import java.lang.reflect.Field;
 import org.apache.commons.math3.geometry.euclidean.threed.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.util.AssertionFailedException;
+
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -616,7 +618,11 @@ public class GamaShape implements IShape /* , IContainer */ {
 			return getInnerGeometry().intersects(g.getInnerGeometry());
 		} catch (TopologyException e) {
 			return getInnerGeometry().buffer(0).intersects(g.getInnerGeometry().buffer(0));
+		} catch (AssertionFailedException e) {
+			return getInnerGeometry().buffer(0).intersects(g.getInnerGeometry().buffer(0));
+			
 		}
+		
 		// } {
 		// return operations().intersects(g);
 	}
