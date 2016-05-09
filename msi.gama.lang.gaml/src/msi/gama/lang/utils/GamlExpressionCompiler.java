@@ -385,8 +385,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 
 		// we verify and compile apart the calls to actions as operators
-		// TypeDescription sd =
-		// getContext().getSpeciesDescription(left.getType().getSpeciesName());
+
 		final TypeDescription sd = left.getType().getSpecies();
 		if (sd != null) {
 			final StatementDescription action = sd.getAction(op);
@@ -407,7 +406,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		// if the operator is an iterator, we must initialize the context
 		// sensitive "each" variable
-		if (ITERATORS.contains(op)) {
+		final boolean isIterator = ITERATORS.contains(op);
+		if (isIterator) {
 			final IType t = left.getType().getContentType();
 			setEach_Expr(op, new EachExpression(t /* ct, kt */));
 		}
@@ -432,7 +432,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IExpression right = compile(e2);
 		// We make sure to remove any mention of the each expression after the
 		// right member has been compiled
-		if (ITERATORS.contains(op)) {
+		if (isIterator) {
 			iteratorContexts.pop();
 		}
 		// and return the binary expression
@@ -945,7 +945,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		final List<Expression> args = EGaml.getExprsOf(object.getArgs());
 		final int size = args.size();
-		if (size == 1) {
+		switch (size) {
+		case 1:
 			if (isTypeName(op)) {
 				return binary(AS, args.get(0), object);
 			}
@@ -956,18 +957,18 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 						IGamlIssue.UNKNOWN_ARGUMENT, object);
 			}
 			return unary(op, args.get(0));
+		case 2:
+			return binary(op, args.get(0), args.get(1));
 
-		}
-		if (size == 2) {
-			final IExpression result = binary(op, args.get(0), args.get(1));
+		default:
+			final IExpression[] compiledArgs = new IExpression[size];
+			for (int i = 0; i < size; i++) {
+				compiledArgs[i] = compile(args.get(i));
+			}
+			final IExpression result = factory.createOperator(op, getContext(), object, compiledArgs);
 			return result;
 		}
-		final IExpression[] compiledArgs = new IExpression[size];
-		for (int i = 0; i < size; i++) {
-			compiledArgs[i] = compile(args.get(i));
-		}
-		final IExpression result = factory.createOperator(op, getContext(), object, compiledArgs);
-		return result;
+
 	}
 
 	@Override
@@ -1048,19 +1049,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			getContext().error("Unknown variable", IGamlIssue.UNKNOWN_VAR, object);
 			return null;
 		}
-
-		// HACK
-		if (varName.equals(USER_LOCATION)) {
+		switch (varName) {
+		case USER_LOCATION:
 			return factory.createVar(USER_LOCATION, Types.POINT, true, IVarExpression.TEMP, getContext());
-		}
-		// HACK
-		if (varName.equals(EACH)) {
+		case EACH:
 			return getEachExpr(object);
-		}
-		if (varName.equals(NULL)) {
+		case NULL:
 			return IExpressionFactory.NIL_EXPR;
-		}
-		if (varName.equals(SELF)) {
+		case SELF:
 			final IDescription temp_sd = getContext().getSpeciesContext();
 			if (temp_sd == null) {
 				getContext().error("Unable to determine the species of self", IGamlIssue.GENERAL, object);
@@ -1068,16 +1064,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			}
 			final IType tt = temp_sd.getType();
 			return factory.createVar(SELF, tt, true, IVarExpression.SELF, null);
-		}
-		if (varName.equalsIgnoreCase(WORLD_AGENT_NAME)) {
+		case WORLD_AGENT_NAME:
 			return getWorldExpr();
 		}
+
 		if (isSpeciesName(varName)) {
 			final SpeciesDescription sd = getSpeciesContext(varName);
 			return sd == null ? null : sd.getSpeciesExpr();
-			// IExpression expr =
-			// factory.createSpeciesConstant(GamaType.from(getSpeciesContext(varName)));
-			// return expr;
 		}
 		final IDescription temp_sd = getContext() == null ? null : getContext().getDescriptionDeclaringVar(varName);
 

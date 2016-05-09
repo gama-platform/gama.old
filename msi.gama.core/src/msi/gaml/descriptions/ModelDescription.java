@@ -206,6 +206,8 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void dispose() {
+//		System.out.println("Disposing model " + getName());
+
 		if ( /* isDisposed || */isBuiltIn()) {
 			return;
 		}

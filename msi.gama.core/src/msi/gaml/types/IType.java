@@ -12,10 +12,15 @@
 package msi.gaml.types;
 
 import java.util.Map;
-import msi.gama.common.interfaces.*;
+
+import msi.gama.common.interfaces.IGamlable;
+import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IGamlDescription;
+import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -25,7 +30,6 @@ import msi.gaml.expressions.IExpression;
  *
  */
 public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
-
 
 	public static String[] vowels = new String[] { "a", "e", "i", "o", "u", "y" };
 
@@ -67,7 +71,7 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public Support cast(IScope scope, Object obj, Object param, boolean copy) throws GamaRuntimeException;
 
 	public Support cast(IScope scope, Object obj, Object param, IType keyType, IType contentType, boolean copy)
-		throws GamaRuntimeException;
+			throws GamaRuntimeException;
 
 	public int id();
 
@@ -105,6 +109,7 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
 	/**
 	 * returns the distance between two types
+	 * 
 	 * @param originalChildType
 	 * @return
 	 */
@@ -122,11 +127,12 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	 */
 	boolean canBeTypeOf(IScope s, Object c);
 
-	public void init(int varKind, final int id, final String name, final Class ... supports);
+	public void init(int varKind, final int id, final String name, final Class... supports);
 
 	/**
-	 * Whether or not this type can be considered as having a contents. True for all containers and
-	 * special types (like rgb, species, etc.)
+	 * Whether or not this type can be considered as having a contents. True for
+	 * all containers and special types (like rgb, species, etc.)
+	 * 
 	 * @return
 	 */
 	// public abstract boolean hasContents();
@@ -135,12 +141,14 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
 	/**
 	 * Whether or not this type can be used in add or remove statements
+	 * 
 	 * @return
 	 */
 	public abstract boolean isFixedLength();
 
 	/**
 	 * Tries to find a common supertype shared between this and the argument.
+	 * 
 	 * @param iType
 	 * @return
 	 */
@@ -152,9 +160,10 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
 	/**
 	 * @param context
-	 * When casting an expression, the type returned is usually that of this type. However, some types will
-	 * compute
-	 * another type based on the type of the expressoin to cast (for instance, species or agent)
+	 *            When casting an expression, the type returned is usually that
+	 *            of this type. However, some types will compute another type
+	 *            based on the type of the expressoin to cast (for instance,
+	 *            species or agent)
 	 * @param exp
 	 * @return
 	 */
@@ -175,7 +184,8 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public String asPattern();
 
 	/**
-	 * @param plugin name
+	 * @param plugin
+	 *            name
 	 */
 	public void setDefiningPlugin(String plugin);
 
@@ -186,9 +196,5 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	 */
 	public boolean isDrawable();
 
-	/**
-	 * @return
-	 */
 	public IType getWrappedType();
-
 }

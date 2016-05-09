@@ -89,7 +89,13 @@ public class GamlResourceDocManager implements IDocManager {
 				return;
 			}
 			if (CACHE2.contains(key)) {
-				CACHE2.get(key).put(EcoreUtil2.getURIFragment(object), new DocumentationNode(description));
+				DocumentationNode node = null;
+				try {
+					node = new DocumentationNode(description);
+				} catch (final Exception e) {
+				}
+				if (node != null)
+					CACHE2.get(key).put(EcoreUtil2.getURIFragment(object), node);
 			}
 
 		}
@@ -198,7 +204,7 @@ public class GamlResourceDocManager implements IDocManager {
 	@Override
 	public void setGamlDocumentation(final EObject object, final IGamlDescription description) {
 		DocumentationQueue.add(new DocumentationTask(object, description));
-		// DocumentationJob.schedule();
+		DocumentationJob.schedule();
 	}
 
 	// To be called once the validation has been done
@@ -233,8 +239,6 @@ public class GamlResourceDocManager implements IDocManager {
 		if (object == null) {
 			return null;
 		}
-		// int index = getGamlDocIndex(object);
-		// if ( index == -1 ) { return null; }
 		final URI key = getKey(object);
 		if (key == null) {
 			return null;
