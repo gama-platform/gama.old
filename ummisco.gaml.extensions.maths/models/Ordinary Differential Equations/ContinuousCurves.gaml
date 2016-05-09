@@ -45,24 +45,24 @@ entities
 
 }
 
-experiment mysimulation type : gui
+experiment mysimulation type: gui
 {
 	output
 	{
 		display chartcontinuous
 		{
-			chart 'chartcontinuous' type : series background : rgb('lightGray') time_series: list((my_SEIR_maths[0]).t[]) size: { 1.0, 0.5 } position: { 0.0, 0.0 }
+			chart 'chartcontinuous' type: series background: rgb('lightGray') time_series: list((my_SEIR_maths[0]).t[]) size: { 1.0, 0.5 } position: { 0.0, 0.0 }
 			{
-				data "s_mathsc" value : (my_SEIR_maths[0]).Sm[] color : # red marker: false;
-				data "e_mathsc" value : (my_SEIR_maths[0]).Em[] color : # yellow marker: false;
-				data "i_mathsc" value : (my_SEIR_maths[0]).Im[] color : # blue marker: false;
+				data "s_mathsc" value: (my_SEIR_maths[0]).Sm[] color: # red marker: false;
+				data "e_mathsc" value: (my_SEIR_maths[0]).Em[] color: # yellow marker: false;
+				data "i_mathsc" value: (my_SEIR_maths[0]).Im[] color: # blue marker: false;
 			}
 
-			chart 'chartdiscret' type : series background : rgb('lightGray') size: { 1.0, 0.5 } position: { 0.0, 0.5 }
+			chart 'chartdiscret' type: series background: rgb('lightGray') size: { 1.0, 0.5 } position: { 0.0, 0.5 }
 			{
-				data "s_mathsd" value : first(my_SEIR_maths).Sm color : rgb('red');
-				data "e_mathsd" value : first(my_SEIR_maths).Em color : rgb('yellow');
-				data "i_mathsd" value : first(my_SEIR_maths).Im color : rgb('blue');
+				data "s_mathsd" value: first(my_SEIR_maths).Sm color: rgb('red');
+				data "e_mathsd" value: first(my_SEIR_maths).Em color: rgb('yellow');
+				data "i_mathsd" value: first(my_SEIR_maths).Im color: rgb('blue');
 			}
 
 		}

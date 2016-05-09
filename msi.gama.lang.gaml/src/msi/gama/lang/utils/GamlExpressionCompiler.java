@@ -658,12 +658,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression caseSkillRef(final SkillRef object) {
-		return skill(EGaml.getKey.caseSkillRef(object));
+		return skill(EGaml.getKeyOf(object));
 	}
 
 	@Override
 	public IExpression caseActionRef(final ActionRef object) {
-		return factory.createConst(EGaml.getKey.caseActionRef(object), Types.STRING);
+		return factory.createConst(EGaml.getKeyOf(object), Types.STRING);
 	}
 
 	@Override
@@ -675,7 +675,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression caseVariableRef(final VariableRef object) {
-		final String s = EGaml.getKey.caseVariableRef(object);
+		final String s = EGaml.getKeyOf(object);
 		if (s == null) {
 			return caseVarDefinition(object.getRef());
 		}
@@ -710,7 +710,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression caseEquationRef(final EquationRef object) {
-		return factory.createConst(EGaml.getKey.caseEquationRef(object), Types.STRING);
+		return factory.createConst(EGaml.getKeyOf(object), Types.STRING);
 	}
 
 	@Override

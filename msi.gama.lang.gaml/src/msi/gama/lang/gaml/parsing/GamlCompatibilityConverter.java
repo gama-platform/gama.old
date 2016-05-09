@@ -201,7 +201,7 @@ public class GamlCompatibilityConverter {
 	private static final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
 			final Set<Diagnostic> errors) {
 		// We catch its keyword
-		String keyword = EGaml.getKey.caseStatement(stm);
+		String keyword = EGaml.getKeyOf(stm);
 		if (keyword == null) {
 			throw new NullPointerException(
 					"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
@@ -522,7 +522,7 @@ public class GamlCompatibilityConverter {
 			final Set<Diagnostic> errors) {
 		final SymbolProto p = DescriptionFactory.getProto(keyword, null);
 		for (final Facet f : EGaml.getFacetsOf(stm)) {
-			String fname = EGaml.getKey.caseFacet(f);
+			String fname = EGaml.getKeyOf(f);
 
 			// We change the "<-" and "->" symbols into full names
 			if (fname.equals("<-")) {
@@ -635,12 +635,12 @@ public class GamlCompatibilityConverter {
 			final Expression expr = facet.getExpr();
 			if (expr != null) {
 				if (expr instanceof VariableRef) {
-					list.add(EGaml.getKey.caseVariableRef((VariableRef) expr));
+					list.add(EGaml.getKeyOf(expr));
 				} else {
 					for (final TreeIterator<EObject> tree = expr.eAllContents(); tree.hasNext();) {
 						final EObject obj = tree.next();
 						if (obj instanceof VariableRef) {
-							list.add(EGaml.getKey.caseVariableRef((VariableRef) obj));
+							list.add(EGaml.getKeyOf(obj));
 						}
 					}
 				}

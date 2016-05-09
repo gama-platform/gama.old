@@ -24,9 +24,9 @@ global {
 	//Total number of individuals
 	int N <- number_S + number_I + number_R;
 	//Number of hosts (for ABM)
-	int nb_hosts <- number_S + number_I + number_R update : length(Host);
+	int nb_hosts <- number_S + number_I + number_R update: length(Host);
 	//Number of infected hosts (for ABM)
-	int nb_infected <- number_I update :  Host count (each.is_infected);
+	int nb_infected <- number_I update:  Host count (each.is_infected);
 	float hKR4 <- 0.7;
 	geometry shape <- square(50);
 	init {

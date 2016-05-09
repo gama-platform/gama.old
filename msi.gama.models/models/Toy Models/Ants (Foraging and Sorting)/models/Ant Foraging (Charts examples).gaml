@@ -203,7 +203,7 @@ experiment Ant type: gui {
 		display ChartHistoListList {
 			chart "DataListListBar" type:histogram
 			{
-				datalist categoriesnames:categnames  value:nbants legend:statesnames inverse_series_categories :false style:stack;
+				datalist categoriesnames:categnames  value:nbants legend:statesnames inverse_series_categories:false style:stack;
 			}
 		}
 		display ChartSerie {
@@ -243,7 +243,7 @@ experiment Ant type: gui {
 		display ChartSeriesListList {
 			chart "DataListListSeries" type:series
 			{
-				datalist categoriesnames:categnames  value:nbants legend:statesnames inverse_series_categories :false style:line;
+				datalist categoriesnames:categnames  value:nbants legend:statesnames inverse_series_categories:false style:line;
 			}
 		}
 		display ChartScatter {

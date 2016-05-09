@@ -30,7 +30,7 @@ global {
 	//User command to create a given number of agents according
 	user_command "Create agents" {
 		 map input_values <- user_input(["Number" :: nbAgent, "shape" :: "circle"]);
-     	 create cell number : int(input_values at "Number") with: [color:: °pink, is_square:: string(input_values at "shape") = "square"];
+     	 create cell number: int(input_values at "Number") with: [color:: °pink, is_square:: string(input_values at "shape") = "square"];
 	}
 	
 }

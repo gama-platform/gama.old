@@ -62,7 +62,7 @@ species S_agt {
 			( - beta * first ( S_agt ) . Ssize * first (	I_agt ) . Isize / N ) ;
 	}
 	
-	reflex solving {solve evol method : "rk4" step : 0.01 ;}
+	reflex solving {solve evol method: "rk4" step: 0.01 ;}
 }
 //Species which represent the infected agents compartiment
 species I_agt {
@@ -73,7 +73,7 @@ species I_agt {
 	float delta ;
 
 	//Equation that will be solved simultaneously with the two other equations systems
-	equation evol simultaneously : [  ( S_agt ) ,  ( R_agt ) ] {
+	equation evol simultaneously: [  ( S_agt ) ,  ( R_agt ) ] {
 		diff ( first ( I_agt ) . Isize , t ) = 
 			( beta * first ( S_agt ) . Ssize * first ( I_agt ) . Isize / N ) 
 			- ( delta * first ( I_agt ) . Isize ) ;
@@ -87,7 +87,7 @@ species R_agt {
 	float delta ;
 
 	//Equation that will be solved simultaneously with the two other equations systems
-	equation evol simultaneously : [ ( S_agt ) + ( I_agt ) ] {
+	equation evol simultaneously: [ ( S_agt ) + ( I_agt ) ] {
 		diff ( first ( R_agt ) . Rsize , t ) = 
 			( delta * first ( I_agt ) . Isize ) ;
 	}
@@ -109,11 +109,11 @@ species SIR_agt {
 		diff ( Rm , t ) = ( delta * Im ) ;
 	}
 	
-	reflex solving {solve SIR method : "rk4" step : 0.01 ;}
+	reflex solving {solve SIR method: "rk4" step: 0.01 ;}
 }
 
 
-experiment Simulation type : gui {
+experiment Simulation type: gui {
 	parameter 'Number of Susceptible' type: int var: number_S <- 495 category: "Initial population"; // The initial number of susceptibles
 	parameter 'Number of Infected'    type: int var: number_I <- 5   category: "Initial population";
 	parameter 'Number of Removed'     type: int var: number_R <- 0   category: "Initial population";
@@ -123,17 +123,17 @@ experiment Simulation type : gui {
 	
 	output {
 		display "split system" {
-			chart 'Susceptible' type : series background : rgb ( 'lightGray' ) {
-				data 'susceptible' value : first ( S_agt ) . Ssize color : rgb ( 'green' ) ;
-				data 'infected' value : first ( I_agt ) . Isize color : rgb ( 'red' ) ;
-				data 'removed' value : first ( R_agt ) . Rsize color : rgb ( 'blue' ) ;
+			chart 'Susceptible' type: series background: rgb ( 'lightGray' ) {
+				data 'susceptible' value: first ( S_agt ) . Ssize color: rgb ( 'green' ) ;
+				data 'infected' value: first ( I_agt ) . Isize color: rgb ( 'red' ) ;
+				data 'removed' value: first ( R_agt ) . Rsize color: rgb ( 'blue' ) ;
 			}
 		}
 		display "unified system"{
-			chart 'Susceptible' type : series background : rgb ( 'lightGray' ) {
-				data 'susceptible_maths' value : first( SIR_agt ).Sm color : rgb ( 'green' ) ;
-				data 'infected_maths' value : first( SIR_agt ).Im color : rgb ( 'red' ) ;
-				data 'removed_maths' value : first( SIR_agt ).Rm color : rgb ( 'blue' ) ;
+			chart 'Susceptible' type: series background: rgb ( 'lightGray' ) {
+				data 'susceptible_maths' value: first( SIR_agt ).Sm color: rgb ( 'green' ) ;
+				data 'infected_maths' value: first( SIR_agt ).Im color: rgb ( 'red' ) ;
+				data 'removed_maths' value: first( SIR_agt ).Rm color: rgb ( 'blue' ) ;
 			}
 		}
 	}

@@ -277,114 +277,114 @@ species userLV {
 
 
 
-experiment examples type : gui {
+experiment examples type: gui {
 	output {		
 		display SI  {
-			chart 'examplePreSI' type : series background : #lightgray position: {0,0} size:{1,0.5} {
-				data "S" value : first(preSI).S color : #green;
-				data "I" value : first(preSI).I color : #red;
+			chart 'examplePreSI' type: series background: #lightgray position: {0,0} size:{1,0.5} {
+				data "S" value: first(preSI).S color: #green;
+				data "I" value: first(preSI).I color: #red;
 			}
-			chart 'examplesUserSI' type : series background : #lightgray position: {0,0.5} size:{1,0.5} {
-				data "S" value : first(userSI).S color : #green;
-				data "I" value : first(userSI).I color : #red;
+			chart 'examplesUserSI' type: series background: #lightgray position: {0,0.5} size:{1,0.5} {
+				data "S" value: first(userSI).S color: #green;
+				data "I" value: first(userSI).I color: #red;
 			}
 		}
 
 		display SISs  {
-			chart 'examplePreSIS' type : series background : #lightgray position: {0,0} size:{1,0.5} {
-				data "S" value : first(preSIS).S color : #green;
-				data "I" value : first(preSIS).I color : #red;
+			chart 'examplePreSIS' type: series background: #lightgray position: {0,0} size:{1,0.5} {
+				data "S" value: first(preSIS).S color: #green;
+				data "I" value: first(preSIS).I color: #red;
 			}
-			chart 'examplesUserSIS' type : series background : #lightgray position: {0,0.5} size:{1,0.5} {
-				data "S" value : first(userSIS).S color : #green;
-				data "I" value : first(userSIS).I color : #red;
+			chart 'examplesUserSIS' type: series background: #lightgray position: {0,0.5} size:{1,0.5} {
+				data "S" value: first(userSIS).S color: #green;
+				data "I" value: first(userSIS).I color: #red;
 			}			
 		}
 		
 		display SIR  {
-			chart 'examplePreSIR' type : series background : #lightgray position: {0,0} size:{1,0.5} {
-				data "S" value : first(preSIR).S color : #green;
-				data "I" value : first(preSIR).I color : #red;
-				data "R" value : first(preSIR).R color : #blue;
+			chart 'examplePreSIR' type: series background: #lightgray position: {0,0} size:{1,0.5} {
+				data "S" value: first(preSIR).S color: #green;
+				data "I" value: first(preSIR).I color: #red;
+				data "R" value: first(preSIR).R color: #blue;
 			}
-			chart 'examplesUserSIR' type : series background : #lightgray position: {0,0.5} size:{1,0.5} {
-				data "S" value : first(userSIR).S color : #green;
-				data "I" value : first(userSIR).I color : #red;
-				data "R" value : first(userSIR).R color : #blue;
+			chart 'examplesUserSIR' type: series background: #lightgray position: {0,0.5} size:{1,0.5} {
+				data "S" value: first(userSIR).S color: #green;
+				data "I" value: first(userSIR).I color: #red;
+				data "R" value: first(userSIR).R color: #blue;
 			}			
 		}
 
 		display SIRS  {
-			chart 'examplePreSIRS' type : series background : #lightgray position: {0,0} size:{1,0.5} {
-				data "S" value : first(preSIRS).S color : #green;
-				data "I" value : first(preSIRS).I color : #red;
-				data "R" value : first(preSIRS).R color : #blue;
+			chart 'examplePreSIRS' type: series background: #lightgray position: {0,0} size:{1,0.5} {
+				data "S" value: first(preSIRS).S color: #green;
+				data "I" value: first(preSIRS).I color: #red;
+				data "R" value: first(preSIRS).R color: #blue;
 			}
-			chart 'examplesUserSIRS' type : series background : #lightgray position: {0,0.5} size:{1,0.5} {
-				data "S" value : first(userSIRS).S color : #green;
-				data "I" value : first(userSIRS).I color : #red;
-				data "R" value : first(userSIRS).R color : #blue;
+			chart 'examplesUserSIRS' type: series background: #lightgray position: {0,0.5} size:{1,0.5} {
+				data "S" value: first(userSIRS).S color: #green;
+				data "I" value: first(userSIRS).I color: #red;
+				data "R" value: first(userSIRS).R color: #blue;
 			}			
 		}
 
 		display SEIR  {
-			chart 'examplePreSEIR' type : series background : #lightgray position: {0,0} size:{1,0.5} {
-				data "S" value : first(preSEIR).S color : #green;
-				data "E" value : first(preSEIR).E color : #yellow;
-				data "I" value : first(preSEIR).I color : #red;
-				data "R" value : first(preSEIR).R color : #blue;
+			chart 'examplePreSEIR' type: series background: #lightgray position: {0,0} size:{1,0.5} {
+				data "S" value: first(preSEIR).S color: #green;
+				data "E" value: first(preSEIR).E color: #yellow;
+				data "I" value: first(preSEIR).I color: #red;
+				data "R" value: first(preSEIR).R color: #blue;
 			}
-			chart 'examplesUserSEIR' type : series background : #lightgray position: {0,0.5} size:{1,0.5} {
-				data "S" value : first(userSEIR).S color : #green;
-				data "E" value : first(userSEIR).E color : #yellow;				
-				data "I" value : first(userSEIR).I color : #red;
-				data "R" value : first(userSEIR).R color : #blue;
+			chart 'examplesUserSEIR' type: series background: #lightgray position: {0,0.5} size:{1,0.5} {
+				data "S" value: first(userSEIR).S color: #green;
+				data "E" value: first(userSEIR).E color: #yellow;				
+				data "I" value: first(userSEIR).I color: #red;
+				data "R" value: first(userSEIR).R color: #blue;
 			}
 		}
 
 		display LV  {
-			chart 'examplePreLV' type : series background : #lightgray position: {0,0} size:{1,0.5} {
-				data "x" value : first(preLV).x color : #yellow;
-				data "y" value : first(preLV).y color : #blue;
+			chart 'examplePreLV' type: series background: #lightgray position: {0,0} size:{1,0.5} {
+				data "x" value: first(preLV).x color: #yellow;
+				data "y" value: first(preLV).y color: #blue;
 			}
-			chart 'examplesUserLV' type : series background : #lightgray position: {0,0.5} size:{1,0.5} {
-				data "x" value : first(userLV).x color : #yellow;
-				data "y" value : first(userLV).y color : #blue;
+			chart 'examplesUserLV' type: series background: #lightgray position: {0,0.5} size:{1,0.5} {
+				data "x" value: first(userLV).x color: #yellow;
+				data "y" value: first(userLV).y color: #blue;
 			}			
 		}						
 	}
 }
 
-experiment diff_predefined_defined_by_user type : gui {
+experiment diff_predefined_defined_by_user type: gui {
 	output {
 		display diff  {
-			chart 'diffSI' type : series background : #lightgray  position: {0,0} size:{0.5, 0.33} {
-				data "dS" value : (first(userSI).S - first(preSI).S) color : #yellow;
-				data "dI" value : (first(userSI).I - first(preSI).I) color : #blue;
+			chart 'diffSI' type: series background: #lightgray  position: {0,0} size:{0.5, 0.33} {
+				data "dS" value: (first(userSI).S - first(preSI).S) color: #yellow;
+				data "dI" value: (first(userSI).I - first(preSI).I) color: #blue;
 			}
-			chart 'diffSIS' type : series background : #lightgray position: {0.5,0} size:{0.5, 0.33} {
-				data "dS" value : (first(userSIS).S - first(preSIS).S) color : #yellow;
-				data "dI" value : (first(userSIS).I - first(preSIS).I) color : #blue;
+			chart 'diffSIS' type: series background: #lightgray position: {0.5,0} size:{0.5, 0.33} {
+				data "dS" value: (first(userSIS).S - first(preSIS).S) color: #yellow;
+				data "dI" value: (first(userSIS).I - first(preSIS).I) color: #blue;
 			}
-			chart 'diffSIR' type : series background : #lightgray position: {0,0.33} size:{0.5, 0.33} {
-				data "dS" value : (first(userSIR).S - first(preSIR).S) color : #yellow;
-				data "dI" value : (first(userSIR).I - first(preSIR).I) color : #blue;
-				data "dR" value : (first(userSIR).R - first(preSIR).R) color : #red;
+			chart 'diffSIR' type: series background: #lightgray position: {0,0.33} size:{0.5, 0.33} {
+				data "dS" value: (first(userSIR).S - first(preSIR).S) color: #yellow;
+				data "dI" value: (first(userSIR).I - first(preSIR).I) color: #blue;
+				data "dR" value: (first(userSIR).R - first(preSIR).R) color: #red;
 			}		
-			chart 'diffSIRS' type : series background : #lightgray position: {0.5,0.33} size:{0.5, 0.33} {
-				data "dS" value : (first(userSIRS).S - first(preSIRS).S) color : #yellow;
-				data "dI" value : (first(userSIRS).I - first(preSIRS).I) color : #blue;
-				data "dR" value : (first(userSIRS).R - first(preSIRS).R) color : #red;
+			chart 'diffSIRS' type: series background: #lightgray position: {0.5,0.33} size:{0.5, 0.33} {
+				data "dS" value: (first(userSIRS).S - first(preSIRS).S) color: #yellow;
+				data "dI" value: (first(userSIRS).I - first(preSIRS).I) color: #blue;
+				data "dR" value: (first(userSIRS).R - first(preSIRS).R) color: #red;
 			}	
-			chart 'diffSEIR' type : series background : #lightgray position: {0,0.66} size:{0.5, 0.33} {
-				data "dS" value : (first(userSEIR).S - first(preSEIR).S) color : #yellow;
-				data "dE" value : (first(userSEIR).E - first(preSEIR).E) color : #yellow;				
-				data "dI" value : (first(userSEIR).I - first(preSEIR).I) color : #blue;
-				data "dR" value : (first(userSEIR).R - first(preSEIR).R) color : #red;
+			chart 'diffSEIR' type: series background: #lightgray position: {0,0.66} size:{0.5, 0.33} {
+				data "dS" value: (first(userSEIR).S - first(preSEIR).S) color: #yellow;
+				data "dE" value: (first(userSEIR).E - first(preSEIR).E) color: #yellow;				
+				data "dI" value: (first(userSEIR).I - first(preSEIR).I) color: #blue;
+				data "dR" value: (first(userSEIR).R - first(preSEIR).R) color: #red;
 			}	
-			chart 'diffLV' type : series background : #lightgray position: {0.5,0.66} size:{0.5, 0.33} {
-				data "dx" value : (first(userLV).x - first(preLV).x) color : #yellow;
-				data "dy" value : (first(userLV).y - first(preLV).y) color : #red;				
+			chart 'diffLV' type: series background: #lightgray position: {0.5,0.66} size:{0.5, 0.33} {
+				data "dx" value: (first(userLV).x - first(preLV).x) color: #yellow;
+				data "dy" value: (first(userLV).y - first(preLV).y) color: #red;				
 			}					
 		}	
 	}

@@ -5,6 +5,7 @@
 * Tags: attribute, ternary, equation, action, container, list
 */
 
+@no_warning
 model syntax
 
 /**

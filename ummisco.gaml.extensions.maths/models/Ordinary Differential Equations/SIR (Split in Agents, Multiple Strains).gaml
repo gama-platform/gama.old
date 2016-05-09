@@ -26,7 +26,7 @@ global {
 			Ssize <- float(number_S);
 		}
 
-		create I_agt number : strain_number {
+		create I_agt number: strain_number {
 			Isize <- float(number_I);
 			self.beta <- _beta; 
 			self.delta <- _delta; 
@@ -52,11 +52,11 @@ species S_agt {
 	float t;		
 	float Ssize;
 	
-	equation evol simultaneously : [I_agt, R_agt] {
+	equation evol simultaneously: [I_agt, R_agt] {
 		diff(self.Ssize, t) = (- sum(I_agt accumulate [each.beta * each.Isize]) * self.Ssize / N);
 	}
 
-	reflex solving {solve evol method : "rk4" step : hKR4 ;}
+	reflex solving {solve evol method: "rk4" step: hKR4 ;}
 }
 
 species I_agt {
@@ -66,7 +66,7 @@ species I_agt {
 	float beta;
 	float delta;
 	
-	equation evol simultaneously : [S_agt, R_agt] {
+	equation evol simultaneously: [S_agt, R_agt] {
 		diff(self.Isize, t) = (beta * first(S_agt).Ssize * self.Isize / N) - (delta * self.Isize);
 	}
 }
@@ -75,7 +75,7 @@ species R_agt {
 	float t;		
 	float Rsize;
 
-	equation evol simultaneously : [I_agt] {
+	equation evol simultaneously: [I_agt] {
 		diff(self.Rsize, t) = (sum(I_agt collect (each.delta * each.Isize)));
 	}
 }
@@ -92,12 +92,12 @@ species my_SIR_maths {
 		diff(self.Rm, t) = (_delta * Im);
 	}
 
-	reflex solving {solve SIR method : "rk4" step : hKR4;}
+	reflex solving {solve SIR method: "rk4" step: hKR4;}
 }
 
 
 
-experiment Simulation type : gui {
+experiment Simulation type: gui {
 	parameter 'Number of Susceptible' type: int var: number_S <- 495 category: "Initial population"; 
 	parameter 'Number of Infected'    type: int var: number_I <- 5   category: "Initial population";
 	parameter 'Number of Removed'     type: int var: number_R <- 0   category: "Initial population";
@@ -107,21 +107,21 @@ experiment Simulation type : gui {
 	
 	output {
 		display chart_3system_eq {
-			chart 'Split system' type : series background : #lightgray {
-				data 'susceptible' value : first(S_agt).Ssize color : #green;
-				data 'infected0' value : first(I_agt).beta * first(I_agt).Isize color : #white;
-				data 'infected1' value : last(I_agt).beta * last(I_agt).Isize color : #yellow;
-				data 'i1+i2' value : sum(I_agt accumulate (each.beta * each. Isize)) color : rgb ( 'red' ) ;				
-				data 'recovered' value : first(R_agt).Rsize color : #blue;
+			chart 'Split system' type: series background: #lightgray {
+				data 'susceptible' value: first(S_agt).Ssize color: #green;
+				data 'infected0' value: first(I_agt).beta * first(I_agt).Isize color: #white;
+				data 'infected1' value: last(I_agt).beta * last(I_agt).Isize color: #yellow;
+				data 'i1+i2' value: sum(I_agt accumulate (each.beta * each. Isize)) color: rgb ( 'red' ) ;				
+				data 'recovered' value: first(R_agt).Rsize color: #blue;
 			}
 
 		}
 
 		display chart_1system_eq  {
-			chart 'unified system' type : series background : #lightgray {
-				data 'susceptible_maths' value : first(my_SIR_maths).Sm color : #green;
-				data 'infected_maths' value : first(my_SIR_maths).Im color : #red;
-				data 'recovered_maths' value : first(my_SIR_maths).Rm color : #blue;
+			chart 'unified system' type: series background: #lightgray {
+				data 'susceptible_maths' value: first(my_SIR_maths).Sm color: #green;
+				data 'infected_maths' value: first(my_SIR_maths).Im color: #red;
+				data 'recovered_maths' value: first(my_SIR_maths).Rm color: #blue;
 			}
 		}
 	}

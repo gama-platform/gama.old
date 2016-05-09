@@ -11,14 +11,25 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.scoping;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
+import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.util.SimpleAttributeResolver;
+import org.eclipse.xtext.util.Strings;
+
+import com.google.inject.Inject;
+
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.ArgumentDefinition;
+import msi.gama.lang.gaml.gaml.Facet;
+import msi.gama.lang.gaml.gaml.Import;
+import msi.gama.lang.gaml.gaml.Model;
+import msi.gama.lang.gaml.gaml.S_Definition;
+import msi.gama.lang.gaml.gaml.S_Experiment;
+import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.utils.EGaml;
 import msi.gaml.descriptions.ModelDescription;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.naming.*;
-import org.eclipse.xtext.util.*;
-import com.google.inject.Inject;
 
 /**
  * A Puppet Qualified Name provider.
@@ -40,7 +51,8 @@ public class GamlQualifiedNameProvider extends DefaultDeclarativeQualifiedNamePr
 	 * @return
 	 */
 	// QualifiedName getParentsFullyQualifiedName(EObject o) {
-	// for ( EObject tmp = o.eContainer(); tmp != null; tmp = tmp.eContainer() ) {
+	// for ( EObject tmp = o.eContainer(); tmp != null; tmp = tmp.eContainer() )
+	// {
 	// if ( tmp instanceof Statement &&
 	// ((Statement) tmp).getKey().equals(IKeyword.ENVIRONMENT) ||
 	// ((Statement) tmp).getKey().equals(IKeyword.ENTITIES) ||
@@ -57,25 +69,29 @@ public class GamlQualifiedNameProvider extends DefaultDeclarativeQualifiedNamePr
 	// String k = EGaml.getKey.caseStatement(o);
 	// String n = EGaml.getNameOf(o);
 	// if ( n == null ) { return null; }
-	// if ( k.equals(IKeyword.SPECIES) || k.equals(IKeyword.GRID) || k.equals(IKeyword.VAR) ||
+	// if ( k.equals(IKeyword.SPECIES) || k.equals(IKeyword.GRID) ||
+	// k.equals(IKeyword.VAR) ||
 	// !SymbolProto.nonTypeStatements.contains(k) ) { return splice(
-	// getParentsFullyQualifiedName(o), converter.toQualifiedName(EGaml.getNameOf(o))); }
+	// getParentsFullyQualifiedName(o),
+	// converter.toQualifiedName(EGaml.getNameOf(o))); }
 	// return null;
 	// }
 
 	QualifiedName qualifiedName(final Statement s) {
-		String k = EGaml.getKey.caseStatement(s);
-		if ( k.equals(IKeyword.SPECIES) || k.equals(IKeyword.GRID) ) {
-			for ( EObject tmp = s.eContainer(); tmp != null; tmp = tmp.eContainer() ) {
-				if ( tmp instanceof Statement && IKeyword.DISPLAY.equals(EGaml.getKeyOf(tmp)) ) {
-					QualifiedName nn = QualifiedName.create(EGaml.getNameOf(s) + "_display");
+		final String k = EGaml.getKeyOf(s);
+		if (k.equals(IKeyword.SPECIES) || k.equals(IKeyword.GRID)) {
+			for (EObject tmp = s.eContainer(); tmp != null; tmp = tmp.eContainer()) {
+				if (tmp instanceof Statement && IKeyword.DISPLAY.equals(EGaml.getKeyOf(tmp))) {
+					final QualifiedName nn = QualifiedName.create(EGaml.getNameOf(s) + "_display");
 					return nn;
 				}
 			}
 		}
 
-		String name = SimpleAttributeResolver.NAME_RESOLVER.apply(s);
-		if ( Strings.isEmpty(name) ) { return null; }
+		final String name = SimpleAttributeResolver.NAME_RESOLVER.apply(s);
+		if (Strings.isEmpty(name)) {
+			return null;
+		}
 		return converter.toQualifiedName(name);
 	}
 
@@ -84,7 +100,9 @@ public class GamlQualifiedNameProvider extends DefaultDeclarativeQualifiedNamePr
 	}
 
 	QualifiedName qualifiedName(final S_Definition s) {
-		if ( IKeyword.PARAMETER.equals(EGaml.getKeyOf(s)) ) { return null; }
+		if (IKeyword.PARAMETER.equals(EGaml.getKeyOf(s))) {
+			return null;
+		}
 		return converter.toQualifiedName(s.getName());
 	}
 
@@ -93,8 +111,10 @@ public class GamlQualifiedNameProvider extends DefaultDeclarativeQualifiedNamePr
 	}
 
 	QualifiedName qualifiedName(final Facet f) {
-		String name = f.getName();
-		if ( !Strings.isEmpty(name) ) { return QualifiedName.create(name); }
+		final String name = f.getName();
+		if (!Strings.isEmpty(name)) {
+			return QualifiedName.create(name);
+		}
 		return null;
 	}
 
@@ -103,8 +123,10 @@ public class GamlQualifiedNameProvider extends DefaultDeclarativeQualifiedNamePr
 	}
 
 	QualifiedName qualifiedName(final Import i) {
-		String name = i.getName();
-		if ( !Strings.isEmpty(name) ) { return QualifiedName.create(name); }
+		final String name = i.getName();
+		if (!Strings.isEmpty(name)) {
+			return QualifiedName.create(name);
+		}
 		return null;
 	}
 
