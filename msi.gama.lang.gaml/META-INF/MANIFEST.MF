@@ -17,8 +17,7 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.xbase.lib,
  msi.gama.processor,
  org.eclipse.xtext.ide,
- org.eclipse.xtext.generator;bundle-version="2.9.1";resolution:=optional,
- org.eclipse.emf.mwe2.launch;bundle-version="2.8.3"
+ org.eclipse.xtext.generator;bundle-version="2.9.1";resolution:=optional
 Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.formatting,
  msi.gama.lang.gaml.gaml,
