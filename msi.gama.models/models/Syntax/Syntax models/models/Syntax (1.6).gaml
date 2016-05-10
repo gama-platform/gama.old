@@ -16,7 +16,7 @@ global skills: [moving] control: fsm {
 
 /**
  * EQUATIONS
- */
+ */ 
 	float x;
 	float y;
 	float t;
@@ -32,7 +32,7 @@ global skills: [moving] control: fsm {
  */
 
 // Attributes can be declared in different ways, ranging from "classic"...
-	var a1 type: list <- [1, 2, 3] of: int;
+	list<int> a1 const: true <- [1, 2, 3] of: int;
 	list a2 <- [1, 2, 3] of: int;
 	// ... to "compact" Java-like syntax.
 	list<int> a3 <- [1, 2, 3];

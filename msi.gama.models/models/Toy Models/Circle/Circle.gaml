@@ -23,7 +23,7 @@ global {
 	//Size of the agents
 	int size_of_agents <- 100;
 	//Center of the considered circle created by the cells
-	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
+	point center const: true <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
 	geometry shape <- square(width_and_height_of_environment);
 	init { 
 		//Creation of the cell agents
@@ -34,13 +34,13 @@ global {
 //Species cell which represents the cell agents, using the skill moving
 species cell skills: [moving] {  
 	//Color of the cell, randomly chosen
-	const color type: rgb <- [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;
+	rgb color const: true <- [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;
 	//Size of the cell
-	const size type: float <- float(size_of_agents);
+	float size const: true <- float(size_of_agents);
 	//Range of the cell
-	const range type: float <- float(range_of_agents); 
+	float range const: true <- float(range_of_agents); 
 	//Speed of the cell
-	const speed type: float <- speed_of_agents;   
+	float speed const: true <- speed_of_agents;   
 	//Heading of the cell, the direction it 'watches'
 	int heading <- rnd(359);
 	

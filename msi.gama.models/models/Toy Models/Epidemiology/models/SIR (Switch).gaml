@@ -25,6 +25,7 @@ global {
 	
 	// Global variables
 	int grid_size <- 50;
+geometry shape <- square(grid_size);
 	int number_Hosts <- initial_S + initial_I + initial_R; // Total number of individuals
 	SIR_model current_model; // serves as an interface, it is transparent to user if model is maths or IBM
 
@@ -99,13 +100,11 @@ global {
 
 }
 //Grid which represent the discretized space for the host agents
-environment width: grid_size height: grid_size {
 	grid sir_grid width: grid_size height: grid_size {
 		rgb color <- #black;
 		list<sir_grid> neighbours <- (self neighbors_at neighbours_range) of_species sir_grid;
 	}
 
-}
 
 //Species which allows the execution of only Host, IBM_model, Math_model and switch_model at each cycle
 species new_scheduler schedules: (Host + IBM_model + Math_model + switch_model) ;

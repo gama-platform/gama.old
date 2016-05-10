@@ -49,21 +49,21 @@ global torus: true{
 
 //Grid species representing the places and the people in each cell
 grid space parent: base width: dimensions height: dimensions neighbors: 8  {
-	rgb color <- black;
+	rgb color <- #black;
 	//List of the neighbours of the places
 	list<space> my_neighbours <- self neighbors_at neighbours_distance;
 	//Action to migrate the agent in another cell if it is not happy
 	action migrate {
 		if !is_happy {
 			//Change the space of the agent to a free space
-			space pp <- any(my_neighbours where (each.color = black));
+			space pp <- any(my_neighbours where (each.color = #black));
 			if (pp != nil) {
 				free_places <+ self;
 				free_places >- pp;
 				all_people >- self;
 				all_people << pp;
 				set pp.color <- color;
-				set color <- black;
+				set color <- #black;
 			}
 		}
 	}

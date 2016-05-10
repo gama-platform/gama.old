@@ -12,16 +12,16 @@ global {
 	//Evaporation value per cycle of the pheromons
 	float evaporation_per_cycle <- 5.0 min: 0.01 max: 240.0 ;
 	//Diffusion rate of the pheromons
-	const diffusion_rate type: float <- 1.0 min: 0.0 max: 1.0 ;
+	float diffusion_rate const: true <- 1.0 min: 0.0 max: 1.0 ;
 	//Size of the grid
-	const gridsize type: int <- 75; 
+	int gridsize const: true <- 75; 
 	//Number of ants to create
 	int ants_number  <- 50 min: 1 max: 200 parameter: 'Number of Ants:';
 	//Variable to keep information about the food remaining
 	int food_remaining update: list ( ant_grid ) count ( each . food > 0) <- 10;
 	//Center of the grid that will be considered as the nest of ants
-	const center type: point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };
-	const types type: matrix of: int <- matrix<int> (pgm_file ( '../images/environment75x75_scarce.pgm' )); 
+	point center const: true <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };
+	matrix<int> types <- matrix<int> (pgm_file ( '../images/environment75x75_scarce.pgm' )); 
 	
 	geometry shape <- square(gridsize);
 	
@@ -61,7 +61,7 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 	float road <- 0.0 max:240.0 update: (road<=evaporation_per_cycle) ? 0.0 : road-evaporation_per_cycle;
 	rgb color <- rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) , self.road * 30 , self.road > 15 ? 255 : food * 50 ]) update: rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,self.road * 30 , self.road > 15 ? 255 : food * 50 ]); 
 	int food <- isFoodLocation ? 5 : 0; 
-	const nest type: int <- int(300 - ( self distance_to center ));
+	int nest const: true <- int(300 - ( self distance_to center ));
 }
 
 //Species ant that will move

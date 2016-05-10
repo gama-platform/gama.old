@@ -16,8 +16,6 @@ global
 
 }
 
-entities
-{
 	species my_SEIR_maths
 	{
 		float t;
@@ -43,7 +41,6 @@ entities
 
 	}
 
-}
 
 experiment mysimulation type: gui
 {

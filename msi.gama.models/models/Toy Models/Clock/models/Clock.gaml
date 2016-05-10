@@ -9,13 +9,13 @@ model Clock
 
 global {
 	//Background of the clock
-	const clock_normal     type: file <- image_file("../images/clock.png");
+	file clock_normal     const: true <- image_file("../images/clock.png");
 	//Image for the big hand 
-	const clock_big_hand   type: file <- image_file("../images/big_hand.png");
+	file clock_big_hand   const: true <- image_file("../images/big_hand.png");
 	//Image for the small hand
-	const clock_small_hand type: file <- image_file("../images/small_hand.png");
+	file clock_small_hand const: true <- image_file("../images/small_hand.png");
 	//Image for the clock alarm
-	const clock_alarm 	   type: file <- image_file("../images/alarm_hand.png");
+	file clock_alarm 	  const: true <- image_file("../images/alarm_hand.png");
 	//Zoom to take in consideration the zoom in the display, to better write the cycle values
 	int zoom <- 4 min:1 max:100;
 	//Time value for a cycle

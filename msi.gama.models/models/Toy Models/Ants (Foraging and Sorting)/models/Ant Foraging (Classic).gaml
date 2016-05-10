@@ -19,13 +19,13 @@ global {
 	//Size of the grid
 	int gridsize <- 75 ;
 	//Center of the grid that will be used as a nest for the ants
-	const center type: point <- { (gridsize / 2),  (gridsize / 2)} ;
-	const types type: file <- (pgm_file('../images/environment75x75.pgm')) ;
-	const ant_shape_empty type: string <- '../icons/ant.png' ;
-	const ant_shape_full type: string <- '../icons/full_ant.png'  ;
-	const C00CC00 type: rgb <- rgb('#00CC00') ;    
-	const C009900 type: rgb <- rgb('#009900') ; 
-	const C005500 type: rgb <- rgb('#005500') ; 
+	point center const: true <- { (gridsize / 2),  (gridsize / 2)} ;
+	file types const: true <- (pgm_file('../images/environment75x75.pgm')) ;
+	string ant_shape_empty const: true <- '../icons/ant.png' ;
+	string ant_shape_full const: true <- '../icons/full_ant.png'  ;
+	rgb C00CC00 const: true <- rgb('#00CC00') ;    
+	rgb C009900 const: true <- rgb('#009900') ; 
+	rgb C005500 const: true <- rgb('#005500') ; 
 	int food_gathered <- 0 ;    
 	geometry shape <- square(gridsize);
 	init{  
@@ -48,7 +48,7 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: 
 	bool isFoodLocation <- type = 2 ; 
 	rgb color <- isNestLocation ? °sienna:((food > 0)? °brown : ((road < 0.001)? #darkgoldenrod: ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) update: isNestLocation ? °sienna:((food > 0)? °brown : ((road < 0.001)?#darkgoldenrod : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) ;
 	int food <- isFoodLocation ? 5 : 0 ;
-	const nest type: int <- 300 - int(self distance_to center) ;
+	int nest const: true <- 300 - int(self distance_to center) ;
 	
 }
 //Species ant that will move and follow a final state machine
