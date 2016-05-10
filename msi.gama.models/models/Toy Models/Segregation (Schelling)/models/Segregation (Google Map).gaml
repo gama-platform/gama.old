@@ -23,7 +23,7 @@ global {
 	int neighbours_distance <- 4; 
 	//Number of groups of people
 	int number_of_groups <- 3;
-	const google_buildings type: list <- [rgb("#EBE6DC"), rgb("#D1D0CD"), rgb("#F2EFE9"), rgb("#EEEBE1"), rgb("#F9EFE8")] ;
+	list google_buildings  <- [rgb("#EBE6DC"), rgb("#D1D0CD"), rgb("#F2EFE9"), rgb("#EEEBE1"), rgb("#F9EFE8")] ;
 	//List of all the available places
 	list<space> available_places ;
 	//Image file to load
@@ -50,7 +50,7 @@ grid space width: dimensions height: dimensions neighbors: 8 use_individual_shap
  
 //Species people representing the people agent
 species people parent: base  {
-	const color type: rgb <- colors at (rnd (number_of_groups - 1));
+	rgb color <- colors at (rnd (number_of_groups - 1));
 	//List of all the neighbours
 	list<people> my_neighbours -> {(self neighbors_at neighbours_distance) of_species people};
 	

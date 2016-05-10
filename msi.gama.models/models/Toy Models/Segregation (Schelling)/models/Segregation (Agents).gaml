@@ -32,13 +32,13 @@ global {
 }
 //Grid to discretize space, each cell representing a free space for the people agents
 grid space width: dimensions height: dimensions neighbors: 8 use_regular_agents: false frequency: 0{
-	const color type: rgb <- black;
+	rgb color  <- #black;
 }
 
 //Species representing the people agents
 species people parent: base  {
 	//Color of the people agent
-	const color type: rgb <- colors at (rnd (number_of_groups - 1));
+	rgb color <- colors at (rnd (number_of_groups - 1));
 	//List of all the neighbours of the agent
 	list<people> my_neighbours -> {people at_distance neighbours_distance} ;
 	//Cell representing the place of the agent
@@ -48,17 +48,17 @@ species people parent: base  {
 		my_place <- one_of(free_places);
 		location <- my_place.location; 
 		//As one agent is in the place, the place is removed from the free places
-		remove my_place from: free_places;
+		free_places >> my_place;
 	} 
 	//Reflex to migrate the people agent when it is not happy 
 	reflex migrate when: !is_happy {
 		//Add the place to the free places as it will move to another place
-		add my_place to: free_places;
+		free_places << my_place;
 		//Change the place of the agent
 		my_place <- one_of(free_places);
 		location <- my_place.location; 
 		//Remove the new place from the free places
-		remove my_place from: free_places;
+		free_places >> my_place;
 	}
 	
 	aspect default{ 

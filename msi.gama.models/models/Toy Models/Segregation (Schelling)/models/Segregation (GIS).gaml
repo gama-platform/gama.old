@@ -45,12 +45,12 @@ global {
 //Species people representing the people
 species people parent: base { 
 	//Size of the people agent
-	const size type: float <- 2.0;
+	float size const: true <- 2.0;
 	//Color of the people agent  
-	const color type: rgb <- colors at (rnd (number_of_groups - 1)); 
-	const red type: int <- (color as list) at 0; 
-	const green type: int <- (color as list) at 1;  
-	const blue type: int <- (color as list) at 2;  
+	rgb color const: true <- colors at (rnd (number_of_groups - 1)); 
+	int red const: true <- (color as list) at 0; 
+	int green const: true <- (color as list) at 1;  
+	int blue const: true <- (color as list) at 2;  
 	//Building in which the agent lives
 	space current_building <- nil;
 	//List of all the neighbour people agents

@@ -56,9 +56,9 @@ global torus: torus_environment{
 
 
 	// flock's parameter 
-	const two_boids_distance type: float init: 30.0;  
-	const merging_distance type: int init: 30;
-	var create_flock type: bool init: false;  
+	float two_boids_distance const: true init: 30.0;  
+	int merging_distance const: true init: 30;
+	bool create_flock  init: false;  
 	
 	init {
 		//Create the boids and place them randomlly
@@ -127,7 +127,7 @@ global torus: torus_environment{
 }
 //Species boids_goal which represents the goal followed by the boids agent, using the skill moving
 species name: boids_goal skills: [moving] {
-	const range type: float init: 20.0;
+	float range const: true init: 20.0;
 	int radius <-3;
 	
 	//Reflex to make the goal move in circle

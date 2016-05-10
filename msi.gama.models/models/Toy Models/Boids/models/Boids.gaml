@@ -64,7 +64,7 @@ global torus: torus_environment{
 
 //Species boids goal which represents the goal that will be followed by boids agents using the skill moving
 species boids_goal skills: [moving] {
-	const range type: float <- 20.0;
+	float range  <- 20.0;
 	
 	//If the mouse is not used, then the goal just wander
 	reflex wander {  

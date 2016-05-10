@@ -32,15 +32,11 @@ global {
 	// Environment
 	geometry shape <- rectangle(50, 50);
 		
-	const types type: file<int> <- file<int>('../images/sugarscape.pgm');
-	const red type: rgb <- #red;
-	const white type: rgb <- #white;
-	const FFFFAA type: rgb <- rgb('#FFFFAA');
-	const FFFF55 type: rgb <- rgb('#FFFF55');
-	const yellow type: rgb <- #yellow;
-	const dark_yellow type: rgb <- rgb('#EEB422');
-	const pink type: rgb <- #pink;
-	const less_red type: rgb <- rgb('#FF5F5F');
+	file<int> types  <- file<int>('../images/sugarscape.pgm');
+	rgb FFFFAA const: true <- rgb('#FFFFAA');
+	rgb FFFF55 const: true <- rgb('#FFFF55');
+	rgb dark_yellow const: true <- rgb('#EEB422');
+	rgb less_red const: true <- rgb('#FF5F5F');
 	
 	init {
 		
@@ -51,19 +47,18 @@ global {
 		ask sugar_cell {
 			maxSugar <- (types at {grid_x,grid_y});
 			sugar <- maxSugar;
-			color <- [white,FFFFAA,FFFF55,yellow,dark_yellow] at sugar;
+			color <- [#white,FFFFAA,FFFF55,#yellow,dark_yellow] at sugar;
 		}
 	}
 }
 
 	//Grid species representing the sugar cells
 	grid sugar_cell width: 50 height: 50 neighbors: 4 use_individual_shapes: false use_regular_agents: false{ 
-		const multiagent type: bool <- false;
 		//Maximum sugar
 		int maxSugar;
 		//Sugar contained in thecell
 		int sugar update: sugar + sugarGrowthRate max: maxSugar;
-		rgb color update: [white,FFFFAA,FFFF55,yellow,dark_yellow] at sugar;
+		rgb color update: [#white,FFFFAA,FFFF55,#yellow,dark_yellow] at sugar;
 		map<int,list<sugar_cell>> neighbours;
 		
 		//Initialization of the neighbours
@@ -77,17 +72,17 @@ global {
 //Species animal representing the animal agents
 species animal {
 	//Color of the animal
-	const color type: rgb <- red;
+	rgb color  <- #red;
 	//Speed of the animal
-	const speed type: float <- 1.0;
+	float speed  <- 1.0;
 	//Metabolism of the animal
-	const metabolism type: int min: 1 <- rnd(maxMetabolism);
+	int metabolism  min: 1 <- rnd(maxMetabolism);
 	//Perception range of the animal
-	const vision type: int min: 1 <- rnd(maxRange);
+	int vision  min: 1 <- rnd(maxRange);
 	//Maximal age of the animal
-	const maxAge type: int min: minDeathAge max: maxDeathAge <- rnd (maxDeathAge - minDeathAge) + minDeathAge;
+	int maxAge  min: minDeathAge max: maxDeathAge <- rnd (maxDeathAge - minDeathAge) + minDeathAge;
 	//Size of the animal
-	const size type: float <- 0.5;
+	float size  <- 0.5;
 	//Sugar of the animal
 	int sugar min: 0 <- (rnd (maxInitialSugar - minInitialSugar)) + minInitialSugar update: sugar - metabolism;
 	//Age of the animal
@@ -119,7 +114,7 @@ species animal {
 		do die;
 	}
 	aspect default {
-		draw circle(0.5) color: red;
+		draw circle(0.5) color: #red;
 	}
 }
 

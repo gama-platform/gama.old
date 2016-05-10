@@ -153,7 +153,7 @@ species shelter skills: [moving]  frequency: 2 {
 	
 	//Subspecies prey_in_shelter that will represent the prey agents captured by the shelter
 	species prey_in_shelter parent: prey frequency: 2 schedules: ( ( int ( (length (prey_in_shelter)) / 2 ) ) among (list (prey_in_shelter)) ) {
-		var in_shelter_time type: int init: int(time);
+		int in_shelter_time <- int(time);
 		
 		state in_shelter {
 			do wander speed: shelter_speed;

@@ -11,8 +11,8 @@ model HowToImportRaster
 
 global {	
 	// Constants 
-	const heightImg type: int <- 5587;
-	const widthImg type: int <- 6201;	 
+	int heightImg const: true <- 5587;
+	int widthImg const: true <- 6201;	 
 	  
 	// Global variables
 	int factorDiscret <- 30 ;

@@ -13,9 +13,9 @@ model RasterAndShapefiles
  
 global {
 	// Constants
-	const heightImg type: int <- 5587;
-	const widthImg type: int <- 6201;	
-	const boundsMNT type: file <- file("../images/mnt/boundsMNT.shp"); 
+	int heightImg const: true <- 5587;
+	int widthImg const: true <- 6201;	
+	file boundsMNT const: true <- file("../images/mnt/boundsMNT.shp"); 
 	
 	
 // The environment bounds are defined using the hand-made boundsMNT shapefile.

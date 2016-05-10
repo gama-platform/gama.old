@@ -30,7 +30,7 @@ global  {
 	}
 
 	rgb black <- #black  ;	
-	const colors type: list<rgb> <- [#yellow,#red, #orange, #blue, #green,#cyan, #gray,#pink,#magenta] ;
+	list<rgb> colors const: true <- [#yellow,#red, #orange, #blue, #green,#cyan, #gray,#pink,#magenta] ;
 	//Action to write the description of the model
 	action description {
 		write "\n Description. \n This model is loosely based on the behavior of ants sorting different elements in their nest. \n A of mobile agents - the ants - is placed on a grid. The grid itself contains cells of different colors. Each step, the agents move randomly. If they enter a colored cell, they pick this color if its density in the neighbourhood is less than *number_of_objects_around*. If they have picked a color, they drop it on a black cell if they have encountered at least *number_of_objects_in_history* cells with the same color.\n After a while, colors begin to be aggregated. " ;	

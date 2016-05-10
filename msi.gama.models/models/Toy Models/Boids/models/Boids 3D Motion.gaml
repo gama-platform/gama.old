@@ -54,7 +54,7 @@ global torus: torus_environment{
 
 //Species boids_goal that will represent the goal agent, using the skill moving
 species boids_goal skills: [moving3D] {
-	const range type: float init: 20.0;
+	float range init: 20.0;
 	
 	//Reflex to make the goal agent wander in a certain amplitude and a certain speed, 
 	//Respecting the minimal and maximal z values

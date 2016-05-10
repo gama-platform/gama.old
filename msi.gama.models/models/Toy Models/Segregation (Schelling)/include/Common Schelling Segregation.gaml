@@ -10,7 +10,6 @@ global {
 	rgb color_6 <- rgb ("pink") parameter: "Color of group 6:" category: "User interface";   
 	rgb color_7 <- rgb ("magenta") parameter: "Color of group 7:" category: "User interface";
 	rgb color_8 <- rgb ("cyan") parameter: "Color of group 8:" category: "User interface";
-	const black type: rgb <- rgb ("black");
 	list colors <- [°yellow, °red, °blue, °orange, °green, °pink, °magenta, °cyan] of: rgb;
 	
 	//Number of groups
