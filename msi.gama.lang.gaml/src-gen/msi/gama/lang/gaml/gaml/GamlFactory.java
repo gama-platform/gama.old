@@ -257,15 +257,6 @@ public interface GamlFactory extends EFactory
   S_Solve createS_Solve();
 
   /**
-   * Returns a new object of class '<em>SMonitor</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>SMonitor</em>'.
-   * @generated
-   */
-  S_Monitor createS_Monitor();
-
-  /**
    * Returns a new object of class '<em>SDisplay</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

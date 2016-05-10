@@ -64,12 +64,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Equations/equations"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Solve"/>
-    <genClasses ecoreClass="Gaml.ecore#//S_Monitor">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/key"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/firstFacet"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Monitor/facets"/>
-    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Display">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Display/name"/>
     </genClasses>
@@ -168,5 +162,15 @@
     <genClasses ecoreClass="Gaml.ecore#//StringLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//BooleanLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//ReservedLiteral"/>
+    <genClasses ecoreClass="Gaml.ecore#//S_Monitor">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/firstFacet"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Monitor/facets"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/firstFacet"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/firstFacet"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

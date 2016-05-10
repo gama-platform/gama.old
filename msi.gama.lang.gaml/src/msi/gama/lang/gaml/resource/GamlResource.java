@@ -37,6 +37,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
+import org.eclipse.xtext.util.CancelIndicator;
 
 import com.google.common.collect.ImmutableList;
 
@@ -516,6 +517,24 @@ public class GamlResource extends LazyLinkingResource {
 	public GamlProperties getRequires() {
 		requires.remove(null);
 		return requires;
+	}
+
+	@Override
+	public void update(final int offset, final int replacedTextLength, final String newText) {
+		final long begin = System.nanoTime();
+		super.update(offset, replacedTextLength, newText);
+		System.out.println("'" + getURI().lastSegment() + "'" + " updated in " + (System.nanoTime() - begin) / 1000000d
+				+ " ms in Thread [" + Thread.currentThread().getName() + "]");
+		System.out.println("****************************************************");
+	}
+
+	@Override
+	public void resolveLazyCrossReferences(final CancelIndicator mon) {
+		final long begin = System.nanoTime();
+		super.resolveLazyCrossReferences(mon);
+		System.out.println("'" + getURI().lastSegment() + "'" + " resolved in " + (System.nanoTime() - begin) / 1000000d
+				+ " ms in Thread [" + Thread.currentThread().getName() + "]");
+		System.out.println("****************************************************");
 	}
 
 }

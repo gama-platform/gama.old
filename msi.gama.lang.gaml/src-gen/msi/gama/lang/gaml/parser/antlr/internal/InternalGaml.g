@@ -2827,8 +2827,6 @@ ruleS_Solve returns [EObject current=null]
 
 
 
-
-
 // Entry rule entryRuleS_Display
 entryRuleS_Display returns [EObject current=null] 
 	:

@@ -205,11 +205,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createS_SolveAdapter();
       }
       @Override
-      public Adapter caseS_Monitor(S_Monitor object)
-      {
-        return createS_MonitorAdapter();
-      }
-      @Override
       public Adapter caseS_Display(S_Display object)
       {
         return createS_DisplayAdapter();
@@ -852,21 +847,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createS_SolveAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Monitor <em>SMonitor</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.S_Monitor
-   * @generated
-   */
-  public Adapter createS_MonitorAdapter()
   {
     return null;
   }

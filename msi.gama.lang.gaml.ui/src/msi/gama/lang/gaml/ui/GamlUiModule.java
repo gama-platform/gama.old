@@ -17,6 +17,7 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.parser.IEncodingProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
@@ -37,7 +38,6 @@ import org.eclipse.xtext.ui.editor.model.ResourceForIEditorInputFactory;
 import org.eclipse.xtext.ui.editor.outline.actions.IOutlineContribution;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.ui.resource.SimpleResourceSetProvider;
 
@@ -45,7 +45,6 @@ import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
-import msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory;
 import msi.gama.lang.gaml.ui.contentassist.GamlTemplateProposalProvider;
 import msi.gama.lang.gaml.ui.editor.GamaAutoEditStrategyProvider;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
@@ -101,8 +100,9 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	// return GamlEncodingProvider.class;
 	// }
 
-	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindStatefulFactory() {
-		return ContentAssistContextFactory.class;
+	@Override
+	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindParserBasedContentAssistContextFactory$StatefulFactory() {
+		return msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory.class;
 	}
 
 	@Override

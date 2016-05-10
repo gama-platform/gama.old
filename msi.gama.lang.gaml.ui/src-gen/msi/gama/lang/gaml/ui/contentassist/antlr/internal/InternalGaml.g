@@ -926,8 +926,6 @@ finally {
 
 
 
-
-
 // Entry rule entryRuleS_Display
 entryRuleS_Display 
 :
@@ -3664,7 +3662,6 @@ rule__S_Solve__Alternatives_4
 finally {
 	restoreStackSize(stackSize);
 }
-
 
 rule__S_Display__NameAlternatives_2_0
     @init {
@@ -9435,7 +9432,6 @@ rule__S_Solve__Group__4__Impl
 finally {
 	restoreStackSize(stackSize);
 }
-
 
 
 
@@ -18688,10 +18684,6 @@ rule__S_Solve__BlockAssignment_4_0
 finally {
 	restoreStackSize(stackSize);
 }
-
-
-
-
 
 rule__S_Display__KeyAssignment_0
     @init {

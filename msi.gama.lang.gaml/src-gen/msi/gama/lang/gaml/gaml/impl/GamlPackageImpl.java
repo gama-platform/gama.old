@@ -52,7 +52,6 @@ import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Loop;
-import msi.gama.lang.gaml.gaml.S_Monitor;
 import msi.gama.lang.gaml.gaml.S_Other;
 import msi.gama.lang.gaml.gaml.S_Reflex;
 import msi.gama.lang.gaml.gaml.S_Return;
@@ -275,13 +274,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass s_SolveEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass s_MonitorEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1133,56 +1125,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EClass getS_Solve()
   {
     return s_SolveEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getS_Monitor()
-  {
-    return s_MonitorEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getS_Monitor_Key()
-  {
-    return (EAttribute)s_MonitorEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getS_Monitor_FirstFacet()
-  {
-    return (EAttribute)s_MonitorEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getS_Monitor_Name()
-  {
-    return (EAttribute)s_MonitorEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getS_Monitor_Facets()
-  {
-    return (EReference)s_MonitorEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -2057,12 +1999,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     s_SolveEClass = createEClass(SSOLVE);
 
-    s_MonitorEClass = createEClass(SMONITOR);
-    createEAttribute(s_MonitorEClass, SMONITOR__KEY);
-    createEAttribute(s_MonitorEClass, SMONITOR__FIRST_FACET);
-    createEAttribute(s_MonitorEClass, SMONITOR__NAME);
-    createEReference(s_MonitorEClass, SMONITOR__FACETS);
-
     s_DisplayEClass = createEClass(SDISPLAY);
     createEAttribute(s_DisplayEClass, SDISPLAY__NAME);
 
@@ -2363,12 +2299,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEReference(getS_Equations_Equations(), this.getS_Assignment(), null, "equations", null, 0, -1, S_Equations.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(s_SolveEClass, S_Solve.class, "S_Solve", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(s_MonitorEClass, S_Monitor.class, "S_Monitor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getS_Monitor_Key(), ecorePackage.getEString(), "key", null, 0, 1, S_Monitor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getS_Monitor_FirstFacet(), ecorePackage.getEString(), "firstFacet", null, 0, 1, S_Monitor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getS_Monitor_Name(), ecorePackage.getEString(), "name", null, 0, 1, S_Monitor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getS_Monitor_Facets(), this.getFacet(), null, "facets", null, 0, -1, S_Monitor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(s_DisplayEClass, S_Display.class, "S_Display", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getS_Display_Name(), ecorePackage.getEString(), "name", null, 0, 1, S_Display.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

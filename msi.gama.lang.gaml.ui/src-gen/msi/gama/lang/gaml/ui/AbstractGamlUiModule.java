@@ -132,6 +132,11 @@ public abstract class AbstractGamlUiModule extends org.eclipse.xtext.ui.DefaultU
 		binder.bind(org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer.class).annotatedWith(com.google.inject.name.Names.named(org.eclipse.xtext.ui.LexerUIBindings.CONTENT_ASSIST)).to(msi.gama.lang.gaml.ui.contentassist.antlr.internal.InternalGamlLexer.class);
 	}
 
+	// contributed by org.eclipse.xtext.generator.parser.antlr.XtextAntlrUiGeneratorFragment
+	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindParserBasedContentAssistContextFactory$StatefulFactory() {
+		return org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.PartialStatefulFactory.class;
+	}
+
 	// contributed by org.eclipse.xtext.ui.generator.templates.CodetemplatesGeneratorFragment
 	public com.google.inject.Provider<org.eclipse.xtext.ui.codetemplates.ui.preferences.TemplatesLanguageConfiguration> provideTemplatesLanguageConfiguration() {
 		return org.eclipse.xtext.ui.codetemplates.ui.AccessibleCodetemplatesActivator.getTemplatesLanguageConfigurationProvider();

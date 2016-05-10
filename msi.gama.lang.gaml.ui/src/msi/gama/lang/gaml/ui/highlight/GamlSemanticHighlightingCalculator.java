@@ -30,38 +30,32 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.nodemodel.ILeafNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.tasks.ITaskFinder;
 import org.eclipse.xtext.tasks.Task;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.util.CancelIndicator;
 
 import com.google.inject.Inject;
 
 import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
-import msi.gama.lang.gaml.gaml.Binary;
 import msi.gama.lang.gaml.gaml.Facet;
-import msi.gama.lang.gaml.gaml.Function;
+import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Pragma;
-import msi.gama.lang.gaml.gaml.ReservedLiteral;
 import msi.gama.lang.gaml.gaml.S_Assignment;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_DirectAssignment;
-import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
-import msi.gama.lang.gaml.gaml.TerminalExpression;
-import msi.gama.lang.gaml.gaml.TypeRef;
-import msi.gama.lang.gaml.gaml.UnitName;
-import msi.gama.lang.gaml.gaml.VariableRef;
-import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.utils.EGaml;
 
 /**
@@ -71,7 +65,7 @@ import msi.gama.lang.utils.EGaml;
  *         highlighting
  *
  */
-public class GamlSemanticHighlightingCalculator extends GamlSwitch implements ISemanticHighlightingCalculator {
+public class GamlSemanticHighlightingCalculator implements ISemanticHighlightingCalculator {
 
 	@Inject
 	private ITaskFinder taskFinder;
@@ -83,17 +77,23 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 	Set<INode> done = new HashSet();
 
 	@Override
-	public void provideHighlightingFor(final XtextResource resource, final IHighlightedPositionAcceptor a) {
+	public void provideHighlightingFor(final XtextResource resource, final IHighlightedPositionAcceptor arg1,
+			final CancelIndicator arg2) {
+		final long begin = System.nanoTime();
 		if (resource == null) {
 			return;
 		}
-		acceptor = a;
+		acceptor = arg1;
 		final TreeIterator<EObject> root = resource.getAllContents();
 		while (root.hasNext()) {
-			doSwitch(root.next());
+			process(root.next());
+			// doSwitch(root.next());
 		}
 		done.clear();
 		highlightTasks(resource, acceptor);
+		System.out.println("'" + resource.getURI().lastSegment() + "' hightlighted in "
+				+ (System.nanoTime() - begin) / 1000000d + " ms in Thread [" + Thread.currentThread().getName() + "]");
+		System.out.println("****************************************************");
 	}
 
 	protected void highlightTasks(final XtextResource resource, final IHighlightedPositionAcceptor acceptor) {
@@ -103,117 +103,87 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 		}
 	}
 
-	@Override
-	public Object caseS_Display(final S_Display object) {
-		return caseStatement(object);
+	void process(final EObject object) {
+		if (object == null)
+			return;
+		process(object, object.eClass());
 	}
 
-	@Override
-	public Object caseStatement(final Statement object) {
+	void process(final EObject object, final EClass clazz) {
+		final int id = clazz.getClassifierID();
 
-		setStyle(object, VARDEF_ID, EGaml.getNameOf(object));
-
-		setStyle(object, KEYWORD_ID, object.getKey());
-
-		return setStyle(object, FACET_ID, object.getFirstFacet());
-	}
-
-	@Override
-	public Object casePragma(final Pragma object) {
-		return setStyle(object, PRAGMA_ID, object.getName());
-	}
-
-	@Override
-	public Object caseS_DirectAssignment(final S_DirectAssignment obj) {
-		return setStyle(obj, ASSIGN_ID, obj.getKey());
-	}
-
-	@Override
-	public Object caseS_Assignment(final S_Assignment obj) {
-		final String s = obj.getKey();
-		if ("=".equals(s)) {
-			return setStyle(obj, ASSIGN_ID, s);
-		}
-		return false;
-	}
-
-	@Override
-	public Object caseFacet(final Facet object) {
-		final String key = object.getKey();
-		if (ASSIGNMENTS.contains(key)) {
-			setStyle(object, ASSIGN_ID, 0);
-		} else {
-			setStyle(object, FACET_ID, 0);
-			if (key.startsWith("type")) {
-				setStyle(TYPE_ID, NodeModelUtils.getNode(object.getExpr()));
-			} else if (object.getName() != null) {
-				setStyle(object, VARDEF_ID, 1);
+		switch (id) {
+		case GamlPackage.PRAGMA:
+			setStyle(object, PRAGMA_ID, ((Pragma) object).getName());
+			break;
+		case GamlPackage.SDIRECT_ASSIGNMENT:
+			setStyle(object, ASSIGN_ID, ((S_DirectAssignment) object).getKey());
+			break;
+		case GamlPackage.SASSIGNMENT:
+			final String s = ((S_Assignment) object).getKey();
+			if ("=".equals(s)) {
+				setStyle(object, ASSIGN_ID, s);
 			}
+			break;
+		case GamlPackage.FACET:
+			final Facet f = (Facet) object;
+			final String key = f.getKey();
+			if (ASSIGNMENTS.contains(key)) {
+				setStyle(object, ASSIGN_ID, 0);
+			} else {
+				setStyle(object, FACET_ID, 0);
+				if (key.startsWith("type")) {
+					setStyle(TYPE_ID, NodeModelUtils.getNode(f.getExpr()));
+				} else if (f.getName() != null) {
+					setStyle(object, VARDEF_ID, 1);
+				}
+			}
+			break;
+		case GamlPackage.TERMINAL_EXPRESSION:
+			if (!(object instanceof StringLiteral)) {
+				setStyle(object, NUMBER_ID, 0);
+			}
+			break;
+		case GamlPackage.RESERVED_LITERAL:
+			setStyle(object, RESERVED_ID, 0);
+			break;
+		case GamlPackage.BINARY:
+		case GamlPackage.FUNCTION:
+			setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
+			break;
+		case GamlPackage.ARGUMENT_PAIR:
+			setStyle(object, VARIABLE_ID, ((ArgumentPair) object).getOp());
+			break;
+		case GamlPackage.VARIABLE_REF:
+			setStyle(VARIABLE_ID, NodeModelUtils.getNode(object));
+			break;
+		case GamlPackage.UNIT_NAME:
+			setStyle(object, UNIT_ID, 0);
+			break;
+		case GamlPackage.TYPE_REF:
+			final Statement st = EGaml.getStatement(object);
+			if (st instanceof S_Definition && ((S_Definition) st).getTkey() == object) {
+				setStyle(KEYWORD_ID, NodeModelUtils.findActualNodeFor(object));
+			} else
+				setStyle(TYPE_ID, NodeModelUtils.getNode(object));
+			break;
+		case GamlPackage.PARAMETER:
+			setStyle(object, VARIABLE_ID, ((Parameter) object).getBuiltInFacetKey());
+			break;
+		case GamlPackage.ARGUMENT_DEFINITION:
+			setStyle(object, VARDEF_ID, ((ArgumentDefinition) object).getName());
+			break;
+		case GamlPackage.STATEMENT:
+			final Statement stat = (Statement) object;
+			setStyle(object, VARDEF_ID, EGaml.getNameOf(stat));
+			setStyle(object, KEYWORD_ID, stat.getKey());
+			setStyle(object, FACET_ID, stat.getFirstFacet());
+			break;
+		default:
+			final List<EClass> eSuperTypes = clazz.getESuperTypes();
+			if (!eSuperTypes.isEmpty())
+				process(object, eSuperTypes.get(0));
 		}
-		return true;
-	}
-
-	@Override
-	public Object caseTerminalExpression(final TerminalExpression object) {
-		if (!(object instanceof StringLiteral)) {
-			setStyle(object, NUMBER_ID, 0);
-		}
-		return true;
-	}
-
-	@Override
-	public Object caseReservedLiteral(final ReservedLiteral object) {
-		return setStyle(object, RESERVED_ID, 0);
-	}
-
-	@Override
-	public Object caseBinary(final Binary object) {
-		return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
-	}
-
-	@Override
-	public Object caseFunction(final Function object) {
-		return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
-	}
-
-	@Override
-	public Object caseArgumentPair(final ArgumentPair object) {
-		return setStyle(object, VARIABLE_ID, object.getOp());
-	}
-
-	@Override
-	public Object caseVariableRef(final VariableRef object) {
-		return setStyle(VARIABLE_ID, NodeModelUtils.getNode(object));
-	}
-
-	@Override
-	public Object caseUnitName(final UnitName object) {
-		return setStyle(object, UNIT_ID, 0);
-	}
-
-	@Override
-	public Object caseTypeRef(final TypeRef object) {
-		final Statement s = EGaml.getStatement(object);
-		if (s instanceof S_Definition && ((S_Definition) s).getTkey() == object) {
-			setStyle(KEYWORD_ID, NodeModelUtils.findActualNodeFor(object));
-		}
-		return setStyle(TYPE_ID, NodeModelUtils.getNode(object));
-	}
-
-	//
-	// @Override
-	// public Object caseSpeciesRef(final SpeciesRef object) {
-	// return setStyle(TYPE_ID, NodeModelUtils.getNode(object));
-	// }
-
-	@Override
-	public Object caseParameter(final Parameter object) {
-		return setStyle(object, VARIABLE_ID, object.getBuiltInFacetKey());
-	}
-
-	@Override
-	public Object caseArgumentDefinition(final ArgumentDefinition object) {
-		return setStyle(object, VARDEF_ID, object.getName());
 	}
 
 	private final boolean setStyle(final EObject obj, final String s, final int position) {

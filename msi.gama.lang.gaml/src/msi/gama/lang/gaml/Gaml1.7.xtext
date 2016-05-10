@@ -4,15 +4,12 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 
 Entry:
-	Model | StringEvaluator | ActionEditor;
+	Model | StringEvaluator ;
 
 
 
 StringEvaluator:
 	toto=ID "<-" expr=Expression;
-
-ActionEditor:
-	"$$$" action=S_Definition;
 
 
 Model:
@@ -34,19 +31,11 @@ Pragma:
  */
 
 S_Section returns Statement:
-	S_Entities | S_Global | S_Species | S_Experiment | S_Environment
+	 S_Global | S_Species | S_Experiment 
 ;
 
 S_Global :
 	key="global" (facets+=Facet)* (block=Block | ';')
-;
-
-S_Entities:
-	key="entities" block=Block
-;
-
-S_Environment :
-	key="environment" (facets+=Facet)* (block=Block | ';')
 ;
 
 S_Species :
@@ -85,7 +74,7 @@ S_Return:
  * DECLARATIONS
  */
 S_Declaration:
-	=>S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop ;
+	=>S_Definition | S_Species | S_Reflex | S_Action  | S_Loop  ; // S_Var
 
 S_Reflex:
 	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when"":" expr=Expression)? block=Block;
@@ -96,8 +85,8 @@ S_Definition:
 S_Action returns S_Definition:
 	{S_Action} key="action" (firstFacet='name:')? name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
 
-S_Var returns S_Definition:
-	{S_Var} key=_VarOrConstKey (firstFacet="name:")? name=Valid_ID (facets+=Facet)* ';';
+//S_Var returns S_Definition:
+//	{S_Var} key=_VarOrConstKey (firstFacet="name:")? name=Valid_ID (facets+=Facet)* ';';
 
 
 	/*
@@ -126,9 +115,8 @@ S_Solve:
 /**
  * DISPLAYS
  */
- 
 
-//S_Monitor:
+//S_Monitor :
 //	key="monitor" (firstFacet="name:")? name=(Valid_ID|STRING) facets+=Facet ";"
 //;
 
@@ -157,9 +145,15 @@ outputBlock returns Block:
 	{Block} '{' (statements += outputStatement)* '}'
 ;
 
-outputStatement returns Statement:
-	Statement | S_Display 
-;
+outputStatement returns Statement
+	:
+	Statement 
+	| 
+	S_Display 
+//	| 
+//	S_Monitor
+	
+	;
 displayStatement returns Statement:
 	speciesOrGridDisplayStatement | S_1Expr_Facets_BlockOrEnd
 ;
@@ -185,13 +179,11 @@ _1Expr_Facets_BlockOrEnd_Key:
 	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status";
 
 _LayerKey:
-	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist"
+	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" |  "event" | "overlay" | "datalist" | "camera" | "light"
 ;
 _DoKey:
 	"do";
 
-_VarOrConstKey:
-	"var" | "const" | "let" | "arg" | "signal" ;
 
 _ReflexKey:
 	"init" | "reflex" | "aspect";
@@ -435,7 +427,7 @@ EquationFakeDefinition:
 	'**equation*' name=Valid_ID;
 
 Valid_ID:
-	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
+	_SpeciesKey | _DoKey | _ReflexKey  | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID; // _VarOrConsKey
 
 	/**
  * Terminals

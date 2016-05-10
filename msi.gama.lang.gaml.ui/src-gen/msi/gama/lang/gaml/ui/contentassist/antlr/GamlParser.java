@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 import org.antlr.runtime.RecognitionException;
 import org.eclipse.xtext.AbstractElement;
-import org.eclipse.xtext.ui.editor.contentassist.antlr.AbstractContentAssistParser;
+import org.eclipse.xtext.ui.editor.contentassist.antlr.AbstractPartialContentAssistParser;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.FollowElement;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.AbstractInternalContentAssistParser;
 
@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 
 import msi.gama.lang.gaml.services.GamlGrammarAccess;
 
-public class GamlParser extends AbstractContentAssistParser {
+public class GamlParser extends AbstractPartialContentAssistParser {
 	
 	@Inject
 	private GamlGrammarAccess grammarAccess;
@@ -59,7 +59,6 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getS_EquationsAccess().getAlternatives_3(), "rule__S_Equations__Alternatives_3");
 					put(grammarAccess.getS_EquationAccess().getExprAlternatives_0_0(), "rule__S_Equation__ExprAlternatives_0_0");
 					put(grammarAccess.getS_SolveAccess().getAlternatives_4(), "rule__S_Solve__Alternatives_4");
-					put(grammarAccess.getS_MonitorAccess().getNameAlternatives_2_0(), "rule__S_Monitor__NameAlternatives_2_0");
 					put(grammarAccess.getS_DisplayAccess().getNameAlternatives_2_0(), "rule__S_Display__NameAlternatives_2_0");
 					put(grammarAccess.getExperimentStatementAccess().getAlternatives(), "rule__ExperimentStatement__Alternatives");
 					put(grammarAccess.getS_OutputAccess().getKeyAlternatives_0_0(), "rule__S_Output__KeyAlternatives_0_0");
@@ -144,7 +143,6 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getS_EquationsAccess().getGroup_3_0_1(), "rule__S_Equations__Group_3_0_1__0");
 					put(grammarAccess.getS_EquationAccess().getGroup(), "rule__S_Equation__Group__0");
 					put(grammarAccess.getS_SolveAccess().getGroup(), "rule__S_Solve__Group__0");
-					put(grammarAccess.getS_MonitorAccess().getGroup(), "rule__S_Monitor__Group__0");
 					put(grammarAccess.getS_DisplayAccess().getGroup(), "rule__S_Display__Group__0");
 					put(grammarAccess.getDisplayBlockAccess().getGroup(), "rule__DisplayBlock__Group__0");
 					put(grammarAccess.getExperimentBlockAccess().getGroup(), "rule__ExperimentBlock__Group__0");
@@ -344,10 +342,6 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getS_SolveAccess().getExprAssignment_2(), "rule__S_Solve__ExprAssignment_2");
 					put(grammarAccess.getS_SolveAccess().getFacetsAssignment_3(), "rule__S_Solve__FacetsAssignment_3");
 					put(grammarAccess.getS_SolveAccess().getBlockAssignment_4_0(), "rule__S_Solve__BlockAssignment_4_0");
-					put(grammarAccess.getS_MonitorAccess().getKeyAssignment_0(), "rule__S_Monitor__KeyAssignment_0");
-					put(grammarAccess.getS_MonitorAccess().getFirstFacetAssignment_1(), "rule__S_Monitor__FirstFacetAssignment_1");
-					put(grammarAccess.getS_MonitorAccess().getNameAssignment_2(), "rule__S_Monitor__NameAssignment_2");
-					put(grammarAccess.getS_MonitorAccess().getFacetsAssignment_3(), "rule__S_Monitor__FacetsAssignment_3");
 					put(grammarAccess.getS_DisplayAccess().getKeyAssignment_0(), "rule__S_Display__KeyAssignment_0");
 					put(grammarAccess.getS_DisplayAccess().getFirstFacetAssignment_1(), "rule__S_Display__FirstFacetAssignment_1");
 					put(grammarAccess.getS_DisplayAccess().getNameAssignment_2(), "rule__S_Display__NameAssignment_2");

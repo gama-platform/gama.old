@@ -1516,64 +1516,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getSemicolonKeyword_4_1() { return cSemicolonKeyword_4_1; }
 	}
 
-	public class S_MonitorElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.S_Monitor");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Keyword cKeyMonitorKeyword_0_0 = (Keyword)cKeyAssignment_0.eContents().get(0);
-		private final Assignment cFirstFacetAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Keyword cFirstFacetNameKeyword_1_0 = (Keyword)cFirstFacetAssignment_1.eContents().get(0);
-		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final Alternatives cNameAlternatives_2_0 = (Alternatives)cNameAssignment_2.eContents().get(0);
-		private final RuleCall cNameValid_IDParserRuleCall_2_0_0 = (RuleCall)cNameAlternatives_2_0.eContents().get(0);
-		private final RuleCall cNameSTRINGTerminalRuleCall_2_0_1 = (RuleCall)cNameAlternatives_2_0.eContents().get(1);
-		private final Assignment cFacetsAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cFacetsFacetParserRuleCall_3_0 = (RuleCall)cFacetsAssignment_3.eContents().get(0);
-		private final Keyword cSemicolonKeyword_4 = (Keyword)cGroup.eContents().get(4);
-		
-		/// **
-		// * DISPLAYS
-		// * / S_Monitor:
-		//	key="monitor" firstFacet="name:"? name=(Valid_ID | STRING) facets+=Facet ";";
-		@Override public ParserRule getRule() { return rule; }
-
-		//key="monitor" firstFacet="name:"? name=(Valid_ID | STRING) facets+=Facet ";"
-		public Group getGroup() { return cGroup; }
-
-		//key="monitor"
-		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
-
-		//"monitor"
-		public Keyword getKeyMonitorKeyword_0_0() { return cKeyMonitorKeyword_0_0; }
-
-		//firstFacet="name:"?
-		public Assignment getFirstFacetAssignment_1() { return cFirstFacetAssignment_1; }
-
-		//"name:"
-		public Keyword getFirstFacetNameKeyword_1_0() { return cFirstFacetNameKeyword_1_0; }
-
-		//name=(Valid_ID | STRING)
-		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
-
-		//(Valid_ID | STRING)
-		public Alternatives getNameAlternatives_2_0() { return cNameAlternatives_2_0; }
-
-		//Valid_ID
-		public RuleCall getNameValid_IDParserRuleCall_2_0_0() { return cNameValid_IDParserRuleCall_2_0_0; }
-
-		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_2_0_1() { return cNameSTRINGTerminalRuleCall_2_0_1; }
-
-		//facets+=Facet
-		public Assignment getFacetsAssignment_3() { return cFacetsAssignment_3; }
-
-		//Facet
-		public RuleCall getFacetsFacetParserRuleCall_3_0() { return cFacetsFacetParserRuleCall_3_0; }
-
-		//";"
-		public Keyword getSemicolonKeyword_4() { return cSemicolonKeyword_4; }
-	}
-
 	public class S_DisplayElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.S_Display");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -1590,6 +1532,11 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cBlockAssignment_4 = (Assignment)cGroup.eContents().get(4);
 		private final RuleCall cBlockDisplayBlockParserRuleCall_4_0 = (RuleCall)cBlockAssignment_4.eContents().get(0);
 		
+		/// **
+		// * DISPLAYS
+		// * / //S_Monitor:
+		////	key="monitor" (firstFacet="name:")? name=(Valid_ID|STRING) facets+=Facet ";"
+		////;
 		//S_Display:
 		//	key="display" firstFacet="name:"? name=(Valid_ID | STRING) facets+=Facet* block=displayBlock;
 		@Override public ParserRule getRule() { return rule; }
@@ -4862,7 +4809,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private final S_EquationsElements pS_Equations;
 	private final S_EquationElements pS_Equation;
 	private final S_SolveElements pS_Solve;
-	private final S_MonitorElements pS_Monitor;
 	private final S_DisplayElements pS_Display;
 	private final DisplayBlockElements pDisplayBlock;
 	private final ExperimentBlockElements pExperimentBlock;
@@ -4989,7 +4935,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		this.pS_Equations = new S_EquationsElements();
 		this.pS_Equation = new S_EquationElements();
 		this.pS_Solve = new S_SolveElements();
-		this.pS_Monitor = new S_MonitorElements();
 		this.pS_Display = new S_DisplayElements();
 		this.pDisplayBlock = new DisplayBlockElements();
 		this.pExperimentBlock = new ExperimentBlockElements();
@@ -5428,16 +5373,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	/// **
 	// * DISPLAYS
-	// * / S_Monitor:
-	//	key="monitor" firstFacet="name:"? name=(Valid_ID | STRING) facets+=Facet ";";
-	public S_MonitorElements getS_MonitorAccess() {
-		return pS_Monitor;
-	}
-	
-	public ParserRule getS_MonitorRule() {
-		return getS_MonitorAccess().getRule();
-	}
-
+	// * / //S_Monitor:
+	////	key="monitor" (firstFacet="name:")? name=(Valid_ID|STRING) facets+=Facet ";"
+	////;
 	//S_Display:
 	//	key="display" firstFacet="name:"? name=(Valid_ID | STRING) facets+=Facet* block=displayBlock;
 	public S_DisplayElements getS_DisplayAccess() {

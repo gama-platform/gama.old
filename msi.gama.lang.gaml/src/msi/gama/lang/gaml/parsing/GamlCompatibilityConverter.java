@@ -17,19 +17,15 @@ import static msi.gama.common.interfaces.IKeyword.ALL;
 import static msi.gama.common.interfaces.IKeyword.ARG;
 import static msi.gama.common.interfaces.IKeyword.AT;
 import static msi.gama.common.interfaces.IKeyword.BATCH;
-import static msi.gama.common.interfaces.IKeyword.CONST;
 import static msi.gama.common.interfaces.IKeyword.DEFAULT;
 import static msi.gama.common.interfaces.IKeyword.DEPENDS_ON;
 import static msi.gama.common.interfaces.IKeyword.DISPLAY;
 import static msi.gama.common.interfaces.IKeyword.ELSE;
-import static msi.gama.common.interfaces.IKeyword.ENTITIES;
-import static msi.gama.common.interfaces.IKeyword.ENVIRONMENT;
 import static msi.gama.common.interfaces.IKeyword.EQUATION;
 import static msi.gama.common.interfaces.IKeyword.EQUATION_LEFT;
 import static msi.gama.common.interfaces.IKeyword.EQUATION_OP;
 import static msi.gama.common.interfaces.IKeyword.EQUATION_RIGHT;
 import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
-import static msi.gama.common.interfaces.IKeyword.FALSE;
 import static msi.gama.common.interfaces.IKeyword.FILE;
 import static msi.gama.common.interfaces.IKeyword.FROM;
 import static msi.gama.common.interfaces.IKeyword.FUNCTION;
@@ -58,9 +54,7 @@ import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword.TITLE;
 import static msi.gama.common.interfaces.IKeyword.TO;
 import static msi.gama.common.interfaces.IKeyword.TYPE;
-import static msi.gama.common.interfaces.IKeyword.UNKNOWN;
 import static msi.gama.common.interfaces.IKeyword.VALUE;
-import static msi.gama.common.interfaces.IKeyword.VAR;
 import static msi.gama.common.interfaces.IKeyword.WHEN;
 import static msi.gama.common.interfaces.IKeyword.WITH;
 import static msi.gama.common.interfaces.IKeyword.ZERO;
@@ -102,7 +96,6 @@ import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Reflex;
 import msi.gama.lang.gaml.gaml.S_Solve;
-import msi.gama.lang.gaml.gaml.S_Var;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.VariableRef;
@@ -144,26 +137,8 @@ public class GamlCompatibilityConverter {
 			return null;
 		}
 		final ModelImpl m = (ModelImpl) root;
-		Object[] imps;
-		List<String> prgm = null;
-		if (m.eIsSet(GamlPackage.MODEL__PRAGMAS)) {
-			final List<Pragma> pragmas = m.getPragmas();
-			prgm = new ArrayList();
-			for (int i = 0; i < pragmas.size(); i++) {
-				final String pragma = pragmas.get(i).getName();
-				prgm.add(pragma);
-			}
-		}
-		if (m.eIsSet(GamlPackage.MODEL__IMPORTS)) {
-			final List<Import> imports = m.getImports();
-			imps = new Object[imports.size()];
-			for (int i = 0; i < imps.length; i++) {
-				final URI uri = URI.createURI(imports.get(i).getImportURI(), false);
-				imps[i] = uri;
-			}
-		} else {
-			imps = null;
-		}
+		final List<String> prgm = collectPragmas(m);
+		final Object[] imps = collectImports(m);
 
 		final SyntacticModelElement model = (SyntacticModelElement) SyntacticFactory.create(MODEL, m,
 				EGaml.hasChildren(m), imps);
@@ -171,6 +146,34 @@ public class GamlCompatibilityConverter {
 		model.setFacet(NAME, convertToLabel(null, m.getName()));
 		convStatements(model, EGaml.getStatementsOf(m), errors);
 		return model;
+	}
+
+	private static Object[] collectImports(final ModelImpl m) {
+		Object[] imps = null;
+		if (m.eIsSet(GamlPackage.MODEL__IMPORTS)) {
+			final List<Import> imports = m.getImports();
+			imps = new Object[imports.size()];
+			for (int i = 0; i < imps.length; i++) {
+				final URI uri = URI.createURI(imports.get(i).getImportURI(), false);
+				imps[i] = uri;
+			}
+		}
+		return imps;
+	}
+
+	private static List<String> collectPragmas(final ModelImpl m) {
+		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) {
+			return null;
+		}
+		final List<Pragma> pragmas = m.getPragmas();
+		final List<String> result = new ArrayList();
+		if (pragmas.isEmpty())
+			return null;
+		for (int i = 0; i < pragmas.size(); i++) {
+			final String pragma = pragmas.get(i).getName();
+			result.add(pragma);
+		}
+		return result;
 	}
 
 	private static boolean doesNotDefineAttributes(final String keyword) {
@@ -205,17 +208,23 @@ public class GamlCompatibilityConverter {
 		if (keyword == null) {
 			throw new NullPointerException(
 					"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
-		} else if (keyword.equals(ENTITIES)) {
-			convertBlock(stm, upper, errors);
-			return null;
-		} else {
+		}
+
+		// else if (keyword.equals(ENTITIES)) {
+		// convertBlock(stm, upper, errors);
+		// return null;
+		// }
+
+		else {
 			keyword = convertKeyword(keyword, upper.getKeyword());
 		}
 		final ISyntacticElement elt = SyntacticFactory.create(keyword, stm, EGaml.hasChildren(stm));
 
-		if (keyword.equals(ENVIRONMENT)) {
-			convertBlock(stm, upper, errors);
-		} else if (stm instanceof S_Assignment) {
+		// if (keyword.equals(ENVIRONMENT)) {
+		// convertBlock(stm, upper, errors);
+		// } else
+
+		if (stm instanceof S_Assignment) {
 			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr(), errors);
 			// } else if ( stm instanceof S_Definition &&
 			// !SymbolProto.nonTypeStatements.contains(keyword) ) {
@@ -293,26 +302,29 @@ public class GamlCompatibilityConverter {
 		// We apply some conversions to the facets expressed in the statement
 		convertFacets(stm, keyword, elt, errors);
 
-		if (stm instanceof S_Var && (keyword.equals(CONST) || keyword.equals(VAR))) {
-			// We modify the "var", "const" declarations in order to replace the
-			// keyword by the type
-			final IExpressionDescription type = elt.getExpressionAt(TYPE);
-			if (type == null) {
-				addWarning("Facet 'type' is missing, set by default to 'unknown'", stm, errors);
-				elt.setKeyword(UNKNOWN);
-			} else {
-
-				// WARNING FALSE (type is now more TypeRef)
-				elt.setKeyword(type.toString());
-			}
-			if (keyword.equals(CONST)) {
-				final IExpressionDescription constant = elt.getExpressionAt(CONST);
-				if (constant != null && constant.toString().equals(FALSE)) {
-					addWarning("Is this variable constant or not ?", stm, errors);
-				}
-				elt.setFacet(CONST, ConstantExpressionDescription.create(true));
-			}
-		} else if (stm instanceof S_Experiment) {
+		// if (stm instanceof S_Var && (keyword.equals(CONST) ||
+		// keyword.equals(VAR))) {
+		// // We modify the "var", "const" declarations in order to replace the
+		// // keyword by the type
+		// final IExpressionDescription type = elt.getExpressionAt(TYPE);
+		// if (type == null) {
+		// addWarning("Facet 'type' is missing, set by default to 'unknown'",
+		// stm, errors);
+		// elt.setKeyword(UNKNOWN);
+		// } else {
+		//
+		// // WARNING FALSE (type is now more TypeRef)
+		// elt.setKeyword(type.toString());
+		// }
+		// if (keyword.equals(CONST)) {
+		// final IExpressionDescription constant = elt.getExpressionAt(CONST);
+		// if (constant != null && constant.toString().equals(FALSE)) {
+		// addWarning("Is this variable constant or not ?", stm, errors);
+		// }
+		// elt.setFacet(CONST, ConstantExpressionDescription.create(true));
+		// }
+		// } else
+		if (stm instanceof S_Experiment) {
 			// We do it also for experiments, and change their name
 			final IExpressionDescription type = elt.getExpressionAt(TYPE);
 			if (type == null) {
@@ -382,28 +394,13 @@ public class GamlCompatibilityConverter {
 
 	private static void assignDependencies(final Statement stm, final String keyword, final ISyntacticElement elt,
 			final Set<Diagnostic> errors) {
-		// COMPATIBILITY with the definition of environment
-		// if ( !SymbolProto.nonTypeStatements.contains(keyword) ) {
+
 		if (!DescriptionFactory.isStatementProto(keyword)) {
 			final Set<String> s = varDependenciesOf(stm);
 			if (s != null && !s.isEmpty()) {
 				elt.setFacet(DEPENDS_ON, new StringListExpressionDescription(s));
 			}
-			// 25/01/14: this test is cancelled for the moment, as the facet
-			// type is now defined earlier when dealing
-			// with type var_name;
-			// if ( !(stm instanceof S_Var) ) {
-			// IExpressionDescription type = elt.getExpressionAt(TYPE);
-			// if ( type != null ) {
-			// if ( type.toString().equals(keyword) ) {
-			// addWarning("Duplicate declaration of type", stm, errors);
-			// } else {
-			// addWarning("Conflicting declaration of type (" + type + " and " +
-			// keyword +
-			// "), only the last one will be considered", stm, errors);
-			// }
-			// }
-			// }
+
 		}
 	}
 
@@ -428,9 +425,6 @@ public class GamlCompatibilityConverter {
 				addFacet(arg, NAME, convertToLabel(null, def.getName()), errors);
 				final EObject type = def.getType();
 				addFacet(arg, TYPE, convExpr(type, errors), errors);
-				// addFacet(arg, TYPE, convertToConstantString(null,
-				// EGaml.getKey.caseTypeRef(type)), errors);
-				// convertType(arg, type, errors);
 				final Expression e = def.getDefault();
 				if (e != null) {
 					addFacet(arg, DEFAULT, convExpr(e, errors), errors);
@@ -440,9 +434,10 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static String convertAssignment(final S_Assignment stm, String keyword, final ISyntacticElement elt,
-			final Expression expr, final Set<Diagnostic> errors) {
+	private static String convertAssignment(final S_Assignment stm, final String originalKeyword,
+			final ISyntacticElement elt, final Expression expr, final Set<Diagnostic> errors) {
 		final IExpressionDescription value = convExpr(stm.getValue(), errors);
+		String keyword = originalKeyword;
 		if (keyword.endsWith("<-") || keyword.equals(SET)) {
 			// Translation of "container[index] <- value" to
 			// "put item: value in: container at: index"

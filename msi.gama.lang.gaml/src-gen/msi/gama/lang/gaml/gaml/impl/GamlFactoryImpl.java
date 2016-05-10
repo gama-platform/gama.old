@@ -90,7 +90,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SSET: return createS_Set();
       case GamlPackage.SEQUATIONS: return createS_Equations();
       case GamlPackage.SSOLVE: return createS_Solve();
-      case GamlPackage.SMONITOR: return createS_Monitor();
       case GamlPackage.SDISPLAY: return createS_Display();
       case GamlPackage.SPECIES_OR_GRID_DISPLAY_STATEMENT: return createspeciesOrGridDisplayStatement();
       case GamlPackage.PARAMETERS: return createParameters();
@@ -427,17 +426,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     S_SolveImpl s_Solve = new S_SolveImpl();
     return s_Solve;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public S_Monitor createS_Monitor()
-  {
-    S_MonitorImpl s_Monitor = new S_MonitorImpl();
-    return s_Monitor;
   }
 
   /**

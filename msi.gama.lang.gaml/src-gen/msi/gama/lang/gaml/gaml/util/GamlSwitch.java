@@ -302,13 +302,6 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.SMONITOR:
-      {
-        S_Monitor s_Monitor = (S_Monitor)theEObject;
-        T result = caseS_Monitor(s_Monitor);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case GamlPackage.SDISPLAY:
       {
         S_Display s_Display = (S_Display)theEObject;
@@ -1121,22 +1114,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseS_Solve(S_Solve object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>SMonitor</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>SMonitor</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseS_Monitor(S_Monitor object)
   {
     return null;
   }
