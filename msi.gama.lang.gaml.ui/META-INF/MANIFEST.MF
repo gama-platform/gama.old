@@ -24,6 +24,7 @@ Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
 Import-Package: gnu.trove.map.hash,
  org.apache.commons.lang;version="2.6.0",
  org.apache.log4j,
+ org.eclipse.ui.texteditor.spelling,
  org.eclipse.xtext.ide.editor.syntaxcoloring
 Export-Package: msi.gama.lang.gaml.ui,
  msi.gama.lang.gaml.ui.contentassist,
