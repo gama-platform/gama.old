@@ -38,6 +38,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.ImageUtilities;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateProposal;
@@ -69,9 +70,11 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
+import org.eclipse.ui.texteditor.spelling.SpellingService;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
@@ -125,6 +128,13 @@ import ummisco.gaml.editbox.IBoxProvider;
 @SuppressWarnings("all")
 public class GamlEditor extends XtextEditor
 		implements IGamlBuilderListener2, IBoxEnabledEditor, IToolbarDecoratedView, ITooltipDisplayer {
+
+	static {
+		final IPreferenceStore store = EditorsUI.getPreferenceStore();
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, false);
+		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
+		store.setValue(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
+	}
 
 	public GamlEditor() {
 	}
@@ -260,7 +270,7 @@ public class GamlEditor extends XtextEditor
 	public boolean isRangeIndicatorEnabled() {
 		final IPreferenceStore store = getAdvancedPreferenceStore();
 		return store != null ? store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR)
-				: true;
+				: false;
 	}
 
 	public final IPreferenceStore getAdvancedPreferenceStore() {
@@ -306,6 +316,14 @@ public class GamlEditor extends XtextEditor
 	private void installGestures() {
 		editToolbar.installGesturesFor(this);
 	}
+
+	@Override
+	protected void installFoldingSupport(final ProjectionViewer projectionViewer) {
+		super.installFoldingSupport(projectionViewer);
+		if (!getAdvancedPreferenceStore()
+				.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR))
+			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+	};
 
 	@Override
 	protected void handleCursorPositionChanged() {
