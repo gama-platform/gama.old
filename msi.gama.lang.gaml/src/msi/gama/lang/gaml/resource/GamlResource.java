@@ -521,20 +521,22 @@ public class GamlResource extends LazyLinkingResource {
 
 	@Override
 	public void update(final int offset, final int replacedTextLength, final String newText) {
-		final long begin = System.nanoTime();
+		// final long begin = System.nanoTime();
 		super.update(offset, replacedTextLength, newText);
-		System.out.println("'" + getURI().lastSegment() + "'" + " updated in " + (System.nanoTime() - begin) / 1000000d
-				+ " ms in Thread [" + Thread.currentThread().getName() + "]");
-		System.out.println("****************************************************");
+		// System.out.println("'" + getURI().lastSegment() + "'" + " updated in
+		// " + (System.nanoTime() - begin) / 1000000d
+		// + " ms in Thread [" + Thread.currentThread().getName() + "]");
+		// System.out.println("****************************************************");
 	}
 
 	@Override
 	public void resolveLazyCrossReferences(final CancelIndicator mon) {
-		final long begin = System.nanoTime();
+		// final long begin = System.nanoTime();
 		super.resolveLazyCrossReferences(mon);
-		System.out.println("'" + getURI().lastSegment() + "'" + " resolved in " + (System.nanoTime() - begin) / 1000000d
-				+ " ms in Thread [" + Thread.currentThread().getName() + "]");
-		System.out.println("****************************************************");
+		// System.out.println("'" + getURI().lastSegment() + "'" + " resolved in
+		// " + (System.nanoTime() - begin) / 1000000d
+		// + " ms in Thread [" + Thread.currentThread().getName() + "]");
+		// System.out.println("****************************************************");
 	}
 
 }

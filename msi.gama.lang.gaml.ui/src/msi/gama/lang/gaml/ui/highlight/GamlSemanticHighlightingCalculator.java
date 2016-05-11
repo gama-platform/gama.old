@@ -53,7 +53,6 @@ import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.S_Assignment;
 import msi.gama.lang.gaml.gaml.S_Definition;
-import msi.gama.lang.gaml.gaml.S_DirectAssignment;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.utils.EGaml;
@@ -79,7 +78,6 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	@Override
 	public void provideHighlightingFor(final XtextResource resource, final IHighlightedPositionAcceptor arg1,
 			final CancelIndicator arg2) {
-		final long begin = System.nanoTime();
 		if (resource == null) {
 			return;
 		}
@@ -87,13 +85,9 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		final TreeIterator<EObject> root = resource.getAllContents();
 		while (root.hasNext()) {
 			process(root.next());
-			// doSwitch(root.next());
 		}
 		done.clear();
 		highlightTasks(resource, acceptor);
-		System.out.println("'" + resource.getURI().lastSegment() + "' hightlighted in "
-				+ (System.nanoTime() - begin) / 1000000d + " ms in Thread [" + Thread.currentThread().getName() + "]");
-		System.out.println("****************************************************");
 	}
 
 	protected void highlightTasks(final XtextResource resource, final IHighlightedPositionAcceptor acceptor) {
@@ -116,14 +110,9 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		case GamlPackage.PRAGMA:
 			setStyle(object, PRAGMA_ID, ((Pragma) object).getName());
 			break;
-		case GamlPackage.SDIRECT_ASSIGNMENT:
-			setStyle(object, ASSIGN_ID, ((S_DirectAssignment) object).getKey());
-			break;
 		case GamlPackage.SASSIGNMENT:
 			final String s = ((S_Assignment) object).getKey();
-			if ("=".equals(s)) {
-				setStyle(object, ASSIGN_ID, s);
-			}
+			setStyle(object, ASSIGN_ID, s);
 			break;
 		case GamlPackage.FACET:
 			final Facet f = (Facet) object;
@@ -177,7 +166,6 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 			final Statement stat = (Statement) object;
 			setStyle(object, VARDEF_ID, EGaml.getNameOf(stat));
 			setStyle(object, KEYWORD_ID, stat.getKey());
-			setStyle(object, FACET_ID, stat.getFirstFacet());
 			break;
 		default:
 			final List<EClass> eSuperTypes = clazz.getESuperTypes();
