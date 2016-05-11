@@ -94,7 +94,7 @@ species pedestrian skills: [moving] {
 	//Reflex to move the agent to its target location and make it die once it reached its target
 	reflex move_left 
 	{
-		do action: move heading: (self) towards (target_location); 
+		do move heading: (self) towards (target_location); 
 		
 		if ( (target_location.x - location.x) <= speed ) 
 		{

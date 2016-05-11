@@ -216,13 +216,13 @@ experiment traffic type: gui {
 			species road aspect: traffic_jam ;
 		}
 		display chart_display refresh: every(10) {
-			chart name: "Traffic jam" type: series size: {0.9, 0.4} position: {0.05, 0.05} {
-				data name:"Mean road traffic coefficient" value: mean (road collect each.coeff_traffic) style: line color: #green ;
-				data name:"Max road traffic coefficient" value: road max_of (each.coeff_traffic) style: line color: #red ;
+			chart "Traffic jam" type: series size: {0.9, 0.4} position: {0.05, 0.05} {
+				data "Mean road traffic coefficient" value: mean (road collect each.coeff_traffic) style: line color: #green ;
+				data "Max road traffic coefficient" value: road max_of (each.coeff_traffic) style: line color: #red ;
 			}
-			chart name: "People Objectif" type: pie style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
-				data name:"Working" value: length ((people as list) where (each.objective="working")) color: #green ;
-				data name:"Staying home" value: length ((people as list) where (each.objective="go home")) color: #blue ;
+			chart "People Objectif" type: pie style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
+				data "Working" value: length ((people as list) where (each.objective="working")) color: #green ;
+				data "Staying home" value: length ((people as list) where (each.objective="go home")) color: #blue ;
 			}
 		}
 		monitor "Number of goals achieved" value: nbGoalsAchived ;

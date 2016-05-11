@@ -276,10 +276,10 @@ species Host schedules: [] skills: [moving] {
 	//Reflex to make the agent infected when the infection is computed from S for a better execution time
 	reflex become_infected when: (is_susceptible and computeInfectionFromS) {
 		if (flip(1 - (1 - beta) ^ (((self) neighbors_at (2)) of_species Host) count (each.is_infected))) {
-			set is_susceptible <- false;
-			set is_infected <- true;
-			set is_immune <- false;
-			set color <- #red;
+			is_susceptible <- false;
+			is_infected <- true;
+			is_immune <- false;
+			color <- #red;
 		}
 
 	}

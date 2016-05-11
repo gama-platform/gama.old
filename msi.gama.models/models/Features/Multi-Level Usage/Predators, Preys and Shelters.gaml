@@ -94,7 +94,7 @@ species prey skills: [moving] control: fsm {
 	}
 	
 	aspect default {
-		draw geometry: shape color: color;
+		draw  shape color: color;
 	}
 }
 
@@ -118,7 +118,7 @@ species predator skills: [moving] schedules: shuffle (list (predator)) {
 	reflex chase_prey when: (target_prey != nil) { do move heading: self towards target_prey speed: predator_speed;}
 	
 	aspect default {
-		draw geometry:shape color: predator_color;
+		draw shape color: predator_color;
 	} 
 } 
 
@@ -160,12 +160,12 @@ species shelter skills: [moving]  frequency: 2 {
 		}
 		
 		aspect default {
-			draw geometry: shape color: predator_in_shelter_color;
+			draw  shape color: predator_in_shelter_color;
 		} 
 	}
 	
 	aspect default {
-		draw geometry:shape color: shelter_color;
+		draw shape color: shelter_color;
 		draw 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 6 at: {(location).x - 20, (location).y};
 	}
 }

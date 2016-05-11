@@ -74,11 +74,11 @@ experiment schelling type: gui {
 			species people;
 		}	
 		display Charts {
-			chart name: "Proportion of happiness" type: pie background: #gray style: exploded position: {0,0} size: {1.0,0.5}{
+			chart "Proportion of happiness" type: pie background: #gray style: exploded position: {0,0} size: {1.0,0.5}{
 				data "Unhappy" value: number_of_people - sum_happy_people color: #green;
 				data "Happy" value: sum_happy_people color: #yellow;
 			}
-			chart name: "Global happiness and similarity" type: series background: #gray axes: #white position: {0,0.5} size: {1.0,0.5} {
+			chart "Global happiness and similarity" type: series background: #gray axes: #white position: {0,0.5} size: {1.0,0.5} {
 				data "happy" color: #blue value:  (sum_happy_people / number_of_people) * 100 style: spline ;
 				data "similarity" color: #red value:  (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
 			}

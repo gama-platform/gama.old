@@ -345,7 +345,7 @@ experiment vote type: gui {
 		display votants {
 			chart "Distribution of electors" type: pie background: #white  {
 			 	loop cand over: candidate {
-			 		data legend: cand.name value:cand.percentage_vote color: cand.color ;
+			 		data  cand.name value:cand.percentage_vote color: cand.color ;
 			 	}	
 			}
 			

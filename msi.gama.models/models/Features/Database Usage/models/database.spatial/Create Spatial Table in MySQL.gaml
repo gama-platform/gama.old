@@ -12,7 +12,7 @@ global
 	map<string, string> PARAMS <- ['host'::'localhost', 'dbtype'::'MySQL', 'database'::'', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
 	init
 	{
-		create species: test_species number: 1;
+		create test_species number: 1;
 		ask test_species
 		{
 			if (self testConnection [params::PARAMS])

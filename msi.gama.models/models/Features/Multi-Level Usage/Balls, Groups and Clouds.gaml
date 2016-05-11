@@ -271,7 +271,7 @@ global {
 		//Action to do when the group is disaggregated
 		action disaggregate {
 			release members as: ball in: world {
-				set state value: 'chaos' ;
+				 state <- 'chaos' ;
 			}
 			
 			do die ;

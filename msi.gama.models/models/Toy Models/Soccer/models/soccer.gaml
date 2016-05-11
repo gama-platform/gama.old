@@ -532,8 +532,8 @@ experiment match type:gui {
 				draw "Blue side - "+string(blue_score) color:#blue at: {10,5} font: font("Helvetica", 18 * #zoom, #bold) perspective:true;
 				draw string(red_score)+" - Red side" color:#red at: {100,5} font: font("Helvetica", 18 * #zoom, #bold) perspective:true;
 				if (show_status) {
-					draw geometry:line([{red_offside_pos,0},{red_offside_pos,90}]) color:#red;
-					draw geometry:line([{blue_offside_pos,0},{blue_offside_pos,90}]) color:#blue;
+					draw line([{red_offside_pos,0},{red_offside_pos,90}]) color:#red;
+					draw line([{blue_offside_pos,0},{blue_offside_pos,90}]) color:#blue;
 				}
 			}
 		}

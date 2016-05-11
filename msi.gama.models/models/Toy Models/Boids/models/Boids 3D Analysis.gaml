@@ -126,14 +126,14 @@ global torus: torus_environment{
 	}  
 }
 //Species boids_goal which represents the goal followed by the boids agent, using the skill moving
-species name: boids_goal skills: [moving] {
+species boids_goal skills: [moving] {
 	float range const: true init: 20.0;
 	int radius <-3;
 	
 	//Reflex to make the goal move in circle
 	reflex wander_in_circle{
 		
-		set location <- {world.shape.width/2 + world.shape.width/2 * cos (time*radius_speed), world.shape.width/2 + world.shape.width/2 * sin (time*radius_speed)};
+		location <- {world.shape.width/2 + world.shape.width/2 * cos (time*radius_speed), world.shape.width/2 + world.shape.width/2 * sin (time*radius_speed)};
 		goal <- location;
 	}
 	
@@ -165,7 +165,7 @@ species flock
 		{
 			loop o over: others 
 			{
-				if condition: dead(o) 
+				if  dead(o) 
 				{
 					do write message: 'in ' + name + ' agent with others contains death agents'; 
 				} 
@@ -360,7 +360,7 @@ species obstacle skills: [moving] {
 experiment start type: gui {
 	output {
 		display RealBoids  type:opengl z_fighting:false {
-			image name:'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean;
 			species boids aspect: dynamicColor  position:{0,0,0.1} trace: 30;
 			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
@@ -372,7 +372,7 @@ experiment trajectory_analysis type: gui {
 	output {
 		
 		display RealBoids  type:opengl {
-			image name:'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean;
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids aspect: image transparency:0.5 position:{0,0,0.11};
 			species boids_goal transparency:0.2 position:{0,0,0.1};
@@ -380,7 +380,7 @@ experiment trajectory_analysis type: gui {
 		}
 				
 		display AggregatedBoidsTrajectory  type:opengl  {
-			image name:'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean;
 			species aggregatedboids  aspect: base trace:100 fading: true ;
 			species boids_goal aspect:sphere;		
 		}
@@ -390,7 +390,7 @@ experiment trajectory_analysis type: gui {
 experiment SpaceTimeCube type: gui {
 	output {
 		display RealBoids  type:opengl {
-			image name:'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean;
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids aspect: image transparency:0.5 position:{0,0,0.11};
 			species boids_goal transparency:0.2 position:{0,0,0.1};
@@ -398,7 +398,7 @@ experiment SpaceTimeCube type: gui {
 		}
 		
 		display SpaceTimeCubeAll  type:opengl {
-			image name:'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean;
 			species boids trace:true{
 			    draw triangle(20) size: 15 rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) border:hsb (float(heading)/360.0,1.0,1.0) depth:5 at: {location.x ,location.y,location.z+time};	
 			}
@@ -408,7 +408,7 @@ experiment SpaceTimeCube type: gui {
 		}
 				
 		display SpaceTimeCubeAggregated  type:opengl {
-			image name:'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean;
 			species aggregatedboids trace:true{
 			    draw sphere(10) color: rgb('red') at: {location.x ,location.y,location.z+time};	
 			}
@@ -424,7 +424,7 @@ experiment MultipleView type: gui {
 
 
 		display RealBoids   type:opengl {
-			image name:'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean;
 			species boids aspect: image  transparency:0.5 position:{0,0,0.25};
 			species boids_goal transparency:0.2 position:{0,0,0.25};
 			species obstacle ;
@@ -435,7 +435,7 @@ experiment MultipleView type: gui {
 		camera_look_pos:{int(first(boids).location.x),first(boids).location.y,0} 
 		camera_up_vector:{0.0,-1.0,0.0} {
 		
-			image name:'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean;
 			species obstacle;
 			species boids  aspect: dynamicColor transparency:0.2 ;
 			species boids_goal  transparency:0.2; 		
@@ -446,7 +446,7 @@ experiment MultipleView type: gui {
 			camera_look_pos:{cos(first(boids).heading)*first(boids).speed+int(first(boids).location.x),
 			sin(first(boids).heading)*first(boids).speed+int(first(boids).location.y),10} 
 			camera_up_vector:{0.0,0.0,1.0} {	
-			image name:'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean;
 			species obstacle ;
 			species boids  aspect: dynamicColor transparency:0.2 ;
 			species boids_goal  transparency:0.2; 		

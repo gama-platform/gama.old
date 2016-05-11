@@ -161,7 +161,7 @@ global skills: [moving] control: fsm {
 		list<int> l <- [1, 2, 3, 4, 5];
 
 		// Adding a value
-		add item: 1 to: l;
+		add 1 to: l;
 		// ... can now be written
 		l <+ 1;
 
@@ -176,7 +176,7 @@ global skills: [moving] control: fsm {
 
 		// Setting/putting a value
 		put "a" at: 'key' in: m;
-		put item: 1 at: 0 in: l;
+		put 1 at: 0 in: l;
 		// ... can now be written
 		m['key'] <- "a";
 		l[0] <- 1;
@@ -196,12 +196,9 @@ global skills: [moving] control: fsm {
 	reflex calling_actions {
 	// IN IMPERATIVE MODE (i.e. in a statement)
 	// The classic way
-		do action: dummy1 with: [a::10, b::100.0];
+		do dummy1 with: [a::10, b::100.0];
 
-		// Another classic way using facets
-		do action: dummy1 a: 10 b: 100.0;
-
-		// Another by removing the first facet
+		// Another by distributing the arguments
 		do dummy1 a: 10 b: 100.0;
 
 		// The new alternative one 

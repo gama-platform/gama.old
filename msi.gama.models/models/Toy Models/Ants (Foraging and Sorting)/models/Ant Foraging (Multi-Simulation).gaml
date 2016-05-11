@@ -135,9 +135,9 @@ species ant skills: [moving] control: fsm {
 
 //Experiment to show how to make multi simulations
 experiment "4 Simulations" type: gui {
-	parameter name: 'Number:' var: ants_number init: 100 unit: 'ants' category: 'Environment and Population';
-	parameter name: 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
-	parameter name: 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
+	parameter 'Number:' var: ants_number init: 100 unit: 'ants' category: 'Environment and Population';
+	parameter 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
+	parameter 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
 
 	// We create three supplementary simulations using the species name 'ants_model' (automatically created from the name of the model + '_model')
 

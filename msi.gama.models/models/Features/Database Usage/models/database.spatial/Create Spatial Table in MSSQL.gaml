@@ -19,7 +19,7 @@ global
 			{
 				do executeUpdate params: PARAMS updateComm: "CREATE DATABASE spatial_DB";
 				write "spatial_BD database was created ";
-				remove key: "database" from: PARAMS;
+				remove  "database" from: PARAMS;
 				put "spatial_DB" key: "database" in: PARAMS;
 				do executeUpdate params: PARAMS updateComm: "CREATE TABLE bounds" + "( " + " geom GEOMETRY " + ")";
 				write "bounds table was created ";

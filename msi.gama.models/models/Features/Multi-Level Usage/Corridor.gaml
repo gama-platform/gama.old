@@ -169,7 +169,7 @@ species corridor_wall {
 		create corridor_wall_info_drawer number: 1 with: [target :: self];
 	}
 	
-	aspect name: my_aspect {
+	aspect  my_aspect {
 		draw shape color: corridor_wall_color;
 	}
 }
@@ -211,13 +211,13 @@ experiment corridor_expr type: gui{
 		}
 
 		display Execution_Time refresh: every(25) {
-			chart name: 'Simulation step length' type: series background: #white {
+			chart 'Simulation step length' type: series background: #white {
 				data 'simulation_step_length_in_mili_second' value: machine_time - start_time color: (rgb ('green'));
 			}
 		}
 	 	
 		display Captured_Pedestrians refresh: every(25){
-			chart name: 'Captured Pedestrian' type: series background: #white {
+			chart 'Captured Pedestrian' type: series background: #white {
 				data 'captured_pedestrians' value: length ( ((list (corridor)) at 0).members ) color: rgb ('blue');
 				data 'pedestrians' value: length (list (pedestrian)) color: rgb ('white');  
 			}

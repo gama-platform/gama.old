@@ -48,8 +48,8 @@ global {
     	//Ask for each edge agent to update it sources and destination to create the matrix
     	ask edge_agent{
 			loop i from:0 to: nbTypeOfClass-1{															
-				set src <- my_graph source_of(self);
-				set dest <- my_graph target_of(self);
+				src <- my_graph source_of(self);
+				dest <- my_graph target_of(self);
 				int tmp <- (interactionMatrix[i]  at {(src.classVector[i]-1),(dest.classVector[i]-1)});
 				interactionMatrix[i][src.classVector[i]-1,dest.classVector[i]-1] <- (tmp+1);
 			}
@@ -96,7 +96,7 @@ global {
 			location <- {(cos (((class-1)/nbValuePerClass)*360)*50 +50),(sin (((class-1)/nbValuePerClass)*360)*50+50),0};
 			color <- hsb (i/nbValuePerClass,1.0,1.0);
 			do updatemyNodes;
-			set i<-i+1;	
+			i<-i+1;	
 		}
 		//We finally create the macroGraph
 		create macroGraph;
@@ -224,7 +224,7 @@ global {
 		aspect base {
 			loop i from:0 to: nbTypeOfClass-1{
 				if(nbAggregatedLinkList[i]>threshold){
-				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i])/((length(edge_agent)))*nbEdgeMax)) color: rgb(125,125,125) border:rgb(125,125,125); 	
+				draw (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i])/((length(edge_agent)))*nbEdgeMax)) color: rgb(125,125,125) border:rgb(125,125,125); 	
 				}
 			}
 		}
@@ -259,8 +259,8 @@ global {
 		        if(i!=j){
 		            create macroEdge{
 		              nbAggregatedLinkList[h] <- tmp;
-		              set src <- macroNode[i];
-				      set dest <- macroNode[j];
+		              src <- macroNode[i];
+				      dest <- macroNode[j];
 		            }	  
 		        }      
 		      }

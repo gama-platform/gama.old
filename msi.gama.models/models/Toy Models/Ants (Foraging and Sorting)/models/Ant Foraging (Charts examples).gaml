@@ -203,7 +203,7 @@ experiment Ant type: gui {
 		display ChartHistoListList {
 			chart "DataListListBar" type:histogram
 			{
-				datalist categoriesnames:categnames  value:nbants legend:statesnames inverse_series_categories:false style:stack;
+				datalist "data" categoriesnames:categnames  value:nbants legend:statesnames inverse_series_categories:false style:stack;
 			}
 		}
 		display ChartSerie {
@@ -220,18 +220,18 @@ experiment Ant type: gui {
 		{
 			chart "simpleserieslist" type:series  y_range:{-6.11, -4.11} x_tick_unit:0.5 y_tick_unit:0.05
 			{
-				data value:[-5,-6,-8] legend:"prems" color:°blue marker_shape:marker_square fill:false;
-				data value:[-5.5,-4.11,-5.645] legend:"sec" color:°red marker_shape:marker_empty;
-				data value:[-7,-6,-4.654] legend:"third" color:°green marker_shape:marker_hor_ellipse fill:false;
+				data "prems" value:[-5,-6,-8] legend:"prems" color:°blue marker_shape:marker_square fill:false;
+				data "sec" value:[-5.5,-4.11,-5.645] legend:"sec" color:°red marker_shape:marker_empty;
+				data "third" value:[-7,-6,-4.654] legend:"third" color:°green marker_shape:marker_hor_ellipse fill:false;
 			}
 		}
 		display Cyclevalues
 		{
 			chart "simplecyclelist" type:xy x_tick_unit:0.5 y_tick_unit:0.5
 			{
-				data value:{-5+cycle,-4} legend:"prems" color:°blue marker_shape:marker_square fill:false;
-				data value:{-5.5+cycle,-3.5} legend:"sec" color:°red marker_shape:marker_diamond;
-				data value:{-7+cycle,-4.654} legend:"third" color:°green marker_shape:marker_hor_ellipse fill:false;
+				data "prems" value:{-5+cycle,-4} legend:"prems" color:°blue marker_shape:marker_square fill:false;
+				data "sec" value:{-5.5+cycle,-3.5} legend:"sec" color:°red marker_shape:marker_diamond;
+				data "third" value:{-7+cycle,-4.654} legend:"third" color:°green marker_shape:marker_hor_ellipse fill:false;
 			}
 		}
 			display ChartSerieList {
@@ -243,7 +243,7 @@ experiment Ant type: gui {
 		display ChartSeriesListList {
 			chart "DataListListSeries" type:series
 			{
-				datalist categoriesnames:categnames  value:nbants legend:statesnames inverse_series_categories:false style:line;
+				datalist "data" categoriesnames: categnames  value:nbants legend:statesnames inverse_series_categories:false style:line;
 			}
 		}
 		display ChartScatter {
