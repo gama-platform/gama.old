@@ -71,13 +71,33 @@ public class SocketSkill extends Skill {
 		if ( sersock == null || sersock.isClosed() ) {
 			try {
 				sersock = new ServerSocket(socket);
-				sock = sersock.accept();
 			} catch (Exception e) {
 				scope.getGui().errorStatus(e.getMessage());
 			}
 		}
 	}
+	
 
+	private void closeSocket(final IScope scope, final Integer socket) {
+		if ( sersock == null || sersock.isClosed() ) {
+			try {
+				sersock.close();
+			} catch (Exception e) {
+				scope.getGui().errorStatus(e.getMessage());
+			}
+		}
+	}
+	
+
+
+	@action(name = "close_socket", doc = @doc(examples = { @example("d;") }, value = ".") )
+	public void primCloseSocket(final IScope scope) throws GamaRuntimeException {
+		// return null;
+		// ServerSocket sersock = null;
+		// Socket sock = null;
+		closeSocket(scope, myPort);
+	}
+	
 	@action(name = "open_socket", doc = @doc(examples = { @example("d;") }, value = ".") )
 	public void primOpenSocket(final IScope scope) throws GamaRuntimeException {
 		// return null;
@@ -93,7 +113,14 @@ public class SocketSkill extends Skill {
 			// BufferedReader keyRead = new BufferedReader(new InputStreamReader(
 			// java.lang.System.in));
 			// sending to client (pwrite object)
-
+			if(sock == null){				
+				while (true) {
+					sock = sersock.accept();
+					if(sock!=null){
+						break;
+					}
+				}
+			}
 			InputStream istream = sock.getInputStream();
 			BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
 			String receiveMessage;
