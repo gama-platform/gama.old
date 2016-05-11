@@ -22,7 +22,7 @@ global {
 		create Initiator;
 		create Participant returns: ps;
 		
-		set p <- ps at 0;
+		 p <- ps at 0;
 		
 		write 'Step the simulation to observe the outcome in the console';
 	}
