@@ -48,11 +48,27 @@ S_Experiment :
  * Statements
  */
 Statement:
-	(=> S_Declaration |
-	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Equations)));
+	
+	(
+		=> S_Other 
+		| 
+		S_Declaration 
+		| 
+		(
+			(
+				=> S_Assignment  
+				| S_Do 
+				| S_Return 
+				| S_Solve 
+				| S_If 
+				| S_Equations
+			)
+		)
+	)
+;
 
-S_1Expr_Facets_BlockOrEnd returns Statement:
-	key=_1Expr_Facets_BlockOrEnd_Key expr=Expression (facets+=Facet)* (block=Block | ";");
+//S_1Expr_Facets_BlockOrEnd returns Statement:
+//	key=_1Expr_Facets_BlockOrEnd_Key expr=Expression (facets+=Facet)* (block=Block | ";");
 
 S_Do:
 	key=_DoKey expr=AbstractRef (facets+=Facet)* (block=Block | ';');
@@ -64,7 +80,7 @@ S_If:
 	key='if' expr=Expression block=Block (=> 'else' else=(S_If | Block))?;
 
 S_Other:
-	key=ID (facets+=Facet)* (block=Block | ';');
+	key=ID (expr=Expression)? (facets+=Facet)* (block=Block | ';');
 
 S_Return:
 	key='return' expr=Expression? ';';
@@ -77,7 +93,7 @@ S_Declaration:
 	=>S_Definition | S_Species | S_Reflex | S_Action  | S_Loop  ; // S_Var
 
 S_Reflex:
-	key=_ReflexKey name=Valid_ID? ("when"":" expr=Expression)? block=Block;
+	key=_ReflexKey name=ID? ("when"":" expr=Expression)? block=Block;
 
 S_Definition:
 	tkey=(TypeRef) name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
@@ -115,12 +131,12 @@ S_Solve:
 //;
 
 S_Display:
-	key="display" name=(Valid_ID|STRING) (facets+=Facet)* block=displayBlock
+	key="display" name=(Valid_ID|STRING) (facets+=Facet)* block=Block
 ;
 
-displayBlock returns Block:
-	{Block} '{' (statements+=displayStatement)* '}'
-;
+//displayBlock returns Block:
+//	{Block} '{' (statements+=displayStatement)* '}'
+//;
 
 ExperimentBlock returns Block:
 	{Block} '{' (statements+=experimentStatement)* '}'
@@ -148,13 +164,13 @@ outputStatement returns Statement
 //	S_Monitor
 	
 	;
-displayStatement returns Statement:
-	speciesOrGridDisplayStatement | S_1Expr_Facets_BlockOrEnd
-;
+//displayStatement returns Statement:
+//	speciesOrGridDisplayStatement | Statement
+//;
 
-speciesOrGridDisplayStatement:
-	key=_SpeciesKey expr=Expression (facets+=Facet)* (block=displayBlock | ";")
-;
+//speciesOrGridDisplayStatement:
+//	key=_SpeciesKey expr=Expression (facets+=Facet)* (block=displayBlock | ";")
+//;
 
 	/**
  * Statement keys
@@ -168,13 +184,13 @@ _SolveKey:
 _SpeciesKey:
 	"species" | "grid";
 
-_1Expr_Facets_BlockOrEnd_Key:
-	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
-	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status";
-
-_LayerKey:
-	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" |  "event" | "overlay" | "datalist" | "camera" | "light"
-;
+//_1Expr_Facets_BlockOrEnd_Key:
+//	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
+//	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status";
+//
+//_LayerKey:
+//	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" |  "event" | "overlay" | "datalist" | "camera" | "light"
+//;
 _DoKey:
 	"do";
 
@@ -203,10 +219,7 @@ ArgumentDefinition:
 Facet:
 	DefinitionFacet | FunctionFacet | ClassicFacet | TypeFacet | VarFacet | ActionFacet;
 
-FirstFacetKey:
-	DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | VarFacetKey | ActionFacetKey | ClassicFacetKey ;
-
-ClassicFacetKey: (ID ':');
+ClassicFacetKey: ID ':';
 
 DefinitionFacetKey:
 	/*"name:" |*/ "returns:" ; /*| "var:" */
@@ -421,7 +434,7 @@ EquationFakeDefinition:
 	'**equation*' name=Valid_ID;
 
 Valid_ID:
-	_SpeciesKey | _DoKey | _ReflexKey  | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID; // _VarOrConsKey
+	ID; // _VarOrConsKey
 
 	/**
  * Terminals

@@ -54,7 +54,7 @@ Workflow {
 			// The antlr parser generator fragment.
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {
 				antlrParam = "-Xconversiontimeout"
-				antlrParam = "10000"
+				antlrParam = "50000"
 				options = {
 					backtrack = false
 					memoize = true
@@ -105,7 +105,7 @@ Workflow {
 			// generates a more lightweight Antlr parser and lexer tailored for content assist
 			fragment = parser.antlr.XtextAntlrUiGeneratorFragment auto-inject {
 				antlrParam = "-Xconversiontimeout"
-				antlrParam = "10000"
+				antlrParam = "50000"
 				partialParsing = true
 				options = {
 					backtrack = false
